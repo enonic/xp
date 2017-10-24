@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.content.index.processor;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -13,8 +11,8 @@ public class AttachmentConfigProcessor
 {
     private ContentTypeName contentTypeName;
 
-    public AttachmentConfigProcessor( final Builder builder) {
-        this.contentTypeName = builder.contentTypeName;
+    public AttachmentConfigProcessor( final ContentTypeName contentTypeName) {
+        this.contentTypeName = contentTypeName;
     }
 
     @Override
@@ -42,31 +40,5 @@ public class AttachmentConfigProcessor
         }
 
         return builder;
-    }
-
-    public static Builder create() {
-        return new Builder();
-    }
-
-    public static class Builder {
-
-        private ContentTypeName contentTypeName;
-
-        public Builder contentTypeName( final ContentTypeName value )
-        {
-            this.contentTypeName = value;
-            return this;
-        }
-
-        void validate()
-        {
-            Preconditions.checkNotNull( contentTypeName );
-        }
-
-        public AttachmentConfigProcessor build()
-        {
-            validate();
-            return new AttachmentConfigProcessor( this );
-        }
     }
 }

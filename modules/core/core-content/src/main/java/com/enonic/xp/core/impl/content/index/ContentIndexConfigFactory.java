@@ -7,12 +7,14 @@ import com.enonic.xp.core.impl.content.index.processor.BaseConfigProcessor;
 import com.enonic.xp.core.impl.content.index.processor.ContentIndexConfigProcessors;
 import com.enonic.xp.core.impl.content.index.processor.DataConfigProcessor;
 import com.enonic.xp.core.impl.content.index.processor.PageConfigProcessor;
+import com.enonic.xp.form.Form;
 import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
+import com.enonic.xp.schema.content.GetContentTypeParams;
 
 public class ContentIndexConfigFactory
 {
@@ -25,22 +27,25 @@ public class ContentIndexConfigFactory
         if ( builder.contentTypeName != null )
         {
             indexConfigProcessors.
-                add( DataConfigProcessor.create().
-                    contentTypeName( builder.contentTypeName ).
-                    contentTypeService( builder.contentTypeService ).
-                    build() ).
-                add( AttachmentConfigProcessor.create().
-                    contentTypeName( builder.contentTypeName ).
-                    build() );
+                add( new DataConfigProcessor( getDataForm( builder.contentTypeService, builder.contentTypeName ) ) ).
+                add( new AttachmentConfigProcessor( builder.contentTypeName ) );
         }
 
-        if ( builder.descriptorKey != null && builder.pageDescriptorService != null)
+        if ( builder.descriptorKey != null && builder.pageDescriptorService != null )
         {
-            indexConfigProcessors.add( PageConfigProcessor.create().
-                pageDescriptorService( builder.pageDescriptorService ).
-                descriptorKey( builder.descriptorKey ).
-                build() );
+            indexConfigProcessors.add(
+                new PageConfigProcessor( getPageConfigForm( builder.pageDescriptorService, builder.descriptorKey ) ) );
         }
+    }
+
+    private Form getDataForm( final ContentTypeService contentTypeService, final ContentTypeName contentTypeName )
+    {
+        return contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) ).getForm();
+    }
+
+    private Form getPageConfigForm( final PageDescriptorService pageDescriptorService, final DescriptorKey descriptorKey )
+    {
+        return pageDescriptorService.getByKey( descriptorKey ).getConfig();
     }
 
     public IndexConfigDocument produce()
@@ -53,7 +58,8 @@ public class ContentIndexConfigFactory
         return configDocumentBuilder.build();
     }
 
-    public static Builder create() {
+    public static Builder create()
+    {
         return new Builder();
     }
 

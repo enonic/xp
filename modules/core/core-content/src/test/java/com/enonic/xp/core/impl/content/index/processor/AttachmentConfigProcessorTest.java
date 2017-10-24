@@ -32,7 +32,7 @@ public class AttachmentConfigProcessorTest
         throws Exception
     {
         this.contentTypeName = ContentTypeName.textMedia();
-        this.configProcessor = AttachmentConfigProcessor.create().contentTypeName( this.contentTypeName ).build();
+        this.configProcessor = new AttachmentConfigProcessor( contentTypeName );
 
         configProcessor.processDocument( builder );
 
@@ -52,7 +52,7 @@ public class AttachmentConfigProcessorTest
         throws Exception
     {
         this.contentTypeName = ContentTypeName.folder();
-        this.configProcessor = AttachmentConfigProcessor.create().contentTypeName( this.contentTypeName ).build();
+        this.configProcessor = new AttachmentConfigProcessor( contentTypeName );
 
         configProcessor.processDocument( builder );
 

@@ -35,8 +35,6 @@ public class DataConfigProcessorTest
     {
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
         this.contentTypeName = ContentTypeName.folder();
-        this.configProcessor =
-            DataConfigProcessor.create().contentTypeService( contentTypeService ).contentTypeName( contentTypeName ).build();
         builder = PatternIndexConfigDocument.create();
     }
 
@@ -48,6 +46,9 @@ public class DataConfigProcessorTest
 
         Mockito.when( contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) ) ).thenReturn(
             contentType );
+
+        this.configProcessor =
+            new DataConfigProcessor( getDataForm( contentTypeService, contentTypeName) );
 
         configProcessor.processDocument( builder );
 
@@ -75,6 +76,9 @@ public class DataConfigProcessorTest
         Mockito.when( contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) ) ).thenReturn(
             contentType );
 
+        this.configProcessor =
+            new DataConfigProcessor( getDataForm( contentTypeService, contentTypeName) );
+
         configProcessor.processDocument( builder );
 
         assertEquals( 2, builder.build().getPathIndexConfigs().size() );
@@ -82,5 +86,10 @@ public class DataConfigProcessorTest
                       builder.build().getConfigForPath( PropertyPath.from( DATA + ".htmlArea" ) ).getIndexValueProcessors().get(
                           0 ).getName() );
 
+    }
+
+    private Form getDataForm( final ContentTypeService contentTypeService, final ContentTypeName contentTypeName )
+    {
+        return contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) ).getForm();
     }
 }

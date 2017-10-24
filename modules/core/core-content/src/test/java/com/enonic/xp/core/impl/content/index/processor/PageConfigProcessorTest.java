@@ -45,8 +45,6 @@ public class PageConfigProcessorTest
     {
         this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
         this.descriptorKey = DescriptorKey.from( "descriptorKey" );
-        this.configProcessor =
-            PageConfigProcessor.create().pageDescriptorService( pageDescriptorService ).descriptorKey( descriptorKey ).build();
         this.builder = PatternIndexConfigDocument.create();
     }
 
@@ -60,6 +58,8 @@ public class PageConfigProcessorTest
             PageDescriptor.create().key( descriptorKey ).config( form ).regions( RegionDescriptors.create().build() ).build();
 
         Mockito.when( pageDescriptorService.getByKey( descriptorKey ) ).thenReturn( descriptor );
+
+        this.configProcessor = new PageConfigProcessor( getPageConfigForm( pageDescriptorService, descriptorKey ) );
 
         configProcessor.processDocument( builder );
 
@@ -100,6 +100,8 @@ public class PageConfigProcessorTest
 
         Mockito.when( pageDescriptorService.getByKey( descriptorKey ) ).thenReturn( descriptor );
 
+        this.configProcessor = new PageConfigProcessor( getPageConfigForm( pageDescriptorService, descriptorKey ) );
+
         configProcessor.processDocument( builder );
 
         assertEquals( 6, builder.build().getPathIndexConfigs().size() );
@@ -109,31 +111,9 @@ public class PageConfigProcessorTest
                           0 ).getName() );
     }
 
-  /*  @Test
-    public void test_data_form_with_html_area()
-        throws Exception
+    private Form getPageConfigForm( final PageDescriptorService pageDescriptorService, final DescriptorKey descriptorKey )
     {
-        Input myTextLine = Input.create().
-            name( "htmlArea" ).
-            inputType( InputTypeName.HTML_AREA ).
-            label( "htmlArea" ).
-            required( true ).
-            build();
-        Form form = Form.create().
-            addFormItem( myTextLine ).
-            build();
+        return pageDescriptorService.getByKey( descriptorKey ).getConfig();
+    }
 
-        final ContentType contentType = ContentType.create().superType( ContentTypeName.folder() ).name( "typeName" ).form( form ).build();
-
-        Mockito.when( contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) ) ).thenReturn(
-            contentType );
-
-        configProcessor.processDocument( builder );
-
-        assertEquals( 2, builder.build().getPathIndexConfigs().size() );
-        assertEquals( "htmlStripper",
-                      builder.build().getConfigForPath( PropertyPath.from( DATA + ".htmlArea" ) ).getIndexValueProcessors().get(
-                          0 ).getName() );
-
-    }*/
-}
+ }
