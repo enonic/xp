@@ -2,13 +2,23 @@ package com.enonic.xp.core.impl.content.index.processor;
 
 import java.util.Set;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentPropertyNames;
+import com.enonic.xp.core.impl.content.index.ContentIndexConfigFactory;
 import com.enonic.xp.data.PropertyPath;
+import com.enonic.xp.form.Form;
 import com.enonic.xp.index.IndexConfig;
+import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.index.PathIndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
+import com.enonic.xp.schema.content.ContentType;
+import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.content.ContentTypeService;
+import com.enonic.xp.schema.content.GetContentTypeParams;
 
 import static org.junit.Assert.*;
 
@@ -28,6 +38,15 @@ import static com.enonic.xp.content.ContentPropertyNames.TYPE;
 public class BaseConfigProcessorTest
 {
     final BaseConfigProcessor processor = new BaseConfigProcessor();
+
+    private ContentTypeService contentTypeService;
+
+    @Before
+    public void setUp()
+        throws Exception
+    {
+        this.contentTypeService = Mockito.mock( ContentTypeService.class );
+    }
 
     @Test
     public void test_default_config()
@@ -85,5 +104,37 @@ public class BaseConfigProcessorTest
         assertTrue( indexConfigs.contains(
             PathIndexConfig.create().path( PropertyPath.from( EXTRA_DATA ) ).indexConfig( IndexConfig.MINIMAL ).build() ) );
 
+    }
+
+    @Test
+    public void test_media_indexing()
+        throws Exception
+    {
+        PatternIndexConfigDocument indexConfigDocument = processForm(Form.create().build());
+
+        assertEquals( IndexConfig.MINIMAL, indexConfigDocument.getConfigForPath( PropertyPath.from( ContentPropertyNames.EXTRA_DATA ) ) );
+
+        assertEquals( IndexConfig.MINIMAL,
+                      indexConfigDocument.getConfigForPath( PropertyPath.from( ContentPropertyNames.EXTRA_DATA, "media" ) ) );
+
+        assertEquals( IndexConfig.MINIMAL,
+                      indexConfigDocument.getConfigForPath( PropertyPath.from( ContentPropertyNames.EXTRA_DATA, "subSet" ) ) );
+
+        assertEquals( IndexConfig.MINIMAL, indexConfigDocument.getConfigForPath(
+            PropertyPath.from( ContentPropertyNames.EXTRA_DATA, "subSet", "subSetValue" ) ) );
+    }
+
+    private PatternIndexConfigDocument processForm( final Form form )
+    {
+        final ContentType contentType =
+            ContentType.create().superType( ContentTypeName.structured() ).name( "myapplication:test" ).form( form ).build();
+
+        Mockito.when( contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentType.getName() ) ) ).thenReturn(
+            contentType );
+
+        final BaseConfigProcessor configProcessor =
+            new BaseConfigProcessor();
+
+        return configProcessor.processDocument( PatternIndexConfigDocument.create() ).build();
     }
 }
