@@ -26,10 +26,4 @@ public class ContentIndexConfigProcessors
         this.processors.add( processor );
         return this;
     }
-
-    public ContentIndexConfigProcessors remove( final ContentIndexConfigProcessor processor )
-    {
-        this.processors.remove( processor );
-        return this;
-    }
 }

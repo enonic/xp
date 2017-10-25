@@ -24,27 +24,28 @@ public class ContentIndexConfigFactory
     {
         indexConfigProcessors.add( new BaseConfigProcessor() );
 
-        if ( builder.contentTypeName != null )
-        {
-            indexConfigProcessors.
-                add( new DataConfigProcessor( getDataForm( builder.contentTypeService, builder.contentTypeName ) ) ).
-                add( new AttachmentConfigProcessor( builder.contentTypeName ) );
-        }
+        indexConfigProcessors.add( new AttachmentConfigProcessor( builder.contentTypeName ) );
 
-        if ( builder.descriptorKey != null && builder.pageDescriptorService != null )
-        {
-            indexConfigProcessors.add(
-                new PageConfigProcessor( getPageConfigForm( builder.pageDescriptorService, builder.descriptorKey ) ) );
-        }
+        indexConfigProcessors.add( new DataConfigProcessor( getDataForm( builder.contentTypeService, builder.contentTypeName ) ) );
+
+        indexConfigProcessors.add( new PageConfigProcessor( getPageConfigForm( builder.pageDescriptorService, builder.descriptorKey ) ) );
     }
 
     private Form getDataForm( final ContentTypeService contentTypeService, final ContentTypeName contentTypeName )
     {
+        if ( contentTypeName == null || contentTypeService == null )
+        {
+            return null;
+        }
         return contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) ).getForm();
     }
 
     private Form getPageConfigForm( final PageDescriptorService pageDescriptorService, final DescriptorKey descriptorKey )
     {
+        if ( pageDescriptorService == null || descriptorKey == null )
+        {
+            return null;
+        }
         return pageDescriptorService.getByKey( descriptorKey ).getConfig();
     }
 

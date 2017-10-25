@@ -10,6 +10,8 @@ import com.enonic.xp.form.Input;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.inputtype.InputTypeName;
+import com.enonic.xp.page.PageDescriptor;
+import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -25,35 +27,22 @@ public class DataConfigProcessorTest
 
     private ContentTypeName contentTypeName;
 
-    private DataConfigProcessor configProcessor;
-
-    private PatternIndexConfigDocument.Builder builder;
-
     @Before
     public void setUp()
         throws Exception
     {
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
         this.contentTypeName = ContentTypeName.folder();
-        builder = PatternIndexConfigDocument.create();
     }
 
     @Test
-    public void test_empty_data_form()
+    public void test_data()
         throws Exception
     {
-        final ContentType contentType = ContentType.create().superType( ContentTypeName.folder() ).name( "typeName" ).build();
+        final PatternIndexConfigDocument result = processForm(Form.create().build());
 
-        Mockito.when( contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) ) ).thenReturn(
-            contentType );
-
-        this.configProcessor =
-            new DataConfigProcessor( getDataForm( contentTypeService, contentTypeName) );
-
-        configProcessor.processDocument( builder );
-
-        assertEquals( 1, builder.build().getPathIndexConfigs().size() );
-        assertEquals( IndexConfig.BY_TYPE, builder.build().getConfigForPath( PropertyPath.from( DATA ) ) );
+        assertEquals( 1, result.getPathIndexConfigs().size() );
+        assertEquals( IndexConfig.BY_TYPE, result.getConfigForPath( PropertyPath.from( DATA ) ) );
 
     }
 
@@ -71,19 +60,12 @@ public class DataConfigProcessorTest
             addFormItem( myTextLine ).
             build();
 
-        final ContentType contentType = ContentType.create().superType( ContentTypeName.folder() ).name( "typeName" ).form( form ).build();
+        final PatternIndexConfigDocument result = processForm(form);
 
-        Mockito.when( contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) ) ).thenReturn(
-            contentType );
 
-        this.configProcessor =
-            new DataConfigProcessor( getDataForm( contentTypeService, contentTypeName) );
-
-        configProcessor.processDocument( builder );
-
-        assertEquals( 2, builder.build().getPathIndexConfigs().size() );
+        assertEquals( 2, result.getPathIndexConfigs().size() );
         assertEquals( "htmlStripper",
-                      builder.build().getConfigForPath( PropertyPath.from( DATA + ".htmlArea" ) ).getIndexValueProcessors().get(
+                      result.getConfigForPath( PropertyPath.from( DATA + ".htmlArea" ) ).getIndexValueProcessors().get(
                           0 ).getName() );
 
     }
@@ -91,5 +73,18 @@ public class DataConfigProcessorTest
     private Form getDataForm( final ContentTypeService contentTypeService, final ContentTypeName contentTypeName )
     {
         return contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) ).getForm();
+    }
+
+    private PatternIndexConfigDocument processForm( final Form form )
+    {
+        final ContentType contentType = ContentType.create().superType( ContentTypeName.folder() ).name( "typeName" ).form( form ).build();
+
+        Mockito.when( contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) ) ).thenReturn(
+            contentType );
+
+        final DataConfigProcessor configProcessor =
+            new DataConfigProcessor( getDataForm( contentTypeService, contentTypeName) );
+
+        return configProcessor.processDocument( PatternIndexConfigDocument.create() ).build();
     }
 }
