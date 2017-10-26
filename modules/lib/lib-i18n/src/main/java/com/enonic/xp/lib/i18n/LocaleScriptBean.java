@@ -31,7 +31,7 @@ public final class LocaleScriptBean
 
     public String localize( final String key, final List<String> locales, final ScriptValue values, String[] bundles )
     {
-        if ( bundles == null || bundles.length > 0 )
+        if ( bundles == null || bundles.length == 0 )
         {
             bundles = new String[]{"site/i18n/phrases"};
         }
