@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.content;
+package com.enonic.xp.core.impl.content.index;
 
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.form.Input;
@@ -27,7 +27,6 @@ public class IndexConfigVisitor
     {
         if ( InputTypeName.HTML_AREA.equals( input.getInputType() ) )
         {
-
             final IndexConfig htmlIndexConfig = IndexConfig.create().
                 enabled( true ).
                 fulltext( true ).
