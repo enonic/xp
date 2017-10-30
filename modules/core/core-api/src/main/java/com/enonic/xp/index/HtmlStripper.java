@@ -10,10 +10,10 @@ import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueType;
 import com.enonic.xp.data.ValueTypes;
 
-final class HtmlStripper
+    final class HtmlStripper
     implements IndexValueProcessor
 {
-    private final static String NAME = "htmlStripper";
+    public final static String NAME = "htmlStripper";
 
     private final static Pattern XML_TAG_PATTERN = Pattern.compile( "(?:<[^>]*>)+", Pattern.MULTILINE );
 
