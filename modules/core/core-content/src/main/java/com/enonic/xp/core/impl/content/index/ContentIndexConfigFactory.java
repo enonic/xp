@@ -64,7 +64,9 @@ public class ContentIndexConfigFactory
             return null;
         }
         return siteConfigs.stream().
-            map( siteConfig -> siteService.getDescriptor( siteConfig.getApplicationKey() ).getForm() ).
+            map( siteConfig -> siteService.getDescriptor( siteConfig.getApplicationKey() ) ).
+            filter( siteDescriptor -> siteDescriptor != null && siteDescriptor.getForm() != null ).
+            map( siteDescriptor -> siteDescriptor.getForm() ).
             collect( Collectors.toList() );
     }
 
