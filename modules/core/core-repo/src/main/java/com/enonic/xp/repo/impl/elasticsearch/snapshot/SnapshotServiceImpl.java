@@ -82,6 +82,8 @@ public class SnapshotServiceImpl
         checkSnapshotRepository();
         validateSnapshot( restoreParams.getSnapshotName() );
 
+        this.eventPublisher.publish( RepositoryEvents.restoreInitialized() );
+
         final RestoreResult result = SnapshotRestoreExecutor.create().
             repositoryToRestore( restoreParams.getRepositoryId() ).
             snapshotName( restoreParams.getSnapshotName() ).
@@ -127,20 +129,17 @@ public class SnapshotServiceImpl
 
             if ( snapshot == null )
             {
-                throw new SnapshotException( "Failed to restore snapshot: Snapshot with name '" + snapshotName +
-                                                 "' not found" );
+                throw new SnapshotException( "Failed to restore snapshot: Snapshot with name '" + snapshotName + "' not found" );
             }
 
             if ( snapshot.state().equals( SnapshotState.FAILED ) )
             {
-                throw new SnapshotException( "Failed to restore snapshot: Snapshot with name '" + snapshotName +
-                                                 "' is not valid" );
+                throw new SnapshotException( "Failed to restore snapshot: Snapshot with name '" + snapshotName + "' is not valid" );
             }
         }
         catch ( RepositoryMissingException e )
         {
-            throw new SnapshotException( "Failed to restore snapshot [" + snapshotName +
-                                             "]: Repository not initialized '" );
+            throw new SnapshotException( "Failed to restore snapshot [" + snapshotName + "]: Repository not initialized '" );
         }
         catch ( Exception e )
         {
