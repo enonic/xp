@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentDataValidationException;
@@ -32,6 +33,7 @@ import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.GetContentTypeParams;
+import com.enonic.xp.site.SiteService;
 
 final class UpdateContentCommand
     extends AbstractCreatingOrUpdatingContentCommand
@@ -104,8 +106,11 @@ final class UpdateContentCommand
             modifier( getCurrentUser().getKey() ).
             build();
 
-        final UpdateNodeParams updateNodeParams = UpdateNodeParamsFactory.create( updateContentTranslatorParams ).contentTypeService(
-            this.contentTypeService ).pageDescriptorService( this.pageDescriptorService ).build().produce();
+        final UpdateNodeParams updateNodeParams = UpdateNodeParamsFactory.create( updateContentTranslatorParams ).
+            contentTypeService(this.contentTypeService ).
+            pageDescriptorService( this.pageDescriptorService ).
+            siteService( this.siteService ).
+            build().produce();
 
         final Node editedNode = this.nodeService.update( updateNodeParams );
         return translator.fromNode( editedNode, true );

@@ -12,6 +12,7 @@ import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.RenameNodeParams;
+import com.enonic.xp.page.PageDescriptorService;
 
 import static com.enonic.xp.core.impl.content.ContentNodeHelper.translateNodePathToContentPath;
 
@@ -21,10 +22,13 @@ final class RenameContentCommand
 {
     private final RenameContentParams params;
 
+    private final PageDescriptorService pageDescriptorService;
+
     private RenameContentCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
+        this.pageDescriptorService = builder.pageDescriptorService;
     }
 
     public static Builder create( final RenameContentParams params )
@@ -96,7 +100,11 @@ final class RenameContentCommand
             modifier( content.getModifier() ).
             editor( edit -> edit.valid = isValid );
 
-        return UpdateContentCommand.create( this ).params( updateContentParams ).build().execute();
+        return UpdateContentCommand.create( this ).params( updateContentParams ).
+            siteService( siteService ).
+            contentTypeService( contentTypeService ).
+            pageDescriptorService( this.pageDescriptorService ).
+            build().execute();
     }
 
     public static class Builder
@@ -104,9 +112,17 @@ final class RenameContentCommand
     {
         private final RenameContentParams params;
 
+        private PageDescriptorService pageDescriptorService;
+
         public Builder( final RenameContentParams params )
         {
             this.params = params;
+        }
+
+        Builder pageDescriptorService( final PageDescriptorService value )
+        {
+            this.pageDescriptorService = value;
+            return this;
         }
 
         @Override

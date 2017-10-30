@@ -9,12 +9,13 @@ import com.enonic.xp.content.UpdateContentTranslatorParams;
 import com.enonic.xp.core.impl.content.index.ContentIndexConfigFactory;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.node.NodeEditor;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeService;
+import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteService;
 
 public class UpdateNodeParamsFactory
 {
@@ -24,6 +25,8 @@ public class UpdateNodeParamsFactory
 
     private final PageDescriptorService pageDescriptorService;
 
+    private final SiteService siteService;
+
     private static final ContentDataSerializer CONTENT_DATA_SERIALIZER = new ContentDataSerializer();
 
     public UpdateNodeParamsFactory( final Builder builder )
@@ -31,6 +34,7 @@ public class UpdateNodeParamsFactory
         this.params = builder.params;
         this.contentTypeService = builder.contentTypeService;
         this.pageDescriptorService = builder.pageDescriptorService;
+        this.siteService = builder.siteService;
     }
 
     public UpdateNodeParams produce()
@@ -68,8 +72,10 @@ public class UpdateNodeParamsFactory
         final ContentIndexConfigFactory indexConfigFactory = ContentIndexConfigFactory.create().
             contentTypeService( contentTypeService ).
             pageDescriptorService( pageDescriptorService ).
+            siteService( this.siteService ).
             contentTypeName( content.getType() ).
             descriptorKey( content.getPage() != null ? content.getPage().getController() : null ).
+            siteConfigs( content.isSite() ? ( (Site) content ).getSiteConfigs() : null ).
             build();
 
         return editableNode -> {
@@ -88,6 +94,8 @@ public class UpdateNodeParamsFactory
 
         private PageDescriptorService pageDescriptorService;
 
+        private SiteService siteService;
+
         Builder( final UpdateContentTranslatorParams params )
         {
             this.params = params;
@@ -102,6 +110,12 @@ public class UpdateNodeParamsFactory
         Builder pageDescriptorService( final PageDescriptorService value )
         {
             this.pageDescriptorService = value;
+            return this;
+        }
+
+        Builder siteService( final SiteService value )
+        {
+            this.siteService = value;
             return this;
         }
 

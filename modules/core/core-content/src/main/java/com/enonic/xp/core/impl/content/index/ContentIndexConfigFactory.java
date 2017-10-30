@@ -1,5 +1,8 @@
 package com.enonic.xp.core.impl.content.index;
 
+import java.util.Collection;
+import java.util.stream.Collectors;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.core.impl.content.index.processor.AttachmentConfigProcessor;
@@ -7,6 +10,7 @@ import com.enonic.xp.core.impl.content.index.processor.BaseConfigProcessor;
 import com.enonic.xp.core.impl.content.index.processor.ContentIndexConfigProcessors;
 import com.enonic.xp.core.impl.content.index.processor.DataConfigProcessor;
 import com.enonic.xp.core.impl.content.index.processor.PageConfigProcessor;
+import com.enonic.xp.core.impl.content.index.processor.SiteConfigProcessor;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.index.PatternIndexConfigDocument;
@@ -15,6 +19,8 @@ import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
+import com.enonic.xp.site.SiteConfigs;
+import com.enonic.xp.site.SiteService;
 
 public class ContentIndexConfigFactory
 {
@@ -29,6 +35,8 @@ public class ContentIndexConfigFactory
         indexConfigProcessors.add( new DataConfigProcessor( getDataForm( builder.contentTypeService, builder.contentTypeName ) ) );
 
         indexConfigProcessors.add( new PageConfigProcessor( getPageConfigForm( builder.pageDescriptorService, builder.descriptorKey ) ) );
+
+        indexConfigProcessors.add( new SiteConfigProcessor( getSiteConfigForms( builder.siteService, builder.siteConfigs ) ) );
     }
 
     private Form getDataForm( final ContentTypeService contentTypeService, final ContentTypeName contentTypeName )
@@ -47,6 +55,17 @@ public class ContentIndexConfigFactory
             return null;
         }
         return pageDescriptorService.getByKey( descriptorKey ).getConfig();
+    }
+
+    private Collection<Form> getSiteConfigForms( final SiteService siteService, final SiteConfigs siteConfigs )
+    {
+        if ( siteService == null || siteConfigs == null )
+        {
+            return null;
+        }
+        return siteConfigs.stream().
+            map( siteConfig -> siteService.getDescriptor( siteConfig.getApplicationKey() ).getForm() ).
+            collect( Collectors.toList() );
     }
 
     public IndexConfigDocument produce()
@@ -70,10 +89,13 @@ public class ContentIndexConfigFactory
 
         private PageDescriptorService pageDescriptorService;
 
+        private SiteService siteService;
+
         private ContentTypeName contentTypeName;
 
         private DescriptorKey descriptorKey;
 
+        private SiteConfigs siteConfigs;
 
         public Builder contentTypeService( final ContentTypeService value )
         {
@@ -87,6 +109,12 @@ public class ContentIndexConfigFactory
             return this;
         }
 
+        public Builder siteService( final SiteService value )
+        {
+            this.siteService = value;
+            return this;
+        }
+
         public Builder contentTypeName( final ContentTypeName value )
         {
             this.contentTypeName = value;
@@ -96,6 +124,12 @@ public class ContentIndexConfigFactory
         public Builder descriptorKey( final DescriptorKey value )
         {
             this.descriptorKey = value;
+            return this;
+        }
+
+        public Builder siteConfigs( final SiteConfigs value )
+        {
+            this.siteConfigs = value;
             return this;
         }
 

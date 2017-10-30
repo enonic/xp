@@ -17,6 +17,9 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeService;
+import com.enonic.xp.site.SiteConfigs;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
+import com.enonic.xp.site.SiteService;
 
 public class CreateNodeParamsFactory
 {
@@ -26,6 +29,8 @@ public class CreateNodeParamsFactory
 
     private final PageDescriptorService pageDescriptorService;
 
+    private final SiteService siteService;
+
     private static final ContentDataSerializer CONTENT_DATA_SERIALIZER = new ContentDataSerializer();
 
     public CreateNodeParamsFactory( final Builder builder )
@@ -33,18 +38,24 @@ public class CreateNodeParamsFactory
         this.params = builder.params;
         this.contentTypeService = builder.contentTypeService;
         this.pageDescriptorService = builder.pageDescriptorService;
+        this.siteService = builder.siteService;
     }
 
     public CreateNodeParams produce()
     {
         final PropertyTree contentAsData = CONTENT_DATA_SERIALIZER.toCreateNodeData( params );
 
-        final PropertySet pageSet = contentAsData.getPropertySet( PropertyPath.from( ContentPropertyNames.PAGE ));
+        final PropertySet pageSet = contentAsData.getPropertySet( PropertyPath.from( ContentPropertyNames.PAGE ) );
+
+        final SiteConfigs siteConfigs = new SiteConfigsDataSerializer().fromProperties( contentAsData.getPropertySet(
+            PropertyPath.from( ContentPropertyNames.DATA ) ) ).build();
 
         final Page page = pageSet != null ? ContentDataSerializer.PAGE_SERIALIZER.fromData( pageSet ) : null;
 
         final ContentIndexConfigFactory.Builder indexConfigFactoryBuilder = ContentIndexConfigFactory.create().
             contentTypeName( params.getType() ).
+            siteConfigs( siteConfigs ).
+            siteService( siteService ).
             contentTypeService( contentTypeService );
 
         if ( page != null )
@@ -97,6 +108,8 @@ public class CreateNodeParamsFactory
 
         private PageDescriptorService pageDescriptorService;
 
+        private SiteService siteService;
+
         Builder( final CreateContentTranslatorParams params )
         {
             this.params = params;
@@ -114,11 +127,18 @@ public class CreateNodeParamsFactory
             return this;
         }
 
+        Builder siteService( final SiteService value )
+        {
+            this.siteService = value;
+            return this;
+        }
+
         void validate()
         {
             Preconditions.checkNotNull( params );
             Preconditions.checkNotNull( contentTypeService );
             Preconditions.checkNotNull( pageDescriptorService );
+            Preconditions.checkNotNull( siteService );
         }
 
         public CreateNodeParamsFactory build()
