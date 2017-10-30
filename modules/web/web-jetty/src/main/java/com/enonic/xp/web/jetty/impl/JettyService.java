@@ -1,22 +1,18 @@
 package com.enonic.xp.web.jetty.impl;
 
 import javax.servlet.Servlet;
+import java.lang.management.ManagementFactory;
 
+import com.codahale.metrics.jetty9.InstrumentedHandler;
+import com.enonic.xp.util.Metrics;
+import com.enonic.xp.web.jetty.impl.configurator.*;
+import org.eclipse.jetty.jmx.MBeanContainer;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.codahale.metrics.jetty9.InstrumentedHandler;
-
-import com.enonic.xp.util.Metrics;
-import com.enonic.xp.web.jetty.impl.configurator.GZipConfigurator;
-import com.enonic.xp.web.jetty.impl.configurator.HttpConfigurator;
-import com.enonic.xp.web.jetty.impl.configurator.MultipartConfigurator;
-import com.enonic.xp.web.jetty.impl.configurator.RequestLogConfigurator;
-import com.enonic.xp.web.jetty.impl.configurator.SessionConfigurator;
 
 final class JettyService
 {
@@ -76,6 +72,13 @@ final class JettyService
 
         new MultipartConfigurator().configure( this.config, holder );
         new HttpConfigurator().configure( this.config, this.server );
+
+        // Setup JMX
+        if ( this.config.jmx_enabled() ) {
+            MBeanContainer mbContainer = new MBeanContainer( ManagementFactory.getPlatformMBeanServer() );
+            server.addEventListener( mbContainer );
+            server.addBean( mbContainer );
+        }
 
         Metrics.removeAll( Handler.class );
         final InstrumentedHandler instrumentedHandler = new InstrumentedHandler( Metrics.registry(), Handler.class.getName() );
