@@ -39,6 +39,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.security.PrincipalKey;
@@ -57,12 +58,15 @@ final class CreateContentCommand
 
     private final FormDefaultValuesProcessor formDefaultValuesProcessor;
 
+    private final PageDescriptorService pageDescriptorService;
+
     private CreateContentCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
         this.mediaInfo = builder.mediaInfo;
         this.formDefaultValuesProcessor = builder.formDefaultValuesProcessor;
+        this.pageDescriptorService = builder.pageDescriptorService;
     }
 
     static Builder create()
@@ -92,7 +96,11 @@ final class CreateContentCommand
 
         final CreateContentTranslatorParams createContentTranslatorParams = createContentTranslatorParams( processedParams );
 
-        final CreateNodeParams createNodeParams = CreateNodeParamsFactory.create( createContentTranslatorParams, this.contentTypeService );
+        final CreateNodeParams createNodeParams = CreateNodeParamsFactory.create( createContentTranslatorParams ).
+            contentTypeService(this.contentTypeService ).
+            pageDescriptorService( this.pageDescriptorService ).
+            siteService( this.siteService ).
+            build().produce();
 
         try
         {
@@ -427,6 +435,8 @@ final class CreateContentCommand
 
         private FormDefaultValuesProcessor formDefaultValuesProcessor;
 
+        private PageDescriptorService pageDescriptorService;
+
         private Builder()
         {
         }
@@ -451,6 +461,12 @@ final class CreateContentCommand
         Builder formDefaultValuesProcessor( final FormDefaultValuesProcessor formDefaultValuesProcessor )
         {
             this.formDefaultValuesProcessor = formDefaultValuesProcessor;
+            return this;
+        }
+
+        Builder pageDescriptorService( final PageDescriptorService value )
+        {
+            this.pageDescriptorService = value;
             return this;
         }
 

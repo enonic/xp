@@ -13,6 +13,7 @@ import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.page.PageDescriptorService;
 
 import static com.enonic.xp.content.ContentPropertyNames.MODIFIED_TIME;
 
@@ -24,11 +25,14 @@ final class ReprocessContentCommand
 
     private final MediaInfoService mediaInfoService;
 
+    private final PageDescriptorService pageDescriptorService;
+
     private ReprocessContentCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
         this.mediaInfoService = builder.mediaInfoService;
+        this.pageDescriptorService = builder.pageDescriptorService;
     }
 
     Content execute()
@@ -59,7 +63,12 @@ final class ReprocessContentCommand
             content( id ).
             name( source.getName() );
 
-        return UpdateMediaCommand.create( updateMediaParams, this ).mediaInfoService( mediaInfoService ).build().execute();
+        return UpdateMediaCommand.create( updateMediaParams, this ).
+            mediaInfoService( mediaInfoService ).
+            siteService( this.siteService ).
+            contentTypeService( this.contentTypeService ).
+            pageDescriptorService( this.pageDescriptorService ).
+            build().execute();
     }
 
     private Content revertModifiedTime( final Content content, final Instant modifiedTime )
@@ -84,6 +93,8 @@ final class ReprocessContentCommand
 
         private MediaInfoService mediaInfoService;
 
+        private PageDescriptorService pageDescriptorService;
+
         private Builder( final ReprocessContentParams params )
         {
             this.params = params;
@@ -92,6 +103,12 @@ final class ReprocessContentCommand
         public Builder mediaInfoService( final MediaInfoService value )
         {
             this.mediaInfoService = value;
+            return this;
+        }
+
+        public Builder pageDescriptorService( final PageDescriptorService value )
+        {
+            this.pageDescriptorService = value;
             return this;
         }
 

@@ -57,6 +57,7 @@ import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
+import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.repo.impl.binary.BinaryServiceImpl;
 import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;
 import com.enonic.xp.repo.impl.elasticsearch.AbstractElasticsearchIntegrationTest;
@@ -160,6 +161,8 @@ public class AbstractContentServiceTest
     private IndexDataServiceImpl indexedDataService;
 
     private RepositoryServiceImpl repositoryService;
+
+    private PageDescriptorService pageDescriptorService;
 
     private SearchDaoImpl searchDao;
 
@@ -267,6 +270,8 @@ public class AbstractContentServiceTest
         this.translator = new ContentNodeTranslatorImpl();
         this.translator.setNodeService( this.nodeService );
 
+        this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
+
         this.contentService.setNodeService( this.nodeService );
         this.contentService.setEventPublisher( eventPublisher );
         this.contentService.setMediaInfoService( mediaInfoService );
@@ -274,8 +279,10 @@ public class AbstractContentServiceTest
         this.contentService.setContentTypeService( contentTypeService );
         this.contentService.setMixinService( mixinService );
         this.contentService.setTranslator( this.translator );
+        this.contentService.setPageDescriptorService( this.pageDescriptorService );
         this.contentService.setFormDefaultValuesProcessor( ( form, data ) -> {
         } );
+
 
         initializeRepository();
     }
