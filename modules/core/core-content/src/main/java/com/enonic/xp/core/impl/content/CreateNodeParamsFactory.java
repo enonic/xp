@@ -16,6 +16,8 @@ import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.region.LayoutDescriptorService;
+import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
@@ -29,6 +31,10 @@ public class CreateNodeParamsFactory
 
     private final PageDescriptorService pageDescriptorService;
 
+    private final PartDescriptorService partDescriptorService;
+
+    private final LayoutDescriptorService layoutDescriptorService;
+
     private final SiteService siteService;
 
     private static final ContentDataSerializer CONTENT_DATA_SERIALIZER = new ContentDataSerializer();
@@ -38,6 +44,8 @@ public class CreateNodeParamsFactory
         this.params = builder.params;
         this.contentTypeService = builder.contentTypeService;
         this.pageDescriptorService = builder.pageDescriptorService;
+        this.partDescriptorService = builder.partDescriptorService;
+        this.layoutDescriptorService = builder.layoutDescriptorService;
         this.siteService = builder.siteService;
     }
 
@@ -47,8 +55,8 @@ public class CreateNodeParamsFactory
 
         final PropertySet pageSet = contentAsData.getPropertySet( PropertyPath.from( ContentPropertyNames.PAGE ) );
 
-        final SiteConfigs siteConfigs = new SiteConfigsDataSerializer().fromProperties( contentAsData.getPropertySet(
-            PropertyPath.from( ContentPropertyNames.DATA ) ) ).build();
+        final SiteConfigs siteConfigs = new SiteConfigsDataSerializer().fromProperties(
+            contentAsData.getPropertySet( PropertyPath.from( ContentPropertyNames.DATA ) ) ).build();
 
         final Page page = pageSet != null ? ContentDataSerializer.PAGE_SERIALIZER.fromData( pageSet ) : null;
 
@@ -61,8 +69,10 @@ public class CreateNodeParamsFactory
         if ( page != null )
         {
             indexConfigFactoryBuilder.
-                descriptorKey( page.getController() ).
-                pageDescriptorService( pageDescriptorService );
+                page( page ).
+                pageDescriptorService( pageDescriptorService ).
+                partDescriptorService( partDescriptorService ).
+                layoutDescriptorService( layoutDescriptorService );
         }
 
         final IndexConfigDocument indexConfigDocument = indexConfigFactoryBuilder.build().produce();
@@ -108,6 +118,10 @@ public class CreateNodeParamsFactory
 
         private PageDescriptorService pageDescriptorService;
 
+        private PartDescriptorService partDescriptorService;
+
+        private LayoutDescriptorService layoutDescriptorService;
+
         private SiteService siteService;
 
         Builder( final CreateContentTranslatorParams params )
@@ -130,6 +144,18 @@ public class CreateNodeParamsFactory
         Builder siteService( final SiteService value )
         {
             this.siteService = value;
+            return this;
+        }
+
+        Builder partDescriptorService( final PartDescriptorService value )
+        {
+            this.partDescriptorService = value;
+            return this;
+        }
+
+        Builder layoutDescriptorService( final LayoutDescriptorService value )
+        {
+            this.layoutDescriptorService = value;
             return this;
         }
 

@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentDataValidationException;
@@ -30,10 +29,11 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.region.LayoutDescriptorService;
+import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.site.SiteService;
 
 final class UpdateContentCommand
     extends AbstractCreatingOrUpdatingContentCommand
@@ -46,12 +46,18 @@ final class UpdateContentCommand
 
     private final PageDescriptorService pageDescriptorService;
 
+    private final PartDescriptorService partDescriptorService;
+
+    private final LayoutDescriptorService layoutDescriptorService;
+
     private UpdateContentCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
         this.mediaInfo = builder.mediaInfo;
         this.pageDescriptorService = builder.pageDescriptorService;
+        this.partDescriptorService = builder.partDescriptorService;
+        this.layoutDescriptorService = builder.layoutDescriptorService;
     }
 
     public static Builder create( final UpdateContentParams params )
@@ -109,6 +115,8 @@ final class UpdateContentCommand
         final UpdateNodeParams updateNodeParams = UpdateNodeParamsFactory.create( updateContentTranslatorParams ).
             contentTypeService(this.contentTypeService ).
             pageDescriptorService( this.pageDescriptorService ).
+            partDescriptorService( this.partDescriptorService ).
+            layoutDescriptorService( this.layoutDescriptorService ).
             siteService( this.siteService ).
             build().produce();
 
@@ -311,6 +319,10 @@ final class UpdateContentCommand
 
         private PageDescriptorService pageDescriptorService;
 
+        private PartDescriptorService partDescriptorService;
+
+        private LayoutDescriptorService layoutDescriptorService;
+
         Builder( final UpdateContentParams params )
         {
             this.params = params;
@@ -336,6 +348,18 @@ final class UpdateContentCommand
         Builder pageDescriptorService( final PageDescriptorService value )
         {
             this.pageDescriptorService = value;
+            return this;
+        }
+
+        Builder partDescriptorService( final PartDescriptorService value )
+        {
+            this.partDescriptorService = value;
+            return this;
+        }
+
+        Builder layoutDescriptorService( final LayoutDescriptorService value )
+        {
+            this.layoutDescriptorService = value;
             return this;
         }
 

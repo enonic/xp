@@ -13,6 +13,8 @@ import com.enonic.xp.node.NodeEditor;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.region.LayoutDescriptorService;
+import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteService;
@@ -25,6 +27,10 @@ public class UpdateNodeParamsFactory
 
     private final PageDescriptorService pageDescriptorService;
 
+    private final PartDescriptorService partDescriptorService;
+
+    private final LayoutDescriptorService layoutDescriptorService;
+
     private final SiteService siteService;
 
     private static final ContentDataSerializer CONTENT_DATA_SERIALIZER = new ContentDataSerializer();
@@ -34,6 +40,8 @@ public class UpdateNodeParamsFactory
         this.params = builder.params;
         this.contentTypeService = builder.contentTypeService;
         this.pageDescriptorService = builder.pageDescriptorService;
+        this.partDescriptorService = builder.partDescriptorService;
+        this.layoutDescriptorService = builder.layoutDescriptorService;
         this.siteService = builder.siteService;
     }
 
@@ -72,9 +80,11 @@ public class UpdateNodeParamsFactory
         final ContentIndexConfigFactory indexConfigFactory = ContentIndexConfigFactory.create().
             contentTypeService( contentTypeService ).
             pageDescriptorService( pageDescriptorService ).
+            partDescriptorService( partDescriptorService ).
+            layoutDescriptorService( layoutDescriptorService ).
             siteService( this.siteService ).
             contentTypeName( content.getType() ).
-            descriptorKey( content.getPage() != null ? content.getPage().getController() : null ).
+            page( content.getPage() != null ? content.getPage() : null ).
             siteConfigs( content.isSite() ? ( (Site) content ).getSiteConfigs() : null ).
             build();
 
@@ -93,6 +103,10 @@ public class UpdateNodeParamsFactory
         private ContentTypeService contentTypeService;
 
         private PageDescriptorService pageDescriptorService;
+
+        private PartDescriptorService partDescriptorService;
+
+        private LayoutDescriptorService layoutDescriptorService;
 
         private SiteService siteService;
 
@@ -113,6 +127,18 @@ public class UpdateNodeParamsFactory
             return this;
         }
 
+        Builder partDescriptorService( final PartDescriptorService value )
+        {
+            this.partDescriptorService = value;
+            return this;
+        }
+
+        Builder layoutDescriptorService( final LayoutDescriptorService value )
+        {
+            this.layoutDescriptorService = value;
+            return this;
+        }
+
         Builder siteService( final SiteService value )
         {
             this.siteService = value;
@@ -123,6 +149,9 @@ public class UpdateNodeParamsFactory
         {
             Preconditions.checkNotNull( params );
             Preconditions.checkNotNull( contentTypeService );
+            Preconditions.checkNotNull( pageDescriptorService );
+            Preconditions.checkNotNull( partDescriptorService );
+            Preconditions.checkNotNull( layoutDescriptorService );
         }
 
         public UpdateNodeParamsFactory build()

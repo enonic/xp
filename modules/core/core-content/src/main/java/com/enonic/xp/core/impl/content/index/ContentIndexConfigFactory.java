@@ -10,12 +10,15 @@ import com.enonic.xp.core.impl.content.index.processor.BaseConfigProcessor;
 import com.enonic.xp.core.impl.content.index.processor.ContentIndexConfigProcessors;
 import com.enonic.xp.core.impl.content.index.processor.DataConfigProcessor;
 import com.enonic.xp.core.impl.content.index.processor.PageConfigProcessor;
+import com.enonic.xp.core.impl.content.index.processor.PageRegionsConfigProcessor;
 import com.enonic.xp.core.impl.content.index.processor.SiteConfigProcessor;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.index.PatternIndexConfigDocument;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.region.LayoutDescriptorService;
+import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
@@ -34,9 +37,11 @@ public class ContentIndexConfigFactory
 
         indexConfigProcessors.add( new DataConfigProcessor( getDataForm( builder.contentTypeService, builder.contentTypeName ) ) );
 
-        indexConfigProcessors.add( new PageConfigProcessor( getPageConfigForm( builder.pageDescriptorService, builder.descriptorKey ) ) );
+        indexConfigProcessors.add( new PageConfigProcessor( getPageConfigForm( builder.pageDescriptorService, builder.page ) ) );
 
         indexConfigProcessors.add( new SiteConfigProcessor( getSiteConfigForms( builder.siteService, builder.siteConfigs ) ) );
+
+        indexConfigProcessors.add( new PageRegionsConfigProcessor( builder.page, builder.partDescriptorService, builder.layoutDescriptorService ));
     }
 
     private Form getDataForm( final ContentTypeService contentTypeService, final ContentTypeName contentTypeName )
@@ -48,13 +53,13 @@ public class ContentIndexConfigFactory
         return contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) ).getForm();
     }
 
-    private Form getPageConfigForm( final PageDescriptorService pageDescriptorService, final DescriptorKey descriptorKey )
+    private Form getPageConfigForm( final PageDescriptorService pageDescriptorService, final Page page )
     {
-        if ( pageDescriptorService == null || descriptorKey == null )
+        if ( pageDescriptorService == null || page == null || page.getController() == null )
         {
             return null;
         }
-        return pageDescriptorService.getByKey( descriptorKey ).getConfig();
+        return pageDescriptorService.getByKey( page.getController() ).getConfig();
     }
 
     private Collection<Form> getSiteConfigForms( final SiteService siteService, final SiteConfigs siteConfigs )
@@ -91,11 +96,15 @@ public class ContentIndexConfigFactory
 
         private PageDescriptorService pageDescriptorService;
 
+        private PartDescriptorService partDescriptorService;
+
+        private LayoutDescriptorService layoutDescriptorService;
+
         private SiteService siteService;
 
         private ContentTypeName contentTypeName;
 
-        private DescriptorKey descriptorKey;
+        private Page page;
 
         private SiteConfigs siteConfigs;
 
@@ -111,6 +120,18 @@ public class ContentIndexConfigFactory
             return this;
         }
 
+        public Builder partDescriptorService( final PartDescriptorService value )
+        {
+            this.partDescriptorService = value;
+            return this;
+        }
+
+        public Builder layoutDescriptorService( final LayoutDescriptorService value )
+        {
+            this.layoutDescriptorService = value;
+            return this;
+        }
+
         public Builder siteService( final SiteService value )
         {
             this.siteService = value;
@@ -123,9 +144,9 @@ public class ContentIndexConfigFactory
             return this;
         }
 
-        public Builder descriptorKey( final DescriptorKey value )
+        public Builder page( final Page value )
         {
-            this.descriptorKey = value;
+            this.page = value;
             return this;
         }
 

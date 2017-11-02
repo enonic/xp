@@ -22,6 +22,8 @@ import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.region.LayoutDescriptorService;
+import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -45,6 +47,10 @@ public class RenameContentCommandTest
 
     private PageDescriptorService pageDescriptorService;
 
+    private PartDescriptorService partDescriptorService;
+
+    private LayoutDescriptorService layoutDescriptorService;
+
     private ContentType contentType;
 
     private MixinService mixinService;
@@ -62,6 +68,8 @@ public class RenameContentCommandTest
         this.translator = Mockito.mock( ContentNodeTranslator.class );
         this.mixinService = Mockito.mock( MixinService.class );
         this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
+        this.partDescriptorService = Mockito.mock( PartDescriptorService.class );
+        this.layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
         this.contentProcessors = Mockito.mock( ContentProcessors.class );
 
         contentType = ContentType.create().
@@ -141,6 +149,8 @@ public class RenameContentCommandTest
             mixinService( this.mixinService ).
             contentProcessors( this.contentProcessors ).
             pageDescriptorService( this.pageDescriptorService ).
+            partDescriptorService( this.partDescriptorService ).
+            layoutDescriptorService( this.layoutDescriptorService ).
             build();
     }
 
