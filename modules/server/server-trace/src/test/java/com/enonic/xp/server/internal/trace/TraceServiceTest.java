@@ -70,4 +70,27 @@ public class TraceServiceTest
 
         Mockito.verify( this.dispatcher, Mockito.times( 1 ) ).queue( event );
     }
+
+    @Test
+    public void testEnableTracing()
+    {
+        assertFalse( Tracer.isEnabled() );
+        this.service.enable( true );
+
+        assertTrue( Tracer.isEnabled() );
+    }
+
+    @Test
+    public void testDisableTracing()
+    {
+        final TraceConfig config = Mockito.mock( TraceConfig.class );
+        Mockito.when( config.enabled() ).thenReturn( true );
+
+        this.service.activate( config );
+        assertTrue( Tracer.isEnabled() );
+
+        this.service.enable( false );
+
+        assertFalse( Tracer.isEnabled() );
+    }
 }
