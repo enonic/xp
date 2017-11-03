@@ -26,12 +26,12 @@ public final class TraceService
     {
         if ( config.enabled() )
         {
-            LOG.info( "Call tracing is enabled" );
+            LOG.info( "Call tracing is enabled in config" );
             Tracer.setManager( this );
         }
         else
         {
-            LOG.info( "Call tracing is disabled" );
+            LOG.info( "Call tracing is disabled in config" );
         }
     }
 
@@ -51,6 +51,21 @@ public final class TraceService
     public void dispatch( final TraceEvent event )
     {
         this.dispatcher.queue( event );
+    }
+
+    @Override
+    public void enable( final boolean enabled )
+    {
+        if ( enabled )
+        {
+            Tracer.setManager( this );
+            LOG.info( "Call tracing is enabled" );
+        }
+        else
+        {
+            Tracer.setManager( null );
+            LOG.info( "Call tracing is disabled" );
+        }
     }
 
     @Reference
