@@ -9,9 +9,11 @@ public class ContentPropertyNames
 {
     public static final String PAGE = "page";
 
+    public static final String PAGE_CONFIG = "page.config";
+
     public static final String PAGE_TEXT_COMPONENT_PROPERTY_PATH_PATTERN = "page.region.**.TextComponent.text";
 
-    public static final String SITECONFIG = "siteconfig";
+    public static final String SITECONFIG = "siteConfig";
 
     public static final String APPLICATION_KEY = "applicationkey";
 

@@ -51,7 +51,7 @@ import static com.enonic.xp.content.ContentPropertyNames.VALID;
 
 public final class ContentDataSerializer
 {
-    private static final PageDataSerializer PAGE_SERIALIZER = new PageDataSerializer( ContentPropertyNames.PAGE );
+    public static final PageDataSerializer PAGE_SERIALIZER = new PageDataSerializer( ContentPropertyNames.PAGE );
 
     public PropertyTree toCreateNodeData( final CreateContentTranslatorParams params )
     {

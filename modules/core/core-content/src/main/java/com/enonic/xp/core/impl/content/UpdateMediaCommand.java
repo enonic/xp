@@ -9,6 +9,7 @@ import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.media.MediaInfoService;
+import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 final class UpdateMediaCommand
@@ -18,11 +19,14 @@ final class UpdateMediaCommand
 
     private final MediaInfoService mediaInfoService;
 
+    private final PageDescriptorService pageDescriptorService;
+
     private UpdateMediaCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
         this.mediaInfoService = builder.mediaInfoService;
+        this.pageDescriptorService = builder.pageDescriptorService;
     }
 
     public static Builder create( final UpdateMediaParams params )
@@ -93,6 +97,7 @@ final class UpdateMediaCommand
             contentTypeService( this.contentTypeService ).
             siteService( this.siteService ).
             mixinService( this.mixinService ).
+            pageDescriptorService( this.pageDescriptorService ).
             build().
             execute();
     }
@@ -103,6 +108,8 @@ final class UpdateMediaCommand
         private final UpdateMediaParams params;
 
         private MediaInfoService mediaInfoService;
+
+        private PageDescriptorService pageDescriptorService;
 
         Builder( final UpdateMediaParams params )
         {
@@ -120,6 +127,13 @@ final class UpdateMediaCommand
             this.mediaInfoService = value;
             return this;
         }
+
+        public Builder pageDescriptorService( final PageDescriptorService value )
+        {
+            this.pageDescriptorService = value;
+            return this;
+        }
+
 
         @Override
         void validate()
