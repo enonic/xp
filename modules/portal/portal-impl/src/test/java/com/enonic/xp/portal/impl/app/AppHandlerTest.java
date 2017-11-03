@@ -13,6 +13,8 @@ import com.enonic.xp.resource.BytesResource;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.TraceManager;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
@@ -58,6 +60,11 @@ public class AppHandlerTest
 
         Mockito.when( this.exceptionRenderer.render( Mockito.any(), Mockito.any() ) ).thenReturn(
             WebResponse.create().status( HttpStatus.INTERNAL_SERVER_ERROR ).build() );
+
+        final TraceManager manager = Mockito.mock( TraceManager.class );
+        final Trace trace = Mockito.mock( Trace.class );
+        Mockito.when( manager.newTrace( Mockito.any(), Mockito.any() ) ).thenReturn( trace );
+        com.enonic.xp.trace.Tracer.setManager( manager );
     }
 
     @Test

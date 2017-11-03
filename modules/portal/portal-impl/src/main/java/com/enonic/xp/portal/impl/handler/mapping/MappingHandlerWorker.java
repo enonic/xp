@@ -1,6 +1,5 @@
 package com.enonic.xp.portal.impl.handler.mapping;
 
-import com.enonic.xp.content.Content;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;

@@ -12,12 +12,13 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.MediaTypes;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
@@ -71,8 +72,21 @@ public final class AppHandler
         final ApplicationKey applicationKey = ApplicationKey.from( matcher.group( 1 ) );
         final String restPath = matcher.group( 2 );
 
-        if (restPath != null && !"/".equals( restPath )) {
-            final WebResponse response = serveAsset( applicationKey, restPath );
+        final Trace trace = Tracer.newTrace( "renderApp" );
+        return Tracer.traceEx( trace, () ->
+        {
+            final WebResponse resp = handleAppRequest( req, applicationKey, restPath );
+            addTraceInfo( trace, applicationKey, restPath );
+            return resp;
+        } );
+    }
+
+    private WebResponse handleAppRequest( final WebRequest req, final ApplicationKey applicationKey, final String path )
+        throws Exception
+    {
+        if ( path != null && !"/".equals( path ) )
+        {
+            final WebResponse response = serveAsset( applicationKey, path );
             if ( response != null )
             {
                 return response;
@@ -133,7 +147,13 @@ public final class AppHandler
 
     private ControllerScript getScript( final ApplicationKey applicationKey )
     {
-        return this.controllerScriptFactory.fromScript( ResourceKey.from( applicationKey, "main.js" ) );
+        final ResourceKey script = ResourceKey.from( applicationKey, "main.js" );
+        final Trace trace = Tracer.current();
+        if ( trace != null )
+        {
+            trace.put( "script", script.getPath() );
+        }
+        return this.controllerScriptFactory.fromScript( script );
     }
 
     private WebResponse handleError( final WebRequest webRequest, final Exception e )
@@ -159,6 +179,15 @@ public final class AppHandler
             body( resource ).
             contentType( MediaType.parse( type ) ).
             build();
+    }
+
+    private void addTraceInfo( final Trace trace, final ApplicationKey applicationKey, final String path )
+    {
+        if ( trace != null )
+        {
+            trace.put( "app", applicationKey.toString() );
+            trace.put( "path", path );
+        }
     }
 
     @Reference
