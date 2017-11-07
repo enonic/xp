@@ -9,7 +9,7 @@ import static com.enonic.xp.content.ContentPropertyNames.ATTACHMENT_TEXT_COMPONE
 public class AttachmentConfigProcessor
     implements ContentIndexConfigProcessor
 {
-    private ContentTypeName contentTypeName;
+    private final ContentTypeName contentTypeName;
 
     public AttachmentConfigProcessor( final ContentTypeName contentTypeName) {
         this.contentTypeName = contentTypeName;

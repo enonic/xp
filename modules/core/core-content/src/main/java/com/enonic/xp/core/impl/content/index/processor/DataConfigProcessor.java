@@ -10,7 +10,7 @@ import static com.enonic.xp.content.ContentPropertyNames.DATA;
 public class DataConfigProcessor
     implements ContentIndexConfigProcessor
 {
-    private Form dataForm;
+    private final Form dataForm;
 
     public DataConfigProcessor( final Form dataFrom) {
         this.dataForm = dataFrom;
