@@ -2,6 +2,7 @@ package com.enonic.xp.portal.impl.app;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -15,6 +16,7 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.TraceManager;
+import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
@@ -64,7 +66,13 @@ public class AppHandlerTest
         final TraceManager manager = Mockito.mock( TraceManager.class );
         final Trace trace = Mockito.mock( Trace.class );
         Mockito.when( manager.newTrace( Mockito.any(), Mockito.any() ) ).thenReturn( trace );
-        com.enonic.xp.trace.Tracer.setManager( manager );
+        Tracer.setManager( manager );
+    }
+
+    @After
+    public void tearDown()
+    {
+        Tracer.setManager( null );
     }
 
     @Test
