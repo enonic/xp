@@ -12,6 +12,9 @@ import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.RenameNodeParams;
+import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.region.LayoutDescriptorService;
+import com.enonic.xp.region.PartDescriptorService;
 
 import static com.enonic.xp.core.impl.content.ContentNodeHelper.translateNodePathToContentPath;
 
@@ -21,10 +24,19 @@ final class RenameContentCommand
 {
     private final RenameContentParams params;
 
+    private final PageDescriptorService pageDescriptorService;
+
+    private final PartDescriptorService partDescriptorService;
+
+    private final LayoutDescriptorService layoutDescriptorService;
+
     private RenameContentCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
+        this.pageDescriptorService = builder.pageDescriptorService;
+        this.partDescriptorService = builder.partDescriptorService;
+        this.layoutDescriptorService = builder.layoutDescriptorService;
     }
 
     public static Builder create( final RenameContentParams params )
@@ -96,7 +108,13 @@ final class RenameContentCommand
             modifier( content.getModifier() ).
             editor( edit -> edit.valid = isValid );
 
-        return UpdateContentCommand.create( this ).params( updateContentParams ).build().execute();
+        return UpdateContentCommand.create( this ).params( updateContentParams ).
+            siteService( siteService ).
+            contentTypeService( contentTypeService ).
+            pageDescriptorService( this.pageDescriptorService ).
+            partDescriptorService( this.partDescriptorService ).
+            layoutDescriptorService( this.layoutDescriptorService ).
+            build().execute();
     }
 
     public static class Builder
@@ -104,9 +122,33 @@ final class RenameContentCommand
     {
         private final RenameContentParams params;
 
+        private PageDescriptorService pageDescriptorService;
+
+        private PartDescriptorService partDescriptorService;
+
+        private LayoutDescriptorService layoutDescriptorService;
+
         public Builder( final RenameContentParams params )
         {
             this.params = params;
+        }
+
+        Builder pageDescriptorService( final PageDescriptorService value )
+        {
+            this.pageDescriptorService = value;
+            return this;
+        }
+
+        Builder partDescriptorService( final PartDescriptorService value )
+        {
+            this.partDescriptorService = value;
+            return this;
+        }
+
+        Builder layoutDescriptorService( final LayoutDescriptorService value )
+        {
+            this.layoutDescriptorService = value;
+            return this;
         }
 
         @Override

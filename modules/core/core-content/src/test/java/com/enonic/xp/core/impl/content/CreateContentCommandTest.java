@@ -28,6 +28,7 @@ import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeType;
+import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -50,6 +51,8 @@ public class CreateContentCommandTest
 
     private NodeService nodeService;
 
+    private PageDescriptorService pageDescriptorService;
+
     private ContentNodeTranslatorImpl translator;
 
     private EventPublisher eventPublisher;
@@ -60,6 +63,7 @@ public class CreateContentCommandTest
     {
         this.siteService = Mockito.mock( SiteService.class );
         this.nodeService = Mockito.mock( NodeService.class );
+        this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
         this.translator = new ContentNodeTranslatorImpl();
         this.translator.setNodeService( this.nodeService );
         this.eventPublisher = Mockito.mock( EventPublisher.class );
@@ -412,6 +416,7 @@ public class CreateContentCommandTest
             mediaInfo( mediaInfo ).
             mixinService( this.mixinService ).
             siteService( this.siteService ).
+            pageDescriptorService( this.pageDescriptorService ).
             contentProcessors( new ContentProcessors() ).
             formDefaultValuesProcessor( ( form, data ) -> {
             } ).

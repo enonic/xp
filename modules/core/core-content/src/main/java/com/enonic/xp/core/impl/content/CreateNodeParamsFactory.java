@@ -1,24 +1,81 @@
 package com.enonic.xp.core.impl.content;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentName;
+import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentTranslatorParams;
+import com.enonic.xp.core.impl.content.index.ContentIndexConfigFactory;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
+import com.enonic.xp.data.PropertyPath;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.page.Page;
+import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.region.LayoutDescriptorService;
+import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeService;
+import com.enonic.xp.site.SiteConfigs;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
+import com.enonic.xp.site.SiteService;
 
 public class CreateNodeParamsFactory
 {
+    private final CreateContentTranslatorParams params;
+
+    private final ContentTypeService contentTypeService;
+
+    private final PageDescriptorService pageDescriptorService;
+
+    private final PartDescriptorService partDescriptorService;
+
+    private final LayoutDescriptorService layoutDescriptorService;
+
+    private final SiteService siteService;
+
     private static final ContentDataSerializer CONTENT_DATA_SERIALIZER = new ContentDataSerializer();
 
-    public static CreateNodeParams create( final CreateContentTranslatorParams params, final ContentTypeService contentTypeService )
+    public CreateNodeParamsFactory( final Builder builder )
+    {
+        this.params = builder.params;
+        this.contentTypeService = builder.contentTypeService;
+        this.pageDescriptorService = builder.pageDescriptorService;
+        this.partDescriptorService = builder.partDescriptorService;
+        this.layoutDescriptorService = builder.layoutDescriptorService;
+        this.siteService = builder.siteService;
+    }
+
+    public CreateNodeParams produce()
     {
         final PropertyTree contentAsData = CONTENT_DATA_SERIALIZER.toCreateNodeData( params );
 
-        final IndexConfigDocument indexConfigDocument = ContentIndexConfigFactory.create( params, contentTypeService );
+        final PropertySet pageSet = contentAsData.getPropertySet( PropertyPath.from( ContentPropertyNames.PAGE ) );
+
+        final SiteConfigs siteConfigs = new SiteConfigsDataSerializer().fromProperties(
+            contentAsData.getPropertySet( PropertyPath.from( ContentPropertyNames.DATA ) ) ).build();
+
+        final Page page = pageSet != null ? ContentDataSerializer.PAGE_SERIALIZER.fromData( pageSet ) : null;
+
+        final ContentIndexConfigFactory.Builder indexConfigFactoryBuilder = ContentIndexConfigFactory.create().
+            contentTypeName( params.getType() ).
+            siteConfigs( siteConfigs ).
+            siteService( siteService ).
+            contentTypeService( contentTypeService );
+
+        if ( page != null )
+        {
+            indexConfigFactoryBuilder.
+                page( page ).
+                pageDescriptorService( pageDescriptorService ).
+                partDescriptorService( partDescriptorService ).
+                layoutDescriptorService( layoutDescriptorService );
+        }
+
+        final IndexConfigDocument indexConfigDocument = indexConfigFactoryBuilder.build().produce();
 
         final CreateNodeParams.Builder builder = CreateNodeParams.create().
             name( resolveNodeName( params.getName() ) ).
@@ -46,6 +103,75 @@ public class CreateNodeParamsFactory
         }
 
         return name.toString();
+    }
+
+    public static Builder create( final CreateContentTranslatorParams params )
+    {
+        return new Builder( params );
+    }
+
+    public static class Builder
+    {
+        private CreateContentTranslatorParams params;
+
+        private ContentTypeService contentTypeService;
+
+        private PageDescriptorService pageDescriptorService;
+
+        private PartDescriptorService partDescriptorService;
+
+        private LayoutDescriptorService layoutDescriptorService;
+
+        private SiteService siteService;
+
+        Builder( final CreateContentTranslatorParams params )
+        {
+            this.params = params;
+        }
+
+        Builder contentTypeService( final ContentTypeService value )
+        {
+            this.contentTypeService = value;
+            return this;
+        }
+
+        Builder pageDescriptorService( final PageDescriptorService value )
+        {
+            this.pageDescriptorService = value;
+            return this;
+        }
+
+        Builder siteService( final SiteService value )
+        {
+            this.siteService = value;
+            return this;
+        }
+
+        Builder partDescriptorService( final PartDescriptorService value )
+        {
+            this.partDescriptorService = value;
+            return this;
+        }
+
+        Builder layoutDescriptorService( final LayoutDescriptorService value )
+        {
+            this.layoutDescriptorService = value;
+            return this;
+        }
+
+        void validate()
+        {
+            Preconditions.checkNotNull( params );
+            Preconditions.checkNotNull( contentTypeService );
+            Preconditions.checkNotNull( pageDescriptorService );
+            Preconditions.checkNotNull( siteService );
+        }
+
+        public CreateNodeParamsFactory build()
+        {
+            validate();
+            return new CreateNodeParamsFactory( this );
+        }
     }
 
 }

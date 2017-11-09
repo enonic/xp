@@ -11,6 +11,9 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.FormDefaultValuesProcessor;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.media.MediaInfoService;
+import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.region.LayoutDescriptorService;
+import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 final class CreateMediaCommand
@@ -22,12 +25,21 @@ final class CreateMediaCommand
 
     private final FormDefaultValuesProcessor formDefaultValuesProcessor;
 
+    private final PageDescriptorService pageDescriptorService;
+
+    private final PartDescriptorService partDescriptorService;
+
+    private final LayoutDescriptorService layoutDescriptorService;
+
     private CreateMediaCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
         this.mediaInfoService = builder.mediaInfoService;
         this.formDefaultValuesProcessor = builder.formDefaultValuesProcessor;
+        this.pageDescriptorService = builder.pageDescriptorService;
+        this.partDescriptorService = builder.partDescriptorService;
+        this.layoutDescriptorService = builder.layoutDescriptorService;
     }
 
     Content execute()
@@ -92,6 +104,9 @@ final class CreateMediaCommand
             siteService( this.siteService ).
             mixinService( this.mixinService ).
             formDefaultValuesProcessor( this.formDefaultValuesProcessor ).
+            pageDescriptorService( this.pageDescriptorService ).
+            partDescriptorService( this.partDescriptorService ).
+            layoutDescriptorService( this.layoutDescriptorService ).
             build();
 
         return createCommand.execute();
@@ -121,6 +136,13 @@ final class CreateMediaCommand
 
         private FormDefaultValuesProcessor formDefaultValuesProcessor;
 
+        private PageDescriptorService pageDescriptorService;
+
+        private PartDescriptorService partDescriptorService;
+
+        private LayoutDescriptorService layoutDescriptorService;
+
+
         public Builder params( final CreateMediaParams params )
         {
             this.params = params;
@@ -136,6 +158,24 @@ final class CreateMediaCommand
         public Builder formDefaultValuesProcessor( final FormDefaultValuesProcessor formDefaultValuesProcessor )
         {
             this.formDefaultValuesProcessor = formDefaultValuesProcessor;
+            return this;
+        }
+
+        Builder pageDescriptorService( final PageDescriptorService value )
+        {
+            this.pageDescriptorService = value;
+            return this;
+        }
+
+        Builder partDescriptorService( final PartDescriptorService value )
+        {
+            this.partDescriptorService = value;
+            return this;
+        }
+
+        Builder layoutDescriptorService( final LayoutDescriptorService value )
+        {
+            this.layoutDescriptorService = value;
             return this;
         }
 

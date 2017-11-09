@@ -99,6 +99,9 @@ import com.enonic.xp.node.ReorderChildNodeParams;
 import com.enonic.xp.node.ReorderChildNodesParams;
 import com.enonic.xp.node.ReorderChildNodesResult;
 import com.enonic.xp.node.SetNodeChildOrderParams;
+import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.region.LayoutDescriptorService;
+import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -148,6 +151,12 @@ public class ContentServiceImpl
 
     private FormDefaultValuesProcessor formDefaultValuesProcessor;
 
+    private PageDescriptorService pageDescriptorService;
+
+    private PartDescriptorService partDescriptorService;
+
+    private LayoutDescriptorService layoutDescriptorService;
+
     public ContentServiceImpl()
     {
         final ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().
@@ -193,6 +202,9 @@ public class ContentServiceImpl
             mixinService( this.mixinService ).
             contentProcessors( this.contentProcessors ).
             formDefaultValuesProcessor( this.formDefaultValuesProcessor ).
+            pageDescriptorService( this.pageDescriptorService ).
+            partDescriptorService( this.partDescriptorService ).
+            layoutDescriptorService( this.layoutDescriptorService ).
             params( createContentParams ).
             build().
             execute();
@@ -223,6 +235,9 @@ public class ContentServiceImpl
             mixinService( this.mixinService ).
             contentProcessors( this.contentProcessors ).
             formDefaultValuesProcessor( this.formDefaultValuesProcessor ).
+            pageDescriptorService( this.pageDescriptorService ).
+            partDescriptorService( this.partDescriptorService ).
+            layoutDescriptorService( this.layoutDescriptorService ).
             params( params ).
             build().
             execute();
@@ -260,6 +275,9 @@ public class ContentServiceImpl
             mixinService( this.mixinService ).
             contentProcessors( this.contentProcessors ).
             formDefaultValuesProcessor( this.formDefaultValuesProcessor ).
+            pageDescriptorService( this.pageDescriptorService ).
+            partDescriptorService( this.partDescriptorService ).
+            layoutDescriptorService( this.layoutDescriptorService ).
             build().
             execute();
     }
@@ -275,6 +293,9 @@ public class ContentServiceImpl
             siteService( this.siteService ).
             mixinService( this.mixinService ).
             contentProcessors( this.contentProcessors ).
+            pageDescriptorService( this.pageDescriptorService ).
+            partDescriptorService( this.partDescriptorService ).
+            layoutDescriptorService( this.layoutDescriptorService ).
             build().
             execute();
     }
@@ -288,6 +309,9 @@ public class ContentServiceImpl
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             mediaInfoService( this.mediaInfoService ).
+            pageDescriptorService( this.pageDescriptorService ).
+            partDescriptorService( this.partDescriptorService ).
+            layoutDescriptorService( this.layoutDescriptorService ).
             siteService( this.siteService ).
             mixinService( this.mixinService ).
             contentProcessors( this.contentProcessors ).
@@ -588,6 +612,9 @@ public class ContentServiceImpl
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             contentProcessors( this.contentProcessors ).
+            pageDescriptorService( this.pageDescriptorService ).
+            partDescriptorService( this.partDescriptorService ).
+            layoutDescriptorService( this.layoutDescriptorService ).
             build().
             execute();
     }
@@ -891,6 +918,9 @@ public class ContentServiceImpl
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             mediaInfoService( this.mediaInfoService ).
+            pageDescriptorService( this.pageDescriptorService ).
+            partDescriptorService( this.partDescriptorService ).
+            layoutDescriptorService( this.layoutDescriptorService ).
             siteService( this.siteService ).
             mixinService( this.mixinService ).
             contentProcessors( this.contentProcessors ).
@@ -984,5 +1014,23 @@ public class ContentServiceImpl
     public void setFormDefaultValuesProcessor( final FormDefaultValuesProcessor formDefaultValuesProcessor )
     {
         this.formDefaultValuesProcessor = formDefaultValuesProcessor;
+    }
+
+    @Reference
+    public void setPageDescriptorService( final PageDescriptorService pageDescriptorService )
+    {
+        this.pageDescriptorService = pageDescriptorService;
+    }
+
+    @Reference
+    public void setPartDescriptorService( final PartDescriptorService partDescriptorService )
+    {
+        this.partDescriptorService  = partDescriptorService ;
+    }
+
+    @Reference
+    public void setLayoutDescriptorService( final LayoutDescriptorService layoutDescriptorService )
+    {
+        this.layoutDescriptorService = layoutDescriptorService;
     }
 }

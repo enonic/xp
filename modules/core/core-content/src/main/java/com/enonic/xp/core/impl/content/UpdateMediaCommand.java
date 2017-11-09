@@ -9,6 +9,9 @@ import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.media.MediaInfoService;
+import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.region.LayoutDescriptorService;
+import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 final class UpdateMediaCommand
@@ -18,11 +21,20 @@ final class UpdateMediaCommand
 
     private final MediaInfoService mediaInfoService;
 
+    private final PageDescriptorService pageDescriptorService;
+
+    private final PartDescriptorService partDescriptorService;
+
+    private final LayoutDescriptorService layoutDescriptorService;
+
     private UpdateMediaCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
         this.mediaInfoService = builder.mediaInfoService;
+        this.pageDescriptorService = builder.pageDescriptorService;
+        this.partDescriptorService = builder.partDescriptorService;
+        this.layoutDescriptorService = builder.layoutDescriptorService;
     }
 
     public static Builder create( final UpdateMediaParams params )
@@ -93,6 +105,9 @@ final class UpdateMediaCommand
             contentTypeService( this.contentTypeService ).
             siteService( this.siteService ).
             mixinService( this.mixinService ).
+            pageDescriptorService( this.pageDescriptorService ).
+            partDescriptorService( this.partDescriptorService ).
+            layoutDescriptorService( this.layoutDescriptorService ).
             build().
             execute();
     }
@@ -103,6 +118,12 @@ final class UpdateMediaCommand
         private final UpdateMediaParams params;
 
         private MediaInfoService mediaInfoService;
+
+        private PageDescriptorService pageDescriptorService;
+
+        private PartDescriptorService partDescriptorService;
+
+        private LayoutDescriptorService layoutDescriptorService;
 
         Builder( final UpdateMediaParams params )
         {
@@ -120,6 +141,25 @@ final class UpdateMediaCommand
             this.mediaInfoService = value;
             return this;
         }
+
+        public Builder pageDescriptorService( final PageDescriptorService value )
+        {
+            this.pageDescriptorService = value;
+            return this;
+        }
+
+        public Builder partDescriptorService( final PartDescriptorService value )
+        {
+            this.partDescriptorService = value;
+            return this;
+        }
+
+        public Builder layoutDescriptorService( final LayoutDescriptorService value )
+        {
+            this.layoutDescriptorService = value;
+            return this;
+        }
+
 
         @Override
         void validate()

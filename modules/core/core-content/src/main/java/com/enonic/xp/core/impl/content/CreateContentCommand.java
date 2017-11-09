@@ -39,6 +39,9 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.region.LayoutDescriptorService;
+import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.security.PrincipalKey;
@@ -57,12 +60,21 @@ final class CreateContentCommand
 
     private final FormDefaultValuesProcessor formDefaultValuesProcessor;
 
+    private final PageDescriptorService pageDescriptorService;
+
+    private final PartDescriptorService partDescriptorService;
+
+    private final LayoutDescriptorService layoutDescriptorService;
+
     private CreateContentCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
         this.mediaInfo = builder.mediaInfo;
         this.formDefaultValuesProcessor = builder.formDefaultValuesProcessor;
+        this.pageDescriptorService = builder.pageDescriptorService;
+        this.partDescriptorService = builder.partDescriptorService;
+        this.layoutDescriptorService = builder.layoutDescriptorService;
     }
 
     static Builder create()
@@ -92,7 +104,13 @@ final class CreateContentCommand
 
         final CreateContentTranslatorParams createContentTranslatorParams = createContentTranslatorParams( processedParams );
 
-        final CreateNodeParams createNodeParams = CreateNodeParamsFactory.create( createContentTranslatorParams, this.contentTypeService );
+        final CreateNodeParams createNodeParams = CreateNodeParamsFactory.create( createContentTranslatorParams ).
+            contentTypeService(this.contentTypeService ).
+            pageDescriptorService( this.pageDescriptorService ).
+            partDescriptorService( this.partDescriptorService ).
+            layoutDescriptorService( this.layoutDescriptorService ).
+            siteService( this.siteService ).
+            build().produce();
 
         try
         {
@@ -427,6 +445,12 @@ final class CreateContentCommand
 
         private FormDefaultValuesProcessor formDefaultValuesProcessor;
 
+        private PageDescriptorService pageDescriptorService;
+
+        private PartDescriptorService partDescriptorService;
+
+        private LayoutDescriptorService layoutDescriptorService;
+
         private Builder()
         {
         }
@@ -451,6 +475,24 @@ final class CreateContentCommand
         Builder formDefaultValuesProcessor( final FormDefaultValuesProcessor formDefaultValuesProcessor )
         {
             this.formDefaultValuesProcessor = formDefaultValuesProcessor;
+            return this;
+        }
+
+        Builder pageDescriptorService( final PageDescriptorService value )
+        {
+            this.pageDescriptorService = value;
+            return this;
+        }
+
+        Builder partDescriptorService( final PartDescriptorService value )
+        {
+            this.partDescriptorService = value;
+            return this;
+        }
+
+        Builder layoutDescriptorService( final LayoutDescriptorService value )
+        {
+            this.layoutDescriptorService = value;
             return this;
         }
 
