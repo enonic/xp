@@ -41,7 +41,8 @@ public class ContentIndexConfigFactory
 
         indexConfigProcessors.add( new SiteConfigProcessor( getSiteConfigForms( builder.siteService, builder.siteConfigs ) ) );
 
-        indexConfigProcessors.add( new PageRegionsConfigProcessor( builder.page, builder.partDescriptorService, builder.layoutDescriptorService ));
+        indexConfigProcessors.add(
+            new PageRegionsConfigProcessor( builder.page, builder.partDescriptorService, builder.layoutDescriptorService ) );
     }
 
     private Form getDataForm( final ContentTypeService contentTypeService, final ContentTypeName contentTypeName )
@@ -50,7 +51,10 @@ public class ContentIndexConfigFactory
         {
             return null;
         }
-        return contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) ).getForm();
+        return contentTypeService.getByName( new GetContentTypeParams().
+            inlineMixinsToFormItems( true ).
+            contentTypeName( contentTypeName ) ).
+            getForm();
     }
 
     private Form getPageConfigForm( final PageDescriptorService pageDescriptorService, final Page page )
