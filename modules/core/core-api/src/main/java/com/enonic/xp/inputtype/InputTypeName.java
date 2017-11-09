@@ -1,7 +1,5 @@
 package com.enonic.xp.inputtype;
 
-import java.util.Objects;
-
 import com.google.common.annotations.Beta;
 
 @Beta
@@ -63,19 +61,20 @@ public final class InputTypeName
         {
             return true;
         }
-        if ( !( o instanceof InputTypeName ) )
+        if ( o == null || getClass() != o.getClass() )
         {
             return false;
         }
 
-        final InputTypeName other = (InputTypeName) o;
-        return Objects.equals( this.name, other.name );
+        final InputTypeName that = (InputTypeName) o;
+
+        return name != null ? name.toLowerCase().equals( that.name != null ? that.name.toLowerCase() : null ) : that.name == null;
     }
 
     @Override
     public int hashCode()
     {
-        return this.name.hashCode();
+        return name != null ? name.hashCode() : 0;
     }
 
     @Override
