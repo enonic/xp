@@ -13,6 +13,7 @@ import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.handler.ControllerHandlerWorker;
 import com.enonic.xp.portal.impl.app.AppHandler;
+import com.enonic.xp.portal.impl.websocket.WebSocketEndpointImpl;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
@@ -20,6 +21,8 @@ import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.service.ServiceDescriptor;
 import com.enonic.xp.service.ServiceDescriptorService;
 import com.enonic.xp.site.Site;
+import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
@@ -73,14 +76,16 @@ final class ServiceHandlerWorker
         if ( site != null )
         {
             final PropertyTree siteConfig = site.getSiteConfig( applicationKey );
-            if (siteConfig == null) {
+            if ( siteConfig == null )
+            {
                 throw forbidden( "Service [%s] forbidden for this site", descriptorKey.toString() );
             }
         }
 
         //Checks if the application is set on the current application
         final ApplicationKey baseApplicationKey = getBaseApplicationKey();
-        if (baseApplicationKey != null && !baseApplicationKey.equals( applicationKey )) {
+        if ( baseApplicationKey != null && !baseApplicationKey.equals( applicationKey ) )
+        {
             throw forbidden( "Service [%s] forbidden for this application", descriptorKey.toString() );
         }
 
@@ -120,7 +125,8 @@ final class ServiceHandlerWorker
     private ApplicationKey getBaseApplicationKey()
     {
         final Matcher matcher = AppHandler.PATTERN.matcher( this.request.getRawPath() );
-        if (matcher.matches()) {
+        if ( matcher.matches() )
+        {
             final String applicationBase = matcher.group( 1 );
             return ApplicationKey.from( applicationBase );
         }
@@ -129,6 +135,12 @@ final class ServiceHandlerWorker
 
     private WebSocketEndpoint newWebSocketEndpoint( final WebSocketConfig config )
     {
+        final ApplicationKey app = this.request.getApplicationKey();
+        final Trace trace = Tracer.current();
+        if ( trace != null && app != null && !trace.containsKey( "app" ) )
+        {
+            trace.put( "app", app.toString() );
+        }
         return new WebSocketEndpointImpl( config, this::getScript );
     }
 }
