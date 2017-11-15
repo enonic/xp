@@ -1,6 +1,8 @@
 package com.enonic.xp.script.impl.executor;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
 
 import javax.script.Bindings;
 import javax.script.ScriptContext;
@@ -9,6 +11,7 @@ import javax.script.SimpleBindings;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
+import com.google.common.util.concurrent.Striped;
 
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 
@@ -60,6 +63,8 @@ public final class ScriptExecutorImpl
     private ScriptValueFactory scriptValueFactory;
 
     private JavascriptHelper javascriptHelper;
+
+    private final static Striped<Lock> requireLocks = Striped.lazyWeakLock( 100 );
 
     public void setScriptSettings( final ScriptSettings scriptSettings )
     {
@@ -149,16 +154,40 @@ public final class ScriptExecutorImpl
             return mock;
         }
 
-        final Object cached = this.exportsCache.get( key );
-        final Resource resource = loadIfNeeded( key, cached );
-        if ( resource == null )
+        Object cached = this.exportsCache.get( key );
+        if ( cached != null )
         {
             return cached;
         }
 
-        final Object result = requireJsOrJson( resource );
-        this.exportsCache.put( resource, result );
-        return result;
+        final Lock lock = requireLocks.get( key );
+        try
+        {
+            if ( !lock.tryLock( 60, TimeUnit.SECONDS ) )
+            {
+                throw new RuntimeException( "Script require failed: [" + key + "]" );
+            }
+
+            cached = this.exportsCache.get( key );
+            final Resource resource = loadIfNeeded( key, cached );
+            if ( resource == null )
+            {
+                return cached;
+            }
+
+            final Object result = requireJsOrJson( resource );
+            this.exportsCache.put( resource, result );
+            return result;
+
+        }
+        catch ( InterruptedException e )
+        {
+            throw new RuntimeException( "Script require failed: [" + key + "]", e );
+        }
+        finally
+        {
+            lock.unlock();
+        }
     }
 
     private String getFileName( final Resource resource )
