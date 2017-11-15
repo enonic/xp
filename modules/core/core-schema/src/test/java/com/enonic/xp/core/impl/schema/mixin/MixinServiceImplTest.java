@@ -88,6 +88,20 @@ public class MixinServiceImplTest
     }
 
     @Test
+    public void testGetByNames()
+    {
+        Mixins mixins = service.getByNames( MixinNames.from( MediaInfo.GPS_INFO_METADATA_NAME ) );
+        assertEquals( 1, mixins.getSize() );
+
+        mixins = service.getByNames( MixinNames.from( MediaInfo.GPS_INFO_METADATA_NAME, MediaInfo.IMAGE_INFO_METADATA_NAME ) );
+        assertEquals( 2, mixins.getSize() );
+
+        mixins = service.getByNames(
+            MixinNames.from( MediaInfo.GPS_INFO_METADATA_NAME, MediaInfo.IMAGE_INFO_METADATA_NAME, MediaInfo.CAMERA_INFO_METADATA_NAME ) );
+        assertEquals( 3, mixins.getSize() );
+    }
+
+    @Test
     public void testApplications()
     {
         initializeApps();

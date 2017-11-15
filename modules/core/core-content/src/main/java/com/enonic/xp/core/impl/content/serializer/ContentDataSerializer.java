@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.AttachmentNames;
 import com.enonic.xp.attachment.AttachmentSerializer;
@@ -18,14 +17,12 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.CreateContentTranslatorParams;
-import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.UpdateContentTranslatorParams;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.icon.Thumbnail;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.BinaryReferences;
@@ -53,6 +50,8 @@ public final class ContentDataSerializer
 {
     public static final PageDataSerializer PAGE_SERIALIZER = new PageDataSerializer( ContentPropertyNames.PAGE );
 
+    public static final ExtraDataSerializer EXTRA_DATA_SERIALIZER = new ExtraDataSerializer( );
+
     public PropertyTree toCreateNodeData( final CreateContentTranslatorParams params )
     {
         final PropertyTree propertyTree = new PropertyTree();
@@ -78,7 +77,7 @@ public final class ContentDataSerializer
 
         if ( extraData != null && !extraData.isEmpty() )
         {
-            addExtraData( contentAsData, extraData );
+            EXTRA_DATA_SERIALIZER.toData( extraData, contentAsData );
         }
 
         if ( params.getCreateAttachments() != null )
@@ -101,7 +100,7 @@ public final class ContentDataSerializer
 
         if ( content.hasExtraData() )
         {
-            addExtraData( contentAsData, content.getAllExtraData() );
+            EXTRA_DATA_SERIALIZER.toData( content.getAllExtraData(), contentAsData );
         }
 
         final Attachments attachments = mergeExistingAndUpdatedAttachments( content.getAttachments(), params );
@@ -161,23 +160,6 @@ public final class ContentDataSerializer
         }
     }
 
-    private void addExtraData( final PropertySet contentAsData, final ExtraDatas extraDatas )
-    {
-        final PropertySet metaSet = contentAsData.addSet( EXTRA_DATA );
-        for ( final ExtraData extraData : extraDatas )
-        {
-
-            final String xDataApplicationPrefix = extraData.getApplicationPrefix();
-            PropertySet xDataApplication = metaSet.getSet( xDataApplicationPrefix );
-            if ( xDataApplication == null )
-            {
-                xDataApplication = metaSet.addSet( xDataApplicationPrefix );
-            }
-            xDataApplication.addSet( extraData.getName().getLocalName(), extraData.getData().getRoot().copy( metaSet.getTree() ) );
-        }
-    }
-
-
     private void extractUserInfo( final PropertySet contentAsSet, final Content.Builder builder )
     {
         builder.creator( PrincipalKey.from( contentAsSet.getString( CREATOR ) ) );
@@ -226,24 +208,10 @@ public final class ContentDataSerializer
 
     private void extractExtradata( final PropertySet contentAsSet, final Content.Builder builder )
     {
-        final PropertySet metadataSet = contentAsSet.getSet( EXTRA_DATA );
-        if ( metadataSet != null )
-        {
-            final ExtraDatas.Builder extradatasBuilder = ExtraDatas.create();
-            for ( final String metadataApplicationPrefix : metadataSet.getPropertyNames() )
-            {
-                final PropertySet xDataApplication = metadataSet.getSet( metadataApplicationPrefix );
-                for ( final String metadataLocalName : xDataApplication.getPropertyNames() )
-                {
+        final ExtraDatas extraData = EXTRA_DATA_SERIALIZER.fromData( contentAsSet.getSet( EXTRA_DATA ) );
 
-                    final ApplicationKey applicationKey = ExtraData.fromApplicationPrefix( metadataApplicationPrefix );
-
-                    final MixinName metadataName = MixinName.from( applicationKey, metadataLocalName );
-                    extradatasBuilder.add( new ExtraData( metadataName, xDataApplication.getSet( metadataLocalName ).toTree() ) );
-                }
-            }
-
-            builder.extraDatas( extradatasBuilder.build() );
+        if(extraData != null && extraData.isNotEmpty()){
+            builder.extraDatas( extraData );
         }
     }
 

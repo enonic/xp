@@ -56,6 +56,11 @@ public final class ApplicationKey
         return from( FrameworkUtil.getBundle( clzz ) );
     }
 
+    public static ApplicationKey from( final String name, final String preffix )
+    {
+        return new ApplicationKey( name != null ? name.replace( preffix, "." ) : "" );
+    }
+
     @Override
     public boolean equals( final Object o )
     {
