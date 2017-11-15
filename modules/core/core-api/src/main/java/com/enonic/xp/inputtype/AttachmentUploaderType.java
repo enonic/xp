@@ -18,7 +18,7 @@ final class AttachmentUploaderType
     @Override
     public Value createValue( final Value value, final InputTypeConfig config )
     {
-        return ValueFactory.newReference( value.asReference() );
+        return ValueFactory.newString( value.asString() );
     }
 
     @Override
