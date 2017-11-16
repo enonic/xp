@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.io.ByteSource;
 
@@ -80,6 +81,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.EffectivePermissionAc
 import com.enonic.xp.admin.impl.rest.resource.content.json.EffectivePermissionJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.EffectivePermissionMemberJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.GetContentVersionsJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.GetDependenciesResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.GetDescendantsOfContents;
 import com.enonic.xp.admin.impl.rest.resource.content.json.HasUnpublishedChildrenResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.LocaleListJson;
@@ -549,22 +551,27 @@ public final class ContentResource
         }
     }
 
-    @GET
+    @POST
     @Path("getDependencies")
-    public DependenciesJson getDependencies( @QueryParam("id") final String id )
+    public GetDependenciesResultJson getDependencies( final ContentIdsJson params )
     {
+        final Map<String, DependenciesJson> result = Maps.newHashMap();
 
-        final ContentDependencies result = contentService.getDependencies( ContentId.from( id ) );
+        params.getContentIds().forEach( (id -> {
+            final ContentDependencies dependencies = contentService.getDependencies( id );
 
-        final List<DependenciesAggregationJson> inbound = result.getInbound().stream().
-            map( aggregation -> new DependenciesAggregationJson( aggregation, this.contentTypeIconUrlResolver ) ).collect(
-            Collectors.toList() );
+            final List<DependenciesAggregationJson> inbound = dependencies.getInbound().stream().
+                map( aggregation -> new DependenciesAggregationJson( aggregation, this.contentTypeIconUrlResolver ) ).collect(
+                Collectors.toList() );
 
-        final List<DependenciesAggregationJson> outbound = result.getOutbound().stream().
-            map( aggregation -> new DependenciesAggregationJson( aggregation, this.contentTypeIconUrlResolver ) ).collect(
-            Collectors.toList() );
+            final List<DependenciesAggregationJson> outbound = dependencies.getOutbound().stream().
+                map( aggregation -> new DependenciesAggregationJson( aggregation, this.contentTypeIconUrlResolver ) ).collect(
+                Collectors.toList() );
 
-        return new DependenciesJson( inbound, outbound );
+            result.put( id.toString(), new DependenciesJson( inbound, outbound ));
+        }) );
+
+        return new GetDependenciesResultJson(result);
     }
 
     @POST
