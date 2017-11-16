@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.handler.service;
+package com.enonic.xp.portal.impl.websocket;
 
 import java.util.function.Supplier;
 
@@ -7,7 +7,7 @@ import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
 import com.enonic.xp.web.websocket.WebSocketEvent;
 
-final class WebSocketEndpointImpl
+public final class WebSocketEndpointImpl
     implements WebSocketEndpoint
 {
     private final Supplier<ControllerScript> scriptSupplier;

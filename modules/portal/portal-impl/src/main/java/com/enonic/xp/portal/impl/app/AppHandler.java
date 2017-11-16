@@ -14,6 +14,7 @@ import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
+import com.enonic.xp.portal.impl.websocket.WebSocketEndpointImpl;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
@@ -133,16 +134,21 @@ public final class AppHandler
         final WebSocketContext webSocketContext = req.getWebSocketContext();
         if ( ( webSocketContext != null ) && ( webSocketConfig != null ) )
         {
-            final WebSocketEndpoint webSocketEndpoint = newWebSocketEndpoint( webSocketConfig, script );
+            final WebSocketEndpoint webSocketEndpoint = newWebSocketEndpoint( webSocketConfig, script, req.getApplicationKey() );
             webSocketContext.apply( webSocketEndpoint );
         }
 
         return res;
     }
 
-    private WebSocketEndpoint newWebSocketEndpoint( final WebSocketConfig config, final ControllerScript script )
+    private WebSocketEndpoint newWebSocketEndpoint( final WebSocketConfig config, final ControllerScript script, final ApplicationKey app )
     {
-        return new WebSocketEndpointImpl( config, script );
+        final Trace trace = Tracer.current();
+        if ( trace != null && !trace.containsKey( "app" ) )
+        {
+            trace.put( "app", app.toString() );
+        }
+        return new WebSocketEndpointImpl( config, () -> script );
     }
 
     private ControllerScript getScript( final ApplicationKey applicationKey )

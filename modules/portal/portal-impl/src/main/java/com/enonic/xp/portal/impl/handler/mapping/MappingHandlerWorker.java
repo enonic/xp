@@ -1,5 +1,8 @@
 package com.enonic.xp.portal.impl.handler.mapping;
 
+import java.util.function.Supplier;
+
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
@@ -7,6 +10,7 @@ import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.portal.impl.rendering.Renderer;
 import com.enonic.xp.portal.impl.rendering.RendererFactory;
+import com.enonic.xp.portal.impl.websocket.WebSocketEndpointImpl;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
@@ -53,7 +57,8 @@ final class MappingHandlerWorker
         final WebSocketContext webSocketContext = this.request.getWebSocketContext();
         if ( ( webSocketContext != null ) && ( webSocketConfig != null ) )
         {
-            final WebSocketEndpoint webSocketEndpoint = new WebSocketEndpointImpl( webSocketConfig, this::getScript );
+            final WebSocketEndpoint webSocketEndpoint =
+                newWebSocketEndpoint( webSocketConfig, this::getScript, request.getApplicationKey() );
             webSocketContext.apply( webSocketEndpoint );
         }
         return portalResponse;
@@ -76,4 +81,15 @@ final class MappingHandlerWorker
         return this.controllerScriptFactory.fromScript( resource.getKey() );
     }
 
+
+    private WebSocketEndpoint newWebSocketEndpoint( final WebSocketConfig config, final Supplier<ControllerScript> script,
+                                                    final ApplicationKey app )
+    {
+        final Trace trace = Tracer.current();
+        if ( trace != null && app != null && !trace.containsKey( "app" ) )
+        {
+            trace.put( "app", app.toString() );
+        }
+        return new WebSocketEndpointImpl( config, script );
+    }
 }

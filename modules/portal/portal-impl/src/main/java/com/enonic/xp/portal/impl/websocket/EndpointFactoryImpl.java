@@ -17,10 +17,7 @@ final class EndpointFactoryImpl
     @Override
     public Endpoint newEndpoint()
     {
-        final WebSocketEntryImpl entry = new WebSocketEntryImpl();
-        entry.endpoint = this.endpoint;
-        entry.registry = this.registry;
-        return entry;
+        return new WebSocketEntryImpl( this.endpoint, this.registry );
     }
 
     @Override
