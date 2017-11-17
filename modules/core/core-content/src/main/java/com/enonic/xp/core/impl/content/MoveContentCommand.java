@@ -6,12 +6,13 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentAlreadyMovedException;
 import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.content.ContentNotFoundException;
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.MoveContentException;
 import com.enonic.xp.content.MoveContentParams;
+import com.enonic.xp.content.MoveContentsResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.Node;
@@ -19,8 +20,8 @@ import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeAlreadyMovedException;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.site.Site;
@@ -44,13 +45,15 @@ final class MoveContentCommand
         return new Builder( params );
     }
 
-    Content execute()
+    MoveContentsResult execute()
     {
         params.validate();
 
         try
         {
-            return doExecute();
+            final MoveContentsResult movedContents = doExecute();
+            this.nodeService.refresh( RefreshMode.ALL );
+            return movedContents;
         }
         catch ( NodeAlreadyMovedException e )
         {
@@ -70,7 +73,7 @@ final class MoveContentCommand
         }
     }
 
-    private Content doExecute()
+    private MoveContentsResult doExecute()
     {
         this.verifyIntegrity( params.getParentContentPath() );
 
@@ -104,15 +107,22 @@ final class MoveContentCommand
 
         final Content movedContent = translator.fromNode( movedNode, true );
 
+        String contentName = movedContent.getDisplayName();
+        ContentId contentId = movedContent.getId();
+
         if ( isOutOfSite )
         {
             final UpdateContentParams updateParams = new UpdateContentParams().
                 contentId( params.getContentId() ).
                 modifier( params.getCreator() ).
                 editor( edit -> edit.extraDatas = this.updateExtraData( nearestSite, movedContent ) );
-            return contentService.update( updateParams );
+            final Content updatedContent = contentService.update( updateParams );
+
+            contentName = updatedContent.getDisplayName();
+            contentId = updatedContent.getId();
         }
-        return movedContent;
+
+        return MoveContentsResult.create().setContentName( contentName ).addMoved( contentId ).build();
     }
 
     private void verifyIntegrity( ContentPath destinationPath )

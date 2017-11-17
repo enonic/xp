@@ -7,6 +7,7 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.MoveContentParams;
+import com.enonic.xp.content.MoveContentsResult;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -34,13 +35,15 @@ public class ContentServiceImplTest_move
         final Content child1 = createContent( site.getPath(), "child1" );
         createContent( child1.getPath(), "child1_1" );
         createContent( child1.getPath(), "child2_1" );
-
         final Content site2 = createContent( ContentPath.ROOT, "site2" );
 
         refresh();
 
-        final Content movedContent = this.contentService.move( new MoveContentParams( child1.getId(), site2.getPath() ) );
+        final MoveContentsResult result = this.contentService.move( new MoveContentParams( child1.getId(), site2.getPath() ) );
 
+        final Content movedContent = contentService.getById( result.getMovedContents().first() );
+
+        assertEquals( 1, result.getMovedContents().getSize() );
         assertEquals( movedContent.getParentPath(), site2.getPath() );
 
     }
@@ -58,7 +61,9 @@ public class ContentServiceImplTest_move
 
         refresh();
 
-        final Content movedContent = this.contentService.move( new MoveContentParams( content.getId(), ContentPath.ROOT ) );
+        final MoveContentsResult result = this.contentService.move( new MoveContentParams( content.getId(), ContentPath.ROOT ) );
+
+        final Content movedContent = contentService.getById( result.getMovedContents().first() );
 
         assertEquals( movedContent.getAllExtraData().getSize(), 0 );
 
