@@ -41,7 +41,7 @@ public final class ExtraData
 
     public String getApplicationPrefix()
     {
-        return name.getApplicationPreffix();
+        return name.getApplicationPrefix();
     }
 
     public static ApplicationKey fromApplicationPrefix( final String applicationPrefixName )

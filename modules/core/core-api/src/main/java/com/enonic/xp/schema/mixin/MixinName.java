@@ -30,7 +30,7 @@ public final class MixinName
         return new MixinName( mixinName );
     }
 
-    public String getApplicationPreffix() {
+    public String getApplicationPrefix() {
         return this.getApplicationKey() == null ? "" : this.getApplicationKey().toString().replace( '.', '-' );
     }
 

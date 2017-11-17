@@ -27,7 +27,7 @@ public class XDataConfigProcessor
         {
             this.mixins.forEach( mixin -> {
                 final IndexConfigVisitor indexConfigVisitor =
-                    new IndexConfigVisitor( String.join( ".", EXTRA_DATA, mixin.getName().getApplicationPreffix(), mixin.getName().getLocalName() ), builder );
+                    new IndexConfigVisitor( String.join( ".", EXTRA_DATA, mixin.getName().getApplicationPrefix(), mixin.getName().getLocalName() ), builder );
                 indexConfigVisitor.traverse( mixin.getForm() );
             } );
         }
