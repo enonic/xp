@@ -106,4 +106,10 @@ public @interface JettyConfig
      * Retain log for number of days.
      */
     int log_retainDays() default 31;
+
+    /**
+     * Enable jetty's JMX.
+     */
+    boolean jmx_enabled() default false;
+
 }
