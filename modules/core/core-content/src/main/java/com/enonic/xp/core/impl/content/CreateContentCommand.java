@@ -107,6 +107,7 @@ final class CreateContentCommand
         final CreateNodeParams createNodeParams = CreateNodeParamsFactory.create( createContentTranslatorParams ).
             contentTypeService(this.contentTypeService ).
             pageDescriptorService( this.pageDescriptorService ).
+            mixinService( this.mixinService ).
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
             siteService( this.siteService ).

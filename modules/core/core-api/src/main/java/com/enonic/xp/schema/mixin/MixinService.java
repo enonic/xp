@@ -11,6 +11,8 @@ public interface MixinService
 {
     Mixin getByName( MixinName name );
 
+    Mixins getByNames( MixinNames names );
+
     Mixins getAll();
 
     Mixins getByApplication( ApplicationKey applicationKey );

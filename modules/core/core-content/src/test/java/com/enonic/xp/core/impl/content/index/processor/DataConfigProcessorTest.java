@@ -10,15 +10,12 @@ import com.enonic.xp.form.Input;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.inputtype.InputTypeName;
-import com.enonic.xp.page.PageDescriptor;
-import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 
 import static com.enonic.xp.content.ContentPropertyNames.DATA;
-
 import static org.junit.Assert.*;
 
 public class DataConfigProcessorTest

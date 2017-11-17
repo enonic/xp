@@ -41,12 +41,12 @@ public final class ExtraData
 
     public String getApplicationPrefix()
     {
-        return name.getApplicationKey() == null ? "" : name.getApplicationKey().toString().replace( '.', '-' );
+        return name.getApplicationPrefix();
     }
 
-    public static ApplicationKey fromApplicationPrefix( final String applicationPrefix )
+    public static ApplicationKey fromApplicationPrefix( final String applicationPrefixName )
     {
-        return ApplicationKey.from( applicationPrefix.replace( '-', '.' ) );
+        return ApplicationKey.from( applicationPrefixName, "-" );
     }
 
     public void setName( final MixinName name )

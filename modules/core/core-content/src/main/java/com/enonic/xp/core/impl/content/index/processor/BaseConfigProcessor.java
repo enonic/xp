@@ -10,7 +10,6 @@ import static com.enonic.xp.content.ContentPropertyNames.ATTACHMENT;
 import static com.enonic.xp.content.ContentPropertyNames.CREATED_TIME;
 import static com.enonic.xp.content.ContentPropertyNames.CREATOR;
 import static com.enonic.xp.content.ContentPropertyNames.DATA;
-import static com.enonic.xp.content.ContentPropertyNames.EXTRA_DATA;
 import static com.enonic.xp.content.ContentPropertyNames.MODIFIED_TIME;
 import static com.enonic.xp.content.ContentPropertyNames.MODIFIER;
 import static com.enonic.xp.content.ContentPropertyNames.OWNER;
@@ -34,7 +33,6 @@ public class BaseConfigProcessor
             add( SITE, IndexConfig.NONE ).
             add( TYPE, IndexConfig.MINIMAL ).
             add( ATTACHMENT, IndexConfig.MINIMAL ).
-            add( PropertyPath.from( EXTRA_DATA ), IndexConfig.MINIMAL ).
             defaultConfig( IndexConfig.BY_TYPE );
 
         return builder;

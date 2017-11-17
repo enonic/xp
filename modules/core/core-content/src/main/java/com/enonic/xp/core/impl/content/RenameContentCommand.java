@@ -111,6 +111,7 @@ final class RenameContentCommand
         return UpdateContentCommand.create( this ).params( updateContentParams ).
             siteService( siteService ).
             contentTypeService( contentTypeService ).
+            mixinService( this.mixinService ).
             pageDescriptorService( this.pageDescriptorService ).
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
