@@ -8,8 +8,7 @@ public abstract class OrderExpr
 {
     public enum Direction
     {
-        ASC,
-        DESC
+        ASC, DESC
     }
 
     private final Direction direction;
