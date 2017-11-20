@@ -113,6 +113,8 @@ import com.enonic.xp.site.CreateSiteParams;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.SiteService;
+import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
 
 @Component(immediate = true)
@@ -483,7 +485,21 @@ public class ContentServiceImpl
     @Override
     public Content getById( final ContentId contentId )
     {
-        return doGetById( contentId );
+        final Trace trace = Tracer.newTrace( "content.getById" );
+        if ( trace == null )
+        {
+            return doGetById( contentId );
+        }
+
+        return Tracer.trace( trace, () -> {
+            final Content content = doGetById( contentId );
+            if ( content != null )
+            {
+                trace.put( "path", content.getPath() );
+            }
+            trace.put( "id", contentId );
+            return content;
+        } );
     }
 
     private Content doGetById( final ContentId contentId )
@@ -513,6 +529,21 @@ public class ContentServiceImpl
     @Override
     public Contents getByIds( final GetContentByIdsParams params )
     {
+        final Trace trace = Tracer.newTrace( "content.getByIds" );
+        if ( trace == null )
+        {
+            return doGetByIds( params );
+        }
+
+        return Tracer.trace( trace, () -> {
+            final Contents contents = doGetByIds( params );
+            trace.put( "id", params.getIds() );
+            return contents;
+        } );
+    }
+
+    private Contents doGetByIds( final GetContentByIdsParams params )
+    {
         return GetContentByIdsCommand.create( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
@@ -524,6 +555,25 @@ public class ContentServiceImpl
 
     @Override
     public Content getByPath( final ContentPath path )
+    {
+        final Trace trace = Tracer.newTrace( "content.getByPath" );
+        if ( trace == null )
+        {
+            return executeGetByPath( path );
+        }
+
+        return Tracer.trace( trace, () -> {
+            final Content content = executeGetByPath( path );
+            if ( content != null )
+            {
+                trace.put( "id", content.getId() );
+            }
+            trace.put( "path", path );
+            return content;
+        } );
+    }
+
+    private Content executeGetByPath( final ContentPath path )
     {
         return GetContentByPathCommand.create( path ).
             nodeService( this.nodeService ).
@@ -548,6 +598,21 @@ public class ContentServiceImpl
     @Override
     public Contents getByPaths( final ContentPaths paths )
     {
+        final Trace trace = Tracer.newTrace( "content.getByPaths" );
+        if ( trace == null )
+        {
+            return doGetByPaths( paths );
+        }
+
+        return Tracer.trace( trace, () -> {
+            final Contents contents = doGetByPaths( paths );
+            trace.put( "path", paths );
+            return contents;
+        } );
+    }
+
+    private Contents doGetByPaths( final ContentPaths paths )
+    {
         return GetContentByPathsCommand.create( paths ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
@@ -559,6 +624,24 @@ public class ContentServiceImpl
 
     @Override
     public FindContentByParentResult findByParent( final FindContentByParentParams params )
+    {
+        final Trace trace = Tracer.newTrace( "content.findByParent" );
+        if ( trace == null )
+        {
+            return doFindByParent( params );
+        }
+
+        return Tracer.trace( trace, () -> {
+            final FindContentByParentResult result = doFindByParent( params );
+            trace.put( "query", params.getParentPath() != null ? params.getParentPath() : params.getParentId() );
+            trace.put( "from", params.getFrom() );
+            trace.put( "size", params.getSize() );
+            trace.put( "hits", result.getTotalHits() );
+            return result;
+        } );
+    }
+
+    private FindContentByParentResult doFindByParent( final FindContentByParentParams params )
     {
         return FindContentByParentCommand.create( params ).
             nodeService( this.nodeService ).
@@ -635,6 +718,24 @@ public class ContentServiceImpl
 
     @Override
     public FindContentIdsByQueryResult find( final ContentQuery query )
+    {
+        final Trace trace = Tracer.newTrace( "content.find" );
+        if ( trace == null )
+        {
+            return doFind( query );
+        }
+
+        return Tracer.trace( trace, () -> {
+            final FindContentIdsByQueryResult result = doFind( query );
+            trace.put( "query", query.getQueryExpr() != null ? query.getQueryExpr().toString() : "" );
+            trace.put( "from", query.getFrom() );
+            trace.put( "size", query.getSize() );
+            trace.put( "hits", result.getTotalHits() );
+            return result;
+        } );
+    }
+
+    private FindContentIdsByQueryResult doFind( final ContentQuery query )
     {
         return FindContentIdsByQueryCommand.create().
             query( query ).
@@ -1025,7 +1126,7 @@ public class ContentServiceImpl
     @Reference
     public void setPartDescriptorService( final PartDescriptorService partDescriptorService )
     {
-        this.partDescriptorService  = partDescriptorService ;
+        this.partDescriptorService = partDescriptorService;
     }
 
     @Reference
