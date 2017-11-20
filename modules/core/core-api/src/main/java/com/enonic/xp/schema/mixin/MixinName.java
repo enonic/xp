@@ -30,6 +30,10 @@ public final class MixinName
         return new MixinName( mixinName );
     }
 
+    public String getApplicationPrefix() {
+        return this.getApplicationKey() == null ? "" : this.getApplicationKey().toString().replace( '.', '-' );
+    }
+
     @Override
     public int compareTo( final MixinName that )
     {

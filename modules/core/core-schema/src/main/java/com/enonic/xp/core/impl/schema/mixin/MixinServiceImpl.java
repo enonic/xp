@@ -30,6 +30,7 @@ import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.mixin.MixinNames;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.schema.mixin.Mixins;
 
@@ -59,6 +60,17 @@ public final class MixinServiceImpl
         }
 
         return new MixinLoader( this.resourceService ).get( name );
+    }
+
+    @Override
+    public Mixins getByNames( final MixinNames names )
+    {
+        if ( names == null )
+        {
+            return Mixins.empty();
+        }
+
+        return Mixins.from( names.stream().map( name -> getByName( name ) ).collect( Collectors.toList() ) );
     }
 
     private boolean isSystem( final MixinName name )

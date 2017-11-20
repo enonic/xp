@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.core.impl.content.index.processor.AttachmentConfigProcessor;
 import com.enonic.xp.core.impl.content.index.processor.BaseConfigProcessor;
 import com.enonic.xp.core.impl.content.index.processor.ContentIndexConfigProcessors;
@@ -12,6 +13,7 @@ import com.enonic.xp.core.impl.content.index.processor.DataConfigProcessor;
 import com.enonic.xp.core.impl.content.index.processor.PageConfigProcessor;
 import com.enonic.xp.core.impl.content.index.processor.PageRegionsConfigProcessor;
 import com.enonic.xp.core.impl.content.index.processor.SiteConfigProcessor;
+import com.enonic.xp.core.impl.content.index.processor.XDataConfigProcessor;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.index.PatternIndexConfigDocument;
@@ -22,6 +24,8 @@ import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
+import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.schema.mixin.Mixins;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteService;
 
@@ -36,6 +40,8 @@ public class ContentIndexConfigFactory
         indexConfigProcessors.add( new AttachmentConfigProcessor( builder.contentTypeName ) );
 
         indexConfigProcessors.add( new DataConfigProcessor( getDataForm( builder.contentTypeService, builder.contentTypeName ) ) );
+
+        indexConfigProcessors.add( new XDataConfigProcessor( getMixins( builder.mixinService, builder.extraDatas ) ) );
 
         indexConfigProcessors.add( new PageConfigProcessor( getPageConfigForm( builder.pageDescriptorService, builder.page ) ) );
 
@@ -55,6 +61,15 @@ public class ContentIndexConfigFactory
             inlineMixinsToFormItems( true ).
             contentTypeName( contentTypeName ) ).
             getForm();
+    }
+
+    private Mixins getMixins( final MixinService mixinService, final ExtraDatas extraDatas )
+    {
+        if ( mixinService == null || extraDatas == null )
+        {
+            return null;
+        }
+        return mixinService.getByNames( extraDatas.getNames() );
     }
 
     private Form getPageConfigForm( final PageDescriptorService pageDescriptorService, final Page page )
@@ -98,6 +113,8 @@ public class ContentIndexConfigFactory
     {
         private ContentTypeService contentTypeService;
 
+        private MixinService mixinService;
+
         private PageDescriptorService pageDescriptorService;
 
         private PartDescriptorService partDescriptorService;
@@ -112,9 +129,17 @@ public class ContentIndexConfigFactory
 
         private SiteConfigs siteConfigs;
 
+        private ExtraDatas extraDatas;
+
         public Builder contentTypeService( final ContentTypeService value )
         {
             this.contentTypeService = value;
+            return this;
+        }
+
+        public Builder mixinService( final MixinService value )
+        {
+            this.mixinService = value;
             return this;
         }
 
@@ -157,6 +182,12 @@ public class ContentIndexConfigFactory
         public Builder siteConfigs( final SiteConfigs value )
         {
             this.siteConfigs = value;
+            return this;
+        }
+
+        public Builder extraDatas( final ExtraDatas value )
+        {
+            this.extraDatas = value;
             return this;
         }
 
