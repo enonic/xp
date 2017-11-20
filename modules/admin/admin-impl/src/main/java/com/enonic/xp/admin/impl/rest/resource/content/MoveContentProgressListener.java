@@ -8,6 +8,8 @@ final class MoveContentProgressListener
 {
     private final ProgressReporter progressReporter;
 
+    private int total = 0;
+
     private int progressCount = 0;
 
     public MoveContentProgressListener( final ProgressReporter progressReporter )
@@ -16,9 +18,15 @@ final class MoveContentProgressListener
     }
 
     @Override
+    public void setTotal( final int count )
+    {
+        total = count;
+    }
+
+    @Override
     public void contentMoved( final int count )
     {
         progressCount = progressCount + count;
-        progressReporter.progress( progressCount, progressCount );
+        progressReporter.progress( progressCount, total );
     }
 }

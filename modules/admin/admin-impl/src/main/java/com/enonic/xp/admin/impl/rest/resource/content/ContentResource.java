@@ -383,6 +383,7 @@ public final class ContentResource
         progressReporter.info( "Moving content" );
 
         final MoveContentProgressListener listener = new MoveContentProgressListener( progressReporter );
+        listener.setTotal( contentToMoveList.getSize() );
         int moved = 0;
         int failed = 0;
         String contentName = "";
