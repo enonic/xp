@@ -9,6 +9,7 @@ import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.BaseWebHandler;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.handler.WebHandlerChain;
+import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 @Component(immediate = true, service = WebHandler.class)
 public final class TraceWebFilter
@@ -31,13 +32,16 @@ public final class TraceWebFilter
         throws Exception
     {
         final Trace trace = Tracer.newTrace( "portalRequest" );
-        if ( trace != null )
+        if ( trace == null )
         {
-            trace.put( "path", req.getPath() );
-            trace.put( "rawpath", req.getRawPath() );
-            trace.put( "method", req.getMethod().toString() );
-            trace.put( "host", req.getHost() );
+            return chain.handle( req, res );
         }
+
+        trace.put( "path", req.getPath() );
+        trace.put( "rawpath", req.getRawPath() );
+        trace.put( "url", ServletRequestUrlHelper.getFullUrl( req.getRawRequest() ) );
+        trace.put( "method", req.getMethod().toString() );
+        trace.put( "host", req.getHost() );
 
         return Tracer.traceEx( trace, () ->
         {
