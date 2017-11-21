@@ -492,12 +492,12 @@ public class ContentServiceImpl
         }
 
         return Tracer.trace( trace, () -> {
+            trace.put( "id", contentId );
             final Content content = doGetById( contentId );
             if ( content != null )
             {
                 trace.put( "path", content.getPath() );
             }
-            trace.put( "id", contentId );
             return content;
         } );
     }
@@ -515,6 +515,25 @@ public class ContentServiceImpl
 
     @Override
     public Site getNearestSite( final ContentId contentId )
+    {
+        final Trace trace = Tracer.newTrace( "content.getNearestSite" );
+        if ( trace == null )
+        {
+            return doGetNearestSite( contentId );
+        }
+
+        return Tracer.trace( trace, () -> {
+            trace.put( "id", contentId );
+            final Site site = doGetNearestSite( contentId );
+            if ( site != null )
+            {
+                trace.put( "path", site.getPath() );
+            }
+            return site;
+        } );
+    }
+
+    private Site doGetNearestSite( final ContentId contentId )
     {
         return GetNearestSiteCommand.create().
             contentId( contentId ).
@@ -536,9 +555,8 @@ public class ContentServiceImpl
         }
 
         return Tracer.trace( trace, () -> {
-            final Contents contents = doGetByIds( params );
             trace.put( "id", params.getIds() );
-            return contents;
+            return doGetByIds( params );
         } );
     }
 
@@ -563,12 +581,12 @@ public class ContentServiceImpl
         }
 
         return Tracer.trace( trace, () -> {
+            trace.put( "path", path );
             final Content content = executeGetByPath( path );
             if ( content != null )
             {
                 trace.put( "id", content.getId() );
             }
-            trace.put( "path", path );
             return content;
         } );
     }
@@ -605,9 +623,8 @@ public class ContentServiceImpl
         }
 
         return Tracer.trace( trace, () -> {
-            final Contents contents = doGetByPaths( paths );
             trace.put( "path", paths );
-            return contents;
+            return doGetByPaths( paths );
         } );
     }
 
@@ -632,10 +649,10 @@ public class ContentServiceImpl
         }
 
         return Tracer.trace( trace, () -> {
-            final FindContentByParentResult result = doFindByParent( params );
             trace.put( "query", params.getParentPath() != null ? params.getParentPath() : params.getParentId() );
             trace.put( "from", params.getFrom() );
             trace.put( "size", params.getSize() );
+            final FindContentByParentResult result = doFindByParent( params );
             trace.put( "hits", result.getTotalHits() );
             return result;
         } );
@@ -726,10 +743,10 @@ public class ContentServiceImpl
         }
 
         return Tracer.trace( trace, () -> {
-            final FindContentIdsByQueryResult result = doFind( query );
             trace.put( "query", query.getQueryExpr() != null ? query.getQueryExpr().toString() : "" );
             trace.put( "from", query.getFrom() );
             trace.put( "size", query.getSize() );
+            final FindContentIdsByQueryResult result = doFind( query );
             trace.put( "hits", result.getTotalHits() );
             return result;
         } );
