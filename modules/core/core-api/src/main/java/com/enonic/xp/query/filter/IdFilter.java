@@ -3,6 +3,7 @@ package com.enonic.xp.query.filter;
 import java.util.Collection;
 import java.util.List;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
@@ -36,6 +37,16 @@ public class IdFilter
     public List<String> getValues()
     {
         return values;
+    }
+
+    @Override
+    public String toString()
+    {
+        return MoreObjects.toStringHelper( this ).
+            omitNullValues().
+            add( "fieldName", fieldName ).
+            add( "values", values ).
+            toString();
     }
 
     public static Builder create()

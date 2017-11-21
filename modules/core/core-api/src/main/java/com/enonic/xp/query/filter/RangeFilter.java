@@ -1,6 +1,7 @@
 package com.enonic.xp.query.filter;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.MoreObjects;
 
 import com.enonic.xp.data.Value;
 
@@ -27,6 +28,17 @@ public class RangeFilter
     public Value getTo()
     {
         return to;
+    }
+
+    @Override
+    public String toString()
+    {
+        return MoreObjects.toStringHelper( this ).
+            omitNullValues().
+            add( "fieldName", fieldName ).
+            add( "from", from ).
+            add( "to", to ).
+            toString();
     }
 
     public static Builder create()
