@@ -109,8 +109,8 @@ public class NodeServiceImpl
         }
 
         return Tracer.trace( trace, () -> {
-            final Node node = executeGetById( id );
             trace.put( "id", id );
+            final Node node = executeGetById( id );
             trace.put( "path", node.path() );
             return node;
         } );
@@ -151,12 +151,12 @@ public class NodeServiceImpl
         }
 
         return Tracer.trace( trace, () -> {
+            trace.put( "path", path );
             final Node node = executeGetByPath( path );
             if ( node != null )
             {
                 trace.put( "id", node.id() );
             }
-            trace.put( "path", path );
             return node;
         } );
     }
@@ -188,9 +188,8 @@ public class NodeServiceImpl
         }
 
         return Tracer.trace( trace, () -> {
-            final Nodes nodes = executeGetByIds( ids );
             trace.put( "id", ids );
-            return nodes;
+            return executeGetByIds( ids );
         } );
     }
 
@@ -216,9 +215,8 @@ public class NodeServiceImpl
         }
 
         return Tracer.trace( trace, () -> {
-            final Nodes nodes = executeGetByPaths( paths );
             trace.put( "path", paths );
-            return nodes;
+            return executeGetByPaths( paths );
         } );
     }
 
@@ -244,10 +242,10 @@ public class NodeServiceImpl
         }
 
         return Tracer.trace( trace, () -> {
-            final FindNodesByParentResult result = executeFindByParent( params );
             trace.put( "parent", params.getParentPath() != null ? params.getParentPath() : params.getParentId() );
             trace.put( "from", params.getFrom() );
             trace.put( "size", params.getSize() );
+            final FindNodesByParentResult result = executeFindByParent( params );
             trace.put( "hits", result.getTotalHits() );
             return result;
         } );
@@ -293,10 +291,10 @@ public class NodeServiceImpl
         }
 
         return Tracer.trace( trace, () -> {
-            final FindNodesByQueryResult result = executeFindByQuery( nodeQuery );
             trace.put( "query", nodeQuery.getQuery() != null ? nodeQuery.getQuery().toString() : "" );
             trace.put( "from", nodeQuery.getFrom() );
             trace.put( "size", nodeQuery.getSize() );
+            final FindNodesByQueryResult result = executeFindByQuery( nodeQuery );
             trace.put( "hits", result.getTotalHits() );
             return result;
         } );
