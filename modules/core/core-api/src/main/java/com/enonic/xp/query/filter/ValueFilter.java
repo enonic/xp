@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
@@ -22,6 +23,15 @@ public class ValueFilter
     {
         super( builder );
         this.values = ImmutableSet.copyOf( builder.values );
+    }
+
+    @Override
+    public String toString()
+    {
+        return MoreObjects.toStringHelper( this ).omitNullValues().
+            add( "fieldName", fieldName ).
+            add( "values", values ).
+            toString();
     }
 
     public static Builder create()

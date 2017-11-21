@@ -23,4 +23,15 @@ public class RangeFilterTest
         assertTrue( rangeFilter.isCache() );
     }
 
+    @Test
+    public void testToString()
+    {
+        final RangeFilter filter = RangeFilter.create().
+            from( ValueFactory.newDouble( 2.0 ) ).
+            to( ValueFactory.newDouble( 50.0 ) ).
+            setCache( true ).
+            build();
+
+        assertEquals( "RangeFilter{from=2.0, to=50.0}", filter.toString() );
+    }
 }
