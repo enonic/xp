@@ -3,6 +3,7 @@ package com.enonic.xp.query.filter;
 import java.util.Arrays;
 import java.util.Set;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
@@ -42,6 +43,17 @@ public class IndicesFilter
     public Filter getNoMatchFilter()
     {
         return noMatchFilter;
+    }
+
+    @Override
+    public String toString()
+    {
+        return MoreObjects.toStringHelper( this ).
+            omitNullValues().
+            add( "indices", indices ).
+            add( "filter", filter ).
+            add( "noMatchFilter", noMatchFilter ).
+            toString();
     }
 
     public static final class Builder

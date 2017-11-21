@@ -3,6 +3,7 @@ package com.enonic.xp.query.filter;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
@@ -37,6 +38,17 @@ public class BooleanFilter
     public ImmutableSet<Filter> getShould()
     {
         return should;
+    }
+
+    @Override
+    public String toString()
+    {
+        return MoreObjects.toStringHelper( this ).
+            omitNullValues().
+            add( "must", must ).
+            add( "mustNot", mustNot ).
+            add( "should", should ).
+            toString();
     }
 
     public static Builder create()
