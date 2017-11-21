@@ -51,6 +51,10 @@ public final class Tracer
         {
             return traceEx( trace, runnable::run );
         }
+        catch ( final RuntimeException e )
+        {
+            throw e;
+        }
         catch ( final Exception e )
         {
             throw new RuntimeException( e );
