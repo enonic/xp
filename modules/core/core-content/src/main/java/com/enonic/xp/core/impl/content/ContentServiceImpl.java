@@ -597,6 +597,7 @@ public class ContentServiceImpl
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             contentService( this ).
+            moveListener( params.getMoveContentListener() ).
             build().
             execute();
     }

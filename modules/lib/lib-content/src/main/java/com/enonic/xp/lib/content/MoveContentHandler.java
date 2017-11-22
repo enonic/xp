@@ -86,7 +86,10 @@ public final class MoveContentHandler
 
     private Content move( final ContentId sourceId, final ContentPath newPath )
     {
-        final MoveContentParams moveParams = new MoveContentParams( sourceId, newPath );
+        final MoveContentParams moveParams = MoveContentParams.create().
+            contentId( sourceId ).
+            parentContentPath( newPath ).
+            build();
         final MoveContentsResult result = contentService.move( moveParams );
         return contentService.getById( result.getMovedContents().first() );
     }

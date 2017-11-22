@@ -11,10 +11,12 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.MoveContentException;
+import com.enonic.xp.content.MoveContentListener;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.node.MoveNodeException;
+import com.enonic.xp.node.MoveNodeListener;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
@@ -28,16 +30,20 @@ import com.enonic.xp.site.Site;
 
 final class MoveContentCommand
     extends AbstractContentCommand
+    implements MoveNodeListener
 {
     private final MoveContentParams params;
 
     private final ContentService contentService;
+
+    private final MoveContentListener moveContentListener;
 
     private MoveContentCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
         this.contentService = builder.contentService;
+        this.moveContentListener = builder.moveContentListener;
     }
 
     public static Builder create( final MoveContentParams params )
@@ -103,7 +109,7 @@ final class MoveContentCommand
 
         checkRestrictedMoves( sourceNode, isOutOfSite );
 
-        final Node movedNode = nodeService.move( sourceNodeId, nodePath );
+        final Node movedNode = nodeService.move( sourceNodeId, nodePath, this );
 
         final Content movedContent = translator.fromNode( movedNode, true );
 
@@ -122,7 +128,14 @@ final class MoveContentCommand
             contentId = updatedContent.getId();
         }
 
-        return MoveContentsResult.create().setContentName( contentName ).addMoved( contentId ).build();
+        final MoveContentsResult result = MoveContentsResult.create().
+            setContentName( contentName ).
+            addMoved( contentId ).
+            build();
+
+        nodesMoved( result.getMovedContents().getSize() );
+
+        return result;
     }
 
     private void verifyIntegrity( ContentPath destinationPath )
@@ -162,12 +175,23 @@ final class MoveContentCommand
             extraData -> site.getSiteConfigs().get( extraData.getName().getApplicationKey() ) == null ) );
     }
 
+    @Override
+    public void nodesMoved( final int count )
+    {
+        if ( moveContentListener != null )
+        {
+            moveContentListener.contentMoved( count );
+        }
+    }
+
     public static class Builder
         extends AbstractContentCommand.Builder<Builder>
     {
         private final MoveContentParams params;
 
         private ContentService contentService;
+
+        private MoveContentListener moveContentListener;
 
         public Builder( final MoveContentParams params )
         {
@@ -177,6 +201,12 @@ final class MoveContentCommand
         public MoveContentCommand.Builder contentService( ContentService contentService )
         {
             this.contentService = contentService;
+            return this;
+        }
+
+        public Builder moveListener( final MoveContentListener moveContentListener )
+        {
+            this.moveContentListener = moveContentListener;
             return this;
         }
 

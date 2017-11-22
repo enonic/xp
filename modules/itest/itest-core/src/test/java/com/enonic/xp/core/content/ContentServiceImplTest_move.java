@@ -39,7 +39,11 @@ public class ContentServiceImplTest_move
 
         refresh();
 
-        final MoveContentsResult result = this.contentService.move( new MoveContentParams( child1.getId(), site2.getPath() ) );
+        final MoveContentParams params = MoveContentParams.create().
+            contentId( child1.getId() ).
+            parentContentPath( site2.getPath() ).
+            build();
+        final MoveContentsResult result = this.contentService.move( params );
 
         final Content movedContent = contentService.getById( result.getMovedContents().first() );
 
@@ -61,7 +65,12 @@ public class ContentServiceImplTest_move
 
         refresh();
 
-        final MoveContentsResult result = this.contentService.move( new MoveContentParams( content.getId(), ContentPath.ROOT ) );
+        final MoveContentParams params = MoveContentParams.create().
+            contentId( content.getId() ).
+            parentContentPath( ContentPath.ROOT ).
+            build();
+
+        final MoveContentsResult result = this.contentService.move( params );
 
         final Content movedContent = contentService.getById( result.getMovedContents().first() );
 

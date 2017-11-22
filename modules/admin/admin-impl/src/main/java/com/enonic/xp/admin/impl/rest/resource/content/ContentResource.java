@@ -383,13 +383,24 @@ public final class ContentResource
         progressReporter.info( "Moving content" );
 
         final MoveContentProgressListener listener = new MoveContentProgressListener( progressReporter );
-        listener.setTotal( contentToMoveList.getSize() );
+
+        final ContentQuery allChildrenQuery = ContentQuery.create().
+            size( GET_ALL_SIZE_FLAG ).
+            queryExpr( constructExprToFindChildren( contentToMoveList ) ).
+            build();
+        final long childrenIds = this.contentService.find( allChildrenQuery ).getTotalHits();
+
+        listener.setTotal( Math.toIntExact( childrenIds + 1 ) );
         int moved = 0;
         int failed = 0;
         String contentName = "";
         for ( ContentId contentId : contentToMoveList )
         {
-            final MoveContentParams moveContentParams = new MoveContentParams( contentId, params.getParentContentPath() );
+            final MoveContentParams moveContentParams = MoveContentParams.create().
+                contentId( contentId ).
+                parentContentPath( params.getParentContentPath() ).
+                moveContentListener( listener ).
+                build();
             try
             {
                 final MoveContentsResult result = contentService.move( moveContentParams );
@@ -404,8 +415,6 @@ public final class ContentResource
             {
                 failed++;
             }
-
-            listener.contentMoved( 1 );
         }
 
         progressReporter.info( getMoveMessage( moved, failed, contentName ) );
@@ -644,7 +653,7 @@ public final class ContentResource
             excludeChildrenIds( excludeChildrenIds ).
             contentPublishInfo( contentPublishInfo ).
             includeDependencies( true ).
-            pushListener( new PublishContentProgressListener( progressReporter ) ).
+            pushListener( new PublishContentProgressListener( progressReporter ) ). //
             build() );
 
         final ContentIds pushedContents = result.getPushedContents();

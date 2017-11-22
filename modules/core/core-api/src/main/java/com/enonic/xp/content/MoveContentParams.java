@@ -14,11 +14,19 @@ public final class MoveContentParams
 
     private PrincipalKey creator;
 
-    public MoveContentParams( final ContentId contentId, final ContentPath parentContentPath )
-    {
-        this.contentId = contentId;
-        this.parentContentPath = parentContentPath;
+    private final MoveContentListener moveContentListener;
 
+    public MoveContentParams( Builder builder )
+    {
+        this.contentId = builder.contentId;
+        this.parentContentPath = builder.parentContentPath;
+        this.creator = builder.creator;
+        this.moveContentListener = builder.moveContentListener;
+    }
+
+    public static MoveContentParams.Builder create()
+    {
+        return new MoveContentParams.Builder();
     }
 
     public ContentId getContentId()
@@ -31,15 +39,14 @@ public final class MoveContentParams
         return parentContentPath;
     }
 
-    public MoveContentParams creator( final PrincipalKey creator )
-    {
-        this.creator = creator;
-        return this;
-    }
-
     public PrincipalKey getCreator()
     {
         return creator;
+    }
+
+    public MoveContentListener getMoveContentListener()
+    {
+        return moveContentListener;
     }
 
     public void validate()
@@ -79,5 +86,50 @@ public final class MoveContentParams
         int result = contentId != null ? contentId.hashCode() : 0;
         result = 31 * result + ( parentContentPath != null ? parentContentPath.hashCode() : 0 );
         return result;
+    }
+
+    public static final class Builder
+    {
+
+        private ContentId contentId;
+
+        private ContentPath parentContentPath;
+
+        private PrincipalKey creator;
+
+        private MoveContentListener moveContentListener;
+
+        private Builder()
+        {
+        }
+
+        public Builder contentId( ContentId contentId )
+        {
+            this.contentId = contentId;
+            return this;
+        }
+
+        public Builder parentContentPath( ContentPath parentContentPath )
+        {
+            this.parentContentPath = parentContentPath;
+            return this;
+        }
+
+        public Builder creator( PrincipalKey creator )
+        {
+            this.creator = creator;
+            return this;
+        }
+
+        public Builder moveContentListener( MoveContentListener moveContentListener )
+        {
+            this.moveContentListener = moveContentListener;
+            return this;
+        }
+
+        public MoveContentParams build()
+        {
+            return new MoveContentParams( this );
+        }
     }
 }

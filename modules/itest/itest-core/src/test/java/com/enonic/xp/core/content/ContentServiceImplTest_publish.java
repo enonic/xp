@@ -302,7 +302,12 @@ public class ContentServiceImplTest_publish
             excludeChildrenIds( ContentIds.from( content1.getId() ) ).
             build() );
 
-        this.contentService.move( new MoveContentParams( content2_1.getId(), content1.getPath() ) );
+        final MoveContentParams params = MoveContentParams.create().
+            contentId( content2_1.getId() ).
+            parentContentPath( content1.getPath() ).
+            build();
+
+        this.contentService.move( params );
 
         this.contentService.delete( DeleteContentParams.create().
             contentPath( content2.getPath() ).
@@ -411,12 +416,20 @@ public class ContentServiceImplTest_publish
 
     private void doMove( final ContentId contentId, final ContentPath newParent )
     {
-        this.contentService.move( new MoveContentParams( contentId, newParent ) );
+        final MoveContentParams params = MoveContentParams.create().
+            contentId( contentId ).
+            parentContentPath( newParent ).
+            build();
+        this.contentService.move( params );
     }
 
     private void doMove( final ContentId contentId, final String newParent )
     {
-        this.contentService.move( new MoveContentParams( contentId, ContentPath.from( newParent ) ) );
+        final MoveContentParams params = MoveContentParams.create().
+            contentId( contentId ).
+            parentContentPath( ContentPath.from( newParent )  ).
+            build();
+        this.contentService.move( params );
     }
 
     private void doDelete( final ContentPath f1Path, boolean instantly )

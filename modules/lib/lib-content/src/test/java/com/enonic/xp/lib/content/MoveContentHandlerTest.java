@@ -95,7 +95,10 @@ public class MoveContentHandlerTest
 
     private void mockMove( final ContentId contentId, final String parentPath, final Content contentResult )
     {
-        final MoveContentParams moveParams = new MoveContentParams( contentId, ContentPath.from( parentPath ) );
+        final MoveContentParams moveParams = MoveContentParams.create().
+            contentId( contentId ).
+            parentContentPath( ContentPath.from( parentPath ) ).
+            build();
         final MoveContentsResult result = MoveContentsResult.create().addMoved( contentResult.getId() ).build();
         when( this.contentService.move( Mockito.eq( moveParams ) ) ).thenReturn( result );
     }

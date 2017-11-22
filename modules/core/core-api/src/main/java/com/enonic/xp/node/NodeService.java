@@ -36,7 +36,11 @@ public interface NodeService
 
     Node move( NodeId nodeId, NodePath parentNodePath );
 
+    Node move( NodeId nodeId, NodePath parentNodePath, MoveNodeListener moveListener );
+
     Nodes move( NodeIds nodeIds, NodePath parentNodePath );
+
+    Nodes move( NodeIds nodeIds, NodePath parentNodePath, MoveNodeListener moveListener );
 
     FindNodesByParentResult findByParent( FindNodesByParentParams params );
 
