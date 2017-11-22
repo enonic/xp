@@ -1,6 +1,7 @@
 package com.enonic.xp.query.aggregation;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.MoreObjects;
 
 @Beta
 public final class NumericRange
@@ -25,6 +26,16 @@ public final class NumericRange
     public Double getTo()
     {
         return to;
+    }
+
+    @Override
+    public String toString()
+    {
+        return MoreObjects.toStringHelper( this ).omitNullValues().
+            add( "key", getKey() ).
+            add( "from", from ).
+            add( "to", to ).
+            toString();
     }
 
     public static Builder create()
