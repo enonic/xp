@@ -33,6 +33,7 @@ import com.enonic.xp.node.ImportNodeResult;
 import com.enonic.xp.node.ImportNodeVersionParams;
 import com.enonic.xp.node.LoadNodeParams;
 import com.enonic.xp.node.LoadNodeResult;
+import com.enonic.xp.node.MoveNodeListener;
 import com.enonic.xp.node.MultiRepoNodeQuery;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeComparison;
@@ -259,6 +260,12 @@ class NodeServiceMock
     }
 
     @Override
+    public Node move( final NodeId nodeId, final NodePath parentNodePath, MoveNodeListener moveListener )
+    {
+        return null;
+    }
+
+    @Override
     public FindNodesByParentResult findByParent( final FindNodesByParentParams params )
     {
         final MockNodeTree<NodePath> parentNode = this.nodeTree.find( params.getParentPath() );
@@ -412,6 +419,12 @@ class NodeServiceMock
 
     @Override
     public Nodes move( final NodeIds nodeIds, final NodePath parentNodePath )
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
+    }
+
+    @Override
+    public Nodes move( final NodeIds nodeIds, final NodePath parentNodePath, MoveNodeListener moveListener )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }

@@ -4,11 +4,9 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.ws.rs.core.MediaType;
 
@@ -19,13 +17,9 @@ import org.mockito.Mockito;
 import com.enonic.xp.admin.impl.json.content.ContentTreeSelectorListJson;
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentIdsJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.ContentSelectorQueryJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.ContentTreeSelectorJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentTreeSelectorQueryJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.GetDescendantsOfContents;
 import com.enonic.xp.admin.impl.rest.resource.content.json.HasUnpublishedChildrenResultJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentResultJson;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.CompareContentResult;
@@ -51,7 +45,6 @@ import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.HasUnpublishedChildrenParams;
-import com.enonic.xp.content.MoveContentException;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
@@ -70,10 +63,6 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplateKey;
-import com.enonic.xp.query.expr.CompareExpr;
-import com.enonic.xp.query.expr.FieldExpr;
-import com.enonic.xp.query.expr.QueryExpr;
-import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.schema.content.ContentType;
@@ -1035,6 +1024,7 @@ public class ContentResourceTest
         assertJson( "resolve_publish_content.json", jsonString );
     }
 
+/*
     @Test
     public void move_with_moveContentException()
     {
@@ -1050,6 +1040,7 @@ public class ContentResourceTest
         assertEquals( 3, resultJson.getSuccesses().size() );
         assertEquals( 1, resultJson.getFailures().size() );
     }
+*/
 
     @Test
     public void getEffectivePermissions()

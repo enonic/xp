@@ -342,7 +342,12 @@ public class ContentServiceImplTest_delete
 
         refresh();
 
-        this.contentService.move( new MoveContentParams( child1.getId(), site2.getPath() ) );
+        final MoveContentParams params = MoveContentParams.create().
+            contentId( child1.getId() ).
+            parentContentPath( site2.getPath() ).
+            build();
+
+        this.contentService.move( params );
 
         final DeleteContentsResult result = this.contentService.deleteWithoutFetch( DeleteContentParams.create().
             contentPath( site.getPath() ).

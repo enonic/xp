@@ -43,7 +43,10 @@ public class MoveContentCommandTest
 
         ContentId contentId = ContentId.from( "mycontent" );
 
-        MoveContentParams params = new MoveContentParams( contentId, ContentPath.ROOT );
+        MoveContentParams params = MoveContentParams.create().
+            contentId( contentId ).
+            parentContentPath( ContentPath.ROOT ).
+            build();
 
         MoveContentCommand command = MoveContentCommand.create( params ).
             contentTypeService( this.contentTypeService ).
@@ -70,7 +73,10 @@ public class MoveContentCommandTest
         final Site parentSite = createSite( existingContentData, ContentPath.ROOT );
         final Content existingContent = createContent( existingContentData, parentSite.getPath(), ContentTypeName.fragment() );
 
-        final MoveContentParams params = new MoveContentParams( existingContent.getId(), ContentPath.ROOT );
+        MoveContentParams params = MoveContentParams.create().
+            contentId( existingContent.getId() ).
+            parentContentPath( ContentPath.ROOT ).
+            build();
 
         final MoveContentCommand command = MoveContentCommand.create( params ).
             contentTypeService( this.contentTypeService ).
@@ -100,7 +106,10 @@ public class MoveContentCommandTest
 
         final Content existingContent = createContent( existingContentData, ContentPath.ROOT, ContentTypeName.folder() );
 
-        final MoveContentParams params = new MoveContentParams( existingContent.getId(), ContentPath.ROOT );
+        final MoveContentParams params = MoveContentParams.create().
+            contentId( existingContent.getId() ).
+            parentContentPath( ContentPath.ROOT ).
+            build();
 
         final MoveContentCommand command = MoveContentCommand.create( params ).
             contentTypeService( this.contentTypeService ).

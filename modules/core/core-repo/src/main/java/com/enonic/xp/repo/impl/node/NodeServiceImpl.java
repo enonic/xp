@@ -28,6 +28,7 @@ import com.enonic.xp.node.ImportNodeResult;
 import com.enonic.xp.node.ImportNodeVersionParams;
 import com.enonic.xp.node.LoadNodeParams;
 import com.enonic.xp.node.LoadNodeResult;
+import com.enonic.xp.node.MoveNodeListener;
 import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.MultiRepoNodeQuery;
 import com.enonic.xp.node.Node;
@@ -347,8 +348,6 @@ public class NodeServiceImpl
     @Override
     public PushNodesResult push( final NodeIds ids, final Branch target )
     {
-        verifyContext();
-        verifyBranchExists( target );
         return push( ids, target, null );
     }
 
@@ -400,6 +399,12 @@ public class NodeServiceImpl
     @Override
     public Node move( final NodeId nodeId, final NodePath parentNodePath )
     {
+        return move( nodeId, parentNodePath, null );
+    }
+
+    @Override
+    public Node move( final NodeId nodeId, final NodePath parentNodePath, final MoveNodeListener moveListener )
+    {
         verifyContext();
         final MoveNodeResult moveNodeResult = MoveNodeCommand.create().
             id( nodeId ).
@@ -407,6 +412,7 @@ public class NodeServiceImpl
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.nodeStorageService ).
             searchService( this.nodeSearchService ).
+            moveListener( moveListener ).
             build().
             execute();
 
@@ -424,10 +430,16 @@ public class NodeServiceImpl
     @Override
     public Nodes move( final NodeIds nodeIds, final NodePath parentNodePath )
     {
+        return move( nodeIds, parentNodePath, null );
+    }
+
+    @Override
+    public Nodes move( final NodeIds nodeIds, final NodePath parentNodePath, final MoveNodeListener moveListener )
+    {
         verifyContext();
         return Nodes.from( nodeIds.
             stream().
-            map( nodeId -> this.move( nodeId, parentNodePath ) ).collect( Collectors.toList() ) );
+            map( nodeId -> this.move( nodeId, parentNodePath, moveListener ) ).collect( Collectors.toList() ) );
     }
 
 
