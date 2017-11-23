@@ -385,7 +385,7 @@ public final class ContentResource
         final MoveContentProgressListener listener = new MoveContentProgressListener( progressReporter );
 
         final ContentQuery allChildrenQuery = ContentQuery.create().
-            size( GET_ALL_SIZE_FLAG ).
+            size( 0 ).
             queryExpr( constructExprToFindChildren( contentToMoveList ) ).
             build();
         final long childrenIds = this.contentService.find( allChildrenQuery ).getTotalHits();
@@ -653,7 +653,7 @@ public final class ContentResource
             excludeChildrenIds( excludeChildrenIds ).
             contentPublishInfo( contentPublishInfo ).
             includeDependencies( true ).
-            pushListener( new PublishContentProgressListener( progressReporter ) ). //
+            pushListener( new PublishContentProgressListener( progressReporter ) ).
             build() );
 
         final ContentIds pushedContents = result.getPushedContents();
