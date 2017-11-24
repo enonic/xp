@@ -12,6 +12,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.status.StatusReporter;
 import com.enonic.xp.web.dispatch.DispatchServlet;
 
 @Component(immediate = true, service = JettyController.class, configurationPid = "com.enonic.xp.web.jetty")
@@ -25,6 +26,8 @@ public final class JettyActivator
     private JettyConfig config;
 
     private ServiceRegistration controllerReg;
+
+    private ServiceRegistration statusReporterReg;
 
     private DispatchServlet dispatchServlet;
 
@@ -43,6 +46,7 @@ public final class JettyActivator
         this.service.start();
 
         publishController();
+        publishStatusReporter();
     }
 
     @Deactivate
@@ -50,6 +54,7 @@ public final class JettyActivator
         throws Exception
     {
         this.controllerReg.unregister();
+        this.statusReporterReg.unregister();
         this.service.stop();
     }
 
@@ -77,6 +82,12 @@ public final class JettyActivator
         map.put( "http.port", this.config.http_port() );
 
         this.controllerReg = this.context.registerService( JettyController.class, this, map );
+    }
+
+    private void publishStatusReporter()
+    {
+        final HttpThreadPoolStatusReporter statusReporter = new HttpThreadPoolStatusReporter( this.service.server.getThreadPool() );
+        this.statusReporterReg = this.context.registerService( StatusReporter.class, statusReporter, new Hashtable<>() );
     }
 
     @Reference

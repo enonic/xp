@@ -1,0 +1,5 @@
+{
+  "threads": 8,
+  "idleThreads": 2,
+  "isLowOnThreads": false
+}
