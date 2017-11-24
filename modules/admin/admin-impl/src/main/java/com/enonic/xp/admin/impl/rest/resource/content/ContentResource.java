@@ -389,8 +389,9 @@ public final class ContentResource
             queryExpr( constructExprToFindChildren( contentToMoveList ) ).
             build();
         final long childrenIds = this.contentService.find( allChildrenQuery ).getTotalHits();
+        final int contentIds = contentToMoveList.getSize();
 
-        listener.setTotal( Math.toIntExact( childrenIds + 1 ) );
+        listener.setTotal( Math.toIntExact( childrenIds + contentIds ) );
         int moved = 0;
         int failed = 0;
         String contentName = "";

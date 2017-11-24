@@ -133,8 +133,6 @@ final class MoveContentCommand
             addMoved( contentId ).
             build();
 
-        nodesMoved( result.getMovedContents().getSize() );
-
         return result;
     }
 
