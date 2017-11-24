@@ -1,6 +1,7 @@
 package com.enonic.xp.query.aggregation;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.MoreObjects;
 
 @Beta
 public class TermsAggregationQuery
@@ -51,6 +52,19 @@ public class TermsAggregationQuery
     public long getMinDocCount()
     {
         return minDocCount;
+    }
+
+    @Override
+    public String toString()
+    {
+        return MoreObjects.toStringHelper( this ).omitNullValues().
+            add( "name", getName() ).
+            add( "fieldName", fieldName ).
+            add( "size", size ).
+            add( "orderDirection", orderDirection ).
+            add( "orderType", orderType ).
+            add( "minDocCount", minDocCount ).
+            toString();
     }
 
     public static Builder create( final String name )
@@ -114,14 +128,12 @@ public class TermsAggregationQuery
 
     public enum Direction
     {
-        ASC,
-        DESC
+        ASC, DESC
     }
 
     public enum Type
     {
-        TERM,
-        DOC_COUNT
+        TERM, DOC_COUNT
     }
 
 
