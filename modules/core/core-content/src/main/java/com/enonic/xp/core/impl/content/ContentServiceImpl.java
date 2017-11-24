@@ -60,6 +60,7 @@ import com.enonic.xp.content.GetPublishStatusesParams;
 import com.enonic.xp.content.GetPublishStatusesResult;
 import com.enonic.xp.content.HasUnpublishedChildrenParams;
 import com.enonic.xp.content.MoveContentParams;
+import com.enonic.xp.content.MoveContentsResult;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PublishStatus;
 import com.enonic.xp.content.PushContentParams;
@@ -332,7 +333,6 @@ public class ContentServiceImpl
             execute();
     }
 
-
     @Override
     public DeleteContentsResult deleteWithoutFetch( final DeleteContentParams params )
     {
@@ -589,7 +589,7 @@ public class ContentServiceImpl
     }
 
     @Override
-    public Content move( final MoveContentParams params )
+    public MoveContentsResult move( final MoveContentParams params )
     {
         return MoveContentCommand.create( params ).
             nodeService( this.nodeService ).
@@ -597,6 +597,7 @@ public class ContentServiceImpl
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             contentService( this ).
+            moveListener( params.getMoveContentListener() ).
             build().
             execute();
     }

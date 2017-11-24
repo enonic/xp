@@ -51,7 +51,7 @@ public interface ContentService
 
     Content duplicate( DuplicateContentParams params );
 
-    Content move( MoveContentParams params );
+    MoveContentsResult move( MoveContentParams params );
 
     Content setChildOrder( SetContentChildOrderParams params );
 

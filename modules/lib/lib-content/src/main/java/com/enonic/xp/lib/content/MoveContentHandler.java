@@ -8,6 +8,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.MoveContentParams;
+import com.enonic.xp.content.MoveContentsResult;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.lib.content.mapper.ContentMapper;
 
@@ -85,8 +86,12 @@ public final class MoveContentHandler
 
     private Content move( final ContentId sourceId, final ContentPath newPath )
     {
-        final MoveContentParams moveParams = new MoveContentParams( sourceId, newPath );
-        return contentService.move( moveParams );
+        final MoveContentParams moveParams = MoveContentParams.create().
+            contentId( sourceId ).
+            parentContentPath( newPath ).
+            build();
+        final MoveContentsResult result = contentService.move( moveParams );
+        return contentService.getById( result.getMovedContents().first() );
     }
 
     private Content rename( final ContentId sourceId, final String newName )
