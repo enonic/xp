@@ -1,6 +1,7 @@
 package com.enonic.xp.query.aggregation.metric;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.MoreObjects;
 
 import com.enonic.xp.query.aggregation.MetricAggregationQuery;
 
@@ -11,6 +12,15 @@ public class MinAggregationQuery
     private MinAggregationQuery( final Builder builder )
     {
         super( builder );
+    }
+
+    @Override
+    public String toString()
+    {
+        return MoreObjects.toStringHelper( this ).omitNullValues().
+            add( "name", getName() ).
+            add( "fieldName", getFieldName() ).
+            toString();
     }
 
     public static Builder create( final String name )

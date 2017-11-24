@@ -1,6 +1,7 @@
 package com.enonic.xp.query.aggregation;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.MoreObjects;
 
 @Beta
 public class HistogramAggregationQuery
@@ -38,6 +39,18 @@ public class HistogramAggregationQuery
     public Order getOrder()
     {
         return order;
+    }
+
+    @Override
+    public String toString()
+    {
+        return MoreObjects.toStringHelper( this ).omitNullValues().
+            add( "name", getName() ).
+            add( "fieldName", getFieldName() ).
+            add( "extendedBoundMin", extendedBoundMin ).
+            add( "extendedBoundMax", extendedBoundMax ).
+            add( "order", order ).
+            toString();
     }
 
     public static Builder create( final String name )
@@ -86,10 +99,7 @@ public class HistogramAggregationQuery
 
     public enum Order
     {
-        KEY_ASC,
-        KEY_DESC,
-        COUNT_ASC,
-        COUNT_DESC
+        KEY_ASC, KEY_DESC, COUNT_ASC, COUNT_DESC
     }
 
 

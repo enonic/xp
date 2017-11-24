@@ -7,6 +7,7 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentTranslatorParams;
+import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.core.impl.content.index.ContentIndexConfigFactory;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.data.PropertyPath;
@@ -19,6 +20,7 @@ import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeService;
+import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.SiteService;
@@ -28,6 +30,8 @@ public class CreateNodeParamsFactory
     private final CreateContentTranslatorParams params;
 
     private final ContentTypeService contentTypeService;
+
+    private final MixinService mixinService;
 
     private final PageDescriptorService pageDescriptorService;
 
@@ -43,10 +47,11 @@ public class CreateNodeParamsFactory
     {
         this.params = builder.params;
         this.contentTypeService = builder.contentTypeService;
+        this.mixinService = builder.mixinService;
+        this.siteService = builder.siteService;
         this.pageDescriptorService = builder.pageDescriptorService;
         this.partDescriptorService = builder.partDescriptorService;
         this.layoutDescriptorService = builder.layoutDescriptorService;
-        this.siteService = builder.siteService;
     }
 
     public CreateNodeParams produce()
@@ -54,16 +59,20 @@ public class CreateNodeParamsFactory
         final PropertyTree contentAsData = CONTENT_DATA_SERIALIZER.toCreateNodeData( params );
 
         final PropertySet pageSet = contentAsData.getPropertySet( PropertyPath.from( ContentPropertyNames.PAGE ) );
+        final PropertySet extraDataSet = contentAsData.getPropertySet( PropertyPath.from( ContentPropertyNames.EXTRA_DATA ) );
 
         final SiteConfigs siteConfigs = new SiteConfigsDataSerializer().fromProperties(
             contentAsData.getPropertySet( PropertyPath.from( ContentPropertyNames.DATA ) ) ).build();
 
         final Page page = pageSet != null ? ContentDataSerializer.PAGE_SERIALIZER.fromData( pageSet ) : null;
 
+        final ExtraDatas extraData = pageSet != null ? ContentDataSerializer.EXTRA_DATA_SERIALIZER.fromData( extraDataSet ) : null;
+
         final ContentIndexConfigFactory.Builder indexConfigFactoryBuilder = ContentIndexConfigFactory.create().
             contentTypeName( params.getType() ).
             siteConfigs( siteConfigs ).
             siteService( siteService ).
+            mixinService( mixinService ).
             contentTypeService( contentTypeService );
 
         if ( page != null )
@@ -73,6 +82,10 @@ public class CreateNodeParamsFactory
                 pageDescriptorService( pageDescriptorService ).
                 partDescriptorService( partDescriptorService ).
                 layoutDescriptorService( layoutDescriptorService );
+        }
+
+        if(extraData != null) {
+            indexConfigFactoryBuilder.extraDatas( extraData );
         }
 
         final IndexConfigDocument indexConfigDocument = indexConfigFactoryBuilder.build().produce();
@@ -116,6 +129,8 @@ public class CreateNodeParamsFactory
 
         private ContentTypeService contentTypeService;
 
+        private MixinService mixinService;
+
         private PageDescriptorService pageDescriptorService;
 
         private PartDescriptorService partDescriptorService;
@@ -132,6 +147,12 @@ public class CreateNodeParamsFactory
         Builder contentTypeService( final ContentTypeService value )
         {
             this.contentTypeService = value;
+            return this;
+        }
+
+        Builder mixinService( final MixinService value )
+        {
+            this.mixinService = value;
             return this;
         }
 
@@ -165,6 +186,7 @@ public class CreateNodeParamsFactory
             Preconditions.checkNotNull( contentTypeService );
             Preconditions.checkNotNull( pageDescriptorService );
             Preconditions.checkNotNull( siteService );
+            Preconditions.checkNotNull( mixinService );
         }
 
         public CreateNodeParamsFactory build()

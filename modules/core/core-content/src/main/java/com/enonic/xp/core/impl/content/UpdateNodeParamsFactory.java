@@ -16,6 +16,7 @@ import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeService;
+import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteService;
 
@@ -24,6 +25,8 @@ public class UpdateNodeParamsFactory
     private final UpdateContentTranslatorParams params;
 
     private final ContentTypeService contentTypeService;
+
+    private final MixinService mixinService;
 
     private final PageDescriptorService pageDescriptorService;
 
@@ -39,6 +42,7 @@ public class UpdateNodeParamsFactory
     {
         this.params = builder.params;
         this.contentTypeService = builder.contentTypeService;
+        this.mixinService = builder.mixinService;
         this.pageDescriptorService = builder.pageDescriptorService;
         this.partDescriptorService = builder.partDescriptorService;
         this.layoutDescriptorService = builder.layoutDescriptorService;
@@ -83,9 +87,11 @@ public class UpdateNodeParamsFactory
             partDescriptorService( partDescriptorService ).
             layoutDescriptorService( layoutDescriptorService ).
             siteService( this.siteService ).
+            mixinService( this.mixinService ).
             contentTypeName( content.getType() ).
             page( content.getPage() != null ? content.getPage() : null ).
             siteConfigs( content.isSite() ? ( (Site) content ).getSiteConfigs() : null ).
+            extraDatas( content.getAllExtraData()).
             build();
 
         return editableNode -> {
@@ -101,6 +107,8 @@ public class UpdateNodeParamsFactory
         private UpdateContentTranslatorParams params;
 
         private ContentTypeService contentTypeService;
+
+        private MixinService mixinService;
 
         private PageDescriptorService pageDescriptorService;
 
@@ -118,6 +126,12 @@ public class UpdateNodeParamsFactory
         Builder contentTypeService( final ContentTypeService value )
         {
             this.contentTypeService = value;
+            return this;
+        }
+
+        Builder mixinService( final MixinService value )
+        {
+            this.mixinService = value;
             return this;
         }
 
@@ -149,6 +163,7 @@ public class UpdateNodeParamsFactory
         {
             Preconditions.checkNotNull( params );
             Preconditions.checkNotNull( contentTypeService );
+            Preconditions.checkNotNull( mixinService );
             Preconditions.checkNotNull( pageDescriptorService );
             Preconditions.checkNotNull( partDescriptorService );
             Preconditions.checkNotNull( layoutDescriptorService );

@@ -1,6 +1,7 @@
 package com.enonic.xp.query.aggregation;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.MoreObjects;
 
 @Beta
 public class DateHistogramAggregationQuery
@@ -12,6 +13,16 @@ public class DateHistogramAggregationQuery
     {
         super( builder, builder.interval );
         this.format = builder.format;
+    }
+
+    @Override
+    public String toString()
+    {
+        return MoreObjects.toStringHelper( this ).omitNullValues().
+            add( "name", getName() ).
+            add( "fieldName", getFieldName() ).
+            add( "format", format ).
+            toString();
     }
 
     public String getFormat()

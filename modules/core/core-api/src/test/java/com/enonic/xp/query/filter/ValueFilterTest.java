@@ -25,4 +25,19 @@ public class ValueFilterTest
         assertEquals( 6, myFilter.getValues().size() );
         assertEquals( "myfield", myFilter.getFieldName() );
     }
+
+    @Test
+    public void testToString()
+    {
+        String[] strings = new String[]{"one", "two", "three"};
+
+        final ValueFilter filter = ValueFilter.create().
+            fieldName( "myfield" ).
+            addValues( strings ).
+            addValue( ValueFactory.newString( "four" ) ).
+            addValues( ValueFactory.newDouble( 2.0 ), ValueFactory.newBoolean( true ) ).
+            build();
+
+        assertEquals( "ValueFilter{fieldName=myfield, values=[2.0, true, one, four, two, three]}", filter.toString() );
+    }
 }
