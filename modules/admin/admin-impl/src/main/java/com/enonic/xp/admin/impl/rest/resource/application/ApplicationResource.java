@@ -560,6 +560,18 @@ public final class ApplicationResource
     }
 
     @Reference
+    public void setContentTypeService( final ContentTypeService contentTypeService )
+    {
+        this.contentTypeService = contentTypeService;
+    }
+
+    @Reference
+    public void setContentTypeIconUrlResolver( final ContentTypeIconUrlResolver contentTypeIconUrlResolver )
+    {
+        this.contentTypeIconUrlResolver = contentTypeIconUrlResolver;
+    }
+
+    @Reference
     public void setMacroDescriptorService( final MacroDescriptorService macroDescriptorService )
     {
         this.macroDescriptorService = macroDescriptorService;
