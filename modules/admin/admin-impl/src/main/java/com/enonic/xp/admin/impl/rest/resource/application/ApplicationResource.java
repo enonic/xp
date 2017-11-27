@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,8 +30,14 @@ import org.slf4j.LoggerFactory;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 
+import com.enonic.xp.admin.impl.json.content.page.PageDescriptorListJson;
+import com.enonic.xp.admin.impl.json.content.page.region.LayoutDescriptorsJson;
+import com.enonic.xp.admin.impl.json.content.page.region.PartDescriptorsJson;
+import com.enonic.xp.admin.impl.json.schema.content.ContentTypeSummaryListJson;
+import com.enonic.xp.admin.impl.json.schema.relationship.RelationshipTypeListJson;
 import com.enonic.xp.admin.impl.market.MarketService;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
+import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationInfoJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationInstallParams;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationInstallResultJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationInstalledJson;
@@ -40,10 +47,17 @@ import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationSucces
 import com.enonic.xp.admin.impl.rest.resource.application.json.GetMarketApplicationsJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ListApplicationJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.MarketApplicationsJson;
+import com.enonic.xp.admin.impl.rest.resource.macro.MacroIconResolver;
+import com.enonic.xp.admin.impl.rest.resource.macro.MacroIconUrlResolver;
+import com.enonic.xp.admin.impl.rest.resource.macro.json.MacrosJson;
+import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
+import com.enonic.xp.admin.impl.rest.resource.schema.relationship.RelationshipTypeIconResolver;
+import com.enonic.xp.admin.impl.rest.resource.schema.relationship.RelationshipTypeIconUrlResolver;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.app.ApplicationDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
@@ -51,6 +65,17 @@ import com.enonic.xp.auth.AuthDescriptor;
 import com.enonic.xp.auth.AuthDescriptorService;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.jaxrs.JaxRsComponent;
+import com.enonic.xp.macro.MacroDescriptorService;
+import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.page.PageDescriptors;
+import com.enonic.xp.region.LayoutDescriptorService;
+import com.enonic.xp.region.LayoutDescriptors;
+import com.enonic.xp.region.PartDescriptorService;
+import com.enonic.xp.region.PartDescriptors;
+import com.enonic.xp.schema.content.ContentTypeService;
+import com.enonic.xp.schema.content.ContentTypes;
+import com.enonic.xp.schema.relationship.RelationshipTypeService;
+import com.enonic.xp.schema.relationship.RelationshipTypes;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
@@ -82,7 +107,25 @@ public final class ApplicationResource
 
     private AuthDescriptorService authDescriptorService;
 
+    private PageDescriptorService pageDescriptorService;
+
+    private PartDescriptorService partDescriptorService;
+
+    private RelationshipTypeService relationshipTypeService;
+
+    private LayoutDescriptorService layoutDescriptorService;
+
+    private MacroDescriptorService macroDescriptorService;
+
+    private ContentTypeService contentTypeService;
+
     private ApplicationIconUrlResolver iconUrlResolver;
+
+    private RelationshipTypeIconUrlResolver relationshipTypeIconUrlResolver;
+
+    private MacroIconUrlResolver macroIconUrlResolver;
+
+    private ContentTypeIconUrlResolver contentTypeIconUrlResolver;
 
     public ApplicationResource()
     {
@@ -116,6 +159,39 @@ public final class ApplicationResource
         }
 
         return json;
+    }
+
+    @GET
+    @Path("info")
+    public ApplicationInfoJson info( @QueryParam("applicationKey") String applicationKey )
+    {
+        final ContentTypes contentTypes = contentTypeService.getByApplication( ApplicationKey.from( applicationKey ) );
+        final ContentTypeSummaryListJson contentTypeSummaryListJson =
+            new ContentTypeSummaryListJson( contentTypes, this.contentTypeIconUrlResolver );
+
+        final PageDescriptors pageDescriptors = this.pageDescriptorService.getByApplication( ApplicationKey.from( applicationKey ) );
+        final PageDescriptorListJson pageJson = new PageDescriptorListJson( PageDescriptors.from( pageDescriptors ) );
+
+        final PartDescriptors partDescriptors = partDescriptorService.getByApplication( ApplicationKey.from( applicationKey ) );
+        final PartDescriptorsJson partJson = new PartDescriptorsJson( partDescriptors );
+
+        final LayoutDescriptors layoutDescriptors = layoutDescriptorService.getByApplication( ApplicationKey.from( applicationKey ) );
+        final LayoutDescriptorsJson layoutJson = new LayoutDescriptorsJson( layoutDescriptors );
+
+        final RelationshipTypes relationshipTypes = relationshipTypeService.getByApplication( ApplicationKey.from( applicationKey ) );
+        final RelationshipTypeListJson relationshipTypeListJson =
+            new RelationshipTypeListJson( relationshipTypes, this.relationshipTypeIconUrlResolver );
+
+        final List<ApplicationKey> keys = Arrays.asList( ApplicationKey.from( applicationKey ), ApplicationKey.SYSTEM );
+        final MacrosJson macrosJson =
+            new MacrosJson( this.macroDescriptorService.getByApplications( ApplicationKeys.from( keys ) ), this.macroIconUrlResolver );
+
+        return new ApplicationInfoJson().setContentTypesJson( contentTypeSummaryListJson ).
+            setLayoutsJson( layoutJson ).
+            setMacrosJson( macrosJson ).
+            setPagesJson( pageJson ).
+            setPartsJson( partJson ).
+            setRelationsJson( relationshipTypeListJson );
     }
 
     @GET
@@ -463,6 +539,51 @@ public final class ApplicationResource
     public void setAuthDescriptorService( final AuthDescriptorService authDescriptorService )
     {
         this.authDescriptorService = authDescriptorService;
+    }
+
+    @Reference
+    public void setPageDescriptorService( final PageDescriptorService pageDescriptorService )
+    {
+        this.pageDescriptorService = pageDescriptorService;
+    }
+
+    @Reference
+    public void setPartDescriptorService( final PartDescriptorService partDescriptorService )
+    {
+        this.partDescriptorService = partDescriptorService;
+    }
+
+    @Reference
+    public void setLayoutDescriptorService( final LayoutDescriptorService layoutDescriptorService )
+    {
+        this.layoutDescriptorService = layoutDescriptorService;
+    }
+
+    @Reference
+    public void setContentTypeService( final ContentTypeService contentTypeService )
+    {
+        this.contentTypeService = contentTypeService;
+    }
+
+    @Reference
+    public void setContentTypeIconUrlResolver( final ContentTypeIconUrlResolver contentTypeIconUrlResolver )
+    {
+        this.contentTypeIconUrlResolver = contentTypeIconUrlResolver;
+    }
+
+    @Reference
+    public void setMacroDescriptorService( final MacroDescriptorService macroDescriptorService )
+    {
+        this.macroDescriptorService = macroDescriptorService;
+        this.macroIconUrlResolver = new MacroIconUrlResolver( new MacroIconResolver( this.macroDescriptorService ) );
+    }
+
+    @Reference
+    public void setRelationshipTypeService( final RelationshipTypeService relationshipTypeService )
+    {
+        this.relationshipTypeService = relationshipTypeService;
+        this.relationshipTypeIconUrlResolver =
+            new RelationshipTypeIconUrlResolver( new RelationshipTypeIconResolver( relationshipTypeService ) );
     }
 }
 
