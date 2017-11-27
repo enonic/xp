@@ -12,6 +12,7 @@ import org.elasticsearch.action.admin.cluster.snapshots.get.GetSnapshotsRequest;
 import org.elasticsearch.action.admin.cluster.snapshots.get.GetSnapshotsRequestBuilder;
 import org.elasticsearch.action.admin.cluster.snapshots.get.GetSnapshotsResponse;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.cluster.metadata.RepositoryMetaData;
 import org.elasticsearch.common.collect.ImmutableList;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.repositories.RepositoryException;
@@ -157,17 +158,45 @@ public class SnapshotServiceImpl
 
     private boolean snapshotRepositoryExists()
     {
-        final GetRepositoriesRequest getRepositoriesRequest = new GetRepositoriesRequest( new String[]{SNAPSHOT_REPOSITORY_NAME} );
+        final RepositoryMetaData snapshotRepo = getSnapshotRepo();
 
-        try
-        {
-            final GetRepositoriesResponse response = this.client.admin().cluster().getRepositories( getRepositoriesRequest ).actionGet();
-            return !response.repositories().isEmpty();
-        }
-        catch ( RepositoryException e )
+        if ( snapshotRepo == null )
         {
             return false;
         }
+
+        final boolean sameAsConfiguredLocation = snapshotRepo.settings().get( "location" ).equals( getSnapshotsDir().getPath() );
+
+        if ( !sameAsConfiguredLocation )
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    private RepositoryMetaData getSnapshotRepo()
+    {
+        try
+        {
+            final GetRepositoriesRequest getRepositoriesRequest = new GetRepositoriesRequest( new String[]{SNAPSHOT_REPOSITORY_NAME} );
+
+            final GetRepositoriesResponse response = this.client.admin().cluster().getRepositories( getRepositoriesRequest ).actionGet();
+
+            for ( final RepositoryMetaData repo : response.repositories() )
+            {
+                if ( repo.name().equals( SNAPSHOT_REPOSITORY_NAME ) )
+                {
+                    return repo;
+                }
+            }
+        }
+        catch ( RepositoryException e )
+        {
+            return null;
+        }
+
+        return null;
     }
 
     private void registerRepository()
