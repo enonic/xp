@@ -81,14 +81,6 @@ public class ApplicationResourceTest
 
     private ContentTypeService contentTypeService;
 
-    private ApplicationIconUrlResolver iconUrlResolver;
-
-    private RelationshipTypeIconUrlResolver relationshipTypeIconUrlResolver;
-
-    private MacroIconUrlResolver macroIconUrlResolver;
-
-    private ContentTypeIconUrlResolver contentTypeIconUrlResolver;
-
     @Test
     public void get_application_list()
         throws Exception
@@ -413,7 +405,6 @@ public class ApplicationResourceTest
             macroDescriptors );
     }
 
-
     @Override
     protected Object getResourceInstance()
     {
@@ -429,11 +420,6 @@ public class ApplicationResourceTest
         this.relationshipTypeService = Mockito.mock( RelationshipTypeService.class );
         this.macroDescriptorService = Mockito.mock( MacroDescriptorService.class );
 
-        this.contentTypeIconUrlResolver = new ContentTypeIconUrlResolver( new ContentTypeIconResolver( this.contentTypeService ) );
-        this.relationshipTypeIconUrlResolver =
-            new RelationshipTypeIconUrlResolver( new RelationshipTypeIconResolver( this.relationshipTypeService ) );
-        this.macroIconUrlResolver = new MacroIconUrlResolver( new MacroIconResolver( this.macroDescriptorService ) );
-
         final ApplicationResource resource = new ApplicationResource();
         resource.setApplicationService( this.applicationService );
         resource.setSiteService( this.siteService );
@@ -441,7 +427,6 @@ public class ApplicationResourceTest
         resource.setAuthDescriptorService( this.authDescriptorService );
         resource.setApplicationDescriptorService( this.applicationDescriptorService );
         resource.setContentTypeService( this.contentTypeService );
-        resource.setContentTypeIconUrlResolver( this.contentTypeIconUrlResolver );
         resource.setPageDescriptorService( this.pageDescriptorService );
         resource.setPartDescriptorService( this.partDescriptorService );
         resource.setLayoutDescriptorService( this.layoutDescriptorService );
