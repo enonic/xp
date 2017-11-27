@@ -6,6 +6,7 @@ import com.enonic.xp.core.impl.content.index.IndexConfigVisitor;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexValueProcessors;
 import com.enonic.xp.index.PatternIndexConfigDocument;
+import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.region.Component;
@@ -121,32 +122,39 @@ public class PageRegionsConfigProcessor
         components.forEach( component -> {
             if ( PartComponentType.INSTANCE == component.getType() )
             {
-                final String partComponentPath = String.join( ELEMENT_DIVIDER, path, String.join( ELEMENT_DIVIDER, COMPONENT, PART_COMPONENT ));
+                final String partComponentPath =
+                    String.join( ELEMENT_DIVIDER, path, String.join( ELEMENT_DIVIDER, COMPONENT, PART_COMPONENT ) );
 
-                final PartDescriptor partDescriptor = partDescriptorService.getByKey( ( (PartComponent) component ).getDescriptor() );
+                final DescriptorKey descriptorKey = ( (PartComponent) component ).getDescriptor();
 
-                final IndexConfigVisitor indexConfigVisitor =
-                    new IndexConfigVisitor( String.join( ELEMENT_DIVIDER, partComponentPath, CONFIG ), builder );
-                indexConfigVisitor.traverse( partDescriptor.getConfig() );
+                if ( descriptorKey != null )
+                {
+                    final PartDescriptor partDescriptor = partDescriptorService.getByKey( ( (PartComponent) component ).getDescriptor() );
 
+                    final IndexConfigVisitor indexConfigVisitor =
+                        new IndexConfigVisitor( String.join( ELEMENT_DIVIDER, partComponentPath, CONFIG ), builder );
+                    indexConfigVisitor.traverse( partDescriptor.getConfig() );
+                }
             }
             if ( LayoutComponentType.INSTANCE == component.getType() )
             {
-                final String layoutComponentPath = String.join( ELEMENT_DIVIDER, path, String.join( ELEMENT_DIVIDER, COMPONENT, LAYOUT_COMPONENT ) );
+                final String layoutComponentPath =
+                    String.join( ELEMENT_DIVIDER, path, String.join( ELEMENT_DIVIDER, COMPONENT, LAYOUT_COMPONENT ) );
 
-                final LayoutDescriptor layoutDescriptor =
-                    layoutDescriptorService.getByKey( ( (LayoutComponent) component ).getDescriptor() );
+                final DescriptorKey descriptorKey = ( (LayoutComponent) component ).getDescriptor();
 
-                final IndexConfigVisitor indexConfigVisitor =
-                    new IndexConfigVisitor( String.join( ELEMENT_DIVIDER, layoutComponentPath, CONFIG ), builder );
-                indexConfigVisitor.traverse( layoutDescriptor.getConfig() );
+                if ( descriptorKey != null )
+                {
+                    final LayoutDescriptor layoutDescriptor =
+                        layoutDescriptorService.getByKey( ( (LayoutComponent) component ).getDescriptor() );
 
-                parseLayoutRegions( ( (LayoutComponent) component ).getRegions(), builder, layoutComponentPath );
+                    final IndexConfigVisitor indexConfigVisitor =
+                        new IndexConfigVisitor( String.join( ELEMENT_DIVIDER, layoutComponentPath, CONFIG ), builder );
+                    indexConfigVisitor.traverse( layoutDescriptor.getConfig() );
+
+                    parseLayoutRegions( ( (LayoutComponent) component ).getRegions(), builder, layoutComponentPath );
+                }
             }
         } );
     }
-
-
-
-
 }
