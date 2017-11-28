@@ -64,7 +64,7 @@ public final class ScriptExecutorImpl
 
     private JavascriptHelper javascriptHelper;
 
-    private final static Striped<Lock> requireLocks = Striped.lazyWeakLock( 100 );
+    private final static Striped<Lock> requireLocks = Striped.lazyWeakLock( 1000 );
 
     public void setScriptSettings( final ScriptSettings scriptSettings )
     {
@@ -163,30 +163,34 @@ public final class ScriptExecutorImpl
         final Lock lock = requireLocks.get( key );
         try
         {
-            if ( !lock.tryLock( 60, TimeUnit.SECONDS ) )
+            if ( lock.tryLock( 5, TimeUnit.MINUTES ) )
+            {
+                try
+                {
+                    cached = this.exportsCache.get( key );
+                    final Resource resource = loadIfNeeded( key, cached );
+                    if ( resource == null )
+                    {
+                        return cached;
+                    }
+
+                    final Object result = requireJsOrJson( resource );
+                    this.exportsCache.put( resource, result );
+                    return result;
+                }
+                finally
+                {
+                    lock.unlock();
+                }
+            }
+            else
             {
                 throw new RuntimeException( "Script require failed: [" + key + "]" );
             }
-
-            cached = this.exportsCache.get( key );
-            final Resource resource = loadIfNeeded( key, cached );
-            if ( resource == null )
-            {
-                return cached;
-            }
-
-            final Object result = requireJsOrJson( resource );
-            this.exportsCache.put( resource, result );
-            return result;
-
         }
         catch ( InterruptedException e )
         {
             throw new RuntimeException( "Script require failed: [" + key + "]", e );
-        }
-        finally
-        {
-            lock.unlock();
         }
     }
 
