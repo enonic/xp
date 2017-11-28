@@ -25,6 +25,14 @@ import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.auth.AuthDescriptor;
 import com.enonic.xp.auth.AuthDescriptorService;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentQuery;
+import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.Contents;
+import com.enonic.xp.content.FindContentIdsByQueryResult;
+import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
@@ -81,6 +89,8 @@ public class ApplicationResourceTest
 
     private ContentTypeService contentTypeService;
 
+    private ContentService contentService;
+
     @Test
     public void get_application_list()
         throws Exception
@@ -113,6 +123,7 @@ public class ApplicationResourceTest
         mockLayoutDescriptors( applicationKey );
         mockRelationshipTypes( applicationKey );
         mockMacros( applicationKey );
+        mockReferences( applicationKey );
 
         String response = request().
             path( "application/info" ).
@@ -301,8 +312,8 @@ public class ApplicationResourceTest
         final ContentType contentType =
             ContentType.create().name( ContentTypeName.media() ).form( Form.create().build() ).setAbstract().setFinal().allowChildContent(
                 true ).setBuiltIn().contentDisplayNameScript( "contentDisplayNameScript" ).metadata( null ).displayName(
-                "displayName" ).description( "description" ).modifiedTime( Instant.ofEpochSecond( 1000 ) ).createdTime( Instant.ofEpochSecond( 1000 ) ).creator(
-                PrincipalKey.ofAnonymous() ).modifier( PrincipalKey.ofAnonymous() ).build();
+                "displayName" ).description( "description" ).modifiedTime( Instant.ofEpochSecond( 1000 ) ).createdTime(
+                Instant.ofEpochSecond( 1000 ) ).creator( PrincipalKey.ofAnonymous() ).modifier( PrincipalKey.ofAnonymous() ).build();
 
         final ContentTypes contentTypes = ContentTypes.from( contentType );
         Mockito.when( contentTypeService.getByApplication( applicationKey ) ).thenReturn( contentTypes );
@@ -405,6 +416,35 @@ public class ApplicationResourceTest
             macroDescriptors );
     }
 
+    private void mockReferences( final ApplicationKey applicationKey )
+    {
+        final Content content1 = Content.create().
+            id( ContentId.from( "id1" ) ).
+            name( "name1" ).
+            displayName( "My Content 1" ).
+            parentPath( ContentPath.from( "/a/b" ) ).
+            modifier( PrincipalKey.from( "user:system:admin" ) ).
+            modifiedTime( Instant.ofEpochSecond( 0 ) ).
+            creator( PrincipalKey.from( "user:system:admin" ) ).
+            createdTime( Instant.ofEpochSecond( 0 ) ).
+            build();
+
+        final Content content2 = Content.create().
+            id( ContentId.from( "id2" ) ).
+            name( "name2" ).
+            displayName( "My Content 2" ).
+            parentPath( ContentPath.from( "/a/c" ) ).
+            modifier( PrincipalKey.from( "user:system:admin" ) ).
+            modifiedTime( Instant.ofEpochSecond( 0 ) ).
+            creator( PrincipalKey.from( "user:system:admin" ) ).
+            createdTime( Instant.ofEpochSecond( 0 ) ).
+            build();
+
+        final Contents contents = Contents.from( content1, content2 );
+
+        Mockito.when( this.contentService.findByApplicationKey( applicationKey ) ).thenReturn( contents );
+    }
+
     @Override
     protected Object getResourceInstance()
     {
@@ -419,6 +459,7 @@ public class ApplicationResourceTest
         this.layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
         this.relationshipTypeService = Mockito.mock( RelationshipTypeService.class );
         this.macroDescriptorService = Mockito.mock( MacroDescriptorService.class );
+        this.contentService = Mockito.mock( ContentService.class );
 
         final ApplicationResource resource = new ApplicationResource();
         resource.setApplicationService( this.applicationService );
@@ -432,6 +473,7 @@ public class ApplicationResourceTest
         resource.setLayoutDescriptorService( this.layoutDescriptorService );
         resource.setRelationshipTypeService( this.relationshipTypeService );
         resource.setMacroDescriptorService( this.macroDescriptorService );
+        resource.setContentService( this.contentService );
 
         return resource;
     }

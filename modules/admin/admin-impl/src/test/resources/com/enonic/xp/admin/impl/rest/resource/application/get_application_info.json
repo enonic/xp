@@ -136,6 +136,17 @@
       }
     ]
   },
+  "referencesJson" : {
+    "references" : [ {
+      "displayName" : "My Content 1",
+      "path" : "/a/b/name1",
+      "type" : "base:unstructured"
+    }, {
+      "displayName" : "My Content 2",
+      "path" : "/a/c/name2",
+      "type" : "base:unstructured"
+    } ]
+  },
   "relationsJson": {
     "relationshipTypes": [
       {
