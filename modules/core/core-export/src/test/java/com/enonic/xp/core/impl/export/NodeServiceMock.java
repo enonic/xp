@@ -18,6 +18,7 @@ import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
+import com.enonic.xp.node.DuplicateNodeListener;
 import com.enonic.xp.node.DuplicateNodeProcessor;
 import com.enonic.xp.node.EditableNode;
 import com.enonic.xp.node.FindNodePathsByQueryResult;
@@ -248,19 +249,13 @@ class NodeServiceMock
     }
 
     @Override
-    public Node duplicate( final NodeId nodeId, final DuplicateNodeProcessor processor )
-    {
-        throw new UnsupportedOperationException( "Not implemented in mock" );
-    }
-
-    @Override
-    public Node move( final NodeId nodeId, final NodePath parentNodePath )
+    public Node duplicate( final NodeId nodeId, final DuplicateNodeProcessor processor, final DuplicateNodeListener duplicateListener )
     {
         return null;
     }
 
     @Override
-    public Node move( final NodeId nodeId, final NodePath parentNodePath, MoveNodeListener moveListener )
+    public Node move( final NodeId nodeId, final NodePath parentNodePath, final MoveNodeListener moveListener )
     {
         return null;
     }
@@ -413,12 +408,6 @@ class NodeServiceMock
 
     @Override
     public boolean nodeExists( final NodePath nodePath )
-    {
-        throw new UnsupportedOperationException( "Not implemented in mock" );
-    }
-
-    @Override
-    public Nodes move( final NodeIds nodeIds, final NodePath parentNodePath )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }

@@ -129,6 +129,7 @@ import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.content.DuplicateContentParams;
+import com.enonic.xp.content.DuplicateContentsResult;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.content.FindContentIdsByParentResult;
@@ -360,11 +361,61 @@ public final class ContentResource
 
     @POST
     @Path("duplicate")
-    public ContentJson duplicate( final DuplicateContentJson params )
+    public TaskResultJson duplicate( final DuplicateContentJson params )
     {
-        final Content duplicatedContent = contentService.duplicate( new DuplicateContentParams( params.getContentId() ) );
+        final RunnableTask runnableTask = ( id, progressReporter ) -> duplicateTask( params, progressReporter );
+        final TaskId taskId = taskService.submitTask( runnableTask, "Duplicate content" );
+        return new TaskResultJson( taskId );
+    }
 
-        return new ContentJson( duplicatedContent, contentIconUrlResolver, principalsResolver );
+    private void duplicateTask( final DuplicateContentJson params, final ProgressReporter progressReporter )
+    {
+        final ContentId contentToDuplicate = params.getContentId();
+        final Context ctx = ContextAccessor.current();
+        progressReporter.info( "Duplicating content" );
+
+        final DuplicateContentProgressListener listener = new DuplicateContentProgressListener( progressReporter );
+
+        final ContentQuery allChildrenQuery = ContentQuery.create().
+            size( 0 ).
+            queryExpr( constructExprToFindChildren( ContentIds.from( contentToDuplicate ) ) ).
+            build();
+        final long childrenIds = this.contentService.find( allChildrenQuery ).getTotalHits();
+
+        listener.setTotal( Math.toIntExact( childrenIds + 1 ) );
+        String contentName = "";
+        boolean moved = true;
+
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+        final DuplicateContentParams duplicateContentParams = DuplicateContentParams.create().
+            contentId( contentToDuplicate ).
+            creator( authInfo.getUser().getKey() ).
+            duplicateContentListener( listener ).
+            build();
+        try
+        {
+            final DuplicateContentsResult result = contentService.duplicate( duplicateContentParams );
+
+            contentName = result.getContentName();
+        }
+        catch ( final Exception e )
+        {
+            moved = false;
+        }
+
+        progressReporter.info( getDuplicateMessage( moved, contentName ) );
+    }
+
+    private String getDuplicateMessage( final boolean moved, final String contentName )
+    {
+        if ( moved )
+        {
+            return "\"" + contentName + "\" item is duplicated.";
+        }
+        else
+        {
+            return "Content could not be duplicated.";
+        }
     }
 
     @POST
@@ -427,7 +478,7 @@ public final class ContentResource
         switch ( total )
         {
             case 0:
-                return "The item is already moved";
+                return "The item is already moved.";
 
             case 1:
                 if ( moved == 1 )
@@ -436,7 +487,7 @@ public final class ContentResource
                 }
                 else
                 {
-                    return "Content could not be moved";
+                    return "Content could not be moved.";
                 }
 
             default:

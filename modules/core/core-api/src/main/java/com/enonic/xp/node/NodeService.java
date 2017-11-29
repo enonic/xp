@@ -32,13 +32,9 @@ public interface NodeService
 
     Nodes getByPaths( NodePaths paths );
 
-    Node duplicate( NodeId nodeId, DuplicateNodeProcessor processor );
-
-    Node move( NodeId nodeId, NodePath parentNodePath );
+    Node duplicate( NodeId nodeId, DuplicateNodeProcessor processor, DuplicateNodeListener duplicateListener );
 
     Node move( NodeId nodeId, NodePath parentNodePath, MoveNodeListener moveListener );
-
-    Nodes move( NodeIds nodeIds, NodePath parentNodePath );
 
     Nodes move( NodeIds nodeIds, NodePath parentNodePath, MoveNodeListener moveListener );
 

@@ -43,6 +43,7 @@ import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.content.DuplicateContentParams;
+import com.enonic.xp.content.DuplicateContentsResult;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.content.FindContentByQueryParams;
@@ -582,10 +583,19 @@ public class ContentServiceImpl
     }
 
     @Override
-    public Content duplicate( final DuplicateContentParams params )
+    public DuplicateContentsResult duplicate( final DuplicateContentParams params )
     {
-        final Node createdNode = nodeService.duplicate( NodeId.from( params.getContentId() ), new DuplicateContentProcessor() );
-        return translator.fromNode( createdNode, true );
+        return DuplicateContentCommand.create( params ).
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            translator( this.translator ).
+            eventPublisher( this.eventPublisher ).
+            contentService( this ).
+            duplicateListener( params.getDuplicateContentListener() ).
+            build().
+            execute();
+//        final Node createdNode = nodeService.duplicate( NodeId.from( params.getContentId() ), new DuplicateContentProcessor() );
+//        return translator.fromNode( createdNode, true );
     }
 
     @Override

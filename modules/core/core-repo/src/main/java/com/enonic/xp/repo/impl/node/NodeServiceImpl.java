@@ -14,6 +14,7 @@ import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
+import com.enonic.xp.node.DuplicateNodeListener;
 import com.enonic.xp.node.DuplicateNodeProcessor;
 import com.enonic.xp.node.FindNodePathsByQueryResult;
 import com.enonic.xp.node.FindNodesByMultiRepoQueryResult;
@@ -376,7 +377,7 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Node duplicate( final NodeId nodeId, final DuplicateNodeProcessor processor )
+    public Node duplicate( final NodeId nodeId, final DuplicateNodeProcessor processor, final DuplicateNodeListener duplicateListener )
     {
         verifyContext();
         final Node duplicatedNode = DuplicateNodeCommand.create().
@@ -386,6 +387,7 @@ public class NodeServiceImpl
             binaryService( this.binaryService ).
             storageService( this.nodeStorageService ).
             searchService( this.nodeSearchService ).
+            duplicateListener( duplicateListener ).
             build().
             execute();
 
@@ -394,12 +396,6 @@ public class NodeServiceImpl
             this.eventPublisher.publish( NodeEvents.duplicated( duplicatedNode ) );
         }
         return duplicatedNode;
-    }
-
-    @Override
-    public Node move( final NodeId nodeId, final NodePath parentNodePath )
-    {
-        return move( nodeId, parentNodePath, null );
     }
 
     @Override
@@ -425,12 +421,6 @@ public class NodeServiceImpl
         {
             return moveNodeResult.getSourceNode();
         }
-    }
-
-    @Override
-    public Nodes move( final NodeIds nodeIds, final NodePath parentNodePath )
-    {
-        return move( nodeIds, parentNodePath, null );
     }
 
     @Override

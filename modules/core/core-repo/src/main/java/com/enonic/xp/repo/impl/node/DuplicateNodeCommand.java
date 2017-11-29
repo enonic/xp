@@ -7,10 +7,12 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.DuplicateNodeListener;
 import com.enonic.xp.node.DuplicateNodeProcessor;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.InsertManualStrategy;
+import com.enonic.xp.node.MoveNodeListener;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
@@ -32,12 +34,15 @@ public final class DuplicateNodeCommand
 
     private final DuplicateNodeProcessor processor;
 
+    private final DuplicateNodeListener duplicateListener;
+
     private DuplicateNodeCommand( final Builder builder )
     {
         super( builder );
         this.nodeId = builder.id;
         this.binaryService = builder.binaryService;
         this.processor = builder.processor;
+        this.duplicateListener = builder.duplicateListener;
     }
 
     public static Builder create()
@@ -51,7 +56,7 @@ public final class DuplicateNodeCommand
 
         if ( existingNode == null )
         {
-            throw new NodeNotFoundException( "cannot duplicate node with id [" + nodeId + "]" );
+            throw new NodeNotFoundException( "Cannot duplicate node with id [" + nodeId + "]" );
         }
 
         if ( existingNode.isRoot() )
@@ -73,6 +78,8 @@ public final class DuplicateNodeCommand
             binaryService( binaryService ).
             build().
             execute();
+
+        nodeDuplicated( 1 );
 
         final NodeReferenceUpdatesHolder.Builder builder = NodeReferenceUpdatesHolder.create().
             add( existingNode.id(), duplicatedNode.id() );
@@ -138,6 +145,8 @@ public final class DuplicateNodeCommand
             builder.add( node.id(), newChildNode.id() );
 
             storeChildNodes( node, newChildNode, builder );
+
+            nodeDuplicated( 1 );
         }
     }
 
@@ -236,6 +245,14 @@ public final class DuplicateNodeCommand
         return newNodeName;
     }
 
+    private void nodeDuplicated( final int count )
+    {
+        if ( duplicateListener != null )
+        {
+            duplicateListener.nodesDuplicated( count );
+        }
+    }
+
     public static class Builder
         extends AbstractNodeCommand.Builder<Builder>
     {
@@ -244,6 +261,8 @@ public final class DuplicateNodeCommand
         private BinaryService binaryService;
 
         private DuplicateNodeProcessor processor;
+
+        private DuplicateNodeListener duplicateListener;
 
         Builder()
         {
@@ -271,6 +290,12 @@ public final class DuplicateNodeCommand
         public Builder processor( final DuplicateNodeProcessor processor )
         {
             this.processor = processor;
+            return this;
+        }
+
+        public Builder duplicateListener( final DuplicateNodeListener duplicateListener )
+        {
+            this.duplicateListener = duplicateListener;
             return this;
         }
 
