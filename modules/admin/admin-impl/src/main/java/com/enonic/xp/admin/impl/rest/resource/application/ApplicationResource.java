@@ -44,6 +44,7 @@ import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationInstal
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationListParams;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationSuccessJson;
+import com.enonic.xp.admin.impl.rest.resource.application.json.ContentReferencesJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.GetMarketApplicationsJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ListApplicationJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.MarketApplicationsJson;
@@ -64,11 +65,18 @@ import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.auth.AuthDescriptor;
 import com.enonic.xp.auth.AuthDescriptorService;
+import com.enonic.xp.content.ContentPropertyNames;
+import com.enonic.xp.content.ContentQuery;
+import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.Contents;
+import com.enonic.xp.content.FindContentByQueryParams;
+import com.enonic.xp.content.FindContentByQueryResult;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.macro.MacroDescriptorService;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageDescriptors;
+import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.LayoutDescriptors;
 import com.enonic.xp.region.PartDescriptorService;
@@ -120,6 +128,8 @@ public final class ApplicationResource
 
     private ContentTypeService contentTypeService;
 
+    private ContentService contentService;
+
     private ApplicationIconUrlResolver iconUrlResolver;
 
     private RelationshipTypeIconUrlResolver relationshipTypeIconUrlResolver;
@@ -164,35 +174,41 @@ public final class ApplicationResource
 
     @GET
     @Path("info")
-    public ApplicationInfoJson info( @QueryParam("applicationKey") String applicationKey )
+    public ApplicationInfoJson info( @QueryParam("applicationKey") String key )
     {
-        final ContentTypes contentTypes = contentTypeService.getByApplication( ApplicationKey.from( applicationKey ) );
+        final ApplicationKey applicationKey = ApplicationKey.from( key );
+
+        final ContentTypes contentTypes = contentTypeService.getByApplication( applicationKey );
         final ContentTypeSummaryListJson contentTypeSummaryListJson =
             new ContentTypeSummaryListJson( contentTypes, this.contentTypeIconUrlResolver );
 
-        final PageDescriptors pageDescriptors = this.pageDescriptorService.getByApplication( ApplicationKey.from( applicationKey ) );
+        final PageDescriptors pageDescriptors = this.pageDescriptorService.getByApplication( applicationKey );
         final PageDescriptorListJson pageJson = new PageDescriptorListJson( PageDescriptors.from( pageDescriptors ) );
 
-        final PartDescriptors partDescriptors = partDescriptorService.getByApplication( ApplicationKey.from( applicationKey ) );
+        final PartDescriptors partDescriptors = partDescriptorService.getByApplication( applicationKey );
         final PartDescriptorsJson partJson = new PartDescriptorsJson( partDescriptors );
 
-        final LayoutDescriptors layoutDescriptors = layoutDescriptorService.getByApplication( ApplicationKey.from( applicationKey ) );
+        final LayoutDescriptors layoutDescriptors = layoutDescriptorService.getByApplication( applicationKey );
         final LayoutDescriptorsJson layoutJson = new LayoutDescriptorsJson( layoutDescriptors );
 
-        final RelationshipTypes relationshipTypes = relationshipTypeService.getByApplication( ApplicationKey.from( applicationKey ) );
+        final RelationshipTypes relationshipTypes = relationshipTypeService.getByApplication( applicationKey );
         final RelationshipTypeListJson relationshipTypeListJson =
             new RelationshipTypeListJson( relationshipTypes, this.relationshipTypeIconUrlResolver );
 
-        final List<ApplicationKey> keys = Arrays.asList( ApplicationKey.from( applicationKey ), ApplicationKey.SYSTEM );
+        final List<ApplicationKey> keys = Arrays.asList( applicationKey, ApplicationKey.SYSTEM );
         final MacrosJson macrosJson =
             new MacrosJson( this.macroDescriptorService.getByApplications( ApplicationKeys.from( keys ) ), this.macroIconUrlResolver );
+
+        final ContentReferencesJson referencesJson =
+            new ContentReferencesJson( this.contentService.findByApplicationKey( applicationKey ) );
 
         return new ApplicationInfoJson().setContentTypesJson( contentTypeSummaryListJson ).
             setLayoutsJson( layoutJson ).
             setMacrosJson( macrosJson ).
             setPagesJson( pageJson ).
             setPartsJson( partJson ).
-            setRelationsJson( relationshipTypeListJson );
+            setRelationsJson( relationshipTypeListJson ).
+            setReferencesJson( referencesJson );
     }
 
     @GET
@@ -561,12 +577,19 @@ public final class ApplicationResource
     }
 
     @Reference
+    public void setContentService( final ContentService contentService )
+    {
+        this.contentService = contentService;
+    }
+
+    @Reference
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
         this.contentTypeService = contentTypeService;
         this.contentTypeIconUrlResolver = new ContentTypeIconUrlResolver( new ContentTypeIconResolver( contentTypeService ) );
     }
 
+    @Reference
     public void setMacroDescriptorService( final MacroDescriptorService macroDescriptorService )
     {
         this.macroDescriptorService = macroDescriptorService;

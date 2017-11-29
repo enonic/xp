@@ -19,6 +19,8 @@ public class ApplicationInfoJson
 
     private RelationshipTypeListJson relationsJson;
 
+    private ContentReferencesJson referencesJson;
+
     private MacrosJson macrosJson;
 
     public ContentTypeSummaryListJson getContentTypesJson()
@@ -51,6 +53,11 @@ public class ApplicationInfoJson
         return macrosJson;
     }
 
+    public ContentReferencesJson getReferencesJson()
+    {
+        return referencesJson;
+    }
+
     public ApplicationInfoJson setContentTypesJson( final ContentTypeSummaryListJson contentTypesJson )
     {
         this.contentTypesJson = contentTypesJson;
@@ -78,6 +85,12 @@ public class ApplicationInfoJson
     public ApplicationInfoJson setRelationsJson( final RelationshipTypeListJson relationsJson )
     {
         this.relationsJson = relationsJson;
+        return this;
+    }
+
+    public ApplicationInfoJson setReferencesJson( final ContentReferencesJson referencesJson )
+    {
+        this.referencesJson = referencesJson;
         return this;
     }
 
