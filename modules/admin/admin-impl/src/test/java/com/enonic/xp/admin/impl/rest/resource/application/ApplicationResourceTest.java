@@ -1,6 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.application;
 
 import java.time.Instant;
+import java.util.Arrays;
 
 import javax.ws.rs.core.MediaType;
 
@@ -24,6 +25,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
+import com.enonic.xp.descriptor.Descriptors;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
@@ -56,6 +58,8 @@ import com.enonic.xp.schema.relationship.RelationshipTypes;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
+import com.enonic.xp.task.TaskDescriptor;
+import com.enonic.xp.task.TaskDescriptorService;
 
 public class ApplicationResourceTest
     extends AdminResourceTestSupport
@@ -85,6 +89,8 @@ public class ApplicationResourceTest
     private ContentService contentService;
 
     private ResourceService resourceService;
+
+    private TaskDescriptorService taskDescriptorService;
 
     @Test
     public void get_application_list()
@@ -119,6 +125,7 @@ public class ApplicationResourceTest
         mockRelationshipTypes( applicationKey );
         mockMacros( applicationKey );
         mockReferences( applicationKey );
+        mockTasks(applicationKey);
         mockDeployment( applicationKey );
 
         String response = request().
@@ -442,6 +449,25 @@ public class ApplicationResourceTest
         Mockito.when( this.contentService.findByApplicationKey( applicationKey ) ).thenReturn( contents );
     }
 
+    private void mockTasks( final ApplicationKey applicationKey )
+    {
+        final TaskDescriptor taskDescriptor1 = TaskDescriptor.create().
+            key( DescriptorKey.from( ApplicationKey.SYSTEM, "task1" ) ).
+            description( "description1" ).
+            config( Form.create().build() ).
+            build();
+
+        final TaskDescriptor taskDescriptor2 = TaskDescriptor.create().
+            key( DescriptorKey.from( ApplicationKey.SYSTEM, "task2" ) ).
+            description( "description2" ).
+            config( Form.create().build() ).
+            build();
+
+        final Descriptors<TaskDescriptor> descriptors = Descriptors.from( taskDescriptor1, taskDescriptor2 );
+
+        Mockito.when( this.taskDescriptorService.getTasks( applicationKey ) ).thenReturn( descriptors );
+    }
+
     private void mockDeployment( final ApplicationKey applicationKey )
     {
         final Resource resourceMock = Mockito.mock( Resource.class );
@@ -466,6 +492,7 @@ public class ApplicationResourceTest
         this.macroDescriptorService = Mockito.mock( MacroDescriptorService.class );
         this.contentService = Mockito.mock( ContentService.class );
         this.resourceService = Mockito.mock( ResourceService.class );
+        this.taskDescriptorService = Mockito.mock( TaskDescriptorService.class );
 
         final ApplicationResource resource = new ApplicationResource();
         resource.setApplicationService( this.applicationService );
@@ -481,6 +508,7 @@ public class ApplicationResourceTest
         resource.setMacroDescriptorService( this.macroDescriptorService );
         resource.setContentService( this.contentService );
         resource.setResourceService( this.resourceService );
+        resource.setTaskDescriptorService( this.taskDescriptorService );
 
         return resource;
     }

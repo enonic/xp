@@ -186,5 +186,17 @@
       }
     ],
     "total": 2
+  },
+  "tasks": {
+    "tasks": [
+      {
+        "description": "description1",
+        "key": "system:task1"
+      },
+      {
+        "description": "description2",
+        "key": "system:task2"
+      }
+    ]
   }
 }

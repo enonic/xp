@@ -47,6 +47,8 @@ import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationInstal
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationListParams;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationSuccessJson;
+import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationTaskDescriptorJson;
+import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationTaskDescriptorsJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ContentReferencesJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.GetMarketApplicationsJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ListApplicationJson;
@@ -69,6 +71,7 @@ import com.enonic.xp.app.Applications;
 import com.enonic.xp.auth.AuthDescriptor;
 import com.enonic.xp.auth.AuthDescriptorService;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.descriptor.Descriptors;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.macro.MacroDescriptorService;
@@ -89,6 +92,10 @@ import com.enonic.xp.schema.relationship.RelationshipTypes;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
+import com.enonic.xp.task.TaskDescriptor;
+import com.enonic.xp.task.TaskDescriptorService;
+import com.enonic.xp.task.TaskInfo;
+import com.enonic.xp.task.TaskService;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
 
@@ -133,7 +140,7 @@ public final class ApplicationResource
 
     private ResourceService resourceService;
 
-    private PortalUrlService portalUrlService;
+    private TaskDescriptorService taskDescriptorService;
 
     private ApplicationIconUrlResolver iconUrlResolver;
 
@@ -208,9 +215,12 @@ public final class ApplicationResource
         final ContentReferencesJson referencesJson =
             new ContentReferencesJson( this.contentService.findByApplicationKey( applicationKey ) );
 
+        final ApplicationTaskDescriptorsJson taskDescriptorsJson =
+            new ApplicationTaskDescriptorsJson( taskDescriptorService.getTasks( applicationKey ) );
+
         final Resource resource = resourceService.getResource( ResourceKey.from( applicationKey, "/main.js" ) );
         ApplicationDeploymentJson deploymentJson = null;
-        if ( resource.exists() )
+        if ( resource != null && resource.exists() )
         {
             final String url = ui.getBaseUri() + "app/" + applicationKey.toString();
             deploymentJson = new ApplicationDeploymentJson( url, new URL( url ).getHost().equals( "localhost" ) );
@@ -223,6 +233,7 @@ public final class ApplicationResource
             setParts( partJson ).
             setRelations( relationshipTypeListJson ).
             setReferences( referencesJson ).
+            setTasks( taskDescriptorsJson ).
             setDeployment( deploymentJson );
     }
 
@@ -601,6 +612,12 @@ public final class ApplicationResource
     public void setResourceService( final ResourceService resourceService )
     {
         this.resourceService = resourceService;
+    }
+
+    @Reference
+    public void setTaskDescriptorService( final TaskDescriptorService taskDescriptorService )
+    {
+        this.taskDescriptorService = taskDescriptorService;
     }
 
     @Reference

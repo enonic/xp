@@ -23,6 +23,8 @@ public class ApplicationInfoJson
 
     private MacrosJson macros;
 
+    private ApplicationTaskDescriptorsJson tasks;
+
     private ApplicationDeploymentJson deployment;
 
     public ContentTypeSummaryListJson getContentTypes()
@@ -58,6 +60,11 @@ public class ApplicationInfoJson
     public ContentReferencesJson getReferences()
     {
         return references;
+    }
+
+    public ApplicationTaskDescriptorsJson getTasks()
+    {
+        return tasks;
     }
 
     public ApplicationDeploymentJson getDeployment()
@@ -104,6 +111,12 @@ public class ApplicationInfoJson
     public ApplicationInfoJson setMacros( final MacrosJson macros )
     {
         this.macros = macros;
+        return this;
+    }
+
+    public ApplicationInfoJson setTasks( final ApplicationTaskDescriptorsJson tasks )
+    {
+        this.tasks = tasks;
         return this;
     }
 

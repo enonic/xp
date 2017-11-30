@@ -17,7 +17,7 @@ import com.enonic.xp.task.TaskDescriptor;
 public final class TaskDescriptorLoader
     implements DescriptorLoader<TaskDescriptor>
 {
-    private final static String PATH = "/tasks";
+    private final static String PATH = "/site/tasks";
 
     private ResourceService resourceService;
 
