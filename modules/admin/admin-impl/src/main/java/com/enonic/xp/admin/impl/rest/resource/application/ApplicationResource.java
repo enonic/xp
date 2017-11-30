@@ -17,8 +17,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.CacheControl;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -37,6 +39,7 @@ import com.enonic.xp.admin.impl.json.schema.content.ContentTypeSummaryListJson;
 import com.enonic.xp.admin.impl.json.schema.relationship.RelationshipTypeListJson;
 import com.enonic.xp.admin.impl.market.MarketService;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
+import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationDeploymentJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationInfoJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationInstallParams;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationInstallResultJson;
@@ -65,22 +68,20 @@ import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.auth.AuthDescriptor;
 import com.enonic.xp.auth.AuthDescriptorService;
-import com.enonic.xp.content.ContentPropertyNames;
-import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.content.Contents;
-import com.enonic.xp.content.FindContentByQueryParams;
-import com.enonic.xp.content.FindContentByQueryResult;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.macro.MacroDescriptorService;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageDescriptors;
-import com.enonic.xp.query.parser.QueryParser;
+import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.LayoutDescriptors;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.region.PartDescriptors;
+import com.enonic.xp.resource.Resource;
+import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
@@ -130,6 +131,10 @@ public final class ApplicationResource
 
     private ContentService contentService;
 
+    private ResourceService resourceService;
+
+    private PortalUrlService portalUrlService;
+
     private ApplicationIconUrlResolver iconUrlResolver;
 
     private RelationshipTypeIconUrlResolver relationshipTypeIconUrlResolver;
@@ -174,7 +179,8 @@ public final class ApplicationResource
 
     @GET
     @Path("info")
-    public ApplicationInfoJson info( @QueryParam("applicationKey") String key )
+    public ApplicationInfoJson info( @QueryParam("applicationKey") String key, @Context UriInfo ui )
+        throws Exception
     {
         final ApplicationKey applicationKey = ApplicationKey.from( key );
 
@@ -202,13 +208,22 @@ public final class ApplicationResource
         final ContentReferencesJson referencesJson =
             new ContentReferencesJson( this.contentService.findByApplicationKey( applicationKey ) );
 
-        return new ApplicationInfoJson().setContentTypesJson( contentTypeSummaryListJson ).
-            setLayoutsJson( layoutJson ).
-            setMacrosJson( macrosJson ).
-            setPagesJson( pageJson ).
-            setPartsJson( partJson ).
-            setRelationsJson( relationshipTypeListJson ).
-            setReferencesJson( referencesJson );
+        final Resource resource = resourceService.getResource( ResourceKey.from( applicationKey, "/main.js" ) );
+        ApplicationDeploymentJson deploymentJson = null;
+        if ( resource.exists() )
+        {
+            final String url = ui.getBaseUri() + "app/" + applicationKey.toString();
+            deploymentJson = new ApplicationDeploymentJson( url, new URL( url ).getHost().equals( "localhost" ) );
+        }
+
+        return new ApplicationInfoJson().setContentTypes( contentTypeSummaryListJson ).
+            setLayouts( layoutJson ).
+            setMacros( macrosJson ).
+            setPages( pageJson ).
+            setParts( partJson ).
+            setRelations( relationshipTypeListJson ).
+            setReferences( referencesJson ).
+            setDeployment( deploymentJson );
     }
 
     @GET
@@ -580,6 +595,12 @@ public final class ApplicationResource
     public void setContentService( final ContentService contentService )
     {
         this.contentService = contentService;
+    }
+
+    @Reference
+    public void setResourceService( final ResourceService resourceService )
+    {
+        this.resourceService = resourceService;
     }
 
     @Reference

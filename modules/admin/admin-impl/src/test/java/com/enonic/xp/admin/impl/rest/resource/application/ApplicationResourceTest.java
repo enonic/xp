@@ -10,12 +10,6 @@ import org.osgi.framework.Version;
 
 import com.enonic.xp.admin.impl.market.MarketService;
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
-import com.enonic.xp.admin.impl.rest.resource.macro.MacroIconResolver;
-import com.enonic.xp.admin.impl.rest.resource.macro.MacroIconUrlResolver;
-import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconResolver;
-import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
-import com.enonic.xp.admin.impl.rest.resource.schema.relationship.RelationshipTypeIconResolver;
-import com.enonic.xp.admin.impl.rest.resource.schema.relationship.RelationshipTypeIconUrlResolver;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.app.ApplicationDescriptorService;
@@ -28,15 +22,11 @@ import com.enonic.xp.auth.AuthDescriptorService;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
-import com.enonic.xp.content.FindContentIdsByQueryResult;
-import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
-import com.enonic.xp.macro.Macro;
 import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroDescriptorService;
 import com.enonic.xp.macro.MacroDescriptors;
@@ -53,6 +43,9 @@ import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.region.PartDescriptors;
 import com.enonic.xp.region.RegionDescriptor;
 import com.enonic.xp.region.RegionDescriptors;
+import com.enonic.xp.resource.Resource;
+import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -91,6 +84,8 @@ public class ApplicationResourceTest
 
     private ContentService contentService;
 
+    private ResourceService resourceService;
+
     @Test
     public void get_application_list()
         throws Exception
@@ -124,9 +119,11 @@ public class ApplicationResourceTest
         mockRelationshipTypes( applicationKey );
         mockMacros( applicationKey );
         mockReferences( applicationKey );
+        mockDeployment( applicationKey );
 
         String response = request().
             path( "application/info" ).
+            baseUri( "http://localhost/" ).
             queryParam( "applicationKey", "testapplication" ).
             get().getAsString();
         assertJson( "get_application_info.json", response );
@@ -445,6 +442,14 @@ public class ApplicationResourceTest
         Mockito.when( this.contentService.findByApplicationKey( applicationKey ) ).thenReturn( contents );
     }
 
+    private void mockDeployment( final ApplicationKey applicationKey )
+    {
+        final Resource resourceMock = Mockito.mock( Resource.class );
+        Mockito.when( resourceMock.exists() ).thenReturn( true );
+
+        Mockito.when( this.resourceService.getResource( ResourceKey.from( applicationKey, "/main.js" ) ) ).thenReturn( resourceMock );
+    }
+
     @Override
     protected Object getResourceInstance()
     {
@@ -460,6 +465,7 @@ public class ApplicationResourceTest
         this.relationshipTypeService = Mockito.mock( RelationshipTypeService.class );
         this.macroDescriptorService = Mockito.mock( MacroDescriptorService.class );
         this.contentService = Mockito.mock( ContentService.class );
+        this.resourceService = Mockito.mock( ResourceService.class );
 
         final ApplicationResource resource = new ApplicationResource();
         resource.setApplicationService( this.applicationService );
@@ -474,6 +480,7 @@ public class ApplicationResourceTest
         resource.setRelationshipTypeService( this.relationshipTypeService );
         resource.setMacroDescriptorService( this.macroDescriptorService );
         resource.setContentService( this.contentService );
+        resource.setResourceService( this.resourceService );
 
         return resource;
     }
