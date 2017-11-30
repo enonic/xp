@@ -2,6 +2,7 @@ package com.enonic.xp.jaxrs.impl;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.net.URI;
 import java.net.URLEncoder;
 
 import javax.ws.rs.core.MediaType;
@@ -19,6 +20,8 @@ public final class RestRequestBuilder
     private final Dispatcher dispatcher;
 
     private final StringBuilder uri;
+
+    private String baseUri;
 
     private int numParams = 0;
 
@@ -40,6 +43,12 @@ public final class RestRequestBuilder
         }
 
         this.uri.append( path );
+        return this;
+    }
+
+    public RestRequestBuilder baseUri( final String baseUri )
+    {
+        this.baseUri = baseUri;
         return this;
     }
 
@@ -91,14 +100,18 @@ public final class RestRequestBuilder
     public MockRestResponse get()
         throws Exception
     {
-        final MockHttpRequest request = MockHttpRequest.get( this.uri.toString() );
+        final MockHttpRequest request = baseUri != null
+            ? MockHttpRequest.create( "GET", new URI( this.uri.toString() ), new URI( baseUri ) )
+            : MockHttpRequest.get( this.uri.toString() );
         return execute( request );
     }
 
     public MockRestResponse post()
         throws Exception
     {
-        final MockHttpRequest request = MockHttpRequest.post( this.uri.toString() );
+        final MockHttpRequest request = baseUri != null
+            ? MockHttpRequest.create( "POST", new URI( this.uri.toString() ), new URI( baseUri ) )
+            : MockHttpRequest.post( this.uri.toString() );
         request.setInputStream( new ByteArrayInputStream( this.entity ) );
         request.header( "Content-Type", this.entityType );
         return execute( request );

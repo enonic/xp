@@ -9,94 +9,107 @@ import com.enonic.xp.admin.impl.rest.resource.macro.json.MacrosJson;
 
 public class ApplicationInfoJson
 {
-    private ContentTypeSummaryListJson contentTypesJson;
+    private ContentTypeSummaryListJson contentTypes;
 
-    private PageDescriptorListJson pagesJson;
+    private PageDescriptorListJson pages;
 
-    private PartDescriptorsJson partsJson;
+    private PartDescriptorsJson parts;
 
-    private LayoutDescriptorsJson layoutsJson;
+    private LayoutDescriptorsJson layouts;
 
-    private RelationshipTypeListJson relationsJson;
+    private RelationshipTypeListJson relations;
 
-    private ContentReferencesJson referencesJson;
+    private ContentReferencesJson references;
 
-    private MacrosJson macrosJson;
+    private MacrosJson macros;
 
-    public ContentTypeSummaryListJson getContentTypesJson()
+    private ApplicationDeploymentJson deployment;
+
+    public ContentTypeSummaryListJson getContentTypes()
     {
-        return contentTypesJson;
+        return contentTypes;
     }
 
-    public PageDescriptorListJson getPagesJson()
+    public PageDescriptorListJson getPages()
     {
-        return pagesJson;
+        return pages;
     }
 
-    public PartDescriptorsJson getPartsJson()
+    public PartDescriptorsJson getParts()
     {
-        return partsJson;
+        return parts;
     }
 
-    public LayoutDescriptorsJson getLayoutsJson()
+    public LayoutDescriptorsJson getLayouts()
     {
-        return layoutsJson;
+        return layouts;
     }
 
-    public RelationshipTypeListJson getRelationsJson()
+    public RelationshipTypeListJson getRelations()
     {
-        return relationsJson;
+        return relations;
     }
 
-    public MacrosJson getMacrosJson()
+    public MacrosJson getMacros()
     {
-        return macrosJson;
+        return macros;
     }
 
-    public ContentReferencesJson getReferencesJson()
+    public ContentReferencesJson getReferences()
     {
-        return referencesJson;
+        return references;
     }
 
-    public ApplicationInfoJson setContentTypesJson( final ContentTypeSummaryListJson contentTypesJson )
+    public ApplicationDeploymentJson getDeployment()
     {
-        this.contentTypesJson = contentTypesJson;
+        return deployment;
+    }
+
+    public ApplicationInfoJson setContentTypes( final ContentTypeSummaryListJson contentTypes )
+    {
+        this.contentTypes = contentTypes;
         return this;
     }
 
-    public ApplicationInfoJson setPagesJson( final PageDescriptorListJson pagesJson )
+    public ApplicationInfoJson setPages( final PageDescriptorListJson pages )
     {
-        this.pagesJson = pagesJson;
+        this.pages = pages;
         return this;
     }
 
-    public ApplicationInfoJson setPartsJson( final PartDescriptorsJson partsJson )
+    public ApplicationInfoJson setParts( final PartDescriptorsJson parts )
     {
-        this.partsJson = partsJson;
+        this.parts = parts;
         return this;
     }
 
-    public ApplicationInfoJson setLayoutsJson( final LayoutDescriptorsJson layoutsJson )
+    public ApplicationInfoJson setLayouts( final LayoutDescriptorsJson layouts )
     {
-        this.layoutsJson = layoutsJson;
+        this.layouts = layouts;
         return this;
     }
 
-    public ApplicationInfoJson setRelationsJson( final RelationshipTypeListJson relationsJson )
+    public ApplicationInfoJson setRelations( final RelationshipTypeListJson relations )
     {
-        this.relationsJson = relationsJson;
+        this.relations = relations;
         return this;
     }
 
-    public ApplicationInfoJson setReferencesJson( final ContentReferencesJson referencesJson )
+    public ApplicationInfoJson setReferences( final ContentReferencesJson references )
     {
-        this.referencesJson = referencesJson;
+        this.references = references;
         return this;
     }
 
-    public ApplicationInfoJson setMacrosJson( final MacrosJson macrosJson )
+    public ApplicationInfoJson setMacros( final MacrosJson macros )
     {
-        this.macrosJson = macrosJson;
+        this.macros = macros;
+        return this;
+    }
+
+    public ApplicationInfoJson setDeployment( final ApplicationDeploymentJson deployment )
+    {
+        this.deployment = deployment;
         return this;
     }
 }

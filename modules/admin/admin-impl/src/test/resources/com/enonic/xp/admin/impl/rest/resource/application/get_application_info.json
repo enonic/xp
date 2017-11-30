@@ -1,5 +1,5 @@
 {
-  "contentTypesJson": {
+  "contentTypes": {
     "contentTypes": [
       {
         "abstract": true,
@@ -22,7 +22,11 @@
     ],
     "total": 1
   },
-  "layoutsJson": {
+  "deployment": {
+    "local": true,
+    "url": "http://localhost/app/testapplication"
+  },
+  "layouts": {
     "descriptors": [
       {
         "config": {
@@ -62,7 +66,7 @@
       }
     ]
   },
-  "macrosJson": {
+  "macros": {
     "macros": [
       {
         "description": "my description",
@@ -86,7 +90,7 @@
       }
     ]
   },
-  "pagesJson": {
+  "pages": {
     "descriptors": [
       {
         "config": {
@@ -112,7 +116,7 @@
       }
     ]
   },
-  "partsJson": {
+  "parts": {
     "descriptors": [
       {
         "config": {
@@ -136,18 +140,21 @@
       }
     ]
   },
-  "referencesJson" : {
-    "references" : [ {
-      "displayName" : "My Content 1",
-      "path" : "/a/b/name1",
-      "type" : "base:unstructured"
-    }, {
-      "displayName" : "My Content 2",
-      "path" : "/a/c/name2",
-      "type" : "base:unstructured"
-    } ]
+  "references": {
+    "references": [
+      {
+        "displayName": "My Content 1",
+        "path": "/a/b/name1",
+        "type": "base:unstructured"
+      },
+      {
+        "displayName": "My Content 2",
+        "path": "/a/c/name2",
+        "type": "base:unstructured"
+      }
+    ]
   },
-  "relationsJson": {
+  "relations": {
     "relationshipTypes": [
       {
         "allowedFromTypes": [],
