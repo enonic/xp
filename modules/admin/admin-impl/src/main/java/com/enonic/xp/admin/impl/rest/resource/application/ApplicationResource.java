@@ -164,14 +164,13 @@ public final class ApplicationResource
 
     @GET
     @Path("list")
-    public ListApplicationJson list( @QueryParam("query") final String query, @Context UriInfo ui  ) throws Exception
+    public ListApplicationJson list( @QueryParam("query") final String query ) throws Exception
     {
         Applications applications = this.applicationService.getInstalledApplications();
 
         applications = this.filterApplications( applications, query );
         applications = this.sortApplications( applications );
 
-        info( "com.enonic.app.features", ui );
         final ListApplicationJson json = new ListApplicationJson();
         for ( final Application application : applications )
         {
