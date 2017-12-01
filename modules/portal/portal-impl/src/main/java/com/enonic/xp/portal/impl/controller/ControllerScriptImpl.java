@@ -17,6 +17,8 @@ import com.enonic.xp.web.websocket.WebSocketEvent;
 final class ControllerScriptImpl
     implements ControllerScript
 {
+    private static final String ALL_SCRIPT_METHOD_NAME = "all";
+
     private final ScriptExports scriptExports;
 
     ControllerScriptImpl( final ScriptExports scriptExports )
@@ -50,12 +52,19 @@ final class ControllerScriptImpl
 
         final HttpMethod method = portalRequest.getMethod();
         final boolean isHead = method == HttpMethod.HEAD;
-        final String runMethod = isHead ? "get" : method.toString().toLowerCase();
+        String runMethod = isHead ? "get" : method.toString().toLowerCase();
 
         final boolean exists = this.scriptExports.hasMethod( runMethod );
         if ( !exists )
         {
-            return new PortalResponseSerializer( null, HttpStatus.METHOD_NOT_ALLOWED ).serialize();
+            if ( this.scriptExports.hasMethod( ALL_SCRIPT_METHOD_NAME ) )
+            {
+                runMethod = ALL_SCRIPT_METHOD_NAME;
+            }
+            else
+            {
+                return new PortalResponseSerializer( null, HttpStatus.METHOD_NOT_ALLOWED ).serialize();
+            }
         }
 
         final PortalRequestMapper requestMapper = new PortalRequestMapper( portalRequest );

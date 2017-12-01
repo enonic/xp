@@ -87,5 +87,14 @@ public class ControllerScriptImpl_requestTest
         execute( "myapplication:/controller/request.js" );
         assertEquals( HttpStatus.OK, this.portalResponse.getStatus() );
     }
+
+    @Test
+    public void testAllMethod()
+        throws Exception
+    {
+        this.portalRequest.setMethod( HttpMethod.GET );
+        execute( "myapplication:/controller/allHandler.js" );
+        assertEquals( HttpStatus.OK, this.portalResponse.getStatus() );
+    }
 }
 
