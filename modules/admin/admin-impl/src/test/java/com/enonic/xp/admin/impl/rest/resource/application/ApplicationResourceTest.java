@@ -19,12 +19,14 @@ import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.auth.AuthDescriptor;
+import com.enonic.xp.auth.AuthDescriptorMode;
 import com.enonic.xp.auth.AuthDescriptorService;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.Descriptors;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
@@ -55,7 +57,12 @@ import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.relationship.RelationshipType;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
 import com.enonic.xp.schema.relationship.RelationshipTypes;
+import com.enonic.xp.security.AuthConfig;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.SecurityService;
+import com.enonic.xp.security.UserStore;
+import com.enonic.xp.security.UserStoreKey;
+import com.enonic.xp.security.UserStores;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.task.TaskDescriptor;
@@ -92,6 +99,8 @@ public class ApplicationResourceTest
 
     private TaskDescriptorService taskDescriptorService;
 
+    private SecurityService securityService;
+
     @Test
     public void get_application_list()
         throws Exception
@@ -125,7 +134,8 @@ public class ApplicationResourceTest
         mockRelationshipTypes( applicationKey );
         mockMacros( applicationKey );
         mockReferences( applicationKey );
-        mockTasks(applicationKey);
+        mockTasks( applicationKey );
+        mockIdProvider(applicationKey);
         mockDeployment( applicationKey );
 
         String response = request().
@@ -468,6 +478,40 @@ public class ApplicationResourceTest
         Mockito.when( this.taskDescriptorService.getTasks( applicationKey ) ).thenReturn( descriptors );
     }
 
+    private void mockIdProvider( final ApplicationKey applicationKey )
+    {
+        final AuthDescriptor authDescriptor = AuthDescriptor.create().
+            config( Form.create().build() ).
+            key( applicationKey ).
+            mode( AuthDescriptorMode.EXTERNAL ).
+            build();
+
+        final UserStore userStore1 = UserStore.create().
+            displayName( "userStore1" ).
+            key( UserStoreKey.from( "userStore1" ) ).
+            authConfig( AuthConfig.
+                create().
+                applicationKey( applicationKey ).
+                config( new PropertyTree() ).
+                build() ).
+            build();
+
+        final UserStore userStore2 = UserStore.create().
+            displayName( "userStore2" ).
+            key( UserStoreKey.from( "userStore2" +
+                                        "" ) ).
+            authConfig( AuthConfig.
+                create().
+                applicationKey( applicationKey ).
+                config( new PropertyTree() ).
+                build() ).
+            build();
+
+        Mockito.when( this.authDescriptorService.getDescriptor( applicationKey ) ).thenReturn( authDescriptor );
+        Mockito.when( this.securityService.getUserStores()).thenReturn( UserStores.from( userStore1, userStore2 ) );
+
+    }
+
     private void mockDeployment( final ApplicationKey applicationKey )
     {
         final Resource resourceMock = Mockito.mock( Resource.class );
@@ -493,6 +537,7 @@ public class ApplicationResourceTest
         this.contentService = Mockito.mock( ContentService.class );
         this.resourceService = Mockito.mock( ResourceService.class );
         this.taskDescriptorService = Mockito.mock( TaskDescriptorService.class );
+        this.securityService = Mockito.mock( SecurityService.class );
 
         final ApplicationResource resource = new ApplicationResource();
         resource.setApplicationService( this.applicationService );
@@ -509,6 +554,7 @@ public class ApplicationResourceTest
         resource.setContentService( this.contentService );
         resource.setResourceService( this.resourceService );
         resource.setTaskDescriptorService( this.taskDescriptorService );
+        resource.setSecurityService( this.securityService );
 
         return resource;
     }

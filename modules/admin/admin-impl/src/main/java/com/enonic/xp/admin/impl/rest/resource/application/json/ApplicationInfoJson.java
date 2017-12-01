@@ -25,6 +25,8 @@ public class ApplicationInfoJson
 
     private ApplicationTaskDescriptorsJson tasks;
 
+    private ApplicationIdProviderJson idProvider;
+
     private ApplicationDeploymentJson deployment;
 
     public ContentTypeSummaryListJson getContentTypes()
@@ -65,6 +67,11 @@ public class ApplicationInfoJson
     public ApplicationTaskDescriptorsJson getTasks()
     {
         return tasks;
+    }
+
+    public ApplicationIdProviderJson getIdProvider()
+    {
+        return idProvider;
     }
 
     public ApplicationDeploymentJson getDeployment()
@@ -117,6 +124,11 @@ public class ApplicationInfoJson
     public ApplicationInfoJson setTasks( final ApplicationTaskDescriptorsJson tasks )
     {
         this.tasks = tasks;
+        return this;
+    }
+
+    public ApplicationInfoJson setIdProvider(final ApplicationIdProviderJson idProvider) {
+        this.idProvider = idProvider;
         return this;
     }
 

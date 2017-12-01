@@ -40,6 +40,7 @@ import com.enonic.xp.admin.impl.json.schema.relationship.RelationshipTypeListJso
 import com.enonic.xp.admin.impl.market.MarketService;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationDeploymentJson;
+import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationIdProviderJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationInfoJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationInstallParams;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationInstallResultJson;
@@ -90,6 +91,8 @@ import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
 import com.enonic.xp.schema.relationship.RelationshipTypes;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.SecurityService;
+import com.enonic.xp.security.UserStores;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.task.TaskDescriptor;
@@ -142,6 +145,8 @@ public final class ApplicationResource
 
     private TaskDescriptorService taskDescriptorService;
 
+    private SecurityService securityService;
+
     private ApplicationIconUrlResolver iconUrlResolver;
 
     private RelationshipTypeIconUrlResolver relationshipTypeIconUrlResolver;
@@ -159,13 +164,14 @@ public final class ApplicationResource
 
     @GET
     @Path("list")
-    public ListApplicationJson list( @QueryParam("query") final String query )
+    public ListApplicationJson list( @QueryParam("query") final String query, @Context UriInfo ui  ) throws Exception
     {
         Applications applications = this.applicationService.getInstalledApplications();
 
         applications = this.filterApplications( applications, query );
         applications = this.sortApplications( applications );
 
+        info( "com.enonic.app.features", ui );
         final ListApplicationJson json = new ListApplicationJson();
         for ( final Application application : applications )
         {
@@ -218,6 +224,18 @@ public final class ApplicationResource
         final ApplicationTaskDescriptorsJson taskDescriptorsJson =
             new ApplicationTaskDescriptorsJson( taskDescriptorService.getTasks( applicationKey ) );
 
+        final AuthDescriptor authDescriptor = this.authDescriptorService.getDescriptor( applicationKey );
+        UserStores userStores = null;
+
+        if(authDescriptor != null)
+        {
+            userStores = UserStores.from( securityService.getUserStores().
+                stream().
+                filter( userStore -> userStore.getAuthConfig() != null &&
+                    userStore.getAuthConfig().getApplicationKey().equals( authDescriptor.getKey() ) ).collect( Collectors.toList() ) );
+        }
+        final ApplicationIdProviderJson idProviderJson = new ApplicationIdProviderJson( authDescriptor, userStores );
+
         final Resource resource = resourceService.getResource( ResourceKey.from( applicationKey, "/main.js" ) );
         ApplicationDeploymentJson deploymentJson = null;
         if ( resource != null && resource.exists() )
@@ -234,6 +252,7 @@ public final class ApplicationResource
             setRelations( relationshipTypeListJson ).
             setReferences( referencesJson ).
             setTasks( taskDescriptorsJson ).
+            setIdProvider(idProviderJson).
             setDeployment( deploymentJson );
     }
 
@@ -618,6 +637,12 @@ public final class ApplicationResource
     public void setTaskDescriptorService( final TaskDescriptorService taskDescriptorService )
     {
         this.taskDescriptorService = taskDescriptorService;
+    }
+
+    @Reference
+    public void setSecurityService( final SecurityService securityService )
+    {
+        this.securityService = securityService;
     }
 
     @Reference

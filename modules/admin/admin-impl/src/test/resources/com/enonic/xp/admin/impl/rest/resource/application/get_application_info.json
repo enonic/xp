@@ -26,6 +26,19 @@
     "local": true,
     "url": "http://localhost/app/testapplication"
   },
+  "idProvider": {
+    "mode": "EXTERNAL",
+    "userStores": [
+      {
+        "displayName": "userStore1",
+        "path": "/userStore1"
+      },
+      {
+        "displayName": "userStore2",
+        "path": "/userStore2"
+      }
+    ]
+  },
   "layouts": {
     "descriptors": [
       {
