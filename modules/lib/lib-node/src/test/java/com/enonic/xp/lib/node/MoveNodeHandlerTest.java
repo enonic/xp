@@ -40,7 +40,7 @@ public class MoveNodeHandlerTest
                 name = renameNodeParams.getNewNodeName().toString();
                 return createNode();
             } );
-        Mockito.when( this.nodeService.move( Mockito.any( NodeId.class ), Mockito.any(), null ) ).
+        Mockito.when( this.nodeService.move( Mockito.any( NodeId.class ), Mockito.any(), Mockito.any() ) ).
             thenAnswer( invocation -> {
                 parentPath = ( (NodePath) invocation.getArguments()[1] ).trimTrailingDivider();
                 return createNode();

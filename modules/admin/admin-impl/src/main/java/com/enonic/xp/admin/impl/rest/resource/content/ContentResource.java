@@ -370,51 +370,81 @@ public final class ContentResource
 
     private void duplicateTask( final DuplicateContentJson params, final ProgressReporter progressReporter )
     {
-        final ContentId contentToDuplicate = params.getContentId();
+        final ContentIds contentToDuplicateList = ContentIds.from( params.getContentIds() );
         final Context ctx = ContextAccessor.current();
         progressReporter.info( "Duplicating content" );
 
         final DuplicateContentProgressListener listener = new DuplicateContentProgressListener( progressReporter );
 
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+
         final ContentQuery allChildrenQuery = ContentQuery.create().
             size( 0 ).
-            queryExpr( constructExprToFindChildren( ContentIds.from( contentToDuplicate ) ) ).
+            queryExpr( constructExprToFindChildren( contentToDuplicateList ) ).
             build();
         final long childrenIds = this.contentService.find( allChildrenQuery ).getTotalHits();
+        final int contentIds = contentToDuplicateList.getSize();
 
-        listener.setTotal( Math.toIntExact( childrenIds + 1 ) );
+        listener.setTotal( Math.toIntExact( childrenIds + contentIds ) );
+        int duplicated = 0;
+        int failed = 0;
         String contentName = "";
-        boolean moved = true;
-
-        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-        final DuplicateContentParams duplicateContentParams = DuplicateContentParams.create().
-            contentId( contentToDuplicate ).
-            creator( authInfo.getUser().getKey() ).
-            duplicateContentListener( listener ).
-            build();
-        try
+        for ( ContentId contentId : contentToDuplicateList )
         {
-            final DuplicateContentsResult result = contentService.duplicate( duplicateContentParams );
+            final DuplicateContentParams duplicateContentParams = DuplicateContentParams.create().
+                contentId( contentId ).
+                creator( authInfo.getUser().getKey() ).
+                duplicateContentListener( listener ).
+                build();
+            try
+            {
+                final DuplicateContentsResult result = contentService.duplicate( duplicateContentParams );
 
-            contentName = result.getContentName();
-        }
-        catch ( final Exception e )
-        {
-            moved = false;
+                contentName = result.getContentName();
+                duplicated++;
+            }
+            catch ( ContentAlreadyMovedException e )
+            {
+                continue;
+            }
+            catch ( final Exception e )
+            {
+                duplicated++;
+            }
         }
 
-        progressReporter.info( getDuplicateMessage( moved, contentName ) );
+        progressReporter.info( getMoveMessage( duplicated, failed, contentName ) );
     }
 
-    private String getDuplicateMessage( final boolean moved, final String contentName )
+    private String getDuplicateMessage( final int duplicated, final int failed, final String contentName )
     {
-        if ( moved )
+        final int total = duplicated + failed;
+        switch ( total )
         {
-            return "\"" + contentName + "\" item is duplicated.";
-        }
-        else
-        {
-            return "Content could not be duplicated.";
+            case 0:
+                return "The item is already duplicated.";
+
+            case 1:
+                if ( duplicated == 1 )
+                {
+                    return "\"" + contentName + "\" item is duplicated.";
+                }
+                else
+                {
+                    return "Content could not be duplicated.";
+                }
+
+            default:
+                final StringBuilder builder = new StringBuilder();
+                if ( duplicated > 0 )
+                {
+                    builder.append( duplicated ).append( duplicated > 1 ? " items are " : " item is " ).append( "duplicated. " );
+                }
+                if ( failed > 0 )
+                {
+                    builder.append( failed ).append( failed > 1 ? " items " : " item " ).append( " failed to be duplicated. " );
+                }
+                return builder.toString();
         }
     }
 
