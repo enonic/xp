@@ -413,7 +413,7 @@ public final class ContentResource
             }
         }
 
-        progressReporter.info( getMoveMessage( duplicated, failed, contentName ) );
+        progressReporter.info( getDuplicateMessage( duplicated, failed, contentName ) );
     }
 
     private String getDuplicateMessage( final int duplicated, final int failed, final String contentName )
