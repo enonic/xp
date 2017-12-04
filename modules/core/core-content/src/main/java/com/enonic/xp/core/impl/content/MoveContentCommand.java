@@ -83,7 +83,7 @@ final class MoveContentCommand
     {
         this.verifyIntegrity( params.getParentContentPath() );
 
-        final NodeId sourceNodeId = NodeId.from( params.getContentId().toString() );
+        final NodeId sourceNodeId = NodeId.from( params.getContentId() );
         final Node sourceNode = nodeService.getById( sourceNodeId );
         if ( sourceNode == null )
         {

@@ -129,6 +129,7 @@ import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.content.DuplicateContentParams;
+import com.enonic.xp.content.DuplicateContentsResult;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.content.FindContentIdsByParentResult;
@@ -360,11 +361,91 @@ public final class ContentResource
 
     @POST
     @Path("duplicate")
-    public ContentJson duplicate( final DuplicateContentJson params )
+    public TaskResultJson duplicate( final DuplicateContentJson params )
     {
-        final Content duplicatedContent = contentService.duplicate( new DuplicateContentParams( params.getContentId() ) );
+        final RunnableTask runnableTask = ( id, progressReporter ) -> duplicateTask( params, progressReporter );
+        final TaskId taskId = taskService.submitTask( runnableTask, "Duplicate content" );
+        return new TaskResultJson( taskId );
+    }
 
-        return new ContentJson( duplicatedContent, contentIconUrlResolver, principalsResolver );
+    private void duplicateTask( final DuplicateContentJson params, final ProgressReporter progressReporter )
+    {
+        final ContentIds contentToDuplicateList = ContentIds.from( params.getContentIds() );
+        final Context ctx = ContextAccessor.current();
+        progressReporter.info( "Duplicating content" );
+
+        final DuplicateContentProgressListener listener = new DuplicateContentProgressListener( progressReporter );
+
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+
+        final ContentQuery allChildrenQuery = ContentQuery.create().
+            size( 0 ).
+            queryExpr( constructExprToFindChildren( contentToDuplicateList ) ).
+            build();
+        final long childrenIds = this.contentService.find( allChildrenQuery ).getTotalHits();
+        final int contentIds = contentToDuplicateList.getSize();
+
+        listener.setTotal( Math.toIntExact( childrenIds + contentIds ) );
+        int duplicated = 0;
+        int failed = 0;
+        String contentName = "";
+        for ( ContentId contentId : contentToDuplicateList )
+        {
+            final DuplicateContentParams duplicateContentParams = DuplicateContentParams.create().
+                contentId( contentId ).
+                creator( authInfo.getUser().getKey() ).
+                duplicateContentListener( listener ).
+                build();
+            try
+            {
+                final DuplicateContentsResult result = contentService.duplicate( duplicateContentParams );
+
+                contentName = result.getContentName();
+                duplicated++;
+            }
+            catch ( ContentAlreadyMovedException e )
+            {
+                continue;
+            }
+            catch ( final Exception e )
+            {
+                duplicated++;
+            }
+        }
+
+        progressReporter.info( getMoveMessage( duplicated, failed, contentName ) );
+    }
+
+    private String getDuplicateMessage( final int duplicated, final int failed, final String contentName )
+    {
+        final int total = duplicated + failed;
+        switch ( total )
+        {
+            case 0:
+                return "The item is already duplicated.";
+
+            case 1:
+                if ( duplicated == 1 )
+                {
+                    return "\"" + contentName + "\" item is duplicated.";
+                }
+                else
+                {
+                    return "Content could not be duplicated.";
+                }
+
+            default:
+                final StringBuilder builder = new StringBuilder();
+                if ( duplicated > 0 )
+                {
+                    builder.append( duplicated ).append( duplicated > 1 ? " items are " : " item is " ).append( "duplicated. " );
+                }
+                if ( failed > 0 )
+                {
+                    builder.append( failed ).append( failed > 1 ? " items " : " item " ).append( " failed to be duplicated. " );
+                }
+                return builder.toString();
+        }
     }
 
     @POST
@@ -427,7 +508,7 @@ public final class ContentResource
         switch ( total )
         {
             case 0:
-                return "The item is already moved";
+                return "The item is already moved.";
 
             case 1:
                 if ( moved == 1 )
@@ -436,7 +517,7 @@ public final class ContentResource
                 }
                 else
                 {
-                    return "Content could not be moved";
+                    return "Content could not be moved.";
                 }
 
             default:
