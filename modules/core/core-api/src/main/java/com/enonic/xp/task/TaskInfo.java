@@ -1,10 +1,14 @@
 package com.enonic.xp.task;
 
+import java.time.Instant;
 import java.util.Objects;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
+
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.security.PrincipalKey;
 
 @Beta
 public final class TaskInfo
@@ -19,6 +23,12 @@ public final class TaskInfo
 
     private final TaskProgress progress;
 
+    private final ApplicationKey application;
+
+    private final PrincipalKey user;
+
+    private final Instant startTime;
+
     private TaskInfo( final Builder builder )
     {
         Preconditions.checkNotNull( builder.id, "TaskId cannot be null" );
@@ -27,6 +37,9 @@ public final class TaskInfo
         state = builder.state == null ? TaskState.WAITING : builder.state;
         description = builder.description == null ? "" : builder.description;
         progress = builder.progress == null ? TaskProgress.EMPTY : builder.progress;
+        application = builder.application == null ? ApplicationKey.SYSTEM : builder.application;
+        user = builder.user == null ? PrincipalKey.ofAnonymous() : builder.user;
+        startTime = builder.startTime == null ? Instant.now() : builder.startTime;
     }
 
     public TaskId getId()
@@ -64,6 +77,21 @@ public final class TaskInfo
         return progress;
     }
 
+    public ApplicationKey getApplication()
+    {
+        return application;
+    }
+
+    public PrincipalKey getUser()
+    {
+        return user;
+    }
+
+    public Instant getStartTime()
+    {
+        return startTime;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -71,16 +99,17 @@ public final class TaskInfo
         {
             return false;
         }
-
         final TaskInfo taskInfo = (TaskInfo) o;
         return Objects.equals( id, taskInfo.id ) && Objects.equals( name, taskInfo.name ) &&
-            Objects.equals( description, taskInfo.description ) && state == taskInfo.state && Objects.equals( progress, taskInfo.progress );
+            Objects.equals( description, taskInfo.description ) && state == taskInfo.state &&
+            Objects.equals( progress, taskInfo.progress ) && Objects.equals( application, taskInfo.application ) &&
+            Objects.equals( user, taskInfo.user ) && Objects.equals( startTime, taskInfo.startTime );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( id, name, description, state, progress );
+        return Objects.hash( id, name, description, state, progress, application, user, startTime );
     }
 
     @Override
@@ -92,6 +121,9 @@ public final class TaskInfo
             add( "description", description ).
             add( "state", state ).
             add( "progress", progress ).
+            add( "application", application ).
+            add( "user", user ).
+            add( "startTime", startTime ).
             toString();
     }
 
@@ -117,6 +149,12 @@ public final class TaskInfo
 
         private TaskProgress progress;
 
+        private ApplicationKey application;
+
+        private PrincipalKey user;
+
+        private Instant startTime;
+
         private Builder()
         {
         }
@@ -128,6 +166,9 @@ public final class TaskInfo
             state = source.state;
             description = source.description;
             progress = source.progress;
+            application = source.application;
+            user = source.user;
+            startTime = source.startTime;
         }
 
         public Builder id( final TaskId id )
@@ -157,6 +198,24 @@ public final class TaskInfo
         public Builder name( final String name )
         {
             this.name = name;
+            return this;
+        }
+
+        public Builder application( final ApplicationKey application )
+        {
+            this.application = application;
+            return this;
+        }
+
+        public Builder user( final PrincipalKey user )
+        {
+            this.user = user;
+            return this;
+        }
+
+        public Builder startTime( final Instant startTime )
+        {
+            this.startTime = startTime;
             return this;
         }
 

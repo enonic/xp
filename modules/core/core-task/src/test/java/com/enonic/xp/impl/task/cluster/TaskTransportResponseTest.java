@@ -1,6 +1,7 @@
 package com.enonic.xp.impl.task.cluster;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.Arrays;
 
 import org.elasticsearch.common.io.stream.BytesStreamInput;
@@ -8,6 +9,8 @@ import org.elasticsearch.common.io.stream.BytesStreamOutput;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
 import com.enonic.xp.task.TaskProgress;
@@ -30,6 +33,9 @@ public class TaskTransportResponseTest
             id( TaskId.from( "task2" ) ).
             name( "name2" ).
             description( "Task2 on node1" ).
+            application( ApplicationKey.from( "com.enonic.myapp" ) ).
+            user( PrincipalKey.from( "user:store:me" ) ).
+            startTime( Instant.parse( "2017-10-01T09:00:00Z" ) ).
             progress( TaskProgress.EMPTY ).
             state( TaskState.FINISHED ).
             build();

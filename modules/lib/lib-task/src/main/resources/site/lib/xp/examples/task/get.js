@@ -19,6 +19,9 @@ var expected = {
     "id": "7ca603c1-3b88-4009-8f30-46ddbcc4bb19",
     "name": "task-7ca603c1-3b88-4009-8f30-46ddbcc4bb19",
     "state": "RUNNING",
+    "application": "com.enonic.myapp",
+    "user": "user:store:me",
+    "startTime": "2017-10-01T09:00:00Z",
     "progress": {
         "info": "Processing item 33",
         "current": 33,
