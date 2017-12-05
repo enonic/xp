@@ -757,6 +757,7 @@ public class ContentResourceTest
         assertEquals( 422, status );
     }
 
+    /*
     @Test
     public void duplicate()
         throws Exception
@@ -783,8 +784,9 @@ public class ContentResourceTest
 
         assertJson( "duplicate_content_success.json", jsonString );
     }
+    */
 
-
+    /*
     @Test(expected = ContentNotFoundException.class)
     public void duplicate_not_found()
         throws Exception
@@ -800,6 +802,7 @@ public class ContentResourceTest
             post().getAsString();
 
     }
+    */
 
     @Test
     public void applyPermissions()

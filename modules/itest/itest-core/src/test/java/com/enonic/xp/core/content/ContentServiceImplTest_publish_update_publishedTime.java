@@ -8,6 +8,7 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.DuplicateContentParams;
+import com.enonic.xp.content.DuplicateContentsResult;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.context.ContextAccessor;
@@ -118,10 +119,10 @@ public class ContentServiceImplTest_publish_update_publishedTime
 
     private Content doDuplicateContent( final Content rootContent )
     {
-        final DuplicateContentParams params = new DuplicateContentParams( rootContent.getId() );
-        final Content duplicatedContent = contentService.duplicate( params );
+        final DuplicateContentParams params = DuplicateContentParams.create().contentId( rootContent.getId() ).build();
+        final DuplicateContentsResult result = contentService.duplicate( params );
 
-        return this.contentService.getById( duplicatedContent.getId() );
+        return this.contentService.getById( result.getDuplicatedContents().first() );
     }
 
     private void doPublishContent( final Content content )

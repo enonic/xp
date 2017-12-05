@@ -49,7 +49,7 @@ public interface ContentService
 
     ContentIds getInvalidContent( ContentIds contentIds );
 
-    Content duplicate( DuplicateContentParams params );
+    DuplicateContentsResult duplicate( DuplicateContentParams params );
 
     MoveContentsResult move( MoveContentParams params );
 
