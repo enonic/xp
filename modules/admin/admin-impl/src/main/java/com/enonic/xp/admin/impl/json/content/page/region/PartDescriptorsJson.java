@@ -19,9 +19,12 @@ public class PartDescriptorsJson
     {
         this.descriptors = descriptors;
         ImmutableList.Builder<PartDescriptorJson> builder = new ImmutableList.Builder<>();
-        for ( PartDescriptor descriptor : descriptors )
+        if(descriptors != null)
         {
-            builder.add( new PartDescriptorJson( descriptor ) );
+            for ( PartDescriptor descriptor : descriptors )
+            {
+                builder.add( new PartDescriptorJson( descriptor ) );
+            }
         }
         this.descriptorJsonList = builder.build();
     }

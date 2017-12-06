@@ -24,16 +24,16 @@ public final class LayoutDescriptors
 
     public static LayoutDescriptors from( final LayoutDescriptor... descriptors )
     {
-        return new LayoutDescriptors( ImmutableList.copyOf( descriptors ) );
+        return descriptors != null ? new LayoutDescriptors( ImmutableList.copyOf( descriptors ) ) : LayoutDescriptors.empty();
     }
 
     public static LayoutDescriptors from( final Iterable<? extends LayoutDescriptor> descriptors )
     {
-        return new LayoutDescriptors( ImmutableList.copyOf( descriptors ) );
+        return descriptors != null ? new LayoutDescriptors( ImmutableList.copyOf( descriptors ) ) : LayoutDescriptors.empty();
     }
 
     public static LayoutDescriptors from( final Collection<? extends LayoutDescriptor> descriptors )
     {
-        return new LayoutDescriptors( ImmutableList.copyOf( descriptors ) );
+        return descriptors != null ? new LayoutDescriptors( ImmutableList.copyOf( descriptors ) ) : LayoutDescriptors.empty();
     }
 }

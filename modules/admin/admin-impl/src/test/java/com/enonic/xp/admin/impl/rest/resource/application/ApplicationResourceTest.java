@@ -1,72 +1,40 @@
 package com.enonic.xp.admin.impl.rest.resource.application;
 
 import java.time.Instant;
-import java.util.Arrays;
-
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
-
+import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.Version;
+import org.springframework.mock.web.MockHttpServletRequest;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.enonic.xp.admin.impl.market.MarketService;
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.app.ApplicationDescriptorService;
+import com.enonic.xp.app.ApplicationInfo;
+import com.enonic.xp.app.ApplicationInfoService;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.auth.AuthDescriptor;
-import com.enonic.xp.auth.AuthDescriptorMode;
 import com.enonic.xp.auth.AuthDescriptorService;
-import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentService;
-import com.enonic.xp.content.Contents;
-import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.descriptor.Descriptors;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
-import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroDescriptorService;
-import com.enonic.xp.macro.MacroDescriptors;
-import com.enonic.xp.macro.MacroKey;
-import com.enonic.xp.page.DescriptorKey;
-import com.enonic.xp.page.PageDescriptor;
-import com.enonic.xp.page.PageDescriptorService;
-import com.enonic.xp.page.PageDescriptors;
-import com.enonic.xp.region.LayoutDescriptor;
-import com.enonic.xp.region.LayoutDescriptorService;
-import com.enonic.xp.region.LayoutDescriptors;
-import com.enonic.xp.region.PartDescriptor;
-import com.enonic.xp.region.PartDescriptorService;
-import com.enonic.xp.region.PartDescriptors;
-import com.enonic.xp.region.RegionDescriptor;
-import com.enonic.xp.region.RegionDescriptors;
+import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.schema.content.ContentType;
-import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
-import com.enonic.xp.schema.content.ContentTypes;
-import com.enonic.xp.schema.relationship.RelationshipType;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
-import com.enonic.xp.schema.relationship.RelationshipTypes;
-import com.enonic.xp.security.AuthConfig;
-import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.security.UserStore;
-import com.enonic.xp.security.UserStoreKey;
-import com.enonic.xp.security.UserStores;
+import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
-import com.enonic.xp.task.TaskDescriptor;
-import com.enonic.xp.task.TaskDescriptorService;
 
 public class ApplicationResourceTest
     extends AdminResourceTestSupport
@@ -75,31 +43,23 @@ public class ApplicationResourceTest
 
     private ApplicationDescriptorService applicationDescriptorService;
 
+    private ApplicationInfoService applicationInfoService;
+
     private SiteService siteService;
 
     private MarketService marketService;
 
     private AuthDescriptorService authDescriptorService;
 
-    private PageDescriptorService pageDescriptorService;
-
-    private PartDescriptorService partDescriptorService;
-
     private RelationshipTypeService relationshipTypeService;
-
-    private LayoutDescriptorService layoutDescriptorService;
 
     private MacroDescriptorService macroDescriptorService;
 
     private ContentTypeService contentTypeService;
 
-    private ContentService contentService;
-
     private ResourceService resourceService;
 
-    private TaskDescriptorService taskDescriptorService;
-
-    private SecurityService securityService;
+    private PortalScriptService portalScriptService;
 
     @Test
     public void get_application_list()
@@ -126,24 +86,32 @@ public class ApplicationResourceTest
         throws Exception
     {
         final ApplicationKey applicationKey = createApplication().getKey();
+        final ResourceKey resourceKey = ResourceKey.from( applicationKey, "/main.js" );
 
-        mockContentTypes( applicationKey );
-        mockPageDescriptors( applicationKey );
-        mockPartDescriptors( applicationKey );
-        mockLayoutDescriptors( applicationKey );
-        mockRelationshipTypes( applicationKey );
-        mockMacros( applicationKey );
-        mockReferences( applicationKey );
-        mockTasks( applicationKey );
-        mockIdProvider(applicationKey);
-        mockDeployment( applicationKey );
+        final ApplicationInfo applicationInfo = ApplicationInfo.create().build();
 
-        String response = request().
+        Mockito.when( this.applicationInfoService.getApplicationInfo( applicationKey ) ).thenReturn( applicationInfo );
+
+        final Resource resource = Mockito.mock( Resource.class );
+        Mockito.when( resource.exists() ).thenReturn( true );
+        Mockito.when( resource.getKey() ).thenReturn( resourceKey );
+        Mockito.when( this.resourceService.getResource( resourceKey ) ).thenReturn( resource );
+
+        final ScriptExports scriptExports = Mockito.mock( ScriptExports.class );
+        Mockito.when( scriptExports.hasMethod( "get" ) ).thenReturn( true );
+        Mockito.when( this.portalScriptService.execute( resourceKey ) ).thenReturn( scriptExports );
+
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        ResteasyProviderFactory.getContextDataMap().put( HttpServletRequest.class, mockRequest );
+
+        final String response = request().
             path( "application/info" ).
-            baseUri( "http://localhost/" ).
             queryParam( "applicationKey", "testapplication" ).
             get().getAsString();
-        assertJson( "get_application_info.json", response );
+
+        final String deploymentUrl = new ObjectMapper().readTree( response ).findPath( "deployment" ).findPath( "url" ).asText();
+
+        assertEquals( "localhost:80/app/testapplication", deploymentUrl );
     }
 
     @Test
@@ -321,223 +289,20 @@ public class ApplicationResourceTest
             build();
     }
 
-    private void mockContentTypes( final ApplicationKey applicationKey )
-    {
-        final ContentType contentType =
-            ContentType.create().name( ContentTypeName.media() ).form( Form.create().build() ).setAbstract().setFinal().allowChildContent(
-                true ).setBuiltIn().contentDisplayNameScript( "contentDisplayNameScript" ).metadata( null ).displayName(
-                "displayName" ).description( "description" ).modifiedTime( Instant.ofEpochSecond( 1000 ) ).createdTime(
-                Instant.ofEpochSecond( 1000 ) ).creator( PrincipalKey.ofAnonymous() ).modifier( PrincipalKey.ofAnonymous() ).build();
-
-        final ContentTypes contentTypes = ContentTypes.from( contentType );
-        Mockito.when( contentTypeService.getByApplication( applicationKey ) ).thenReturn( contentTypes );
-    }
-
-    private void mockPageDescriptors( final ApplicationKey applicationKey )
-    {
-        final PageDescriptor pageDescriptor1 = PageDescriptor.create().
-            displayName( "Landing page" ).
-            config( Form.create().build() ).
-            regions( RegionDescriptors.create().build() ).
-            key( DescriptorKey.from( "module:landing-page" ) ).
-            build();
-
-        final PageDescriptor pageDescriptor2 = PageDescriptor.create().
-            displayName( "Log out" ).
-            config( Form.create().build() ).
-            regions( RegionDescriptors.create().build() ).
-            key( DescriptorKey.from( "module:logout-page" ) ).
-            build();
-
-        final PageDescriptors pageDescriptors = PageDescriptors.from( pageDescriptor1, pageDescriptor2 );
-        Mockito.when( pageDescriptorService.getByApplication( applicationKey ) ).thenReturn( pageDescriptors );
-    }
-
-    private void mockPartDescriptors( final ApplicationKey applicationKey )
-    {
-        final PartDescriptor partDescriptor1 = PartDescriptor.create().
-            displayName( "News part" ).
-            config( Form.create().build() ).
-            key( DescriptorKey.from( "module:new-part" ) ).
-            build();
-
-        final PartDescriptor partDescriptor2 = PartDescriptor.create().
-            displayName( "News part2" ).
-            config( Form.create().build() ).
-            key( DescriptorKey.from( "module:new-part2" ) ).
-            build();
-
-        Mockito.when( partDescriptorService.getByApplication( applicationKey ) ).
-            thenReturn( PartDescriptors.from( partDescriptor1, partDescriptor2 ) );
-    }
-
-    private void mockLayoutDescriptors( final ApplicationKey applicationKey )
-    {
-        final LayoutDescriptor layoutDescriptor1 = LayoutDescriptor.create().
-            displayName( "Fancy layout" ).
-            config( Form.create().build() ).
-            regions( RegionDescriptors.create().
-                add( RegionDescriptor.create().name( "left" ).build() ).
-                add( RegionDescriptor.create().name( "right" ).build() ).
-                build() ).
-            key( DescriptorKey.from( "application:fancy-layout" ) ).
-            build();
-
-        final LayoutDescriptor layoutDescriptor2 = LayoutDescriptor.create().
-            displayName( "Putty layout" ).
-            config( Form.create().build() ).
-            regions( RegionDescriptors.create().
-                add( RegionDescriptor.create().name( "top" ).build() ).
-                add( RegionDescriptor.create().name( "bottom" ).build() ).
-                build() ).
-            key( DescriptorKey.from( "application:putty-layout" ) ).
-            build();
-
-        Mockito.when( layoutDescriptorService.getByApplication( applicationKey ) ).
-            thenReturn( LayoutDescriptors.from( layoutDescriptor1, layoutDescriptor2 ) );
-
-    }
-
-    private void mockRelationshipTypes( final ApplicationKey applicationKey )
-    {
-        final RelationshipTypes relationshipTypes =
-            RelationshipTypes.from( RelationshipType.create().name( "myapplication:person" ).build(),
-                                    RelationshipType.create().name( "myapplication:site" ).build() );
-
-        Mockito.when( this.relationshipTypeService.getByApplication( applicationKey ) ).thenReturn( relationshipTypes );
-    }
-
-    private void mockMacros( final ApplicationKey applicationKey )
-    {
-        final MacroDescriptor macroDescriptor1 = MacroDescriptor.create().
-            key( MacroKey.from( "my-app1:macro1" ) ).
-            description( "my description" ).
-            displayName( "A macro" ).
-            form( Form.create().build() ).
-            build();
-
-        final MacroDescriptor macroDescriptor2 = MacroDescriptor.create().
-            key( MacroKey.from( "my-app2:macro2" ) ).
-            description( "my description" ).
-            displayName( "B macro" ).
-            form( Form.create().build() ).
-            build();
-
-        final MacroDescriptors macroDescriptors = MacroDescriptors.from( macroDescriptor1, macroDescriptor2 );
-
-        Mockito.when(
-            this.macroDescriptorService.getByApplications( ApplicationKeys.from( applicationKey, ApplicationKey.SYSTEM ) ) ).thenReturn(
-            macroDescriptors );
-    }
-
-    private void mockReferences( final ApplicationKey applicationKey )
-    {
-        final Content content1 = Content.create().
-            id( ContentId.from( "id1" ) ).
-            name( "name1" ).
-            displayName( "My Content 1" ).
-            parentPath( ContentPath.from( "/a/b" ) ).
-            modifier( PrincipalKey.from( "user:system:admin" ) ).
-            modifiedTime( Instant.ofEpochSecond( 0 ) ).
-            creator( PrincipalKey.from( "user:system:admin" ) ).
-            createdTime( Instant.ofEpochSecond( 0 ) ).
-            build();
-
-        final Content content2 = Content.create().
-            id( ContentId.from( "id2" ) ).
-            name( "name2" ).
-            displayName( "My Content 2" ).
-            parentPath( ContentPath.from( "/a/c" ) ).
-            modifier( PrincipalKey.from( "user:system:admin" ) ).
-            modifiedTime( Instant.ofEpochSecond( 0 ) ).
-            creator( PrincipalKey.from( "user:system:admin" ) ).
-            createdTime( Instant.ofEpochSecond( 0 ) ).
-            build();
-
-        final Contents contents = Contents.from( content1, content2 );
-
-        Mockito.when( this.contentService.findByApplicationKey( applicationKey ) ).thenReturn( contents );
-    }
-
-    private void mockTasks( final ApplicationKey applicationKey )
-    {
-        final TaskDescriptor taskDescriptor1 = TaskDescriptor.create().
-            key( DescriptorKey.from( ApplicationKey.SYSTEM, "task1" ) ).
-            description( "description1" ).
-            config( Form.create().build() ).
-            build();
-
-        final TaskDescriptor taskDescriptor2 = TaskDescriptor.create().
-            key( DescriptorKey.from( ApplicationKey.SYSTEM, "task2" ) ).
-            description( "description2" ).
-            config( Form.create().build() ).
-            build();
-
-        final Descriptors<TaskDescriptor> descriptors = Descriptors.from( taskDescriptor1, taskDescriptor2 );
-
-        Mockito.when( this.taskDescriptorService.getTasks( applicationKey ) ).thenReturn( descriptors );
-    }
-
-    private void mockIdProvider( final ApplicationKey applicationKey )
-    {
-        final AuthDescriptor authDescriptor = AuthDescriptor.create().
-            config( Form.create().build() ).
-            key( applicationKey ).
-            mode( AuthDescriptorMode.EXTERNAL ).
-            build();
-
-        final UserStore userStore1 = UserStore.create().
-            displayName( "userStore1" ).
-            key( UserStoreKey.from( "userStore1" ) ).
-            authConfig( AuthConfig.
-                create().
-                applicationKey( applicationKey ).
-                config( new PropertyTree() ).
-                build() ).
-            build();
-
-        final UserStore userStore2 = UserStore.create().
-            displayName( "userStore2" ).
-            key( UserStoreKey.from( "userStore2" +
-                                        "" ) ).
-            authConfig( AuthConfig.
-                create().
-                applicationKey( applicationKey ).
-                config( new PropertyTree() ).
-                build() ).
-            build();
-
-        Mockito.when( this.authDescriptorService.getDescriptor( applicationKey ) ).thenReturn( authDescriptor );
-        Mockito.when( this.securityService.getUserStores()).thenReturn( UserStores.from( userStore1, userStore2 ) );
-
-    }
-
-    private void mockDeployment( final ApplicationKey applicationKey )
-    {
-        final Resource resourceMock = Mockito.mock( Resource.class );
-        Mockito.when( resourceMock.exists() ).thenReturn( true );
-
-        Mockito.when( this.resourceService.getResource( ResourceKey.from( applicationKey, "/main.js" ) ) ).thenReturn( resourceMock );
-    }
-
     @Override
     protected Object getResourceInstance()
     {
         this.applicationService = Mockito.mock( ApplicationService.class );
         this.applicationDescriptorService = Mockito.mock( ApplicationDescriptorService.class );
+        this.applicationInfoService = Mockito.mock( ApplicationInfoService.class );
         this.siteService = Mockito.mock( SiteService.class );
         this.marketService = Mockito.mock( MarketService.class );
         this.authDescriptorService = Mockito.mock( AuthDescriptorService.class );
-        this.contentTypeService = Mockito.mock( ContentTypeService.class );
-        this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
-        this.partDescriptorService = Mockito.mock( PartDescriptorService.class );
-        this.layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
+        this.resourceService = Mockito.mock( ResourceService.class );
+        this.portalScriptService = Mockito.mock( PortalScriptService.class );
         this.relationshipTypeService = Mockito.mock( RelationshipTypeService.class );
         this.macroDescriptorService = Mockito.mock( MacroDescriptorService.class );
-        this.contentService = Mockito.mock( ContentService.class );
-        this.resourceService = Mockito.mock( ResourceService.class );
-        this.taskDescriptorService = Mockito.mock( TaskDescriptorService.class );
-        this.securityService = Mockito.mock( SecurityService.class );
+        this.contentTypeService = Mockito.mock( ContentTypeService.class );
 
         final ApplicationResource resource = new ApplicationResource();
         resource.setApplicationService( this.applicationService );
@@ -545,16 +310,12 @@ public class ApplicationResourceTest
         resource.setMarketService( this.marketService );
         resource.setAuthDescriptorService( this.authDescriptorService );
         resource.setApplicationDescriptorService( this.applicationDescriptorService );
+        resource.setApplicationInfoService( this.applicationInfoService );
         resource.setContentTypeService( this.contentTypeService );
-        resource.setPageDescriptorService( this.pageDescriptorService );
-        resource.setPartDescriptorService( this.partDescriptorService );
-        resource.setLayoutDescriptorService( this.layoutDescriptorService );
         resource.setRelationshipTypeService( this.relationshipTypeService );
         resource.setMacroDescriptorService( this.macroDescriptorService );
-        resource.setContentService( this.contentService );
         resource.setResourceService( this.resourceService );
-        resource.setTaskDescriptorService( this.taskDescriptorService );
-        resource.setSecurityService( this.securityService );
+        resource.setPortalScriptService( this.portalScriptService );
 
         return resource;
     }

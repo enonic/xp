@@ -1,11 +1,20 @@
 package com.enonic.xp.admin.impl.rest.resource.application.json;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.admin.impl.json.content.page.PageDescriptorListJson;
 import com.enonic.xp.admin.impl.json.content.page.region.LayoutDescriptorsJson;
 import com.enonic.xp.admin.impl.json.content.page.region.PartDescriptorsJson;
 import com.enonic.xp.admin.impl.json.schema.content.ContentTypeSummaryListJson;
 import com.enonic.xp.admin.impl.json.schema.relationship.RelationshipTypeListJson;
+import com.enonic.xp.admin.impl.rest.resource.macro.MacroIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.macro.json.MacrosJson;
+import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
+import com.enonic.xp.admin.impl.rest.resource.schema.relationship.RelationshipTypeIconUrlResolver;
+import com.enonic.xp.app.ApplicationInfo;
+import com.enonic.xp.page.PageDescriptors;
+import com.enonic.xp.region.LayoutDescriptors;
+import com.enonic.xp.region.PartDescriptors;
 
 public class ApplicationInfoJson
 {
@@ -28,6 +37,21 @@ public class ApplicationInfoJson
     private ApplicationIdProviderJson idProvider;
 
     private ApplicationDeploymentJson deployment;
+
+    private ApplicationInfoJson( final Builder builder )
+    {
+        this.contentTypes = new ContentTypeSummaryListJson( builder.applicationInfo.getContentTypes(), builder.contentTypeIconUrlResolver );
+        this.pages = new PageDescriptorListJson( PageDescriptors.from( builder.applicationInfo.getPages() ) );
+        this.parts = new PartDescriptorsJson( PartDescriptors.from( builder.applicationInfo.getParts() ) );
+        this.layouts = new LayoutDescriptorsJson( LayoutDescriptors.from( builder.applicationInfo.getLayouts() ) );
+        this.relations = new RelationshipTypeListJson( builder.applicationInfo.getRelations(), builder.relationshipTypeIconUrlResolver );
+        this.references = new ContentReferencesJson( builder.applicationInfo.getContentReferences() );
+        this.macros = new MacrosJson( builder.applicationInfo.getMacros(), builder.macroIconUrlResolver );
+        this.tasks = new ApplicationTaskDescriptorsJson( builder.applicationInfo.getTasks() );
+        this.idProvider =
+            new ApplicationIdProviderJson( builder.applicationInfo.getAuthDescriptor(), builder.applicationInfo.getUserStoreReferences() );
+        this.deployment = new ApplicationDeploymentJson( builder.deploymentUrl );
+    }
 
     public ContentTypeSummaryListJson getContentTypes()
     {
@@ -79,62 +103,69 @@ public class ApplicationInfoJson
         return deployment;
     }
 
-    public ApplicationInfoJson setContentTypes( final ContentTypeSummaryListJson contentTypes )
+    public static Builder create()
     {
-        this.contentTypes = contentTypes;
-        return this;
+        return new Builder();
     }
 
-    public ApplicationInfoJson setPages( final PageDescriptorListJson pages )
+    public static final class Builder
     {
-        this.pages = pages;
-        return this;
-    }
+        private ApplicationInfo applicationInfo;
 
-    public ApplicationInfoJson setParts( final PartDescriptorsJson parts )
-    {
-        this.parts = parts;
-        return this;
-    }
+        private String deploymentUrl;
 
-    public ApplicationInfoJson setLayouts( final LayoutDescriptorsJson layouts )
-    {
-        this.layouts = layouts;
-        return this;
-    }
+        private RelationshipTypeIconUrlResolver relationshipTypeIconUrlResolver;
 
-    public ApplicationInfoJson setRelations( final RelationshipTypeListJson relations )
-    {
-        this.relations = relations;
-        return this;
-    }
+        private MacroIconUrlResolver macroIconUrlResolver;
 
-    public ApplicationInfoJson setReferences( final ContentReferencesJson references )
-    {
-        this.references = references;
-        return this;
-    }
+        private ContentTypeIconUrlResolver contentTypeIconUrlResolver;
 
-    public ApplicationInfoJson setMacros( final MacrosJson macros )
-    {
-        this.macros = macros;
-        return this;
-    }
+        private Builder()
+        {
+        }
 
-    public ApplicationInfoJson setTasks( final ApplicationTaskDescriptorsJson tasks )
-    {
-        this.tasks = tasks;
-        return this;
-    }
+        public Builder setApplicationInfo( final ApplicationInfo applicationInfo )
+        {
+            this.applicationInfo = applicationInfo;
+            return this;
+        }
 
-    public ApplicationInfoJson setIdProvider(final ApplicationIdProviderJson idProvider) {
-        this.idProvider = idProvider;
-        return this;
-    }
+        public Builder setDeploymentUrl( final String deploymentUrl )
+        {
+            this.deploymentUrl = deploymentUrl;
+            return this;
+        }
 
-    public ApplicationInfoJson setDeployment( final ApplicationDeploymentJson deployment )
-    {
-        this.deployment = deployment;
-        return this;
+        public Builder setRelationshipTypeIconUrlResolver( final RelationshipTypeIconUrlResolver relationshipTypeIconUrlResolver )
+        {
+            this.relationshipTypeIconUrlResolver = relationshipTypeIconUrlResolver;
+            return this;
+        }
+
+        public Builder setMacroIconUrlResolver( final MacroIconUrlResolver macroIconUrlResolver )
+        {
+            this.macroIconUrlResolver = macroIconUrlResolver;
+            return this;
+        }
+
+        public Builder setContentTypeIconUrlResolver( final ContentTypeIconUrlResolver contentTypeIconUrlResolver )
+        {
+            this.contentTypeIconUrlResolver = contentTypeIconUrlResolver;
+            return this;
+        }
+
+        public void validate()
+        {
+            Preconditions.checkNotNull( this.applicationInfo, "applicationInfo cannot be null" );
+            Preconditions.checkNotNull( this.relationshipTypeIconUrlResolver, "relationshipTypeIconUrlResolver cannot be null" );
+            Preconditions.checkNotNull( this.macroIconUrlResolver, "macroIconUrlResolver cannot be null" );
+            Preconditions.checkNotNull( this.contentTypeIconUrlResolver, "contentTypeIconUrlResolver cannot be null" );
+        }
+
+        public ApplicationInfoJson build()
+        {
+            validate();
+            return new ApplicationInfoJson( this );
+        }
     }
 }

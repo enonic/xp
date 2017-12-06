@@ -24,16 +24,16 @@ public final class PartDescriptors
 
     public static PartDescriptors from( final PartDescriptor... descriptors )
     {
-        return new PartDescriptors( ImmutableList.copyOf( descriptors ) );
+        return descriptors != null ? new PartDescriptors( ImmutableList.copyOf( descriptors ) ) : PartDescriptors.empty();
     }
 
     public static PartDescriptors from( final Iterable<? extends PartDescriptor> descriptors )
     {
-        return new PartDescriptors( ImmutableList.copyOf( descriptors ) );
+        return descriptors != null ? new PartDescriptors( ImmutableList.copyOf( descriptors ) ) : PartDescriptors.empty();
     }
 
     public static PartDescriptors from( final Collection<? extends PartDescriptor> descriptors )
     {
-        return new PartDescriptors( ImmutableList.copyOf( descriptors ) );
+        return descriptors != null ? new PartDescriptors( ImmutableList.copyOf( descriptors ) ) : PartDescriptors.empty();
     }
 }

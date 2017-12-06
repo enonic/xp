@@ -15,9 +15,12 @@ public class RelationshipTypeListJson
     public RelationshipTypeListJson( final RelationshipTypes relationshipTypes, final RelationshipTypeIconUrlResolver iconUrlResolver )
     {
         final ImmutableList.Builder<RelationshipTypeJson> builder = ImmutableList.builder();
-        for ( final RelationshipType type : relationshipTypes.getList() )
+        if(relationshipTypes != null)
         {
-            builder.add( new RelationshipTypeJson( type, iconUrlResolver ) );
+            for ( final RelationshipType type : relationshipTypes.getList() )
+            {
+                builder.add( new RelationshipTypeJson( type, iconUrlResolver ) );
+            }
         }
 
         this.list = builder.build();
