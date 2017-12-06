@@ -124,7 +124,7 @@ public final class ApplicationResource
 
     @GET
     @Path("list")
-    public ListApplicationJson list( @QueryParam("query") final String query, @Context HttpServletRequest request )
+    public ListApplicationJson list( @QueryParam("query") final String query )
         throws Exception
     {
         Applications applications = this.applicationService.getInstalledApplications();
@@ -132,7 +132,6 @@ public final class ApplicationResource
         applications = this.filterApplications( applications, query );
         applications = this.sortApplications( applications );
 
-        //ApplicationInfoJson applicationInfoJson = info( "com.enonic.app.features", request );
         final ListApplicationJson json = new ListApplicationJson();
         for ( final Application application : applications )
         {
