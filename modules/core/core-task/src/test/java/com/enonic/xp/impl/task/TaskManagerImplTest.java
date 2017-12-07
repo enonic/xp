@@ -4,15 +4,19 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.util.concurrent.Uninterruptibles;
 
+import com.enonic.xp.event.Event;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
@@ -24,20 +28,23 @@ public class TaskManagerImplTest
 {
     private TaskManagerImpl taskMan;
 
+    private List<Event> eventsPublished;
+
     @Before
     public void setup()
     {
         taskMan = new TaskManagerImpl();
         final AtomicInteger count = new AtomicInteger( 0 );
         taskMan.setIdGen( () -> ( TaskId.from( Integer.toString( count.incrementAndGet() ) ) ) );
+
+        this.eventsPublished = new ArrayList<>();
+        taskMan.setEventPublisher( event -> this.eventsPublished.add( event ) );
     }
 
     @Test
     public void submitTask()
-        throws Exception
     {
-        final RunnableTask runnableTask = ( id, progressReporter ) ->
-        {
+        final RunnableTask runnableTask = ( id, progressReporter ) -> {
             for ( int i = 0; i < 5; i++ )
             {
                 progressReporter.progress( 1, 10 );
@@ -65,15 +72,16 @@ public class TaskManagerImplTest
         assertEquals( 1, taskMan.getAllTasks().size() );
         assertEquals( 0, taskMan.getRunningTasks().size() );
         assertNotNull( taskMan.getTaskInfo( taskId ) );
-
+        assertEquals( 13, eventsPublished.size() );
+        assertEquals( "task.submitted , task.updated , task.updated , task.updated , task.updated , task.updated , " +
+                          "task.updated , task.updated , task.updated , task.updated , task.updated , task.updated , task.finished",
+                      eventTypes() );
     }
 
     @Test
     public void submitTaskWithError()
-        throws Exception
     {
-        final RunnableTask runnableTask = ( id, progressReporter ) ->
-        {
+        final RunnableTask runnableTask = ( id, progressReporter ) -> {
             Uninterruptibles.sleepUninterruptibly( 500, TimeUnit.MILLISECONDS );
             throw new RuntimeException( "Some error" );
         };
@@ -91,7 +99,8 @@ public class TaskManagerImplTest
         assertEquals( 1, taskMan.getAllTasks().size() );
         assertEquals( 0, taskMan.getRunningTasks().size() );
         assertEquals( TaskState.FAILED, taskMan.getTaskInfo( taskId ).getState() );
-
+        assertEquals( 3, eventsPublished.size() );
+        assertEquals( "task.submitted , task.updated , task.failed", eventTypes() );
     }
 
     @Test
@@ -102,8 +111,7 @@ public class TaskManagerImplTest
         taskMan.setClock( Clock.fixed( initTime, ZoneId.systemDefault() ) );
 
         CountDownLatch latch = new CountDownLatch( 1 );
-        RunnableTask runnableTask = ( id, progressReporter ) ->
-        {
+        RunnableTask runnableTask = ( id, progressReporter ) -> {
             Uninterruptibles.sleepUninterruptibly( 100, TimeUnit.MILLISECONDS );
             latch.countDown();
         };
@@ -125,5 +133,12 @@ public class TaskManagerImplTest
         assertNull( taskMan.getTaskInfo( taskId ) );
         assertEquals( 0, taskMan.getAllTasks().size() );
         assertEquals( 0, taskMan.getRunningTasks().size() );
+        assertEquals( 4, eventsPublished.size() );
+        assertEquals( "task.submitted , task.updated , task.finished , task.removed", eventTypes() );
+    }
+
+    private String eventTypes()
+    {
+        return eventsPublished.stream().map( ( e ) -> e.getType() ).collect( Collectors.joining( " , " ) );
     }
 }
