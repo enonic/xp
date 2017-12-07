@@ -12,9 +12,12 @@ public class ContentReferencesJson
     public ContentReferencesJson( final Contents contents )
     {
         final ImmutableList.Builder<ContentReferenceJson> builder = ImmutableList.builder();
-        for ( final Content content : contents )
+        if(contents != null)
         {
-            builder.add( new ContentReferenceJson( content ) );
+            for ( final Content content : contents )
+            {
+                builder.add( new ContentReferenceJson( content ) );
+            }
         }
         this.references = builder.build();
     }

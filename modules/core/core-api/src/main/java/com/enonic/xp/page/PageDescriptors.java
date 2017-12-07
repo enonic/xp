@@ -24,16 +24,16 @@ public final class PageDescriptors
 
     public static PageDescriptors from( final PageDescriptor... pageDescriptors )
     {
-        return new PageDescriptors( ImmutableList.copyOf( pageDescriptors ) );
+        return pageDescriptors != null ? new PageDescriptors( ImmutableList.copyOf( pageDescriptors ) ) : PageDescriptors.empty();
     }
 
     public static PageDescriptors from( final Iterable<? extends PageDescriptor> pageDescriptors )
     {
-        return new PageDescriptors( ImmutableList.copyOf( pageDescriptors ) );
+        return pageDescriptors != null ? new PageDescriptors( ImmutableList.copyOf( pageDescriptors ) ) : PageDescriptors.empty();
     }
 
     public static PageDescriptors from( final Collection<? extends PageDescriptor> pageDescriptors )
     {
-        return new PageDescriptors( ImmutableList.copyOf( pageDescriptors ) );
+        return pageDescriptors != null ? new PageDescriptors( ImmutableList.copyOf( pageDescriptors ) ) : PageDescriptors.empty();
     }
 }

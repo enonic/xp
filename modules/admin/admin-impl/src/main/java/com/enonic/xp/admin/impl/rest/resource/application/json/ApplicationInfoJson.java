@@ -1,102 +1,171 @@
 package com.enonic.xp.admin.impl.rest.resource.application.json;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.admin.impl.json.content.page.PageDescriptorListJson;
 import com.enonic.xp.admin.impl.json.content.page.region.LayoutDescriptorsJson;
 import com.enonic.xp.admin.impl.json.content.page.region.PartDescriptorsJson;
 import com.enonic.xp.admin.impl.json.schema.content.ContentTypeSummaryListJson;
 import com.enonic.xp.admin.impl.json.schema.relationship.RelationshipTypeListJson;
+import com.enonic.xp.admin.impl.rest.resource.macro.MacroIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.macro.json.MacrosJson;
+import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
+import com.enonic.xp.admin.impl.rest.resource.schema.relationship.RelationshipTypeIconUrlResolver;
+import com.enonic.xp.app.ApplicationInfo;
+import com.enonic.xp.page.PageDescriptors;
+import com.enonic.xp.region.LayoutDescriptors;
+import com.enonic.xp.region.PartDescriptors;
 
 public class ApplicationInfoJson
 {
-    private ContentTypeSummaryListJson contentTypesJson;
+    private ContentTypeSummaryListJson contentTypes;
 
-    private PageDescriptorListJson pagesJson;
+    private PageDescriptorListJson pages;
 
-    private PartDescriptorsJson partsJson;
+    private PartDescriptorsJson parts;
 
-    private LayoutDescriptorsJson layoutsJson;
+    private LayoutDescriptorsJson layouts;
 
-    private RelationshipTypeListJson relationsJson;
+    private RelationshipTypeListJson relations;
 
-    private ContentReferencesJson referencesJson;
+    private ContentReferencesJson references;
 
-    private MacrosJson macrosJson;
+    private MacrosJson macros;
 
-    public ContentTypeSummaryListJson getContentTypesJson()
+    private ApplicationTaskDescriptorsJson tasks;
+
+    private ApplicationIdProviderJson idProvider;
+
+    private ApplicationDeploymentJson deployment;
+
+    private ApplicationInfoJson( final Builder builder )
     {
-        return contentTypesJson;
+        this.contentTypes = new ContentTypeSummaryListJson( builder.applicationInfo.getContentTypes(), builder.contentTypeIconUrlResolver );
+        this.pages = new PageDescriptorListJson( PageDescriptors.from( builder.applicationInfo.getPages() ) );
+        this.parts = new PartDescriptorsJson( PartDescriptors.from( builder.applicationInfo.getParts() ) );
+        this.layouts = new LayoutDescriptorsJson( LayoutDescriptors.from( builder.applicationInfo.getLayouts() ) );
+        this.relations = new RelationshipTypeListJson( builder.applicationInfo.getRelations(), builder.relationshipTypeIconUrlResolver );
+        this.references = new ContentReferencesJson( builder.applicationInfo.getContentReferences() );
+        this.macros = new MacrosJson( builder.applicationInfo.getMacros(), builder.macroIconUrlResolver );
+        this.tasks = new ApplicationTaskDescriptorsJson( builder.applicationInfo.getTasks() );
+        this.idProvider =
+            new ApplicationIdProviderJson( builder.applicationInfo.getAuthDescriptor(), builder.applicationInfo.getUserStoreReferences() );
+        this.deployment = new ApplicationDeploymentJson( builder.deploymentUrl );
     }
 
-    public PageDescriptorListJson getPagesJson()
+    public ContentTypeSummaryListJson getContentTypes()
     {
-        return pagesJson;
+        return contentTypes;
     }
 
-    public PartDescriptorsJson getPartsJson()
+    public PageDescriptorListJson getPages()
     {
-        return partsJson;
+        return pages;
     }
 
-    public LayoutDescriptorsJson getLayoutsJson()
+    public PartDescriptorsJson getParts()
     {
-        return layoutsJson;
+        return parts;
     }
 
-    public RelationshipTypeListJson getRelationsJson()
+    public LayoutDescriptorsJson getLayouts()
     {
-        return relationsJson;
+        return layouts;
     }
 
-    public MacrosJson getMacrosJson()
+    public RelationshipTypeListJson getRelations()
     {
-        return macrosJson;
+        return relations;
     }
 
-    public ContentReferencesJson getReferencesJson()
+    public MacrosJson getMacros()
     {
-        return referencesJson;
+        return macros;
     }
 
-    public ApplicationInfoJson setContentTypesJson( final ContentTypeSummaryListJson contentTypesJson )
+    public ContentReferencesJson getReferences()
     {
-        this.contentTypesJson = contentTypesJson;
-        return this;
+        return references;
     }
 
-    public ApplicationInfoJson setPagesJson( final PageDescriptorListJson pagesJson )
+    public ApplicationTaskDescriptorsJson getTasks()
     {
-        this.pagesJson = pagesJson;
-        return this;
+        return tasks;
     }
 
-    public ApplicationInfoJson setPartsJson( final PartDescriptorsJson partsJson )
+    public ApplicationIdProviderJson getIdProvider()
     {
-        this.partsJson = partsJson;
-        return this;
+        return idProvider;
     }
 
-    public ApplicationInfoJson setLayoutsJson( final LayoutDescriptorsJson layoutsJson )
+    public ApplicationDeploymentJson getDeployment()
     {
-        this.layoutsJson = layoutsJson;
-        return this;
+        return deployment;
     }
 
-    public ApplicationInfoJson setRelationsJson( final RelationshipTypeListJson relationsJson )
+    public static Builder create()
     {
-        this.relationsJson = relationsJson;
-        return this;
+        return new Builder();
     }
 
-    public ApplicationInfoJson setReferencesJson( final ContentReferencesJson referencesJson )
+    public static final class Builder
     {
-        this.referencesJson = referencesJson;
-        return this;
-    }
+        private ApplicationInfo applicationInfo;
 
-    public ApplicationInfoJson setMacrosJson( final MacrosJson macrosJson )
-    {
-        this.macrosJson = macrosJson;
-        return this;
+        private String deploymentUrl;
+
+        private RelationshipTypeIconUrlResolver relationshipTypeIconUrlResolver;
+
+        private MacroIconUrlResolver macroIconUrlResolver;
+
+        private ContentTypeIconUrlResolver contentTypeIconUrlResolver;
+
+        private Builder()
+        {
+        }
+
+        public Builder setApplicationInfo( final ApplicationInfo applicationInfo )
+        {
+            this.applicationInfo = applicationInfo;
+            return this;
+        }
+
+        public Builder setDeploymentUrl( final String deploymentUrl )
+        {
+            this.deploymentUrl = deploymentUrl;
+            return this;
+        }
+
+        public Builder setRelationshipTypeIconUrlResolver( final RelationshipTypeIconUrlResolver relationshipTypeIconUrlResolver )
+        {
+            this.relationshipTypeIconUrlResolver = relationshipTypeIconUrlResolver;
+            return this;
+        }
+
+        public Builder setMacroIconUrlResolver( final MacroIconUrlResolver macroIconUrlResolver )
+        {
+            this.macroIconUrlResolver = macroIconUrlResolver;
+            return this;
+        }
+
+        public Builder setContentTypeIconUrlResolver( final ContentTypeIconUrlResolver contentTypeIconUrlResolver )
+        {
+            this.contentTypeIconUrlResolver = contentTypeIconUrlResolver;
+            return this;
+        }
+
+        public void validate()
+        {
+            Preconditions.checkNotNull( this.applicationInfo, "applicationInfo cannot be null" );
+            Preconditions.checkNotNull( this.relationshipTypeIconUrlResolver, "relationshipTypeIconUrlResolver cannot be null" );
+            Preconditions.checkNotNull( this.macroIconUrlResolver, "macroIconUrlResolver cannot be null" );
+            Preconditions.checkNotNull( this.contentTypeIconUrlResolver, "contentTypeIconUrlResolver cannot be null" );
+        }
+
+        public ApplicationInfoJson build()
+        {
+            validate();
+            return new ApplicationInfoJson( this );
+        }
     }
 }

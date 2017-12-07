@@ -19,9 +19,12 @@ public class LayoutDescriptorsJson
     {
         this.descriptors = descriptors;
         ImmutableList.Builder<LayoutDescriptorJson> builder = new ImmutableList.Builder<>();
-        for ( LayoutDescriptor descriptor : descriptors )
+        if(descriptors != null)
         {
-            builder.add( new LayoutDescriptorJson( descriptor ) );
+            for ( LayoutDescriptor descriptor : descriptors )
+            {
+                builder.add( new LayoutDescriptorJson( descriptor ) );
+            }
         }
         this.descriptorJsonList = builder.build();
     }

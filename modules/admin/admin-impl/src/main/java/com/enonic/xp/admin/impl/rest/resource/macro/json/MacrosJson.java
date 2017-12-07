@@ -17,9 +17,12 @@ public class MacrosJson
     public MacrosJson( final MacroDescriptors macroDescriptors, final MacroIconUrlResolver macroIconUrlResolver )
     {
         List<MacroDescriptorJson> notSortedMacros = Lists.newArrayList();
-        for ( final MacroDescriptor macroDescriptor : macroDescriptors )
+        if(macroDescriptors != null)
         {
-            notSortedMacros.add( new MacroDescriptorJson( macroDescriptor, macroIconUrlResolver ) );
+            for ( final MacroDescriptor macroDescriptor : macroDescriptors )
+            {
+                notSortedMacros.add( new MacroDescriptorJson( macroDescriptor, macroIconUrlResolver ) );
+            }
         }
         macros = getSortedMacros( notSortedMacros );
     }
