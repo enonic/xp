@@ -21,6 +21,7 @@ import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.MediaTypes;
+import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
@@ -74,8 +75,7 @@ public final class AppHandler
         final String restPath = matcher.group( 2 );
 
         final Trace trace = Tracer.newTrace( "renderApp" );
-        return Tracer.traceEx( trace, () ->
-        {
+        return Tracer.traceEx( trace, () -> {
             final WebResponse resp = handleAppRequest( req, applicationKey, restPath );
             addTraceInfo( trace, applicationKey, restPath );
             return resp;
@@ -85,7 +85,7 @@ public final class AppHandler
     private WebResponse handleAppRequest( final WebRequest req, final ApplicationKey applicationKey, final String path )
         throws Exception
     {
-        if ( path != null && !"/".equals( path ) )
+        if ( path != null && !"/".equals( path ) && req.getMethod() == HttpMethod.GET )
         {
             final WebResponse response = serveAsset( applicationKey, path );
             if ( response != null )

@@ -17,6 +17,7 @@ import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.TraceManager;
 import com.enonic.xp.trace.Tracer;
+import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
@@ -114,6 +115,7 @@ public class AppHandlerTest
         final Resource resource = mockResource( "myapp:/assets/a/b.txt", "hello".getBytes() );
 
         this.request.setRawPath( "/app/myapp/a/b.txt" );
+        this.request.setMethod( HttpMethod.GET );
 
         final WebResponse response = this.handler.doHandle( this.request, null, this.chain );
         assertEquals( HttpStatus.OK, response.getStatus() );
