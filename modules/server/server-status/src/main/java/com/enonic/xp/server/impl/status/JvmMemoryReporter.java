@@ -2,11 +2,14 @@ package com.enonic.xp.server.impl.status;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
+import java.lang.management.MemoryPoolMXBean;
 import java.lang.management.MemoryUsage;
+import java.util.List;
 
 import org.osgi.service.component.annotations.Component;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -31,6 +34,36 @@ public final class JvmMemoryReporter
         final MemoryMXBean bean = ManagementFactory.getMemoryMXBean();
         json.set( "heap", buildMemoryUsageInfo( bean.getHeapMemoryUsage() ) );
         json.set( "nonHeap", buildMemoryUsageInfo( bean.getNonHeapMemoryUsage() ) );
+        json.set( "pools", buildMemoryPools() );
+
+        return json;
+    }
+
+    private ArrayNode buildMemoryPools()
+    {
+        final ArrayNode jsonNode = JsonNodeFactory.instance.arrayNode();
+
+        final List<MemoryPoolMXBean> memoryPools = ManagementFactory.getMemoryPoolMXBeans();
+
+        for ( final MemoryPoolMXBean mp : memoryPools )
+        {
+            jsonNode.add( buildPoolInfo( mp ) );
+        }
+
+        return jsonNode;
+    }
+
+    private ObjectNode buildPoolInfo( final MemoryPoolMXBean pool )
+    {
+        final ObjectNode json = JsonNodeFactory.instance.objectNode();
+
+        json.put( "name", pool.getName() );
+        json.put( "type", pool.getType().toString() );
+
+        if ( pool.getUsage() != null )
+        {
+            json.set( "usage", buildMemoryUsageInfo( pool.getUsage() ) );
+        }
 
         return json;
     }
