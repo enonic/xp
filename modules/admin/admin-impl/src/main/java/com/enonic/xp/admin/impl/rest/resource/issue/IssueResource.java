@@ -41,7 +41,6 @@ import com.enonic.xp.issue.IssueService;
 import com.enonic.xp.issue.IssueStatus;
 import com.enonic.xp.issue.UpdateIssueParams;
 import com.enonic.xp.jaxrs.JaxRsComponent;
-import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
@@ -102,13 +101,16 @@ public final class IssueResource
     {
         final Issue issue = issueService.update( generateUpdateIssueParams( params ) );
 
-        if ( params.isPublish )
+        if ( !params.autoSave )
         {
-            issueNotificationsSender.notifyIssuePublished( issue, request.getHeader( HttpHeaders.REFERER ) );
-        }
-        else
-        {
-            issueNotificationsSender.notifyIssueUpdated( issue, request.getHeader( HttpHeaders.REFERER ) );
+            if ( params.isPublish )
+            {
+                issueNotificationsSender.notifyIssuePublished( issue, request.getHeader( HttpHeaders.REFERER ) );
+            }
+            else
+            {
+                issueNotificationsSender.notifyIssueUpdated( issue, request.getHeader( HttpHeaders.REFERER ) );
+            }
         }
 
         return new IssueJson( issue );
@@ -219,35 +221,34 @@ public final class IssueResource
 
         return UpdateIssueParams.create().
             id( json.issueId ).
-            editor( editMe ->
-                    {
-                        if ( json.title != null )
-                        {
-                            editMe.title = json.title;
-                        }
-                        if ( json.description != null )
-                        {
-                            editMe.description = json.description;
-                        }
-                        if ( json.issueStatus != null )
-                        {
-                            editMe.issueStatus = json.issueStatus;
-                        }
-                        if ( json.approverIds != null )
-                        {
-                            editMe.approverIds = filterInvalidAssignees( json.approverIds );
-                        }
-                        if ( json.publishRequest != null )
-                        {
-                            editMe.publishRequest = json.publishRequest;
-                        }
-                    } ).
+            editor( editMe -> {
+                if ( json.title != null )
+                {
+                    editMe.title = json.title;
+                }
+                if ( json.description != null )
+                {
+                    editMe.description = json.description;
+                }
+                if ( json.issueStatus != null )
+                {
+                    editMe.issueStatus = json.issueStatus;
+                }
+                if ( json.approverIds != null )
+                {
+                    editMe.approverIds = filterInvalidAssignees( json.approverIds );
+                }
+                if ( json.publishRequest != null )
+                {
+                    editMe.publishRequest = json.publishRequest;
+                }
+            } ).
             build();
     }
 
     private PrincipalKeys filterInvalidAssignees( final List<PrincipalKey> assignees )
     {
-         return PrincipalKeys.from( assignees.stream().filter( this::isValidAssignee ).collect( Collectors.toList() ) );
+        return PrincipalKeys.from( assignees.stream().filter( this::isValidAssignee ).collect( Collectors.toList() ) );
     }
 
     private boolean isValidAssignee( final PrincipalKey principalKey )
