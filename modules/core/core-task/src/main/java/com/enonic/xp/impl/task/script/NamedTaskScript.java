@@ -3,6 +3,7 @@ package com.enonic.xp.impl.task.script;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.task.ProgressReporter;
@@ -52,4 +53,8 @@ public final class NamedTaskScript
         }
     }
 
+    public ApplicationKey getApplication()
+    {
+        return this.taskDescriptor.getApplicationKey();
+    }
 }

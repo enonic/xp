@@ -17,6 +17,7 @@ import org.osgi.service.component.annotations.Component;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.impl.task.script.NamedTaskScript;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.User;
 import com.enonic.xp.task.RunnableTask;
@@ -113,6 +114,10 @@ public final class TaskManagerImpl
     {
         try
         {
+            if ( runnable instanceof NamedTaskScript )
+            {
+                return ( (NamedTaskScript) runnable ).getApplication();
+            }
             return ApplicationKey.from( runnable.getClass() );
         }
         catch ( Exception e )
