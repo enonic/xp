@@ -77,11 +77,19 @@ public class ScriptMapGeneratorTest
         level1List.add( "list1B" );
         level1List.add( level2List );
 
+        final Map<String, Object> map = new HashMap<>();
+        map.put( "mapValue", 1 );
+        final HashMultimap<Object, Object> multimap = HashMultimap.create();
+        multimap.put( "multimapValue", 1 );
+        multimap.put( "multimapValue", 2 );
+
         final List<Object> list = new ArrayList<>();
         list.add( 1 );
         list.add( true );
         list.add( "string" );
         list.add( level1List );
+        list.add( map );
+        list.add( multimap );
 
         final MapSerializable value = gen -> gen.value( "root", list );
 

@@ -14,7 +14,8 @@ exports.testMapValue = function (o) {
 };
 
 exports.testListValue = function (o) {
-    assert.assertEquals('{"root":[1,true,"string",["list1A","list1B",["list2A","list2B"]]]}', JSON.stringify(o));
+    assert.assertEquals('{"root":[1,true,"string",["list1A","list1B",["list2A","list2B"]],{"mapValue":1},{"multimapValue":[1,2]}]}',
+        JSON.stringify(o));
 };
 
 exports.testMultimapValue = function (o) {

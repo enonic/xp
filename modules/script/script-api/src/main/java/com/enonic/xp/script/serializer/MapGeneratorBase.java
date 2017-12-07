@@ -114,18 +114,6 @@ public abstract class MapGeneratorBase
     @Override
     public final MapGenerator value( final Object value )
     {
-        return rawValue( convertValue( value ) );
-    }
-
-    @Override
-    public final MapGenerator value( final String key, final Object value )
-    {
-        return rawValue( key, convertValue( value ) );
-    }
-
-    @Override
-    public MapGenerator rawValue( final Object value )
-    {
         if ( value instanceof Map )
         {
             this.map();
@@ -147,12 +135,11 @@ public abstract class MapGeneratorBase
             return this.end();
         }
 
-        addToArray( convertRaw( value ) );
-        return this;
+        return rawValue( convertValue( value ) );
     }
 
     @Override
-    public MapGenerator rawValue( final String key, final Object value )
+    public final MapGenerator value( final String key, final Object value )
     {
         if ( value instanceof Map )
         {
@@ -175,6 +162,19 @@ public abstract class MapGeneratorBase
             return this.end();
         }
 
+        return rawValue( key, convertValue( value ) );
+    }
+
+    @Override
+    public MapGenerator rawValue( final Object value )
+    {
+        addToArray( convertRaw( value ) );
+        return this;
+    }
+
+    @Override
+    public MapGenerator rawValue( final String key, final Object value )
+    {
         putInMap( key, convertRaw( value ) );
         return this;
     }
@@ -238,21 +238,6 @@ public abstract class MapGeneratorBase
         }
 
         if ( value instanceof Exception )
-        {
-            return value;
-        }
-
-        if ( value instanceof Map )
-        {
-            return value;
-        }
-
-        if ( value instanceof List )
-        {
-            return value;
-        }
-
-        if ( value instanceof Multimap )
         {
             return value;
         }
