@@ -87,7 +87,10 @@ public final class NodeImporter
     {
         this.result.dryRun( this.dryRun );
 
-        nodeImportListener.nodeResolved( exportReader.getNodeFileCount(exportRoot) );
+        if (nodeImportListener != null) {
+            nodeImportListener.nodeResolved( exportReader.getNodeFileCount(exportRoot) );
+        }
+        
         if ( !isNodeFolder( this.exportRoot ) )
         {
             importFromDirectoryLayout( this.exportRoot );
@@ -220,7 +223,10 @@ public final class NodeImporter
 
         final ImportNodeResult importNodeResult = importNode( nodeFolder, processNodeSettings, newNode, importNodePath );
 
-        nodeImportListener.nodeImported( 1L );
+        if (nodeImportListener != null)
+        {
+            nodeImportListener.nodeImported( 1L );
+        }
         if ( importNodeResult.isPreExisting() )
         {
             result.updated( importNodeResult.getNode().path() );
