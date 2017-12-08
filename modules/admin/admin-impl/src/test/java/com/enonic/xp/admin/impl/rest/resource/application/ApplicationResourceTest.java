@@ -111,7 +111,7 @@ public class ApplicationResourceTest
 
         final String deploymentUrl = new ObjectMapper().readTree( response ).findPath( "deployment" ).findPath( "url" ).asText();
 
-        assertEquals( "localhost:80/app/testapplication", deploymentUrl );
+        assertEquals( "http://localhost:80/app/testapplication", deploymentUrl );
     }
 
     @Test

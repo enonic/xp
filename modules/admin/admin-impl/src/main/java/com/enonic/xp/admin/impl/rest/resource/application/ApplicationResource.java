@@ -172,7 +172,16 @@ public final class ApplicationResource
 
             if ( exports.hasMethod( "get" ) || exports.hasMethod( "post" ) || exports.hasMethod( "head" ) || exports.hasMethod( "all" ) )
             {
-                builder.setDeploymentUrl( request.getServerName() + ":" + request.getServerPort() + "/app/" + applicationKey.toString() );
+                if ( "localhost".equals( request.getServerName() ) )
+                {
+                    builder.setDeploymentUrl(
+                        request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/app/" +
+                            applicationKey.toString() );
+                }
+                else
+                {
+                    builder.setDeploymentUrl( "app/" + applicationKey.toString() );
+                }
             }
         }
         return builder.build();
