@@ -14,6 +14,7 @@ import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
+import com.enonic.xp.node.DuplicateNodeListener;
 import com.enonic.xp.node.DuplicateNodeProcessor;
 import com.enonic.xp.node.FindNodePathsByQueryResult;
 import com.enonic.xp.node.FindNodesByMultiRepoQueryResult;
@@ -28,6 +29,7 @@ import com.enonic.xp.node.ImportNodeResult;
 import com.enonic.xp.node.ImportNodeVersionParams;
 import com.enonic.xp.node.LoadNodeParams;
 import com.enonic.xp.node.LoadNodeResult;
+import com.enonic.xp.node.MoveNodeListener;
 import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.MultiRepoNodeQuery;
 import com.enonic.xp.node.Node;
@@ -448,8 +450,6 @@ public class NodeServiceImpl
     @Override
     public PushNodesResult push( final NodeIds ids, final Branch target )
     {
-        verifyContext();
-        verifyBranchExists( target );
         return push( ids, target, null );
     }
 
@@ -478,7 +478,7 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Node duplicate( final NodeId nodeId, final DuplicateNodeProcessor processor )
+    public Node duplicate( final NodeId nodeId, final DuplicateNodeProcessor processor, final DuplicateNodeListener duplicateListener )
     {
         verifyContext();
         final Node duplicatedNode = DuplicateNodeCommand.create().
@@ -488,6 +488,7 @@ public class NodeServiceImpl
             binaryService( this.binaryService ).
             storageService( this.nodeStorageService ).
             searchService( this.nodeSearchService ).
+            duplicateListener( duplicateListener ).
             build().
             execute();
 
@@ -499,7 +500,7 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Node move( final NodeId nodeId, final NodePath parentNodePath )
+    public Node move( final NodeId nodeId, final NodePath parentNodePath, final MoveNodeListener moveListener )
     {
         verifyContext();
         final MoveNodeResult moveNodeResult = MoveNodeCommand.create().
@@ -508,6 +509,7 @@ public class NodeServiceImpl
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.nodeStorageService ).
             searchService( this.nodeSearchService ).
+            moveListener( moveListener ).
             build().
             execute();
 
@@ -523,12 +525,12 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Nodes move( final NodeIds nodeIds, final NodePath parentNodePath )
+    public Nodes move( final NodeIds nodeIds, final NodePath parentNodePath, final MoveNodeListener moveListener )
     {
         verifyContext();
         return Nodes.from( nodeIds.
             stream().
-            map( nodeId -> this.move( nodeId, parentNodePath ) ).collect( Collectors.toList() ) );
+            map( nodeId -> this.move( nodeId, parentNodePath, moveListener ) ).collect( Collectors.toList() ) );
     }
 
 

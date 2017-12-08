@@ -43,6 +43,7 @@ import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.content.DuplicateContentParams;
+import com.enonic.xp.content.DuplicateContentsResult;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.content.FindContentByQueryParams;
@@ -60,6 +61,7 @@ import com.enonic.xp.content.GetPublishStatusesParams;
 import com.enonic.xp.content.GetPublishStatusesResult;
 import com.enonic.xp.content.HasUnpublishedChildrenParams;
 import com.enonic.xp.content.MoveContentParams;
+import com.enonic.xp.content.MoveContentsResult;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PublishStatus;
 import com.enonic.xp.content.PushContentParams;
@@ -333,7 +335,6 @@ public class ContentServiceImpl
             build().
             execute();
     }
-
 
     @Override
     public DeleteContentsResult deleteWithoutFetch( final DeleteContentParams params )
@@ -682,14 +683,23 @@ public class ContentServiceImpl
     }
 
     @Override
-    public Content duplicate( final DuplicateContentParams params )
+    public DuplicateContentsResult duplicate( final DuplicateContentParams params )
     {
-        final Node createdNode = nodeService.duplicate( NodeId.from( params.getContentId() ), new DuplicateContentProcessor() );
-        return translator.fromNode( createdNode, true );
+        return DuplicateContentCommand.create( params ).
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            translator( this.translator ).
+            eventPublisher( this.eventPublisher ).
+            contentService( this ).
+            duplicateListener( params.getDuplicateContentListener() ).
+            build().
+            execute();
+//        final Node createdNode = nodeService.duplicate( NodeId.from( params.getContentId() ), new DuplicateContentProcessor() );
+//        return translator.fromNode( createdNode, true );
     }
 
     @Override
-    public Content move( final MoveContentParams params )
+    public MoveContentsResult move( final MoveContentParams params )
     {
         return MoveContentCommand.create( params ).
             nodeService( this.nodeService ).
@@ -697,6 +707,7 @@ public class ContentServiceImpl
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             contentService( this ).
+            moveListener( params.getMoveContentListener() ).
             build().
             execute();
     }

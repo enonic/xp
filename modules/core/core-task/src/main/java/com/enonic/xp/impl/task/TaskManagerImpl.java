@@ -14,8 +14,12 @@ import java.util.function.Supplier;
 
 import org.osgi.service.component.annotations.Component;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.impl.task.script.NamedTaskScript;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.User;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
@@ -62,11 +66,17 @@ public final class TaskManagerImpl
     {
         final TaskId id = idGen.get();
 
+        final Context userContext = ContextAccessor.current();
+
+        final User user = userContext.getAuthInfo().getUser();
         final TaskInfo info = TaskInfo.create().
             id( id ).
             description( description ).
             name( name ).
             state( TaskState.WAITING ).
+            startTime( Instant.now() ).
+            application( getApplication( runnable ) ).
+            user( user != null ? user.getKey() : PrincipalKey.ofAnonymous() ).
             build();
 
         final TaskContext taskContext = TaskContext.create().
@@ -76,7 +86,6 @@ public final class TaskManagerImpl
 
         tasks.put( id, taskContext );
 
-        final Context userContext = ContextAccessor.current();
         final TaskWrapper wrapper = new TaskWrapper( id, runnable, userContext, this );
         executorService.submit( wrapper );
         return id;
@@ -99,6 +108,22 @@ public final class TaskManagerImpl
     public List<TaskInfo> getRunningTasks()
     {
         return tasks.values().stream().map( TaskContext::getTaskInfo ).filter( TaskInfo::isRunning ).collect( toList() );
+    }
+
+    private ApplicationKey getApplication( final RunnableTask runnable )
+    {
+        try
+        {
+            if ( runnable instanceof NamedTaskScript )
+            {
+                return ( (NamedTaskScript) runnable ).getApplication();
+            }
+            return ApplicationKey.from( runnable.getClass() );
+        }
+        catch ( Exception e )
+        {
+            return null;
+        }
     }
 
     private TaskId newId()

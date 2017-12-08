@@ -1,8 +1,12 @@
 package com.enonic.xp.script.serializer;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.Multimap;
 import com.google.common.io.ByteSource;
 
 @Beta
@@ -110,12 +114,54 @@ public abstract class MapGeneratorBase
     @Override
     public final MapGenerator value( final Object value )
     {
+        if ( value instanceof Map )
+        {
+            this.map();
+            serializeMap( (Map<?, ?>) value );
+            return this.end();
+        }
+
+        if ( value instanceof List )
+        {
+            this.array();
+            serializeList( (List<?>) value );
+            return end();
+        }
+
+        if ( value instanceof Multimap )
+        {
+            this.map();
+            serializeMultimap( (Multimap<?, ?>) value );
+            return this.end();
+        }
+
         return rawValue( convertValue( value ) );
     }
 
     @Override
     public final MapGenerator value( final String key, final Object value )
     {
+        if ( value instanceof Map )
+        {
+            this.map( key );
+            serializeMap( (Map<?, ?>) value );
+            return this.end();
+        }
+
+        if ( value instanceof List )
+        {
+            this.array( key );
+            serializeList( (List<?>) value );
+            return end();
+        }
+
+        if ( value instanceof Multimap )
+        {
+            this.map( key );
+            serializeMultimap( (Multimap<?, ?>) value );
+            return this.end();
+        }
+
         return rawValue( key, convertValue( value ) );
     }
 
@@ -217,6 +263,45 @@ public abstract class MapGeneratorBase
         final MapGeneratorBase generator = newGenerator();
         value.serialize( generator );
         return generator.getRoot();
+    }
+
+    private MapGeneratorBase serializeMap( final Map<?, ?> map )
+    {
+        for ( final Map.Entry entry : map.entrySet() )
+        {
+            this.value( entry.getKey().toString(), entry.getValue() );
+        }
+        return this;
+    }
+
+    private MapGeneratorBase serializeList( final List<?> list )
+    {
+        for ( final Object item : list )
+        {
+            this.value( item );
+        }
+        return this;
+    }
+
+
+    private MapGeneratorBase serializeMultimap( final Multimap<?, ?> multimap )
+    {
+        final Map<?, ? extends Collection<?>> params = multimap.asMap();
+        for ( final Object key : params.keySet() )
+        {
+            final Collection<?> values = params.get( key );
+            if ( values.size() == 1 )
+            {
+                this.value( key.toString(), values.iterator().next() );
+            }
+            else
+            {
+                this.array( key.toString() );
+                values.forEach( this::value );
+                this.end();
+            }
+        }
+        return this;
     }
 
     protected abstract MapGeneratorBase newGenerator();

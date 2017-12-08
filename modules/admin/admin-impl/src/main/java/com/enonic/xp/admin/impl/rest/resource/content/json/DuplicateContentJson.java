@@ -1,19 +1,19 @@
 package com.enonic.xp.admin.impl.rest.resource.content.json;
 
 
-import com.enonic.xp.content.ContentId;
+import java.util.List;
 
 public class DuplicateContentJson
 {
-    private ContentId contentId;
+    private List<String> contentIds;
 
-    public ContentId getContentId()
+    public List<String> getContentIds()
     {
-        return contentId;
+        return contentIds;
     }
 
-    public void setContentId( final String contentId )
+    public void setContentIds( final List<String> contentIds )
     {
-        this.contentId = ContentId.from( contentId );
+        this.contentIds = contentIds;
     }
 }

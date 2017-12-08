@@ -1,6 +1,7 @@
 package com.enonic.xp.query.aggregation;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.MoreObjects;
 
 @Beta
 public class DateRangeAggregationQuery
@@ -17,6 +18,16 @@ public class DateRangeAggregationQuery
     public String getFormat()
     {
         return format;
+    }
+
+    @Override
+    public String toString()
+    {
+        return MoreObjects.toStringHelper( this ).
+            omitNullValues().
+            add( "fieldName", getFieldName() ).
+            add( "ranges", getRanges() ).
+            add( "format", format ).toString();
     }
 
     public static Builder create( final String name )

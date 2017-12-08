@@ -1,6 +1,11 @@
 package com.enonic.xp.task;
 
+import java.time.Instant;
+
 import org.junit.Test;
+
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.security.PrincipalKey;
 
 import static org.junit.Assert.*;
 
@@ -17,6 +22,9 @@ public class TaskInfoTest
             name( "name" ).
             description( "test" ).
             state( TaskState.FINISHED ).
+            application( ApplicationKey.from( "com.enonic.myapp" ) ).
+            user( PrincipalKey.from( "user:store:me" ) ).
+            startTime( Instant.parse( "2017-10-01T09:00:00Z" ) ).
             progress( progress ).
             build();
 
@@ -25,6 +33,9 @@ public class TaskInfoTest
         assertEquals( "test", info.getDescription() );
         assertEquals( TaskState.FINISHED, info.getState() );
         assertEquals( progress, info.getProgress() );
+        assertEquals( ApplicationKey.from( "com.enonic.myapp" ), info.getApplication() );
+        assertEquals( PrincipalKey.from( "user:store:me" ), info.getUser() );
+        assertEquals( Instant.parse( "2017-10-01T09:00:00Z" ), info.getStartTime() );
     }
 
     @Test
@@ -64,9 +75,29 @@ public class TaskInfoTest
         final TaskInfo i2 = TaskInfo.create().id( TaskId.from( "123" ) ).build();
         final TaskInfo i3 = TaskInfo.create().id( TaskId.from( "321" ) ).build();
 
+        final TaskInfo i4 = TaskInfo.create().
+            id( TaskId.from( "123" ) ).
+            name( "name" ).
+            description( "test" ).
+            state( TaskState.FINISHED ).
+            application( ApplicationKey.from( "com.enonic.myapp" ) ).
+            user( PrincipalKey.from( "user:store:me" ) ).
+            startTime( Instant.parse( "2017-10-01T09:00:00Z" ) ).
+            build();
+        final TaskInfo i5 = TaskInfo.create().
+            id( TaskId.from( "123" ) ).
+            name( "name" ).
+            description( "test" ).
+            state( TaskState.FINISHED ).
+            application( ApplicationKey.from( "com.enonic.myapp" ) ).
+            user( PrincipalKey.from( "user:store:me" ) ).
+            startTime( Instant.parse( "2017-10-01T09:00:00Z" ) ).
+            build();
+
         assertEquals( true, i1.equals( i2 ) );
         assertEquals( false, i1.equals( i3 ) );
         assertEquals( false, i1.equals( "test" ) );
+        assertTrue( i4.equals( i5 ) );
     }
 
     @Test
@@ -76,15 +107,44 @@ public class TaskInfoTest
         final TaskInfo i2 = TaskInfo.create().id( TaskId.from( "123" ) ).build();
         final TaskInfo i3 = TaskInfo.create().id( TaskId.from( "321" ) ).build();
 
+        final TaskInfo i4 = TaskInfo.create().
+            id( TaskId.from( "123" ) ).
+            name( "name" ).
+            description( "test" ).
+            state( TaskState.FINISHED ).
+            application( ApplicationKey.from( "com.enonic.myapp" ) ).
+            user( PrincipalKey.from( "user:store:me" ) ).
+            startTime( Instant.parse( "2017-10-01T09:00:00Z" ) ).
+            build();
+        final TaskInfo i5 = TaskInfo.create().
+            id( TaskId.from( "123" ) ).
+            name( "name" ).
+            description( "test" ).
+            state( TaskState.FINISHED ).
+            application( ApplicationKey.from( "com.enonic.myapp" ) ).
+            user( PrincipalKey.from( "user:store:me" ) ).
+            startTime( Instant.parse( "2017-10-01T09:00:00Z" ) ).
+            build();
+
         assertEquals( i1.hashCode(), i2.hashCode() );
         assertNotEquals( i1.hashCode(), i3.hashCode() );
+        assertEquals( i4.hashCode(), i5.hashCode() );
     }
 
     @Test
     public void testToString()
     {
-        final TaskInfo i = TaskInfo.create().id( TaskId.from( "123" ) ).build();
-        assertEquals( "TaskInfo{id=123, name=task-123, description=, state=WAITING, progress=TaskProgress{current=0, total=0, info=}}",
-                      i.toString() );
+        final TaskInfo i = TaskInfo.create().
+            id( TaskId.from( "123" ) ).
+            name( "name" ).
+            description( "test" ).
+            state( TaskState.FINISHED ).
+            application( ApplicationKey.from( "com.enonic.myapp" ) ).
+            user( PrincipalKey.from( "user:store:me" ) ).
+            startTime( Instant.parse( "2017-10-01T09:00:00Z" ) ).
+            build();
+        assertEquals( "TaskInfo{id=123, name=name, description=test, state=FINISHED, " +
+                          "progress=TaskProgress{current=0, total=0, info=}, application=com.enonic.myapp, " +
+                          "user=user:store:me, startTime=2017-10-01T09:00:00Z}", i.toString() );
     }
 }

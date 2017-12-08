@@ -49,9 +49,9 @@ public interface ContentService
 
     ContentIds getInvalidContent( ContentIds contentIds );
 
-    Content duplicate( DuplicateContentParams params );
+    DuplicateContentsResult duplicate( DuplicateContentParams params );
 
-    Content move( MoveContentParams params );
+    MoveContentsResult move( MoveContentParams params );
 
     Content setChildOrder( SetContentChildOrderParams params );
 

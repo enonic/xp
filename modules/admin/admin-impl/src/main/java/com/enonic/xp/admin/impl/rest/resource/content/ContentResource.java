@@ -86,7 +86,6 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.GetDescendantsOfConte
 import com.enonic.xp.admin.impl.rest.resource.content.json.HasUnpublishedChildrenResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.LocaleListJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ReorderChildJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ReorderChildrenJson;
@@ -130,6 +129,7 @@ import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.content.DuplicateContentParams;
+import com.enonic.xp.content.DuplicateContentsResult;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.content.FindContentIdsByParentResult;
@@ -142,8 +142,8 @@ import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.GetPublishStatusesParams;
 import com.enonic.xp.content.GetPublishStatusesResult;
 import com.enonic.xp.content.HasUnpublishedChildrenParams;
-import com.enonic.xp.content.MoveContentException;
 import com.enonic.xp.content.MoveContentParams;
+import com.enonic.xp.content.MoveContentsResult;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentListener;
 import com.enonic.xp.content.PushContentParams;
@@ -361,44 +361,177 @@ public final class ContentResource
 
     @POST
     @Path("duplicate")
-    public ContentJson duplicate( final DuplicateContentJson params )
+    public TaskResultJson duplicate( final DuplicateContentJson params )
     {
-        final Content duplicatedContent = contentService.duplicate( new DuplicateContentParams( params.getContentId() ) );
+        final RunnableTask runnableTask = ( id, progressReporter ) -> duplicateTask( params, progressReporter );
+        final TaskId taskId = taskService.submitTask( runnableTask, "Duplicate content" );
+        return new TaskResultJson( taskId );
+    }
 
-        return new ContentJson( duplicatedContent, contentIconUrlResolver, principalsResolver );
+    private void duplicateTask( final DuplicateContentJson params, final ProgressReporter progressReporter )
+    {
+        final ContentIds contentToDuplicateList = ContentIds.from( params.getContentIds() );
+        final Context ctx = ContextAccessor.current();
+        progressReporter.info( "Duplicating content" );
+
+        final DuplicateContentProgressListener listener = new DuplicateContentProgressListener( progressReporter );
+
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+
+        final ContentQuery allChildrenQuery = ContentQuery.create().
+            size( 0 ).
+            queryExpr( constructExprToFindChildren( contentToDuplicateList ) ).
+            build();
+        final long childrenIds = this.contentService.find( allChildrenQuery ).getTotalHits();
+        final int contentIds = contentToDuplicateList.getSize();
+
+        listener.setTotal( Math.toIntExact( childrenIds + contentIds ) );
+        int duplicated = 0;
+        int failed = 0;
+        String contentName = "";
+        for ( ContentId contentId : contentToDuplicateList )
+        {
+            final DuplicateContentParams duplicateContentParams = DuplicateContentParams.create().
+                contentId( contentId ).
+                creator( authInfo.getUser().getKey() ).
+                duplicateContentListener( listener ).
+                build();
+            try
+            {
+                final DuplicateContentsResult result = contentService.duplicate( duplicateContentParams );
+
+                contentName = result.getContentName();
+                duplicated++;
+            }
+            catch ( ContentAlreadyMovedException e )
+            {
+                continue;
+            }
+            catch ( final Exception e )
+            {
+                duplicated++;
+            }
+        }
+
+        progressReporter.info( getDuplicateMessage( duplicated, failed, contentName ) );
+    }
+
+    private String getDuplicateMessage( final int duplicated, final int failed, final String contentName )
+    {
+        final int total = duplicated + failed;
+        switch ( total )
+        {
+            case 0:
+                return "The item is already duplicated.";
+
+            case 1:
+                if ( duplicated == 1 )
+                {
+                    return "\"" + contentName + "\" item is duplicated.";
+                }
+                else
+                {
+                    return "Content could not be duplicated.";
+                }
+
+            default:
+                final StringBuilder builder = new StringBuilder();
+                if ( duplicated > 0 )
+                {
+                    builder.append( duplicated ).append( duplicated > 1 ? " items are " : " item is " ).append( "duplicated. " );
+                }
+                if ( failed > 0 )
+                {
+                    builder.append( failed ).append( failed > 1 ? " items " : " item " ).append( " failed to be duplicated. " );
+                }
+                return builder.toString();
+        }
     }
 
     @POST
     @Path("move")
-    public MoveContentResultJson move( final MoveContentJson params )
+    public TaskResultJson move( final MoveContentJson params )
     {
-        final MoveContentResultJson resultJson = new MoveContentResultJson();
+        final RunnableTask runnableTask = ( id, progressReporter ) -> moveTask( params, progressReporter );
+        final TaskId taskId = taskService.submitTask( runnableTask, "Move content" );
+        return new TaskResultJson( taskId );
+    }
 
-        for ( ContentId contentId : ContentIds.from( params.getContentIds() ) )
+    private void moveTask( final MoveContentJson params, final ProgressReporter progressReporter )
+    {
+        final ContentIds contentToMoveList = ContentIds.from( params.getContentIds() );
+        final Context ctx = ContextAccessor.current();
+        progressReporter.info( "Moving content" );
+
+        final MoveContentProgressListener listener = new MoveContentProgressListener( progressReporter );
+
+        final ContentQuery allChildrenQuery = ContentQuery.create().
+            size( 0 ).
+            queryExpr( constructExprToFindChildren( contentToMoveList ) ).
+            build();
+        final long childrenIds = this.contentService.find( allChildrenQuery ).getTotalHits();
+        final int contentIds = contentToMoveList.getSize();
+
+        listener.setTotal( Math.toIntExact( childrenIds + contentIds ) );
+        int moved = 0;
+        int failed = 0;
+        String contentName = "";
+        for ( ContentId contentId : contentToMoveList )
         {
+            final MoveContentParams moveContentParams = MoveContentParams.create().
+                contentId( contentId ).
+                parentContentPath( params.getParentContentPath() ).
+                moveContentListener( listener ).
+                build();
             try
             {
-                final Content movedContent = contentService.move( new MoveContentParams( contentId, params.getParentContentPath() ) );
-                resultJson.addSuccess( movedContent != null ? movedContent.getDisplayName() : contentId.toString() );
+                final MoveContentsResult result = contentService.move( moveContentParams );
+
+                contentName = result.getContentName();
+                moved++;
             }
             catch ( ContentAlreadyMovedException e ) {
                 continue;
             }
-            catch ( MoveContentException e )
+            catch ( final Exception e )
             {
-                try
-                {
-                    final Content failedContent = contentService.getById( contentId );
-                    resultJson.addFailure( failedContent != null ? failedContent.getDisplayName() : contentId.toString(), e.getMessage() );
-                }
-                catch ( ContentNotFoundException cnEx )
-                {
-                    resultJson.addFailure( contentId.toString(), e.getMessage() );
-                }
+                failed++;
             }
         }
 
-        return resultJson;
+        progressReporter.info( getMoveMessage( moved, failed, contentName ) );
+    }
+
+    private String getMoveMessage( final int moved, final int failed, final String contentName )
+    {
+        final int total = moved + failed;
+        switch ( total )
+        {
+            case 0:
+                return "The item is already moved.";
+
+            case 1:
+                if ( moved == 1 )
+                {
+                    return "\"" + contentName + "\" item is moved.";
+                }
+                else
+                {
+                    return "Content could not be moved.";
+                }
+
+            default:
+                final StringBuilder builder = new StringBuilder();
+                if ( moved > 0 )
+                {
+                    builder.append( moved ).append( moved > 1 ? " items are " : " item is " ).append( "moved. " );
+                }
+                if ( failed > 0 )
+                {
+                    builder.append( failed ).append( failed > 1 ? " items " : " item " ).append( " failed to be moved. " );
+                }
+                return builder.toString();
+        }
     }
 
     @POST

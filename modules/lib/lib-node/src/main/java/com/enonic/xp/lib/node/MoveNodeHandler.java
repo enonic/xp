@@ -80,7 +80,7 @@ public final class MoveNodeHandler
 
     private Node move( final NodeId sourceId, final NodePath newPath )
     {
-        return nodeService.move( sourceId, newPath );
+        return nodeService.move( sourceId, newPath, null );
     }
 
     private Node rename( final NodeId sourceId, final NodeName newName )

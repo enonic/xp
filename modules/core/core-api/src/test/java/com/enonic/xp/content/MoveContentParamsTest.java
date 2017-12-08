@@ -16,14 +16,21 @@ public class MoveContentParamsTest
 
         final ContentPath parentPath = ContentPath.ROOT;
 
-        MoveContentParams params = new MoveContentParams( contentId, parentPath );
-        params.creator( PrincipalKey.ofAnonymous() );
+        MoveContentParams params = MoveContentParams.create().
+            contentId( contentId ).
+            creator( PrincipalKey.ofAnonymous() ).
+            parentContentPath( parentPath ).
+            build();
 
         assertEquals( contentId, params.getContentId() );
         assertEquals( parentPath, params.getParentContentPath() );
         assertEquals( PrincipalKey.ofAnonymous(), params.getCreator() );
 
-        MoveContentParams params2 = new MoveContentParams( params.getContentId(), params.getParentContentPath() );
+        MoveContentParams params2 = MoveContentParams.create().
+            contentId( contentId ).
+            creator( PrincipalKey.ofAnonymous() ).
+            parentContentPath( parentPath ).
+            build();
 
         assertEquals( params, params2 );
         assertEquals( params.hashCode(), params2.hashCode() );
@@ -33,7 +40,7 @@ public class MoveContentParamsTest
     @Test(expected = NullPointerException.class)
     public void testValidate()
     {
-        MoveContentParams invalidParams = new MoveContentParams( null, ContentPath.ROOT );
+        MoveContentParams invalidParams = new MoveContentParams( null );
         invalidParams.validate();
     }
 
