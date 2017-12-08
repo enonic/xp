@@ -26,6 +26,11 @@ public final class FieldOrderExpr
         return new FieldOrderExpr( FieldExpr.from( indexPath ), direction );
     }
 
+    public static FieldOrderExpr create( final String indexPath, Direction direction )
+    {
+        return new FieldOrderExpr( FieldExpr.from( indexPath ), direction );
+    }
+
     @Override
     public String toString()
     {

@@ -38,9 +38,9 @@ public class OrderExpressionsTest
     @Test
     public void from()
     {
-        final FieldOrderExpr expr1 = FieldOrderExpr.create( IndexPath.from( "name" ), OrderExpr.Direction.DESC );
-        final FieldOrderExpr expr2 = FieldOrderExpr.create( IndexPath.from( "date" ), OrderExpr.Direction.ASC );
-        final FieldOrderExpr expr3 = FieldOrderExpr.create( IndexPath.from( "time" ), OrderExpr.Direction.ASC );
+        final FieldOrderExpr expr1 = FieldOrderExpr.create( "name", OrderExpr.Direction.DESC );
+        final FieldOrderExpr expr2 = FieldOrderExpr.create( "date", OrderExpr.Direction.ASC );
+        final FieldOrderExpr expr3 = FieldOrderExpr.create( "time", OrderExpr.Direction.ASC );
 
         final OrderExpressions orderExprs1 = OrderExpressions.from( expr1, expr2 );
         final OrderExpressions orderExprs2 = OrderExpressions.from( Lists.newArrayList( expr3 ) );

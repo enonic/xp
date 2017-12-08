@@ -75,6 +75,8 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryNotFoundException;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
 
 @Component(immediate = true)
@@ -102,6 +104,22 @@ public class NodeServiceImpl
     @Override
     public Node getById( final NodeId id )
     {
+        final Trace trace = Tracer.newTrace( "node.getById" );
+        if ( trace == null )
+        {
+            return executeGetById( id );
+        }
+
+        return Tracer.trace( trace, () -> {
+            trace.put( "id", id );
+            final Node node = executeGetById( id );
+            trace.put( "path", node.path() );
+            return node;
+        } );
+    }
+
+    private Node executeGetById( final NodeId id )
+    {
         verifyContext();
         final Node node = doGetById( id );
 
@@ -128,6 +146,25 @@ public class NodeServiceImpl
     @Override
     public Node getByPath( final NodePath path )
     {
+        final Trace trace = Tracer.newTrace( "node.getByPath" );
+        if ( trace == null )
+        {
+            return executeGetByPath( path );
+        }
+
+        return Tracer.trace( trace, () -> {
+            trace.put( "path", path );
+            final Node node = executeGetByPath( path );
+            if ( node != null )
+            {
+                trace.put( "id", node.id() );
+            }
+            return node;
+        } );
+    }
+
+    private Node executeGetByPath( final NodePath path )
+    {
         verifyContext();
         return doGetByPath( path );
     }
@@ -146,6 +183,20 @@ public class NodeServiceImpl
     @Override
     public Nodes getByIds( final NodeIds ids )
     {
+        final Trace trace = Tracer.newTrace( "node.getByIds" );
+        if ( trace == null )
+        {
+            return executeGetByIds( ids );
+        }
+
+        return Tracer.trace( trace, () -> {
+            trace.put( "id", ids );
+            return executeGetByIds( ids );
+        } );
+    }
+
+    private Nodes executeGetByIds( final NodeIds ids )
+    {
         verifyContext();
         return GetNodesByIdsCommand.create().
             ids( ids ).
@@ -159,6 +210,20 @@ public class NodeServiceImpl
     @Override
     public Nodes getByPaths( final NodePaths paths )
     {
+        final Trace trace = Tracer.newTrace( "node.getByPaths" );
+        if ( trace == null )
+        {
+            return executeGetByPaths( paths );
+        }
+
+        return Tracer.trace( trace, () -> {
+            trace.put( "path", paths );
+            return executeGetByPaths( paths );
+        } );
+    }
+
+    private Nodes executeGetByPaths( final NodePaths paths )
+    {
         verifyContext();
         return GetNodesByPathsCommand.create().
             paths( paths ).
@@ -171,6 +236,24 @@ public class NodeServiceImpl
 
     @Override
     public FindNodesByParentResult findByParent( final FindNodesByParentParams params )
+    {
+        final Trace trace = Tracer.newTrace( "node.findByParent" );
+        if ( trace == null )
+        {
+            return executeFindByParent( params );
+        }
+
+        return Tracer.trace( trace, () -> {
+            trace.put( "parent", params.getParentPath() != null ? params.getParentPath() : params.getParentId() );
+            trace.put( "from", params.getFrom() );
+            trace.put( "size", params.getSize() );
+            final FindNodesByParentResult result = executeFindByParent( params );
+            trace.put( "hits", result.getTotalHits() );
+            return result;
+        } );
+    }
+
+    private FindNodesByParentResult executeFindByParent( final FindNodesByParentParams params )
     {
         verifyContext();
         if ( params.isRecursive() )
@@ -202,6 +285,24 @@ public class NodeServiceImpl
 
     @Override
     public FindNodesByQueryResult findByQuery( final NodeQuery nodeQuery )
+    {
+        final Trace trace = Tracer.newTrace( "node.findByQuery" );
+        if ( trace == null )
+        {
+            return executeFindByQuery( nodeQuery );
+        }
+
+        return Tracer.trace( trace, () -> {
+            trace.put( "query", nodeQuery.getQuery() != null ? nodeQuery.getQuery().toString() : "" );
+            trace.put( "from", nodeQuery.getFrom() );
+            trace.put( "size", nodeQuery.getSize() );
+            final FindNodesByQueryResult result = executeFindByQuery( nodeQuery );
+            trace.put( "hits", result.getTotalHits() );
+            return result;
+        } );
+    }
+
+    private FindNodesByQueryResult executeFindByQuery( final NodeQuery nodeQuery )
     {
         verifyContext();
         return FindNodesByQueryCommand.create().
