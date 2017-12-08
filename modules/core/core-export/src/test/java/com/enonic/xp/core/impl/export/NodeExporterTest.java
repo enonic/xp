@@ -8,11 +8,13 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.core.impl.export.writer.FileExportWriter;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.export.NodeExportListener;
 import com.enonic.xp.export.NodeExportResult;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.CreateNodeParams;
@@ -72,11 +74,14 @@ public class NodeExporterTest
         final Node child2 = createNode( "child2", root.path() );
         createNode( "child2_1", child2.path() );
 
+        final NodeExportListener nodeExportListener = Mockito.mock( NodeExportListener.class );
+
         final NodeExportResult result = NodeExporter.create().
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.ROOT ).
             targetDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myExport" ) ).
+            nodeExportListener( nodeExportListener ).
             build().
             execute();
 
@@ -91,6 +96,11 @@ public class NodeExporterTest
         assertFileExists( "/myExport/mynode/child1/child1_2/child1_2_2/_/node.xml" );
         assertFileExists( "/myExport/mynode/child2/_/node.xml" );
         assertFileExists( "/myExport/mynode/child2/child2_1/_/node.xml" );
+
+        Mockito.verify( nodeExportListener ).
+            nodeResolved( 9L );
+        Mockito.verify( nodeExportListener, Mockito.times( 9 ) ).
+            nodeExported( 1L );
     }
 
     @Test

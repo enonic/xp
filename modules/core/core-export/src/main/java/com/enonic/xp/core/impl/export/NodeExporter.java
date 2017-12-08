@@ -12,6 +12,7 @@ import com.enonic.xp.core.impl.export.writer.ExportWriter;
 import com.enonic.xp.core.impl.export.writer.NodeExportPathResolver;
 import com.enonic.xp.core.impl.export.xml.XmlNodeSerializer;
 import com.enonic.xp.export.ExportError;
+import com.enonic.xp.export.NodeExportListener;
 import com.enonic.xp.export.NodeExportResult;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.FindNodesByParentParams;
@@ -54,6 +55,8 @@ public class NodeExporter
 
     private final boolean exportVersions;
 
+    private final NodeExportListener nodeExportListener;
+
     private final NodeExportResult.Builder result = NodeExportResult.create();
 
     private final static Logger LOG = LoggerFactory.getLogger( NodeExporter.class );
@@ -71,6 +74,7 @@ public class NodeExporter
         this.exportNodeIds = builder.exportNodeIds;
         this.exportTimestamp = builder.exportTimestamp;
         this.exportVersions = builder.exportVersions;
+        this.nodeExportListener = builder.nodeExportListener;
     }
 
     public NodeExportResult execute()
@@ -81,6 +85,10 @@ public class NodeExporter
 
         if ( rootNode != null )
         {
+            if (nodeExportListener != null) {
+                final long childNodeCount = getRecursiveNodeCountByParentPath( sourceNodePath );
+                nodeExportListener.nodeResolved( childNodeCount + 1 );
+            }
             exportNode( rootNode );
         }
         else
@@ -97,6 +105,9 @@ public class NodeExporter
     private void exportNode( final Node node )
     {
         writeNode( node );
+        if (nodeExportListener != null) {
+            nodeExportListener.nodeExported( 1L );
+        }
         result.addNodePath( node.path() );
         doExportChildNodes( node.path() );
     }
@@ -284,6 +295,17 @@ public class NodeExporter
         }
     }
 
+    private long getRecursiveNodeCountByParentPath( final NodePath nodePath )
+    {
+        return nodeService.
+            findByParent( FindNodesByParentParams.create().
+                countOnly( true ).
+                parentPath( nodePath ).
+                recursive( true ).
+                build() ).
+            getTotalHits();
+    }
+
     private double getNumberOfBatches( final NodePath nodePath )
     {
         final FindNodesByParentResult countResult = nodeService.findByParent( FindNodesByParentParams.create().
@@ -342,6 +364,8 @@ public class NodeExporter
         private boolean exportTimestamp = true;
 
         private boolean exportVersions = false;
+
+        private NodeExportListener nodeExportListener;
 
         private Builder()
         {
@@ -410,6 +434,12 @@ public class NodeExporter
         public Builder exportVersions( final boolean exportVersions )
         {
             this.exportVersions = exportVersions;
+            return this;
+        }
+
+        public Builder nodeExportListener( final NodeExportListener nodeExportListener )
+        {
+            this.nodeExportListener = nodeExportListener;
             return this;
         }
 
