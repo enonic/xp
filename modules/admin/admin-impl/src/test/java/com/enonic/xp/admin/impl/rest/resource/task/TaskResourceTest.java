@@ -1,11 +1,14 @@
 package com.enonic.xp.admin.impl.rest.resource.task;
 
+import java.time.Instant;
 import java.util.Arrays;
 
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
 import com.enonic.xp.task.TaskProgress;
@@ -39,6 +42,9 @@ public class TaskResourceTest
             id( taskId1 ).
             description( "My task" ).
             state( TaskState.RUNNING ).
+            application( ApplicationKey.from( "com.enonic.myapp" ) ).
+            user( PrincipalKey.from( "user:store:me" ) ).
+            startTime( Instant.parse( "2017-10-01T09:00:00Z" ) ).
             progress( TaskProgress.create().current( 2 ).total( 10 ).info( "Processing items" ).build() ).
             build();
 
@@ -47,6 +53,9 @@ public class TaskResourceTest
             id( taskId2 ).
             description( "Old task" ).
             state( TaskState.FINISHED ).
+            application( ApplicationKey.from( "com.enonic.other" ) ).
+            user( PrincipalKey.from( "user:store:user" ) ).
+            startTime( Instant.parse( "2017-09-11T09:00:00Z" ) ).
             progress( TaskProgress.create().current( 42 ).total( 42 ).info( "Process completed" ).build() ).
             build();
 
@@ -66,6 +75,9 @@ public class TaskResourceTest
             id( taskId ).
             description( "My task" ).
             state( TaskState.RUNNING ).
+            application( ApplicationKey.from( "com.enonic.myapp" ) ).
+            user( PrincipalKey.from( "user:store:me" ) ).
+            startTime( Instant.parse( "2017-10-01T09:00:00Z" ) ).
             progress( TaskProgress.create().current( 2 ).total( 10 ).info( "Processing items" ).build() ).
             build();
 

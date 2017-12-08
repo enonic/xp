@@ -1,5 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.task;
 
+import java.time.Instant;
+
 import com.enonic.xp.task.TaskInfo;
 
 public class TaskInfoJson
@@ -29,6 +31,21 @@ public class TaskInfoJson
     public String getState()
     {
         return taskInfo != null ? taskInfo.getState().name() : "";
+    }
+
+    public String getApplication()
+    {
+        return taskInfo != null ? taskInfo.getApplication().toString() : "";
+    }
+
+    public String getUser()
+    {
+        return taskInfo != null ? taskInfo.getUser().toString() : "";
+    }
+
+    public Instant getStartTime()
+    {
+        return taskInfo != null ? taskInfo.getStartTime() : null;
     }
 
     public TaskProgressJson getProgress()

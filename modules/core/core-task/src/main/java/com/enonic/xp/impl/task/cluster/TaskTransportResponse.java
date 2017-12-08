@@ -1,6 +1,7 @@
 package com.enonic.xp.impl.task.cluster;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.List;
 
 import org.elasticsearch.common.io.stream.StreamInput;
@@ -9,6 +10,8 @@ import org.elasticsearch.transport.TransportResponse;
 
 import com.google.common.collect.ImmutableList;
 
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
 import com.enonic.xp.task.TaskProgress;
@@ -57,6 +60,9 @@ public final class TaskTransportResponse
             name( streamInput.readString() ).
             description( streamInput.readString() ).
             state( TaskState.values()[streamInput.readInt()] ).
+            application( ApplicationKey.from( streamInput.readString() ) ).
+            user( PrincipalKey.from( streamInput.readString() ) ).
+            startTime( Instant.parse( streamInput.readString() ) ).
             progress( readTaskProgressFrom( streamInput ) ).
             build();
     }
@@ -92,6 +98,9 @@ public final class TaskTransportResponse
         streamOutput.writeString( taskInfo.getName() );
         streamOutput.writeString( taskInfo.getDescription() );
         streamOutput.writeInt( taskInfo.getState().ordinal() );
+        streamOutput.writeString( taskInfo.getApplication().toString() );
+        streamOutput.writeString( taskInfo.getUser().toString() );
+        streamOutput.writeString( taskInfo.getStartTime().toString() );
         writeTo( streamOutput, taskInfo.getProgress() );
     }
 

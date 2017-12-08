@@ -10,6 +10,9 @@ exports.getExistingTask = function () {
         "id": "123",
         "name": "task-123",
         "state": "RUNNING",
+        "application": "com.enonic.myapp",
+        "user": "user:store:me",
+        "startTime": "2017-10-01T09:00:00Z",
         "progress": {
             "info": "Processing item 33",
             "current": 33,

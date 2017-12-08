@@ -1,6 +1,7 @@
 {
   "tasks": [
     {
+      "application": "com.enonic.myapp",
       "description": "My task",
       "id": "123",
       "name" : "task-123",
@@ -9,9 +10,12 @@
         "info": "Processing items",
         "total": 10
       },
-      "state": "RUNNING"
+      "startTime": "2017-10-01T09:00:00Z",
+      "state": "RUNNING",
+      "user": "user:store:me"
     },
     {
+      "application": "com.enonic.other",
       "description": "Old task",
       "id": "666",
       "name" : "task-666",
@@ -20,7 +24,9 @@
         "info": "Process completed",
         "total": 42
       },
-      "state": "FINISHED"
+      "startTime": "2017-09-11T09:00:00Z",
+      "state": "FINISHED",
+      "user": "user:store:user"
     }
   ]
 }

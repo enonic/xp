@@ -1,7 +1,10 @@
 {
+  "application": "",
   "description": "",
   "id": "",
   "name" : "",
   "progress": null,
-  "state": ""
+  "startTime": null,
+  "state": "",
+  "user": ""
 }
