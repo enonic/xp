@@ -84,7 +84,7 @@ public class IssueResourceTest
         final HttpServletRequest request = Mockito.mock( HttpServletRequest.class );
         final IssueResource issueResource = getResourceInstance();
         final Role role = Role.create().key( RoleKeys.CONTENT_MANAGER_APP ).displayName( "dname" ).build();
-        Mockito.when( securityService.getPrincipals( Mockito.any( PrincipalKeys.class) ) ).thenReturn( Principals.from( role ) );
+        Mockito.when( securityService.getPrincipals( Mockito.any( PrincipalKeys.class ) ) ).thenReturn( Principals.from( role ) );
         issueResource.create( params, request );
 
         Mockito.verify( issueService, Mockito.times( 1 ) ).create( Mockito.any( CreateIssueParams.class ) );
@@ -93,15 +93,17 @@ public class IssueResourceTest
     }
 
     @Test
-    public void verifyValidAssigneeNotFiltered() throws Exception {
+    public void verifyValidAssigneeNotFiltered()
+        throws Exception
+    {
         final CreateIssueJson params =
             new CreateIssueJson( "title", "desc", Arrays.asList( User.ANONYMOUS.getKey().toString() ), createPublishRequest() );
 
         final HttpServletRequest request = Mockito.mock( HttpServletRequest.class );
         final IssueResource issueResource = getResourceInstance();
         final Role role = Role.create().key( RoleKeys.CONTENT_MANAGER_EXPERT ).displayName( "dname" ).build();
-        Mockito.when( securityService.getPrincipals( Mockito.any( PrincipalKeys.class) ) ).thenReturn( Principals.from( role ) );
-        ArgumentCaptor<CreateIssueParams> issueParamsArgumentCaptor = ArgumentCaptor.forClass( CreateIssueParams.class);
+        Mockito.when( securityService.getPrincipals( Mockito.any( PrincipalKeys.class ) ) ).thenReturn( Principals.from( role ) );
+        ArgumentCaptor<CreateIssueParams> issueParamsArgumentCaptor = ArgumentCaptor.forClass( CreateIssueParams.class );
         issueResource.create( params, request );
         Mockito.verify( issueService ).create( issueParamsArgumentCaptor.capture() );
 
@@ -109,15 +111,17 @@ public class IssueResourceTest
     }
 
     @Test
-    public void verifyInvalidAssigneeFiltered() throws Exception {
+    public void verifyInvalidAssigneeFiltered()
+        throws Exception
+    {
         final CreateIssueJson params =
             new CreateIssueJson( "title", "desc", Arrays.asList( User.ANONYMOUS.getKey().toString() ), createPublishRequest() );
 
         final HttpServletRequest request = Mockito.mock( HttpServletRequest.class );
         final IssueResource issueResource = getResourceInstance();
         final Role role = Role.create().key( RoleKeys.EVERYONE ).displayName( "dname" ).build();
-        Mockito.when( securityService.getPrincipals( Mockito.any( PrincipalKeys.class) ) ).thenReturn( Principals.from( role ) );
-        ArgumentCaptor<CreateIssueParams> issueParamsArgumentCaptor = ArgumentCaptor.forClass( CreateIssueParams.class);
+        Mockito.when( securityService.getPrincipals( Mockito.any( PrincipalKeys.class ) ) ).thenReturn( Principals.from( role ) );
+        ArgumentCaptor<CreateIssueParams> issueParamsArgumentCaptor = ArgumentCaptor.forClass( CreateIssueParams.class );
         issueResource.create( params, request );
         Mockito.verify( issueService ).create( issueParamsArgumentCaptor.capture() );
 
@@ -125,7 +129,9 @@ public class IssueResourceTest
     }
 
     @Test
-    public void verifyOnlyInvalidAssigneeFiltered() throws Exception {
+    public void verifyOnlyInvalidAssigneeFiltered()
+        throws Exception
+    {
         final CreateIssueJson params =
             new CreateIssueJson( "title", "desc", Arrays.asList( User.ANONYMOUS.getKey().toString(), User.ANONYMOUS.getKey().toString() ),
                                  createPublishRequest() );
@@ -220,7 +226,7 @@ public class IssueResourceTest
         final Issue issue = createIssue();
 
         final UpdateIssueJson params =
-            new UpdateIssueJson( issue.getId().toString(), "title", "desc", "Open", false, Arrays.asList( "user:system:admin" ),
+            new UpdateIssueJson( issue.getId().toString(), "title", "desc", "Open", false, false, Arrays.asList( "user:system:admin" ),
                                  createPublishRequest() );
 
         getResourceInstance().update( params, Mockito.mock( HttpServletRequest.class ) );
@@ -236,7 +242,7 @@ public class IssueResourceTest
         final Issue issue = createIssue();
 
         final UpdateIssueJson params =
-            new UpdateIssueJson( issue.getId().toString(), "title", "desc", "Closed", true, Arrays.asList( "user:system:admin" ),
+            new UpdateIssueJson( issue.getId().toString(), "title", "desc", "Closed", true, false, Arrays.asList( "user:system:admin" ),
                                  createPublishRequest() );
 
         getResourceInstance().update( params, Mockito.mock( HttpServletRequest.class ) );
@@ -246,6 +252,23 @@ public class IssueResourceTest
                                                                                              Mockito.anyString() );
     }
 
+    @Test
+    public void test_update_is_autoSave()
+    {
+        final Issue issue = createIssue();
+
+        final UpdateIssueJson params =
+            new UpdateIssueJson( issue.getId().toString(), "title", "desc", "Closed", true, true, Arrays.asList( "user:system:admin" ),
+                                 createPublishRequest() );
+
+        getResourceInstance().update( params, Mockito.mock( HttpServletRequest.class ) );
+
+        Mockito.verify( issueService, Mockito.times( 1 ) ).update( Mockito.any( UpdateIssueParams.class ) );
+        Mockito.verify( issueNotificationsSender, Mockito.times( 0 ) ).notifyIssueUpdated( Mockito.any( Issue.class ),
+                                                                                           Mockito.anyString() );
+        Mockito.verify( issueNotificationsSender, Mockito.times( 0 ) ).notifyIssuePublished( Mockito.any( Issue.class ),
+                                                                                             Mockito.anyString() );
+    }
 
     private PublishRequestJson createPublishRequest()
     {
