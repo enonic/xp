@@ -13,9 +13,12 @@ public class PageDescriptorListJson
     public PageDescriptorListJson( final PageDescriptors pageDescriptors )
     {
         final ImmutableList.Builder<PageDescriptorJson> builder = ImmutableList.builder();
-        for ( final PageDescriptor pageDescriptor : pageDescriptors )
+        if(pageDescriptors != null)
         {
-            builder.add( new PageDescriptorJson( pageDescriptor ) );
+            for ( final PageDescriptor pageDescriptor : pageDescriptors )
+            {
+                builder.add( new PageDescriptorJson( pageDescriptor ) );
+            }
         }
         this.pageDescriptors = builder.build();
     }

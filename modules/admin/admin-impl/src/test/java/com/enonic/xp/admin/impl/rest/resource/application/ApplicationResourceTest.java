@@ -1,18 +1,22 @@
 package com.enonic.xp.admin.impl.rest.resource.application;
 
 import java.time.Instant;
-
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
-
+import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.Version;
+import org.springframework.mock.web.MockHttpServletRequest;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.enonic.xp.admin.impl.market.MarketService;
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.app.ApplicationDescriptorService;
+import com.enonic.xp.app.ApplicationInfo;
+import com.enonic.xp.app.ApplicationInfoService;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
@@ -21,6 +25,14 @@ import com.enonic.xp.auth.AuthDescriptorService;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
+import com.enonic.xp.macro.MacroDescriptorService;
+import com.enonic.xp.portal.script.PortalScriptService;
+import com.enonic.xp.resource.Resource;
+import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.schema.content.ContentTypeService;
+import com.enonic.xp.schema.relationship.RelationshipTypeService;
+import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 
@@ -31,11 +43,23 @@ public class ApplicationResourceTest
 
     private ApplicationDescriptorService applicationDescriptorService;
 
+    private ApplicationInfoService applicationInfoService;
+
     private SiteService siteService;
 
     private MarketService marketService;
 
     private AuthDescriptorService authDescriptorService;
+
+    private RelationshipTypeService relationshipTypeService;
+
+    private MacroDescriptorService macroDescriptorService;
+
+    private ContentTypeService contentTypeService;
+
+    private ResourceService resourceService;
+
+    private PortalScriptService portalScriptService;
 
     @Test
     public void get_application_list()
@@ -55,6 +79,39 @@ public class ApplicationResourceTest
             path( "application/list" ).
             get().getAsString();
         assertJson( "get_application_list_success.json", response );
+    }
+
+    @Test
+    public void get_application_info()
+        throws Exception
+    {
+        final ApplicationKey applicationKey = createApplication().getKey();
+        final ResourceKey resourceKey = ResourceKey.from( applicationKey, "/main.js" );
+
+        final ApplicationInfo applicationInfo = ApplicationInfo.create().build();
+
+        Mockito.when( this.applicationInfoService.getApplicationInfo( applicationKey ) ).thenReturn( applicationInfo );
+
+        final Resource resource = Mockito.mock( Resource.class );
+        Mockito.when( resource.exists() ).thenReturn( true );
+        Mockito.when( resource.getKey() ).thenReturn( resourceKey );
+        Mockito.when( this.resourceService.getResource( resourceKey ) ).thenReturn( resource );
+
+        final ScriptExports scriptExports = Mockito.mock( ScriptExports.class );
+        Mockito.when( scriptExports.hasMethod( "get" ) ).thenReturn( true );
+        Mockito.when( this.portalScriptService.execute( resourceKey ) ).thenReturn( scriptExports );
+
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        ResteasyProviderFactory.getContextDataMap().put( HttpServletRequest.class, mockRequest );
+
+        final String response = request().
+            path( "application/info" ).
+            queryParam( "applicationKey", "testapplication" ).
+            get().getAsString();
+
+        final String deploymentUrl = new ObjectMapper().readTree( response ).findPath( "deployment" ).findPath( "url" ).asText();
+
+        assertEquals( "http://localhost:80/app/testapplication", deploymentUrl );
     }
 
     @Test
@@ -237,9 +294,15 @@ public class ApplicationResourceTest
     {
         this.applicationService = Mockito.mock( ApplicationService.class );
         this.applicationDescriptorService = Mockito.mock( ApplicationDescriptorService.class );
+        this.applicationInfoService = Mockito.mock( ApplicationInfoService.class );
         this.siteService = Mockito.mock( SiteService.class );
         this.marketService = Mockito.mock( MarketService.class );
         this.authDescriptorService = Mockito.mock( AuthDescriptorService.class );
+        this.resourceService = Mockito.mock( ResourceService.class );
+        this.portalScriptService = Mockito.mock( PortalScriptService.class );
+        this.relationshipTypeService = Mockito.mock( RelationshipTypeService.class );
+        this.macroDescriptorService = Mockito.mock( MacroDescriptorService.class );
+        this.contentTypeService = Mockito.mock( ContentTypeService.class );
 
         final ApplicationResource resource = new ApplicationResource();
         resource.setApplicationService( this.applicationService );
@@ -247,6 +310,12 @@ public class ApplicationResourceTest
         resource.setMarketService( this.marketService );
         resource.setAuthDescriptorService( this.authDescriptorService );
         resource.setApplicationDescriptorService( this.applicationDescriptorService );
+        resource.setApplicationInfoService( this.applicationInfoService );
+        resource.setContentTypeService( this.contentTypeService );
+        resource.setRelationshipTypeService( this.relationshipTypeService );
+        resource.setMacroDescriptorService( this.macroDescriptorService );
+        resource.setResourceService( this.resourceService );
+        resource.setPortalScriptService( this.portalScriptService );
 
         return resource;
     }

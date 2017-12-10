@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.io.ByteSource;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.CompareContentParams;
 import com.enonic.xp.content.CompareContentResult;
@@ -33,6 +34,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
+import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
@@ -102,6 +104,7 @@ import com.enonic.xp.node.ReorderChildNodesParams;
 import com.enonic.xp.node.ReorderChildNodesResult;
 import com.enonic.xp.node.SetNodeChildOrderParams;
 import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.repository.RepositoryService;
@@ -773,6 +776,21 @@ public class ContentServiceImpl
             eventPublisher( this.eventPublisher ).
             build().
             execute();
+    }
+
+    public Contents findByApplicationKey( final ApplicationKey key )
+    {
+        final ContentQuery query = ContentQuery.create().
+            queryExpr( QueryParser.parse( new StringBuilder(
+                String.join( ".", ContentPropertyNames.DATA, ContentPropertyNames.SITECONFIG, ContentPropertyNames.APPLICATION_KEY ) ).
+                append( "=" ).
+                append( "'" ).append( key ).append( "'" ).
+                toString() ) ).
+            size( -1 ).
+            build();
+
+        return this.getByIds( new GetContentByIdsParams( this.find( query ).getContentIds() ) );
+
     }
 
     @Override

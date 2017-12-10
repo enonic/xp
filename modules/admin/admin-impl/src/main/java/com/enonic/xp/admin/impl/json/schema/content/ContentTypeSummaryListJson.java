@@ -17,9 +17,12 @@ public class ContentTypeSummaryListJson
     public ContentTypeSummaryListJson( final ContentTypes contentTypes, final ContentTypeIconUrlResolver iconUrlResolver )
     {
         final ImmutableList.Builder<ContentTypeSummaryJson> builder = ImmutableList.builder();
-        for ( final ContentType contentType : contentTypes )
+        if(contentTypes != null)
         {
-            builder.add( new ContentTypeSummaryJson( contentType, iconUrlResolver ) );
+            for ( final ContentType contentType : contentTypes )
+            {
+                builder.add( new ContentTypeSummaryJson( contentType, iconUrlResolver ) );
+            }
         }
 
         this.list = builder.build();

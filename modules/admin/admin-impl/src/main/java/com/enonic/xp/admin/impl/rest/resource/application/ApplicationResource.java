@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -16,6 +17,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.CacheControl;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -31,6 +33,7 @@ import com.google.common.io.ByteStreams;
 
 import com.enonic.xp.admin.impl.market.MarketService;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
+import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationInfoJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationInstallParams;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationInstallResultJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationInstalledJson;
@@ -40,9 +43,17 @@ import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationSucces
 import com.enonic.xp.admin.impl.rest.resource.application.json.GetMarketApplicationsJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ListApplicationJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.MarketApplicationsJson;
+import com.enonic.xp.admin.impl.rest.resource.macro.MacroIconResolver;
+import com.enonic.xp.admin.impl.rest.resource.macro.MacroIconUrlResolver;
+import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconResolver;
+import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
+import com.enonic.xp.admin.impl.rest.resource.schema.relationship.RelationshipTypeIconResolver;
+import com.enonic.xp.admin.impl.rest.resource.schema.relationship.RelationshipTypeIconUrlResolver;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.app.ApplicationDescriptorService;
+import com.enonic.xp.app.ApplicationInfo;
+import com.enonic.xp.app.ApplicationInfoService;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.ApplicationService;
@@ -51,6 +62,14 @@ import com.enonic.xp.auth.AuthDescriptor;
 import com.enonic.xp.auth.AuthDescriptorService;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.jaxrs.JaxRsComponent;
+import com.enonic.xp.macro.MacroDescriptorService;
+import com.enonic.xp.portal.script.PortalScriptService;
+import com.enonic.xp.resource.Resource;
+import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.schema.content.ContentTypeService;
+import com.enonic.xp.schema.relationship.RelationshipTypeService;
+import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
@@ -82,7 +101,19 @@ public final class ApplicationResource
 
     private AuthDescriptorService authDescriptorService;
 
+    private ApplicationInfoService applicationInfoService;
+
+    private ResourceService resourceService;
+
+    private PortalScriptService portalScriptService;
+
     private ApplicationIconUrlResolver iconUrlResolver;
+
+    private RelationshipTypeIconUrlResolver relationshipTypeIconUrlResolver;
+
+    private MacroIconUrlResolver macroIconUrlResolver;
+
+    private ContentTypeIconUrlResolver contentTypeIconUrlResolver;
 
     public ApplicationResource()
     {
@@ -94,6 +125,7 @@ public final class ApplicationResource
     @GET
     @Path("list")
     public ListApplicationJson list( @QueryParam("query") final String query )
+        throws Exception
     {
         Applications applications = this.applicationService.getInstalledApplications();
 
@@ -116,6 +148,43 @@ public final class ApplicationResource
         }
 
         return json;
+    }
+
+    @GET
+    @Path("info")
+    public ApplicationInfoJson info( @QueryParam("applicationKey") String key, @Context HttpServletRequest request )
+        throws Exception
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( key );
+
+        final ApplicationInfo applicationInfo = this.applicationInfoService.getApplicationInfo( applicationKey );
+
+        final ApplicationInfoJson.Builder builder = ApplicationInfoJson.create().
+            setApplicationInfo( applicationInfo ).
+            setContentTypeIconUrlResolver( this.contentTypeIconUrlResolver ).
+            setMacroIconUrlResolver( this.macroIconUrlResolver ).
+            setRelationshipTypeIconUrlResolver( this.relationshipTypeIconUrlResolver );
+
+        final Resource resource = resourceService.getResource( ResourceKey.from( applicationKey, "/main.js" ) );
+        if ( resource != null && resource.exists() )
+        {
+            final ScriptExports exports = portalScriptService.execute( resource.getKey() );
+
+            if ( exports.hasMethod( "get" ) || exports.hasMethod( "post" ) || exports.hasMethod( "head" ) || exports.hasMethod( "all" ) )
+            {
+                if ( "localhost".equals( request.getServerName() ) )
+                {
+                    builder.setDeploymentUrl(
+                        request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/app/" +
+                            applicationKey.toString() );
+                }
+                else
+                {
+                    builder.setDeploymentUrl( "app/" + applicationKey.toString() );
+                }
+            }
+        }
+        return builder.build();
     }
 
     @GET
@@ -463,6 +532,43 @@ public final class ApplicationResource
     public void setAuthDescriptorService( final AuthDescriptorService authDescriptorService )
     {
         this.authDescriptorService = authDescriptorService;
+    }
+
+    @Reference
+    public void setApplicationInfoService( final ApplicationInfoService applicationInfoService )
+    {
+        this.applicationInfoService = applicationInfoService;
+    }
+
+    @Reference
+    public void setResourceService( final ResourceService resourceService )
+    {
+        this.resourceService = resourceService;
+    }
+
+    @Reference
+    public void setPortalScriptService( final PortalScriptService portalScriptService )
+    {
+        this.portalScriptService = portalScriptService;
+    }
+
+    @Reference
+    public void setContentTypeService( final ContentTypeService contentTypeService )
+    {
+        this.contentTypeIconUrlResolver = new ContentTypeIconUrlResolver( new ContentTypeIconResolver( contentTypeService ) );
+    }
+
+    @Reference
+    public void setMacroDescriptorService( final MacroDescriptorService macroDescriptorService )
+    {
+        this.macroIconUrlResolver = new MacroIconUrlResolver( new MacroIconResolver( macroDescriptorService ) );
+    }
+
+    @Reference
+    public void setRelationshipTypeService( final RelationshipTypeService relationshipTypeService )
+    {
+        this.relationshipTypeIconUrlResolver =
+            new RelationshipTypeIconUrlResolver( new RelationshipTypeIconResolver( relationshipTypeService ) );
     }
 }
 
