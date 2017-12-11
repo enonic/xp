@@ -51,8 +51,6 @@ public class NodeExporter
 
     private final boolean exportNodeIds;
 
-    private final boolean exportTimestamp;
-
     private final boolean exportVersions;
 
     private final NodeExportListener nodeExportListener;
@@ -72,7 +70,6 @@ public class NodeExporter
         this.xpVersion = builder.xpVersion;
         this.dryRun = builder.dryRun;
         this.exportNodeIds = builder.exportNodeIds;
-        this.exportTimestamp = builder.exportTimestamp;
         this.exportVersions = builder.exportVersions;
         this.nodeExportListener = builder.nodeExportListener;
     }
@@ -85,7 +82,8 @@ public class NodeExporter
 
         if ( rootNode != null )
         {
-            if (nodeExportListener != null) {
+            if ( nodeExportListener != null )
+            {
                 final long childNodeCount = getRecursiveNodeCountByParentPath( sourceNodePath );
                 nodeExportListener.nodeResolved( childNodeCount + 1 );
             }
@@ -105,9 +103,12 @@ public class NodeExporter
     private void exportNode( final Node node )
     {
         writeNode( node );
-        if (nodeExportListener != null) {
+
+        if ( nodeExportListener != null )
+        {
             nodeExportListener.nodeExported( 1L );
         }
+
         result.addNodePath( node.path() );
         doExportChildNodes( node.path() );
     }
@@ -361,20 +362,12 @@ public class NodeExporter
 
         private boolean exportNodeIds = true;
 
-        private boolean exportTimestamp = true;
-
         private boolean exportVersions = false;
 
         private NodeExportListener nodeExportListener;
 
         private Builder()
         {
-        }
-
-        public Builder keepTimestamp( boolean keepTimestamp )
-        {
-            this.exportTimestamp = keepTimestamp;
-            return this;
         }
 
         public Builder sourceNodePath( NodePath exportRootNode )
