@@ -3,7 +3,7 @@ package com.enonic.xp.admin.impl.rest.resource.content;
 import com.enonic.xp.content.PushContentListener;
 import com.enonic.xp.task.ProgressReporter;
 
-final class PublishContentProgressListener
+public final class PublishContentProgressListener
     implements PushContentListener
 {
 

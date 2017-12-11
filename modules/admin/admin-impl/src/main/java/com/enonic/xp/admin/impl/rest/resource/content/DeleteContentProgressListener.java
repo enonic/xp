@@ -3,7 +3,7 @@ package com.enonic.xp.admin.impl.rest.resource.content;
 import com.enonic.xp.content.DeleteContentListener;
 import com.enonic.xp.task.ProgressReporter;
 
-final class DeleteContentProgressListener
+public final class DeleteContentProgressListener
     implements DeleteContentListener
 {
     private final ProgressReporter progressReporter;

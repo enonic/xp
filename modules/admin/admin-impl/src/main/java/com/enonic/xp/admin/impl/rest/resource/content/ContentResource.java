@@ -98,6 +98,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.UndoPendingDeleteCont
 import com.enonic.xp.admin.impl.rest.resource.content.json.UndoPendingDeleteContentResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.UnpublishContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.UpdateContentJson;
+import com.enonic.xp.admin.impl.rest.resource.content.query.ContentQueryWithChildren;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
 import com.enonic.xp.attachment.Attachment;
@@ -167,14 +168,6 @@ import com.enonic.xp.extractor.ExtractedData;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.jaxrs.JaxRsExceptions;
-import com.enonic.xp.query.expr.CompareExpr;
-import com.enonic.xp.query.expr.ConstraintExpr;
-import com.enonic.xp.query.expr.FieldExpr;
-import com.enonic.xp.query.expr.FieldOrderExpr;
-import com.enonic.xp.query.expr.LogicalExpr;
-import com.enonic.xp.query.expr.OrderExpr;
-import com.enonic.xp.query.expr.QueryExpr;
-import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
@@ -378,11 +371,12 @@ public final class ContentResource
 
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
 
-        final ContentQuery allChildrenQuery = ContentQuery.create().
-            size( 0 ).
-            queryExpr( constructExprToFindChildren( contentToDuplicateList ) ).
-            build();
-        final long childrenIds = this.contentService.find( allChildrenQuery ).getTotalHits();
+        final long childrenIds = ContentQueryWithChildren.create().
+            contentService( this.contentService ).
+            contentsIds( contentToDuplicateList ).
+            build().
+            find().
+            getTotalHits();
         final int contentIds = contentToDuplicateList.getSize();
 
         listener.setTotal( Math.toIntExact( childrenIds + contentIds ) );
@@ -398,7 +392,7 @@ public final class ContentResource
                 build();
             try
             {
-                final DuplicateContentsResult result = contentService.duplicate( duplicateContentParams );
+                final DuplicateContentsResult result = this.contentService.duplicate( duplicateContentParams );
 
                 contentName = result.getContentName();
                 duplicated++;
@@ -465,11 +459,12 @@ public final class ContentResource
 
         final MoveContentProgressListener listener = new MoveContentProgressListener( progressReporter );
 
-        final ContentQuery allChildrenQuery = ContentQuery.create().
-            size( 0 ).
-            queryExpr( constructExprToFindChildren( contentToMoveList ) ).
-            build();
-        final long childrenIds = this.contentService.find( allChildrenQuery ).getTotalHits();
+        final long childrenIds = ContentQueryWithChildren.create().
+            contentService( this.contentService ).
+            contentsIds( contentToMoveList ).
+            build().
+            find().
+            getTotalHits();
         final int contentIds = contentToMoveList.getSize();
 
         listener.setTotal( Math.toIntExact( childrenIds + contentIds ) );
@@ -818,9 +813,13 @@ public final class ContentResource
 
         final PushContentListener listener = new UnpublishContentProgressListener( progressReporter );
 
-        final ContentIds childrenIds = this.contentService.find(
-            ContentQuery.create().size( GET_ALL_SIZE_FLAG ).queryExpr( constructExprToFindChildren( contentIds ) ).
-                build() ).getContentIds();
+        final ContentIds childrenIds = ContentQueryWithChildren.create().
+            contentService( this.contentService ).
+            contentsIds( contentIds ).
+            size( GET_ALL_SIZE_FLAG ).
+            build().
+            find().
+            getContentIds();
 
         final ContentIds filteredChildrenIds = ContentIds.from( this.filterIdsByStatus( childrenIds, Arrays.asList( CompareStatus.EQUAL,
                                                                                                                     CompareStatus.PENDING_DELETE,
@@ -1396,16 +1395,19 @@ public final class ContentResource
     {
         final ContentPaths contentsPaths = ContentPaths.from( json.getContentPaths() );
 
-        FindContentIdsByQueryResult result = this.contentService.find(
-            ContentQuery.create().size( GET_ALL_SIZE_FLAG ).queryExpr( constructExprToFindChildren( contentsPaths ) ).
-                build() );
+        FindContentIdsByQueryResult result = ContentQueryWithChildren.create().
+            contentService( this.contentService ).
+            contentsPaths( contentsPaths ).
+            size( GET_ALL_SIZE_FLAG ).
+            build().
+            find();
 
         final Boolean isFilterNeeded = json.getFilterStatuses() != null && json.getFilterStatuses().size() > 0;
 
         if ( isFilterNeeded )
         {
             return this.filterIdsByStatus( result.getContentIds(), json.getFilterStatuses() ).
-                map( id -> new ContentIdJson( id ) ).
+                map( ContentIdJson::new ).
                 collect( Collectors.toList() );
         }
         else
@@ -1423,7 +1425,7 @@ public final class ContentResource
         return compareResultMap.entrySet().
             stream().
             filter( entry -> statuses.contains( entry.getValue().getCompareStatus() ) ).
-            map( entry -> entry.getKey() );
+            map( Map.Entry::getKey );
     }
 
     @POST
@@ -1512,11 +1514,14 @@ public final class ContentResource
             ? ContentConstants.DEFAULT_CONTENT_REPO_ROOT_ORDER
             : contentQueryJson.getChildOrder() != null ? contentQueryJson.getChildOrder() : ContentConstants.DEFAULT_CHILD_ORDER;
 
-        final FindContentIdsByQueryResult findLayerContentsResult = contentService.find( ContentQuery.create().
+        final FindContentIdsByQueryResult findLayerContentsResult = ContentQueryWithChildren.create().
+            contentService( this.contentService ).
+            contentsPaths( ContentPaths.from( layerPaths ) ).
+            order( layerOrder ).
             from( from ).
             size( size ).
-            queryExpr( constructExprToFindByPaths( ContentPaths.from( layerPaths ), layerOrder ) ).
-            build() );
+            build().
+            findOrdered();
 
         final List<ContentTreeSelectorJson> resultItems = contentService.getByIds( new GetContentByIdsParams( findLayerContentsResult.getContentIds() ) ).
             stream().
@@ -1812,48 +1817,12 @@ public final class ContentResource
 
     private long countChildren( final ContentPaths contentsPaths )
     {
-        FindContentIdsByQueryResult result =
-            this.contentService.find( ContentQuery.create().size( 0 ).queryExpr( constructExprToFindChildren( contentsPaths ) ).build() );
-
-        return result.getTotalHits();
-    }
-
-    private QueryExpr constructExprToFindChildren( final ContentPaths contentsPaths )
-    {
-        final FieldExpr fieldExpr = FieldExpr.from( "_path" );
-
-        ConstraintExpr expr = CompareExpr.like( fieldExpr, ValueExpr.string( "/content" + contentsPaths.first() + "/*" ) );
-
-        for ( ContentPath contentPath : contentsPaths )
-        {
-            if ( !contentPath.equals( contentsPaths.first() ) )
-            {
-                ConstraintExpr likeExpr = CompareExpr.like( fieldExpr, ValueExpr.string( "/content" + contentPath + "/*" ) );
-                expr = LogicalExpr.or( expr, likeExpr );
-            }
-        }
-
-        expr = LogicalExpr.and( expr, CompareExpr.notIn( fieldExpr, contentsPaths.stream().
-            map( contentPath -> ValueExpr.string( "/content" + contentPath ) ).collect( Collectors.toList() ) ) );
-
-        return QueryExpr.from( expr, new FieldOrderExpr( fieldExpr, OrderExpr.Direction.ASC ) );
-    }
-
-    private QueryExpr constructExprToFindByPaths( final ContentPaths contentsPaths, final ChildOrder order )
-    {
-        final FieldExpr fieldExpr = FieldExpr.from( "_path" );
-
-        final CompareExpr compareExpr = CompareExpr.in( fieldExpr, contentsPaths.stream().
-            map( contentPath -> ValueExpr.string( "/content/" + contentPath ) ).collect( Collectors.toList() ) );
-
-        return QueryExpr.from( compareExpr, order != null ? order.getOrderExpressions() : null );
-    }
-
-    private QueryExpr constructExprToFindChildren( final ContentIds contentsIds )
-    {
-        final ContentPaths contentPaths = this.contentService.getByIds( new GetContentByIdsParams( contentsIds ) ).getPaths();
-
-        return constructExprToFindChildren( contentPaths );
+        return ContentQueryWithChildren.create().
+            contentService( this.contentService ).
+            contentsPaths( contentsPaths ).
+            build().
+            find().
+            getTotalHits();
     }
 
     private boolean contentNameIsOccupied( final RenameContentParams renameParams )
