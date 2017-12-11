@@ -24,6 +24,8 @@ public class ImportNodesParams
     private final VirtualFile xslt;
 
     private final Map<String, Object> xsltParams;
+    
+    private final NodeImportListener nodeImportListener;
 
     private ImportNodesParams( final Builder builder )
     {
@@ -34,6 +36,7 @@ public class ImportNodesParams
         this.importPermissions = builder.importPermissions;
         this.xslt = builder.xslt;
         this.xsltParams = builder.xsltParams;
+        this.nodeImportListener = builder.nodeImportListener;
     }
 
     public static Builder create()
@@ -76,6 +79,11 @@ public class ImportNodesParams
         return xsltParams;
     }
 
+    public NodeImportListener getNodeImportListener()
+    {
+        return nodeImportListener;
+    }
+
     public static final class Builder
     {
         private NodePath targetNodePath;
@@ -91,6 +99,8 @@ public class ImportNodesParams
         private VirtualFile xslt;
 
         private Map<String, Object> xsltParams;
+        
+        private NodeImportListener nodeImportListener;
 
         private Builder()
         {
@@ -145,6 +155,12 @@ public class ImportNodesParams
                 this.xsltParams = new HashMap<>();
             }
             this.xsltParams.put( paramName, paramValue );
+            return this;
+        }
+
+        public Builder nodeImportListener( final NodeImportListener nodeImportListener )
+        {
+            this.nodeImportListener = nodeImportListener;
             return this;
         }
 
