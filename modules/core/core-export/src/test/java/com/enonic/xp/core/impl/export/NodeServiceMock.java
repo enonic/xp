@@ -273,12 +273,7 @@ class NodeServiceMock
         final FindNodesByParentResult.Builder resultBuilder = FindNodesByParentResult.create();
 
         final Nodes.Builder nodesBuilder = Nodes.create();
-
-        for ( final MockNodeTree<NodePath> treeNode : parentNode.children )
-        {
-            nodesBuilder.add( nodePathMap.get( treeNode.data ) );
-        }
-
+        getNodes(parentNode, nodesBuilder, params.isRecursive());
         final Nodes nodes = nodesBuilder.build();
 
         return resultBuilder.hits( nodes.getSize() ).
@@ -287,6 +282,16 @@ class NodeServiceMock
                 collect( Collectors.toList() ) ) ).
             totalHits( nodes.getSize() ).
             build();
+    }
+    
+    private void getNodes(MockNodeTree<NodePath> parentNode, Nodes.Builder nodesBuilder, final boolean recursive) {
+        for ( final MockNodeTree<NodePath> treeNode : parentNode.children )
+        {
+            nodesBuilder.add( nodePathMap.get( treeNode.data ) );
+            if (recursive) {
+                getNodes( treeNode, nodesBuilder, recursive );
+            }
+        }
     }
 
     @Override

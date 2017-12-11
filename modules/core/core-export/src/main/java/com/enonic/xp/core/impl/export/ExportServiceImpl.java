@@ -46,6 +46,7 @@ public class ExportServiceImpl
             dryRun( params.isDryRun() ).
             exportNodeIds( params.isIncludeNodeIds() ).
             exportVersions( params.isIncludeVersions() ).
+            nodeExportListener( params.getNodeExportListener() ).
             build().
             execute();
     }
