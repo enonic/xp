@@ -31,7 +31,7 @@ public final class AdminToolHandler
 
     private final static Pattern PATTERN = Pattern.compile( "([^/]+)/([^/]+)" );
 
-        private final static DescriptorKey DEFAULT_DESCRIPTOR_KEY = DescriptorKey.from( "com.enonic.xp.app.main:home" );
+    private final static DescriptorKey DEFAULT_DESCRIPTOR_KEY = DescriptorKey.from( "com.enonic.xp.app.main:home" );
 
     private AdminToolDescriptorService adminToolDescriptorService;
 
@@ -80,14 +80,15 @@ public final class AdminToolHandler
         worker.descriptorKey = descriptorKey;
 
         final Trace trace = Tracer.newTrace( "portalRequest" );
-        if ( trace != null )
+        if ( trace == null )
         {
-            trace.put( "path", webRequest.getPath() );
-            trace.put( "method", webRequest.getMethod().toString() );
-            trace.put( "host", webRequest.getHost() );
+            return worker.execute();
         }
-        return Tracer.traceEx( trace, () ->
-        {
+
+        trace.put( "path", webRequest.getPath() );
+        trace.put( "method", webRequest.getMethod().toString() );
+        trace.put( "host", webRequest.getHost() );
+        return Tracer.traceEx( trace, () -> {
             final PortalResponse response = worker.execute();
             addTraceInfo( trace, response );
             return response;
