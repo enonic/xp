@@ -63,6 +63,7 @@ public class ExportServiceImpl
             importPermissions( params.isImportPermissions() ).
             xslt( params.getXslt() ).
             xsltParams( params.getXsltParams() ).
+            nodeImportListener( params.getNodeImportListener() ).
             build().
             execute();
     }

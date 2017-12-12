@@ -20,6 +20,7 @@ import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.export.ImportNodeException;
+import com.enonic.xp.export.NodeImportListener;
 import com.enonic.xp.export.NodeImportResult;
 import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.node.BinaryAttachments;
@@ -62,6 +63,8 @@ public final class NodeImporter
     private final Set<ImportValidator> importValidators = Sets.newHashSet( new ContentImportValidator() );
 
     private final XsltTransformer transformer;
+    
+    private final NodeImportListener nodeImportListener;
 
     private NodeImporter( final Builder builder )
     {
@@ -72,6 +75,7 @@ public final class NodeImporter
         this.importNodeIds = builder.importNodeIds;
         this.importPermissions = builder.importPermissions;
         this.transformer = builder.xslt != null ? XsltTransformer.create( builder.xslt.getUrl(), builder.xsltParams ) : null;
+        this.nodeImportListener = builder.nodeImportListener;
     }
 
     public static Builder create()
@@ -83,6 +87,10 @@ public final class NodeImporter
     {
         this.result.dryRun( this.dryRun );
 
+        if (nodeImportListener != null) {
+            nodeImportListener.nodeResolved( exportReader.getNodeFileCount(exportRoot) );
+        }
+        
         if ( !isNodeFolder( this.exportRoot ) )
         {
             importFromDirectoryLayout( this.exportRoot );
@@ -215,6 +223,10 @@ public final class NodeImporter
 
         final ImportNodeResult importNodeResult = importNode( nodeFolder, processNodeSettings, newNode, importNodePath );
 
+        if (nodeImportListener != null)
+        {
+            nodeImportListener.nodeImported( 1L );
+        }
         if ( importNodeResult.isPreExisting() )
         {
             result.updated( importNodeResult.getNode().path() );
@@ -366,6 +378,8 @@ public final class NodeImporter
         private VirtualFile xslt;
 
         private Map<String, Object> xsltParams;
+        
+        private NodeImportListener nodeImportListener;
 
         private Builder()
         {
@@ -426,6 +440,12 @@ public final class NodeImporter
                 this.xsltParams = new HashMap<>();
             }
             this.xsltParams.put( paramName, paramValue );
+            return this;
+        }
+
+        public Builder nodeImportListener( final NodeImportListener nodeImportListener )
+        {
+            this.nodeImportListener = nodeImportListener;
             return this;
         }
 

@@ -19,6 +19,19 @@ public class ExportReader
         return url.toString().replaceFirst( ".*/([^/?]+).*", "$1" );
     }
 
+    public long getNodeFileCount( final VirtualFile virtualFile )
+    {
+        long nodeFileCount = virtualFile.getChildren().
+            stream().
+            mapToLong( this::getNodeFileCount ).
+            sum();
+        if ( NODE_XML_EXPORT_NAME.equals( virtualFile.getName() ) )
+        {
+            nodeFileCount++;
+        }
+        return nodeFileCount;
+    }
+
     public Stream<VirtualFile> getChildren( final VirtualFile parent )
     {
         return parent.getChildren().stream().
