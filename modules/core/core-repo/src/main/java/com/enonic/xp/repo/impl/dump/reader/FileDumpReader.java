@@ -226,7 +226,7 @@ public class FileDumpReader
 
         if ( this.listener != null )
         {
-            this.listener.nodeLoaded();
+            this.listener.entryLoaded();
         }
 
         return processor.getResult();

@@ -9,7 +9,5 @@ public interface SystemLoadListener
 
     void loadingVersions( final RepositoryId repositoryId );
 
-    void nodeLoaded();
-
-    void setTotal( final Long total );
+    void entryLoaded();
 }
