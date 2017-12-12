@@ -102,7 +102,7 @@ public final class TaskManagerImpl
 
         tasks.put( id, taskContext );
 
-        final TaskWrapper wrapper = new TaskWrapper( id, runnable, userContext, info.getApplication(), this );
+        final TaskWrapper wrapper = new TaskWrapper( info, runnable, userContext, this );
         executorService.submit( wrapper );
         return id;
     }
