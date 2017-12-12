@@ -18,6 +18,7 @@ import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
@@ -83,6 +84,7 @@ public final class TestDataFixtures
         builder.data( tree );
         builder.attachments( newAttachments() );
         builder.valid( true );
+        builder.childOrder( ChildOrder.from( "_timestamp DESC, _name ASC" ) );
 
         return builder;
     }
