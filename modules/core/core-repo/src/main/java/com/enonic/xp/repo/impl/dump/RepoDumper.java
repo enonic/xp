@@ -114,10 +114,7 @@ class RepoDumper
         try
         {
             writer.openBranchMeta( this.repositoryId, branch );
-            final Node rootNode = this.nodeService.getRoot();
-            dumpedNodes.add( rootNode.id() );
-            doDumpNode( rootNode.id(), branchDumpResult );
-            dumpedNodes.addAll( dumpChildren( rootNode.id(), branchDumpResult ) );
+            dumpedNodes.addAll( dumpBranch( branchDumpResult ) );
         }
         catch ( Exception e )
         {
@@ -133,19 +130,23 @@ class RepoDumper
         return dumpedNodes;
     }
 
-    private Set<NodeId> dumpChildren( final NodeId nodeId, final BranchDumpResult.Builder dumpResult )
+    private Set<NodeId> dumpBranch( final BranchDumpResult.Builder dumpResult )
     {
         Set<NodeId> dumpedNodes = Sets.newHashSet();
 
+        final Node rootNode = this.nodeService.getRoot();
         final BatchedGetChildrenExecutor executor = BatchedGetChildrenExecutor.create().
             nodeService( this.nodeService ).
-            parentId( nodeId ).
+            parentId( rootNode.id() ).
             recursive( true ).
             batchSize( DEFAULT_BATCH_SIZE ).
             childOrder( ChildOrder.from( "_path asc" ) ).
             build();
 
-        reportDumpingBranch( ContextAccessor.current().getBranch(), executor.getTotalHits() );
+        reportDumpingBranch( ContextAccessor.current().getBranch(), executor.getTotalHits() + 1 );
+
+        doDumpNode( rootNode.id(), dumpResult );
+        dumpedNodes.add( rootNode.id() );
 
         while ( executor.hasMore() )
         {
@@ -220,8 +221,9 @@ class RepoDumper
             catch ( Exception e )
             {
                 // Report
-                LOG.error( "Failed to write binary for nodeVersion " + metaData.getNodeVersionId() + ", binary " +
-                               attachedBinary.getBlobKey(), e );
+                LOG.error(
+                    "Failed to write binary for nodeVersion " + metaData.getNodeVersionId() + ", binary " + attachedBinary.getBlobKey(),
+                    e );
             }
         } );
     }
