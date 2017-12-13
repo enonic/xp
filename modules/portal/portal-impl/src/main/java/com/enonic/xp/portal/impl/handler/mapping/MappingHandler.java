@@ -61,6 +61,10 @@ public final class MappingHandler
         worker.controllerScriptFactory = this.controllerScriptFactory;
         worker.rendererFactory = rendererFactory;
         final Trace trace = Tracer.newTrace( "renderComponent" );
+        if ( trace == null )
+        {
+            return worker.execute();
+        }
         return Tracer.traceEx( trace, worker::execute );
     }
 

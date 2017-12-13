@@ -75,6 +75,10 @@ public final class AppHandler
         final String restPath = matcher.group( 2 );
 
         final Trace trace = Tracer.newTrace( "renderApp" );
+        if ( trace == null )
+        {
+            return handleAppRequest( req, applicationKey, restPath );
+        }
         return Tracer.traceEx( trace, () -> {
             final WebResponse resp = handleAppRequest( req, applicationKey, restPath );
             addTraceInfo( trace, applicationKey, restPath );
@@ -83,7 +87,6 @@ public final class AppHandler
     }
 
     private WebResponse handleAppRequest( final WebRequest req, final ApplicationKey applicationKey, final String path )
-        throws Exception
     {
         if ( path != null && !"/".equals( path ) && req.getMethod() == HttpMethod.GET )
         {
@@ -99,7 +102,6 @@ public final class AppHandler
     }
 
     private WebResponse handleRequest( final PortalRequest req )
-        throws Exception
     {
         try
         {
