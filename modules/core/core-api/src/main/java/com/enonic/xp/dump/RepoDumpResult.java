@@ -84,6 +84,12 @@ public class RepoDumpResult
             return this;
         }
 
+        public Builder versions( final Long versions)
+        {
+            this.versions = versions;
+            return this;
+        }
+
         public RepoDumpResult build()
         {
             return new RepoDumpResult( this );

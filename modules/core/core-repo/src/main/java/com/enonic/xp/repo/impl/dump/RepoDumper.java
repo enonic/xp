@@ -67,8 +67,6 @@ class RepoDumper
 
     private final RepoDumpResult.Builder dumpResult;
 
-    private final String xpVersion;
-
     private final SystemDumpListener listener;
 
     private RepoDumper( final Builder builder )
@@ -79,7 +77,6 @@ class RepoDumper
         this.nodeService = builder.nodeService;
         this.repositoryService = builder.repositoryService;
         this.writer = builder.writer;
-        this.xpVersion = builder.xpVersion;
         this.dumpResult = RepoDumpResult.create( this.repositoryId );
         this.maxAge = builder.maxAge;
         this.maxVersions = builder.maxVersions;
@@ -88,8 +85,6 @@ class RepoDumper
 
     public RepoDumpResult execute()
     {
-        writer.writeDumpMetaData( new DumpMeta( this.xpVersion ) );
-
         final Set<NodeId> dumpedNodes = Sets.newHashSet();
 
         getBranches().forEach( ( branch ) -> dumpedNodes.addAll( setContext( branch ).callWith( this::doExecute ) ) );
@@ -355,8 +350,6 @@ class RepoDumper
 
         private DumpWriter writer;
 
-        private String xpVersion;
-
         private Integer maxAge;
 
         private Integer maxVersions;
@@ -402,13 +395,7 @@ class RepoDumper
             this.writer = writer;
             return this;
         }
-
-        public Builder xpVersion( final String xpVersion )
-        {
-            this.xpVersion = xpVersion;
-            return this;
-        }
-
+        
         public Builder maxAge( final Integer maxAge )
         {
             this.maxAge = maxAge;

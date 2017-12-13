@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl.dump.serializer.json;
 
+import java.io.IOException;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -19,6 +21,19 @@ public class DumpMetaJsonSerializer
         catch ( JsonProcessingException e )
         {
             throw new RepoDumpException( "Cannot serializer dumpEntry", e );
+        }
+    }
+
+    public DumpMeta toDumpMeta( final String value )
+    {
+        try
+        {
+            final DumpMetaJson dumpMetaJson = MAPPER.readValue( value, DumpMetaJson.class );
+            return DumpMetaJson.fromJson( dumpMetaJson );
+        }
+        catch ( IOException e )
+        {
+            throw new RepoDumpException( "Cannot deserialize value [" + value + "] to DumpMeta", e );
         }
     }
 
