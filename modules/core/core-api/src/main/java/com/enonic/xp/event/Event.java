@@ -193,7 +193,7 @@ public final class Event
                 return this;
             }
 
-            if ( value instanceof Number || value instanceof Boolean || value instanceof Collection )
+            if ( value instanceof Number || value instanceof Boolean || value instanceof Collection || value instanceof Map )
             {
                 dataBuilder.put( key, value );
                 return this;
