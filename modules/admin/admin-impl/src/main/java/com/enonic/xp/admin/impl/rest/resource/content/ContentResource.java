@@ -102,6 +102,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.query.ContentQueryWithChil
 import com.enonic.xp.admin.impl.rest.resource.content.task.DeleteRunnableTask;
 import com.enonic.xp.admin.impl.rest.resource.content.task.DuplicateRunnableTask;
 import com.enonic.xp.admin.impl.rest.resource.content.task.MoveRunnableTask;
+import com.enonic.xp.admin.impl.rest.resource.content.task.PublishRunnableTask;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
 import com.enonic.xp.attachment.Attachment;
@@ -124,7 +125,6 @@ import com.enonic.xp.content.ContentListMetaData;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
-import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
@@ -141,9 +141,7 @@ import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.GetPublishStatusesParams;
 import com.enonic.xp.content.GetPublishStatusesResult;
 import com.enonic.xp.content.HasUnpublishedChildrenParams;
-import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentListener;
-import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
@@ -430,7 +428,7 @@ public final class ContentResource
 
     @POST
     @Path("delete")
-    public TaskResultJson move( final DeleteContentJson params )
+    public TaskResultJson delete( final DeleteContentJson params )
     {
         return DeleteRunnableTask.create().
             params( params ).
@@ -468,93 +466,13 @@ public final class ContentResource
     @Path("publish")
     public TaskResultJson publish( final PublishContentJson params )
     {
-        final RunnableTask runnableTask = ( id, progressReporter ) -> publishTask( params, progressReporter );
-        final TaskId taskId = taskService.submitTask( runnableTask, "Publish content" );
-        return new TaskResultJson( taskId );
-    }
-
-    private void publishTask( final PublishContentJson params, final ProgressReporter progressReporter )
-    {
-        final ContentIds contentIds = ContentIds.from( params.getIds() );
-        final ContentIds excludeContentIds = ContentIds.from( params.getExcludedIds() );
-        final ContentIds excludeChildrenIds = ContentIds.from( params.getExcludeChildrenIds() );
-        final ContentPublishInfo contentPublishInfo = params.getSchedule() == null ? null : ContentPublishInfo.create().
-            from( params.getSchedule().getPublishFrom() ).
-            to( params.getSchedule().getPublishTo() ).
-            build();
-        progressReporter.info( "Publishing content" );
-
-        final PublishContentResult result = contentService.publish( PushContentParams.create().
-            target( ContentConstants.BRANCH_MASTER ).
-            contentIds( contentIds ).
-            excludedContentIds( excludeContentIds ).
-            excludeChildrenIds( excludeChildrenIds ).
-            contentPublishInfo( contentPublishInfo ).
-            includeDependencies( true ).
-            pushListener( new PublishContentProgressListener( progressReporter ) ).
-            build() );
-
-        final ContentIds pushedContents = result.getPushedContents();
-        final ContentIds deletedContents = result.getDeletedContents();
-        final ContentIds failedContents = result.getFailedContents();
-
-        String contentName = "";
-        if ( ( pushedContents.getSize() + deletedContents.getSize() + failedContents.getSize() ) == 1 )
-        {
-            if ( pushedContents.getSize() == 1 )
-            {
-                contentName = contentService.getById( pushedContents.first() ).getDisplayName();
-            }
-
-            if ( failedContents.getSize() == 1 )
-            {
-                contentName = contentService.getById( failedContents.first() ).getDisplayName();
-            }
-        }
-
-        progressReporter.info(
-            getPublishMessage( pushedContents.getSize(), failedContents.getSize(), deletedContents.getSize(), contentName ) );
-    }
-
-    private String getPublishMessage( final int succeeded, final int failed, final int deleted, final String contentName )
-    {
-        final int total = succeeded + failed + deleted;
-        switch ( total )
-        {
-            case 0:
-                return "Nothing to publish.";
-
-            case 1:
-                if ( succeeded == 1 )
-                {
-                    return "\"" + contentName + "\" is published";
-                }
-
-                if ( failed == 1 )
-                {
-                    return "\"" + contentName + "\" failed to be published";
-                }
-
-                if ( deleted == 1 )
-                {
-                    return "The item is deleted";
-                }
-
-            default:
-                if ( succeeded > 0 )
-                {
-                    return succeeded + " items are published";
-                }
-                if ( deleted > 0 )
-                {
-                    return deleted + " items are deleted";
-                }
-                if ( failed > 0 )
-                {
-                    return failed + " items failed to be published";
-                }
-        }
-        return "";
+        return PublishRunnableTask.create().
+            params( params ).
+            description( "Publish content" ).
+            taskService( taskService ).
+            contentService( contentService ).
+            build().
+            createTaskResult();
     }
 
     @POST
