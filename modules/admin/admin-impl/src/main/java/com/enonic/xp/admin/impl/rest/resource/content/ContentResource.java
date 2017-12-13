@@ -103,6 +103,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.task.DeleteRunnableTask;
 import com.enonic.xp.admin.impl.rest.resource.content.task.DuplicateRunnableTask;
 import com.enonic.xp.admin.impl.rest.resource.content.task.MoveRunnableTask;
 import com.enonic.xp.admin.impl.rest.resource.content.task.PublishRunnableTask;
+import com.enonic.xp.admin.impl.rest.resource.content.task.UnpublishRunnableTask;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
 import com.enonic.xp.attachment.Attachment;
@@ -141,7 +142,6 @@ import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.GetPublishStatusesParams;
 import com.enonic.xp.content.GetPublishStatusesResult;
 import com.enonic.xp.content.HasUnpublishedChildrenParams;
-import com.enonic.xp.content.PushContentListener;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
@@ -151,8 +151,6 @@ import com.enonic.xp.content.ResolveRequiredDependenciesParams;
 import com.enonic.xp.content.SetActiveContentVersionResult;
 import com.enonic.xp.content.SetContentChildOrderParams;
 import com.enonic.xp.content.UndoPendingDeleteContentParams;
-import com.enonic.xp.content.UnpublishContentParams;
-import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.context.ContextAccessor;
@@ -175,9 +173,6 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.task.ProgressReporter;
-import com.enonic.xp.task.RunnableTask;
-import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.multipart.MultipartForm;
@@ -479,66 +474,14 @@ public final class ContentResource
     @Path("unpublish")
     public TaskResultJson unpublish( final UnpublishContentJson params )
     {
-        final RunnableTask runnableTask = ( id, progressReporter ) -> unpublishTask( params, progressReporter );
-        final TaskId taskId = taskService.submitTask( runnableTask, "Unpublish content" );
-        return new TaskResultJson( taskId );
-    }
-
-    private void unpublishTask( final UnpublishContentJson params, final ProgressReporter progressReporter )
-    {
-        final ContentIds contentIds = ContentIds.from( params.getIds() );
-        progressReporter.info( "Unpublishing content" );
-
-        final PushContentListener listener = new UnpublishContentProgressListener( progressReporter );
-
-        final ContentIds childrenIds = ContentQueryWithChildren.create().
-            contentService( this.contentService ).
-            contentsIds( contentIds ).
-            size( GET_ALL_SIZE_FLAG ).
+        return UnpublishRunnableTask.create().
+            params( params ).
+            description( "Unpublish content" ).
+            taskService( taskService ).
+            contentService( contentService ).
             build().
-            find().
-            getContentIds();
-
-        final ContentIds filteredChildrenIds = ContentIds.from( this.filterIdsByStatus( childrenIds, Arrays.asList( CompareStatus.EQUAL,
-                                                                                                                    CompareStatus.PENDING_DELETE,
-                                                                                                                    CompareStatus.NEWER ) ).collect(
-            Collectors.toSet() ) );
-
-        listener.contentResolved( filteredChildrenIds.getSize() + contentIds.getSize() );
-
-        final UnpublishContentsResult result = this.contentService.unpublishContent( UnpublishContentParams.create().
-            unpublishBranch( ContentConstants.BRANCH_MASTER ).
-            contentIds( contentIds ).
-            includeChildren( params.isIncludeChildren() ).
-            pushListener( listener ).
-            build() );
-
-        final ContentIds unpublishedContents = result.getUnpublishedContents();
-
-        String contentName = "";
-        if ( unpublishedContents.getSize() == 1 )
-        {
-            contentName = result.getContentName();
-        }
-
-        progressReporter.info( getUnpublishMessage( unpublishedContents.getSize(), contentName ) );
+            createTaskResult();
     }
-
-    private String getUnpublishMessage( final int unpublished, final String contentName )
-    {
-        switch ( unpublished )
-        {
-            case 0:
-                return "Nothing to unpublish.";
-
-            case 1:
-                return "\"" + contentName + "\" is unpublished";
-
-            default:
-                return unpublished + " items are unpublished";
-        }
-    }
-
 
     @POST
     @Path("hasUnpublishedChildren")

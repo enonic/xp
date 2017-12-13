@@ -2,7 +2,6 @@ package com.enonic.xp.admin.impl.rest.resource.content.task;
 
 import com.enonic.xp.admin.impl.rest.resource.content.json.TaskResultJson;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
@@ -37,8 +36,6 @@ public abstract class CommonRunnableTask
         private TaskService taskService;
 
         private ContentService contentService;
-
-        private AuthenticationInfo authInfo;
 
         protected Builder()
         {
