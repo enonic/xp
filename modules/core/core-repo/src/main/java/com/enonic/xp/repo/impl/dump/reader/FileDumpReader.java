@@ -3,6 +3,7 @@ package com.enonic.xp.repo.impl.dump.reader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -16,6 +17,7 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
+import com.google.common.io.Files;
 import com.google.common.io.LineProcessor;
 
 import com.enonic.xp.blob.BlobKey;
@@ -25,6 +27,8 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.dump.BranchLoadResult;
 import com.enonic.xp.dump.LoadError;
+import com.enonic.xp.dump.RepoDumpResult;
+import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.dump.SystemLoadListener;
 import com.enonic.xp.dump.VersionsLoadResult;
 import com.enonic.xp.node.NodeVersion;
@@ -34,6 +38,8 @@ import com.enonic.xp.repo.impl.dump.DumpBlobStore;
 import com.enonic.xp.repo.impl.dump.DumpConstants;
 import com.enonic.xp.repo.impl.dump.RepoDumpException;
 import com.enonic.xp.repo.impl.dump.RepoLoadException;
+import com.enonic.xp.repo.impl.dump.model.DumpMeta;
+import com.enonic.xp.repo.impl.dump.serializer.json.DumpMetaJsonSerializer;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
 
@@ -49,6 +55,8 @@ public class FileDumpReader
 
     private final SystemLoadListener listener;
 
+    private final DumpMeta dumpMeta;
+
     public FileDumpReader( final Path basePath, final String dumpName, final SystemLoadListener listener )
     {
         this.dumpDirectory = getDumpDirectory( basePath, dumpName );
@@ -61,11 +69,27 @@ public class FileDumpReader
         this.listener = listener;
         this.dumpBlobStore = new DumpBlobStore( this.dumpDirectory.toFile() );
         this.factory = new NodeVersionFactory();
+        this.dumpMeta = readDumpMetaData();
     }
 
     private java.nio.file.Path getDumpDirectory( final Path basePath, final String name )
     {
         return Paths.get( basePath.toString(), name ).toAbsolutePath();
+    }
+
+
+    private DumpMeta readDumpMetaData()
+    {
+        final Path dumpMetaFile = Paths.get( this.dumpDirectory.toString(), "dump.json" );
+        try
+        {
+            final String json = Files.toString( dumpMetaFile.toFile(), Charset.defaultCharset() );
+            return new DumpMetaJsonSerializer().toDumpMeta( json );
+        }
+        catch ( IOException e )
+        {
+            throw new RepoLoadException( "Cannot read dump-meta file", e );
+        }
     }
 
     @Override
@@ -147,7 +171,7 @@ public class FileDumpReader
 
         if ( this.listener != null )
         {
-            this.listener.loadingVersions( repositoryId );
+            this.listener.loadingVersions( repositoryId, getDumpMetaVersions(repositoryId) );
         }
 
         final VersionsLoadResult.Builder builder = VersionsLoadResult.create();
@@ -155,6 +179,17 @@ public class FileDumpReader
         return builder.successful( result.getSuccessful() ).
             errors( result.getErrors().stream().map( error -> LoadError.error( error.getMessage() ) ).collect( Collectors.toList() ) ).
             build();
+    }
+    
+    private Long getDumpMetaVersions(final RepositoryId repositoryId) {
+        final SystemDumpResult systemDumpResult = this.dumpMeta.getSystemDumpResult();
+        if (systemDumpResult != null) {
+            final RepoDumpResult repoDumpResult = systemDumpResult.get( repositoryId );
+            if (repoDumpResult != null) {
+                return repoDumpResult.getVersions();
+            }
+        }
+        return null;
     }
 
     private EntriesLoadResult doLoadEntries( final LineProcessor<EntryLoadResult> processor, final File tarFile )
