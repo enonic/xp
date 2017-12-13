@@ -100,6 +100,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.UnpublishContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.UpdateContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.query.ContentQueryWithChildren;
 import com.enonic.xp.admin.impl.rest.resource.content.task.DuplicateRunnableTask;
+import com.enonic.xp.admin.impl.rest.resource.content.task.MoveRunnableTask;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
 import com.enonic.xp.attachment.Attachment;
@@ -114,7 +115,6 @@ import com.enonic.xp.content.CompareContentsParams;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAlreadyExistsException;
-import com.enonic.xp.content.ContentAlreadyMovedException;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentDependencies;
 import com.enonic.xp.content.ContentId;
@@ -142,8 +142,6 @@ import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.GetPublishStatusesParams;
 import com.enonic.xp.content.GetPublishStatusesResult;
 import com.enonic.xp.content.HasUnpublishedChildrenParams;
-import com.enonic.xp.content.MoveContentParams;
-import com.enonic.xp.content.MoveContentsResult;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentListener;
 import com.enonic.xp.content.PushContentParams;
@@ -369,87 +367,13 @@ public final class ContentResource
     @Path("move")
     public TaskResultJson move( final MoveContentJson params )
     {
-        final RunnableTask runnableTask = ( id, progressReporter ) -> moveTask( params, progressReporter );
-        final TaskId taskId = taskService.submitTask( runnableTask, "Move content" );
-        return new TaskResultJson( taskId );
-    }
-
-    private void moveTask( final MoveContentJson params, final ProgressReporter progressReporter )
-    {
-        final ContentIds contentToMoveList = ContentIds.from( params.getContentIds() );
-        final Context ctx = ContextAccessor.current();
-        progressReporter.info( "Moving content" );
-
-        final MoveContentProgressListener listener = new MoveContentProgressListener( progressReporter );
-
-        final long childrenIds = ContentQueryWithChildren.create().
-            contentService( this.contentService ).
-            contentsIds( contentToMoveList ).
+        return MoveRunnableTask.create().
+            params( params ).
+            description( "Move content" ).
+            taskService( taskService ).
+            contentService( contentService ).
             build().
-            find().
-            getTotalHits();
-        final int contentIds = contentToMoveList.getSize();
-
-        listener.setTotal( Math.toIntExact( childrenIds + contentIds ) );
-        int moved = 0;
-        int failed = 0;
-        String contentName = "";
-        for ( ContentId contentId : contentToMoveList )
-        {
-            final MoveContentParams moveContentParams = MoveContentParams.create().
-                contentId( contentId ).
-                parentContentPath( params.getParentContentPath() ).
-                moveContentListener( listener ).
-                build();
-            try
-            {
-                final MoveContentsResult result = contentService.move( moveContentParams );
-
-                contentName = result.getContentName();
-                moved++;
-            }
-            catch ( ContentAlreadyMovedException e ) {
-                continue;
-            }
-            catch ( final Exception e )
-            {
-                failed++;
-            }
-        }
-
-        progressReporter.info( getMoveMessage( moved, failed, contentName ) );
-    }
-
-    private String getMoveMessage( final int moved, final int failed, final String contentName )
-    {
-        final int total = moved + failed;
-        switch ( total )
-        {
-            case 0:
-                return "The item is already moved.";
-
-            case 1:
-                if ( moved == 1 )
-                {
-                    return "\"" + contentName + "\" item is moved.";
-                }
-                else
-                {
-                    return "Content could not be moved.";
-                }
-
-            default:
-                final StringBuilder builder = new StringBuilder();
-                if ( moved > 0 )
-                {
-                    builder.append( moved ).append( moved > 1 ? " items are " : " item is " ).append( "moved. " );
-                }
-                if ( failed > 0 )
-                {
-                    builder.append( failed ).append( failed > 1 ? " items " : " item " ).append( " failed to be moved. " );
-                }
-                return builder.toString();
-        }
+            createTaskResult();
     }
 
     @POST
@@ -518,7 +442,6 @@ public final class ContentResource
     private void deleteTask( final DeleteContentJson params, final ProgressReporter progressReporter )
     {
         final ContentPaths contentsToDeleteList = this.filterChildrenIfParentPresents( ContentPaths.from( params.getContentPaths() ) );
-        final Context ctx = ContextAccessor.current();
         progressReporter.info( "Deleting content" );
 
         // TODO: Move cycle to DeleteContentResult, pass the listener
@@ -580,7 +503,7 @@ public final class ContentResource
                     return "The item is marked for deletion";
                 }
                 else
-                { // failed
+                {
                     return "Content could not be deleted";
                 }
 
@@ -643,7 +566,6 @@ public final class ContentResource
             from( params.getSchedule().getPublishFrom() ).
             to( params.getSchedule().getPublishTo() ).
             build();
-        final Context ctx = ContextAccessor.current();
         progressReporter.info( "Publishing content" );
 
         final PublishContentResult result = contentService.publish( PushContentParams.create().
@@ -731,7 +653,6 @@ public final class ContentResource
     private void unpublishTask( final UnpublishContentJson params, final ProgressReporter progressReporter )
     {
         final ContentIds contentIds = ContentIds.from( params.getIds() );
-        final Context ctx = ContextAccessor.current();
         progressReporter.info( "Unpublishing content" );
 
         final PushContentListener listener = new UnpublishContentProgressListener( progressReporter );

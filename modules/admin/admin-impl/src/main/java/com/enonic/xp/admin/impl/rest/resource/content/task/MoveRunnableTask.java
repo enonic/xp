@@ -1,66 +1,62 @@
 package com.enonic.xp.admin.impl.rest.resource.content.task;
 
-import com.enonic.xp.admin.impl.rest.resource.content.DuplicateContentProgressListener;
-import com.enonic.xp.admin.impl.rest.resource.content.json.DuplicateContentJson;
+import com.enonic.xp.admin.impl.rest.resource.content.MoveContentProgressListener;
+import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.query.ContentQueryWithChildren;
 import com.enonic.xp.content.ContentAlreadyMovedException;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.content.DuplicateContentParams;
-import com.enonic.xp.content.DuplicateContentsResult;
-import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.content.MoveContentParams;
+import com.enonic.xp.content.MoveContentsResult;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
 
-public class DuplicateRunnableTask
+public class MoveRunnableTask
     extends CommonRunnableTask
 {
-    private AuthenticationInfo authInfo;
+    private MoveContentJson params;
 
-    private DuplicateContentJson params;
-
-    DuplicateRunnableTask( Builder builder )
+    MoveRunnableTask( Builder builder )
     {
         super( builder );
-        this.authInfo = builder.authInfo;
         this.params = builder.params;
     }
 
     @Override
     public void run( final TaskId id, final ProgressReporter progressReporter )
     {
-        final ContentIds contentToDuplicateList = ContentIds.from( params.getContentIds() );
-        progressReporter.info( "Duplicating content" );
+        final ContentIds contentToMoveList = ContentIds.from( params.getContentIds() );
+        progressReporter.info( "Moving content" );
 
-        final DuplicateContentProgressListener listener = new DuplicateContentProgressListener( progressReporter );
+        final MoveContentProgressListener listener = new MoveContentProgressListener( progressReporter );
 
         final long childrenIds = ContentQueryWithChildren.create().
             contentService( this.contentService ).
-            contentsIds( contentToDuplicateList ).
+            contentsIds( contentToMoveList ).
             build().
             find().
             getTotalHits();
-        final int contentIds = contentToDuplicateList.getSize();
+        final int contentIds = contentToMoveList.getSize();
 
         listener.setTotal( Math.toIntExact( childrenIds + contentIds ) );
-        int duplicated = 0;
+        int moved = 0;
         int failed = 0;
         String contentName = "";
-        for ( ContentId contentId : contentToDuplicateList )
+        for ( ContentId contentId : contentToMoveList )
         {
-            final DuplicateContentParams duplicateContentParams = DuplicateContentParams.create().
+            final MoveContentParams moveContentParams = MoveContentParams.create().
                 contentId( contentId ).
-                creator( authInfo.getUser().getKey() ).
-                duplicateContentListener( listener ).
+                parentContentPath( params.getParentContentPath() ).
+                moveContentListener( listener ).
                 build();
             try
             {
-                final DuplicateContentsResult result = contentService.duplicate( duplicateContentParams );
+                final MoveContentsResult result = contentService.move( moveContentParams );
 
                 contentName = result.getContentName();
-                duplicated++;
+                moved++;
             }
             catch ( ContentAlreadyMovedException e )
             {
@@ -72,36 +68,36 @@ public class DuplicateRunnableTask
             }
         }
 
-        progressReporter.info( getMessage( duplicated, failed, contentName ) );
+        progressReporter.info( getMessage( moved, failed, contentName ) );
     }
 
-    private String getMessage( final int duplicated, final int failed, final String contentName )
+    private String getMessage( final int moved, final int failed, final String contentName )
     {
-        final int total = duplicated + failed;
+        final int total = moved + failed;
         switch ( total )
         {
             case 0:
-                return "The item is already duplicated.";
+                return "The item is already moved.";
 
             case 1:
-                if ( duplicated == 1 )
+                if ( moved == 1 )
                 {
-                    return "\"" + contentName + "\" item is duplicated.";
+                    return "\"" + contentName + "\" item is moved.";
                 }
                 else
                 {
-                    return "Content could not be duplicated.";
+                    return "Content could not be moved.";
                 }
 
             default:
                 final StringBuilder builder = new StringBuilder();
-                if ( duplicated > 0 )
+                if ( moved > 0 )
                 {
-                    builder.append( duplicated ).append( duplicated > 1 ? " items are " : " item is " ).append( "duplicated. " );
+                    builder.append( moved ).append( moved > 1 ? " items are " : " item is " ).append( "moved. " );
                 }
                 if ( failed > 0 )
                 {
-                    builder.append( failed ).append( failed > 1 ? " items " : " item " ).append( "failed to be duplicated. " );
+                    builder.append( failed ).append( failed > 1 ? " items " : " item " ).append( "failed to be moved. " );
                 }
                 return builder.toString().trim();
         }
@@ -115,17 +111,9 @@ public class DuplicateRunnableTask
     public static class Builder
         extends CommonRunnableTask.Builder
     {
-        private AuthenticationInfo authInfo;
+        private MoveContentJson params;
 
-        private DuplicateContentJson params;
-
-        public Builder authInfo( AuthenticationInfo authInfo )
-        {
-            this.authInfo = authInfo;
-            return this;
-        }
-
-        public Builder params( DuplicateContentJson params )
+        public Builder params( MoveContentJson params )
         {
             this.params = params;
             return this;
@@ -152,9 +140,9 @@ public class DuplicateRunnableTask
             return this;
         }
 
-        public DuplicateRunnableTask build()
+        public MoveRunnableTask build()
         {
-            return new DuplicateRunnableTask( this );
+            return new MoveRunnableTask( this );
         }
     }
 }
