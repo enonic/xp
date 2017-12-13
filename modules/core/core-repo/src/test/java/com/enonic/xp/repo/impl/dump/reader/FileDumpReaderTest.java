@@ -2,12 +2,15 @@ package com.enonic.xp.repo.impl.dump.reader;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Paths;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
+import com.google.common.io.Files;
 
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.repository.RepositoryId;
@@ -29,6 +32,7 @@ public class FileDumpReaderTest
         throws Exception
     {
         this.dumpFolder = root.newFolder( "myDump" );
+        createMetaDataFile( dumpFolder );
         this.fileDumpReader = new FileDumpReader( root.getRoot().toPath(), "myDump", null );
     }
 
@@ -95,6 +99,13 @@ public class FileDumpReaderTest
 
         final Branches branches = fileDumpReader.getBranches( RepositoryId.from( "repo1" ) );
         assertEquals( 1, branches.getSize() );
+    }
+
+    private void createMetaDataFile( final File parent )
+        throws IOException
+    {
+        final String content = "{\"xpVersion\":\"X.Y.Z.SNAPSHOT\",\"timestamp\":\"1970-01-01T00:00:00.000Z\"}";
+        Files.write( content, new File( parent, "dump.json" ), Charset.defaultCharset() );
     }
 
     private File createFolder( final File parent, final String name )
