@@ -36,9 +36,12 @@ public abstract class CommonRunnableTaskTest
     {
         this.authInfo = AuthenticationInfo.create().user( User.ANONYMOUS ).build();
         this.contents = Lists.newArrayList(
-            Content.create().id( ContentId.from( "id1" ) ).path( "/content/id1" ).name( "content1" ).displayName( "Content 1" ).build(),
-            Content.create().id( ContentId.from( "id2" ) ).path( "/content/id2" ).name( "content2" ).displayName( "Content 2" ).build(),
-            Content.create().id( ContentId.from( "id3" ) ).path( "/content/id3" ).name( "content3" ).displayName( "Content 3" ).build() );
+            Content.create().id( ContentId.from( "id1" ) ).path( "/content/content1" ).name( "content1" ).displayName(
+                "Content 1" ).build(),
+            Content.create().id( ContentId.from( "id2" ) ).path( "/content/content2" ).name( "content2" ).displayName(
+                "Content 2" ).build(),
+            Content.create().id( ContentId.from( "id3" ) ).path( "/content/content3" ).name( "content3" ).displayName(
+                "Content 3" ).build() );
         this.contentService = Mockito.mock( ContentService.class );
         this.taskService = Mockito.mock( TaskService.class );
         this.progressReporter = Mockito.mock( ProgressReporter.class );

@@ -99,6 +99,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.UndoPendingDeleteCont
 import com.enonic.xp.admin.impl.rest.resource.content.json.UnpublishContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.UpdateContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.query.ContentQueryWithChildren;
+import com.enonic.xp.admin.impl.rest.resource.content.task.DeleteRunnableTask;
 import com.enonic.xp.admin.impl.rest.resource.content.task.DuplicateRunnableTask;
 import com.enonic.xp.admin.impl.rest.resource.content.task.MoveRunnableTask;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconResolver;
@@ -128,8 +129,6 @@ import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.CreateMediaParams;
-import com.enonic.xp.content.DeleteContentParams;
-import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.content.FindContentIdsByParentResult;
@@ -158,7 +157,6 @@ import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
-import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.extractor.BinaryExtractor;
 import com.enonic.xp.extractor.ExtractedData;
@@ -432,97 +430,15 @@ public final class ContentResource
 
     @POST
     @Path("delete")
-    public TaskResultJson delete( final DeleteContentJson params )
+    public TaskResultJson move( final DeleteContentJson params )
     {
-        final RunnableTask runnableTask = ( id, progressReporter ) -> deleteTask( params, progressReporter );
-        final TaskId taskId = taskService.submitTask( runnableTask, "Delete content" );
-        return new TaskResultJson( taskId );
-    }
-
-    private void deleteTask( final DeleteContentJson params, final ProgressReporter progressReporter )
-    {
-        final ContentPaths contentsToDeleteList = this.filterChildrenIfParentPresents( ContentPaths.from( params.getContentPaths() ) );
-        progressReporter.info( "Deleting content" );
-
-        // TODO: Move cycle to DeleteContentResult, pass the listener
-        final DeleteContentProgressListener listener = new DeleteContentProgressListener( progressReporter );
-        int deleted = 0;
-        int pending = 0;
-        int failed = 0;
-        for ( final ContentPath contentToDelete : contentsToDeleteList )
-        {
-            final DeleteContentParams deleteContentParams = DeleteContentParams.create().
-                contentPath( contentToDelete ).
-                deleteOnline( params.isDeleteOnline() ).
-                build();
-
-            try
-            {
-                DeleteContentsResult result = contentService.deleteWithoutFetch( deleteContentParams );
-
-                deleted += result.getDeletedContents().getSize();
-                pending += result.getPendingContents().getSize();
-            }
-            catch ( final Exception e )
-            {
-                try
-                {
-                    Content content = contentService.getByPath( contentToDelete );
-                    if ( content != null )
-                    {
-                        failed++;
-                    }
-                }
-                catch ( final Exception e2 )
-                {
-                    failed++;
-                }
-            }
-
-            listener.contentDeleted( 1 );
-        }
-
-        progressReporter.info( getDeleteMessage( deleted, pending, failed ) );
-    }
-
-    private String getDeleteMessage( final int deleted, final int pending, final int failed )
-    {
-        final int total = deleted + pending + failed;
-        switch ( total )
-        {
-            case 0:
-                return "Nothing to delete";
-
-            case 1:
-                if ( deleted == 1 )
-                {
-                    return "The item is deleted";
-                }
-                else if ( pending == 1 )
-                {
-                    return "The item is marked for deletion";
-                }
-                else
-                {
-                    return "Content could not be deleted";
-                }
-
-            default:
-                final StringBuilder builder = new StringBuilder();
-                if ( deleted > 0 )
-                {
-                    builder.append( deleted ).append( deleted > 1 ? " items are " : " item is " ).append( "deleted. " );
-                }
-                if ( pending > 0 )
-                {
-                    builder.append( pending ).append( pending > 1 ? " items are " : " item is " ).append( "marked for deletion. " );
-                }
-                if ( failed > 0 )
-                {
-                    builder.append( failed ).append( failed > 1 ? " items " : " item " ).append( " failed to be deleted. " );
-                }
-                return builder.toString();
-        }
+        return DeleteRunnableTask.create().
+            params( params ).
+            description( "Delete content" ).
+            taskService( taskService ).
+            contentService( contentService ).
+            build().
+            createTaskResult();
     }
 
     @POST
@@ -1276,9 +1192,10 @@ public final class ContentResource
     @Path("countContentsWithDescendants")
     public long countContentsWithDescendants( final GetDescendantsOfContents json )
     {
-        final ContentPaths contentsPaths = this.filterChildrenIfParentPresents( ContentPaths.from( json.getContentPaths() ) );
-
-        return this.countContentsAndTheirChildren( contentsPaths );
+        final ContentPaths paths = ContentPaths.from( json.getContentPaths() );
+        List<ContentPath> filteredPaths =
+            paths.stream().filter( contentPath -> paths.stream().noneMatch( contentPath::isChildOf ) ).collect( Collectors.toList() );
+        return this.countContentsAndTheirChildren( ContentPaths.from( filteredPaths ) );
     }
 
     @POST
@@ -1636,22 +1553,6 @@ public final class ContentResource
     private ByteSource getFileItemByteSource( final MultipartItem item )
     {
         return item.getBytes();
-    }
-
-    private ContentPaths filterChildrenIfParentPresents( final ContentPaths sourceContentPaths )
-    {
-        ContentPaths filteredContentPaths = ContentPaths.empty();
-
-        for ( ContentPath contentPath : sourceContentPaths )
-        {
-            boolean hasParent = sourceContentPaths.stream().anyMatch( contentPath::isChildOf );
-            if ( !hasParent )
-            {
-                filteredContentPaths = filteredContentPaths.add( contentPath );
-            }
-        }
-
-        return filteredContentPaths;
     }
 
     private long countContentsAndTheirChildren( final ContentPaths contentsPaths )
