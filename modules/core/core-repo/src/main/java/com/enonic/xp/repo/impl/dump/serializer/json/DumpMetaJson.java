@@ -35,8 +35,10 @@ public class DumpMetaJson
     public static DumpMetaJson from( final DumpMeta dumpMeta )
     {
         Map<String, RepoDumpResultJson> result = new HashMap<>();
-        dumpMeta.getSystemDumpResult().forEach(
-            repoDumpResult -> result.put( repoDumpResult.getRepositoryId().toString(), RepoDumpResultJson.from( repoDumpResult ) ) );
+        dumpMeta.getSystemDumpResult().forEach( repoDumpResult -> {
+            final RepoDumpResultJson repoDumpResultJson = RepoDumpResultJson.from( repoDumpResult );
+            result.put( repoDumpResult.getRepositoryId().toString(), repoDumpResultJson);
+        } );
 
         return new DumpMetaJson( dumpMeta.getXpVersion(), dumpMeta.getTimestamp().toString(), result );
     }
@@ -44,7 +46,8 @@ public class DumpMetaJson
     public static DumpMeta fromJson( final DumpMetaJson dumpMetaJson )
     {
         SystemDumpResult result = null;
-        if (dumpMetaJson.getResult() != null) {
+        if ( dumpMetaJson.getResult() != null )
+        {
             SystemDumpResult.Builder resultBuilder = SystemDumpResult.create();
             dumpMetaJson.getResult().entrySet().forEach(
                 resultEntry -> resultBuilder.add( RepoDumpResultJson.fromJson( resultEntry.getKey(), resultEntry.getValue() ) ) );

@@ -25,6 +25,7 @@ import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
+import com.enonic.xp.dump.BranchDumpResult;
 import com.enonic.xp.dump.BranchLoadResult;
 import com.enonic.xp.dump.LoadError;
 import com.enonic.xp.dump.RepoDumpResult;
@@ -153,7 +154,7 @@ public class FileDumpReader
 
         if ( this.listener != null )
         {
-            this.listener.loadingBranch( repositoryId, branch );
+            this.listener.loadingBranch( repositoryId, branch, getBranchSuccessfulCountFromMeta(repositoryId, branch) );
         }
 
         final EntriesLoadResult result = doLoadEntries( processor, tarFile );
@@ -171,7 +172,7 @@ public class FileDumpReader
 
         if ( this.listener != null )
         {
-            this.listener.loadingVersions( repositoryId, getDumpMetaVersions(repositoryId) );
+            this.listener.loadingVersions( repositoryId, getRepoVersionCountFromMeta( repositoryId) );
         }
 
         final VersionsLoadResult.Builder builder = VersionsLoadResult.create();
@@ -181,12 +182,26 @@ public class FileDumpReader
             build();
     }
     
-    private Long getDumpMetaVersions(final RepositoryId repositoryId) {
+    private Long getRepoVersionCountFromMeta( final RepositoryId repositoryId) {
         final SystemDumpResult systemDumpResult = this.dumpMeta.getSystemDumpResult();
         if (systemDumpResult != null) {
             final RepoDumpResult repoDumpResult = systemDumpResult.get( repositoryId );
             if (repoDumpResult != null) {
                 return repoDumpResult.getVersions();
+            }
+        }
+        return null;
+    }
+    
+    private Long getBranchSuccessfulCountFromMeta( final RepositoryId repositoryId, final Branch branch) {
+        final SystemDumpResult systemDumpResult = this.dumpMeta.getSystemDumpResult();
+        if (systemDumpResult != null) {
+            final RepoDumpResult repoDumpResult = systemDumpResult.get( repositoryId );
+            if (repoDumpResult != null) {
+                final BranchDumpResult branchDumpResult = repoDumpResult.get( branch );
+                if (branchDumpResult != null) {
+                    return branchDumpResult.getSuccessful();
+                }
             }
         }
         return null;

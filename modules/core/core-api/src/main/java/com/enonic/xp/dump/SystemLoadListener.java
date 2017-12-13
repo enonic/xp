@@ -5,7 +5,7 @@ import com.enonic.xp.repository.RepositoryId;
 
 public interface SystemLoadListener
 {
-    void loadingBranch( final RepositoryId repositoryId, final Branch branch );
+    void loadingBranch( final RepositoryId repositoryId, final Branch branch, final Long total );
 
     void loadingVersions( final RepositoryId repositoryId, final Long total );
 
