@@ -28,6 +28,8 @@ import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
 import com.enonic.xp.task.TaskProgress;
 import com.enonic.xp.task.TaskState;
+import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.Tracer;
 
 import static com.enonic.xp.task.TaskState.FAILED;
 import static com.enonic.xp.task.TaskState.FINISHED;
@@ -69,6 +71,20 @@ public final class TaskManagerImpl
     @Override
     public TaskId submitTask( final RunnableTask runnable, final String description, String name )
     {
+        final Trace trace = Tracer.newTrace( "task.submit" );
+        if ( trace == null )
+        {
+            return doSubmitTask( runnable, description, name );
+        }
+
+        final TaskId id = Tracer.trace( trace, () -> doSubmitTask( runnable, description, name ) );
+        trace.put( "taskId", id );
+        trace.put( "name", name );
+        return id;
+    }
+
+    private TaskId doSubmitTask( final RunnableTask runnable, final String description, String name )
+    {
         final TaskId id = idGen.get();
 
         final Context userContext = ContextAccessor.current();
@@ -93,7 +109,8 @@ public final class TaskManagerImpl
 
         eventPublisher.publish( TaskEvents.submitted( info ) );
 
-        final TaskWrapper wrapper = new TaskWrapper( id, runnable, userContext, this );
+        final TaskWrapper wrapper = new TaskWrapper( id, runnable, userContext, info.getApplication(),this );
+        final TaskWrapper wrapper = new TaskWrapper( id, runnable, userContext, info.getApplication(), this );
         executorService.submit( wrapper );
 
         return id;

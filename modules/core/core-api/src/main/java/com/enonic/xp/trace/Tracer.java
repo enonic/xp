@@ -38,8 +38,7 @@ public final class Tracer
 
     public static void trace( final Trace trace, final Runnable runnable )
     {
-        trace( trace, () ->
-        {
+        trace( trace, () -> {
             runnable.run();
             return null;
         } );
@@ -123,7 +122,10 @@ public final class Tracer
         }
 
         trace.start();
-        INSTANCE.manager.dispatch( TraceEvent.start( trace ) );
+        if ( INSTANCE.manager != null )
+        {
+            INSTANCE.manager.dispatch( TraceEvent.start( trace ) );
+        }
     }
 
     private static void endTrace( final Trace trace )
@@ -134,6 +136,9 @@ public final class Tracer
         }
 
         trace.end();
-        INSTANCE.manager.dispatch( TraceEvent.end( trace ) );
+        if ( INSTANCE.manager != null )
+        {
+            INSTANCE.manager.dispatch( TraceEvent.end( trace ) );
+        }
     }
 }
