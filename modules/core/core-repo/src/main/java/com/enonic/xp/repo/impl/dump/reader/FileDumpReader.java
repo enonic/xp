@@ -172,7 +172,7 @@ public class FileDumpReader
 
         if ( this.listener != null )
         {
-            this.listener.loadingVersions( repositoryId, getRepoVersionCountFromMeta( repositoryId) );
+            this.listener.loadingVersions( repositoryId );
         }
 
         final VersionsLoadResult.Builder builder = VersionsLoadResult.create();
@@ -180,17 +180,6 @@ public class FileDumpReader
         return builder.successful( result.getSuccessful() ).
             errors( result.getErrors().stream().map( error -> LoadError.error( error.getMessage() ) ).collect( Collectors.toList() ) ).
             build();
-    }
-    
-    private Long getRepoVersionCountFromMeta( final RepositoryId repositoryId) {
-        final SystemDumpResult systemDumpResult = this.dumpMeta.getSystemDumpResult();
-        if (systemDumpResult != null) {
-            final RepoDumpResult repoDumpResult = systemDumpResult.get( repositoryId );
-            if (repoDumpResult != null) {
-                return repoDumpResult.getVersions();
-            }
-        }
-        return null;
     }
     
     private Long getBranchSuccessfulCountFromMeta( final RepositoryId repositoryId, final Branch branch) {
