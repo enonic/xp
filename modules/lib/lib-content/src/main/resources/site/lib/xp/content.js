@@ -93,6 +93,43 @@ exports.getAttachmentStream = function (params) {
     return bean.getStream();
 };
 
+/**
+ * Adds an attachment to an existing content.
+ *
+ * @example-ref examples/content/addAttachment.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Path or id to the content.
+ * @param {string} params.name Attachment name.
+ * @param {string} params.mimeType Attachment content type.
+ * @param {string} [params.label] Attachment label.
+ * @param {object} params.data Stream with the binary data for the attachment.
+ */
+exports.addAttachment = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.content.AddAttachmentHandler');
+    bean.key = required(params, 'key');
+    bean.name = required(params, 'name');
+    bean.mimeType = required(params, 'mimeType');
+    bean.label = nullOrValue(params.label);
+    bean.data = required(params, 'data');
+    bean.execute();
+};
+
+/**
+ * Removes an attachment from an existing content.
+ *
+ * @example-ref examples/content/removeAttachment.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Path or id to the content.
+ * @param {string|string[]} params.name Attachment name, or array of names.
+ */
+exports.removeAttachment = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.content.RemoveAttachmentHandler');
+    bean.key = required(params, 'key');
+    bean.name = [].concat(required(params, 'name'));
+    bean.execute();
+};
 
 /**
  * This function returns the parent site of a content.
@@ -158,7 +195,7 @@ exports.delete = function (params) {
  * @param {string} [params.sort] Sorting expression.
  * @param {string} [params.branch] Set by portal, depending on context, to either draft or master. May be overridden, but this is not recommended. Default is the current branch set in portal.
  *
- * @returns {boolean} Result (of content) fetched from the repository.
+ * @returns {Object} Result (of content) fetched from the repository.
  */
 exports.getChildren = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.GetChildContentHandler');
@@ -230,7 +267,7 @@ exports.create = function (params) {
  * @param {string[]} [params.contentTypes] Content types to filter on.
  * @param {string} [params.branch] Set by portal, depending on context, to either draft or master. May be overridden, but this is not recommended. Default is the current branch set in portal.
  *
- * @returns {boolean} Result of query.
+ * @returns {Object} Result of query.
  */
 exports.query = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.QueryContentHandler');
