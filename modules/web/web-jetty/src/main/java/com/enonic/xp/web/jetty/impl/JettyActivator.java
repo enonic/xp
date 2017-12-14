@@ -14,6 +14,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.status.StatusReporter;
 import com.enonic.xp.web.dispatch.DispatchServlet;
+import com.enonic.xp.web.thread.ThreadPoolInfo;
 
 @Component(immediate = true, service = JettyController.class, configurationPid = "com.enonic.xp.web.jetty")
 public final class JettyActivator
@@ -47,6 +48,7 @@ public final class JettyActivator
 
         publishController();
         publishStatusReporter();
+        publishThreadPoolInfo();
     }
 
     @Deactivate
@@ -88,6 +90,12 @@ public final class JettyActivator
     {
         final HttpThreadPoolStatusReporter statusReporter = new HttpThreadPoolStatusReporter( this.service.server.getThreadPool() );
         this.statusReporterReg = this.context.registerService( StatusReporter.class, statusReporter, new Hashtable<>() );
+    }
+
+    private void publishThreadPoolInfo()
+    {
+        final ThreadPoolInfoImpl threadPoolInfo = new ThreadPoolInfoImpl( this.service.server.getThreadPool() );
+        this.statusReporterReg = this.context.registerService( ThreadPoolInfo.class, threadPoolInfo, new Hashtable<>() );
     }
 
     @Reference
