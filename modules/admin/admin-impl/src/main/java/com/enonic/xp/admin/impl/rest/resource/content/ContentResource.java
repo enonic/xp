@@ -550,10 +550,7 @@ public final class ContentResource
 
         final Content updatedContent = contentService.update( updateParams );
 
-        if ( json.getApplyContentPermissionsParams().isOverwriteChildPermissions() )
-        {
-            this.contentService.applyPermissions( json.getApplyContentPermissionsParams() );
-        }
+        this.contentService.applyPermissions( json.getApplyContentPermissionsParams() );
 
         if ( json.getContentName().equals( updatedContent.getName() ) )
         {
