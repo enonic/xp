@@ -89,7 +89,7 @@ final class UpdateContentCommand
 
         Content editedContent = editContent( params.getEditor(), contentBeforeChange );
 
-        if ( contentBeforeChange.equals( editedContent ) && params.getCreateAttachments() == null )
+        if ( contentBeforeChange.equals( editedContent ) && params.getCreateAttachments() == null && params.getRemoveAttachments() == null )
         {
             return contentBeforeChange;
         }
@@ -113,7 +113,7 @@ final class UpdateContentCommand
             build();
 
         final UpdateNodeParams updateNodeParams = UpdateNodeParamsFactory.create( updateContentTranslatorParams ).
-            contentTypeService(this.contentTypeService ).
+            contentTypeService( this.contentTypeService ).
             mixinService( this.mixinService ).
             pageDescriptorService( this.pageDescriptorService ).
             partDescriptorService( this.partDescriptorService ).

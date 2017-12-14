@@ -42,16 +42,22 @@ public abstract class PostProcessingRenderer<R>
         PortalResponse filterResponse = portalResponse;
         for ( FilterDescriptor filter : filters )
         {
+            final PortalResponse filterPortalResponse = filterResponse;
+
             final Trace trace = Tracer.newTrace( "renderFilter" );
-            if ( trace != null )
+            if ( trace == null )
+            {
+                filterResponse = filterExecutor.executeResponseFilter( filter, portalRequest, filterPortalResponse );
+            }
+            else
             {
                 trace.put( "app", filter.getApplication().toString() );
                 trace.put( "name", filter.getName() );
                 trace.put( "type", "filter" );
+                filterResponse =
+                    Tracer.trace( trace, () -> filterExecutor.executeResponseFilter( filter, portalRequest, filterPortalResponse ) );
             }
-            final PortalResponse filterPortalResponse = filterResponse;
-            filterResponse =
-                Tracer.trace( trace, () -> filterExecutor.executeResponseFilter( filter, portalRequest, filterPortalResponse ) );
+
             if ( !filterResponse.applyFilters() )
             {
                 break;

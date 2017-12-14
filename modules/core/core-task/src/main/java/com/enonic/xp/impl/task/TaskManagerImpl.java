@@ -13,10 +13,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.event.EventPublisher;
+import com.enonic.xp.impl.task.event.TaskEvents;
 import com.enonic.xp.impl.task.script.NamedTaskScript;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.User;
@@ -42,6 +45,8 @@ public final class TaskManagerImpl
     private final ExecutorService executorService;
 
     private final ConcurrentMap<TaskId, TaskContext> tasks;
+
+    private EventPublisher eventPublisher;
 
     private Supplier<TaskId> idGen;
 
@@ -102,8 +107,11 @@ public final class TaskManagerImpl
 
         tasks.put( id, taskContext );
 
+        eventPublisher.publish( TaskEvents.submitted( info ) );
+
         final TaskWrapper wrapper = new TaskWrapper( info, runnable, userContext, this );
         executorService.submit( wrapper );
+
         return id;
     }
 
@@ -165,6 +173,8 @@ public final class TaskManagerImpl
         final TaskInfo updatedInfo = taskInfo.copy().progress( updatedProgress ).build();
         final TaskContext updatedCtx = ctx.copy().taskInfo( updatedInfo ).build();
         tasks.put( taskId, updatedCtx );
+
+        eventPublisher.publish( TaskEvents.updated( updatedInfo ) );
     }
 
     void updateProgress( final TaskId taskId, final String message )
@@ -180,6 +190,8 @@ public final class TaskManagerImpl
         final TaskInfo updatedInfo = taskInfo.copy().progress( updatedProgress ).build();
         final TaskContext updatedCtx = ctx.copy().taskInfo( updatedInfo ).build();
         tasks.put( taskId, updatedCtx );
+
+        eventPublisher.publish( TaskEvents.updated( updatedInfo ) );
     }
 
     void updateState( final TaskId taskId, final TaskState newState )
@@ -194,6 +206,18 @@ public final class TaskManagerImpl
         final Instant doneTime = newState == FAILED || newState == FINISHED ? Instant.now( clock ) : null;
         final TaskContext updatedCtx = ctx.copy().taskInfo( updatedInfo ).doneTime( doneTime ).build();
         tasks.put( taskId, updatedCtx );
+
+        switch ( newState )
+        {
+            case FINISHED:
+                eventPublisher.publish( TaskEvents.finished( updatedInfo ) );
+                break;
+            case FAILED:
+                eventPublisher.publish( TaskEvents.failed( updatedInfo ) );
+                break;
+            default:
+                eventPublisher.publish( TaskEvents.updated( updatedInfo ) );
+        }
     }
 
     void removeExpiredTasks()
@@ -201,10 +225,12 @@ public final class TaskManagerImpl
         final Instant now = Instant.now( clock );
         for ( TaskContext taskCtx : tasks.values() )
         {
-            if ( taskCtx.getTaskInfo().isDone() && taskCtx.getDoneTime() != null &&
+            final TaskInfo taskInfo = taskCtx.getTaskInfo();
+            if ( taskInfo.isDone() && taskCtx.getDoneTime() != null &&
                 taskCtx.getDoneTime().until( now, SECONDS ) > KEEP_COMPLETED_MAX_TIME_SEC )
             {
-                tasks.remove( taskCtx.getTaskInfo().getId() );
+                tasks.remove( taskInfo.getId() );
+                eventPublisher.publish( TaskEvents.removed( taskInfo ) );
             }
         }
     }
@@ -212,5 +238,11 @@ public final class TaskManagerImpl
     void setClock( final Clock clock )
     {
         this.clock = clock;
+    }
+
+    @Reference
+    public void setEventPublisher( final EventPublisher eventPublisher )
+    {
+        this.eventPublisher = eventPublisher;
     }
 }

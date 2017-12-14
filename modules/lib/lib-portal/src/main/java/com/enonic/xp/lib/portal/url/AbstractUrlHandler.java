@@ -3,6 +3,7 @@ package com.enonic.xp.lib.portal.url;
 import java.util.Map;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.portal.PortalRequest;
@@ -23,6 +24,11 @@ public abstract class AbstractUrlHandler
 
     public final String createUrl( final ScriptValue params )
     {
+        if ( params == null )
+        {
+            return createUrl( Maps.newHashMap() );
+        }
+
         return createUrl( params.getMap() );
     }
 

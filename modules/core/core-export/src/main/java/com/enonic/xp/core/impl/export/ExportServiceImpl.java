@@ -46,6 +46,7 @@ public class ExportServiceImpl
             dryRun( params.isDryRun() ).
             exportNodeIds( params.isIncludeNodeIds() ).
             exportVersions( params.isIncludeVersions() ).
+            nodeExportListener( params.getNodeExportListener() ).
             build().
             execute();
     }
@@ -62,6 +63,7 @@ public class ExportServiceImpl
             importPermissions( params.isImportPermissions() ).
             xslt( params.getXslt() ).
             xsltParams( params.getXsltParams() ).
+            nodeImportListener( params.getNodeImportListener() ).
             build().
             execute();
     }

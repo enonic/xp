@@ -10,12 +10,14 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.mockito.Mockito;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
 import com.enonic.xp.core.impl.export.writer.NodeExportPathResolver;
 import com.enonic.xp.export.ImportNodeException;
+import com.enonic.xp.export.NodeImportListener;
 import com.enonic.xp.export.NodeImportResult;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.CreateNodeParams;
@@ -156,10 +158,13 @@ public class NodeImporterTest
         createNodeXmlFile( Paths.get( "myExport", "mynode", "mychild", "mychildchild" ), false );
         createNodeXmlFile( Paths.get( "myExport", "mynode", "mychild", "mychildchild", "mychildchildchild" ), false );
 
+        NodeImportListener nodeImportListener = Mockito.mock( NodeImportListener.class );
+
         final NodeImportResult result = NodeImporter.create().
             nodeService( this.importNodeService ).
             targetNodePath( NodePath.ROOT ).
             sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
+            nodeImportListener( nodeImportListener ).
             build().
             execute();
 
@@ -170,6 +175,9 @@ public class NodeImporterTest
         final Node mychild = assertNodeExists( mynode.path(), "mychild" );
         final Node mychildchild = assertNodeExists( mychild.path(), "mychildchild" );
         assertNodeExists( mychildchild.path(), "mychildchildchild" );
+
+        Mockito.verify( nodeImportListener ).nodeResolved( 5L );
+        Mockito.verify( nodeImportListener, Mockito.times( 5 ) ).nodeImported( 1L );
     }
 
     @Test
