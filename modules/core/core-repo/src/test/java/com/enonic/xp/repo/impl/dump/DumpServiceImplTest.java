@@ -28,6 +28,7 @@ import com.enonic.xp.dump.RepoLoadResult;
 import com.enonic.xp.dump.SystemDumpListener;
 import com.enonic.xp.dump.SystemDumpParams;
 import com.enonic.xp.dump.SystemDumpResult;
+import com.enonic.xp.dump.SystemLoadListener;
 import com.enonic.xp.dump.SystemLoadParams;
 import com.enonic.xp.dump.SystemLoadResult;
 import com.enonic.xp.dump.VersionsLoadResult;
@@ -568,22 +569,38 @@ public class DumpServiceImplTest
     }
 
     @Test
-    public void dumpListener()
+    public void dumpAndLoadListener()
     {
-        final TestDumpListener listener = new TestDumpListener();
 
         createNode( NodePath.ROOT, "myNode" );
 
+        final SystemDumpListener systemDumpListener = Mockito.mock( SystemDumpListener.class );
         NodeHelper.runAsAdmin( () -> this.dumpService.dump( SystemDumpParams.create().
             dumpName( "myTestDump" ).
             includeVersions( true ).
             includeBinaries( true ).
-            listener( listener ).
+            listener( systemDumpListener ).
             build() ) );
 
-        assertEquals( 7, listener.getNodesDumped() );
-        assertNotNull( listener.dumpedBranches.get( CTX_DEFAULT.getRepositoryId() ) );
-        assertNotNull( listener.dumpedBranches.get( SystemConstants.SYSTEM_REPO.getId() ) );
+        Mockito.verify( systemDumpListener ).dumpingBranch( CTX_DEFAULT.getRepositoryId(), CTX_DEFAULT.getBranch(), 2 );
+        Mockito.verify( systemDumpListener ).dumpingBranch( CTX_OTHER.getRepositoryId(), CTX_OTHER.getBranch(), 1 );
+        Mockito.verify( systemDumpListener ).dumpingBranch( SystemConstants.SYSTEM_REPO.getId(), SystemConstants.BRANCH_SYSTEM, 4 );
+        Mockito.verify( systemDumpListener, Mockito.times( 7 ) ).nodeDumped();
+
+        final SystemLoadListener systemLoadListener = Mockito.mock( SystemLoadListener.class );
+        NodeHelper.runAsAdmin( () -> this.dumpService.load( SystemLoadParams.create().
+            dumpName( "myTestDump" ).
+            includeVersions( true ).
+            listener( systemLoadListener ).
+            build() ) );
+
+        Mockito.verify( systemLoadListener ).loadingBranch( CTX_DEFAULT.getRepositoryId(), CTX_DEFAULT.getBranch(), 2L );
+        Mockito.verify( systemLoadListener ).loadingBranch( CTX_OTHER.getRepositoryId(), CTX_OTHER.getBranch(), 1L );
+        Mockito.verify( systemLoadListener ).loadingVersions( CTX_OTHER.getRepositoryId() );
+        Mockito.verify( systemLoadListener ).loadingBranch( SystemConstants.SYSTEM_REPO.getId(), SystemConstants.BRANCH_SYSTEM, 4L );
+        Mockito.verify( systemLoadListener ).loadingVersions( SystemConstants.SYSTEM_REPO.getId() );
+        Mockito.verify( systemLoadListener, Mockito.times( 2 + 1 + 2 + 4 + 4 ) ).entryLoaded();
+        
     }
 
     private void verifyBinaries( final Node node, final Node updatedNode, final NodeVersionQueryResult versions )
