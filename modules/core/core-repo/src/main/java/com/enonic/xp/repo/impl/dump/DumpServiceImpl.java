@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.dump;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,6 +30,7 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.SecurityHelper;
+import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.reader.FileDumpReader;
 import com.enonic.xp.repo.impl.dump.writer.FileDumpWriter;
 import com.enonic.xp.repo.impl.node.NodeHelper;
@@ -98,7 +100,6 @@ public class DumpServiceImpl
                 nodeService( this.nodeService ).
                 repositoryService( this.repositoryService ).
                 repositoryId( repository.getId() ).
-                xpVersion( this.xpVersion ).
                 maxVersions( params.getMaxVersions() ).
                 maxAge( params.getMaxAge() ).
                 listener( params.getListener() ).
@@ -108,7 +109,10 @@ public class DumpServiceImpl
             dumpResults.add( result );
         }
 
-        return dumpResults.build();
+        final SystemDumpResult systemDumpResult = dumpResults.build();
+        writer.writeDumpMetaData( new DumpMeta( this.xpVersion, Instant.now(), systemDumpResult ) );   
+        
+        return systemDumpResult;
     }
 
     @Override

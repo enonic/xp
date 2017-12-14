@@ -8,4 +8,8 @@ public class RepoLoadException
         super( message );
     }
 
+    public RepoLoadException( final String message, final Throwable cause )
+    {
+        super( message, cause );
+    }
 }
