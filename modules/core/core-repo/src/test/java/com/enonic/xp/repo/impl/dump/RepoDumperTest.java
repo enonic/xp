@@ -132,19 +132,6 @@ public class RepoDumperTest
         assertTrue( writer.getBinaries().contains( updateBinary.getBlobKey() ) );
     }
 
-    @Test
-    public void dumpMeta()
-        throws Exception
-    {
-        createNode( NodePath.ROOT, "myNode" );
-        final TestDumpWriter writer = new TestDumpWriter();
-        doDump( writer );
-
-        assertNotNull( writer.getDumpMeta() );
-        assertEquals( "x-y-z", writer.getDumpMeta().getXpVersion() );
-    }
-
-
     private void doDump( final TestDumpWriter writer )
     {
         NodeHelper.runAsAdmin( () -> RepoDumper.create().
@@ -154,7 +141,6 @@ public class RepoDumperTest
             includeBinaries( true ).
             includeVersions( true ).
             repositoryId( CTX_DEFAULT.getRepositoryId() ).
-            xpVersion( "x-y-z" ).
             build().
             execute() );
     }
