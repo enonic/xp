@@ -15,13 +15,13 @@ import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
 
 public class DuplicateRunnableTask
-    extends CommonRunnableTask
+    extends AbstractRunnableTask
 {
-    private AuthenticationInfo authInfo;
+    private final AuthenticationInfo authInfo;
 
-    private DuplicateContentJson params;
+    private final DuplicateContentJson params;
 
-    DuplicateRunnableTask( Builder builder )
+    private DuplicateRunnableTask( Builder builder )
     {
         super( builder );
         this.authInfo = builder.authInfo;
@@ -113,7 +113,7 @@ public class DuplicateRunnableTask
     }
 
     public static class Builder
-        extends CommonRunnableTask.Builder
+        extends AbstractRunnableTask.Builder
     {
         private AuthenticationInfo authInfo;
 

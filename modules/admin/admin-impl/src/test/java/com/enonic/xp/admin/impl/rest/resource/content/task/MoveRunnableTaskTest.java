@@ -21,7 +21,7 @@ import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
 
 public class MoveRunnableTaskTest
-    extends CommonRunnableTaskTest
+    extends AbstractRunnableTaskTest
 {
     private MoveContentJson params;
 

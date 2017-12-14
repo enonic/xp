@@ -17,7 +17,7 @@ import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
 
 public class PublishRunnableTaskTest
-    extends CommonRunnableTaskTest
+    extends AbstractRunnableTaskTest
 {
     private PublishContentJson params;
 

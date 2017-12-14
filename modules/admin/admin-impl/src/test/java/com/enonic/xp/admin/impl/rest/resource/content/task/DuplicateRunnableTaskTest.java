@@ -21,7 +21,7 @@ import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
 
 public class DuplicateRunnableTaskTest
-    extends CommonRunnableTaskTest
+    extends AbstractRunnableTaskTest
 {
     private DuplicateContentJson params;
 

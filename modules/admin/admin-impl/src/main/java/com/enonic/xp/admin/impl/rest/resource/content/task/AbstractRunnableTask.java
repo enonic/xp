@@ -6,16 +6,16 @@ import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
 
-public abstract class CommonRunnableTask
+public abstract class AbstractRunnableTask
     implements RunnableTask
 {
-    private String description;
+    private final String description;
 
-    private TaskService taskService;
+    private final TaskService taskService;
 
-    protected ContentService contentService;
+    final ContentService contentService;
 
-    CommonRunnableTask( Builder builder )
+    AbstractRunnableTask( Builder builder )
     {
         this.description = builder.description;
         this.taskService = builder.taskService;
@@ -37,7 +37,7 @@ public abstract class CommonRunnableTask
 
         private ContentService contentService;
 
-        protected Builder()
+        Builder()
         {
         }
 
@@ -59,6 +59,6 @@ public abstract class CommonRunnableTask
             return this;
         }
 
-        public abstract CommonRunnableTask build();
+        public abstract AbstractRunnableTask build();
     }
 }

@@ -22,11 +22,11 @@ import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
 
 public class UnpublishRunnableTask
-    extends CommonRunnableTask
+    extends AbstractRunnableTask
 {
-    private UnpublishContentJson params;
+    private final UnpublishContentJson params;
 
-    UnpublishRunnableTask( Builder builder )
+    private UnpublishRunnableTask( Builder builder )
     {
         super( builder );
         this.params = builder.params;
@@ -104,7 +104,7 @@ public class UnpublishRunnableTask
     }
 
     public static class Builder
-        extends CommonRunnableTask.Builder
+        extends AbstractRunnableTask.Builder
     {
         private UnpublishContentJson params;
 

@@ -20,7 +20,7 @@ import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
 
 public class DeleteRunnableTaskTest
-    extends CommonRunnableTaskTest
+    extends AbstractRunnableTaskTest
 {
     private DeleteContentJson params;
 

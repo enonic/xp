@@ -16,7 +16,7 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskService;
 
-public abstract class CommonRunnableTaskTest
+public abstract class AbstractRunnableTaskTest
 {
     protected AuthenticationInfo authInfo;
 
@@ -48,5 +48,5 @@ public abstract class CommonRunnableTaskTest
         this.contentQueryArgumentCaptor = ArgumentCaptor.forClass( String.class );
     }
 
-    protected abstract CommonRunnableTask createAndRunTask();
+    protected abstract AbstractRunnableTask createAndRunTask();
 }

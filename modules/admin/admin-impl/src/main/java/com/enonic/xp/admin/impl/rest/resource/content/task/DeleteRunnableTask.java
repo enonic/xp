@@ -15,11 +15,11 @@ import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
 
 public class DeleteRunnableTask
-    extends CommonRunnableTask
+    extends AbstractRunnableTask
 {
-    private DeleteContentJson params;
+    private final DeleteContentJson params;
 
-    DeleteRunnableTask( Builder builder )
+    private DeleteRunnableTask( Builder builder )
     {
         super( builder );
         this.params = builder.params;
@@ -124,7 +124,7 @@ public class DeleteRunnableTask
     }
 
     public static class Builder
-        extends CommonRunnableTask.Builder
+        extends AbstractRunnableTask.Builder
     {
         private DeleteContentJson params;
 

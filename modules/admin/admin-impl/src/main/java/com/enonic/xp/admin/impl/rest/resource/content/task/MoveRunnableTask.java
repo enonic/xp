@@ -14,11 +14,11 @@ import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
 
 public class MoveRunnableTask
-    extends CommonRunnableTask
+    extends AbstractRunnableTask
 {
-    private MoveContentJson params;
+    private final MoveContentJson params;
 
-    MoveRunnableTask( Builder builder )
+    private MoveRunnableTask( Builder builder )
     {
         super( builder );
         this.params = builder.params;
@@ -109,7 +109,7 @@ public class MoveRunnableTask
     }
 
     public static class Builder
-        extends CommonRunnableTask.Builder
+        extends AbstractRunnableTask.Builder
     {
         private MoveContentJson params;
 
