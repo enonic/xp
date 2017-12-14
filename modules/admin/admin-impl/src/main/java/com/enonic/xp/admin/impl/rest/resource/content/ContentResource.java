@@ -98,6 +98,12 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.UndoPendingDeleteCont
 import com.enonic.xp.admin.impl.rest.resource.content.json.UndoPendingDeleteContentResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.UnpublishContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.UpdateContentJson;
+import com.enonic.xp.admin.impl.rest.resource.content.query.ContentQueryWithChildren;
+import com.enonic.xp.admin.impl.rest.resource.content.task.DeleteRunnableTask;
+import com.enonic.xp.admin.impl.rest.resource.content.task.DuplicateRunnableTask;
+import com.enonic.xp.admin.impl.rest.resource.content.task.MoveRunnableTask;
+import com.enonic.xp.admin.impl.rest.resource.content.task.PublishRunnableTask;
+import com.enonic.xp.admin.impl.rest.resource.content.task.UnpublishRunnableTask;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
 import com.enonic.xp.attachment.Attachment;
@@ -112,7 +118,6 @@ import com.enonic.xp.content.CompareContentsParams;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAlreadyExistsException;
-import com.enonic.xp.content.ContentAlreadyMovedException;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentDependencies;
 import com.enonic.xp.content.ContentId;
@@ -121,15 +126,10 @@ import com.enonic.xp.content.ContentListMetaData;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
-import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.CreateMediaParams;
-import com.enonic.xp.content.DeleteContentParams;
-import com.enonic.xp.content.DeleteContentsResult;
-import com.enonic.xp.content.DuplicateContentParams;
-import com.enonic.xp.content.DuplicateContentsResult;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.content.FindContentIdsByParentResult;
@@ -142,11 +142,6 @@ import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.GetPublishStatusesParams;
 import com.enonic.xp.content.GetPublishStatusesResult;
 import com.enonic.xp.content.HasUnpublishedChildrenParams;
-import com.enonic.xp.content.MoveContentParams;
-import com.enonic.xp.content.MoveContentsResult;
-import com.enonic.xp.content.PublishContentResult;
-import com.enonic.xp.content.PushContentListener;
-import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
@@ -156,25 +151,14 @@ import com.enonic.xp.content.ResolveRequiredDependenciesParams;
 import com.enonic.xp.content.SetActiveContentVersionResult;
 import com.enonic.xp.content.SetContentChildOrderParams;
 import com.enonic.xp.content.UndoPendingDeleteContentParams;
-import com.enonic.xp.content.UnpublishContentParams;
-import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
-import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.extractor.BinaryExtractor;
 import com.enonic.xp.extractor.ExtractedData;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.jaxrs.JaxRsExceptions;
-import com.enonic.xp.query.expr.CompareExpr;
-import com.enonic.xp.query.expr.ConstraintExpr;
-import com.enonic.xp.query.expr.FieldExpr;
-import com.enonic.xp.query.expr.FieldOrderExpr;
-import com.enonic.xp.query.expr.LogicalExpr;
-import com.enonic.xp.query.expr.OrderExpr;
-import com.enonic.xp.query.expr.QueryExpr;
-import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
@@ -189,9 +173,6 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.task.ProgressReporter;
-import com.enonic.xp.task.RunnableTask;
-import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.multipart.MultipartForm;
@@ -363,175 +344,27 @@ public final class ContentResource
     @Path("duplicate")
     public TaskResultJson duplicate( final DuplicateContentJson params )
     {
-        final RunnableTask runnableTask = ( id, progressReporter ) -> duplicateTask( params, progressReporter );
-        final TaskId taskId = taskService.submitTask( runnableTask, "Duplicate content" );
-        return new TaskResultJson( taskId );
-    }
-
-    private void duplicateTask( final DuplicateContentJson params, final ProgressReporter progressReporter )
-    {
-        final ContentIds contentToDuplicateList = ContentIds.from( params.getContentIds() );
-        final Context ctx = ContextAccessor.current();
-        progressReporter.info( "Duplicating content" );
-
-        final DuplicateContentProgressListener listener = new DuplicateContentProgressListener( progressReporter );
-
-        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-
-        final ContentQuery allChildrenQuery = ContentQuery.create().
-            size( 0 ).
-            queryExpr( constructExprToFindChildren( contentToDuplicateList ) ).
-            build();
-        final long childrenIds = this.contentService.find( allChildrenQuery ).getTotalHits();
-        final int contentIds = contentToDuplicateList.getSize();
-
-        listener.setTotal( Math.toIntExact( childrenIds + contentIds ) );
-        int duplicated = 0;
-        int failed = 0;
-        String contentName = "";
-        for ( ContentId contentId : contentToDuplicateList )
-        {
-            final DuplicateContentParams duplicateContentParams = DuplicateContentParams.create().
-                contentId( contentId ).
-                creator( authInfo.getUser().getKey() ).
-                duplicateContentListener( listener ).
-                build();
-            try
-            {
-                final DuplicateContentsResult result = contentService.duplicate( duplicateContentParams );
-
-                contentName = result.getContentName();
-                duplicated++;
-            }
-            catch ( ContentAlreadyMovedException e )
-            {
-                continue;
-            }
-            catch ( final Exception e )
-            {
-                duplicated++;
-            }
-        }
-
-        progressReporter.info( getDuplicateMessage( duplicated, failed, contentName ) );
-    }
-
-    private String getDuplicateMessage( final int duplicated, final int failed, final String contentName )
-    {
-        final int total = duplicated + failed;
-        switch ( total )
-        {
-            case 0:
-                return "The item is already duplicated.";
-
-            case 1:
-                if ( duplicated == 1 )
-                {
-                    return "\"" + contentName + "\" item is duplicated.";
-                }
-                else
-                {
-                    return "Content could not be duplicated.";
-                }
-
-            default:
-                final StringBuilder builder = new StringBuilder();
-                if ( duplicated > 0 )
-                {
-                    builder.append( duplicated ).append( duplicated > 1 ? " items are " : " item is " ).append( "duplicated. " );
-                }
-                if ( failed > 0 )
-                {
-                    builder.append( failed ).append( failed > 1 ? " items " : " item " ).append( " failed to be duplicated. " );
-                }
-                return builder.toString();
-        }
+        return DuplicateRunnableTask.create().
+            params( params ).
+            description( "Duplicate content" ).
+            taskService( taskService ).
+            contentService( contentService ).
+            authInfo( ContextAccessor.current().getAuthInfo() ).
+            build().
+            createTaskResult();
     }
 
     @POST
     @Path("move")
     public TaskResultJson move( final MoveContentJson params )
     {
-        final RunnableTask runnableTask = ( id, progressReporter ) -> moveTask( params, progressReporter );
-        final TaskId taskId = taskService.submitTask( runnableTask, "Move content" );
-        return new TaskResultJson( taskId );
-    }
-
-    private void moveTask( final MoveContentJson params, final ProgressReporter progressReporter )
-    {
-        final ContentIds contentToMoveList = ContentIds.from( params.getContentIds() );
-        final Context ctx = ContextAccessor.current();
-        progressReporter.info( "Moving content" );
-
-        final MoveContentProgressListener listener = new MoveContentProgressListener( progressReporter );
-
-        final ContentQuery allChildrenQuery = ContentQuery.create().
-            size( 0 ).
-            queryExpr( constructExprToFindChildren( contentToMoveList ) ).
-            build();
-        final long childrenIds = this.contentService.find( allChildrenQuery ).getTotalHits();
-        final int contentIds = contentToMoveList.getSize();
-
-        listener.setTotal( Math.toIntExact( childrenIds + contentIds ) );
-        int moved = 0;
-        int failed = 0;
-        String contentName = "";
-        for ( ContentId contentId : contentToMoveList )
-        {
-            final MoveContentParams moveContentParams = MoveContentParams.create().
-                contentId( contentId ).
-                parentContentPath( params.getParentContentPath() ).
-                moveContentListener( listener ).
-                build();
-            try
-            {
-                final MoveContentsResult result = contentService.move( moveContentParams );
-
-                contentName = result.getContentName();
-                moved++;
-            }
-            catch ( ContentAlreadyMovedException e ) {
-                continue;
-            }
-            catch ( final Exception e )
-            {
-                failed++;
-            }
-        }
-
-        progressReporter.info( getMoveMessage( moved, failed, contentName ) );
-    }
-
-    private String getMoveMessage( final int moved, final int failed, final String contentName )
-    {
-        final int total = moved + failed;
-        switch ( total )
-        {
-            case 0:
-                return "The item is already moved.";
-
-            case 1:
-                if ( moved == 1 )
-                {
-                    return "\"" + contentName + "\" item is moved.";
-                }
-                else
-                {
-                    return "Content could not be moved.";
-                }
-
-            default:
-                final StringBuilder builder = new StringBuilder();
-                if ( moved > 0 )
-                {
-                    builder.append( moved ).append( moved > 1 ? " items are " : " item is " ).append( "moved. " );
-                }
-                if ( failed > 0 )
-                {
-                    builder.append( failed ).append( failed > 1 ? " items " : " item " ).append( " failed to be moved. " );
-                }
-                return builder.toString();
-        }
+        return MoveRunnableTask.create().
+            params( params ).
+            description( "Move content" ).
+            taskService( taskService ).
+            contentService( contentService ).
+            build().
+            createTaskResult();
     }
 
     @POST
@@ -592,96 +425,13 @@ public final class ContentResource
     @Path("delete")
     public TaskResultJson delete( final DeleteContentJson params )
     {
-        final RunnableTask runnableTask = ( id, progressReporter ) -> deleteTask( params, progressReporter );
-        final TaskId taskId = taskService.submitTask( runnableTask, "Delete content" );
-        return new TaskResultJson( taskId );
-    }
-
-    private void deleteTask( final DeleteContentJson params, final ProgressReporter progressReporter )
-    {
-        final ContentPaths contentsToDeleteList = this.filterChildrenIfParentPresents( ContentPaths.from( params.getContentPaths() ) );
-        final Context ctx = ContextAccessor.current();
-        progressReporter.info( "Deleting content" );
-
-        // TODO: Move cycle to DeleteContentResult, pass the listener
-        final DeleteContentProgressListener listener = new DeleteContentProgressListener( progressReporter );
-        int deleted = 0;
-        int pending = 0;
-        int failed = 0;
-        for ( final ContentPath contentToDelete : contentsToDeleteList )
-        {
-            final DeleteContentParams deleteContentParams = DeleteContentParams.create().
-                contentPath( contentToDelete ).
-                deleteOnline( params.isDeleteOnline() ).
-                build();
-
-            try
-            {
-                DeleteContentsResult result = contentService.deleteWithoutFetch( deleteContentParams );
-
-                deleted += result.getDeletedContents().getSize();
-                pending += result.getPendingContents().getSize();
-            }
-            catch ( final Exception e )
-            {
-                try
-                {
-                    Content content = contentService.getByPath( contentToDelete );
-                    if ( content != null )
-                    {
-                        failed++;
-                    }
-                }
-                catch ( final Exception e2 )
-                {
-                    failed++;
-                }
-            }
-
-            listener.contentDeleted( 1 );
-        }
-
-        progressReporter.info( getDeleteMessage( deleted, pending, failed ) );
-    }
-
-    private String getDeleteMessage( final int deleted, final int pending, final int failed )
-    {
-        final int total = deleted + pending + failed;
-        switch ( total )
-        {
-            case 0:
-                return "Nothing to delete";
-
-            case 1:
-                if ( deleted == 1 )
-                {
-                    return "The item is deleted";
-                }
-                else if ( pending == 1 )
-                {
-                    return "The item is marked for deletion";
-                }
-                else
-                { // failed
-                    return "Content could not be deleted";
-                }
-
-            default:
-                final StringBuilder builder = new StringBuilder();
-                if ( deleted > 0 )
-                {
-                    builder.append( deleted ).append( deleted > 1 ? " items are " : " item is " ).append( "deleted. " );
-                }
-                if ( pending > 0 )
-                {
-                    builder.append( pending ).append( pending > 1 ? " items are " : " item is " ).append( "marked for deletion. " );
-                }
-                if ( failed > 0 )
-                {
-                    builder.append( failed ).append( failed > 1 ? " items " : " item " ).append( " failed to be deleted. " );
-                }
-                return builder.toString();
-        }
+        return DeleteRunnableTask.create().
+            params( params ).
+            description( "Delete content" ).
+            taskService( taskService ).
+            contentService( contentService ).
+            build().
+            createTaskResult();
     }
 
     @POST
@@ -711,157 +461,27 @@ public final class ContentResource
     @Path("publish")
     public TaskResultJson publish( final PublishContentJson params )
     {
-        final RunnableTask runnableTask = ( id, progressReporter ) -> publishTask( params, progressReporter );
-        final TaskId taskId = taskService.submitTask( runnableTask, "Publish content" );
-        return new TaskResultJson( taskId );
-    }
-
-    private void publishTask( final PublishContentJson params, final ProgressReporter progressReporter )
-    {
-        final ContentIds contentIds = ContentIds.from( params.getIds() );
-        final ContentIds excludeContentIds = ContentIds.from( params.getExcludedIds() );
-        final ContentIds excludeChildrenIds = ContentIds.from( params.getExcludeChildrenIds() );
-        final ContentPublishInfo contentPublishInfo = params.getSchedule() == null ? null : ContentPublishInfo.create().
-            from( params.getSchedule().getPublishFrom() ).
-            to( params.getSchedule().getPublishTo() ).
-            build();
-        final Context ctx = ContextAccessor.current();
-        progressReporter.info( "Publishing content" );
-
-        final PublishContentResult result = contentService.publish( PushContentParams.create().
-            target( ContentConstants.BRANCH_MASTER ).
-            contentIds( contentIds ).
-            excludedContentIds( excludeContentIds ).
-            excludeChildrenIds( excludeChildrenIds ).
-            contentPublishInfo( contentPublishInfo ).
-            includeDependencies( true ).
-            pushListener( new PublishContentProgressListener( progressReporter ) ).
-            build() );
-
-        final ContentIds pushedContents = result.getPushedContents();
-        final ContentIds deletedContents = result.getDeletedContents();
-        final ContentIds failedContents = result.getFailedContents();
-
-        String contentName = "";
-        if ( ( pushedContents.getSize() + deletedContents.getSize() + failedContents.getSize() ) == 1 )
-        {
-            if ( pushedContents.getSize() == 1 )
-            {
-                contentName = contentService.getById( pushedContents.first() ).getDisplayName();
-            }
-
-            if ( failedContents.getSize() == 1 )
-            {
-                contentName = contentService.getById( failedContents.first() ).getDisplayName();
-            }
-        }
-
-        progressReporter.info(
-            getPublishMessage( pushedContents.getSize(), failedContents.getSize(), deletedContents.getSize(), contentName ) );
-    }
-
-    private String getPublishMessage( final int succeeded, final int failed, final int deleted, final String contentName )
-    {
-        final int total = succeeded + failed + deleted;
-        switch ( total )
-        {
-            case 0:
-                return "Nothing to publish.";
-
-            case 1:
-                if ( succeeded == 1 )
-                {
-                    return "\"" + contentName + "\" is published";
-                }
-
-                if ( failed == 1 )
-                {
-                    return "\"" + contentName + "\" failed to be published";
-                }
-
-                if ( deleted == 1 )
-                {
-                    return "The item is deleted";
-                }
-
-            default:
-                if ( succeeded > 0 )
-                {
-                    return succeeded + " items are published";
-                }
-                if ( deleted > 0 )
-                {
-                    return deleted + " items are deleted";
-                }
-                if ( failed > 0 )
-                {
-                    return failed + " items failed to be published";
-                }
-        }
-        return "";
+        return PublishRunnableTask.create().
+            params( params ).
+            description( "Publish content" ).
+            taskService( taskService ).
+            contentService( contentService ).
+            build().
+            createTaskResult();
     }
 
     @POST
     @Path("unpublish")
     public TaskResultJson unpublish( final UnpublishContentJson params )
     {
-        final RunnableTask runnableTask = ( id, progressReporter ) -> unpublishTask( params, progressReporter );
-        final TaskId taskId = taskService.submitTask( runnableTask, "Unpublish content" );
-        return new TaskResultJson( taskId );
+        return UnpublishRunnableTask.create().
+            params( params ).
+            description( "Unpublish content" ).
+            taskService( taskService ).
+            contentService( contentService ).
+            build().
+            createTaskResult();
     }
-
-    private void unpublishTask( final UnpublishContentJson params, final ProgressReporter progressReporter )
-    {
-        final ContentIds contentIds = ContentIds.from( params.getIds() );
-        final Context ctx = ContextAccessor.current();
-        progressReporter.info( "Unpublishing content" );
-
-        final PushContentListener listener = new UnpublishContentProgressListener( progressReporter );
-
-        final ContentIds childrenIds = this.contentService.find(
-            ContentQuery.create().size( GET_ALL_SIZE_FLAG ).queryExpr( constructExprToFindChildren( contentIds ) ).
-                build() ).getContentIds();
-
-        final ContentIds filteredChildrenIds = ContentIds.from( this.filterIdsByStatus( childrenIds, Arrays.asList( CompareStatus.EQUAL,
-                                                                                                                    CompareStatus.PENDING_DELETE,
-                                                                                                                    CompareStatus.NEWER ) ).collect(
-            Collectors.toSet() ) );
-
-        listener.contentResolved( filteredChildrenIds.getSize() + contentIds.getSize() );
-
-        final UnpublishContentsResult result = this.contentService.unpublishContent( UnpublishContentParams.create().
-            unpublishBranch( ContentConstants.BRANCH_MASTER ).
-            contentIds( contentIds ).
-            includeChildren( params.isIncludeChildren() ).
-            pushListener( listener ).
-            build() );
-
-        final ContentIds unpublishedContents = result.getUnpublishedContents();
-
-        String contentName = "";
-        if ( unpublishedContents.getSize() == 1 )
-        {
-            contentName = result.getContentName();
-        }
-
-        progressReporter.info( getUnpublishMessage( unpublishedContents.getSize(), contentName ) );
-    }
-
-    private String getUnpublishMessage( final int unpublished, final String contentName )
-    {
-        switch ( unpublished )
-        {
-            case 0:
-                return "Nothing to unpublish.";
-
-            case 1:
-                return "\"" + contentName + "\" is unpublished";
-
-            default:
-                return unpublished + " items are unpublished";
-        }
-    }
-
 
     @POST
     @Path("hasUnpublishedChildren")
@@ -1396,16 +1016,19 @@ public final class ContentResource
     {
         final ContentPaths contentsPaths = ContentPaths.from( json.getContentPaths() );
 
-        FindContentIdsByQueryResult result = this.contentService.find(
-            ContentQuery.create().size( GET_ALL_SIZE_FLAG ).queryExpr( constructExprToFindChildren( contentsPaths ) ).
-                build() );
+        FindContentIdsByQueryResult result = ContentQueryWithChildren.create().
+            contentService( this.contentService ).
+            contentsPaths( contentsPaths ).
+            size( GET_ALL_SIZE_FLAG ).
+            build().
+            find();
 
         final Boolean isFilterNeeded = json.getFilterStatuses() != null && json.getFilterStatuses().size() > 0;
 
         if ( isFilterNeeded )
         {
             return this.filterIdsByStatus( result.getContentIds(), json.getFilterStatuses() ).
-                map( id -> new ContentIdJson( id ) ).
+                map( ContentIdJson::new ).
                 collect( Collectors.toList() );
         }
         else
@@ -1423,16 +1046,17 @@ public final class ContentResource
         return compareResultMap.entrySet().
             stream().
             filter( entry -> statuses.contains( entry.getValue().getCompareStatus() ) ).
-            map( entry -> entry.getKey() );
+            map( Map.Entry::getKey );
     }
 
     @POST
     @Path("countContentsWithDescendants")
     public long countContentsWithDescendants( final GetDescendantsOfContents json )
     {
-        final ContentPaths contentsPaths = this.filterChildrenIfParentPresents( ContentPaths.from( json.getContentPaths() ) );
-
-        return this.countContentsAndTheirChildren( contentsPaths );
+        final ContentPaths paths = ContentPaths.from( json.getContentPaths() );
+        List<ContentPath> filteredPaths =
+            paths.stream().filter( contentPath -> paths.stream().noneMatch( contentPath::isChildOf ) ).collect( Collectors.toList() );
+        return this.countContentsAndTheirChildren( ContentPaths.from( filteredPaths ) );
     }
 
     @POST
@@ -1512,11 +1136,14 @@ public final class ContentResource
             ? ContentConstants.DEFAULT_CONTENT_REPO_ROOT_ORDER
             : contentQueryJson.getChildOrder() != null ? contentQueryJson.getChildOrder() : ContentConstants.DEFAULT_CHILD_ORDER;
 
-        final FindContentIdsByQueryResult findLayerContentsResult = contentService.find( ContentQuery.create().
+        final FindContentIdsByQueryResult findLayerContentsResult = ContentQueryWithChildren.create().
+            contentService( this.contentService ).
+            contentsPaths( ContentPaths.from( layerPaths ) ).
+            order( layerOrder ).
             from( from ).
             size( size ).
-            queryExpr( constructExprToFindByPaths( ContentPaths.from( layerPaths ), layerOrder ) ).
-            build() );
+            build().
+            findOrdered();
 
         final List<ContentTreeSelectorJson> resultItems = contentService.getByIds( new GetContentByIdsParams( findLayerContentsResult.getContentIds() ) ).
             stream().
@@ -1789,22 +1416,6 @@ public final class ContentResource
         return item.getBytes();
     }
 
-    private ContentPaths filterChildrenIfParentPresents( final ContentPaths sourceContentPaths )
-    {
-        ContentPaths filteredContentPaths = ContentPaths.empty();
-
-        for ( ContentPath contentPath : sourceContentPaths )
-        {
-            boolean hasParent = sourceContentPaths.stream().anyMatch( contentPath::isChildOf );
-            if ( !hasParent )
-            {
-                filteredContentPaths = filteredContentPaths.add( contentPath );
-            }
-        }
-
-        return filteredContentPaths;
-    }
-
     private long countContentsAndTheirChildren( final ContentPaths contentsPaths )
     {
         return contentsPaths.getSize() + ( contentsPaths.isEmpty() ? 0 : countChildren( contentsPaths ) );
@@ -1812,48 +1423,12 @@ public final class ContentResource
 
     private long countChildren( final ContentPaths contentsPaths )
     {
-        FindContentIdsByQueryResult result =
-            this.contentService.find( ContentQuery.create().size( 0 ).queryExpr( constructExprToFindChildren( contentsPaths ) ).build() );
-
-        return result.getTotalHits();
-    }
-
-    private QueryExpr constructExprToFindChildren( final ContentPaths contentsPaths )
-    {
-        final FieldExpr fieldExpr = FieldExpr.from( "_path" );
-
-        ConstraintExpr expr = CompareExpr.like( fieldExpr, ValueExpr.string( "/content" + contentsPaths.first() + "/*" ) );
-
-        for ( ContentPath contentPath : contentsPaths )
-        {
-            if ( !contentPath.equals( contentsPaths.first() ) )
-            {
-                ConstraintExpr likeExpr = CompareExpr.like( fieldExpr, ValueExpr.string( "/content" + contentPath + "/*" ) );
-                expr = LogicalExpr.or( expr, likeExpr );
-            }
-        }
-
-        expr = LogicalExpr.and( expr, CompareExpr.notIn( fieldExpr, contentsPaths.stream().
-            map( contentPath -> ValueExpr.string( "/content" + contentPath ) ).collect( Collectors.toList() ) ) );
-
-        return QueryExpr.from( expr, new FieldOrderExpr( fieldExpr, OrderExpr.Direction.ASC ) );
-    }
-
-    private QueryExpr constructExprToFindByPaths( final ContentPaths contentsPaths, final ChildOrder order )
-    {
-        final FieldExpr fieldExpr = FieldExpr.from( "_path" );
-
-        final CompareExpr compareExpr = CompareExpr.in( fieldExpr, contentsPaths.stream().
-            map( contentPath -> ValueExpr.string( "/content/" + contentPath ) ).collect( Collectors.toList() ) );
-
-        return QueryExpr.from( compareExpr, order != null ? order.getOrderExpressions() : null );
-    }
-
-    private QueryExpr constructExprToFindChildren( final ContentIds contentsIds )
-    {
-        final ContentPaths contentPaths = this.contentService.getByIds( new GetContentByIdsParams( contentsIds ) ).getPaths();
-
-        return constructExprToFindChildren( contentPaths );
+        return ContentQueryWithChildren.create().
+            contentService( this.contentService ).
+            contentsPaths( contentsPaths ).
+            build().
+            find().
+            getTotalHits();
     }
 
     private boolean contentNameIsOccupied( final RenameContentParams renameParams )

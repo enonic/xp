@@ -38,7 +38,6 @@ import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
@@ -546,96 +545,6 @@ public class ContentResourceTest
         assertJson( "batch_content_summary.json", jsonString );
     }
 
-    /*
-    @Test
-    public void delete_content_success()
-        throws Exception
-    {
-
-        Content content = Content.create().
-            id( ContentId.from( "123" ) ).
-            parentPath( ContentPath.ROOT ).
-            name( "one" ).
-            displayName( "one" ).
-            type( ContentTypeName.folder() ).
-            build();
-
-        final DeleteContentsResult result = DeleteContentsResult.create().addDeleted( content.getId() ).build();
-        Mockito.when( contentService.deleteWithoutFetch( Mockito.isA( DeleteContentParams.class ) ) ).thenReturn( result );
-
-        final Content aContent = createContent( "aaa", "my_a_content", "myapplication:my_type" );
-        Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).
-            thenReturn( aContent );
-
-        String jsonString = request().path( "content/delete" ).
-            entity( readFromFile( "delete_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post().getAsString();
-
-        assertJson( "delete_content_success.json", jsonString );
-    }
-
-    @Test
-    public void delete_content_failure()
-        throws Exception
-    {
-        Mockito.when( contentService.deleteWithoutFetch( Mockito.eq( DeleteContentParams.create().
-            contentPath( ContentPath.from( "/one" ) ).
-            build() ) ) ).
-            thenThrow( new ContentNotFoundException( ContentPath.from( "/one" ), ContentConstants.BRANCH_DRAFT ) );
-
-        final Content aContent = createContent( "aaa", "my_a_content", "myapplication:my_type" );
-        Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).
-            thenReturn( aContent );
-        Mockito.when( contentService.deleteWithoutFetch( Mockito.eq( DeleteContentParams.create().
-            contentPath( ContentPath.from( "/two" ) ).
-            build() ) ) ).
-            thenThrow( new UnableToDeleteContentException( ContentPath.from( "/two" ), "Some reason" ) );
-
-        String jsonString = request().path( "content/delete" ).
-            entity( readFromFile( "delete_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post().getAsString();
-
-        assertJson( "delete_content_failure.json", jsonString );
-    }
-
-    @Test
-    public void delete_content_both()
-        throws Exception
-    {
-        final Content aContent1 = createContent( "aaa", "my_a_content1", "myapplication:my_type" );
-        Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).
-            thenReturn( aContent1 );
-
-        final Content aContent2 = Content.create().
-            id( ContentId.from( "123" ) ).
-            parentPath( ContentPath.ROOT ).
-            name( "one" ).
-            displayName( "one" ).
-            build();
-
-        final DeleteContentsResult result = DeleteContentsResult.create().addDeleted( aContent2.getId() ).build();
-        Mockito.when( contentService.deleteWithoutFetch( Mockito.eq( DeleteContentParams.create().
-            contentPath( ContentPath.from( "/one" ) ).
-            build() ) ) ).
-            thenReturn( result );
-
-        final Content aContent3 = createContent( "aaa", "my_a_content2", "myapplication:my_type" );
-        Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).
-            thenReturn( aContent3 );
-
-        Mockito.when( contentService.deleteWithoutFetch( DeleteContentParams.create().
-            contentPath( ContentPath.from( "/two" ) ).
-            build() ) ).
-            thenThrow( new UnableToDeleteContentException( ContentPath.from( "/two" ), "Some reason" ) );
-
-        String jsonString = request().path( "content/delete" ).
-            entity( readFromFile( "delete_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post().getAsString();
-
-        assertJson( "delete_content_both.json", jsonString );
-    }
-    */
-
     @Test(expected = IllegalArgumentException.class)
     public void create_content_exception()
         throws Exception
@@ -756,53 +665,6 @@ public class ContentResourceTest
             getStatus();
         assertEquals( 422, status );
     }
-
-    /*
-    @Test
-    public void duplicate()
-        throws Exception
-    {
-        final String contentIdString = "1";
-
-        final Content aContent = createContent( contentIdString, "my_a_content", "myapplication:my_type" );
-
-        final PropertyTree aContentData = aContent.getData();
-
-        aContentData.setString( "myArray[0]", "arrayValue1" );
-        aContentData.setString( "myArray[1]", "arrayValue2" );
-
-        aContentData.setDouble( "mySetWithArray.myArray[0]", 3.14159 );
-        aContentData.setDouble( "mySetWithArray.myArray[1]", 1.333 );
-
-        final DuplicateContentParams duplicateContentParams = new DuplicateContentParams( ContentId.from( contentIdString ) );
-
-        Mockito.when( contentService.duplicate( duplicateContentParams ) ).thenReturn( aContent );
-
-        String jsonString = request().path( "content/duplicate" ).
-            entity( readFromFile( "duplicate_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post().getAsString();
-
-        assertJson( "duplicate_content_success.json", jsonString );
-    }
-    */
-
-    /*
-    @Test(expected = ContentNotFoundException.class)
-    public void duplicate_not_found()
-        throws Exception
-    {
-
-        final Exception e = new ContentNotFoundException( ContentId.from( "content-id" ), ContentConstants.BRANCH_DRAFT );
-
-        Mockito.when( contentService.duplicate( Mockito.isA( DuplicateContentParams.class ) ) ).
-            thenThrow( e );
-
-        request().path( "content/duplicate" ).
-            entity( readFromFile( "duplicate_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post().getAsString();
-
-    }
-    */
 
     @Test
     public void applyPermissions()
@@ -1026,24 +888,6 @@ public class ContentResourceTest
 
         assertJson( "resolve_publish_content.json", jsonString );
     }
-
-/*
-    @Test
-    public void move_with_moveContentException()
-    {
-        MoveContentJson json = new MoveContentJson();
-        json.setContentIds( asList( "id1", "id2", "id3", "id4" ) );
-        json.setParentContentPath( "/root" );
-
-        ContentResource contentResource = getResourceInstance();
-        Mockito.when( contentService.move( Mockito.any() ) ).thenThrow( new MoveContentException( "" ) ).thenReturn( null );
-
-        MoveContentResultJson resultJson = contentResource.move( json );
-
-        assertEquals( 3, resultJson.getSuccesses().size() );
-        assertEquals( 1, resultJson.getFailures().size() );
-    }
-*/
 
     @Test
     public void getEffectivePermissions()

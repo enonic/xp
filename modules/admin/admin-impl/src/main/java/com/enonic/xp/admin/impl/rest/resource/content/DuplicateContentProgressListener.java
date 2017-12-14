@@ -3,7 +3,7 @@ package com.enonic.xp.admin.impl.rest.resource.content;
 import com.enonic.xp.content.DuplicateContentListener;
 import com.enonic.xp.task.ProgressReporter;
 
-final class DuplicateContentProgressListener
+public final class DuplicateContentProgressListener
     implements DuplicateContentListener
 {
     private final ProgressReporter progressReporter;
