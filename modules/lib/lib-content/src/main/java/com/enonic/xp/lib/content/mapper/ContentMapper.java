@@ -41,6 +41,10 @@ public final class ContentMapper
         gen.value( "hasChildren", value.hasChildren() );
         gen.value( "language", value.getLanguage() );
         gen.value( "valid", value.isValid() );
+        if ( value.getChildOrder() != null )
+        {
+            gen.value( "childOrder", value.getChildOrder().toString() );
+        }
 
         serializeData( gen, value.getData() );
         serializeExtraData( gen, value.getAllExtraData() );
