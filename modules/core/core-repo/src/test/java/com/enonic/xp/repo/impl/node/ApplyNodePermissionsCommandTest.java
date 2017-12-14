@@ -178,13 +178,13 @@ public class ApplyNodePermissionsCommandTest
     }
 
     @Test
-    public void testApplyPermissionsWithMerge()
+    public void testApplyPermissionsWithoutOverwriting()
         throws Exception
     {
-        runAs( PrincipalKey.ofAnonymous(), this::applyPermissionsWithMerge );
+        runAs( PrincipalKey.ofAnonymous(), this::applyPermissionsWithoutOverwriting );
     }
 
-    private void applyPermissionsWithMerge()
+    private void applyPermissionsWithoutOverwriting()
     {
         final PrincipalKey user1 = PrincipalKey.ofUser( USK, "user1" );
         final PrincipalKey user2 = PrincipalKey.ofUser( USK, "user2" );
@@ -272,10 +272,9 @@ public class ApplyNodePermissionsCommandTest
         assertEquals( permissions, child1_2Updated.getPermissions() );
 
         final Node child1_1_1Updated = getNodeById( child1_1_1.id() );
-        assertEquals( "[user:system:anonymous[+read, +write_permissions], " +
-                          "group:system:group1[+read, +create, +modify, +delete], " +
-                          "user:system:user1[+read, +modify, +delete], " +
-                          "user:system:user2[+read, +create, +modify, +delete, +publish]]", child1_1_1Updated.getPermissions().toString() );
+        assertEquals( "[user:system:anonymous[+read, +write_permissions]," +
+                          " user:system:user1[+read, +modify, +delete]," +
+                          " user:system:user2[+read, +create, +modify, +delete, +publish]]", child1_1_1Updated.getPermissions().toString() );
 
         final Node child1_2_1Updated = getNodeById( child1_2_1.id() );
         assertEquals( permissions, child1_2_1Updated.getPermissions() );
