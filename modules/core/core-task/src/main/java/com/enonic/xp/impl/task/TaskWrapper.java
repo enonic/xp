@@ -1,6 +1,5 @@
 package com.enonic.xp.impl.task;
 
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
@@ -10,6 +9,7 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
+import com.enonic.xp.task.TaskInfo;
 import com.enonic.xp.task.TaskState;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
@@ -17,6 +17,8 @@ import com.enonic.xp.trace.Tracer;
 final class TaskWrapper
     implements Runnable, ProgressReporter
 {
+    private final TaskInfo taskInfo;
+
     private final TaskId taskId;
 
     private final RunnableTask runnableTask;
@@ -29,23 +31,23 @@ final class TaskWrapper
 
     private final AuthenticationInfo authInfo;
 
-    private final ApplicationKey application;
 
-    public TaskWrapper( final TaskId taskId, final RunnableTask runnableTask, final Context userContext, final ApplicationKey app,
+    public TaskWrapper( final TaskInfo taskInfo, final RunnableTask runnableTask, final Context userContext,
                         final TaskManagerImpl taskManager )
     {
-        this.taskId = taskId;
+        this.taskInfo = taskInfo;
+        this.taskId = taskInfo.getId();
         this.runnableTask = runnableTask;
         this.taskManager = taskManager;
         this.branch = userContext.getBranch();
         this.repo = userContext.getRepositoryId();
         this.authInfo = userContext.getAuthInfo();
-        this.application = app;
     }
 
     @Override
     public void run()
     {
+        setThreadName();
         final Trace trace = Tracer.newTrace( "task.run" );
         if ( trace == null )
         {
@@ -55,7 +57,7 @@ final class TaskWrapper
         {
             trace.put( "taskId", this.taskId );
             trace.put( "user", authInfo.getUser() != null ? authInfo.getUser().getKey() : PrincipalKey.ofAnonymous() );
-            trace.put( "app", application.toString() );
+            trace.put( "app", taskInfo.getApplication().toString() );
             Tracer.trace( trace, this::doRun );
         }
     }
@@ -77,7 +79,7 @@ final class TaskWrapper
     private void callTaskWithContext()
     {
         getContext().callWith( () -> {
-            runnableTask.run( taskId, this );
+            runnableTask.run( taskInfo.getId(), this );
             return null;
         } );
     }
@@ -85,6 +87,15 @@ final class TaskWrapper
     private Context getContext()
     {
         return ContextBuilder.create().authInfo( authInfo ).branch( branch ).repositoryId( repo ).build();
+    }
+
+    private void setThreadName()
+    {
+        final String defaultName = "task-" + taskInfo.getId();
+        final String threadName = defaultName.equalsIgnoreCase( taskInfo.getName() )
+            ? "Task " + taskInfo.getApplication() + "-" + taskInfo.getId()
+            : "Task " + taskInfo.getName() + "-" + taskInfo.getId();
+        Thread.currentThread().setName( threadName );
     }
 
     @Override

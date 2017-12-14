@@ -109,7 +109,7 @@ public final class TaskManagerImpl
 
         eventPublisher.publish( TaskEvents.submitted( info ) );
 
-        final TaskWrapper wrapper = new TaskWrapper( id, runnable, userContext, info.getApplication(), this );
+        final TaskWrapper wrapper = new TaskWrapper( info, runnable, userContext, this );
         executorService.submit( wrapper );
 
         return id;
