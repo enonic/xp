@@ -23,7 +23,7 @@ public final class CreateUserStoreParams
     private CreateUserStoreParams( final Builder builder )
     {
         this.userStoreKey = checkNotNull( builder.userStoreKey, "userStoreKey is required" );
-        this.displayName = checkNotNull( builder.displayName, "displayName is required" );
+        this.displayName = checkNotNull( builder.displayName, "displayName is required" ).trim();
         this.description = builder.description;
         this.authConfig = builder.authConfig;
         this.userStorePermissions =

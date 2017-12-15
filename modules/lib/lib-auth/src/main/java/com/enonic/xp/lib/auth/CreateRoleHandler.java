@@ -4,14 +4,13 @@ import java.util.function.Supplier;
 
 import com.enonic.xp.lib.common.PrincipalMapper;
 import com.enonic.xp.script.bean.BeanContext;
-import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.security.CreateRoleParams;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.Role;
 import com.enonic.xp.security.SecurityService;
 
 public final class CreateRoleHandler
-    implements ScriptBean
+    extends PrincipalHandler
 {
     private Supplier<SecurityService> securityService;
 
@@ -38,10 +37,10 @@ public final class CreateRoleHandler
 
     public PrincipalMapper createRole()
     {
-        final Role role = this.securityService.get().createRole( CreateRoleParams.create().
-            roleKey( PrincipalKey.ofRole( name )).
-            displayName( this.displayName ).
-            description( this.description ).
+        final Role role = securityService.get().createRole( CreateRoleParams.create().
+            roleKey( PrincipalKey.ofRole( trim( name ) ) ).
+            displayName( trim( displayName ) ).
+            description( description ).
             build() );
         return role != null ? new PrincipalMapper( role ) : null;
     }

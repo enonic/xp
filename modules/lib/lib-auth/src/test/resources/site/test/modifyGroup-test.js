@@ -2,7 +2,7 @@ var t = require('/lib/xp/testing.js');
 var auth = require('/lib/xp/auth.js');
 
 function editor(c) {
-    c.displayName = 'Modified display name';
+    c.displayName = ' Modified display name ';
     c.description = 'descriptionY';
     return c;
 }
@@ -15,11 +15,11 @@ exports.modifyGroup = function () {
     });
 
     var expectedJson = {
-        "type": "group",
-        "key": "group:system:group-a",
-        "displayName": "Modified display name",
-        "modifiedTime": "1970-01-01T00:00:00Z",
-        "description": "descriptionY"
+        'type': 'group',
+        'key': 'group:system:group-a',
+        'displayName': 'Modified display name',
+        'modifiedTime': '1970-01-01T00:00:00Z',
+        'description': 'descriptionY'
     };
 
     t.assertJsonEquals(expectedJson, result);

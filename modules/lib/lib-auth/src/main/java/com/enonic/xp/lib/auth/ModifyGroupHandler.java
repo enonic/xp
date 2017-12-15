@@ -8,7 +8,6 @@ import com.enonic.xp.convert.Converters;
 import com.enonic.xp.lib.common.PrincipalMapper;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
-import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.security.EditableGroup;
 import com.enonic.xp.security.Group;
 import com.enonic.xp.security.GroupEditor;
@@ -17,7 +16,7 @@ import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.UpdateGroupParams;
 
 public final class ModifyGroupHandler
-    implements ScriptBean
+    extends PrincipalHandler
 {
     private Supplier<SecurityService> securityService;
 
@@ -74,7 +73,7 @@ public final class ModifyGroupHandler
         final String displayName = Converters.convert( map.get( "displayName" ), String.class );
         if ( displayName != null )
         {
-            target.displayName = displayName;
+            target.displayName = trim( displayName );
         }
 
         final String description = Converters.convert( map.get( "description" ), String.class );
