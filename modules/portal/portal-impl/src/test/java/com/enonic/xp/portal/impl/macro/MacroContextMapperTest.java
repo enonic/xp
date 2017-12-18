@@ -80,6 +80,7 @@ public class MacroContextMapperTest
             name( "macroName" ).
             body( "body" ).
             param( "firstParam", "firstParamValue" ).
+            param( "firstParam", "firstParamSecondValue" ).
             param( "secondParam", "secondParamValue" ).
             request( portalRequest ).
             document( "<h1>document</h1>" ).

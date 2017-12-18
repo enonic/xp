@@ -1,19 +1,19 @@
 package com.enonic.xp.portal.impl.postprocess.instruction;
 
-import java.util.Map;
-
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableListMultimap;
+import com.google.common.collect.ListMultimap;
 
 final class Instruction
 {
     private final String id;
 
-    private final ImmutableMap<String, String> attributes;
+    private final ImmutableListMultimap<String, String> attributes;
 
-    Instruction( final String id, Map<String, String> attributes )
+    Instruction( final String id, ListMultimap<String, String> attributes )
     {
         this.id = id;
-        this.attributes = ImmutableMap.copyOf( attributes );
+        this.attributes = ImmutableListMultimap.copyOf( attributes );
     }
 
     String getId()
@@ -21,14 +21,15 @@ final class Instruction
         return id;
     }
 
-    String attribute( final String name, final String defaultValue )
+    ImmutableList<String> attributes( final String name )
     {
-        return attributes.getOrDefault( name, defaultValue );
+        return attributes.get( name );
     }
 
     String attribute( final String name )
     {
-        return attributes.get( name );
+        final ImmutableList<String> attrs = attributes.get( name );
+        return attrs.isEmpty() ? null : attrs.get( 0 );
     }
 
     Iterable<String> attributeNames()

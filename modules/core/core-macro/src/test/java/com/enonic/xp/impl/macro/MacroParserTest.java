@@ -1,5 +1,9 @@
 package com.enonic.xp.impl.macro;
 
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.stream.Collectors;
+
 import org.junit.Test;
 
 import com.enonic.xp.macro.Macro;
@@ -90,10 +94,10 @@ public class MacroParserTest
 
         assertEquals( "macroName", parsedMacro.getName() );
         assertEquals( "body body", parsedMacro.getBody() );
-        assertEquals( 3, parsedMacro.getParams().size() );
-        assertEquals( "val1", parsedMacro.getParam( "par1" ) );
-        assertEquals( "val2", parsedMacro.getParam( "par2" ) );
-        assertEquals( "val3", parsedMacro.getParam( "par3" ) );
+        assertEquals( 3, parsedMacro.getParameters().size() );
+        assertEquals( "val1", first( parsedMacro.getParameter( "par1" ) ) );
+        assertEquals( "val2", first( parsedMacro.getParameter( "par2" ) ) );
+        assertEquals( "val3", first( parsedMacro.getParameter( "par3" ) ) );
 
         final String test2 = "[macroName ]body body[/macroName]";
         final MacroParser macroParser2 = new MacroParser();
@@ -111,7 +115,7 @@ public class MacroParserTest
 
         assertEquals( "macroName", parsedMacro.getName() );
         assertEquals( "body body", parsedMacro.getBody() );
-        assertEquals( 0, parsedMacro.getParams().size() );
+        assertEquals( 0, parsedMacro.getParameters().size() );
     }
 
     @Test
@@ -123,10 +127,10 @@ public class MacroParserTest
 
         assertEquals( "macroName", parsedMacro.getName() );
         assertEquals( "", parsedMacro.getBody() );
-        assertEquals( 3, parsedMacro.getParams().size() );
-        assertEquals( "val1", parsedMacro.getParam( "par1" ) );
-        assertEquals( "val2", parsedMacro.getParam( "par2" ) );
-        assertEquals( "val3", parsedMacro.getParam( "par3" ) );
+        assertEquals( 3, parsedMacro.getParameters().size() );
+        assertEquals( "val1", first( parsedMacro.getParameter( "par1" ) ) );
+        assertEquals( "val2", first( parsedMacro.getParameter( "par2" ) ) );
+        assertEquals( "val3", first( parsedMacro.getParameter( "par3" ) ) );
     }
 
     @Test
@@ -138,7 +142,7 @@ public class MacroParserTest
 
         assertEquals( "macroName", parsedMacro.getName() );
         assertEquals( "", parsedMacro.getBody() );
-        assertEquals( 0, parsedMacro.getParams().size() );
+        assertEquals( 0, parsedMacro.getParameters().size() );
     }
 
     @Test
@@ -151,9 +155,9 @@ public class MacroParserTest
 
         assertEquals( "macro_name123", parsedMacro.getName() );
         assertEquals( "/][body][/[/macro_name123 ", parsedMacro.getBody() );
-        assertEquals( 2, parsedMacro.getParams().size() );
-        assertEquals( "value\"1", parsedMacro.getParam( "par1" ) );
-        assertEquals( "\\va\"l\"ue2", parsedMacro.getParam( "par2" ) );
+        assertEquals( 2, parsedMacro.getParameters().size() );
+        assertEquals( "value\"1", first( parsedMacro.getParameter( "par1" ) ) );
+        assertEquals( "\\va\"l\"ue2", first( parsedMacro.getParameter( "par2" ) ) );
     }
 
     @Test
@@ -186,5 +190,32 @@ public class MacroParserTest
         {
             assertEquals( "Name cannot start with underscore '_' at position 9", e.getMessage() );
         }
+    }
+
+    @Test
+    public void testValidMacroWithMultiValues()
+    {
+        final String macro = "[macroName par1=\"val1\" par1=\"val2\" par2=\"other1\" par2=\"other2\" par3=\"something\" /]";
+        assertValidMacro( true, macro );
+
+        final MacroParser parser = new MacroParser();
+        final Macro parsedMacro = parser.parse( macro );
+
+        assertEquals( "macroName", parsedMacro.getName() );
+        assertEquals( "", parsedMacro.getBody() );
+        assertEquals( 5, parsedMacro.getParameters().size() );
+        assertEquals( 2, parsedMacro.getParameter( "par1" ).size() );
+        assertEquals( 2, parsedMacro.getParameter( "par2" ).size() );
+        assertEquals( 1, parsedMacro.getParameter( "par3" ).size() );
+
+        assertEquals( "val1,val2", parsedMacro.getParameter( "par1" ).stream().collect( Collectors.joining( "," ) ) );
+        assertEquals( "other1,other2", parsedMacro.getParameter( "par2" ).stream().collect( Collectors.joining( "," ) ) );
+        assertEquals( "something", parsedMacro.getParameter( "par3" ).stream().collect( Collectors.joining( "," ) ) );
+    }
+
+    private <T> T first( final Collection<T> values )
+    {
+        final Iterator<T> ite = values.iterator();
+        return ite.hasNext() ? ite.next() : null;
     }
 }

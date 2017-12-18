@@ -1,8 +1,11 @@
 package com.enonic.xp.macro;
 
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableMap;
 
 @Beta
@@ -12,7 +15,7 @@ public final class Macro
 
     private final String body;
 
-    private final ImmutableMap<String, String> params;
+    private final ImmutableListMultimap<String, String> params;
 
     private Macro( final Builder builder )
     {
@@ -31,12 +34,31 @@ public final class Macro
         return body;
     }
 
+    @Deprecated
     public String getParam( final String name )
+    {
+        final ImmutableList<String> values = this.params.get( name );
+        return values.isEmpty() ? null : values.stream().collect( Collectors.joining( "," ) );
+    }
+
+    @Deprecated
+    public ImmutableMap<String, String> getParams()
+    {
+        final ImmutableMap.Builder<String, String> mapParams = ImmutableMap.builder();
+        for ( String key : this.params.keySet() )
+        {
+            final String value = this.params.get( key ).stream().collect( Collectors.joining( "," ) );
+            mapParams.put( key, value );
+        }
+        return mapParams.build();
+    }
+
+    public ImmutableList<String> getParameter( final String name )
     {
         return this.params.get( name );
     }
 
-    public ImmutableMap<String, String> getParams()
+    public ImmutableListMultimap<String, String> getParameters()
     {
         return params;
     }
@@ -74,9 +96,12 @@ public final class Macro
         {
             for ( String paramName : params.keySet() )
             {
-                result.append( " " ).append( paramName ).append( "=\"" );
-                result.append( escapeParam( params.get( paramName ) ) );
-                result.append( "\"" );
+                for ( String value : params.get( paramName ) )
+                {
+                    result.append( " " ).append( paramName ).append( "=\"" );
+                    result.append( escapeParam( value ) );
+                    result.append( "\"" );
+                }
             }
             if ( body.isEmpty() )
             {
@@ -112,18 +137,18 @@ public final class Macro
 
         private String body;
 
-        private final ImmutableMap.Builder<String, String> paramsBuilder;
+        private final ImmutableListMultimap.Builder<String, String> paramsBuilder;
 
         public Builder()
         {
-            this.paramsBuilder = ImmutableMap.builder();
+            this.paramsBuilder = ImmutableListMultimap.builder();
         }
 
         private Builder( final Macro macro )
         {
             this.name = macro.name;
             this.body = macro.body;
-            this.paramsBuilder = ImmutableMap.builder();
+            this.paramsBuilder = ImmutableListMultimap.builder();
             this.paramsBuilder.putAll( macro.params );
         }
 
