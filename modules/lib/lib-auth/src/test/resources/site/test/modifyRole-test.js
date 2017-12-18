@@ -2,7 +2,7 @@ var t = require('/lib/xp/testing.js');
 var libAuth = require('/lib/xp/auth.js');
 
 function editor(c) {
-    c.displayName = 'Modified display name';
+    c.displayName = ' Modified display name ';
     c.description = 'descriptionY';
     return c;
 }

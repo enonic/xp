@@ -4,7 +4,6 @@ import java.util.function.Supplier;
 
 import com.enonic.xp.lib.common.PrincipalMapper;
 import com.enonic.xp.script.bean.BeanContext;
-import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.security.CreateUserParams;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.SecurityService;
@@ -12,7 +11,7 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserStoreKey;
 
 public final class CreateUserHandler
-    implements ScriptBean
+    extends PrincipalHandler
 {
     private Supplier<SecurityService> securityService;
 
@@ -46,9 +45,13 @@ public final class CreateUserHandler
 
     public PrincipalMapper createUser()
     {
-        final User user = this.securityService.get().createUser(
-            CreateUserParams.create().displayName( this.displayName ).email( this.email ).login( this.name ).userKey(
-                PrincipalKey.ofUser( this.userStore, this.name ) ).build() );
+        final String name = trim( this.name );
+        final User user = securityService.get().createUser( CreateUserParams.create().
+            displayName( trim( displayName ) ).
+            email( trim( email ) ).
+            login( name ).
+            userKey( PrincipalKey.ofUser( userStore, name ) ).
+            build() );
         return user != null ? new PrincipalMapper( user ) : null;
     }
 

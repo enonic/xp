@@ -4,7 +4,6 @@ import java.util.function.Supplier;
 
 import com.enonic.xp.lib.common.PrincipalMapper;
 import com.enonic.xp.script.bean.BeanContext;
-import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.security.CreateGroupParams;
 import com.enonic.xp.security.Group;
 import com.enonic.xp.security.PrincipalKey;
@@ -12,7 +11,7 @@ import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.UserStoreKey;
 
 public final class CreateGroupHandler
-    implements ScriptBean
+    extends PrincipalHandler
 {
     private Supplier<SecurityService> securityService;
 
@@ -46,10 +45,10 @@ public final class CreateGroupHandler
 
     public PrincipalMapper createGroup()
     {
-        final Group group = this.securityService.get().createGroup( CreateGroupParams.create().
-            displayName( this.displayName != null ? this.displayName : this.name ).
-            groupKey( PrincipalKey.ofGroup( this.userStore, this.name ) ).
-            description( this.description ).
+        final Group group = securityService.get().createGroup( CreateGroupParams.create().
+            displayName( trim( displayName != null ? displayName : name ) ).
+            groupKey( PrincipalKey.ofGroup( userStore, trim( name ) ) ).
+            description( description ).
             build() );
         return group != null ? new PrincipalMapper( group ) : null;
     }
