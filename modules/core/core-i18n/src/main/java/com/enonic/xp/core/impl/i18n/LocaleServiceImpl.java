@@ -7,12 +7,16 @@ import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
+import java.util.StringJoiner;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
@@ -25,11 +29,20 @@ import static org.apache.commons.lang.StringUtils.substringBetween;
 
 @Component(immediate = true)
 public final class LocaleServiceImpl
-    implements LocaleService
+    implements LocaleService, ApplicationInvalidator
 {
     private static final String DELIMITER = "_";
 
+    private static final String KEY_SEPARATOR = "|";
+
     private ResourceService resourceService;
+
+    private final ConcurrentMap<String, MessageBundle> bundleCache;
+
+    public LocaleServiceImpl()
+    {
+        this.bundleCache = new ConcurrentHashMap<>();
+    }
 
     @Override
     public MessageBundle getBundle( final ApplicationKey applicationKey, final Locale locale )
@@ -45,7 +58,7 @@ public final class LocaleServiceImpl
             return null;
         }
 
-        return createMessageBundle( applicationKey, locale, bundleNames );
+        return getMessageBundle( applicationKey, locale, bundleNames );
     }
 
     @Override
@@ -92,6 +105,32 @@ public final class LocaleServiceImpl
             default:
                 return new Locale( localeParts[partCount - 3], localeParts[partCount - 2], localeParts[partCount - 1] );
         }
+    }
+
+    private String bundleCacheKey( final ApplicationKey applicationKey, final Locale locale, final String... bundleNames )
+    {
+        String lang = locale != null ? locale.getLanguage() : "";
+        String country = locale != null ? locale.getCountry() : "";
+        String variant = locale != null ? locale.getVariant() : "";
+        StringJoiner key = new StringJoiner( KEY_SEPARATOR ).
+            add( applicationKey.toString() ).
+            add( lang ).
+            add( country ).
+            add( variant );
+        if ( bundleNames != null )
+        {
+            for ( String bundleName : bundleNames )
+            {
+                key.add( bundleName );
+            }
+        }
+        return key.toString();
+    }
+
+    private MessageBundle getMessageBundle( final ApplicationKey applicationKey, final Locale locale, final String... bundleNames )
+    {
+        final String key = bundleCacheKey( applicationKey, locale, bundleNames );
+        return this.bundleCache.computeIfAbsent( key, ( k ) -> createMessageBundle( applicationKey, locale, bundleNames ) );
     }
 
     private MessageBundle createMessageBundle( final ApplicationKey applicationKey, final Locale locale, final String... bundleNames )
@@ -167,6 +206,13 @@ public final class LocaleServiceImpl
         }
 
         return properties;
+    }
+
+    @Override
+    public void invalidate( final ApplicationKey appKey )
+    {
+        final String cacheKeyPrefix = appKey.toString() + KEY_SEPARATOR;
+        bundleCache.keySet().removeIf( ( k ) -> k.startsWith( cacheKeyPrefix ) );
     }
 
     @Reference

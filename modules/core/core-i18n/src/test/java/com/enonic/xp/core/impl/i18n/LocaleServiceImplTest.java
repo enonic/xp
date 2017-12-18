@@ -147,4 +147,31 @@ public class LocaleServiceImplTest
         assertTrue( locales.contains( new Locale( "fr" ) ) );
         assertTrue( locales.contains( new Locale( "ca" ) ) );
     }
+
+    @Test
+    public void bundleInvalidateCaching()
+    {
+        final ResourceKeys resourceKeys = ResourceKeys.empty();
+        Mockito.when( resourceService.findFiles( Mockito.any(), Mockito.anyString() ) ).thenReturn( resourceKeys );
+
+        final ApplicationKey myApp = ApplicationKey.from( "myapplication" );
+        final ApplicationKey otherApp = ApplicationKey.from( "otherapp" );
+
+        MessageBundle bundleCached = localeService.getBundle( myApp, Locale.ENGLISH, "/phrases", "/override" );
+        MessageBundle bundle = localeService.getBundle( myApp, Locale.ENGLISH, "/phrases", "/override" );
+
+        MessageBundle otherBundleCached = localeService.getBundle( otherApp, Locale.ENGLISH, "/texts" );
+        MessageBundle otherBundle = localeService.getBundle( otherApp, Locale.ENGLISH, "/texts" );
+
+        assertTrue( bundle == bundleCached );
+        assertTrue( otherBundle == otherBundleCached );
+
+        localeService.invalidate( myApp );
+
+        bundle = localeService.getBundle( myApp, Locale.ENGLISH, "/phrases", "/override" );
+        otherBundle = localeService.getBundle( otherApp, Locale.ENGLISH, "/texts" );
+
+        assertTrue( bundle != bundleCached );
+        assertTrue( otherBundle == otherBundleCached );
+    }
 }
