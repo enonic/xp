@@ -76,8 +76,12 @@ public class MarketDataHttpProvider
         final String proxyHost = System.getProperty( scheme + ".proxyHost" );
         if ( StringUtils.isNotBlank( proxyHost ) )
         {
-            Integer proxyPort = Ints.tryParse( System.getProperty( scheme + ".proxyPort", "80" ) );
-            proxyPort = proxyPort == null ? 80 : proxyPort;
+            final int defaultPort = "https".equals( scheme ) ? 443 : 80;
+            Integer proxyPort = Ints.tryParse( System.getProperty( scheme + ".proxyPort", Integer.toString( defaultPort ) ) );
+            if ( proxyPort == null )
+            {
+                proxyPort = defaultPort;
+            }
             final String proxyUser = System.getProperty( scheme + ".proxyUser" );
             final String proxyPassword = System.getProperty( scheme + ".proxyPassword" );
 
