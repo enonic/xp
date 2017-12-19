@@ -10,11 +10,18 @@ var result = contentLib.query({
     query: "data.city = 'Oslo' AND fulltext('data.description', 'garden', 'AND') ",
     filters: {
         boolean: {
-            must: {
-                exists: {
-                    field: "modifiedTime"
+            must: [
+                {
+                    exists: {
+                        field: "modifiedTime"
+                    }
+                },
+                {
+                    exists: {
+                        field: "another"
+                    }
                 }
-            },
+            ],
             mustNot: {
                 hasValue: {
                     field: "myField",
