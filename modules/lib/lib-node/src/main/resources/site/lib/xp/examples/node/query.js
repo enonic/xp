@@ -14,11 +14,18 @@ var result = repo.query({
     query: "startTime > instant('2016-10-11T14:38:54.454Z')",
     filters: {
         boolean: {
-            must: {
-                exists: {
-                    field: "modifiedTime"
+            must: [
+                {
+                    exists: {
+                        field: "modifiedTime"
+                    }
+                },
+                {
+                    exists: {
+                        field: "other"
+                    }
                 }
-            },
+            ],
             mustNot: {
                 hasValue: {
                     field: "myField",

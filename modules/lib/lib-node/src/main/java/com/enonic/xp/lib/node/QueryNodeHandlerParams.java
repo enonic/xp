@@ -31,7 +31,17 @@ public class QueryNodeHandlerParams
     @SuppressWarnings("unused")
     public void setFilters( final ScriptValue filters )
     {
-        this.filters = filters != null ? filters.getMap() : Maps.newHashMap();
+        if ( filters == null )
+        {
+            return;
+        }
+
+        if ( !filters.isObject() )
+        {
+            throw new IllegalArgumentException( "Filter not of type object" );
+        }
+
+        this.filters = filters.getMap();
     }
 
     Integer getStart()
