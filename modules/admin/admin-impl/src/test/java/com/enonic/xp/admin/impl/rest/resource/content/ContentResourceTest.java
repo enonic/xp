@@ -597,6 +597,7 @@ public class ContentResourceTest
         Content content = createContent( "content-id", "content-name", "myapplication:content-type" );
         Mockito.when( contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenReturn( content );
         Mockito.when( contentService.getById( Mockito.any() ) ).thenReturn( content );
+        Mockito.when( contentService.getPermissionsById( content.getId() ) ).thenReturn( AccessControlList.empty() );
         String jsonString = request().path( "content/update" ).
             entity( readFromFile( "update_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
@@ -613,6 +614,7 @@ public class ContentResourceTest
         Content content = createContent( "content-id", "content-name", "myapplication:content-type" );
         Mockito.when( contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenReturn( content );
         Mockito.when( contentService.getById( Mockito.any() ) ).thenReturn( content );
+        Mockito.when( contentService.getPermissionsById( content.getId() ) ).thenReturn( AccessControlList.empty() );
         String jsonString = request().path( "content/update" ).
             entity( readFromFile( "update_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
@@ -629,6 +631,7 @@ public class ContentResourceTest
         Content content = createContent( "content-id", "content-name", "myapplication:content-type" );
         Mockito.when( contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenReturn( content );
         Mockito.when( contentService.getById( Mockito.any() ) ).thenReturn( content );
+        Mockito.when( contentService.getPermissionsById( content.getId() ) ).thenReturn( AccessControlList.empty() );
         String jsonString = request().path( "content/update" ).
             entity( readFromFile( "update_content_params_with_publish_dates.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
@@ -636,6 +639,26 @@ public class ContentResourceTest
         Mockito.verify( contentService, Mockito.times( 0 ) ).rename( Mockito.isA( RenameContentParams.class ) );
 
         assertJson( "update_content_success.json", jsonString );
+    }
+
+    @Test
+    public void update_content_with_new_permissions()
+        throws Exception
+    {
+        Content content = createContent( "content-id", "content-name", "myapplication:content-type" );
+        Mockito.when( contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenReturn( content );
+        Mockito.when( contentService.getById( Mockito.any() ) ).thenReturn( content );
+        Mockito.when( contentService.getPermissionsById( content.getId() ) ).
+            thenReturn( AccessControlList.of( AccessControlEntry.create().
+                allow( Permission.WRITE_PERMISSIONS ).
+                principal( PrincipalKey.from( "user:store:user" ) ).
+                build() ) );
+
+        request().path( "content/update" ).
+            entity( readFromFile( "update_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        Mockito.verify( contentService, Mockito.times( 1 ) ).applyPermissions( Mockito.any() );
     }
 
     @Test
@@ -1116,31 +1139,32 @@ public class ContentResourceTest
             Contents.from( content4 ) );
 
         Mockito.when( this.contentService.findContentPaths( Mockito.isA( ContentQuery.class ) ) ).
-            thenReturn(ContentPaths.from( content4.getPath()) );
+            thenReturn( ContentPaths.from( content4.getPath() ) );
 
         Mockito.when( this.contentService.find( Mockito.isA( ContentQuery.class ) ) ).
-            thenReturn(  FindContentIdsByQueryResult.create().totalHits( 1L ).contents( ContentIds.from( content1.getId() ) ).build() );
+            thenReturn( FindContentIdsByQueryResult.create().totalHits( 1L ).contents( ContentIds.from( content1.getId() ) ).build() );
 
-        ContentTreeSelectorQueryJson json = initContentTreeSelectorQueryJson(null);
+        ContentTreeSelectorQueryJson json = initContentTreeSelectorQueryJson( null );
         ContentTreeSelectorListJson result = contentResource.treeSelectorQuery( json );
-        assertEquals( result.getItems().get(0).getContent().getId(), content1.getId().toString() );
-
-       Mockito.when( this.contentService.find( Mockito.isA( ContentQuery.class ) ) ).
-            thenReturn(  FindContentIdsByQueryResult.create().totalHits( 1L ).contents( ContentIds.from( content2.getId() ) ).build() );
-
-        json = initContentTreeSelectorQueryJson(content1.getPath());
-        result = contentResource.treeSelectorQuery( json );
-        assertEquals( result.getItems().get(0).getContent().getId(), content2.getId().toString() );
+        assertEquals( result.getItems().get( 0 ).getContent().getId(), content1.getId().toString() );
 
         Mockito.when( this.contentService.find( Mockito.isA( ContentQuery.class ) ) ).
-            thenReturn(  FindContentIdsByQueryResult.create().totalHits( 1L ).contents( ContentIds.from( content3.getId() ) ).build() );
+            thenReturn( FindContentIdsByQueryResult.create().totalHits( 1L ).contents( ContentIds.from( content2.getId() ) ).build() );
 
-        json = initContentTreeSelectorQueryJson(content2.getPath());
+        json = initContentTreeSelectorQueryJson( content1.getPath() );
         result = contentResource.treeSelectorQuery( json );
-        assertEquals( result.getItems().get(0).getContent().getId(), content3.getId().toString() );
+        assertEquals( result.getItems().get( 0 ).getContent().getId(), content2.getId().toString() );
+
+        Mockito.when( this.contentService.find( Mockito.isA( ContentQuery.class ) ) ).
+            thenReturn( FindContentIdsByQueryResult.create().totalHits( 1L ).contents( ContentIds.from( content3.getId() ) ).build() );
+
+        json = initContentTreeSelectorQueryJson( content2.getPath() );
+        result = contentResource.treeSelectorQuery( json );
+        assertEquals( result.getItems().get( 0 ).getContent().getId(), content3.getId().toString() );
     }
 
-    private ContentTreeSelectorQueryJson initContentTreeSelectorQueryJson(final ContentPath parentPath) {
+    private ContentTreeSelectorQueryJson initContentTreeSelectorQueryJson( final ContentPath parentPath )
+    {
         final ContentTreeSelectorQueryJson json = Mockito.mock( ContentTreeSelectorQueryJson.class );
 
         Mockito.when( json.getFrom() ).thenReturn( 0 );

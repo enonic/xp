@@ -381,9 +381,11 @@ public final class ContentResource
 
         final UpdateContentParams updateParams = json.getUpdateContentParams();
 
+        final AccessControlList permissionsBeforeSave = contentService.getPermissionsById( updateParams.getContentId() );
+
         final Content updatedContent = contentService.update( updateParams );
 
-        if ( json.getApplyContentPermissionsParams().isOverwriteChildPermissions() )
+        if ( !permissionsBeforeSave.equals( updatedContent.getPermissions() ) )
         {
             this.contentService.applyPermissions( json.getApplyContentPermissionsParams() );
         }
