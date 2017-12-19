@@ -101,11 +101,6 @@ final class ApplyNodePermissionsCommand
 
             return result;
         }
-       /* else
-        {
-            final AccessControlList mergedPermissions = mergingStrategy.mergePermissions( node.getPermissions(), parentPermissions );
-            updatedNode = createUpdatedNode( node, mergedPermissions, false );
-        }*/
         return node;
 
     }
