@@ -3,9 +3,12 @@ package com.enonic.xp.admin.impl.market;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 
@@ -13,6 +16,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
+import com.google.common.primitives.Ints;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
@@ -47,13 +51,9 @@ public class MarketDataHttpProvider
 
     private MarketApplicationsJson doRequest( Request request )
     {
-
-        final OkHttpClient client = new OkHttpClient();
-        client.setReadTimeout( readTimeout, TimeUnit.MILLISECONDS );
-        client.setConnectTimeout( connectionTimeout, TimeUnit.MILLISECONDS );
-
         try
         {
+            final OkHttpClient client = newClient( request );
             final Response response = client.newCall( request ).execute();
             return parseResponse( response );
         }
@@ -61,6 +61,34 @@ public class MarketDataHttpProvider
         {
             throw new MarketException( "Cannot connect to market", e );
         }
+    }
+
+    private OkHttpClient newClient( final Request request )
+        throws IOException
+    {
+        final OkHttpClient client = new OkHttpClient();
+        client.setReadTimeout( readTimeout, TimeUnit.MILLISECONDS );
+        client.setConnectTimeout( connectionTimeout, TimeUnit.MILLISECONDS );
+
+        String scheme = request.uri().getScheme();
+        scheme = scheme == null ? "http" : scheme;
+
+        final String proxyHost = System.getProperty( scheme + ".proxyHost" );
+        if ( StringUtils.isNotBlank( proxyHost ) )
+        {
+            Integer proxyPort = Ints.tryParse( System.getProperty( scheme + ".proxyPort", "80" ) );
+            proxyPort = proxyPort == null ? 80 : proxyPort;
+            final String proxyUser = System.getProperty( scheme + ".proxyUser" );
+            final String proxyPassword = System.getProperty( scheme + ".proxyPassword" );
+
+            client.setProxy( new Proxy( Proxy.Type.HTTP, new InetSocketAddress( proxyHost, proxyPort ) ) );
+
+            if ( StringUtils.isNotBlank( proxyUser ) )
+            {
+                client.setAuthenticator( new ProxyAuthenticator( proxyUser, proxyPassword ) );
+            }
+        }
+        return client;
     }
 
     protected MarketApplicationsJson parseResponse( final Response response )
