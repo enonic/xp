@@ -16,6 +16,7 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.app.ApplicationBuilder;
@@ -46,6 +47,8 @@ public abstract class ScriptTestSupport
     private String appVersion;
 
     protected PortalRequest portalRequest;
+    
+    protected ContentService contentService;
 
     private ResourceService resourceService;
 
@@ -88,9 +91,12 @@ public abstract class ScriptTestSupport
         this.portalRequest = createPortalRequest();
         PortalRequestAccessor.set( this.portalRequest );
 
+
         this.bundleContext = createBundleContext();
+        this.contentService = Mockito.mock( ContentService.class );
         this.resourceService = createResourceService();
 
+        addService( ContentService.class, this.contentService );
         addService( ResourceService.class, this.resourceService );
         addService( ViewFunctionService.class, new MockViewFunctionService() );
 
