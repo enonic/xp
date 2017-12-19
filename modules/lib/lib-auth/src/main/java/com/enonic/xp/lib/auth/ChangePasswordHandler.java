@@ -20,7 +20,7 @@ public class ChangePasswordHandler
     {
         final PrincipalKey principalKey = PrincipalKey.from( userKey );
 
-        this.securityService.get().setPassword( principalKey, password );
+        this.securityService.get().setPassword( principalKey, normalize( password ) );
     }
 
     @Override
@@ -37,5 +37,10 @@ public class ChangePasswordHandler
     public void setPassword( final String password )
     {
         this.password = password;
+    }
+
+    private String normalize( final String value )
+    {
+        return value.replaceAll( "\\s", "" );
     }
 }

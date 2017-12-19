@@ -46,10 +46,11 @@ public class ChangePasswordHandlerTest
     }
 
     @Test
-    public void testFunction()
+    public void testChangePassword()
     {
         runFunction( "/site/test/changePassword-test.js", "changePassword" );
 
-        Mockito.verify( this.securityService ).setPassword( eq( PrincipalKey.from( "user:myUserStore:userId" ) ), eq( "test-password" ) );
+        Mockito.verify( this.securityService ).setPassword( eq( PrincipalKey.from( "user:myUserStore:userId" ) ),
+                                                            eq( "test-password-without-spaces" ) );
     }
 }
