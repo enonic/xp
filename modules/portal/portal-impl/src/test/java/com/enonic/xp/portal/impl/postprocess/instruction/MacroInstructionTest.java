@@ -66,7 +66,7 @@ public class MacroInstructionTest
         when( macroDescriptorService.getByKey( key ) ).thenReturn( macroDescriptor );
 
         MacroProcessor macro = ( ctx ) -> PortalResponse.create().body(
-            ctx.getName() + ": param1=" + ctx.getParam( "param1" ) + ", body=" + ctx.getBody() ).build();
+            ctx.getName() + ": param1=" + ctx.getParameter( "param1" ).get( 0 ) + ", body=" + ctx.getBody() ).build();
         when( macroProcessorFactory.fromScript( any() ) ).thenReturn( macro );
 
         String outputHtml =
@@ -189,6 +189,23 @@ public class MacroInstructionTest
 
         String outputHtml =
             macroInstruction.evaluate( portalRequest, "MACRO _name=\"MYMACRO\" PARAM1=\"value1\" _body=\"body\"" ).getAsString();
+        assertEquals( "mymacro: param1=value1, body=body", outputHtml );
+    }
+
+    @Test
+    public void testInstructionMacroMultiValue()
+        throws Exception
+    {
+        MacroKey key = MacroKey.from( "myapp:mymacro" );
+        MacroDescriptor macroDescriptor = MacroDescriptor.create().key( key ).build();
+        when( macroDescriptorService.getByKey( key ) ).thenReturn( macroDescriptor );
+
+        MacroProcessor macro = ( ctx ) -> PortalResponse.create().body(
+            ctx.getName() + ": param1=" + ctx.getParameter( "param1" ).get( 0 ) + ", body=" + ctx.getBody() ).build();
+        when( macroProcessorFactory.fromScript( any() ) ).thenReturn( macro );
+
+        String outputHtml = macroInstruction.evaluate( portalRequest,
+                                                       "MACRO _name=\"mymacro\" param1=\"value1\" param1=\"value2\" param2=\"other\" _body=\"body\"" ).getAsString();
         assertEquals( "mymacro: param1=value1, body=body", outputHtml );
     }
 

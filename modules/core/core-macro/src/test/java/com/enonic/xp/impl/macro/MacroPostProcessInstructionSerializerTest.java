@@ -44,4 +44,23 @@ public class MacroPostProcessInstructionSerializerTest
 
         assertEquals( "<!--#MACRO _name=\"macro4\" _body=\"some !@#$%^&*() \\\" \\-\\- body\"-->", serializer.serialize( macro4 ) );
     }
+
+    @Test
+    public void testSerializeMultiValue()
+    {
+        final MacroPostProcessInstructionSerializer serializer = new MacroPostProcessInstructionSerializer();
+
+        final Macro macro1 = Macro.create().name( "macro" ).
+            body( "body" ).
+            param( "param1", "value1" ).
+            param( "param1", "value2" ).
+            param( "param1", "value3" ).
+            param( "param2", "other1" ).
+            param( "param2", "other2" ).
+            param( "param3", "something" ).
+            build();
+
+        assertEquals( "<!--#MACRO _name=\"macro\" param1=\"value1\" param1=\"value2\" param1=\"value3\" " +
+                          "param2=\"other1\" param2=\"other2\" param3=\"something\" _body=\"body\"-->", serializer.serialize( macro1 ) );
+    }
 }

@@ -1,7 +1,7 @@
 package com.enonic.xp.portal.impl.postprocess.instruction;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
 
 import com.enonic.xp.portal.impl.rendering.RenderException;
 
@@ -9,9 +9,7 @@ final class InstructionParser
 {
     private enum Token
     {
-        NAME,
-        QUOTE,
-        EQUALS
+        NAME, QUOTE, EQUALS
     }
 
     private static final char EOF = (char) -1;
@@ -24,12 +22,12 @@ final class InstructionParser
 
     private String instructionId;
 
-    private Map<String, String> attributes;
+    private ListMultimap<String, String> attributes;
 
     public Instruction parse( final String text )
     {
         instructionId = "";
-        attributes = new HashMap<>();
+        attributes = ArrayListMultimap.create();
 
         input = text;
         p = 0;

@@ -182,7 +182,10 @@ public final class MacroInstruction
                     contextParamName = normalizedName;
                 }
             }
-            context.param( contextParamName, macroInstruction.attribute( name ) );
+            for ( String attribute : macroInstruction.attributes( name ) )
+            {
+                context.param( contextParamName, attribute );
+            }
         }
         context.body( macroInstruction.attribute( MACRO_BODY ) );
         context.request( request );
@@ -201,7 +204,10 @@ public final class MacroInstruction
             {
                 continue;
             }
-            macro.param( name, macroInstruction.attribute( name ) );
+            for ( String attribute : macroInstruction.attributes( name ) )
+            {
+                macro.param( name, attribute );
+            }
         }
         macro.body( macroInstruction.attribute( MACRO_BODY ) );
         return macro.build().toString();

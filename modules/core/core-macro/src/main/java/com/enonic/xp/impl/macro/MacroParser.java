@@ -1,7 +1,7 @@
 package com.enonic.xp.impl.macro;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 
 import com.enonic.xp.macro.Macro;
 
@@ -36,7 +36,7 @@ public final class MacroParser
 
     private String macroName;
 
-    private final Map<String, String> attributes = new HashMap<>();
+    private final Multimap<String, String> attributes = ArrayListMultimap.create();
 
     private String body;
 
@@ -76,9 +76,12 @@ public final class MacroParser
         }
 
         final Macro.Builder macro = Macro.create().name( macroName );
-        for ( Map.Entry<String, String> attribute : attributes.entrySet() )
+        for ( String attribute : attributes.keySet() )
         {
-            macro.param( attribute.getKey(), attribute.getValue() );
+            for ( String value : attributes.get( attribute ) )
+            {
+                macro.param( attribute, value );
+            }
         }
         return macro.body( body ).build();
     }

@@ -22,7 +22,7 @@ public final class MacroContextMapper
     {
         gen.value( "name", macroContext.getName() );
         gen.value( "body", macroContext.getBody() );
-        MapperHelper.serializeMap( "params", gen, macroContext.getParams() );
+        MapperHelper.serializeMultimap( "params", gen, macroContext.getParameters() );
         final PortalRequest request = macroContext.getRequest();
         gen.map( "request" );
         if ( request != null )

@@ -2,7 +2,7 @@
   "name": "macroName",
   "body": "body",
   "params": {
-    "firstParam": "firstParamValue",
+    "firstParam" : [ "firstParamValue", "firstParamSecondValue" ],
     "secondParam": "secondParamValue"
   },
   "request": {

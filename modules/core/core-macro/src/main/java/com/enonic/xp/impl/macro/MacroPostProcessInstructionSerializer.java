@@ -1,5 +1,7 @@
 package com.enonic.xp.impl.macro;
 
+import com.google.common.collect.ImmutableMultimap;
+
 import com.enonic.xp.macro.Macro;
 
 public class MacroPostProcessInstructionSerializer
@@ -22,10 +24,15 @@ public class MacroPostProcessInstructionSerializer
     private String makeParamsAttributes( final Macro macro )
     {
         final StringBuilder result = new StringBuilder( "" );
-        macro.getParams().forEach( ( key, value ) -> {
-            String escapedVal = escapeSpecialChars( value );
-            result.append( " " ).append( key ).append( "=\"" ).append( escapedVal ).append( "\"" );
-        } );
+        final ImmutableMultimap<String, String> params = macro.getParameters();
+        for ( String key : params.keySet() )
+        {
+            for ( String value : params.get( key ) )
+            {
+                String escapedVal = escapeSpecialChars( value );
+                result.append( " " ).append( key ).append( "=\"" ).append( escapedVal ).append( "\"" );
+            }
+        }
         return result.toString();
     }
 
