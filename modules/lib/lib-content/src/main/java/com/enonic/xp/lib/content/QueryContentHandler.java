@@ -20,7 +20,7 @@ import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.script.ScriptValue;
 
-@SuppressWarnings( "unused" )
+@SuppressWarnings("unused")
 public final class QueryContentHandler
     extends BaseContextHandler
 {
@@ -119,6 +119,16 @@ public final class QueryContentHandler
 
     public void setFilters( final ScriptValue value )
     {
-        this.filters = value != null ? value.getMap() : null;
+        if ( value == null )
+        {
+            return;
+        }
+
+        if ( !value.isObject() )
+        {
+            throw new IllegalArgumentException( "Filter not of type object" );
+        }
+
+        this.filters = value.getMap();
     }
 }

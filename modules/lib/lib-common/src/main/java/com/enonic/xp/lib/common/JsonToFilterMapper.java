@@ -35,6 +35,39 @@ public class JsonToFilterMapper
         return createFilters( value );
     }
 
+    @SuppressWarnings("unchecked")
+    private static Filters createFilters( final Object object )
+    {
+        if ( object == null )
+        {
+            return Filters.empty();
+        }
+
+        if ( object instanceof Map )
+        {
+            return createFilters( (Map<String, Object>) object );
+        }
+
+        if ( object instanceof Collection )
+        {
+            return createFilters( (Collection<Object>) object );
+        }
+
+        throw new IllegalArgumentException( "Filter not on expected format, expected Collection, got " + object.getClass().getName() );
+    }
+
+    private static Filters createFilters( final Collection<Object> collection )
+    {
+        final Filters.Builder builder = Filters.create();
+
+        for ( final Object o : collection )
+        {
+            builder.addAll( createFilters( o ).getList() );
+        }
+
+        return builder.build();
+    }
+
     private static Filters createFilters( final Map<String, Object> filterMap )
     {
         if ( filterMap == null )
@@ -63,6 +96,7 @@ public class JsonToFilterMapper
 
         return filters.build();
     }
+
 
     private static Filter doCreateFilter( final String key, final Object filter )
     {
@@ -186,21 +220,17 @@ public class JsonToFilterMapper
     {
         final BooleanFilter.Builder filterBuilder = BooleanFilter.create();
 
-        final Filters must = createFilters( toMap( boolFilter.get( "must" ) ) );
-        final Filters mustNot = createFilters( toMap( boolFilter.get( "mustNot" ) ) );
-        final Filters should = createFilters( toMap( boolFilter.get( "should" ) ) );
-
-        for ( Filter filter : must )
+        for ( Filter filter : createFilters( boolFilter.get( "must" ) ) )
         {
             filterBuilder.must( filter );
         }
 
-        for ( Filter filter : mustNot )
+        for ( Filter filter : createFilters( boolFilter.get( "mustNot" ) ) )
         {
             filterBuilder.mustNot( filter );
         }
 
-        for ( Filter filter : should )
+        for ( Filter filter : createFilters( boolFilter.get( "should" ) ) )
         {
             filterBuilder.should( filter );
         }
@@ -217,7 +247,7 @@ public class JsonToFilterMapper
         }
         catch ( ClassCastException e )
         {
-            throw new IllegalArgumentException( "Filter not on expected format" );
+            throw new IllegalArgumentException( "Filter not on expected format, expected Map, got " + o.getClass().getName() );
         }
     }
 

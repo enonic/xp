@@ -2,7 +2,9 @@ package com.enonic.xp.lib.content;
 
 import java.time.Instant;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 
 import com.enonic.xp.aggregation.Aggregations;
@@ -17,15 +19,27 @@ import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.GetContentByIdsParams;
+import com.enonic.xp.resource.ResourceProblemException;
 
 public class QueryContentHandlerTest
     extends BaseContentHandlerTest
 {
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
     @Test
     public void testExample()
     {
         setupQuery( 2, true );
         runScript( "/site/lib/xp/examples/content/query.js" );
+    }
+
+    @Test
+    public void invalidFilter()
+    {
+        thrown.expect( ResourceProblemException.class );
+        thrown.expectMessage( "Filter not of type object" );
+        runFunction( "/site/test/QueryContentHandlerTest_invalid_filter.js", "query" );
     }
 
     @Test
