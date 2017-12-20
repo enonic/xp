@@ -12,6 +12,8 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceProblemException;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.Tracer;
 
 public final class MustacheProcessor
 {
@@ -40,9 +42,24 @@ public final class MustacheProcessor
 
     public String process()
     {
+        final Trace trace = Tracer.newTrace( "mustache.render" );
+        if ( trace == null )
+        {
+            return execute();
+        }
+
+        return Tracer.trace( trace, () -> {
+            trace.put( "path", this.view.getPath() );
+            trace.put( "app", this.view.getApplicationKey().toString() );
+            return execute();
+        } );
+    }
+
+    public String execute()
+    {
         try
         {
-            return doProcess();
+            return doExecute();
         }
         catch ( final RuntimeException e )
         {
@@ -55,7 +72,7 @@ public final class MustacheProcessor
         this.resourceService = resourceService;
     }
 
-    private String doProcess()
+    private String doExecute()
     {
         final Resource resource = resourceService.getResource( this.view );
         final Template template = this.compiler.compile( resource.readString() );
