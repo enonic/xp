@@ -17,9 +17,12 @@ function checkRequired(params, name) {
  * @typedef TaskInfo
  * @type Object
  * @property {string} id Task Id.
- * @property {string} name Task Id.
+ * @property {string} name Task name.
  * @property {string} description Task description.
  * @property {string} state Task state. Possible values: 'WAITING' | 'RUNNING' | 'FINISHED' | 'FAILED'
+ * @property {string} application Application containing the callback function to run.
+ * @property {string} user Key of the user that submitted the task.
+ * @property {string} startTime Time when the task was submitted (in ISO-8601 format).
  * @property {object} progress Progress information provided by the running task.
  * @property {number} progress.current Latest progress current numeric value.
  * @property {number} progress.total Latest progress target numeric value.
