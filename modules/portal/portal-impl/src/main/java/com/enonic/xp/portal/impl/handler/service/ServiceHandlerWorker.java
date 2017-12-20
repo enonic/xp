@@ -1,10 +1,13 @@
 package com.enonic.xp.portal.impl.handler.service;
 
+import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
@@ -18,6 +21,8 @@ import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.service.ServiceDescriptor;
 import com.enonic.xp.service.ServiceDescriptorService;
 import com.enonic.xp.site.Site;
@@ -70,12 +75,15 @@ final class ServiceHandlerWorker
             throw forbidden( "You don't have permission to access [%s]", descriptorKey.toString() );
         }
 
-        //Checks if the application is set on the current site
+        //Retrieves the current content and site
         final Content content = getContentOrNull( getContentSelector() );
         final Site site = getSiteOrNull( content );
-        if ( site != null )
+
+        //Checks if the application is set on the current site
+        final Site forcedSite = site == null ? forcedGetSiteOrNull(content) : site;
+        if ( forcedSite != null )
         {
-            final PropertyTree siteConfig = site.getSiteConfig( applicationKey );
+            final PropertyTree siteConfig = forcedSite.getSiteConfig( applicationKey );
             if ( siteConfig == null )
             {
                 throw forbidden( "Service [%s] forbidden for this site", descriptorKey.toString() );
@@ -142,5 +150,24 @@ final class ServiceHandlerWorker
             trace.put( "app", app.toString() );
         }
         return new WebSocketEndpointImpl( config, this::getScript );
+    }
+    
+    private Site forcedGetSiteOrNull( final Content content ) {
+        return runWithAdminRole(() -> {
+            final Content forcedContent = content == null ? getContentOrNull( getContentSelector() ) : content;
+            return getSiteOrNull( forcedContent );
+        });
+    }
+
+    private <T> T runWithAdminRole( final Callable<T> callable )
+    {
+        final Context context = ContextAccessor.current();
+        final AuthenticationInfo authenticationInfo = AuthenticationInfo.copyOf( context.getAuthInfo() ).
+            principals( RoleKeys.ADMIN ).
+            build();
+        return ContextBuilder.from( context ).
+            authInfo( authenticationInfo ).
+            build().
+            callWith( callable );
     }
 }
