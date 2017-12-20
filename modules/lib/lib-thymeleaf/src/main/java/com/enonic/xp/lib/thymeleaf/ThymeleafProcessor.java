@@ -13,6 +13,8 @@ import com.google.common.collect.Maps;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceProblemException;
 import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.Tracer;
 
 public final class ThymeleafProcessor
 {
@@ -58,6 +60,21 @@ public final class ThymeleafProcessor
     }
 
     public String process()
+    {
+        final Trace trace = Tracer.newTrace( "thymeleaf.render" );
+        if ( trace == null )
+        {
+            return doProcess();
+        }
+
+        return Tracer.trace( trace, () -> {
+            trace.put( "path", this.view.getPath() );
+            trace.put( "app", this.view.getApplicationKey().toString() );
+            return doProcess();
+        } );
+    }
+
+    private String doProcess()
     {
         try
         {
