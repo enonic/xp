@@ -38,7 +38,7 @@ public final class VirtualHostFilter
             final VirtualHostMapping virtualHostMapping = this.config.getMappings().resolve( req );
             if ( virtualHostMapping == null )
             {
-                LOG.warn( "Virtual host mapping could not be resolved: " + req.getServerName() + req.getRequestURI() );
+                LOG.warn( "Virtual host mapping could not be resolved for host [" + req.getServerName() + "] and path [" +  req.getRequestURI() + "]" );
                 res.setStatus( HttpServletResponse.SC_NOT_FOUND );
             }
             else
