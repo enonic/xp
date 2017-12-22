@@ -27,6 +27,19 @@ public class PortalUrlServiceImpl_identityUrlTest
         final String url = this.service.identityUrl( params );
         assertEquals( "/portal/draft/_/idprovider/system/login", url );
     }
+    
+    @Test
+    public void createUrl_withContentPath()
+    {
+        final IdentityUrlParams params = new IdentityUrlParams().
+            portalRequest( this.portalRequest ).
+            includeContentPath( true ).
+            userStoreKey( UserStoreKey.system() ).
+            idProviderFunction( "login" );
+
+        final String url = this.service.identityUrl( params );
+        assertEquals( "/portal/draft/context/path/_/idprovider/system/login", url );
+    }
 
     @Test
     public void createUrl_withoutFunction()
