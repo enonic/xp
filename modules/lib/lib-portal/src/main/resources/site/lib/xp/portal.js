@@ -39,7 +39,7 @@ exports.assetUrl = function (params) {
  * @param {string} [params.background] Background color.
  * @param {string} [params.format] Format of the image.
  * @param {string} [params.filter] A number of filters are available to alter the image appearance, for example, blur(3), grayscale(), rounded(5), etc.
- * @param {string} [params.contentPath=false] Add the current content path.
+ * @param {string} [params.contentPath=true] Add the current content path.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
  * @param {object} [params.params] Custom parameters to append to the url.
  *
@@ -59,7 +59,6 @@ exports.imageUrl = function (params) {
  * @param {string} [params.id] Id to the page.
  * @param {string} [params.path] Path to the page.
  * @param {string} [params.component] Path to the component. If not set, the current path is set.
- * @param {string} [params.contentPath=false] Add the current content path.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
  * @param {object} [params.params] Custom parameters to append to the url.
  *
@@ -81,7 +80,6 @@ exports.componentUrl = function (params) {
  * @param {string} [params.name] Name to the attachment.
  * @param {string} [params.type=source] Label of the attachment.
  * @param {boolean} [params.download=false] Set to true if the disposition header should be set to attachment.
- * @param {string} [params.contentPath=false] Add the current content path.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
  * @param {object} [params.params] Custom parameters to append to the url.
  *
