@@ -25,6 +25,19 @@ public class PortalUrlServiceImpl_serviceUrlTest
     }
 
     @Test
+    public void createUrl_withoutContentPath()
+    {
+        final ServiceUrlParams params = new ServiceUrlParams().
+            portalRequest( this.portalRequest ).
+            includeContentPath( false ).
+            service( "myservice" ).
+            param( "a", 3 );
+
+        final String url = this.service.serviceUrl( params );
+        assertEquals( "/portal/draft/_/service/myapplication/myservice?a=3", url );
+    }
+
+    @Test
     public void createUrl_withApplication()
     {
         final ServiceUrlParams params = new ServiceUrlParams().

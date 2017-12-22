@@ -28,6 +28,18 @@ public class PortalUrlServiceImpl_assetUrlTest
 
         final String url = this.service.assetUrl( params );
         assertEquals( "/portal/draft/_/asset/myapplication:31556889864403199/css/my.css", url );
+    }    
+    
+    @Test
+    public void createUrl_withContentPath()
+    {
+        final AssetUrlParams params = new AssetUrlParams().
+            portalRequest( this.portalRequest ).
+            includeContentPath( true ).
+            path( "css/my.css" );
+
+        final String url = this.service.assetUrl( params );
+        assertEquals( "/portal/draft/context/path/_/asset/myapplication:31556889864403199/css/my.css", url );
     }
 
     @Test

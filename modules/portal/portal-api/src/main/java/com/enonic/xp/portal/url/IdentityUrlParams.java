@@ -50,6 +50,11 @@ public final class IdentityUrlParams
         return this;
     }
 
+    @Override
+    protected boolean getDefaultContentPathInclusion()
+    {
+        return false;
+    }
 
     @Override
     public IdentityUrlParams setAsMap( final Multimap<String, String> map )

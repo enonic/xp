@@ -3,23 +3,38 @@ package com.enonic.xp.portal.impl.url;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.common.collect.Multimap;
+
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.portal.url.AbstractUrlParams;
 import com.enonic.xp.web.servlet.UriRewritingResult;
 
-abstract class RootContentUrlBuilder<T extends AbstractUrlParams>
+abstract class GenericEndpointUrlBuilder<T extends AbstractUrlParams>
     extends PortalUrlBuilder<T>
 {
-    private final String endpointType;
+    protected final String endpointType;
 
-    public RootContentUrlBuilder( final String endpointType )
+    public GenericEndpointUrlBuilder( final String endpointType )
     {
         this.endpointType = endpointType;
     }
 
     @Override
+    protected void buildUrl( final StringBuilder url, final Multimap<String, String> params )
+    {
+        super.buildUrl( url, params );
+        appendPart( url, this.portalRequest.getContentPath().toString() );
+        appendPart( url, "_" );
+        appendPart( url, this.endpointType );
+    }
+    
+    @Override
     protected String postUriRewriting( final UriRewritingResult uriRewritingResult )
     {
+        if (this.params.mustIncludeContentPath()) {
+            return uriRewritingResult.getRewrittenUri();
+        }
+        
         //Example of URI: /portal/draft/context/path/_/asset/myapplication/css/my.css
         //Corresponding result: /portal/draft/_/asset/myapplication/css/my.css
 

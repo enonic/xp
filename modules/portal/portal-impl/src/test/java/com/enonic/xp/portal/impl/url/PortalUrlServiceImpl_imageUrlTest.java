@@ -32,6 +32,20 @@ public class PortalUrlServiceImpl_imageUrlTest
     }
 
     @Test
+    public void createUrl_withoutContentPath()
+    {
+        this.portalRequest.setContent( createContent() );
+
+        final ImageUrlParams params = new ImageUrlParams().
+            portalRequest( this.portalRequest ).
+            includeContentPath( false ).
+            scale( "max(300)" );
+
+        final String url = this.service.imageUrl( params );
+        assertEquals( "/portal/draft/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent", url );
+    }
+
+    @Test
     public void createUrl_withFormat()
     {
         this.portalRequest.setContent( createContent() );
