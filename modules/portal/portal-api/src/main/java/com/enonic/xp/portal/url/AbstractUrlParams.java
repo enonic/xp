@@ -18,6 +18,8 @@ public abstract class AbstractUrlParams<T extends AbstractUrlParams>
 
     private String type = UrlTypeConstants.SERVER_RELATIVE;
 
+    private boolean includeContentPath;
+
     private final Multimap<String, String> params;
 
     public AbstractUrlParams()
@@ -53,6 +55,17 @@ public abstract class AbstractUrlParams<T extends AbstractUrlParams>
         return typecastThis();
     }
 
+    public final T contentPath( final Boolean value )
+    {
+        this.includeContentPath = value == null ? getDefaultContentPathInclusion() : value.booleanValue();
+        return typecastThis();
+    }
+
+    protected boolean getDefaultContentPathInclusion()
+    {
+        return true;
+    }
+
     public final T param( final String name, final Object value )
     {
         final String strValue = value != null ? value.toString() : null;
@@ -69,6 +82,8 @@ public abstract class AbstractUrlParams<T extends AbstractUrlParams>
     public T setAsMap( Multimap<String, String> map )
     {
         type( singleValue( map, "_type" ) );
+        final String contentPath = singleValue( map, "_contentPath" );
+        contentPath( contentPath == null ? null : Boolean.valueOf( contentPath ) );
         return typecastThis();
     }
 
