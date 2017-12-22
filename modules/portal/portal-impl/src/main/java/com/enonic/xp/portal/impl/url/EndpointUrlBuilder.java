@@ -7,12 +7,12 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.portal.url.AbstractUrlParams;
 import com.enonic.xp.web.servlet.UriRewritingResult;
 
-abstract class RootContentUrlBuilder<T extends AbstractUrlParams>
+abstract class EndpointUrlBuilder<T extends AbstractUrlParams>
     extends PortalUrlBuilder<T>
 {
     private final String endpointType;
 
-    public RootContentUrlBuilder( final String endpointType )
+    public EndpointUrlBuilder( final String endpointType )
     {
         this.endpointType = endpointType;
     }
@@ -20,6 +20,10 @@ abstract class RootContentUrlBuilder<T extends AbstractUrlParams>
     @Override
     protected String postUriRewriting( final UriRewritingResult uriRewritingResult )
     {
+        if (this.params.mustIncludeContentPath()) {
+            return uriRewritingResult.getRewrittenUri();
+        }
+        
         //Example of URI: /portal/draft/context/path/_/asset/myapplication/css/my.css
         //Corresponding result: /portal/draft/_/asset/myapplication/css/my.css
 

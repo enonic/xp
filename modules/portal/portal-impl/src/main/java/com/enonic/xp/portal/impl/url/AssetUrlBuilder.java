@@ -7,7 +7,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.url.AssetUrlParams;
 
 final class AssetUrlBuilder
-    extends RootContentUrlBuilder<AssetUrlParams>
+    extends EndpointUrlBuilder<AssetUrlParams>
 {
     public AssetUrlBuilder()
     {

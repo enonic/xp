@@ -8,7 +8,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.url.IdentityUrlParams;
 
 final class IdentityUrlBuilder
-    extends RootContentUrlBuilder<IdentityUrlParams>
+    extends EndpointUrlBuilder<IdentityUrlParams>
 {
 
     public IdentityUrlBuilder()

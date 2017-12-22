@@ -32,6 +32,11 @@ public abstract class AbstractUrlParams<T extends AbstractUrlParams>
         return type;
     }
 
+    public boolean mustIncludeContentPath()
+    {
+        return includeContentPath;
+    }
+
     public final Multimap<String, String> getParams()
     {
         return this.params;
