@@ -212,6 +212,7 @@ public final class IssueResource
         builder.description( json.description );
         builder.setPublishRequest( json.publishRequest );
         builder.setApproverIds( filterInvalidAssignees( json.assignees ) );
+        builder.setComments( json.comments );
 
         return builder.build();
     }
@@ -237,6 +238,10 @@ public final class IssueResource
                 if ( json.approverIds != null )
                 {
                     editMe.approverIds = filterInvalidAssignees( json.approverIds );
+                }
+                if ( json.comments != null )
+                {
+                    editMe.comments = json.comments;
                 }
                 if ( json.publishRequest != null )
                 {

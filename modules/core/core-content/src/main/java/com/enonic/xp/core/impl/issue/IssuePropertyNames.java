@@ -21,5 +21,9 @@ public final class IssuePropertyNames
 
     public static final String APPROVERS = "approverIds";
 
+    public static final String COMMENTS = "comments";
+
+    public static final String TEXT = "text";
+
     public static final String PUBLISH_REQUEST = "publishRequest";
 }

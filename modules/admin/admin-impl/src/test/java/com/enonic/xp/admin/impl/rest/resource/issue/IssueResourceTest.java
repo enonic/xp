@@ -1,10 +1,12 @@
 package com.enonic.xp.admin.impl.rest.resource.issue;
 
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
@@ -16,17 +18,20 @@ import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import com.enonic.xp.admin.impl.json.issue.IssueStatsJson;
 import com.enonic.xp.admin.impl.json.issue.PublishRequestItemJson;
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishRequestJson;
+import com.enonic.xp.admin.impl.rest.resource.issue.json.CommentJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.CreateIssueJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.ListIssuesJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.UpdateIssueJson;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.LocalScope;
+import com.enonic.xp.issue.Comment;
 import com.enonic.xp.issue.CreateIssueParams;
 import com.enonic.xp.issue.FindIssuesResult;
 import com.enonic.xp.issue.Issue;
@@ -79,7 +84,8 @@ public class IssueResourceTest
         throws Exception
     {
         final CreateIssueJson params =
-            new CreateIssueJson( "title", "desc", Arrays.asList( User.ANONYMOUS.getKey().toString() ), createPublishRequest() );
+            new CreateIssueJson( "title", "desc", Arrays.asList( User.ANONYMOUS.getKey().toString() ), createComments(),
+                                 createPublishRequest() );
 
         final HttpServletRequest request = Mockito.mock( HttpServletRequest.class );
         final IssueResource issueResource = getResourceInstance();
@@ -97,7 +103,8 @@ public class IssueResourceTest
         throws Exception
     {
         final CreateIssueJson params =
-            new CreateIssueJson( "title", "desc", Arrays.asList( User.ANONYMOUS.getKey().toString() ), createPublishRequest() );
+            new CreateIssueJson( "title", "desc", Arrays.asList( User.ANONYMOUS.getKey().toString() ), createComments(),
+                                 createPublishRequest() );
 
         final HttpServletRequest request = Mockito.mock( HttpServletRequest.class );
         final IssueResource issueResource = getResourceInstance();
@@ -115,7 +122,8 @@ public class IssueResourceTest
         throws Exception
     {
         final CreateIssueJson params =
-            new CreateIssueJson( "title", "desc", Arrays.asList( User.ANONYMOUS.getKey().toString() ), createPublishRequest() );
+            new CreateIssueJson( "title", "desc", Arrays.asList( User.ANONYMOUS.getKey().toString() ), createComments(),
+                                 createPublishRequest() );
 
         final HttpServletRequest request = Mockito.mock( HttpServletRequest.class );
         final IssueResource issueResource = getResourceInstance();
@@ -134,7 +142,7 @@ public class IssueResourceTest
     {
         final CreateIssueJson params =
             new CreateIssueJson( "title", "desc", Arrays.asList( User.ANONYMOUS.getKey().toString(), User.ANONYMOUS.getKey().toString() ),
-                                 createPublishRequest() );
+                                 createComments(), createPublishRequest() );
 
         final HttpServletRequest request = Mockito.mock( HttpServletRequest.class );
         final IssueResource issueResource = getResourceInstance();
@@ -168,7 +176,9 @@ public class IssueResourceTest
     {
         createLocalSession();
 
-        final Issue issue = createIssue();
+        final Instant createdTime = Instant.now();
+        final Issue issue = createIssue( createdTime );
+        ;
         final List<Issue> issues = Lists.newArrayList( issue );
         final IssueResource issueResource = getResourceInstance();
         final FindIssuesResult result = FindIssuesResult.create().hits( 2 ).totalHits( 4 ).issues( issues ).build();
@@ -184,12 +194,14 @@ public class IssueResourceTest
     public void test_getIssue()
         throws Exception
     {
-        final Issue issue = createIssue();
+        final Instant createdTime = Instant.now();
+        final Issue issue = createIssue( createdTime );
 
         Mockito.when( this.issueService.getIssue( issue.getId() ) ).thenReturn( issue );
 
         final Map params = Maps.newHashMap();
         params.put( "id", issue.getId().toString() );
+        params.put( "createdTime", createdTime );
 
         final String expected = new StrSubstitutor( params ).replace( readFromFile( "get_issue_result.json" ) );
 
@@ -204,12 +216,14 @@ public class IssueResourceTest
     public void test_getIssues()
         throws Exception
     {
-        final Issue issue = createIssue();
+        final Instant createdTime = Instant.now();
+        final Issue issue = createIssue( createdTime );
 
         Mockito.when( this.issueService.getIssue( issue.getId() ) ).thenReturn( issue );
 
         final Map params = Maps.newHashMap();
         params.put( "id", issue.getId().toString() );
+        params.put( "createdTime", createdTime );
 
         final String expected = new StrSubstitutor( params ).replace( readFromFile( "get_issues_result.json" ) );
 
@@ -223,11 +237,12 @@ public class IssueResourceTest
     @Test
     public void test_update()
     {
-        final Issue issue = createIssue();
+        final Instant createdTime = Instant.now();
+        final Issue issue = createIssue( createdTime );
 
         final UpdateIssueJson params =
             new UpdateIssueJson( issue.getId().toString(), "title", "desc", "Open", false, false, Arrays.asList( "user:system:admin" ),
-                                 createPublishRequest() );
+                                 createComments(), createPublishRequest() );
 
         getResourceInstance().update( params, Mockito.mock( HttpServletRequest.class ) );
 
@@ -239,11 +254,12 @@ public class IssueResourceTest
     @Test
     public void test_update_is_publish()
     {
-        final Issue issue = createIssue();
+        final Instant createdTime = Instant.now();
+        final Issue issue = createIssue( createdTime );
 
         final UpdateIssueJson params =
             new UpdateIssueJson( issue.getId().toString(), "title", "desc", "Closed", true, false, Arrays.asList( "user:system:admin" ),
-                                 createPublishRequest() );
+                                 createComments(), createPublishRequest() );
 
         getResourceInstance().update( params, Mockito.mock( HttpServletRequest.class ) );
 
@@ -255,11 +271,12 @@ public class IssueResourceTest
     @Test
     public void test_update_is_autoSave()
     {
-        final Issue issue = createIssue();
+        final Instant createdTime = Instant.now();
+        final Issue issue = createIssue( createdTime );
 
         final UpdateIssueJson params =
             new UpdateIssueJson( issue.getId().toString(), "title", "desc", "Closed", true, true, Arrays.asList( "user:system:admin" ),
-                                 createPublishRequest() );
+                                 createComments(), createPublishRequest() );
 
         getResourceInstance().update( params, Mockito.mock( HttpServletRequest.class ) );
 
@@ -268,6 +285,11 @@ public class IssueResourceTest
                                                                                            Mockito.anyString() );
         Mockito.verify( issueNotificationsSender, Mockito.times( 0 ) ).notifyIssuePublished( Mockito.any( Issue.class ),
                                                                                              Mockito.anyString() );
+    }
+
+    private List<CommentJson> createComments()
+    {
+        return Lists.newArrayList( new CommentJson( "user:system:anonymous", "Comment text one", Instant.now().toString() ) );
     }
 
     private PublishRequestJson createPublishRequest()
@@ -283,9 +305,12 @@ public class IssueResourceTest
         return publishRequestJson;
     }
 
-    private Issue createIssue()
+    private Issue createIssue( final Instant createdTime )
     {
-        return Issue.create().addApproverId( PrincipalKey.from( "user:system:anonymous" ) ).
+        Set<Comment> comments = Sets.newHashSet( new Comment( User.ANONYMOUS.getKey(), "Comment text one", createdTime ) );
+        return Issue.create().
+            addApproverId( PrincipalKey.from( "user:system:anonymous" ) ).
+            addComments( comments ).
             title( "title" ).
             description( "desc" ).creator( User.ANONYMOUS.getKey() ).modifier( User.ANONYMOUS.getKey() ).
             setPublishRequest( PublishRequest.create().addExcludeId( ContentId.from( "exclude-id" ) ).addItem(

@@ -1,9 +1,14 @@
 package com.enonic.xp.core.issue;
 
+import java.time.Instant;
+
 import org.junit.Test;
+
+import com.google.common.collect.Lists;
 
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.core.impl.issue.IssueNameFactory;
+import com.enonic.xp.issue.Comment;
 import com.enonic.xp.issue.CreateIssueParams;
 import com.enonic.xp.issue.Issue;
 import com.enonic.xp.issue.IssueStatus;
@@ -23,20 +28,22 @@ public class IssueServiceImplTest_update
     public void update()
         throws Exception
     {
-        final Issue issue = this.createIssue();
+        final Instant createdTime = Instant.now();
+        final Issue issue = this.createIssue( createdTime );
 
+        final PrincipalKey commentatorKey = PrincipalKey.from( "user:myStore:commentator-1" );
         final UpdateIssueParams updateIssueParams = UpdateIssueParams.create().
             id( issue.getId() ).
-            editor( editMe ->
-                    {
-                        editMe.title = "updated title";
-                        editMe.description = "updated description";
-                        editMe.approverIds = PrincipalKeys.from( PrincipalKey.from( "user:myStore:approver-1" ),
-                                                                 PrincipalKey.from( "user:myStore:approver-2" ) );
-                        editMe.publishRequest = PublishRequest.create().addExcludeId( ContentId.from( "new-exclude-id" ) ).addItem(
-                            PublishRequestItem.create().id( ContentId.from( "new-content-id" ) ).includeChildren( true ).build() ).build();
-                        editMe.issueStatus = IssueStatus.CLOSED;
-                    } ).build();
+            editor( editMe -> {
+                editMe.title = "updated title";
+                editMe.description = "updated description";
+                editMe.approverIds =
+                    PrincipalKeys.from( PrincipalKey.from( "user:myStore:approver-1" ), PrincipalKey.from( "user:myStore:approver-2" ) );
+                editMe.comments = Lists.newArrayList( new Comment( commentatorKey ) );
+                editMe.publishRequest = PublishRequest.create().addExcludeId( ContentId.from( "new-exclude-id" ) ).addItem(
+                    PublishRequestItem.create().id( ContentId.from( "new-content-id" ) ).includeChildren( true ).build() ).build();
+                editMe.issueStatus = IssueStatus.CLOSED;
+            } ).build();
 
         final Issue updatedIssue = this.issueService.update( updateIssueParams );
 
@@ -47,6 +54,10 @@ public class IssueServiceImplTest_update
         assertEquals( PrincipalKey.from( "user:system:test-user" ), updatedIssue.getCreator() );
         assertEquals( PrincipalKey.from( "user:system:test-user" ), updatedIssue.getModifier() );
         assertEquals( PrincipalKey.from( "user:myStore:approver-1" ), updatedIssue.getApproverIds().first() );
+        assertEquals( 1, updatedIssue.getComments().size() );
+        final Comment firstComment = updatedIssue.getComments().toArray( new Comment[updatedIssue.getComments().size()] )[0];
+        assertEquals( commentatorKey, firstComment.getCreator() );
+        assertEquals( "", firstComment.getText() );
         assertEquals( ContentId.from( "new-exclude-id" ), updatedIssue.getPublishRequest().getExcludeIds().first() );
         assertEquals( ContentId.from( "new-content-id" ), updatedIssue.getPublishRequest().getItems().first().getId() );
         assertEquals( true, updatedIssue.getPublishRequest().getItems().first().getIncludeChildren() );
@@ -58,7 +69,8 @@ public class IssueServiceImplTest_update
     public void nothing_updated()
         throws Exception
     {
-        final Issue issue = this.createIssue();
+        final Instant createdTime = Instant.now();
+        final Issue issue = this.createIssue( createdTime );
 
         final UpdateIssueParams updateIssueParams = UpdateIssueParams.create().id( issue.getId() ).build();
 
@@ -78,7 +90,8 @@ public class IssueServiceImplTest_update
     public void test_name_does_not_get_updated()
         throws Exception
     {
-        final Issue issue = this.createIssue();
+        final Instant createdTime = Instant.now();
+        final Issue issue = this.createIssue( createdTime );
 
         final UpdateIssueParams updateIssueParams = UpdateIssueParams.create().
             id( issue.getId() ).
@@ -92,12 +105,13 @@ public class IssueServiceImplTest_update
         assertEquals( IssueNameFactory.create( updatedIssue.getIndex() ), updatedIssue.getName() );
     }
 
-    private Issue createIssue()
+    private Issue createIssue( Instant createdTime )
     {
         return this.createIssue( CreateIssueParams.create().
             title( "title" ).
             description( "description" ).
             setApproverIds( PrincipalKeys.from( "user:myStore:approver-1" ) ).
+            setComments( Lists.newArrayList( new Comment( PrincipalKey.ofAnonymous(), "First comment", createdTime ) ) ).
             setPublishRequest( PublishRequest.create().addItem(
                 PublishRequestItem.create().id( ContentId.from( "content-id" ) ).includeChildren( true ).build() ).build() ) );
     }

@@ -1,8 +1,11 @@
 package com.enonic.xp.issue;
 
 import java.time.Instant;
+import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.security.PrincipalKey;
@@ -34,6 +37,8 @@ public final class Issue
 
     private final PublishRequest publishRequest;
 
+    private final List<Comment> comments;
+
     private Issue( Builder builder )
     {
         this.id = builder.id == null ? IssueId.create() : builder.id;
@@ -48,6 +53,7 @@ public final class Issue
         this.modifier = builder.modifier;
         this.approverIds = PrincipalKeys.from( builder.approverIds );
         this.publishRequest = builder.publishRequest;
+        this.comments = builder.comments != null ? builder.comments : Lists.newArrayList();
     }
 
     public IssueId getId()
@@ -110,6 +116,11 @@ public final class Issue
         return publishRequest;
     }
 
+    public List<Comment> getComments()
+    {
+        return comments;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -146,9 +157,12 @@ public final class Issue
 
         private PublishRequest publishRequest;
 
+        private List<Comment> comments;
+
         public Builder()
         {
             this.approverIds = Sets.newLinkedHashSet();
+            this.comments = Lists.newArrayList();
             this.issueStatus = IssueStatus.OPEN;
         }
 
@@ -167,6 +181,7 @@ public final class Issue
             this.modifier = source.modifier;
             this.approverIds = source.approverIds != null ? source.approverIds.getSet() : Sets.newHashSet();
             this.publishRequest = source.publishRequest;
+            this.comments = source.comments != null ? source.comments : Lists.newArrayList();
         }
 
         public Builder id( final IssueId id )
@@ -238,6 +253,18 @@ public final class Issue
         public Builder addApproverIds( final PrincipalKeys approverIds )
         {
             this.approverIds.addAll( approverIds.getSet() );
+            return this;
+        }
+
+        public Builder addComment( final Comment comment )
+        {
+            this.comments.add( comment );
+            return this;
+        }
+
+        public Builder addComments( final Collection<Comment> comments )
+        {
+            this.comments.addAll( comments );
             return this;
         }
 
