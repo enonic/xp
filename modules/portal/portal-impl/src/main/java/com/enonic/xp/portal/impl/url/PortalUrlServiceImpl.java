@@ -12,6 +12,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.portal.url.AbstractUrlParams;
+import com.enonic.xp.portal.url.ApplicationUrlParams;
 import com.enonic.xp.portal.url.AssetUrlParams;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
 import com.enonic.xp.portal.url.ComponentUrlParams;
@@ -75,6 +76,12 @@ public final class PortalUrlServiceImpl
     public String identityUrl( final IdentityUrlParams params )
     {
         return build( new IdentityUrlBuilder(), params );
+    }
+
+    @Override
+    public String applicationUrl( final ApplicationUrlParams params )
+    {
+        return build( new ApplicationUrlBuilder(), params );
     }
 
     @Override
