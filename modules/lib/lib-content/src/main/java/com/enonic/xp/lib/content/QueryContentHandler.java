@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
@@ -82,7 +83,16 @@ public final class QueryContentHandler
 
     private ContentsResultMapper convert( final FindContentIdsByQueryResult findQueryResult )
     {
-        final Contents contents = this.contentService.getByIds( new GetContentByIdsParams( findQueryResult.getContentIds() ) );
+        final ContentIds contentIds = findQueryResult.getContentIds();
+        final Contents contents;
+        if ( contentIds.isEmpty() )
+        {
+            contents = Contents.empty();
+        }
+        else
+        {
+            contents = this.contentService.getByIds( new GetContentByIdsParams( contentIds ) );
+        }
 
         return new ContentsResultMapper( contents, findQueryResult.getTotalHits(), findQueryResult.getAggregations() );
     }
