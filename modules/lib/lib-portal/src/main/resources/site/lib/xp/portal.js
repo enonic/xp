@@ -142,7 +142,7 @@ exports.idProviderUrl = function (params) {
 };
 
 /**
- * This function generates a URL pointing to the login function of the ID provider corresponding to the current user.
+ * This function generates a URL pointing to the login function of an ID provider.
  *
  *
  * @param {object} [params] Input parameters as JSON.
