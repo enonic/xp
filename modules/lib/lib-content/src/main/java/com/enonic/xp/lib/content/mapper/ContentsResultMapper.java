@@ -26,7 +26,7 @@ public final class ContentsResultMapper
     {
         this.contents = contents;
         this.total = total;
-        this.aggregations = aggregations == null ? null : aggregations;
+        this.aggregations = aggregations;
     }
 
     @Override

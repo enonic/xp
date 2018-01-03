@@ -71,9 +71,11 @@ public class TaskInfoTest
     @Test
     public void testEquals()
     {
-        final TaskInfo i1 = TaskInfo.create().id( TaskId.from( "123" ) ).build();
-        final TaskInfo i2 = TaskInfo.create().id( TaskId.from( "123" ) ).build();
-        final TaskInfo i3 = TaskInfo.create().id( TaskId.from( "321" ) ).build();
+        final Instant t = Instant.parse( "2017-10-01T09:00:00Z" );
+
+        final TaskInfo i1 = TaskInfo.create().id( TaskId.from( "123" ) ).startTime( t ).build();
+        final TaskInfo i2 = TaskInfo.create().id( TaskId.from( "123" ) ).startTime( t ).build();
+        final TaskInfo i3 = TaskInfo.create().id( TaskId.from( "321" ) ).startTime( t ).build();
 
         final TaskInfo i4 = TaskInfo.create().
             id( TaskId.from( "123" ) ).
@@ -82,7 +84,7 @@ public class TaskInfoTest
             state( TaskState.FINISHED ).
             application( ApplicationKey.from( "com.enonic.myapp" ) ).
             user( PrincipalKey.from( "user:store:me" ) ).
-            startTime( Instant.parse( "2017-10-01T09:00:00Z" ) ).
+            startTime( t ).
             build();
         final TaskInfo i5 = TaskInfo.create().
             id( TaskId.from( "123" ) ).
@@ -91,7 +93,7 @@ public class TaskInfoTest
             state( TaskState.FINISHED ).
             application( ApplicationKey.from( "com.enonic.myapp" ) ).
             user( PrincipalKey.from( "user:store:me" ) ).
-            startTime( Instant.parse( "2017-10-01T09:00:00Z" ) ).
+            startTime( t ).
             build();
 
         assertEquals( true, i1.equals( i2 ) );
@@ -103,9 +105,11 @@ public class TaskInfoTest
     @Test
     public void testHashCode()
     {
-        final TaskInfo i1 = TaskInfo.create().id( TaskId.from( "123" ) ).build();
-        final TaskInfo i2 = TaskInfo.create().id( TaskId.from( "123" ) ).build();
-        final TaskInfo i3 = TaskInfo.create().id( TaskId.from( "321" ) ).build();
+        final Instant t = Instant.parse( "2017-10-01T09:00:00Z" );
+
+        final TaskInfo i1 = TaskInfo.create().id( TaskId.from( "123" ) ).startTime( t ).build();
+        final TaskInfo i2 = TaskInfo.create().id( TaskId.from( "123" ) ).startTime( t ).build();
+        final TaskInfo i3 = TaskInfo.create().id( TaskId.from( "321" ) ).startTime( t ).build();
 
         final TaskInfo i4 = TaskInfo.create().
             id( TaskId.from( "123" ) ).
@@ -114,7 +118,7 @@ public class TaskInfoTest
             state( TaskState.FINISHED ).
             application( ApplicationKey.from( "com.enonic.myapp" ) ).
             user( PrincipalKey.from( "user:store:me" ) ).
-            startTime( Instant.parse( "2017-10-01T09:00:00Z" ) ).
+            startTime( t ).
             build();
         final TaskInfo i5 = TaskInfo.create().
             id( TaskId.from( "123" ) ).
@@ -123,7 +127,7 @@ public class TaskInfoTest
             state( TaskState.FINISHED ).
             application( ApplicationKey.from( "com.enonic.myapp" ) ).
             user( PrincipalKey.from( "user:store:me" ) ).
-            startTime( Instant.parse( "2017-10-01T09:00:00Z" ) ).
+            startTime( t ).
             build();
 
         assertEquals( i1.hashCode(), i2.hashCode() );
