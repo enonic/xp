@@ -26,11 +26,13 @@ import com.enonic.xp.admin.impl.json.issue.IssueListJson;
 import com.enonic.xp.admin.impl.json.issue.IssueStatsJson;
 import com.enonic.xp.admin.impl.json.issue.IssuesJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
+import com.enonic.xp.admin.impl.rest.resource.issue.json.CommentIssueJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.CreateIssueJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.GetIssuesJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.ListIssuesJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.UpdateIssueJson;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.issue.Comment;
 import com.enonic.xp.issue.CreateIssueParams;
 import com.enonic.xp.issue.FindIssuesParams;
 import com.enonic.xp.issue.FindIssuesResult;
@@ -121,6 +123,18 @@ public final class IssueResource
     public IssueStatsJson getStats()
     {
         return countIssues();
+    }
+
+    @POST
+    @Path("comment")
+    public IssueJson comment( final CommentIssueJson json )
+    {
+        UpdateIssueParams params = UpdateIssueParams.create().
+            id( json.issueId ).
+            editor( editMe -> editMe.comments.add( new Comment( json.creator, json.text ) ) ).
+            build();
+
+        return new IssueJson( issueService.update( params ) );
     }
 
     @POST

@@ -24,6 +24,7 @@ import com.enonic.xp.admin.impl.json.issue.IssueStatsJson;
 import com.enonic.xp.admin.impl.json.issue.PublishRequestItemJson;
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishRequestJson;
+import com.enonic.xp.admin.impl.rest.resource.issue.json.CommentIssueJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.CommentJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.CreateIssueJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.ListIssuesJson;
@@ -33,6 +34,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.LocalScope;
 import com.enonic.xp.issue.Comment;
 import com.enonic.xp.issue.CreateIssueParams;
+import com.enonic.xp.issue.EditableIssue;
 import com.enonic.xp.issue.FindIssuesResult;
 import com.enonic.xp.issue.Issue;
 import com.enonic.xp.issue.IssueQuery;
@@ -285,6 +287,30 @@ public class IssueResourceTest
                                                                                            Mockito.anyString() );
         Mockito.verify( issueNotificationsSender, Mockito.times( 0 ) ).notifyIssuePublished( Mockito.any( Issue.class ),
                                                                                              Mockito.anyString() );
+    }
+
+    @Test
+    public void test_addComment()
+    {
+        final Instant createdTime = Instant.now();
+        final Issue issue = createIssue( createdTime );
+
+        final CommentIssueJson paramsJson = new CommentIssueJson( issue.getId().toString(), "Comment title", "user:system:admin" );
+
+        getResourceInstance().comment( paramsJson );
+
+        ArgumentCaptor<UpdateIssueParams> captor = ArgumentCaptor.forClass( UpdateIssueParams.class );
+        Mockito.verify( issueService ).update( captor.capture() );
+        UpdateIssueParams updateParams = captor.getValue();
+        assertEquals( updateParams.getId(), issue.getId() );
+
+        EditableIssue editedIssue = new EditableIssue( issue );
+        updateParams.getEditor().edit( editedIssue );
+
+        assertEquals( editedIssue.comments.size(), 2 );
+        Comment newComment = editedIssue.comments.get( 1 );
+        assertEquals( newComment.getCreator(), paramsJson.creator );
+        assertEquals( newComment.getText(), paramsJson.text );
     }
 
     private List<CommentJson> createComments()
