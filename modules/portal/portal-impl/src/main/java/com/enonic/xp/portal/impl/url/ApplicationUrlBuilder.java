@@ -17,13 +17,13 @@ final class ApplicationUrlBuilder
     }
 
     @Override
-    protected String getBaseUri()
+    protected String getTargetBaseUri()
     {
         return "/app";
     }
 
     @Override
-    protected boolean isPortalBase()
+    protected boolean isTargetPortalBase()
     {
         return false;
     }

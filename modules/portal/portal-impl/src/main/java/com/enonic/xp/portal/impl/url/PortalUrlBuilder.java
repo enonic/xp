@@ -36,7 +36,12 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
 
     protected ApplicationService applicationService;
 
-    protected String getBaseUri()
+    private String getBaseUri()
+    {
+        return this.portalRequest.getBaseUri();
+    }
+
+    protected String getTargetBaseUri()
     {
         return this.portalRequest.getBaseUri();
     }
@@ -140,7 +145,7 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
     private String doBuild()
     {
         final StringBuilder str = new StringBuilder();
-        appendPart( str, getBaseUri() );
+        appendPart( str, getTargetBaseUri() );
 
         final Multimap<String, String> params = HashMultimap.create();
         buildUrl( str, params );
@@ -170,7 +175,7 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
     {
         params.putAll( this.params.getParams() );
 
-        if ( isPortalBase() )
+        if ( isTargetPortalBase() )
         {
             appendPart( url, getBranch().toString() );
         }
@@ -196,10 +201,14 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
             return buildErrorUrl( 500, e.getMessage() );
         }
     }
-
-    protected boolean isPortalBase()
-    {
+    
+    private boolean isPortalBase() {
         return this.portalRequest.getBaseUri().startsWith( "/portal" ) || this.portalRequest.getBaseUri().startsWith( "/admin/portal" );
+    }
+
+    protected boolean isTargetPortalBase()
+    {
+        return isPortalBase();
     }
 
     protected final String buildErrorUrl( final int code, final String message )
