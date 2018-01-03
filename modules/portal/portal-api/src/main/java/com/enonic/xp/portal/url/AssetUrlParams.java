@@ -36,9 +36,9 @@ public final class AssetUrlParams
     }
 
     @Override
-    protected boolean getDefaultContentPathInclusion()
+    protected ContextPathType getDefaultContextPath()
     {
-        return false;
+        return ContextPathType.VHOST;
     }
 
     @Override

@@ -15,7 +15,7 @@
  * @param {object} params Input parameters as JSON.
  * @param {string} params.path Path to the asset.
  * @param {string} [params.application] Other application to reference to. Defaults to current application.
- * @param {string} [params.contentPath=false] Add the current content path.
+ * @param {string} [params.contextPath=vhost] Context path. Either `vhost` (using vhost target path) or `relative` to the current path.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
  * @param {object} [params.params] Custom parameters to append to the url.
  *
@@ -39,7 +39,7 @@ exports.assetUrl = function (params) {
  * @param {string} [params.background] Background color.
  * @param {string} [params.format] Format of the image.
  * @param {string} [params.filter] A number of filters are available to alter the image appearance, for example, blur(3), grayscale(), rounded(5), etc.
- * @param {string} [params.contentPath=true] Add the current content path.
+ * @param {string} [params.contextPath=relative] Context path. Either `vhost` (using vhost target path) or `relative` to the current path.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
  * @param {object} [params.params] Custom parameters to append to the url.
  *
@@ -116,7 +116,7 @@ exports.pageUrl = function (params) {
  * @param {object} params Input parameters as JSON.
  * @param {string} params.service Name of the service.
  * @param {string} [params.application] Other application to reference to. Default is current application.
- * @param {string} [params.contentPath=false] Add the current content path.
+ * @param {string} [params.contextPath=vhost] Context path. Either `vhost` (using vhost target path) or `relative` to the current path.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
  * @param {object} [params.params] Custom parameters to append to the url.
  *
@@ -134,7 +134,7 @@ exports.serviceUrl = function (params) {
  * @param {object} [params] Input parameters as JSON.
  * @param {string} [params.userStore] Key of a user store using an ID provider.
  * If userStore is not set, then the user store corresponding to the current execution context will be used.
- * @param {string} [params.contentPath=false] Add the current content path.
+ * @param {string} [params.contextPath=vhost] Context path. Either `vhost` (using vhost target path) or `relative` to the current path.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
  * @param {object} [params.params] Custom parameters to append to the url.
  *
@@ -153,7 +153,7 @@ exports.idProviderUrl = function (params) {
  * @param {string} [params.userStore] Key of a user store using an ID provider.
  * If userStore is not set, then the user store corresponding to the current execution context will be used.
  * @param {string} [params.redirect] The URL to redirect to after the login.
- * @param {string} [params.contentPath=false] Add the current content path.
+ * @param {string} [params.contextPath=vhost] Context path. Either `vhost` (using vhost target path) or `relative` to the current path.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
  * @param {object} [params.params] Custom parameters to append to the url.
  *
@@ -170,7 +170,7 @@ exports.loginUrl = function (params) {
  *
  * @param {object} [params] Input parameters as JSON.
  * @param {string} [params.redirect] The URL to redirect to after the logout.
- * @param {string} [params.contentPath=false] Add the current content path.
+ * @param {string} [params.contextPath=vhost] Context path. Either `vhost` (using vhost target path) or `relative` to the current path.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
  * @param {object} [params.params] Custom parameters to append to the url.
  *

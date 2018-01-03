@@ -51,9 +51,9 @@ public final class IdentityUrlParams
     }
 
     @Override
-    protected boolean getDefaultContentPathInclusion()
+    protected ContextPathType getDefaultContextPath()
     {
-        return false;
+        return ContextPathType.VHOST;
     }
 
     @Override

@@ -18,7 +18,7 @@ public abstract class AbstractUrlParams<T extends AbstractUrlParams>
 
     private String type = UrlTypeConstants.SERVER_RELATIVE;
 
-    private Boolean includeContentPath;
+    private ContextPathType contextPathType;
 
     private final Multimap<String, String> params;
 
@@ -32,9 +32,9 @@ public abstract class AbstractUrlParams<T extends AbstractUrlParams>
         return type;
     }
 
-    public boolean mustIncludeContentPath()
+    public ContextPathType getContextPathType()
     {
-        return includeContentPath == null ? getDefaultContentPathInclusion() : includeContentPath.booleanValue();
+        return contextPathType == null ? getDefaultContextPath() : contextPathType;
     }
 
     public final Multimap<String, String> getParams()
@@ -60,15 +60,15 @@ public abstract class AbstractUrlParams<T extends AbstractUrlParams>
         return typecastThis();
     }
 
-    public final T includeContentPath( final Boolean value )
+    public final T contextPathType( final String value )
     {
-        this.includeContentPath = value;
+        this.contextPathType = Strings.isNullOrEmpty( value ) ? null : ContextPathType.from( value );
         return typecastThis();
     }
 
-    protected boolean getDefaultContentPathInclusion()
+    protected ContextPathType getDefaultContextPath()
     {
-        return true;
+        return ContextPathType.RELATIVE;
     }
 
     public final T param( final String name, final Object value )
@@ -87,8 +87,7 @@ public abstract class AbstractUrlParams<T extends AbstractUrlParams>
     public T setAsMap( Multimap<String, String> map )
     {
         type( singleValue( map, "_type" ) );
-        final String contentPath = singleValue( map, "_contentPath" );
-        includeContentPath( contentPath == null ? null : Boolean.valueOf( contentPath ) );
+        contextPathType( singleValue( map, "_contextPath" ) );
         return typecastThis();
     }
 
@@ -112,6 +111,7 @@ public abstract class AbstractUrlParams<T extends AbstractUrlParams>
     {
         helper.omitNullValues();
         helper.add( "type", this.type );
+        helper.add( "contextPath", this.contextPathType );
         helper.add( "params", this.params );
     }
 

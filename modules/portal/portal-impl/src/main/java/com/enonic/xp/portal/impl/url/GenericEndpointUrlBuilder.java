@@ -7,6 +7,7 @@ import com.google.common.collect.Multimap;
 
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.portal.url.AbstractUrlParams;
+import com.enonic.xp.portal.url.ContextPathType;
 import com.enonic.xp.web.servlet.UriRewritingResult;
 
 abstract class GenericEndpointUrlBuilder<T extends AbstractUrlParams>
@@ -27,14 +28,15 @@ abstract class GenericEndpointUrlBuilder<T extends AbstractUrlParams>
         appendPart( url, "_" );
         appendPart( url, this.endpointType );
     }
-    
+
     @Override
     protected String postUriRewriting( final UriRewritingResult uriRewritingResult )
     {
-        if (this.params.mustIncludeContentPath()) {
+        if ( ContextPathType.RELATIVE == this.params.getContextPathType() )
+        {
             return uriRewritingResult.getRewrittenUri();
         }
-        
+
         //Example of URI: /portal/draft/context/path/_/asset/myapplication/css/my.css
         //Corresponding result: /portal/draft/_/asset/myapplication/css/my.css
 
