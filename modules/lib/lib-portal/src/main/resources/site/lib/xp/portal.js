@@ -176,6 +176,24 @@ exports.logoutUrl = function (params) {
 };
 
 /**
+ * This function generates a URL pointing to an application.
+ *
+ * @example-ref examples/portal/applicationUrl.js
+ *
+ * @param {object} [params] Input parameters as JSON.
+ * @param {string} [params.application] Other application to reference to. Default is current application.
+ * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
+ * @param {string} [params.path] Path to append to the url.
+ * @param {object} [params.params] Custom parameters to append to the url.
+ *
+ * @returns {string} The generated URL.
+ */
+exports.applicationUrl = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.portal.url.ApplicationUrlHandler');
+    return bean.createUrl(__.toScriptValue(params || {}));
+};
+
+/**
  * This function generates a URL.
  *
  * @example-ref examples/portal/url.js

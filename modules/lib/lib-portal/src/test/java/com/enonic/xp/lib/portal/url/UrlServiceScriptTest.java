@@ -72,6 +72,12 @@ public class UrlServiceScriptTest
     }
 
     @Test
+    public void applicationUrlTest()
+    {
+        Assert.assertTrue( execute( "applicationUrlTest" ) );
+    }
+
+    @Test
     public void processHtmlTest()
     {
         Assert.assertTrue( execute( "processHtmlTest" ) );
@@ -117,6 +123,12 @@ public class UrlServiceScriptTest
     public void testExample_serviceUrl()
     {
         runScript( "/site/lib/xp/examples/portal/serviceUrl.js" );
+    }
+
+    @Test
+    public void testExample_applicationUrl()
+    {
+        runScript( "/site/lib/xp/examples/portal/applicationUrl.js" );
     }
 
     @Test
