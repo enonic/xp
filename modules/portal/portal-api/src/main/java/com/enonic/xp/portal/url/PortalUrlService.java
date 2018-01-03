@@ -19,6 +19,8 @@ public interface PortalUrlService
 
     String identityUrl( IdentityUrlParams params );
 
+    String applicationUrl( ApplicationUrlParams params );
+
     String generateUrl( GenerateUrlParams params );
 
     String processHtml( ProcessHtmlParams params );

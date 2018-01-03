@@ -1,5 +1,6 @@
 package com.enonic.xp.lib.thymeleaf;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.enonic.xp.portal.PortalRequest;
@@ -40,6 +41,16 @@ final class ThymeleafViewFunctions
     public String serviceUrl( final List<String> params )
     {
         return execute( "serviceUrl", params ).toString();
+    }
+
+    public String applicationUrl()
+    {
+        return applicationUrl( Collections.EMPTY_LIST);
+    }
+    
+    public String applicationUrl( final List<String> params )
+    {
+        return execute( "applicationUrl", params ).toString();
     }
 
     public String imagePlaceholder( final List<String> params )
