@@ -25,6 +25,7 @@ import static com.enonic.xp.core.impl.issue.IssuePropertyNames.APPROVERS;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.COMMENTS;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.CREATED_TIME;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.CREATOR;
+import static com.enonic.xp.core.impl.issue.IssuePropertyNames.CREATOR_NAME;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.DESCRIPTION;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.INDEX;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.MODIFIED_TIME;
@@ -118,7 +119,8 @@ public class IssueDataSerializer
         for ( final Comment item : comments )
         {
             final PropertySet itemSet = new PropertySet();
-            itemSet.setString( CREATOR, item.getCreator().toString() );
+            itemSet.setString( CREATOR, item.getCreatorKey().toString() );
+            itemSet.setString( CREATOR_NAME, item.getCreatorDisplayName() );
             itemSet.setInstant( CREATED_TIME, item.getCreatedTime() );
             itemSet.setString( TEXT, item.getText() );
             commentsSet.add( itemSet );
@@ -133,7 +135,8 @@ public class IssueDataSerializer
 
         for ( final PropertySet itemSet : commentsSet )
         {
-            builder.addComment( new Comment( PrincipalKey.from( itemSet.getString( CREATOR ) ), itemSet.getString( TEXT ),
+            builder.addComment( new Comment( PrincipalKey.from( itemSet.getString( CREATOR ) ), itemSet.getString( CREATOR_NAME ),
+                                             itemSet.getString( TEXT ),
                                              itemSet.getInstant( CREATED_TIME ) ) );
         }
     }

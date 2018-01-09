@@ -39,7 +39,7 @@ public class IssueServiceImplTest_update
                 editMe.description = "updated description";
                 editMe.approverIds =
                     PrincipalKeys.from( PrincipalKey.from( "user:myStore:approver-1" ), PrincipalKey.from( "user:myStore:approver-2" ) );
-                editMe.comments = Lists.newArrayList( new Comment( commentatorKey ) );
+                editMe.comments = Lists.newArrayList( new Comment( commentatorKey, "Commentator" ) );
                 editMe.publishRequest = PublishRequest.create().addExcludeId( ContentId.from( "new-exclude-id" ) ).addItem(
                     PublishRequestItem.create().id( ContentId.from( "new-content-id" ) ).includeChildren( true ).build() ).build();
                 editMe.issueStatus = IssueStatus.CLOSED;
@@ -56,7 +56,7 @@ public class IssueServiceImplTest_update
         assertEquals( PrincipalKey.from( "user:myStore:approver-1" ), updatedIssue.getApproverIds().first() );
         assertEquals( 1, updatedIssue.getComments().size() );
         final Comment firstComment = updatedIssue.getComments().toArray( new Comment[updatedIssue.getComments().size()] )[0];
-        assertEquals( commentatorKey, firstComment.getCreator() );
+        assertEquals( commentatorKey, firstComment.getCreatorKey() );
         assertEquals( "", firstComment.getText() );
         assertEquals( ContentId.from( "new-exclude-id" ), updatedIssue.getPublishRequest().getExcludeIds().first() );
         assertEquals( ContentId.from( "new-content-id" ), updatedIssue.getPublishRequest().getItems().first().getId() );
@@ -111,7 +111,7 @@ public class IssueServiceImplTest_update
             title( "title" ).
             description( "description" ).
             setApproverIds( PrincipalKeys.from( "user:myStore:approver-1" ) ).
-            setComments( Lists.newArrayList( new Comment( PrincipalKey.ofAnonymous(), "First comment", createdTime ) ) ).
+            setComments( Lists.newArrayList( new Comment( PrincipalKey.ofAnonymous(), "Anonymous", "First comment", createdTime ) ) ).
             setPublishRequest( PublishRequest.create().addItem(
                 PublishRequestItem.create().id( ContentId.from( "content-id" ) ).includeChildren( true ).build() ).build() ) );
     }

@@ -25,5 +25,7 @@ public final class IssuePropertyNames
 
     public static final String TEXT = "text";
 
+    public static final String CREATOR_NAME = "creatorName";
+
     public static final String PUBLISH_REQUEST = "publishRequest";
 }

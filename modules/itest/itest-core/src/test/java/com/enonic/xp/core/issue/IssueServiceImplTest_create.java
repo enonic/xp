@@ -26,7 +26,7 @@ public class IssueServiceImplTest_create
     public void create_issue()
         throws Exception
     {
-        final Comment comment = new Comment( PrincipalKey.ofAnonymous(), "Issue comment", Instant.now() );
+        final Comment comment = new Comment( PrincipalKey.ofAnonymous(), "Anonymous", "Issue comment", Instant.now() );
 
         final CreateIssueParams params = CreateIssueParams.create().
             title( "title" ).
@@ -47,7 +47,7 @@ public class IssueServiceImplTest_create
         assertEquals( PrincipalKey.from( "user:myStore:approver-1" ), issue.getApproverIds().first() );
         assertEquals( 1, issue.getComments().size() );
         final Comment firstComment = issue.getComments().toArray( new Comment[issue.getComments().size()] )[0];
-        assertEquals( comment.getCreator(), firstComment.getCreator() );
+        assertEquals( comment.getCreatorKey(), firstComment.getCreatorKey() );
         assertEquals( comment.getText(), firstComment.getText() );
         assertEquals( ContentId.from( "content-id" ), issue.getPublishRequest().getItems().first().getId() );
         assertEquals( ContentId.from( "exclude-id" ), issue.getPublishRequest().getExcludeIds().first() );

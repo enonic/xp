@@ -131,7 +131,7 @@ public final class IssueResource
     {
         UpdateIssueParams params = UpdateIssueParams.create().
             id( json.issueId ).
-            editor( editMe -> editMe.comments.add( new Comment( json.creator, json.text ) ) ).
+            editor( editMe -> editMe.comments.add( new Comment( json.creatorKey, json.creatorDisplayName, json.text ) ) ).
             build();
 
         return new IssueJson( issueService.update( params ) );

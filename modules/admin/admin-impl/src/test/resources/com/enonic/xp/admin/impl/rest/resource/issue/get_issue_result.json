@@ -5,7 +5,8 @@
   "comments": [
     {
       "createdTime": "${createdTime}",
-      "creator": "user:system:anonymous",
+      "creatorDisplayName": "Anonymous",
+      "creatorKey": "user:system:anonymous",
       "text": "Comment text one"
     }
   ],

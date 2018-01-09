@@ -6,32 +6,40 @@ import com.enonic.xp.security.PrincipalKey;
 
 public class Comment
 {
-    private PrincipalKey creator;
+    private PrincipalKey creatorKey;
+
+    private String creatorDisplayName;
 
     private Instant createdTime;
 
     private String text;
 
-    public Comment( final PrincipalKey creator, final String text, final Instant createdTime )
+    public Comment( final PrincipalKey creatorKey, final String creatorDisplayName, final String text, final Instant createdTime )
     {
-        this.creator = creator;
+        this.creatorKey = creatorKey;
+        this.creatorDisplayName = creatorDisplayName;
         this.createdTime = createdTime;
         this.text = text;
     }
 
-    public Comment( final PrincipalKey creator, final String text )
+    public Comment( final PrincipalKey creatorKey, final String creatorDisplayName, final String text )
     {
-        this( creator, text, Instant.now() );
+        this( creatorKey, creatorDisplayName, text, Instant.now() );
     }
 
-    public Comment( final PrincipalKey creator )
+    public Comment( final PrincipalKey creatorKey, final String creatorDisplayName )
     {
-        this( creator, "" );
+        this( creatorKey, creatorDisplayName, "" );
     }
 
-    public PrincipalKey getCreator()
+    public PrincipalKey getCreatorKey()
     {
-        return creator;
+        return creatorKey;
+    }
+
+    public String getCreatorDisplayName()
+    {
+        return creatorDisplayName;
     }
 
     public Instant getCreatedTime()

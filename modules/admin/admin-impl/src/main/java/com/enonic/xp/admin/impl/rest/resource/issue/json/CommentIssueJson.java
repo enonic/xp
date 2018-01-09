@@ -12,14 +12,18 @@ public class CommentIssueJson
 
     public final String text;
 
-    public final PrincipalKey creator;
+    public final PrincipalKey creatorKey;
+
+    public final String creatorDisplayName;
 
     @JsonCreator
     public CommentIssueJson( @JsonProperty("issueId") final String issueId, @JsonProperty("text") final String text,
-                             @JsonProperty("creator") final String creator )
+                             @JsonProperty("creatorKey") final String creatorKey,
+                             @JsonProperty("creatorDisplayName") final String creatorDisplayName )
     {
         this.text = text;
-        this.creator = PrincipalKey.from( creator );
+        this.creatorKey = PrincipalKey.from( creatorKey );
+        this.creatorDisplayName = creatorDisplayName;
         this.issueId = IssueId.from( issueId );
     }
 

@@ -295,7 +295,8 @@ public class IssueResourceTest
         final Instant createdTime = Instant.now();
         final Issue issue = createIssue( createdTime );
 
-        final CommentIssueJson paramsJson = new CommentIssueJson( issue.getId().toString(), "Comment title", "user:system:admin" );
+        final CommentIssueJson paramsJson =
+            new CommentIssueJson( issue.getId().toString(), "Comment title", "user:system:admin", "Anonymous" );
 
         getResourceInstance().comment( paramsJson );
 
@@ -309,13 +310,13 @@ public class IssueResourceTest
 
         assertEquals( editedIssue.comments.size(), 2 );
         Comment newComment = editedIssue.comments.get( 1 );
-        assertEquals( newComment.getCreator(), paramsJson.creator );
+        assertEquals( newComment.getCreatorKey(), paramsJson.creatorKey );
         assertEquals( newComment.getText(), paramsJson.text );
     }
 
     private List<CommentJson> createComments()
     {
-        return Lists.newArrayList( new CommentJson( "user:system:anonymous", "Comment text one", Instant.now().toString() ) );
+        return Lists.newArrayList( new CommentJson( "user:system:anonymous", "Anonymous", "Comment text one", Instant.now().toString() ) );
     }
 
     private PublishRequestJson createPublishRequest()
@@ -333,7 +334,7 @@ public class IssueResourceTest
 
     private Issue createIssue( final Instant createdTime )
     {
-        Set<Comment> comments = Sets.newHashSet( new Comment( User.ANONYMOUS.getKey(), "Comment text one", createdTime ) );
+        Set<Comment> comments = Sets.newHashSet( new Comment( User.ANONYMOUS.getKey(), "Anonymous", "Comment text one", createdTime ) );
         return Issue.create().
             addApproverId( PrincipalKey.from( "user:system:anonymous" ) ).
             addComments( comments ).
