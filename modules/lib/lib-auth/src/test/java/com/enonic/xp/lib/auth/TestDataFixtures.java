@@ -93,7 +93,7 @@ public class TestDataFixtures
     public static UserStore getTestUserStore()
     {
         return UserStore.create().
-            key( UserStoreKey.from( "userStoreTestKey" ) ).
+            key( UserStoreKey.from( "myUserStore" ) ).
             description( "User store used for testing" ).
             displayName( "User store test" ).
             authConfig( getTestAuthConfig() ).
@@ -102,18 +102,24 @@ public class TestDataFixtures
 
     private static AuthConfig getTestAuthConfig()
     {
-        final PropertySet backgroundPropertySet = new PropertySet();
-        backgroundPropertySet.setString( "subString", "subStringValue" );
-        backgroundPropertySet.setLong( "subLong", 123l );
-
-        final PropertyTree config = new PropertyTree();
-        config.setSet( "set", backgroundPropertySet );
-        config.setString( "string", "stringValue" );
-
         return AuthConfig.create().
             applicationKey( ApplicationKey.from( "com.enonic.app.test" ) ).
-            config( config ).
+            config( getConfig() ).
             build();
+    }
+
+    private static PropertyTree getConfig()
+    {
+        final PropertySet passwordPropertySet = new PropertySet();
+        passwordPropertySet.setString( "email", "noreply@example.com" );
+        passwordPropertySet.setString( "site", "MyWebsite" );
+
+        final PropertyTree config = new PropertyTree();
+        config.setString( "title", "App Title" );
+        config.setBoolean( "avatar", true );
+        config.setSet( "forgotPassword", passwordPropertySet );
+
+        return config;
     }
 
     public static AuthenticationInfo createAuthenticationInfo()
