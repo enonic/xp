@@ -474,3 +474,20 @@ exports.getUserStore = function (params) {
 
     return __.toNativeObject(bean.getUserStore());
 };
+
+/**
+ * Returns a list of principals with access level.
+ *
+ * @example-ref examples/auth/getUserstorePermissions.js
+ *
+ * @param {string} params JSON parameters.
+ * @param {string} params.key key of the UserStore to fetch permissions for.
+ * @returns {object[]} Returns the list of principals with access level.
+ */
+exports.getUserstorePermissions = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.auth.GetUserstorePermissionsHandler');
+
+    bean.userStoreKey = required(params, 'key');
+
+    return __.toNativeObject(bean.getUserstorePermissions());
+};
