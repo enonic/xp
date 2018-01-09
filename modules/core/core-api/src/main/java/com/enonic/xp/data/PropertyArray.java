@@ -143,7 +143,7 @@ public final class PropertyArray
         return parent;
     }
 
-    String getName()
+    public String getName()
     {
         return name;
     }
