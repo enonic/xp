@@ -33,7 +33,7 @@ public final class LocaleScriptBean
     {
         if ( bundles == null || bundles.length == 0 )
         {
-            bundles = new String[]{"site/i18n/phrases"};
+            bundles = new String[]{"i18n/phrases", "site/i18n/phrases"};
         }
 
         final String locale = getPreferredLocale( locales, bundles );

@@ -47,7 +47,7 @@ public final class LocaleServiceImpl
     @Override
     public MessageBundle getBundle( final ApplicationKey applicationKey, final Locale locale )
     {
-        return getBundle( applicationKey, locale, "site/i18n/phrases" );
+        return getBundle( applicationKey, locale, "site/i18n/phrases", "i18n/phrases" );
     }
 
     @Override
