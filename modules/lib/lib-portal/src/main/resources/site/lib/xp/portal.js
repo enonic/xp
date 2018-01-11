@@ -15,7 +15,6 @@
  * @param {object} params Input parameters as JSON.
  * @param {string} params.path Path to the asset.
  * @param {string} [params.application] Other application to reference to. Defaults to current application.
- * @param {string} [params.contextPath=vhost] Context path. Either `vhost` (using vhost target path) or `relative` to the current path.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
  * @param {object} [params.params] Custom parameters to append to the url.
  *
@@ -39,7 +38,6 @@ exports.assetUrl = function (params) {
  * @param {string} [params.background] Background color.
  * @param {string} [params.format] Format of the image.
  * @param {string} [params.filter] A number of filters are available to alter the image appearance, for example, blur(3), grayscale(), rounded(5), etc.
- * @param {string} [params.contextPath=relative] Context path. Either `vhost` (using vhost target path) or `relative` to the current path.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
  * @param {object} [params.params] Custom parameters to append to the url.
  *
@@ -116,7 +114,6 @@ exports.pageUrl = function (params) {
  * @param {object} params Input parameters as JSON.
  * @param {string} params.service Name of the service.
  * @param {string} [params.application] Other application to reference to. Default is current application.
- * @param {string} [params.contextPath=vhost] Context path. Either `vhost` (using vhost target path) or `relative` to the current path.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
  * @param {object} [params.params] Custom parameters to append to the url.
  *
