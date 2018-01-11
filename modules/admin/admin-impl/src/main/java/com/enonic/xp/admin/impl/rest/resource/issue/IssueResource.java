@@ -127,14 +127,18 @@ public final class IssueResource
 
     @POST
     @Path("comment")
-    public IssueJson comment( final CommentIssueJson json )
+    public IssueJson comment( final CommentIssueJson json, @Context HttpServletRequest request )
     {
         UpdateIssueParams params = UpdateIssueParams.create().
             id( json.issueId ).
             editor( editMe -> editMe.comments.add( new Comment( json.creatorKey, json.creatorDisplayName, json.text ) ) ).
             build();
 
-        return new IssueJson( issueService.update( params ) );
+        final Issue issue = issueService.update( params );
+
+        issueNotificationsSender.notifyIssueCommented( issue, request.getHeader( HttpHeaders.REFERER ) );
+
+        return new IssueJson( issue );
     }
 
     @POST

@@ -1,5 +1,8 @@
 package com.enonic.xp.admin.impl.rest.resource.issue;
 
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -17,6 +20,7 @@ import com.google.common.io.Resources;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.issue.Comment;
 import com.enonic.xp.issue.IssueStatus;
 import com.enonic.xp.mail.MailMessage;
 import com.enonic.xp.security.User;
@@ -24,6 +28,8 @@ import com.enonic.xp.security.User;
 public abstract class IssueMailMessageGenerator<P extends IssueMailMessageParams>
 {
     protected final P params;
+
+    private final static Integer MAX_COMMENTS = 5;
 
     public IssueMailMessageGenerator( final P params )
     {
@@ -38,8 +44,7 @@ public abstract class IssueMailMessageGenerator<P extends IssueMailMessageParams
         final String messageSubject = generateMessageSubject();
         final String messageBody = generateMessageBody();
 
-        return msg ->
-        {
+        return msg -> {
             msg.setFrom( new InternetAddress( sender, "Content Studio" ) );
             msg.addRecipients( Message.RecipientType.TO, recipients );
             msg.addRecipients( Message.RecipientType.CC, copyRecipients );
@@ -78,6 +83,7 @@ public abstract class IssueMailMessageGenerator<P extends IssueMailMessageParams
     {
         final Map messageParams = Maps.newHashMap();
         final int itemCount = params.getIssue().getPublishRequest().getItems().getSize();
+        final int commentsCount = params.getIssue().getComments().size();
         final String description = params.getIssue().getDescription();
 
         messageParams.put( "id", params.getIssue().getId().toString() );
@@ -95,6 +101,10 @@ public abstract class IssueMailMessageGenerator<P extends IssueMailMessageParams
         messageParams.put( "description-block-visibility", description.length() == 0 ? "none" : "block" );
         messageParams.put( "issue-block-visibility", itemCount == 0 ? "none" : "block" );
         messageParams.put( "no-issues-block-visibility", itemCount == 0 ? "block" : "none" );
+        messageParams.put( "comments-hidden-block-visibility", commentsCount > IssueMailMessageGenerator.MAX_COMMENTS ? "block" : "none" );
+        messageParams.put( "commentsHiddenNum", Math.max( commentsCount - IssueMailMessageGenerator.MAX_COMMENTS, 0 ) );
+        messageParams.put( "comments-block-visibility", commentsCount == 0 ? "none" : "block" );
+        messageParams.put( "comments", generateCommentsHtml() );
 
         return new StrSubstitutor( messageParams ).replace( load( "email.html" ) );
     }
@@ -110,6 +120,34 @@ public abstract class IssueMailMessageGenerator<P extends IssueMailMessageParams
             throw new RuntimeException(
                 "Cannot load resource with name [" + name + "] in [" + IssueMailMessageGenerator.class.getPackage() + "]" );
         }
+    }
+
+    private String generateCommentsHtml()
+    {
+        final String commentTemplate = load( "comment.html" );
+        final DateTimeFormatter fmt = DateTimeFormatter.ofLocalizedDateTime( FormatStyle.SHORT );
+        final StringBuilder stringBuilder = new StringBuilder();
+        final Integer commentCount = params.getIssue().getComments().size();
+
+        for ( final Comment comment : params.getIssue().getComments().subList(
+            Math.max( 0, commentCount - IssueMailMessageGenerator.MAX_COMMENTS ), commentCount ) )
+        {
+            stringBuilder.append( generateCommentHtml( comment, commentTemplate, fmt ) );
+        }
+
+        return stringBuilder.toString();
+    }
+
+    private String generateCommentHtml( final Comment item, final String template, final DateTimeFormatter fmt )
+    {
+        final Map itemParams = Maps.newHashMap();
+        itemParams.put( "displayName", item.getCreatorDisplayName() );
+        itemParams.put( "shortName", makeShortName( item.getCreatorDisplayName() ) );
+        itemParams.put( "icon", item.getCreatorKey() );
+        itemParams.put( "createdTime", fmt.format( item.getCreatedTime().atZone( ZoneId.systemDefault() ) ) );
+        itemParams.put( "text", item.getText() );
+
+        return new StrSubstitutor( itemParams ).replace( template );
     }
 
     private String generateItemsHtml()
@@ -159,7 +197,7 @@ public abstract class IssueMailMessageGenerator<P extends IssueMailMessageParams
         if ( isSvg )
         {
             return icon.replaceFirst( "(\\s+)(width=\")(.+?)(\")", " width=\"100%\"" ).
-                replaceFirst( "(\\s+)(height=\")(.+?)(\")"," height=\"auto\"" );
+                replaceFirst( "(\\s+)(height=\")(.+?)(\")", " height=\"auto\"" );
         }
 
         return icon;
@@ -183,6 +221,11 @@ public abstract class IssueMailMessageGenerator<P extends IssueMailMessageParams
 
     private String makeShortName( final String displayName )
     {
+        if ( displayName == null || displayName.length() == 0 )
+        {
+            return "";
+        }
+
         final String[] nameParts = displayName.split( " " );
 
         if ( nameParts.length < 2 )

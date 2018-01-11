@@ -9,4 +9,7 @@ public interface IssueNotificationsSender
     void notifyIssuePublished( final Issue issue, final String url );
 
     void notifyIssueUpdated( final Issue issue, final String url );
+
+    void notifyIssueCommented( final Issue issue, final String url );
+
 }

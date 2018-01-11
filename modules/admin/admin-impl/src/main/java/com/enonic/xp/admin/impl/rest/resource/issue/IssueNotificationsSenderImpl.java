@@ -30,6 +30,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.issue.Issue;
+import com.enonic.xp.issue.PublishRequestItem;
 import com.enonic.xp.mail.MailMessage;
 import com.enonic.xp.mail.MailService;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -101,13 +102,27 @@ public class IssueNotificationsSenderImpl
         }
     }
 
+    public void notifyIssueCommented( final Issue issue, final String url )
+    {
+        final User modifier = getCurrentUser();
+        final IssueCommentedMailMessageParams params =
+            IssueCommentedMailMessageParams.create( modifier, createMessageParams( issue, url ) ).build();
+
+        if ( isRecipientsPresent( params ) )
+        {
+            final MailMessage mailMessage = new IssueCommentedMailMessageGenerator( params ).generateMessage();
+            sendMailExecutor.execute( () -> mailService.send( mailMessage ) );
+        }
+    }
+
     private IssueMailMessageParams createMessageParams( final Issue issue, final String url )
     {
         final User creator = securityService.getUser( issue.getCreator() ).orElse( null );
         final ContentIds contentIds = ContentIds.from(
-            issue.getPublishRequest().getItems().stream().map( publishRequestItem -> publishRequestItem.getId() ).collect( Collectors.toList() ) );
+            issue.getPublishRequest().getItems().stream().map( PublishRequestItem::getId ).collect( Collectors.toList() ) );
         final Contents contents = contentService.getByIds( new GetContentByIdsParams( contentIds ) );
-        final CompareContentResults compareResults = contentService.compare( new CompareContentsParams( contentIds, ContentConstants.BRANCH_MASTER ) );
+        final CompareContentResults compareResults =
+            contentService.compare( new CompareContentsParams( contentIds, ContentConstants.BRANCH_MASTER ) );
         final List<User> approvers =
             issue.getApproverIds().stream().map( principalKey -> securityService.getUser( principalKey ).orElse( null ) ).filter(
                 Objects::nonNull ).collect( Collectors.toList() );
@@ -121,14 +136,13 @@ public class IssueNotificationsSenderImpl
     {
         final Map<ContentId, String> icons = Maps.newHashMap();
 
-        contents.stream().forEach( content ->
-                                   {
-                                       final Icon icon = this.contentTypeIconResolver.resolveIcon( content.getType() );
-                                       if ( icon != null && HELPER.isSvg( icon ) )
-                                       {
-                                           icons.put( content.getId(), new String( icon.toByteArray() ) );
-                                       }
-                                   } );
+        contents.stream().forEach( content -> {
+            final Icon icon = this.contentTypeIconResolver.resolveIcon( content.getType() );
+            if ( icon != null && HELPER.isSvg( icon ) )
+            {
+                icons.put( content.getId(), new String( icon.toByteArray() ) );
+            }
+        } );
 
         return icons;
     }
