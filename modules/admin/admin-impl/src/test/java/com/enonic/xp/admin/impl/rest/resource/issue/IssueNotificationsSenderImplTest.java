@@ -22,6 +22,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.icon.Icon;
+import com.enonic.xp.issue.Comment;
 import com.enonic.xp.issue.Issue;
 import com.enonic.xp.issue.IssueId;
 import com.enonic.xp.issue.PublishRequest;
@@ -152,6 +153,40 @@ public class IssueNotificationsSenderImplTest
     }
 
     @Test
+    public void testNotifyIssueCommented()
+        throws Exception
+    {
+        final User creator = generateUser();
+        final User approver = generateUserNoEmail();
+        final Issue issue = createIssue( creator.getKey(), PrincipalKeys.from( approver.getKey() ) );
+        final Content content = Content.create().
+            id( ContentId.from( "aaa" ) ).
+            type( ContentTypeName.folder() ).
+            name( "name" ).
+            parentPath( ContentPath.from( "/aaa" ) ).
+            build();
+        final Contents contents = Contents.from( content );
+        final CompareContentResults compareResults = CompareContentResults.create().
+            add( new CompareContentResult( CompareStatus.NEW, ContentId.from( "aaa" ) ) ).
+            add( new CompareContentResult( CompareStatus.NEW, ContentId.from( "contentId2" ) ) ).
+            build();
+
+        Mockito.when( securityService.getUser( issue.getCreator() ) ).thenReturn( Optional.of( creator ) );
+        Mockito.when( securityService.getUser( issue.getApproverIds().first() ) ).thenReturn( Optional.of( approver ) );
+        Mockito.when( contentService.getByIds( Mockito.any( GetContentByIdsParams.class ) ) ).thenReturn( contents );
+        Mockito.when( contentService.compare( Mockito.any( CompareContentsParams.class ) ) ).thenReturn( compareResults );
+        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn(
+            ContentType.create().name( "mycontenttype" ).icon( Icon.from( new byte[]{1}, "image/svg+xml", Instant.now() ) ).setBuiltIn(
+                true ).build() );
+
+        issueNotificationsSender.notifyIssueCommented( issue, "url" );
+
+        verify( securityService, times( 2 ) ).getUser( Mockito.any() );
+        verify( contentService, times( 1 ) ).getByIds( Mockito.any() );
+        verify( contentService, times( 1 ) ).compare( Mockito.any( CompareContentsParams.class ) );
+    }
+
+    @Test
     public void testNotifyIssueUpdatedNotCalledNoRecipients()
         throws Exception
     {
@@ -225,7 +260,8 @@ public class IssueNotificationsSenderImplTest
     {
         return Issue.create().id( IssueId.create() ).title( "title" ).description( "description" ).creator( creator ).addApproverIds(
             approvers ).setPublishRequest( PublishRequest.create().addExcludeId( ContentId.from( "exclude-id" ) ).addItem(
-            PublishRequestItem.create().id( ContentId.from( "content-id" ) ).includeChildren( true ).build() ).build() ).build();
+            PublishRequestItem.create().id( ContentId.from( "content-id" ) ).includeChildren( true ).build() ).build() ).addComment(
+            new Comment( creator, "Creator", "Comment text" ) ).build();
     }
 
     private User generateUser()

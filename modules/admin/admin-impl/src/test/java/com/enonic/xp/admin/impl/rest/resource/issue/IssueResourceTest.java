@@ -34,7 +34,6 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.LocalScope;
 import com.enonic.xp.issue.Comment;
 import com.enonic.xp.issue.CreateIssueParams;
-import com.enonic.xp.issue.EditableIssue;
 import com.enonic.xp.issue.FindIssuesResult;
 import com.enonic.xp.issue.Issue;
 import com.enonic.xp.issue.IssueQuery;
@@ -298,20 +297,12 @@ public class IssueResourceTest
         final CommentIssueJson paramsJson =
             new CommentIssueJson( issue.getId().toString(), "Comment title", "user:system:admin", "Anonymous" );
         final HttpServletRequest request = Mockito.mock( HttpServletRequest.class );
+
         getResourceInstance().comment( paramsJson, request );
 
-        ArgumentCaptor<UpdateIssueParams> captor = ArgumentCaptor.forClass( UpdateIssueParams.class );
-        Mockito.verify( issueService ).update( captor.capture() );
-        UpdateIssueParams updateParams = captor.getValue();
-        assertEquals( updateParams.getId(), issue.getId() );
-
-        EditableIssue editedIssue = new EditableIssue( issue );
-        updateParams.getEditor().edit( editedIssue );
-
-        assertEquals( editedIssue.comments.size(), 2 );
-        Comment newComment = editedIssue.comments.get( 1 );
-        assertEquals( newComment.getCreatorKey(), paramsJson.creatorKey );
-        assertEquals( newComment.getText(), paramsJson.text );
+        Mockito.verify( issueService, Mockito.times( 1 ) ).update( Mockito.any( UpdateIssueParams.class ) );
+        Mockito.verify( issueNotificationsSender, Mockito.times( 1 ) ).notifyIssueCommented( Mockito.any( Issue.class ),
+                                                                                             Mockito.anyString() );
     }
 
     private List<CommentJson> createComments()
