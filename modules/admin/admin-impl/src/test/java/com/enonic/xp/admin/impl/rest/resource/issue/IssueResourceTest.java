@@ -297,8 +297,8 @@ public class IssueResourceTest
 
         final CommentIssueJson paramsJson =
             new CommentIssueJson( issue.getId().toString(), "Comment title", "user:system:admin", "Anonymous" );
-
-        getResourceInstance().comment( paramsJson );
+        final HttpServletRequest request = Mockito.mock( HttpServletRequest.class );
+        getResourceInstance().comment( paramsJson, request );
 
         ArgumentCaptor<UpdateIssueParams> captor = ArgumentCaptor.forClass( UpdateIssueParams.class );
         Mockito.verify( issueService ).update( captor.capture() );
