@@ -37,7 +37,7 @@ final class MessageBundleImpl
     public String localize( final String key, final Object... args )
     {
         final String message = (String) handleGetObject( key );
-        return StringUtils.isNotEmpty( message ) ? format( message, args ) : MISSING_VALUE_MESSAGE;
+        return StringUtils.isNotEmpty( message ) ? format( message, args ) : null;
     }
 
     private String format( final String message, final Object[] args )

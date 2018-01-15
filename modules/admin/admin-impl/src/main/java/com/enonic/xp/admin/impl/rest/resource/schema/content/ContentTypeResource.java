@@ -54,7 +54,7 @@ public final class ContentTypeResource
 
     private ContentTypeIconResolver contentTypeIconResolver;
 
-    private LocaleMessageResolver localeMessageResolver;
+    private LocaleService localeService;
 
     private ContentService contentService;
 
@@ -71,8 +71,9 @@ public final class ContentTypeResource
         {
             throw new WebApplicationException( String.format( "ContentType [%s] not found", name ), Response.Status.NOT_FOUND );
         }
-        this.localeMessageResolver.setApplicationKey( contentType.getName().getApplicationKey() );
-        return new ContentTypeJson( contentType, this.contentTypeIconUrlResolver, this.localeMessageResolver );
+        final LocaleMessageResolver localeMessageResolver =
+            new LocaleMessageResolver( this.localeService, contentType.getName().getApplicationKey() );
+        return new ContentTypeJson( contentType, this.contentTypeIconUrlResolver, localeMessageResolver );
     }
 
     @GET
@@ -91,8 +92,10 @@ public final class ContentTypeResource
         final GetAllContentTypesParams getAll = new GetAllContentTypesParams().inlineMixinsToFormItems( inlineMixinsToFormItems );
         final ContentTypes contentTypes = contentTypeService.getAll( getAll );
 
-        this.localeMessageResolver.setApplicationKey( contentTypes.first().getName().getApplicationKey() );
-        return new ContentTypeSummaryListJson( contentTypes, this.contentTypeIconUrlResolver, this.localeMessageResolver );
+        final ApplicationKey applicationKey = contentTypes.first() != null ? contentTypes.first().getName().getApplicationKey() : null;
+        final LocaleMessageResolver localeMessageResolver = new LocaleMessageResolver( this.localeService, applicationKey );
+
+        return new ContentTypeSummaryListJson( contentTypes, this.contentTypeIconUrlResolver, localeMessageResolver );
     }
 
     @GET
@@ -117,8 +120,10 @@ public final class ContentTypeResource
             contentTypes = ContentTypes.empty();
         }
 
-        this.localeMessageResolver.setApplicationKey( contentTypes.first().getName().getApplicationKey() );
-        return new ContentTypeSummaryListJson( contentTypes, this.contentTypeIconUrlResolver, this.localeMessageResolver );
+        final ApplicationKey applicationKey = contentTypes.first() != null ? contentTypes.first().getName().getApplicationKey() : null;
+        final LocaleMessageResolver localeMessageResolver = new LocaleMessageResolver( this.localeService, applicationKey );
+
+        return new ContentTypeSummaryListJson( contentTypes, this.contentTypeIconUrlResolver, localeMessageResolver );
     }
 
     @GET
@@ -126,8 +131,11 @@ public final class ContentTypeResource
     public ContentTypeSummaryListJson getByApplication( @QueryParam("applicationKey") final String applicationKey )
     {
         final ContentTypes contentTypes = contentTypeService.getByApplication( ApplicationKey.from( applicationKey ) );
-        this.localeMessageResolver.setApplicationKey( contentTypes.first().getName().getApplicationKey() );
-        return new ContentTypeSummaryListJson( contentTypes, this.contentTypeIconUrlResolver, this.localeMessageResolver );
+
+        final LocaleMessageResolver localeMessageResolver =
+            new LocaleMessageResolver( this.localeService, ApplicationKey.from( applicationKey ) );
+        ;
+        return new ContentTypeSummaryListJson( contentTypes, this.contentTypeIconUrlResolver, localeMessageResolver );
     }
 
     @GET
@@ -172,7 +180,7 @@ public final class ContentTypeResource
     @Reference
     public void setLocaleService( final LocaleService localeService )
     {
-        this.localeMessageResolver = new LocaleMessageResolver( localeService );
+        this.localeService = localeService;
     }
 
     @Reference

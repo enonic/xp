@@ -20,6 +20,12 @@ public final class LocaleMessageResolver
         this.localeService = localeService;
     }
 
+    public LocaleMessageResolver( final LocaleService localeService, final ApplicationKey applicationKey )
+    {
+        this( localeService );
+        this.applicationKey = applicationKey;
+    }
+
     public void setApplicationKey( final ApplicationKey applicationKey )
     {
         this.applicationKey = applicationKey;
@@ -39,7 +45,7 @@ public final class LocaleMessageResolver
             return defaultValue;
         }
         final String localizedValue = bundle.localize( key );
-        return !MessageBundle.MISSING_VALUE_MESSAGE.equals( localizedValue ) ? localizedValue : defaultValue;
+        return localizedValue != null ? localizedValue : defaultValue;
     }
 
     private String getLocale()

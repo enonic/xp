@@ -109,6 +109,8 @@ public final class ApplicationResource
 
     private PortalScriptService portalScriptService;
 
+    private LocaleService localeService;
+
     private ApplicationIconUrlResolver iconUrlResolver;
 
     private RelationshipTypeIconUrlResolver relationshipTypeIconUrlResolver;
@@ -116,8 +118,6 @@ public final class ApplicationResource
     private MacroIconUrlResolver macroIconUrlResolver;
 
     private ContentTypeIconUrlResolver contentTypeIconUrlResolver;
-
-    private LocaleMessageResolver localeMessageResolver;
 
     public ApplicationResource()
     {
@@ -168,7 +168,7 @@ public final class ApplicationResource
             setContentTypeIconUrlResolver( this.contentTypeIconUrlResolver ).
             setMacroIconUrlResolver( this.macroIconUrlResolver ).
             setRelationshipTypeIconUrlResolver( this.relationshipTypeIconUrlResolver ).
-            setLocaleMessageResolver( this.localeMessageResolver );
+            setLocaleMessageResolver( new LocaleMessageResolver( this.localeService, applicationKey ) );
 
         final Resource resource = resourceService.getResource( ResourceKey.from( applicationKey, "/main.js" ) );
         if ( resource != null && resource.exists() )
@@ -579,7 +579,7 @@ public final class ApplicationResource
     @Reference
     public void setLocaleService( final LocaleService localeService )
     {
-        this.localeMessageResolver = new LocaleMessageResolver( localeService );
+        this.localeService = localeService;
     }
 
 }
