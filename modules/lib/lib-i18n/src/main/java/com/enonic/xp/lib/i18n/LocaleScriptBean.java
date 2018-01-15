@@ -2,7 +2,6 @@ package com.enonic.xp.lib.i18n;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 import java.util.function.Supplier;
 
 import com.google.common.base.Strings;
@@ -19,8 +18,6 @@ import com.enonic.xp.script.serializer.MapSerializable;
 import com.enonic.xp.site.Site;
 
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
-import static org.apache.commons.lang.StringUtils.substringBefore;
 
 public final class LocaleScriptBean
     implements ScriptBean
@@ -57,37 +54,21 @@ public final class LocaleScriptBean
     {
         final ApplicationKey applicationKey = getApplication();
         return this.localeService.get().getLocales( applicationKey, bundleNames ).stream().
-            map( Locale::toString ).
+            map( Locale::toLanguageTag ).
             sorted( String::compareTo ).
             collect( toList() );
     }
 
-    private String getPreferredLocale( final List<String> locales, final String[] bundleNames )
+    private String getPreferredLocale( final List<String> localeTags, final String[] bundleNames )
     {
-        final ApplicationKey applicationKey = getApplication();
-        final Set<String> supportedLocales = this.localeService.get().getLocales( applicationKey, bundleNames ).stream().
-            map( Locale::toString ).
-            collect( toSet() );
-        if ( locales == null || locales.isEmpty() )
+        if ( localeTags == null || localeTags.isEmpty() )
         {
             return null;
         }
-        for ( String locale : locales )
-        {
-            if ( supportedLocales.contains( locale ) )
-            {
-                return locale;
-            }
-            if ( locale.contains( "_" ) )
-            {
-                final String language = substringBefore( locale, "_" );
-                if ( supportedLocales.contains( language ) )
-                {
-                    return language; // language locale supported, e.g. locale=="en_us" && supportedLocales.contains("en")
-                }
-            }
-        }
-        return null;
+        final ApplicationKey applicationKey = getApplication();
+        final List<Locale> locales = localeTags.stream().map( Locale::forLanguageTag ).collect( toList() );
+        final Locale preferredLocale = this.localeService.get().getSupportedLocale( locales, applicationKey, bundleNames );
+        return preferredLocale == null ? null : preferredLocale.toLanguageTag();
     }
 
     private MessageBundle getMessageBundle( final String locale, final String... bundleNames )
