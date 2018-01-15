@@ -5,6 +5,7 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
+import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleResolver;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypes;
 
@@ -14,14 +15,15 @@ public class ContentTypeSummaryListJson
 {
     private final ImmutableList<ContentTypeSummaryJson> list;
 
-    public ContentTypeSummaryListJson( final ContentTypes contentTypes, final ContentTypeIconUrlResolver iconUrlResolver )
+    public ContentTypeSummaryListJson( final ContentTypes contentTypes, final ContentTypeIconUrlResolver iconUrlResolver,
+                                       final LocaleResolver localeResolver )
     {
         final ImmutableList.Builder<ContentTypeSummaryJson> builder = ImmutableList.builder();
         if(contentTypes != null)
         {
             for ( final ContentType contentType : contentTypes )
             {
-                builder.add( new ContentTypeSummaryJson( contentType, iconUrlResolver ) );
+                builder.add( new ContentTypeSummaryJson( contentType, iconUrlResolver, localeResolver ) );
             }
         }
 

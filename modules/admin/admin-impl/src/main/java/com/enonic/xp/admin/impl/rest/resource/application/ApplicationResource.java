@@ -47,6 +47,7 @@ import com.enonic.xp.admin.impl.rest.resource.macro.MacroIconResolver;
 import com.enonic.xp.admin.impl.rest.resource.macro.MacroIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
+import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.relationship.RelationshipTypeIconResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.relationship.RelationshipTypeIconUrlResolver;
 import com.enonic.xp.app.Application;
@@ -60,6 +61,7 @@ import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.auth.AuthDescriptor;
 import com.enonic.xp.auth.AuthDescriptorService;
+import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.macro.MacroDescriptorService;
@@ -115,6 +117,8 @@ public final class ApplicationResource
 
     private ContentTypeIconUrlResolver contentTypeIconUrlResolver;
 
+    private LocaleResolver localeResolver;
+
     public ApplicationResource()
     {
         final byte[] image = loadDefaultImage( "app_default.svg" );
@@ -163,7 +167,8 @@ public final class ApplicationResource
             setApplicationInfo( applicationInfo ).
             setContentTypeIconUrlResolver( this.contentTypeIconUrlResolver ).
             setMacroIconUrlResolver( this.macroIconUrlResolver ).
-            setRelationshipTypeIconUrlResolver( this.relationshipTypeIconUrlResolver );
+            setRelationshipTypeIconUrlResolver( this.relationshipTypeIconUrlResolver ).
+            setLocaleResolver( this.localeResolver );
 
         final Resource resource = resourceService.getResource( ResourceKey.from( applicationKey, "/main.js" ) );
         if ( resource != null && resource.exists() )
@@ -570,5 +575,12 @@ public final class ApplicationResource
         this.relationshipTypeIconUrlResolver =
             new RelationshipTypeIconUrlResolver( new RelationshipTypeIconResolver( relationshipTypeService ) );
     }
+
+    @Reference
+    public void setLocaleService( final LocaleService localeService )
+    {
+        this.localeResolver = new LocaleResolver( localeService );
+    }
+
 }
 

@@ -3,11 +3,14 @@ package com.enonic.xp.admin.impl.json.schema.content;
 import java.time.Instant;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.admin.impl.json.ChangeTraceableJson;
 import com.enonic.xp.admin.impl.json.ItemJson;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
+import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleResolver;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.mixin.MixinName;
 
@@ -21,9 +24,13 @@ public class ContentTypeSummaryJson
 
     private final ImmutableList<String> metadataMixinNames;
 
-    public ContentTypeSummaryJson( final ContentType contentType, final ContentTypeIconUrlResolver iconUrlResolver )
+    private final LocaleResolver localeResolver;
+
+    public ContentTypeSummaryJson( final ContentType contentType, final ContentTypeIconUrlResolver iconUrlResolver,
+                                   final LocaleResolver localeResolver )
     {
         this.contentType = contentType;
+        this.localeResolver = localeResolver;
         this.iconUrl = iconUrlResolver.resolve( contentType );
 
         ImmutableList.Builder<String> mixinNamesBuilder = new ImmutableList.Builder<>();
@@ -44,7 +51,15 @@ public class ContentTypeSummaryJson
 
     public String getDisplayName()
     {
-        return contentType.getDisplayName();
+        if ( StringUtils.isNotBlank( contentType.getDisplayNameI18nKey() ) )
+        {
+            return localeResolver.localizeMessage( contentType.getName().getApplicationKey(), contentType.getDisplayNameI18nKey(),
+                                                   contentType.getDisplayName() );
+        }
+        else
+        {
+            return contentType.getDisplayName();
+        }
     }
 
     public String getDescription()

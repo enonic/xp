@@ -20,8 +20,6 @@ final class MessageBundleImpl
 
     private static final String LATIN_1_ENCODING = "ISO-8859-1";
 
-    static final String MISSING_VALUE_MESSAGE = "NOT_TRANSLATED";
-
     private final Properties properties;
 
     MessageBundleImpl( final Properties properties )

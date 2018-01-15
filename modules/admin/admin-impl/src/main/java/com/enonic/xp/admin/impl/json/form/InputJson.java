@@ -3,6 +3,8 @@ package com.enonic.xp.admin.impl.json.form;
 import java.util.Collection;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -10,6 +12,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.annotations.Beta;
 
+import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleResolver;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeConfig;
@@ -25,13 +28,16 @@ public class InputJson
 
     private final String inputType;
 
+    private final LocaleResolver localeResolver;
+
     private Value defaultValue;
 
-    public InputJson( final Input input )
+    public InputJson( final Input input, final LocaleResolver localeResolver )
     {
         this.input = input;
         this.occurrences = new OccurrencesJson( input.getOccurrences() );
         this.inputType = input.getInputType().toString();
+        this.localeResolver = localeResolver;
     }
 
     @JsonIgnore
@@ -49,7 +55,14 @@ public class InputJson
 
     public String getLabel()
     {
-        return input.getLabel();
+        if ( localeResolver != null && StringUtils.isNotBlank( input.getLabelI18nKey() ) )
+        {
+            return localeResolver.localizeMessage( input.getLabelI18nKey(), input.getLabel() );
+        }
+        else
+        {
+            return input.getLabel();
+        }
     }
 
     public boolean isImmutable()
@@ -74,7 +87,14 @@ public class InputJson
 
     public String getHelpText()
     {
-        return input.getHelpText();
+        if ( localeResolver != null && StringUtils.isNotBlank( input.getHelpTextI18nKey() ) )
+        {
+            return localeResolver.localizeMessage( input.getHelpTextI18nKey(), input.getHelpText() );
+        }
+        else
+        {
+            return input.getHelpText();
+        }
     }
 
     public String getValidationRegexp()
