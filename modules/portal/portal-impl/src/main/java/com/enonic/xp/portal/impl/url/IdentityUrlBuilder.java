@@ -8,7 +8,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.url.IdentityUrlParams;
 
 final class IdentityUrlBuilder
-    extends RootContentUrlBuilder<IdentityUrlParams>
+    extends GenericEndpointUrlBuilder<IdentityUrlParams>
 {
 
     public IdentityUrlBuilder()
@@ -20,9 +20,6 @@ final class IdentityUrlBuilder
     protected void buildUrl( final StringBuilder url, final Multimap<String, String> params )
     {
         super.buildUrl( url, params );
-        appendPart( url, this.portalRequest.getContentPath().toString() );
-        appendPart( url, "_" );
-        appendPart( url, "idprovider" );
 
         if ( this.params.getUserStoreKey() == null )
         {

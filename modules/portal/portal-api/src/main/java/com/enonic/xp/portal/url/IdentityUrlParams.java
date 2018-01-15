@@ -50,6 +50,11 @@ public final class IdentityUrlParams
         return this;
     }
 
+    @Override
+    protected ContextPathType getDefaultContextPath()
+    {
+        return ContextPathType.VHOST;
+    }
 
     @Override
     public IdentityUrlParams setAsMap( final Multimap<String, String> map )
