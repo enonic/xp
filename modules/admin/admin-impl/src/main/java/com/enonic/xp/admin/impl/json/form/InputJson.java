@@ -28,15 +28,20 @@ public class InputJson
 
     private final String inputType;
 
-    private final LocaleMessageResolver localeMessageResolver;
+    private LocaleMessageResolver localeMessageResolver;
 
     private Value defaultValue;
 
-    public InputJson( final Input input, final LocaleMessageResolver localeMessageResolver )
+    public InputJson( final Input input )
     {
         this.input = input;
         this.occurrences = new OccurrencesJson( input.getOccurrences() );
         this.inputType = input.getInputType().toString();
+    }
+
+    public InputJson( final Input input, final LocaleMessageResolver localeMessageResolver )
+    {
+        this( input );
         this.localeMessageResolver = localeMessageResolver;
     }
 

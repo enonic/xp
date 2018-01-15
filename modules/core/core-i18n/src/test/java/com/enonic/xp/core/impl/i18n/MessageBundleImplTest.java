@@ -28,7 +28,7 @@ public class MessageBundleImplTest
         throws Exception
     {
         MessageBundle resourceBundle = createDefault();
-        assertEquals( resourceBundle.localize( "dummyKey" ), MessageBundleImpl.MISSING_VALUE_MESSAGE );
+        assertEquals( resourceBundle.localize( "dummyKey" ), null );
     }
 
     @Test
@@ -36,14 +36,14 @@ public class MessageBundleImplTest
         throws Exception
     {
         MessageBundle resourceBundle = createDefault();
-        assertEquals( resourceBundle.localize( "key6" ), MessageBundleImpl.MISSING_VALUE_MESSAGE );
+        assertEquals( resourceBundle.localize( "key6" ), null );
     }
 
     @Test
     public void testEmptyResourceBundle()
     {
         MessageBundle resourceBundle = new MessageBundleImpl( new Properties() );
-        assertEquals( resourceBundle.localize( "dummyKey" ), MessageBundleImpl.MISSING_VALUE_MESSAGE );
+        assertEquals( resourceBundle.localize( "dummyKey" ), null );
     }
 
     @Test

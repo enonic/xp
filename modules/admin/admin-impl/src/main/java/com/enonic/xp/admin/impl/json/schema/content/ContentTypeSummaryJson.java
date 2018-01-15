@@ -53,8 +53,7 @@ public class ContentTypeSummaryJson
     {
         if ( StringUtils.isNotBlank( contentType.getDisplayNameI18nKey() ) )
         {
-            return localeMessageResolver.localizeMessage( contentType.getName().getApplicationKey(), contentType.getDisplayNameI18nKey(),
-                                                          contentType.getDisplayName() );
+            return localeMessageResolver.localizeMessage( contentType.getDisplayNameI18nKey(), contentType.getDisplayName() );
         }
         else
         {

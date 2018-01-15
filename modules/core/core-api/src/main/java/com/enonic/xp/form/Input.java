@@ -185,7 +185,7 @@ public final class Input
             Objects.equals( this.maximizeUIInputWidth, that.maximizeUIInputWidth ) && Objects.equals( this.customText, that.customText ) &&
             Objects.equals( this.helpText, that.helpText ) && Objects.equals( this.validationRegexp, that.validationRegexp ) &&
             Objects.equals( this.inputTypeConfig, that.inputTypeConfig ) && Objects.equals( this.helpTextI18nKey, that.helpTextI18nKey ) &&
-            Objects.equals( this.labelI18nKey, that.label );
+            Objects.equals( this.labelI18nKey, that.labelI18nKey );
 
     }
 

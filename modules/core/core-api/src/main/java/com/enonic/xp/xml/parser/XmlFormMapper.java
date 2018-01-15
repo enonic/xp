@@ -103,11 +103,11 @@ public final class XmlFormMapper
         builder.inputType( inputTypeName );
         builder.name( root.getAttribute( "name" ) );
         builder.label( root.getChildValue( "label" ) );
-        builder.labelI18nKey( root.getChild( "label" ) != null ? root.getChild( "label" ).getAttribute( "i18n" ) : null );
+        builder.labelI18nKey( root.getChild( "label" ) != null ? root.getChild( "label" ).getAttribute( "i18n", null ) : null );
 
         builder.customText( root.getChildValue( "custom-text" ) );
         builder.helpText( root.getChildValue( "help-text" ) );
-        builder.helpTextI18nKey( root.getChild( "help-text" ) != null ? root.getChild( "help-text" ).getAttribute( "i18n" ) : null );
+        builder.helpTextI18nKey( root.getChild( "help-text" ) != null ? root.getChild( "help-text" ).getAttribute( "i18n", null ) : null );
         builder.occurrences( buildOccurrence( root.getChild( "occurrences" ) ) );
         builder.immutable( root.getChildValueAs( "immutable", Boolean.class, false ) );
         builder.indexed( root.getChildValueAs( "indexed", Boolean.class, false ) );

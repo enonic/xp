@@ -26,17 +26,7 @@ public final class LocaleMessageResolver
         this.applicationKey = applicationKey;
     }
 
-    public void setApplicationKey( final ApplicationKey applicationKey )
-    {
-        this.applicationKey = applicationKey;
-    }
-
     public String localizeMessage( final String key, final String defaultValue )
-    {
-        return localizeMessage( this.applicationKey, key, defaultValue );
-    }
-
-    public String localizeMessage( final ApplicationKey applicationKey, final String key, final String defaultValue )
     {
         final MessageBundle bundle = this.localeService.getBundle( applicationKey, new Locale( getLocale() ) );
 
@@ -52,6 +42,10 @@ public final class LocaleMessageResolver
     {
         final HttpServletRequest req = ServletRequestHolder.getRequest();
         final Locale locale = req != null ? req.getLocale() : Locale.getDefault();
+        if ( locale == null )
+        {
+            return "";
+        }
         return resolveLanguage( locale.getLanguage().toLowerCase() );
     }
 
