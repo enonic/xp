@@ -9,13 +9,13 @@ import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 
-public final class LocaleResolver
+public final class LocaleMessageResolver
 {
     private LocaleService localeService;
 
     private ApplicationKey applicationKey;
 
-    public LocaleResolver( final LocaleService localeService )
+    public LocaleMessageResolver( final LocaleService localeService )
     {
         this.localeService = localeService;
     }

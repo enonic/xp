@@ -47,7 +47,7 @@ import com.enonic.xp.admin.impl.rest.resource.macro.MacroIconResolver;
 import com.enonic.xp.admin.impl.rest.resource.macro.MacroIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
-import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleResolver;
+import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.relationship.RelationshipTypeIconResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.relationship.RelationshipTypeIconUrlResolver;
 import com.enonic.xp.app.Application;
@@ -117,7 +117,7 @@ public final class ApplicationResource
 
     private ContentTypeIconUrlResolver contentTypeIconUrlResolver;
 
-    private LocaleResolver localeResolver;
+    private LocaleMessageResolver localeMessageResolver;
 
     public ApplicationResource()
     {
@@ -168,7 +168,7 @@ public final class ApplicationResource
             setContentTypeIconUrlResolver( this.contentTypeIconUrlResolver ).
             setMacroIconUrlResolver( this.macroIconUrlResolver ).
             setRelationshipTypeIconUrlResolver( this.relationshipTypeIconUrlResolver ).
-            setLocaleResolver( this.localeResolver );
+            setLocaleMessageResolver( this.localeMessageResolver );
 
         final Resource resource = resourceService.getResource( ResourceKey.from( applicationKey, "/main.js" ) );
         if ( resource != null && resource.exists() )
@@ -579,7 +579,7 @@ public final class ApplicationResource
     @Reference
     public void setLocaleService( final LocaleService localeService )
     {
-        this.localeResolver = new LocaleResolver( localeService );
+        this.localeMessageResolver = new LocaleMessageResolver( localeService );
     }
 
 }
