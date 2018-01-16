@@ -101,8 +101,7 @@ public abstract class IssueMailMessageGenerator<P extends IssueMailMessageParams
         messageParams.put( "description-block-visibility", description.length() == 0 ? "none" : "block" );
         messageParams.put( "issue-block-visibility", itemCount == 0 ? "none" : "block" );
         messageParams.put( "no-issues-block-visibility", itemCount == 0 ? "block" : "none" );
-        messageParams.put( "comments-hidden-block-visibility", commentsCount > IssueMailMessageGenerator.MAX_COMMENTS ? "block" : "none" );
-        messageParams.put( "commentsHiddenNum", Math.max( commentsCount - IssueMailMessageGenerator.MAX_COMMENTS, 0 ) );
+        messageParams.put( "comments-trimmed-text-visibility", commentsCount > IssueMailMessageGenerator.MAX_COMMENTS ? "inline" : "none" );
         messageParams.put( "comments-block-visibility", commentsCount == 0 ? "none" : "block" );
         messageParams.put( "comments", generateCommentsHtml() );
 
