@@ -60,10 +60,11 @@ public final class AdminLibHelper
             locales = Collections.singletonList( Locale.getDefault() );
         }
 
-        final List<String> localeList = locales.stream().map( ( l ) -> resolveLanguage( l.toString().toLowerCase() ) ).collect( toList() );
+        final List<String> localeList =
+            locales.stream().map( ( l ) -> resolveLanguage( l.toLanguageTag().toLowerCase() ) ).collect( toList() );
         if ( localeList.isEmpty() )
         {
-            return Collections.singletonList( resolveLanguage( Locale.getDefault().getLanguage().toLowerCase() ) );
+            return Collections.singletonList( resolveLanguage( Locale.getDefault().toLanguageTag().toLowerCase() ) );
         }
         else
         {

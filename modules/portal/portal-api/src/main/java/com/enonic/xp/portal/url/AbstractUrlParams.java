@@ -18,6 +18,8 @@ public abstract class AbstractUrlParams<T extends AbstractUrlParams>
 
     private String type = UrlTypeConstants.SERVER_RELATIVE;
 
+    private ContextPathType contextPathType;
+
     private final Multimap<String, String> params;
 
     public AbstractUrlParams()
@@ -28,6 +30,11 @@ public abstract class AbstractUrlParams<T extends AbstractUrlParams>
     public String getType()
     {
         return type;
+    }
+
+    public ContextPathType getContextPathType()
+    {
+        return contextPathType == null ? getDefaultContextPath() : contextPathType;
     }
 
     public final Multimap<String, String> getParams()
@@ -53,6 +60,17 @@ public abstract class AbstractUrlParams<T extends AbstractUrlParams>
         return typecastThis();
     }
 
+    public final T contextPathType( final String value )
+    {
+        this.contextPathType = Strings.isNullOrEmpty( value ) ? null : ContextPathType.from( value );
+        return typecastThis();
+    }
+
+    protected ContextPathType getDefaultContextPath()
+    {
+        return ContextPathType.RELATIVE;
+    }
+
     public final T param( final String name, final Object value )
     {
         final String strValue = value != null ? value.toString() : null;
@@ -69,6 +87,7 @@ public abstract class AbstractUrlParams<T extends AbstractUrlParams>
     public T setAsMap( Multimap<String, String> map )
     {
         type( singleValue( map, "_type" ) );
+        contextPathType( singleValue( map, "_contextPath" ) );
         return typecastThis();
     }
 
@@ -92,6 +111,7 @@ public abstract class AbstractUrlParams<T extends AbstractUrlParams>
     {
         helper.omitNullValues();
         helper.add( "type", this.type );
+        helper.add( "contextPath", this.contextPathType );
         helper.add( "params", this.params );
     }
 

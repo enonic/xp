@@ -1,12 +1,9 @@
 package com.enonic.xp.script.impl.event;
 
 import java.util.Iterator;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.osgi.service.component.annotations.Component;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
 
 import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
@@ -19,35 +16,35 @@ import com.enonic.xp.script.event.ScriptEventManager;
 public final class ScriptEventManagerImpl
     implements ScriptEventManager, ApplicationInvalidator, EventListener
 {
-    private final Multimap<ApplicationKey, ScriptEventListener> listeners;
+    private final CopyOnWriteArrayList<ScriptEventListener> listeners;
 
     public ScriptEventManagerImpl()
     {
-        this.listeners = HashMultimap.create();
+        this.listeners = new CopyOnWriteArrayList<>();
     }
 
     @Override
     public void add( final ScriptEventListener listener )
     {
-        this.listeners.put( listener.getApplication(), listener );
+        this.listeners.add( listener );
     }
 
     @Override
     public Iterator<ScriptEventListener> iterator()
     {
-        return Lists.newArrayList( this.listeners.values() ).iterator();
+        return this.listeners.iterator();
     }
 
     @Override
     public void invalidate( final ApplicationKey key )
     {
-        this.listeners.removeAll( key );
+        this.listeners.removeIf( ( listener ) -> key.equals( listener.getApplication() ) );
     }
 
     @Override
     public void onEvent( final Event event )
     {
-        for ( final ScriptEventListener listener : this )
+        for ( final ScriptEventListener listener : listeners )
         {
             listener.onEvent( event );
         }
