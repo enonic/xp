@@ -57,6 +57,10 @@ public class XmlPartDescriptorParserTest
         assertNotNull( config );
         assertEquals( InputTypeName.DOUBLE, config.getFormItem( "width" ).toInput().getInputType() );
         assertEquals( "Column width", config.getFormItem( "width" ).toInput().getLabel() );
+
+        assertEquals( "key.label", config.getFormItem( "width" ).toInput().getLabelI18nKey() );
+        assertEquals( "key.help-text", config.getFormItem( "width" ).toInput().getHelpTextI18nKey() );
+
         assertEquals( "link-urls", config.getFormItem( "link-urls" ).toInlineMixin().getName() );
     }
 }

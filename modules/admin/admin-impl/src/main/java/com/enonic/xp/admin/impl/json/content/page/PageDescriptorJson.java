@@ -8,6 +8,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.admin.impl.json.ItemJson;
 import com.enonic.xp.admin.impl.json.content.page.region.RegionDescriptorJson;
 import com.enonic.xp.admin.impl.json.form.FormJson;
+import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.region.RegionDescriptor;
 import com.enonic.xp.region.RegionDescriptors;
@@ -25,11 +26,11 @@ public class PageDescriptorJson
 
     private final List<RegionDescriptorJson> regionsJson;
 
-    public PageDescriptorJson( final PageDescriptor descriptor )
+    public PageDescriptorJson( final PageDescriptor descriptor, final LocaleMessageResolver localeMessageResolver )
     {
         Preconditions.checkNotNull( descriptor );
         this.descriptor = descriptor;
-        this.configJson = new FormJson( descriptor.getConfig() );
+        this.configJson = new FormJson( descriptor.getConfig(), localeMessageResolver );
 
         this.editable = false;
         this.deletable = false;

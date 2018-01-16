@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.admin.impl.json.ItemJson;
 import com.enonic.xp.admin.impl.json.form.FormJson;
+import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.region.ComponentDescriptor;
 
 
@@ -14,11 +15,11 @@ public abstract class DescriptorJson
 
     private final FormJson configJson;
 
-    public DescriptorJson( final ComponentDescriptor descriptor )
+    public DescriptorJson( final ComponentDescriptor descriptor, final LocaleMessageResolver localeMessageResolver )
     {
         Preconditions.checkNotNull( descriptor );
         this.descriptor = descriptor;
-        this.configJson = new FormJson( descriptor.getConfig() );
+        this.configJson = new FormJson( descriptor.getConfig(), localeMessageResolver );
     }
 
     public String getKey()

@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
-import com.enonic.xp.app.ApplicationKeys;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
@@ -93,11 +93,12 @@ public class LayoutDescriptorResourceTest
             key( DescriptorKey.from( "application:putty-layout" ) ).
             build();
 
-        final LayoutDescriptors layoutDescriptors = LayoutDescriptors.from( layoutDescriptor1, layoutDescriptor2 );
-
-        final ApplicationKeys applicationKeys = ApplicationKeys.from( "application1", "application2", "application3" );
-
-        Mockito.when( layoutDescriptorService.getByApplications( applicationKeys ) ).thenReturn( layoutDescriptors );
+        Mockito.when( layoutDescriptorService.getByApplication( ApplicationKey.from( "application1" ) ) ).thenReturn(
+            LayoutDescriptors.from( layoutDescriptor1 ) );
+        Mockito.when( layoutDescriptorService.getByApplication( ApplicationKey.from( "application2" ) ) ).thenReturn(
+            LayoutDescriptors.from( layoutDescriptor2 ) );
+        Mockito.when( layoutDescriptorService.getByApplication( ApplicationKey.from( "application3" ) ) ).thenReturn(
+            LayoutDescriptors.empty() );
 
         String jsonString = request().path( "content/page/layout/descriptor/list/by_applications" ).
             entity( readFromFile( "get_by_applications_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
