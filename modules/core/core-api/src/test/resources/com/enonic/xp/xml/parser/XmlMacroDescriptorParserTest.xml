@@ -4,13 +4,14 @@
   <description>This macro is a test</description>
   <form>
     <input type="Date" name="myDate">
-      <label>label</label>
+      <label i18n="key.label">label</label>
       <immutable>false</immutable>
       <indexed>false</indexed>
+      <help-text i18n="key.help-text">help text</help-text>
       <occurrences minimum="0" maximum="1"/>
     </input>
     <input type="ContentSelector" name="someonesParent">
-      <label>Someones parent</label>
+      <label i18n="key.parent">Someones parent</label>
       <occurrences minimum="0" maximum="1"/>
       <config>
         <relationship>system:reference</relationship>
@@ -28,7 +29,7 @@
           <label>My field set</label>
           <items>
             <input type="TextLine" name="myTextLine">
-              <label>label</label>
+              <label i18n="key.label">label</label>
               <immutable>false</immutable>
               <indexed>false</indexed>
               <occurrences minimum="0" maximum="1"/>

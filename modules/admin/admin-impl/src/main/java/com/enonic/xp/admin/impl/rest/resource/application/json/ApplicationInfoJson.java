@@ -46,7 +46,7 @@ public class ApplicationInfoJson
         this.layouts = new LayoutDescriptorsJson( LayoutDescriptors.from( builder.applicationInfo.getLayouts() ) );
         this.relations = new RelationshipTypeListJson( builder.applicationInfo.getRelations(), builder.relationshipTypeIconUrlResolver );
         this.references = new ContentReferencesJson( builder.applicationInfo.getContentReferences() );
-        this.macros = new MacrosJson( builder.applicationInfo.getMacros(), builder.macroIconUrlResolver );
+        this.macros = new MacrosJson( builder.applicationInfo.getMacros(), builder.macroIconUrlResolver, builder.localeMessageResolver );
         this.tasks = new ApplicationTaskDescriptorsJson( builder.applicationInfo.getTasks() );
         this.idProvider =
             new ApplicationIdProviderJson( builder.applicationInfo.getAuthDescriptor(), builder.applicationInfo.getUserStoreReferences() );

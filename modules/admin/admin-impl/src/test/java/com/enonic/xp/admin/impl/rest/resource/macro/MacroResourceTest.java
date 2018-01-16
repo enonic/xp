@@ -15,7 +15,6 @@ import com.google.common.io.Resources;
 
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
@@ -109,8 +108,16 @@ public class MacroResourceTest
     public void testGetByApps()
         throws Exception
     {
-        Mockito.when( this.macroDescriptorService.getByApplications(
-            ApplicationKeys.from( ApplicationKey.SYSTEM.toString(), "appKey1", "appKey2" ) ) ).thenReturn( this.getTestDescriptors() );
+        final MacroDescriptor macroDescriptor1 = newMacroDescriptor( "my-app1:macro1", "A macro" );
+        final MacroDescriptor macroDescriptor2 = newMacroDescriptor( "my-app2:macro2", "B macro" );
+        final MacroDescriptor macroDescriptor3 = newMacroDescriptor( "my-app3:macro3", "C macro" );
+
+        Mockito.when( this.macroDescriptorService.getByApplication( ApplicationKey.SYSTEM ) ).thenReturn(
+            MacroDescriptors.from( macroDescriptor1 ) );
+        Mockito.when( this.macroDescriptorService.getByApplication( ApplicationKey.from( "appKey1" ) ) ).thenReturn(
+            MacroDescriptors.from( macroDescriptor2 ) );
+        Mockito.when( this.macroDescriptorService.getByApplication( ApplicationKey.from( "appKey2" ) ) ).thenReturn(
+            MacroDescriptors.from( macroDescriptor3 ) );
 
         String response = request().
             path( "macro/getByApps" ).
@@ -179,33 +186,18 @@ public class MacroResourceTest
         assertJson( "preview_string_macro_result.json", response );
     }
 
-    private MacroDescriptors getTestDescriptors()
-        throws Exception
+    private MacroDescriptor newMacroDescriptor( final String key, final String name )
     {
         final Form config = Form.create().build();
 
-        final MacroDescriptor macroDescriptor1 = MacroDescriptor.create().
-            key( MacroKey.from( "my-app1:macro1" ) ).
+        final MacroDescriptor macroDescriptor = MacroDescriptor.create().
+            key( MacroKey.from( key ) ).
             description( "my description" ).
-            displayName( "A macro" ).
+            displayName( name ).
             form( config ).
             build();
 
-        final MacroDescriptor macroDescriptor2 = MacroDescriptor.create().
-            key( MacroKey.from( "my-app2:macro2" ) ).
-            description( "my description" ).
-            displayName( "B macro" ).
-            form( config ).
-            build();
-
-        final MacroDescriptor macroDescriptor3 = MacroDescriptor.create().
-            key( MacroKey.from( "my-app3:macro3" ) ).
-            description( "my description" ).
-            displayName( "C macro" ).
-            form( config ).
-            build();
-
-        return MacroDescriptors.from( macroDescriptor3, macroDescriptor2, macroDescriptor1 );
+        return macroDescriptor;
     }
 
     public static Site newSite()
