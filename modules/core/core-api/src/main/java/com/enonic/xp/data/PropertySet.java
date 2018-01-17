@@ -222,7 +222,7 @@ public final class PropertySet
         return (int) result;
     }
 
-    public void addPropertyArray( final PropertyArray array )
+    void addPropertyArray( final PropertyArray array )
     {
         this.propertyArrayByName.put( array.getName(), array );
     }
