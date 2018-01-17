@@ -18,7 +18,10 @@ import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.collect.ImmutableList;
+
 import com.enonic.xp.admin.impl.json.schema.content.ContentTypeJson;
+import com.enonic.xp.admin.impl.json.schema.content.ContentTypeSummaryJson;
 import com.enonic.xp.admin.impl.json.schema.content.ContentTypeSummaryListJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.schema.SchemaImageHelper;
@@ -92,10 +95,15 @@ public final class ContentTypeResource
         final GetAllContentTypesParams getAll = new GetAllContentTypesParams().inlineMixinsToFormItems( inlineMixinsToFormItems );
         final ContentTypes contentTypes = contentTypeService.getAll( getAll );
 
-        final ApplicationKey applicationKey = contentTypes.first() != null ? contentTypes.first().getName().getApplicationKey() : null;
-        final LocaleMessageResolver localeMessageResolver = new LocaleMessageResolver( this.localeService, applicationKey );
+        ImmutableList.Builder<ContentTypeSummaryJson> summariesJsonBuilder = new ImmutableList.Builder();
 
-        return new ContentTypeSummaryListJson( contentTypes, this.contentTypeIconUrlResolver, localeMessageResolver );
+        contentTypes.forEach( contentType -> {
+            summariesJsonBuilder.add( new ContentTypeSummaryJson( contentType, this.contentTypeIconUrlResolver,
+                                                                  new LocaleMessageResolver( localeService,
+                                                                                             contentType.getName().getApplicationKey() ) ) );
+        } );
+
+        return new ContentTypeSummaryListJson( summariesJsonBuilder.build() );
     }
 
     @GET
@@ -120,10 +128,17 @@ public final class ContentTypeResource
             contentTypes = ContentTypes.empty();
         }
 
-        final ApplicationKey applicationKey = contentTypes.first() != null ? contentTypes.first().getName().getApplicationKey() : null;
-        final LocaleMessageResolver localeMessageResolver = new LocaleMessageResolver( this.localeService, applicationKey );
+        ImmutableList.Builder<ContentTypeSummaryJson> summariesJsonBuilder = new ImmutableList.Builder();
 
-        return new ContentTypeSummaryListJson( contentTypes, this.contentTypeIconUrlResolver, localeMessageResolver );
+        contentTypes.forEach( contentType -> {
+            summariesJsonBuilder.addAll( this.contentTypeService.getByApplication( contentType.getName().getApplicationKey() ).
+                stream().
+                map( type -> new ContentTypeSummaryJson( type, this.contentTypeIconUrlResolver,
+                                                         new LocaleMessageResolver( localeService, type.getName().getApplicationKey() ) ) ).
+                collect( Collectors.toList() ) );
+        } );
+
+        return new ContentTypeSummaryListJson( summariesJsonBuilder.build() );
     }
 
     @GET

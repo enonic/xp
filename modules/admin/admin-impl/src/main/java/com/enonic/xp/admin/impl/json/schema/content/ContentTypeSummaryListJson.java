@@ -30,6 +30,11 @@ public class ContentTypeSummaryListJson
         this.list = builder.build();
     }
 
+    public ContentTypeSummaryListJson( final ImmutableList<ContentTypeSummaryJson> list )
+    {
+        this.list = list;
+    }
+
     public int getTotal()
     {
         return this.list.size();
