@@ -26,7 +26,7 @@ public final class Property
 
     private Value value;
 
-    Property( final String name, final int index, final Value value, final PropertySet parent )
+    public Property( final String name, final int index, final Value value, final PropertySet parent )
     {
         checkName( name );
         this.name = name;

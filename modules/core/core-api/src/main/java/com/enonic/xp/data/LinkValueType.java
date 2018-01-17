@@ -9,7 +9,7 @@ final class LinkValueType
     }
 
     @Override
-    Value fromJsonValue( final Object object )
+    public Value fromJsonValue( final Object object )
     {
         return ValueFactory.newLink( convert( object ) );
     }

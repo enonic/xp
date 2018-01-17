@@ -22,7 +22,7 @@ public final class PropertyArray
 
     private final LinkedList<Property> array = new LinkedList<>();
 
-    PropertyArray( final PropertyTree tree, final PropertySet parent, final String name, final ValueType valueType )
+    public PropertyArray( final PropertyTree tree, final PropertySet parent, final String name, final ValueType valueType )
     {
         Preconditions.checkNotNull( parent, "parent cannot be null" );
         Preconditions.checkNotNull( name, "name cannot be null" );
@@ -138,7 +138,7 @@ public final class PropertyArray
         return parent.getProperty() != null ? parent.countAncestors() + 1 : 0;
     }
 
-    PropertySet getParent()
+    public PropertySet getParent()
     {
         return parent;
     }
@@ -171,12 +171,12 @@ public final class PropertyArray
     /**
      * Creates a new PropertySet attached to the same PropertyTree as this PropertyArray.
      */
-    PropertySet newSet()
+    public PropertySet newSet()
     {
         return this.parent.newSet();
     }
 
-    void addProperty( final Property property )
+    public void addProperty( final Property property )
     {
         checkType( property.getType() );
         this.array.addLast( property );
