@@ -11,7 +11,7 @@ final class DateTimeValueType
     }
 
     @Override
-    Value fromJsonValue( final Object object )
+    public Value fromJsonValue( final Object object )
     {
         return ValueFactory.newDateTime( convertNullSafe( object ) );
     }

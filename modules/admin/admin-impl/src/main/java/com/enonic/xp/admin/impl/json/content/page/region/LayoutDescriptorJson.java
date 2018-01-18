@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.enonic.xp.admin.impl.json.content.page.DescriptorJson;
+import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.RegionDescriptor;
 import com.enonic.xp.region.RegionDescriptors;
@@ -18,9 +19,9 @@ public class LayoutDescriptorJson
 
     private final List<RegionDescriptorJson> regionsJson;
 
-    public LayoutDescriptorJson( final LayoutDescriptor descriptor )
+    public LayoutDescriptorJson( final LayoutDescriptor descriptor, LocaleMessageResolver localeMessageResolver )
     {
-        super( descriptor );
+        super( descriptor, localeMessageResolver );
         this.editable = false;
         this.deletable = false;
 

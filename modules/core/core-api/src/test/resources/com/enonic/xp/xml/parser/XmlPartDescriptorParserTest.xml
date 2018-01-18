@@ -3,9 +3,10 @@
   <display-name>A Part</display-name>
   <config>
     <input type="Double" name="width">
-      <label>Column width</label>
+      <label i18n="key.label">Column width</label>
       <immutable>false</immutable>
       <indexed>false</indexed>
+      <help-text i18n="key.help-text"/>
       <occurrences minimum="0" maximum="1"/>
     </input>
     <inline mixin="myapplication:link-urls"/>

@@ -131,6 +131,7 @@ exports.serviceUrl = function (params) {
  * @param {object} [params] Input parameters as JSON.
  * @param {string} [params.userStore] Key of a user store using an ID provider.
  * If userStore is not set, then the user store corresponding to the current execution context will be used.
+ * @param {string} [params.contextPath=vhost] Context path. Either `vhost` (using vhost target path) or `relative` to the current path.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
  * @param {object} [params.params] Custom parameters to append to the url.
  *
@@ -149,6 +150,7 @@ exports.idProviderUrl = function (params) {
  * @param {string} [params.userStore] Key of a user store using an ID provider.
  * If userStore is not set, then the user store corresponding to the current execution context will be used.
  * @param {string} [params.redirect] The URL to redirect to after the login.
+ * @param {string} [params.contextPath=vhost] Context path. Either `vhost` (using vhost target path) or `relative` to the current path.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
  * @param {object} [params.params] Custom parameters to append to the url.
  *
@@ -165,6 +167,7 @@ exports.loginUrl = function (params) {
  *
  * @param {object} [params] Input parameters as JSON.
  * @param {string} [params.redirect] The URL to redirect to after the logout.
+ * @param {string} [params.contextPath=vhost] Context path. Either `vhost` (using vhost target path) or `relative` to the current path.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
  * @param {object} [params.params] Custom parameters to append to the url.
  *
