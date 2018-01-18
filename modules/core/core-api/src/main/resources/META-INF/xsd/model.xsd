@@ -214,7 +214,7 @@
 
   <xs:complexType name="pageDescriptor">
     <xs:sequence>
-      <xs:element minOccurs="0" name="display-name" type="xs:string"/>
+      <xs:element minOccurs="0" name="display-name" type="i18n"/>
       <xs:element minOccurs="0" name="config" type="form"/>
       <xs:element minOccurs="0" name="regions" type="regions"/>
     </xs:sequence>
