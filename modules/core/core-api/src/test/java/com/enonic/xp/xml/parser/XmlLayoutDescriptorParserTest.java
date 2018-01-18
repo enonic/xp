@@ -53,6 +53,7 @@ public class XmlLayoutDescriptorParserTest
         assertEquals( "myapplication:mylayout", result.getKey().toString() );
         assertEquals( "mylayout", result.getName() );
         assertEquals( "My Layout", result.getDisplayName() );
+        assertEquals( "key.display-name", result.getDisplayNameI18nKey() );
 
         final Form config = result.getConfig();
         assertNotNull( config );
