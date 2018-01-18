@@ -13,15 +13,17 @@ import com.enonic.xp.content.Media;
 import com.enonic.xp.portal.url.ImageUrlParams;
 
 final class ImageUrlBuilder
-    extends PortalUrlBuilder<ImageUrlParams>
+    extends GenericEndpointUrlBuilder<ImageUrlParams>
 {
+    public ImageUrlBuilder()
+    {
+        super( "image" );
+    }
+
     @Override
     protected void buildUrl( final StringBuilder url, final Multimap<String, String> params )
     {
         super.buildUrl( url, params );
-        appendPart( url, this.portalRequest.getContentPath().toString() );
-        appendPart( url, "_" );
-        appendPart( url, "image" );
 
         final ContentId id = resolveId();
         final Media media = resolveMedia( id );

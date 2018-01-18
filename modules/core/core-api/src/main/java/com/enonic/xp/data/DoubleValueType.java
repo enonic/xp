@@ -9,7 +9,7 @@ final class DoubleValueType
     }
 
     @Override
-    Value fromJsonValue( final Object object )
+    public Value fromJsonValue( final Object object )
     {
         return ValueFactory.newDouble( convertNullSafe( object ) );
     }

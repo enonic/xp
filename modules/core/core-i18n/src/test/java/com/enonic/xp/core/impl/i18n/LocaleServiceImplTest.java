@@ -1,8 +1,11 @@
 package com.enonic.xp.core.impl.i18n;
 
 import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -129,10 +132,10 @@ public class LocaleServiceImplTest
         throws Exception
     {
         final ResourceKeys resourceKeys =
-            ResourceKeys.from( "myapplication:/site/i18n/myphrases.properties", "myapplication:/site/i18n/myphrases_en.properties",
-                               "myapplication:/site/i18n/myphrases_en_US.properties",
-                               "myapplication:/site/i18n/myphrases_en_US_1.properties", "myapplication:/site/i18n/myphrases_fr.properties",
-                               "myapplication:/site/i18n/myphrases_ca.properties" );
+            ResourceKeys.from( "myapplication:/i18n/myphrases.properties", "myapplication:/i18n/myphrases_en.properties",
+                               "myapplication:/i18n/myphrases_en_US.properties",
+                               "myapplication:/i18n/myphrases_en_US_1.properties", "myapplication:/i18n/myphrases_fr.properties",
+                               "myapplication:/i18n/myphrases_ca.properties" );
 
         Mockito.when( resourceService.findFiles( Mockito.any(), Mockito.eq( "\\Q/phrases\\E.*\\.properties" ) ) ).thenReturn(
             resourceKeys );
@@ -173,5 +176,86 @@ public class LocaleServiceImplTest
 
         assertTrue( bundle != bundleCached );
         assertTrue( otherBundle == otherBundleCached );
+    }
+
+    @Test
+    public void getSupportedLocale_onePreferredFound()
+        throws Exception
+    {
+        final ResourceKeys resourceKeys =
+            ResourceKeys.from( "myapplication:/site/i18n/myphrases.properties", "myapplication:/site/i18n/myphrases_en.properties",
+                               "myapplication:/site/i18n/myphrases_en_US.properties",
+                               "myapplication:/site/i18n/myphrases_en_US_1.properties", "myapplication:/site/i18n/myphrases_fr.properties",
+                               "myapplication:/site/i18n/myphrases_ca.properties" );
+
+        Mockito.when( resourceService.findFiles( Mockito.any(), Mockito.anyString() ) ).thenReturn( resourceKeys );
+
+        List<Locale> preferredLocales = localeList( "en-US" );
+        Locale supportedLocale = localeService.getSupportedLocale( preferredLocales, ApplicationKey.from( "myapplication" ), "/myphrases" );
+
+        assertNotNull( supportedLocale );
+        assertEquals( "en-US", supportedLocale.toLanguageTag() );
+    }
+
+    @Test
+    public void getSupportedLocale_LanguagePreferredFound()
+        throws Exception
+    {
+        final ResourceKeys resourceKeys =
+            ResourceKeys.from( "myapplication:/site/i18n/myphrases.properties", "myapplication:/site/i18n/myphrases_en.properties",
+                               "myapplication:/site/i18n/myphrases_en_US.properties",
+                               "myapplication:/site/i18n/myphrases_en_US_1.properties", "myapplication:/site/i18n/myphrases_fr.properties",
+                               "myapplication:/site/i18n/myphrases_ca.properties" );
+
+        Mockito.when( resourceService.findFiles( Mockito.any(), Mockito.anyString() ) ).thenReturn( resourceKeys );
+
+        List<Locale> preferredLocales = localeList( "en-UK" );
+        Locale supportedLocale = localeService.getSupportedLocale( preferredLocales, ApplicationKey.from( "myapplication" ), "/myphrases" );
+
+        assertNotNull( supportedLocale );
+        assertEquals( "en", supportedLocale.toLanguageTag() );
+    }
+
+    @Test
+    public void getSupportedLocale_moreThanOneFound()
+        throws Exception
+    {
+        final ResourceKeys resourceKeys =
+            ResourceKeys.from( "myapplication:/site/i18n/myphrases.properties", "myapplication:/site/i18n/myphrases_en.properties",
+                               "myapplication:/site/i18n/myphrases_en_US.properties",
+                               "myapplication:/site/i18n/myphrases_en_US_1.properties", "myapplication:/site/i18n/myphrases_fr.properties",
+                               "myapplication:/site/i18n/myphrases_ca.properties" );
+
+        Mockito.when( resourceService.findFiles( Mockito.any(), Mockito.anyString() ) ).thenReturn( resourceKeys );
+
+        List<Locale> preferredLocales = localeList( "no", "ca-ES", "en" );
+        Locale supportedLocale = localeService.getSupportedLocale( preferredLocales, ApplicationKey.from( "myapplication" ), "/myphrases" );
+
+        assertNotNull( supportedLocale );
+        assertEquals( "ca", supportedLocale.toLanguageTag() );
+    }
+
+
+    @Test
+    public void getSupportedLocale_noPreferredFound()
+        throws Exception
+    {
+        final ResourceKeys resourceKeys =
+            ResourceKeys.from( "myapplication:/site/i18n/myphrases.properties", "myapplication:/site/i18n/myphrases_en.properties",
+                               "myapplication:/site/i18n/myphrases_en_US.properties",
+                               "myapplication:/site/i18n/myphrases_en_US_1.properties", "myapplication:/site/i18n/myphrases_fr.properties",
+                               "myapplication:/site/i18n/myphrases_ca.properties" );
+
+        Mockito.when( resourceService.findFiles( Mockito.any(), Mockito.anyString() ) ).thenReturn( resourceKeys );
+
+        List<Locale> preferredLocales = localeList( "no" );
+        Locale supportedLocale = localeService.getSupportedLocale( preferredLocales, ApplicationKey.from( "myapplication" ), "/myphrases" );
+
+        assertNull( supportedLocale );
+    }
+
+    private List<Locale> localeList( final String... localeTags )
+    {
+        return Arrays.stream( localeTags ).map( Locale::forLanguageTag ).collect( Collectors.toList() );
     }
 }

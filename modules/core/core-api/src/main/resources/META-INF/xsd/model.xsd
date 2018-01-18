@@ -60,11 +60,11 @@
     <xs:complexContent>
       <xs:extension base="formItem">
         <xs:all>
-          <xs:element minOccurs="1" name="label" type="xs:string"/>
+          <xs:element minOccurs="1" name="label" type="label"/>
           <xs:element minOccurs="0" name="immutable" type="xs:boolean"/>
           <xs:element minOccurs="0" name="indexed" type="xs:boolean"/>
           <xs:element minOccurs="0" name="custom-text" type="xs:string"/>
-          <xs:element minOccurs="0" name="help-text" type="xs:string"/>
+          <xs:element minOccurs="0" name="help-text" type="help-text"/>
           <xs:element minOccurs="0" name="validation-regexp" type="xs:string"/>
           <xs:element minOccurs="0" name="occurrences" type="occurrence"/>
           <xs:element minOccurs="0" name="config" type="config"/>
@@ -81,6 +81,24 @@
     <xs:sequence>
       <xs:any minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
     </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="label">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="i18n" type="xs:string">
+        </xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="help-text">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="i18n" type="xs:string">
+        </xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
   </xs:complexType>
 
   <xs:complexType name="default" mixed="true">
@@ -170,7 +188,7 @@
 
   <xs:complexType name="contentType">
     <xs:sequence>
-      <xs:element minOccurs="0" name="display-name" type="xs:string"/>
+      <xs:element minOccurs="0" name="display-name" type="display-name"/>
       <xs:element minOccurs="0" name="description" type="xs:string"/>
       <xs:element minOccurs="0" name="content-display-name-script" type="xs:string"/>
       <xs:element minOccurs="0" name="super-type" type="xs:string"/>
@@ -180,6 +198,15 @@
       <xs:element minOccurs="0" maxOccurs="unbounded" name="x-data" type="xdata"/>
       <xs:element minOccurs="0" name="form" type="formItems"/>
     </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="display-name">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="i18n" type="xs:string">
+        </xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
   </xs:complexType>
 
   <xs:complexType name="mixin">

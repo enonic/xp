@@ -33,6 +33,8 @@ public final class XmlContentTypeParser
 
         assertTagName( root, "content-type" );
         this.builder.displayName( root.getChildValue( "display-name" ) );
+        this.builder.displayNameI18nKey(
+            root.getChild( "display-name" ) != null ? root.getChild( "display-name" ).getAttribute( "i18n" ) : null );
         this.builder.description( root.getChildValue( "description" ) );
 
         this.builder.contentDisplayNameScript( root.getChildValue( "content-display-name-script" ) );
