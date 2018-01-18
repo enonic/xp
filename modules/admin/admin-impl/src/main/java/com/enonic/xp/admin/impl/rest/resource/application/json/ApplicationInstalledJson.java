@@ -9,7 +9,11 @@ public class ApplicationInstalledJson
 
     public ApplicationInstalledJson( final Application application, final boolean local, final ApplicationIconUrlResolver iconUrlResolver )
     {
-        this.application = new ApplicationJson( application, local, null, null, null, iconUrlResolver );
+        this.application = ApplicationJson.create().
+            setApplication( application ).
+            setLocal( local ).
+            setIconUrlResolver( iconUrlResolver ).
+            build();
     }
 
     @SuppressWarnings("unused")

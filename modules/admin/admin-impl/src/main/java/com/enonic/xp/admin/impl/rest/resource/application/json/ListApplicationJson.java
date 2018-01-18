@@ -4,12 +4,6 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.xp.admin.impl.rest.resource.application.ApplicationIconUrlResolver;
-import com.enonic.xp.app.Application;
-import com.enonic.xp.app.ApplicationDescriptor;
-import com.enonic.xp.auth.AuthDescriptor;
-import com.enonic.xp.site.SiteDescriptor;
-
 public final class ListApplicationJson
 {
     private final List<ApplicationJson> list;
@@ -19,11 +13,9 @@ public final class ListApplicationJson
         this.list = Lists.newArrayList();
     }
 
-    public void add( final Application application, final boolean local, final ApplicationDescriptor applicationDescriptor,
-                     final SiteDescriptor siteDescriptor, final AuthDescriptor authDescriptor,
-                     final ApplicationIconUrlResolver iconUrlResolver )
+    public void add( final ApplicationJson applicationJson )
     {
-        this.list.add( new ApplicationJson( application, local, applicationDescriptor, siteDescriptor, authDescriptor, iconUrlResolver ) );
+        this.list.add( applicationJson );
     }
 
     public int getTotal()

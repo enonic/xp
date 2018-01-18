@@ -147,7 +147,15 @@ public final class ApplicationResource
                 final boolean localApplication = this.applicationService.isLocalApplication( applicationKey );
                 final ApplicationDescriptor appDescriptor = this.applicationDescriptorService.get( applicationKey );
 
-                json.add( application, localApplication, appDescriptor, siteDescriptor, authDescriptor, iconUrlResolver );
+                json.add( ApplicationJson.create().
+                    setApplication( application ).
+                    setLocal( localApplication ).
+                    setApplicationDescriptor( appDescriptor ).
+                    setSiteDescriptor( siteDescriptor ).
+                    setAuthDescriptor( authDescriptor ).
+                    setIconUrlResolver( this.iconUrlResolver ).
+                    setLocaleMessageResolver( new LocaleMessageResolver( this.localeService, applicationKey ) ).
+                    build() );
             }
         }
 
@@ -220,7 +228,16 @@ public final class ApplicationResource
         final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( appKey );
         final AuthDescriptor authDescriptor = this.authDescriptorService.getDescriptor( appKey );
         final ApplicationDescriptor appDescriptor = applicationDescriptorService.get( appKey );
-        return new ApplicationJson( application, local, appDescriptor, siteDescriptor, authDescriptor, iconUrlResolver );
+
+        return ApplicationJson.create().
+            setApplication( application ).
+            setLocal( local ).
+            setApplicationDescriptor( appDescriptor ).
+            setSiteDescriptor( siteDescriptor ).
+            setAuthDescriptor( authDescriptor ).
+            setIconUrlResolver( this.iconUrlResolver ).
+            setLocaleMessageResolver( new LocaleMessageResolver( this.localeService, appKey ) ).
+            build();
     }
 
     @POST
@@ -418,7 +435,16 @@ public final class ApplicationResource
                 final AuthDescriptor authDescriptor = this.authDescriptorService.getDescriptor( applicationKey );
                 final boolean localApplication = this.applicationService.isLocalApplication( applicationKey );
                 final ApplicationDescriptor appDescriptor = this.applicationDescriptorService.get( applicationKey );
-                json.add( application, localApplication, appDescriptor, siteDescriptor, authDescriptor, iconUrlResolver );
+
+                json.add( ApplicationJson.create().
+                    setApplication( application ).
+                    setLocal( localApplication ).
+                    setApplicationDescriptor( appDescriptor ).
+                    setSiteDescriptor( siteDescriptor ).
+                    setAuthDescriptor( authDescriptor ).
+                    setIconUrlResolver( this.iconUrlResolver ).
+                    setLocaleMessageResolver( new LocaleMessageResolver( this.localeService, applicationKey ) ).
+                    build() );
             }
         }
         return json;
@@ -440,7 +466,15 @@ public final class ApplicationResource
             final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( applicationKey );
 
             final ApplicationDescriptor appDescriptor = applicationDescriptorService.get( applicationKey );
-            return new ApplicationJson( application, localApplication, appDescriptor, siteDescriptor, authDescriptor, iconUrlResolver );
+            return ApplicationJson.create().
+                setApplication( application ).
+                setLocal( localApplication ).
+                setApplicationDescriptor( appDescriptor ).
+                setSiteDescriptor( siteDescriptor ).
+                setAuthDescriptor( authDescriptor ).
+                setIconUrlResolver( this.iconUrlResolver ).
+                setLocaleMessageResolver( new LocaleMessageResolver( this.localeService, applicationKey ) ).
+                build();
         }
         return null;
     }
@@ -462,7 +496,16 @@ public final class ApplicationResource
                 final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( applicationKey );
                 final boolean localApplication = this.applicationService.isLocalApplication( applicationKey );
                 final ApplicationDescriptor appDescriptor = this.applicationDescriptorService.get( applicationKey );
-                json.add( application, localApplication, appDescriptor, siteDescriptor, authDescriptor, iconUrlResolver );
+
+                json.add( ApplicationJson.create().
+                    setApplication( application ).
+                    setLocal( localApplication ).
+                    setApplicationDescriptor( appDescriptor ).
+                    setSiteDescriptor( siteDescriptor ).
+                    setAuthDescriptor( authDescriptor ).
+                    setIconUrlResolver( this.iconUrlResolver ).
+                    setLocaleMessageResolver( new LocaleMessageResolver( this.localeService, applicationKey ) ).
+                    build() );
             }
         }
 
