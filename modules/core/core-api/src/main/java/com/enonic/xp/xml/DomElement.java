@@ -3,6 +3,7 @@ package com.enonic.xp.xml;
 import java.util.List;
 import java.util.function.Predicate;
 
+import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CharacterData;
 import org.w3c.dom.Comment;
@@ -108,7 +109,7 @@ public final class DomElement
     public String getAttribute( final String name, final String defValue )
     {
         final String value = getAttribute( name );
-        return value != null ? value : defValue;
+        return StringUtils.isNotBlank( value ) ? value : defValue;
     }
 
     public <T> T getAttributeAs( final String name, final Class<T> type, final T defValue )
