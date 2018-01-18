@@ -54,6 +54,7 @@ public class XmlMacroDescriptorParserTest
         assertEquals( "myapplication:mymacro", result.getKey().toString() );
         assertEquals( "My macro", result.getDisplayName() );
         assertEquals( "key.display-name", result.getDisplayNameI18nKey() );
+        assertEquals( "key.description", result.getDescriptionI18nKey() );
 
         assertEquals( "This macro is a test", result.getDescription() );
 

@@ -150,7 +150,7 @@ public class MacroResourceTest
             build();
 
         final MacroDescriptor macroDescriptor1 = newMacroDescriptor( "my-app1:macro1", "A macro", "key.a.display-name", descriptorForm );
-        final MacroDescriptor macroDescriptor2 = newMacroDescriptor( "my-app2:macro2", "B macro", "key.b.display-name" );
+        final MacroDescriptor macroDescriptor2 = newMacroDescriptor( "my-app2:macro2", "B macro", "key.b.display-name", "key.description" );
         final MacroDescriptor macroDescriptor3 = newMacroDescriptor( "my-app3:macro3", "C macro", "key.c.display-name" );
 
         Mockito.when( this.macroDescriptorService.getByApplication( ApplicationKey.SYSTEM ) ).thenReturn(
@@ -163,6 +163,7 @@ public class MacroResourceTest
         final MessageBundle messageBundle = Mockito.mock( MessageBundle.class );
         Mockito.when( messageBundle.localize( "key.label" ) ).thenReturn( "translated.label" );
         Mockito.when( messageBundle.localize( "key.help-text" ) ).thenReturn( "translated.helpText" );
+        Mockito.when( messageBundle.localize( "key.description" ) ).thenReturn( "translated.description" );
         Mockito.when( messageBundle.localize( "key.a.display-name" ) ).thenReturn( "translated.A.displayName" );
         Mockito.when( messageBundle.localize( "key.b.display-name" ) ).thenReturn( "translated.B.displayName" );
         Mockito.when( messageBundle.localize( "key.c.display-name" ) ).thenReturn( "translated.C.displayName" );
@@ -241,6 +242,23 @@ public class MacroResourceTest
         final MacroDescriptor macroDescriptor = MacroDescriptor.create().
             key( MacroKey.from( key ) ).
             description( "my description" ).
+            displayName( name ).
+            displayNameI18nKey( nameI18nKey ).
+            form( config ).
+            build();
+
+        return macroDescriptor;
+    }
+
+    private MacroDescriptor newMacroDescriptor( final String key, final String name, final String nameI18nKey,
+                                                final String descriptionI18nKey )
+    {
+        final Form config = Form.create().build();
+
+        final MacroDescriptor macroDescriptor = MacroDescriptor.create().
+            key( MacroKey.from( key ) ).
+            description( "my description" ).
+            descriptionI18nKey( descriptionI18nKey ).
             displayName( name ).
             displayNameI18nKey( nameI18nKey ).
             form( config ).

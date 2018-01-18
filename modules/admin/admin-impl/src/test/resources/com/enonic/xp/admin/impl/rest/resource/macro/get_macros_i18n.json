@@ -30,7 +30,7 @@
       "name": "macro1"
     },
     {
-      "description": "my description",
+      "description": "translated.description",
       "displayName": "translated.B.displayName",
       "form": {
         "formItems": []
