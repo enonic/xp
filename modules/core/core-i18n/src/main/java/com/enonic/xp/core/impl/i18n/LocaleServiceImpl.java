@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
@@ -25,6 +26,8 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceKeys;
 import com.enonic.xp.resource.ResourceService;
 
+import static java.util.stream.Collectors.toSet;
+import static org.apache.commons.lang.StringUtils.substringBefore;
 import static org.apache.commons.lang.StringUtils.substringBetween;
 
 @Component(immediate = true)
@@ -83,6 +86,38 @@ public final class LocaleServiceImpl
             }
         }
         return new LinkedHashSet<>( locales );
+    }
+
+    @Override
+    public Locale getSupportedLocale( final List<Locale> preferredLocales, final ApplicationKey applicationKey,
+                                      final String... bundleNames )
+    {
+        if ( preferredLocales == null || preferredLocales.isEmpty() )
+        {
+            return null;
+        }
+
+        final Set<String> supportedLocales = this.getLocales( applicationKey, bundleNames ).stream().
+            map( ( l ) -> l.toLanguageTag().toLowerCase() ).
+            collect( toSet() );
+
+        for ( Locale locale : preferredLocales )
+        {
+            final String localeTag = locale.toLanguageTag().toLowerCase();
+            if ( supportedLocales.contains( localeTag ) )
+            {
+                return locale;
+            }
+            if ( localeTag.contains( "-" ) )
+            {
+                final String language = substringBefore( localeTag, "-" );
+                if ( supportedLocales.contains( language ) )
+                {
+                    return new Locale( language ); // language locale supported, e.g. locale=="en-us" && supportedLocales.contains("en")
+                }
+            }
+        }
+        return null;
     }
 
     private Locale localeFromResource( final String resourceName )

@@ -9,6 +9,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.url.AssetUrlParams;
+import com.enonic.xp.portal.url.ContextPathType;
 import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 import com.enonic.xp.web.vhost.VirtualHost;
@@ -28,6 +29,18 @@ public class PortalUrlServiceImpl_assetUrlTest
 
         final String url = this.service.assetUrl( params );
         assertEquals( "/portal/draft/_/asset/myapplication:31556889864403199/css/my.css", url );
+    }    
+    
+    @Test
+    public void createUrl_withContentPath()
+    {
+        final AssetUrlParams params = new AssetUrlParams().
+            portalRequest( this.portalRequest ).
+            contextPathType( ContextPathType.RELATIVE.getValue() ).
+            path( "css/my.css" );
+
+        final String url = this.service.assetUrl( params );
+        assertEquals( "/portal/draft/context/path/_/asset/myapplication:31556889864403199/css/my.css", url );
     }
 
     @Test
