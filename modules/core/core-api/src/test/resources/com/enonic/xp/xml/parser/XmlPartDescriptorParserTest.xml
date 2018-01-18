@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <part xmlns="urn:enonic:xp:model:1.0">
-  <display-name>A Part</display-name>
+  <display-name i18n="key.display-name">A Part</display-name>
   <config>
     <input type="Double" name="width">
       <label i18n="key.label">Column width</label>
