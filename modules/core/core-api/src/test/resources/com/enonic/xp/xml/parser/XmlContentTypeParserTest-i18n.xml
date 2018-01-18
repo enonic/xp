@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<content-type xmlns="urn:enonic:xp:model:1.0">
+  <display-name i18n="translated.display-name">Content display name</display-name>
+  <description>description</description>
+  <super-type>base:structured</super-type>
+  <form>
+    <input type="TextLine" name="textLine">
+      <label i18n="translated.label">Text Line</label>
+      <immutable>false</immutable>
+      <indexed>false</indexed>
+      <help-text i18n="translated.help-text">Help Text</help-text>
+    </input>
+  </form>
+</content-type>

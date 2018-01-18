@@ -9,7 +9,7 @@ final class PropertySetValueType
     }
 
     @Override
-    Value fromJsonValue( final Object object )
+    public Value fromJsonValue( final Object object )
     {
         return ValueFactory.newPropertySet( convertNullSafe( object ) );
     }

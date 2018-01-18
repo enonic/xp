@@ -16,6 +16,8 @@ public abstract class BaseSchema<T extends BaseSchemaName>
 
     final String displayName;
 
+    final String displayNameI18nKey;
+
     final String description;
 
     final Instant createdTime;
@@ -33,6 +35,7 @@ public abstract class BaseSchema<T extends BaseSchemaName>
         this.name = (T) builder.name;
         this.displayName =
             builder.displayName == null || builder.displayName.trim().isEmpty() ? builder.name.getLocalName() : builder.displayName;
+        this.displayNameI18nKey = builder.displayNameI18nKey;
         this.description = builder.description;
         this.createdTime = builder.createdTime;
         this.modifiedTime = builder.modifiedTime;
@@ -49,6 +52,11 @@ public abstract class BaseSchema<T extends BaseSchemaName>
     public String getDisplayName()
     {
         return displayName;
+    }
+
+    public String getDisplayNameI18nKey()
+    {
+        return displayNameI18nKey;
     }
 
     public String getDescription()
@@ -87,6 +95,8 @@ public abstract class BaseSchema<T extends BaseSchemaName>
 
         private String displayName;
 
+        private String displayNameI18nKey;
+
         private String description;
 
         private Instant createdTime;
@@ -108,6 +118,7 @@ public abstract class BaseSchema<T extends BaseSchemaName>
             Preconditions.checkNotNull( schema, "schema cannot be null" );
             this.name = (SCHEMA_NAME) schema.name;
             this.displayName = schema.displayName;
+            this.displayNameI18nKey = schema.displayNameI18nKey;
             this.description = schema.description;
             this.createdTime = schema.createdTime;
             this.modifiedTime = schema.modifiedTime;
@@ -130,6 +141,12 @@ public abstract class BaseSchema<T extends BaseSchemaName>
         public T displayName( String value )
         {
             this.displayName = value;
+            return getThis();
+        }
+
+        public T displayNameI18nKey( String value )
+        {
+            this.displayNameI18nKey = value;
             return getThis();
         }
 

@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.junit.After;
+import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -48,8 +49,8 @@ public class LocalizeNoHttpTest
 
         final MessageBundle bundle = Mockito.mock( MessageBundle.class, (Answer) this::answer );
         Mockito.when( localeService.getBundle( eq( ApplicationKey.from( "com.enonic.myapplication" ) ), Mockito.any( Locale.class ),
-                                               Mockito.any( String[].class ) ) ).
-            thenAnswer( mock -> bundle );
+                                               Matchers.<String>anyVararg() ) ).
+            thenReturn( bundle );
 
         addService( LocaleService.class, localeService );
     }

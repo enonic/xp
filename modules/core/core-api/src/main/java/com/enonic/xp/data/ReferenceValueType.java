@@ -11,7 +11,7 @@ final class ReferenceValueType
     }
 
     @Override
-    Value fromJsonValue( final Object object )
+    public Value fromJsonValue( final Object object )
     {
         return ValueFactory.newReference( convertNullSafe( object ) );
     }

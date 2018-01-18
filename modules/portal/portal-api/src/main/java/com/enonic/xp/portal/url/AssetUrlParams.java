@@ -36,6 +36,12 @@ public final class AssetUrlParams
     }
 
     @Override
+    protected ContextPathType getDefaultContextPath()
+    {
+        return ContextPathType.VHOST;
+    }
+
+    @Override
     public AssetUrlParams setAsMap( final Multimap<String, String> map )
     {
         super.setAsMap( map );

@@ -9,7 +9,7 @@ final class LongValueType
     }
 
     @Override
-    Value fromJsonValue( final Object object )
+    public Value fromJsonValue( final Object object )
     {
         return ValueFactory.newLong( convertNullSafe( object ) );
     }
