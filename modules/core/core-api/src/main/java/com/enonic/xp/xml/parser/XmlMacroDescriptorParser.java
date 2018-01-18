@@ -23,6 +23,9 @@ public final class XmlMacroDescriptorParser
     {
         assertTagName( root, "macro" );
         this.builder.displayName( root.getChildValue( "display-name" ) );
+        this.builder.displayNameI18nKey(
+            root.getChild( "display-name" ) != null ? root.getChild( "display-name" ).getAttribute( "i18n" ) : null );
+
         this.builder.description( root.getChildValue( "description" ) );
 
         final XmlFormMapper mapper = new XmlFormMapper( this.currentApplication );

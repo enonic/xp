@@ -53,6 +53,8 @@ public class XmlMacroDescriptorParserTest
         final MacroDescriptor result = this.builder.build();
         assertEquals( "myapplication:mymacro", result.getKey().toString() );
         assertEquals( "My macro", result.getDisplayName() );
+        assertEquals( "key.display-name", result.getDisplayNameI18nKey() );
+
         assertEquals( "This macro is a test", result.getDescription() );
 
         assertEquals( 3, result.getForm().size() );

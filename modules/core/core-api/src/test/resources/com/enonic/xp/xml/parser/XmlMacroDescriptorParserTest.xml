@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <macro xmlns="urn:enonic:xp:model:1.0">
-  <display-name>My macro</display-name>
+  <display-name i18n="key.display-name">My macro</display-name>
   <description>This macro is a test</description>
   <form>
     <input type="Date" name="myDate">

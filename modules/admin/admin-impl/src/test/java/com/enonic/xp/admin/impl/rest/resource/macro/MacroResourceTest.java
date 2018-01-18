@@ -20,7 +20,11 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
+import com.enonic.xp.form.Input;
+import com.enonic.xp.i18n.LocaleService;
+import com.enonic.xp.i18n.MessageBundle;
 import com.enonic.xp.icon.Icon;
+import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroDescriptorService;
 import com.enonic.xp.macro.MacroDescriptors;
@@ -50,6 +54,8 @@ public class MacroResourceTest
 
     private ContentService contentService;
 
+    private LocaleService localeService;
+
     private MacroResource macroResource;
 
     @Override
@@ -59,12 +65,14 @@ public class MacroResourceTest
         this.macroProcessorFactory = Mockito.mock( MacroProcessorFactory.class );
         this.portalUrlService = Mockito.mock( PortalUrlService.class );
         this.contentService = Mockito.mock( ContentService.class );
+        this.localeService = Mockito.mock( LocaleService.class );
 
         this.macroResource = new MacroResource();
         macroResource.setMacroDescriptorService( this.macroDescriptorService );
         macroResource.setMacroProcessorFactory( this.macroProcessorFactory );
         macroResource.setPortalUrlService( this.portalUrlService );
         macroResource.setContentService( this.contentService );
+        macroResource.setLocaleService( this.localeService );
 
         return macroResource;
     }
@@ -127,6 +135,48 @@ public class MacroResourceTest
     }
 
     @Test
+    public void testGetByApps_i18n()
+        throws Exception
+    {
+        final Form descriptorForm = Form.create().
+            addFormItem( Input.create().
+                name( "columns" ).
+                maximizeUIInputWidth( true ).
+                label( "Columns" ).
+                labelI18nKey( "key.label" ).
+                helpTextI18nKey( "key.help-text" ).
+                inputType( InputTypeName.DOUBLE ).
+                build() ).
+            build();
+
+        final MacroDescriptor macroDescriptor1 = newMacroDescriptor( "my-app1:macro1", "A macro", "key.a.display-name", descriptorForm );
+        final MacroDescriptor macroDescriptor2 = newMacroDescriptor( "my-app2:macro2", "B macro", "key.b.display-name" );
+        final MacroDescriptor macroDescriptor3 = newMacroDescriptor( "my-app3:macro3", "C macro", "key.c.display-name" );
+
+        Mockito.when( this.macroDescriptorService.getByApplication( ApplicationKey.SYSTEM ) ).thenReturn(
+            MacroDescriptors.from( macroDescriptor1 ) );
+        Mockito.when( this.macroDescriptorService.getByApplication( ApplicationKey.from( "appKey1" ) ) ).thenReturn(
+            MacroDescriptors.from( macroDescriptor2 ) );
+        Mockito.when( this.macroDescriptorService.getByApplication( ApplicationKey.from( "appKey2" ) ) ).thenReturn(
+            MacroDescriptors.from( macroDescriptor3 ) );
+
+        final MessageBundle messageBundle = Mockito.mock( MessageBundle.class );
+        Mockito.when( messageBundle.localize( "key.label" ) ).thenReturn( "translated.label" );
+        Mockito.when( messageBundle.localize( "key.help-text" ) ).thenReturn( "translated.helpText" );
+        Mockito.when( messageBundle.localize( "key.a.display-name" ) ).thenReturn( "translated.A.displayName" );
+        Mockito.when( messageBundle.localize( "key.b.display-name" ) ).thenReturn( "translated.B.displayName" );
+        Mockito.when( messageBundle.localize( "key.c.display-name" ) ).thenReturn( "translated.C.displayName" );
+
+        Mockito.when( this.localeService.getBundle( Mockito.any(), Mockito.any() ) ).thenReturn( messageBundle );
+
+        String response = request().
+            path( "macro/getByApps" ).
+            entity( "{\"appKeys\": [\"appKey1\", \"appKey2\"]}", MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+        assertJson( "get_macros_i18n.json", response );
+    }
+
+    @Test
     public void testPreview()
         throws Exception
     {
@@ -186,18 +236,29 @@ public class MacroResourceTest
         assertJson( "preview_string_macro_result.json", response );
     }
 
-    private MacroDescriptor newMacroDescriptor( final String key, final String name )
+    private MacroDescriptor newMacroDescriptor( final String key, final String name, final String nameI18nKey, final Form config )
     {
-        final Form config = Form.create().build();
-
         final MacroDescriptor macroDescriptor = MacroDescriptor.create().
             key( MacroKey.from( key ) ).
             description( "my description" ).
             displayName( name ).
+            displayNameI18nKey( nameI18nKey ).
             form( config ).
             build();
 
         return macroDescriptor;
+    }
+
+    private MacroDescriptor newMacroDescriptor( final String key, final String name, final String nameI18nKey )
+    {
+        final Form config = Form.create().build();
+
+        return this.newMacroDescriptor( key, name, nameI18nKey, config );
+    }
+
+    private MacroDescriptor newMacroDescriptor( final String key, final String name )
+    {
+        return this.newMacroDescriptor( key, name, null );
     }
 
     public static Site newSite()
