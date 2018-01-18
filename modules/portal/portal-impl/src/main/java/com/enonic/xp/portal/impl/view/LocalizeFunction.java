@@ -19,6 +19,8 @@ public final class LocalizeFunction
 
     final static String NO_MATCHING_BUNDLE = "no localization bundle found in application ''{0}''";
 
+    private final static String NOT_TRANSLATED_MESSAGE = "NOT_TRANSLATED";
+
     @Override
     public String getName()
     {
@@ -36,8 +38,9 @@ public final class LocalizeFunction
         {
             return MessageFormat.format( NO_MATCHING_BUNDLE, localizeParams.getApplicationKey() );
         }
+        final String localizedMessage = bundle.localize( localizeParams.getKey(), localizeParams.getParams() );
 
-        return bundle.localize( localizeParams.getKey(), localizeParams.getParams() );
+        return localizedMessage != null ? localizedMessage : NOT_TRANSLATED_MESSAGE;
     }
 
     @Reference

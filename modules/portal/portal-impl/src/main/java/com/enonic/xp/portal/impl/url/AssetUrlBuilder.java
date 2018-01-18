@@ -7,7 +7,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.url.AssetUrlParams;
 
 final class AssetUrlBuilder
-    extends RootContentUrlBuilder<AssetUrlParams>
+    extends GenericEndpointUrlBuilder<AssetUrlParams>
 {
     public AssetUrlBuilder()
     {
@@ -18,9 +18,6 @@ final class AssetUrlBuilder
     protected void buildUrl( final StringBuilder url, final Multimap<String, String> params )
     {
         super.buildUrl( url, params );
-        appendPart( url, this.portalRequest.getContentPath().toString() );
-        appendPart( url, "_" );
-        appendPart( url, "asset" );
 
         Application application = resolveApplication();
         String applicationKey = application.getKey().toString();

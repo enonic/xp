@@ -112,6 +112,31 @@ public class XmlContentTypeParserTest
         assertOptionSetResult();
     }
 
+    @Test
+    public void testI18nParse()
+        throws Exception
+    {
+        parse( this.parser, "-i18n.xml" );
+        final ContentType result = this.builder.build();
+
+        assertEquals( "translated.display-name", result.getDisplayNameI18nKey() );
+
+    }
+
+    @Test
+    public void testI18n_formInput()
+        throws Exception
+    {
+        parse( this.parser, "-i18n.xml" );
+        final ContentType result = this.builder.build();
+
+        final Input input = (Input) result.getForm().getFormItem( "textLine" );
+
+        assertEquals( "translated.label", input.getLabelI18nKey() );
+        assertEquals( "translated.help-text", input.getHelpTextI18nKey() );
+
+    }
+
     private void assertOptionSetResult()
         throws Exception
     {

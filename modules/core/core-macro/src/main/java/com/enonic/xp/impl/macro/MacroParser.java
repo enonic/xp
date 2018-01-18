@@ -269,6 +269,10 @@ public final class MacroParser
                         {
                             throw new ParseException( "Name cannot start with underscore '" + c + "' at position " + p );
                         }
+                        if ( c == '-' )
+                        {
+                            throw new ParseException( "Name cannot start with a hyphen character '" + c + "' at position " + p );
+                        }
                         return Token.NAME;
                     }
                     throw new ParseException( "Invalid character '" + c + "' at position " + p );
@@ -320,7 +324,7 @@ public final class MacroParser
 
     private boolean isNameChar( final char c )
     {
-        return Character.isLetterOrDigit( c ) || c == '_';
+        return Character.isLetterOrDigit( c ) || c == '_' || c == '-';
     }
 
     MacroParser debugMode()

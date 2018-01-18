@@ -51,6 +51,7 @@ public class MacroParserTest
         assertValidMacro( true, "[macro_name][macro_in_body/][/macro_name]" );
         assertValidMacro( true, "[macro_name][macro_in_body/][/macro_in_body][/macro_name]" );
         assertValidMacro( true, "[macro_name][macro_in_body/][/macro[/macro_name]" );
+        assertValidMacro( true, "[macro-na-me]with dashes in name[/macro-na-me]" );
 
         assertValidMacro( false, "1x" );
         assertValidMacro( false, "[macroName" );
@@ -61,6 +62,7 @@ public class MacroParserTest
         assertValidMacro( false, "[]ooo[/]" );
         assertValidMacro( false, "[/]" );
         assertValidMacro( false, "[_/]" );
+        assertValidMacro( false, "[-/]" );
     }
 
     @Test

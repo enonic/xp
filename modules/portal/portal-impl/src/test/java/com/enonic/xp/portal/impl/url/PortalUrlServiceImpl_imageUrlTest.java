@@ -9,6 +9,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.portal.impl.ContentFixtures;
+import com.enonic.xp.portal.url.ContextPathType;
 import com.enonic.xp.portal.url.ImageUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
@@ -29,6 +30,20 @@ public class PortalUrlServiceImpl_imageUrlTest
 
         final String url = this.service.imageUrl( params );
         assertEquals( "/portal/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent", url );
+    }
+
+    @Test
+    public void createUrl_withoutContentPath()
+    {
+        this.portalRequest.setContent( createContent() );
+
+        final ImageUrlParams params = new ImageUrlParams().
+            portalRequest( this.portalRequest ).
+            contextPathType( ContextPathType.VHOST.getValue() ).
+            scale( "max(300)" );
+
+        final String url = this.service.imageUrl( params );
+        assertEquals( "/portal/draft/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent", url );
     }
 
     @Test
