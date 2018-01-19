@@ -6,6 +6,7 @@ import java.util.stream.StreamSupport;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.form.FormOptionSet;
 
 public class FormOptionSetJson
@@ -19,13 +20,13 @@ public class FormOptionSetJson
 
     private final List<FormOptionSetOptionJson> options;
 
-    public FormOptionSetJson( final FormOptionSet formOptionSet )
+    public FormOptionSetJson( final FormOptionSet formOptionSet, final LocaleMessageResolver localeMessageResolver )
     {
         this.formOptionSet = formOptionSet;
         this.occurrences = new OccurrencesJson( formOptionSet.getOccurrences() );
         this.multiselection = new OccurrencesJson( formOptionSet.getMultiselection() );
         this.options = StreamSupport.stream( formOptionSet.spliterator(), false ).
-            map( FormOptionSetOptionJson::new ).
+            map( formOptionSetOption -> new FormOptionSetOptionJson( formOptionSetOption, localeMessageResolver ) ).
             collect( Collectors.toList() );
     }
 

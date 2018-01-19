@@ -32,17 +32,21 @@ public class InputJson
 
     private Value defaultValue;
 
-    public InputJson( final Input input )
+/*    public InputJson( final Input input )
     {
         this.input = input;
         this.occurrences = new OccurrencesJson( input.getOccurrences() );
         this.inputType = input.getInputType().toString();
-    }
+    }*/
 
     public InputJson( final Input input, final LocaleMessageResolver localeMessageResolver )
     {
-        this( input );
+        //  this( input );
         this.localeMessageResolver = localeMessageResolver;
+
+        this.input = input;
+        this.occurrences = new OccurrencesJson( input.getOccurrences() );
+        this.inputType = input.getInputType().toString();
     }
 
     @JsonIgnore
