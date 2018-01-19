@@ -1,7 +1,24 @@
 package com.enonic.xp.admin.impl.rest.resource.schema.mixin;
 
+import java.awt.image.BufferedImage;
+import java.io.InputStream;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+
+import javax.ws.rs.core.Response;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.mockito.Mockito;
+
+import com.google.common.io.ByteStreams;
+import com.google.common.io.Resources;
+
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.form.Input;
+import com.enonic.xp.i18n.LocaleService;
+import com.enonic.xp.i18n.MessageBundle;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.jaxrs.impl.MockRestResponse;
@@ -9,20 +26,8 @@ import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.schema.mixin.Mixins;
-import com.google.common.io.ByteStreams;
-import com.google.common.io.Resources;
-import org.junit.Assert;
-import org.junit.Test;
-import org.mockito.Mockito;
 
-import javax.ws.rs.core.Response;
-import java.awt.image.BufferedImage;
-import java.io.InputStream;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 public class MixinResourceTest
     extends AdminResourceTestSupport
@@ -37,15 +42,19 @@ public class MixinResourceTest
 
     private MixinService mixinService;
 
+    private LocaleService localeService;
+
     private MixinResource resource;
 
     @Override
     protected Object getResourceInstance()
     {
         mixinService = Mockito.mock( MixinService.class );
+        localeService = Mockito.mock( LocaleService.class );
 
         resource = new MixinResource();
         resource.setMixinService( mixinService );
+        resource.setLocaleService( localeService );
 
         return resource;
     }
@@ -65,6 +74,34 @@ public class MixinResourceTest
         String response = request().path( "schema/mixin" ).queryParam( "name", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get().getAsString();
 
         assertJson( "get_mixin.json", response );
+    }
+
+    @Test
+    public final void test_get_mixin_i18n()
+        throws Exception
+    {
+        Mixin mixin = Mixin.create().
+            createdTime( LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC ) ).
+            displayNameI18nKey( "key.display-name" ).
+            descriptionI18nKey( "key.description" ).
+            name( MY_MIXIN_QUALIFIED_NAME_1.toString() ).addFormItem(
+            Input.create().name( MY_MIXIN_INPUT_NAME_1 ).inputType( InputTypeName.TEXT_LINE ).label( "Line Text 1" ).required(
+                true ).labelI18nKey( "key.label" ).helpText( "Help text line 1" ).helpTextI18nKey( "key.help-text" ).required(
+                true ).build() ).build();
+
+        Mockito.when( mixinService.getByName( Mockito.isA( MixinName.class ) ) ).thenReturn( mixin );
+
+        final MessageBundle messageBundle = Mockito.mock( MessageBundle.class );
+        Mockito.when( messageBundle.localize( "key.label" ) ).thenReturn( "translated.label" );
+        Mockito.when( messageBundle.localize( "key.help-text" ) ).thenReturn( "translated.helpText" );
+        Mockito.when( messageBundle.localize( "key.display-name" ) ).thenReturn( "translated.displayName" );
+        Mockito.when( messageBundle.localize( "key.description" ) ).thenReturn( "translated.description" );
+
+        Mockito.when( this.localeService.getBundle( Mockito.any(), Mockito.any() ) ).thenReturn( messageBundle );
+
+        String response = request().path( "schema/mixin" ).queryParam( "name", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get().getAsString();
+
+        assertJson( "get_mixin_i18n.json", response );
     }
 
     @Test

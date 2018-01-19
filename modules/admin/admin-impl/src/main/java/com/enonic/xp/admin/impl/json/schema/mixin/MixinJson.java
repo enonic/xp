@@ -2,8 +2,13 @@ package com.enonic.xp.admin.impl.json.schema.mixin;
 
 import java.time.Instant;
 
+import org.apache.commons.lang.StringUtils;
+
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.admin.impl.json.ItemJson;
 import com.enonic.xp.admin.impl.json.form.FormJson;
+import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.mixin.MixinIconUrlResolver;
 import com.enonic.xp.schema.mixin.Mixin;
 
@@ -14,9 +19,14 @@ public class MixinJson
 
     private final String iconUrl;
 
-    public MixinJson( final Mixin mixin, final MixinIconUrlResolver iconUrlResolver )
+    private final LocaleMessageResolver localeMessageResolver;
+
+    public MixinJson( final Mixin mixin, final MixinIconUrlResolver iconUrlResolver, final LocaleMessageResolver localeMessageResolver )
     {
+        Preconditions.checkNotNull( localeMessageResolver );
+
         this.mixin = mixin;
+        this.localeMessageResolver = localeMessageResolver;
         this.iconUrl = iconUrlResolver.resolve( mixin );
     }
 
@@ -27,12 +37,26 @@ public class MixinJson
 
     public String getDisplayName()
     {
-        return mixin.getDisplayName();
+        if ( StringUtils.isNotBlank( mixin.getDisplayNameI18nKey() ) )
+        {
+            return localeMessageResolver.localizeMessage( mixin.getDisplayNameI18nKey(), mixin.getDisplayName() );
+        }
+        else
+        {
+            return mixin.getDisplayName();
+        }
     }
 
     public String getDescription()
     {
-        return mixin.getDescription();
+        if ( StringUtils.isNotBlank( mixin.getDescriptionI18nKey() ) )
+        {
+            return localeMessageResolver.localizeMessage( mixin.getDescriptionI18nKey(), mixin.getDescription() );
+        }
+        else
+        {
+            return mixin.getDescription();
+        }
     }
 
     public Instant getCreatedTime()
@@ -52,7 +76,7 @@ public class MixinJson
 
     public FormJson getForm()
     {
-        return new FormJson( mixin.getForm() );
+        return new FormJson( mixin.getForm(), this.localeMessageResolver );
     }
 
     public String getCreator()

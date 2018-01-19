@@ -193,8 +193,8 @@
 
   <xs:complexType name="mixin">
     <xs:sequence>
-      <xs:element minOccurs="0" name="display-name" type="xs:string"/>
-      <xs:element minOccurs="0" name="description" type="xs:string"/>
+      <xs:element minOccurs="0" name="display-name" type="i18n"/>
+      <xs:element minOccurs="0" name="description" type="i18n"/>
       <xs:element minOccurs="0" name="items" type="formItems"/>
     </xs:sequence>
   </xs:complexType>

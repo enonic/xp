@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <mixin xmlns="urn:enonic:xp:model:1.0">
-  <display-name>display name</display-name>
-  <description>description</description>
+  <display-name i18n="key.display-name">display name</display-name>
+  <description i18n="key.description">description</description>
   <items>
     <item-set name="mySet">
       <immutable>false</immutable>
