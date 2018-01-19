@@ -72,13 +72,13 @@ public class ClusterManagerImpl
 
     private void activate()
     {
-        this.providers.forEach( ClusterProvider::activate );
+        this.providers.forEach( ClusterProvider::enable );
     }
 
     private void deactivate()
     {
         LOG.info( "Deactivate all providers" );
-        this.providers.forEach( ClusterProvider::deactivate );
+        this.providers.forEach( ClusterProvider::disable );
     }
 
     private void registerProvider()

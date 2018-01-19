@@ -8,7 +8,7 @@ public interface ClusterProvider
 
     ClusterNodes getNodes();
 
-    void activate();
+    void enable();
 
-    void deactivate();
+    void disable();
 }

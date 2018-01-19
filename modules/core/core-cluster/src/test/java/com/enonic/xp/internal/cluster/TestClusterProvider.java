@@ -62,7 +62,7 @@ class TestClusterProvider
     }
 
     @Override
-    public void activate()
+    public void enable()
     {
         if ( !active )
         {
@@ -71,7 +71,7 @@ class TestClusterProvider
     }
 
     @Override
-    public void deactivate()
+    public void disable()
     {
         if ( active )
         {

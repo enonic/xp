@@ -1,8 +1,6 @@
 package com.enonic.xp.elasticsearch.impl;
 
 import java.util.Hashtable;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
@@ -18,10 +16,16 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.cluster.ClusterNodes;
+import com.enonic.xp.cluster.ClusterProvider;
+import com.enonic.xp.cluster.ClusterProviderHealth;
+import com.enonic.xp.cluster.ClusterProviderId;
+
 @Component(immediate = true)
 public final class ClientActivator
+    implements ClusterProvider
 {
-    private final static long CHECK_INTERVAL_MS = 1000L;
+    private final ClusterProviderId id = ClusterProviderId.from( "elasticsearch" );
 
     private final String CLUSTER_HEALTH_TIMEOUT = "5s";
 
@@ -29,53 +33,55 @@ public final class ClientActivator
 
     private BundleContext context;
 
-    private final Timer timer;
-
     protected ServiceRegistration<Client> reg;
 
     private final static Logger LOG = LoggerFactory.getLogger( ClientActivator.class );
 
-    public ClientActivator()
-    {
-        this.timer = new Timer();
-    }
-
     @Activate
+    @SuppressWarnings("WeakerAccess")
     public void activate( final BundleContext context )
     {
         this.context = context;
         this.reg = null;
-
-        registerClientIfNotRed();
-        this.timer.schedule( new TimerTask()
-        {
-            @Override
-            public void run()
-            {
-                registerClientIfNotRed();
-            }
-        }, CHECK_INTERVAL_MS, CHECK_INTERVAL_MS );
     }
 
     @Deactivate
+    @SuppressWarnings("unused")
     public void deactivate()
     {
-        this.timer.cancel();
         unregisterClient();
     }
 
-    protected void registerClientIfNotRed()
+    @Override
+    public ClusterProviderId getId()
     {
-        if ( isRedState() )
-        {
-            unregisterClient();
-        }
-        else
-        {
-            registerClient();
-        }
+        return id;
     }
 
+    @Override
+    public ClusterProviderHealth getHealth()
+    {
+        final ClusterHealthResponse healthResponse = doGetHealth();
+        return getProviderState( healthResponse.getStatus() );
+    }
+
+    @Override
+    public ClusterNodes getNodes()
+    {
+        return null;
+    }
+
+    @Override
+    public void enable()
+    {
+        registerClient();
+    }
+
+    @Override
+    public void disable()
+    {
+        unregisterClient();
+    }
 
     private void registerClient()
     {
@@ -110,10 +116,7 @@ public final class ClientActivator
     {
         try
         {
-            final ClusterHealthResponse response = this.node.client().admin().cluster().health( new ClusterHealthRequest().
-                timeout( CLUSTER_HEALTH_TIMEOUT ).
-                waitForYellowStatus() ).
-                actionGet();
+            final ClusterHealthResponse response = doGetHealth();
 
             final boolean isRed = response.getStatus() == ClusterHealthStatus.RED;
 
@@ -130,6 +133,30 @@ public final class ClientActivator
             return true;
         }
     }
+
+    private ClusterHealthResponse doGetHealth()
+    {
+        return this.node.client().admin().cluster().health( new ClusterHealthRequest().
+            timeout( CLUSTER_HEALTH_TIMEOUT ).
+            waitForYellowStatus() ).
+            actionGet();
+    }
+
+    private ClusterProviderHealth getProviderState( final ClusterHealthStatus status )
+    {
+        if ( status == ClusterHealthStatus.RED )
+        {
+            return ClusterProviderHealth.RED;
+        }
+
+        if ( status == ClusterHealthStatus.YELLOW )
+        {
+            return ClusterProviderHealth.YELLOW;
+        }
+
+        return ClusterProviderHealth.GREEN;
+    }
+
 
     @Reference
     public void setNode( final Node node )
