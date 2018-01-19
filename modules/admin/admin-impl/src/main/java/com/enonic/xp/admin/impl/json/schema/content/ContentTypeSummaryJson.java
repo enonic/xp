@@ -63,7 +63,14 @@ public class ContentTypeSummaryJson
 
     public String getDescription()
     {
-        return contentType.getDescription();
+        if ( StringUtils.isNotBlank( contentType.getDescriptionI18nKey() ) )
+        {
+            return localeMessageResolver.localizeMessage( contentType.getDescriptionI18nKey(), contentType.getDescription() );
+        }
+        else
+        {
+            return contentType.getDescription();
+        }
     }
 
     @Override

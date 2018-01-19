@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <content-type xmlns="urn:enonic:xp:model:1.0">
   <display-name i18n="translated.display-name">Content display name</display-name>
-  <description>description</description>
+  <description i18n="translated.description">description</description>
   <super-type>base:structured</super-type>
   <form>
     <input type="TextLine" name="textLine">
