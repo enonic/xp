@@ -18,6 +18,7 @@ include 'core:core-blobstore'
 include 'core:core-auth'
 include 'core:core-macro'
 include 'core:core-task'
+include 'core:core-cluster'
 
 include 'server:server-config'
 include 'server:server-deploy'

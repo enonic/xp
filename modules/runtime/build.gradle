@@ -80,6 +80,7 @@ addBundle( project( ':core:core-extractor' ), 22 )
 addBundle( project( ':core:core-auth' ), 22 )
 addBundle( project( ':core:core-macro' ), 22 )
 addBundle( project( ':core:core-task' ), 22 )
+addBundle( project( ':core:core-cluster' ), 22 )
 
 // Server bundles
 addBundle( project( ':server:server-config' ), 12 )
