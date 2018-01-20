@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl.index;
 
+import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -24,6 +26,8 @@ import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 import com.enonic.xp.repo.impl.node.FindNodesByQueryCommand;
 import com.enonic.xp.repo.impl.node.PushNodesCommand;
+import com.enonic.xp.repo.impl.repository.IndexNameResolver;
+import com.enonic.xp.repository.IndexSettings;
 import com.enonic.xp.security.SystemConstants;
 
 import static org.junit.Assert.*;
@@ -304,6 +308,37 @@ public class IndexServiceImplTest
             build() );
 
         assertEquals( 2, result.getUpdatedIndexes().size() );
+    }
+
+    @Test
+    public void getIndexSettings_empty()
+        throws Exception
+    {
+        final Map<String, IndexSettings> settingsMap = this.indexService.getIndexSettings( TEST_REPO.getId() );
+
+        final IndexSettings searchIndexSettings = settingsMap.get( IndexNameResolver.resolveSearchIndexName( TEST_REPO.getId() ) );
+        final IndexSettings storageIndexSettings = settingsMap.get( IndexNameResolver.resolveStorageIndexName( TEST_REPO.getId() ) );
+
+        assertNull( searchIndexSettings.getNode().get( "index.invalid_path" ) );
+        assertNull( storageIndexSettings.getNode().get( "index.invalid_path" ) );
+    }
+
+    @Test
+    public void getIndexSettings()
+        throws Exception
+    {
+        this.indexService.updateIndexSettings( UpdateIndexSettingsParams.create().
+            repository( TEST_REPO.getId() ).
+            settings( "{\"index\": {\"number_of_replicas\": 2}}" ).
+            build() );
+
+        final Map<String, IndexSettings> settingsMap = this.indexService.getIndexSettings( TEST_REPO.getId() );
+
+        final IndexSettings searchIndexSettings = settingsMap.get( IndexNameResolver.resolveSearchIndexName( TEST_REPO.getId() ) );
+        final IndexSettings storageIndexSettings = settingsMap.get( IndexNameResolver.resolveStorageIndexName( TEST_REPO.getId() ) );
+
+        assertEquals( "\"2\"", searchIndexSettings.getNode().get( "index.number_of_replicas" ).toString() );
+        assertEquals( "\"2\"", storageIndexSettings.getNode().get( "index.number_of_replicas" ).toString() );
     }
 
 }

@@ -1,10 +1,16 @@
 package com.enonic.xp.admin.impl.rest.resource.status;
 
+import java.util.Map;
 import java.util.Properties;
 
 import org.junit.Test;
+import org.mockito.Mockito;
+
+import com.google.common.collect.Maps;
 
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
+import com.enonic.xp.index.IndexService;
+import com.enonic.xp.repository.IndexSettings;
 import com.enonic.xp.server.ServerInfo;
 import com.enonic.xp.server.VersionInfo;
 
@@ -13,12 +19,17 @@ public class StatusResourceTest
 {
     private Properties serverInfo;
 
+    private IndexService indexService;
+
     @Override
     protected Object getResourceInstance()
     {
         this.serverInfo = new Properties();
+        this.indexService = Mockito.mock( IndexService.class );
+
         final StatusResource resource = new StatusResource();
         resource.info = new ServerInfo( this.serverInfo );
+        resource.setIndexService( this.indexService );
         return resource;
     }
 
@@ -36,5 +47,21 @@ public class StatusResourceTest
 
         final String json = request().path( "/status" ).get().getAsString();
         assertJson( "status_ok.json", json );
+    }
+
+    @Test
+    public void testGetStatus_readonly()
+        throws Exception
+    {
+        final Map<String, IndexSettings> indexSettingsMap = Maps.newHashMap();
+        final Map<String, Object> indexes = Maps.newHashMap();
+
+        indexes.put( "index.blocks.write", false );
+        indexSettingsMap.put( "search-cms-repo", IndexSettings.from( indexes ) );
+
+        Mockito.when( this.indexService.getIndexSettings( Mockito.any() ) ).thenReturn( indexSettingsMap );
+
+        final String json = request().path( "/status" ).get().getAsString();
+        assertJson( "status_readonly.json", json );
     }
 }

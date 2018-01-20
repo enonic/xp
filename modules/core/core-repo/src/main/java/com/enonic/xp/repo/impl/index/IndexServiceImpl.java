@@ -1,9 +1,14 @@
 package com.enonic.xp.repo.impl.index;
 
+import java.util.List;
+import java.util.Map;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
 
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.index.IndexType;
@@ -132,6 +137,20 @@ public class IndexServiceImpl
         }
 
         result.addUpdatedIndex( indexName );
+    }
+
+    @Override
+    public Map<String, IndexSettings> getIndexSettings( final RepositoryId... repositoryIds )
+    {
+        List<String> repoNames = Lists.newArrayList();
+
+        for ( final RepositoryId repositoryId : repositoryIds )
+        {
+            repoNames.add( IndexNameResolver.resolveSearchIndexName( repositoryId ) );
+            repoNames.add( IndexNameResolver.resolveStorageIndexName( repositoryId ) );
+        }
+
+        return this.indexServiceInternal.getIndexSettings( repoNames );
     }
 
     @Override

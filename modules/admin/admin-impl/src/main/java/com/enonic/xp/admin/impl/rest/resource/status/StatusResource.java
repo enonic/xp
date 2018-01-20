@@ -6,15 +6,20 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.index.IndexService;
 import com.enonic.xp.jaxrs.JaxRsComponent;
+import com.enonic.xp.repository.IndexSettings;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.server.ServerInfo;
@@ -25,6 +30,8 @@ public final class StatusResource
     implements JaxRsComponent
 {
     protected ServerInfo info;
+
+    protected IndexService indexService;
 
     public StatusResource()
     {
@@ -37,8 +44,22 @@ public final class StatusResource
     {
         final ObjectNode json = JsonNodeFactory.instance.objectNode();
         new ProductInfoBuilder( this.info ).build( json );
+
         json.set( "context", createContextJson() );
+        json.set( "readonly", createRepoReadOnlyJson() );
         return json;
+    }
+
+    private JsonNode createRepoReadOnlyJson()
+    {
+        final IndexSettings indexSettings =
+            this.indexService.getIndexSettings( ContentConstants.CONTENT_REPO.getId() ).get( "search-cms-repo" );
+
+        final JsonNode writeJsonNode = indexSettings != null ? indexSettings.getNode().get( "index.blocks.write" ) : null;
+
+        final boolean isWritePermission = writeJsonNode != null ? writeJsonNode.booleanValue() : false;
+
+        return JsonNodeFactory.instance.booleanNode( !isWritePermission );
     }
 
     private ObjectNode createContextJson()
@@ -59,5 +80,11 @@ public final class StatusResource
         }
 
         return node;
+    }
+
+    @Reference
+    public void setIndexService( final IndexService indexService )
+    {
+        this.indexService = indexService;
     }
 }

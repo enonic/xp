@@ -66,7 +66,12 @@ public class JsonHelper
     {
         final Map<String, Object> settingsMap = propertyTree.toMap();
 
-        return mapper.valueToTree( settingsMap );
+        return from( settingsMap );
+    }
+
+    public static JsonNode from( final Map<String, Object> settings )
+    {
+        return mapper.valueToTree( settings );
     }
 
     public static JsonNode from( final String json )

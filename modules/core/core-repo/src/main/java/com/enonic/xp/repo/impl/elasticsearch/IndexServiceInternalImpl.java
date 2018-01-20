@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl.elasticsearch;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 
 import org.elasticsearch.ElasticsearchException;
@@ -16,6 +18,7 @@ import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsReques
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.action.admin.indices.open.OpenIndexRequestBuilder;
+import org.elasticsearch.action.admin.indices.settings.get.GetSettingsRequest;
 import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsRequest;
 import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsResponse;
 import org.elasticsearch.action.get.GetRequest;
@@ -24,6 +27,8 @@ import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
+import org.elasticsearch.common.collect.ImmutableOpenMap;
+import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.indices.IndexMissingException;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -31,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Stopwatch;
+import com.google.common.collect.Maps;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodeId;
@@ -62,6 +68,8 @@ public class IndexServiceInternalImpl
     private final static String INDEX_EXISTS_TIMEOUT = "5s";
 
     private final static String CLUSTER_STATE_TIMEOUT = "5s";
+
+    private final static String GET_SETTINGS_TIMEOUT = "5s";
 
     private Client client;
 
@@ -170,6 +178,22 @@ public class IndexServiceInternalImpl
         {
             throw new IndexException( "Failed to update index: " + indexName, e );
         }
+    }
+
+    @Override
+    public Map<String, IndexSettings> getIndexSettings( final Collection<String> indexNames )
+    {
+        final Map<String, IndexSettings> result = Maps.newHashMap();
+
+        final ImmutableOpenMap<String, Settings> settingsMap = this.client.admin().indices().getSettings( new GetSettingsRequest().indices(
+            indexNames != null ? Arrays.copyOf( indexNames.toArray(), indexNames.size(), String[].class ) : null ) ).actionGet(
+            GET_SETTINGS_TIMEOUT ).getIndexToSettings();
+
+        settingsMap.keysIt().forEachRemaining( key -> {
+            result.put( key, IndexSettings.from( (Map) settingsMap.get( key ).getAsMap() ) );
+        } );
+
+        return result;
     }
 
     @Override
