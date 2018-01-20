@@ -46,6 +46,11 @@ public final class UserStore
         return new Builder();
     }
 
+    public static Builder create( UserStore userStore )
+    {
+        return new Builder( userStore );
+    }
+
     public static class Builder
     {
         private UserStoreKey key;
@@ -58,6 +63,14 @@ public final class UserStore
 
         private Builder()
         {
+        }
+
+        private Builder( UserStore userStore )
+        {
+            key = userStore.key;
+            displayName = userStore.displayName;
+            description = userStore.description;
+            authConfig = userStore.authConfig;
         }
 
         public Builder displayName( final String value )
