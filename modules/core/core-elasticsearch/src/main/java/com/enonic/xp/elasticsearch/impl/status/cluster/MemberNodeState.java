@@ -7,16 +7,20 @@ public final class MemberNodeState
 {
     private String address;
 
+    private final String name;
+
     private MemberNodeState( Builder builder )
     {
         super( builder );
         this.address = builder.address;
+        this.name = builder.name;
     }
 
     public ObjectNode toJson()
     {
         final ObjectNode json = super.toJson();
         json.put( "address", this.address );
+        json.put( "name", this.name );
         return json;
     }
 
@@ -30,6 +34,8 @@ public final class MemberNodeState
     {
         private String address;
 
+        private String name;
+
         private Builder()
         {
         }
@@ -37,6 +43,12 @@ public final class MemberNodeState
         public Builder address( final String address )
         {
             this.address = address;
+            return this;
+        }
+
+        public Builder name( final String name )
+        {
+            this.name = name;
             return this;
         }
 

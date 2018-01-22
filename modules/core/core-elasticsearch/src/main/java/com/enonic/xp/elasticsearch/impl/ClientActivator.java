@@ -5,7 +5,11 @@ import java.util.Hashtable;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus;
+import org.elasticsearch.action.admin.cluster.state.ClusterStateRequest;
+import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.client.Requests;
+import org.elasticsearch.cluster.node.DiscoveryNodes;
 import org.elasticsearch.node.Node;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -68,7 +72,8 @@ public final class ClientActivator
     @Override
     public ClusterNodes getNodes()
     {
-        return null;
+        final DiscoveryNodes members = getMembers();
+        return ClusterNodesFactory.create( members );
     }
 
     @Override
@@ -140,6 +145,19 @@ public final class ClientActivator
             timeout( CLUSTER_HEALTH_TIMEOUT ).
             waitForYellowStatus() ).
             actionGet();
+    }
+
+    private DiscoveryNodes getMembers()
+    {
+        final ClusterStateRequest clusterStateRequest = Requests.clusterStateRequest().
+            clear().
+            nodes( true ).
+            indices( "" ).
+            masterNodeTimeout( CLUSTER_HEALTH_TIMEOUT );
+
+        final ClusterStateResponse response = this.node.client().admin().cluster().state( clusterStateRequest ).actionGet();
+
+        return response.getState().getNodes();
     }
 
     private ClusterProviderHealth getProviderState( final ClusterHealthStatus status )

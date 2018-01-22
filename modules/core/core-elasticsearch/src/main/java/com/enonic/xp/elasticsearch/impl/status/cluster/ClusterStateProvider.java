@@ -93,6 +93,7 @@ public final class ClusterStateProvider
                 id( node.id() ).
                 hostName( node.getHostName() ).
                 version( node.getVersion().toString() ).
+                name( node.getName() ).
                 master( node.getId().equals( members.getMasterNodeId() ) ).build();
 
             results.add( memberNodeState );

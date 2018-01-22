@@ -13,14 +13,16 @@
       "id": "nodeId2",
       "hostName": "hostName2",
       "version": "1.0.0",
-      "address": "local[10.10.10.2]"
+      "address": "local[10.10.10.2]",
+      "name": "nodeName2"
     },
     {
       "isMaster": false,
       "id": "nodeId1",
       "hostName": "hostName1",
       "version": "1.0.0",
-      "address": "local[10.10.10.1]"
+      "address": "local[10.10.10.1]",
+      "name": "nodeName1"
     }
   ],
   "state": "GREEN"

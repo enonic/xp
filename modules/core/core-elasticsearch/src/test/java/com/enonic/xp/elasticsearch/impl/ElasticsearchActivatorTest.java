@@ -18,6 +18,10 @@ import org.osgi.framework.ServiceRegistration;
 
 import com.google.common.collect.Maps;
 
+import com.enonic.xp.cluster.ClusterConfig;
+import com.enonic.xp.cluster.ClusterNodeId;
+import com.enonic.xp.cluster.NodeDiscovery;
+
 public class ElasticsearchActivatorTest
 {
     private BundleContext context;
@@ -43,6 +47,20 @@ public class ElasticsearchActivatorTest
     {
         this.context = Mockito.mock( BundleContext.class );
         this.activator = new ElasticsearchActivator();
+        this.activator.setClusterConfig( new ClusterConfig()
+        {
+            @Override
+            public NodeDiscovery discovery()
+            {
+                return null;
+            }
+
+            @Override
+            public ClusterNodeId name()
+            {
+                return ClusterNodeId.from( "ClusterNodeId" );
+            }
+        } );
 
         final File homeDir = this.temporaryFolder.newFolder( "home" );
         System.setProperty( "xp.home", homeDir.getAbsolutePath() );
@@ -61,6 +79,7 @@ public class ElasticsearchActivatorTest
         final Map<String, String> map = Maps.newHashMap();
 
         this.activator.activate( this.context, map );
+
         verifyRegisterService( Node.class );
         verifyRegisterService( AdminClient.class );
         verifyRegisterService( ClusterAdminClient.class );

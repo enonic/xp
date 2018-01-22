@@ -1,5 +1,6 @@
-package com.enonic.xp.internal.cluster;
+package com.enonic.xp.cluster.impl;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -12,7 +13,6 @@ import com.enonic.xp.cluster.ClusterProviderHealth;
 import com.enonic.xp.cluster.ClusterProviderId;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.*;
 
 public class ClusterManagerImplTest
 {
@@ -41,10 +41,10 @@ public class ClusterManagerImplTest
         this.clusterManager.getHealth();
         assertActive( provider );
         provider.setHealth( ClusterProviderHealth.RED );
-        assertEquals( ClusterHealth.ERROR, this.clusterManager.getHealth() );
+        Assert.assertEquals( ClusterHealth.ERROR, this.clusterManager.getHealth() );
         assertDeactivated( provider );
         provider.setHealth( ClusterProviderHealth.GREEN );
-        assertEquals( ClusterHealth.OK, this.clusterManager.getHealth() );
+        Assert.assertEquals( ClusterHealth.OK, this.clusterManager.getHealth() );
         assertActive( provider );
     }
 
@@ -74,7 +74,7 @@ public class ClusterManagerImplTest
         assertActive( provider1, provider2 );
 
         provider1.setHealth( ClusterProviderHealth.RED );
-        assertEquals( ClusterHealth.ERROR, clusterManager.getHealth() );
+        Assert.assertEquals( ClusterHealth.ERROR, clusterManager.getHealth() );
         assertDeactivated( provider1, provider2 );
     }
 
@@ -104,7 +104,7 @@ public class ClusterManagerImplTest
 
         this.clusterManager.addProvider( provider1 );
         this.clusterManager.addProvider( provider2 );
-        assertEquals( ClusterHealth.OK, this.clusterManager.getHealth() );
+        Assert.assertEquals( ClusterHealth.OK, this.clusterManager.getHealth() );
         assertActive( provider1, provider2 );
 
         provider1.setNodes( ClusterNodes.create().
@@ -112,7 +112,7 @@ public class ClusterManagerImplTest
             add( ClusterNode.from( "b" ) ).
             build() );
 
-        assertEquals( ClusterHealth.ERROR, this.clusterManager.getHealth() );
+        Assert.assertEquals( ClusterHealth.ERROR, this.clusterManager.getHealth() );
         assertDeactivated( provider1, provider2 );
     }
 
@@ -128,7 +128,7 @@ public class ClusterManagerImplTest
     {
         for ( final TestClusterProvider provider : providers )
         {
-            assertFalse( String.format( "Provider '%s' not deactivated", provider.getId() ), provider.isActive() );
+            Assert.assertFalse( String.format( "Provider '%s' not deactivated", provider.getId() ), provider.isActive() );
         }
     }
 }

@@ -2,9 +2,9 @@ package com.enonic.xp.cluster;
 
 public class ClusterNode
 {
-    private final String id;
+    private final ClusterNodeId id;
 
-    private ClusterNode( final String id )
+    private ClusterNode( final ClusterNodeId id )
     {
         this.id = id;
     }
@@ -16,10 +16,10 @@ public class ClusterNode
 
     public static ClusterNode from( final String id )
     {
-        return new ClusterNode( id );
+        return new ClusterNode( ClusterNodeId.from( id ) );
     }
 
-    public String getId()
+    public ClusterNodeId getId()
     {
         return id;
     }
@@ -31,13 +31,13 @@ public class ClusterNode
 
     public static final class Builder
     {
-        private String id;
+        private ClusterNodeId id;
 
         private Builder()
         {
         }
 
-        public Builder id( final String val )
+        public Builder id( final ClusterNodeId val )
         {
             id = val;
             return this;

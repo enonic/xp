@@ -1,4 +1,4 @@
-package com.enonic.xp.internal.cluster;
+package com.enonic.xp.cluster.impl;
 
 import java.util.List;
 import java.util.Timer;
@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.xp.cluster.ClusterConfig;
 import com.enonic.xp.cluster.ClusterHealth;
 import com.enonic.xp.cluster.ClusterManager;
 import com.enonic.xp.cluster.ClusterNodes;
@@ -34,9 +35,12 @@ public class ClusterManagerImpl
 
     private final List<ClusterProviderId> requiredProviders;
 
+    private ClusterConfig clusterConfig;
+
     private final static List<ClusterProviderId> DEFAULT_REQUIRED_PROVIDERS =
         Lists.newArrayList( ClusterProviderId.from( "elasticsearch" ) );
 
+    @SuppressWarnings("WeakerAccess")
     public ClusterManagerImpl()
     {
         this.checkIntervalMs = 1000L;
@@ -47,21 +51,6 @@ public class ClusterManagerImpl
     {
         checkIntervalMs = builder.checkIntervalMs;
         requiredProviders = builder.requiredProviders;
-    }
-
-    private void startPolling()
-    {
-        if ( checkIntervalMs > 0 )
-        {
-            this.timer.schedule( new TimerTask()
-            {
-                @Override
-                public void run()
-                {
-                    doGetHealth();
-                }
-            }, this.checkIntervalMs, this.checkIntervalMs );
-        }
     }
 
     @Override
@@ -92,6 +81,21 @@ public class ClusterManagerImpl
         else
         {
             deactivate();
+        }
+    }
+
+    private void startPolling()
+    {
+        if ( checkIntervalMs > 0 )
+        {
+            this.timer.schedule( new TimerTask()
+            {
+                @Override
+                public void run()
+                {
+                    doGetHealth();
+                }
+            }, this.checkIntervalMs, this.checkIntervalMs );
         }
     }
 
@@ -144,14 +148,6 @@ public class ClusterManagerImpl
         return true;
     }
 
-    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
-    public void addProvider( final ClusterProvider provider )
-    {
-        LOG.info( "Adding cluster-provider: " + provider.getId() );
-        this.providers.add( provider );
-        this.registerProvider();
-    }
-
     @SuppressWarnings("unused")
     public void removeProvider( final ClusterProvider provider )
     {
@@ -191,5 +187,20 @@ public class ClusterManagerImpl
         {
             return new ClusterManagerImpl( this );
         }
+    }
+
+
+    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
+    public void addProvider( final ClusterProvider provider )
+    {
+        LOG.info( "Adding cluster-provider: " + provider.getId() );
+        this.providers.add( provider );
+        this.registerProvider();
+    }
+
+    @Reference
+    public void setClusterConfig( final ClusterConfig clusterConfig )
+    {
+        this.clusterConfig = clusterConfig;
     }
 }

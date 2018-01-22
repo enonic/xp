@@ -5,13 +5,13 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public abstract class NodeState
 {
-    protected final String id;
+    private final String id;
 
-    protected final String hostName;
+    private final String hostName;
 
-    protected final Boolean isMaster;
+    private final Boolean isMaster;
 
-    protected final String version;
+    private final String version;
 
     protected NodeState( Builder builder )
     {
@@ -40,7 +40,7 @@ public abstract class NodeState
 
         private Boolean isMaster;
 
-        protected String version;
+        private String version;
 
         protected Builder()
         {
@@ -73,6 +73,7 @@ public abstract class NodeState
             this.version = version;
             return (B) this;
         }
+
 
         public abstract NodeState build();
 

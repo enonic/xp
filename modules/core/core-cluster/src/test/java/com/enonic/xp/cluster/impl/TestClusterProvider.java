@@ -1,4 +1,4 @@
-package com.enonic.xp.internal.cluster;
+package com.enonic.xp.cluster.impl;
 
 import com.enonic.xp.cluster.ClusterNodes;
 import com.enonic.xp.cluster.ClusterProvider;
