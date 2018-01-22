@@ -57,9 +57,7 @@ public final class StatusResource
 
         final JsonNode writeJsonNode = indexSettings != null ? indexSettings.getNode().get( "index.blocks.write" ) : null;
 
-        final boolean isWritePermission = writeJsonNode != null ? writeJsonNode.booleanValue() : false;
-
-        return JsonNodeFactory.instance.booleanNode( !isWritePermission );
+        return writeJsonNode != null ? writeJsonNode : JsonNodeFactory.instance.booleanNode( false );
     }
 
     private ObjectNode createContextJson()

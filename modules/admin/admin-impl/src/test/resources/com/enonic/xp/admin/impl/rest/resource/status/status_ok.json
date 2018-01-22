@@ -14,5 +14,5 @@
       "role:system.everyone"
     ]
   },
-  "readonly": true
+  "readonly": false
 }
