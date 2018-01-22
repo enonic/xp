@@ -4,14 +4,6 @@
       "approverIds": [
         "user:system:anonymous"
       ],
-      "comments": [
-        {
-          "createdTime": "${createdTime}",
-          "creatorDisplayName": "Anonymous",
-          "creatorKey": "user:system:anonymous",
-          "text": "Comment text one"
-        }
-      ],
       "createdTime": null,
       "creator": "user:system:anonymous",
       "description": "desc",

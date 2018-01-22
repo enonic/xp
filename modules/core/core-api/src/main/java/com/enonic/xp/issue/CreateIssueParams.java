@@ -1,7 +1,5 @@
 package com.enonic.xp.issue;
 
-import java.util.List;
-
 import com.enonic.xp.security.PrincipalKeys;
 
 public final class CreateIssueParams
@@ -16,8 +14,6 @@ public final class CreateIssueParams
 
     private final PrincipalKeys approverIds;
 
-    private final List<Comment> comments;
-
     private final PublishRequest publishRequest;
 
     private CreateIssueParams( Builder builder )
@@ -27,7 +23,6 @@ public final class CreateIssueParams
         this.description = builder.description;
         this.issueStatus = builder.issueStatus;
         this.approverIds = builder.approverIds;
-        this.comments = builder.comments;
         this.publishRequest = builder.publishRequest;
     }
 
@@ -61,11 +56,6 @@ public final class CreateIssueParams
         return publishRequest;
     }
 
-    public List<Comment> getComments()
-    {
-        return comments;
-    }
-
     public static Builder create()
     {
         return new Builder();
@@ -83,8 +73,6 @@ public final class CreateIssueParams
         private PrincipalKeys approverIds;
 
         private PublishRequest publishRequest;
-
-        private List<Comment> comments;
 
         private Builder()
         {
@@ -107,12 +95,6 @@ public final class CreateIssueParams
         public Builder setApproverIds( final PrincipalKeys approverIds )
         {
             this.approverIds = approverIds;
-            return this;
-        }
-
-        public Builder setComments( final List<Comment> comments )
-        {
-            this.comments = comments;
             return this;
         }
 

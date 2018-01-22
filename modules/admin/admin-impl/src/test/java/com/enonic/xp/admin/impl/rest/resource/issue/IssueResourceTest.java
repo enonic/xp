@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
@@ -18,24 +17,26 @@ import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.admin.impl.json.issue.IssueStatsJson;
 import com.enonic.xp.admin.impl.json.issue.PublishRequestItemJson;
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishRequestJson;
-import com.enonic.xp.admin.impl.rest.resource.issue.json.CommentIssueJson;
-import com.enonic.xp.admin.impl.rest.resource.issue.json.CommentJson;
+import com.enonic.xp.admin.impl.rest.resource.issue.json.CreateIssueCommentJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.CreateIssueJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.ListIssuesJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.UpdateIssueJson;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.LocalScope;
-import com.enonic.xp.issue.Comment;
+import com.enonic.xp.issue.CreateIssueCommentParams;
 import com.enonic.xp.issue.CreateIssueParams;
+import com.enonic.xp.issue.FindIssueCommentsResult;
 import com.enonic.xp.issue.FindIssuesResult;
 import com.enonic.xp.issue.Issue;
+import com.enonic.xp.issue.IssueComment;
+import com.enonic.xp.issue.IssueCommentQuery;
+import com.enonic.xp.issue.IssueNotFoundException;
 import com.enonic.xp.issue.IssueQuery;
 import com.enonic.xp.issue.IssueService;
 import com.enonic.xp.issue.PublishRequest;
@@ -43,6 +44,7 @@ import com.enonic.xp.issue.PublishRequestItem;
 import com.enonic.xp.issue.UpdateIssueParams;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.PrincipalNotFoundException;
 import com.enonic.xp.security.Principals;
 import com.enonic.xp.security.Role;
 import com.enonic.xp.security.RoleKeys;
@@ -85,8 +87,7 @@ public class IssueResourceTest
         throws Exception
     {
         final CreateIssueJson params =
-            new CreateIssueJson( "title", "desc", Arrays.asList( User.ANONYMOUS.getKey().toString() ), createComments(),
-                                 createPublishRequest() );
+            new CreateIssueJson( "title", "desc", Arrays.asList( User.ANONYMOUS.getKey().toString() ), createPublishRequest() );
 
         final HttpServletRequest request = Mockito.mock( HttpServletRequest.class );
         final IssueResource issueResource = getResourceInstance();
@@ -104,8 +105,7 @@ public class IssueResourceTest
         throws Exception
     {
         final CreateIssueJson params =
-            new CreateIssueJson( "title", "desc", Arrays.asList( User.ANONYMOUS.getKey().toString() ), createComments(),
-                                 createPublishRequest() );
+            new CreateIssueJson( "title", "desc", Arrays.asList( User.ANONYMOUS.getKey().toString() ), createPublishRequest() );
 
         final HttpServletRequest request = Mockito.mock( HttpServletRequest.class );
         final IssueResource issueResource = getResourceInstance();
@@ -123,8 +123,7 @@ public class IssueResourceTest
         throws Exception
     {
         final CreateIssueJson params =
-            new CreateIssueJson( "title", "desc", Arrays.asList( User.ANONYMOUS.getKey().toString() ), createComments(),
-                                 createPublishRequest() );
+            new CreateIssueJson( "title", "desc", Arrays.asList( User.ANONYMOUS.getKey().toString() ), createPublishRequest() );
 
         final HttpServletRequest request = Mockito.mock( HttpServletRequest.class );
         final IssueResource issueResource = getResourceInstance();
@@ -143,7 +142,7 @@ public class IssueResourceTest
     {
         final CreateIssueJson params =
             new CreateIssueJson( "title", "desc", Arrays.asList( User.ANONYMOUS.getKey().toString(), User.ANONYMOUS.getKey().toString() ),
-                                 createComments(), createPublishRequest() );
+                                 createPublishRequest() );
 
         final HttpServletRequest request = Mockito.mock( HttpServletRequest.class );
         final IssueResource issueResource = getResourceInstance();
@@ -177,9 +176,7 @@ public class IssueResourceTest
     {
         createLocalSession();
 
-        final Instant createdTime = Instant.now();
-        final Issue issue = createIssue( createdTime );
-        ;
+        final Issue issue = createIssue();
         final List<Issue> issues = Lists.newArrayList( issue );
         final IssueResource issueResource = getResourceInstance();
         final FindIssuesResult result = FindIssuesResult.create().hits( 2 ).totalHits( 4 ).issues( issues ).build();
@@ -196,9 +193,12 @@ public class IssueResourceTest
         throws Exception
     {
         final Instant createdTime = Instant.now();
-        final Issue issue = createIssue( createdTime );
+        final Issue issue = createIssue();
 
         Mockito.when( this.issueService.getIssue( issue.getId() ) ).thenReturn( issue );
+        List<IssueComment> comments = Lists.newArrayList( this.createIssueComment( createdTime ) );
+        FindIssueCommentsResult result = FindIssueCommentsResult.create().hits( 1 ).totalHits( 3 ).comments( comments ).build();
+        Mockito.when( this.issueService.findComments( Mockito.any( IssueCommentQuery.class ) ) ).thenReturn( result );
 
         final Map params = Maps.newHashMap();
         params.put( "id", issue.getId().toString() );
@@ -218,9 +218,11 @@ public class IssueResourceTest
         throws Exception
     {
         final Instant createdTime = Instant.now();
-        final Issue issue = createIssue( createdTime );
+        final Issue issue = createIssue();
 
         Mockito.when( this.issueService.getIssue( issue.getId() ) ).thenReturn( issue );
+        Mockito.when( this.issueService.findComments( Mockito.any( IssueCommentQuery.class ) ) ).thenReturn(
+            FindIssueCommentsResult.create().build() );
 
         final Map params = Maps.newHashMap();
         params.put( "id", issue.getId().toString() );
@@ -238,76 +240,151 @@ public class IssueResourceTest
     @Test
     public void test_update()
     {
-        final Instant createdTime = Instant.now();
-        final Issue issue = createIssue( createdTime );
+        final Issue issue = createIssue();
 
         final UpdateIssueJson params =
             new UpdateIssueJson( issue.getId().toString(), "title", "desc", "Open", false, false, Arrays.asList( "user:system:admin" ),
-                                 createComments(), createPublishRequest() );
+                                 createPublishRequest() );
 
-        getResourceInstance().update( params, Mockito.mock( HttpServletRequest.class ) );
+        IssueResource resource = getResourceInstance();
+        Mockito.when( issueService.update( Mockito.any( UpdateIssueParams.class ) ) ).thenReturn( issue );
+        Mockito.when( issueService.findComments( Mockito.any( IssueCommentQuery.class ) ) ).thenReturn(
+            FindIssueCommentsResult.create().build() );
+
+        resource.update( params, Mockito.mock( HttpServletRequest.class ) );
 
         Mockito.verify( issueService, Mockito.times( 1 ) ).update( Mockito.any( UpdateIssueParams.class ) );
         Mockito.verify( issueNotificationsSender, Mockito.times( 1 ) ).notifyIssueUpdated( Mockito.any( Issue.class ),
+                                                                                           Mockito.anyListOf( IssueComment.class ),
                                                                                            Mockito.anyString() );
     }
 
     @Test
     public void test_update_is_publish()
     {
-        final Instant createdTime = Instant.now();
-        final Issue issue = createIssue( createdTime );
+        final Issue issue = createIssue();
 
         final UpdateIssueJson params =
             new UpdateIssueJson( issue.getId().toString(), "title", "desc", "Closed", true, false, Arrays.asList( "user:system:admin" ),
-                                 createComments(), createPublishRequest() );
+                                 createPublishRequest() );
 
-        getResourceInstance().update( params, Mockito.mock( HttpServletRequest.class ) );
+        IssueResource resource = getResourceInstance();
+        Mockito.when( issueService.update( Mockito.any( UpdateIssueParams.class ) ) ).thenReturn( issue );
+        Mockito.when( issueService.findComments( Mockito.any( IssueCommentQuery.class ) ) ).thenReturn(
+            FindIssueCommentsResult.create().build() );
+
+        resource.update( params, Mockito.mock( HttpServletRequest.class ) );
 
         Mockito.verify( issueService, Mockito.times( 1 ) ).update( Mockito.any( UpdateIssueParams.class ) );
         Mockito.verify( issueNotificationsSender, Mockito.times( 1 ) ).notifyIssuePublished( Mockito.any( Issue.class ),
+                                                                                             Mockito.anyListOf( IssueComment.class ),
                                                                                              Mockito.anyString() );
     }
 
     @Test
     public void test_update_is_autoSave()
     {
-        final Instant createdTime = Instant.now();
-        final Issue issue = createIssue( createdTime );
+        final Issue issue = createIssue();
 
         final UpdateIssueJson params =
             new UpdateIssueJson( issue.getId().toString(), "title", "desc", "Closed", true, true, Arrays.asList( "user:system:admin" ),
-                                 createComments(), createPublishRequest() );
+                                 createPublishRequest() );
 
-        getResourceInstance().update( params, Mockito.mock( HttpServletRequest.class ) );
+        IssueResource resource = getResourceInstance();
+        Mockito.when( issueService.update( Mockito.any( UpdateIssueParams.class ) ) ).thenReturn( issue );
+        Mockito.when( issueService.findComments( Mockito.any( IssueCommentQuery.class ) ) ).thenReturn(
+            FindIssueCommentsResult.create().build() );
+
+        resource.update( params, Mockito.mock( HttpServletRequest.class ) );
 
         Mockito.verify( issueService, Mockito.times( 1 ) ).update( Mockito.any( UpdateIssueParams.class ) );
         Mockito.verify( issueNotificationsSender, Mockito.times( 0 ) ).notifyIssueUpdated( Mockito.any( Issue.class ),
+                                                                                           Mockito.anyListOf( IssueComment.class ),
                                                                                            Mockito.anyString() );
         Mockito.verify( issueNotificationsSender, Mockito.times( 0 ) ).notifyIssuePublished( Mockito.any( Issue.class ),
+                                                                                             Mockito.anyListOf( IssueComment.class ),
                                                                                              Mockito.anyString() );
     }
 
     @Test
-    public void test_addComment()
+    public void test_comment()
     {
-        final Instant createdTime = Instant.now();
-        final Issue issue = createIssue( createdTime );
+        final Issue issue = createIssue();
+        final IssueComment comment = createIssueComment( Instant.now() );
+        final User creator = User.ANONYMOUS;
 
-        final CommentIssueJson paramsJson =
-            new CommentIssueJson( issue.getId().toString(), "Comment title", "user:system:admin", "Anonymous" );
-        final HttpServletRequest request = Mockito.mock( HttpServletRequest.class );
+        final CreateIssueCommentJson params =
+            new CreateIssueCommentJson( issue.getId().toString(), comment.getText(), comment.getCreator().toString() );
 
-        getResourceInstance().comment( paramsJson, request );
+        IssueResource resource = getResourceInstance();
+        Mockito.when( securityService.getUser( params.creator ) ).thenReturn( Optional.ofNullable( creator ) );
+        Mockito.when( issueService.getIssue( params.issueId ) ).thenReturn( issue );
+        Mockito.when( issueService.createComment( Mockito.any( CreateIssueCommentParams.class ) ) ).thenReturn( comment );
+        Mockito.when( issueService.findComments( Mockito.any( IssueCommentQuery.class ) ) ).thenReturn(
+            FindIssueCommentsResult.create().build() );
 
-        Mockito.verify( issueService, Mockito.times( 1 ) ).update( Mockito.any( UpdateIssueParams.class ) );
+        resource.comment( params, Mockito.mock( HttpServletRequest.class ) );
+
+        Mockito.verify( issueService, Mockito.times( 1 ) ).createComment( Mockito.any( CreateIssueCommentParams.class ) );
         Mockito.verify( issueNotificationsSender, Mockito.times( 1 ) ).notifyIssueCommented( Mockito.any( Issue.class ),
+                                                                                             Mockito.anyListOf( IssueComment.class ),
                                                                                              Mockito.anyString() );
     }
 
-    private List<CommentJson> createComments()
+    @Test(expected = PrincipalNotFoundException.class)
+    public void test_commentNoUser()
     {
-        return Lists.newArrayList( new CommentJson( "user:system:anonymous", "Anonymous", "Comment text one", Instant.now().toString() ) );
+        final Issue issue = createIssue();
+        final IssueComment comment = createIssueComment( Instant.now() );
+
+        final CreateIssueCommentJson params =
+            new CreateIssueCommentJson( issue.getId().toString(), comment.getText(), comment.getCreator().toString() );
+
+        IssueResource resource = getResourceInstance();
+        Mockito.when( issueService.getIssue( params.issueId ) ).thenReturn( issue );
+        Mockito.when( securityService.getUser( params.creator ) ).thenReturn( Optional.empty() );
+
+        resource.comment( params, Mockito.mock( HttpServletRequest.class ) );
+    }
+
+    @Test(expected = IssueNotFoundException.class)
+    public void test_commentNoIssue()
+    {
+        final Issue issue = createIssue();
+        final IssueComment comment = createIssueComment( Instant.now() );
+
+        final CreateIssueCommentJson params =
+            new CreateIssueCommentJson( issue.getId().toString(), comment.getText(), comment.getCreator().toString() );
+
+        IssueResource resource = getResourceInstance();
+        Mockito.when( issueService.getIssue( params.issueId ) ).thenThrow( new IssueNotFoundException( issue.getId() ) );
+        Mockito.when( securityService.getUser( params.creator ) ).thenReturn( Optional.of( User.ANONYMOUS ) );
+
+        resource.comment( params, Mockito.mock( HttpServletRequest.class ) );
+    }
+
+    @Test
+    public void test_getComments()
+        throws Exception
+    {
+        final Issue issue = createIssue();
+        final IssueComment comment = createIssueComment( Instant.now() );
+
+        FindIssueCommentsResult result =
+            FindIssueCommentsResult.create().comments( Lists.newArrayList( comment ) ).hits( 1 ).totalHits( 10 ).build();
+
+        Mockito.when( this.issueService.findComments( Mockito.any( IssueCommentQuery.class ) ) ).thenReturn( result );
+
+        final Map params = Maps.newHashMap();
+        params.put( "createdTime", comment.getCreated() );
+
+        final String expected = new StrSubstitutor( params ).replace( readFromFile( "get_issue_comments_result.json" ) );
+
+        String jsonString = request().path( "issue/comment/list" ).
+            entity( "{\"issueName\":\"" + issue.getName() + "\"}", MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertStringJson( expected, jsonString );
     }
 
     private PublishRequestJson createPublishRequest()
@@ -323,12 +400,20 @@ public class IssueResourceTest
         return publishRequestJson;
     }
 
-    private Issue createIssue( final Instant createdTime )
+    private IssueComment createIssueComment( Instant createdTime )
     {
-        Set<Comment> comments = Sets.newHashSet( new Comment( User.ANONYMOUS.getKey(), "Anonymous", "Comment text one", createdTime ) );
-        return Issue.create().
-            addApproverId( PrincipalKey.from( "user:system:anonymous" ) ).
-            addComments( comments ).
+        return IssueComment.create().
+            text( "Comment text one" ).
+            creator( User.ANONYMOUS.getKey() ).
+            creatorDisplayName( "Anonymous" ).
+            created( createdTime ).
+            build();
+
+    }
+
+    private Issue createIssue()
+    {
+        return Issue.create().addApproverId( PrincipalKey.from( "user:system:anonymous" ) ).
             title( "title" ).
             description( "desc" ).creator( User.ANONYMOUS.getKey() ).modifier( User.ANONYMOUS.getKey() ).
             setPublishRequest( PublishRequest.create().addExcludeId( ContentId.from( "exclude-id" ) ).addItem(

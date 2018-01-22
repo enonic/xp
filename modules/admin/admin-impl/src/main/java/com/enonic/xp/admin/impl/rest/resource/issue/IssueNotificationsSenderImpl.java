@@ -30,6 +30,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.issue.Issue;
+import com.enonic.xp.issue.IssueComment;
 import com.enonic.xp.issue.PublishRequestItem;
 import com.enonic.xp.mail.MailMessage;
 import com.enonic.xp.mail.MailService;
@@ -67,20 +68,20 @@ public class IssueNotificationsSenderImpl
 
     public void notifyIssueCreated( final Issue issue, final String url )
     {
-        final IssueMailMessageParams params = createMessageParams( issue, url );
+        final IssueMailMessageParams params = createMessageParams( issue, null, url );
 
-        if ( params.hasValidCreator() )
+        if ( isRecipientsPresent( params ) )
         {
             final MailMessage mailMessage = new IssueCreatedMailMessageGenerator( params ).generateMessage();
             sendMailExecutor.execute( () -> mailService.send( mailMessage ) );
         }
     }
 
-    public void notifyIssuePublished( final Issue issue, final String url )
+    public void notifyIssuePublished( final Issue issue, List<IssueComment> comments, final String url )
     {
         final User publisher = getCurrentUser();
         final IssuePublishedMailMessageParams params =
-            IssuePublishedMailMessageParams.create( publisher, createMessageParams( issue, url ) ).build();
+            IssuePublishedMailMessageParams.create( publisher, createMessageParams( issue, comments, url ) ).build();
 
         if ( isRecipientsPresent( params ) )
         {
@@ -89,11 +90,11 @@ public class IssueNotificationsSenderImpl
         }
     }
 
-    public void notifyIssueUpdated( final Issue issue, final String url )
+    public void notifyIssueUpdated( final Issue issue, List<IssueComment> comments, final String url )
     {
         final User modifier = getCurrentUser();
         final IssueUpdatedMailMessageParams params =
-            IssueUpdatedMailMessageParams.create( modifier, createMessageParams( issue, url ) ).build();
+            IssueUpdatedMailMessageParams.create( modifier, createMessageParams( issue, comments, url ) ).build();
 
         if ( isRecipientsPresent( params ) )
         {
@@ -102,11 +103,11 @@ public class IssueNotificationsSenderImpl
         }
     }
 
-    public void notifyIssueCommented( final Issue issue, final String url )
+    public void notifyIssueCommented( final Issue issue, List<IssueComment> comments, final String url )
     {
         final User modifier = getCurrentUser();
         final IssueCommentedMailMessageParams params =
-            IssueCommentedMailMessageParams.create( modifier, createMessageParams( issue, url ) ).build();
+            IssueCommentedMailMessageParams.create( modifier, createMessageParams( issue, comments, url ) ).build();
 
         if ( isRecipientsPresent( params ) )
         {
@@ -115,7 +116,7 @@ public class IssueNotificationsSenderImpl
         }
     }
 
-    private IssueMailMessageParams createMessageParams( final Issue issue, final String url )
+    private IssueMailMessageParams createMessageParams( final Issue issue, List<IssueComment> comments, final String url )
     {
         final User creator = securityService.getUser( issue.getCreator() ).orElse( null );
         final ContentIds contentIds = ContentIds.from(
@@ -128,8 +129,16 @@ public class IssueNotificationsSenderImpl
                 Objects::nonNull ).collect( Collectors.toList() );
         final Map<ContentId, String> icons = getIcons( contents );
 
-        return IssueMailMessageParams.create().issue( issue ).creator( creator ).approvers( approvers ).items( contents ).url( url ).icons(
-            icons ).compareResults( compareResults ).build();
+        return IssueMailMessageParams.create().
+            issue( issue ).
+            creator( creator ).
+            approvers( approvers ).
+            items( contents ).
+            url( url ).
+            icons( icons ).
+            compareResults( compareResults ).
+            comments( comments ).
+            build();
     }
 
     private Map<ContentId, String> getIcons( final Contents contents )

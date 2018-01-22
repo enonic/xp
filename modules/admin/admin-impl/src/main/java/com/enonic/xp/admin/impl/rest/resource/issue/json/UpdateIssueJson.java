@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishRequestJson;
-import com.enonic.xp.issue.Comment;
 import com.enonic.xp.issue.IssueId;
 import com.enonic.xp.issue.IssueStatus;
 import com.enonic.xp.issue.PublishRequest;
@@ -31,14 +30,11 @@ public class UpdateIssueJson
 
     public final boolean autoSave;
 
-    public List<Comment> comments;
-
     @JsonCreator
     public UpdateIssueJson( @JsonProperty("id") final String issueId, @JsonProperty("title") final String title,
                             @JsonProperty("description") final String description, @JsonProperty("status") final String status,
                             @JsonProperty("isPublish") final boolean isPublish, @JsonProperty("autoSave") final boolean autoSave,
                             @JsonProperty("approvers") final List<String> approverIds,
-                            @JsonProperty("comments") final List<CommentJson> commentJsons,
                             @JsonProperty("publishRequest") final PublishRequestJson publishRequest )
     {
         this.issueId = IssueId.from( issueId );
@@ -48,7 +44,6 @@ public class UpdateIssueJson
         this.description = description;
         this.issueStatus = status != null ? IssueStatus.valueOf( status.trim().toUpperCase() ) : null;
         this.approverIds = approverIds != null ? approverIds.stream().map( PrincipalKey::from ).collect( Collectors.toList() ) : null;
-        this.comments = commentJsons != null ? commentJsons.stream().map( CommentJson::toComment ).collect( Collectors.toList() ) : null;
         this.publishRequest = publishRequest != null ? publishRequest.toRequest() : null;
     }
 

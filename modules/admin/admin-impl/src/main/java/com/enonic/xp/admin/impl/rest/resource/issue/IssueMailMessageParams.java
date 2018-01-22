@@ -1,5 +1,6 @@
 package com.enonic.xp.admin.impl.rest.resource.issue;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -7,6 +8,7 @@ import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.issue.Issue;
+import com.enonic.xp.issue.IssueComment;
 import com.enonic.xp.security.User;
 
 public class IssueMailMessageParams
@@ -25,6 +27,8 @@ public class IssueMailMessageParams
 
     private final CompareContentResults compareResults;
 
+    private final List<IssueComment> comments;
+
     public IssueMailMessageParams( final Builder builder )
     {
         this.issue = builder.issue;
@@ -34,6 +38,7 @@ public class IssueMailMessageParams
         this.approvers = builder.approvers;
         this.items = builder.items;
         this.compareResults = builder.compareResults;
+        this.comments = builder.comments != null ? builder.comments : Collections.emptyList();
     }
 
     public Issue getIssue()
@@ -76,6 +81,11 @@ public class IssueMailMessageParams
         return creator != null && creator.getEmail() != null;
     }
 
+    public List<IssueComment> getComments()
+    {
+        return this.comments;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -97,6 +107,8 @@ public class IssueMailMessageParams
 
         private CompareContentResults compareResults;
 
+        private List<IssueComment> comments;
+
         protected Builder()
         {
         }
@@ -110,6 +122,7 @@ public class IssueMailMessageParams
             this.url = source.url;
             this.icons = source.icons;
             this.compareResults = source.compareResults;
+            this.comments = source.comments;
         }
 
         public B issue( final Issue issue )
@@ -151,6 +164,12 @@ public class IssueMailMessageParams
         public B compareResults( final CompareContentResults compareResults )
         {
             this.compareResults = compareResults;
+            return (B) this;
+        }
+
+        public B comments( final List<IssueComment> comments )
+        {
+            this.comments = comments;
             return (B) this;
         }
 
