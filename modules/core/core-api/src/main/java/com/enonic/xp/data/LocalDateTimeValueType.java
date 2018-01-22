@@ -11,7 +11,7 @@ final class LocalDateTimeValueType
     }
 
     @Override
-    Value fromJsonValue( final Object object )
+    public Value fromJsonValue( final Object object )
     {
         return ValueFactory.newLocalDateTime( convertNullSafe( object ) );
     }

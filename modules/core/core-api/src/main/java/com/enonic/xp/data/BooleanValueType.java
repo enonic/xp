@@ -9,7 +9,7 @@ final class BooleanValueType
     }
 
     @Override
-    Value fromJsonValue( final Object object )
+    public Value fromJsonValue( final Object object )
     {
         return ValueFactory.newBoolean( convertNullSafe( object ) );
     }
