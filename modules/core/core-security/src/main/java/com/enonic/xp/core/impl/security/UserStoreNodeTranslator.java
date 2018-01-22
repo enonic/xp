@@ -18,7 +18,6 @@ import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.security.AuthConfig;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
-import com.enonic.xp.security.UpdateUserStoreParams;
 import com.enonic.xp.security.UserStore;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.UserStores;
@@ -225,16 +224,16 @@ abstract class UserStoreNodeTranslator
         return AccessControlList.create().addAll( entries ).build();
     }
 
-    static UpdateNodeParams toUpdateNodeParams( final UpdateUserStoreParams updateUserStoreParams, final NodeId nodeId )
+    static UpdateNodeParams toUpdateNodeParams( final UserStore userStore, final NodeId nodeId )
     {
         return UpdateNodeParams.create().
             id( nodeId ).
             editor( editableNode -> {
                 final PropertyTree nodeData = editableNode.data;
-                nodeData.setString( UserStorePropertyNames.DISPLAY_NAME_KEY, updateUserStoreParams.getDisplayName() );
-                nodeData.setString( UserStorePropertyNames.DESCRIPTION_KEY, updateUserStoreParams.getDescription() );
+                nodeData.setString( UserStorePropertyNames.DISPLAY_NAME_KEY, userStore.getDisplayName() );
+                nodeData.setString( UserStorePropertyNames.DESCRIPTION_KEY, userStore.getDescription() );
 
-                final AuthConfig authConfig = updateUserStoreParams.getAuthConfig();
+                final AuthConfig authConfig = userStore.getAuthConfig();
                 if ( authConfig == null )
                 {
                     if ( nodeData.hasProperty( UserStorePropertyNames.ID_PROVIDER_KEY ) )
