@@ -6,6 +6,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -47,8 +48,8 @@ public class I18NScriptTest
 
         final MessageBundle bundle = Mockito.mock( MessageBundle.class, (Answer) this::answer );
         Mockito.when(
-            localeService.getBundle( Mockito.any( ApplicationKey.class ), Mockito.any( Locale.class ), Mockito.any( String[].class ) ) ).
-            thenAnswer( mock -> bundle );
+            localeService.getBundle( Mockito.any( ApplicationKey.class ), Mockito.any( Locale.class ), Matchers.<String>anyVararg() ) ).
+            thenReturn( bundle );
 
         addService( LocaleService.class, localeService );
 

@@ -132,10 +132,10 @@ public class LocaleServiceImplTest
         throws Exception
     {
         final ResourceKeys resourceKeys =
-            ResourceKeys.from( "myapplication:/site/i18n/myphrases.properties", "myapplication:/site/i18n/myphrases_en.properties",
-                               "myapplication:/site/i18n/myphrases_en_US.properties",
-                               "myapplication:/site/i18n/myphrases_en_US_1.properties", "myapplication:/site/i18n/myphrases_fr.properties",
-                               "myapplication:/site/i18n/myphrases_ca.properties" );
+            ResourceKeys.from( "myapplication:/i18n/myphrases.properties", "myapplication:/i18n/myphrases_en.properties",
+                               "myapplication:/i18n/myphrases_en_US.properties",
+                               "myapplication:/i18n/myphrases_en_US_1.properties", "myapplication:/i18n/myphrases_fr.properties",
+                               "myapplication:/i18n/myphrases_ca.properties" );
 
         Mockito.when( resourceService.findFiles( Mockito.any(), Mockito.eq( "\\Q/phrases\\E.*\\.properties" ) ) ).thenReturn(
             resourceKeys );

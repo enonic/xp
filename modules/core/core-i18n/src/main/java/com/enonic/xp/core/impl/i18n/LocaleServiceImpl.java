@@ -50,7 +50,7 @@ public final class LocaleServiceImpl
     @Override
     public MessageBundle getBundle( final ApplicationKey applicationKey, final Locale locale )
     {
-        return getBundle( applicationKey, locale, "site/i18n/phrases" );
+        return getBundle( applicationKey, locale, "site/i18n/phrases", "i18n/phrases" );
     }
 
     @Override
@@ -89,12 +89,15 @@ public final class LocaleServiceImpl
     }
 
     @Override
-    public Locale getSupportedLocale( final List<Locale> preferredLocales, final ApplicationKey applicationKey,
-                                      final String... bundleNames )
+    public Locale getSupportedLocale( final List<Locale> preferredLocales, final ApplicationKey applicationKey, String... bundleNames )
     {
         if ( preferredLocales == null || preferredLocales.isEmpty() )
         {
             return null;
+        }
+        if ( bundleNames == null || bundleNames.length == 0 )
+        {
+            bundleNames = new String[]{"site/i18n/phrases", "i18n/phrases"};
         }
 
         final Set<String> supportedLocales = this.getLocales( applicationKey, bundleNames ).stream().

@@ -6,9 +6,11 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
-import com.enonic.xp.app.ApplicationKeys;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
+import com.enonic.xp.i18n.LocaleService;
+import com.enonic.xp.i18n.MessageBundle;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.LayoutDescriptor;
@@ -22,13 +24,17 @@ public class LayoutDescriptorResourceTest
 {
     private LayoutDescriptorService layoutDescriptorService;
 
+    private LocaleService localeService;
+
     @Override
     protected Object getResourceInstance()
     {
         layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
+        localeService = Mockito.mock( LocaleService.class );
 
         final LayoutDescriptorResource resource = new LayoutDescriptorResource();
         resource.setLayoutDescriptorService( layoutDescriptorService );
+        resource.setLocaleService( localeService );
 
         return resource;
     }
@@ -66,6 +72,48 @@ public class LayoutDescriptorResourceTest
     }
 
     @Test
+    public void test_get_by_key_i18n()
+        throws Exception
+    {
+        final DescriptorKey key = DescriptorKey.from( "application:fancy-layout" );
+        final Form layoutForm = Form.create().
+            addFormItem( Input.create().
+                name( "columns" ).
+                maximizeUIInputWidth( true ).
+                label( "Columns" ).
+                labelI18nKey( "key.label" ).
+                helpTextI18nKey( "key.help-text" ).
+                inputType( InputTypeName.DOUBLE ).
+                build() ).
+            build();
+
+        final LayoutDescriptor layoutDescriptor = LayoutDescriptor.create().
+            displayName( "Fancy layout" ).
+            displayNameI18nKey( "key.display-name" ).
+            config( layoutForm ).
+            regions( RegionDescriptors.create().
+                add( RegionDescriptor.create().name( "left" ).build() ).
+                add( RegionDescriptor.create().name( "right" ).build() ).
+                build() ).
+            key( key ).
+            build();
+
+        Mockito.when( layoutDescriptorService.getByKey( key ) ).thenReturn( layoutDescriptor );
+
+        final MessageBundle messageBundle = Mockito.mock( MessageBundle.class );
+        Mockito.when( messageBundle.localize( "key.label" ) ).thenReturn( "translated.label" );
+        Mockito.when( messageBundle.localize( "key.help-text" ) ).thenReturn( "translated.helpText" );
+        Mockito.when( messageBundle.localize( "key.display-name" ) ).thenReturn( "translated.displayName" );
+
+        Mockito.when( this.localeService.getBundle( Mockito.any(), Mockito.any() ) ).thenReturn( messageBundle );
+
+        String jsonString = request().path( "content/page/layout/descriptor" ).
+            queryParam( "key", "application:fancy-layout" ).get().getAsString();
+
+        assertJson( "get_by_key_i18n.json", jsonString );
+    }
+
+    @Test
     public void test_get_by_applications()
         throws Exception
     {
@@ -93,11 +141,12 @@ public class LayoutDescriptorResourceTest
             key( DescriptorKey.from( "application:putty-layout" ) ).
             build();
 
-        final LayoutDescriptors layoutDescriptors = LayoutDescriptors.from( layoutDescriptor1, layoutDescriptor2 );
-
-        final ApplicationKeys applicationKeys = ApplicationKeys.from( "application1", "application2", "application3" );
-
-        Mockito.when( layoutDescriptorService.getByApplications( applicationKeys ) ).thenReturn( layoutDescriptors );
+        Mockito.when( layoutDescriptorService.getByApplication( ApplicationKey.from( "application1" ) ) ).thenReturn(
+            LayoutDescriptors.from( layoutDescriptor1 ) );
+        Mockito.when( layoutDescriptorService.getByApplication( ApplicationKey.from( "application2" ) ) ).thenReturn(
+            LayoutDescriptors.from( layoutDescriptor2 ) );
+        Mockito.when( layoutDescriptorService.getByApplication( ApplicationKey.from( "application3" ) ) ).thenReturn(
+            LayoutDescriptors.empty() );
 
         String jsonString = request().path( "content/page/layout/descriptor/list/by_applications" ).
             entity( readFromFile( "get_by_applications_params.json" ), MediaType.APPLICATION_JSON_TYPE ).

@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableList;
 import com.enonic.xp.admin.impl.json.ItemJson;
 import com.enonic.xp.admin.impl.json.form.FormJson;
 import com.enonic.xp.admin.impl.rest.resource.application.ApplicationIconUrlResolver;
+import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.auth.AuthDescriptor;
@@ -31,25 +32,28 @@ public class ApplicationJson
 
     private final String iconUrl;
 
-    public ApplicationJson( final Application application, final boolean local, final ApplicationDescriptor applicationDescriptor,
-                            final SiteDescriptor siteDescriptor, final AuthDescriptor authDescriptor,
-                            final ApplicationIconUrlResolver iconUrlResolver )
+    public ApplicationJson( final Builder builder )
     {
-        this.application = application;
-        this.applicationDescriptor = applicationDescriptor;
-        this.local = local;
-        this.config = siteDescriptor != null && siteDescriptor.getForm() != null ? new FormJson( siteDescriptor.getForm() ) : null;
-        this.authConfig = authDescriptor != null && authDescriptor.getConfig() != null ? new FormJson( authDescriptor.getConfig() ) : null;
+        this.application = builder.application;
+        this.applicationDescriptor = builder.applicationDescriptor;
+        this.local = builder.local;
+        this.config = builder.siteDescriptor != null && builder.siteDescriptor.getForm() != null ? new FormJson(
+            builder.siteDescriptor.getForm(), builder.localeMessageResolver )
+            : null;
+        this.authConfig =
+            builder.authDescriptor != null && builder.authDescriptor.getConfig() != null
+                ? new FormJson( builder.authDescriptor.getConfig(), builder.localeMessageResolver )
+                : null;
         ImmutableList.Builder<String> mixinNamesBuilder = new ImmutableList.Builder<>();
-        if ( siteDescriptor != null && siteDescriptor.getMetaSteps() != null )
+        if ( builder.siteDescriptor != null && builder.siteDescriptor.getMetaSteps() != null )
         {
-            for ( MixinName mixinName : siteDescriptor.getMetaSteps() )
+            for ( MixinName mixinName : builder.siteDescriptor.getMetaSteps() )
             {
                 mixinNamesBuilder.add( mixinName.toString() );
             }
         }
         this.metaStepMixinNames = mixinNamesBuilder.build();
-        this.iconUrl = iconUrlResolver.resolve( application.getKey(), applicationDescriptor );
+        this.iconUrl = builder.iconUrlResolver.resolve( application.getKey(), applicationDescriptor );
     }
 
     public String getKey()
@@ -142,6 +146,75 @@ public class ApplicationJson
     public boolean getEditable()
     {
         return false;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public static class Builder
+    {
+        private Application application;
+
+        private ApplicationDescriptor applicationDescriptor;
+
+        private SiteDescriptor siteDescriptor;
+
+        private AuthDescriptor authDescriptor;
+
+        private ApplicationIconUrlResolver iconUrlResolver;
+
+        private LocaleMessageResolver localeMessageResolver;
+
+        private boolean local;
+
+        public ApplicationJson build()
+        {
+            return new ApplicationJson( this );
+        }
+
+        public Builder setApplication( final Application application )
+        {
+            this.application = application;
+            return this;
+        }
+
+        public Builder setApplicationDescriptor( final ApplicationDescriptor applicationDescriptor )
+        {
+            this.applicationDescriptor = applicationDescriptor;
+            return this;
+        }
+
+        public Builder setSiteDescriptor( final SiteDescriptor siteDescriptor )
+        {
+            this.siteDescriptor = siteDescriptor;
+            return this;
+        }
+
+        public Builder setAuthDescriptor( final AuthDescriptor authDescriptor )
+        {
+            this.authDescriptor = authDescriptor;
+            return this;
+        }
+
+        public Builder setIconUrlResolver( final ApplicationIconUrlResolver iconUrlResolver )
+        {
+            this.iconUrlResolver = iconUrlResolver;
+            return this;
+        }
+
+        public Builder setLocaleMessageResolver( final LocaleMessageResolver localeMessageResolver )
+        {
+            this.localeMessageResolver = localeMessageResolver;
+            return this;
+        }
+
+        public Builder setLocal( final boolean local )
+        {
+            this.local = local;
+            return this;
+        }
     }
 
 }

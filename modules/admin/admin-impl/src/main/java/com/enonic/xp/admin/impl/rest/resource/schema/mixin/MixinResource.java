@@ -16,11 +16,15 @@ import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.collect.ImmutableList;
+
 import com.enonic.xp.admin.impl.json.schema.mixin.MixinJson;
 import com.enonic.xp.admin.impl.json.schema.mixin.MixinListJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.schema.SchemaImageHelper;
+import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.schema.mixin.Mixin;
@@ -46,6 +50,8 @@ public final class MixinResource
 
     private MixinIconResolver mixinIconResolver;
 
+    private LocaleService localeService;
+
     @GET
     public MixinJson get( @QueryParam("name") final String name )
     {
@@ -57,7 +63,9 @@ public final class MixinResource
             throw new WebApplicationException( String.format( "Mixin [%s] was not found.", mixinName ), Response.Status.NOT_FOUND );
         }
 
-        return new MixinJson( mixin, this.mixinIconUrlResolver );
+        final LocaleMessageResolver localeMessageResolver = new LocaleMessageResolver( this.localeService, mixinName.getApplicationKey() );
+
+        return new MixinJson( mixin, this.mixinIconUrlResolver, localeMessageResolver );
     }
 
     @GET
@@ -65,7 +73,16 @@ public final class MixinResource
     public MixinListJson list()
     {
         final Mixins mixins = mixinService.getAll();
-        return new MixinListJson( mixins, this.mixinIconUrlResolver );
+
+        ImmutableList.Builder<MixinJson> mixinJsonBuilder = new ImmutableList.Builder();
+
+        mixins.forEach( mixin -> {
+            mixinJsonBuilder.add( new MixinJson( mixin, this.mixinIconUrlResolver,
+                                                 new LocaleMessageResolver( localeService, mixin.getName().getApplicationKey() ) ) );
+        } );
+
+        return new MixinListJson( mixinJsonBuilder.build() );
+
     }
 
     @GET
@@ -73,7 +90,15 @@ public final class MixinResource
     public MixinListJson getByApplication( @QueryParam("applicationKey") final String applicationKey )
     {
         final Mixins mixins = mixinService.getByApplication( ApplicationKey.from( applicationKey ) );
-        return new MixinListJson( mixins, this.mixinIconUrlResolver );
+
+        ImmutableList.Builder<MixinJson> mixinJsonBuilder = new ImmutableList.Builder();
+
+        mixins.forEach( mixin -> {
+            mixinJsonBuilder.add( new MixinJson( mixin, this.mixinIconUrlResolver,
+                                                 new LocaleMessageResolver( localeService, mixin.getName().getApplicationKey() ) ) );
+        } );
+
+        return new MixinListJson( mixinJsonBuilder.build() );
     }
 
     @GET
@@ -124,5 +149,11 @@ public final class MixinResource
         this.mixinService = mixinService;
         this.mixinIconResolver = new MixinIconResolver( mixinService );
         this.mixinIconUrlResolver = new MixinIconUrlResolver( this.mixinIconResolver );
+    }
+
+    @Reference
+    public void setLocaleService( final LocaleService localeService )
+    {
+        this.localeService = localeService;
     }
 }

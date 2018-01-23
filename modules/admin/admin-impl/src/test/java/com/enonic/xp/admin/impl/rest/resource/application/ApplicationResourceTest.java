@@ -1,13 +1,16 @@
 package com.enonic.xp.admin.impl.rest.resource.application;
 
 import java.time.Instant;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
+
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.Version;
 import org.springframework.mock.web.MockHttpServletRequest;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.enonic.xp.admin.impl.market.MarketService;
@@ -24,6 +27,8 @@ import com.enonic.xp.auth.AuthDescriptor;
 import com.enonic.xp.auth.AuthDescriptorService;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
+import com.enonic.xp.i18n.LocaleService;
+import com.enonic.xp.i18n.MessageBundle;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.macro.MacroDescriptorService;
 import com.enonic.xp.portal.script.PortalScriptService;
@@ -60,6 +65,8 @@ public class ApplicationResourceTest
     private ResourceService resourceService;
 
     private PortalScriptService portalScriptService;
+
+    private LocaleService localeService;
 
     @Test
     public void get_application_list()
@@ -197,6 +204,35 @@ public class ApplicationResourceTest
     }
 
     @Test
+    public void get_application_i18n()
+        throws Exception
+    {
+        final Application application = createApplication();
+        Mockito.when( this.applicationService.getInstalledApplication( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( application );
+        final SiteDescriptor siteDescriptor = createSiteDescriptor();
+        Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
+        final AuthDescriptor authDescriptor = createAuthDescriptor();
+        Mockito.when( this.authDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( authDescriptor );
+        final ApplicationDescriptor appDescriptor = createApplicationDescriptor();
+        Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
+
+        final MessageBundle messageBundle = Mockito.mock( MessageBundle.class );
+        Mockito.when( messageBundle.localize( "key.label" ) ).thenReturn( "translated.label" );
+        Mockito.when( messageBundle.localize( "key.help-text" ) ).thenReturn( "translated.helpText" );
+
+        Mockito.when( messageBundle.localize( "site.config.helpText" ) ).thenReturn( "translated.site.helpText" );
+        Mockito.when( messageBundle.localize( "site.config.label" ) ).thenReturn( "translated.site.label" );
+
+        Mockito.when( this.localeService.getBundle( Mockito.any(), Mockito.any() ) ).thenReturn( messageBundle );
+
+        String response = request().
+            path( "application" ).
+            queryParam( "applicationKey", "testapplication" ).
+            get().getAsString();
+        assertJson( "get_application_i18n.json", response );
+    }
+
+    @Test
     public void start_application()
         throws Exception
     {
@@ -274,15 +310,18 @@ public class ApplicationResourceTest
     private SiteDescriptor createSiteDescriptor()
     {
         final Form config = Form.create().
-            addFormItem( Input.create().name( "some-name" ).label( "some-label" ).inputType( InputTypeName.TEXT_LINE ).build() ).
+            addFormItem( Input.create().name( "some-name" ).label( "some-label" ).helpTextI18nKey( "site.config.helpText" ).labelI18nKey(
+                "site.config.label" ).inputType( InputTypeName.TEXT_LINE ).build() ).
             build();
+
         return SiteDescriptor.create().form( config ).build();
     }
 
     private AuthDescriptor createAuthDescriptor()
     {
         final Form config = Form.create().
-            addFormItem( Input.create().name( "some-name" ).label( "some-label" ).inputType( InputTypeName.TEXT_LINE ).build() ).
+            addFormItem( Input.create().name( "some-name" ).label( "some-label" ).labelI18nKey( "key.label" ).helpTextI18nKey(
+                "key.help-text" ).inputType( InputTypeName.TEXT_LINE ).build() ).
             build();
         return AuthDescriptor.create().
             config( config ).
@@ -303,6 +342,7 @@ public class ApplicationResourceTest
         this.relationshipTypeService = Mockito.mock( RelationshipTypeService.class );
         this.macroDescriptorService = Mockito.mock( MacroDescriptorService.class );
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
+        this.localeService = Mockito.mock( LocaleService.class );
 
         final ApplicationResource resource = new ApplicationResource();
         resource.setApplicationService( this.applicationService );
@@ -316,6 +356,7 @@ public class ApplicationResourceTest
         resource.setMacroDescriptorService( this.macroDescriptorService );
         resource.setResourceService( this.resourceService );
         resource.setPortalScriptService( this.portalScriptService );
+        resource.setLocaleService( this.localeService );
 
         return resource;
     }

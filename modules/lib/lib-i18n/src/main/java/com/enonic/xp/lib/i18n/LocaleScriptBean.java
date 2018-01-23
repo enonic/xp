@@ -26,11 +26,13 @@ public final class LocaleScriptBean
 
     private ApplicationKey application;
 
+    private final static String NOT_TRANSLATED_MESSAGE = "NOT_TRANSLATED";
+
     public String localize( final String key, final List<String> locales, final ScriptValue values, String[] bundles )
     {
         if ( bundles == null || bundles.length == 0 )
         {
-            bundles = new String[]{"site/i18n/phrases"};
+            bundles = new String[]{"i18n/phrases", "site/i18n/phrases"};
         }
 
         final String locale = getPreferredLocale( locales, bundles );
@@ -41,7 +43,9 @@ public final class LocaleScriptBean
             return null;
         }
 
-        return bundle.localize( key, toArray( values ) );
+        final String localizedMessage = bundle.localize( key, toArray( values ) );
+
+        return localizedMessage != null ? localizedMessage : NOT_TRANSLATED_MESSAGE;
     }
 
     public MapSerializable getPhrases( final List<String> locales, final String... bundleNames )
