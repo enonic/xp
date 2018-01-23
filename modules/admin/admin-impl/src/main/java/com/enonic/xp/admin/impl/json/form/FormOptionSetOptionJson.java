@@ -5,29 +5,29 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.FormItems;
 import com.enonic.xp.form.FormOptionSetOption;
 
 public class FormOptionSetOptionJson
 {
-
     private final FormOptionSetOption formOptionSetOption;
 
     private final List<FormItemJson> items;
 
-    public FormOptionSetOptionJson( final FormOptionSetOption formOptionSetOption )
+    public FormOptionSetOptionJson( final FormOptionSetOption formOptionSetOption, final LocaleMessageResolver localeMessageResolver )
     {
         this.formOptionSetOption = formOptionSetOption;
-        this.items = wrapFormItems( formOptionSetOption.getFormItems() );
+        this.items = wrapFormItems( formOptionSetOption.getFormItems(), localeMessageResolver );
     }
 
-    private static List<FormItemJson> wrapFormItems( final FormItems items )
+    private List<FormItemJson> wrapFormItems( final FormItems items, final LocaleMessageResolver localeMessageResolver )
     {
         final List<FormItemJson> formItemJsonList = new ArrayList<>();
         for ( FormItem formItem : items )
         {
-            formItemJsonList.add( FormItemJsonFactory.create( formItem ) );
+            formItemJsonList.add( FormItemJsonFactory.create( formItem, localeMessageResolver ) );
         }
         return formItemJsonList;
     }

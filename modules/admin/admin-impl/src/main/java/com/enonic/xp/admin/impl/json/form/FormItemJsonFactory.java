@@ -17,11 +17,11 @@ public class FormItemJsonFactory
     {
         if ( formItem instanceof FormItemSet )
         {
-            return new FormItemSetJson( (FormItemSet) formItem );
+            return new FormItemSetJson( (FormItemSet) formItem, localeMessageResolver );
         }
         else if ( formItem instanceof Layout )
         {
-            return LayoutJsonFactory.create( (Layout) formItem );
+            return LayoutJsonFactory.create( (Layout) formItem, localeMessageResolver );
         }
         else if ( formItem instanceof Input )
         {
@@ -33,13 +33,9 @@ public class FormItemJsonFactory
         }
         else if ( formItem instanceof FormOptionSet )
         {
-            return new FormOptionSetJson( (FormOptionSet) formItem );
+            return new FormOptionSetJson( (FormOptionSet) formItem, localeMessageResolver );
         }
         throw new IllegalArgumentException( "Unsupported FormItem: " + formItem.getClass().getSimpleName() );
     }
 
-    public static FormItemJson create( final FormItem formItem )
-    {
-        return create( formItem, null );
-    }
 }

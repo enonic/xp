@@ -21,11 +21,6 @@ public class FormJson
 
     private LocaleMessageResolver localeMessageResolver;
 
-    public FormJson( final Form form )
-    {
-        this( form, null );
-    }
-
     public FormJson( final Form form, final LocaleMessageResolver localeMessageResolver )
     {
         this.form = form;
