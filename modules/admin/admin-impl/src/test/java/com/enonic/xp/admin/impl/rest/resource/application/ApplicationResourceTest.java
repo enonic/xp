@@ -220,6 +220,9 @@ public class ApplicationResourceTest
         Mockito.when( messageBundle.localize( "key.label" ) ).thenReturn( "translated.label" );
         Mockito.when( messageBundle.localize( "key.help-text" ) ).thenReturn( "translated.helpText" );
 
+        Mockito.when( messageBundle.localize( "site.config.helpText" ) ).thenReturn( "translated.site.helpText" );
+        Mockito.when( messageBundle.localize( "site.config.label" ) ).thenReturn( "translated.site.label" );
+
         Mockito.when( this.localeService.getBundle( Mockito.any(), Mockito.any() ) ).thenReturn( messageBundle );
 
         String response = request().
@@ -307,8 +310,10 @@ public class ApplicationResourceTest
     private SiteDescriptor createSiteDescriptor()
     {
         final Form config = Form.create().
-            addFormItem( Input.create().name( "some-name" ).label( "some-label" ).inputType( InputTypeName.TEXT_LINE ).build() ).
+            addFormItem( Input.create().name( "some-name" ).label( "some-label" ).helpTextI18nKey( "site.config.helpText" ).labelI18nKey(
+                "site.config.label" ).inputType( InputTypeName.TEXT_LINE ).build() ).
             build();
+
         return SiteDescriptor.create().form( config ).build();
     }
 

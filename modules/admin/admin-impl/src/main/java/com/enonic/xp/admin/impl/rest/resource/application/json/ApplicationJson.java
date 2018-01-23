@@ -37,8 +37,8 @@ public class ApplicationJson
         this.application = builder.application;
         this.applicationDescriptor = builder.applicationDescriptor;
         this.local = builder.local;
-        this.config = builder.siteDescriptor != null && builder.siteDescriptor.getForm() != null
-            ? new FormJson( builder.siteDescriptor.getForm() )
+        this.config = builder.siteDescriptor != null && builder.siteDescriptor.getForm() != null ? new FormJson(
+            builder.siteDescriptor.getForm(), builder.localeMessageResolver )
             : null;
         this.authConfig =
             builder.authDescriptor != null && builder.authDescriptor.getConfig() != null

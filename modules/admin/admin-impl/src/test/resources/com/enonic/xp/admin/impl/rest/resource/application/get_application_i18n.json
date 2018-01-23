@@ -27,11 +27,11 @@
         "Input": {
           "config": {},
           "customText": null,
-          "helpText": null,
+          "helpText": "translated.site.helpText",
           "immutable": false,
           "indexed": false,
           "inputType": "TextLine",
-          "label": "some-label",
+          "label": "translated.site.label",
           "maximizeUIInputWidth": true,
           "name": "some-name",
           "occurrences": {
