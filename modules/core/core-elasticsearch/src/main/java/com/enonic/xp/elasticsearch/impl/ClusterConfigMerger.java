@@ -32,7 +32,13 @@ class ClusterConfigMerger
     {
         final String port = source.get( CLUSTER_CONFIG_UNITCAST_OPTION );
 
-        return clusterConfig.discovery().get().stream().map( e -> e.getCanonicalHostName() + ":" + port ).collect(
-            Collectors.joining( "," ) );
+        return clusterConfig.discovery().get().stream().
+            map( e -> e.getCanonicalHostName() + getPortPrefix( port ) ).
+            collect( Collectors.joining( "," ) );
+    }
+
+    private static String getPortPrefix( final String port )
+    {
+        return "[" + port + "]";
     }
 }

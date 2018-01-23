@@ -25,8 +25,21 @@ public class ClusterConfigMergerTest
         final Configuration config = ClusterConfigMerger.merge( createClusterConfig(), ConfigBuilder.create().
             add( "discovery.unicast.port", "9300" ).
             build() );
-        assertEquals( "localhost:9300,192.168.0.1:9300", config.get( "discovery.zen.ping.unicast.hosts" ) );
+        assertEquals( "localhost[9300],192.168.0.1[9300]", config.get( "discovery.zen.ping.unicast.hosts" ) );
     }
+
+
+    @Test
+    public void merge_hosts_port_range_alt_format()
+        throws Exception
+
+    {
+        final Configuration config = ClusterConfigMerger.merge( createClusterConfig(), ConfigBuilder.create().
+            add( "discovery.unicast.port", "9300-9400" ).
+            build() );
+        assertEquals( "localhost[9300-9400],192.168.0.1[9300-9400]", config.get( "discovery.zen.ping.unicast.hosts" ) );
+    }
+
 
     private ClusterConfig createClusterConfig()
     {
