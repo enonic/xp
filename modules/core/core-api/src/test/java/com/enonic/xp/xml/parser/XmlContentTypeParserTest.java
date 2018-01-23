@@ -120,6 +120,7 @@ public class XmlContentTypeParserTest
         final ContentType result = this.builder.build();
 
         assertEquals( "translated.display-name", result.getDisplayNameI18nKey() );
+        assertEquals( "translated.description", result.getDescriptionI18nKey() );
 
     }
 
