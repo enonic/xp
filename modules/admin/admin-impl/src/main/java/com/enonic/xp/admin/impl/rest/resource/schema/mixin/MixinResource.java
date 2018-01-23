@@ -152,9 +152,8 @@ public final class MixinResource
     }
 
     @Reference
-    public MixinResource setLocaleService( final LocaleService localeService )
+    public void setLocaleService( final LocaleService localeService )
     {
         this.localeService = localeService;
-        return this;
     }
 }

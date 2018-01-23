@@ -60,9 +60,8 @@ public class AdminToolResource
     }
 
     @Reference
-    public AdminToolResource setLocaleService( final LocaleService localeService )
+    public void setLocaleService( final LocaleService localeService )
     {
         this.localeService = localeService;
-        return this;
     }
 }
