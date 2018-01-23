@@ -8,9 +8,12 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.issue.FindIssueCommentsResult;
 import com.enonic.xp.issue.IssueCommentQuery;
-import com.enonic.xp.issue.IssueName;
+import com.enonic.xp.issue.IssueId;
 import com.enonic.xp.node.FindNodesByQueryResult;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.Nodes;
@@ -33,15 +36,19 @@ public class FindIssueCommentsCommandTest
     public void testFindIssues()
         throws Exception
     {
-        final IssueName issueName = IssueName.from( "issue-1" );
+        final IssueId issueId = IssueId.create();
+        final Node issueNode = Node.create().id( NodeId.from( issueId ) ).name( "parent-issue" ).build();
+
         final PrincipalKey creator = PrincipalKey.from( "user:store:one" );
         final IssueCommentQuery commentQuery = IssueCommentQuery.create().
             from( 0 ).
             size( 20 ).
-            issueName( issueName ).
+            issue( issueId ).
             creator( creator ).
             build();
         final FindIssueCommentsCommand command = createCommand( commentQuery );
+
+        Mockito.when( this.nodeService.getById( Mockito.any( NodeId.class ) ) ).thenReturn( issueNode );
 
         Mockito.when( nodeService.findByQuery( Mockito.any( NodeQuery.class ) ) ).thenReturn(
             FindNodesByQueryResult.create().hits( 20 ).totalHits( 40 ).build() );
@@ -57,6 +64,41 @@ public class FindIssueCommentsCommandTest
         assertEquals( 20, result.getHits() );
         assertEquals( 40, result.getTotalHits() );
         assertEquals( 1, result.getIssueComments().size() );
+    }
+
+    @Test(expected = NodeNotFoundException.class)
+    public void testFindIssuesIssueNotExists()
+        throws Exception
+    {
+        final IssueId issueId = IssueId.create();
+
+        final PrincipalKey creator = PrincipalKey.from( "user:store:one" );
+        final IssueCommentQuery commentQuery = IssueCommentQuery.create().
+            from( 0 ).
+            size( 20 ).
+            issue( issueId ).
+            creator( creator ).
+            build();
+        final FindIssueCommentsCommand command = createCommand( commentQuery );
+
+        Mockito.when( this.nodeService.getById( Mockito.any( NodeId.class ) ) ).thenThrow( new NodeNotFoundException( "Node not found" ) );
+
+        FindIssueCommentsResult result = command.execute();
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testFindIssuesNoIssue()
+        throws Exception
+    {
+        final PrincipalKey creator = PrincipalKey.from( "user:store:one" );
+        final IssueCommentQuery commentQuery = IssueCommentQuery.create().
+            from( 0 ).
+            size( 20 ).
+            creator( creator ).
+            build();
+        final FindIssueCommentsCommand command = createCommand( commentQuery );
+
+        FindIssueCommentsResult result = command.execute();
     }
 
     private FindIssueCommentsCommand createCommand( final IssueCommentQuery query )

@@ -9,12 +9,13 @@ import org.mockito.invocation.InvocationOnMock;
 
 import com.enonic.xp.issue.CreateIssueCommentParams;
 import com.enonic.xp.issue.IssueComment;
-import com.enonic.xp.issue.IssueName;
+import com.enonic.xp.issue.IssueId;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
+import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.security.PrincipalKey;
@@ -38,9 +39,10 @@ public class CreateIssueCommentCommandTest
     @Test
     public void create()
     {
+        final Node issueNode = Node.create().name( "parent-issue" ).build();
         final PrincipalKey creator = PrincipalKey.from( "user:store:one" );
         final CreateIssueCommentParams params = CreateIssueCommentParams.create().
-            issueName( IssueName.from( "issue-1" ) ).
+            issue( IssueId.create() ).
             creator( creator ).
             creatorDisplayName( "Creator One" ).
             text( "Comment text..." ).
@@ -50,6 +52,8 @@ public class CreateIssueCommentCommandTest
         Mockito.when( this.nodeService.findByQuery( Mockito.any( NodeQuery.class ) ) ).thenReturn(
             FindNodesByQueryResult.create().build() );
 
+        Mockito.when( this.nodeService.getById( Mockito.any( NodeId.class ) ) ).thenReturn( issueNode );
+
         final IssueComment comment = command.execute();
 
         assertNotNull( comment );
@@ -58,16 +62,37 @@ public class CreateIssueCommentCommandTest
         assertEquals( "Creator One", comment.getCreatorDisplayName() );
     }
 
+    @Test(expected = NodeNotFoundException.class)
+    public void createIssueNotExists()
+    {
+        final PrincipalKey creator = PrincipalKey.from( "user:store:one" );
+
+        final CreateIssueCommentParams params = CreateIssueCommentParams.create().
+            creator( creator ).
+            issue( IssueId.create() ).
+            creatorDisplayName( "Creator One" ).
+            text( "Comment text..." ).
+            build();
+
+        final CreateIssueCommentCommand command = createIssueCommentCommand( params );
+        Mockito.when( this.nodeService.findByQuery( Mockito.any( NodeQuery.class ) ) ).thenReturn(
+            FindNodesByQueryResult.create().build() );
+
+        Mockito.when( this.nodeService.getById( Mockito.any( NodeId.class ) ) ).thenThrow( new NodeNotFoundException( "Node not found" ) );
+
+        final IssueComment comment = command.execute();
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void testNoText()
     {
-        final CreateIssueCommentParams params = CreateIssueCommentParams.create().issueName( IssueName.from( "issue-1" ) ).build();
+        final CreateIssueCommentParams params = CreateIssueCommentParams.create().issue( IssueId.create() ).build();
         final CreateIssueCommentCommand command = createIssueCommentCommand( params );
         command.execute();
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testNoIssueName()
+    public void testNoIssueId()
     {
         final CreateIssueCommentParams params = CreateIssueCommentParams.create().text( "text" ).build();
         final CreateIssueCommentCommand command = createIssueCommentCommand( params );

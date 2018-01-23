@@ -6,6 +6,8 @@ import com.enonic.xp.issue.FindIssueCommentsResult;
 import com.enonic.xp.issue.IssueComment;
 import com.enonic.xp.issue.IssueCommentQuery;
 import com.enonic.xp.node.FindNodesByQueryResult;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.Nodes;
 
@@ -22,7 +24,11 @@ public class FindIssueCommentsCommand
 
     public FindIssueCommentsResult execute()
     {
-        final NodeQuery nodeQuery = IssueCommentQueryNodeQueryTranslator.translate( this.query );
+        validateBlockingChecks();
+
+        final Node issue = nodeService.getById( NodeId.from( this.query.getIssue() ) );
+
+        final NodeQuery nodeQuery = IssueCommentQueryNodeQueryTranslator.translate( this.query, issue.name() );
 
         final FindNodesByQueryResult result = nodeService.findByQuery( nodeQuery );
 
@@ -31,6 +37,14 @@ public class FindIssueCommentsCommand
         final List<IssueComment> issues = IssueCommentNodeTranslator.fromNodes( foundNodes );
 
         return FindIssueCommentsResult.create().comments( issues ).hits( result.getHits() ).totalHits( result.getTotalHits() ).build();
+    }
+
+    private void validateBlockingChecks()
+    {
+        if ( query.getIssue() == null )
+        {
+            throw new IllegalArgumentException( "Issue id can not be null." );
+        }
     }
 
     public static Builder create()

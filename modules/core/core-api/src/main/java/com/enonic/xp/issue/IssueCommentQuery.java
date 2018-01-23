@@ -1,14 +1,17 @@
 package com.enonic.xp.issue;
 
+import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.security.PrincipalKey;
 
 public final class IssueCommentQuery
 {
     private static final int DEFAULT_FETCH_SIZE = 10;
 
+    private static final ChildOrder DEFAULT_ORDER = ChildOrder.defaultOrder();
+
     private final PrincipalKey creator;
 
-    private final IssueName issueName;
+    private final IssueId issue;
 
     private final int from;
 
@@ -16,13 +19,16 @@ public final class IssueCommentQuery
 
     private final boolean count;
 
+    private final ChildOrder order;
+
     private IssueCommentQuery( final Builder builder )
     {
         this.creator = builder.creator;
-        this.issueName = builder.issueName;
+        this.issue = builder.issue;
         this.from = builder.from;
         this.size = builder.size;
         this.count = builder.count;
+        this.order = builder.order;
     }
 
     public PrincipalKey getCreator()
@@ -30,9 +36,9 @@ public final class IssueCommentQuery
         return creator;
     }
 
-    public IssueName getIssueName()
+    public IssueId getIssue()
     {
-        return issueName;
+        return issue;
     }
 
     public int getFrom()
@@ -50,6 +56,11 @@ public final class IssueCommentQuery
         return count;
     }
 
+    public ChildOrder getOrder()
+    {
+        return order;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -60,7 +71,7 @@ public final class IssueCommentQuery
 
         private PrincipalKey creator;
 
-        private IssueName issueName;
+        private IssueId issue;
 
         private int from = 0;
 
@@ -68,15 +79,17 @@ public final class IssueCommentQuery
 
         private boolean count = false;
 
+        private ChildOrder order = DEFAULT_ORDER;
+
         public Builder creator( final PrincipalKey creator )
         {
             this.creator = creator;
             return this;
         }
 
-        public Builder issueName( final IssueName issueName )
+        public Builder issue( final IssueId issue )
         {
-            this.issueName = issueName;
+            this.issue = issue;
             return this;
         }
 
@@ -98,6 +111,11 @@ public final class IssueCommentQuery
             return this;
         }
 
+        public Builder order( final ChildOrder order )
+        {
+            this.order = order;
+            return this;
+        }
 
         public IssueCommentQuery build()
         {

@@ -15,7 +15,7 @@ public class CreateIssueCommentJson
     public final PrincipalKey creator;
 
     @JsonCreator
-    public CreateIssueCommentJson( @JsonProperty("issueId") final String issueId, @JsonProperty("text") final String text,
+    public CreateIssueCommentJson( @JsonProperty("issue") final String issueId, @JsonProperty("text") final String text,
                                    @JsonProperty("creator") final String creator )
     {
         this.text = text;

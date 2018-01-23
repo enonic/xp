@@ -113,7 +113,7 @@ public final class IssueResource
 
         if ( !params.autoSave )
         {
-            IssueCommentQuery query = IssueCommentQuery.create().issueName( issue.getName() ).build();
+            IssueCommentQuery query = IssueCommentQuery.create().issue( issue.getId() ).build();
             final FindIssueCommentsResult results = issueService.findComments( query );
 
             if ( params.isPublish )
@@ -150,7 +150,7 @@ public final class IssueResource
         }
 
         CreateIssueCommentParams params = CreateIssueCommentParams.create().
-            issueName( issue.getName() ).
+            issue( issue.getId() ).
             text( json.text ).
             creator( creator.get().getKey() ).
             creatorDisplayName( creator.get().getDisplayName() ).
@@ -158,7 +158,7 @@ public final class IssueResource
 
         final IssueComment comment = issueService.createComment( params );
 
-        final IssueCommentQuery commentsQuery = IssueCommentQuery.create().issueName( issue.getName() ).build();
+        final IssueCommentQuery commentsQuery = IssueCommentQuery.create().issue( issue.getId() ).build();
         final FindIssueCommentsResult results = issueService.findComments( commentsQuery );
 
         issueNotificationsSender.notifyIssueCommented( issue, results.getIssueComments(), request.getHeader( HttpHeaders.REFERER ) );
@@ -198,7 +198,7 @@ public final class IssueResource
     private IssueCommentQuery createIssueCommentQuery( final ListIssueCommentsJson params )
     {
         return IssueCommentQuery.create().
-            issueName( params.getIssueName() ).
+            issue( params.getIssue() ).
             creator( params.getCreator() ).
             from( params.getFrom() ).
             size( params.getSize() ).

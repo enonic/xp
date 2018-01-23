@@ -6,7 +6,7 @@ import com.enonic.xp.security.PrincipalKey;
 
 public final class CreateIssueCommentParams
 {
-    private final IssueName issueName;
+    private final IssueId issue;
 
     private final String text;
 
@@ -18,16 +18,16 @@ public final class CreateIssueCommentParams
 
     private CreateIssueCommentParams( Builder builder )
     {
-        this.issueName = builder.issueName;
+        this.issue = builder.issue;
         this.text = builder.text;
         this.creator = builder.creator;
         this.creatorDisplayName = builder.creatorDisplayName;
         this.created = builder.created;
     }
 
-    public IssueName getIssueName()
+    public IssueId getIssue()
     {
-        return issueName;
+        return issue;
     }
 
     public String getText()
@@ -57,7 +57,7 @@ public final class CreateIssueCommentParams
 
     public static class Builder
     {
-        private IssueName issueName;
+        private IssueId issue;
 
         private String text;
 
@@ -72,9 +72,9 @@ public final class CreateIssueCommentParams
             this.created = Instant.now();
         }
 
-        public Builder issueName( final IssueName issueName )
+        public Builder issue( final IssueId issue )
         {
-            this.issueName = issueName;
+            this.issue = issue;
             return this;
         }
 

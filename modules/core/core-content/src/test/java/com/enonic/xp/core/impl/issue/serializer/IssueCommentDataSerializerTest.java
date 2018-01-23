@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.issue.CreateIssueCommentParams;
-import com.enonic.xp.issue.IssueName;
+import com.enonic.xp.issue.IssueId;
 import com.enonic.xp.security.PrincipalKey;
 
 import static com.enonic.xp.core.impl.issue.IssueCommentPropertyNames.CREATED_TIME;
@@ -24,10 +24,9 @@ public class IssueCommentDataSerializerTest
         IssueCommentDataSerializer serializer = new IssueCommentDataSerializer();
 
         final PrincipalKey creator = PrincipalKey.from( "user:store:one" );
-        final IssueName issue = IssueName.from( "issue-1" );
         final Instant createdTime = Instant.now().minus( 1, ChronoUnit.MINUTES );
         final CreateIssueCommentParams params = CreateIssueCommentParams.create().
-            issueName( issue ).
+            issue( IssueId.create() ).
             creator( creator ).
             creatorDisplayName( "Creator One" ).
             text( "Comment text..." ).

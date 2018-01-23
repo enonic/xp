@@ -9,7 +9,7 @@ import com.enonic.xp.issue.CreateIssueCommentParams;
 import com.enonic.xp.issue.CreateIssueParams;
 import com.enonic.xp.issue.Issue;
 import com.enonic.xp.issue.IssueComment;
-import com.enonic.xp.issue.IssueName;
+import com.enonic.xp.issue.IssueId;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.security.PrincipalKey;
 
@@ -30,7 +30,7 @@ public class IssueServiceImplTest_comment
 
         final CreateIssueCommentParams params = CreateIssueCommentParams.create().
             text( "text" ).
-            issueName( issue.getName() ).
+            issue( issue.getId() ).
             creator( creator ).
             creatorDisplayName( creatorDisplayName ).
             created( created ).
@@ -52,11 +52,10 @@ public class IssueServiceImplTest_comment
         final Instant created = Instant.now().minus( 1, ChronoUnit.MINUTES );
         final PrincipalKey creator = PrincipalKey.from( "user:store:me" );
         final String creatorDisplayName = "Me Myself";
-        final IssueName issueName = IssueName.from( "non-existing-issue" );
 
         final CreateIssueCommentParams params = CreateIssueCommentParams.create().
             text( "text" ).
-            issueName( issueName ).
+            issue( IssueId.create() ).
             creator( creator ).
             creatorDisplayName( creatorDisplayName ).
             created( created ).

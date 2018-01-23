@@ -381,7 +381,7 @@ public class IssueResourceTest
         final String expected = new StrSubstitutor( params ).replace( readFromFile( "get_issue_comments_result.json" ) );
 
         String jsonString = request().path( "issue/comment/list" ).
-            entity( "{\"issueName\":\"" + issue.getName() + "\"}", MediaType.APPLICATION_JSON_TYPE ).
+            entity( "{\"issue\":\"" + issue.getName() + "\"}", MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
 
         assertStringJson( expected, jsonString );

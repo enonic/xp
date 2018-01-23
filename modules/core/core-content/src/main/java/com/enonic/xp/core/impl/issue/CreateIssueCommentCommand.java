@@ -2,16 +2,18 @@ package com.enonic.xp.core.impl.issue;
 
 import com.enonic.xp.core.impl.issue.serializer.IssueCommentDataSerializer;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.issue.CreateIssueCommentParams;
 import com.enonic.xp.issue.IssueAlreadyExistsException;
 import com.enonic.xp.issue.IssueComment;
 import com.enonic.xp.issue.IssueCommentQuery;
+import com.enonic.xp.issue.IssueId;
 import com.enonic.xp.issue.IssueName;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.RefreshMode;
@@ -35,12 +37,12 @@ public class CreateIssueCommentCommand
     private IssueComment doExecute()
     {
         validateBlockingChecks();
+        final Node issueNode = nodeService.getById( NodeId.from( params.getIssue() ) );
 
-        final long index = countTotalComments( this.params.getIssueName() ) + 1;
-
+        final long index = countTotalComments( params.getIssue(), issueNode.name() ) + 1;
         final String commentName = IssueCommentNameFactory.create( index );
 
-        final CreateNodeParams createNodeParams = CreateNodeParamsFactory.create( this.params, commentName );
+        final CreateNodeParams createNodeParams = CreateNodeParamsFactory.create( this.params, issueNode.name(), commentName );
 
         final Node createdNode;
         try
@@ -56,15 +58,15 @@ public class CreateIssueCommentCommand
         return IssueCommentNodeTranslator.fromNode( createdNode );
     }
 
-    private long countTotalComments( final IssueName issueName )
+    private long countTotalComments( final IssueId issueId, NodeName parentName )
     {
         final IssueCommentQuery query = IssueCommentQuery.create().
-            issueName( issueName ).
+            issue( issueId ).
             size( 0 ).
             count( true ).
             build();
 
-        final NodeQuery nodeQuery = IssueCommentQueryNodeQueryTranslator.translate( query );
+        final NodeQuery nodeQuery = IssueCommentQueryNodeQueryTranslator.translate( query, parentName );
 
         final FindNodesByQueryResult result = nodeService.findByQuery( nodeQuery );
 
@@ -73,9 +75,9 @@ public class CreateIssueCommentCommand
 
     private void validateBlockingChecks()
     {
-        if ( params.getIssueName() == null )
+        if ( params.getIssue() == null )
         {
-            throw new IllegalArgumentException( "Issue name can not be null." );
+            throw new IllegalArgumentException( "Issue id can not be null." );
         }
         if ( params.getText() == null )
         {
@@ -115,17 +117,14 @@ public class CreateIssueCommentCommand
 
         private static final IssueCommentDataSerializer ISSUE_COMMENT_DATA_SERIALIZER = new IssueCommentDataSerializer();
 
-        public static CreateNodeParams create( final CreateIssueCommentParams params, String commentName )
+        public static CreateNodeParams create( final CreateIssueCommentParams params, NodeName parentName, String commentName )
         {
             final PropertyTree commentAsData = ISSUE_COMMENT_DATA_SERIALIZER.toCreateNodeData( params );
 
-            final IndexConfigDocument indexConfigDocument = IssueIndexConfigFactory.create();
-
             final CreateNodeParams.Builder builder = CreateNodeParams.create().
                 name( commentName ).
-                parent( NodePath.create( IssueConstants.ISSUE_ROOT_PATH, params.getIssueName().toString() ).build() ).
+                parent( NodePath.create( IssueConstants.ISSUE_ROOT_PATH, parentName.toString() ).build() ).
                 data( commentAsData ).
-                indexConfigDocument( indexConfigDocument ).
                 inheritPermissions( true ).
                 childOrder( IssueCommentConstants.DEFAULT_CHILD_ORDER ).
                 nodeType( IssueCommentConstants.NODE_COLLECTION );
