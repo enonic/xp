@@ -19,7 +19,7 @@ final class NodeSettingsBuilder
 
     private final ClusterConfig clusterConfig;
 
-    public NodeSettingsBuilder( final BundleContext context, final ClusterConfig clusterConfig )
+    NodeSettingsBuilder( final BundleContext context, final ClusterConfig clusterConfig )
     {
         this.context = context;
         this.defaultConfig = ConfigBuilder.create().
@@ -28,24 +28,23 @@ final class NodeSettingsBuilder
         this.clusterConfig = clusterConfig;
     }
 
-    public Settings buildSettings( final Map<String, String> map )
+    Settings buildSettings( final Map<String, String> map )
     {
         final Configuration config = buildConfig( map );
-        final Settings settings = buildSettings( config );
-        return settings;
+        return buildSettings( config );
     }
 
     private Configuration buildConfig( final Map<String, String> map )
     {
-        final Configuration source = ConfigBuilder.create().
+        final Configuration config = ConfigBuilder.create().
             addAll( this.defaultConfig ).
             addAll( map ).
-            add( "node.name", clusterConfig.name().toString() ).
             build();
 
         final ConfigInterpolator interpolator = new ConfigInterpolator();
         interpolator.bundleContext( this.context );
-        return interpolator.interpolate( source );
+        final Configuration mergedConfig = ClusterConfigMerger.merge( this.clusterConfig, config );
+        return interpolator.interpolate( mergedConfig );
     }
 
     private Settings buildSettings( final Configuration config )

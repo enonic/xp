@@ -8,7 +8,7 @@ import com.google.common.collect.Lists;
 import com.enonic.xp.cluster.NodeDiscovery;
 
 public class StaticIpNodeDiscovery
-    implements NodeDiscovery<InetAddress>
+    implements NodeDiscovery
 {
     private final List<InetAddress> hosts;
 

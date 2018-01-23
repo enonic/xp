@@ -24,8 +24,6 @@ public class ClusterConfigImpl
 {
     private Configuration config;
 
-    public NodeDiscovery discovery;
-
     @Activate
     public void activate( final Map<String, String> map )
     {

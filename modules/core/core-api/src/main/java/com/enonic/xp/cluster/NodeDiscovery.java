@@ -1,8 +1,9 @@
 package com.enonic.xp.cluster;
 
+import java.net.InetAddress;
 import java.util.List;
 
-public interface NodeDiscovery<T>
+public interface NodeDiscovery
 {
-    List<T> get();
+    List<InetAddress> get();
 }
