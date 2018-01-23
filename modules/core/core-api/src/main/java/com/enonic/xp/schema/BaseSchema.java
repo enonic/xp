@@ -20,6 +20,8 @@ public abstract class BaseSchema<T extends BaseSchemaName>
 
     final String description;
 
+    final String descriptionI18nKey;
+
     final Instant createdTime;
 
     final Instant modifiedTime;
@@ -37,6 +39,7 @@ public abstract class BaseSchema<T extends BaseSchemaName>
             builder.displayName == null || builder.displayName.trim().isEmpty() ? builder.name.getLocalName() : builder.displayName;
         this.displayNameI18nKey = builder.displayNameI18nKey;
         this.description = builder.description;
+        this.descriptionI18nKey = builder.descriptionI18nKey;
         this.createdTime = builder.createdTime;
         this.modifiedTime = builder.modifiedTime;
         this.creator = builder.creator;
@@ -62,6 +65,11 @@ public abstract class BaseSchema<T extends BaseSchemaName>
     public String getDescription()
     {
         return description;
+    }
+
+    public String getDescriptionI18nKey()
+    {
+        return descriptionI18nKey;
     }
 
     public Instant getCreatedTime()
@@ -99,6 +107,8 @@ public abstract class BaseSchema<T extends BaseSchemaName>
 
         private String description;
 
+        private String descriptionI18nKey;
+
         private Instant createdTime;
 
         private Instant modifiedTime;
@@ -120,6 +130,7 @@ public abstract class BaseSchema<T extends BaseSchemaName>
             this.displayName = schema.displayName;
             this.displayNameI18nKey = schema.displayNameI18nKey;
             this.description = schema.description;
+            this.descriptionI18nKey = schema.descriptionI18nKey;
             this.createdTime = schema.createdTime;
             this.modifiedTime = schema.modifiedTime;
             this.creator = schema.creator;
@@ -153,6 +164,12 @@ public abstract class BaseSchema<T extends BaseSchemaName>
         public T description( String value )
         {
             this.description = value;
+            return getThis();
+        }
+
+        public T descriptionI18nKey( final String descriptionI18nKey )
+        {
+            this.descriptionI18nKey = descriptionI18nKey;
             return getThis();
         }
 
