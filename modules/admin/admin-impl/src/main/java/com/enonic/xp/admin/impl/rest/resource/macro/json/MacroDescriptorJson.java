@@ -1,5 +1,9 @@
 package com.enonic.xp.admin.impl.rest.resource.macro.json;
 
+import org.apache.commons.lang.StringUtils;
+
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.admin.impl.json.form.FormJson;
 import com.enonic.xp.admin.impl.rest.resource.macro.MacroIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
@@ -19,12 +23,23 @@ public class MacroDescriptorJson
 
     private String iconUrl;
 
+    private String displayNameI18nKey;
+
+    private final LocaleMessageResolver localeMessageResolver;
+
+    private String descriptionI18nKey;
+
     public MacroDescriptorJson( final MacroDescriptor macroDescriptor, final MacroIconUrlResolver macroIconUrlResolver,
                                 final LocaleMessageResolver localeMessageResolver )
     {
+        Preconditions.checkNotNull( localeMessageResolver );
+        this.localeMessageResolver = localeMessageResolver;
+
         this.key = macroDescriptor.getKey().toString();
         this.name = macroDescriptor.getName();
         this.displayName = macroDescriptor.getDisplayName();
+        this.displayNameI18nKey = macroDescriptor.getDisplayNameI18nKey();
+        this.descriptionI18nKey = macroDescriptor.getDescriptionI18nKey();
         this.description = macroDescriptor.getDescription();
         this.form = new FormJson( macroDescriptor.getForm(), localeMessageResolver );
         this.iconUrl = macroIconUrlResolver.resolve( macroDescriptor );
@@ -42,12 +57,26 @@ public class MacroDescriptorJson
 
     public String getDisplayName()
     {
-        return displayName;
+        if ( StringUtils.isNotBlank( displayNameI18nKey ) )
+        {
+            return localeMessageResolver.localizeMessage( displayNameI18nKey, displayName );
+        }
+        else
+        {
+            return displayName;
+        }
     }
 
     public String getDescription()
     {
-        return description;
+        if ( StringUtils.isNotBlank( descriptionI18nKey ) )
+        {
+            return localeMessageResolver.localizeMessage( descriptionI18nKey, description );
+        }
+        else
+        {
+            return description;
+        }
     }
 
     public FormJson getForm()

@@ -53,6 +53,7 @@ public class XmlPageDescriptorParserTest
         assertEquals( "myapplication:mypage", result.getKey().toString() );
         assertEquals( "mypage", result.getName() );
         assertEquals( "Landing page", result.getDisplayName() );
+        assertEquals( "key.display-name", result.getDisplayNameI18nKey() );
 
         final Form config = result.getConfig();
         assertNotNull( config );

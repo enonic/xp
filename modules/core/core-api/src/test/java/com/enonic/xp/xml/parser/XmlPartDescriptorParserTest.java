@@ -52,6 +52,7 @@ public class XmlPartDescriptorParserTest
         assertEquals( "myapplication:mypart", result.getKey().toString() );
         assertEquals( "mypart", result.getName() );
         assertEquals( "A Part", result.getDisplayName() );
+        assertEquals( "key.display-name", result.getDisplayNameI18nKey() );
 
         final Form config = result.getConfig();
         assertNotNull( config );

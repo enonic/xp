@@ -1,5 +1,7 @@
 package com.enonic.xp.admin.impl.json.content.page;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.admin.impl.json.ItemJson;
@@ -15,10 +17,16 @@ public abstract class DescriptorJson
 
     private final FormJson configJson;
 
+    private final LocaleMessageResolver localeMessageResolver;
+
     public DescriptorJson( final ComponentDescriptor descriptor, final LocaleMessageResolver localeMessageResolver )
     {
         Preconditions.checkNotNull( descriptor );
+        Preconditions.checkNotNull( localeMessageResolver );
+
+        this.localeMessageResolver = localeMessageResolver;
         this.descriptor = descriptor;
+
         this.configJson = new FormJson( descriptor.getConfig(), localeMessageResolver );
     }
 
@@ -34,7 +42,14 @@ public abstract class DescriptorJson
 
     public String getDisplayName()
     {
-        return descriptor.getDisplayName();
+        if ( StringUtils.isNotBlank( descriptor.getDisplayNameI18nKey() ) )
+        {
+            return localeMessageResolver.localizeMessage( descriptor.getDisplayNameI18nKey(), descriptor.getDisplayName() );
+        }
+        else
+        {
+            return descriptor.getDisplayName();
+        }
     }
 
     public FormJson getConfig()

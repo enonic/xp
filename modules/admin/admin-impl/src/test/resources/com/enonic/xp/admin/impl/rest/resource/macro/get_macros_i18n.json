@@ -1,0 +1,53 @@
+{
+  "macros": [
+    {
+      "description": "my description",
+      "displayName": "translated.A.displayName",
+      "form": {
+        "formItems": [
+          {
+            "Input": {
+              "config": {},
+              "customText": null,
+              "helpText": "translated.helpText",
+              "immutable": false,
+              "indexed": false,
+              "inputType": "Double",
+              "label": "translated.label",
+              "maximizeUIInputWidth": true,
+              "name": "columns",
+              "occurrences": {
+                "maximum": 1,
+                "minimum": 0
+              },
+              "validationRegexp": null
+            }
+          }
+        ]
+      },
+      "iconUrl": "/admin/rest/macro/icon/my-app1:macro1",
+      "key": "my-app1:macro1",
+      "name": "macro1"
+    },
+    {
+      "description": "translated.description",
+      "displayName": "translated.B.displayName",
+      "form": {
+        "formItems": []
+      },
+      "iconUrl": "/admin/rest/macro/icon/my-app2:macro2",
+      "key": "my-app2:macro2",
+      "name": "macro2"
+    },
+    {
+      "description": "my description",
+      "displayName": "translated.C.displayName",
+      "form": {
+        "formItems": []
+      },
+      "iconUrl": "/admin/rest/macro/icon/my-app3:macro3",
+      "key": "my-app3:macro3",
+      "name": "macro3"
+    }
+  ]
+}

@@ -23,6 +23,9 @@ public final class XmlPageDescriptorParser
     {
         assertTagName( root, "page" );
         this.builder.displayName( root.getChildValue( "display-name" ) );
+        this.builder.displayNameI18nKey(
+            root.getChild( "display-name" ) != null ? root.getChild( "display-name" ).getAttribute( "i18n" ) : null );
+
 
         final XmlFormMapper formMapper = new XmlFormMapper( this.currentApplication );
         this.builder.config( formMapper.buildForm( root.getChild( "config" ) ) );
