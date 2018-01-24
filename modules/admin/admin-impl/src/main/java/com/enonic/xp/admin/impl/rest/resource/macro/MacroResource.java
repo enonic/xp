@@ -1,7 +1,9 @@
 package com.enonic.xp.admin.impl.rest.resource.macro;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.Cookie;
@@ -24,15 +26,18 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.google.common.html.HtmlEscapers;
 
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.macro.json.ApplicationKeysParam;
+import com.enonic.xp.admin.impl.rest.resource.macro.json.MacroDescriptorJson;
 import com.enonic.xp.admin.impl.rest.resource.macro.json.MacrosJson;
 import com.enonic.xp.admin.impl.rest.resource.macro.json.PreviewMacroJson;
 import com.enonic.xp.admin.impl.rest.resource.macro.json.PreviewMacroResultJson;
 import com.enonic.xp.admin.impl.rest.resource.macro.json.PreviewMacroStringResultJson;
 import com.enonic.xp.admin.impl.rest.resource.macro.json.PreviewStringMacroJson;
+import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.content.Content;
@@ -42,6 +47,7 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.macro.Macro;
@@ -82,6 +88,8 @@ public final class MacroResource
 
     private ContentService contentService;
 
+    private LocaleService localeService;
+
     private static final MacroImageHelper HELPER = new MacroImageHelper();
 
     private static final String DEFAULT_MIME_TYPE = "image/svg+xml";
@@ -92,7 +100,18 @@ public final class MacroResource
     {
         final Set<ApplicationKey> keys = appKeys.getKeys();
         keys.add( ApplicationKey.SYSTEM );
-        return new MacrosJson( this.macroDescriptorService.getByApplications( ApplicationKeys.from( keys ) ), this.macroIconUrlResolver );
+
+        final List<MacroDescriptorJson> macroDescriptorJsons = Lists.newArrayList();
+
+        ApplicationKeys.from( keys ).forEach( applicationKey -> {
+            macroDescriptorJsons.addAll( this.macroDescriptorService.getByApplication( applicationKey ).
+                stream().
+                map( macroDescriptor -> new MacroDescriptorJson( macroDescriptor, macroIconUrlResolver,
+                                                                 new LocaleMessageResolver( localeService, applicationKey ) ) ).
+                collect( Collectors.toList() ) );
+        } );
+
+        return new MacrosJson( macroDescriptorJsons );
     }
 
     @GET
@@ -319,5 +338,11 @@ public final class MacroResource
     public void setContentService( final ContentService contentService )
     {
         this.contentService = contentService;
+    }
+
+    @Reference
+    public void setLocaleService( final LocaleService localeService )
+    {
+        this.localeService = localeService;
     }
 }

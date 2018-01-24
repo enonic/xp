@@ -1,6 +1,8 @@
 package com.enonic.xp.jaxrs.impl;
 
 import java.net.URL;
+import java.util.Collections;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -54,6 +56,7 @@ public abstract class JaxRsResourceTestSupport
         Mockito.when( req.getScheme() ).thenReturn( "http" );
         Mockito.when( req.getServerName() ).thenReturn( "localhost" );
         Mockito.when( req.getLocalPort() ).thenReturn( 80 );
+        Mockito.when( req.getLocales() ).thenReturn( Collections.enumeration( Collections.singleton( Locale.ENGLISH ) ) );
         ServletRequestHolder.setRequest( req );
     }
 

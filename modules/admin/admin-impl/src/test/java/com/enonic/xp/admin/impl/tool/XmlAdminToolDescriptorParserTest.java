@@ -53,6 +53,9 @@ public class XmlAdminToolDescriptorParserTest
         assertEquals( "myapplication:myadmintool", result.getKey().toString() );
         assertEquals( "My admin tool", result.getDisplayName() );
 
+        assertEquals( "key.display-name", result.getDisplayNameI18nKey() );
+        assertEquals( "key.description", result.getDescriptionI18nKey() );
+
         final PrincipalKeys allowedPrincipals = result.getAllowedPrincipals();
         assertNotNull( allowedPrincipals );
         assertEquals( 1, allowedPrincipals.getSize() );

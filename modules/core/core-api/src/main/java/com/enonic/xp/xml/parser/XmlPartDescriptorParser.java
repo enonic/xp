@@ -23,6 +23,8 @@ public final class XmlPartDescriptorParser
     {
         assertTagName( root, "part" );
         this.builder.displayName( root.getChildValue( "display-name" ) );
+        this.builder.displayNameI18nKey(
+            root.getChild( "display-name" ) != null ? root.getChild( "display-name" ).getAttribute( "i18n" ) : null );
 
         final XmlFormMapper mapper = new XmlFormMapper( this.currentApplication );
         this.builder.config( mapper.buildForm( root.getChild( "config" ) ) );

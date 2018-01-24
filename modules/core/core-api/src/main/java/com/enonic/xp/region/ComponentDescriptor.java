@@ -14,6 +14,8 @@ public abstract class ComponentDescriptor
 {
     private final String displayName;
 
+    private final String displayNameI18nKey;
+
     private final Form config;
 
     ComponentDescriptor( final BaseBuilder builder )
@@ -22,12 +24,18 @@ public abstract class ComponentDescriptor
 
         Preconditions.checkNotNull( builder.config, "config cannot be null" );
         this.displayName = builder.displayName == null || builder.displayName.trim().isEmpty() ? builder.name : builder.displayName;
+        this.displayNameI18nKey = builder.displayNameI18nKey;
         this.config = builder.config;
     }
 
     public final String getDisplayName()
     {
         return displayName;
+    }
+
+    public String getDisplayNameI18nKey()
+    {
+        return displayNameI18nKey;
     }
 
     public final Form getConfig()
@@ -45,6 +53,8 @@ public abstract class ComponentDescriptor
 
         protected String displayName;
 
+        protected String displayNameI18nKey;
+
         protected Form config;
 
         BaseBuilder()
@@ -56,6 +66,7 @@ public abstract class ComponentDescriptor
             this.key = descriptor.getKey();
             this.name = descriptor.getName();
             this.displayName = descriptor.getDisplayName();
+            this.displayNameI18nKey = descriptor.getDisplayNameI18nKey();
             this.config = descriptor.getConfig();
         }
 
@@ -68,6 +79,12 @@ public abstract class ComponentDescriptor
         public final T displayName( final String displayName )
         {
             this.displayName = displayName;
+            return typecastToBuilder( this );
+        }
+
+        public final T displayNameI18nKey( final String displayNameI18nKey )
+        {
+            this.displayNameI18nKey = displayNameI18nKey;
             return typecastToBuilder( this );
         }
 

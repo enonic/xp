@@ -1,12 +1,13 @@
 <?xml version="1.0"?>
 <page xmlns="urn:enonic:xp:model:1.0">
-  <display-name>Landing page</display-name>
+  <display-name i18n="key.display-name">Landing page</display-name>
   <config>
     <input type="Double" name="pause">
-      <label>Pause parameter</label>
+      <label i18n="key1.label">Pause parameter</label>
       <immutable>false</immutable>
       <indexed>false</indexed>
       <occurrences minimum="0" maximum="1"/>
+      <help-text i18n="key1.help-text"/>
     </input>
     <item-set name="myFormItemSet">
       <label>My form item set</label>
@@ -29,9 +30,10 @@
           <label>My field set</label>
           <items>
             <input type="TextLine" name="fieldSetItem">
-              <label>Field set Item</label>
+              <label i18n="key2.label">Field set Item</label>
               <immutable>false</immutable>
               <indexed>false</indexed>
+              <help-text i18n="key2.help-text"/>
               <occurrences minimum="0" maximum="1"/>
             </input>
           </items>

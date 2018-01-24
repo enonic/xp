@@ -53,15 +53,23 @@ public class XmlLayoutDescriptorParserTest
         assertEquals( "myapplication:mylayout", result.getKey().toString() );
         assertEquals( "mylayout", result.getName() );
         assertEquals( "My Layout", result.getDisplayName() );
+        assertEquals( "key.display-name", result.getDisplayNameI18nKey() );
 
         final Form config = result.getConfig();
         assertNotNull( config );
         assertEquals( InputTypeName.DOUBLE, config.getFormItem( "pause" ).toInput().getInputType() );
         assertEquals( "Pause parameter", config.getFormItem( "pause" ).toInput().getLabel() );
+
+        assertEquals( "key1.label", config.getFormItem( "pause" ).toInput().getLabelI18nKey() );
+        assertEquals( "key1.help-text", config.getFormItem( "pause" ).toInput().getHelpTextI18nKey() );
+
         assertNotNull( config.getFormItem( "myFormItemSet" ).toFormItemSet() );
         assertEquals( "My form item set", config.getFormItem( "myFormItemSet" ).toFormItemSet().getLabel() );
         assertEquals( InputTypeName.TEXT_LINE, config.getFormItem( "myFormItemSet.fieldSetItem" ).toInput().getInputType() );
         assertEquals( "Field set Item", config.getFormItem( "myFormItemSet.fieldSetItem" ).toInput().getLabel() );
+
+        assertEquals( "key2.label", config.getFormItem( "myFormItemSet.fieldSetItem" ).toInput().getLabelI18nKey() );
+        assertEquals( "key2.help-text", config.getFormItem( "myFormItemSet.fieldSetItem" ).toInput().getHelpTextI18nKey() );
 
         final RegionDescriptors regions = result.getRegions();
         assertNotNull( regions );

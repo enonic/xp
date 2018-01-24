@@ -53,7 +53,7 @@ exports.getLocales = function () {
  * @returns {string} Current locale.
  */
 exports.getPhrases = function () {
-    return JSON.stringify(i18n.getPhrases(exports.getLocales(), ['admin/i18n/common', 'admin/i18n/phrases']));
+    return JSON.stringify(i18n.getPhrases(exports.getLocales(), ['i18n/common', 'i18n/phrases']));
 };
 
 function getMainAppUrl(path) {

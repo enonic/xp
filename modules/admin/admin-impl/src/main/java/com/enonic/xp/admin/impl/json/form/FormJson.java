@@ -7,6 +7,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.annotations.Beta;
 
+import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
 
@@ -18,13 +19,17 @@ public class FormJson
 
     private final List<FormItemJson> items;
 
-    public FormJson( final Form form )
+    private LocaleMessageResolver localeMessageResolver;
+
+    public FormJson( final Form form, final LocaleMessageResolver localeMessageResolver )
     {
         this.form = form;
+        this.localeMessageResolver = localeMessageResolver;
+
         items = new ArrayList<>( form.size() );
         for ( FormItem formItem : form )
         {
-            items.add( FormItemJsonFactory.create( formItem ) );
+            items.add( FormItemJsonFactory.create( formItem, this.localeMessageResolver ) );
         }
         FormDefaultValuesJsonProcessor.setDefaultValues( form, this );
     }

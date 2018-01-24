@@ -6,6 +6,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.annotations.Beta;
 
+import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.FormItems;
@@ -19,11 +20,11 @@ public class FieldSetJson
 
     private final List<FormItemJson> items;
 
-    public FieldSetJson( final FieldSet fieldSet )
+    public FieldSetJson( final FieldSet fieldSet, final LocaleMessageResolver localeMessageResolver )
     {
         super( fieldSet );
         this.fieldSet = fieldSet;
-        this.items = wrapFormItems( fieldSet.getFormItems() );
+        this.items = wrapFormItems( fieldSet.getFormItems(), localeMessageResolver );
     }
 
     private static Iterable<FormItem> unwrapFormItems( final List<FormItemJson> items )
@@ -36,12 +37,12 @@ public class FieldSetJson
         return formItems;
     }
 
-    private static List<FormItemJson> wrapFormItems( final FormItems items )
+    private static List<FormItemJson> wrapFormItems( final FormItems items, final LocaleMessageResolver localeMessageResolver )
     {
         final List<FormItemJson> formItemJsonList = new ArrayList<>();
         for ( FormItem formItem : items )
         {
-            formItemJsonList.add( FormItemJsonFactory.create( formItem ) );
+            formItemJsonList.add( FormItemJsonFactory.create( formItem, localeMessageResolver ) );
         }
         return formItemJsonList;
     }

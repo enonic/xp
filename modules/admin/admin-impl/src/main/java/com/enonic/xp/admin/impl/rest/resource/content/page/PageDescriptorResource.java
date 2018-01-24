@@ -1,5 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.content.page;
 
+import java.util.stream.Collectors;
+
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -12,12 +14,15 @@ import javax.ws.rs.core.MediaType;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.collect.ImmutableList;
+
 import com.enonic.xp.admin.impl.json.content.page.PageDescriptorJson;
 import com.enonic.xp.admin.impl.json.content.page.PageDescriptorListJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.content.page.part.GetByApplicationsParams;
+import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationKeys;
+import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.PageDescriptor;
@@ -34,12 +39,16 @@ public final class PageDescriptorResource
 {
     private PageDescriptorService pageDescriptorService;
 
+    private LocaleService localeService;
+
     @GET
     public PageDescriptorJson getByKey( @QueryParam("key") final String pageDescriptorKey )
     {
         final DescriptorKey key = DescriptorKey.from( pageDescriptorKey );
         final PageDescriptor descriptor = pageDescriptorService.getByKey( key );
-        final PageDescriptorJson json = new PageDescriptorJson( descriptor );
+
+        final LocaleMessageResolver localeMessageResolver = new LocaleMessageResolver( this.localeService, key.getApplicationKey() );
+        final PageDescriptorJson json = new PageDescriptorJson( descriptor, localeMessageResolver );
         return json;
     }
 
@@ -48,7 +57,10 @@ public final class PageDescriptorResource
     public PageDescriptorListJson getByApplication( @QueryParam("applicationKey") final String applicationKey )
     {
         final PageDescriptors pageDescriptors = this.pageDescriptorService.getByApplication( ApplicationKey.from( applicationKey ) );
-        return new PageDescriptorListJson( PageDescriptors.from( pageDescriptors ) );
+
+        final LocaleMessageResolver localeMessageResolver =
+            new LocaleMessageResolver( this.localeService, ApplicationKey.from( applicationKey ) );
+        return new PageDescriptorListJson( PageDescriptors.from( pageDescriptors ), localeMessageResolver );
     }
 
     @POST
@@ -56,14 +68,28 @@ public final class PageDescriptorResource
     @Consumes(MediaType.APPLICATION_JSON)
     public PageDescriptorListJson getByApplications( final GetByApplicationsParams params )
     {
-        final ApplicationKeys applicationKeys = ApplicationKeys.from( params.getApplicationKeys() );
-        final PageDescriptors pageDescriptors = this.pageDescriptorService.getByApplications( applicationKeys );
-        return new PageDescriptorListJson( PageDescriptors.from( pageDescriptors ) );
+        ImmutableList.Builder<PageDescriptorJson> pageDescriptorsJsonBuilder = new ImmutableList.Builder();
+
+        params.getApplicationKeys().forEach( applicationKey -> {
+            pageDescriptorsJsonBuilder.addAll( this.pageDescriptorService.getByApplication( applicationKey ).
+                stream().
+                map( pageDescriptor -> new PageDescriptorJson( pageDescriptor,
+                                                               new LocaleMessageResolver( localeService, applicationKey ) ) ).
+                collect( Collectors.toList() ) );
+        } );
+
+        return new PageDescriptorListJson( pageDescriptorsJsonBuilder.build() );
     }
 
     @Reference
     public void setPageDescriptorService( final PageDescriptorService pageDescriptorService )
     {
         this.pageDescriptorService = pageDescriptorService;
+    }
+
+    @Reference
+    public void setLocaleService( final LocaleService localeService )
+    {
+        this.localeService = localeService;
     }
 }

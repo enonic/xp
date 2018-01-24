@@ -23,6 +23,8 @@ public final class Input
 
     private final String label;
 
+    private final String labelI18nKey;
+
     private final InputTypeDefault defaultValue;
 
     private final boolean immutable;
@@ -36,6 +38,8 @@ public final class Input
     private final String validationRegexp;
 
     private final String helpText;
+
+    private final String helpTextI18nKey;
 
     private final InputTypeConfig inputTypeConfig;
 
@@ -65,6 +69,8 @@ public final class Input
         this.helpText = builder.helpText;
         this.inputTypeConfig = builder.inputTypeConfig.build();
         this.maximizeUIInputWidth = builder.maximizeUIInputWidth;
+        this.labelI18nKey = builder.labelI18nKey;
+        this.helpTextI18nKey = builder.helpTextI18nKey;
     }
 
     @Override
@@ -144,6 +150,16 @@ public final class Input
         return inputTypeConfig;
     }
 
+    public String getLabelI18nKey()
+    {
+        return labelI18nKey;
+    }
+
+    public String getHelpTextI18nKey()
+    {
+        return helpTextI18nKey;
+    }
+
     @Override
     public Input copy()
     {
@@ -163,26 +179,22 @@ public final class Input
         }
 
         final Input that = (Input) o;
-        return super.equals( o ) &&
-            Objects.equals( this.type, that.type ) &&
-            Objects.equals( this.label, that.label ) &&
-            Objects.equals( this.defaultValue, that.defaultValue ) &&
-            Objects.equals( this.immutable, that.immutable ) &&
-            Objects.equals( this.occurrences, that.occurrences ) &&
-            Objects.equals( this.indexed, that.indexed ) &&
-            Objects.equals( this.maximizeUIInputWidth, that.maximizeUIInputWidth ) &&
-            Objects.equals( this.customText, that.customText ) &&
-            Objects.equals( this.helpText, that.helpText ) &&
-            Objects.equals( this.validationRegexp, that.validationRegexp ) &&
-            Objects.equals( this.inputTypeConfig, that.inputTypeConfig );
+        return super.equals( o ) && Objects.equals( this.type, that.type ) && Objects.equals( this.label, that.label ) &&
+            Objects.equals( this.defaultValue, that.defaultValue ) && Objects.equals( this.immutable, that.immutable ) &&
+            Objects.equals( this.occurrences, that.occurrences ) && Objects.equals( this.indexed, that.indexed ) &&
+            Objects.equals( this.maximizeUIInputWidth, that.maximizeUIInputWidth ) && Objects.equals( this.customText, that.customText ) &&
+            Objects.equals( this.helpText, that.helpText ) && Objects.equals( this.validationRegexp, that.validationRegexp ) &&
+            Objects.equals( this.inputTypeConfig, that.inputTypeConfig ) && Objects.equals( this.helpTextI18nKey, that.helpTextI18nKey ) &&
+            Objects.equals( this.labelI18nKey, that.labelI18nKey );
+
     }
 
     @Override
     public int hashCode()
     {
         return Objects.hash( super.hashCode(), this.type, this.label, this.defaultValue, this.immutable, this.occurrences, this.indexed,
-                             this.customText,
-                             this.helpText, this.validationRegexp, this.inputTypeConfig, this.maximizeUIInputWidth );
+                             this.customText, this.helpText, this.validationRegexp, this.inputTypeConfig, this.maximizeUIInputWidth,
+                             this.labelI18nKey, this.helpTextI18nKey );
     }
 
     public static Builder create()
@@ -203,6 +215,8 @@ public final class Input
 
         private String label;
 
+        private String labelI18nKey;
+
         private InputTypeDefault defaultValue;
 
         private boolean immutable = false;
@@ -216,6 +230,8 @@ public final class Input
         private String validationRegexp;
 
         private String helpText;
+
+        private String helpTextI18nKey;
 
         private final InputTypeConfig.Builder inputTypeConfig = InputTypeConfig.create();
 
@@ -238,6 +254,8 @@ public final class Input
             this.validationRegexp = source.validationRegexp;
             this.helpText = source.helpText;
             this.maximizeUIInputWidth = source.maximizeUIInputWidth;
+            this.labelI18nKey = source.labelI18nKey;
+            this.helpTextI18nKey = source.helpTextI18nKey;
 
             if ( source.inputTypeConfig != null )
             {
@@ -260,6 +278,12 @@ public final class Input
         public Builder label( String value )
         {
             label = value;
+            return this;
+        }
+
+        public Builder labelI18nKey( String value )
+        {
+            labelI18nKey = value;
             return this;
         }
 
@@ -352,6 +376,12 @@ public final class Input
         public Builder helpText( String value )
         {
             helpText = value;
+            return this;
+        }
+
+        public Builder helpTextI18nKey( String value )
+        {
+            helpTextI18nKey = value;
             return this;
         }
 
