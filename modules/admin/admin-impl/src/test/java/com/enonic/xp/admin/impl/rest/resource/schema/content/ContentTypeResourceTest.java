@@ -112,6 +112,143 @@ public class ContentTypeResourceTest
     }
 
     @Test
+    public void get_contentType_i18n_fieldSet()
+        throws Exception
+    {
+        final ContentType contentType = ContentType.create().
+            name( MY_CTY_QUALIFIED_NAME ).
+            createdTime( SOME_DATE ).
+            superType( ContentTypeName.unstructured() ).
+            displayName( "My ContentType" ).
+            description( "My description" ).
+            icon( Icon.from( new byte[]{123}, "image/gif", SOME_DATE ) ).
+            addFormItem( FieldSet.create().
+                name( "myFieldSet" ).
+                label( "My field set" ).
+                labelI18nKey( "key.label" ).
+                addFormItem( Input.create().
+                    name( "myTextLine" ).
+                    inputType( InputTypeName.TEXT_LINE ).
+                    label( "My text line" ).
+                    labelI18nKey( "key.label" ).
+                    helpTextI18nKey( "key.help-text" ).
+                    required( true ).
+                    build() ).
+                build() ).
+            build();
+
+        Mockito.when( contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
+
+        final MessageBundle messageBundle = Mockito.mock( MessageBundle.class );
+        Mockito.when( messageBundle.localize( "key.label" ) ).thenReturn( "translated.label" );
+        Mockito.when( messageBundle.localize( "key.help-text" ) ).thenReturn( "translated.helpText" );
+
+        Mockito.when( this.localeService.getBundle( Mockito.any(), Mockito.any() ) ).thenReturn( messageBundle );
+
+        // execute
+        String jsonString =
+            request().path( "schema/content" ).queryParam( "name", MY_CTY_QUALIFIED_NAME.toString() ).queryParam( "inlineMixinsToFormItems",
+                                                                                                                  "false" ).get().getAsString();
+
+        // verify
+        assertJson( "ContentTypeResourceTest-get_contentType_i18n_fieldSet.json", jsonString );
+    }
+
+    @Test
+    public void get_contentType_i18n_itemSet()
+        throws Exception
+    {
+        final ContentType contentType = ContentType.create().
+            name( MY_CTY_QUALIFIED_NAME ).
+            createdTime( SOME_DATE ).
+            superType( ContentTypeName.unstructured() ).
+            displayName( "My ContentType" ).
+            description( "My description" ).
+            icon( Icon.from( new byte[]{123}, "image/gif", SOME_DATE ) ).
+            addFormItem( FormItemSet.create().
+                name( "myFormItemSet" ).
+                label( "My Form Item Set" ).
+                labelI18nKey( "key.label" ).
+                addFormItem( Input.create().
+                    name( "myTextLine" ).
+                    inputType( InputTypeName.TEXT_LINE ).
+                    label( "My text line" ).
+                    labelI18nKey( "key.label" ).
+                    helpTextI18nKey( "key.help-text" ).
+                    required( true ).
+                    build() ).
+                build() ).
+            build();
+
+        Mockito.when( contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
+
+        final MessageBundle messageBundle = Mockito.mock( MessageBundle.class );
+        Mockito.when( messageBundle.localize( "key.label" ) ).thenReturn( "translated.label" );
+        Mockito.when( messageBundle.localize( "key.help-text" ) ).thenReturn( "translated.helpText" );
+
+        Mockito.when( this.localeService.getBundle( Mockito.any(), Mockito.any() ) ).thenReturn( messageBundle );
+
+        // execute
+        String jsonString =
+            request().path( "schema/content" ).queryParam( "name", MY_CTY_QUALIFIED_NAME.toString() ).queryParam( "inlineMixinsToFormItems",
+                                                                                                                  "false" ).get().getAsString();
+
+        // verify
+        assertJson( "ContentTypeResourceTest-get_contentType_i18n_itemSet.json", jsonString );
+    }
+
+    @Test
+    public void get_contentType_i18n_optionSet()
+        throws Exception
+    {
+        final ContentType contentType = ContentType.create().
+            name( MY_CTY_QUALIFIED_NAME ).
+            createdTime( SOME_DATE ).
+            superType( ContentTypeName.unstructured() ).
+            displayName( "My ContentType" ).
+            description( "My description" ).
+            icon( Icon.from( new byte[]{123}, "image/gif", SOME_DATE ) ).
+            addFormItem( FormOptionSet.create().
+                name( "myOptionSet" ).
+                label( "My Option Set" ).
+                labelI18nKey( "key.label" ).
+                helpTextI18nKey( "key.help-text" ).
+                addOptionSetOption( FormOptionSetOption.create().
+                    name( "option" ).
+                    label( "My option" ).
+                    helpText( "Option help text" ).
+                    labelI18nKey( "key.label" ).
+                    helpTextI18nKey( "key.help-text" ).
+                    addFormItem( Input.create().
+                        name( "myTextLine" ).
+                        inputType( InputTypeName.TEXT_LINE ).
+                        label( "My text line" ).
+                        labelI18nKey( "key.label" ).
+                        helpTextI18nKey( "key.help-text" ).
+                        required( true ).
+                        build() ).
+                    build() ).
+                build() ).
+            build();
+
+        Mockito.when( contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
+
+        final MessageBundle messageBundle = Mockito.mock( MessageBundle.class );
+        Mockito.when( messageBundle.localize( "key.label" ) ).thenReturn( "translated.label" );
+        Mockito.when( messageBundle.localize( "key.help-text" ) ).thenReturn( "translated.helpText" );
+
+        Mockito.when( this.localeService.getBundle( Mockito.any(), Mockito.any() ) ).thenReturn( messageBundle );
+
+        // execute
+        String jsonString =
+            request().path( "schema/content" ).queryParam( "name", MY_CTY_QUALIFIED_NAME.toString() ).queryParam( "inlineMixinsToFormItems",
+                                                                                                                  "false" ).get().getAsString();
+
+        // verify
+        assertJson( "ContentTypeResourceTest-get_contentType_i18n_optionSet.json", jsonString );
+    }
+
+    @Test
     public void get_contentType_i18n()
         throws Exception
     {
