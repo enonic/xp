@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.elasticsearch;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Map;
 
 import org.elasticsearch.ElasticsearchException;
@@ -36,9 +34,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Stopwatch;
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.index.IndexType;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.index.ApplyMappingRequest;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
@@ -181,19 +179,22 @@ public class IndexServiceInternalImpl
     }
 
     @Override
-    public Map<String, IndexSettings> getIndexSettings( final Collection<String> indexNames )
+    public IndexSettings getIndexSettings( final RepositoryId repositoryId, final IndexType indexType )
     {
-        final Map<String, IndexSettings> result = Maps.newHashMap();
+        if ( repositoryId == null || indexType == null )
+        {
+            return null;
+        }
 
-        final ImmutableOpenMap<String, Settings> settingsMap = this.client.admin().indices().getSettings( new GetSettingsRequest().indices(
-            indexNames != null ? Arrays.copyOf( indexNames.toArray(), indexNames.size(), String[].class ) : null ) ).actionGet(
-            GET_SETTINGS_TIMEOUT ).getIndexToSettings();
+        final String indexName = IndexType.SEARCH == indexType
+            ? IndexNameResolver.resolveSearchIndexName( repositoryId )
+            : IndexNameResolver.resolveStorageIndexName( repositoryId );
 
-        settingsMap.keysIt().forEachRemaining( key -> {
-            result.put( key, IndexSettings.from( (Map) settingsMap.get( key ).getAsMap() ) );
-        } );
+        final ImmutableOpenMap<String, Settings> settingsMap =
+            this.client.admin().indices().getSettings( new GetSettingsRequest().indices( indexName ) ).actionGet(
+                GET_SETTINGS_TIMEOUT ).getIndexToSettings();
 
-        return result;
+        return IndexSettings.from( (Map) settingsMap.get( indexName ).getAsMap() );
     }
 
     @Override

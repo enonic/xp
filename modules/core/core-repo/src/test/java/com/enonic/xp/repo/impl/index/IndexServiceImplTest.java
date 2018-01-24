@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.index;
 
-import java.util.Map;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -9,6 +7,7 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.index.IndexType;
 import com.enonic.xp.index.PurgeIndexParams;
 import com.enonic.xp.index.ReindexParams;
 import com.enonic.xp.index.ReindexResult;
@@ -26,7 +25,6 @@ import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 import com.enonic.xp.repo.impl.node.FindNodesByQueryCommand;
 import com.enonic.xp.repo.impl.node.PushNodesCommand;
-import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repository.IndexSettings;
 import com.enonic.xp.security.SystemConstants;
 
@@ -314,13 +312,9 @@ public class IndexServiceImplTest
     public void getIndexSettings_empty()
         throws Exception
     {
-        final Map<String, IndexSettings> settingsMap = this.indexService.getIndexSettings( TEST_REPO.getId() );
+        final IndexSettings indexSettings = this.indexService.getIndexSettings( TEST_REPO.getId(), IndexType.SEARCH );
 
-        final IndexSettings searchIndexSettings = settingsMap.get( IndexNameResolver.resolveSearchIndexName( TEST_REPO.getId() ) );
-        final IndexSettings storageIndexSettings = settingsMap.get( IndexNameResolver.resolveStorageIndexName( TEST_REPO.getId() ) );
-
-        assertNull( searchIndexSettings.getNode().get( "index.invalid_path" ) );
-        assertNull( storageIndexSettings.getNode().get( "index.invalid_path" ) );
+        assertNull( indexSettings.getNode().get( "index.invalid_path" ) );
     }
 
     @Test
@@ -332,13 +326,9 @@ public class IndexServiceImplTest
             settings( "{\"index\": {\"number_of_replicas\": 2}}" ).
             build() );
 
-        final Map<String, IndexSettings> settingsMap = this.indexService.getIndexSettings( TEST_REPO.getId() );
+        final IndexSettings indexSettings = this.indexService.getIndexSettings( TEST_REPO.getId(), IndexType.SEARCH );
 
-        final IndexSettings searchIndexSettings = settingsMap.get( IndexNameResolver.resolveSearchIndexName( TEST_REPO.getId() ) );
-        final IndexSettings storageIndexSettings = settingsMap.get( IndexNameResolver.resolveStorageIndexName( TEST_REPO.getId() ) );
-
-        assertEquals( "\"2\"", searchIndexSettings.getNode().get( "index.number_of_replicas" ).toString() );
-        assertEquals( "\"2\"", storageIndexSettings.getNode().get( "index.number_of_replicas" ).toString() );
+        assertEquals( "\"2\"", indexSettings.getNode().get( "index.number_of_replicas" ).toString() );
     }
 
 }

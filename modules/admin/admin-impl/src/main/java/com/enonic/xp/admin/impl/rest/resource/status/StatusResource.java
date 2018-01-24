@@ -18,6 +18,7 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.index.IndexService;
+import com.enonic.xp.index.IndexType;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.repository.IndexSettings;
 import com.enonic.xp.security.PrincipalKey;
@@ -52,8 +53,7 @@ public final class StatusResource
 
     private JsonNode createRepoReadOnlyJson()
     {
-        final IndexSettings indexSettings =
-            this.indexService.getIndexSettings( ContentConstants.CONTENT_REPO.getId() ).get( "search-cms-repo" );
+        final IndexSettings indexSettings = this.indexService.getIndexSettings( ContentConstants.CONTENT_REPO.getId(), IndexType.SEARCH );
 
         final JsonNode writeJsonNode = indexSettings != null ? indexSettings.getNode().get( "index.blocks.write" ) : null;
 

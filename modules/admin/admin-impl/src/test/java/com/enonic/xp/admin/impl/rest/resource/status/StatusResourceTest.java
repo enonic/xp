@@ -9,7 +9,9 @@ import org.mockito.Mockito;
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.index.IndexService;
+import com.enonic.xp.index.IndexType;
 import com.enonic.xp.repository.IndexSettings;
 import com.enonic.xp.server.ServerInfo;
 import com.enonic.xp.server.VersionInfo;
@@ -49,13 +51,11 @@ public class StatusResourceTest
     {
         initServerInfo();
 
-        final Map<String, IndexSettings> indexSettingsMap = Maps.newHashMap();
         final Map<String, Object> indexes = Maps.newHashMap();
-
         indexes.put( "index.blocks.write", true );
-        indexSettingsMap.put( "search-cms-repo", IndexSettings.from( indexes ) );
 
-        Mockito.when( this.indexService.getIndexSettings( Mockito.any() ) ).thenReturn( indexSettingsMap );
+        Mockito.when( this.indexService.getIndexSettings( ContentConstants.CONTENT_REPO.getId(), IndexType.SEARCH ) ).thenReturn(
+            IndexSettings.from( indexes ) );
 
         final String json = request().path( "/status" ).get().getAsString();
         assertJson( "status_readonly.json", json );

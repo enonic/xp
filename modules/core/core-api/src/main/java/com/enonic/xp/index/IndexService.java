@@ -1,7 +1,5 @@
 package com.enonic.xp.index;
 
-import java.util.Map;
-
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.repository.IndexSettings;
@@ -15,7 +13,7 @@ public interface IndexService
 
     UpdateIndexSettingsResult updateIndexSettings( final UpdateIndexSettingsParams params );
 
-    Map<String, IndexSettings> getIndexSettings( final RepositoryId... repositoryIds );
+    IndexSettings getIndexSettings( final RepositoryId repositoryId, final IndexType indexType );
 
     ReindexResult reindex( ReindexParams params );
 
