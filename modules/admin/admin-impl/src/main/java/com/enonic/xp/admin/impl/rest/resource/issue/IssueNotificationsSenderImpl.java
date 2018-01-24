@@ -66,9 +66,9 @@ public class IssueNotificationsSenderImpl
         this.sendMailExecutor = Executors.newCachedThreadPool( threadFactory );
     }
 
-    public void notifyIssueCreated( final Issue issue, final String url )
+    public void notifyIssueCreated( final Issue issue, final List<IssueComment> comments, final String url )
     {
-        final IssueMailMessageParams params = createMessageParams( issue, null, url );
+        final IssueMailMessageParams params = createMessageParams( issue, comments, url );
 
         if ( isRecipientsPresent( params ) )
         {

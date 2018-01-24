@@ -19,6 +19,8 @@ import javax.ws.rs.core.MediaType;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.net.HttpHeaders;
 
@@ -79,7 +81,25 @@ public final class IssueResource
     public IssueJson create( final CreateIssueJson json, @Context HttpServletRequest request )
     {
         final Issue issue = issueService.create( generateCreateIssueParams( json ) );
-        issueNotificationsSender.notifyIssueCreated( issue, request.getHeader( HttpHeaders.REFERER ) );
+        final List<IssueComment> comments = Lists.newArrayList();
+
+        if ( !Strings.isNullOrEmpty( json.description ) )
+        {
+            Optional<User> creator = securityService.getUser( issue.getCreator() );
+            if ( creator.isPresent() )
+            {
+                CreateIssueCommentParams params = CreateIssueCommentParams.create().
+                    issue( issue.getId() ).
+                    creator( issue.getCreator() ).
+                    creatorDisplayName( creator.get().getDisplayName() ).
+                    text( json.description ).
+                    build();
+
+                comments.add( issueService.createComment( params ) );
+            }
+        }
+
+        issueNotificationsSender.notifyIssueCreated( issue, comments, request.getHeader( HttpHeaders.REFERER ) );
 
         return new IssueJson( issue );
     }

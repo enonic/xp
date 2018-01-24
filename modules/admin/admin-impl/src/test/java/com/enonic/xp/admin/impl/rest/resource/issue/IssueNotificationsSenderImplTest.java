@@ -2,7 +2,6 @@ package com.enonic.xp.admin.impl.rest.resource.issue;
 
 import java.time.Instant;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -11,6 +10,8 @@ import java.util.stream.Collectors;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import com.google.common.collect.Lists;
 
 import com.enonic.xp.content.CompareContentResult;
 import com.enonic.xp.content.CompareContentResults;
@@ -24,6 +25,7 @@ import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.issue.Issue;
+import com.enonic.xp.issue.IssueComment;
 import com.enonic.xp.issue.IssueId;
 import com.enonic.xp.issue.PublishRequest;
 import com.enonic.xp.issue.PublishRequestItem;
@@ -82,7 +84,7 @@ public class IssueNotificationsSenderImplTest
         Mockito.when( securityService.getUser( issue.getApproverIds().first() ) ).thenReturn( Optional.of( approver ) );
         Mockito.when( contentService.getByIds( Mockito.any( GetContentByIdsParams.class ) ) ).thenReturn( contents );
 
-        issueNotificationsSender.notifyIssueCreated( issue, "url" );
+        issueNotificationsSender.notifyIssueCreated( issue, this.createComments( creator.getKey() ), "url" );
 
         Thread.sleep( 1000 ); // giving a chance to run threads that send mails
 
@@ -108,7 +110,7 @@ public class IssueNotificationsSenderImplTest
             approver -> Mockito.when( securityService.getUser( approver.getKey() ) ).thenReturn( Optional.of( approver ) ) );
         Mockito.when( contentService.getByIds( Mockito.any( GetContentByIdsParams.class ) ) ).thenReturn( contents );
 
-        issueNotificationsSender.notifyIssueCreated( issue, "url" );
+        issueNotificationsSender.notifyIssueCreated( issue, this.createComments( creator.getKey() ), "url" );
 
         Thread.sleep( 1000 ); // giving a chance to run threads that send mails
 
@@ -145,7 +147,7 @@ public class IssueNotificationsSenderImplTest
             ContentType.create().name( "mycontenttype" ).icon( Icon.from( new byte[]{1}, "image/svg+xml", Instant.now() ) ).setBuiltIn(
                 true ).build() );
 
-        issueNotificationsSender.notifyIssueUpdated( issue, Collections.emptyList(), "url" );
+        issueNotificationsSender.notifyIssueUpdated( issue, this.createComments( creator.getKey() ), "url" );
 
         verify( securityService, times( 2 ) ).getUser( Mockito.any() );
         verify( contentService, times( 1 ) ).getByIds( Mockito.any() );
@@ -179,7 +181,7 @@ public class IssueNotificationsSenderImplTest
             ContentType.create().name( "mycontenttype" ).icon( Icon.from( new byte[]{1}, "image/svg+xml", Instant.now() ) ).setBuiltIn(
                 true ).build() );
 
-        issueNotificationsSender.notifyIssueCommented( issue, Collections.emptyList(), "url" );
+        issueNotificationsSender.notifyIssueCommented( issue, this.createComments( creator.getKey() ), "url" );
 
         verify( securityService, times( 2 ) ).getUser( Mockito.any() );
         verify( contentService, times( 1 ) ).getByIds( Mockito.any() );
@@ -213,7 +215,7 @@ public class IssueNotificationsSenderImplTest
             ContentType.create().name( "mycontenttype" ).icon( Icon.from( new byte[]{1}, "image/svg+xml", Instant.now() ) ).setBuiltIn(
                 true ).build() );
 
-        issueNotificationsSender.notifyIssueUpdated( issue, Collections.emptyList(), "url" );
+        issueNotificationsSender.notifyIssueUpdated( issue, this.createComments( creator.getKey() ), "url" );
 
         verify( mailService, never() ).send( Mockito.any() );
     }
@@ -231,7 +233,7 @@ public class IssueNotificationsSenderImplTest
         Mockito.when( securityService.getUser( issue.getApproverIds().first() ) ).thenReturn( Optional.of( approver ) );
         Mockito.when( contentService.getByIds( Mockito.any( GetContentByIdsParams.class ) ) ).thenReturn( contents );
 
-        issueNotificationsSender.notifyIssuePublished( issue, Collections.emptyList(), "url" );
+        issueNotificationsSender.notifyIssuePublished( issue, this.createComments( creator.getKey() ), "url" );
 
         verify( securityService, times( 2 ) ).getUser( Mockito.any() );
         verify( contentService, times( 1 ) ).getByIds( Mockito.any() );
@@ -251,16 +253,30 @@ public class IssueNotificationsSenderImplTest
         Mockito.when( securityService.getUser( issue.getApproverIds().first() ) ).thenReturn( Optional.empty() );
         Mockito.when( contentService.getByIds( Mockito.any( GetContentByIdsParams.class ) ) ).thenReturn( contents );
 
-        issueNotificationsSender.notifyIssuePublished( issue, Collections.emptyList(), "url" );
+        issueNotificationsSender.notifyIssuePublished( issue, this.createComments( creator.getKey() ), "url" );
 
         verify( mailService, never() ).send( Mockito.any() );
     }
 
     private Issue createIssue( final PrincipalKey creator, final PrincipalKeys approvers )
     {
-        return Issue.create().id( IssueId.create() ).title( "title" ).description( "description" ).creator( creator ).addApproverIds(
-            approvers ).setPublishRequest( PublishRequest.create().addExcludeId( ContentId.from( "exclude-id" ) ).addItem(
+        return Issue.create().
+            id( IssueId.create() ).
+            title( "title" ).
+            description( "description" ).
+            creator( creator ).
+            addApproverIds( approvers ).setPublishRequest( PublishRequest.create().addExcludeId( ContentId.from( "exclude-id" ) ).addItem(
             PublishRequestItem.create().id( ContentId.from( "content-id" ) ).includeChildren( true ).build() ).build() ).build();
+    }
+
+    private List<IssueComment> createComments( final PrincipalKey creator )
+    {
+        final IssueComment comment = IssueComment.create().
+            text( "Comment One" ).
+            creator( creator ).
+            creatorDisplayName( "Creator" ).
+            build();
+        return Lists.newArrayList( comment );
     }
 
     private User generateUser()

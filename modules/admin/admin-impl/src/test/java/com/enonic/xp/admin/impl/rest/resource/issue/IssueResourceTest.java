@@ -89,14 +89,54 @@ public class IssueResourceTest
         final CreateIssueJson params =
             new CreateIssueJson( "title", "desc", Arrays.asList( User.ANONYMOUS.getKey().toString() ), createPublishRequest() );
 
+        final Issue issue = Issue.create().title( "title" ).description( "desc" ).creator( User.ANONYMOUS.getKey() ).build();
+        final IssueComment comment = IssueComment.create().text( issue.getDescription() ).creator( issue.getCreator() ).build();
+        final Role role = Role.create().key( RoleKeys.CONTENT_MANAGER_APP ).displayName( "dname" ).build();
         final HttpServletRequest request = Mockito.mock( HttpServletRequest.class );
         final IssueResource issueResource = getResourceInstance();
-        final Role role = Role.create().key( RoleKeys.CONTENT_MANAGER_APP ).displayName( "dname" ).build();
+        final ArgumentCaptor<CreateIssueCommentParams> commentCaptor = ArgumentCaptor.forClass( CreateIssueCommentParams.class );
+
         Mockito.when( securityService.getPrincipals( Mockito.any( PrincipalKeys.class ) ) ).thenReturn( Principals.from( role ) );
+        Mockito.when( securityService.getUser( User.ANONYMOUS.getKey() ) ).thenReturn( Optional.of( User.ANONYMOUS ) );
+        Mockito.when( issueService.create( Mockito.any( CreateIssueParams.class ) ) ).thenReturn( issue );
+        Mockito.when( issueService.createComment( Mockito.any( CreateIssueCommentParams.class ) ) ).thenReturn( comment );
+
+        issueResource.create( params, request );
+
+        Mockito.verify( issueService ).createComment( commentCaptor.capture() );
+        Mockito.verify( issueService, Mockito.times( 1 ) ).create( Mockito.any( CreateIssueParams.class ) );
+        Mockito.verify( issueService, Mockito.times( 1 ) ).createComment( Mockito.any( CreateIssueCommentParams.class ) );
+        Mockito.verify( issueNotificationsSender, Mockito.times( 1 ) ).notifyIssueCreated( Mockito.eq( issue ),
+                                                                                           Mockito.eq( Lists.newArrayList( comment ) ),
+                                                                                           Mockito.anyString() );
+
+        assertEquals( "desc", commentCaptor.getValue().getText() );
+        assertEquals( issue.getId(), commentCaptor.getValue().getIssue() );
+        assertEquals( issue.getCreator(), commentCaptor.getValue().getCreator() );
+    }
+
+    @Test
+    public void test_createNoDescription()
+        throws Exception
+    {
+        final CreateIssueJson params =
+            new CreateIssueJson( "title", null, Arrays.asList( User.ANONYMOUS.getKey().toString() ), createPublishRequest() );
+
+        final Issue issue = Issue.create().title( "title" ).description( "desc" ).creator( User.ANONYMOUS.getKey() ).build();
+
+        final Role role = Role.create().key( RoleKeys.CONTENT_MANAGER_APP ).displayName( "dname" ).build();
+        final HttpServletRequest request = Mockito.mock( HttpServletRequest.class );
+        final IssueResource issueResource = getResourceInstance();
+
+        Mockito.when( securityService.getPrincipals( Mockito.any( PrincipalKeys.class ) ) ).thenReturn( Principals.from( role ) );
+        Mockito.when( issueService.create( Mockito.any( CreateIssueParams.class ) ) ).thenReturn( issue );
+
         issueResource.create( params, request );
 
         Mockito.verify( issueService, Mockito.times( 1 ) ).create( Mockito.any( CreateIssueParams.class ) );
-        Mockito.verify( issueNotificationsSender, Mockito.times( 1 ) ).notifyIssueCreated( Mockito.any( Issue.class ),
+        Mockito.verify( issueService, Mockito.never() ).createComment( Mockito.any( CreateIssueCommentParams.class ) );
+        Mockito.verify( issueNotificationsSender, Mockito.times( 1 ) ).notifyIssueCreated( Mockito.eq( issue ),
+                                                                                           Mockito.eq( Lists.newArrayList() ),
                                                                                            Mockito.anyString() );
     }
 
@@ -105,7 +145,7 @@ public class IssueResourceTest
         throws Exception
     {
         final CreateIssueJson params =
-            new CreateIssueJson( "title", "desc", Arrays.asList( User.ANONYMOUS.getKey().toString() ), createPublishRequest() );
+            new CreateIssueJson( "title", "", Arrays.asList( User.ANONYMOUS.getKey().toString() ), createPublishRequest() );
 
         final HttpServletRequest request = Mockito.mock( HttpServletRequest.class );
         final IssueResource issueResource = getResourceInstance();
@@ -123,7 +163,7 @@ public class IssueResourceTest
         throws Exception
     {
         final CreateIssueJson params =
-            new CreateIssueJson( "title", "desc", Arrays.asList( User.ANONYMOUS.getKey().toString() ), createPublishRequest() );
+            new CreateIssueJson( "title", "", Arrays.asList( User.ANONYMOUS.getKey().toString() ), createPublishRequest() );
 
         final HttpServletRequest request = Mockito.mock( HttpServletRequest.class );
         final IssueResource issueResource = getResourceInstance();
@@ -141,7 +181,7 @@ public class IssueResourceTest
         throws Exception
     {
         final CreateIssueJson params =
-            new CreateIssueJson( "title", "desc", Arrays.asList( User.ANONYMOUS.getKey().toString(), User.ANONYMOUS.getKey().toString() ),
+            new CreateIssueJson( "title", "", Arrays.asList( User.ANONYMOUS.getKey().toString(), User.ANONYMOUS.getKey().toString() ),
                                  createPublishRequest() );
 
         final HttpServletRequest request = Mockito.mock( HttpServletRequest.class );
