@@ -1,8 +1,10 @@
 package com.enonic.xp.repo.impl.index;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.index.IndexType;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.elasticsearch.ClusterHealthStatus;
+import com.enonic.xp.repository.IndexSettings;
 import com.enonic.xp.repository.RepositoryId;
 
 public interface IndexServiceInternal
@@ -22,6 +24,8 @@ public interface IndexServiceInternal
     void applyMapping( final ApplyMappingRequest request );
 
     ClusterHealthStatus getClusterHealth( final String timeout, final String... indexNames );
+
+    IndexSettings getIndexSettings( final RepositoryId repositoryId, final IndexType indexType );
 
     void refresh( final String... indexNames );
 

@@ -1,6 +1,7 @@
 package com.enonic.xp.repository;
 
 import java.net.URL;
+import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.annotations.Beta;
@@ -26,6 +27,11 @@ public class IndexSettings
     public static IndexSettings from( final String string )
     {
         return new IndexSettings( JsonHelper.from( string ) );
+    }
+
+    public static IndexSettings from( final Map<String, Object> settings )
+    {
+        return new IndexSettings( JsonHelper.from( settings ) );
     }
 
     public IndexSettings( final JsonNode resourceNode )

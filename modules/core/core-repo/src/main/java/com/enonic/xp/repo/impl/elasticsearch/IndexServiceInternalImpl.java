@@ -16,6 +16,7 @@ import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsReques
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.action.admin.indices.open.OpenIndexRequestBuilder;
+import org.elasticsearch.action.admin.indices.settings.get.GetSettingsRequest;
 import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsRequest;
 import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsResponse;
 import org.elasticsearch.action.get.GetRequest;
@@ -24,6 +25,8 @@ import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
+import org.elasticsearch.common.collect.ImmutableOpenMap;
+import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.indices.IndexMissingException;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -33,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Stopwatch;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.index.IndexType;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.index.ApplyMappingRequest;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
@@ -62,6 +66,8 @@ public class IndexServiceInternalImpl
     private final static String INDEX_EXISTS_TIMEOUT = "5s";
 
     private final static String CLUSTER_STATE_TIMEOUT = "5s";
+
+    private final static String GET_SETTINGS_TIMEOUT = "5s";
 
     private Client client;
 
@@ -170,6 +176,25 @@ public class IndexServiceInternalImpl
         {
             throw new IndexException( "Failed to update index: " + indexName, e );
         }
+    }
+
+    @Override
+    public IndexSettings getIndexSettings( final RepositoryId repositoryId, final IndexType indexType )
+    {
+        if ( repositoryId == null || indexType == null )
+        {
+            return null;
+        }
+
+        final String indexName = IndexType.SEARCH == indexType
+            ? IndexNameResolver.resolveSearchIndexName( repositoryId )
+            : IndexNameResolver.resolveStorageIndexName( repositoryId );
+
+        final ImmutableOpenMap<String, Settings> settingsMap =
+            this.client.admin().indices().getSettings( new GetSettingsRequest().indices( indexName ) ).actionGet(
+                GET_SETTINGS_TIMEOUT ).getIndexToSettings();
+
+        return IndexSettings.from( (Map) settingsMap.get( indexName ).getAsMap() );
     }
 
     @Override
