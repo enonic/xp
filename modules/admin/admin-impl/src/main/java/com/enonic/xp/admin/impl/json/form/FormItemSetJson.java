@@ -3,8 +3,11 @@ package com.enonic.xp.admin.impl.json.form;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.annotations.Beta;
+import com.google.common.base.Preconditions;
 
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.form.FormItem;
@@ -22,9 +25,16 @@ public class FormItemSetJson
 
     private final OccurrencesJson occurrences;
 
+    private final LocaleMessageResolver localeMessageResolver;
+
     public FormItemSetJson( final FormItemSet formItemSet, final LocaleMessageResolver localeMessageResolver )
     {
+        Preconditions.checkNotNull( formItemSet );
+        Preconditions.checkNotNull( localeMessageResolver );
+
         this.formItemSet = formItemSet;
+        this.localeMessageResolver = localeMessageResolver;
+
         this.items = wrapFormItems( formItemSet.getFormItems(), localeMessageResolver );
         this.occurrences = new OccurrencesJson( formItemSet.getOccurrences() );
     }
@@ -70,7 +80,14 @@ public class FormItemSetJson
 
     public String getLabel()
     {
-        return formItemSet.getLabel();
+        if ( localeMessageResolver != null && StringUtils.isNotBlank( formItemSet.getLabelI18nKey() ) )
+        {
+            return localeMessageResolver.localizeMessage( formItemSet.getLabelI18nKey(), formItemSet.getLabel() );
+        }
+        else
+        {
+            return formItemSet.getLabel();
+        }
     }
 
     public boolean isImmutable()
@@ -85,7 +102,14 @@ public class FormItemSetJson
 
     public String getHelpText()
     {
-        return formItemSet.getHelpText();
+        if ( localeMessageResolver != null && StringUtils.isNotBlank( formItemSet.getHelpTextI18nKey() ) )
+        {
+            return localeMessageResolver.localizeMessage( formItemSet.getHelpTextI18nKey(), formItemSet.getHelpText() );
+        }
+        else
+        {
+            return formItemSet.getHelpText();
+        }
     }
 
     public List<FormItemJson> getItems()
