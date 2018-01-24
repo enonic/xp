@@ -1,7 +1,6 @@
 package com.enonic.xp.core.impl.issue.serializer;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
@@ -11,7 +10,6 @@ import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.core.impl.issue.PublishRequestPropertyNames;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.issue.Comment;
 import com.enonic.xp.issue.CreateIssueParams;
 import com.enonic.xp.issue.Issue;
 import com.enonic.xp.issue.IssueStatus;
@@ -22,17 +20,14 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.util.Reference;
 
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.APPROVERS;
-import static com.enonic.xp.core.impl.issue.IssuePropertyNames.COMMENTS;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.CREATED_TIME;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.CREATOR;
-import static com.enonic.xp.core.impl.issue.IssuePropertyNames.CREATOR_NAME;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.DESCRIPTION;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.INDEX;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.MODIFIED_TIME;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.MODIFIER;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.PUBLISH_REQUEST;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.STATUS;
-import static com.enonic.xp.core.impl.issue.IssuePropertyNames.TEXT;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.TITLE;
 
 public class IssueDataSerializer
@@ -51,12 +46,6 @@ public class IssueDataSerializer
         {
             issueAsData.addStrings( APPROVERS, params.getApproverIds().
                 stream().map( PrincipalKey::toString ).collect( Collectors.toList() ) );
-        }
-
-        List<Comment> comments = params.getComments();
-        if ( comments != null && comments.size() > 0 )
-        {
-            serializeComments( issueAsData, params.getComments() );
         }
 
         if ( params.getPublishRequest() != null )
@@ -85,8 +74,6 @@ public class IssueDataSerializer
         issueAsData.addStrings( APPROVERS, editedIssue.getApproverIds().
             stream().map( PrincipalKey::toString ).collect( Collectors.toList() ) );
 
-        serializeComments( issueAsData, editedIssue.getComments() );
-
         if ( editedIssue.getPublishRequest() != null )
         {
             addPublishRequest( issueAsData, editedIssue.getPublishRequest() );
@@ -107,38 +94,8 @@ public class IssueDataSerializer
         extractUserInfo( issueProperties, builder );
         extractApprovers( issueProperties, builder );
         extractPublishRequest( issueProperties, builder );
-        extractComments( issueProperties, builder );
 
         return builder;
-    }
-
-    private void serializeComments( final PropertySet issueAsData, final List<Comment> comments )
-    {
-        final Collection<PropertySet> commentsSet = Lists.newArrayList();
-
-        for ( final Comment item : comments )
-        {
-            final PropertySet itemSet = new PropertySet();
-            itemSet.setString( CREATOR, item.getCreatorKey().toString() );
-            itemSet.setString( CREATOR_NAME, item.getCreatorDisplayName() );
-            itemSet.setInstant( CREATED_TIME, item.getCreatedTime() );
-            itemSet.setString( TEXT, item.getText() );
-            commentsSet.add( itemSet );
-        }
-
-        issueAsData.addSets( COMMENTS, commentsSet.toArray( new PropertySet[commentsSet.size()] ) );
-    }
-
-    private void extractComments( final PropertySet issueProperties, final Issue.Builder builder )
-    {
-        final Iterable<PropertySet> commentsSet = issueProperties.getSets( COMMENTS );
-
-        for ( final PropertySet itemSet : commentsSet )
-        {
-            builder.addComment( new Comment( PrincipalKey.from( itemSet.getString( CREATOR ) ), itemSet.getString( CREATOR_NAME ),
-                                             itemSet.getString( TEXT ),
-                                             itemSet.getInstant( CREATED_TIME ) ) );
-        }
     }
 
     private void addPublishRequest( final PropertySet issueProperties, final PublishRequest publishRequest )
@@ -168,7 +125,6 @@ public class IssueDataSerializer
     }
 
     private void extractPublishRequest( final PropertySet issueProperties, final Issue.Builder builder )
-
     {
         final PropertySet publishRequestSet = issueProperties.getSet( PUBLISH_REQUEST );
 

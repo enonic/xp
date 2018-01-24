@@ -9,7 +9,7 @@ final class XmlValueType
     }
 
     @Override
-    Value fromJsonValue( final Object object )
+    public Value fromJsonValue( final Object object )
     {
         return ValueFactory.newXml( convertNullSafe( object ) );
     }

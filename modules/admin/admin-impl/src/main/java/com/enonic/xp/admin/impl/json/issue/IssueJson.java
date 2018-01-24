@@ -4,7 +4,6 @@ import java.time.Instant;
 import java.util.List;
 
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishRequestJson;
-import com.enonic.xp.admin.impl.rest.resource.issue.json.CommentJson;
 import com.enonic.xp.issue.Issue;
 import com.enonic.xp.security.PrincipalKey;
 
@@ -81,10 +80,5 @@ public class IssueJson
     public PublishRequestJson getPublishRequest()
     {
         return this.issue.getPublishRequest() != null ? PublishRequestJson.from( this.issue.getPublishRequest() ) : null;
-    }
-
-    public List<CommentJson> getComments()
-    {
-        return this.issue.getComments().stream().map( CommentJson::from ).collect( toList() );
     }
 }

@@ -1047,7 +1047,11 @@ public final class SecurityServiceImpl
                 return null;
             }
 
-            final UpdateNodeParams updateNodeParams = UserStoreNodeTranslator.toUpdateNodeParams( updateUserStoreParams, node.id() );
+            final UserStore existingUserStore = UserStoreNodeTranslator.fromNode( node );
+
+            final UserStore userStoreToUpdate = updateUserStoreParams.update( existingUserStore );
+
+            final UpdateNodeParams updateNodeParams = UserStoreNodeTranslator.toUpdateNodeParams( userStoreToUpdate, node.id() );
             final Node userStoreNode = nodeService.update( updateNodeParams );
 
             if ( updateUserStoreParams.getUserStorePermissions() != null )

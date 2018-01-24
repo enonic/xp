@@ -2,6 +2,7 @@ package com.enonic.xp.admin.impl.rest.resource.issue;
 
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -22,7 +23,6 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.icon.Icon;
-import com.enonic.xp.issue.Comment;
 import com.enonic.xp.issue.Issue;
 import com.enonic.xp.issue.IssueId;
 import com.enonic.xp.issue.PublishRequest;
@@ -145,7 +145,7 @@ public class IssueNotificationsSenderImplTest
             ContentType.create().name( "mycontenttype" ).icon( Icon.from( new byte[]{1}, "image/svg+xml", Instant.now() ) ).setBuiltIn(
                 true ).build() );
 
-        issueNotificationsSender.notifyIssueUpdated( issue, "url" );
+        issueNotificationsSender.notifyIssueUpdated( issue, Collections.emptyList(), "url" );
 
         verify( securityService, times( 2 ) ).getUser( Mockito.any() );
         verify( contentService, times( 1 ) ).getByIds( Mockito.any() );
@@ -179,7 +179,7 @@ public class IssueNotificationsSenderImplTest
             ContentType.create().name( "mycontenttype" ).icon( Icon.from( new byte[]{1}, "image/svg+xml", Instant.now() ) ).setBuiltIn(
                 true ).build() );
 
-        issueNotificationsSender.notifyIssueCommented( issue, "url" );
+        issueNotificationsSender.notifyIssueCommented( issue, Collections.emptyList(), "url" );
 
         verify( securityService, times( 2 ) ).getUser( Mockito.any() );
         verify( contentService, times( 1 ) ).getByIds( Mockito.any() );
@@ -213,7 +213,7 @@ public class IssueNotificationsSenderImplTest
             ContentType.create().name( "mycontenttype" ).icon( Icon.from( new byte[]{1}, "image/svg+xml", Instant.now() ) ).setBuiltIn(
                 true ).build() );
 
-        issueNotificationsSender.notifyIssueUpdated( issue, "url" );
+        issueNotificationsSender.notifyIssueUpdated( issue, Collections.emptyList(), "url" );
 
         verify( mailService, never() ).send( Mockito.any() );
     }
@@ -231,7 +231,7 @@ public class IssueNotificationsSenderImplTest
         Mockito.when( securityService.getUser( issue.getApproverIds().first() ) ).thenReturn( Optional.of( approver ) );
         Mockito.when( contentService.getByIds( Mockito.any( GetContentByIdsParams.class ) ) ).thenReturn( contents );
 
-        issueNotificationsSender.notifyIssuePublished( issue, "url" );
+        issueNotificationsSender.notifyIssuePublished( issue, Collections.emptyList(), "url" );
 
         verify( securityService, times( 2 ) ).getUser( Mockito.any() );
         verify( contentService, times( 1 ) ).getByIds( Mockito.any() );
@@ -251,7 +251,7 @@ public class IssueNotificationsSenderImplTest
         Mockito.when( securityService.getUser( issue.getApproverIds().first() ) ).thenReturn( Optional.empty() );
         Mockito.when( contentService.getByIds( Mockito.any( GetContentByIdsParams.class ) ) ).thenReturn( contents );
 
-        issueNotificationsSender.notifyIssuePublished( issue, "url" );
+        issueNotificationsSender.notifyIssuePublished( issue, Collections.emptyList(), "url" );
 
         verify( mailService, never() ).send( Mockito.any() );
     }
@@ -260,8 +260,7 @@ public class IssueNotificationsSenderImplTest
     {
         return Issue.create().id( IssueId.create() ).title( "title" ).description( "description" ).creator( creator ).addApproverIds(
             approvers ).setPublishRequest( PublishRequest.create().addExcludeId( ContentId.from( "exclude-id" ) ).addItem(
-            PublishRequestItem.create().id( ContentId.from( "content-id" ) ).includeChildren( true ).build() ).build() ).addComment(
-            new Comment( creator, "Creator", "Comment text" ) ).build();
+            PublishRequestItem.create().id( ContentId.from( "content-id" ) ).includeChildren( true ).build() ).build() ).build();
     }
 
     private User generateUser()

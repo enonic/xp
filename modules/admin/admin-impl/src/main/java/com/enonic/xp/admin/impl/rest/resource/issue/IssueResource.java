@@ -3,6 +3,7 @@ package com.enonic.xp.admin.impl.rest.resource.issue;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
@@ -21,22 +22,28 @@ import org.osgi.service.component.annotations.Reference;
 import com.google.common.collect.Maps;
 import com.google.common.net.HttpHeaders;
 
+import com.enonic.xp.admin.impl.json.issue.IssueCommentJson;
+import com.enonic.xp.admin.impl.json.issue.IssueCommentListJson;
 import com.enonic.xp.admin.impl.json.issue.IssueJson;
 import com.enonic.xp.admin.impl.json.issue.IssueListJson;
 import com.enonic.xp.admin.impl.json.issue.IssueStatsJson;
 import com.enonic.xp.admin.impl.json.issue.IssuesJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
-import com.enonic.xp.admin.impl.rest.resource.issue.json.CommentIssueJson;
+import com.enonic.xp.admin.impl.rest.resource.issue.json.CreateIssueCommentJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.CreateIssueJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.GetIssuesJson;
+import com.enonic.xp.admin.impl.rest.resource.issue.json.ListIssueCommentsJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.ListIssuesJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.UpdateIssueJson;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.issue.Comment;
+import com.enonic.xp.issue.CreateIssueCommentParams;
 import com.enonic.xp.issue.CreateIssueParams;
+import com.enonic.xp.issue.FindIssueCommentsResult;
 import com.enonic.xp.issue.FindIssuesParams;
 import com.enonic.xp.issue.FindIssuesResult;
 import com.enonic.xp.issue.Issue;
+import com.enonic.xp.issue.IssueComment;
+import com.enonic.xp.issue.IssueCommentQuery;
 import com.enonic.xp.issue.IssueId;
 import com.enonic.xp.issue.IssueQuery;
 import com.enonic.xp.issue.IssueService;
@@ -46,6 +53,7 @@ import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.PrincipalNotFoundException;
 import com.enonic.xp.security.Principals;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
@@ -105,13 +113,17 @@ public final class IssueResource
 
         if ( !params.autoSave )
         {
+            IssueCommentQuery query = IssueCommentQuery.create().issue( issue.getId() ).build();
+            final FindIssueCommentsResult results = issueService.findComments( query );
+
             if ( params.isPublish )
             {
-                issueNotificationsSender.notifyIssuePublished( issue, request.getHeader( HttpHeaders.REFERER ) );
+                issueNotificationsSender.notifyIssuePublished( issue, results.getIssueComments(),
+                                                               request.getHeader( HttpHeaders.REFERER ) );
             }
             else
             {
-                issueNotificationsSender.notifyIssueUpdated( issue, request.getHeader( HttpHeaders.REFERER ) );
+                issueNotificationsSender.notifyIssueUpdated( issue, results.getIssueComments(), request.getHeader( HttpHeaders.REFERER ) );
             }
         }
 
@@ -127,18 +139,42 @@ public final class IssueResource
 
     @POST
     @Path("comment")
-    public IssueJson comment( final CommentIssueJson json, @Context HttpServletRequest request )
+    public IssueCommentJson comment( final CreateIssueCommentJson json, @Context HttpServletRequest request )
     {
-        UpdateIssueParams params = UpdateIssueParams.create().
-            id( json.issueId ).
-            editor( editMe -> editMe.comments.add( new Comment( json.creatorKey, json.creatorDisplayName, json.text ) ) ).
+        final Issue issue = issueService.getIssue( json.issueId );
+        final Optional<User> creator = securityService.getUser( json.creator );
+
+        if ( !creator.isPresent() )
+        {
+            throw new PrincipalNotFoundException( json.creator );
+        }
+
+        CreateIssueCommentParams params = CreateIssueCommentParams.create().
+            issue( issue.getId() ).
+            text( json.text ).
+            creator( creator.get().getKey() ).
+            creatorDisplayName( creator.get().getDisplayName() ).
             build();
 
-        final Issue issue = issueService.update( params );
+        final IssueComment comment = issueService.createComment( params );
 
-        issueNotificationsSender.notifyIssueCommented( issue, request.getHeader( HttpHeaders.REFERER ) );
+        final IssueCommentQuery commentsQuery = IssueCommentQuery.create().issue( issue.getId() ).build();
+        final FindIssueCommentsResult results = issueService.findComments( commentsQuery );
 
-        return new IssueJson( issue );
+        issueNotificationsSender.notifyIssueCommented( issue, results.getIssueComments(), request.getHeader( HttpHeaders.REFERER ) );
+
+        return new IssueCommentJson( comment );
+    }
+
+    @POST
+    @Path("comment/list")
+    public IssueCommentListJson listComments( final ListIssueCommentsJson params )
+    {
+        final IssueCommentQuery issueQuery = createIssueCommentQuery( params );
+        final FindIssueCommentsResult result = this.issueService.findComments( issueQuery );
+        final IssueListMetaData metaData = IssueListMetaData.create().hits( result.getHits() ).totalHits( result.getTotalHits() ).build();
+
+        return new IssueCommentListJson( result.getIssueComments(), metaData );
     }
 
     @POST
@@ -157,6 +193,17 @@ public final class IssueResource
         {
             return new IssueListJson( result.getIssues(), metaData );
         }
+    }
+
+    private IssueCommentQuery createIssueCommentQuery( final ListIssueCommentsJson params )
+    {
+        return IssueCommentQuery.create().
+            issue( params.getIssue() ).
+            creator( params.getCreator() ).
+            from( params.getFrom() ).
+            size( params.getSize() ).
+            count( params.isCount() ).
+            build();
     }
 
     private IssueQuery createIssueQuery( final FindIssuesParams params )
@@ -230,7 +277,6 @@ public final class IssueResource
         builder.description( json.description );
         builder.setPublishRequest( json.publishRequest );
         builder.setApproverIds( filterInvalidAssignees( json.assignees ) );
-        builder.setComments( json.comments );
 
         return builder.build();
     }
@@ -256,10 +302,6 @@ public final class IssueResource
                 if ( json.approverIds != null )
                 {
                     editMe.approverIds = filterInvalidAssignees( json.approverIds );
-                }
-                if ( json.comments != null )
-                {
-                    editMe.comments = json.comments;
                 }
                 if ( json.publishRequest != null )
                 {

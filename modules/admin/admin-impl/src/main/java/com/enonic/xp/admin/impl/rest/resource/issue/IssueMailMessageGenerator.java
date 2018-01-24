@@ -20,7 +20,7 @@ import com.google.common.io.Resources;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.issue.Comment;
+import com.enonic.xp.issue.IssueComment;
 import com.enonic.xp.issue.IssueStatus;
 import com.enonic.xp.mail.MailMessage;
 import com.enonic.xp.security.User;
@@ -83,7 +83,7 @@ public abstract class IssueMailMessageGenerator<P extends IssueMailMessageParams
     {
         final Map messageParams = Maps.newHashMap();
         final int itemCount = params.getIssue().getPublishRequest().getItems().getSize();
-        final int commentsCount = params.getIssue().getComments().size();
+        final int commentsCount = params.getComments().size();
         final String description = params.getIssue().getDescription();
 
         messageParams.put( "id", params.getIssue().getId().toString() );
@@ -126,9 +126,9 @@ public abstract class IssueMailMessageGenerator<P extends IssueMailMessageParams
         final String commentTemplate = load( "comment.html" );
         final DateTimeFormatter fmt = DateTimeFormatter.ofLocalizedDateTime( FormatStyle.SHORT );
         final StringBuilder stringBuilder = new StringBuilder();
-        final Integer commentCount = params.getIssue().getComments().size();
+        final Integer commentCount = params.getComments().size();
 
-        for ( final Comment comment : params.getIssue().getComments().subList(
+        for ( final IssueComment comment : params.getComments().subList(
             Math.max( 0, commentCount - IssueMailMessageGenerator.MAX_COMMENTS ), commentCount ) )
         {
             stringBuilder.append( generateCommentHtml( comment, commentTemplate, fmt ) );
@@ -137,13 +137,13 @@ public abstract class IssueMailMessageGenerator<P extends IssueMailMessageParams
         return stringBuilder.toString();
     }
 
-    private String generateCommentHtml( final Comment item, final String template, final DateTimeFormatter fmt )
+    private String generateCommentHtml( final IssueComment item, final String template, final DateTimeFormatter fmt )
     {
         final Map itemParams = Maps.newHashMap();
         itemParams.put( "displayName", item.getCreatorDisplayName() );
         itemParams.put( "shortName", makeShortName( item.getCreatorDisplayName() ) );
-        itemParams.put( "icon", item.getCreatorKey() );
-        itemParams.put( "createdTime", fmt.format( item.getCreatedTime().atZone( ZoneId.systemDefault() ) ) );
+        itemParams.put( "icon", item.getCreator() );
+        itemParams.put( "createdTime", fmt.format( item.getCreated().atZone( ZoneId.systemDefault() ) ) );
         itemParams.put( "text", item.getText() );
 
         return new StrSubstitutor( itemParams ).replace( template );

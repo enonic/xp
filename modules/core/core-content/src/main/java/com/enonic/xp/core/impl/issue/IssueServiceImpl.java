@@ -5,9 +5,13 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.issue.CreateIssueCommentParams;
 import com.enonic.xp.issue.CreateIssueParams;
+import com.enonic.xp.issue.FindIssueCommentsResult;
 import com.enonic.xp.issue.FindIssuesResult;
 import com.enonic.xp.issue.Issue;
+import com.enonic.xp.issue.IssueComment;
+import com.enonic.xp.issue.IssueCommentQuery;
 import com.enonic.xp.issue.IssueId;
 import com.enonic.xp.issue.IssueQuery;
 import com.enonic.xp.issue.IssueService;
@@ -65,6 +69,24 @@ public class IssueServiceImpl
     public FindIssuesResult findIssues( final IssueQuery query )
     {
         return FindIssuesCommand.create().
+            query( query ).
+            nodeService( nodeService ).
+            build().
+            execute();
+    }
+
+    public IssueComment createComment( final CreateIssueCommentParams params )
+    {
+        return CreateIssueCommentCommand.create().
+            params( params ).
+            nodeService( this.nodeService ).
+            build().
+            execute();
+    }
+
+    public FindIssueCommentsResult findComments( final IssueCommentQuery query )
+    {
+        return FindIssueCommentsCommand.create().
             query( query ).
             nodeService( nodeService ).
             build().

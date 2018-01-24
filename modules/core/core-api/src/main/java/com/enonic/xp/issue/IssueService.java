@@ -14,4 +14,8 @@ public interface IssueService
 
     FindIssuesResult findIssues( IssueQuery query );
 
+    IssueComment createComment( CreateIssueCommentParams params );
+
+    FindIssueCommentsResult findComments( IssueCommentQuery query );
+
 }
