@@ -117,28 +117,6 @@ public final class ClientActivator
         }
     }
 
-    private boolean isRedState()
-    {
-        try
-        {
-            final ClusterHealthResponse response = doGetHealth();
-
-            final boolean isRed = response.getStatus() == ClusterHealthStatus.RED;
-
-            if ( isRed )
-            {
-                LOG.error( "Cluster health in state 'RED' " );
-            }
-
-            return isRed;
-        }
-        catch ( final Exception e )
-        {
-            LOG.error( "Cluster health in state 'RED' ", e );
-            return true;
-        }
-    }
-
     private ClusterHealthResponse doGetHealth()
     {
         return this.node.client().admin().cluster().health( new ClusterHealthRequest().

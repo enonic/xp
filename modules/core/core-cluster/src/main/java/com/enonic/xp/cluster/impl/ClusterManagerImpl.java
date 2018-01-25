@@ -3,6 +3,7 @@ package com.enonic.xp.cluster.impl;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Component;
@@ -14,7 +15,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.xp.cluster.ClusterConfig;
 import com.enonic.xp.cluster.ClusterHealth;
 import com.enonic.xp.cluster.ClusterManager;
 import com.enonic.xp.cluster.ClusterNodes;
@@ -27,7 +27,7 @@ public class ClusterManagerImpl
 {
     private final Long checkIntervalMs;
 
-    private final List<ClusterProvider> providers = Lists.newArrayList();
+    private final CopyOnWriteArrayList<ClusterProvider> providers = new CopyOnWriteArrayList<>();
 
     private final Logger LOG = LoggerFactory.getLogger( ClusterManagerImpl.class );
 
@@ -35,10 +35,8 @@ public class ClusterManagerImpl
 
     private final List<ClusterProviderId> requiredProviders;
 
-    private ClusterConfig clusterConfig;
-
     private final static List<ClusterProviderId> DEFAULT_REQUIRED_PROVIDERS =
-        Lists.newArrayList( ClusterProviderId.from( "elasticsearch" ) );
+        Lists.newArrayList( ClusterProviderId.from( "elasticsearch" ), ClusterProviderId.from( "ignite" ) );
 
     @SuppressWarnings("WeakerAccess")
     public ClusterManagerImpl()
@@ -106,6 +104,8 @@ public class ClusterManagerImpl
 
     private ClusterHealth doGetHealth()
     {
+        LOG.info( "Get cluster health" );
+
         if ( !allHealthy() || !hasSameNodes() )
         {
             deactivate();
@@ -133,19 +133,41 @@ public class ClusterManagerImpl
     private boolean hasSameNodes()
     {
         ClusterNodes current = null;
+        ClusterProvider first = null;
 
-        // This probably need some grace period to handle nodes added and disappearing from cluster
         for ( final ClusterProvider provider : providers )
         {
-            if ( current != null && !current.equals( provider.getNodes() ) )
+            final ClusterNodes providerNodes = provider.getNodes();
+
+            if ( first != null && current != null && !current.equals( providerNodes ) )
             {
+                LOG.error( nodesErrorString( first, provider, current, providerNodes ) );
                 return false;
             }
 
-            current = provider.getNodes();
+            if ( first == null )
+            {
+                first = provider;
+            }
+
+            if ( current == null )
+            {
+                current = providerNodes;
+            }
         }
 
         return true;
+    }
+
+    private String nodesErrorString( final ClusterProvider p1, final ClusterProvider p2, final ClusterNodes c1, final ClusterNodes c2 )
+    {
+        final StringBuilder builder = new StringBuilder();
+        builder.append( "ClusterNodes not matching: " );
+        builder.append( p1.getId() + ": " + c1 );
+        builder.append( "; " );
+        builder.append( p2.getId() + ": " + c2 );
+
+        return builder.toString();
     }
 
     @SuppressWarnings("unused")
@@ -189,18 +211,12 @@ public class ClusterManagerImpl
         }
     }
 
-
+    @SuppressWarnings("WeakerAccess")
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
     public void addProvider( final ClusterProvider provider )
     {
         LOG.info( "Adding cluster-provider: " + provider.getId() );
         this.providers.add( provider );
         this.registerProvider();
-    }
-
-    @Reference
-    public void setClusterConfig( final ClusterConfig clusterConfig )
-    {
-        this.clusterConfig = clusterConfig;
     }
 }

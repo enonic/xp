@@ -1,5 +1,7 @@
 package com.enonic.xp.cluster.impl;
 
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,15 +24,15 @@ public class ClusterManagerImplTest
     public void setUp()
         throws Exception
     {
-        this.clusterManager = ClusterManagerImpl.create().
-            checkIntervalMs( 0L ).
-            build();
+
     }
 
     @Test
     public void single_provider_life_cycle()
         throws Exception
     {
+        createManager( "elasticsearch" );
+
         final TestClusterProvider provider = TestClusterProvider.create().
             health( ClusterProviderHealth.GREEN ).
             id( ClusterProviderId.from( "elasticsearch" ) ).
@@ -52,6 +54,8 @@ public class ClusterManagerImplTest
     public void multiple_providers_life_cycle()
         throws Exception
     {
+        createManager( "elasticsearch", "another" );
+
         final TestClusterProvider provider1 = TestClusterProvider.create().
             health( ClusterProviderHealth.GREEN ).
             id( ClusterProviderId.from( "elasticsearch" ) ).
@@ -60,11 +64,6 @@ public class ClusterManagerImplTest
         final TestClusterProvider provider2 = TestClusterProvider.create().
             health( ClusterProviderHealth.GREEN ).
             id( ClusterProviderId.from( "another" ) ).
-            build();
-
-        this.clusterManager = ClusterManagerImpl.create().
-            checkIntervalMs( 0L ).
-            requiredProviders( Lists.newArrayList( ClusterProviderId.from( "elasticsearch" ), ClusterProviderId.from( "another" ) ) ).
             build();
 
         this.clusterManager.addProvider( provider1 );
@@ -97,10 +96,7 @@ public class ClusterManagerImplTest
             build() ).
             build();
 
-        this.clusterManager = ClusterManagerImpl.create().
-            checkIntervalMs( 0L ).
-            requiredProviders( Lists.newArrayList( ClusterProviderId.from( "elasticsearch" ), ClusterProviderId.from( "another" ) ) ).
-            build();
+        createManager( "elasticsearch", "another" );
 
         this.clusterManager.addProvider( provider1 );
         this.clusterManager.addProvider( provider2 );
@@ -114,6 +110,22 @@ public class ClusterManagerImplTest
 
         Assert.assertEquals( ClusterHealth.ERROR, this.clusterManager.getHealth() );
         assertDeactivated( provider1, provider2 );
+    }
+
+    private void createManager( final String... required )
+    {
+        List<ClusterProviderId> requiredIds = Lists.newArrayList();
+
+        for ( final String req : required )
+        {
+            requiredIds.add( ClusterProviderId.from( req ) );
+        }
+
+        this.clusterManager = ClusterManagerImpl.create().
+            checkIntervalMs( 0L ).
+            requiredProviders( requiredIds ).
+            build();
+
     }
 
     private void assertActive( final TestClusterProvider... providers )

@@ -10,6 +10,6 @@ public class ClusterNodeNameProvider
 
     public static ClusterNodeId getID()
     {
-        return ClusterNodeId.from( "MYNODE" + ID );
+        return ClusterNodeId.from( ID );
     }
 }
