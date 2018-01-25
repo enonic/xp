@@ -51,7 +51,7 @@ public final class BuiltinMacroDescriptors
         final MacroKey macroKey = MacroKey.from( ApplicationKey.SYSTEM, "disable" );
 
         final Form form = Form.create().
-            addFormItem( createTextAreaInput( "body", "Contents" ).occurrences( 1, 1 ).build() ).
+            addFormItem( createTextAreaInput( "body", "Contents", macroKey ).occurrences( 1, 1 ).build() ).
             build();
 
         return create( macroKey, "Disable macros", "Contents of this macro will not be formatted", form );
@@ -62,7 +62,7 @@ public final class BuiltinMacroDescriptors
         final MacroKey macroKey = MacroKey.from( ApplicationKey.SYSTEM, "embed" );
 
         final Form form = Form.create().
-            addFormItem( createTextAreaInput( "body", "IFrame HTML" ).occurrences( 1, 1 ).build() ).
+            addFormItem( createTextAreaInput( "body", "IFrame HTML", macroKey ).occurrences( 1, 1 ).build() ).
             build();
 
         return create( macroKey, "Embed IFrame", "Generic iframe embedder", form );
@@ -73,17 +73,20 @@ public final class BuiltinMacroDescriptors
         return MacroDescriptor.create().
             key( macroKey ).
             displayName( displayName ).
+            displayNameI18nKey( macroKey.getApplicationKey().getName() + "." + macroKey.getName() + ".displayName" ).
             description( description ).
+            descriptionI18nKey( macroKey.getApplicationKey().getName() + "." + macroKey.getName() + ".description" ).
             form( form ).
             icon( IconLoader.loadIcon( this.getClass(), MACRO_DESCRIPTORS_FOLDER, macroKey.getName() ) ).
             build();
     }
 
-    private static Input.Builder createTextAreaInput( final String name, final String label )
+    private static Input.Builder createTextAreaInput( final String name, final String label, final MacroKey macroKey )
     {
         return Input.create().
             inputType( InputTypeName.TEXT_AREA ).
             label( label ).
+            labelI18nKey( macroKey.getApplicationKey().getName() + "." + macroKey.getName() + "." + name + ".label" ).
             name( name ).
             immutable( true );
     }
