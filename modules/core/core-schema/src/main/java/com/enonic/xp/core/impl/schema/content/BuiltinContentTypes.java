@@ -40,13 +40,16 @@ final class BuiltinContentTypes
         addFormItem( Input.create().
             name( "description" ).
             label( "Description" ).
+            labelI18nKey( "portal.site.description.label" ).
             inputType( InputTypeName.TEXT_AREA ).
             occurrences( 0, 1 ).
             build() ).
         addFormItem( Input.create().
             name( "siteConfig" ).
             label( "Applications" ).
+            labelI18nKey( "portal.site.applications.label" ).
             helpText( "Configure applications used by this site" ).
+            helpTextI18nKey( "portal.site.applications.helpText" ).
             inputType( InputTypeName.SITE_CONFIGURATOR ).
             required( false ).
             multiple( true ).
@@ -57,24 +60,34 @@ final class BuiltinContentTypes
         addFormItem( Input.create().
             name( "target" ).
             label( "Target" ).
+            labelI18nKey( "base.shortcut.target.label" ).
             helpText( "Choose shortcut target" ).
+            helpTextI18nKey( "base.shortcut.target.helpText" ).
             inputType( InputTypeName.CONTENT_SELECTOR ).
             inputTypeProperty( InputTypeProperty.create( "relationshipType", RelationshipTypeName.REFERENCE.toString() ).build() ).
             required( true ).
             build() ).
-        addFormItem( FormItemSet.create().name( "parameters" ).label( "Parameters" ).helpText( "HTTP Parameters" ).
+        addFormItem( FormItemSet.create().name( "parameters" ).
+            label( "Parameters" ).
+            labelI18nKey( "base.shortcut.parameters.label" ).
+            helpText( "HTTP Parameters" ).
+            helpTextI18nKey( "base.shortcut.parameters.helpText" ).
             multiple( true ).required( false ).
             addFormItem( Input.create().
                 name( "name" ).
                 label( "Name" ).
+                labelI18nKey( "base.shortcut.parameters.name.label" ).
                 helpText( "HTTP parameter name" ).
+                helpTextI18nKey( "base.shortcut.parameters.name.helpText" ).
                 inputType( InputTypeName.TEXT_LINE ).
                 occurrences( 1, 1 ).
                 build() ).
             addFormItem( Input.create().
                 name( "value" ).
                 label( "Value" ).
+                labelI18nKey( "base.shortcut.parameters.value.label" ).
                 helpText( "HTTP parameter value" ).
+                helpTextI18nKey( "base.shortcut.parameters.value.helpText" ).
                 inputType( InputTypeName.TEXT_LINE ).
                 occurrences( 1, 1 ).
                 build() ).
@@ -84,25 +97,30 @@ final class BuiltinContentTypes
     private static final Form MEDIA_IMAGE_FORM = Form.create().
         addFormItem( Input.create().name( ContentPropertyNames.MEDIA ).
             label( "Image" ).
+            labelI18nKey( "media.image.media.label" ).
             inputType( InputTypeName.IMAGE_UPLOADER ).build() ).
         addFormItem( Input.create().name( "caption" ).
             inputType( InputTypeName.TEXT_AREA ).
             label( "Caption" ).
+            labelI18nKey( "media.image.caption.label" ).
             occurrences( 0, 1 ).
             build() ).
         addFormItem( Input.create().name( "artist" ).
             inputType( InputTypeName.TAG ).
             label( "Artist" ).
+            labelI18nKey( "media.image.artist.label" ).
             occurrences( 0, 0 ).
             build() ).
         addFormItem( Input.create().name( "copyright" ).
             inputType( InputTypeName.TEXT_LINE ).
             label( "Copyright" ).
+            labelI18nKey( "media.image.copyright.label" ).
             occurrences( 0, 1 ).
             build() ).
         addFormItem( Input.create().name( "tags" ).
             inputType( InputTypeName.TAG ).
             label( "Tags" ).
+            labelI18nKey( "media.image.tags.label" ).
             occurrences( 0, 0 ).
             build() ).
         build();
@@ -110,25 +128,30 @@ final class BuiltinContentTypes
     private static final Form MEDIA_VECTOR_FORM = Form.create().
         addFormItem( Input.create().name( ContentPropertyNames.MEDIA ).
             label( "Media" ).
+            labelI18nKey( "media.vector.media.label" ).
             inputType( InputTypeName.MEDIA_UPLOADER ).build() ).
         addFormItem( Input.create().name( "caption" ).
             inputType( InputTypeName.TEXT_AREA ).
             label( "Caption" ).
+            labelI18nKey( "media.vector.caption.label" ).
             occurrences( 0, 1 ).
             build() ).
         addFormItem( Input.create().name( "artist" ).
             inputType( InputTypeName.TAG ).
             label( "Artist" ).
+            labelI18nKey( "media.vector.artist.label" ).
             occurrences( 0, 0 ).
             build() ).
         addFormItem( Input.create().name( "copyright" ).
             inputType( InputTypeName.TEXT_LINE ).
             label( "Copyright" ).
+            labelI18nKey( "media.vector.copyright.label" ).
             occurrences( 0, 1 ).
             build() ).
         addFormItem( Input.create().name( "tags" ).
             inputType( InputTypeName.TAG ).
             label( "Tags" ).
+            labelI18nKey( "media.vector.tags.label" ).
             occurrences( 0, 0 ).
             build() ).
         build();
@@ -136,15 +159,18 @@ final class BuiltinContentTypes
     private static final Form MEDIA_DOCUMENT_FORM = Form.create().
         addFormItem( Input.create().name( ContentPropertyNames.MEDIA ).
             label( "Media" ).
+            labelI18nKey( "media.document.media.label" ).
             inputType( InputTypeName.MEDIA_UPLOADER ).build() ).
         addFormItem( Input.create().name( "abstract" ).
             inputType( InputTypeName.TEXT_AREA ).
             label( "Abstract" ).
+            labelI18nKey( "media.document.abstract.label" ).
             occurrences( 0, 1 ).
             build() ).
         addFormItem( Input.create().name( "tags" ).
             inputType( InputTypeName.TAG ).
             label( "Tags" ).
+            labelI18nKey( "media.document.tags.label" ).
             occurrences( 0, 0 ).
             build() ).
         build();
@@ -152,16 +178,19 @@ final class BuiltinContentTypes
     private static final Form MEDIA_DEFAULT_FORM = Form.create().
         addFormItem( Input.create().name( ContentPropertyNames.MEDIA ).
             label( "Media" ).
+            label( "media.default.media.label" ).
             inputType( InputTypeName.MEDIA_UPLOADER ).build() ).
         addFormItem( Input.create().name( "tags" ).
             inputType( InputTypeName.TAG ).
             label( "Tags" ).
+            label( "media.default.tags.label" ).
             occurrences( 0, 0 ).
             build() ).
         build();
 
     private static final ContentType SITE = createSystemType( ContentTypeName.site() ).
         description( "Root content for sites" ).
+        descriptionI18nKey( "portal.site.description" ).
         setFinal( true ).
         setAbstract( false ).
         form( SITE_FORM ).
@@ -178,7 +207,9 @@ final class BuiltinContentTypes
         addFormItem( Input.create().
             name( "supports" ).
             label( "Supports" ).
+            labelI18nKey( "portal.page-template.supports.label" ).
             helpText( "Choose which content types this page template supports" ).
+            helpTextI18nKey( "portal.page-template.supports.helpText" ).
             inputType( InputTypeName.CONTENT_TYPE_FILTER ).
             required( true ).
             multiple( true ).
@@ -268,9 +299,11 @@ final class BuiltinContentTypes
     private static ContentType.Builder createSystemType( final ContentTypeName contentTypeName )
     {
         final String displayName = WordUtils.capitalize( contentTypeName.getLocalName() );
+        final String app = contentTypeName.getApplicationKey().getName();
         return ContentType.create().
             name( contentTypeName ).
             displayName( displayName ).
+            displayNameI18nKey( app + "." + contentTypeName.getLocalName().toLowerCase() + ".displayName" ).
             setBuiltIn();
     }
 

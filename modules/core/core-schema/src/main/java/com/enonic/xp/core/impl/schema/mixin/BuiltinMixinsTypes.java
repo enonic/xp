@@ -29,18 +29,21 @@ final class BuiltinMixinsTypes
     private static final Mixin IMAGE_METADATA = Mixin.create().
         name( IMAGE_INFO_METADATA_NAME ).
         displayName( "Image Info" ).
+        displayNameI18nKey( "media.imageInfo.displayName" ).
         form( createImageInfoMixinForm() ).
         build();
 
     private static final Mixin CAMERA_METADATA = Mixin.create().
         name( CAMERA_INFO_METADATA_NAME ).
         displayName( "Photo Info" ).
+        displayNameI18nKey( "media.cameraInfo.displayName" ).
         form( createPhotoInfoMixinForm() ).
         build();
 
     private static final Mixin GPS_METADATA = Mixin.create().
         name( GPS_INFO_METADATA_NAME ).
         displayName( "Gps Info" ).
+        displayNameI18nKey( "base.gpsInfo.displayName" ).
         form( createGpsInfoMixinForm() ).
         build();
 
@@ -48,73 +51,80 @@ final class BuiltinMixinsTypes
 
     private static Form createImageInfoMixinForm()
     {
+        final String i18n = "media.imageInfo";
         final Form.Builder form = Form.create();
-        form.addFormItem( createLong( IMAGE_INFO_PIXEL_SIZE, "Size (px)" ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createLong( IMAGE_INFO_IMAGE_HEIGHT, "Height (px)" ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createLong( IMAGE_INFO_IMAGE_WIDTH, "Width (px)" ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "contentType", "Content Type" ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "description", "Description" ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createLong( MEDIA_INFO_BYTE_SIZE, "Size (bytes)" ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "colorSpace", "Color Space" ).occurrences( 0, 0 ).build() );
-        form.addFormItem( createTextLine( "fileSource", "File Source" ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createLong( IMAGE_INFO_PIXEL_SIZE, "Size (px)", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createLong( IMAGE_INFO_IMAGE_HEIGHT, "Height (px)", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createLong( IMAGE_INFO_IMAGE_WIDTH, "Width (px)", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createTextLine( "contentType", "Content Type", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createTextLine( "description", "Description", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createLong( MEDIA_INFO_BYTE_SIZE, "Size (bytes)", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createTextLine( "colorSpace", "Color Space", i18n ).occurrences( 0, 0 ).build() );
+        form.addFormItem( createTextLine( "fileSource", "File Source", i18n ).occurrences( 0, 1 ).build() );
 
         return form.build();
     }
 
     private static Form createGpsInfoMixinForm()
     {
+        final String i18n = "base.gpsInfo";
         final Form.Builder form = Form.create();
-        form.addFormItem( createGeoPoint( GPS_INFO_GEO_POINT, "Geo Point" ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "altitude", "Altitude" ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "direction", "Direction" ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createGeoPoint( GPS_INFO_GEO_POINT, "Geo Point", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createTextLine( "altitude", "Altitude", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createTextLine( "direction", "Direction", i18n ).occurrences( 0, 1 ).build() );
 
         return form.build();
     }
 
     private static Form createPhotoInfoMixinForm()
     {
+        final String i18n = "media.cameraInfo";
         final Form.Builder form = Form.create();
-        form.addFormItem( createDate( "date", "Date" ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "make", "Make" ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "model", "Model" ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "lens", "Lens" ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "iso", "ISO" ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "focalLength", "Focal Length" ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "focalLength35", "Focal Length 35mm" ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "exposureBias", "Exposure Bias" ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "aperture", "Aperture" ).occurrences( 0, 0 ).build() );
-        form.addFormItem( createTextLine( "shutterTime", "Shutter Time" ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "flash", "Flash" ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "autoFlashCompensation", "Auto Flash Compensation" ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "whiteBalance", "White Balance" ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "exposureProgram", "Exposure Program" ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "shootingMode", "Shooting Mode" ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "meteringMode", "Metering Mode" ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "exposureMode", "Exposure Mode" ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "focusDistance", "Focus Distance" ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "orientation", "Orientation" ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createDate( "date", "Date", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createTextLine( "make", "Make", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createTextLine( "model", "Model", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createTextLine( "lens", "Lens", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createTextLine( "iso", "ISO", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createTextLine( "focalLength", "Focal Length", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createTextLine( "focalLength35", "Focal Length 35mm", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createTextLine( "exposureBias", "Exposure Bias", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createTextLine( "aperture", "Aperture", i18n ).occurrences( 0, 0 ).build() );
+        form.addFormItem( createTextLine( "shutterTime", "Shutter Time", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createTextLine( "flash", "Flash", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createTextLine( "autoFlashCompensation", "Auto Flash Compensation", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createTextLine( "whiteBalance", "White Balance", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createTextLine( "exposureProgram", "Exposure Program", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createTextLine( "shootingMode", "Shooting Mode", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createTextLine( "meteringMode", "Metering Mode", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createTextLine( "exposureMode", "Exposure Mode", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createTextLine( "focusDistance", "Focus Distance", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createTextLine( "orientation", "Orientation", i18n ).occurrences( 0, 1 ).build() );
 
         return form.build();
     }
 
-    private static Input.Builder createTextLine( final String name, final String label )
+    private static Input.Builder createTextLine( final String name, final String label, final String i18n )
     {
-        return Input.create().inputType( InputTypeName.TEXT_LINE ).label( label ).name( name ).immutable( true );
+        return Input.create().inputType( InputTypeName.TEXT_LINE ).label( label ).name( name ).
+            labelI18nKey( i18n + "." + name + ".label" ).immutable( true );
     }
 
-    private static Input.Builder createLong( final String name, final String label )
+    private static Input.Builder createLong( final String name, final String label, final String i18n )
     {
-        return Input.create().inputType( InputTypeName.LONG ).label( label ).name( name ).immutable( true );
+        return Input.create().inputType( InputTypeName.LONG ).label( label ).name( name ).
+            labelI18nKey( i18n + "." + name + ".label" ).immutable( true );
     }
 
-    private static Input.Builder createDate( final String name, final String label )
+    private static Input.Builder createDate( final String name, final String label, final String i18n )
     {
-        return Input.create().inputType( InputTypeName.DATE_TIME ).label( label ).name( name ).immutable( true );
+        return Input.create().inputType( InputTypeName.DATE_TIME ).label( label ).name( name ).
+            labelI18nKey( i18n + "." + name + ".label" ).immutable( true );
     }
 
-    private static Input.Builder createGeoPoint( final String name, final String label )
+    private static Input.Builder createGeoPoint( final String name, final String label, final String i18n )
     {
-        return Input.create().inputType( InputTypeName.GEO_POINT ).label( label ).name( name ).immutable( true );
+        return Input.create().inputType( InputTypeName.GEO_POINT ).label( label ).name( name ).
+            labelI18nKey( i18n + "." + name + ".label" ).immutable( true );
     }
 
     private final Mixins mixins;
