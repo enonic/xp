@@ -4,7 +4,6 @@ import java.net.URL;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -12,21 +11,20 @@ import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
-import com.enonic.xp.core.impl.app.resolver.BundleApplicationUrlResolver;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceKeys;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
-import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.server.RunMode;
 
 @Component(immediate = true)
 public final class ResourceServiceImpl
     implements ResourceService, ApplicationInvalidator
 {
+    private static final ApplicationKey SYSTEM_APPLICATION_KEY = ApplicationKey.from( "com.enonic.xp.app.system" );
+
     private final ProcessingCache cache;
 
     private ApplicationService applicationService;
@@ -92,7 +90,7 @@ public final class ResourceServiceImpl
 
     private Application findApplication( final ApplicationKey key )
     {
-        final ApplicationKey applicationKey = isSystemApp( key ) ? ApplicationKey.SYSTEM_APPLICATION_KEY : key;
+        final ApplicationKey applicationKey = isSystemApp( key ) ? SYSTEM_APPLICATION_KEY : key;
         final Application application = this.applicationService.getInstalledApplication( applicationKey );
         return ( application != null ) && application.isStarted() ? application : null;
     }
@@ -100,11 +98,6 @@ public final class ResourceServiceImpl
     private boolean isSystemApp( final ApplicationKey key )
     {
         return ApplicationKey.SYSTEM_RESERVED_APPLICATION_KEYS.contains( key );
-    }
-
-    private ApplicationUrlResolver systemResolver()
-    {
-        return new BundleApplicationUrlResolver( FrameworkUtil.getBundle( ContentTypeName.class ) );
     }
 
     @Override
