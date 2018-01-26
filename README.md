@@ -27,13 +27,8 @@ Build all code skipping all tests:
 
 ## Running
 
-After building the project, you can start it locally by running the server script (or `bat` on Windows):
-
-    modules/runtime/build/install/bin/server.sh
-    
-You can also go to the `modules/runtime` directory and type:
-    
-    gradle run    
+This project is just the runtime of the Enonic XP platform.  In order to run the system properly,
+please see the xp-distro project that bundles the necessary part together: (https://github.com/enonic/xp-distro)
 
 ## License
 
