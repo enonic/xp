@@ -39,12 +39,6 @@ public final class ResourceServiceImpl
     @Override
     public Resource getResource( final ResourceKey key )
     {
-        if ( isSystemApp( key.getApplicationKey() ) )
-        {
-            final URL url = systemResolver().findUrl( key.getPath() );
-            return new UrlResource( key, url );
-        }
-
         final Application app = findApplication( key.getApplicationKey() );
         if ( app == null )
         {
@@ -72,11 +66,6 @@ public final class ResourceServiceImpl
 
     private Stream<String> doFindFiles( final ApplicationKey key )
     {
-        if ( isSystemApp( key ) )
-        {
-            return systemResolver().findFiles().stream();
-        }
-
         final Application app = findApplication( key );
         if ( app == null )
         {
@@ -103,7 +92,8 @@ public final class ResourceServiceImpl
 
     private Application findApplication( final ApplicationKey key )
     {
-        final Application application = this.applicationService.getInstalledApplication( key );
+        final ApplicationKey applicationKey = isSystemApp( key ) ? ApplicationKey.SYSTEM_APPLICATION_KEY : key;
+        final Application application = this.applicationService.getInstalledApplication( applicationKey );
         return ( application != null ) && application.isStarted() ? application : null;
     }
 

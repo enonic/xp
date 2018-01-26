@@ -18,6 +18,8 @@ public final class ApplicationKey
     public static final ApplicationKey PORTAL = ApplicationKey.from( "portal" );
 
     public static final ApplicationKey BASE = ApplicationKey.from( "base" );
+    
+    public static final ApplicationKey SYSTEM_APPLICATION_KEY = ApplicationKey.from( "com.enonic.xp.app.system" );
 
     public static final ApplicationKeys SYSTEM_RESERVED_APPLICATION_KEYS = ApplicationKeys.from( SYSTEM, MEDIA_MOD, PORTAL, BASE );
 
