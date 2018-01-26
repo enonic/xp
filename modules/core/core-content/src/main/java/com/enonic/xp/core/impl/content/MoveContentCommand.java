@@ -84,7 +84,7 @@ final class MoveContentCommand
         final ContentPath newParentPath = ContentNodeHelper.translateNodePathToContentPath( nodePath );
 
         final boolean isOutOfSite =
-                nearestSite != null && !(newParentPath.isChildOf(nearestSite.getPath()) || newParentPath.equals(nearestSite.getPath()));
+                nearestSite != null && !(newParentPath.isChildOf(nearestSite.getPath()) || newParentPath.asAbsolute().equals(nearestSite.getPath().asAbsolute()));
 
         checkRestrictedMoves( sourceNode, isOutOfSite );
 
