@@ -80,6 +80,8 @@ include 'launcher:launcher-main'
 
 include 'blobstore:blobstore-file'
 
+include 'app:app-system'
+
 include 'repack:repack-attoparser'
 include 'repack:repack-elasticsearch'
 include 'repack:repack-jparsec'
