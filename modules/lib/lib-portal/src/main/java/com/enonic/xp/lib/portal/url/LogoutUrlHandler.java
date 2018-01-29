@@ -1,12 +1,14 @@
 package com.enonic.xp.lib.portal.url;
 
-import com.google.common.collect.Multimap;
-
 import com.enonic.xp.context.Context;
 import com.enonic.xp.portal.url.IdentityUrlParams;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.google.common.collect.Multimap;
+
+import java.util.Arrays;
+import java.util.List;
 
 public final class LogoutUrlHandler
     extends AbstractUrlHandler
@@ -35,6 +37,11 @@ public final class LogoutUrlHandler
                 getUserStore();
         }
         return null;
+    }
+
+    @Override
+    protected List<String> getValidUrlPropertyKeys() {
+        return Arrays.asList("redirect", "type", "params");
     }
 
     @Override

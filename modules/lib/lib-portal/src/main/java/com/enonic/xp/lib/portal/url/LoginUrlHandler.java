@@ -1,11 +1,13 @@
 package com.enonic.xp.lib.portal.url;
 
-import com.google.common.collect.Multimap;
-
 import com.enonic.xp.portal.url.IdentityUrlParams;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
+import com.google.common.collect.Multimap;
+
+import java.util.Arrays;
+import java.util.List;
 
 public final class LoginUrlHandler
     extends AbstractUrlHandler
@@ -19,6 +21,11 @@ public final class LoginUrlHandler
             userStoreKey( retrieveUserStoreKey() ).
             setAsMap( map );
         return this.urlService.identityUrl( params );
+    }
+
+    @Override
+    protected List<String> getValidUrlPropertyKeys() {
+        return Arrays.asList("userStore", "redirect", "type", "params");
     }
 
     private UserStoreKey retrieveUserStoreKey()

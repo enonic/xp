@@ -1,8 +1,10 @@
 package com.enonic.xp.lib.portal.url;
 
+import com.enonic.xp.portal.url.GenerateUrlParams;
 import com.google.common.collect.Multimap;
 
-import com.enonic.xp.portal.url.GenerateUrlParams;
+import java.util.Arrays;
+import java.util.List;
 
 public final class UrlHandler
     extends AbstractUrlHandler
@@ -12,5 +14,10 @@ public final class UrlHandler
     {
         final GenerateUrlParams params = new GenerateUrlParams().portalRequest( this.request ).setAsMap( map );
         return this.urlService.generateUrl( params );
+    }
+
+    @Override
+    protected List<String> getValidUrlPropertyKeys() {
+        return Arrays.asList("path", "type", "params");
     }
 }
