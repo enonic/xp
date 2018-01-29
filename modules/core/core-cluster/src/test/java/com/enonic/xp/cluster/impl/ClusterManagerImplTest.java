@@ -123,7 +123,7 @@ public class ClusterManagerImplTest
 
         this.clusterManager = ClusterManagerImpl.create().
             checkIntervalMs( 0L ).
-            requiredProviders( requiredIds ).
+            requiredProviders( new ClusterProviders( requiredIds ) ).
             build();
 
     }
