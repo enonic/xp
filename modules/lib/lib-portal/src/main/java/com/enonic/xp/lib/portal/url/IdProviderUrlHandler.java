@@ -35,6 +35,6 @@ public final class IdProviderUrlHandler
 
     @Override
     protected List<String> getValidUrlPropertyKeys() {
-        return Arrays.asList("userStore", "type", "params");
+        return Arrays.asList("userStore", "redirect", "contextPath", "type", "params");
     }
 }

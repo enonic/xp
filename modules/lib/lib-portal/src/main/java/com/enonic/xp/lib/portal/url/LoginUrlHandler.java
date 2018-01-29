@@ -25,7 +25,7 @@ public final class LoginUrlHandler
 
     @Override
     protected List<String> getValidUrlPropertyKeys() {
-        return Arrays.asList("userStore", "redirect", "type", "params");
+        return Arrays.asList("userStore", "redirect", "contextPath", "type", "params");
     }
 
     private UserStoreKey retrieveUserStoreKey()

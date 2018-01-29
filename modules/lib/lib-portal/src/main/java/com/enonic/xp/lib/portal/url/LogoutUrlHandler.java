@@ -41,7 +41,7 @@ public final class LogoutUrlHandler
 
     @Override
     protected List<String> getValidUrlPropertyKeys() {
-        return Arrays.asList("redirect", "type", "params");
+        return Arrays.asList("redirect", "contextPath", "type", "params");
     }
 
     @Override
