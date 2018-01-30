@@ -39,6 +39,7 @@ include 'web:web-jetty'
 include 'web:web-dos'
 include 'web:web-dispatch'
 include 'web:web-jetty-next'
+include 'web:web-session'
 
 include 'jaxrs:jaxrs-api'
 include 'jaxrs:jaxrs-impl'

@@ -54,6 +54,7 @@ addBundle( project( ':repack:repack-okhttp' ), 8 )
 addBundle( project( ':repack:repack-javax-cache-api' ), 8 )
 addBundle( 'org.apache.ignite:ignite-core:2.3.0', 8 )
 addBundle( 'org.apache.ignite:ignite-osgi:2.3.0', 8 )
+addBundle( 'org.apache.ignite:ignite-web:2.3.0', 8 )
 
 // API bundles
 addBundle( project( ':core:core-api' ), 10 )
@@ -104,6 +105,7 @@ addBundle( project( ':web:web-impl' ), 26 )
 addBundle( project( ':web:web-vhost' ), 26 )
 addBundle( project( ':web:web-dos' ), 26 )
 addBundle( project( ':web:web-dispatch' ), 26 )
+addBundle( project( ':web:web-session' ), 26 )
 
 // JaxRs app
 addBundle( project( ':jaxrs:jaxrs-impl' ), 28 )

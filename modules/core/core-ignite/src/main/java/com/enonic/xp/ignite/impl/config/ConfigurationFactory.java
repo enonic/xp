@@ -20,6 +20,8 @@ public class ConfigurationFactory
     {
         final IgniteConfiguration config = new IgniteConfiguration();
 
+        config.setIgniteInstanceName( InstanceNameResolver.resolve() );
+
         config.setDiscoverySpi( DiscoveryFactory.create().
             discovery( clusterConfig.discovery() ).
             igniteConfig( igniteConfig ).

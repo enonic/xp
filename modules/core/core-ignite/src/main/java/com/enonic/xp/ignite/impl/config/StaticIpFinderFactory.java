@@ -4,11 +4,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.cluster.NodeDiscovery;
 
 class StaticIpFinderFactory
 {
+    private final static Logger LOG = LoggerFactory.getLogger( StaticIpFinderFactory.class );
+
     private final NodeDiscovery discovery;
 
     private final IgniteSettings igniteConfig;
@@ -29,6 +33,9 @@ class StaticIpFinderFactory
             this.discovery.get().stream().map( host -> host.getCanonicalHostName() + portPrefix ).collect( Collectors.toList() );
 
         staticIpFinder.setAddresses( hostStrings );
+
+        LOG.info( "Setting discovery [staticIP] with address: [" + hostStrings + "]" );
+
         return staticIpFinder;
     }
 
