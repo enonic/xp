@@ -135,6 +135,12 @@ public class IndexServiceImpl
     }
 
     @Override
+    public IndexSettings getIndexSettings( final RepositoryId repositoryId, final IndexType indexType )
+    {
+        return this.indexServiceInternal.getIndexSettings( repositoryId, indexType );
+    }
+
+    @Override
     public boolean isMaster()
     {
 

@@ -16,6 +16,8 @@ public class FieldSet
 {
     private final String label;
 
+    private final String labelI18nKey;
+
     private final FormItems formItems;
 
     private FieldSet( final Builder builder )
@@ -25,6 +27,8 @@ public class FieldSet
         Preconditions.checkNotNull( builder.label, "label is required" );
 
         this.label = builder.label;
+        this.labelI18nKey = builder.labelI18nKey;
+
         this.formItems = new FormItems( this );
         for ( final FormItem formItem : builder.formItems )
         {
@@ -35,6 +39,11 @@ public class FieldSet
     public String getLabel()
     {
         return label;
+    }
+
+    public String getLabelI18nKey()
+    {
+        return labelI18nKey;
     }
 
     @Override
@@ -88,14 +97,14 @@ public class FieldSet
         }
 
         final FieldSet that = (FieldSet) o;
-        return super.equals( o ) && Objects.equals( this.label, that.label ) &&
+        return super.equals( o ) && Objects.equals( this.label, that.label ) && Objects.equals( this.labelI18nKey, that.labelI18nKey ) &&
             Objects.equals( this.formItems, that.formItems );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( super.hashCode(), this.label, this.formItems );
+        return Objects.hash( super.hashCode(), this.label, this.labelI18nKey, this.formItems );
     }
 
     public static Builder create()
@@ -112,6 +121,8 @@ public class FieldSet
     {
         private String label;
 
+        private String labelI18nKey;
+
         private String name;
 
         private List<FormItem> formItems = new ArrayList<FormItem>();
@@ -124,6 +135,7 @@ public class FieldSet
         private Builder( final FieldSet source )
         {
             this.label = source.label;
+            this.labelI18nKey = source.labelI18nKey;
             this.name = source.getName();
 
             for ( final FormItem formItemSource : source.formItems )
@@ -135,6 +147,12 @@ public class FieldSet
         public Builder label( String value )
         {
             this.label = value;
+            return this;
+        }
+
+        public Builder labelI18nKey( String value )
+        {
+            this.labelI18nKey = value;
             return this;
         }
 

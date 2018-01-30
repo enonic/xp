@@ -23,6 +23,8 @@ import com.enonic.xp.server.RunMode;
 public final class ResourceServiceImpl
     implements ResourceService, ApplicationInvalidator
 {
+    private static final ApplicationKey SYSTEM_APPLICATION_KEY = ApplicationKey.from( "com.enonic.xp.app.system" );
+
     private final ProcessingCache cache;
 
     private ApplicationService applicationService;
@@ -88,8 +90,14 @@ public final class ResourceServiceImpl
 
     private Application findApplication( final ApplicationKey key )
     {
-        final Application application = this.applicationService.getInstalledApplication( key );
+        final ApplicationKey applicationKey = isSystemApp( key ) ? SYSTEM_APPLICATION_KEY : key;
+        final Application application = this.applicationService.getInstalledApplication( applicationKey );
         return ( application != null ) && application.isStarted() ? application : null;
+    }
+
+    private boolean isSystemApp( final ApplicationKey key )
+    {
+        return ApplicationKey.SYSTEM_RESERVED_APPLICATION_KEYS.contains( key );
     }
 
     @Override

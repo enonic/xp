@@ -3,8 +3,11 @@ package com.enonic.xp.admin.impl.json.form;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.annotations.Beta;
+import com.google.common.base.Preconditions;
 
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.form.FieldSet;
@@ -20,10 +23,18 @@ public class FieldSetJson
 
     private final List<FormItemJson> items;
 
+    private final LocaleMessageResolver localeMessageResolver;
+
     public FieldSetJson( final FieldSet fieldSet, final LocaleMessageResolver localeMessageResolver )
     {
         super( fieldSet );
+
+        Preconditions.checkNotNull( fieldSet );
+        Preconditions.checkNotNull( localeMessageResolver );
+
         this.fieldSet = fieldSet;
+        this.localeMessageResolver = localeMessageResolver;
+
         this.items = wrapFormItems( fieldSet.getFormItems(), localeMessageResolver );
     }
 
@@ -55,7 +66,14 @@ public class FieldSetJson
 
     public String getLabel()
     {
-        return fieldSet.getLabel();
+        if ( localeMessageResolver != null && StringUtils.isNotBlank( fieldSet.getLabelI18nKey() ) )
+        {
+            return localeMessageResolver.localizeMessage( fieldSet.getLabelI18nKey(), fieldSet.getLabel() );
+        }
+        else
+        {
+            return fieldSet.getLabel();
+        }
     }
 
     public List<FormItemJson> getItems()

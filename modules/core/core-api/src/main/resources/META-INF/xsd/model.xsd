@@ -120,7 +120,7 @@
     <xs:complexContent>
       <xs:extension base="formItem">
         <xs:all>
-          <xs:element minOccurs="0" name="label" type="xs:string"/>
+          <xs:element minOccurs="0" name="label" type="i18n"/>
           <xs:element minOccurs="0" name="items" type="formItems"/>
         </xs:all>
         <xs:attribute name="name" type="xs:string" use="required"/>
@@ -132,10 +132,10 @@
     <xs:complexContent>
       <xs:extension base="formItem">
         <xs:all>
-          <xs:element minOccurs="0" name="label" type="xs:string"/>
+          <xs:element minOccurs="0" name="label" type="i18n"/>
           <xs:element minOccurs="0" name="immutable" type="xs:boolean"/>
           <xs:element minOccurs="0" name="custom-text" type="xs:string"/>
-          <xs:element minOccurs="0" name="help-text" type="xs:string"/>
+          <xs:element minOccurs="0" name="help-text" type="i18n"/>
           <xs:element minOccurs="0" name="occurrences" type="occurrence"/>
           <xs:element minOccurs="0" name="items" type="formItems"/>
         </xs:all>
@@ -148,9 +148,9 @@
     <xs:complexContent>
       <xs:extension base="formItem">
         <xs:all>
-          <xs:element minOccurs="0" maxOccurs="1" name="label" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="label" type="i18n"/>
           <xs:element minOccurs="0" maxOccurs="1" name="expanded" type="xs:boolean"/>
-          <xs:element minOccurs="0" name="help-text" type="xs:string"/>
+          <xs:element minOccurs="0" name="help-text" type="i18n"/>
           <xs:element minOccurs="0" name="occurrences" type="occurrence"/>
           <xs:element minOccurs="1" maxOccurs="1" name="options" type="optionSetOptions"/>
         </xs:all>
@@ -169,9 +169,9 @@
 
   <xs:complexType name="optionSetOption">
     <xs:all>
-      <xs:element minOccurs="1" name="label" type="xs:string"/>
+      <xs:element minOccurs="1" name="label" type="i18n"/>
       <xs:element minOccurs="0" maxOccurs="1" name="default" type="xs:boolean"/>
-      <xs:element minOccurs="0" name="help-text" type="xs:string"/>
+      <xs:element minOccurs="0" name="help-text" type="i18n"/>
       <xs:element minOccurs="0" name="items" type="formItems"/>
     </xs:all>
     <xs:attribute name="name" type="xs:string" use="required"/>

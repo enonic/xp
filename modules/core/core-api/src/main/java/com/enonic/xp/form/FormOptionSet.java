@@ -18,6 +18,8 @@ public class FormOptionSet
 
     private final String label;
 
+    private final String labelI18nKey;
+
     private final boolean expanded;
 
     private final FormItems optionSetOptions;
@@ -27,6 +29,8 @@ public class FormOptionSet
     private final Occurrences multiselection;
 
     private final String helpText;
+
+    private final String helpTextI18nKey;
 
     private FormOptionSet( Builder builder )
     {
@@ -38,7 +42,9 @@ public class FormOptionSet
 
         this.name = builder.name;
         this.label = builder.label;
+        this.labelI18nKey = builder.labelI18nKey;
         this.helpText = builder.helpText;
+        this.helpTextI18nKey = builder.helpTextI18nKey;
         this.expanded = builder.expanded;
         this.occurrences = builder.occurrences;
         this.multiselection = builder.multiselection;
@@ -71,6 +77,11 @@ public class FormOptionSet
         return label;
     }
 
+    public String getLabelI18nKey()
+    {
+        return labelI18nKey;
+    }
+
     public Occurrences getOccurrences()
     {
         return occurrences;
@@ -89,6 +100,11 @@ public class FormOptionSet
     public String getHelpText()
     {
         return helpText;
+    }
+
+    public String getHelpTextI18nKey()
+    {
+        return helpTextI18nKey;
     }
 
     public boolean isRequired()
@@ -127,7 +143,8 @@ public class FormOptionSet
         return super.equals( o ) && Objects.equals( expanded, that.expanded ) && Objects.equals( name, that.name ) &&
             Objects.equals( label, that.label ) && Objects.equals( helpText, that.helpText ) &&
             Objects.equals( optionSetOptions, that.optionSetOptions ) && Objects.equals( occurrences, that.occurrences ) &&
-            Objects.equals( multiselection, that.multiselection ) && Objects.equals( helpText, that.helpText );
+            Objects.equals( multiselection, that.multiselection ) && Objects.equals( helpText, that.helpText ) &&
+            Objects.equals( labelI18nKey, that.labelI18nKey ) && Objects.equals( helpTextI18nKey, that.helpTextI18nKey );
     }
 
     @Override
@@ -152,6 +169,8 @@ public class FormOptionSet
 
         private String label;
 
+        private String labelI18nKey;
+
         private boolean expanded = false;
 
         private List<FormOptionSetOption> setOptionsList = new ArrayList<>();
@@ -162,6 +181,8 @@ public class FormOptionSet
 
         private String helpText;
 
+        private String helpTextI18nKey;
+
         private Builder()
         {
         }
@@ -170,10 +191,12 @@ public class FormOptionSet
         {
             this.name = source.name;
             this.label = source.label;
+            this.labelI18nKey = source.labelI18nKey;
             this.expanded = source.expanded;
             this.occurrences = source.occurrences;
             this.multiselection = source.multiselection;
             this.helpText = source.helpText;
+            this.helpTextI18nKey = source.helpTextI18nKey;
 
             for ( final FormOptionSetOption formItemSource : source )
             {
@@ -190,6 +213,12 @@ public class FormOptionSet
         public Builder label( final String label )
         {
             this.label = label;
+            return this;
+        }
+
+        public Builder labelI18nKey( final String labelI18nKey )
+        {
+            this.labelI18nKey = labelI18nKey;
             return this;
         }
 
@@ -240,6 +269,12 @@ public class FormOptionSet
         public Builder helpText( String value )
         {
             helpText = value;
+            return this;
+        }
+
+        public Builder helpTextI18nKey( String value )
+        {
+            helpTextI18nKey = value;
             return this;
         }
 

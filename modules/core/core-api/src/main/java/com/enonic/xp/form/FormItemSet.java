@@ -20,6 +20,8 @@ public class FormItemSet
 
     private final String label;
 
+    private final String labelI18nKey;
+
     private final FormItems formItems;
 
     private final boolean immutable;
@@ -29,6 +31,8 @@ public class FormItemSet
     private final String customText;
 
     private final String helpText;
+
+    private final String helpTextI18nKey;
 
     private FormItemSet( Builder builder )
     {
@@ -45,10 +49,13 @@ public class FormItemSet
         this.customText = builder.customText;
         this.helpText = builder.helpText;
         this.formItems = new FormItems( this );
+        this.labelI18nKey = builder.labelI18nKey;
+        this.helpTextI18nKey = builder.helpTextI18nKey;
         for ( final FormItem formItem : builder.formItems )
         {
             this.formItems.add( formItem );
         }
+
     }
 
     @Override
@@ -108,6 +115,17 @@ public class FormItemSet
         return formItems;
     }
 
+    public String getLabelI18nKey()
+    {
+        return labelI18nKey;
+    }
+
+    public String getHelpTextI18nKey()
+    {
+        return helpTextI18nKey;
+    }
+
+
     @Override
     public Iterator<FormItem> iterator()
     {
@@ -132,7 +150,8 @@ public class FormItemSet
             Objects.equals( this.immutable, that.immutable ) &&
             Objects.equals( this.customText, that.customText ) &&
             Objects.equals( this.helpText, that.helpText ) &&
-            Objects.equals( this.occurrences, that.occurrences ) &&
+            Objects.equals( this.occurrences, that.occurrences ) && Objects.equals( this.labelI18nKey, that.labelI18nKey ) &&
+            Objects.equals( this.helpTextI18nKey, that.helpTextI18nKey ) &&
             Objects.equals( this.formItems, that.formItems );
     }
 
@@ -140,6 +159,7 @@ public class FormItemSet
     public int hashCode()
     {
         return Objects.hash( super.hashCode(), this.label, this.immutable, this.customText, this.helpText, this.occurrences,
+                             this.helpTextI18nKey, this.labelI18nKey,
                              this.formItems );
     }
 
@@ -231,6 +251,8 @@ public class FormItemSet
 
         private String label;
 
+        private String labelI18nKey;
+
         private boolean immutable;
 
         private Occurrences occurrences = Occurrences.create( 0, 1 );
@@ -238,6 +260,8 @@ public class FormItemSet
         private String customText;
 
         private String helpText;
+
+        private String helpTextI18nKey;
 
         private List<FormItem> formItems = new ArrayList<FormItem>();
 
@@ -254,6 +278,8 @@ public class FormItemSet
             this.occurrences = source.occurrences;
             this.customText = source.customText;
             this.helpText = source.helpText;
+            this.labelI18nKey = source.labelI18nKey;
+            this.helpTextI18nKey = source.helpTextI18nKey;
 
             for ( final FormItem formItemSource : source.formItems )
             {
@@ -270,6 +296,12 @@ public class FormItemSet
         public Builder label( String value )
         {
             label = value;
+            return this;
+        }
+
+        public Builder labelI18nKey( String value )
+        {
+            labelI18nKey = value;
             return this;
         }
 
@@ -326,6 +358,12 @@ public class FormItemSet
         public Builder helpText( String value )
         {
             helpText = value;
+            return this;
+        }
+
+        public Builder helpTextI18nKey( String value )
+        {
+            helpTextI18nKey = value;
             return this;
         }
 
