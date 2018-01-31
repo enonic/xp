@@ -1,17 +1,17 @@
 package com.enonic.xp.lib.portal.url;
 
-import java.util.Map;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+
+import java.util.List;
+import java.util.Map;
 
 public abstract class AbstractUrlHandler
     implements ScriptBean
@@ -32,10 +32,15 @@ public abstract class AbstractUrlHandler
         return createUrl( params.getMap() );
     }
 
-    private String createUrl( final Map<String, Object> params )
-    {
-        final Multimap<String, String> map = toMap( params );
-        return buildUrl( map );
+    private String createUrl(final Map<String, Object> params) {
+        try {
+            final Multimap<String, String> map = toMap(params);
+
+            return buildUrl(map);
+
+        } catch (UnknownUrlPropertyException e) {
+            return e.getMessage();
+        }
     }
 
     private Multimap<String, String> toMap( final Map<String, Object> params )
@@ -50,7 +55,11 @@ public abstract class AbstractUrlHandler
             }
             else
             {
-                applyParam( map, "_" + key, param.getValue() );
+                if (this.isValidParam(key)) {
+                    applyParam(map, "_" + key, param.getValue());
+                } else {
+                    throw new UnknownUrlPropertyException(key);
+                }
             }
         }
 
@@ -92,6 +101,12 @@ public abstract class AbstractUrlHandler
         {
             params.put( key, value.toString() );
         }
+    }
+
+    protected abstract List<String> getValidUrlPropertyKeys();
+
+    private boolean isValidParam(final String key) {
+        return this.getValidUrlPropertyKeys().contains(key);
     }
 
     @Override
