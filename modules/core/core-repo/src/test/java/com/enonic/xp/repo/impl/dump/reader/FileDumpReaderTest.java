@@ -5,7 +5,6 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
 import com.google.common.io.Files;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -17,7 +16,6 @@ import java.nio.file.Paths;
 
 import static org.junit.Assert.assertEquals;
 
-@Ignore
 public class FileDumpReaderTest
 {
     @Rule
