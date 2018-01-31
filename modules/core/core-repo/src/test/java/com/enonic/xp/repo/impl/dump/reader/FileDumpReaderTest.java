@@ -1,20 +1,19 @@
 package com.enonic.xp.repo.impl.dump.reader;
 
-import com.enonic.xp.branch.Branches;
-import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.repository.RepositoryIds;
-import com.google.common.io.Files;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Paths;
+import com.enonic.xp.branch.Branches;
+import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.RepositoryIds;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class FileDumpReaderTest
 {
