@@ -33,7 +33,7 @@ exports.localize = function (params) {
  * This function returns all phrases for the given locale and bundles.
  *
  * @param {string|string[]} locale A string-representation of a locale, or an array of locales in preferred order.
- * @param {string[]} bundles List of bundle names.  Bundle names are specified as paths inside the resource folder.
+ * @param {string[]} bundles List of bundle names.  Bundle names are specified as paths, relative to the `src/main/resources` folder.
  *
  * @returns {object} An object of all phrases.
  *
