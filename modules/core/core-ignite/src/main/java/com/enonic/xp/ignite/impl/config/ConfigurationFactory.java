@@ -29,6 +29,7 @@ public class ConfigurationFactory
             execute() );
 
         config.setConsistentId( clusterConfig.name().toString() );
+        config.setGridLogger( LoggerConfig.create() );
 
         return config;
     }
