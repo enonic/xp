@@ -38,7 +38,7 @@ exports.localize = function (params) {
  * @returns {object} An object of all phrases.
  *
  * @example
- * i18nLib.getPhrases('en', ['admin/i18n/phrases'])
+ * i18nLib.getPhrases('en', ['i18n/phrases'])
  */
 exports.getPhrases = function (locale, bundles) {
     var bean = __.newBean('com.enonic.xp.lib.i18n.LocaleScriptBean');
