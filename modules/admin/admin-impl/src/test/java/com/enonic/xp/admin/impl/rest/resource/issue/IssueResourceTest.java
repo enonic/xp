@@ -18,12 +18,14 @@ import org.mockito.Mockito;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import com.enonic.xp.admin.impl.json.issue.DeleteIssueCommentResultJson;
 import com.enonic.xp.admin.impl.json.issue.IssueStatsJson;
 import com.enonic.xp.admin.impl.json.issue.PublishRequestItemJson;
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishRequestJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.CreateIssueCommentJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.CreateIssueJson;
+import com.enonic.xp.admin.impl.rest.resource.issue.json.DeleteIssueCommentJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.ListIssuesJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.UpdateIssueJson;
 import com.enonic.xp.content.ContentId;
@@ -31,6 +33,8 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.LocalScope;
 import com.enonic.xp.issue.CreateIssueCommentParams;
 import com.enonic.xp.issue.CreateIssueParams;
+import com.enonic.xp.issue.DeleteIssueCommentParams;
+import com.enonic.xp.issue.DeleteIssueCommentResult;
 import com.enonic.xp.issue.FindIssueCommentsResult;
 import com.enonic.xp.issue.FindIssuesResult;
 import com.enonic.xp.issue.Issue;
@@ -42,6 +46,10 @@ import com.enonic.xp.issue.IssueService;
 import com.enonic.xp.issue.PublishRequest;
 import com.enonic.xp.issue.PublishRequestItem;
 import com.enonic.xp.issue.UpdateIssueParams;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeName;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.PrincipalNotFoundException;
@@ -427,6 +435,24 @@ public class IssueResourceTest
         assertStringJson( expected, jsonString );
     }
 
+    @Test
+    public void test_deleteComment()
+        throws Exception
+    {
+        final Issue issue = createIssue();
+        final IssueComment comment = createIssueComment( Instant.now() );
+        IssueResource resource = getResourceInstance();
+
+        DeleteIssueCommentResult result = new DeleteIssueCommentResult( NodeIds.from( NodeId.from( "comment-id" ) ), NodePath.ROOT );
+        Mockito.when( this.issueService.deleteComment( Mockito.any( DeleteIssueCommentParams.class ) ) ).thenReturn( result );
+
+        DeleteIssueCommentJson params = new DeleteIssueCommentJson( issue.getId().toString(), comment.getName().toString() );
+        DeleteIssueCommentResultJson resultJson = resource.deleteComment( params );
+
+        assertEquals( NodePath.ROOT.toString(), resultJson.getPath() );
+        assertEquals( 1, resultJson.getIds().size() );
+    }
+
     private PublishRequestJson createPublishRequest()
     {
         final PublishRequestItemJson publishRequestItemJson = new PublishRequestItemJson( PublishRequestItem.create().
@@ -443,6 +469,7 @@ public class IssueResourceTest
     private IssueComment createIssueComment( Instant createdTime )
     {
         return IssueComment.create().
+            name( NodeName.from( "Comment-name-one" ) ).
             text( "Comment text one" ).
             creator( User.ANONYMOUS.getKey() ).
             creatorDisplayName( "Anonymous" ).

@@ -7,6 +7,8 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.issue.CreateIssueCommentParams;
 import com.enonic.xp.issue.CreateIssueParams;
+import com.enonic.xp.issue.DeleteIssueCommentParams;
+import com.enonic.xp.issue.DeleteIssueCommentResult;
 import com.enonic.xp.issue.FindIssueCommentsResult;
 import com.enonic.xp.issue.FindIssuesResult;
 import com.enonic.xp.issue.Issue;
@@ -88,6 +90,15 @@ public class IssueServiceImpl
     {
         return FindIssueCommentsCommand.create().
             query( query ).
+            nodeService( nodeService ).
+            build().
+            execute();
+    }
+
+    public DeleteIssueCommentResult deleteComment( DeleteIssueCommentParams params )
+    {
+        return DeleteIssueCommentCommand.create().
+            params( params ).
             nodeService( nodeService ).
             build().
             execute();

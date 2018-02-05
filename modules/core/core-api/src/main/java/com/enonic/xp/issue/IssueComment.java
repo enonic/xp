@@ -2,10 +2,13 @@ package com.enonic.xp.issue;
 
 import java.time.Instant;
 
+import com.enonic.xp.node.NodeName;
 import com.enonic.xp.security.PrincipalKey;
 
 public class IssueComment
 {
+    private NodeName name;
+
     private PrincipalKey creator;
 
     private String creatorDisplayName;
@@ -16,10 +19,16 @@ public class IssueComment
 
     private IssueComment( Builder builder )
     {
+        this.name = builder.name;
         this.creator = builder.creator;
         this.creatorDisplayName = builder.creatorDisplayName;
         this.created = builder.created;
         this.text = builder.text;
+    }
+
+    public NodeName getName()
+    {
+        return name;
     }
 
     public PrincipalKey getCreator()
@@ -49,6 +58,7 @@ public class IssueComment
 
     public static class Builder
     {
+        private NodeName name;
 
         private String text;
 
@@ -61,6 +71,12 @@ public class IssueComment
         private Builder()
         {
             this.created = Instant.now();
+        }
+
+        public Builder name( final NodeName name )
+        {
+            this.name = name;
+            return this;
         }
 
         public Builder text( final String text )

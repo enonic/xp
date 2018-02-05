@@ -32,6 +32,6 @@ public class IssueCommentNodeTranslator
 
     private static IssueComment doTranslate( final Node node )
     {
-        return ISSUE_COMMENT_DATA_SERIALIZER.fromData( node.data().getRoot() ).build();
+        return ISSUE_COMMENT_DATA_SERIALIZER.fromData( node.data().getRoot() ).name( node.name() ).build();
     }
 }

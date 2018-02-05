@@ -4,6 +4,7 @@
       "createdTime": "${createdTime}",
       "creatorDisplayName": "Anonymous",
       "creatorKey": "user:system:anonymous",
+      "name": "Comment-name-one",
       "text": "Comment text one"
     }
   ],

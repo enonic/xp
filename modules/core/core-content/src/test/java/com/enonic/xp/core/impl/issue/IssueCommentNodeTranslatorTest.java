@@ -10,10 +10,9 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.issue.IssueComment;
-import com.enonic.xp.issue.IssueName;
-import com.enonic.xp.name.NamePrettyfier;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeName;
 import com.enonic.xp.security.PrincipalKey;
 
 import static com.enonic.xp.core.impl.issue.IssueCommentPropertyNames.CREATED_TIME;
@@ -34,6 +33,7 @@ public class IssueCommentNodeTranslatorTest
         final IssueComment comment = IssueCommentNodeTranslator.fromNode( node );
 
         assertNotNull( comment );
+        assertEquals( NodeName.from( "name" ), comment.getName() );
         assertEquals( "title", comment.getText() );
         assertEquals( PrincipalKey.from( "user:myStore:me" ), comment.getCreator() );
         assertEquals( "Me Myself", comment.getCreatorDisplayName() );
@@ -53,7 +53,7 @@ public class IssueCommentNodeTranslatorTest
 
         return Node.create().
             id( NodeId.from( UUID.randomUUID() ) ).
-            name( IssueName.from( NamePrettyfier.create( "title" ) ).toString() ).
+            name( NodeName.from( "name" ) ).
             parentPath( ContentConstants.CONTENT_ROOT_PATH ).
             data( propertyTree ).
             build();

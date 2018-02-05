@@ -18,4 +18,6 @@ public interface IssueService
 
     FindIssueCommentsResult findComments( IssueCommentQuery query );
 
+    DeleteIssueCommentResult deleteComment( DeleteIssueCommentParams params );
+
 }

@@ -5,17 +5,13 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.issue.CreateIssueCommentParams;
 import com.enonic.xp.issue.IssueAlreadyExistsException;
 import com.enonic.xp.issue.IssueComment;
-import com.enonic.xp.issue.IssueCommentQuery;
-import com.enonic.xp.issue.IssueId;
 import com.enonic.xp.issue.IssueName;
 import com.enonic.xp.node.CreateNodeParams;
-import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.RefreshMode;
 
 public class CreateIssueCommentCommand
@@ -39,8 +35,7 @@ public class CreateIssueCommentCommand
         validateBlockingChecks();
         final Node issueNode = nodeService.getById( NodeId.from( params.getIssue() ) );
 
-        final long index = countTotalComments( params.getIssue(), issueNode.name() ) + 1;
-        final String commentName = IssueCommentNameFactory.create( index );
+        final String commentName = IssueCommentNameFactory.create( params.getCreated() );
 
         final CreateNodeParams createNodeParams = CreateNodeParamsFactory.create( this.params, issueNode.name(), commentName );
 
@@ -56,21 +51,6 @@ public class CreateIssueCommentCommand
 
         nodeService.refresh( RefreshMode.SEARCH );
         return IssueCommentNodeTranslator.fromNode( createdNode );
-    }
-
-    private long countTotalComments( final IssueId issueId, NodeName parentName )
-    {
-        final IssueCommentQuery query = IssueCommentQuery.create().
-            issue( issueId ).
-            size( 0 ).
-            count( true ).
-            build();
-
-        final NodeQuery nodeQuery = IssueCommentQueryNodeQueryTranslator.translate( query, parentName );
-
-        final FindNodesByQueryResult result = nodeService.findByQuery( nodeQuery );
-
-        return result.getTotalHits();
     }
 
     private void validateBlockingChecks()

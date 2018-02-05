@@ -24,6 +24,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.net.HttpHeaders;
 
+import com.enonic.xp.admin.impl.json.issue.DeleteIssueCommentResultJson;
 import com.enonic.xp.admin.impl.json.issue.IssueCommentJson;
 import com.enonic.xp.admin.impl.json.issue.IssueCommentListJson;
 import com.enonic.xp.admin.impl.json.issue.IssueJson;
@@ -33,6 +34,7 @@ import com.enonic.xp.admin.impl.json.issue.IssuesJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.CreateIssueCommentJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.CreateIssueJson;
+import com.enonic.xp.admin.impl.rest.resource.issue.json.DeleteIssueCommentJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.GetIssuesJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.ListIssueCommentsJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.ListIssuesJson;
@@ -40,6 +42,7 @@ import com.enonic.xp.admin.impl.rest.resource.issue.json.UpdateIssueJson;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.issue.CreateIssueCommentParams;
 import com.enonic.xp.issue.CreateIssueParams;
+import com.enonic.xp.issue.DeleteIssueCommentResult;
 import com.enonic.xp.issue.FindIssueCommentsResult;
 import com.enonic.xp.issue.FindIssuesParams;
 import com.enonic.xp.issue.FindIssuesResult;
@@ -195,6 +198,15 @@ public final class IssueResource
         final IssueListMetaData metaData = IssueListMetaData.create().hits( result.getHits() ).totalHits( result.getTotalHits() ).build();
 
         return new IssueCommentListJson( result.getIssueComments(), metaData );
+    }
+
+    @POST
+    @Path("comment/delete")
+    public DeleteIssueCommentResultJson deleteComment( final DeleteIssueCommentJson params )
+    {
+        final DeleteIssueCommentResult result = this.issueService.deleteComment( params.getDeleteIssueCommentParams() );
+
+        return new DeleteIssueCommentResultJson( result );
     }
 
     @POST
