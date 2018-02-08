@@ -14,18 +14,18 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.cluster.Cluster;
 import com.enonic.xp.cluster.ClusterConfig;
+import com.enonic.xp.cluster.ClusterHealth;
+import com.enonic.xp.cluster.ClusterId;
 import com.enonic.xp.cluster.ClusterNode;
 import com.enonic.xp.cluster.ClusterNodes;
-import com.enonic.xp.cluster.ClusterProvider;
-import com.enonic.xp.cluster.ClusterProviderHealth;
-import com.enonic.xp.cluster.ClusterProviderId;
 import com.enonic.xp.ignite.impl.config.ConfigurationFactory;
 import com.enonic.xp.ignite.impl.config.IgniteSettings;
 
 @Component(immediate = true, configurationPid = "com.enonic.xp.ignite")
-public class IgniteActivator
-    implements ClusterProvider
+public class IgniteCluster
+    implements Cluster
 {
     private Ignite ignite;
 
@@ -33,7 +33,7 @@ public class IgniteActivator
 
     private BundleContext context;
 
-    private static final Logger LOG = LoggerFactory.getLogger( IgniteActivator.class );
+    private static final Logger LOG = LoggerFactory.getLogger( IgniteCluster.class );
 
     private IgniteSettings igniteSettings;
 
@@ -64,15 +64,15 @@ public class IgniteActivator
     }
 
     @Override
-    public ClusterProviderId getId()
+    public ClusterId getId()
     {
-        return ClusterProviderId.from( "ignite" );
+        return ClusterId.from( "ignite" );
     }
 
     @Override
-    public ClusterProviderHealth getHealth()
+    public ClusterHealth getHealth()
     {
-        return ClusterProviderHealth.GREEN;
+        return ClusterHealth.GREEN;
     }
 
     @Override
@@ -88,7 +88,7 @@ public class IgniteActivator
     @Override
     public void enable()
     {
-        registerClient();
+        registerService();
     }
 
     @Override
@@ -103,7 +103,7 @@ public class IgniteActivator
         return this.reg != null;
     }
 
-    private void registerClient()
+    private void registerService()
     {
         if ( this.reg != null )
         {

@@ -47,6 +47,7 @@ public final class ElasticsearchActivator
     }
 
     @Activate
+    @SuppressWarnings("WeakerAccess")
     public void activate( final BundleContext context, final Map<String, String> map )
     {
         final Settings settings = new NodeSettingsBuilder( context, this.clusterConfig ).

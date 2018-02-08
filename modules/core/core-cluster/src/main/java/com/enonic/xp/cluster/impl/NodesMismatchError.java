@@ -1,21 +1,21 @@
 package com.enonic.xp.cluster.impl;
 
+import com.enonic.xp.cluster.Cluster;
 import com.enonic.xp.cluster.ClusterNodes;
-import com.enonic.xp.cluster.ClusterProvider;
 import com.enonic.xp.cluster.ClusterValidationError;
 
-public class NodesMismatchError
+class NodesMismatchError
     implements ClusterValidationError
 {
-    private final ClusterProvider p1;
+    private final Cluster p1;
 
-    private final ClusterProvider p2;
+    private final Cluster p2;
 
     private final ClusterNodes c1;
 
     private final ClusterNodes c2;
 
-    public NodesMismatchError( final ClusterProvider p1, final ClusterProvider p2, final ClusterNodes c1, final ClusterNodes c2 )
+    NodesMismatchError( final Cluster p1, final Cluster p2, final ClusterNodes c1, final ClusterNodes c2 )
     {
         this.p1 = p1;
         this.p2 = p2;

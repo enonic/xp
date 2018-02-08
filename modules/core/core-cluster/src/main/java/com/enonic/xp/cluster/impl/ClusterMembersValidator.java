@@ -3,29 +3,30 @@ package com.enonic.xp.cluster.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.cluster.Cluster;
 import com.enonic.xp.cluster.ClusterNodes;
-import com.enonic.xp.cluster.ClusterProvider;
-import com.enonic.xp.cluster.ClusterProviders;
 import com.enonic.xp.cluster.ClusterValidator;
 import com.enonic.xp.cluster.ClusterValidatorResult;
+import com.enonic.xp.cluster.Clusters;
 
-public class ClusterMembersValidator
+class ClusterMembersValidator
     implements ClusterValidator
 {
     private final static Logger LOG = LoggerFactory.getLogger( ClusterMembersValidator.class );
 
-    public ClusterValidatorResult validate( final ClusterProviders providers )
+    @Override
+    public ClusterValidatorResult validate( final Clusters clusters )
     {
         ClusterNodes current = null;
-        ClusterProvider first = null;
+        Cluster first = null;
 
-        for ( final ClusterProvider provider : providers )
+        for ( final Cluster cluster : clusters )
         {
-            final ClusterNodes providerNodes = provider.getNodes();
+            final ClusterNodes clusterNodes = cluster.getNodes();
 
-            if ( first != null && current != null && !current.equals( providerNodes ) )
+            if ( first != null && current != null && !current.equals( clusterNodes ) )
             {
-                final NodesMismatchError error = new NodesMismatchError( provider, first, providerNodes, current );
+                final NodesMismatchError error = new NodesMismatchError( cluster, first, clusterNodes, current );
 
                 LOG.error( error.getMessage() );
 
@@ -37,17 +38,15 @@ public class ClusterMembersValidator
 
             if ( first == null )
             {
-                first = provider;
+                first = cluster;
             }
 
             if ( current == null )
             {
-                current = providerNodes;
+                current = clusterNodes;
             }
         }
 
         return ClusterValidatorResult.ok();
     }
-
-
 }

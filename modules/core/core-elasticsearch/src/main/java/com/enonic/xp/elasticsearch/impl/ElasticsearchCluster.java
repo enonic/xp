@@ -20,16 +20,16 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.cluster.Cluster;
+import com.enonic.xp.cluster.ClusterHealth;
+import com.enonic.xp.cluster.ClusterId;
 import com.enonic.xp.cluster.ClusterNodes;
-import com.enonic.xp.cluster.ClusterProvider;
-import com.enonic.xp.cluster.ClusterProviderHealth;
-import com.enonic.xp.cluster.ClusterProviderId;
 
 @Component(immediate = true)
-public final class ClientActivator
-    implements ClusterProvider
+public final class ElasticsearchCluster
+    implements Cluster
 {
-    private final ClusterProviderId id = ClusterProviderId.from( "elasticsearch" );
+    private final ClusterId id = ClusterId.from( "elasticsearch" );
 
     private final String CLUSTER_HEALTH_TIMEOUT = "5s";
 
@@ -39,7 +39,7 @@ public final class ClientActivator
 
     protected ServiceRegistration<Client> reg;
 
-    private final static Logger LOG = LoggerFactory.getLogger( ClientActivator.class );
+    private final static Logger LOG = LoggerFactory.getLogger( ElasticsearchCluster.class );
 
     @Activate
     @SuppressWarnings("WeakerAccess")
@@ -57,7 +57,7 @@ public final class ClientActivator
     }
 
     @Override
-    public ClusterProviderId getId()
+    public ClusterId getId()
     {
         return id;
     }
@@ -69,7 +69,7 @@ public final class ClientActivator
     }
 
     @Override
-    public ClusterProviderHealth getHealth()
+    public ClusterHealth getHealth()
     {
         final ClusterHealthResponse healthResponse = doGetHealth();
         return getProviderState( healthResponse.getStatus() );
@@ -144,19 +144,19 @@ public final class ClientActivator
         return response.getState().getNodes();
     }
 
-    private ClusterProviderHealth getProviderState( final ClusterHealthStatus status )
+    private ClusterHealth getProviderState( final ClusterHealthStatus status )
     {
         if ( status == ClusterHealthStatus.RED )
         {
-            return ClusterProviderHealth.RED;
+            return ClusterHealth.RED;
         }
 
         if ( status == ClusterHealthStatus.YELLOW )
         {
-            return ClusterProviderHealth.YELLOW;
+            return ClusterHealth.YELLOW;
         }
 
-        return ClusterProviderHealth.GREEN;
+        return ClusterHealth.GREEN;
     }
 
 

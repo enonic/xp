@@ -13,13 +13,13 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.xp.cluster.Cluster;
+import com.enonic.xp.cluster.ClusterId;
 import com.enonic.xp.cluster.ClusterManager;
-import com.enonic.xp.cluster.ClusterProvider;
-import com.enonic.xp.cluster.ClusterProviderId;
-import com.enonic.xp.cluster.ClusterProviders;
 import com.enonic.xp.cluster.ClusterState;
 import com.enonic.xp.cluster.ClusterValidator;
 import com.enonic.xp.cluster.ClusterValidatorResult;
+import com.enonic.xp.cluster.Clusters;
 
 @Component(immediate = true)
 public class ClusterManagerImpl
@@ -27,10 +27,10 @@ public class ClusterManagerImpl
 {
     private final Long checkIntervalMs;
 
-    private final static List<ClusterProviderId> DEFAULT_REQUIRED_PROVIDERS =
-        Lists.newArrayList( ClusterProviderId.from( "elasticsearch" ), ClusterProviderId.from( "ignite" ) );
+    private final static List<ClusterId> DEFAULT_REQUIRED_INSTANCES =
+        Lists.newArrayList( ClusterId.from( "elasticsearch" ), ClusterId.from( "ignite" ) );
 
-    private final ClusterProviders clusterProviders;
+    private final Clusters instances;
 
     private final Logger LOG = LoggerFactory.getLogger( ClusterManagerImpl.class );
 
@@ -42,13 +42,13 @@ public class ClusterManagerImpl
     public ClusterManagerImpl()
     {
         this.checkIntervalMs = 1000L;
-        this.clusterProviders = new ClusterProviders( DEFAULT_REQUIRED_PROVIDERS );
+        this.instances = new Clusters( DEFAULT_REQUIRED_INSTANCES );
     }
 
     private ClusterManagerImpl( final Builder builder )
     {
         this.checkIntervalMs = builder.checkIntervalMs;
-        this.clusterProviders = builder.clusterProviders;
+        this.instances = builder.clusters;
     }
 
     @Override
@@ -58,25 +58,25 @@ public class ClusterManagerImpl
     }
 
     @Override
-    public ClusterProviders getProviders()
+    public Clusters getInstances()
     {
-        return this.clusterProviders;
+        return this.instances;
     }
 
     private void activate()
     {
-        this.clusterProviders.forEach( ClusterProvider::enable );
+        this.instances.forEach( Cluster::enable );
     }
 
     private void deactivate()
     {
         LOG.info( "Deactivate all providers" );
-        this.clusterProviders.forEach( ClusterProvider::disable );
+        this.instances.forEach( Cluster::disable );
     }
 
     private void registerProvider()
     {
-        if ( this.clusterProviders.hasRequiredProviders() )
+        if ( this.instances.hasRequiredProviders() )
         {
             LOG.info( "Has all required cluster-providers, activate and start polling health" );
             activate();
@@ -107,7 +107,7 @@ public class ClusterManagerImpl
     {
         for ( final ClusterValidator validator : this.validators )
         {
-            final ClusterValidatorResult result = validator.validate( this.clusterProviders );
+            final ClusterValidatorResult result = validator.validate( this.instances );
 
             if ( !result.isOk() )
             {
@@ -122,10 +122,10 @@ public class ClusterManagerImpl
 
 
     @SuppressWarnings("unused")
-    public void removeProvider( final ClusterProvider provider )
+    public void removeProvider( final Cluster provider )
     {
         LOG.info( "Removing cluster-provider: " + provider.getId() );
-        this.clusterProviders.remove( provider );
+        this.instances.remove( provider );
         this.registerProvider();
     }
 
@@ -138,7 +138,7 @@ public class ClusterManagerImpl
     {
         private Long checkIntervalMs = 1000L;
 
-        private ClusterProviders clusterProviders = new ClusterProviders( DEFAULT_REQUIRED_PROVIDERS );
+        private Clusters clusters = new Clusters( DEFAULT_REQUIRED_INSTANCES );
 
         private Builder()
         {
@@ -150,9 +150,9 @@ public class ClusterManagerImpl
             return this;
         }
 
-        Builder requiredProviders( final ClusterProviders val )
+        Builder requiredInstances( final Clusters val )
         {
-            clusterProviders = val;
+            clusters = val;
             return this;
         }
 
@@ -164,10 +164,10 @@ public class ClusterManagerImpl
 
     @SuppressWarnings("WeakerAccess")
     @Reference(cardinality = ReferenceCardinality.AT_LEAST_ONE, policy = ReferencePolicy.DYNAMIC)
-    public void addProvider( final ClusterProvider provider )
+    public void addProvider( final Cluster instance )
     {
-        LOG.info( "Adding cluster-provider: " + provider.getId() );
-        this.clusterProviders.add( provider );
+        LOG.info( "Adding cluster-provider: " + instance.getId() );
+        this.instances.add( instance );
         this.registerProvider();
     }
 }

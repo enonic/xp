@@ -8,12 +8,12 @@ import org.junit.Test;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.xp.cluster.ClusterHealth;
+import com.enonic.xp.cluster.ClusterId;
 import com.enonic.xp.cluster.ClusterNode;
 import com.enonic.xp.cluster.ClusterNodes;
-import com.enonic.xp.cluster.ClusterProviderHealth;
-import com.enonic.xp.cluster.ClusterProviderId;
-import com.enonic.xp.cluster.ClusterProviders;
 import com.enonic.xp.cluster.ClusterState;
+import com.enonic.xp.cluster.Clusters;
 
 import static junit.framework.TestCase.assertTrue;
 
@@ -34,19 +34,19 @@ public class ClusterManagerImplTest
     {
         createManager( "elasticsearch" );
 
-        final TestClusterProvider provider = TestClusterProvider.create().
-            health( ClusterProviderHealth.GREEN ).
-            id( ClusterProviderId.from( "elasticsearch" ) ).
+        final TestCluster provider = TestCluster.create().
+            health( ClusterHealth.GREEN ).
+            id( ClusterId.from( "elasticsearch" ) ).
             build();
 
         this.clusterManager.addProvider( provider );
         assertActive( provider );
         this.clusterManager.getHealth();
         assertActive( provider );
-        provider.setHealth( ClusterProviderHealth.RED );
+        provider.setHealth( ClusterHealth.RED );
         Assert.assertEquals( ClusterState.ERROR, this.clusterManager.getHealth() );
         assertDeactivated( provider );
-        provider.setHealth( ClusterProviderHealth.GREEN );
+        provider.setHealth( ClusterHealth.GREEN );
         Assert.assertEquals( ClusterState.OK, this.clusterManager.getHealth() );
         assertActive( provider );
     }
@@ -57,14 +57,14 @@ public class ClusterManagerImplTest
     {
         createManager( "elasticsearch", "another" );
 
-        final TestClusterProvider provider1 = TestClusterProvider.create().
-            health( ClusterProviderHealth.GREEN ).
-            id( ClusterProviderId.from( "elasticsearch" ) ).
+        final TestCluster provider1 = TestCluster.create().
+            health( ClusterHealth.GREEN ).
+            id( ClusterId.from( "elasticsearch" ) ).
             build();
 
-        final TestClusterProvider provider2 = TestClusterProvider.create().
-            health( ClusterProviderHealth.GREEN ).
-            id( ClusterProviderId.from( "another" ) ).
+        final TestCluster provider2 = TestCluster.create().
+            health( ClusterHealth.GREEN ).
+            id( ClusterId.from( "another" ) ).
             build();
 
         this.clusterManager.addProvider( provider1 );
@@ -73,7 +73,7 @@ public class ClusterManagerImplTest
         this.clusterManager.addProvider( provider2 );
         assertActive( provider1, provider2 );
 
-        provider1.setHealth( ClusterProviderHealth.RED );
+        provider1.setHealth( ClusterHealth.RED );
         Assert.assertEquals( ClusterState.ERROR, clusterManager.getHealth() );
         assertDeactivated( provider1, provider2 );
     }
@@ -82,17 +82,17 @@ public class ClusterManagerImplTest
     public void multiple_providers_nodes_mismatch()
         throws Exception
     {
-        final TestClusterProvider provider1 = TestClusterProvider.create().
-            health( ClusterProviderHealth.GREEN ).
-            id( ClusterProviderId.from( "elasticsearch" ) ).
+        final TestCluster provider1 = TestCluster.create().
+            health( ClusterHealth.GREEN ).
+            id( ClusterId.from( "elasticsearch" ) ).
             nodes( ClusterNodes.create().
                 add( ClusterNode.from( "a" ) ).
                 build() ).
             build();
 
-        final TestClusterProvider provider2 = TestClusterProvider.create().
-            health( ClusterProviderHealth.GREEN ).
-            id( ClusterProviderId.from( "another" ) ).nodes( ClusterNodes.create().
+        final TestCluster provider2 = TestCluster.create().
+            health( ClusterHealth.GREEN ).
+            id( ClusterId.from( "another" ) ).nodes( ClusterNodes.create().
             add( ClusterNode.from( "a" ) ).
             build() ).
             build();
@@ -115,31 +115,31 @@ public class ClusterManagerImplTest
 
     private void createManager( final String... required )
     {
-        List<ClusterProviderId> requiredIds = Lists.newArrayList();
+        List<ClusterId> requiredIds = Lists.newArrayList();
 
         for ( final String req : required )
         {
-            requiredIds.add( ClusterProviderId.from( req ) );
+            requiredIds.add( ClusterId.from( req ) );
         }
 
         this.clusterManager = ClusterManagerImpl.create().
             checkIntervalMs( 0L ).
-            requiredProviders( new ClusterProviders( requiredIds ) ).
+            requiredInstances( new Clusters( requiredIds ) ).
             build();
 
     }
 
-    private void assertActive( final TestClusterProvider... providers )
+    private void assertActive( final TestCluster... providers )
     {
-        for ( final TestClusterProvider provider : providers )
+        for ( final TestCluster provider : providers )
         {
             assertTrue( String.format( "Provider '%s' not active", provider.getId() ), provider.isEnabled() );
         }
     }
 
-    private void assertDeactivated( final TestClusterProvider... providers )
+    private void assertDeactivated( final TestCluster... providers )
     {
-        for ( final TestClusterProvider provider : providers )
+        for ( final TestCluster provider : providers )
         {
             Assert.assertFalse( String.format( "Provider '%s' not deactivated", provider.getId() ), provider.isEnabled() );
         }

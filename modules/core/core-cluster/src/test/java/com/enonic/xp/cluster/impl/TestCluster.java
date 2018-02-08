@@ -1,22 +1,22 @@
 package com.enonic.xp.cluster.impl;
 
+import com.enonic.xp.cluster.Cluster;
+import com.enonic.xp.cluster.ClusterHealth;
+import com.enonic.xp.cluster.ClusterId;
 import com.enonic.xp.cluster.ClusterNodes;
-import com.enonic.xp.cluster.ClusterProvider;
-import com.enonic.xp.cluster.ClusterProviderHealth;
-import com.enonic.xp.cluster.ClusterProviderId;
 
-class TestClusterProvider
-    implements ClusterProvider
+class TestCluster
+    implements Cluster
 {
-    private final ClusterProviderId id;
+    private final ClusterId id;
 
-    private ClusterProviderHealth health;
+    private ClusterHealth health;
 
     private ClusterNodes nodes;
 
     private boolean active = false;
 
-    private TestClusterProvider( final Builder builder )
+    private TestCluster( final Builder builder )
     {
         id = builder.id;
         health = builder.health;
@@ -34,7 +34,7 @@ class TestClusterProvider
         return new Builder();
     }
 
-    void setHealth( final ClusterProviderHealth health )
+    void setHealth( final ClusterHealth health )
     {
         this.health = health;
     }
@@ -45,13 +45,13 @@ class TestClusterProvider
     }
 
     @Override
-    public ClusterProviderId getId()
+    public ClusterId getId()
     {
         return this.id;
     }
 
     @Override
-    public ClusterProviderHealth getHealth()
+    public ClusterHealth getHealth()
     {
         return this.health;
     }
@@ -82,9 +82,9 @@ class TestClusterProvider
 
     public static final class Builder
     {
-        private ClusterProviderId id;
+        private ClusterId id;
 
-        private ClusterProviderHealth health;
+        private ClusterHealth health;
 
         private ClusterNodes nodes;
 
@@ -92,13 +92,13 @@ class TestClusterProvider
         {
         }
 
-        public Builder id( final ClusterProviderId val )
+        public Builder id( final ClusterId val )
         {
             id = val;
             return this;
         }
 
-        public Builder health( final ClusterProviderHealth val )
+        public Builder health( final ClusterHealth val )
         {
             health = val;
             return this;
@@ -110,9 +110,9 @@ class TestClusterProvider
             return this;
         }
 
-        public TestClusterProvider build()
+        public TestCluster build()
         {
-            return new TestClusterProvider( this );
+            return new TestCluster( this );
         }
     }
 }

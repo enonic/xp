@@ -1,10 +1,10 @@
 package com.enonic.xp.cluster;
 
-public interface ClusterProvider
+public interface Cluster
 {
-    ClusterProviderId getId();
+    ClusterId getId();
 
-    ClusterProviderHealth getHealth();
+    ClusterHealth getHealth();
 
     ClusterNodes getNodes();
 

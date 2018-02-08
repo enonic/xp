@@ -1,17 +1,17 @@
 package com.enonic.xp.cluster;
 
-public class ClusterProviderId
+public class ClusterId
 {
     private final String value;
 
-    private ClusterProviderId( final String value )
+    private ClusterId( final String value )
     {
         this.value = value;
     }
 
-    public static ClusterProviderId from( final String name )
+    public static ClusterId from( final String name )
     {
-        return new ClusterProviderId( name );
+        return new ClusterId( name );
     }
 
     @Override
@@ -26,7 +26,7 @@ public class ClusterProviderId
             return false;
         }
 
-        final ClusterProviderId that = (ClusterProviderId) o;
+        final ClusterId that = (ClusterId) o;
 
         return value != null ? value.equals( that.value ) : that.value == null;
     }

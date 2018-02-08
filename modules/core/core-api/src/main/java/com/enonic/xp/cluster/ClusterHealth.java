@@ -1,6 +1,6 @@
 package com.enonic.xp.cluster;
 
-public enum ClusterProviderHealth
+public enum ClusterHealth
 {
     YELLOW, GREEN, RED;
 

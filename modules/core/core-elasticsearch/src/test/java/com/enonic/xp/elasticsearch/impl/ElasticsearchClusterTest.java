@@ -14,15 +14,15 @@ import org.mockito.Mockito;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
-import com.enonic.xp.cluster.ClusterProviderHealth;
+import com.enonic.xp.cluster.ClusterHealth;
 
 import static org.junit.Assert.*;
 
-public class ClientActivatorTest
+public class ElasticsearchClusterTest
 {
     private BundleContext context;
 
-    private ClientActivator activator;
+    private ElasticsearchCluster activator;
 
     private ServiceRegistration<Client> clientReg;
 
@@ -33,7 +33,7 @@ public class ClientActivatorTest
         throws Exception
     {
         this.context = Mockito.mock( BundleContext.class );
-        this.activator = new ClientActivator();
+        this.activator = new ElasticsearchCluster();
 
         this.clientReg = mockRegisterService( Client.class );
 
@@ -83,7 +83,7 @@ public class ClientActivatorTest
         throws Exception
     {
         setClusterHealth( ClusterHealthStatus.RED );
-        assertEquals( ClusterProviderHealth.RED, this.activator.getHealth() );
+        assertEquals( ClusterHealth.RED, this.activator.getHealth() );
     }
 
     @Test
@@ -91,7 +91,7 @@ public class ClientActivatorTest
         throws Exception
     {
         setClusterHealth( ClusterHealthStatus.YELLOW );
-        assertEquals( ClusterProviderHealth.YELLOW, this.activator.getHealth() );
+        assertEquals( ClusterHealth.YELLOW, this.activator.getHealth() );
     }
 
     @Test
@@ -99,7 +99,7 @@ public class ClientActivatorTest
         throws Exception
     {
         setClusterHealth( ClusterHealthStatus.GREEN );
-        assertEquals( ClusterProviderHealth.GREEN, this.activator.getHealth() );
+        assertEquals( ClusterHealth.GREEN, this.activator.getHealth() );
     }
 
     @SuppressWarnings("unchecked")

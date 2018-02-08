@@ -1,14 +1,14 @@
 package com.enonic.xp.cluster.impl;
 
-import com.enonic.xp.cluster.ClusterProviderId;
+import com.enonic.xp.cluster.ClusterId;
 import com.enonic.xp.cluster.ClusterValidationError;
 
-public class ProviderHealthError
+class ClusterHealthError
     implements ClusterValidationError
 {
-    private final ClusterProviderId providerId;
+    private final ClusterId providerId;
 
-    public ProviderHealthError( final ClusterProviderId providerId )
+    ClusterHealthError( final ClusterId providerId )
     {
         this.providerId = providerId;
     }
