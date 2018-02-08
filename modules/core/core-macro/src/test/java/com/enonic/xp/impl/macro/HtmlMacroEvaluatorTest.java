@@ -33,8 +33,10 @@ public class HtmlMacroEvaluatorTest
     public void macroInTagMultiValues()
         throws Exception
     {
-        String result = testMacro( "<p class=\"foo\" title = \"bar\" >[macro param1=\"123\" param1=\"456\" param1=\"789\" param2=\"abc\"/]</p>", 1 );
-        assertEquals( "<p class=\"foo\" title = \"bar\" >{macro param1=\"123\" param1=\"456\" param1=\"789\" param2=\"abc\"/}</p>", result );
+        String result =
+            testMacro( "<p class=\"foo\" title = \"bar\" >[macro param1=\"123\" param1=\"456\" param1=\"789\" param2=\"abc\"/]</p>", 1 );
+        assertEquals( "<p class=\"foo\" title = \"bar\" >{macro param1=\"123\" param1=\"456\" param1=\"789\" param2=\"abc\"/}</p>",
+                      result );
     }
 
     @Test
@@ -139,6 +141,21 @@ public class HtmlMacroEvaluatorTest
     {
         String result = testMacro( "<!wrong>[macro1/]</some <>[macro2/]", 2 );
         assertEquals( "<!wrong>{macro1/}</some <>{macro2/}", result );
+    }
+
+    @Test
+    public void bigHtmlContent()
+        throws Exception
+    {
+        final StringBuilder input = new StringBuilder();
+        final StringBuilder expectedResult = new StringBuilder();
+        for ( int i = 0; i < 2000; i++ )
+        {
+            input.append( "<aTag>Content<aSubTag attribute=\"value[notAMacro/]\"/>[myMacro/]</aTag>" );
+            expectedResult.append( "<aTag>Content<aSubTag attribute=\"value[notAMacro/]\"/>{myMacro/}</aTag>" );
+        }
+        String result = testMacro( input.toString(), 2000 );
+        assertEquals( expectedResult.toString(), result );
     }
 
     private String testMacro( final String macroText, final int expectedMacros )

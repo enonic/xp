@@ -29,12 +29,12 @@ final class HtmlMacroEvaluator
     String evaluate()
     {
         p = -1;
-        processData();
+        process();
 
         return input;
     }
 
-    private void processData()
+    private void process()
     {
         do
         {
@@ -119,7 +119,6 @@ final class HtmlMacroEvaluator
             if ( "]]>".equals( lookAheadStr( 3 ) ) )
             {
                 p += 2;
-                processData();
                 return;
             }
             nextChar();
@@ -134,7 +133,6 @@ final class HtmlMacroEvaluator
             nextChar();
             if ( c == '>' )
             {
-                processData();
                 return;
             }
         }
@@ -199,7 +197,7 @@ final class HtmlMacroEvaluator
         nextChar();
         if ( c == '>' )
         {
-            processData();
+            return;
         }
         else
         {
@@ -224,7 +222,6 @@ final class HtmlMacroEvaluator
             }
             else if ( c == '>' )
             {
-                processData();
                 return;
             }
         }
@@ -247,7 +244,6 @@ final class HtmlMacroEvaluator
             }
             else if ( c == '>' )
             {
-                processData();
                 return;
             }
             else if ( Character.isLetter( c ) || c == '"' || c == '\'' || c == '<' || c == '=' )
@@ -281,7 +277,6 @@ final class HtmlMacroEvaluator
             }
             else if ( c == '>' )
             {
-                processData();
                 return;
             }
         }
@@ -309,7 +304,6 @@ final class HtmlMacroEvaluator
             }
             else if ( c == '>' )
             {
-                processData();
                 return;
             }
             else if ( Character.isLetter( c ) || c == '"' || c == '\'' || c == '<' )
@@ -361,7 +355,6 @@ final class HtmlMacroEvaluator
             }
             else if ( c == '>' )
             {
-                processData();
                 return;
             }
         }
@@ -413,7 +406,6 @@ final class HtmlMacroEvaluator
             }
             else if ( c == '>' )
             {
-                processData();
                 return;
             }
         }
@@ -425,7 +417,7 @@ final class HtmlMacroEvaluator
         nextChar();
         if ( c == '>' )
         {
-            processData();
+            return;
         }
         else
         {
@@ -439,7 +431,7 @@ final class HtmlMacroEvaluator
         nextChar();
         if ( c == '>' )
         {
-            processData();
+            return;
         }
         else if ( Character.isLetter( c ) )
         {
@@ -458,7 +450,6 @@ final class HtmlMacroEvaluator
             nextChar();
             if ( c == '>' )
             {
-                processData();
                 return;
             }
         }
