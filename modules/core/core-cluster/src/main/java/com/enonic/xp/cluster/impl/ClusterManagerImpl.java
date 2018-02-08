@@ -13,10 +13,13 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.xp.cluster.ClusterHealth;
 import com.enonic.xp.cluster.ClusterManager;
 import com.enonic.xp.cluster.ClusterProvider;
 import com.enonic.xp.cluster.ClusterProviderId;
+import com.enonic.xp.cluster.ClusterProviders;
+import com.enonic.xp.cluster.ClusterState;
+import com.enonic.xp.cluster.ClusterValidator;
+import com.enonic.xp.cluster.ClusterValidatorResult;
 
 @Component(immediate = true)
 public class ClusterManagerImpl
@@ -33,6 +36,8 @@ public class ClusterManagerImpl
 
     private final Timer timer = new Timer();
 
+    private final List<ClusterValidator> validators = Lists.newArrayList( new HealthValidator(), new ClusterMembersValidator() );
+
     @SuppressWarnings("WeakerAccess")
     public ClusterManagerImpl()
     {
@@ -47,9 +52,15 @@ public class ClusterManagerImpl
     }
 
     @Override
-    public ClusterHealth getHealth()
+    public ClusterState getHealth()
     {
         return doGetHealth();
+    }
+
+    @Override
+    public ClusterProviders getProviders()
+    {
+        return this.clusterProviders;
     }
 
     private void activate()
@@ -92,16 +103,21 @@ public class ClusterManagerImpl
         }
     }
 
-    private ClusterHealth doGetHealth()
+    private ClusterState doGetHealth()
     {
-        if ( !HealthValidator.validate( this.clusterProviders ) || !ClusterMembersValidator.validate( this.clusterProviders ) )
+        for ( final ClusterValidator validator : this.validators )
         {
-            deactivate();
-            return ClusterHealth.ERROR;
+            final ClusterValidatorResult result = validator.validate( this.clusterProviders );
+
+            if ( !result.isOk() )
+            {
+                deactivate();
+                return ClusterState.ERROR;
+            }
         }
 
         activate();
-        return ClusterHealth.OK;
+        return ClusterState.OK;
     }
 
 

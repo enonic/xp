@@ -11,4 +11,6 @@ public interface ClusterProvider
     void enable();
 
     void disable();
+
+    boolean isEnabled();
 }

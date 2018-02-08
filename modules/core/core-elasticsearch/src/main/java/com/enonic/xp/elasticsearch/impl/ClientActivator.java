@@ -63,6 +63,12 @@ public final class ClientActivator
     }
 
     @Override
+    public boolean isEnabled()
+    {
+        return this.reg != null;
+    }
+
+    @Override
     public ClusterProviderHealth getHealth()
     {
         final ClusterHealthResponse healthResponse = doGetHealth();

@@ -8,7 +8,7 @@ import com.enonic.xp.cluster.ClusterProviderId;
 class TestClusterProvider
     implements ClusterProvider
 {
-    private ClusterProviderId id;
+    private final ClusterProviderId id;
 
     private ClusterProviderHealth health;
 
@@ -23,7 +23,8 @@ class TestClusterProvider
         nodes = builder.nodes;
     }
 
-    boolean isActive()
+    @Override
+    public boolean isEnabled()
     {
         return active;
     }

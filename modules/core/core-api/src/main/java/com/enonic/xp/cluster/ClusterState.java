@@ -1,6 +1,6 @@
 package com.enonic.xp.cluster;
 
-public enum ClusterHealth
+public enum ClusterState
 {
     OK, ERROR
 }

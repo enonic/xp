@@ -33,7 +33,7 @@ public class IgniteActivator
 
     private BundleContext context;
 
-    private static Logger LOG = LoggerFactory.getLogger( IgniteActivator.class );
+    private static final Logger LOG = LoggerFactory.getLogger( IgniteActivator.class );
 
     private IgniteSettings igniteSettings;
 
@@ -95,6 +95,12 @@ public class IgniteActivator
     public void disable()
     {
         unregisterClient();
+    }
+
+    @Override
+    public boolean isEnabled()
+    {
+        return this.reg != null;
     }
 
     private void registerClient()

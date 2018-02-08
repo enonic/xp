@@ -5,12 +5,16 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.cluster.ClusterNodes;
 import com.enonic.xp.cluster.ClusterProvider;
+import com.enonic.xp.cluster.ClusterProviders;
+import com.enonic.xp.cluster.ClusterValidator;
+import com.enonic.xp.cluster.ClusterValidatorResult;
 
-class ClusterMembersValidator
+public class ClusterMembersValidator
+    implements ClusterValidator
 {
     private final static Logger LOG = LoggerFactory.getLogger( ClusterMembersValidator.class );
 
-    static boolean validate( final ClusterProviders providers )
+    public ClusterValidatorResult validate( final ClusterProviders providers )
     {
         ClusterNodes current = null;
         ClusterProvider first = null;
@@ -21,8 +25,14 @@ class ClusterMembersValidator
 
             if ( first != null && current != null && !current.equals( providerNodes ) )
             {
-                LOG.error( nodesErrorString( first, provider, current, providerNodes ) );
-                return false;
+                final NodesMismatchError error = new NodesMismatchError( provider, first, providerNodes, current );
+
+                LOG.error( error.getMessage() );
+
+                return ClusterValidatorResult.create().
+                    ok( false ).
+                    error( error ).
+                    build();
             }
 
             if ( first == null )
@@ -36,19 +46,8 @@ class ClusterMembersValidator
             }
         }
 
-        return true;
+        return ClusterValidatorResult.ok();
     }
 
-    private static String nodesErrorString( final ClusterProvider p1, final ClusterProvider p2, final ClusterNodes c1,
-                                            final ClusterNodes c2 )
-    {
-        final StringBuilder builder = new StringBuilder();
-        builder.append( "ClusterNodes not matching: " );
-        builder.append( p1.getId() + ": " + c1 );
-        builder.append( "; " );
-        builder.append( p2.getId() + ": " + c2 );
-
-        return builder.toString();
-    }
 
 }
