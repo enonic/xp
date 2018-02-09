@@ -10,3 +10,8 @@ exports.deleteNonExistingUser = function () {
     var result = auth.deletePrincipal('user:myUserStore:XXX');
     t.assertEquals(false, result);
 };
+
+exports.deleteSystemUser = function () {
+    var result = auth.deletePrincipal('user:system:su');
+    t.assertEquals(false, result);
+};

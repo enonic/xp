@@ -4,9 +4,11 @@ import java.util.function.Supplier;
 
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
+import com.enonic.xp.security.PrincipalException;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalNotFoundException;
 import com.enonic.xp.security.SecurityService;
+import com.enonic.xp.security.UserStoreKey;
 
 public final class DeletePrincipalHandler
     implements ScriptBean
@@ -22,6 +24,12 @@ public final class DeletePrincipalHandler
 
     public boolean deletePrincipal()
     {
+        if ( PrincipalKey.ofAnonymous().equals( principalKey ) ||
+            PrincipalKey.ofUser( UserStoreKey.system(), "su" ).equals( principalKey ) )
+        {
+            throw new PrincipalException( "No allowed to delete principal [" + principalKey + "]" );
+        }
+
         try
         {
             this.securityService.get().deletePrincipal( this.principalKey );
