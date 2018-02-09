@@ -1,6 +1,6 @@
 package com.enonic.xp.ignite.impl.config;
 
-import java.nio.file.Paths;
+import java.io.File;
 
 import org.apache.ignite.configuration.IgniteConfiguration;
 
@@ -29,6 +29,16 @@ public class ConfigurationFactory
         config.setConsistentId( clusterConfig.name().toString() );
         config.setIgniteHome( resolveIgniteHome() );
 
+        if ( !igniteConfig.connector_enabled() )
+        {
+            config.setConnectorConfiguration( null );
+        }
+
+        if ( !igniteConfig.odbc_enabled() )
+        {
+            config.setClientConnectorConfiguration( null );
+        }
+
         if ( !Strings.isNullOrEmpty( igniteConfig.localhost() ) )
         {
             config.setLocalHost( igniteConfig.localhost() );
@@ -49,7 +59,12 @@ public class ConfigurationFactory
 
     private String resolveIgniteHome()
     {
-        return Paths.get( HomeDir.get().toFile().getPath(), igniteConfig.home().split( "/" ) ).toString();
+        if ( Strings.isNullOrEmpty( igniteConfig.home() ) )
+        {
+            return HomeDir.get().toFile().getPath();
+        }
+
+        return new File( this.igniteConfig.home() ).getPath();
     }
 
     public static Builder create()
