@@ -52,9 +52,9 @@ public class ClusterManagerImpl
     }
 
     @Override
-    public ClusterState getHealth()
+    public ClusterState getClusterState()
     {
-        return doGetHealth();
+        return doGetClusterState();
     }
 
     @Override
@@ -97,13 +97,13 @@ public class ClusterManagerImpl
                 @Override
                 public void run()
                 {
-                    doGetHealth();
+                    doGetClusterState();
                 }
             }, this.checkIntervalMs, this.checkIntervalMs );
         }
     }
 
-    private ClusterState doGetHealth()
+    private ClusterState doGetClusterState()
     {
         for ( final ClusterValidator validator : this.validators )
         {

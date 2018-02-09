@@ -2,7 +2,7 @@ package com.enonic.xp.cluster;
 
 public interface ClusterManager
 {
-    ClusterState getHealth();
+    ClusterState getClusterState();
 
     Clusters getInstances();
 }

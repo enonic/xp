@@ -41,13 +41,13 @@ public class ClusterManagerImplTest
 
         this.clusterManager.addProvider( provider );
         assertActive( provider );
-        this.clusterManager.getHealth();
+        this.clusterManager.getClusterState();
         assertActive( provider );
         provider.setHealth( ClusterHealth.RED );
-        Assert.assertEquals( ClusterState.ERROR, this.clusterManager.getHealth() );
+        Assert.assertEquals( ClusterState.ERROR, this.clusterManager.getClusterState() );
         assertDeactivated( provider );
         provider.setHealth( ClusterHealth.GREEN );
-        Assert.assertEquals( ClusterState.OK, this.clusterManager.getHealth() );
+        Assert.assertEquals( ClusterState.OK, this.clusterManager.getClusterState() );
         assertActive( provider );
     }
 
@@ -74,7 +74,7 @@ public class ClusterManagerImplTest
         assertActive( provider1, provider2 );
 
         provider1.setHealth( ClusterHealth.RED );
-        Assert.assertEquals( ClusterState.ERROR, clusterManager.getHealth() );
+        Assert.assertEquals( ClusterState.ERROR, clusterManager.getClusterState() );
         assertDeactivated( provider1, provider2 );
     }
 
@@ -101,7 +101,7 @@ public class ClusterManagerImplTest
 
         this.clusterManager.addProvider( provider1 );
         this.clusterManager.addProvider( provider2 );
-        Assert.assertEquals( ClusterState.OK, this.clusterManager.getHealth() );
+        Assert.assertEquals( ClusterState.OK, this.clusterManager.getClusterState() );
         assertActive( provider1, provider2 );
 
         provider1.setNodes( ClusterNodes.create().
@@ -109,7 +109,7 @@ public class ClusterManagerImplTest
             add( ClusterNode.from( "b" ) ).
             build() );
 
-        Assert.assertEquals( ClusterState.ERROR, this.clusterManager.getHealth() );
+        Assert.assertEquals( ClusterState.ERROR, this.clusterManager.getClusterState() );
         assertDeactivated( provider1, provider2 );
     }
 

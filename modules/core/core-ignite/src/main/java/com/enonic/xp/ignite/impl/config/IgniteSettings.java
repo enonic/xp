@@ -2,6 +2,12 @@ package com.enonic.xp.ignite.impl.config;
 
 public @interface IgniteSettings
 {
+    String home() default "ignite";
+
+    String localhost();
+
+    int metrics_log_frequency() default 0;
+
     String discovery_tcp_ipFinder() default "staticIP";
 
     String discovery_tcp_localAddress() default "localhost";

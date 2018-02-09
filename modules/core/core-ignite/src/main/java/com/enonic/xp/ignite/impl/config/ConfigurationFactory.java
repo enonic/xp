@@ -1,8 +1,13 @@
 package com.enonic.xp.ignite.impl.config;
 
+import java.nio.file.Paths;
+
 import org.apache.ignite.configuration.IgniteConfiguration;
 
+import com.google.common.base.Strings;
+
 import com.enonic.xp.cluster.ClusterConfig;
+import com.enonic.xp.home.HomeDir;
 
 public class ConfigurationFactory
 {
@@ -21,6 +26,13 @@ public class ConfigurationFactory
         final IgniteConfiguration config = new IgniteConfiguration();
 
         config.setIgniteInstanceName( InstanceNameResolver.resolve() );
+        config.setConsistentId( clusterConfig.name().toString() );
+        config.setIgniteHome( resolveIgniteHome() );
+
+        if ( !Strings.isNullOrEmpty( igniteConfig.localhost() ) )
+        {
+            config.setLocalHost( igniteConfig.localhost() );
+        }
 
         config.setDiscoverySpi( DiscoveryFactory.create().
             discovery( clusterConfig.discovery() ).
@@ -28,10 +40,16 @@ public class ConfigurationFactory
             build().
             execute() );
 
-        config.setConsistentId( clusterConfig.name().toString() );
         config.setGridLogger( LoggerConfig.create() );
 
+        config.setMetricsLogFrequency( igniteConfig.metrics_log_frequency() );
+
         return config;
+    }
+
+    private String resolveIgniteHome()
+    {
+        return Paths.get( HomeDir.get().toFile().getPath(), igniteConfig.home().split( "/" ) ).toString();
     }
 
     public static Builder create()
