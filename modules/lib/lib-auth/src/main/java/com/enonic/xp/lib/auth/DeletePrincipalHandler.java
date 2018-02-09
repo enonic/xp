@@ -27,7 +27,7 @@ public final class DeletePrincipalHandler
         if ( PrincipalKey.ofAnonymous().equals( principalKey ) ||
             PrincipalKey.ofUser( UserStoreKey.system(), "su" ).equals( principalKey ) )
         {
-            throw new PrincipalException( "No allowed to delete principal [" + principalKey + "]" );
+            throw new PrincipalException( "Not allowed to delete principal [" + principalKey + "]" );
         }
 
         try
