@@ -926,6 +926,39 @@ public class SecurityServiceImplTest
     }
 
     @Test
+    public void testUpdateUserStoreWithEditor()
+        throws Exception
+    {
+        runAsAdmin( () -> {
+            // setup
+            final CreateUserStoreParams createUserStore = CreateUserStoreParams.create().
+                key( UserStoreKey.from( "enonic" ) ).
+                displayName( "Enonic User Store" ).
+                description( "old user store description" ).
+                build();
+            final UserStore userStoreCreated = securityService.createUserStore( createUserStore );
+
+            // exercise
+            final UpdateUserStoreParams updateUserStore = UpdateUserStoreParams.create( userStoreCreated ).
+                editor( edit -> {
+                    edit.key = UserStoreKey.from( "newEnonic" );
+                    edit.displayName = "Enonic User Store updated";
+                    edit.description = "new user store description";
+                } ).
+                displayName( "Display name from parameters" ).
+                description( "Description from parameters" ).
+                build();
+            final UserStore userStoreUpdated = securityService.updateUserStore( updateUserStore );
+
+            // verify
+            assertNotNull( userStoreUpdated );
+            assertEquals( "enonic", userStoreUpdated.getKey().toString() );
+            assertEquals( "Enonic User Store updated", userStoreUpdated.getDisplayName() );
+            assertEquals( "new user store description", userStoreUpdated.getDescription() );
+        } );
+    }
+
+    @Test
     public void setPassword()
         throws Exception
     {

@@ -1,0 +1,10 @@
+[
+  {
+    "description": "Description desc1",
+    "displayName": "translated.description",
+    "key": {
+      "application": "myapp",
+      "name": "desc1"
+    }
+  }
+]

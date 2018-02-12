@@ -4,8 +4,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.commons.lang.StringUtils;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.base.Preconditions;
+
+import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.form.FormOptionSet;
 
 public class FormOptionSetJson
@@ -19,13 +23,20 @@ public class FormOptionSetJson
 
     private final List<FormOptionSetOptionJson> options;
 
-    public FormOptionSetJson( final FormOptionSet formOptionSet )
+    private final LocaleMessageResolver localeMessageResolver;
+
+    public FormOptionSetJson( final FormOptionSet formOptionSet, final LocaleMessageResolver localeMessageResolver )
     {
+        Preconditions.checkNotNull( formOptionSet );
+        Preconditions.checkNotNull( localeMessageResolver );
+
         this.formOptionSet = formOptionSet;
+        this.localeMessageResolver = localeMessageResolver;
+
         this.occurrences = new OccurrencesJson( formOptionSet.getOccurrences() );
         this.multiselection = new OccurrencesJson( formOptionSet.getMultiselection() );
         this.options = StreamSupport.stream( formOptionSet.spliterator(), false ).
-            map( FormOptionSetOptionJson::new ).
+            map( formOptionSetOption -> new FormOptionSetOptionJson( formOptionSetOption, localeMessageResolver ) ).
             collect( Collectors.toList() );
     }
 
@@ -36,7 +47,14 @@ public class FormOptionSetJson
 
     public String getLabel()
     {
-        return formOptionSet.getLabel();
+        if ( localeMessageResolver != null && StringUtils.isNotBlank( formOptionSet.getLabelI18nKey() ) )
+        {
+            return localeMessageResolver.localizeMessage( formOptionSet.getLabelI18nKey(), formOptionSet.getLabel() );
+        }
+        else
+        {
+            return formOptionSet.getLabel();
+        }
     }
 
     public boolean isExpanded()
@@ -61,7 +79,14 @@ public class FormOptionSetJson
 
     public String getHelpText()
     {
-        return formOptionSet.getHelpText();
+        if ( localeMessageResolver != null && StringUtils.isNotBlank( formOptionSet.getHelpTextI18nKey() ) )
+        {
+            return localeMessageResolver.localizeMessage( formOptionSet.getHelpTextI18nKey(), formOptionSet.getHelpText() );
+        }
+        else
+        {
+            return formOptionSet.getHelpText();
+        }
     }
 
     @JsonIgnore

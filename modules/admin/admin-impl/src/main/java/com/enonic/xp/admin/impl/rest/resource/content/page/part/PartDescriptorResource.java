@@ -1,5 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.content.page.part;
 
+import java.util.stream.Collectors;
+
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -12,10 +14,14 @@ import javax.ws.rs.core.MediaType;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.collect.ImmutableList;
+
 import com.enonic.xp.admin.impl.json.content.page.region.PartDescriptorJson;
 import com.enonic.xp.admin.impl.json.content.page.region.PartDescriptorsJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
+import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.PartDescriptor;
@@ -32,12 +38,16 @@ public final class PartDescriptorResource
 {
     private PartDescriptorService partDescriptorService;
 
+    private LocaleService localeService;
+
     @GET
     public PartDescriptorJson getByKey( @QueryParam("key") final String partDescriptorKey )
     {
         final DescriptorKey key = DescriptorKey.from( partDescriptorKey );
         final PartDescriptor descriptor = partDescriptorService.getByKey( key );
-        return new PartDescriptorJson( descriptor );
+
+        final LocaleMessageResolver localeMessageResolver = new LocaleMessageResolver( this.localeService, descriptor.getApplicationKey() );
+        return new PartDescriptorJson( descriptor, localeMessageResolver );
     }
 
     @GET
@@ -45,7 +55,10 @@ public final class PartDescriptorResource
     public PartDescriptorsJson getByApplication( @QueryParam("applicationKey") final String applicationKey )
     {
         final PartDescriptors descriptors = partDescriptorService.getByApplication( ApplicationKey.from( applicationKey ) );
-        return new PartDescriptorsJson( descriptors );
+
+        final LocaleMessageResolver localeMessageResolver =
+            new LocaleMessageResolver( this.localeService, ApplicationKey.from( applicationKey ) );
+        return new PartDescriptorsJson( descriptors, localeMessageResolver );
     }
 
 
@@ -54,13 +67,27 @@ public final class PartDescriptorResource
     @Consumes(MediaType.APPLICATION_JSON)
     public PartDescriptorsJson getByApplications( final GetByApplicationsParams params )
     {
-        final PartDescriptors descriptors = partDescriptorService.getByApplications( params.getApplicationKeys() );
-        return new PartDescriptorsJson( descriptors );
+        ImmutableList.Builder<PartDescriptorJson> partDescriptorsJsonBuilder = new ImmutableList.Builder();
+
+        params.getApplicationKeys().forEach( applicationKey -> {
+            partDescriptorsJsonBuilder.addAll( this.partDescriptorService.getByApplication( applicationKey ).
+                stream().
+                map( partDescriptor -> new PartDescriptorJson( partDescriptor,
+                                                               new LocaleMessageResolver( localeService, applicationKey ) ) ).
+                collect( Collectors.toList() ) );
+        } );
+        return new PartDescriptorsJson( partDescriptorsJsonBuilder.build() );
     }
 
     @Reference
     public void setPartDescriptorService( final PartDescriptorService partDescriptorService )
     {
         this.partDescriptorService = partDescriptorService;
+    }
+
+    @Reference
+    public void setLocaleService( final LocaleService localeService )
+    {
+        this.localeService = localeService;
     }
 }

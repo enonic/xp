@@ -3,7 +3,6 @@ package com.enonic.xp.form;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -18,9 +17,13 @@ public class FormOptionSetOption
 
     private final String label;
 
+    private final String labelI18nKey;
+
     private final boolean defaultOption;
 
     private final String helpText;
+
+    private final String helpTextI18nKey;
 
     private final FormItems formItems;
 
@@ -36,41 +39,14 @@ public class FormOptionSetOption
         this.label = builder.label;
         this.defaultOption = builder.defaultOption;
         this.helpText = builder.helpText;
+        this.labelI18nKey = builder.labelI18nKey;
+        this.helpTextI18nKey = builder.helpTextI18nKey;
+
         this.formItems = new FormItems( this );
         for ( final FormItem formItem : builder.formItemsList )
         {
             this.formItems.add( formItem );
         }
-    }
-
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( !( o instanceof FormOptionSetOption ) )
-        {
-            return false;
-        }
-        if ( !super.equals( o ) )
-        {
-            return false;
-        }
-        final FormOptionSetOption that = (FormOptionSetOption) o;
-        return super.equals( o ) &&
-            Objects.equals( name, that.name ) &&
-            Objects.equals( label, that.label ) &&
-            Objects.equals( helpText, that.helpText ) &&
-            Objects.equals( defaultOption, that.defaultOption ) &&
-            Objects.equals( formItems, that.formItems );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash( super.hashCode(), name, label, defaultOption, formItems, helpText );
     }
 
     public String getName()
@@ -104,6 +80,16 @@ public class FormOptionSetOption
         return FormItemType.FORM_OPTION_SET_OPTION;
     }
 
+    public String getLabelI18nKey()
+    {
+        return labelI18nKey;
+    }
+
+    public String getHelpTextI18nKey()
+    {
+        return helpTextI18nKey;
+    }
+
     @Override
     public FormOptionSetOption copy()
     {
@@ -114,6 +100,37 @@ public class FormOptionSetOption
     public Iterator<FormItem> iterator()
     {
         return formItems.iterator();
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+        if ( !super.equals( o ) )
+        {
+            return false;
+        }
+        final FormOptionSetOption formItems1 = (FormOptionSetOption) o;
+        return defaultOption == formItems1.defaultOption && com.google.common.base.Objects.equal( name, formItems1.name ) &&
+            com.google.common.base.Objects.equal( label, formItems1.label ) &&
+            com.google.common.base.Objects.equal( labelI18nKey, formItems1.labelI18nKey ) &&
+            com.google.common.base.Objects.equal( helpText, formItems1.helpText ) &&
+            com.google.common.base.Objects.equal( helpTextI18nKey, formItems1.helpTextI18nKey ) &&
+            com.google.common.base.Objects.equal( formItems, formItems1.formItems );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return com.google.common.base.Objects.hashCode( super.hashCode(), name, label, labelI18nKey, defaultOption, helpText,
+                                                        helpTextI18nKey, formItems );
     }
 
     public static Builder create()
@@ -132,9 +149,13 @@ public class FormOptionSetOption
 
         private String label;
 
+        private String labelI18nKey;
+
         private boolean defaultOption;
 
         private String helpText;
+
+        private String helpTextI18nKey;
 
         private List<FormItem> formItemsList = new ArrayList<>();
 
@@ -148,6 +169,8 @@ public class FormOptionSetOption
             this.label = source.label;
             this.defaultOption = source.defaultOption;
             this.helpText = source.helpText;
+            this.labelI18nKey = source.labelI18nKey;
+            this.helpTextI18nKey = source.helpTextI18nKey;
 
             for ( final FormItem formItemSource : source.formItems )
             {
@@ -194,9 +217,22 @@ public class FormOptionSetOption
             return this;
         }
 
+        public Builder labelI18nKey( String value )
+        {
+            labelI18nKey = value;
+            return this;
+        }
+
         public Builder helpText( final String helpText )
         {
             this.helpText = helpText;
+            return this;
+        }
+
+
+        public Builder helpTextI18nKey( String value )
+        {
+            helpTextI18nKey = value;
             return this;
         }
 

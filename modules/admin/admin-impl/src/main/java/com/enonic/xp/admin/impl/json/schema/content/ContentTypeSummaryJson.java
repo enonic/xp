@@ -3,11 +3,14 @@ package com.enonic.xp.admin.impl.json.schema.content;
 import java.time.Instant;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.admin.impl.json.ChangeTraceableJson;
 import com.enonic.xp.admin.impl.json.ItemJson;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
+import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.mixin.MixinName;
 
@@ -21,9 +24,13 @@ public class ContentTypeSummaryJson
 
     private final ImmutableList<String> metadataMixinNames;
 
-    public ContentTypeSummaryJson( final ContentType contentType, final ContentTypeIconUrlResolver iconUrlResolver )
+    private final LocaleMessageResolver localeMessageResolver;
+
+    public ContentTypeSummaryJson( final ContentType contentType, final ContentTypeIconUrlResolver iconUrlResolver,
+                                   final LocaleMessageResolver localeMessageResolver )
     {
         this.contentType = contentType;
+        this.localeMessageResolver = localeMessageResolver;
         this.iconUrl = iconUrlResolver.resolve( contentType );
 
         ImmutableList.Builder<String> mixinNamesBuilder = new ImmutableList.Builder<>();
@@ -44,12 +51,26 @@ public class ContentTypeSummaryJson
 
     public String getDisplayName()
     {
-        return contentType.getDisplayName();
+        if ( StringUtils.isNotBlank( contentType.getDisplayNameI18nKey() ) )
+        {
+            return localeMessageResolver.localizeMessage( contentType.getDisplayNameI18nKey(), contentType.getDisplayName() );
+        }
+        else
+        {
+            return contentType.getDisplayName();
+        }
     }
 
     public String getDescription()
     {
-        return contentType.getDescription();
+        if ( StringUtils.isNotBlank( contentType.getDescriptionI18nKey() ) )
+        {
+            return localeMessageResolver.localizeMessage( contentType.getDescriptionI18nKey(), contentType.getDescription() );
+        }
+        else
+        {
+            return contentType.getDescription();
+        }
     }
 
     @Override

@@ -3,9 +3,13 @@ package com.enonic.xp.admin.impl.json.form;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.annotations.Beta;
+import com.google.common.base.Preconditions;
 
+import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.FormItems;
@@ -19,11 +23,19 @@ public class FieldSetJson
 
     private final List<FormItemJson> items;
 
-    public FieldSetJson( final FieldSet fieldSet )
+    private final LocaleMessageResolver localeMessageResolver;
+
+    public FieldSetJson( final FieldSet fieldSet, final LocaleMessageResolver localeMessageResolver )
     {
         super( fieldSet );
+
+        Preconditions.checkNotNull( fieldSet );
+        Preconditions.checkNotNull( localeMessageResolver );
+
         this.fieldSet = fieldSet;
-        this.items = wrapFormItems( fieldSet.getFormItems() );
+        this.localeMessageResolver = localeMessageResolver;
+
+        this.items = wrapFormItems( fieldSet.getFormItems(), localeMessageResolver );
     }
 
     private static Iterable<FormItem> unwrapFormItems( final List<FormItemJson> items )
@@ -36,12 +48,12 @@ public class FieldSetJson
         return formItems;
     }
 
-    private static List<FormItemJson> wrapFormItems( final FormItems items )
+    private static List<FormItemJson> wrapFormItems( final FormItems items, final LocaleMessageResolver localeMessageResolver )
     {
         final List<FormItemJson> formItemJsonList = new ArrayList<>();
         for ( FormItem formItem : items )
         {
-            formItemJsonList.add( FormItemJsonFactory.create( formItem ) );
+            formItemJsonList.add( FormItemJsonFactory.create( formItem, localeMessageResolver ) );
         }
         return formItemJsonList;
     }
@@ -54,7 +66,14 @@ public class FieldSetJson
 
     public String getLabel()
     {
-        return fieldSet.getLabel();
+        if ( localeMessageResolver != null && StringUtils.isNotBlank( fieldSet.getLabelI18nKey() ) )
+        {
+            return localeMessageResolver.localizeMessage( fieldSet.getLabelI18nKey(), fieldSet.getLabel() );
+        }
+        else
+        {
+            return fieldSet.getLabel();
+        }
     }
 
     public List<FormItemJson> getItems()

@@ -7,6 +7,7 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.index.IndexType;
 import com.enonic.xp.index.PurgeIndexParams;
 import com.enonic.xp.index.ReindexParams;
 import com.enonic.xp.index.ReindexResult;
@@ -24,6 +25,7 @@ import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 import com.enonic.xp.repo.impl.node.FindNodesByQueryCommand;
 import com.enonic.xp.repo.impl.node.PushNodesCommand;
+import com.enonic.xp.repository.IndexSettings;
 import com.enonic.xp.security.SystemConstants;
 
 import static org.junit.Assert.*;
@@ -304,6 +306,29 @@ public class IndexServiceImplTest
             build() );
 
         assertEquals( 2, result.getUpdatedIndexes().size() );
+    }
+
+    @Test
+    public void getIndexSettings_empty()
+        throws Exception
+    {
+        final IndexSettings indexSettings = this.indexService.getIndexSettings( TEST_REPO.getId(), IndexType.SEARCH );
+
+        assertNull( indexSettings.getNode().get( "index.invalid_path" ) );
+    }
+
+    @Test
+    public void getIndexSettings()
+        throws Exception
+    {
+        this.indexService.updateIndexSettings( UpdateIndexSettingsParams.create().
+            repository( TEST_REPO.getId() ).
+            settings( "{\"index\": {\"number_of_replicas\": 2}}" ).
+            build() );
+
+        final IndexSettings indexSettings = this.indexService.getIndexSettings( TEST_REPO.getId(), IndexType.SEARCH );
+
+        assertEquals( "\"2\"", indexSettings.getNode().get( "index.number_of_replicas" ).toString() );
     }
 
 }

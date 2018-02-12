@@ -1,6 +1,7 @@
 package com.enonic.xp.admin.impl.json.content.page.region;
 
 import com.enonic.xp.admin.impl.json.content.page.DescriptorJson;
+import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.region.PartDescriptor;
 
 
@@ -11,9 +12,9 @@ public class PartDescriptorJson
 
     private final boolean deletable;
 
-    public PartDescriptorJson( final PartDescriptor descriptor )
+    public PartDescriptorJson( final PartDescriptor descriptor, final LocaleMessageResolver localeMessageResolver )
     {
-        super( descriptor );
+        super( descriptor, localeMessageResolver );
         this.editable = false;
         this.deletable = false;
     }

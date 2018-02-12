@@ -49,7 +49,9 @@ public class XmlMixinParserTest
         final Mixin result = this.builder.build();
         assertEquals( "myapplication:mymixin", result.getName().toString() );
         assertEquals( "display name", result.getDisplayName() );
+        assertEquals( "key.display-name", result.getDisplayNameI18nKey() );
         assertEquals( "description", result.getDescription() );
+        assertEquals( "key.description", result.getDescriptionI18nKey() );
 
         assertEquals( 1, result.getForm().size() );
     }

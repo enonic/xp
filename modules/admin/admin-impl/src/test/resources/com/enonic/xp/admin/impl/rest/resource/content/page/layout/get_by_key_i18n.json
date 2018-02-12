@@ -1,0 +1,37 @@
+{
+  "config": {
+    "formItems": [
+      {
+        "Input": {
+          "config": {},
+          "customText": null,
+          "helpText": "translated.helpText",
+          "immutable": false,
+          "indexed": false,
+          "inputType": "Double",
+          "label": "translated.label",
+          "maximizeUIInputWidth": true,
+          "name": "columns",
+          "occurrences": {
+            "maximum": 1,
+            "minimum": 0
+          },
+          "validationRegexp": null
+        }
+      }
+    ]
+  },
+  "deletable": false,
+  "displayName": "translated.displayName",
+  "editable": false,
+  "key": "application:fancy-layout",
+  "name": "fancy-layout",
+  "regions": [
+    {
+      "name": "left"
+    },
+    {
+      "name": "right"
+    }
+  ]
+}

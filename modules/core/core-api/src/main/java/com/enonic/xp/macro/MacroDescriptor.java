@@ -15,7 +15,11 @@ public final class MacroDescriptor
 
     private final String displayName;
 
+    private final String displayNameI18nKey;
+
     private final String description;
+
+    private final String descriptionI18nKey;
 
     private final Form form;
 
@@ -25,7 +29,9 @@ public final class MacroDescriptor
     {
         this.key = builder.key;
         this.displayName = builder.displayName == null ? builder.key.getName() : builder.displayName;
+        this.displayNameI18nKey = builder.displayNameI18nKey;
         this.description = builder.description;
+        this.descriptionI18nKey = builder.descriptionI18nKey;
         this.form = builder.form == null ? Form.create().build() : builder.form;
         this.icon = builder.icon;
     }
@@ -45,9 +51,19 @@ public final class MacroDescriptor
         return displayName;
     }
 
+    public String getDisplayNameI18nKey()
+    {
+        return displayNameI18nKey;
+    }
+
     public String getDescription()
     {
         return description;
+    }
+
+    public String getDescriptionI18nKey()
+    {
+        return descriptionI18nKey;
     }
 
     public Form getForm()
@@ -91,7 +107,11 @@ public final class MacroDescriptor
 
         private String displayName;
 
+        private String displayNameI18nKey;
+
         private String description;
+
+        private String descriptionI18nKey;
 
         private Form form;
 
@@ -119,9 +139,21 @@ public final class MacroDescriptor
             return this;
         }
 
+        public Builder displayNameI18nKey( final String displayNameI18nKey )
+        {
+            this.displayNameI18nKey = displayNameI18nKey;
+            return this;
+        }
+
         public Builder description( final String description )
         {
             this.description = description;
+            return this;
+        }
+
+        public Builder descriptionI18nKey( final String descriptionI18nKey )
+        {
+            this.descriptionI18nKey = descriptionI18nKey;
             return this;
         }
 

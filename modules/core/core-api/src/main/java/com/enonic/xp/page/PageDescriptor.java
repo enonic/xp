@@ -15,6 +15,8 @@ public final class PageDescriptor
 
     private final String displayName;
 
+    private final String displayNameI18nKey;
+
     private final Form config;
 
     private final RegionDescriptors regions;
@@ -28,6 +30,7 @@ public final class PageDescriptor
         this.displayName = builder.displayName;
         this.regions = builder.regions;
         this.config = builder.config;
+        this.displayNameI18nKey = builder.displayNameI18nKey;
     }
 
     public DescriptorKey getKey()
@@ -48,6 +51,11 @@ public final class PageDescriptor
     public String getDisplayName()
     {
         return displayName;
+    }
+
+    public String getDisplayNameI18nKey()
+    {
+        return displayNameI18nKey;
     }
 
     public Form getConfig()
@@ -81,6 +89,8 @@ public final class PageDescriptor
 
         private String displayName;
 
+        private String displayNameI18nKey;
+
         private Form config;
 
         private RegionDescriptors regions;
@@ -89,6 +99,7 @@ public final class PageDescriptor
         {
             this.key = pageDescriptor.getKey();
             this.displayName = pageDescriptor.getDisplayName();
+            this.displayNameI18nKey = pageDescriptor.getDisplayNameI18nKey();
             this.config = pageDescriptor.getConfig();
             this.regions = pageDescriptor.getRegions();
         }
@@ -118,6 +129,12 @@ public final class PageDescriptor
         public Builder regions( final RegionDescriptors value )
         {
             this.regions = value;
+            return this;
+        }
+
+        public Builder displayNameI18nKey( final String displayNameI18nKey )
+        {
+            this.displayNameI18nKey = displayNameI18nKey;
             return this;
         }
 

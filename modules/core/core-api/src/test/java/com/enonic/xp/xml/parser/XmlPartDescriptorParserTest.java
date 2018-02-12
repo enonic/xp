@@ -52,11 +52,16 @@ public class XmlPartDescriptorParserTest
         assertEquals( "myapplication:mypart", result.getKey().toString() );
         assertEquals( "mypart", result.getName() );
         assertEquals( "A Part", result.getDisplayName() );
+        assertEquals( "key.display-name", result.getDisplayNameI18nKey() );
 
         final Form config = result.getConfig();
         assertNotNull( config );
         assertEquals( InputTypeName.DOUBLE, config.getFormItem( "width" ).toInput().getInputType() );
         assertEquals( "Column width", config.getFormItem( "width" ).toInput().getLabel() );
+
+        assertEquals( "key.label", config.getFormItem( "width" ).toInput().getLabelI18nKey() );
+        assertEquals( "key.help-text", config.getFormItem( "width" ).toInput().getHelpTextI18nKey() );
+
         assertEquals( "link-urls", config.getFormItem( "link-urls" ).toInlineMixin().getName() );
     }
 }

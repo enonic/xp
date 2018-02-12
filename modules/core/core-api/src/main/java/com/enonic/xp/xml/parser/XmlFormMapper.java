@@ -103,9 +103,11 @@ public final class XmlFormMapper
         builder.inputType( inputTypeName );
         builder.name( root.getAttribute( "name" ) );
         builder.label( root.getChildValue( "label" ) );
+        builder.labelI18nKey( root.getChild( "label" ) != null ? root.getChild( "label" ).getAttribute( "i18n", null ) : null );
 
         builder.customText( root.getChildValue( "custom-text" ) );
         builder.helpText( root.getChildValue( "help-text" ) );
+        builder.helpTextI18nKey( root.getChild( "help-text" ) != null ? root.getChild( "help-text" ).getAttribute( "i18n", null ) : null );
         builder.occurrences( buildOccurrence( root.getChild( "occurrences" ) ) );
         builder.immutable( root.getChildValueAs( "immutable", Boolean.class, false ) );
         builder.indexed( root.getChildValueAs( "indexed", Boolean.class, false ) );
@@ -126,6 +128,7 @@ public final class XmlFormMapper
         final FieldSet.Builder builder = FieldSet.create();
         builder.name( root.getAttribute( "name" ) );
         builder.label( root.getChildValue( "label" ) );
+        builder.labelI18nKey( root.getChild( "label" ) != null ? root.getChild( "label" ).getAttribute( "i18n", null ) : null );
         builder.addFormItems( buildItems( root.getChild( "items" ) ) );
         return builder.build();
     }
@@ -142,8 +145,10 @@ public final class XmlFormMapper
         final FormItemSet.Builder builder = FormItemSet.create();
         builder.name( root.getAttribute( "name" ) );
         builder.label( root.getChildValue( "label" ) );
+        builder.labelI18nKey( root.getChild( "label" ) != null ? root.getChild( "label" ).getAttribute( "i18n", null ) : null );
         builder.customText( root.getChildValue( "custom-text" ) );
         builder.helpText( root.getChildValue( "help-text" ) );
+        builder.helpTextI18nKey( root.getChild( "help-text" ) != null ? root.getChild( "help-text" ).getAttribute( "i18n", null ) : null );
         builder.occurrences( buildOccurrence( root.getChild( "occurrences" ) ) );
         builder.immutable( root.getChildValueAs( "immutable", Boolean.class, false ) );
         builder.addFormItems( buildItems( root.getChild( "items" ) ) );
@@ -155,7 +160,9 @@ public final class XmlFormMapper
         final FormOptionSet.Builder builder = FormOptionSet.create();
         builder.name( root.getAttribute( "name" ) );
         builder.label( root.getChildValue( "label" ) );
+        builder.labelI18nKey( root.getChild( "label" ) != null ? root.getChild( "label" ).getAttribute( "i18n", null ) : null );
         builder.helpText( root.getChildValue( "help-text" ) );
+        builder.helpTextI18nKey( root.getChild( "help-text" ) != null ? root.getChild( "help-text" ).getAttribute( "i18n", null ) : null );
         builder.expanded( root.getChildValueAs( "expanded", Boolean.class, false ) );
         builder.occurrences( buildOccurrence( root.getChild( "occurrences" ) ) );
         builder.multiselection( buildOccurrence( root.getChild( "options" ) ) );
@@ -182,7 +189,10 @@ public final class XmlFormMapper
 
             builder.name( root.getAttribute( "name" ) );
             builder.label( root.getChildValue( "label" ) );
+            builder.labelI18nKey( root.getChild( "label" ) != null ? root.getChild( "label" ).getAttribute( "i18n", null ) : null );
             builder.helpText( root.getChildValue( "help-text" ) );
+            builder.helpTextI18nKey(
+                root.getChild( "help-text" ) != null ? root.getChild( "help-text" ).getAttribute( "i18n", null ) : null );
             builder.defaultOption( root.getChildValueAs( "default", Boolean.class, false ) );
             builder.addFormItems( buildItems( root.getChild( "items" ) ) );
 

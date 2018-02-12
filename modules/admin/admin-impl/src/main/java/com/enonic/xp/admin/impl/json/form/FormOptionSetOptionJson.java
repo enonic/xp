@@ -3,31 +3,41 @@ package com.enonic.xp.admin.impl.json.form;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.commons.lang.StringUtils;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.base.Preconditions;
+
+import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.FormItems;
 import com.enonic.xp.form.FormOptionSetOption;
 
 public class FormOptionSetOptionJson
 {
-
     private final FormOptionSetOption formOptionSetOption;
 
     private final List<FormItemJson> items;
 
-    public FormOptionSetOptionJson( final FormOptionSetOption formOptionSetOption )
+    private final LocaleMessageResolver localeMessageResolver;
+
+    public FormOptionSetOptionJson( final FormOptionSetOption formOptionSetOption, final LocaleMessageResolver localeMessageResolver )
     {
+        Preconditions.checkNotNull( formOptionSetOption );
+        Preconditions.checkNotNull( localeMessageResolver );
+
         this.formOptionSetOption = formOptionSetOption;
-        this.items = wrapFormItems( formOptionSetOption.getFormItems() );
+        this.localeMessageResolver = localeMessageResolver;
+
+        this.items = wrapFormItems( formOptionSetOption.getFormItems(), localeMessageResolver );
     }
 
-    private static List<FormItemJson> wrapFormItems( final FormItems items )
+    private List<FormItemJson> wrapFormItems( final FormItems items, final LocaleMessageResolver localeMessageResolver )
     {
         final List<FormItemJson> formItemJsonList = new ArrayList<>();
         for ( FormItem formItem : items )
         {
-            formItemJsonList.add( FormItemJsonFactory.create( formItem ) );
+            formItemJsonList.add( FormItemJsonFactory.create( formItem, localeMessageResolver ) );
         }
         return formItemJsonList;
     }
@@ -39,12 +49,26 @@ public class FormOptionSetOptionJson
 
     public String getLabel()
     {
-        return formOptionSetOption.getLabel();
+        if ( localeMessageResolver != null && StringUtils.isNotBlank( formOptionSetOption.getLabelI18nKey() ) )
+        {
+            return localeMessageResolver.localizeMessage( formOptionSetOption.getLabelI18nKey(), formOptionSetOption.getLabel() );
+        }
+        else
+        {
+            return formOptionSetOption.getLabel();
+        }
     }
 
     public String getHelpText()
     {
-        return formOptionSetOption.getHelpText();
+        if ( localeMessageResolver != null && StringUtils.isNotBlank( formOptionSetOption.getHelpTextI18nKey() ) )
+        {
+            return localeMessageResolver.localizeMessage( formOptionSetOption.getHelpTextI18nKey(), formOptionSetOption.getHelpText() );
+        }
+        else
+        {
+            return formOptionSetOption.getHelpText();
+        }
     }
 
     public boolean isDefaultOption()

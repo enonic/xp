@@ -13,5 +13,6 @@
       "user:system:anonymous",
       "role:system.everyone"
     ]
-  }
+  },
+  "readonly": false
 }

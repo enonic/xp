@@ -30,12 +30,15 @@ exports.localize = function (params) {
 };
 
 /**
- * This function returns all phrases.
+ * This function returns all phrases for the given locale and bundles.
  *
  * @param {string|string[]} locale A string-representation of a locale, or an array of locales in preferred order.
- * @param {string[]} bundles List of bundle names.
+ * @param {string[]} bundles List of bundle names.  Bundle names are specified as paths, relative to the `src/main/resources` folder.
  *
  * @returns {object} An object of all phrases.
+ *
+ * @example
+ * i18nLib.getPhrases('en', ['i18n/phrases'])
  */
 exports.getPhrases = function (locale, bundles) {
     var bean = __.newBean('com.enonic.xp.lib.i18n.LocaleScriptBean');

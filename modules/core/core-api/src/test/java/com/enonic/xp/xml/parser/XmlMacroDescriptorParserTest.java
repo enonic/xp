@@ -53,6 +53,9 @@ public class XmlMacroDescriptorParserTest
         final MacroDescriptor result = this.builder.build();
         assertEquals( "myapplication:mymacro", result.getKey().toString() );
         assertEquals( "My macro", result.getDisplayName() );
+        assertEquals( "key.display-name", result.getDisplayNameI18nKey() );
+        assertEquals( "key.description", result.getDescriptionI18nKey() );
+
         assertEquals( "This macro is a test", result.getDescription() );
 
         assertEquals( 3, result.getForm().size() );
@@ -62,12 +65,15 @@ public class XmlMacroDescriptorParserTest
 
         final Input input = (Input) item;
         assertEquals( InputTypeName.DATE.toString(), input.getInputType().toString() );
+        assertEquals( "key.label", input.getLabelI18nKey() );
+        assertEquals( "key.help-text", input.getHelpTextI18nKey() );
 
         final FormItem contentSelectorItem = result.getForm().getFormItem( "someonesParent" );
         assertNotNull( contentSelectorItem );
 
         final Input contentSelectorInput = (Input) contentSelectorItem;
         assertEquals( InputTypeName.CONTENT_SELECTOR.toString(), contentSelectorInput.getInputType().toString() );
+        assertEquals( "key.parent", contentSelectorInput.getLabelI18nKey() );
 
         assertEquals( "myapplication:mytype", contentSelectorInput.getInputTypeConfig().getProperty( "allowContentType" ).getValue() );
         assertEquals( 2, contentSelectorInput.getInputTypeConfig().getProperties( "allowContentType" ).size() );
