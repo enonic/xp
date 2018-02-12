@@ -4,6 +4,7 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.issue.CreateIssueCommentParams;
 import com.enonic.xp.issue.IssueComment;
+import com.enonic.xp.issue.UpdateIssueCommentParams;
 import com.enonic.xp.security.PrincipalKey;
 
 import static com.enonic.xp.core.impl.issue.IssueCommentPropertyNames.CREATED_TIME;
@@ -26,20 +27,12 @@ public class IssueCommentDataSerializer
         return propertyTree;
     }
 
-    public PropertyTree toUpdateNodeData( final IssueComment editedComment )
+    public void updateNodeData( final PropertyTree nodeData, final UpdateIssueCommentParams params )
     {
-        final PropertyTree propertyTree = new PropertyTree();
-        final PropertySet commentAsData = propertyTree.getRoot();
-
-        commentAsData.ifNotNull().addString( TEXT, editedComment.getText() );
-        commentAsData.ifNotNull().addString( CREATOR_DISPLAY_NAME, editedComment.getCreatorDisplayName() );
-        commentAsData.ifNotNull().addString( CREATOR, editedComment.getCreator().toString() );
-        commentAsData.ifNotNull().addInstant( CREATED_TIME, editedComment.getCreated() );
-
-        return propertyTree;
+        nodeData.setString( TEXT, params.getText() );
     }
 
-    public IssueComment.Builder fromData( final PropertySet commentProperties )
+    public IssueComment.Builder fromData( final PropertyTree commentProperties )
     {
         final IssueComment.Builder builder = IssueComment.create();
 

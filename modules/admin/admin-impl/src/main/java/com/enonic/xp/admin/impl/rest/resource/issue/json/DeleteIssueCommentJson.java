@@ -30,7 +30,7 @@ public final class DeleteIssueCommentJson
         return comment;
     }
 
-    public DeleteIssueCommentParams getDeleteIssueCommentParams()
+    public DeleteIssueCommentParams toDeleteIssueCommentParams()
     {
         return DeleteIssueCommentParams.create().issue( issue ).comment( comment ).build();
     }

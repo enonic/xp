@@ -19,6 +19,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.admin.impl.json.issue.DeleteIssueCommentResultJson;
+import com.enonic.xp.admin.impl.json.issue.IssueCommentJson;
 import com.enonic.xp.admin.impl.json.issue.IssueStatsJson;
 import com.enonic.xp.admin.impl.json.issue.PublishRequestItemJson;
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
@@ -27,6 +28,7 @@ import com.enonic.xp.admin.impl.rest.resource.issue.json.CreateIssueCommentJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.CreateIssueJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.DeleteIssueCommentJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.ListIssuesJson;
+import com.enonic.xp.admin.impl.rest.resource.issue.json.UpdateIssueCommentJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.UpdateIssueJson;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.context.ContextAccessor;
@@ -45,6 +47,7 @@ import com.enonic.xp.issue.IssueQuery;
 import com.enonic.xp.issue.IssueService;
 import com.enonic.xp.issue.PublishRequest;
 import com.enonic.xp.issue.PublishRequestItem;
+import com.enonic.xp.issue.UpdateIssueCommentParams;
 import com.enonic.xp.issue.UpdateIssueParams;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
@@ -433,6 +436,24 @@ public class IssueResourceTest
             post().getAsString();
 
         assertStringJson( expected, jsonString );
+    }
+
+    @Test
+    public void test_updateComment()
+    {
+        final Issue issue = createIssue();
+        final IssueComment comment = createIssueComment( Instant.now() );
+
+        final UpdateIssueCommentJson params =
+            new UpdateIssueCommentJson( issue.getId().toString(), comment.getName().toString(), comment.getText() );
+
+        IssueResource resource = getResourceInstance();
+        Mockito.when( issueService.updateComment( Mockito.any( UpdateIssueCommentParams.class ) ) ).thenReturn( comment );
+
+        IssueCommentJson json = resource.updateComment( params );
+
+        assertEquals( json.text, comment.getText() );
+        Mockito.verify( issueService, Mockito.times( 1 ) ).updateComment( Mockito.any( UpdateIssueCommentParams.class ) );
     }
 
     @Test

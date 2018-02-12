@@ -17,6 +17,7 @@ import com.enonic.xp.issue.IssueCommentQuery;
 import com.enonic.xp.issue.IssueId;
 import com.enonic.xp.issue.IssueQuery;
 import com.enonic.xp.issue.IssueService;
+import com.enonic.xp.issue.UpdateIssueCommentParams;
 import com.enonic.xp.issue.UpdateIssueParams;
 import com.enonic.xp.node.NodeService;
 
@@ -100,6 +101,15 @@ public class IssueServiceImpl
         return DeleteIssueCommentCommand.create().
             params( params ).
             nodeService( nodeService ).
+            build().
+            execute();
+    }
+
+    public IssueComment updateComment( final UpdateIssueCommentParams params )
+    {
+        return UpdateIssueCommentCommand.create().
+            params( params ).
+            nodeService( this.nodeService ).
             build().
             execute();
     }

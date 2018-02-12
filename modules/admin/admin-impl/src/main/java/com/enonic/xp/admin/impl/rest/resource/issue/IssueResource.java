@@ -38,6 +38,7 @@ import com.enonic.xp.admin.impl.rest.resource.issue.json.DeleteIssueCommentJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.GetIssuesJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.ListIssueCommentsJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.ListIssuesJson;
+import com.enonic.xp.admin.impl.rest.resource.issue.json.UpdateIssueCommentJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.UpdateIssueJson;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.issue.CreateIssueCommentParams;
@@ -204,9 +205,18 @@ public final class IssueResource
     @Path("comment/delete")
     public DeleteIssueCommentResultJson deleteComment( final DeleteIssueCommentJson params )
     {
-        final DeleteIssueCommentResult result = this.issueService.deleteComment( params.getDeleteIssueCommentParams() );
+        final DeleteIssueCommentResult result = this.issueService.deleteComment( params.toDeleteIssueCommentParams() );
 
         return new DeleteIssueCommentResultJson( result );
+    }
+
+    @POST
+    @Path("comment/update")
+    public IssueCommentJson updateComment( final UpdateIssueCommentJson params )
+    {
+        final IssueComment result = this.issueService.updateComment( params.toUpdateIssueCommentParams() );
+
+        return new IssueCommentJson( result );
     }
 
     @POST

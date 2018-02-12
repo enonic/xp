@@ -20,4 +20,6 @@ public interface IssueService
 
     DeleteIssueCommentResult deleteComment( DeleteIssueCommentParams params );
 
+    IssueComment updateComment( UpdateIssueCommentParams params );
+
 }
