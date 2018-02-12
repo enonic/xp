@@ -5,32 +5,32 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-public final class ClusterState
+final class ClusterState
 {
-    private String clusterName;
+    private final String clusterName;
 
-    private String errorMessage;
+    private final String errorMessage;
 
-    private LocalNodeState localNodeState;
+    private final LocalNodeState localNodeState;
 
-    private List<MemberNodeState> memberNodeStateList;
+    private final List<MemberNodeState> memberNodeStateList;
 
-    public String getClusterName()
+    String getClusterName()
     {
         return clusterName;
     }
 
-    public String getErrorMessage()
+    String getErrorMessage()
     {
         return errorMessage;
     }
 
-    public LocalNodeState getLocalNodeState()
+    LocalNodeState getLocalNodeState()
     {
         return localNodeState;
     }
 
-    public List<MemberNodeState> getMemberNodeStateList()
+    List<MemberNodeState> getMemberNodeStateList()
     {
         return memberNodeStateList;
     }
@@ -44,12 +44,12 @@ public final class ClusterState
     }
 
 
-    public static ClusterState.Builder create()
+    static ClusterState.Builder create()
     {
         return new Builder();
     }
 
-    public static class Builder
+    static class Builder
     {
 
         private String clusterName;
@@ -58,43 +58,43 @@ public final class ClusterState
 
         private LocalNodeState localNodeState;
 
-        private List<MemberNodeState> memberNodeStateList = Lists.newArrayList();
+        private final List<MemberNodeState> memberNodeStateList = Lists.newArrayList();
 
         private Builder()
         {
         }
 
-        public Builder clusterName( final String clusterName )
+        Builder clusterName( final String clusterName )
         {
             this.clusterName = clusterName;
             return this;
         }
 
-        public Builder errorMessage( final String errorMessage )
+        Builder errorMessage( final String errorMessage )
         {
             this.errorMessage = errorMessage;
             return this;
         }
 
-        public Builder localNodeState( final LocalNodeState localNodeState )
+        Builder localNodeState( final LocalNodeState localNodeState )
         {
             this.localNodeState = localNodeState;
             return this;
         }
 
-        public Builder addMemberNodeStates( final Collection<MemberNodeState> memberNodeStates )
+        Builder addMemberNodeStates( final Collection<MemberNodeState> memberNodeStates )
         {
             this.memberNodeStateList.addAll( memberNodeStates );
             return this;
         }
 
-        public Builder addMemberNodeState( final MemberNodeState memberNodeState )
+        Builder addMemberNodeState( final MemberNodeState memberNodeState )
         {
             this.memberNodeStateList.add( memberNodeState );
             return this;
         }
 
-        public ClusterState build()
+        ClusterState build()
         {
             return new ClusterState( this );
         }

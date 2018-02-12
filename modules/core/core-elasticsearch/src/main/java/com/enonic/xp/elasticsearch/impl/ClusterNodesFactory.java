@@ -5,7 +5,7 @@ import org.elasticsearch.cluster.node.DiscoveryNodes;
 import com.enonic.xp.cluster.ClusterNode;
 import com.enonic.xp.cluster.ClusterNodes;
 
-public class ClusterNodesFactory
+class ClusterNodesFactory
 {
     static ClusterNodes create( final DiscoveryNodes discoveryNodes )
     {

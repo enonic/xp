@@ -2,10 +2,10 @@ package com.enonic.xp.elasticsearch.impl.status.cluster;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public final class MemberNodeState
+final class MemberNodeState
     extends NodeState
 {
-    private String address;
+    private final String address;
 
     private final String name;
 
@@ -16,7 +16,7 @@ public final class MemberNodeState
         this.name = builder.name;
     }
 
-    public ObjectNode toJson()
+    ObjectNode toJson()
     {
         final ObjectNode json = super.toJson();
         json.put( "address", this.address );
@@ -24,12 +24,12 @@ public final class MemberNodeState
         return json;
     }
 
-    public static MemberNodeState.Builder create()
+    static MemberNodeState.Builder create()
     {
         return new Builder();
     }
 
-    public static class Builder
+    static class Builder
         extends NodeState.Builder<Builder>
     {
         private String address;
@@ -40,19 +40,19 @@ public final class MemberNodeState
         {
         }
 
-        public Builder address( final String address )
+        Builder address( final String address )
         {
             this.address = address;
             return this;
         }
 
-        public Builder name( final String name )
+        Builder name( final String name )
         {
             this.name = name;
             return this;
         }
 
-        public MemberNodeState build()
+        MemberNodeState build()
         {
             return new MemberNodeState( this );
         }

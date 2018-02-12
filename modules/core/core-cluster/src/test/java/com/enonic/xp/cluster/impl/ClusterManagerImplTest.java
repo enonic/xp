@@ -37,6 +37,9 @@ public class ClusterManagerImplTest
         final TestCluster provider = TestCluster.create().
             health( ClusterHealth.GREEN ).
             id( ClusterId.from( "elasticsearch" ) ).
+            nodes( ClusterNodes.create().
+                add( ClusterNode.from( "a" ) ).
+                build() ).
             build();
 
         this.clusterManager.addProvider( provider );
@@ -60,11 +63,17 @@ public class ClusterManagerImplTest
         final TestCluster provider1 = TestCluster.create().
             health( ClusterHealth.GREEN ).
             id( ClusterId.from( "elasticsearch" ) ).
+            nodes( ClusterNodes.create().
+                add( ClusterNode.from( "a" ) ).
+                build() ).
             build();
 
         final TestCluster provider2 = TestCluster.create().
             health( ClusterHealth.GREEN ).
             id( ClusterId.from( "another" ) ).
+            nodes( ClusterNodes.create().
+                add( ClusterNode.from( "a" ) ).
+                build() ).
             build();
 
         this.clusterManager.addProvider( provider1 );

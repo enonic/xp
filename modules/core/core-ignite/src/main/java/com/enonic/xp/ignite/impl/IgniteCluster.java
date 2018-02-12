@@ -80,7 +80,14 @@ public class IgniteCluster
     {
         final ClusterNodes.Builder builder = ClusterNodes.create();
 
-        this.ignite.cluster().nodes().forEach( node -> builder.add( ClusterNode.from( node.consistentId().toString() ) ) );
+        this.ignite.cluster().nodes().forEach( node -> {
+
+            node.addresses();
+
+            builder.add( ClusterNode.from( node.consistentId().toString() ) );
+
+
+        } );
 
         return builder.build();
     }

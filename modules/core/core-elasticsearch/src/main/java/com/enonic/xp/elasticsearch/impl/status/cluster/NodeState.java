@@ -3,7 +3,7 @@ package com.enonic.xp.elasticsearch.impl.status.cluster;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public abstract class NodeState
+abstract class NodeState
 {
     private final String id;
 
@@ -13,7 +13,7 @@ public abstract class NodeState
 
     private final String version;
 
-    protected NodeState( Builder builder )
+    NodeState( Builder builder )
     {
         this.id = builder.id;
         this.hostName = builder.hostName;
@@ -21,7 +21,7 @@ public abstract class NodeState
         this.version = builder.version;
     }
 
-    public ObjectNode toJson()
+    ObjectNode toJson()
     {
         final ObjectNode json = JsonNodeFactory.instance.objectNode();
         json.put( "isMaster", this.isMaster );
@@ -31,8 +31,7 @@ public abstract class NodeState
         return json;
     }
 
-
-    public abstract static class Builder<B extends Builder>
+    abstract static class Builder<B extends Builder>
     {
         private String id;
 
@@ -42,40 +41,38 @@ public abstract class NodeState
 
         private String version;
 
-        protected Builder()
+        Builder()
         {
         }
 
         @SuppressWarnings("unchecked")
-        public B id( final String id )
+        B id( final String id )
         {
             this.id = id;
             return (B) this;
         }
 
         @SuppressWarnings("unchecked")
-        public B hostName( final String hostName )
+        B hostName( final String hostName )
         {
             this.hostName = hostName;
             return (B) this;
         }
 
         @SuppressWarnings("unchecked")
-        public B master( final Boolean master )
+        B master( final Boolean master )
         {
             this.isMaster = master;
             return (B) this;
         }
 
         @SuppressWarnings("unchecked")
-        public B version( final String version )
+        B version( final String version )
         {
             this.version = version;
             return (B) this;
         }
 
-
-        public abstract NodeState build();
-
+        abstract NodeState build();
     }
 }

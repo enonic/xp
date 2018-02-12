@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public final class ClusterReport
+final class ClusterReport
 {
     private final ClusterState clusterState;
 
@@ -18,7 +18,7 @@ public final class ClusterReport
         this.clusterHealth = builder.clusterHealth;
     }
 
-    public ObjectNode toJson()
+    ObjectNode toJson()
     {
         final ObjectNode json = JsonNodeFactory.instance.objectNode();
         final ArrayNode errorMessages = JsonNodeFactory.instance.arrayNode();
@@ -74,12 +74,12 @@ public final class ClusterReport
         return json;
     }
 
-    public static ClusterReport.Builder create()
+    static ClusterReport.Builder create()
     {
         return new Builder();
     }
 
-    public static class Builder
+    static class Builder
     {
         private ClusterState clusterState;
 
@@ -89,19 +89,19 @@ public final class ClusterReport
         {
         }
 
-        public Builder clusterState( final ClusterState clusterState )
+        Builder clusterState( final ClusterState clusterState )
         {
             this.clusterState = clusterState;
             return this;
         }
 
-        public Builder clusterHealth( final ClusterHealth clusterHealth )
+        Builder clusterHealth( final ClusterHealth clusterHealth )
         {
             this.clusterHealth = clusterHealth;
             return this;
         }
 
-        public ClusterReport build()
+        ClusterReport build()
         {
             return new ClusterReport( this );
         }

@@ -1,10 +1,14 @@
 package com.enonic.xp.cluster.impl;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.cluster.Cluster;
-import com.enonic.xp.cluster.ClusterNodes;
+import com.enonic.xp.cluster.ClusterNode;
+import com.enonic.xp.cluster.ClusterNodeId;
 import com.enonic.xp.cluster.ClusterValidator;
 import com.enonic.xp.cluster.ClusterValidatorResult;
 import com.enonic.xp.cluster.Clusters;
@@ -17,16 +21,19 @@ class ClusterMembersValidator
     @Override
     public ClusterValidatorResult validate( final Clusters clusters )
     {
-        ClusterNodes current = null;
+        Set<ClusterNodeId> current = null;
         Cluster first = null;
 
         for ( final Cluster cluster : clusters )
         {
-            final ClusterNodes clusterNodes = cluster.getNodes();
+            final Set<ClusterNodeId> clusterNodeIds = cluster.getNodes().
+                stream().
+                map( ClusterNode::getId ).
+                collect( Collectors.toSet() );
 
-            if ( first != null && current != null && !current.equals( clusterNodes ) )
+            if ( first != null && current != null && !current.equals( clusterNodeIds ) )
             {
-                final NodesMismatchError error = new NodesMismatchError( cluster, first, clusterNodes, current );
+                final NodesMismatchError error = new NodesMismatchError( cluster, first, clusterNodeIds, current );
 
                 LOG.error( error.getMessage() );
 
@@ -43,7 +50,7 @@ class ClusterMembersValidator
 
             if ( current == null )
             {
-                current = clusterNodes;
+                current = clusterNodeIds;
             }
         }
 

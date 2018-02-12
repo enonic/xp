@@ -19,7 +19,7 @@ public final class ClusterReporter
     @Override
     public String getName()
     {
-        return "cluster";
+        return "cluster.elasticsearch";
     }
 
     @Override

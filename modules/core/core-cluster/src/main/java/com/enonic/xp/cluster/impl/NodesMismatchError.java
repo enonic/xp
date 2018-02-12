@@ -1,7 +1,9 @@
 package com.enonic.xp.cluster.impl;
 
+import java.util.Set;
+
 import com.enonic.xp.cluster.Cluster;
-import com.enonic.xp.cluster.ClusterNodes;
+import com.enonic.xp.cluster.ClusterNodeId;
 import com.enonic.xp.cluster.ClusterValidationError;
 
 class NodesMismatchError
@@ -11,11 +13,11 @@ class NodesMismatchError
 
     private final Cluster p2;
 
-    private final ClusterNodes c1;
+    private final Set<ClusterNodeId> c1;
 
-    private final ClusterNodes c2;
+    private final Set<ClusterNodeId> c2;
 
-    NodesMismatchError( final Cluster p1, final Cluster p2, final ClusterNodes c1, final ClusterNodes c2 )
+    NodesMismatchError( final Cluster p1, final Cluster p2, final Set<ClusterNodeId> c1, final Set<ClusterNodeId> c2 )
     {
         this.p1 = p1;
         this.p2 = p2;
