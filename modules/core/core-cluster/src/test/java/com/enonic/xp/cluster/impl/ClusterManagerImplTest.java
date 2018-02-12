@@ -47,10 +47,10 @@ public class ClusterManagerImplTest
         this.clusterManager.getClusterState();
         assertActive( provider );
         provider.setHealth( ClusterHealth.RED );
-        Assert.assertEquals( ClusterState.ERROR, this.clusterManager.getClusterState() );
+        assertClusterError();
         assertDeactivated( provider );
         provider.setHealth( ClusterHealth.GREEN );
-        Assert.assertEquals( ClusterState.OK, this.clusterManager.getClusterState() );
+        assertClusterOk();
         assertActive( provider );
     }
 
@@ -83,7 +83,7 @@ public class ClusterManagerImplTest
         assertActive( provider1, provider2 );
 
         provider1.setHealth( ClusterHealth.RED );
-        Assert.assertEquals( ClusterState.ERROR, clusterManager.getClusterState() );
+        assertClusterError();
         assertDeactivated( provider1, provider2 );
     }
 
@@ -110,7 +110,7 @@ public class ClusterManagerImplTest
 
         this.clusterManager.addProvider( provider1 );
         this.clusterManager.addProvider( provider2 );
-        Assert.assertEquals( ClusterState.OK, this.clusterManager.getClusterState() );
+        assertClusterOk();
         assertActive( provider1, provider2 );
 
         provider1.setNodes( ClusterNodes.create().
@@ -118,8 +118,49 @@ public class ClusterManagerImplTest
             add( ClusterNode.from( "b" ) ).
             build() );
 
-        Assert.assertEquals( ClusterState.ERROR, this.clusterManager.getClusterState() );
+        assertClusterError();
         assertDeactivated( provider1, provider2 );
+    }
+
+    @Test
+    public void fail_after_register()
+        throws Exception
+    {
+        final TestCluster provider1 = TestCluster.create().
+            health( ClusterHealth.GREEN ).
+            id( ClusterId.from( "elasticsearch" ) ).
+            nodes( ClusterNodes.create().
+                add( ClusterNode.from( "a" ) ).
+                build() ).
+            build();
+
+        final TestCluster provider2 = TestCluster.create().
+            health( ClusterHealth.GREEN ).
+            id( ClusterId.from( "another" ) ).nodes( ClusterNodes.create().
+            add( ClusterNode.from( "a" ) ).
+            build() ).
+            build();
+
+        createManager( "elasticsearch", "another" );
+
+        this.clusterManager.addProvider( provider1 );
+        this.clusterManager.addProvider( provider2 );
+
+        assertClusterOk();
+
+        this.clusterManager.removeProvider( provider2 );
+
+        assertClusterError();
+    }
+
+    private void assertClusterError()
+    {
+        Assert.assertEquals( ClusterState.ERROR, this.clusterManager.getClusterState() );
+    }
+
+    private void assertClusterOk()
+    {
+        Assert.assertEquals( ClusterState.OK, this.clusterManager.getClusterState() );
     }
 
     private void createManager( final String... required )

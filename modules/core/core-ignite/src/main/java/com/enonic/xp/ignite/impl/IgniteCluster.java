@@ -131,7 +131,7 @@ public class IgniteCluster
 
         try
         {
-            LOG.info( "Cluster not operational, unregister elasticsearch-client" );
+            LOG.info( "Cluster not operational, unregister " + this.getId() );
             this.reg.unregister();
         }
         finally

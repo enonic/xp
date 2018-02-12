@@ -5,6 +5,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
@@ -63,14 +64,14 @@ public class ClusterManagerImpl
         return this.instances;
     }
 
-    private void activate()
+    private void activateProviders()
     {
         this.instances.forEach( Cluster::enable );
     }
 
-    private void deactivate()
+    private void deactivateProviders()
     {
-        LOG.info( "Deactivate all providers" );
+        LOG.info( "Deactivating all providers" );
         this.instances.forEach( Cluster::disable );
     }
 
@@ -79,12 +80,12 @@ public class ClusterManagerImpl
         if ( this.instances.hasRequiredProviders() )
         {
             LOG.info( "Has all required cluster-providers, activate and start polling health" );
-            activate();
+            activateProviders();
             startPolling();
         }
         else
         {
-            deactivate();
+            deactivateProviders();
         }
     }
 
@@ -111,13 +112,20 @@ public class ClusterManagerImpl
 
             if ( !result.isOk() )
             {
-                deactivate();
+                deactivateProviders();
                 return ClusterState.ERROR;
             }
         }
 
-        activate();
-        return ClusterState.OK;
+        if ( this.instances.hasRequiredProviders() )
+        {
+            activateProviders();
+            return ClusterState.OK;
+        }
+        else
+        {
+            return ClusterState.ERROR;
+        }
     }
 
 
@@ -169,5 +177,12 @@ public class ClusterManagerImpl
         LOG.info( "Adding cluster-provider: " + instance.getId() );
         this.instances.add( instance );
         this.registerProvider();
+    }
+
+
+    @Deactivate
+    public void deactivate()
+    {
+        this.timer.cancel();
     }
 }

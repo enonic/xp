@@ -60,6 +60,8 @@ public class WebSessionFilter
     protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain )
         throws Exception
     {
+        System.out.println( "Forward only now" );
+        chain.doFilter( req, res );
         this.webSessionFilter.doFilter( req, res, chain );
     }
 
