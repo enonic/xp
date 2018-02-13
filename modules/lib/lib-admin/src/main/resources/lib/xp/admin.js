@@ -50,29 +50,62 @@ exports.getLocales = function () {
 /**
  * Returns all i18n phrases.
  *
- * @returns {string} Current locale.
+ * @returns {object} JSON object with phrases.
  */
 exports.getPhrases = function () {
     return JSON.stringify(i18n.getPhrases(exports.getLocales(), ['i18n/common', 'i18n/phrases']));
 };
 
-function getMainAppUrl(path) {
-    return portal.assetUrl({
-        path: path,
-        application: 'com.enonic.xp.app.main'
-    });
-}
-
 /**
- * Return url for the main app.
+ * Returns the URL for launcher panel.
  *
- * @param path Path for resource.
+ * @returns {string} URL.
  */
-exports.getMainAppUrl = getMainAppUrl;
+exports.getLauncherUrl = function () {
+    return helper.getLauncherToolUrl();
+};
 
 /**
  * Returns the URL for launcher javascript.
+ *
+ * @returns {string} Path.
  */
-exports.getLauncherUrl = function () {
-    return getMainAppUrl('/js/launcher/bundle.js');
+exports.getLauncherPath = function () {
+    return portal.assetUrl({
+        application: helper.getHomeAppName(),
+        path: '/js/launcher/bundle.js'
+    });
+};
+
+/**
+ * Returns the URL for an admin tool of specific application.
+ * @param {string} application Full application name (f.ex, 'com.enonic.app')
+ * @param {string} tool Name of the tool inside an app (f.ex, 'main')
+ *
+ * @returns {string} URL.
+ */
+exports.getToolUrl = function (application, tool) {
+    if (application) {
+        return helper.generateAdminToolUri(application, tool);
+    }
+
+    return helper.generateHomeToolUri();
+};
+
+/**
+ * Returns the URL for the Home admin tool.
+ *
+ * @returns {string} URL.
+ */
+exports.getHomeToolUrl = function () {
+    return helper.generateHomeToolUri();
+};
+
+/**
+ * Returns installation name.
+ *
+ * @returns {string} Installation name.
+ */
+exports.getInstallation = function () {
+    return helper.getInstallation();
 };

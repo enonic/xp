@@ -326,6 +326,20 @@ exports.findPrincipals = function (params) {
 };
 
 /**
+ * Deletes the principal with the specified key.
+ *
+ * @example-ref examples/auth/deletePrincipal.js
+ *
+ * @param {string} principalKey Principal key to delete.
+ * @returns {boolean} True if deleted, false otherwise.
+ */
+exports.deletePrincipal = function (principalKey) {
+    var bean = __.newBean('com.enonic.xp.lib.auth.DeletePrincipalHandler');
+    bean.principalKey = __.nullOrValue(principalKey);
+    return __.toNativeObject(bean.deletePrincipal());
+};
+
+/**
  * This function returns the ID provider configuration for the current user store.
  * It is meant to be called from an ID provider controller.
  *

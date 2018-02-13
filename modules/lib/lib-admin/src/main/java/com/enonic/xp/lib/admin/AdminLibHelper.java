@@ -7,6 +7,7 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.server.VersionInfo;
+import com.enonic.xp.server.ServerInfo;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
@@ -14,9 +15,13 @@ import static java.util.stream.Collectors.toList;
 
 public final class AdminLibHelper
 {
+    private static final String ADMIN_APP_NAME = "com.enonic.xp.app.main";
+
     private static final String ADMIN_URI_PREFIX = "/admin";
 
     private static final String ADMIN_ASSETS_URI_PREFIX = "/admin/assets/";
+
+    private static final String ADMIN_TOOLS_URI_PREFIX = "/admin/tool";
 
     private final String version;
 
@@ -38,6 +43,28 @@ public final class AdminLibHelper
     public String getAssetsUri()
     {
         return rewriteUri( ADMIN_ASSETS_URI_PREFIX + this.version );
+    }
+
+    public String generateHomeToolUri()
+    {
+        return rewriteUri( ADMIN_TOOLS_URI_PREFIX );
+    }
+
+    public String generateAdminToolUri( String application, String adminTool )
+    {
+        String uri = ADMIN_TOOLS_URI_PREFIX + "/" + application;
+        if (adminTool != null) {
+            uri += "/" + adminTool;
+        }
+        return rewriteUri( uri );
+    }
+
+    public String getHomeAppName() {
+        return ADMIN_APP_NAME;
+    }
+
+    public String getLauncherToolUrl() {
+        return generateAdminToolUri(ADMIN_APP_NAME, "launcher");
     }
 
     public String getLocale()
@@ -101,5 +128,10 @@ public final class AdminLibHelper
         {
             return version.getVersion();
         }
+    }
+
+    public String getInstallation()
+    {
+        return ServerInfo.get().getName();
     }
 }
