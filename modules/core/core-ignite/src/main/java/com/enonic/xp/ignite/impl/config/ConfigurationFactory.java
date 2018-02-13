@@ -3,6 +3,7 @@ package com.enonic.xp.ignite.impl.config;
 import java.io.File;
 
 import org.apache.ignite.configuration.IgniteConfiguration;
+import org.osgi.framework.BundleContext;
 
 import com.google.common.base.Strings;
 
@@ -15,10 +16,13 @@ public class ConfigurationFactory
 
     private final IgniteSettings igniteConfig;
 
+    private final BundleContext bundleContext;
+
     private ConfigurationFactory( final Builder builder )
     {
         clusterConfig = builder.clusterConfig;
         igniteConfig = builder.igniteConfig;
+        bundleContext = builder.bundleContext;
     }
 
     public IgniteConfiguration execute()
@@ -54,6 +58,8 @@ public class ConfigurationFactory
 
         config.setMetricsLogFrequency( igniteConfig.metrics_log_frequency() );
 
+        config.setClassLoader( ClassLoaderFactory.create( this.bundleContext ) );
+
         return config;
     }
 
@@ -78,6 +84,8 @@ public class ConfigurationFactory
 
         private IgniteSettings igniteConfig;
 
+        private BundleContext bundleContext;
+
         private Builder()
         {
         }
@@ -91,6 +99,12 @@ public class ConfigurationFactory
         public Builder igniteConfig( final IgniteSettings val )
         {
             igniteConfig = val;
+            return this;
+        }
+
+        public Builder bundleContext( final BundleContext val )
+        {
+            bundleContext = val;
             return this;
         }
 

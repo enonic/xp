@@ -49,8 +49,11 @@ public class IgniteCluster
         final IgniteConfiguration igniteConfig = ConfigurationFactory.create().
             clusterConfig( this.clusterConfig ).
             igniteConfig( this.igniteSettings ).
+            bundleContext( context ).
             build().
             execute();
+
+        final ClassLoader classLoader = igniteConfig.getClassLoader();
 
         this.ignite = Ignition.start( igniteConfig );
     }

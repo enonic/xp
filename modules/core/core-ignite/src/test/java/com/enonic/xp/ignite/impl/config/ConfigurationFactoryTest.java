@@ -6,6 +6,7 @@ import org.apache.ignite.configuration.IgniteConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.osgi.framework.BundleContext;
 
 import com.enonic.xp.cluster.ClusterConfig;
 import com.enonic.xp.cluster.ClusterNodeId;
@@ -17,12 +18,15 @@ public class ConfigurationFactoryTest
 {
     private com.enonic.xp.ignite.impl.config.IgniteSettings igniteSettings;
 
+    private BundleContext bundleContext;
+
     @Before
     public void setUp()
         throws Exception
     {
         System.setProperty( "xp.home", Paths.get( "my", "xp", "home" ).toString() );
         this.igniteSettings = Mockito.mock( IgniteSettings.class );
+        this.bundleContext = Mockito.mock( BundleContext.class );
     }
 
     @Test
@@ -32,6 +36,7 @@ public class ConfigurationFactoryTest
         final IgniteConfiguration config = com.enonic.xp.ignite.impl.config.ConfigurationFactory.create().
             clusterConfig( createClusterConfig( "myNode" ) ).
             igniteConfig( this.igniteSettings ).
+            bundleContext( this.bundleContext ).
             build().
             execute();
 
@@ -48,6 +53,7 @@ public class ConfigurationFactoryTest
         final IgniteConfiguration config = com.enonic.xp.ignite.impl.config.ConfigurationFactory.create().
             clusterConfig( createClusterConfig( "myNode" ) ).
             igniteConfig( this.igniteSettings ).
+            bundleContext( this.bundleContext ).
             build().
             execute();
 
@@ -61,6 +67,7 @@ public class ConfigurationFactoryTest
         final IgniteConfiguration config = com.enonic.xp.ignite.impl.config.ConfigurationFactory.create().
             clusterConfig( createClusterConfig( "myNode" ) ).
             igniteConfig( this.igniteSettings ).
+            bundleContext( this.bundleContext ).
             build().
             execute();
 

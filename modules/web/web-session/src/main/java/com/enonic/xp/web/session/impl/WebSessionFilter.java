@@ -17,9 +17,10 @@ import com.enonic.xp.annotation.Order;
 import com.enonic.xp.web.filter.OncePerRequestFilter;
 
 import static org.apache.ignite.cache.websession.WebSessionFilter.WEB_SES_CACHE_NAME_PARAM;
+import static org.apache.ignite.cache.websession.WebSessionFilter.WEB_SES_KEEP_BINARY_PARAM;
 
 @Component(immediate = true, service = Filter.class, configurationPid = "com.enonic.xp.web.session")
-@Order(-100)
+@Order(-190)
 @WebFilter("/*")
 public class WebSessionFilter
     extends OncePerRequestFilter
@@ -51,17 +52,17 @@ public class WebSessionFilter
         final FilterConfigImpl mergedConfig = new FilterConfigImpl( config );
         mergedConfig.populate( this.config );
         mergedConfig.populate( WEB_SES_CACHE_NAME_PARAM, "webSessionCache" );
+        mergedConfig.populate( WEB_SES_KEEP_BINARY_PARAM, "false" );
 
         this.webSessionFilter = new org.apache.ignite.cache.websession.WebSessionFilter();
         this.webSessionFilter.init( mergedConfig );
+
     }
 
     @Override
     protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain )
         throws Exception
     {
-        System.out.println( "Forward only now" );
-        chain.doFilter( req, res );
         this.webSessionFilter.doFilter( req, res, chain );
     }
 
