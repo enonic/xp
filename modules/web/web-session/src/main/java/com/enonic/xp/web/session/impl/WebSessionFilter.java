@@ -18,6 +18,7 @@ import com.enonic.xp.web.filter.OncePerRequestFilter;
 
 import static org.apache.ignite.cache.websession.WebSessionFilter.WEB_SES_CACHE_NAME_PARAM;
 import static org.apache.ignite.cache.websession.WebSessionFilter.WEB_SES_KEEP_BINARY_PARAM;
+import static org.apache.ignite.cache.websession.WebSessionFilter.WEB_SES_NAME_PARAM;
 
 @Component(immediate = true, service = Filter.class, configurationPid = "com.enonic.xp.web.session")
 @Order(-190)
@@ -47,16 +48,19 @@ public class WebSessionFilter
     {
         super.init( config );
 
-        this.ignite.getOrCreateCache( CACHE_NAME );
+        this.ignite.getOrCreateCache( SessionCacheConfigFactory.create( CACHE_NAME, this.config ) );
 
         final FilterConfigImpl mergedConfig = new FilterConfigImpl( config );
         mergedConfig.populate( this.config );
-        mergedConfig.populate( WEB_SES_CACHE_NAME_PARAM, "webSessionCache" );
+        mergedConfig.populate( WEB_SES_CACHE_NAME_PARAM, CACHE_NAME );
+        mergedConfig.populate( WEB_SES_NAME_PARAM, this.ignite.name() );
+        // This cannot be true atm since the classloader will fail to find the class
+        // because the WebSessionV2 uses context classloader to fetch class instead
+        // of the Ignite configured classloader.
         mergedConfig.populate( WEB_SES_KEEP_BINARY_PARAM, "false" );
 
         this.webSessionFilter = new org.apache.ignite.cache.websession.WebSessionFilter();
         this.webSessionFilter.init( mergedConfig );
-
     }
 
     @Override

@@ -81,6 +81,18 @@ public class IgniteCluster
     @Override
     public ClusterNodes getNodes()
     {
+        try
+        {
+            return doGetNodes();
+        }
+        catch ( java.lang.IllegalStateException e )
+        {
+            return ClusterNodes.create().build();
+        }
+    }
+
+    private ClusterNodes doGetNodes()
+    {
         final ClusterNodes.Builder builder = ClusterNodes.create();
 
         this.ignite.cluster().nodes().forEach( node -> {
@@ -88,8 +100,6 @@ public class IgniteCluster
             node.addresses();
 
             builder.add( ClusterNode.from( node.consistentId().toString() ) );
-
-
         } );
 
         return builder.build();

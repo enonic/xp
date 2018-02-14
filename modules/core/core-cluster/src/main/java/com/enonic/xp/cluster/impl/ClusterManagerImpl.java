@@ -39,6 +39,8 @@ public class ClusterManagerImpl
 
     private final List<ClusterValidator> validators = Lists.newArrayList( new HealthValidator(), new ClusterMembersValidator() );
 
+    private boolean isHealthy;
+
     @SuppressWarnings("WeakerAccess")
     public ClusterManagerImpl()
     {
@@ -66,13 +68,24 @@ public class ClusterManagerImpl
 
     private void activateProviders()
     {
+        if ( !this.isHealthy )
+        {
+            LOG.info( "Deactivating all providers" );
+        }
+
         this.instances.forEach( Cluster::enable );
+        this.isHealthy = true;
     }
 
     private void deactivateProviders()
     {
-        LOG.info( "Deactivating all providers" );
+        if ( this.isHealthy )
+        {
+            LOG.info( "Deactivating all providers" );
+        }
+
         this.instances.forEach( Cluster::disable );
+        this.isHealthy = false;
     }
 
     private void registerProvider()
