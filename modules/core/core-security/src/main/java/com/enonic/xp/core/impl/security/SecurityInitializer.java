@@ -226,7 +226,6 @@ final class SecurityInitializer
             userKey( SUPER_USER ).
             displayName( "Super User" ).
             login( "su" ).
-            password( "password" ).
             build();
         addUser( createSuperUser );
 
