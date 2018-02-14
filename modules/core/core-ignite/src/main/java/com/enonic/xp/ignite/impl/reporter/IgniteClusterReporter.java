@@ -18,13 +18,12 @@ public class IgniteClusterReporter
     @Override
     public JsonNode getReport()
     {
+
         return IgniteClusterReport.create().
             cluster( this.ignite.cluster() ).
             regionMetrics( this.ignite.dataRegionMetrics() ).
-            storageMetrics( this.ignite.dataStorageMetrics() ).
             build().
             toJson();
-
     }
 
     @Override
