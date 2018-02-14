@@ -1,17 +1,15 @@
 package com.enonic.xp.core.impl.issue;
 
+import java.util.UUID;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.issue.DeleteIssueCommentParams;
 import com.enonic.xp.issue.DeleteIssueCommentResult;
-import com.enonic.xp.issue.IssueId;
-import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
-import com.enonic.xp.node.NodeName;
-import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 
 import static org.junit.Assert.*;
@@ -31,36 +29,24 @@ public class DeleteIssueCommentCommandTest
     @Test
     public void delete()
     {
-        final Node issueNode = Node.create().name( "parent-issue" ).id( NodeId.from( "issue-id" ) ).parentPath( NodePath.ROOT ).build();
+        DeleteIssueCommentParams params = DeleteIssueCommentParams.create().comment( NodeId.from( UUID.randomUUID() ) ).build();
 
-        DeleteIssueCommentParams params =
-            DeleteIssueCommentParams.create().issue( IssueId.create() ).comment( NodeName.from( "comment-one" ) ).build();
-
-        final NodeIds nodeIds = NodeIds.from( NodeId.from( "node-id" ) );
+        final NodeIds nodeIds = NodeIds.from( params.getComment() );
         final DeleteIssueCommentCommand command = createDeleteIssueCommentCommand( params );
 
-        Mockito.when( this.nodeService.deleteByPath( Mockito.any( NodePath.class ) ) ).thenReturn( nodeIds );
-        Mockito.when( this.nodeService.getById( Mockito.any( NodeId.class ) ) ).thenReturn( issueNode );
+        Mockito.when( this.nodeService.deleteById( Mockito.any( NodeId.class ) ) ).thenReturn( nodeIds );
 
         final DeleteIssueCommentResult result = command.execute();
 
         assertNotNull( result );
-        assertEquals( "/parent-issue/comment-one", result.getPath().toString() );
         assertEquals( 1, result.getIds().getSize() );
+        assertEquals( params.getComment(), result.getIds().first() );
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testNoCommentName()
+    public void testNoCommentId()
     {
-        final DeleteIssueCommentParams params = DeleteIssueCommentParams.create().issue( IssueId.create() ).build();
-        final DeleteIssueCommentCommand command = createDeleteIssueCommentCommand( params );
-        command.execute();
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testNoIssueId()
-    {
-        final DeleteIssueCommentParams params = DeleteIssueCommentParams.create().comment( NodeName.from( "node-name" ) ).build();
+        final DeleteIssueCommentParams params = DeleteIssueCommentParams.create().build();
         final DeleteIssueCommentCommand command = createDeleteIssueCommentCommand( params );
         command.execute();
     }

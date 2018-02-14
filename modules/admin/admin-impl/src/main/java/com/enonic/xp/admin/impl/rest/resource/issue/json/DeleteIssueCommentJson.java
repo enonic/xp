@@ -3,35 +3,20 @@ package com.enonic.xp.admin.impl.rest.resource.issue.json;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.xp.issue.DeleteIssueCommentParams;
-import com.enonic.xp.issue.IssueId;
-import com.enonic.xp.node.NodeName;
+import com.enonic.xp.node.NodeId;
 
 public final class DeleteIssueCommentJson
 {
-    private final NodeName comment;
-
-    private final IssueId issue;
+    private final NodeId comment;
 
     @JsonCreator
-    public DeleteIssueCommentJson( @JsonProperty("issue") final String issueParam, @JsonProperty("comment") final String comment )
+    public DeleteIssueCommentJson( @JsonProperty("comment") final String comment )
     {
-        this.issue = IssueId.from( issueParam );
-        this.comment = NodeName.from( comment );
+        this.comment = NodeId.from( comment );
     }
 
-    public IssueId getIssue()
-    {
-        return issue;
-    }
-
-    public NodeName getComment()
+    public NodeId getComment()
     {
         return comment;
-    }
-
-    public DeleteIssueCommentParams toDeleteIssueCommentParams()
-    {
-        return DeleteIssueCommentParams.create().issue( issue ).comment( comment ).build();
     }
 }

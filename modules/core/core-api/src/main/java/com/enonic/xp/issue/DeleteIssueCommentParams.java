@@ -1,25 +1,17 @@
 package com.enonic.xp.issue;
 
-import com.enonic.xp.node.NodeName;
+import com.enonic.xp.node.NodeId;
 
 public final class DeleteIssueCommentParams
 {
-    private final IssueId issue;
-
-    private final NodeName comment;
+    private final NodeId comment;
 
     private DeleteIssueCommentParams( Builder builder )
     {
-        this.issue = builder.issue;
         this.comment = builder.comment;
     }
 
-    public IssueId getIssue()
-    {
-        return issue;
-    }
-
-    public NodeName getComment()
+    public NodeId getComment()
     {
         return comment;
     }
@@ -31,21 +23,13 @@ public final class DeleteIssueCommentParams
 
     public static class Builder
     {
-        private IssueId issue;
-
-        private NodeName comment;
+        private NodeId comment;
 
         private Builder()
         {
         }
 
-        public Builder issue( final IssueId issue )
-        {
-            this.issue = issue;
-            return this;
-        }
-
-        public Builder comment( final NodeName comment )
+        public Builder comment( final NodeId comment )
         {
             this.comment = comment;
             return this;

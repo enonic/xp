@@ -43,6 +43,7 @@ import com.enonic.xp.admin.impl.rest.resource.issue.json.UpdateIssueJson;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.issue.CreateIssueCommentParams;
 import com.enonic.xp.issue.CreateIssueParams;
+import com.enonic.xp.issue.DeleteIssueCommentParams;
 import com.enonic.xp.issue.DeleteIssueCommentResult;
 import com.enonic.xp.issue.FindIssueCommentsResult;
 import com.enonic.xp.issue.FindIssuesParams;
@@ -54,6 +55,7 @@ import com.enonic.xp.issue.IssueId;
 import com.enonic.xp.issue.IssueQuery;
 import com.enonic.xp.issue.IssueService;
 import com.enonic.xp.issue.IssueStatus;
+import com.enonic.xp.issue.UpdateIssueCommentParams;
 import com.enonic.xp.issue.UpdateIssueParams;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.security.Principal;
@@ -203,18 +205,27 @@ public final class IssueResource
 
     @POST
     @Path("comment/delete")
-    public DeleteIssueCommentResultJson deleteComment( final DeleteIssueCommentJson params )
+    public DeleteIssueCommentResultJson deleteComment( final DeleteIssueCommentJson json )
     {
-        final DeleteIssueCommentResult result = this.issueService.deleteComment( params.toDeleteIssueCommentParams() );
+        DeleteIssueCommentParams params = DeleteIssueCommentParams.create().
+            comment( json.getComment() ).
+            build();
+
+        final DeleteIssueCommentResult result = this.issueService.deleteComment( params );
 
         return new DeleteIssueCommentResultJson( result );
     }
 
     @POST
     @Path("comment/update")
-    public IssueCommentJson updateComment( final UpdateIssueCommentJson params )
+    public IssueCommentJson updateComment( final UpdateIssueCommentJson json )
     {
-        final IssueComment result = this.issueService.updateComment( params.toUpdateIssueCommentParams() );
+        UpdateIssueCommentParams params = UpdateIssueCommentParams.create().
+            comment( json.getComment() ).
+            text( json.getText() ).
+            build();
+
+        final IssueComment result = this.issueService.updateComment( params );
 
         return new IssueCommentJson( result );
     }

@@ -33,7 +33,7 @@ public class IssueCommentNodeTranslatorTest
         final IssueComment comment = IssueCommentNodeTranslator.fromNode( node );
 
         assertNotNull( comment );
-        assertEquals( NodeName.from( "name" ), comment.getName() );
+        assertEquals( node.id(), comment.getId() );
         assertEquals( "title", comment.getText() );
         assertEquals( PrincipalKey.from( "user:myStore:me" ), comment.getCreator() );
         assertEquals( "Me Myself", comment.getCreatorDisplayName() );

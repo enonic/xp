@@ -1,5 +1,7 @@
 package com.enonic.xp.core.issue;
 
+import java.util.UUID;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -9,7 +11,7 @@ import com.enonic.xp.issue.DeleteIssueCommentParams;
 import com.enonic.xp.issue.DeleteIssueCommentResult;
 import com.enonic.xp.issue.Issue;
 import com.enonic.xp.issue.IssueComment;
-import com.enonic.xp.node.NodeName;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.security.User;
 
 import static org.junit.Assert.*;
@@ -34,8 +36,7 @@ public class IssueServiceImplTest_deleteComment
         throws Exception
     {
         DeleteIssueCommentParams params = DeleteIssueCommentParams.create().
-            issue( this.issue.getId() ).
-            comment( this.comment.getName() ).
+            comment( this.comment.getId() ).
             build();
 
         final DeleteIssueCommentResult result = this.issueService.deleteComment( params );
@@ -49,8 +50,7 @@ public class IssueServiceImplTest_deleteComment
         throws Exception
     {
         DeleteIssueCommentParams params = DeleteIssueCommentParams.create().
-            issue( this.issue.getId() ).
-            comment( NodeName.from( "unexisting-id" ) ).
+            comment( NodeId.from( UUID.randomUUID() ) ).
             build();
 
         final DeleteIssueCommentResult result = this.issueService.deleteComment( params );

@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
@@ -51,8 +52,6 @@ import com.enonic.xp.issue.UpdateIssueCommentParams;
 import com.enonic.xp.issue.UpdateIssueParams;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
-import com.enonic.xp.node.NodeName;
-import com.enonic.xp.node.NodePath;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.PrincipalNotFoundException;
@@ -428,6 +427,7 @@ public class IssueResourceTest
 
         final Map params = Maps.newHashMap();
         params.put( "createdTime", comment.getCreated() );
+        params.put( "id", comment.getId() );
 
         final String expected = new StrSubstitutor( params ).replace( readFromFile( "get_issue_comments_result.json" ) );
 
@@ -441,18 +441,16 @@ public class IssueResourceTest
     @Test
     public void test_updateComment()
     {
-        final Issue issue = createIssue();
         final IssueComment comment = createIssueComment( Instant.now() );
 
-        final UpdateIssueCommentJson params =
-            new UpdateIssueCommentJson( issue.getId().toString(), comment.getName().toString(), comment.getText() );
+        final UpdateIssueCommentJson params = new UpdateIssueCommentJson( comment.getId().toString(), comment.getText() );
 
         IssueResource resource = getResourceInstance();
         Mockito.when( issueService.updateComment( Mockito.any( UpdateIssueCommentParams.class ) ) ).thenReturn( comment );
 
         IssueCommentJson json = resource.updateComment( params );
 
-        assertEquals( json.text, comment.getText() );
+        assertEquals( json.getText(), comment.getText() );
         Mockito.verify( issueService, Mockito.times( 1 ) ).updateComment( Mockito.any( UpdateIssueCommentParams.class ) );
     }
 
@@ -460,18 +458,17 @@ public class IssueResourceTest
     public void test_deleteComment()
         throws Exception
     {
-        final Issue issue = createIssue();
         final IssueComment comment = createIssueComment( Instant.now() );
         IssueResource resource = getResourceInstance();
 
-        DeleteIssueCommentResult result = new DeleteIssueCommentResult( NodeIds.from( NodeId.from( "comment-id" ) ), NodePath.ROOT );
+        DeleteIssueCommentResult result = new DeleteIssueCommentResult( NodeIds.from( comment.getId() ) );
         Mockito.when( this.issueService.deleteComment( Mockito.any( DeleteIssueCommentParams.class ) ) ).thenReturn( result );
 
-        DeleteIssueCommentJson params = new DeleteIssueCommentJson( issue.getId().toString(), comment.getName().toString() );
+        DeleteIssueCommentJson params = new DeleteIssueCommentJson( comment.getId().toString() );
         DeleteIssueCommentResultJson resultJson = resource.deleteComment( params );
 
-        assertEquals( NodePath.ROOT.toString(), resultJson.getPath() );
         assertEquals( 1, resultJson.getIds().size() );
+        assertEquals( comment.getId().toString(), resultJson.getIds().get( 0 ) );
     }
 
     private PublishRequestJson createPublishRequest()
@@ -490,7 +487,7 @@ public class IssueResourceTest
     private IssueComment createIssueComment( Instant createdTime )
     {
         return IssueComment.create().
-            name( NodeName.from( "Comment-name-one" ) ).
+            id( NodeId.from( UUID.randomUUID() ) ).
             text( "Comment text one" ).
             creator( User.ANONYMOUS.getKey() ).
             creatorDisplayName( "Anonymous" ).

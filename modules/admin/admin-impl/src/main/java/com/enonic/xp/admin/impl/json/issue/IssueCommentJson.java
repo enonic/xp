@@ -3,33 +3,33 @@ package com.enonic.xp.admin.impl.json.issue;
 import java.time.Instant;
 
 import com.enonic.xp.issue.IssueComment;
-import com.enonic.xp.node.NodeName;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.security.PrincipalKey;
 
 public class IssueCommentJson
 {
-    public final NodeName name;
+    private final NodeId id;
 
-    public final PrincipalKey creatorKey;
+    private final PrincipalKey creatorKey;
 
-    public final String creatorDisplayName;
+    private final String creatorDisplayName;
 
-    public final Instant createdTime;
+    private final Instant createdTime;
 
-    public final String text;
+    private final String text;
 
     public IssueCommentJson( final IssueComment comment )
     {
-        this.name = comment.getName();
+        this.id = comment.getId();
         this.creatorKey = comment.getCreator();
         this.creatorDisplayName = comment.getCreatorDisplayName();
         this.createdTime = comment.getCreated();
         this.text = comment.getText();
     }
 
-    public String getName()
+    public String getId()
     {
-        return name != null ? name.toString() : null;
+        return id != null ? id.toString() : null;
     }
 
     public String getCreatorKey()

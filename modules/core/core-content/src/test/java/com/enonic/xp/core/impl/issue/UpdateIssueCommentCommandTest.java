@@ -14,7 +14,6 @@ import com.enonic.xp.issue.IssueId;
 import com.enonic.xp.issue.UpdateIssueCommentParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
@@ -25,7 +24,6 @@ import static org.junit.Assert.*;
 
 public class UpdateIssueCommentCommandTest
 {
-
     private NodeService nodeService;
 
     @Before
@@ -44,8 +42,7 @@ public class UpdateIssueCommentCommandTest
         final PrincipalKey creator = PrincipalKey.from( "user:store:one" );
 
         final UpdateIssueCommentParams params = UpdateIssueCommentParams.create().
-            issue( IssueId.create() ).
-            comment( NodeName.ROOT ).
+            comment( NodeId.from( UUID.randomUUID() ) ).
             text( "Comment text..." ).
             build();
 
@@ -69,17 +66,17 @@ public class UpdateIssueCommentCommandTest
     }
 
     @Test(expected = NodeNotFoundException.class)
-    public void updateIssueNotExists()
+    public void updateCommentNotExists()
     {
         final UpdateIssueCommentParams params = UpdateIssueCommentParams.create().
-            issue( IssueId.create() ).
-            comment( NodeName.ROOT ).
+            comment( NodeId.from( UUID.randomUUID() ) ).
             text( "Comment text..." ).
             build();
 
         final UpdateIssueCommentCommand command = updateIssueCommentCommand( params );
 
-        Mockito.when( this.nodeService.getById( Mockito.any( NodeId.class ) ) ).thenThrow( new NodeNotFoundException( "Node not found" ) );
+        Mockito.when( this.nodeService.update( Mockito.any( UpdateNodeParams.class ) ) ).thenThrow(
+            new NodeNotFoundException( "Node not found" ) );
 
         final IssueComment comment = command.execute();
     }
@@ -87,24 +84,15 @@ public class UpdateIssueCommentCommandTest
     @Test(expected = IllegalArgumentException.class)
     public void updateNoText()
     {
-        final UpdateIssueCommentParams params =
-            UpdateIssueCommentParams.create().issue( IssueId.create() ).comment( NodeName.ROOT ).build();
+        final UpdateIssueCommentParams params = UpdateIssueCommentParams.create().comment( NodeId.from( UUID.randomUUID() ) ).build();
         final UpdateIssueCommentCommand command = updateIssueCommentCommand( params );
         command.execute();
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void updateNoIssueId()
+    public void updateNoCommentId()
     {
-        final UpdateIssueCommentParams params = UpdateIssueCommentParams.create().text( "text" ).comment( NodeName.ROOT ).build();
-        final UpdateIssueCommentCommand command = updateIssueCommentCommand( params );
-        command.execute();
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void updateNoCommentName()
-    {
-        final UpdateIssueCommentParams params = UpdateIssueCommentParams.create().issue( IssueId.create() ).text( "text" ).build();
+        final UpdateIssueCommentParams params = UpdateIssueCommentParams.create().text( "text" ).build();
         final UpdateIssueCommentCommand command = updateIssueCommentCommand( params );
         command.execute();
     }
@@ -116,5 +104,4 @@ public class UpdateIssueCommentCommandTest
             nodeService( this.nodeService ).
             build();
     }
-
 }

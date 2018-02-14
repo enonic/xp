@@ -2,6 +2,7 @@ package com.enonic.xp.core.issue;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.UUID;
 
 import org.junit.Test;
 
@@ -9,9 +10,8 @@ import com.enonic.xp.issue.CreateIssueCommentParams;
 import com.enonic.xp.issue.CreateIssueParams;
 import com.enonic.xp.issue.Issue;
 import com.enonic.xp.issue.IssueComment;
-import com.enonic.xp.issue.IssueId;
 import com.enonic.xp.issue.UpdateIssueCommentParams;
-import com.enonic.xp.node.NodeName;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.security.PrincipalKey;
 
@@ -41,7 +41,7 @@ public class IssueServiceImplTest_updateComment
         final IssueComment comment = this.issueService.createComment( params );
 
         final IssueComment updatedComment = this.issueService.updateComment(
-            UpdateIssueCommentParams.create().issue( issue.getId() ).comment( comment.getName() ).text( "updated text" ).build() );
+            UpdateIssueCommentParams.create().comment( comment.getId() ).text( "updated text" ).build() );
 
         assertNotNull( updatedComment );
         assertEquals( "updated text", updatedComment.getText() );
@@ -51,13 +51,12 @@ public class IssueServiceImplTest_updateComment
     }
 
     @Test(expected = NodeNotFoundException.class)
-    public void udpateComment_noIssue()
+    public void udpateComment_noComment()
         throws Exception
     {
         final UpdateIssueCommentParams params = UpdateIssueCommentParams.create().
             text( "text" ).
-            issue( IssueId.create() ).
-            comment( NodeName.ROOT ).
+            comment( NodeId.from( UUID.randomUUID() ) ).
             build();
 
         final IssueComment comment = this.issueService.updateComment( params );

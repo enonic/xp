@@ -1,25 +1,17 @@
 package com.enonic.xp.issue;
 
-import com.enonic.xp.node.NodeName;
+import com.enonic.xp.node.NodeId;
 
 public final class UpdateIssueCommentParams
 {
-    private final IssueId issue;
-
-    private final NodeName comment;
+    private final NodeId comment;
 
     private final String text;
 
     private UpdateIssueCommentParams( Builder builder )
     {
-        this.issue = builder.issue;
         this.text = builder.text;
         this.comment = builder.comment;
-    }
-
-    public IssueId getIssue()
-    {
-        return issue;
     }
 
     public String getText()
@@ -27,7 +19,7 @@ public final class UpdateIssueCommentParams
         return text;
     }
 
-    public NodeName getComment()
+    public NodeId getComment()
     {
         return comment;
     }
@@ -39,20 +31,12 @@ public final class UpdateIssueCommentParams
 
     public static class Builder
     {
-        private IssueId issue;
-
-        private NodeName comment;
+        private NodeId comment;
 
         private String text;
 
         private Builder()
         {
-        }
-
-        public Builder issue( final IssueId issue )
-        {
-            this.issue = issue;
-            return this;
         }
 
         public Builder text( final String text )
@@ -61,7 +45,7 @@ public final class UpdateIssueCommentParams
             return this;
         }
 
-        public Builder comment( final NodeName comment )
+        public Builder comment( final NodeId comment )
         {
             this.comment = comment;
             return this;
