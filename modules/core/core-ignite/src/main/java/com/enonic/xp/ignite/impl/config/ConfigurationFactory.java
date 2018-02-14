@@ -14,14 +14,14 @@ public class ConfigurationFactory
 {
     private final ClusterConfig clusterConfig;
 
-    private final IgniteSettings igniteConfig;
+    private final IgniteSettings igniteSettings;
 
     private final BundleContext bundleContext;
 
     private ConfigurationFactory( final Builder builder )
     {
         clusterConfig = builder.clusterConfig;
-        igniteConfig = builder.igniteConfig;
+        igniteSettings = builder.igniteConfig;
         bundleContext = builder.bundleContext;
     }
 
@@ -33,30 +33,32 @@ public class ConfigurationFactory
         config.setConsistentId( clusterConfig.name().toString() );
         config.setIgniteHome( resolveIgniteHome() );
 
-        if ( !igniteConfig.connector_enabled() )
+        config.setDataStorageConfiguration( DataStorageConfigFactory.create( this.igniteSettings ) );
+
+        if ( !igniteSettings.connector_enabled() )
         {
             config.setConnectorConfiguration( null );
         }
 
-        if ( !igniteConfig.odbc_enabled() )
+        if ( !igniteSettings.odbc_enabled() )
         {
             config.setClientConnectorConfiguration( null );
         }
 
-        if ( !Strings.isNullOrEmpty( igniteConfig.localhost() ) )
+        if ( !Strings.isNullOrEmpty( igniteSettings.localhost() ) )
         {
-            config.setLocalHost( igniteConfig.localhost() );
+            config.setLocalHost( igniteSettings.localhost() );
         }
 
         config.setDiscoverySpi( DiscoveryFactory.create().
             discovery( clusterConfig.discovery() ).
-            igniteConfig( igniteConfig ).
+            igniteConfig( igniteSettings ).
             build().
             execute() );
 
         config.setGridLogger( LoggerConfig.create() );
 
-        config.setMetricsLogFrequency( igniteConfig.metrics_log_frequency() );
+        config.setMetricsLogFrequency( igniteSettings.metrics_log_frequency() );
 
         config.setClassLoader( ClassLoaderFactory.create( this.bundleContext ) );
 
@@ -65,12 +67,12 @@ public class ConfigurationFactory
 
     private String resolveIgniteHome()
     {
-        if ( Strings.isNullOrEmpty( igniteConfig.home() ) )
+        if ( Strings.isNullOrEmpty( igniteSettings.home() ) )
         {
             return HomeDir.get().toFile().getPath();
         }
 
-        return new File( this.igniteConfig.home() ).getPath();
+        return new File( this.igniteSettings.home() ).getPath();
     }
 
     public static Builder create()

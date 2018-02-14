@@ -25,8 +25,23 @@ public class ConfigurationFactoryTest
         throws Exception
     {
         System.setProperty( "xp.home", Paths.get( "my", "xp", "home" ).toString() );
-        this.igniteSettings = Mockito.mock( IgniteSettings.class );
         this.bundleContext = Mockito.mock( BundleContext.class );
+
+        this.igniteSettings = Mockito.mock( IgniteSettings.class );
+        Mockito.when( this.igniteSettings.metrics_log_frequency() ).thenReturn( 0 );
+        Mockito.when( this.igniteSettings.connector_enabled() ).thenReturn( false );
+        Mockito.when( this.igniteSettings.odbc_enabled() ).thenReturn( false );
+        Mockito.when( this.igniteSettings.discovery_tcp_ipFinder() ).thenReturn( "staticIP" );
+        Mockito.when( this.igniteSettings.discovery_tcp_localAddress() ).thenReturn( "localhost" );
+        Mockito.when( this.igniteSettings.discovery_tcp_port() ).thenReturn( 47500 );
+        Mockito.when( this.igniteSettings.discovery_tcp_port_range() ).thenReturn( 0 );
+        Mockito.when( this.igniteSettings.discovery_tcp_reconnect() ).thenReturn( 2 );
+        Mockito.when( this.igniteSettings.discovery_tcp_network_timeout() ).thenReturn( 5000L );
+        Mockito.when( this.igniteSettings.discovery_tcp_socket_timeout() ).thenReturn( 2000L );
+        Mockito.when( this.igniteSettings.discovery_tcp_ack_timeout() ).thenReturn( 2000L );
+        Mockito.when( this.igniteSettings.discovery_tcp_join_timeout() ).thenReturn( 0L );
+        Mockito.when( this.igniteSettings.discovery_tcp_stat_printFreq() ).thenReturn( 0 );
+        Mockito.when( this.igniteSettings.off_heap_max_size() ).thenReturn( "512mb" );
     }
 
     @Test

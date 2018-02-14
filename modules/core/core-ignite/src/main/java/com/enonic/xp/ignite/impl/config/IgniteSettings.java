@@ -31,4 +31,6 @@ public @interface IgniteSettings
     long discovery_tcp_join_timeout() default 0L;
 
     int discovery_tcp_stat_printFreq() default 0;
+
+    String off_heap_max_size() default "512MB";
 }
