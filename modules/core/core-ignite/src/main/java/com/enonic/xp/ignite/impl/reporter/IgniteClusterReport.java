@@ -2,7 +2,6 @@ package com.enonic.xp.ignite.impl.reporter;
 
 import java.util.Collection;
 
-import org.apache.ignite.DataRegionMetrics;
 import org.apache.ignite.IgniteCluster;
 import org.apache.ignite.cluster.ClusterNode;
 
@@ -24,11 +23,10 @@ class IgniteClusterReport
     JsonNode toJson()
     {
         final ObjectNode json = JsonNodeFactory.instance.objectNode();
-        json.set( "nodes", createClusterNodesNode( this.cluster.nodes() ) );
-        json.set( "local", createClusterNodeNode( this.cluster.localNode() ) );
+        json.set( "members", createClusterNodesNode( this.cluster.nodes() ) );
+        json.set( "localNode", createLocalNode( this.cluster.localNode(), this.cluster.nodes().size() ) );
         return json;
     }
-
 
     private ArrayNode createClusterNodesNode( final Collection<ClusterNode> nodes )
     {
@@ -41,11 +39,22 @@ class IgniteClusterReport
         return clusterNodes;
     }
 
+    private JsonNode createLocalNode( final ClusterNode n, final int size )
+    {
+        ObjectNode clusterNode = JsonNodeFactory.instance.objectNode();
+        clusterNode.put( "id", n.id().toString() );
+        clusterNode.put( "numberOfNodesSeen", size );
+        return clusterNode;
+    }
+
     private JsonNode createClusterNodeNode( final ClusterNode n )
     {
         ObjectNode clusterNode = JsonNodeFactory.instance.objectNode();
         clusterNode.put( "id", n.id().toString() );
         clusterNode.put( "local", n.isLocal() );
+        clusterNode.put( "isClient", n.isClient() );
+        clusterNode.put( "isDeamon", n.isDaemon() );
+        clusterNode.put( "order", n.order() );
         clusterNode.set( "addresses", createStringArrayNode( n.addresses() ) );
         clusterNode.set( "hostNames", createStringArrayNode( n.hostNames() ) );
         return clusterNode;
@@ -66,18 +75,10 @@ class IgniteClusterReport
 
     static final class Builder
     {
-        private Collection<DataRegionMetrics> regionMetrics;
-
         private IgniteCluster cluster;
 
         private Builder()
         {
-        }
-
-        Builder regionMetrics( final Collection<DataRegionMetrics> val )
-        {
-            regionMetrics = val;
-            return this;
         }
 
         Builder cluster( final IgniteCluster val )

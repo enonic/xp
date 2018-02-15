@@ -6,13 +6,13 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-final class ClusterReport
+final class ElasticsearchClusterReport
 {
     private final ClusterState clusterState;
 
     private final ClusterHealth clusterHealth;
 
-    private ClusterReport( final Builder builder )
+    private ElasticsearchClusterReport( final Builder builder )
     {
         this.clusterState = builder.clusterState;
         this.clusterHealth = builder.clusterHealth;
@@ -74,7 +74,7 @@ final class ClusterReport
         return json;
     }
 
-    static ClusterReport.Builder create()
+    static ElasticsearchClusterReport.Builder create()
     {
         return new Builder();
     }
@@ -101,9 +101,9 @@ final class ClusterReport
             return this;
         }
 
-        ClusterReport build()
+        ElasticsearchClusterReport build()
         {
-            return new ClusterReport( this );
+            return new ElasticsearchClusterReport( this );
         }
 
 
