@@ -6,8 +6,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.xp.status.JsonStatusReporter;
 import com.enonic.xp.status.StatusReporter;
@@ -26,22 +24,10 @@ public class WebSessionReporter
     {
         final IgniteCache<Object, Object> cache = this.ignite.cache( WEB_SESSION_CACHE );
 
-        if ( cache == null )
-        {
-            return createEmptyReport();
-        }
-
         return WebSessionReport.create().
             cache( cache ).
             build().
             toJson();
-    }
-
-    private ObjectNode createEmptyReport()
-    {
-        final ObjectNode jsonNodes = JsonNodeFactory.instance.objectNode();
-        jsonNodes.put( "status", "no cache found" );
-        return jsonNodes;
     }
 
     @Override

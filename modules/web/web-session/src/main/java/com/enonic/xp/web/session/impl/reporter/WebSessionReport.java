@@ -20,6 +20,12 @@ class WebSessionReport
     JsonNode toJson()
     {
         final ObjectNode node = JsonNodeFactory.instance.objectNode();
+
+        if ( cache == null )
+        {
+            return node;
+        }
+
         node.set( "cache", getCacheInfo() );
         return node;
     }
