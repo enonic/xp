@@ -20,7 +20,7 @@ public class ClusterManagerReporter
     public JsonNode getReport()
     {
         return ClusterManagerReport.create().
-            clusters( clusterManager.getInstances() ).
+            clusters( clusterManager.getClusters() ).
             clusterState( clusterManager.getClusterState() ).
             build().
             toJson();
@@ -32,6 +32,7 @@ public class ClusterManagerReporter
         return "cluster.manager";
     }
 
+    @SuppressWarnings("WeakerAccess")
     @Reference
     public void setClusterManager( final ClusterManager clusterManager )
     {

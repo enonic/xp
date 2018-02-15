@@ -4,5 +4,5 @@ public interface ClusterManager
 {
     ClusterState getClusterState();
 
-    Clusters getInstances();
+    Clusters getClusters();
 }

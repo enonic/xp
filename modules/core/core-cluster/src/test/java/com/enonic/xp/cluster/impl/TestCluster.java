@@ -5,7 +5,7 @@ import com.enonic.xp.cluster.ClusterHealth;
 import com.enonic.xp.cluster.ClusterId;
 import com.enonic.xp.cluster.ClusterNodes;
 
-class TestCluster
+public class TestCluster
     implements Cluster
 {
     private final ClusterId id;
@@ -29,17 +29,17 @@ class TestCluster
         return active;
     }
 
-    static Builder create()
+    public static Builder create()
     {
         return new Builder();
     }
 
-    void setHealth( final ClusterHealth health )
+    public void setHealth( final ClusterHealth health )
     {
         this.health = health;
     }
 
-    void setNodes( final ClusterNodes nodes )
+    public void setNodes( final ClusterNodes nodes )
     {
         this.nodes = nodes;
     }

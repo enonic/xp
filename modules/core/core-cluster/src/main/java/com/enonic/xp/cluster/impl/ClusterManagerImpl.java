@@ -61,7 +61,7 @@ public class ClusterManagerImpl
     }
 
     @Override
-    public Clusters getInstances()
+    public Clusters getClusters()
     {
         return this.instances;
     }
@@ -193,6 +193,7 @@ public class ClusterManagerImpl
     }
 
 
+    @SuppressWarnings("unused")
     @Deactivate
     public void deactivate()
     {
