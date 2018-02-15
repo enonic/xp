@@ -13,7 +13,7 @@ import com.google.common.collect.Lists;
 
 import com.enonic.xp.support.JsonTestHelper;
 
-public class IgniteClusterReporterTest
+public class IgniteClusterReportTest
 {
 
     private IgniteCluster igniteCluster;

@@ -14,4 +14,6 @@ public @interface WebSessionConfig
 
     int cache_replicas() default 1;
 
+    boolean cache_stats_enabled() default true;
+
 }

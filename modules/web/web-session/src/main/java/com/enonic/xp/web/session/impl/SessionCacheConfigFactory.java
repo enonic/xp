@@ -8,14 +8,14 @@ import org.apache.ignite.configuration.CacheConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SessionCacheConfigFactory
+class SessionCacheConfigFactory
 {
 
     private static final String CACHE_NAME = "webSessionCache";
 
     private final static Logger LOG = LoggerFactory.getLogger( SessionCacheConfigFactory.class );
 
-    public static CacheConfiguration<Object, Object> create( final String cacheName, final WebSessionConfig config )
+    static CacheConfiguration<Object, Object> create( final String cacheName, final WebSessionConfig config )
     {
         final CacheConfiguration<Object, Object> cacheConfig = new CacheConfiguration<>();
 
@@ -23,8 +23,8 @@ public class SessionCacheConfigFactory
         cacheConfig.setWriteSynchronizationMode( getWriteSyncMode( config.write_sync_mode() ) );
         cacheConfig.setOnheapCacheEnabled( true );
         cacheConfig.setName( cacheName );
-        //setEvictionPolicy( config, cacheConfig );
         setCacheMode( config, cacheConfig );
+        cacheConfig.setStatisticsEnabled( config.cache_stats_enabled() );
         return cacheConfig;
     }
 

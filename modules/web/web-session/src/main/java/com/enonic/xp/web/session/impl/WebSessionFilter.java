@@ -26,7 +26,7 @@ import static org.apache.ignite.cache.websession.WebSessionFilter.WEB_SES_NAME_P
 public class WebSessionFilter
     extends OncePerRequestFilter
 {
-    private static final String CACHE_NAME = "webSessionCache";
+    public static final String WEB_SESSION_CACHE = "com.enonic.xp.webSessionCache";
 
     private WebSessionConfig config;
 
@@ -48,11 +48,11 @@ public class WebSessionFilter
     {
         super.init( config );
 
-        this.ignite.getOrCreateCache( SessionCacheConfigFactory.create( CACHE_NAME, this.config ) );
+        this.ignite.getOrCreateCache( SessionCacheConfigFactory.create( WEB_SESSION_CACHE, this.config ) );
 
         final FilterConfigImpl mergedConfig = new FilterConfigImpl( config );
         mergedConfig.populate( this.config );
-        mergedConfig.populate( WEB_SES_CACHE_NAME_PARAM, CACHE_NAME );
+        mergedConfig.populate( WEB_SES_CACHE_NAME_PARAM, WEB_SESSION_CACHE );
         mergedConfig.populate( WEB_SES_NAME_PARAM, this.ignite.name() );
         // This cannot be true atm since the classloader will fail to find the class
         // because the WebSessionV2 uses context classloader to fetch class instead
