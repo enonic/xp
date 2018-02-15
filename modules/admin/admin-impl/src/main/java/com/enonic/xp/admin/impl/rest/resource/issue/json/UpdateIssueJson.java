@@ -43,8 +43,7 @@ public class UpdateIssueJson
         this.title = title;
         this.description = description;
         this.issueStatus = status != null ? IssueStatus.valueOf( status.trim().toUpperCase() ) : null;
-        this.approverIds =
-            approverIds != null ? approverIds.stream().map( str -> PrincipalKey.from( str ) ).collect( Collectors.toList() ) : null;
+        this.approverIds = approverIds != null ? approverIds.stream().map( PrincipalKey::from ).collect( Collectors.toList() ) : null;
         this.publishRequest = publishRequest != null ? publishRequest.toRequest() : null;
     }
 

@@ -3,6 +3,7 @@ package com.enonic.xp.admin.impl.rest.resource.issue;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
@@ -18,32 +19,49 @@ import javax.ws.rs.core.MediaType;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.net.HttpHeaders;
 
+import com.enonic.xp.admin.impl.json.issue.DeleteIssueCommentResultJson;
+import com.enonic.xp.admin.impl.json.issue.IssueCommentJson;
+import com.enonic.xp.admin.impl.json.issue.IssueCommentListJson;
 import com.enonic.xp.admin.impl.json.issue.IssueJson;
 import com.enonic.xp.admin.impl.json.issue.IssueListJson;
 import com.enonic.xp.admin.impl.json.issue.IssueStatsJson;
 import com.enonic.xp.admin.impl.json.issue.IssuesJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
+import com.enonic.xp.admin.impl.rest.resource.issue.json.CreateIssueCommentJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.CreateIssueJson;
+import com.enonic.xp.admin.impl.rest.resource.issue.json.DeleteIssueCommentJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.GetIssuesJson;
+import com.enonic.xp.admin.impl.rest.resource.issue.json.ListIssueCommentsJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.ListIssuesJson;
+import com.enonic.xp.admin.impl.rest.resource.issue.json.UpdateIssueCommentJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.UpdateIssueJson;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.issue.CreateIssueCommentParams;
 import com.enonic.xp.issue.CreateIssueParams;
+import com.enonic.xp.issue.DeleteIssueCommentParams;
+import com.enonic.xp.issue.DeleteIssueCommentResult;
+import com.enonic.xp.issue.FindIssueCommentsResult;
 import com.enonic.xp.issue.FindIssuesParams;
 import com.enonic.xp.issue.FindIssuesResult;
 import com.enonic.xp.issue.Issue;
+import com.enonic.xp.issue.IssueComment;
+import com.enonic.xp.issue.IssueCommentQuery;
 import com.enonic.xp.issue.IssueId;
 import com.enonic.xp.issue.IssueQuery;
 import com.enonic.xp.issue.IssueService;
 import com.enonic.xp.issue.IssueStatus;
+import com.enonic.xp.issue.UpdateIssueCommentParams;
 import com.enonic.xp.issue.UpdateIssueParams;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.PrincipalNotFoundException;
 import com.enonic.xp.security.Principals;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
@@ -69,7 +87,25 @@ public final class IssueResource
     public IssueJson create( final CreateIssueJson json, @Context HttpServletRequest request )
     {
         final Issue issue = issueService.create( generateCreateIssueParams( json ) );
-        issueNotificationsSender.notifyIssueCreated( issue, request.getHeader( HttpHeaders.REFERER ) );
+        final List<IssueComment> comments = Lists.newArrayList();
+
+        if ( !Strings.isNullOrEmpty( json.description ) )
+        {
+            Optional<User> creator = securityService.getUser( issue.getCreator() );
+            if ( creator.isPresent() )
+            {
+                CreateIssueCommentParams params = CreateIssueCommentParams.create().
+                    issue( issue.getId() ).
+                    creator( issue.getCreator() ).
+                    creatorDisplayName( creator.get().getDisplayName() ).
+                    text( json.description ).
+                    build();
+
+                comments.add( issueService.createComment( params ) );
+            }
+        }
+
+        issueNotificationsSender.notifyIssueCreated( issue, comments, request.getHeader( HttpHeaders.REFERER ) );
 
         return new IssueJson( issue );
     }
@@ -103,13 +139,17 @@ public final class IssueResource
 
         if ( !params.autoSave )
         {
+            IssueCommentQuery query = IssueCommentQuery.create().issue( issue.getId() ).build();
+            final FindIssueCommentsResult results = issueService.findComments( query );
+
             if ( params.isPublish )
             {
-                issueNotificationsSender.notifyIssuePublished( issue, request.getHeader( HttpHeaders.REFERER ) );
+                issueNotificationsSender.notifyIssuePublished( issue, results.getIssueComments(),
+                                                               request.getHeader( HttpHeaders.REFERER ) );
             }
             else
             {
-                issueNotificationsSender.notifyIssueUpdated( issue, request.getHeader( HttpHeaders.REFERER ) );
+                issueNotificationsSender.notifyIssueUpdated( issue, results.getIssueComments(), request.getHeader( HttpHeaders.REFERER ) );
             }
         }
 
@@ -121,6 +161,73 @@ public final class IssueResource
     public IssueStatsJson getStats()
     {
         return countIssues();
+    }
+
+    @POST
+    @Path("comment")
+    public IssueCommentJson comment( final CreateIssueCommentJson json, @Context HttpServletRequest request )
+    {
+        final Issue issue = issueService.getIssue( json.issueId );
+        final Optional<User> creator = securityService.getUser( json.creator );
+
+        if ( !creator.isPresent() )
+        {
+            throw new PrincipalNotFoundException( json.creator );
+        }
+
+        CreateIssueCommentParams params = CreateIssueCommentParams.create().
+            issue( issue.getId() ).
+            text( json.text ).
+            creator( creator.get().getKey() ).
+            creatorDisplayName( creator.get().getDisplayName() ).
+            build();
+
+        final IssueComment comment = issueService.createComment( params );
+
+        final IssueCommentQuery commentsQuery = IssueCommentQuery.create().issue( issue.getId() ).build();
+        final FindIssueCommentsResult results = issueService.findComments( commentsQuery );
+
+        issueNotificationsSender.notifyIssueCommented( issue, results.getIssueComments(), request.getHeader( HttpHeaders.REFERER ) );
+
+        return new IssueCommentJson( comment );
+    }
+
+    @POST
+    @Path("comment/list")
+    public IssueCommentListJson listComments( final ListIssueCommentsJson params )
+    {
+        final IssueCommentQuery issueQuery = createIssueCommentQuery( params );
+        final FindIssueCommentsResult result = this.issueService.findComments( issueQuery );
+        final IssueListMetaData metaData = IssueListMetaData.create().hits( result.getHits() ).totalHits( result.getTotalHits() ).build();
+
+        return new IssueCommentListJson( result.getIssueComments(), metaData );
+    }
+
+    @POST
+    @Path("comment/delete")
+    public DeleteIssueCommentResultJson deleteComment( final DeleteIssueCommentJson json )
+    {
+        DeleteIssueCommentParams params = DeleteIssueCommentParams.create().
+            comment( json.getComment() ).
+            build();
+
+        final DeleteIssueCommentResult result = this.issueService.deleteComment( params );
+
+        return new DeleteIssueCommentResultJson( result );
+    }
+
+    @POST
+    @Path("comment/update")
+    public IssueCommentJson updateComment( final UpdateIssueCommentJson json )
+    {
+        UpdateIssueCommentParams params = UpdateIssueCommentParams.create().
+            comment( json.getComment() ).
+            text( json.getText() ).
+            build();
+
+        final IssueComment result = this.issueService.updateComment( params );
+
+        return new IssueCommentJson( result );
     }
 
     @POST
@@ -139,6 +246,17 @@ public final class IssueResource
         {
             return new IssueListJson( result.getIssues(), metaData );
         }
+    }
+
+    private IssueCommentQuery createIssueCommentQuery( final ListIssueCommentsJson params )
+    {
+        return IssueCommentQuery.create().
+            issue( params.getIssue() ).
+            creator( params.getCreator() ).
+            from( params.getFrom() ).
+            size( params.getSize() ).
+            count( params.isCount() ).
+            build();
     }
 
     private IssueQuery createIssueQuery( final FindIssuesParams params )

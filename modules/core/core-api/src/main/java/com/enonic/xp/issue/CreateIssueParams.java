@@ -22,7 +22,7 @@ public final class CreateIssueParams
         this.title = builder.title;
         this.description = builder.description;
         this.issueStatus = builder.issueStatus;
-        this.approverIds = builder.approverIds ;
+        this.approverIds = builder.approverIds;
         this.publishRequest = builder.publishRequest;
     }
 

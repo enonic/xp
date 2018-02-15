@@ -1,0 +1,15 @@
+{
+  "issueComments": [
+    {
+      "createdTime": "${createdTime}",
+      "creatorDisplayName": "Anonymous",
+      "creatorKey": "user:system:anonymous",
+      "id": "${id}",
+      "text": "Comment text one"
+    }
+  ],
+  "metadata": {
+    "hits": 1,
+    "totalHits": 10
+  }
+}
