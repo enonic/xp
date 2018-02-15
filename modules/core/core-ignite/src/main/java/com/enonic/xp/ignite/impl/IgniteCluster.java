@@ -56,6 +56,9 @@ public class IgniteCluster
         final ClassLoader classLoader = igniteConfig.getClassLoader();
 
         this.ignite = Ignition.start( igniteConfig );
+
+        // Register admin-client to use in e.g reporting
+        context.registerService( IgniteAdminClient.class, new IgniteAdminClientImpl( this.ignite ), new Hashtable<>() );
     }
 
     @SuppressWarnings("unused")
