@@ -118,6 +118,7 @@ public class IssueResourceTest
         Mockito.verify( issueService, Mockito.times( 1 ) ).createComment( Mockito.any( CreateIssueCommentParams.class ) );
         Mockito.verify( issueNotificationsSender, Mockito.times( 1 ) ).notifyIssueCreated( Mockito.eq( issue ),
                                                                                            Mockito.eq( Lists.newArrayList( comment ) ),
+                                                                                           Mockito.any( PrincipalKeys.class ),
                                                                                            Mockito.anyString() );
 
         assertEquals( "desc", commentCaptor.getValue().getText() );
@@ -147,6 +148,7 @@ public class IssueResourceTest
         Mockito.verify( issueService, Mockito.never() ).createComment( Mockito.any( CreateIssueCommentParams.class ) );
         Mockito.verify( issueNotificationsSender, Mockito.times( 1 ) ).notifyIssueCreated( Mockito.eq( issue ),
                                                                                            Mockito.eq( Lists.newArrayList() ),
+                                                                                           Mockito.any( PrincipalKeys.class ),
                                                                                            Mockito.anyString() );
     }
 
@@ -306,6 +308,7 @@ public class IssueResourceTest
         Mockito.verify( issueService, Mockito.times( 1 ) ).update( Mockito.any( UpdateIssueParams.class ) );
         Mockito.verify( issueNotificationsSender, Mockito.times( 1 ) ).notifyIssueUpdated( Mockito.any( Issue.class ),
                                                                                            Mockito.anyListOf( IssueComment.class ),
+                                                                                           Mockito.any( PrincipalKeys.class ),
                                                                                            Mockito.anyString() );
     }
 
@@ -328,6 +331,7 @@ public class IssueResourceTest
         Mockito.verify( issueService, Mockito.times( 1 ) ).update( Mockito.any( UpdateIssueParams.class ) );
         Mockito.verify( issueNotificationsSender, Mockito.times( 1 ) ).notifyIssuePublished( Mockito.any( Issue.class ),
                                                                                              Mockito.anyListOf( IssueComment.class ),
+                                                                                             Mockito.any( PrincipalKeys.class ),
                                                                                              Mockito.anyString() );
     }
 
@@ -350,9 +354,11 @@ public class IssueResourceTest
         Mockito.verify( issueService, Mockito.times( 1 ) ).update( Mockito.any( UpdateIssueParams.class ) );
         Mockito.verify( issueNotificationsSender, Mockito.times( 0 ) ).notifyIssueUpdated( Mockito.any( Issue.class ),
                                                                                            Mockito.anyListOf( IssueComment.class ),
+                                                                                           Mockito.any( PrincipalKeys.class ),
                                                                                            Mockito.anyString() );
         Mockito.verify( issueNotificationsSender, Mockito.times( 0 ) ).notifyIssuePublished( Mockito.any( Issue.class ),
                                                                                              Mockito.anyListOf( IssueComment.class ),
+                                                                                             Mockito.any( PrincipalKeys.class ),
                                                                                              Mockito.anyString() );
     }
 
@@ -378,6 +384,7 @@ public class IssueResourceTest
         Mockito.verify( issueService, Mockito.times( 1 ) ).createComment( Mockito.any( CreateIssueCommentParams.class ) );
         Mockito.verify( issueNotificationsSender, Mockito.times( 1 ) ).notifyIssueCommented( Mockito.any( Issue.class ),
                                                                                              Mockito.anyListOf( IssueComment.class ),
+                                                                                             Mockito.any( PrincipalKeys.class ),
                                                                                              Mockito.anyString() );
     }
 
@@ -498,11 +505,20 @@ public class IssueResourceTest
 
     private Issue createIssue()
     {
-        return Issue.create().addApproverId( PrincipalKey.from( "user:system:anonymous" ) ).
+        return Issue.create().
+            addApproverId( PrincipalKey.from( "user:system:anonymous" ) ).
             title( "title" ).
-            description( "desc" ).creator( User.ANONYMOUS.getKey() ).modifier( User.ANONYMOUS.getKey() ).
-            setPublishRequest( PublishRequest.create().addExcludeId( ContentId.from( "exclude-id" ) ).addItem(
-                PublishRequestItem.create().id( ContentId.from( "content-id" ) ).includeChildren( true ).build() ).build() ).build();
+            description( "desc" ).
+            creator( User.ANONYMOUS.getKey() ).
+            modifier( User.ANONYMOUS.getKey() ).
+            setPublishRequest( PublishRequest.create().
+                addExcludeId( ContentId.from( "exclude-id" ) ).
+                addItem( PublishRequestItem.create().
+                    id( ContentId.from( "content-id" ) ).
+                    includeChildren( true ).
+                    build() ).
+                build() ).
+            build();
 
     }
 

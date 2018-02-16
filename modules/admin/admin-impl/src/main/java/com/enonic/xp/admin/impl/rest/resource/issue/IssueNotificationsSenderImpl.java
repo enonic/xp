@@ -35,6 +35,7 @@ import com.enonic.xp.issue.PublishRequestItem;
 import com.enonic.xp.mail.MailMessage;
 import com.enonic.xp.mail.MailService;
 import com.enonic.xp.schema.content.ContentTypeService;
+import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
 
@@ -66,9 +67,9 @@ public class IssueNotificationsSenderImpl
         this.sendMailExecutor = Executors.newCachedThreadPool( threadFactory );
     }
 
-    public void notifyIssueCreated( final Issue issue, final List<IssueComment> comments, final String url )
+    public void notifyIssueCreated( final Issue issue, final List<IssueComment> comments, final PrincipalKeys recipients, final String url )
     {
-        final IssueMailMessageParams params = createMessageParams( issue, comments, url );
+        final IssueMailMessageParams params = createMessageParams( issue, comments, recipients, url );
 
         if ( isRecipientsPresent( params ) )
         {
@@ -77,11 +78,11 @@ public class IssueNotificationsSenderImpl
         }
     }
 
-    public void notifyIssuePublished( final Issue issue, List<IssueComment> comments, final String url )
+    public void notifyIssuePublished( final Issue issue, List<IssueComment> comments, final PrincipalKeys recipients, final String url )
     {
         final User publisher = getCurrentUser();
         final IssuePublishedMailMessageParams params =
-            IssuePublishedMailMessageParams.create( publisher, createMessageParams( issue, comments, url ) ).build();
+            IssuePublishedMailMessageParams.create( publisher, createMessageParams( issue, comments, recipients, url ) ).build();
 
         if ( isRecipientsPresent( params ) )
         {
@@ -90,11 +91,11 @@ public class IssueNotificationsSenderImpl
         }
     }
 
-    public void notifyIssueUpdated( final Issue issue, List<IssueComment> comments, final String url )
+    public void notifyIssueUpdated( final Issue issue, List<IssueComment> comments, final PrincipalKeys recipients, final String url )
     {
         final User modifier = getCurrentUser();
         final IssueUpdatedMailMessageParams params =
-            IssueUpdatedMailMessageParams.create( modifier, createMessageParams( issue, comments, url ) ).build();
+            IssueUpdatedMailMessageParams.create( modifier, createMessageParams( issue, comments, recipients, url ) ).build();
 
         if ( isRecipientsPresent( params ) )
         {
@@ -103,11 +104,11 @@ public class IssueNotificationsSenderImpl
         }
     }
 
-    public void notifyIssueCommented( final Issue issue, List<IssueComment> comments, final String url )
+    public void notifyIssueCommented( final Issue issue, List<IssueComment> comments, final PrincipalKeys recipients, final String url )
     {
         final User modifier = getCurrentUser();
         final IssueCommentedMailMessageParams params =
-            IssueCommentedMailMessageParams.create( modifier, createMessageParams( issue, comments, url ) ).build();
+            IssueCommentedMailMessageParams.create( modifier, createMessageParams( issue, comments, recipients, url ) ).build();
 
         if ( isRecipientsPresent( params ) )
         {
@@ -116,7 +117,8 @@ public class IssueNotificationsSenderImpl
         }
     }
 
-    private IssueMailMessageParams createMessageParams( final Issue issue, List<IssueComment> comments, final String url )
+    private IssueMailMessageParams createMessageParams( final Issue issue, List<IssueComment> comments, final PrincipalKeys recipients,
+                                                        final String url )
     {
         final User creator = securityService.getUser( issue.getCreator() ).orElse( null );
         final ContentIds contentIds = ContentIds.from(
@@ -124,9 +126,11 @@ public class IssueNotificationsSenderImpl
         final Contents contents = contentService.getByIds( new GetContentByIdsParams( contentIds ) );
         final CompareContentResults compareResults =
             contentService.compare( new CompareContentsParams( contentIds, ContentConstants.BRANCH_MASTER ) );
-        final List<User> approvers =
-            issue.getApproverIds().stream().map( principalKey -> securityService.getUser( principalKey ).orElse( null ) ).filter(
-                Objects::nonNull ).collect( Collectors.toList() );
+        final List<User> approvers = ( recipients != null ? recipients : issue.getApproverIds() ).
+            stream().
+            map( principalKey -> securityService.getUser( principalKey ).orElse( null ) ).
+            filter( Objects::nonNull ).
+            collect( Collectors.toList() );
         final Map<ContentId, String> icons = getIcons( contents );
 
         return IssueMailMessageParams.create().

@@ -1,5 +1,6 @@
 package com.enonic.xp.admin.impl.rest.resource.issue;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -105,7 +106,7 @@ public final class IssueResource
             }
         }
 
-        issueNotificationsSender.notifyIssueCreated( issue, comments, request.getHeader( HttpHeaders.REFERER ) );
+        issueNotificationsSender.notifyIssueCreated( issue, comments, null, request.getHeader( HttpHeaders.REFERER ) );
 
         return new IssueJson( issue );
     }
@@ -135,21 +136,29 @@ public final class IssueResource
     @Path("update")
     public IssueJson update( final UpdateIssueJson params, @Context HttpServletRequest request )
     {
-        final Issue issue = issueService.update( generateUpdateIssueParams( params ) );
+        ArrayList<PrincipalKey> addedAssignees = Lists.newArrayList();
+        ArrayList<PrincipalKey> existingAssignees = Lists.newArrayList();
+        final Issue issue = issueService.update( generateUpdateIssueParams( params, addedAssignees, existingAssignees ) );
+
+        IssueCommentQuery query = IssueCommentQuery.create().issue( issue.getId() ).build();
+        final List<IssueComment> comments = issueService.findComments( query ).getIssueComments();
+        final String referer = request.getHeader( HttpHeaders.REFERER );
+
+        if ( addedAssignees.size() > 0 )
+        {
+            issueNotificationsSender.notifyIssueCreated( issue, comments, PrincipalKeys.from( addedAssignees ), referer );
+        }
 
         if ( !params.autoSave )
         {
-            IssueCommentQuery query = IssueCommentQuery.create().issue( issue.getId() ).build();
-            final FindIssueCommentsResult results = issueService.findComments( query );
-
             if ( params.isPublish )
             {
-                issueNotificationsSender.notifyIssuePublished( issue, results.getIssueComments(),
-                                                               request.getHeader( HttpHeaders.REFERER ) );
+                issueNotificationsSender.notifyIssuePublished( issue, comments, null, request.getHeader( HttpHeaders.REFERER ) );
             }
             else
             {
-                issueNotificationsSender.notifyIssueUpdated( issue, results.getIssueComments(), request.getHeader( HttpHeaders.REFERER ) );
+                issueNotificationsSender.notifyIssueUpdated( issue, comments, PrincipalKeys.from( existingAssignees ),
+                                                             request.getHeader( HttpHeaders.REFERER ) );
             }
         }
 
@@ -187,7 +196,7 @@ public final class IssueResource
         final IssueCommentQuery commentsQuery = IssueCommentQuery.create().issue( issue.getId() ).build();
         final FindIssueCommentsResult results = issueService.findComments( commentsQuery );
 
-        issueNotificationsSender.notifyIssueCommented( issue, results.getIssueComments(), request.getHeader( HttpHeaders.REFERER ) );
+        issueNotificationsSender.notifyIssueCommented( issue, results.getIssueComments(), null, request.getHeader( HttpHeaders.REFERER ) );
 
         return new IssueCommentJson( comment );
     }
@@ -334,9 +343,9 @@ public final class IssueResource
         return builder.build();
     }
 
-    private UpdateIssueParams generateUpdateIssueParams( final UpdateIssueJson json )
+    private UpdateIssueParams generateUpdateIssueParams( final UpdateIssueJson json, final ArrayList<PrincipalKey> added,
+                                                         final ArrayList<PrincipalKey> existing )
     {
-
         return UpdateIssueParams.create().
             id( json.issueId ).
             editor( editMe -> {
@@ -354,7 +363,25 @@ public final class IssueResource
                 }
                 if ( json.approverIds != null )
                 {
-                    editMe.approverIds = filterInvalidAssignees( json.approverIds );
+                    PrincipalKeys validAssignees = filterInvalidAssignees( json.approverIds );
+                    if ( validAssignees.getSize() > 0 )
+                    {
+                        validAssignees.stream().forEach( a -> {
+                            if ( editMe.approverIds.contains( a ) )
+                            {
+                                existing.add( a );
+                            }
+                            else
+                            {
+                                added.add( a );
+                            }
+                        } );
+                    }
+                    else
+                    {
+                        existing.addAll( editMe.approverIds.getSet() );
+                    }
+                    editMe.approverIds = validAssignees;
                 }
                 if ( json.publishRequest != null )
                 {
