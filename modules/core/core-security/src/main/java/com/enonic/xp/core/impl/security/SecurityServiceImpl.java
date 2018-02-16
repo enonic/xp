@@ -683,9 +683,9 @@ public final class SecurityServiceImpl
     public User createUser( final CreateUserParams createUser )
     {
         final Lock lock = userEmailLocks.get( userStoreEmailKey( createUser.getKey(), createUser.getEmail() ) );
+        lock.lock();
         try
         {
-            lock.lock();
             duplicateEmailValidation( createUser.getKey(), createUser.getEmail() );
             return doCreateUser( createUser );
         }
@@ -726,9 +726,9 @@ public final class SecurityServiceImpl
     {
         final String key = userStoreEmailKey( updateUserParams.getKey(), updateUserParams.getEmail() );
         final Lock lock = userEmailLocks.get( key );
+        lock.lock();
         try
         {
-            lock.lock();
             return doUpdateUser( updateUserParams );
         }
         finally
