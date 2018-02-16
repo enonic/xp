@@ -88,6 +88,7 @@ function MultiRepoConnection(multiRepoConnection) {
  * @param {string} [params._parentPath] Path to place content under.
  * @param {object} [params._indexConfig] How the document should be indexed. A default value "byType" will be set if no value specified.
  * @param {object} [params._permissions] The access control list for the node. By default the creator will have full access
+ * @param {boolean} [params._inheritsPermissions] true if the permissions should be inherited from the node parent. Default is false.
  * @param {number} [params._manualOrderValue] Value used to order document when ordering by parent and child-order is set to manual
  * @param {string} [params._childOrder] Default ordering of children when doing getChildren if no order is given in query
  *
