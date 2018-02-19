@@ -5,6 +5,8 @@ import com.enonic.xp.region.ComponentType;
 
 final class LiveEditAttributeInjection
 {
+    private final static char BYTE_ORDER_MARK = '\uFEFF';
+
     public LiveEditAttributeInjection()
     {
     }
@@ -19,6 +21,7 @@ final class LiveEditAttributeInjection
 
         final String responseHtml = (String) bodyObj;
         int p = 0;
+        p = skipByteOrderMark( responseHtml, p );
         p = skipXmlDeclaration( responseHtml, p );
         p = skipDocType( responseHtml, p );
         p = skipComments( responseHtml, p );
@@ -57,6 +60,16 @@ final class LiveEditAttributeInjection
             return PortalResponse.create( response ).body( injectedHtml ).build();
         }
         return response;
+    }
+
+    private int skipByteOrderMark( final String responseHtml, final int initialPosition )
+    {
+        char ch = responseHtml.charAt( initialPosition );
+        if ( ch == BYTE_ORDER_MARK )
+        {
+            return initialPosition + 1;
+        }
+        return initialPosition;
     }
 
     private int skipXmlDeclaration( final String responseHtml, final int initialPosition )
