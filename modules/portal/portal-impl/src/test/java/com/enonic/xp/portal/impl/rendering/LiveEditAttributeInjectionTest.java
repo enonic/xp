@@ -186,7 +186,7 @@ public class LiveEditAttributeInjectionTest
             liveEditAttributeInjection.injectLiveEditAttribute( responseBuilder.build(), TextComponentType.INSTANCE );
 
         final String outputHtml = portalResponse.getBody().toString();
-        final String expectedResult = readResource( "part1Rendered.html" );
+        final String expectedResult = readResource( "part1RenderedBom.html" );
 
         assertEquals( expectedResult, outputHtml );
     }
