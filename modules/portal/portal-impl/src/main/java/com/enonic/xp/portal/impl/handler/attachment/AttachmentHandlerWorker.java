@@ -15,6 +15,8 @@ import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.Permission;
+import com.enonic.xp.web.HttpMethod;
+import com.enonic.xp.web.HttpStatus;
 
 import static com.enonic.xp.web.servlet.ServletRequestUrlHelper.contentDispositionAttachment;
 
@@ -43,6 +45,12 @@ final class AttachmentHandlerWorker
         final Content content = getContent( this.id );
         final Attachment attachment = resolveAttachment( content, this.name );
         final ByteSource binary = resolveBinary( this.id, attachment );
+
+        if ( request.getMethod() == HttpMethod.OPTIONS )
+        {
+            // it will be handled by default OPTIONS handler in BaseWebHandler
+            return PortalResponse.create().status( HttpStatus.METHOD_NOT_ALLOWED ).build();
+        }
 
         final MediaType contentType = MediaType.parse( attachment.getMimeType() );
         final PortalResponse.Builder portalResponse = PortalResponse.create().

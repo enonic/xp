@@ -63,12 +63,12 @@ public abstract class BaseWebHandler
             final HttpMethod method = webRequest.getMethod();
             checkMethodAllowed( method );
 
-            if ( HttpMethod.OPTIONS == method )
+            final WebResponse response = doHandle( webRequest, webResponse, webHandlerChain );
+            if ( HttpMethod.OPTIONS == method && response.getStatus() == HttpStatus.METHOD_NOT_ALLOWED )
             {
-                return handleOptions( webResponse );
+                return handleDefaultOptions();
             }
-
-            return doHandle( webRequest, webResponse, webHandlerChain );
+            return response;
         }
         else
         {
@@ -90,7 +90,7 @@ public abstract class BaseWebHandler
         }
     }
 
-    private WebResponse handleOptions( final WebResponse webResponse )
+    private WebResponse handleDefaultOptions()
     {
         return WebResponse.create().
             status( HttpStatus.OK ).

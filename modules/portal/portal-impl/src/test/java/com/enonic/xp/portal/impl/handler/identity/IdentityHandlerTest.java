@@ -77,6 +77,11 @@ public class IdentityHandlerTest
     public void testOptions()
         throws Exception
     {
+        final AuthControllerService authControllerService = Mockito.mock( AuthControllerService.class );
+        final PortalResponse response = PortalResponse.create().status( HttpStatus.METHOD_NOT_ALLOWED ).build();
+        Mockito.when( authControllerService.execute( Mockito.any() ) ).thenReturn( response );
+        this.handler.setAuthControllerService( authControllerService );
+
         this.request.setMethod( HttpMethod.OPTIONS );
 
         final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );

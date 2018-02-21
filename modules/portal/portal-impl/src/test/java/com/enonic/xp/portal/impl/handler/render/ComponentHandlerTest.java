@@ -77,7 +77,18 @@ public class ComponentHandlerTest
     public void testOptions()
         throws Exception
     {
+        setupContentAndSite();
+        setupTemplates();
+
+        final PortalResponse portalResponse = PortalResponse.create().
+            status( HttpStatus.METHOD_NOT_ALLOWED ).
+            build();
+        setRendererResult( portalResponse );
+
+        Mockito.when( this.postProcessor.processResponseInstructions( Mockito.any(), Mockito.any() ) ).thenReturn( portalResponse );
+
         this.request.setMethod( HttpMethod.OPTIONS );
+        this.request.setEndpointPath( "/_/component/main-region/0" );
 
         final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
         assertNotNull( res );

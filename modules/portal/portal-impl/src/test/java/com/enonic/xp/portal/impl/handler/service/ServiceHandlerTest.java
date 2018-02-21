@@ -124,6 +124,9 @@ public class ServiceHandlerTest
         throws Exception
     {
         this.request.setMethod( HttpMethod.OPTIONS );
+        final PortalResponse portalResponse = PortalResponse.create().status( HttpStatus.METHOD_NOT_ALLOWED ).build();
+        Mockito.when( this.controllerScript.execute( Mockito.anyObject() ) ).thenReturn( portalResponse );
+        this.request.setEndpointPath( "/_/service/demo/test" );
 
         final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
         assertNotNull( res );
@@ -150,7 +153,7 @@ public class ServiceHandlerTest
     }
 
     @Test
-    public void testFordiddenService()
+    public void testForbiddenService()
         throws Exception
     {
         final DescriptorKey serviceDescriptorKey = DescriptorKey.from( "demo:test" );
