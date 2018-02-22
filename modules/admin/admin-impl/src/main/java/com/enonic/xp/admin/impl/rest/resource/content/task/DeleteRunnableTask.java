@@ -75,7 +75,15 @@ public class DeleteRunnableTask
             listener.contentDeleted( 1 );
         }
 
-        progressReporter.info( getMessage( deleted, pending, failed ) );
+        final String message = getMessage( deleted, pending, failed );
+        if ( deleted + pending > 0 )
+        {
+            progressReporter.info( message );
+        }
+        else
+        {
+            throw new RuntimeException( message );
+        }
     }
 
     private String getMessage( final int deleted, final int pending, final int failed )

@@ -41,12 +41,16 @@ public class MoveRunnableTask
 
         final MoveContentProgressListener listener = new MoveContentProgressListener( progressReporter );
 
-        final long childrenIds = ContentQueryWithChildren.create().
-            contentService( this.contentService ).
-            contentsIds( contentToMoveList ).
-            build().
-            find().
-            getTotalHits();
+        long childrenIds = 0;
+        if ( contentToMoveList.getSize() > 0 )
+        {
+            childrenIds = ContentQueryWithChildren.create().
+                contentService( this.contentService ).
+                contentsIds( contentToMoveList ).
+                build().
+                find().
+                getTotalHits();
+        }
         final int contentIds = contentToMoveList.getSize();
 
         listener.setTotal( Math.toIntExact( childrenIds + contentIds ) );
@@ -93,7 +97,16 @@ public class MoveRunnableTask
             }
         }
 
-        progressReporter.info( getMessage( moved, alreadyMoved, existsFailed, notExistsFailed, accessFailed, failed, destination ) );
+        final String message = getMessage( moved, alreadyMoved, existsFailed, notExistsFailed, accessFailed, failed, destination );
+        // if there's at least 1 success, then show it as info, otherwise failure
+        if ( moved.size() + alreadyMoved.size() > 0 )
+        {
+            progressReporter.info( message );
+        }
+        else
+        {
+            throw new RuntimeException( message );
+        }
     }
 
     private String getMessage( final List<String> moved, final List<ContentPath> alreadyMoved, final List<ContentPath> existsFailed,
@@ -102,13 +115,14 @@ public class MoveRunnableTask
     {
         final int total =
             moved.size() + alreadyMoved.size() + existsFailed.size() + notExistsFailed.size() + accessFailed.size() + failed.size();
+        final int totalMoved = moved.size() + alreadyMoved.size();
+        final int totalFailed = total - totalMoved;
+
         if ( total == 0 )
         {
             return "Nothing was moved.";
         }
 
-        final int totalMoved = moved.size() + alreadyMoved.size();
-        final int totalFailed = total - totalMoved;
         final StringBuilder builder = new StringBuilder();
 
         if ( totalMoved == 1 )

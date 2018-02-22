@@ -19,6 +19,7 @@ import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.NodeStorageException;
 import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.InternalContext;
@@ -251,10 +252,17 @@ public class MoveNodeCommand
 
     private Node doStore( final Node movedNode, final boolean metadataOnly )
     {
-        return this.nodeStorageService.move( MoveNodeParams.create().
-            node( movedNode ).
-            updateMetadataOnly( metadataOnly ).
-            build(), InternalContext.from( ContextAccessor.current() ) );
+        try
+        {
+            return this.nodeStorageService.move( MoveNodeParams.create().
+                node( movedNode ).
+                updateMetadataOnly( metadataOnly ).
+                build(), InternalContext.from( ContextAccessor.current() ) );
+        }
+        catch ( NodeStorageException e )
+        {
+            throw new MoveNodeException( e.getMessage(), new NodePath( movedNode.path(), movedNode.name() ) );
+        }
     }
 
     private NodeName getNodeName( final NodeBranchEntry nodeBranchEntry )

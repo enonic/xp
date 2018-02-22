@@ -196,13 +196,24 @@ public final class TaskManagerImpl
 
     void updateState( final TaskId taskId, final TaskState newState )
     {
+        updateState( taskId, newState, null );
+    }
+
+    void updateState( final TaskId taskId, final TaskState newState, final String message )
+    {
         final TaskContext ctx = tasks.get( taskId );
         if ( ctx == null )
         {
             return;
         }
         final TaskInfo taskInfo = ctx.getTaskInfo();
-        final TaskInfo updatedInfo = taskInfo.copy().state( newState ).build();
+        final TaskInfo.Builder infoBuilder = taskInfo.copy().state( newState );
+        if ( message != null )
+        {
+            final TaskProgress taskProgress = taskInfo.getProgress().copy().info( message ).build();
+            infoBuilder.progress( taskProgress );
+        }
+        final TaskInfo updatedInfo = infoBuilder.build();
         final Instant doneTime = newState == FAILED || newState == FINISHED ? Instant.now( clock ) : null;
         final TaskContext updatedCtx = ctx.copy().taskInfo( updatedInfo ).doneTime( doneTime ).build();
         tasks.put( taskId, updatedCtx );

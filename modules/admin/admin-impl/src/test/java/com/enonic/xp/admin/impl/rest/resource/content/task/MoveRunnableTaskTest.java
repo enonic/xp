@@ -5,7 +5,9 @@ import java.util.stream.Collectors;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
@@ -32,6 +34,9 @@ public class MoveRunnableTaskTest
     extends AbstractRunnableTaskTest
 {
     private MoveContentJson params;
+
+    @Rule
+    public final ExpectedException exception = ExpectedException.none();
 
     @Before
     @Override
@@ -171,5 +176,44 @@ public class MoveRunnableTaskTest
         Assert.assertEquals(
             "3 items were moved ( Already moved: 2 ). Failed to move 6 items ( Exist at destination: 2, Not found: 2, Access denied: 2 ).",
             resultMessage );
+    }
+
+    @Test
+    public void create_message_3_failed()
+        throws Exception
+    {
+        Mockito.when( params.getContentIds() ).thenReturn(
+            contents.stream().map( content -> content.getId().toString() ).collect( Collectors.toList() ) );
+        Mockito.when( contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ) ) ).thenReturn( Contents.from( contents ) );
+        Mockito.when( contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn(
+            FindContentIdsByQueryResult.create().totalHits( 3 ).build() );
+        Mockito.when( contentService.move( Mockito.isA( MoveContentParams.class ) ) ).
+            thenThrow( new ContentAccessException( User.ANONYMOUS, contents.get( 0 ).getPath(), Permission.MODIFY ) ).
+            thenThrow( new ContentNotFoundException( contents.get( 1 ).getPath(), Branch.from( "master" ) ) ).
+            thenThrow( new ContentAlreadyExistsException( contents.get( 2 ).getPath() ) );
+
+        exception.expect( RuntimeException.class );
+        exception.expectMessage(
+            "Failed to move 3 items ( Exist at destination: \"content3\", Not found: \"content2\", Access denied: \"content1\" )." );
+
+        createAndRunTask();
+
+        Mockito.verify( progressReporter, Mockito.times( 2 ) ).info( Mockito.anyString() );
+    }
+
+    @Test
+    public void create_message_none()
+        throws Exception
+    {
+        Mockito.when( params.getContentIds() ).thenReturn( Lists.newArrayList() );
+        Mockito.when( params.getParentContentPath() ).thenReturn( ContentPath.from( "/forbidden/path" ) );
+        Mockito.when( contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ) ) ).thenReturn( Contents.empty() );
+
+        exception.expect( RuntimeException.class );
+        exception.expectMessage( "Nothing was moved." );
+
+        createAndRunTask();
+
+        Mockito.verify( progressReporter, Mockito.times( 2 ) ).info( Mockito.anyString() );
     }
 }

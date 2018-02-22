@@ -5,7 +5,9 @@ import java.util.stream.Collectors;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 
 import com.enonic.xp.admin.impl.rest.resource.content.json.DeleteContentJson;
@@ -23,6 +25,9 @@ public class DeleteRunnableTaskTest
     extends AbstractRunnableTaskTest
 {
     private DeleteContentJson params;
+
+    @Rule
+    public final ExpectedException exception = ExpectedException.none();
 
     @Before
     @Override
@@ -126,13 +131,12 @@ public class DeleteRunnableTaskTest
             thenThrow( new ContentNotFoundException( contents.get( 3 ).getPath(), Branch.from( "master" ) ) );
         Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).thenReturn( contents.get( 3 ) );
 
+        exception.expect( RuntimeException.class );
+        exception.expectMessage( "Content could not be deleted." );
+
         createAndRunTask();
 
-        Mockito.verify( progressReporter, Mockito.times( 2 ) ).info( contentQueryArgumentCaptor.capture() );
-
-        final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
-
-        Assert.assertEquals( "Content could not be deleted.", resultMessage );
+        Mockito.verify( progressReporter, Mockito.times( 2 ) ).info( Mockito.anyString() );
     }
 
     @Test
@@ -141,12 +145,11 @@ public class DeleteRunnableTaskTest
     {
         Mockito.when( params.getContentPaths() ).thenReturn( Collections.emptySet() );
 
+        exception.expect( RuntimeException.class );
+        exception.expectMessage( "Nothing to delete." );
+
         createAndRunTask();
 
-        Mockito.verify( progressReporter, Mockito.times( 2 ) ).info( contentQueryArgumentCaptor.capture() );
-
-        final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
-
-        Assert.assertEquals( "Nothing to delete.", resultMessage );
+        Mockito.verify( progressReporter, Mockito.times( 2 ) ).info( Mockito.anyString() );
     }
 }
