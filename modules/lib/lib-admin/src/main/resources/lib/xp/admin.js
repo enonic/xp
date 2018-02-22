@@ -94,11 +94,24 @@ exports.getToolUrl = function (application, tool) {
 
 /**
  * Returns the URL for the Home admin tool.
+ * @param {object} [params] Parameter object
+ * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
  *
  * @returns {string} URL.
  */
-exports.getHomeToolUrl = function () {
-    return helper.generateHomeToolUri();
+exports.getHomeToolUrl = function (params) {
+
+    if (params && params.type == 'absolute') {
+        return portal.url({
+            path: helper.getHomeToolUri(),
+            type: 'absolute'
+        });
+
+    }
+
+    return portal.url({
+        path: helper.getHomeToolUri()
+    });
 };
 
 /**
