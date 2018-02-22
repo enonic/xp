@@ -13,8 +13,12 @@
       "id": "nodeId",
       "hostName": "hostName",
       "version": "1.0.0",
-      "address": "local[10.10.10.1]"
+      "address": "local[10.10.10.1]",
+      "isDataNode": true,
+      "isClientNode": false
     }
   ],
-  "errorMessages": ["ElasticsearchException[cluster health info exception]"]
+  "errorMessages": [
+    "ElasticsearchException[cluster health info exception]"
+  ]
 }
