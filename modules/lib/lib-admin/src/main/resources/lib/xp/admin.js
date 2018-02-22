@@ -122,3 +122,12 @@ exports.getHomeToolUrl = function (params) {
 exports.getInstallation = function () {
     return helper.getInstallation();
 };
+
+/**
+ * Returns version of XP installation.
+ *
+ * @returns {string} Version.
+ */
+exports.getVersion = function () {
+    return helper.getVersion();
+};
