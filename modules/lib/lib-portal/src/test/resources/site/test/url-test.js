@@ -25,7 +25,7 @@ exports.assetUrlTest_unknownProperty = function () {
         }
     });
 
-    assert.assertEquals('Unknown property: unknownProperty', result);
+    assert.assertEquals('AssetUrlParams{type=server, params={a=[1], b=[1, 2]}, path=styles/my.css}', result);
     return true;
 };
 
@@ -38,7 +38,7 @@ exports.assetUrlTest_invalidProperty = function () {
         }
     });
 
-    assert.assertEquals('Unknown property: _path', result);
+    assert.assertEquals('AssetUrlParams{type=server, params={a=[1], b=[1, 2]}}', result);
     return true;
 };
 
@@ -66,7 +66,7 @@ exports.attachmentUrlTest_unknownProperty = function () {
         }
     });
 
-    assert.assertEquals('Unknown property: unknownProperty', result);
+    assert.assertEquals('AttachmentUrlParams{type=server, params={a=[1], b=[1, 2]}, name=myattachment.pdf, download=false}', result);
     return true;
 };
 
@@ -94,7 +94,7 @@ exports.componentUrlTest_unknownProperty = function () {
         }
     });
 
-    assert.assertEquals('Unknown property: unknownProperty', result);
+    assert.assertEquals('ComponentUrlParams{type=server, params={a=[1], b=[1, 2]}, component=mycomp}', result);
     return true;
 };
 
@@ -129,7 +129,8 @@ exports.imageUrlTest_unknownProperty = function () {
         unknownProperty: "value"
     });
 
-    assert.assertEquals('Unknown property: unknownProperty', result);
+    assert.assertEquals('ImageUrlParams{type=server, params={a=[1], b=[1, 2]}, id=123, quality=90, filter=scale(1,1), background=ffffff}',
+        result);
     return true;
 };
 
@@ -157,7 +158,7 @@ exports.pageUrlTest_unknownProperty = function () {
         unknownProperty: "value"
     });
 
-    assert.assertEquals('Unknown property: unknownProperty', result);
+    assert.assertEquals('PageUrlParams{type=server, params={a=[1], b=[1, 2]}, path=a/b}', result);
     return true;
 };
 
@@ -185,7 +186,7 @@ exports.serviceUrlTest_unknownProperty = function () {
         }
     });
 
-    assert.assertEquals('Unknown property: unknownProperty', result);
+    assert.assertEquals('ServiceUrlParams{type=server, params={a=[1], b=[1, 2]}, service=myservice}', result);
     return true;
 };
 
@@ -206,7 +207,8 @@ exports.processHtmlTest_unknownProperty = function () {
         unknownProperty: "value"
     });
 
-    assert.assertEquals('Unknown property: unknownProperty', result);
+    assert.assertEquals('ProcessHtmlParams{type=server, params={}, value=<p><a title="Link tooltip" ' +
+                        'href="content://3e266eea-9875-4cb7-b259-41ad152f8532" target="_blank">link</a></p>}', result);
     return true;
 };
 
@@ -216,6 +218,8 @@ exports.imagePlaceholderTest = function () {
         height: 10
     });
 
-    assert.assertEquals('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAKCAYAAADVTVykAAAAEklEQVR42mNgGAWjYBSMgpEOAAUKAAEVKR6qAAAAAElFTkSuQmCC', result);
+    assert.assertEquals(
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAKCAYAAADVTVykAAAAEklEQVR42mNgGAWjYBSMgpEOAAUKAAEVKR6qAAAAAElFTkSuQmCC',
+        result);
     return true;
 };

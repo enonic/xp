@@ -1,14 +1,18 @@
 package com.enonic.xp.lib.portal.url;
 
-import com.enonic.xp.portal.url.ProcessHtmlParams;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import com.google.common.collect.Multimap;
 
-import java.util.Arrays;
-import java.util.List;
+import com.enonic.xp.portal.url.ProcessHtmlParams;
 
 public final class ProcessHtmlHandler
     extends AbstractUrlHandler
 {
+    private final static Set<String> VALID_URL_PROPERTY_KEYS = new HashSet<>( Arrays.asList( "value", "type" ) );
+
     @Override
     protected String buildUrl( final Multimap<String, String> map )
     {
@@ -17,7 +21,8 @@ public final class ProcessHtmlHandler
     }
 
     @Override
-    protected List<String> getValidUrlPropertyKeys() {
-        return Arrays.asList("value", "type");
+    protected boolean isValidParam( final String param )
+    {
+        return VALID_URL_PROPERTY_KEYS.contains( param );
     }
 }
