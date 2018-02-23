@@ -136,7 +136,7 @@ final class SecurityInitializer
         LOG.info( "Initializing user store [" + UserStoreKey.system() + "]" );
 
         final PropertyTree idProviderConfig = new PropertyTree();
-        if ( !"false".equals( System.getProperty( ADMIN_USER_CREATION_PROPERTY_KEY ) ) )
+        if ( !"false".equalsIgnoreCase( System.getProperty( ADMIN_USER_CREATION_PROPERTY_KEY ) ) )
         {
             idProviderConfig.setBoolean( "adminUserCreationEnabled", true );
         }
