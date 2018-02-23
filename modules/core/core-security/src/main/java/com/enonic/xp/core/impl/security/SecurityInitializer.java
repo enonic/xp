@@ -3,8 +3,6 @@ package com.enonic.xp.core.impl.security;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Strings;
-
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
@@ -41,8 +39,8 @@ final class SecurityInitializer
     public static final PrincipalKey SUPER_USER = PrincipalKey.ofUser( UserStoreKey.system(), "su" );
 
     static final String SYSTEM_USER_STORE_DISPLAY_NAME = "System User Store";
-    
-    private static final String SU_PASSWORD_PROPERTY_KEY = "xp.suPassword";
+
+    private static final String ADMIN_USER_CREATION_PROPERTY_KEY = "xp.init.adminUserCreation";
 
     private static final Logger LOG = LoggerFactory.getLogger( SecurityInitializer.class );
 
@@ -138,7 +136,8 @@ final class SecurityInitializer
         LOG.info( "Initializing user store [" + UserStoreKey.system() + "]" );
 
         final PropertyTree idProviderConfig = new PropertyTree();
-        if ( Strings.isNullOrEmpty( System.getProperty( SU_PASSWORD_PROPERTY_KEY ) )) {
+        if ( !"false".equals( System.getProperty( ADMIN_USER_CREATION_PROPERTY_KEY ) ) )
+        {
             idProviderConfig.setBoolean( "adminUserCreationEnabled", true );
         }
         final AuthConfig authConfig = AuthConfig.create().
