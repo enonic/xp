@@ -154,7 +154,7 @@ public class FileDumpReader
 
         if ( this.listener != null )
         {
-            this.listener.loadingBranch( repositoryId, branch, getBranchSuccessfulCountFromMeta(repositoryId, branch) );
+            this.listener.loadingBranch( repositoryId, branch, getBranchSuccessfulCountFromMeta( repositoryId, branch ) );
         }
 
         final EntriesLoadResult result = doLoadEntries( processor, tarFile );
@@ -168,7 +168,7 @@ public class FileDumpReader
     @Override
     public VersionsLoadResult loadVersions( final RepositoryId repositoryId, final LineProcessor<EntryLoadResult> processor )
     {
-        final File tarFile = getVersionsFile( repositoryId );
+        final File versionsFile = getVersionsFile( repositoryId );
 
         if ( this.listener != null )
         {
@@ -176,19 +176,29 @@ public class FileDumpReader
         }
 
         final VersionsLoadResult.Builder builder = VersionsLoadResult.create();
-        final EntriesLoadResult result = doLoadEntries( processor, tarFile );
+
+        if ( versionsFile == null )
+        {
+            return builder.build();
+        }
+
+        final EntriesLoadResult result = doLoadEntries( processor, versionsFile );
         return builder.successful( result.getSuccessful() ).
             errors( result.getErrors().stream().map( error -> LoadError.error( error.getMessage() ) ).collect( Collectors.toList() ) ).
             build();
     }
-    
-    private Long getBranchSuccessfulCountFromMeta( final RepositoryId repositoryId, final Branch branch) {
+
+    private Long getBranchSuccessfulCountFromMeta( final RepositoryId repositoryId, final Branch branch )
+    {
         final SystemDumpResult systemDumpResult = this.dumpMeta.getSystemDumpResult();
-        if (systemDumpResult != null) {
+        if ( systemDumpResult != null )
+        {
             final RepoDumpResult repoDumpResult = systemDumpResult.get( repositoryId );
-            if (repoDumpResult != null) {
+            if ( repoDumpResult != null )
+            {
                 final BranchDumpResult branchDumpResult = repoDumpResult.get( branch );
-                if (branchDumpResult != null) {
+                if ( branchDumpResult != null )
+                {
                     return branchDumpResult.getSuccessful();
                 }
             }
@@ -242,15 +252,25 @@ public class FileDumpReader
     private File getVersionsFile( final RepositoryId repositoryId )
     {
         final Path metaPath = createVersionMetaPath( this.dumpDirectory, repositoryId );
-        return doGetFile( metaPath );
+        return doGetFile( metaPath, false );
     }
 
     private File doGetFile( final Path metaPath )
+    {
+        return doGetFile( metaPath, true );
+    }
+
+    private File doGetFile( final Path metaPath, final boolean required )
     {
         final File tarFile = metaPath.toFile();
 
         if ( !tarFile.exists() )
         {
+            if ( !required )
+            {
+                return null;
+            }
+
             throw new RepoDumpException( "File doesnt " + metaPath + " exists" );
         }
         return tarFile;
