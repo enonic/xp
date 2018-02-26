@@ -134,4 +134,10 @@ public final class AdminLibHelper
     {
         return ServerInfo.get().getName();
     }
+
+    public String getVersion()
+    {
+        final VersionInfo version = VersionInfo.get();
+        return version.getVersion();
+    }
 }
