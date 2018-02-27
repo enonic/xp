@@ -30,9 +30,30 @@ public class JsonToFilterMapper
 
     private static final String VALUES_FIELD = "values";
 
+    public static Filters create( final List<Map<String, Object>> value )
+    {
+        if ( value != null && value.size() > 1 )
+        {
+            return wrapInBooleanMust( createFilters( value ) );
+        }
+
+        return createFilters( value );
+    }
+
     public static Filters create( final Map<String, Object> value )
     {
         return createFilters( value );
+    }
+
+    private static Filters wrapInBooleanMust( final Filters filters )
+    {
+        final BooleanFilter.Builder builder = BooleanFilter.create();
+
+        filters.forEach( builder::must );
+
+        return Filters.create().
+            add( builder.build() ).
+            build();
     }
 
     @SuppressWarnings("unchecked")
