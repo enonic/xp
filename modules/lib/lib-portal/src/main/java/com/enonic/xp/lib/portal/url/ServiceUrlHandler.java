@@ -11,7 +11,8 @@ import com.enonic.xp.portal.url.ServiceUrlParams;
 public final class ServiceUrlHandler
     extends AbstractUrlHandler
 {
-    private final static Set<String> VALID_URL_PROPERTY_KEYS = new HashSet<>( Arrays.asList( "application", "service", "contextPath", "type", "params" ) );
+    private final static Set<String> VALID_URL_PROPERTY_KEYS =
+        new HashSet<>( Arrays.asList( "application", "service", "contextPath", "type", "params" ) );
 
     @Override
     protected String buildUrl( final Multimap<String, String> map )

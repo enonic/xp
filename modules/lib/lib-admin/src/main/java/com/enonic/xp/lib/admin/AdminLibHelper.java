@@ -6,8 +6,8 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.enonic.xp.server.VersionInfo;
 import com.enonic.xp.server.ServerInfo;
+import com.enonic.xp.server.VersionInfo;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
