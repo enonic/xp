@@ -31,7 +31,8 @@ abstract class NodeState
         return json;
     }
 
-    abstract static class Builder<B extends Builder>
+
+    public abstract static class Builder<B extends Builder>
     {
         private String id;
 
@@ -72,7 +73,5 @@ abstract class NodeState
             this.version = version;
             return (B) this;
         }
-
-        abstract NodeState build();
     }
 }

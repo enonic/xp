@@ -108,7 +108,12 @@ public class WidgetHandlerTest
     public void testOptions()
         throws Exception
     {
+        mockDescriptor( true );
+        final PortalResponse portalResponse = PortalResponse.create().status( HttpStatus.METHOD_NOT_ALLOWED ).build();
+        Mockito.when( this.controllerScript.execute( Mockito.anyObject() ) ).thenReturn( portalResponse );
+
         this.request.setMethod( HttpMethod.OPTIONS );
+        this.request.setMode( RenderMode.ADMIN );
 
         final WebResponse response = this.handler.handle( this.request, WebResponse.create().build(), null );
         assertNotNull( response );
@@ -289,9 +294,9 @@ public class WidgetHandlerTest
     }
 
     private void mockDescriptor( boolean hasAccess )
-    {        
+    {
         WidgetDescriptor descriptor = Mockito.mock( WidgetDescriptor.class );
         Mockito.when( descriptor.isAccessAllowed( Mockito.any( PrincipalKeys.class ) ) ).thenReturn( hasAccess );
-        Mockito.when( this.widgetDescriptorService.getByKey( Mockito.any( DescriptorKey.class ) ) ).thenReturn(descriptor);
+        Mockito.when( this.widgetDescriptorService.getByKey( Mockito.any( DescriptorKey.class ) ) ).thenReturn( descriptor );
     }
 }

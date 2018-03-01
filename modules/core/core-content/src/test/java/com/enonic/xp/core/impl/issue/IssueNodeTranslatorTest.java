@@ -54,7 +54,7 @@ public class IssueNodeTranslatorTest
         assertEquals( issueName, issue.getName() );
     }
 
-    private Node createNode()
+    public static Node createNode()
     {
         final PropertyTree propertyTree = new PropertyTree();
 
@@ -84,7 +84,7 @@ public class IssueNodeTranslatorTest
             build();
     }
 
-    private PropertySet createItemSet( final String id, final boolean recursive )
+    private static PropertySet createItemSet( final String id, final boolean recursive )
     {
         final PropertySet itemSet = new PropertySet();
         itemSet.addString( PublishRequestPropertyNames.ITEM_ID, id );

@@ -4,5 +4,6 @@ dependencies {
     provided project( ':script:script-api' )
     provided project( ':portal:portal-api' )
     compile project( ':lib:lib-i18n' )
+    compile project( ':lib:lib-portal' )
     testCompile project( ':tools:testing' )
 }

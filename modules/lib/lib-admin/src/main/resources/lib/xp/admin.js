@@ -11,6 +11,9 @@ var i18n = require('/lib/xp/i18n');
 var portal = require('/lib/xp/portal');
 var helper = __.newBean('com.enonic.xp.lib.admin.AdminLibHelper');
 
+
+var adminToolsUriPrefix = '/admin/tool';
+
 /**
  * Returns the admin base uri.
  *
@@ -94,11 +97,16 @@ exports.getToolUrl = function (application, tool) {
 
 /**
  * Returns the URL for the Home admin tool.
+ * @param {object} [params] Parameter object
+ * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
  *
  * @returns {string} URL.
  */
-exports.getHomeToolUrl = function () {
-    return helper.generateHomeToolUri();
+exports.getHomeToolUrl = function (params) {
+    return portal.url({
+        path: adminToolsUriPrefix,
+        type: params && params.type
+    });
 };
 
 /**
@@ -108,4 +116,13 @@ exports.getHomeToolUrl = function () {
  */
 exports.getInstallation = function () {
     return helper.getInstallation();
+};
+
+/**
+ * Returns version of XP installation.
+ *
+ * @returns {string} Version.
+ */
+exports.getVersion = function () {
+    return helper.getVersion();
 };

@@ -1,5 +1,7 @@
 package com.enonic.xp.core.issue;
 
+import java.time.Instant;
+
 import org.junit.Test;
 
 import com.enonic.xp.content.ContentId;
@@ -23,20 +25,21 @@ public class IssueServiceImplTest_update
     public void update()
         throws Exception
     {
-        final Issue issue = this.createIssue();
+        final Instant createdTime = Instant.now();
+        final Issue issue = this.createIssue( createdTime );
 
+        final PrincipalKey commentatorKey = PrincipalKey.from( "user:myStore:commentator-1" );
         final UpdateIssueParams updateIssueParams = UpdateIssueParams.create().
             id( issue.getId() ).
-            editor( editMe ->
-                    {
-                        editMe.title = "updated title";
-                        editMe.description = "updated description";
-                        editMe.approverIds = PrincipalKeys.from( PrincipalKey.from( "user:myStore:approver-1" ),
-                                                                 PrincipalKey.from( "user:myStore:approver-2" ) );
-                        editMe.publishRequest = PublishRequest.create().addExcludeId( ContentId.from( "new-exclude-id" ) ).addItem(
-                            PublishRequestItem.create().id( ContentId.from( "new-content-id" ) ).includeChildren( true ).build() ).build();
-                        editMe.issueStatus = IssueStatus.CLOSED;
-                    } ).build();
+            editor( editMe -> {
+                editMe.title = "updated title";
+                editMe.description = "updated description";
+                editMe.approverIds =
+                    PrincipalKeys.from( PrincipalKey.from( "user:myStore:approver-1" ), PrincipalKey.from( "user:myStore:approver-2" ) );
+                editMe.publishRequest = PublishRequest.create().addExcludeId( ContentId.from( "new-exclude-id" ) ).addItem(
+                    PublishRequestItem.create().id( ContentId.from( "new-content-id" ) ).includeChildren( true ).build() ).build();
+                editMe.issueStatus = IssueStatus.CLOSED;
+            } ).build();
 
         final Issue updatedIssue = this.issueService.update( updateIssueParams );
 
@@ -58,7 +61,8 @@ public class IssueServiceImplTest_update
     public void nothing_updated()
         throws Exception
     {
-        final Issue issue = this.createIssue();
+        final Instant createdTime = Instant.now();
+        final Issue issue = this.createIssue( createdTime );
 
         final UpdateIssueParams updateIssueParams = UpdateIssueParams.create().id( issue.getId() ).build();
 
@@ -78,7 +82,8 @@ public class IssueServiceImplTest_update
     public void test_name_does_not_get_updated()
         throws Exception
     {
-        final Issue issue = this.createIssue();
+        final Instant createdTime = Instant.now();
+        final Issue issue = this.createIssue( createdTime );
 
         final UpdateIssueParams updateIssueParams = UpdateIssueParams.create().
             id( issue.getId() ).
@@ -92,7 +97,7 @@ public class IssueServiceImplTest_update
         assertEquals( IssueNameFactory.create( updatedIssue.getIndex() ), updatedIssue.getName() );
     }
 
-    private Issue createIssue()
+    private Issue createIssue( Instant createdTime )
     {
         return this.createIssue( CreateIssueParams.create().
             title( "title" ).

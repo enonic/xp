@@ -93,7 +93,7 @@ public class IssueDataSerializer
 
         extractUserInfo( issueProperties, builder );
         extractApprovers( issueProperties, builder );
-        extractItems( issueProperties, builder );
+        extractPublishRequest( issueProperties, builder );
 
         return builder;
     }
@@ -124,8 +124,7 @@ public class IssueDataSerializer
         }
     }
 
-    private void extractItems( final PropertySet issueProperties, final Issue.Builder builder )
-
+    private void extractPublishRequest( final PropertySet issueProperties, final Issue.Builder builder )
     {
         final PropertySet publishRequestSet = issueProperties.getSet( PUBLISH_REQUEST );
 

@@ -110,6 +110,8 @@ public class AssetHandlerTest
     public void testOptions()
         throws Exception
     {
+        final Resource resource = addResource( "demo:/site/assets/css/main.css" );
+
         this.request.setMethod( HttpMethod.OPTIONS );
 
         final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );

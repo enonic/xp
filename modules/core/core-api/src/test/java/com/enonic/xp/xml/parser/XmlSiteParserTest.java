@@ -1,10 +1,17 @@
 package com.enonic.xp.xml.parser;
 
+import java.net.URL;
+import java.nio.charset.Charset;
+
 import org.junit.Test;
+
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
+import com.enonic.xp.support.ResourceTestHelper;
 import com.enonic.xp.support.XmlTestHelper;
 
 import static org.junit.Assert.*;
@@ -107,4 +114,79 @@ public class XmlSiteParserTest
         assertEquals( 5, mapping3.getOrder() );
     }
 
+    @Test
+    public void testSiteXmlWithUtf8BomEncoding()
+    {
+        final String xml = loadTestFile( "utf8bom.xml", Charsets.UTF_8 );
+
+        final SiteDescriptor.Builder siteDescriptorBuilder = SiteDescriptor.create();
+        ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
+
+        this.parser.source( xml ).
+            currentApplication( applicationKey ).
+            siteDescriptorBuilder( siteDescriptorBuilder ).
+            parse();
+
+        SiteDescriptor siteDescriptor = siteDescriptorBuilder.build();
+
+        assertEquals( 1, siteDescriptor.getForm().getFormItems().size() );
+        assertEquals( 2, siteDescriptor.getMetaSteps().getSize() );
+        assertEquals( 2, siteDescriptor.getFilterDescriptors().getSize() );
+        assertEquals( 0, siteDescriptor.getMappingDescriptors().getSize() );
+    }
+
+    @Test
+    public void testSiteXmlWithUtf16LeBomEncoding()
+    {
+        final String xml = loadTestFile( "utf16lebom.xml", Charsets.UTF_16LE );
+
+        final SiteDescriptor.Builder siteDescriptorBuilder = SiteDescriptor.create();
+        ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
+
+        this.parser.source( xml ).
+            currentApplication( applicationKey ).
+            siteDescriptorBuilder( siteDescriptorBuilder ).
+            parse();
+
+        SiteDescriptor siteDescriptor = siteDescriptorBuilder.build();
+
+        assertEquals( 1, siteDescriptor.getForm().getFormItems().size() );
+        assertEquals( 2, siteDescriptor.getMetaSteps().getSize() );
+        assertEquals( 2, siteDescriptor.getFilterDescriptors().getSize() );
+        assertEquals( 0, siteDescriptor.getMappingDescriptors().getSize() );
+    }
+
+    @Test
+    public void testSiteXmlWithUtf16BeBomEncoding()
+    {
+        final String xml = loadTestFile( "utf16bebom.xml", Charsets.UTF_16BE );
+
+        final SiteDescriptor.Builder siteDescriptorBuilder = SiteDescriptor.create();
+        ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
+
+        this.parser.source( xml ).
+            currentApplication( applicationKey ).
+            siteDescriptorBuilder( siteDescriptorBuilder ).
+            parse();
+
+        SiteDescriptor siteDescriptor = siteDescriptorBuilder.build();
+
+        assertEquals( 1, siteDescriptor.getForm().getFormItems().size() );
+        assertEquals( 2, siteDescriptor.getMetaSteps().getSize() );
+        assertEquals( 2, siteDescriptor.getFilterDescriptors().getSize() );
+        assertEquals( 0, siteDescriptor.getMappingDescriptors().getSize() );
+    }
+
+    private String loadTestFile( final String fileName, Charset charset )
+    {
+        final URL url = new ResourceTestHelper( this ).getTestResource( fileName );
+        try
+        {
+            return Resources.toString( url, charset );
+        }
+        catch ( final Exception e )
+        {
+            throw new RuntimeException( "Failed to load test file: " + url, e );
+        }
+    }
 }

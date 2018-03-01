@@ -210,20 +210,54 @@ public class SecurityServiceImplTest
     public void testCreateUserThrowsExceptionWhenNameIsOccupied()
         throws Exception
     {
-        runAsAdmin( () ->
-                    {
-                        final PrincipalKey userKey1 = PrincipalKey.ofUser( SYSTEM, "User1" );
-                        final CreateUserParams createUser1 = CreateUserParams.create().
-                            userKey( userKey1 ).
-                            displayName( "User 1" ).
-                            email( "user1@enonic.com" ).
-                            login( "User1" ).
-                            password( "123456" ).
-                            build();
+        runAsAdmin( () -> {
+            final PrincipalKey userKey1 = PrincipalKey.ofUser( SYSTEM, "User1" );
+            final CreateUserParams createUser1 = CreateUserParams.create().
+                userKey( userKey1 ).
+                displayName( "User 1" ).
+                email( "user1@enonic.com" ).
+                login( "User1" ).
+                password( "123456" ).
+                build();
 
-                        securityService.createUser( createUser1 );
-                        securityService.createUser( createUser1 );
-                    } );
+            securityService.createUser( createUser1 );
+            securityService.createUser( createUser1 );
+        } );
+    }
+
+    @Test
+    public void testCreateUserDuplicatedEmail()
+    {
+        try
+        {
+            runAsAdmin( () -> {
+                final PrincipalKey userKey1 = PrincipalKey.ofUser( SYSTEM, "User1" );
+                final CreateUserParams createUser1 = CreateUserParams.create().
+                    userKey( userKey1 ).
+                    displayName( "User 1" ).
+                    email( "same_email@enonic.com" ).
+                    login( "User1" ).
+                    password( "123456" ).
+                    build();
+
+                final PrincipalKey userKey2 = PrincipalKey.ofUser( SYSTEM, "user2" );
+                final CreateUserParams createUser2 = CreateUserParams.create().
+                    userKey( userKey2 ).
+                    displayName( "User 2" ).
+                    email( "same_email@enonic.com" ).
+                    login( "user2" ).
+                    build();
+
+                securityService.createUser( createUser1 );
+                securityService.createUser( createUser2 );
+            } );
+
+            fail( "Expected exception" );
+        }
+        catch ( IllegalArgumentException e )
+        {
+            assertEquals( "A user with email 'same_email@enonic.com' already exists in user store 'system'", e.getMessage() );
+        }
     }
 
     @Test
@@ -256,6 +290,88 @@ public class SecurityServiceImplTest
             assertEquals( "User 1", updatedUser.getDisplayName() );
             assertEquals( PrincipalKey.ofUser( SYSTEM, "User1" ), updatedUser.getKey() );
         } );
+    }
+
+    @Test
+    public void testUpdateUserDuplicatedEmail()
+    {
+        try
+        {
+            runAsAdmin( () -> {
+                final PrincipalKey userKey1 = PrincipalKey.ofUser( SYSTEM, "User1" );
+                final CreateUserParams createUser1 = CreateUserParams.create().
+                    userKey( userKey1 ).
+                    displayName( "User 1" ).
+                    email( "same_email@enonic.com" ).
+                    login( "User1" ).
+                    password( "123456" ).
+                    build();
+
+                final PrincipalKey userKey2 = PrincipalKey.ofUser( SYSTEM, "user2" );
+                final CreateUserParams createUser2 = CreateUserParams.create().
+                    userKey( userKey2 ).
+                    displayName( "User 2" ).
+                    email( "same_email@enonic.com" ).
+                    login( "user2" ).
+                    build();
+
+                final User user1 = securityService.createUser( createUser1 );
+                securityService.createUser( createUser2 );
+
+                final UpdateUserParams updateUserParams = UpdateUserParams.create( user1 ).
+                    email( "same_email@enonic.com" ).
+                    build();
+                securityService.updateUser( updateUserParams );
+                refresh();
+            } );
+
+            fail( "Expected exception" );
+        }
+        catch ( IllegalArgumentException e )
+        {
+            assertEquals( "A user with email 'same_email@enonic.com' already exists in user store 'system'", e.getMessage() );
+        }
+    }
+
+    @Test
+    public void testUpdateUserDuplicatedEmailWithEditor()
+    {
+        try
+        {
+            runAsAdmin( () -> {
+                final PrincipalKey userKey1 = PrincipalKey.ofUser( SYSTEM, "User1" );
+                final CreateUserParams createUser1 = CreateUserParams.create().
+                    userKey( userKey1 ).
+                    displayName( "User 1" ).
+                    email( "same_email@enonic.com" ).
+                    login( "User1" ).
+                    password( "123456" ).
+                    build();
+
+                final PrincipalKey userKey2 = PrincipalKey.ofUser( SYSTEM, "user2" );
+                final CreateUserParams createUser2 = CreateUserParams.create().
+                    userKey( userKey2 ).
+                    displayName( "User 2" ).
+                    email( "same_email@enonic.com" ).
+                    login( "user2" ).
+                    build();
+
+                final User user1 = securityService.createUser( createUser1 );
+                securityService.createUser( createUser2 );
+
+                final UpdateUserParams updateUserParams = UpdateUserParams.create( user1 ).
+                    editor( editableUser -> editableUser.email = "same_email@enonic.com" ).
+                    build();
+                securityService.updateUser( updateUserParams );
+                refresh();
+            } );
+
+            fail( "Expected exception" );
+        }
+        catch ( IllegalArgumentException e )
+        {
+            assertEquals( "A user with email 'same_email@enonic.com' already exists in user store 'system'", e.getMessage() );
+        }
     }
 
     @Test
@@ -299,18 +415,17 @@ public class SecurityServiceImplTest
     public void testCreateGroupThrowsExceptionWhenNameIsOccupied()
         throws Exception
     {
-        runAsAdmin( () ->
-                    {
-                        final PrincipalKey groupKey1 = PrincipalKey.ofGroup( SYSTEM, "Group-a" );
-                        final CreateGroupParams createGroup = CreateGroupParams.create().
-                            groupKey( groupKey1 ).
-                            displayName( "Group A" ).
-                            description( "Group A Description" ).
-                            build();
+        runAsAdmin( () -> {
+            final PrincipalKey groupKey1 = PrincipalKey.ofGroup( SYSTEM, "Group-a" );
+            final CreateGroupParams createGroup = CreateGroupParams.create().
+                groupKey( groupKey1 ).
+                displayName( "Group A" ).
+                description( "Group A Description" ).
+                build();
 
-                        securityService.createGroup( createGroup );
-                        securityService.createGroup( createGroup );
-                    } );
+            securityService.createGroup( createGroup );
+            securityService.createGroup( createGroup );
+        } );
     }
 
     @Test
@@ -381,18 +496,17 @@ public class SecurityServiceImplTest
     public void testCreateRoleThrowsExceptionWhenNameIsOccupied()
         throws Exception
     {
-        runAsAdmin( () ->
-                    {
-                        final PrincipalKey roleKey1 = PrincipalKey.ofRole( "Role-a" );
-                        final CreateRoleParams createRole = CreateRoleParams.create().
-                            roleKey( roleKey1 ).
-                            displayName( "Role A" ).
-                            description( "Group A Description" ).
-                            build();
+        runAsAdmin( () -> {
+            final PrincipalKey roleKey1 = PrincipalKey.ofRole( "Role-a" );
+            final CreateRoleParams createRole = CreateRoleParams.create().
+                roleKey( roleKey1 ).
+                displayName( "Role A" ).
+                description( "Group A Description" ).
+                build();
 
-                        securityService.createRole( createRole );
-                        securityService.createRole( createRole );
-                    } );
+            securityService.createRole( createRole );
+            securityService.createRole( createRole );
+        } );
     }
 
     @Test
@@ -856,24 +970,23 @@ public class SecurityServiceImplTest
     public void testCreateUserStoreThrowsExceptionWhenNameIsOccupied()
         throws Exception
     {
-        runAsAdmin( () ->
-                    {
-                        final PrincipalKey userKey = PrincipalKey.ofUser( SYSTEM, "User1" );
+        runAsAdmin( () -> {
+            final PrincipalKey userKey = PrincipalKey.ofUser( SYSTEM, "User1" );
 
-                        final UserStoreAccessControlList permissions = UserStoreAccessControlList.of(
-                            UserStoreAccessControlEntry.create().principal( userKey ).access( CREATE_USERS ).build() );
+            final UserStoreAccessControlList permissions =
+                UserStoreAccessControlList.of( UserStoreAccessControlEntry.create().principal( userKey ).access( CREATE_USERS ).build() );
 
-                        final CreateUserStoreParams createUserStore = CreateUserStoreParams.create().
-                            key( UserStoreKey.from( "enonic" ) ).
-                            displayName( "Enonic User Store" ).
-                            permissions( permissions ).
-                            description( "user store description" ).
-                            build();
+            final CreateUserStoreParams createUserStore = CreateUserStoreParams.create().
+                key( UserStoreKey.from( "enonic" ) ).
+                displayName( "Enonic User Store" ).
+                permissions( permissions ).
+                description( "user store description" ).
+                build();
 
-                        securityService.createUserStore( createUserStore );
-                        securityService.createUserStore( createUserStore );
+            securityService.createUserStore( createUserStore );
+            securityService.createUserStore( createUserStore );
 
-                    } );
+        } );
     }
 
     @Test

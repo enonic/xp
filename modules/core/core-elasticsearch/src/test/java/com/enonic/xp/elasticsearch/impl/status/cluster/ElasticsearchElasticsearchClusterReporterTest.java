@@ -8,11 +8,10 @@ import org.elasticsearch.Version;
 import org.elasticsearch.action.ActionFuture;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus;
-import org.elasticsearch.action.admin.cluster.node.info.NodeInfo;
-import org.elasticsearch.action.admin.cluster.node.info.NodesInfoResponse;
 import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
 import org.elasticsearch.client.ClusterAdminClient;
 import org.elasticsearch.cluster.ClusterName;
+import org.elasticsearch.cluster.ClusterService;
 import org.elasticsearch.cluster.ClusterState;
 import org.elasticsearch.cluster.node.DiscoveryNode;
 import org.elasticsearch.cluster.node.DiscoveryNodes;
@@ -37,13 +36,11 @@ public class ElasticsearchElasticsearchClusterReporterTest
 
     private ClusterState clusterState;
 
+    private ClusterService clusterService;
+
     private ActionFuture<ClusterStateResponse> clusterStateInfo;
 
-    private ActionFuture<NodesInfoResponse> nodesInfo;
-
     private ActionFuture<ClusterHealthResponse> clusterHealthInfo;
-
-    private NodeInfo localNodeInfo;
 
     @SuppressWarnings("unchecked")
     @Before
@@ -52,23 +49,19 @@ public class ElasticsearchElasticsearchClusterReporterTest
     {
         final ClusterAdminClient clusterAdminClient = Mockito.mock( ClusterAdminClient.class );
         this.clusterStateInfo = Mockito.mock( ActionFuture.class );
-        this.nodesInfo = Mockito.mock( ActionFuture.class );
         this.clusterHealthInfo = Mockito.mock( ActionFuture.class );
 
+        this.clusterService = Mockito.mock( ClusterService.class );
+
         Mockito.when( clusterAdminClient.state( Mockito.any() ) ).thenReturn( clusterStateInfo );
-        Mockito.when( clusterAdminClient.nodesInfo( Mockito.any() ) ).thenReturn( nodesInfo );
         Mockito.when( clusterAdminClient.health( Mockito.any() ) ).thenReturn( clusterHealthInfo );
 
         this.clusterState = Mockito.mock( ClusterState.class );
-        this.localNodeInfo = Mockito.mock( NodeInfo.class );
-        Mockito.when( localNodeInfo.getVersion() ).thenReturn( Version.fromString( "1.0.0" ) );
 
         final ClusterStateResponse clusterStateResponse = Mockito.mock( ClusterStateResponse.class );
-        final NodesInfoResponse nodesInfoResponse = Mockito.mock( NodesInfoResponse.class );
         final ClusterHealthResponse clusterHealthResponse = Mockito.mock( ClusterHealthResponse.class );
 
         Mockito.when( clusterStateInfo.actionGet() ).thenReturn( clusterStateResponse );
-        Mockito.when( nodesInfo.actionGet() ).thenReturn( nodesInfoResponse );
         Mockito.when( clusterHealthInfo.actionGet() ).thenReturn( clusterHealthResponse );
 
         final ClusterName clusterName = new ClusterName( "clusterName" );
@@ -76,16 +69,24 @@ public class ElasticsearchElasticsearchClusterReporterTest
         Mockito.when( clusterStateResponse.getClusterName() ).thenReturn( clusterName );
 
         Mockito.when( clusterStateResponse.getState() ).thenReturn( clusterState );
-        Mockito.when( nodesInfoResponse.getAt( 0 ) ).thenReturn( localNodeInfo );
         Mockito.when( clusterHealthResponse.getStatus() ).thenReturn( ClusterHealthStatus.GREEN );
 
         final ClusterHealthProvider clusterHealthProvider = new ClusterHealthProvider();
         clusterHealthProvider.setClusterAdminClient( clusterAdminClient );
+
         final ClusterStateProvider clusterStateProvider = new ClusterStateProvider();
         clusterStateProvider.setClusterAdminClient( clusterAdminClient );
+        clusterStateProvider.setClusterService( clusterService );
 
         elasticsearchClusterReporter.setClusterHealthProvider( clusterHealthProvider );
         elasticsearchClusterReporter.setClusterStateProvider( clusterStateProvider );
+    }
+
+    @Test
+    public void assertName()
+        throws Exception
+    {
+        assertEquals( "cluster", clusterReporter.getName() );
     }
 
     @Test
@@ -102,7 +103,7 @@ public class ElasticsearchElasticsearchClusterReporterTest
             build();
 
         Mockito.when( clusterState.getNodes() ).thenReturn( nodes );
-        Mockito.when( localNodeInfo.getNode() ).thenReturn( node1 );
+        Mockito.when( this.clusterService.localNode() ).thenReturn( node1 );
 
         assertJson( "cluster_with_one_node.json", elasticsearchClusterReporter.getReport().toString() );
     }
@@ -114,27 +115,6 @@ public class ElasticsearchElasticsearchClusterReporterTest
         Mockito.when( clusterStateInfo.actionGet() ).thenThrow( new ElasticsearchException( "cluster state exception" ) );
 
         assertJson( "cluster_state_exception.json", elasticsearchClusterReporter.getReport().toString() );
-    }
-
-    @Test
-    public void testLocalNodeInfo_Exception()
-        throws Exception
-    {
-        Mockito.when( nodesInfo.actionGet() ).thenThrow( new ElasticsearchException( "local node info exception" ) );
-
-        final DiscoveryNode node1 =
-            new DiscoveryNode( "nodeName", "nodeId", "hostName", "hostAddress", new LocalTransportAddress( "10.10.10.1" ), new HashMap<>(),
-                               Version.fromString( "1.0.0" ) );
-
-        final DiscoveryNodes nodes = DiscoveryNodes.builder().
-            put( node1 ).
-            localNodeId( node1.getId() ).
-            build();
-
-        Mockito.when( clusterState.getNodes() ).thenReturn( nodes );
-        Mockito.when( localNodeInfo.getNode() ).thenReturn( node1 );
-
-        assertJson( "local_node_info_exception.json", elasticsearchClusterReporter.getReport().toString() );
     }
 
     @Test
@@ -153,7 +133,7 @@ public class ElasticsearchElasticsearchClusterReporterTest
             build();
 
         Mockito.when( clusterState.getNodes() ).thenReturn( nodes );
-        Mockito.when( localNodeInfo.getNode() ).thenReturn( node1 );
+        Mockito.when( this.clusterService.localNode() ).thenReturn( node1 );
 
         assertJson( "cluster_health_info_exception.json", elasticsearchClusterReporter.getReport().toString() );
     }
@@ -178,7 +158,7 @@ public class ElasticsearchElasticsearchClusterReporterTest
             build();
 
         Mockito.when( clusterState.getNodes() ).thenReturn( nodes );
-        Mockito.when( localNodeInfo.getNode() ).thenReturn( node1 );
+        Mockito.when( this.clusterService.localNode() ).thenReturn( node1 );
 
         assertJson( "cluster_with_two_nodes.json", elasticsearchClusterReporter.getReport().toString() );
     }

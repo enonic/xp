@@ -571,7 +571,6 @@ public class DumpServiceImplTest
     @Test
     public void dumpAndLoadListener()
     {
-
         createNode( NodePath.ROOT, "myNode" );
 
         final SystemDumpListener systemDumpListener = Mockito.mock( SystemDumpListener.class );
@@ -600,7 +599,28 @@ public class DumpServiceImplTest
         Mockito.verify( systemLoadListener ).loadingBranch( SystemConstants.SYSTEM_REPO.getId(), SystemConstants.BRANCH_SYSTEM, 4L );
         Mockito.verify( systemLoadListener ).loadingVersions( SystemConstants.SYSTEM_REPO.getId() );
         Mockito.verify( systemLoadListener, Mockito.times( 2 + 1 + 2 + 4 + 4 ) ).entryLoaded();
-        
+    }
+
+    @Test
+    public void skip_versions()
+        throws Exception
+    {
+        final Node node = createNode( NodePath.ROOT, "myNode" );
+        final Node updatedNode = updateNode( node );
+        final Node currentNode = updateNode( updatedNode );
+        refresh();
+
+        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true, false ) );
+
+        refresh();
+
+        final NodeVersionQueryResult versionsAfterLoad = this.nodeService.findVersions( GetNodeVersionsParams.create().
+            nodeId( node.id() ).
+            build() );
+        assertEquals( 1, versionsAfterLoad.getTotalHits() );
+
+        final Node currentStoredNode = this.nodeService.getById( node.id() );
+        assertEquals( currentNode.data(), currentStoredNode.data() );
     }
 
     private void verifyBinaries( final Node node, final Node updatedNode, final NodeVersionQueryResult versions )
@@ -627,9 +647,14 @@ public class DumpServiceImplTest
 
     private SystemLoadResult dumpDeleteAndLoad( final boolean clearBlobStore )
     {
+        return dumpDeleteAndLoad( clearBlobStore, true );
+    }
+
+    private SystemLoadResult dumpDeleteAndLoad( final boolean clearBlobStore, final boolean includeVersions )
+    {
         final SystemDumpParams params = SystemDumpParams.create().
             dumpName( "myTestDump" ).
-            includeVersions( true ).
+            includeVersions( includeVersions ).
             includeBinaries( true ).
             build();
 

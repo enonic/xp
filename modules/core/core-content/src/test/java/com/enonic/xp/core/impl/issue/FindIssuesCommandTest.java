@@ -35,7 +35,8 @@ public class FindIssuesCommandTest
 
         Mockito.when( nodeService.findByQuery( Mockito.any( NodeQuery.class ) ) ).thenReturn(
             FindNodesByQueryResult.create().hits( 20 ).totalHits( 40 ).build() );
-        Mockito.when( nodeService.getByIds( Mockito.any( NodeIds.class ) ) ).thenReturn( Nodes.empty() );
+        Mockito.when( nodeService.getByIds( Mockito.any( NodeIds.class ) ) ).thenReturn(
+            Nodes.from( IssueNodeTranslatorTest.createNode() ) );
 
         FindIssuesResult result = command.execute();
 
@@ -44,7 +45,7 @@ public class FindIssuesCommandTest
 
         assertEquals( 20, result.getHits() );
         assertEquals( 40, result.getTotalHits() );
-        assertTrue( result.getIssues().isEmpty() );
+        assertEquals( 1, result.getIssues().size() );
     }
 
     private FindIssuesCommand createCommand( final IssueQuery query )

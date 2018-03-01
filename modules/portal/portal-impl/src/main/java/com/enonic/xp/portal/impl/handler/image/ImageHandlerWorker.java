@@ -27,6 +27,8 @@ import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.MediaTypes;
+import com.enonic.xp.web.HttpMethod;
+import com.enonic.xp.web.HttpStatus;
 
 import static org.apache.commons.lang.StringUtils.substringBeforeLast;
 
@@ -82,6 +84,12 @@ final class ImageHandlerWorker
         if ( binary == null )
         {
             throw notFound( "Binary [%s] not found for content [%s]", attachment.getBinaryReference(), this.contentId );
+        }
+
+        if ( request.getMethod() == HttpMethod.OPTIONS )
+        {
+            // it will be handled by default OPTIONS handler in BaseWebHandler
+            return PortalResponse.create().status( HttpStatus.METHOD_NOT_ALLOWED ).build();
         }
 
         final String mimeType = getMimeType( this.name, imageContent.getName(), attachment );

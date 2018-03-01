@@ -48,7 +48,7 @@ public abstract class AbstractUrlHandler
             {
                 applyParams( map, param.getValue() );
             }
-            else
+            else if ( this.isValidParam( key ) )
             {
                 applyParam( map, "_" + key, param.getValue() );
             }
@@ -93,6 +93,8 @@ public abstract class AbstractUrlHandler
             params.put( key, value.toString() );
         }
     }
+
+    protected abstract boolean isValidParam( String param );
 
     @Override
     public void initialize( final BeanContext context )

@@ -2,7 +2,7 @@ package com.enonic.xp.elasticsearch.impl.status.cluster;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public final class LocalNodeState
+final class LocalNodeState
     extends NodeState
 {
     private final Integer numberOfNodesSeen;
@@ -13,20 +13,19 @@ public final class LocalNodeState
         this.numberOfNodesSeen = builder.numberOfNodesSeen;
     }
 
-    public ObjectNode toJson()
+    ObjectNode toJson()
     {
         final ObjectNode json = super.toJson();
         json.put( "numberOfNodesSeen", this.numberOfNodesSeen );
         return json;
     }
 
-    public static LocalNodeState.Builder create()
+    static LocalNodeState.Builder create()
     {
         return new Builder();
     }
 
-
-    public static class Builder
+    static class Builder
         extends NodeState.Builder<Builder>
     {
         private Integer numberOfNodesSeen;
@@ -35,13 +34,13 @@ public final class LocalNodeState
         {
         }
 
-        public Builder numberOfNodesSeen( final Integer numberOfNodesSeen )
+        Builder numberOfNodesSeen( final Integer numberOfNodesSeen )
         {
             this.numberOfNodesSeen = numberOfNodesSeen;
             return this;
         }
 
-        public LocalNodeState build()
+        LocalNodeState build()
         {
             return new LocalNodeState( this );
         }

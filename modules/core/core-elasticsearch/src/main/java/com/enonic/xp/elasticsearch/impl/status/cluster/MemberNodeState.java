@@ -7,20 +7,25 @@ final class MemberNodeState
 {
     private final String address;
 
-    private final String name;
+
+    private final Boolean isDataNode;
+
+    private final Boolean isClientNode;
 
     private MemberNodeState( Builder builder )
     {
         super( builder );
         this.address = builder.address;
-        this.name = builder.name;
+        this.isDataNode = builder.isDataNode;
+        this.isClientNode = builder.isClientNode;
     }
 
     ObjectNode toJson()
     {
         final ObjectNode json = super.toJson();
         json.put( "address", this.address );
-        json.put( "name", this.name );
+        json.put( "isDataNode", this.isDataNode );
+        json.put( "isClientNode", this.isClientNode );
         return json;
     }
 
@@ -34,7 +39,9 @@ final class MemberNodeState
     {
         private String address;
 
-        private String name;
+        private Boolean isDataNode;
+
+        private Boolean isClientNode;
 
         private Builder()
         {
@@ -46,9 +53,15 @@ final class MemberNodeState
             return this;
         }
 
-        Builder name( final String name )
+        Builder isDataNode( final Boolean isDataNode )
         {
-            this.name = name;
+            this.isDataNode = isDataNode;
+            return this;
+        }
+
+        Builder isClientNode( final Boolean isClientNode )
+        {
+            this.isClientNode = isClientNode;
             return this;
         }
 

@@ -3,10 +3,10 @@ package com.enonic.xp.repo.impl.dump.reader;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.LinkOption;
 import java.nio.file.Paths;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -90,17 +90,33 @@ public class FileDumpReaderTest
     }
 
     @Test
-    @Ignore
     public void hidden_folder()
         throws Exception
     {
         final File meta = createFolder( this.dumpFolder, "meta" );
         final File repo1 = createFolder( meta, "repo1" );
-        createFolder( repo1, ".myBranch" );
+        final File hiddenFolder = createFolder( repo1, ".myBranch" );
+
+        if ( isWindows() )
+        {
+            hideTheFileWindowsWay( hiddenFolder );
+        }
+
         createFolder( repo1, "myBranch" );
 
         final Branches branches = fileDumpReader.getBranches( RepositoryId.from( "repo1" ) );
         assertEquals( 1, branches.getSize() );
+    }
+
+    private void hideTheFileWindowsWay( final File hiddenFolder )
+        throws IOException
+    {
+        java.nio.file.Files.setAttribute( hiddenFolder.toPath(), "dos:hidden", Boolean.TRUE, LinkOption.NOFOLLOW_LINKS );
+    }
+
+    private boolean isWindows()
+    {
+        return System.getProperty( "os.name" ).toLowerCase().startsWith( "windows" );
     }
 
     private void createMetaDataFile( final File parent )

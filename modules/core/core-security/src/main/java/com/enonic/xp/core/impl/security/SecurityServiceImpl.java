@@ -9,6 +9,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.locks.Lock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,6 +25,7 @@ import com.google.common.collect.Sets;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.google.common.primitives.Ints;
+import com.google.common.util.concurrent.Striped;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -114,6 +116,8 @@ public final class SecurityServiceImpl
     private final PasswordEncoder passwordEncoder = new PBKDF2Encoder();
 
     private final SecureRandom secureRandom = new SecureRandom();
+
+    private final Striped<Lock> userEmailLocks = Striped.lazyWeakLock( 100 );
 
     private NodeService nodeService;
 
@@ -638,8 +642,7 @@ public final class SecurityServiceImpl
         } );
     }
 
-    @Override
-    public User createUser( final CreateUserParams createUser )
+    private User doCreateUser( final CreateUserParams createUser )
     {
         final User user = User.create().
             key( createUser.getKey() ).
@@ -671,8 +674,28 @@ public final class SecurityServiceImpl
         }
     }
 
+    private String userStoreEmailKey( final PrincipalKey principalKey, final String email )
+    {
+        return principalKey.getUserStore().toString() + '|' + email;
+    }
+
     @Override
-    public User updateUser( final UpdateUserParams updateUserParams )
+    public User createUser( final CreateUserParams createUser )
+    {
+        final Lock lock = userEmailLocks.get( userStoreEmailKey( createUser.getKey(), createUser.getEmail() ) );
+        lock.lock();
+        try
+        {
+            duplicateEmailValidation( createUser.getKey(), createUser.getEmail() );
+            return doCreateUser( createUser );
+        }
+        finally
+        {
+            lock.unlock();
+        }
+    }
+
+    private User doUpdateUser( final UpdateUserParams updateUserParams )
     {
         return callWithContext( () -> {
 
@@ -685,6 +708,8 @@ public final class SecurityServiceImpl
             final User existingUser = PrincipalNodeTranslator.userFromNode( node );
 
             final User userToUpdate = updateUserParams.update( existingUser );
+            duplicateEmailValidation( userToUpdate.getKey(), userToUpdate.getEmail() );
+
             final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.toUpdateNodeParams( userToUpdate );
 
             final Node updatedNode = nodeService.update( updateNodeParams );
@@ -694,6 +719,48 @@ public final class SecurityServiceImpl
             return PrincipalNodeTranslator.userFromNode( updatedNode );
         } );
 
+    }
+
+    @Override
+    public User updateUser( final UpdateUserParams updateUserParams )
+    {
+        final String key = userStoreEmailKey( updateUserParams.getKey(), updateUserParams.getEmail() );
+        final Lock lock = userEmailLocks.get( key );
+        lock.lock();
+        try
+        {
+            return doUpdateUser( updateUserParams );
+        }
+        finally
+        {
+            lock.unlock();
+        }
+    }
+
+    private void duplicateEmailValidation( final PrincipalKey key, final String email )
+    {
+        if ( email == null )
+        {
+            return;
+        }
+
+        final CompareExpr userStoreExpr = CompareExpr.create( FieldExpr.from( PrincipalIndexPath.USER_STORE_KEY ), CompareExpr.Operator.EQ,
+                                                              ValueExpr.string( key.getUserStore().toString() ) );
+        final CompareExpr emailExpr =
+            CompareExpr.create( FieldExpr.from( PrincipalIndexPath.EMAIL_KEY ), CompareExpr.Operator.EQ, ValueExpr.string( email ) );
+        final QueryExpr query = QueryExpr.from( LogicalExpr.and( userStoreExpr, emailExpr ) );
+        final Nodes nodes = callWithContext( () -> {
+            final FindNodesByQueryResult result = nodeService.findByQuery( NodeQuery.create().query( query ).build() );
+            return this.nodeService.getByIds( result.getNodeIds() );
+        } );
+
+        final User user = nodes.isEmpty() ? null : PrincipalNodeTranslator.userFromNode( nodes.first() );
+
+        if ( nodes.getSize() > 1 || ( user != null && !user.getKey().equals( key ) ) )
+        {
+            throw new IllegalArgumentException(
+                "A user with email '" + email + "' already exists in user store '" + key.getUserStore().toString() + "'" );
+        }
     }
 
     @Override
@@ -964,55 +1031,48 @@ public final class SecurityServiceImpl
 
         try
         {
-            final Node node = callWithContext( () ->
-                                               {
+            final Node node = callWithContext( () -> {
 
-                                                   final UserStoreAccessControlList permissions =
-                                                       createUserStoreParams.getUserStorePermissions();
-                                                   AccessControlList userStoreNodePermissions =
-                                                       UserStoreNodeTranslator.userStorePermissionsToUserStoreNodePermissions(
-                                                           permissions );
-                                                   AccessControlList usersNodePermissions =
-                                                       UserStoreNodeTranslator.userStorePermissionsToUsersNodePermissions( permissions );
-                                                   AccessControlList groupsNodePermissions =
-                                                       UserStoreNodeTranslator.userStorePermissionsToGroupsNodePermissions( permissions );
+                final UserStoreAccessControlList permissions = createUserStoreParams.getUserStorePermissions();
+                AccessControlList userStoreNodePermissions =
+                    UserStoreNodeTranslator.userStorePermissionsToUserStoreNodePermissions( permissions );
+                AccessControlList usersNodePermissions = UserStoreNodeTranslator.userStorePermissionsToUsersNodePermissions( permissions );
+                AccessControlList groupsNodePermissions =
+                    UserStoreNodeTranslator.userStorePermissionsToGroupsNodePermissions( permissions );
 
-                                                   final Node rootNode = nodeService.getRoot();
-                                                   userStoreNodePermissions =
-                                                       mergeWithRootPermissions( userStoreNodePermissions, rootNode.getPermissions() );
-                                                   usersNodePermissions =
-                                                       mergeWithRootPermissions( usersNodePermissions, rootNode.getPermissions() );
-                                                   groupsNodePermissions =
-                                                       mergeWithRootPermissions( groupsNodePermissions, rootNode.getPermissions() );
+                final Node rootNode = nodeService.getRoot();
+                userStoreNodePermissions = mergeWithRootPermissions( userStoreNodePermissions, rootNode.getPermissions() );
+                usersNodePermissions = mergeWithRootPermissions( usersNodePermissions, rootNode.getPermissions() );
+                groupsNodePermissions = mergeWithRootPermissions( groupsNodePermissions, rootNode.getPermissions() );
 
-                                                   final Node userStoreNode = nodeService.create( CreateNodeParams.create().
-                                                       parent( UserStoreNodeTranslator.getUserStoresParentPath() ).
-                                                       name( createUserStoreParams.getKey().toString() ).
-                                                       data( data ).
-                                                       permissions( userStoreNodePermissions ).
-                                                       build() );
+                final Node userStoreNode = nodeService.create( CreateNodeParams.create().
+                    parent( UserStoreNodeTranslator.getUserStoresParentPath() ).
+                    name( createUserStoreParams.getKey().toString() ).
+                    data( data ).
+                    permissions( userStoreNodePermissions ).
+                    build() );
 
-                                                   nodeService.create( CreateNodeParams.create().
-                                                       parent( userStoreNode.path() ).
-                                                       name( UserStoreNodeTranslator.USER_FOLDER_NODE_NAME ).
-                                                       permissions( usersNodePermissions ).
-                                                       build() );
-                                                   nodeService.create( CreateNodeParams.create().
-                                                       parent( userStoreNode.path() ).
-                                                       name( UserStoreNodeTranslator.GROUP_FOLDER_NODE_NAME ).
-                                                       permissions( groupsNodePermissions ).
-                                                       build() );
+                nodeService.create( CreateNodeParams.create().
+                    parent( userStoreNode.path() ).
+                    name( UserStoreNodeTranslator.USER_FOLDER_NODE_NAME ).
+                    permissions( usersNodePermissions ).
+                    build() );
+                nodeService.create( CreateNodeParams.create().
+                    parent( userStoreNode.path() ).
+                    name( UserStoreNodeTranslator.GROUP_FOLDER_NODE_NAME ).
+                    permissions( groupsNodePermissions ).
+                    build() );
 
-                                                   final ApplyNodePermissionsParams applyPermissions = ApplyNodePermissionsParams.create().
-                                                       nodeId( rootNode.id() ).
-                                                       overwriteChildPermissions( false ).
-                                                       build();
-                                                   nodeService.applyPermissions( applyPermissions );
+                final ApplyNodePermissionsParams applyPermissions = ApplyNodePermissionsParams.create().
+                    nodeId( rootNode.id() ).
+                    overwriteChildPermissions( false ).
+                    build();
+                nodeService.applyPermissions( applyPermissions );
 
-                                                   this.nodeService.refresh( RefreshMode.SEARCH );
+                this.nodeService.refresh( RefreshMode.SEARCH );
 
-                                                   return userStoreNode;
-                                               } );
+                return userStoreNode;
+            } );
 
             return UserStoreNodeTranslator.fromNode( node );
         }

@@ -1,7 +1,9 @@
 package com.enonic.xp.lib.node;
 
+import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.script.ScriptValue;
@@ -19,11 +21,11 @@ public class QueryNodeHandlerParams
 
     private Map<String, Object> aggregations;
 
-    private Map<String, Object> filters;
+    private List<Map<String, Object>> filters;
 
     private boolean explain = false;
 
-    Map<String, Object> getFilters()
+    List<Map<String, Object>> getFilters()
     {
         return filters;
     }
@@ -31,17 +33,36 @@ public class QueryNodeHandlerParams
     @SuppressWarnings("unused")
     public void setFilters( final ScriptValue filters )
     {
+        this.filters = doSetFilters( filters );
+    }
+
+    private List<Map<String, Object>> doSetFilters( final ScriptValue filters )
+    {
+        List<Map<String, Object>> filterList = Lists.newArrayList();
+
         if ( filters == null )
         {
-            return;
+            return filterList;
         }
 
-        if ( !filters.isObject() )
+        if ( filters.isObject() )
         {
-            throw new IllegalArgumentException( "Filter not of type object" );
+            filterList.add( filters.getMap() );
+        }
+        else if ( filters.isArray() )
+        {
+            filters.getArray().forEach( sv -> {
+
+                if ( !sv.isObject() )
+                {
+                    throw new IllegalArgumentException( "Array elements not of type objects" );
+                }
+
+                filterList.add( sv.getMap() );
+            } );
         }
 
-        this.filters = filters.getMap();
+        return filterList;
     }
 
     Integer getStart()

@@ -63,6 +63,16 @@ public class PageHandlerTest
     public void testOptions()
         throws Exception
     {
+        setupContentAndSite();
+        setupTemplates();
+
+        final PortalResponse portalResponse = PortalResponse.create().
+            status( HttpStatus.METHOD_NOT_ALLOWED ).
+            build();
+
+        setRendererResult( portalResponse );
+
+        this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
         this.request.setMethod( HttpMethod.OPTIONS );
 
         final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );

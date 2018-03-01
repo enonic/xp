@@ -31,14 +31,9 @@ public class JsonToFilterMapperTest
     public void exists_filter()
         throws Exception
     {
-        Map<String, Object> value = Maps.newHashMap();
+        final Map<String, Object> existsFilter = createExistsFilter();
 
-        final HashMap<String, Object> existsFilter = Maps.newHashMap();
-        existsFilter.put( "field", "myField" );
-
-        value.put( "exists", existsFilter );
-
-        final Filters filters = com.enonic.xp.lib.common.JsonToFilterMapper.create( value );
+        final Filters filters = com.enonic.xp.lib.common.JsonToFilterMapper.create( existsFilter );
 
         assertTrue( filters.get( 0 ) instanceof ExistsFilter );
         assertEquals( "myField", ( (ExistsFilter) filters.get( 0 ) ).getFieldName() );
@@ -65,38 +60,35 @@ public class JsonToFilterMapperTest
         assertTrue( mustNotFilter instanceof ExistsFilter );
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void boolean_filter()
         throws Exception
     {
-        Map<String, Object> value = Maps.newHashMap();
+        Map<String, Object> filter = Maps.newHashMap();
 
-        final HashMap<String, Object> existsFilter = Maps.newHashMap();
-        existsFilter.put( "field", "myField" );
-        final HashMap<String, Object> existsFilterWrapper = Maps.newHashMap();
-        existsFilterWrapper.put( "exists", existsFilter );
-        final HashMap<String, Object> existsFilterWrapper2 = Maps.newHashMap();
-        existsFilterWrapper2.put( "exists", existsFilter );
+        final Map<String, Object> boolFilter = Maps.newHashMap();
+        boolFilter.put( "must", Lists.newArrayList( createExistsFilter(), createExistsFilter() ) );
+        boolFilter.put( "mustNot", Lists.newArrayList( createExistsFilter() ) );
+        boolFilter.put( "should", Lists.newArrayList( createExistsFilter(), createExistsFilter(), createExistsFilter() ) );
 
-        final HashMap<String, Object> mustFilter = Maps.newHashMap();
-        List<HashMap<String, Object>> existsFilters = Lists.newArrayList();
-        existsFilters.add( existsFilterWrapper );
-        existsFilters.add( existsFilterWrapper2 );
+        filter.put( "boolean", boolFilter );
 
-        mustFilter.put( "must", existsFilters );
-        value.put( "boolean", mustFilter );
-
-        final Filters filters = com.enonic.xp.lib.common.JsonToFilterMapper.create( value );
+        final Filters filters = com.enonic.xp.lib.common.JsonToFilterMapper.create( filter );
 
         assertTrue( filters.get( 0 ) instanceof BooleanFilter );
         final BooleanFilter booleanFilter = (BooleanFilter) filters.get( 0 );
+
         final ImmutableSet<Filter> mustFilters = booleanFilter.getMust();
         assertEquals( 2, mustFilters.size() );
         assertTrue( mustFilters.iterator().next() instanceof ExistsFilter );
         assertTrue( mustFilters.iterator().next() instanceof ExistsFilter );
 
-        final ImmutableSet<Filter> mustNotFilter = booleanFilter.getMustNot();
-        assertEquals( 0, mustNotFilter.size() );
+        final ImmutableSet<Filter> mustNotFilters = booleanFilter.getMustNot();
+        assertEquals( 1, mustNotFilters.size() );
+
+        final ImmutableSet<Filter> shouldFilters = booleanFilter.getShould();
+        assertEquals( 3, shouldFilters.size() );
     }
 
     @Test
@@ -151,16 +143,40 @@ public class JsonToFilterMapperTest
     }
 
     @Test
-    public void invalid_filter_body()
-        throws IllegalArgumentException
+    public void array_on_root_single()
+        throws Exception
     {
-        Map<String, Object> value = Maps.newHashMap();
-        value.put( "exists", "ost" );
+        final List<Map<String, Object>> existsFilters = Lists.newArrayList();
+        existsFilters.add( createExistsFilter() );
 
-        thrown.expect( IllegalArgumentException.class );
-        thrown.expectMessage( "Filter not on expected format, expected Map, got java.lang.String" );
+        final Filters filters = com.enonic.xp.lib.common.JsonToFilterMapper.create( existsFilters );
 
-        com.enonic.xp.lib.common.JsonToFilterMapper.create( value );
+        assertTrue( filters.get( 0 ) instanceof ExistsFilter );
+    }
+
+    @Test
+    public void array_on_root()
+        throws Exception
+    {
+        final List<Map<String, Object>> existsFilters = Lists.newArrayList();
+        existsFilters.add( createExistsFilter() );
+        existsFilters.add( createExistsFilter() );
+        existsFilters.add( createExistsFilter() );
+
+        final Filters filters = com.enonic.xp.lib.common.JsonToFilterMapper.create( existsFilters );
+
+        assertTrue( filters.get( 0 ) instanceof BooleanFilter );
+        final ImmutableSet<Filter> mustFilters = ( (BooleanFilter) filters.get( 0 ) ).getMust();
+        assertEquals( 3, mustFilters.size() );
+    }
+
+    private Map<String, Object> createExistsFilter()
+    {
+        Map<String, Object> filter = Maps.newHashMap();
+        final Map<String, Object> filterValues = Maps.newHashMap();
+        filterValues.put( "field", "myField" );
+        filter.put( "exists", filterValues );
+        return filter;
     }
 }
 

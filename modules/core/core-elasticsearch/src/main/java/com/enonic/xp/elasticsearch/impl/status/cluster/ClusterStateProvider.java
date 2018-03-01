@@ -3,13 +3,11 @@ package com.enonic.xp.elasticsearch.impl.status.cluster;
 import java.util.List;
 
 import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.action.admin.cluster.node.info.NodeInfo;
-import org.elasticsearch.action.admin.cluster.node.info.NodesInfoRequest;
-import org.elasticsearch.action.admin.cluster.node.info.NodesInfoResponse;
 import org.elasticsearch.action.admin.cluster.state.ClusterStateRequest;
 import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
 import org.elasticsearch.client.ClusterAdminClient;
 import org.elasticsearch.client.Requests;
+import org.elasticsearch.cluster.ClusterService;
 import org.elasticsearch.cluster.node.DiscoveryNode;
 import org.elasticsearch.cluster.node.DiscoveryNodes;
 import org.osgi.service.component.annotations.Component;
@@ -23,62 +21,55 @@ public final class ClusterStateProvider
 {
     private ClusterAdminClient clusterAdminClient;
 
+    // Needed to workaround bug in cluster state report
+    // where localNodeId = null for non-master nodes
+    private ClusterService clusterService;
+
     @Override
     public ClusterState getInfo()
     {
-
         final ClusterState.Builder builder = ClusterState.create();
-        ClusterStateResponse clusterStateResponse = null;
-        NodesInfoResponse localNodeInfoResponse = null;
+
         try
         {
-            clusterStateResponse = this.getClusterStateResponse();
-            builder.clusterName( clusterStateResponse.getClusterName().value() );
+            doPopulateClusterState( builder );
         }
         catch ( ElasticsearchException ex )
         {
             builder.errorMessage( ex.getClass().getSimpleName() + "[" + ex.getMessage() + "]" ).
                 build();
-        }
-
-        try
-        {
-            localNodeInfoResponse = this.getNodesResponse();
-        }
-        catch ( ElasticsearchException ex )
-        {
-            builder.errorMessage( ex.getClass().getSimpleName() + "[" + ex.getMessage() + "]" ).
-                build();
-        }
-
-        if ( clusterStateResponse != null )
-        {
-            final org.elasticsearch.cluster.ClusterState clusterState = clusterStateResponse.getState();
-
-            if ( localNodeInfoResponse != null )
-            {
-                final NodeInfo localNodeInfo = localNodeInfoResponse.getAt( 0 );
-                final LocalNodeState localNodeState = this.getLocalNodeState( clusterState, localNodeInfo );
-                builder.localNodeState( localNodeState );
-            }
-
-            List<MemberNodeState> memberNodeStates = this.getMembersState( clusterState.getNodes() );
-            builder.addMemberNodeStates( memberNodeStates );
         }
 
         return builder.build();
     }
 
-    private LocalNodeState getLocalNodeState( org.elasticsearch.cluster.ClusterState clusterState, final NodeInfo localNodeInfo )
+    private void doPopulateClusterState( final ClusterState.Builder builder )
     {
-        final String nodeId = localNodeInfo.getNode().getId();
+        ClusterStateResponse clusterStateResponse = this.getClusterStateResponse();
 
-        return (LocalNodeState) LocalNodeState.create().
-            numberOfNodesSeen( clusterState.getNodes().size() ).
-            id( nodeId ).
-            hostName( localNodeInfo.getNode().getHostName() ).
-            master( nodeId.equals( clusterState.getNodes().getMasterNodeId() ) ).
-            version( localNodeInfo.getVersion().toString() ).
+        // This should be fetched from custerState.getLocalNodeId() instead
+        // when es-bug is fixed
+        final DiscoveryNode localNode = clusterService.localNode();
+
+        builder.clusterName( clusterStateResponse.getClusterName().value() );
+
+        final org.elasticsearch.cluster.ClusterState clusterState = clusterStateResponse.getState();
+
+        final DiscoveryNodes clusterMembers = clusterState.getNodes();
+
+        builder.localNodeState( createLocalNodeState( clusterMembers, localNode ) );
+        List<MemberNodeState> memberNodeStates = this.getMembersState( clusterMembers );
+        builder.addMemberNodeStates( memberNodeStates );
+    }
+
+    private LocalNodeState createLocalNodeState( final DiscoveryNodes clusterMembers, final DiscoveryNode localNode )
+    {
+        return LocalNodeState.create().
+            numberOfNodesSeen( clusterMembers.size() ).
+            id( localNode.id() ).
+            hostName( localNode.getHostName() ).
+            master( localNode.id().equals( clusterMembers.masterNodeId() ) ).
+            version( localNode.getVersion().toString() ).
             build();
     }
 
@@ -90,18 +81,21 @@ public final class ClusterStateProvider
         {
             final MemberNodeState memberNodeState = MemberNodeState.create().
                 address( node.getAddress().toString() ).
+                hostName( node.getHostName() ).
                 id( node.id() ).
                 hostName( node.getHostName() ).
                 version( node.getVersion().toString() ).
                 name( node.getName() ).
-                master( node.getId().equals( members.getMasterNodeId() ) ).build();
+                master( node.getId().equals( members.getMasterNodeId() ) ).
+                isDataNode( node.isDataNode() ).
+                isClientNode( node.isClientNode() ).
+                build();
 
             results.add( memberNodeState );
         }
 
         return results;
     }
-
 
     private ClusterStateResponse getClusterStateResponse()
     {
@@ -114,16 +108,15 @@ public final class ClusterStateProvider
         return clusterAdminClient.state( clusterStateRequest ).actionGet();
     }
 
-    private NodesInfoResponse getNodesResponse( String... nodeIds )
-    {
-        final NodesInfoRequest req =
-            ( nodeIds != null && nodeIds.length > 0 ) ? new NodesInfoRequest( nodeIds ) : new NodesInfoRequest().all();
-        return clusterAdminClient.nodesInfo( req ).actionGet();
-    }
-
     @Reference
     public void setClusterAdminClient( ClusterAdminClient clusterAdminClient )
     {
         this.clusterAdminClient = clusterAdminClient;
+    }
+
+    @Reference
+    public void setClusterService( final ClusterService clusterService )
+    {
+        this.clusterService = clusterService;
     }
 }

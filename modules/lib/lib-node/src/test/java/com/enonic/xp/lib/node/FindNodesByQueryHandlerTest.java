@@ -70,5 +70,23 @@ public class FindNodesByQueryHandlerTest
         runScript( "/site/lib/xp/examples/node/query.js" );
     }
 
+    @Test
+    public void testExample2()
+    {
+        Mockito.when( this.nodeService.findByQuery( Mockito.isA( NodeQuery.class ) ) ).
+            thenReturn( FindNodesByQueryResult.create().
+                totalHits( 12902 ).
+                addNodeHit( NodeHit.create().
+                    nodeId( NodeId.from( "b186d24f-ac38-42ca-a6db-1c1bda6c6c26" ) ).
+                    score( 1.23f ).
+                    build() ).
+                addNodeHit( NodeHit.create().
+                    nodeId( NodeId.from( "350ba4a6-589c-498b-8af0-f183850e1120" ) ).
+                    score( 1.40f ).
+                    build() ).
+                build() );
+
+        runScript( "/site/lib/xp/examples/node/query-filter-array-on-root.js" );
+    }
 
 }

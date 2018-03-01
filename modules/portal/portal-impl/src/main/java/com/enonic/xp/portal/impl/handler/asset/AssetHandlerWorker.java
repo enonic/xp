@@ -10,6 +10,8 @@ import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.util.MediaTypes;
+import com.enonic.xp.web.HttpMethod;
+import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebRequest;
 
 final class AssetHandlerWorker
@@ -39,6 +41,12 @@ final class AssetHandlerWorker
         throws Exception
     {
         resolveResource();
+
+        if ( request.getMethod() == HttpMethod.OPTIONS )
+        {
+            // it will be handled by default OPTIONS handler in BaseWebHandler
+            return PortalResponse.create().status( HttpStatus.METHOD_NOT_ALLOWED ).build();
+        }
 
         final String type = MediaTypes.instance().fromFile( this.resource.getKey().getName() ).toString();
         final PortalResponse.Builder portalResponse = PortalResponse.create().
