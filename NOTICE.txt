@@ -31,7 +31,7 @@ Licenses used by Enonic XP
 
     GraphQL
     MIT License
-    https://github.com/graphql/graphql-js/blob/master/LICENSE
+    https://github.com/graphql-java/graphql-java/blob/master/LICENSE.md
 
     Jackson Annotations
     Apache License 2.0
