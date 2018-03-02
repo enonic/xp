@@ -66,7 +66,7 @@ final class JettyService
         this.server = new Server();
 
         this.context = new ServletContextHandler( null, "/", ServletContextHandler.SESSIONS );
-        new SessionConfigurator().configure( this.config, this.context.getSessionHandler().getSessionManager() );
+        new SessionConfigurator().configure( this.config, this.context.getSessionHandler() );
         new GZipConfigurator().configure( this.config, this.context );
         new RequestLogConfigurator().configure( this.config, this.server );
 

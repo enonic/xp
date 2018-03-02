@@ -103,7 +103,7 @@ final class JettyConfigurator
         sessionHandler.setCheckingRemoteSessionIdEncoding( true );
         configure( sessionHandler.getSessionCookieConfig() );
     }
-    
+
     private void configure( final SessionCookieConfig cookie )
     {
         cookie.setName( this.config.getSessionCookieName() );

@@ -1,7 +1,7 @@
 apply from: "$rootDir/gradle/osgi.gradle"
 
 ext {
-    jettyVersion = '9.3.5.v20151012'
+    jettyVersion = '9.4.8.v20171121'
 }
 
 dependencies {
