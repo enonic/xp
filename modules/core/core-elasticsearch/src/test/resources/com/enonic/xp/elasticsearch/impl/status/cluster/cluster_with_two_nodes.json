@@ -14,6 +14,7 @@
       "hostName": "hostName2",
       "version": "1.0.0",
       "address": "local[10.10.10.2]",
+      "name": "nodeName2",
       "isDataNode": true,
       "isClientNode": false
     },
@@ -23,6 +24,7 @@
       "hostName": "hostName1",
       "version": "1.0.0",
       "address": "local[10.10.10.1]",
+      "name": "nodeName1",
       "isDataNode": true,
       "isClientNode": false
     }

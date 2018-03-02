@@ -30,9 +30,9 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
 
-public class ElasticsearchElasticsearchClusterReporterTest
+public class ElasticsearchClusterReporterTest
 {
-    private final ElasticsearchClusterReporter elasticsearchClusterReporter = new ElasticsearchClusterReporter();
+    private final ElasticsearchClusterReporter clusterReporter = new ElasticsearchClusterReporter();
 
     private ClusterState clusterState;
 
@@ -78,15 +78,15 @@ public class ElasticsearchElasticsearchClusterReporterTest
         clusterStateProvider.setClusterAdminClient( clusterAdminClient );
         clusterStateProvider.setClusterService( clusterService );
 
-        elasticsearchClusterReporter.setClusterHealthProvider( clusterHealthProvider );
-        elasticsearchClusterReporter.setClusterStateProvider( clusterStateProvider );
+        clusterReporter.setClusterHealthProvider( clusterHealthProvider );
+        clusterReporter.setClusterStateProvider( clusterStateProvider );
     }
 
     @Test
     public void assertName()
         throws Exception
     {
-        assertEquals( "cluster", clusterReporter.getName() );
+        assertEquals( "cluster.elasticsearch", clusterReporter.getName() );
     }
 
     @Test
@@ -105,7 +105,7 @@ public class ElasticsearchElasticsearchClusterReporterTest
         Mockito.when( clusterState.getNodes() ).thenReturn( nodes );
         Mockito.when( this.clusterService.localNode() ).thenReturn( node1 );
 
-        assertJson( "cluster_with_one_node.json", elasticsearchClusterReporter.getReport().toString() );
+        assertJson( "cluster_with_one_node.json", clusterReporter.getReport().toString() );
     }
 
     @Test
@@ -114,7 +114,7 @@ public class ElasticsearchElasticsearchClusterReporterTest
     {
         Mockito.when( clusterStateInfo.actionGet() ).thenThrow( new ElasticsearchException( "cluster state exception" ) );
 
-        assertJson( "cluster_state_exception.json", elasticsearchClusterReporter.getReport().toString() );
+        assertJson( "cluster_state_exception.json", clusterReporter.getReport().toString() );
     }
 
     @Test
@@ -135,7 +135,7 @@ public class ElasticsearchElasticsearchClusterReporterTest
         Mockito.when( clusterState.getNodes() ).thenReturn( nodes );
         Mockito.when( this.clusterService.localNode() ).thenReturn( node1 );
 
-        assertJson( "cluster_health_info_exception.json", elasticsearchClusterReporter.getReport().toString() );
+        assertJson( "cluster_health_info_exception.json", clusterReporter.getReport().toString() );
     }
 
     @Test
@@ -160,7 +160,7 @@ public class ElasticsearchElasticsearchClusterReporterTest
         Mockito.when( clusterState.getNodes() ).thenReturn( nodes );
         Mockito.when( this.clusterService.localNode() ).thenReturn( node1 );
 
-        assertJson( "cluster_with_two_nodes.json", elasticsearchClusterReporter.getReport().toString() );
+        assertJson( "cluster_with_two_nodes.json", clusterReporter.getReport().toString() );
     }
 
 
