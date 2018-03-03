@@ -6,6 +6,7 @@ import org.osgi.service.component.annotations.Component;
 
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.EndpointHandler;
+import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
@@ -25,6 +26,12 @@ public final class ErrorHandler
     protected PortalResponse doHandle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
         throws Exception
     {
+        if ( webRequest.getMethod() == HttpMethod.OPTIONS )
+        {
+            // it will be handled by default OPTIONS handler in BaseWebHandler
+            return PortalResponse.create().status( HttpStatus.METHOD_NOT_ALLOWED ).build();
+        }
+
         final String restPath = findRestPath( webRequest );
 
         final ErrorHandlerWorker worker = new ErrorHandlerWorker( webRequest );

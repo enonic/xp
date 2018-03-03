@@ -15,7 +15,7 @@ import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.LayoutRegions;
 import com.enonic.xp.region.Region;
 
-final class FragmentPageResolver
+public final class FragmentPageResolver
 {
 
     public Page inlineFragmentInPage( final Page page, final Component fragmentComponent, final ComponentPath path )

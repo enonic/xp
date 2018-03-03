@@ -45,7 +45,7 @@ public final class AdminLibHelper
         return rewriteUri( ADMIN_ASSETS_URI_PREFIX + this.version );
     }
 
-    public String generateHomeToolUri()
+    public String getHomeToolUri()
     {
         return rewriteUri( ADMIN_TOOLS_URI_PREFIX );
     }
@@ -133,5 +133,11 @@ public final class AdminLibHelper
     public String getInstallation()
     {
         return ServerInfo.get().getName();
+    }
+
+    public String getVersion()
+    {
+        final VersionInfo version = VersionInfo.get();
+        return version.getVersion();
     }
 }

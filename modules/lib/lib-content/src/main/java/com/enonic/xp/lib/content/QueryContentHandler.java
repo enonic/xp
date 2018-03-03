@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.Lists;
+
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.Contents;
@@ -37,7 +39,7 @@ public final class QueryContentHandler
 
     private List<String> contentTypes;
 
-    private Map<String, Object> filters;
+    private List<Map<String, Object>> filters;
 
     @Override
     protected Object doExecute()
@@ -127,18 +129,38 @@ public final class QueryContentHandler
         this.contentTypes = value != null ? value.getArray( String.class ) : null;
     }
 
-    public void setFilters( final ScriptValue value )
+    public void setFilters( final ScriptValue filters )
     {
-        if ( value == null )
-        {
-            return;
-        }
-
-        if ( !value.isObject() )
-        {
-            throw new IllegalArgumentException( "Filter not of type object" );
-        }
-
-        this.filters = value.getMap();
+        this.filters = doSetFilters( filters );
     }
+
+    private List<Map<String, Object>> doSetFilters( final ScriptValue filters )
+    {
+        List<Map<String, Object>> filterList = Lists.newArrayList();
+
+        if ( filters == null )
+        {
+            return filterList;
+        }
+
+        if ( filters.isObject() )
+        {
+            filterList.add( filters.getMap() );
+        }
+        else if ( filters.isArray() )
+        {
+            filters.getArray().forEach( sv -> {
+
+                if ( !sv.isObject() )
+                {
+                    throw new IllegalArgumentException( "Array elements not of type objects" );
+                }
+
+                filterList.add( sv.getMap() );
+            } );
+        }
+
+        return filterList;
+    }
+
 }

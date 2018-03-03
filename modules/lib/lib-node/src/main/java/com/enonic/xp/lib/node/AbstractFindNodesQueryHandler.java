@@ -24,7 +24,7 @@ abstract class AbstractFindNodesQueryHandler
 
     private final String sort;
 
-    private final Map<String, Object> filters;
+    private final List<Map<String, Object>> filters;
 
     private final Map<String, Object> aggregations;
 
@@ -77,7 +77,7 @@ abstract class AbstractFindNodesQueryHandler
 
         private String sort;
 
-        private Map<String, Object> filters;
+        private List<Map<String, Object>> filters;
 
         private Map<String, Object> aggregations;
 
@@ -116,7 +116,7 @@ abstract class AbstractFindNodesQueryHandler
         }
 
         @SuppressWarnings("unchecked")
-        public B filters( final Map<String, Object> val )
+        public B filters( final List<Map<String, Object>> val )
         {
             filters = val;
             return (B) this;
