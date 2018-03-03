@@ -1,6 +1,5 @@
 package com.enonic.xp.admin.impl.rest.resource.issue;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -83,6 +82,8 @@ public final class IssueResource
 
     private SecurityService securityService;
 
+    private IssueNotificationParamsFactory issueNotificationParamsFactory;
+
     @POST
     @Path("create")
     public IssueJson create( final CreateIssueJson json, @Context HttpServletRequest request )
@@ -106,7 +107,13 @@ public final class IssueResource
             }
         }
 
-        issueNotificationsSender.notifyIssueCreated( issue, comments, null, request.getHeader( HttpHeaders.REFERER ) );
+        final IssueNotificationParams createdParams = issueNotificationParamsFactory.create().
+            setIssue( issue ).
+            setComments( comments ).
+            setUrl( request.getHeader( HttpHeaders.REFERER ) ).
+            buildCreated();
+
+        issueNotificationsSender.notifyIssueCreated( createdParams );
 
         return new IssueJson( issue );
     }
@@ -136,29 +143,44 @@ public final class IssueResource
     @Path("update")
     public IssueJson update( final UpdateIssueJson params, @Context HttpServletRequest request )
     {
-        ArrayList<PrincipalKey> addedAssignees = Lists.newArrayList();
-        ArrayList<PrincipalKey> existingAssignees = Lists.newArrayList();
-        final Issue issue = issueService.update( generateUpdateIssueParams( params, addedAssignees, existingAssignees ) );
+        final Issue issueToEdit = issueService.getIssue( params.issueId );
+        final PrincipalKeys validAssignees = filterInvalidAssignees( params.approverIds );
+
+        final PrincipalKeys addedAssignees = filterKeys( issueToEdit.getApproverIds(), validAssignees, false );
+        final PrincipalKeys existingAssignees = filterKeys( issueToEdit.getApproverIds(), validAssignees, true );
+
+        final Issue issue = issueService.update( generateUpdateIssueParams( params ) );
 
         IssueCommentQuery query = IssueCommentQuery.create().issue( issue.getId() ).build();
         final List<IssueComment> comments = issueService.findComments( query ).getIssueComments();
         final String referer = request.getHeader( HttpHeaders.REFERER );
 
-        if ( addedAssignees.size() > 0 )
+        if ( addedAssignees.getSize() > 0 )
         {
-            issueNotificationsSender.notifyIssueCreated( issue, comments, PrincipalKeys.from( addedAssignees ), referer );
+            final IssueNotificationParams createdParams = issueNotificationParamsFactory.create().
+                setIssue( issue ).
+                setComments( comments ).
+                setUrl( request.getHeader( HttpHeaders.REFERER ) ).
+                setRecipients( addedAssignees ).
+                buildCreated();
+
+            issueNotificationsSender.notifyIssueCreated( createdParams );
         }
 
         if ( !params.autoSave )
         {
+            final IssueNotificationParamsFactory.Builder paramsBuilder = issueNotificationParamsFactory.create().
+                setIssue( issue ).
+                setComments( comments ).
+                setUrl( request.getHeader( HttpHeaders.REFERER ) );
+
             if ( params.isPublish )
             {
-                issueNotificationsSender.notifyIssuePublished( issue, comments, null, request.getHeader( HttpHeaders.REFERER ) );
+                issueNotificationsSender.notifyIssuePublished( paramsBuilder.buildPublished() );
             }
             else
             {
-                issueNotificationsSender.notifyIssueUpdated( issue, comments, PrincipalKeys.from( existingAssignees ),
-                                                             request.getHeader( HttpHeaders.REFERER ) );
+                issueNotificationsSender.notifyIssueUpdated( paramsBuilder.setRecipients( existingAssignees ).buildUpdated() );
             }
         }
 
@@ -196,7 +218,13 @@ public final class IssueResource
         final IssueCommentQuery commentsQuery = IssueCommentQuery.create().issue( issue.getId() ).build();
         final FindIssueCommentsResult results = issueService.findComments( commentsQuery );
 
-        issueNotificationsSender.notifyIssueCommented( issue, results.getIssueComments(), null, request.getHeader( HttpHeaders.REFERER ) );
+        IssueCommentedNotificationParams notificationParams = issueNotificationParamsFactory.create().
+            setIssue( issue ).
+            setComments( results.getIssueComments() ).
+            setUrl( request.getHeader( HttpHeaders.REFERER ) ).
+            buildCommented();
+
+        issueNotificationsSender.notifyIssueCommented( notificationParams );
 
         return new IssueCommentJson( comment );
     }
@@ -343,8 +371,7 @@ public final class IssueResource
         return builder.build();
     }
 
-    private UpdateIssueParams generateUpdateIssueParams( final UpdateIssueJson json, final ArrayList<PrincipalKey> added,
-                                                         final ArrayList<PrincipalKey> existing )
+    private UpdateIssueParams generateUpdateIssueParams( final UpdateIssueJson json )
     {
         return UpdateIssueParams.create().
             id( json.issueId ).
@@ -363,25 +390,7 @@ public final class IssueResource
                 }
                 if ( json.approverIds != null )
                 {
-                    PrincipalKeys validAssignees = filterInvalidAssignees( json.approverIds );
-                    if ( validAssignees.getSize() > 0 )
-                    {
-                        validAssignees.stream().forEach( a -> {
-                            if ( editMe.approverIds.contains( a ) )
-                            {
-                                existing.add( a );
-                            }
-                            else
-                            {
-                                added.add( a );
-                            }
-                        } );
-                    }
-                    else
-                    {
-                        existing.addAll( editMe.approverIds.getSet() );
-                    }
-                    editMe.approverIds = validAssignees;
+                    editMe.approverIds = filterInvalidAssignees( json.approverIds );
                 }
                 if ( json.publishRequest != null )
                 {
@@ -399,9 +408,28 @@ public final class IssueResource
     private boolean isValidAssignee( final PrincipalKey principalKey )
     {
         final PrincipalKeys membershipKeys = securityService.getMemberships( principalKey );
-        final Principals memberships = securityService.getPrincipals( membershipKeys );
+        if ( membershipKeys.getSize() > 0 )
+        {
+            final Principals memberships = securityService.getPrincipals( membershipKeys );
+            return memberships.stream().anyMatch( this::hasIssuePermissions );
+        }
+        else
+        {
+            return false;
+        }
+    }
 
-        return memberships.stream().anyMatch( this::hasIssuePermissions );
+    private PrincipalKeys filterKeys( final PrincipalKeys oldKeys, final PrincipalKeys newKeys, final boolean existing )
+    {
+        if ( newKeys.getSize() == 0 )
+        {
+            return existing ? PrincipalKeys.from( oldKeys ) : PrincipalKeys.empty();
+        }
+        else
+        {
+            return PrincipalKeys.from(
+                newKeys.stream().filter( key -> existing == oldKeys.contains( key ) ).collect( Collectors.toList() ) );
+        }
     }
 
     private boolean hasIssuePermissions( final Principal principal )
@@ -445,5 +473,11 @@ public final class IssueResource
     public void setSecurityService( final SecurityService securityService )
     {
         this.securityService = securityService;
+    }
+
+    @Reference
+    public void setIssueNotificationParamsFactory( final IssueNotificationParamsFactory issueNotificationParamsFactory )
+    {
+        this.issueNotificationParamsFactory = issueNotificationParamsFactory;
     }
 }

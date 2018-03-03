@@ -15,6 +15,7 @@ import org.apache.commons.lang.text.StrSubstitutor;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+import org.mockito.stubbing.Answer;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -32,6 +33,7 @@ import com.enonic.xp.admin.impl.rest.resource.issue.json.ListIssuesJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.UpdateIssueCommentJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.UpdateIssueJson;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.LocalScope;
 import com.enonic.xp.issue.CreateIssueCommentParams;
@@ -43,6 +45,7 @@ import com.enonic.xp.issue.FindIssuesResult;
 import com.enonic.xp.issue.Issue;
 import com.enonic.xp.issue.IssueComment;
 import com.enonic.xp.issue.IssueCommentQuery;
+import com.enonic.xp.issue.IssueId;
 import com.enonic.xp.issue.IssueNotFoundException;
 import com.enonic.xp.issue.IssueQuery;
 import com.enonic.xp.issue.IssueService;
@@ -52,6 +55,7 @@ import com.enonic.xp.issue.UpdateIssueCommentParams;
 import com.enonic.xp.issue.UpdateIssueParams;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.PrincipalNotFoundException;
@@ -66,6 +70,7 @@ import com.enonic.xp.session.SessionKey;
 import com.enonic.xp.session.SimpleSession;
 
 import static org.junit.Assert.*;
+import static org.mockito.Answers.RETURNS_DEEP_STUBS;
 
 public class IssueResourceTest
     extends AdminResourceTestSupport
@@ -74,7 +79,13 @@ public class IssueResourceTest
 
     private IssueNotificationsSender issueNotificationsSender;
 
+    private IssueNotificationParamsFactory notificationParamsFactory;
+
     private SecurityService securityService;
+
+    private ContentService contentService;
+
+    private ContentTypeService contentTypeService;
 
     @Override
     protected IssueResource getResourceInstance()
@@ -84,12 +95,38 @@ public class IssueResourceTest
         issueService = Mockito.mock( IssueService.class );
         issueNotificationsSender = Mockito.mock( IssueNotificationsSender.class );
         securityService = Mockito.mock( SecurityService.class );
+        Mockito.when( securityService.getMemberships( Mockito.isA( PrincipalKey.class ) ) ).thenReturn(
+            PrincipalKeys.from( "role:system:one" ) );
+        Mockito.when( securityService.getPrincipals( Mockito.isA( PrincipalKeys.class ) ) ).thenReturn(
+            Principals.from( Role.create().key( RoleKeys.ADMIN ).displayName( "Admin" ).build() ) );
+        contentService = Mockito.mock( ContentService.class );
+        contentTypeService = Mockito.mock( ContentTypeService.class );
+
+        IssueNotificationParamsFactory.Builder builder =
+            Mockito.mock( IssueNotificationParamsFactory.Builder.class, RETURNS_DEEP_STUBS.get() );
+        Mockito.when( builder.buildCreated() ).then( returnNotificationParams() );
+        Mockito.when( builder.buildUpdated() ).then( returnNotificationParams() );
+        Mockito.when( builder.buildCommented() ).then( returnNotificationParams() );
+        Mockito.when( builder.buildPublished() ).then( returnNotificationParams() );
+
+        notificationParamsFactory = Mockito.mock( IssueNotificationParamsFactory.class );
+        Mockito.when( notificationParamsFactory.create() ).thenReturn( builder );
+
+        notificationParamsFactory.setContentService( contentService );
+        notificationParamsFactory.setSecurityService( securityService );
+        notificationParamsFactory.setContentTypeService( contentTypeService );
 
         resource.setIssueService( issueService );
         resource.setIssueNotificationsSender( issueNotificationsSender );
         resource.setSecurityService( securityService );
+        resource.setIssueNotificationParamsFactory( notificationParamsFactory );
 
         return resource;
+    }
+
+    private Answer<IssueNotificationParams> returnNotificationParams()
+    {
+        return invocation -> IssueNotificationParams.create().build();
     }
 
     @Test
@@ -116,10 +153,7 @@ public class IssueResourceTest
         Mockito.verify( issueService ).createComment( commentCaptor.capture() );
         Mockito.verify( issueService, Mockito.times( 1 ) ).create( Mockito.any( CreateIssueParams.class ) );
         Mockito.verify( issueService, Mockito.times( 1 ) ).createComment( Mockito.any( CreateIssueCommentParams.class ) );
-        Mockito.verify( issueNotificationsSender, Mockito.times( 1 ) ).notifyIssueCreated( Mockito.eq( issue ),
-                                                                                           Mockito.eq( Lists.newArrayList( comment ) ),
-                                                                                           Mockito.any( PrincipalKeys.class ),
-                                                                                           Mockito.anyString() );
+        Mockito.verify( issueNotificationsSender, Mockito.times( 1 ) ).notifyIssueCreated( Mockito.isA( IssueNotificationParams.class ) );
 
         assertEquals( "desc", commentCaptor.getValue().getText() );
         assertEquals( issue.getId(), commentCaptor.getValue().getIssue() );
@@ -146,10 +180,7 @@ public class IssueResourceTest
 
         Mockito.verify( issueService, Mockito.times( 1 ) ).create( Mockito.any( CreateIssueParams.class ) );
         Mockito.verify( issueService, Mockito.never() ).createComment( Mockito.any( CreateIssueCommentParams.class ) );
-        Mockito.verify( issueNotificationsSender, Mockito.times( 1 ) ).notifyIssueCreated( Mockito.eq( issue ),
-                                                                                           Mockito.eq( Lists.newArrayList() ),
-                                                                                           Mockito.any( PrincipalKeys.class ),
-                                                                                           Mockito.anyString() );
+        Mockito.verify( issueNotificationsSender, Mockito.times( 1 ) ).notifyIssueCreated( Mockito.isA( IssueNotificationParams.class ) );
     }
 
     @Test
@@ -299,6 +330,7 @@ public class IssueResourceTest
                                  createPublishRequest() );
 
         IssueResource resource = getResourceInstance();
+        Mockito.when( issueService.getIssue( Mockito.isA( IssueId.class ) ) ).thenReturn( issue );
         Mockito.when( issueService.update( Mockito.any( UpdateIssueParams.class ) ) ).thenReturn( issue );
         Mockito.when( issueService.findComments( Mockito.any( IssueCommentQuery.class ) ) ).thenReturn(
             FindIssueCommentsResult.create().build() );
@@ -306,10 +338,8 @@ public class IssueResourceTest
         resource.update( params, Mockito.mock( HttpServletRequest.class ) );
 
         Mockito.verify( issueService, Mockito.times( 1 ) ).update( Mockito.any( UpdateIssueParams.class ) );
-        Mockito.verify( issueNotificationsSender, Mockito.times( 1 ) ).notifyIssueUpdated( Mockito.any( Issue.class ),
-                                                                                           Mockito.anyListOf( IssueComment.class ),
-                                                                                           Mockito.any( PrincipalKeys.class ),
-                                                                                           Mockito.anyString() );
+        Mockito.verify( issueNotificationsSender, Mockito.times( 1 ) ).notifyIssueUpdated(
+            Mockito.isA( IssueUpdatedNotificationParams.class ) );
     }
 
     @Test
@@ -322,6 +352,7 @@ public class IssueResourceTest
                                  createPublishRequest() );
 
         IssueResource resource = getResourceInstance();
+        Mockito.when( issueService.getIssue( Mockito.isA( IssueId.class ) ) ).thenReturn( issue );
         Mockito.when( issueService.update( Mockito.any( UpdateIssueParams.class ) ) ).thenReturn( issue );
         Mockito.when( issueService.findComments( Mockito.any( IssueCommentQuery.class ) ) ).thenReturn(
             FindIssueCommentsResult.create().build() );
@@ -329,10 +360,8 @@ public class IssueResourceTest
         resource.update( params, Mockito.mock( HttpServletRequest.class ) );
 
         Mockito.verify( issueService, Mockito.times( 1 ) ).update( Mockito.any( UpdateIssueParams.class ) );
-        Mockito.verify( issueNotificationsSender, Mockito.times( 1 ) ).notifyIssuePublished( Mockito.any( Issue.class ),
-                                                                                             Mockito.anyListOf( IssueComment.class ),
-                                                                                             Mockito.any( PrincipalKeys.class ),
-                                                                                             Mockito.anyString() );
+        Mockito.verify( issueNotificationsSender, Mockito.times( 1 ) ).notifyIssuePublished(
+            Mockito.isA( IssuePublishedNotificationParams.class ) );
     }
 
     @Test
@@ -345,6 +374,7 @@ public class IssueResourceTest
                                  createPublishRequest() );
 
         IssueResource resource = getResourceInstance();
+        Mockito.when( issueService.getIssue( Mockito.isA( IssueId.class ) ) ).thenReturn( issue );
         Mockito.when( issueService.update( Mockito.any( UpdateIssueParams.class ) ) ).thenReturn( issue );
         Mockito.when( issueService.findComments( Mockito.any( IssueCommentQuery.class ) ) ).thenReturn(
             FindIssueCommentsResult.create().build() );
@@ -352,14 +382,10 @@ public class IssueResourceTest
         resource.update( params, Mockito.mock( HttpServletRequest.class ) );
 
         Mockito.verify( issueService, Mockito.times( 1 ) ).update( Mockito.any( UpdateIssueParams.class ) );
-        Mockito.verify( issueNotificationsSender, Mockito.times( 0 ) ).notifyIssueUpdated( Mockito.any( Issue.class ),
-                                                                                           Mockito.anyListOf( IssueComment.class ),
-                                                                                           Mockito.any( PrincipalKeys.class ),
-                                                                                           Mockito.anyString() );
-        Mockito.verify( issueNotificationsSender, Mockito.times( 0 ) ).notifyIssuePublished( Mockito.any( Issue.class ),
-                                                                                             Mockito.anyListOf( IssueComment.class ),
-                                                                                             Mockito.any( PrincipalKeys.class ),
-                                                                                             Mockito.anyString() );
+        Mockito.verify( issueNotificationsSender, Mockito.times( 0 ) ).notifyIssueUpdated(
+            Mockito.isA( IssueUpdatedNotificationParams.class ) );
+        Mockito.verify( issueNotificationsSender, Mockito.times( 0 ) ).notifyIssuePublished(
+            Mockito.isA( IssuePublishedNotificationParams.class ) );
     }
 
     @Test
@@ -382,10 +408,8 @@ public class IssueResourceTest
         resource.comment( params, Mockito.mock( HttpServletRequest.class ) );
 
         Mockito.verify( issueService, Mockito.times( 1 ) ).createComment( Mockito.any( CreateIssueCommentParams.class ) );
-        Mockito.verify( issueNotificationsSender, Mockito.times( 1 ) ).notifyIssueCommented( Mockito.any( Issue.class ),
-                                                                                             Mockito.anyListOf( IssueComment.class ),
-                                                                                             Mockito.any( PrincipalKeys.class ),
-                                                                                             Mockito.anyString() );
+        Mockito.verify( issueNotificationsSender, Mockito.times( 1 ) ).notifyIssueCommented(
+            Mockito.isA( IssueCommentedNotificationParams.class ) );
     }
 
     @Test(expected = PrincipalNotFoundException.class)
