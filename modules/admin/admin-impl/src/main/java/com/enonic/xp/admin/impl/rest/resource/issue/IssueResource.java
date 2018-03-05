@@ -40,6 +40,7 @@ import com.enonic.xp.admin.impl.rest.resource.issue.json.ListIssueCommentsJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.ListIssuesJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.UpdateIssueCommentJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.UpdateIssueJson;
+import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.issue.CreateIssueCommentParams;
 import com.enonic.xp.issue.CreateIssueParams;
@@ -58,6 +59,7 @@ import com.enonic.xp.issue.IssueStatus;
 import com.enonic.xp.issue.UpdateIssueCommentParams;
 import com.enonic.xp.issue.UpdateIssueParams;
 import com.enonic.xp.jaxrs.JaxRsComponent;
+import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
@@ -82,7 +84,9 @@ public final class IssueResource
 
     private SecurityService securityService;
 
-    private IssueNotificationParamsFactory issueNotificationParamsFactory;
+    private ContentService contentService;
+
+    private ContentTypeService contentTypeService;
 
     @POST
     @Path("create")
@@ -107,11 +111,15 @@ public final class IssueResource
             }
         }
 
-        final IssueNotificationParams createdParams = issueNotificationParamsFactory.create().
-            setIssue( issue ).
-            setComments( comments ).
-            setUrl( request.getHeader( HttpHeaders.REFERER ) ).
-            buildCreated();
+        final IssueNotificationParams createdParams = IssueNotificationParamsFactory.create().
+            securityService( securityService ).
+            contentService( contentService ).
+            contentTypeService( contentTypeService ).
+            issue( issue ).
+            comments( comments ).
+            url( request.getHeader( HttpHeaders.REFERER ) ).
+            build().
+            createdParams();
 
         issueNotificationsSender.notifyIssueCreated( createdParams );
 
@@ -157,30 +165,37 @@ public final class IssueResource
 
         if ( addedAssignees.getSize() > 0 )
         {
-            final IssueNotificationParams createdParams = issueNotificationParamsFactory.create().
-                setIssue( issue ).
-                setComments( comments ).
-                setUrl( request.getHeader( HttpHeaders.REFERER ) ).
-                setRecipients( addedAssignees ).
-                buildCreated();
+            final IssueNotificationParams createdParams = IssueNotificationParamsFactory.create().
+                securityService( securityService ).
+                contentService( contentService ).
+                contentTypeService( contentTypeService ).
+                issue( issue ).
+                comments( comments ).
+                url( request.getHeader( HttpHeaders.REFERER ) ).
+                recipients( addedAssignees ).
+                build().
+                createdParams();
 
             issueNotificationsSender.notifyIssueCreated( createdParams );
         }
 
         if ( !params.autoSave )
         {
-            final IssueNotificationParamsFactory.Builder paramsBuilder = issueNotificationParamsFactory.create().
-                setIssue( issue ).
-                setComments( comments ).
-                setUrl( request.getHeader( HttpHeaders.REFERER ) );
+            final IssueNotificationParamsFactory.Builder paramsBuilder = IssueNotificationParamsFactory.create().
+                securityService( securityService ).
+                contentService( contentService ).
+                contentTypeService( contentTypeService ).
+                issue( issue ).
+                comments( comments ).
+                url( request.getHeader( HttpHeaders.REFERER ) );
 
             if ( params.isPublish )
             {
-                issueNotificationsSender.notifyIssuePublished( paramsBuilder.buildPublished() );
+                issueNotificationsSender.notifyIssuePublished( paramsBuilder.build().publishedParams() );
             }
             else
             {
-                issueNotificationsSender.notifyIssueUpdated( paramsBuilder.setRecipients( existingAssignees ).buildUpdated() );
+                issueNotificationsSender.notifyIssueUpdated( paramsBuilder.recipients( existingAssignees ).build().updatedParams() );
             }
         }
 
@@ -218,11 +233,15 @@ public final class IssueResource
         final IssueCommentQuery commentsQuery = IssueCommentQuery.create().issue( issue.getId() ).build();
         final FindIssueCommentsResult results = issueService.findComments( commentsQuery );
 
-        IssueCommentedNotificationParams notificationParams = issueNotificationParamsFactory.create().
-            setIssue( issue ).
-            setComments( results.getIssueComments() ).
-            setUrl( request.getHeader( HttpHeaders.REFERER ) ).
-            buildCommented();
+        IssueCommentedNotificationParams notificationParams = IssueNotificationParamsFactory.create().
+            securityService( securityService ).
+            contentService( contentService ).
+            contentTypeService( contentTypeService ).
+            issue( issue ).
+            comments( results.getIssueComments() ).
+            url( request.getHeader( HttpHeaders.REFERER ) ).
+            build().
+            commentedParams();
 
         issueNotificationsSender.notifyIssueCommented( notificationParams );
 
@@ -476,8 +495,14 @@ public final class IssueResource
     }
 
     @Reference
-    public void setIssueNotificationParamsFactory( final IssueNotificationParamsFactory issueNotificationParamsFactory )
+    public void setContentService( final ContentService contentService )
     {
-        this.issueNotificationParamsFactory = issueNotificationParamsFactory;
+        this.contentService = contentService;
+    }
+
+    @Reference
+    public void setContentTypeService( final ContentTypeService contentTypeService )
+    {
+        this.contentTypeService = contentTypeService;
     }
 }

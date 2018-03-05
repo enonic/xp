@@ -5,9 +5,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.admin.impl.rest.resource.schema.SchemaImageHelper;
@@ -31,9 +28,9 @@ import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
 
-@Component
 public class IssueNotificationParamsFactory
 {
+    private final SchemaImageHelper HELPER = new SchemaImageHelper();
 
     private SecurityService securityService;
 
@@ -41,36 +38,121 @@ public class IssueNotificationParamsFactory
 
     private ContentTypeIconResolver contentTypeIconResolver;
 
-    public IssueNotificationParamsFactory()
+    private Issue issue;
+
+    private List<IssueComment> comments;
+
+    private PrincipalKeys recipients;
+
+    private String url;
+
+    private IssueNotificationParamsFactory( Builder builder )
     {
+        this.securityService = builder.securityService;
+        this.contentService = builder.contentService;
+        this.contentTypeIconResolver = new ContentTypeIconResolver( builder.contentTypeService );
+        this.issue = builder.issue;
+        this.comments = builder.comments;
+        this.recipients = builder.recipients;
+        this.url = builder.url;
     }
 
-    public Builder create()
+    public static Builder create()
     {
-        return new Builder( securityService, contentService, contentTypeIconResolver );
+        return new Builder();
     }
 
-    @Reference
     public void setSecurityService( final SecurityService securityService )
     {
         this.securityService = securityService;
     }
 
-    @Reference
     public void setContentService( final ContentService contentService )
     {
         this.contentService = contentService;
     }
 
-    @Reference
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
         this.contentTypeIconResolver = new ContentTypeIconResolver( contentTypeService );
     }
 
+    public IssueNotificationParams createdParams()
+    {
+        return createMessageParams();
+    }
+
+    public IssueUpdatedNotificationParams updatedParams()
+    {
+        return IssueUpdatedNotificationParams.create( getCurrentUser(), createMessageParams() ).build();
+    }
+
+    public IssuePublishedNotificationParams publishedParams()
+    {
+        return IssuePublishedNotificationParams.create( getCurrentUser(), createMessageParams() ).build();
+    }
+
+    IssueCommentedNotificationParams commentedParams()
+    {
+        return IssueCommentedNotificationParams.create( getCurrentUser(), createMessageParams() ).build();
+    }
+
+    private IssueNotificationParams createMessageParams()
+    {
+        final User creator = securityService.getUser( issue.getCreator() ).orElse( null );
+        final ContentIds contentIds = ContentIds.from(
+            issue.getPublishRequest().getItems().stream().map( PublishRequestItem::getId ).collect( Collectors.toList() ) );
+        final Contents contents = contentService.getByIds( new GetContentByIdsParams( contentIds ) );
+        final CompareContentResults compareResults =
+            contentService.compare( new CompareContentsParams( contentIds, ContentConstants.BRANCH_MASTER ) );
+        final List<User> approvers = ( recipients != null ? recipients : issue.getApproverIds() ).
+            stream().
+            map( principalKey -> securityService.getUser( principalKey ).orElse( null ) ).
+            filter( Objects::nonNull ).
+            collect( Collectors.toList() );
+        final Map<ContentId, String> icons = getIcons( contents );
+
+        return IssueNotificationParams.create().
+            issue( issue ).
+            creator( creator ).
+            approvers( approvers ).
+            items( contents ).
+            url( url ).
+            icons( icons ).
+            compareResults( compareResults ).
+            comments( comments ).
+            build();
+    }
+
+    private Map<ContentId, String> getIcons( final Contents contents )
+    {
+        final Map<ContentId, String> icons = Maps.newHashMap();
+
+        contents.stream().forEach( content -> {
+            final Icon icon = contentTypeIconResolver.resolveIcon( content.getType() );
+            if ( icon != null && HELPER.isSvg( icon ) )
+            {
+                icons.put( content.getId(), new String( icon.toByteArray() ) );
+            }
+        } );
+
+        return icons;
+    }
+
+    private User getCurrentUser()
+    {
+        final Context context = ContextAccessor.current();
+        return context.getAuthInfo().getUser() != null ? context.getAuthInfo().getUser() : User.ANONYMOUS;
+    }
+
+
     public static class Builder
     {
-        private final SchemaImageHelper HELPER = new SchemaImageHelper();
+        private SecurityService securityService;
+
+        private ContentService contentService;
+
+        private ContentTypeService contentTypeService;
 
         private Issue issue;
 
@@ -80,110 +162,55 @@ public class IssueNotificationParamsFactory
 
         private String url;
 
-        private SecurityService securityService;
-
-        private ContentService contentService;
-
-        private ContentTypeIconResolver contentTypeIconResolver;
-
-        private Builder( final SecurityService securityService, final ContentService contentService,
-                         final ContentTypeIconResolver contentTypeIconResolver )
+        private Builder()
         {
-            this.securityService = securityService;
-            this.contentService = contentService;
-            this.contentTypeIconResolver = contentTypeIconResolver;
         }
 
-        public IssueNotificationParams buildCreated()
-        {
-            return createMessageParams();
-        }
-
-        public IssueUpdatedNotificationParams buildUpdated()
-        {
-            return IssueUpdatedNotificationParams.create( getCurrentUser(), createMessageParams() ).build();
-        }
-
-        public IssuePublishedNotificationParams buildPublished()
-        {
-            return IssuePublishedNotificationParams.create( getCurrentUser(), createMessageParams() ).build();
-        }
-
-        IssueCommentedNotificationParams buildCommented()
-        {
-            return IssueCommentedNotificationParams.create( getCurrentUser(), createMessageParams() ).build();
-        }
-
-        public Builder setIssue( final Issue issue )
+        public Builder issue( final Issue issue )
         {
             this.issue = issue;
             return this;
         }
 
-        public Builder setComments( final List<IssueComment> comments )
+        public Builder comments( final List<IssueComment> comments )
         {
             this.comments = comments;
             return this;
         }
 
-        public Builder setRecipients( final PrincipalKeys recipients )
+        public Builder recipients( final PrincipalKeys recipients )
         {
             this.recipients = recipients;
             return this;
         }
 
-        public Builder setUrl( final String url )
+        public Builder url( final String url )
         {
             this.url = url;
             return this;
         }
 
-        private IssueNotificationParams createMessageParams()
+        public Builder securityService( final SecurityService securityService )
         {
-            final User creator = securityService.getUser( issue.getCreator() ).orElse( null );
-            final ContentIds contentIds = ContentIds.from(
-                issue.getPublishRequest().getItems().stream().map( PublishRequestItem::getId ).collect( Collectors.toList() ) );
-            final Contents contents = contentService.getByIds( new GetContentByIdsParams( contentIds ) );
-            final CompareContentResults compareResults =
-                contentService.compare( new CompareContentsParams( contentIds, ContentConstants.BRANCH_MASTER ) );
-            final List<User> approvers = ( recipients != null ? recipients : issue.getApproverIds() ).
-                stream().
-                map( principalKey -> securityService.getUser( principalKey ).orElse( null ) ).
-                filter( Objects::nonNull ).
-                collect( Collectors.toList() );
-            final Map<ContentId, String> icons = getIcons( contents );
-
-            return IssueNotificationParams.create().
-                issue( issue ).
-                creator( creator ).
-                approvers( approvers ).
-                items( contents ).
-                url( url ).
-                icons( icons ).
-                compareResults( compareResults ).
-                comments( comments ).
-                build();
+            this.securityService = securityService;
+            return this;
         }
 
-        private Map<ContentId, String> getIcons( final Contents contents )
+        public Builder contentService( final ContentService contentService )
         {
-            final Map<ContentId, String> icons = Maps.newHashMap();
-
-            contents.stream().forEach( content -> {
-                final Icon icon = contentTypeIconResolver.resolveIcon( content.getType() );
-                if ( icon != null && HELPER.isSvg( icon ) )
-                {
-                    icons.put( content.getId(), new String( icon.toByteArray() ) );
-                }
-            } );
-
-            return icons;
+            this.contentService = contentService;
+            return this;
         }
 
-        private User getCurrentUser()
+        public Builder contentTypeService( final ContentTypeService contentTypeService )
         {
-            final Context context = ContextAccessor.current();
-            return context.getAuthInfo().getUser() != null ? context.getAuthInfo().getUser() : User.ANONYMOUS;
+            this.contentTypeService = contentTypeService;
+            return this;
+        }
+
+        public IssueNotificationParamsFactory build()
+        {
+            return new IssueNotificationParamsFactory( this );
         }
     }
 }

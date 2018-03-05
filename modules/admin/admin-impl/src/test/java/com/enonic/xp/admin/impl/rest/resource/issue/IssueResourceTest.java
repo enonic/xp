@@ -32,8 +32,11 @@ import com.enonic.xp.admin.impl.rest.resource.issue.json.DeleteIssueCommentJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.ListIssuesJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.UpdateIssueCommentJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.UpdateIssueJson;
+import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.Contents;
+import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.LocalScope;
 import com.enonic.xp.issue.CreateIssueCommentParams;
@@ -55,6 +58,7 @@ import com.enonic.xp.issue.UpdateIssueCommentParams;
 import com.enonic.xp.issue.UpdateIssueParams;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
@@ -70,7 +74,6 @@ import com.enonic.xp.session.SessionKey;
 import com.enonic.xp.session.SimpleSession;
 
 import static org.junit.Assert.*;
-import static org.mockito.Answers.RETURNS_DEEP_STUBS;
 
 public class IssueResourceTest
     extends AdminResourceTestSupport
@@ -78,8 +81,6 @@ public class IssueResourceTest
     private IssueService issueService;
 
     private IssueNotificationsSender issueNotificationsSender;
-
-    private IssueNotificationParamsFactory notificationParamsFactory;
 
     private SecurityService securityService;
 
@@ -93,35 +94,36 @@ public class IssueResourceTest
         final IssueResource resource = new IssueResource();
 
         issueService = Mockito.mock( IssueService.class );
+        contentService = Mockito.mock( ContentService.class );
+        Mockito.when( contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ) ) ).thenReturn(
+            Contents.from( this.createContent() ) );
+        contentTypeService = Mockito.mock( ContentTypeService.class );
         issueNotificationsSender = Mockito.mock( IssueNotificationsSender.class );
         securityService = Mockito.mock( SecurityService.class );
         Mockito.when( securityService.getMemberships( Mockito.isA( PrincipalKey.class ) ) ).thenReturn(
             PrincipalKeys.from( "role:system:one" ) );
         Mockito.when( securityService.getPrincipals( Mockito.isA( PrincipalKeys.class ) ) ).thenReturn(
             Principals.from( Role.create().key( RoleKeys.ADMIN ).displayName( "Admin" ).build() ) );
-        contentService = Mockito.mock( ContentService.class );
-        contentTypeService = Mockito.mock( ContentTypeService.class );
-
-        IssueNotificationParamsFactory.Builder builder =
-            Mockito.mock( IssueNotificationParamsFactory.Builder.class, RETURNS_DEEP_STUBS.get() );
-        Mockito.when( builder.buildCreated() ).then( returnNotificationParams() );
-        Mockito.when( builder.buildUpdated() ).then( returnNotificationParams() );
-        Mockito.when( builder.buildCommented() ).then( returnNotificationParams() );
-        Mockito.when( builder.buildPublished() ).then( returnNotificationParams() );
-
-        notificationParamsFactory = Mockito.mock( IssueNotificationParamsFactory.class );
-        Mockito.when( notificationParamsFactory.create() ).thenReturn( builder );
-
-        notificationParamsFactory.setContentService( contentService );
-        notificationParamsFactory.setSecurityService( securityService );
-        notificationParamsFactory.setContentTypeService( contentTypeService );
+        Mockito.when( securityService.getUser( User.ANONYMOUS.getKey() ) ).thenReturn( Optional.of( User.ANONYMOUS ) );
 
         resource.setIssueService( issueService );
         resource.setIssueNotificationsSender( issueNotificationsSender );
         resource.setSecurityService( securityService );
-        resource.setIssueNotificationParamsFactory( notificationParamsFactory );
+        resource.setContentService( contentService );
+        resource.setContentTypeService( contentTypeService );
 
         return resource;
+    }
+
+    private Content createContent()
+    {
+        return Content.create().
+            id( ContentId.from( "content-id" ) ).
+            type( ContentTypeName.folder() ).
+            displayName( "Content display name" ).
+            name( "content-name" ).
+            path( "/path/to/content" ).
+            build();
     }
 
     private Answer<IssueNotificationParams> returnNotificationParams()
@@ -136,7 +138,7 @@ public class IssueResourceTest
         final CreateIssueJson params =
             new CreateIssueJson( "title", "desc", Arrays.asList( User.ANONYMOUS.getKey().toString() ), createPublishRequest() );
 
-        final Issue issue = Issue.create().title( "title" ).description( "desc" ).creator( User.ANONYMOUS.getKey() ).build();
+        final Issue issue = this.createIssue();
         final IssueComment comment = IssueComment.create().text( issue.getDescription() ).creator( issue.getCreator() ).build();
         final Role role = Role.create().key( RoleKeys.CONTENT_MANAGER_APP ).displayName( "dname" ).build();
         final HttpServletRequest request = Mockito.mock( HttpServletRequest.class );
@@ -144,7 +146,6 @@ public class IssueResourceTest
         final ArgumentCaptor<CreateIssueCommentParams> commentCaptor = ArgumentCaptor.forClass( CreateIssueCommentParams.class );
 
         Mockito.when( securityService.getPrincipals( Mockito.any( PrincipalKeys.class ) ) ).thenReturn( Principals.from( role ) );
-        Mockito.when( securityService.getUser( User.ANONYMOUS.getKey() ) ).thenReturn( Optional.of( User.ANONYMOUS ) );
         Mockito.when( issueService.create( Mockito.any( CreateIssueParams.class ) ) ).thenReturn( issue );
         Mockito.when( issueService.createComment( Mockito.any( CreateIssueCommentParams.class ) ) ).thenReturn( comment );
 
@@ -167,7 +168,7 @@ public class IssueResourceTest
         final CreateIssueJson params =
             new CreateIssueJson( "title", null, Arrays.asList( User.ANONYMOUS.getKey().toString() ), createPublishRequest() );
 
-        final Issue issue = Issue.create().title( "title" ).description( "desc" ).creator( User.ANONYMOUS.getKey() ).build();
+        final Issue issue = this.createIssue();
 
         final Role role = Role.create().key( RoleKeys.CONTENT_MANAGER_APP ).displayName( "dname" ).build();
         final HttpServletRequest request = Mockito.mock( HttpServletRequest.class );
@@ -194,10 +195,13 @@ public class IssueResourceTest
         final IssueResource issueResource = getResourceInstance();
         final Role role = Role.create().key( RoleKeys.CONTENT_MANAGER_EXPERT ).displayName( "dname" ).build();
         Mockito.when( securityService.getPrincipals( Mockito.any( PrincipalKeys.class ) ) ).thenReturn( Principals.from( role ) );
-        ArgumentCaptor<CreateIssueParams> issueParamsArgumentCaptor = ArgumentCaptor.forClass( CreateIssueParams.class );
-        issueResource.create( params, request );
-        Mockito.verify( issueService ).create( issueParamsArgumentCaptor.capture() );
+        Mockito.when( issueService.create( Mockito.isA( CreateIssueParams.class ) ) ).thenReturn( this.createIssue() );
 
+        ArgumentCaptor<CreateIssueParams> issueParamsArgumentCaptor = ArgumentCaptor.forClass( CreateIssueParams.class );
+
+        issueResource.create( params, request );
+
+        Mockito.verify( issueService ).create( issueParamsArgumentCaptor.capture() );
         assertTrue( issueParamsArgumentCaptor.getValue().getApproverIds().isNotEmpty() );
     }
 
@@ -213,7 +217,10 @@ public class IssueResourceTest
         final Role role = Role.create().key( RoleKeys.EVERYONE ).displayName( "dname" ).build();
         Mockito.when( securityService.getPrincipals( Mockito.any( PrincipalKeys.class ) ) ).thenReturn( Principals.from( role ) );
         ArgumentCaptor<CreateIssueParams> issueParamsArgumentCaptor = ArgumentCaptor.forClass( CreateIssueParams.class );
+        Mockito.when( issueService.create( Mockito.isA( CreateIssueParams.class ) ) ).thenReturn( this.createIssue() );
+
         issueResource.create( params, request );
+
         Mockito.verify( issueService ).create( issueParamsArgumentCaptor.capture() );
 
         assertTrue( issueParamsArgumentCaptor.getValue().getApproverIds().isEmpty() );
@@ -233,7 +240,10 @@ public class IssueResourceTest
         final Role role2 = Role.create().key( RoleKeys.CONTENT_MANAGER_ADMIN ).displayName( "dname" ).build();
         Mockito.when( securityService.getPrincipals( Mockito.any() ) ).thenReturn( Principals.from( role1 ), Principals.from( role2 ) );
         ArgumentCaptor<CreateIssueParams> issueParamsArgumentCaptor = ArgumentCaptor.forClass( CreateIssueParams.class );
+        Mockito.when( issueService.create( Mockito.isA( CreateIssueParams.class ) ) ).thenReturn( this.createIssue() );
+
         issueResource.create( params, request );
+
         Mockito.verify( issueService ).create( issueParamsArgumentCaptor.capture() );
 
         assertTrue( issueParamsArgumentCaptor.getValue().getApproverIds().getSize() == 1 );
@@ -324,7 +334,7 @@ public class IssueResourceTest
     public void test_update()
     {
         final Issue issue = createIssue();
-
+        final User admin = User.create().login( "admin" ).displayName( "Admin" ).email( "admin@email.com" ).build();
         final UpdateIssueJson params =
             new UpdateIssueJson( issue.getId().toString(), "title", "desc", "Open", false, false, Arrays.asList( "user:system:admin" ),
                                  createPublishRequest() );
@@ -334,6 +344,7 @@ public class IssueResourceTest
         Mockito.when( issueService.update( Mockito.any( UpdateIssueParams.class ) ) ).thenReturn( issue );
         Mockito.when( issueService.findComments( Mockito.any( IssueCommentQuery.class ) ) ).thenReturn(
             FindIssueCommentsResult.create().build() );
+        Mockito.when( securityService.getUser( PrincipalKey.from( "user:system:admin" ) ) ).thenReturn( Optional.of( admin ) );
 
         resource.update( params, Mockito.mock( HttpServletRequest.class ) );
 
@@ -348,8 +359,7 @@ public class IssueResourceTest
         final Issue issue = createIssue();
 
         final UpdateIssueJson params =
-            new UpdateIssueJson( issue.getId().toString(), "title", "desc", "Closed", true, false, Arrays.asList( "user:system:admin" ),
-                                 createPublishRequest() );
+            new UpdateIssueJson( issue.getId().toString(), "title", "desc", "Closed", true, false, null, createPublishRequest() );
 
         IssueResource resource = getResourceInstance();
         Mockito.when( issueService.getIssue( Mockito.isA( IssueId.class ) ) ).thenReturn( issue );
@@ -368,7 +378,7 @@ public class IssueResourceTest
     public void test_update_is_autoSave()
     {
         final Issue issue = createIssue();
-
+        final User admin = User.create().login( "admin" ).displayName( "Admin" ).email( "admin@email.com" ).build();
         final UpdateIssueJson params =
             new UpdateIssueJson( issue.getId().toString(), "title", "desc", "Closed", true, true, Arrays.asList( "user:system:admin" ),
                                  createPublishRequest() );
@@ -378,6 +388,7 @@ public class IssueResourceTest
         Mockito.when( issueService.update( Mockito.any( UpdateIssueParams.class ) ) ).thenReturn( issue );
         Mockito.when( issueService.findComments( Mockito.any( IssueCommentQuery.class ) ) ).thenReturn(
             FindIssueCommentsResult.create().build() );
+        Mockito.when( securityService.getUser( PrincipalKey.from( "user:system:admin" ) ) ).thenReturn( Optional.of( admin ) );
 
         resource.update( params, Mockito.mock( HttpServletRequest.class ) );
 

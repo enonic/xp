@@ -48,7 +48,7 @@ public class IssueNotificationParamsFactoryTest
 
     private ContentTypeService contentTypeService;
 
-    IssueNotificationParamsFactory factory;
+    IssueNotificationParamsFactory.Builder notificationFactoryBuilder;
 
     @Before
     public void setUp()
@@ -57,10 +57,10 @@ public class IssueNotificationParamsFactoryTest
         contentService = Mockito.mock( ContentService.class );
         contentTypeService = Mockito.mock( ContentTypeService.class );
 
-        factory = new IssueNotificationParamsFactory();
-        factory.setContentService( contentService );
-        factory.setSecurityService( securityService );
-        factory.setContentTypeService( contentTypeService );
+        notificationFactoryBuilder = IssueNotificationParamsFactory.create().
+            contentService( contentService ).
+            securityService( securityService ).
+            contentTypeService( contentTypeService );
     }
 
     @Test
@@ -84,11 +84,12 @@ public class IssueNotificationParamsFactoryTest
         Mockito.when( contentService.compare( Mockito.isA( CompareContentsParams.class ) ) ).thenReturn( compareResults );
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
 
-        IssueNotificationParams params = factory.create().
-            setIssue( issue ).
-            setComments( comments ).
-            setUrl( "url" ).
-            buildCreated();
+        IssueNotificationParams params = notificationFactoryBuilder.
+            issue( issue ).
+            comments( comments ).
+            url( "url" ).
+            build().
+            createdParams();
 
         assertEquals( Lists.newArrayList( approver ), params.getApprovers() );
         assertEquals( creator, params.getCreator() );
@@ -119,12 +120,13 @@ public class IssueNotificationParamsFactoryTest
         Mockito.when( securityService.getUser( issue.getApproverIds().first() ) ).thenReturn( Optional.of( approver ) );
         Mockito.when( contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ) ) ).thenReturn( Contents.from( content ) );
 
-        IssueUpdatedNotificationParams params = factory.create().
-            setIssue( issue ).
-            setComments( comments ).
-            setRecipients( recepientKeys ).
-            setUrl( "url" ).
-            buildUpdated();
+        IssueUpdatedNotificationParams params = notificationFactoryBuilder.
+            issue( issue ).
+            comments( comments ).
+            recipients( recepientKeys ).
+            url( "url" ).
+            build().
+            updatedParams();
 
         assertEquals( Lists.newArrayList(), params.getApprovers() );
         assertEquals( User.ANONYMOUS, params.getModifier() );
@@ -149,11 +151,12 @@ public class IssueNotificationParamsFactoryTest
         Mockito.when( securityService.getUser( issue.getApproverIds().first() ) ).thenReturn( Optional.of( approver ) );
         Mockito.when( contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ) ) ).thenReturn( Contents.from( content ) );
 
-        IssuePublishedNotificationParams params = factory.create().
-            setIssue( issue ).
-            setComments( comments ).
-            setUrl( "url" ).
-            buildPublished();
+        IssuePublishedNotificationParams params = notificationFactoryBuilder.
+            issue( issue ).
+            comments( comments ).
+            url( "url" ).
+            build().
+            publishedParams();
 
         assertEquals( User.ANONYMOUS, params.getPublisher() );
 
@@ -176,11 +179,12 @@ public class IssueNotificationParamsFactoryTest
         Mockito.when( securityService.getUser( issue.getApproverIds().first() ) ).thenReturn( Optional.of( approver ) );
         Mockito.when( contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ) ) ).thenReturn( Contents.from( content ) );
 
-        IssueCommentedNotificationParams params = factory.create().
-            setIssue( issue ).
-            setComments( comments ).
-            setUrl( "url" ).
-            buildCommented();
+        IssueCommentedNotificationParams params = notificationFactoryBuilder.
+            issue( issue ).
+            comments( comments ).
+            url( "url" ).
+            build().
+            commentedParams();
 
         assertEquals( User.ANONYMOUS, params.getModifier() );
 
