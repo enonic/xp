@@ -19,7 +19,6 @@ import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.GetContentByIdsParams;
-import com.enonic.xp.resource.ResourceProblemException;
 
 public class QueryContentHandlerTest
     extends BaseContentHandlerTest
@@ -35,11 +34,10 @@ public class QueryContentHandlerTest
     }
 
     @Test
-    public void invalidFilter()
+    public void filterArray()
     {
-        thrown.expect( ResourceProblemException.class );
-        thrown.expectMessage( "Filter not of type object" );
-        runFunction( "/site/test/QueryContentHandlerTest_invalid_filter.js", "query" );
+        setupQuery( 2, false );
+        runFunction( "/site/test/QueryContentHandlerTest_filter_array.js", "query" );
     }
 
     @Test

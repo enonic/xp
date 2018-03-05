@@ -1,5 +1,9 @@
 package com.enonic.xp.lib.portal.url;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.context.Context;
@@ -11,6 +15,9 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 public final class LogoutUrlHandler
     extends AbstractUrlHandler
 {
+    private final static Set<String> VALID_URL_PROPERTY_KEYS =
+        new HashSet<>( Arrays.asList( "redirect", "contextPath", "type", "params" ) );
+
     private Context context;
 
     @Override
@@ -35,6 +42,12 @@ public final class LogoutUrlHandler
                 getUserStore();
         }
         return null;
+    }
+
+    @Override
+    protected boolean isValidParam( final String param )
+    {
+        return VALID_URL_PROPERTY_KEYS.contains( param );
     }
 
     @Override

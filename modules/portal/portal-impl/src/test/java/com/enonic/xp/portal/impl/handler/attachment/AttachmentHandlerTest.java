@@ -131,6 +131,7 @@ public class AttachmentHandlerTest
     public void testOptions()
         throws Exception
     {
+        this.request.setEndpointPath( "/_/attachment/download/123456/logo.png" );
         this.request.setMethod( HttpMethod.OPTIONS );
 
         final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );

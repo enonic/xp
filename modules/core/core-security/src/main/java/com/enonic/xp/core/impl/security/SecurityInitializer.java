@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.NodeIndexPath;
@@ -38,6 +39,8 @@ final class SecurityInitializer
     public static final PrincipalKey SUPER_USER = PrincipalKey.ofUser( UserStoreKey.system(), "su" );
 
     static final String SYSTEM_USER_STORE_DISPLAY_NAME = "System User Store";
+
+    private static final String ADMIN_USER_CREATION_PROPERTY_KEY = "xp.init.adminUserCreation";
 
     private static final Logger LOG = LoggerFactory.getLogger( SecurityInitializer.class );
 
@@ -132,8 +135,14 @@ final class SecurityInitializer
     {
         LOG.info( "Initializing user store [" + UserStoreKey.system() + "]" );
 
+        final PropertyTree idProviderConfig = new PropertyTree();
+        if ( !"false".equalsIgnoreCase( System.getProperty( ADMIN_USER_CREATION_PROPERTY_KEY ) ) )
+        {
+            idProviderConfig.setBoolean( "adminUserCreationEnabled", true );
+        }
         final AuthConfig authConfig = AuthConfig.create().
             applicationKey( SYSTEM_ID_PROVIDER_KEY ).
+            config( idProviderConfig ).
             build();
 
         final UserStoreAccessControlList permissions =
@@ -222,7 +231,6 @@ final class SecurityInitializer
             userKey( SUPER_USER ).
             displayName( "Super User" ).
             login( "su" ).
-            password( "password" ).
             build();
         addUser( createSuperUser );
 

@@ -57,6 +57,7 @@ public class ErrorHandlerTest
     public void testOptions()
         throws Exception
     {
+        this.request.setEndpointPath( "/_/error/401" );
         this.request.setMethod( HttpMethod.OPTIONS );
 
         final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );

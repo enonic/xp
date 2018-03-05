@@ -46,16 +46,9 @@ public final class PortalResponseMapper
                 continue;
             }
 
-            if ( contributions.size() == 1 )
-            {
-                gen.value( tag.id(), contributions.get( 0 ) );
-            }
-            else
-            {
-                gen.array( tag.id() );
-                contributions.forEach( gen::value );
-                gen.end();
-            }
+            gen.array( tag.id() );
+            contributions.forEach( gen::value );
+            gen.end();
         }
         gen.end();
     }

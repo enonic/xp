@@ -14,6 +14,7 @@ import com.enonic.xp.node.NodeType;
 
 import static com.enonic.xp.lib.node.NodePropertyConstants.CHILD_ORDER;
 import static com.enonic.xp.lib.node.NodePropertyConstants.INDEX_CONFIG;
+import static com.enonic.xp.lib.node.NodePropertyConstants.INHERITS_PERMISSIONS;
 import static com.enonic.xp.lib.node.NodePropertyConstants.MANUAL_ORDER_VALUE;
 import static com.enonic.xp.lib.node.NodePropertyConstants.NODE_NAME;
 import static com.enonic.xp.lib.node.NodePropertyConstants.NODE_TYPE;
@@ -40,21 +41,31 @@ class CreateNodeParamsFactory
         final String childOrder = properties.getString( CHILD_ORDER );
         final String nodeType = properties.getString( NODE_TYPE );
         final Iterable<PropertySet> permissions = properties.getSets( PERMISSIONS );
+        final Boolean inheritPermissions = properties.getBoolean( INHERITS_PERMISSIONS );
         final PropertySet indexConfig = properties.getSet( INDEX_CONFIG );
 
         final CreateNodeParams.Builder builder = CreateNodeParams.create();
         setName( name, builder );
         setUserData( properties, builder );
 
-        return builder.
+        builder.
             parent( Strings.isNullOrEmpty( parentPath ) ? NodePath.ROOT : NodePath.create( parentPath ).build() ).
             manualOrderValue( manualOrderValue ).
             childOrder( ChildOrder.from( childOrder ) ).
             nodeType( Strings.isNullOrEmpty( nodeType ) ? NodeType.DEFAULT_NODE_COLLECTION : NodeType.from( nodeType ) ).
             indexConfigDocument( new IndexConfigFactory( indexConfig ).create() ).
-            permissions( new PermissionsFactory( permissions ).create() ).
-            setBinaryAttachments( createAttachments ).
-            build();
+            setBinaryAttachments( createAttachments );
+
+        if ( inheritPermissions != null && inheritPermissions )
+        {
+            builder.inheritPermissions( true );
+        }
+        else
+        {
+            builder.permissions( new PermissionsFactory( permissions ).create() );
+        }
+
+        return builder.build();
     }
 
     private void setUserData( final PropertyTree properties, final CreateNodeParams.Builder builder )
