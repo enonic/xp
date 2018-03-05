@@ -157,6 +157,11 @@ final class ComponentHandlerWorker
     private Component getFragmentComponent( final FragmentComponent component )
     {
         final ContentId contentId = component.getFragment();
+        if ( contentId == null )
+        {
+            return null;
+        }
+
         try
         {
             final Content fragmentContent = contentService.getById( contentId );
