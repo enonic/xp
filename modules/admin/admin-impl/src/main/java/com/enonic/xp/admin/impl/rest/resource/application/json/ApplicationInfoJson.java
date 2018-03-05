@@ -12,7 +12,10 @@ import com.enonic.xp.admin.impl.rest.resource.macro.json.MacrosJson;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.relationship.RelationshipTypeIconUrlResolver;
+import com.enonic.xp.admin.impl.rest.resource.widget.json.WidgetDescriptorsJson;
+import com.enonic.xp.admin.widget.WidgetDescriptor;
 import com.enonic.xp.app.ApplicationInfo;
+import com.enonic.xp.descriptor.Descriptors;
 import com.enonic.xp.page.PageDescriptors;
 import com.enonic.xp.region.LayoutDescriptors;
 import com.enonic.xp.region.PartDescriptors;
@@ -35,6 +38,8 @@ public class ApplicationInfoJson
 
     private ApplicationTaskDescriptorsJson tasks;
 
+    private WidgetDescriptorsJson widgets;
+
     private ApplicationIdProviderJson idProvider;
 
     private ApplicationDeploymentJson deployment;
@@ -52,6 +57,7 @@ public class ApplicationInfoJson
         this.references = new ContentReferencesJson( builder.applicationInfo.getContentReferences() );
         this.macros = new MacrosJson( builder.applicationInfo.getMacros(), builder.macroIconUrlResolver, builder.localeMessageResolver );
         this.tasks = new ApplicationTaskDescriptorsJson( builder.applicationInfo.getTasks() );
+        this.widgets = new WidgetDescriptorsJson( builder.widgetDescriptors );
         this.idProvider =
             new ApplicationIdProviderJson( builder.applicationInfo.getAuthDescriptor(), builder.applicationInfo.getUserStoreReferences() );
         this.deployment = new ApplicationDeploymentJson( builder.deploymentUrl );
@@ -107,6 +113,11 @@ public class ApplicationInfoJson
         return deployment;
     }
 
+    public WidgetDescriptorsJson getWidgets()
+    {
+        return widgets;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -115,6 +126,8 @@ public class ApplicationInfoJson
     public static final class Builder
     {
         private ApplicationInfo applicationInfo;
+
+        private Descriptors<WidgetDescriptor> widgetDescriptors;
 
         private String deploymentUrl;
 
@@ -133,6 +146,12 @@ public class ApplicationInfoJson
         public Builder setApplicationInfo( final ApplicationInfo applicationInfo )
         {
             this.applicationInfo = applicationInfo;
+            return this;
+        }
+
+        public Builder setWidgetDescriptors( final Descriptors<WidgetDescriptor> widgetDescriptors )
+        {
+            this.widgetDescriptors = widgetDescriptors;
             return this;
         }
 

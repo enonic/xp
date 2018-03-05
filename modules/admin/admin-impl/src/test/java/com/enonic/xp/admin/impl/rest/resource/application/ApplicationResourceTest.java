@@ -15,6 +15,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.enonic.xp.admin.impl.market.MarketService;
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
+import com.enonic.xp.admin.widget.WidgetDescriptor;
+import com.enonic.xp.admin.widget.WidgetDescriptorService;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.app.ApplicationDescriptorService;
@@ -25,12 +27,14 @@ import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.auth.AuthDescriptor;
 import com.enonic.xp.auth.AuthDescriptorService;
+import com.enonic.xp.descriptor.Descriptors;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.macro.MacroDescriptorService;
+import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
@@ -61,6 +65,8 @@ public class ApplicationResourceTest
     private MacroDescriptorService macroDescriptorService;
 
     private ContentTypeService contentTypeService;
+
+    private WidgetDescriptorService widgetDescriptorService;
 
     private ResourceService resourceService;
 
@@ -108,6 +114,8 @@ public class ApplicationResourceTest
         Mockito.when( scriptExports.hasMethod( "get" ) ).thenReturn( true );
         Mockito.when( this.portalScriptService.execute( resourceKey ) ).thenReturn( scriptExports );
 
+        Mockito.when( this.widgetDescriptorService.getByApplication( applicationKey ) ).thenReturn( createWidgetDescriptors() );
+
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         ResteasyProviderFactory.getContextDataMap().put( HttpServletRequest.class, mockRequest );
 
@@ -116,8 +124,9 @@ public class ApplicationResourceTest
             queryParam( "applicationKey", "testapplication" ).
             get().getAsString();
 
-        final String deploymentUrl = new ObjectMapper().readTree( response ).findPath( "deployment" ).findPath( "url" ).asText();
+        assertJson( "get_application_info.json", response );
 
+        final String deploymentUrl = new ObjectMapper().readTree( response ).findPath( "deployment" ).findPath( "url" ).asText();
         assertEquals( "http://localhost:80/app/testapplication", deploymentUrl );
     }
 
@@ -328,6 +337,18 @@ public class ApplicationResourceTest
             build();
     }
 
+    private Descriptors<WidgetDescriptor> createWidgetDescriptors()
+    {
+        final WidgetDescriptor widgetDescriptor1 = WidgetDescriptor.create().
+            displayName( "My widget" ).
+            addInterface( "com.enonic.xp.my-interface" ).
+            addInterface( "com.enonic.xp.my-interface-2" ).
+            key( DescriptorKey.from( "myapp:my-widget" ) ).
+            build();
+
+        return Descriptors.from( widgetDescriptor1 );
+    }
+
     @Override
     protected Object getResourceInstance()
     {
@@ -343,6 +364,7 @@ public class ApplicationResourceTest
         this.macroDescriptorService = Mockito.mock( MacroDescriptorService.class );
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
         this.localeService = Mockito.mock( LocaleService.class );
+        this.widgetDescriptorService = Mockito.mock( WidgetDescriptorService.class );
 
         final ApplicationResource resource = new ApplicationResource();
         resource.setApplicationService( this.applicationService );
@@ -357,6 +379,7 @@ public class ApplicationResourceTest
         resource.setResourceService( this.resourceService );
         resource.setPortalScriptService( this.portalScriptService );
         resource.setLocaleService( this.localeService );
+        resource.setWidgetDescriptorService( this.widgetDescriptorService );
 
         return resource;
     }

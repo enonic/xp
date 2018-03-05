@@ -50,6 +50,8 @@ import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlR
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.relationship.RelationshipTypeIconResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.relationship.RelationshipTypeIconUrlResolver;
+import com.enonic.xp.admin.widget.WidgetDescriptor;
+import com.enonic.xp.admin.widget.WidgetDescriptorService;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.app.ApplicationDescriptorService;
@@ -61,6 +63,7 @@ import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.auth.AuthDescriptor;
 import com.enonic.xp.auth.AuthDescriptorService;
+import com.enonic.xp.descriptor.Descriptors;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.jaxrs.JaxRsComponent;
@@ -110,6 +113,8 @@ public final class ApplicationResource
     private PortalScriptService portalScriptService;
 
     private LocaleService localeService;
+
+    private WidgetDescriptorService widgetDescriptorService;
 
     private ApplicationIconUrlResolver iconUrlResolver;
 
@@ -171,8 +176,11 @@ public final class ApplicationResource
 
         final ApplicationInfo applicationInfo = this.applicationInfoService.getApplicationInfo( applicationKey );
 
+        final Descriptors<WidgetDescriptor> widgetDescriptors = this.widgetDescriptorService.getByApplication( applicationKey );
+
         final ApplicationInfoJson.Builder builder = ApplicationInfoJson.create().
             setApplicationInfo( applicationInfo ).
+            setWidgetDescriptors( widgetDescriptors ).
             setContentTypeIconUrlResolver( this.contentTypeIconUrlResolver ).
             setMacroIconUrlResolver( this.macroIconUrlResolver ).
             setRelationshipTypeIconUrlResolver( this.relationshipTypeIconUrlResolver ).
@@ -598,6 +606,12 @@ public final class ApplicationResource
     public void setPortalScriptService( final PortalScriptService portalScriptService )
     {
         this.portalScriptService = portalScriptService;
+    }
+
+    @Reference
+    public void setWidgetDescriptorService( WidgetDescriptorService widgetDescriptorService )
+    {
+        this.widgetDescriptorService = widgetDescriptorService;
     }
 
     @Reference
