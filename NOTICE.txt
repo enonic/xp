@@ -29,6 +29,10 @@ Licenses used by Enonic XP
     Apache License 2.0
     https://github.com/google/guava/blob/master/COPYING
 
+    GraphQL
+    MIT License
+    https://github.com/graphql-java/graphql-java/blob/master/LICENSE.md
+
     Jackson Annotations
     Apache License 2.0
     https://github.com/FasterXML/jackson-annotations
