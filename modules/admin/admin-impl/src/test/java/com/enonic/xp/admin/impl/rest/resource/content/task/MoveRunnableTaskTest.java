@@ -1,5 +1,6 @@
 package com.enonic.xp.admin.impl.rest.resource.content.task;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -80,7 +81,49 @@ public class MoveRunnableTaskTest
 
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
 
-        Assert.assertEquals( "2 items were moved ( Already moved: \"content1\" ). \"content2\" was not found.", resultMessage );
+        Assert.assertEquals(
+            "{\"state\":\"ERROR\",\"message\":\"2 items were moved ( Already moved: \\\"content1\\\" ). \\\"content2\\\" was not found.\"}",
+            resultMessage );
+    }
+
+    @Test
+    public void create_message_1_success()
+        throws Exception
+    {
+        Mockito.when( params.getContentIds() ).thenReturn( Collections.singletonList( contents.get( 0 ).getId().toString() ) );
+        Mockito.when( contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ) ) ).thenReturn(
+            Contents.from( contents.get( 0 ) ) );
+        Mockito.when( contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn(
+            FindContentIdsByQueryResult.create().totalHits( 1 ).build() );
+        Mockito.when( contentService.move( Mockito.isA( MoveContentParams.class ) ) ).
+            thenReturn( MoveContentsResult.create().addMoved( contents.get( 0 ).getId() ).setContentName(
+                contents.get( 1 ).getDisplayName() ).build() );
+
+        createAndRunTask();
+
+        Mockito.verify( progressReporter, Mockito.times( 2 ) ).info( contentQueryArgumentCaptor.capture() );
+
+        final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
+
+        Assert.assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"\\\"Content 2\\\" was moved.\"}", resultMessage );
+    }
+
+    @Test
+    public void create_message_0_results()
+        throws Exception
+    {
+        Mockito.when( params.getContentIds() ).thenReturn( Collections.emptyList() );
+        Mockito.when( contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ) ) ).thenReturn( Contents.empty() );
+        Mockito.when( contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn(
+            FindContentIdsByQueryResult.create().totalHits( 0 ).build() );
+
+        createAndRunTask();
+
+        Mockito.verify( progressReporter, Mockito.times( 2 ) ).info( contentQueryArgumentCaptor.capture() );
+
+        final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
+
+        Assert.assertEquals( "{\"state\":\"WARNING\",\"message\":\"Nothing was moved.\"}", resultMessage );
     }
 
     @Test
@@ -105,7 +148,7 @@ public class MoveRunnableTaskTest
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
 
         Assert.assertEquals(
-            "\"Content 2\" was moved. Failed to move 2 items ( Exist at destination: \"content3\", Access denied: \"content1\" ).",
+            "{\"state\":\"ERROR\",\"message\":\"\\\"Content 2\\\" was moved. Failed to move 2 items ( Exist at destination: \\\"content3\\\", Access denied: \\\"content1\\\" ).\"}",
             resultMessage );
     }
 
@@ -119,7 +162,7 @@ public class MoveRunnableTaskTest
         Mockito.when( contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ) ) ).thenReturn(
             Contents.from( contents.subList( 0, 2 ) ) );
         Mockito.when( contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn(
-            FindContentIdsByQueryResult.create().totalHits( 1 ).build() );
+            FindContentIdsByQueryResult.create().totalHits( 2 ).build() );
         Mockito.when( contentService.move( Mockito.isA( MoveContentParams.class ) ) ).
             thenThrow( new ContentAlreadyMovedException( contents.get( 0 ).getDisplayName(), contents.get( 0 ).getPath() ) ).
             thenThrow( new ContentAccessException( User.ANONYMOUS, contents.get( 1 ).getPath(), Permission.MODIFY ) );
@@ -130,7 +173,9 @@ public class MoveRunnableTaskTest
 
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
 
-        Assert.assertEquals( "\"content1\" is already moved. You don't have to access \"/forbidden/path\".", resultMessage );
+        Assert.assertEquals(
+            "{\"state\":\"ERROR\",\"message\":\"\\\"content1\\\" is already moved. You don't have to access \\\"/forbidden/path\\\".\"}",
+            resultMessage );
     }
 
     @Test
@@ -169,7 +214,7 @@ public class MoveRunnableTaskTest
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
 
         Assert.assertEquals(
-            "3 items were moved ( Already moved: 2 ). Failed to move 6 items ( Exist at destination: 2, Not found: 2, Access denied: 2 ).",
+            "{\"state\":\"ERROR\",\"message\":\"3 items were moved ( Already moved: 2 ). Failed to move 6 items ( Exist at destination: 2, Not found: 2, Access denied: 2 ).\"}",
             resultMessage );
     }
 }
