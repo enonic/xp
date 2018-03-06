@@ -50,6 +50,10 @@ import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlR
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.relationship.RelationshipTypeIconResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.relationship.RelationshipTypeIconUrlResolver;
+import com.enonic.xp.admin.impl.rest.resource.tool.json.AdminToolDescriptorJson;
+import com.enonic.xp.admin.impl.rest.resource.tool.json.AdminToolDescriptorsJson;
+import com.enonic.xp.admin.tool.AdminToolDescriptorService;
+import com.enonic.xp.admin.tool.AdminToolDescriptors;
 import com.enonic.xp.admin.widget.WidgetDescriptor;
 import com.enonic.xp.admin.widget.WidgetDescriptorService;
 import com.enonic.xp.app.Application;
@@ -116,6 +120,8 @@ public final class ApplicationResource
 
     private WidgetDescriptorService widgetDescriptorService;
 
+    private AdminToolDescriptorService adminToolDescriptorService;
+
     private ApplicationIconUrlResolver iconUrlResolver;
 
     private RelationshipTypeIconUrlResolver relationshipTypeIconUrlResolver;
@@ -175,12 +181,15 @@ public final class ApplicationResource
         final ApplicationKey applicationKey = ApplicationKey.from( key );
 
         final ApplicationInfo applicationInfo = this.applicationInfoService.getApplicationInfo( applicationKey );
-
         final Descriptors<WidgetDescriptor> widgetDescriptors = this.widgetDescriptorService.getByApplication( applicationKey );
+        final AdminToolDescriptors adminToolDescriptors = this.adminToolDescriptorService.getByApplication( applicationKey );
 
         final ApplicationInfoJson.Builder builder = ApplicationInfoJson.create().
             setApplicationInfo( applicationInfo ).
             setWidgetDescriptors( widgetDescriptors ).
+            setAdminToolDescriptors( new AdminToolDescriptorsJson( adminToolDescriptors.stream().map(
+                adminToolDescriptor -> new AdminToolDescriptorJson( adminToolDescriptor, this.adminToolDescriptorService.getIconByKey(
+                    adminToolDescriptor.getKey() ) ) ).collect( Collectors.toList() ) ) ).
             setContentTypeIconUrlResolver( this.contentTypeIconUrlResolver ).
             setMacroIconUrlResolver( this.macroIconUrlResolver ).
             setRelationshipTypeIconUrlResolver( this.relationshipTypeIconUrlResolver ).
@@ -612,6 +621,12 @@ public final class ApplicationResource
     public void setWidgetDescriptorService( WidgetDescriptorService widgetDescriptorService )
     {
         this.widgetDescriptorService = widgetDescriptorService;
+    }
+
+    @Reference
+    public void setAdminToolDescriptorService( AdminToolDescriptorService adminToolDescriptorService )
+    {
+        this.adminToolDescriptorService = adminToolDescriptorService;
     }
 
     @Reference

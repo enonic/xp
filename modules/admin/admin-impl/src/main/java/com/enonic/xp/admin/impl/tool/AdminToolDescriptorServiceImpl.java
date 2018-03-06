@@ -1,12 +1,17 @@
 package com.enonic.xp.admin.impl.tool;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.admin.tool.AdminToolDescriptor;
 import com.enonic.xp.admin.tool.AdminToolDescriptorService;
 import com.enonic.xp.admin.tool.AdminToolDescriptors;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.descriptor.DescriptorKeyLocator;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.PrincipalKeys;
@@ -15,6 +20,8 @@ import com.enonic.xp.security.PrincipalKeys;
 public final class AdminToolDescriptorServiceImpl
     implements AdminToolDescriptorService
 {
+    private final static String PATH = "/admin/tools";
+
     private ApplicationService applicationService;
 
     private ResourceService resourceService;
@@ -27,6 +34,13 @@ public final class AdminToolDescriptorServiceImpl
             resourceService( this.resourceService ).
             filter( adminToolDescriptor -> adminToolDescriptor.isAccessAllowed( principalKeys ) ).
             execute();
+    }
+
+    @Override
+    public AdminToolDescriptors getByApplication( final ApplicationKey applicationKey )
+    {
+        return AdminToolDescriptors.from(
+            findDescriptorKeys( applicationKey ).stream().map( this::getByKey ).collect( Collectors.toList() ) );
     }
 
     @Override
@@ -46,6 +60,11 @@ public final class AdminToolDescriptorServiceImpl
             resourceService( this.resourceService ).
             descriptorKey( descriptorKey ).
             execute();
+    }
+
+    private Set<DescriptorKey> findDescriptorKeys( final ApplicationKey key )
+    {
+        return new DescriptorKeyLocator( this.resourceService, PATH, true ).findKeys( key );
     }
 
     @Reference

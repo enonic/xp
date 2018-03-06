@@ -32,6 +32,18 @@
   "tasks": {
     "tasks": []
   },
+  "tools": {
+    "descriptors": [
+      {
+        "application": "myapp",
+        "description": null,
+        "displayName": "My tool",
+        "icon": "icon-source",
+        "key": "myapp:my-tool",
+        "name": "my-tool"
+      }
+    ]
+  },
   "widgets": {
     "descriptors": [
       {

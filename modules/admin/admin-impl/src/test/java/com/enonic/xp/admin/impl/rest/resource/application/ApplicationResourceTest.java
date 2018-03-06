@@ -15,6 +15,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.enonic.xp.admin.impl.market.MarketService;
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
+import com.enonic.xp.admin.tool.AdminToolDescriptor;
+import com.enonic.xp.admin.tool.AdminToolDescriptorService;
+import com.enonic.xp.admin.tool.AdminToolDescriptors;
 import com.enonic.xp.admin.widget.WidgetDescriptor;
 import com.enonic.xp.admin.widget.WidgetDescriptorService;
 import com.enonic.xp.app.Application;
@@ -68,6 +71,8 @@ public class ApplicationResourceTest
 
     private WidgetDescriptorService widgetDescriptorService;
 
+    private AdminToolDescriptorService adminToolDescriptorService;
+
     private ResourceService resourceService;
 
     private PortalScriptService portalScriptService;
@@ -115,6 +120,9 @@ public class ApplicationResourceTest
         Mockito.when( this.portalScriptService.execute( resourceKey ) ).thenReturn( scriptExports );
 
         Mockito.when( this.widgetDescriptorService.getByApplication( applicationKey ) ).thenReturn( createWidgetDescriptors() );
+
+        final AdminToolDescriptors adminToolDescriptors = createAdminToolDescriptors();
+        Mockito.when( this.adminToolDescriptorService.getByApplication( applicationKey ) ).thenReturn( adminToolDescriptors );
 
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         ResteasyProviderFactory.getContextDataMap().put( HttpServletRequest.class, mockRequest );
@@ -349,6 +357,18 @@ public class ApplicationResourceTest
         return Descriptors.from( widgetDescriptor1 );
     }
 
+    private AdminToolDescriptors createAdminToolDescriptors()
+    {
+        final AdminToolDescriptor adminToolDescriptor = AdminToolDescriptor.create().
+            key( DescriptorKey.from( "myapp:my-tool" ) ).
+            displayName( "My tool" ).
+            build();
+
+        Mockito.when( this.adminToolDescriptorService.getIconByKey( adminToolDescriptor.getKey() ) ).thenReturn( "icon-source" );
+
+        return AdminToolDescriptors.from( adminToolDescriptor );
+    }
+
     @Override
     protected Object getResourceInstance()
     {
@@ -365,6 +385,7 @@ public class ApplicationResourceTest
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
         this.localeService = Mockito.mock( LocaleService.class );
         this.widgetDescriptorService = Mockito.mock( WidgetDescriptorService.class );
+        this.adminToolDescriptorService = Mockito.mock( AdminToolDescriptorService.class );
 
         final ApplicationResource resource = new ApplicationResource();
         resource.setApplicationService( this.applicationService );
@@ -380,6 +401,7 @@ public class ApplicationResourceTest
         resource.setPortalScriptService( this.portalScriptService );
         resource.setLocaleService( this.localeService );
         resource.setWidgetDescriptorService( this.widgetDescriptorService );
+        resource.setAdminToolDescriptorService( this.adminToolDescriptorService );
 
         return resource;
     }

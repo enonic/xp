@@ -12,6 +12,7 @@ import com.enonic.xp.admin.impl.rest.resource.macro.json.MacrosJson;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.relationship.RelationshipTypeIconUrlResolver;
+import com.enonic.xp.admin.impl.rest.resource.tool.json.AdminToolDescriptorsJson;
 import com.enonic.xp.admin.impl.rest.resource.widget.json.WidgetDescriptorsJson;
 import com.enonic.xp.admin.widget.WidgetDescriptor;
 import com.enonic.xp.app.ApplicationInfo;
@@ -40,6 +41,8 @@ public class ApplicationInfoJson
 
     private WidgetDescriptorsJson widgets;
 
+    private AdminToolDescriptorsJson tools;
+
     private ApplicationIdProviderJson idProvider;
 
     private ApplicationDeploymentJson deployment;
@@ -58,6 +61,7 @@ public class ApplicationInfoJson
         this.macros = new MacrosJson( builder.applicationInfo.getMacros(), builder.macroIconUrlResolver, builder.localeMessageResolver );
         this.tasks = new ApplicationTaskDescriptorsJson( builder.applicationInfo.getTasks() );
         this.widgets = new WidgetDescriptorsJson( builder.widgetDescriptors );
+        this.tools = builder.adminToolDescriptors;
         this.idProvider =
             new ApplicationIdProviderJson( builder.applicationInfo.getAuthDescriptor(), builder.applicationInfo.getUserStoreReferences() );
         this.deployment = new ApplicationDeploymentJson( builder.deploymentUrl );
@@ -118,6 +122,11 @@ public class ApplicationInfoJson
         return widgets;
     }
 
+    public AdminToolDescriptorsJson getTools()
+    {
+        return tools;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -128,6 +137,8 @@ public class ApplicationInfoJson
         private ApplicationInfo applicationInfo;
 
         private Descriptors<WidgetDescriptor> widgetDescriptors;
+
+        private AdminToolDescriptorsJson adminToolDescriptors;
 
         private String deploymentUrl;
 
@@ -152,6 +163,12 @@ public class ApplicationInfoJson
         public Builder setWidgetDescriptors( final Descriptors<WidgetDescriptor> widgetDescriptors )
         {
             this.widgetDescriptors = widgetDescriptors;
+            return this;
+        }
+
+        public Builder setAdminToolDescriptors( final AdminToolDescriptorsJson adminToolDescriptors )
+        {
+            this.adminToolDescriptors = adminToolDescriptors;
             return this;
         }
 

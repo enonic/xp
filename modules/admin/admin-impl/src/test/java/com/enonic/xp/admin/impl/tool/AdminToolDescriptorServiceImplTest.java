@@ -11,6 +11,8 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 
+import static org.junit.Assert.*;
+
 public class AdminToolDescriptorServiceImplTest
     extends ApplicationTestSupport
 {
@@ -41,6 +43,21 @@ public class AdminToolDescriptorServiceImplTest
         Assert.assertNotNull( result );
         Assert.assertEquals( 0, result.getSize() );
     }
+
+    @Test
+    public void getByApplication()
+    {
+        final AdminToolDescriptors result = this.service.getByApplication( ApplicationKey.from( "myapp1" ) );
+
+        assertEquals( 1, result.getSize() );
+
+        final AdminToolDescriptor adminToolDescriptor = result.get( 0 );
+
+        Assert.assertEquals( "My admin tool", adminToolDescriptor.getDisplayName() );
+        Assert.assertEquals( "My admin tool description", adminToolDescriptor.getDescription() );
+        Assert.assertEquals( 1, adminToolDescriptor.getAllowedPrincipals().getSize() );
+    }
+
 
     @Test
     public void getByKey()
