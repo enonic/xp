@@ -16,7 +16,9 @@ public final class AdminToolDescriptorJson
 
     public String icon;
 
-    public AdminToolDescriptorJson( final AdminToolDescriptor adminToolDescriptor, final String iconPath )
+    public String toolUrl;
+
+    public AdminToolDescriptorJson( final AdminToolDescriptor adminToolDescriptor, final String iconPath, final String toolUrl )
     {
         this.key = adminToolDescriptor.getKey().toString();
         this.application = adminToolDescriptor.getApplicationKey().toString();
@@ -24,5 +26,6 @@ public final class AdminToolDescriptorJson
         this.displayName = adminToolDescriptor.getDisplayName();
         this.description = adminToolDescriptor.getDescription();
         this.icon = iconPath;
+        this.toolUrl = toolUrl;
     }
 }

@@ -15,11 +15,14 @@ import com.enonic.xp.descriptor.DescriptorKeyLocator;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 @Component(immediate = true)
 public final class AdminToolDescriptorServiceImpl
     implements AdminToolDescriptorService
 {
+    private static final String ADMIN_TOOLS_URI_PREFIX = "/admin/tool";
+
     private final static String PATH = "/admin/tools";
 
     private ApplicationService applicationService;
@@ -60,6 +63,28 @@ public final class AdminToolDescriptorServiceImpl
             resourceService( this.resourceService ).
             descriptorKey( descriptorKey ).
             execute();
+    }
+
+    private static String rewriteUri( final String uri )
+    {
+        return ServletRequestUrlHelper.createUri( uri );
+    }
+
+    @Override
+    public String getHomeToolUri()
+    {
+        return rewriteUri( ADMIN_TOOLS_URI_PREFIX );
+    }
+
+    @Override
+    public String generateAdminToolUri( String application, String adminTool )
+    {
+        String uri = ADMIN_TOOLS_URI_PREFIX + "/" + application;
+        if ( adminTool != null )
+        {
+            uri += "/" + adminTool;
+        }
+        return rewriteUri( uri );
     }
 
     private Set<DescriptorKey> findDescriptorKeys( final ApplicationKey key )

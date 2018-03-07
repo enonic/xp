@@ -16,4 +16,8 @@ public interface AdminToolDescriptorService
     AdminToolDescriptor getByKey( final DescriptorKey descriptorKey );
 
     String getIconByKey( DescriptorKey descriptorKey );
+
+    String generateAdminToolUri( String application, String adminTool );
+
+    String getHomeToolUri();
 }

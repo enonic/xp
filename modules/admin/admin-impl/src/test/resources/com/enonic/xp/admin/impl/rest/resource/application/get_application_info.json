@@ -40,7 +40,8 @@
         "displayName": "My tool",
         "icon": "icon-source",
         "key": "myapp:my-tool",
-        "name": "my-tool"
+        "name": "my-tool",
+        "toolUrl": "url/to/tool"
       }
     ]
   },

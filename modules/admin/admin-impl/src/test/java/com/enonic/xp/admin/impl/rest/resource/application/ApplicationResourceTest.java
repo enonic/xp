@@ -123,6 +123,7 @@ public class ApplicationResourceTest
 
         final AdminToolDescriptors adminToolDescriptors = createAdminToolDescriptors();
         Mockito.when( this.adminToolDescriptorService.getByApplication( applicationKey ) ).thenReturn( adminToolDescriptors );
+        Mockito.when( this.adminToolDescriptorService.generateAdminToolUri( Mockito.any(), Mockito.any() ) ).thenReturn( "url/to/tool" );
 
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         ResteasyProviderFactory.getContextDataMap().put( HttpServletRequest.class, mockRequest );

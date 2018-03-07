@@ -187,9 +187,13 @@ public final class ApplicationResource
         final ApplicationInfoJson.Builder builder = ApplicationInfoJson.create().
             setApplicationInfo( applicationInfo ).
             setWidgetDescriptors( widgetDescriptors ).
+
             setAdminToolDescriptors( new AdminToolDescriptorsJson( adminToolDescriptors.stream().map(
                 adminToolDescriptor -> new AdminToolDescriptorJson( adminToolDescriptor, this.adminToolDescriptorService.getIconByKey(
-                    adminToolDescriptor.getKey() ) ) ).collect( Collectors.toList() ) ) ).
+                    adminToolDescriptor.getKey() ), this.adminToolDescriptorService.generateAdminToolUri(
+                    adminToolDescriptor.getApplicationKey().toString(), adminToolDescriptor.getName() ) ) ).collect(
+                Collectors.toList() ) ) ).
+
             setContentTypeIconUrlResolver( this.contentTypeIconUrlResolver ).
             setMacroIconUrlResolver( this.macroIconUrlResolver ).
             setRelationshipTypeIconUrlResolver( this.relationshipTypeIconUrlResolver ).
