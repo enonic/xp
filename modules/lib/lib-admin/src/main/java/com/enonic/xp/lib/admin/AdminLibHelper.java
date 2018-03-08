@@ -3,17 +3,22 @@ package com.enonic.xp.lib.admin;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Supplier;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.enonic.xp.server.VersionInfo;
+import com.enonic.xp.admin.tool.AdminToolDescriptorService;
+import com.enonic.xp.script.bean.BeanContext;
+import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.server.ServerInfo;
+import com.enonic.xp.server.VersionInfo;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 import static java.util.stream.Collectors.toList;
 
 public final class AdminLibHelper
+    implements ScriptBean
 {
     private static final String ADMIN_APP_NAME = "com.enonic.xp.app.main";
 
@@ -21,9 +26,9 @@ public final class AdminLibHelper
 
     private static final String ADMIN_ASSETS_URI_PREFIX = "/admin/assets/";
 
-    private static final String ADMIN_TOOLS_URI_PREFIX = "/admin/tool";
-
     private final String version;
+
+    private Supplier<AdminToolDescriptorService> adminToolDescriptorService;
 
     public AdminLibHelper()
     {
@@ -47,16 +52,12 @@ public final class AdminLibHelper
 
     public String getHomeToolUri()
     {
-        return rewriteUri( ADMIN_TOOLS_URI_PREFIX );
+        return this.adminToolDescriptorService.get().getHomeToolUri();
     }
 
     public String generateAdminToolUri( String application, String adminTool )
     {
-        String uri = ADMIN_TOOLS_URI_PREFIX + "/" + application;
-        if (adminTool != null) {
-            uri += "/" + adminTool;
-        }
-        return rewriteUri( uri );
+        return this.adminToolDescriptorService.get().generateAdminToolUri( application, adminTool );
     }
 
     public String getHomeAppName() {
@@ -140,4 +141,11 @@ public final class AdminLibHelper
         final VersionInfo version = VersionInfo.get();
         return version.getVersion();
     }
+
+    @Override
+    public void initialize( final BeanContext context )
+    {
+        this.adminToolDescriptorService = context.getService( AdminToolDescriptorService.class );
+    }
+
 }
