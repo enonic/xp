@@ -74,7 +74,7 @@ public class ContentServiceImplTest_move
 
         final Content movedContent = contentService.getById( result.getMovedContents().first() );
 
-        assertEquals( movedContent.getAllExtraData().getSize(), 0 );
+        assertEquals( movedContent.getAllExtraData().getSize(), 1 );
 
     }
 
