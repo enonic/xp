@@ -13,7 +13,18 @@ public class RunnableTaskResult
 
     public TaskResultState getState()
     {
-        return getTotalCount() > 0 ? ( getFailureCount() == 0 ? TaskResultState.SUCCESS : TaskResultState.ERROR ) : TaskResultState.WARNING;
+        if ( getTotalCount() > 0 && getFailureCount() == 0 )
+        {
+            return TaskResultState.SUCCESS;
+        }
+        else if ( getTotalCount() > 0 && getSuccessCount() == 0 )
+        {
+            return TaskResultState.ERROR;
+        }
+        else
+        {
+            return TaskResultState.WARNING;
+        }
     }
 
     public int getTotalCount()

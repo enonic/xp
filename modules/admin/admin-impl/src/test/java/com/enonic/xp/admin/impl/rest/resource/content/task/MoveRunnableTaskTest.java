@@ -82,7 +82,7 @@ public class MoveRunnableTaskTest
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
 
         Assert.assertEquals(
-            "{\"state\":\"ERROR\",\"message\":\"2 items were moved ( Already moved: \\\"content1\\\" ). \\\"content2\\\" was not found.\"}",
+            "{\"state\":\"WARNING\",\"message\":\"2 items were moved ( Already moved: \\\"content1\\\" ). \\\"content2\\\" was not found.\"}",
             resultMessage );
     }
 
@@ -148,7 +148,7 @@ public class MoveRunnableTaskTest
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
 
         Assert.assertEquals(
-            "{\"state\":\"ERROR\",\"message\":\"\\\"Content 2\\\" was moved. Failed to move 2 items ( Exist at destination: \\\"content3\\\", Access denied: \\\"content1\\\" ).\"}",
+            "{\"state\":\"WARNING\",\"message\":\"\\\"Content 2\\\" was moved. Failed to move 2 items ( Exist at destination: \\\"content3\\\", Access denied: \\\"content1\\\" ).\"}",
             resultMessage );
     }
 
@@ -174,7 +174,7 @@ public class MoveRunnableTaskTest
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
 
         Assert.assertEquals(
-            "{\"state\":\"ERROR\",\"message\":\"\\\"content1\\\" is already moved. You don't have to access \\\"/forbidden/path\\\".\"}",
+            "{\"state\":\"WARNING\",\"message\":\"\\\"content1\\\" is already moved. You don't have to access \\\"/forbidden/path\\\".\"}",
             resultMessage );
     }
 
@@ -214,7 +214,7 @@ public class MoveRunnableTaskTest
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
 
         Assert.assertEquals(
-            "{\"state\":\"ERROR\",\"message\":\"3 items were moved ( Already moved: 2 ). Failed to move 6 items ( Exist at destination: 2, Not found: 2, Access denied: 2 ).\"}",
+            "{\"state\":\"WARNING\",\"message\":\"3 items were moved ( Already moved: 2 ). Failed to move 6 items ( Exist at destination: 2, Not found: 2, Access denied: 2 ).\"}",
             resultMessage );
     }
 }
