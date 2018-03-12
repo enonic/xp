@@ -72,7 +72,15 @@ public class DuplicateRunnableTask
             }
         }
 
-        progressReporter.info( getMessage( duplicated, failed, contentName ) );
+        final String message = getMessage( duplicated, failed, contentName );
+        if ( duplicated > 0 )
+        {
+            progressReporter.info( message );
+        }
+        else
+        {
+            throw new RuntimeException( message );
+        }
     }
 
     private String getMessage( final int duplicated, final int failed, final String contentName )

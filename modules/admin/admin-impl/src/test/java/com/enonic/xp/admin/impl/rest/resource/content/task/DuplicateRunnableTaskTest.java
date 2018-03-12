@@ -4,7 +4,9 @@ import java.util.stream.Collectors;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 
 import com.enonic.xp.admin.impl.rest.resource.content.json.DuplicateContentJson;
@@ -24,6 +26,9 @@ public class DuplicateRunnableTaskTest
     extends AbstractRunnableTaskTest
 {
     private DuplicateContentJson params;
+
+    @Rule
+    public final ExpectedException exception = ExpectedException.none();
 
     @Before
     @Override
@@ -115,12 +120,11 @@ public class DuplicateRunnableTaskTest
             thenThrow( new ContentAlreadyMovedException( contents.get( 0 ).getDisplayName() ) ).
             thenThrow( new ContentNotFoundException( contents.get( 1 ).getPath(), Branch.from( "master" ) ) );
 
+        exception.expect( RuntimeException.class );
+        exception.expectMessage( "Content could not be duplicated." );
+
         createAndRunTask();
 
-        Mockito.verify( progressReporter, Mockito.times( 2 ) ).info( contentQueryArgumentCaptor.capture() );
-
-        final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
-
-        Assert.assertEquals( "Content could not be duplicated.", resultMessage );
+        Mockito.verify( progressReporter, Mockito.times( 2 ) ).info( Mockito.anyString() );
     }
 }
