@@ -25,7 +25,7 @@ import com.enonic.xp.issue.IssueStatus;
 import com.enonic.xp.mail.MailMessage;
 import com.enonic.xp.security.User;
 
-public abstract class IssueMailMessageGenerator<P extends IssueMailMessageParams>
+public abstract class IssueMailMessageGenerator<P extends IssueNotificationParams>
 {
     protected final P params;
 

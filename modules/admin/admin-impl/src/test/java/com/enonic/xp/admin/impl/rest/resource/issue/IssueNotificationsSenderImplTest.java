@@ -56,6 +56,8 @@ public class IssueNotificationsSenderImplTest
 
     private ContentTypeService contentTypeService;
 
+    IssueNotificationParamsFactory.Builder notificationFactoryBuilder;
+
     @Before
     public void setUp()
     {
@@ -65,10 +67,11 @@ public class IssueNotificationsSenderImplTest
         issueNotificationsSender = new IssueNotificationsSenderImpl();
         contentTypeService = Mockito.mock( ContentTypeService.class );
 
-        issueNotificationsSender.setSecurityService( securityService );
         issueNotificationsSender.setMailService( mailService );
-        issueNotificationsSender.setContentService( contentService );
-        issueNotificationsSender.setContentTypeService( contentTypeService );
+
+        notificationFactoryBuilder =
+            IssueNotificationParamsFactory.create().contentService( contentService ).securityService( securityService ).contentTypeService(
+                contentTypeService );
     }
 
     @Test
@@ -84,7 +87,14 @@ public class IssueNotificationsSenderImplTest
         Mockito.when( securityService.getUser( issue.getApproverIds().first() ) ).thenReturn( Optional.of( approver ) );
         Mockito.when( contentService.getByIds( Mockito.any( GetContentByIdsParams.class ) ) ).thenReturn( contents );
 
-        issueNotificationsSender.notifyIssueCreated( issue, this.createComments( creator.getKey() ), "url" );
+        IssueNotificationParams params = notificationFactoryBuilder.
+            issue( issue ).
+            comments( this.createComments( creator.getKey() ) ).
+            url( "url" ).
+            build().
+            createdParams();
+
+        issueNotificationsSender.notifyIssueCreated( params );
 
         Thread.sleep( 1000 ); // giving a chance to run threads that send mails
 
@@ -110,7 +120,14 @@ public class IssueNotificationsSenderImplTest
             approver -> Mockito.when( securityService.getUser( approver.getKey() ) ).thenReturn( Optional.of( approver ) ) );
         Mockito.when( contentService.getByIds( Mockito.any( GetContentByIdsParams.class ) ) ).thenReturn( contents );
 
-        issueNotificationsSender.notifyIssueCreated( issue, this.createComments( creator.getKey() ), "url" );
+        IssueNotificationParams params = notificationFactoryBuilder.
+            issue( issue ).
+            comments( this.createComments( creator.getKey() ) ).
+            url( "url" ).
+            build().
+            createdParams();
+
+        issueNotificationsSender.notifyIssueCreated( params );
 
         Thread.sleep( 1000 ); // giving a chance to run threads that send mails
 
@@ -147,7 +164,14 @@ public class IssueNotificationsSenderImplTest
             ContentType.create().name( "mycontenttype" ).icon( Icon.from( new byte[]{1}, "image/svg+xml", Instant.now() ) ).setBuiltIn(
                 true ).build() );
 
-        issueNotificationsSender.notifyIssueUpdated( issue, this.createComments( creator.getKey() ), "url" );
+        IssueUpdatedNotificationParams params = notificationFactoryBuilder.
+            issue( issue ).
+            comments( this.createComments( creator.getKey() ) ).
+            url( "url" ).
+            build().
+            updatedParams();
+
+        issueNotificationsSender.notifyIssueUpdated( params );
 
         verify( securityService, times( 2 ) ).getUser( Mockito.any() );
         verify( contentService, times( 1 ) ).getByIds( Mockito.any() );
@@ -181,7 +205,14 @@ public class IssueNotificationsSenderImplTest
             ContentType.create().name( "mycontenttype" ).icon( Icon.from( new byte[]{1}, "image/svg+xml", Instant.now() ) ).setBuiltIn(
                 true ).build() );
 
-        issueNotificationsSender.notifyIssueCommented( issue, this.createComments( creator.getKey() ), "url" );
+        IssueCommentedNotificationParams params = notificationFactoryBuilder.
+            issue( issue ).
+            comments( this.createComments( creator.getKey() ) ).
+            url( "url" ).
+            build().
+            commentedParams();
+
+        issueNotificationsSender.notifyIssueCommented( params );
 
         verify( securityService, times( 2 ) ).getUser( Mockito.any() );
         verify( contentService, times( 1 ) ).getByIds( Mockito.any() );
@@ -215,7 +246,14 @@ public class IssueNotificationsSenderImplTest
             ContentType.create().name( "mycontenttype" ).icon( Icon.from( new byte[]{1}, "image/svg+xml", Instant.now() ) ).setBuiltIn(
                 true ).build() );
 
-        issueNotificationsSender.notifyIssueUpdated( issue, this.createComments( creator.getKey() ), "url" );
+        IssueUpdatedNotificationParams params = notificationFactoryBuilder.
+            issue( issue ).
+            comments( this.createComments( creator.getKey() ) ).
+            url( "url" ).
+            build().
+            updatedParams();
+
+        issueNotificationsSender.notifyIssueUpdated( params );
 
         verify( mailService, never() ).send( Mockito.any() );
     }
@@ -233,7 +271,14 @@ public class IssueNotificationsSenderImplTest
         Mockito.when( securityService.getUser( issue.getApproverIds().first() ) ).thenReturn( Optional.of( approver ) );
         Mockito.when( contentService.getByIds( Mockito.any( GetContentByIdsParams.class ) ) ).thenReturn( contents );
 
-        issueNotificationsSender.notifyIssuePublished( issue, this.createComments( creator.getKey() ), "url" );
+        IssuePublishedNotificationParams params = notificationFactoryBuilder.
+            issue( issue ).
+            comments( this.createComments( creator.getKey() ) ).
+            url( "url" ).
+            build().
+            publishedParams();
+
+        issueNotificationsSender.notifyIssuePublished( params );
 
         verify( securityService, times( 2 ) ).getUser( Mockito.any() );
         verify( contentService, times( 1 ) ).getByIds( Mockito.any() );
@@ -253,7 +298,14 @@ public class IssueNotificationsSenderImplTest
         Mockito.when( securityService.getUser( issue.getApproverIds().first() ) ).thenReturn( Optional.empty() );
         Mockito.when( contentService.getByIds( Mockito.any( GetContentByIdsParams.class ) ) ).thenReturn( contents );
 
-        issueNotificationsSender.notifyIssuePublished( issue, this.createComments( creator.getKey() ), "url" );
+        IssuePublishedNotificationParams params = notificationFactoryBuilder.
+            issue( issue ).
+            comments( this.createComments( creator.getKey() ) ).
+            url( "url" ).
+            build().
+            publishedParams();
+
+        issueNotificationsSender.notifyIssuePublished( params );
 
         verify( mailService, never() ).send( Mockito.any() );
     }

@@ -64,6 +64,10 @@ final class LiveEditAttributeInjection
 
     private int skipByteOrderMark( final String responseHtml, final int initialPosition )
     {
+        if ( initialPosition > responseHtml.length() - 1 )
+        {
+            return initialPosition;
+        }
         char ch = responseHtml.charAt( initialPosition );
         if ( ch == BYTE_ORDER_MARK )
         {

@@ -1,9 +1,9 @@
 package com.enonic.xp.admin.impl.rest.resource.issue;
 
 public class IssueUpdatedMailMessageGenerator
-    extends IssueMailMessageGenerator<IssueUpdatedMailMessageParams>
+    extends IssueMailMessageGenerator<IssueUpdatedNotificationParams>
 {
-    public IssueUpdatedMailMessageGenerator( final IssueUpdatedMailMessageParams params )
+    public IssueUpdatedMailMessageGenerator( final IssueUpdatedNotificationParams params )
     {
         super( params );
     }
