@@ -10,12 +10,10 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.MoveContentException;
 import com.enonic.xp.content.MoveContentListener;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
-import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.MoveNodeListener;
 import com.enonic.xp.node.Node;
@@ -118,18 +116,6 @@ final class MoveContentCommand
         String contentName = movedContent.getDisplayName();
         ContentId contentId = movedContent.getId();
 
-        if ( isOutOfSite )
-        {
-            final UpdateContentParams updateParams = new UpdateContentParams().
-                contentId( params.getContentId() ).
-                modifier( params.getCreator() ).
-                editor( edit -> edit.extraDatas = this.updateExtraData( nearestSite, movedContent ) );
-            final Content updatedContent = contentService.update( updateParams );
-
-            contentName = updatedContent.getDisplayName();
-            contentId = updatedContent.getId();
-        }
-
         final MoveContentsResult result = MoveContentsResult.create().
             setContentName( contentName ).
             addMoved( contentId ).
@@ -167,12 +153,6 @@ final class MoveContentCommand
                 throw new MoveContentException( "A Fragment is not allowed to be moved out of its site." );
             }
         }
-    }
-
-    private ExtraDatas updateExtraData( Site site, Content content )
-    {
-        return ExtraDatas.from( content.getAllExtraData().stream().filter(
-            extraData -> site.getSiteConfigs().get( extraData.getName().getApplicationKey() ) == null ) );
     }
 
     @Override
