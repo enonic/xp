@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
+import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentAlreadyMovedException;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
@@ -61,15 +62,15 @@ final class MoveContentCommand
         }
         catch ( NodeAlreadyMovedException e )
         {
-            throw new ContentAlreadyMovedException( e.getMessage() );
+            throw new ContentAlreadyMovedException( e.getMessage(), ContentPath.from( e.getPath().toString() ) );
         }
         catch ( MoveNodeException e )
         {
-            throw new MoveContentException( e.getMessage() );
+            throw new MoveContentException( e.getMessage(), ContentPath.from( e.getPath().toString() ) );
         }
         catch ( NodeAlreadyExistAtPathException e )
         {
-            throw new MoveContentException( "Content already exists at path: " + e.getNode().toString() );
+            throw new ContentAlreadyExistsException( ContentPath.from( e.getNode().toString() ) );
         }
         catch ( NodeAccessException e )
         {
@@ -97,13 +98,14 @@ final class MoveContentCommand
         if ( sourceNode.parentPath().equals( nodePath ) )
         {
             throw new NodeAlreadyMovedException(
-                String.format( "Content with id [%s] is already a child of [%s]", params.getContentId(), params.getParentContentPath() ) );
+                String.format( "Content with id [%s] is already a child of [%s]", params.getContentId(), params.getParentContentPath() ),
+                nodePath );
         }
 
         final ContentPath newParentPath = ContentNodeHelper.translateNodePathToContentPath( nodePath );
 
-        final boolean isOutOfSite =
-                nearestSite != null && !(newParentPath.isChildOf(nearestSite.getPath()) || newParentPath.asAbsolute().equals(nearestSite.getPath().asAbsolute()));
+        final boolean isOutOfSite = nearestSite != null && !( newParentPath.isChildOf( nearestSite.getPath() ) ||
+            newParentPath.asAbsolute().equals( nearestSite.getPath().asAbsolute() ) );
 
         checkRestrictedMoves( sourceNode, isOutOfSite );
 

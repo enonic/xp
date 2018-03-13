@@ -83,7 +83,7 @@ public class MoveNodeCommand
                 build();
         }
 
-        checkNotMovedToSelfOrChild( existingNode, newParentPath );
+        checkNotMovedToSelfOrChild( existingNode, newParentPath, newNodeName );
 
         checkContextUserPermissionOrAdmin( existingNode, newParentPath );
 
@@ -146,11 +146,12 @@ public class MoveNodeCommand
         return newNodeName;
     }
 
-    private void checkNotMovedToSelfOrChild( final Node existingNode, final NodePath newParentPath )
+    private void checkNotMovedToSelfOrChild( final Node existingNode, final NodePath newParentPath, final NodeName newNodeName )
     {
         if ( newParentPath.equals( existingNode.path() ) || newParentPath.getParentPaths().contains( existingNode.path() ) )
         {
-            throw new MoveNodeException( "Not allowed to move content to itself (" + newParentPath + ")" );
+            throw new MoveNodeException( "Not allowed to move content to itself (" + newParentPath + ")",
+                                         new NodePath( newParentPath, newNodeName ) );
         }
     }
 
@@ -280,7 +281,7 @@ public class MoveNodeCommand
 
         if ( exists )
         {
-            throw new NodeAlreadyExistAtPathException( newParentPath );
+            throw new NodeAlreadyExistAtPathException( new NodePath( newParentPath, newNodeName ) );
         }
     }
 
