@@ -38,13 +38,19 @@ final class SecurityInitializer
 {
     public static final PrincipalKey SUPER_USER = PrincipalKey.ofUser( UserStoreKey.system(), "su" );
 
-    static final String SYSTEM_USER_STORE_DISPLAY_NAME = "System User Store";
+    private static final String SYSTEM_USER_STORE_DISPLAY_NAME = "System User Store";
 
     private static final String ADMIN_USER_CREATION_PROPERTY_KEY = "xp.init.adminUserCreation";
 
     private static final Logger LOG = LoggerFactory.getLogger( SecurityInitializer.class );
 
     private static final ApplicationKey SYSTEM_ID_PROVIDER_KEY = ApplicationKey.from( "com.enonic.xp.app.standardidprovider" );
+
+    static final UserStoreAccessControlList DEFAULT_USER_STORE_ACL =
+        UserStoreAccessControlList.of( UserStoreAccessControlEntry.create().principal( RoleKeys.ADMIN ).access( ADMINISTRATOR ).build(),
+                                       UserStoreAccessControlEntry.create().principal( RoleKeys.USER_MANAGER_ADMIN ).access(
+                                           ADMINISTRATOR ).build(),
+                                       UserStoreAccessControlEntry.create().principal( RoleKeys.AUTHENTICATED ).access( READ ).build() );
 
     private final SecurityService securityService;
 
@@ -145,17 +151,11 @@ final class SecurityInitializer
             config( idProviderConfig ).
             build();
 
-        final UserStoreAccessControlList permissions =
-            UserStoreAccessControlList.of( UserStoreAccessControlEntry.create().principal( RoleKeys.ADMIN ).access( ADMINISTRATOR ).build(),
-                                           UserStoreAccessControlEntry.create().principal( RoleKeys.AUTHENTICATED ).access( READ ).build(),
-                                           UserStoreAccessControlEntry.create().principal( RoleKeys.USER_MANAGER_ADMIN ).access(
-                                               ADMINISTRATOR ).build() );
-
         final CreateUserStoreParams createParams = CreateUserStoreParams.create().
             key( UserStoreKey.system() ).
             displayName( SYSTEM_USER_STORE_DISPLAY_NAME ).
             authConfig( authConfig ).
-            permissions( permissions ).
+            permissions( DEFAULT_USER_STORE_ACL ).
             build();
 
         this.securityService.createUserStore( createParams );
