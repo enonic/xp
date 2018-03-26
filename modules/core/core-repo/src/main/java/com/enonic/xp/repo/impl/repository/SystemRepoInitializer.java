@@ -21,7 +21,7 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public class SystemRepoInitializer
 {
-    private static final PrincipalKey SUPER_USER = PrincipalKey.ofUser( UserStoreKey.system(), "su" );
+    private static final PrincipalKey SUPER_USER = PrincipalKey.ofSuperUser();
 
     private final RepositoryService repositoryService;
 
@@ -67,7 +67,7 @@ public class SystemRepoInitializer
 
     private void runAsAdmin( Runnable runnable )
     {
-        final User admin = User.create().key( SUPER_USER ).login( "su" ).build();
+        final User admin = User.create().key( SUPER_USER ).login( SUPER_USER.getId() ).build();
         final AuthenticationInfo authInfo = AuthenticationInfo.create().principals( RoleKeys.ADMIN ).user( admin ).build();
         ContextBuilder.from( SecurityConstants.CONTEXT_SECURITY ).authInfo( authInfo ).build().runWith( runnable );
     }

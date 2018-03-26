@@ -23,8 +23,7 @@ public final class DeletePrincipalHandler
 
     public boolean deletePrincipal()
     {
-        if ( PrincipalKey.ofAnonymous().equals( principalKey ) ||
-            PrincipalKey.ofUser( UserStoreKey.system(), "su" ).equals( principalKey ) )
+        if ( PrincipalKey.ofAnonymous().equals( principalKey ) || PrincipalKey.ofSuperUser().equals( principalKey ) )
         {
             throw new IllegalArgumentException( "Not allowed to delete principal [" + principalKey + "]" );
         }

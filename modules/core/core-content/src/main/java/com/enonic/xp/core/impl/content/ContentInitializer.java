@@ -37,8 +37,8 @@ public final class ContentInitializer
     private final static Logger LOG = LoggerFactory.getLogger( ContentInitializer.class );
 
     public static final User SUPER_USER = User.create().
-        key( PrincipalKey.ofUser( UserStoreKey.system(), "su" ) ).
-        login( "su" ).
+        key( PrincipalKey.ofSuperUser() ).
+        login( PrincipalKey.ofSuperUser().getId() ).
         build();
 
     private static final AccessControlList CONTENT_REPO_DEFAULT_ACL = AccessControlList.create().

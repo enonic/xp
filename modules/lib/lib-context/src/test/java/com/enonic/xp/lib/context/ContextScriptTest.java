@@ -23,9 +23,9 @@ public class ContextScriptTest
         addService( SecurityService.class, securityService );
 
         final User user = User.create().
-            login( "su" ).
+            login( PrincipalKey.ofSuperUser().getId() ).
             displayName( "Super User" ).
-            key( PrincipalKey.ofUser( UserStoreKey.system(), "su" ) ).
+            key( PrincipalKey.ofSuperUser() ).
             build();
         final AuthenticationInfo authInfo = AuthenticationInfo.create().
             user( user ).
