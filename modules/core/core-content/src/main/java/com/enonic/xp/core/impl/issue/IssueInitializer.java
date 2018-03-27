@@ -48,8 +48,8 @@ public class IssueInitializer
         build();
 
     private static final User SUPER_USER = User.create().
-        key( PrincipalKey.ofUser( UserStoreKey.system(), "su" ) ).
-        login( "su" ).
+        key( PrincipalKey.ofSuperUser() ).
+        login( PrincipalKey.ofSuperUser().getId() ).
         build();
 
     public IssueInitializer( final NodeService nodeService )

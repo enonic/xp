@@ -17,7 +17,7 @@ class ApplicationConstants
 
     private static final Repository APPLICATIONS_REPO = SystemConstants.SYSTEM_REPO;
 
-    private static final PrincipalKey APPLICATION_SUPER_USER_KEY = PrincipalKey.ofUser( UserStoreKey.system(), "su" );
+    private static final PrincipalKey APPLICATION_SUPER_USER_KEY = PrincipalKey.ofSuperUser();
 
     private static final User APPLICATION_SUPER_USER = User.create().key( APPLICATION_SUPER_USER_KEY ).login( "node" ).build();
 

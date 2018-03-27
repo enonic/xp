@@ -17,7 +17,7 @@ class ApplicationRepoInitializer
 {
     private final NodeService nodeService;
 
-    private static final PrincipalKey SUPER_USER = PrincipalKey.ofUser( UserStoreKey.system(), "su" );
+    private static final PrincipalKey SUPER_USER = PrincipalKey.ofSuperUser();
 
     private static final Logger LOG = LoggerFactory.getLogger( ApplicationRepoInitializer.class );
 
@@ -63,7 +63,7 @@ class ApplicationRepoInitializer
 
     private void runAsAdmin( Runnable runnable )
     {
-        final User admin = User.create().key( SUPER_USER ).login( "su" ).build();
+        final User admin = User.create().key( SUPER_USER ).login( SUPER_USER.getId() ).build();
         final AuthenticationInfo authInfo = AuthenticationInfo.create().principals( RoleKeys.ADMIN ).user( admin ).build();
         ContextBuilder.from( ApplicationConstants.CONTEXT_APPLICATIONS ).authInfo( authInfo ).build().runWith( runnable );
     }

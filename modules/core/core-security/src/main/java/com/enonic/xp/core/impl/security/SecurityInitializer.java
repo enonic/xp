@@ -36,7 +36,7 @@ import static com.enonic.xp.security.acl.UserStoreAccess.READ;
 
 final class SecurityInitializer
 {
-    public static final PrincipalKey SUPER_USER = PrincipalKey.ofUser( UserStoreKey.system(), "su" );
+    public static final PrincipalKey SUPER_USER = PrincipalKey.ofSuperUser();
 
     private static final String SYSTEM_USER_STORE_DISPLAY_NAME = "System User Store";
 
@@ -93,7 +93,7 @@ final class SecurityInitializer
 
     private void runAsAdmin( Runnable runnable )
     {
-        final User admin = User.create().key( SUPER_USER ).login( "su" ).build();
+        final User admin = User.create().key( SUPER_USER ).login( SUPER_USER.getId() ).build();
         final AuthenticationInfo authInfo = AuthenticationInfo.create().principals( RoleKeys.ADMIN ).user( admin ).build();
         ContextBuilder.from( SecurityConstants.CONTEXT_SECURITY ).authInfo( authInfo ).build().runWith( runnable );
     }
@@ -230,7 +230,7 @@ final class SecurityInitializer
         final CreateUserParams createSuperUser = CreateUserParams.create().
             userKey( SUPER_USER ).
             displayName( "Super User" ).
-            login( "su" ).
+            login( SUPER_USER.getId() ).
             build();
         addUser( createSuperUser );
 

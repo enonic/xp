@@ -414,7 +414,7 @@ public final class SecurityServiceImpl
         {
             final User admin = User.create().
                 key( SecurityInitializer.SUPER_USER ).
-                login( "su" ).
+                login( SecurityInitializer.SUPER_USER.getId() ).
                 displayName( "Super User" ).
                 build();
             return AuthenticationInfo.create().

@@ -22,6 +22,8 @@ public final class PrincipalKey
 
     private static final PrincipalKey ANONYMOUS_PRINCIPAL = new PrincipalKey();
 
+    private static final PrincipalKey SUPER_USER_PRINCIPAL = new PrincipalKey( UserStoreKey.system(), PrincipalType.USER, "su" );
+
     public final static String IDENTITY_NODE_NAME = "identity";
 
     public final static String ROLES_NODE_NAME = "roles";
@@ -192,6 +194,11 @@ public final class PrincipalKey
     public static PrincipalKey ofAnonymous()
     {
         return ANONYMOUS_PRINCIPAL;
+    }
+
+    public static PrincipalKey ofSuperUser()
+    {
+        return SUPER_USER_PRINCIPAL;
     }
 
     public static PrincipalKey ofUser( final UserStoreKey userStore, final String userId )
