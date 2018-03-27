@@ -1,6 +1,9 @@
 package com.enonic.xp.portal.impl.view;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.junit.Before;
+import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
@@ -24,6 +27,9 @@ public abstract class AbstractViewFunctionTest
         this.portalRequest.setApplicationKey( ApplicationKey.from( "myapplication" ) );
         this.portalRequest.setBaseUri( "/portal" );
         this.portalRequest.setContentPath( ContentPath.from( "context/path" ) );
+
+        HttpServletRequest httpServletRequest = Mockito.mock( HttpServletRequest.class );
+        this.portalRequest.setRawRequest( httpServletRequest );
 
         this.service = new ViewFunctionServiceImpl();
         setupFunction();
