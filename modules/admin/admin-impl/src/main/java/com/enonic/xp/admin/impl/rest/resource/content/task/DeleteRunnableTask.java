@@ -39,9 +39,7 @@ public class DeleteRunnableTask
         progressReporter.info( "Deleting content" );
 
         final DeleteContentProgressListener listener = new DeleteContentProgressListener( progressReporter );
-        int deleted = 0;
-        int pending = 0;
-        int failed = 0;
+        final DeleteRunnableTaskResult.Builder resultBuilder = DeleteRunnableTaskResult.create();
         for ( final ContentPath contentToDelete : contentsToDeleteList )
         {
             final DeleteContentParams deleteContentParams = DeleteContentParams.create().
@@ -51,10 +49,16 @@ public class DeleteRunnableTask
 
             try
             {
-                DeleteContentsResult result = contentService.deleteWithoutFetch( deleteContentParams );
+                DeleteContentsResult deleteResult = contentService.deleteWithoutFetch( deleteContentParams );
 
-                deleted += result.getDeletedContents().getSize();
-                pending += result.getPendingContents().getSize();
+                if ( deleteResult.getDeletedContents().getSize() > 0 )
+                {
+                    resultBuilder.deleted( contentToDelete );
+                }
+                if ( deleteResult.getPendingContents().getSize() > 0 )
+                {
+                    resultBuilder.pending( contentToDelete );
+                }
             }
             catch ( final Exception e )
             {
@@ -63,19 +67,19 @@ public class DeleteRunnableTask
                     Content content = contentService.getByPath( contentToDelete );
                     if ( content != null )
                     {
-                        failed++;
+                        resultBuilder.failed( contentToDelete );
                     }
                 }
                 catch ( final Exception e2 )
                 {
-                    failed++;
+                    resultBuilder.failed( contentToDelete );
                 }
             }
 
             listener.contentDeleted( 1 );
         }
 
-        progressReporter.info( getMessage( deleted, pending, failed ) );
+        progressReporter.info( resultBuilder.build().toJson() );
     }
 
     private String getMessage( final int deleted, final int pending, final int failed )

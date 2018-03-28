@@ -1,5 +1,8 @@
 package com.enonic.xp.admin.impl.rest.resource.content.task;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 enum TaskResultState
 {
     SUCCESS, WARNING, ERROR
@@ -27,6 +30,11 @@ public class RunnableTaskResult
         }
     }
 
+    public String getMessage()
+    {
+        return "";
+    }
+
     public int getTotalCount()
     {
         return getSuccessCount() + getFailureCount();
@@ -44,7 +52,13 @@ public class RunnableTaskResult
 
     public String toJson()
     {
-        return "{}";
+        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectNode map = mapper.createObjectNode();
+
+        map.put( "state", getState().toString() );
+        map.put( "message", getMessage() );
+
+        return map.toString();
     }
 
     public static Builder create()

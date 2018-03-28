@@ -2,8 +2,6 @@ package com.enonic.xp.admin.impl.rest.resource.content.task;
 
 import java.util.List;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.content.ContentPath;
@@ -83,16 +81,10 @@ public class MoveRunnableTaskResult
         return existsFailed.size() + notExistsFailed.size() + accessFailed.size() + failed.size();
     }
 
-    public String toJson()
+    @Override
+    public String getMessage()
     {
-        final ObjectMapper mapper = new ObjectMapper();
-        final ObjectNode map = mapper.createObjectNode();
-        final String message = new MoveTaskMessageGenerator().generate( this );
-
-        map.put( "state", getState().toString() );
-        map.put( "message", message );
-
-        return map.toString();
+        return new MoveTaskMessageGenerator().generate( this );
     }
 
     public static Builder create()
