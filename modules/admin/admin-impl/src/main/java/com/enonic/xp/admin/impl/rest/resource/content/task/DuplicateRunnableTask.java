@@ -45,9 +45,7 @@ public class DuplicateRunnableTask
         final int contentIds = contentToDuplicateList.getSize();
 
         listener.setTotal( Math.toIntExact( childrenIds + contentIds ) );
-        int duplicated = 0;
-        int failed = 0;
-        String contentName = "";
+        final DuplicateRunnableTaskResult.Builder resultBuilder = DuplicateRunnableTaskResult.create();
         for ( ContentId contentId : contentToDuplicateList )
         {
             final DuplicateContentParams duplicateContentParams = DuplicateContentParams.create().
@@ -58,53 +56,19 @@ public class DuplicateRunnableTask
             try
             {
                 final DuplicateContentsResult result = contentService.duplicate( duplicateContentParams );
-
-                contentName = result.getContentName();
-                duplicated++;
+                resultBuilder.succeeded( result.getContentName() );
             }
             catch ( ContentAlreadyMovedException e )
             {
-                continue;
+                resultBuilder.alreadyDuplicated( e.getPath() );
             }
             catch ( final Exception e )
             {
-                failed++;
+                resultBuilder.failed( contentId );
             }
         }
 
-        progressReporter.info( getMessage( duplicated, failed, contentName ) );
-    }
-
-    private String getMessage( final int duplicated, final int failed, final String contentName )
-    {
-        final int total = duplicated + failed;
-        switch ( total )
-        {
-            case 0:
-                return "The item is already duplicated.";
-
-            case 1:
-                if ( duplicated == 1 )
-                {
-                    return "\"" + contentName + "\" item is duplicated.";
-                }
-                else
-                {
-                    return "Content could not be duplicated.";
-                }
-
-            default:
-                final StringBuilder builder = new StringBuilder();
-                if ( duplicated > 0 )
-                {
-                    builder.append( duplicated ).append( duplicated > 1 ? " items are " : " item is " ).append( "duplicated. " );
-                }
-                if ( failed > 0 )
-                {
-                    builder.append( failed ).append( failed > 1 ? " items " : " item " ).append( "failed to be duplicated. " );
-                }
-                return builder.toString().trim();
-        }
+        progressReporter.info( resultBuilder.build().toJson() );
     }
 
     public static Builder create()
