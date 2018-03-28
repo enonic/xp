@@ -53,7 +53,7 @@ public class DeleteRunnableTask
 
                 if ( deleteResult.getDeletedContents().getSize() > 0 )
                 {
-                    resultBuilder.deleted( contentToDelete );
+                    resultBuilder.succeeded( contentToDelete );
                 }
                 if ( deleteResult.getPendingContents().getSize() > 0 )
                 {

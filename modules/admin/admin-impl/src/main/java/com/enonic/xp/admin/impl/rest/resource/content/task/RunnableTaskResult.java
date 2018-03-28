@@ -1,7 +1,12 @@
 package com.enonic.xp.admin.impl.rest.resource.content.task;
 
+import java.util.List;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.collect.Lists;
+
+import com.enonic.xp.content.ContentPath;
 
 enum TaskResultState
 {
@@ -10,8 +15,14 @@ enum TaskResultState
 
 public class RunnableTaskResult
 {
+    private final List<ContentPath> succeeded;
+
+    private final List<ContentPath> failed;
+
     RunnableTaskResult( Builder builder )
     {
+        this.succeeded = builder.succeeded;
+        this.failed = builder.failed;
     }
 
     public TaskResultState getState()
@@ -42,12 +53,22 @@ public class RunnableTaskResult
 
     public int getSuccessCount()
     {
-        return 0;
+        return succeeded.size();
     }
 
     public int getFailureCount()
     {
-        return 0;
+        return failed.size();
+    }
+
+    public List<ContentPath> getFailed()
+    {
+        return failed;
+    }
+
+    public List<ContentPath> getSucceeded()
+    {
+        return succeeded;
     }
 
     public String toJson()
@@ -66,10 +87,26 @@ public class RunnableTaskResult
         return new Builder();
     }
 
-    public static class Builder
+    public static class Builder<B extends Builder>
     {
+        private List<ContentPath> succeeded = Lists.newArrayList();
+
+        private List<ContentPath> failed = Lists.newArrayList();
+
         Builder()
         {
+        }
+
+        public B succeeded( ContentPath item )
+        {
+            this.succeeded.add( item );
+            return (B) this;
+        }
+
+        public B failed( ContentPath item )
+        {
+            this.failed.add( item );
+            return (B) this;
         }
 
         public RunnableTaskResult build()

@@ -26,7 +26,7 @@ class DeleteTaskMessageGenerator
     void appendMessageForSingleSuccess( final StringBuilder builder, final DeleteRunnableTaskResult result )
     {
         final List<ContentPath> pending = result.getPending();
-        final List<ContentPath> deleted = result.getDeleted();
+        final List<ContentPath> deleted = result.getSucceeded();
         if ( pending != null && pending.size() == 1 )
         {
             builder.append( String.format( "\"%s\" is marked for deletion.", pending.get( 0 ).getName() ) );
