@@ -29,6 +29,8 @@ public final class InputTypeName
 
     public final static InputTypeName HTML_AREA = InputTypeName.from( "HtmlArea" );
 
+    public final static InputTypeName _HTML_AREA = InputTypeName.from( "_HtmlArea" );
+
     public final static InputTypeName IMAGE_SELECTOR = InputTypeName.from( "ImageSelector" );
 
     public final static InputTypeName IMAGE_UPLOADER = InputTypeName.from( "ImageUploader" );
