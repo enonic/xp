@@ -3,6 +3,7 @@ package com.enonic.xp.admin.impl.rest.resource.content.task;
 import com.enonic.xp.admin.impl.rest.resource.content.DuplicateContentProgressListener;
 import com.enonic.xp.admin.impl.rest.resource.content.json.DuplicateContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.query.ContentQueryWithChildren;
+import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAlreadyMovedException;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
@@ -64,7 +65,15 @@ public class DuplicateRunnableTask
             }
             catch ( final Exception e )
             {
-                resultBuilder.failed( contentId );
+                final Content item = contentService.getById( contentId );
+                if ( item != null )
+                {
+                    resultBuilder.failed( item.getPath() );
+                }
+                else
+                {
+                    resultBuilder.failed( ContentIds.from( contentId ) );
+                }
             }
         }
 

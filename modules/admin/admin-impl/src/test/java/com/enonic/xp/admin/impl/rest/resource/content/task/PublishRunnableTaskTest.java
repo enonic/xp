@@ -75,7 +75,7 @@ public class PublishRunnableTaskTest
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
 
         Assert.assertEquals(
-            "{\"state\":\"WARNING\",\"message\":\"Published 2 items ( Deleted: \\\"content2\\\" ). Item \\\"content3\\\" could not be published.\"}",
+            "{\"state\":\"WARNING\",\"message\":\"Published 2 items ( Deleted: \\\"content2\\\" ). Item \\\"/content/content3\\\" could not be published.\"}",
             resultMessage );
     }
 

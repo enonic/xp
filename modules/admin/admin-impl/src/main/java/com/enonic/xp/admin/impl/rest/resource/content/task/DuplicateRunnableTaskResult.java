@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 
 public class DuplicateRunnableTaskResult
@@ -53,12 +52,6 @@ public class DuplicateRunnableTaskResult
         public Builder succeeded( String item )
         {
             super.succeeded( ContentPath.from( item ) );
-            return this;
-        }
-
-        public Builder failed( ContentId item )
-        {
-            super.failed( ContentPath.from( item.toString() ) );
             return this;
         }
 
