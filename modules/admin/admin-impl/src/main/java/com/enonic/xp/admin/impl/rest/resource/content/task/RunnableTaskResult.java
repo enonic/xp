@@ -89,9 +89,9 @@ public class RunnableTaskResult
 
     public static class Builder<B extends Builder>
     {
-        private List<ContentPath> succeeded = Lists.newArrayList();
+        protected List<ContentPath> succeeded = Lists.newArrayList();
 
-        private List<ContentPath> failed = Lists.newArrayList();
+        protected List<ContentPath> failed = Lists.newArrayList();
 
         Builder()
         {

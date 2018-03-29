@@ -45,67 +45,37 @@ public class PublishRunnableTask
             pushListener( new PublishContentProgressListener( progressReporter ) ).
             build() );
 
-        final ContentIds pushedContents = result.getPushedContents();
-        final ContentIds deletedContents = result.getDeletedContents();
-        final ContentIds failedContents = result.getFailedContents();
+        PublishRunnableTaskResult.Builder resultBuilder = PublishRunnableTaskResult.create();
 
-        String contentName = "";
-        final int total = pushedContents.getSize() + deletedContents.getSize() + failedContents.getSize();
-        if ( total == 1 )
+        ContentIds pushed = result.getPushedContents();
+        ContentIds deleted = result.getDeletedContents();
+        ContentIds failed = result.getFailedContents();
+        if ( pushed.getSize() == 1 )
         {
-            if ( pushedContents.getSize() == 1 )
-            {
-                contentName = contentService.getById( pushedContents.first() ).getDisplayName();
-            }
-            else if ( failedContents.getSize() == 1 )
-            {
-                contentName = contentService.getById( failedContents.first() ).getDisplayName();
-            }
+            resultBuilder.succeeded( contentService.getById( pushed.first() ).getPath() );
+        }
+        else
+        {
+            resultBuilder.succeeded( pushed );
+        }
+        if ( failed.getSize() == 1 )
+        {
+            resultBuilder.failed( contentService.getById( failed.first() ).getPath() );
+        }
+        else
+        {
+            resultBuilder.failed( failed );
+        }
+        if ( deleted.getSize() == 1 )
+        {
+            resultBuilder.deleted( contentService.getById( deleted.first() ).getPath() );
+        }
+        else
+        {
+            resultBuilder.deleted( deleted );
         }
 
-        progressReporter.info( getMessage( pushedContents.getSize(), failedContents.getSize(), deletedContents.getSize(), contentName ) );
-    }
-
-    private String getMessage( final int succeeded, final int failed, final int deleted, final String contentName )
-    {
-        final int total = succeeded + failed + deleted;
-        switch ( total )
-        {
-            case 0:
-                return "Nothing to publish.";
-
-            case 1:
-                if ( succeeded == 1 )
-                {
-                    return "\"" + contentName + "\" is published.";
-                }
-
-                if ( failed == 1 )
-                {
-                    return "\"" + contentName + "\" failed to be published.";
-                }
-
-                if ( deleted == 1 )
-                {
-                    return "The item is deleted.";
-                }
-
-            default:
-                final StringBuilder builder = new StringBuilder();
-                if ( succeeded > 0 )
-                {
-                    builder.append( succeeded ).append( succeeded > 1 ? " items are " : " item is " ).append( "published. " );
-                }
-                if ( deleted > 0 )
-                {
-                    builder.append( deleted ).append( deleted > 1 ? " items are " : " item is " ).append( "deleted. " );
-                }
-                if ( failed > 0 )
-                {
-                    builder.append( failed ).append( failed > 1 ? " items " : " item " ).append( "failed to be published. " );
-                }
-                return builder.toString().trim();
-        }
+        progressReporter.info( resultBuilder.build().toJson() );
     }
 
     public static Builder create()

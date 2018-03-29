@@ -29,7 +29,7 @@ class DeleteTaskMessageGenerator
         final List<ContentPath> deleted = result.getSucceeded();
         if ( pending != null && pending.size() == 1 )
         {
-            builder.append( String.format( "Item \"%s\" is marked for deletion.", pending.get( 0 ).getName() ) );
+            builder.append( String.format( "Item \"%s\" was marked for deletion.", pending.get( 0 ).getName() ) );
         }
         else if ( deleted != null && deleted.size() == 1 )
         {
