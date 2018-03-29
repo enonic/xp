@@ -82,46 +82,6 @@ public class DeleteRunnableTask
         progressReporter.info( resultBuilder.build().toJson() );
     }
 
-    private String getMessage( final int deleted, final int pending, final int failed )
-    {
-        final int total = deleted + pending + failed;
-        switch ( total )
-        {
-            case 0:
-                return "Nothing to delete.";
-
-            case 1:
-                if ( deleted == 1 )
-                {
-                    return "The item is deleted.";
-                }
-                else if ( pending == 1 )
-                {
-                    return "The item is marked for deletion.";
-                }
-                else
-                {
-                    return "Content could not be deleted.";
-                }
-
-            default:
-                final StringBuilder builder = new StringBuilder();
-                if ( deleted > 0 )
-                {
-                    builder.append( deleted ).append( deleted > 1 ? " items are " : " item is " ).append( "deleted. " );
-                }
-                if ( pending > 0 )
-                {
-                    builder.append( pending ).append( pending > 1 ? " items are " : " item is " ).append( "marked for deletion. " );
-                }
-                if ( failed > 0 )
-                {
-                    builder.append( failed ).append( failed > 1 ? " items " : " item " ).append( "failed to be deleted. " );
-                }
-                return builder.toString().trim();
-        }
-    }
-
     public static Builder create()
     {
         return new Builder();

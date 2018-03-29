@@ -35,44 +35,58 @@ public class PublishRunnableTask
             build();
         progressReporter.info( "Publishing content" );
 
-        final PublishContentResult result = contentService.publish( PushContentParams.create().
-            target( ContentConstants.BRANCH_MASTER ).
-            contentIds( contentIds ).
-            excludedContentIds( excludeContentIds ).
-            excludeChildrenIds( excludeChildrenIds ).
-            contentPublishInfo( contentPublishInfo ).
-            includeDependencies( true ).
-            pushListener( new PublishContentProgressListener( progressReporter ) ).
-            build() );
-
         PublishRunnableTaskResult.Builder resultBuilder = PublishRunnableTaskResult.create();
 
-        ContentIds pushed = result.getPushedContents();
-        ContentIds deleted = result.getDeletedContents();
-        ContentIds failed = result.getFailedContents();
-        if ( pushed.getSize() == 1 )
+        try
         {
-            resultBuilder.succeeded( contentService.getById( pushed.first() ).getPath() );
+            final PublishContentResult result = contentService.publish( PushContentParams.create().
+                target( ContentConstants.BRANCH_MASTER ).
+                contentIds( contentIds ).
+                excludedContentIds( excludeContentIds ).
+                excludeChildrenIds( excludeChildrenIds ).
+                contentPublishInfo( contentPublishInfo ).
+                includeDependencies( true ).
+                pushListener( new PublishContentProgressListener( progressReporter ) ).
+                build() );
+
+            ContentIds pushed = result.getPushedContents();
+            ContentIds deleted = result.getDeletedContents();
+            ContentIds failed = result.getFailedContents();
+            if ( pushed.getSize() == 1 )
+            {
+                resultBuilder.succeeded( contentService.getById( pushed.first() ).getPath() );
+            }
+            else
+            {
+                resultBuilder.succeeded( pushed );
+            }
+            if ( failed.getSize() == 1 )
+            {
+                resultBuilder.failed( contentService.getById( failed.first() ).getPath() );
+            }
+            else
+            {
+                resultBuilder.failed( failed );
+            }
+            if ( deleted.getSize() == 1 )
+            {
+                resultBuilder.deleted( contentService.getById( deleted.first() ).getPath() );
+            }
+            else
+            {
+                resultBuilder.deleted( deleted );
+            }
         }
-        else
+        catch ( final Exception e )
         {
-            resultBuilder.succeeded( pushed );
-        }
-        if ( failed.getSize() == 1 )
-        {
-            resultBuilder.failed( contentService.getById( failed.first() ).getPath() );
-        }
-        else
-        {
-            resultBuilder.failed( failed );
-        }
-        if ( deleted.getSize() == 1 )
-        {
-            resultBuilder.deleted( contentService.getById( deleted.first() ).getPath() );
-        }
-        else
-        {
-            resultBuilder.deleted( deleted );
+            if ( contentIds.getSize() == 1 )
+            {
+                resultBuilder.failed( contentService.getById( contentIds.first() ).getPath() );
+            }
+            else
+            {
+                resultBuilder.failed( contentIds );
+            }
         }
 
         progressReporter.info( resultBuilder.build().toJson() );
