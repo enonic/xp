@@ -65,18 +65,6 @@ public class PublishRunnableTaskResult
             return this;
         }
 
-        public Builder succeeded( ContentIds items )
-        {
-            this.succeeded.addAll( items.stream().map( i -> ContentPath.from( i.toString() ) ).collect( Collectors.toList() ) );
-            return this;
-        }
-
-        public Builder failed( ContentIds items )
-        {
-            this.failed.addAll( items.stream().map( i -> ContentPath.from( i.toString() ) ).collect( Collectors.toList() ) );
-            return this;
-        }
-
         public PublishRunnableTaskResult build()
         {
             return new PublishRunnableTaskResult( this );

@@ -15,7 +15,7 @@ class PublishTaskMessageGenerator
 
     void appendMessageForSingleFailure( final StringBuilder builder, final PublishRunnableTaskResult result )
     {
-        builder.append( String.format( "Item \"%s\" could not be published.", result.getFailed().get( 0 ).getName() ) );
+        builder.append( String.format( "Item \"%s\" could not be published.", result.getFailed().get( 0 ).toString() ) );
     }
 
     void appendMessageForMultipleFailure( final StringBuilder builder, final PublishRunnableTaskResult result )

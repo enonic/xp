@@ -1,11 +1,13 @@
 package com.enonic.xp.admin.impl.rest.resource.content.task;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
 
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 
 enum TaskResultState
@@ -103,9 +105,21 @@ public class RunnableTaskResult
             return (B) this;
         }
 
+        public B succeeded( ContentIds items )
+        {
+            this.succeeded.addAll( items.stream().map( i -> ContentPath.from( i.toString() ) ).collect( Collectors.toList() ) );
+            return (B) this;
+        }
+
         public B failed( ContentPath item )
         {
             this.failed.add( item );
+            return (B) this;
+        }
+
+        public B failed( ContentIds items )
+        {
+            this.failed.addAll( items.stream().map( i -> ContentPath.from( i.toString() ) ).collect( Collectors.toList() ) );
             return (B) this;
         }
 
