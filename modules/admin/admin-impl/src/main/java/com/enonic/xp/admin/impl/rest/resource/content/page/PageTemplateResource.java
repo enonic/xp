@@ -139,7 +139,7 @@ public final class PageTemplateResource
             {
                 if ( content.isPageTemplate() )
                 {
-                    return true;
+                    return ( (PageTemplate) content ).getController() != null;
                 }
 
                 final ContentId siteId = nearestSite.getId();
