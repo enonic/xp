@@ -25,7 +25,6 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.site.Site;
 
 final class MoveContentCommand
     extends AbstractContentCommand
@@ -89,8 +88,6 @@ final class MoveContentCommand
             throw new IllegalArgumentException( String.format( "Content with id [%s] not found", params.getContentId() ) );
         }
 
-        final Site nearestSite = contentService.getNearestSite( params.getContentId() );
-
         final NodePath nodePath = NodePath.create( ContentConstants.CONTENT_ROOT_PATH ).
             elements( params.getParentContentPath().toString() ).
             build();
@@ -101,13 +98,6 @@ final class MoveContentCommand
                 String.format( "Content with id [%s] is already a child of [%s]", params.getContentId(), params.getParentContentPath() ),
                 nodePath );
         }
-
-        final ContentPath newParentPath = ContentNodeHelper.translateNodePathToContentPath( nodePath );
-
-        final boolean isOutOfSite = nearestSite != null && !( newParentPath.isChildOf( nearestSite.getPath() ) ||
-            newParentPath.asAbsolute().equals( nearestSite.getPath().asAbsolute() ) );
-
-        checkRestrictedMoves( sourceNode, isOutOfSite );
 
         final Node movedNode = nodeService.move( sourceNodeId, nodePath, this );
 
@@ -140,17 +130,6 @@ final class MoveContentCommand
             {
                 throw new IllegalArgumentException(
                     "Content could not be moved. Children not allowed in destination [" + destinationPath.toString() + "]" );
-            }
-        }
-    }
-
-    private void checkRestrictedMoves( final Node existingNode, final Boolean isOutOfSite )
-    {
-        if ( translator.fromNode( existingNode, false ).getType().isFragment() )
-        {
-            if ( isOutOfSite )
-            {
-                throw new MoveContentException( "A Fragment is not allowed to be moved out of its site." );
             }
         }
     }
