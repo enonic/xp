@@ -23,7 +23,7 @@ public final class ApplicationEventDispatcher
         context.addBundleListener( this );
         for ( final Bundle bundle : context.getBundles() )
         {
-            if ( !isApplication( bundle ) )
+            if ( !isNonSystemApplication( bundle ) )
             {
                 continue;
             }
@@ -47,7 +47,7 @@ public final class ApplicationEventDispatcher
             return;
         }
 
-        if ( !isApplication( bundle ) )
+        if ( !isNonSystemApplication( bundle ) )
         {
             return;
         }
@@ -55,9 +55,10 @@ public final class ApplicationEventDispatcher
         publishApplicationChangeEvent( event );
     }
 
-    private boolean isApplication( final Bundle bundle )
+    private boolean isNonSystemApplication( final Bundle bundle )
     {
-        return ( bundle.getState() != Bundle.UNINSTALLED ) && ApplicationHelper.isApplication( bundle );
+        return ( bundle.getState() != Bundle.UNINSTALLED ) && ApplicationHelper.isApplication( bundle ) &&
+            !ApplicationHelper.isSystemApplication( bundle );
     }
 
     private void publishApplicationChangeEvent( final BundleEvent event )
