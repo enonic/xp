@@ -224,6 +224,10 @@ public abstract class IssueMailMessageGenerator<P extends IssueNotificationParam
         {
             return "";
         }
+        else if ( displayName.length() == 1 )
+        {
+            return displayName;
+        }
 
         final String[] nameParts = displayName.split( " " );
 
