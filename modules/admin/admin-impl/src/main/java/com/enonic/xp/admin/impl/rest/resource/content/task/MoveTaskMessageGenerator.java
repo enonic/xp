@@ -74,7 +74,7 @@ class MoveTaskMessageGenerator
     void appendMessageForSingleSuccess( final StringBuilder builder, final MoveRunnableTaskResult result )
     {
         final List<ContentPath> alreadyMoved = result.getAlreadyMoved();
-        final List<String> moved = result.getMoved();
+        final List<ContentPath> moved = result.getSucceeded();
         if ( alreadyMoved != null && alreadyMoved.size() == 1 )
         {
             builder.append( String.format( "\"%s\" is already moved.", alreadyMoved.get( 0 ).getName() ) );

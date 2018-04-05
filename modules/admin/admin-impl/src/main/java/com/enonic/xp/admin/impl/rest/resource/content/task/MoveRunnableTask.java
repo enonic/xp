@@ -58,7 +58,7 @@ public class MoveRunnableTask
             try
             {
                 final MoveContentsResult moveResult = contentService.move( moveContentParams );
-                result.moved( moveResult.getContentName() );
+                result.succeeded( moveResult.getContentName() );
             }
             catch ( ContentAlreadyMovedException e )
             {
