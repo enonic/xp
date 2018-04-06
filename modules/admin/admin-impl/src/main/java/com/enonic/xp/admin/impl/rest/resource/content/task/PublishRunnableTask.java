@@ -35,77 +35,61 @@ public class PublishRunnableTask
             build();
         progressReporter.info( "Publishing content" );
 
-        final PublishContentResult result = contentService.publish( PushContentParams.create().
-            target( ContentConstants.BRANCH_MASTER ).
-            contentIds( contentIds ).
-            excludedContentIds( excludeContentIds ).
-            excludeChildrenIds( excludeChildrenIds ).
-            contentPublishInfo( contentPublishInfo ).
-            includeDependencies( true ).
-            pushListener( new PublishContentProgressListener( progressReporter ) ).
-            build() );
+        PublishRunnableTaskResult.Builder resultBuilder = PublishRunnableTaskResult.create();
 
-        final ContentIds pushedContents = result.getPushedContents();
-        final ContentIds deletedContents = result.getDeletedContents();
-        final ContentIds failedContents = result.getFailedContents();
-
-        String contentName = "";
-        final int total = pushedContents.getSize() + deletedContents.getSize() + failedContents.getSize();
-        if ( total == 1 )
+        try
         {
-            if ( pushedContents.getSize() == 1 )
+            final PublishContentResult result = contentService.publish( PushContentParams.create().
+                target( ContentConstants.BRANCH_MASTER ).
+                contentIds( contentIds ).
+                excludedContentIds( excludeContentIds ).
+                excludeChildrenIds( excludeChildrenIds ).
+                contentPublishInfo( contentPublishInfo ).
+                includeDependencies( true ).
+                pushListener( new PublishContentProgressListener( progressReporter ) ).
+                build() );
+
+            ContentIds pushed = result.getPushedContents();
+            ContentIds deleted = result.getDeletedContents();
+            ContentIds failed = result.getFailedContents();
+            if ( pushed.getSize() == 1 )
             {
-                contentName = contentService.getById( pushedContents.first() ).getDisplayName();
+                resultBuilder.succeeded( contentService.getById( pushed.first() ).getPath() );
             }
-            else if ( failedContents.getSize() == 1 )
+            else
             {
-                contentName = contentService.getById( failedContents.first() ).getDisplayName();
+                resultBuilder.succeeded( pushed );
+            }
+            if ( failed.getSize() == 1 )
+            {
+                resultBuilder.failed( contentService.getById( failed.first() ).getPath() );
+            }
+            else
+            {
+                resultBuilder.failed( failed );
+            }
+            if ( deleted.getSize() == 1 )
+            {
+                resultBuilder.deleted( contentService.getById( deleted.first() ).getPath() );
+            }
+            else
+            {
+                resultBuilder.deleted( deleted );
+            }
+        }
+        catch ( final Exception e )
+        {
+            if ( contentIds.getSize() == 1 )
+            {
+                resultBuilder.failed( contentService.getById( contentIds.first() ).getPath() );
+            }
+            else
+            {
+                resultBuilder.failed( contentIds );
             }
         }
 
-        progressReporter.info( getMessage( pushedContents.getSize(), failedContents.getSize(), deletedContents.getSize(), contentName ) );
-    }
-
-    private String getMessage( final int succeeded, final int failed, final int deleted, final String contentName )
-    {
-        final int total = succeeded + failed + deleted;
-        switch ( total )
-        {
-            case 0:
-                return "Nothing to publish.";
-
-            case 1:
-                if ( succeeded == 1 )
-                {
-                    return "\"" + contentName + "\" is published.";
-                }
-
-                if ( failed == 1 )
-                {
-                    return "\"" + contentName + "\" failed to be published.";
-                }
-
-                if ( deleted == 1 )
-                {
-                    return "The item is deleted.";
-                }
-
-            default:
-                final StringBuilder builder = new StringBuilder();
-                if ( succeeded > 0 )
-                {
-                    builder.append( succeeded ).append( succeeded > 1 ? " items are " : " item is " ).append( "published. " );
-                }
-                if ( deleted > 0 )
-                {
-                    builder.append( deleted ).append( deleted > 1 ? " items are " : " item is " ).append( "deleted. " );
-                }
-                if ( failed > 0 )
-                {
-                    builder.append( failed ).append( failed > 1 ? " items " : " item " ).append( "failed to be published. " );
-                }
-                return builder.toString().trim();
-        }
+        progressReporter.info( resultBuilder.build().toJson() );
     }
 
     public static Builder create()

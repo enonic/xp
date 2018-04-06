@@ -23,7 +23,7 @@ public class MoveTaskMessageGeneratorTest
     {
 
         final MoveRunnableTaskResult result = MoveRunnableTaskResult.create().
-            moved( "moved-1" ).
+            succeeded( "moved-1" ).
             build();
 
         final String message = generator.generate( result );
@@ -36,8 +36,8 @@ public class MoveTaskMessageGeneratorTest
     {
 
         final MoveRunnableTaskResult result = MoveRunnableTaskResult.create().
-            moved( "moved-1" ).
-            moved( "moved-2" ).
+            succeeded( "moved-1" ).
+            succeeded( "moved-2" ).
             alreadyMoved( ContentPath.from( "already-moved-3" ) ).
             build();
 
@@ -51,7 +51,7 @@ public class MoveTaskMessageGeneratorTest
     {
 
         final MoveRunnableTaskResult result = MoveRunnableTaskResult.create().
-            moved( "moved-1" ).
+            succeeded( "moved-1" ).
             alreadyMoved( ContentPath.from( "already-moved-2" ) ).
             alreadyMoved( ContentPath.from( "already-moved-3" ) ).
             build();

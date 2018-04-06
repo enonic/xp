@@ -89,7 +89,7 @@ public class UnublishRunnableTaskTest
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
 
         Assert.assertEquals( 4, progressArgumentCaptor.getValue().intValue() );
-        Assert.assertEquals( "3 items are unpublished.", resultMessage );
+        Assert.assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"Unpublished 3 items\"}", resultMessage );
     }
 
     @Test
@@ -117,7 +117,7 @@ public class UnublishRunnableTaskTest
 
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
 
-        Assert.assertEquals( "\"Content 1\" is unpublished.", resultMessage );
+        Assert.assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"Item \\\"Content 1\\\" was unpublished.\"}", resultMessage );
     }
 
     @Test
@@ -142,7 +142,7 @@ public class UnublishRunnableTaskTest
 
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
 
-        Assert.assertEquals( "Nothing to unpublish.", resultMessage );
+        Assert.assertEquals( "{\"state\":\"WARNING\",\"message\":\"Nothing to unpublish.\"}", resultMessage );
     }
 
 }

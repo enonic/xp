@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.app.event;
 
+import java.util.Hashtable;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -32,6 +34,9 @@ public class ApplicationInvalidatorListenerTest
 
         final Bundle bundle = Mockito.mock( Bundle.class );
         Mockito.when( bundle.getSymbolicName() ).thenReturn( this.appKey.getName() );
+        final Hashtable<String, String> headers = new Hashtable<>();
+        headers.put( "X-Bundle-Type", "application" );
+        Mockito.when( bundle.getHeaders() ).thenReturn( headers );
 
         final BundleEvent bundleEvent = new BundleEvent( BundleEvent.STARTED, bundle );
         this.event = ApplicationEvents.event( bundleEvent );

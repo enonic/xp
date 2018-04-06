@@ -2,8 +2,6 @@ package com.enonic.xp.admin.impl.rest.resource.content.task;
 
 import java.util.List;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.content.ContentPath;
@@ -12,8 +10,6 @@ import com.enonic.xp.content.ContentPath;
 public class MoveRunnableTaskResult
     extends RunnableTaskResult
 {
-    private final List<String> moved;
-
     private final List<ContentPath> alreadyMoved;
 
     private final List<ContentPath> existsFailed;
@@ -22,25 +18,16 @@ public class MoveRunnableTaskResult
 
     private final List<ContentPath> accessFailed;
 
-    private final List<ContentPath> failed;
-
     private final ContentPath destination;
 
     private MoveRunnableTaskResult( Builder builder )
     {
         super( builder );
-        this.moved = builder.moved;
         this.alreadyMoved = builder.alreadyMoved;
         this.existsFailed = builder.existsFailed;
         this.notExistsFailed = builder.notExistsFailed;
         this.accessFailed = builder.accessFailed;
-        this.failed = builder.failed;
         this.destination = builder.destination;
-    }
-
-    public List<String> getMoved()
-    {
-        return moved;
     }
 
     public List<ContentPath> getAlreadyMoved()
@@ -63,11 +50,6 @@ public class MoveRunnableTaskResult
         return accessFailed;
     }
 
-    public List<ContentPath> getFailed()
-    {
-        return failed;
-    }
-
     public ContentPath getDestination()
     {
         return destination;
@@ -75,24 +57,18 @@ public class MoveRunnableTaskResult
 
     public int getSuccessCount()
     {
-        return moved.size() + alreadyMoved.size();
+        return super.getSuccessCount() + alreadyMoved.size();
     }
 
     public int getFailureCount()
     {
-        return existsFailed.size() + notExistsFailed.size() + accessFailed.size() + failed.size();
+        return super.getFailureCount() + existsFailed.size() + notExistsFailed.size() + accessFailed.size();
     }
 
-    public String toJson()
+    @Override
+    public String getMessage()
     {
-        final ObjectMapper mapper = new ObjectMapper();
-        final ObjectNode map = mapper.createObjectNode();
-        final String message = new MoveTaskMessageGenerator().generate( this );
-
-        map.put( "state", getState().toString() );
-        map.put( "message", message );
-
-        return map.toString();
+        return new MoveTaskMessageGenerator().generate( this );
     }
 
     public static Builder create()
@@ -101,11 +77,8 @@ public class MoveRunnableTaskResult
     }
 
     public static class Builder
-        extends RunnableTaskResult.Builder
+        extends RunnableTaskResult.Builder<Builder>
     {
-
-        private List<String> moved = Lists.newArrayList();
-
         private List<ContentPath> alreadyMoved = Lists.newArrayList();
 
         private List<ContentPath> existsFailed = Lists.newArrayList();
@@ -113,8 +86,6 @@ public class MoveRunnableTaskResult
         private List<ContentPath> notExistsFailed = Lists.newArrayList();
 
         private List<ContentPath> accessFailed = Lists.newArrayList();
-
-        private List<ContentPath> failed = Lists.newArrayList();
 
         private ContentPath destination;
 
@@ -129,9 +100,9 @@ public class MoveRunnableTaskResult
             return this;
         }
 
-        public Builder moved( String item )
+        public Builder succeeded( String item )
         {
-            this.moved.add( item );
+            super.succeeded( ContentPath.from( item ) );
             return this;
         }
 
@@ -156,12 +127,6 @@ public class MoveRunnableTaskResult
         public Builder accessFailed( ContentPath item )
         {
             this.accessFailed.add( item );
-            return this;
-        }
-
-        public Builder failed( ContentPath item )
-        {
-            this.failed.add( item );
             return this;
         }
 
