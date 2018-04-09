@@ -89,7 +89,7 @@ final class ControllerMappingsResolver
         final Map<ApplicationKey, Integer> appsOrder = getAppsOrder( site.getSiteConfigs() );
 
         return descriptors.stream().
-            filter( ( d ) -> matchesUrlPattern( d, request, site ) ).
+            filter( ( d ) -> matchesUrlPattern( d, request ) ).
             filter( ( d ) -> matchesContent( d, request ) ).
             sorted( ( d1, d2 ) -> {
                 if ( d2.compareTo( d1 ) == 0 )
@@ -251,18 +251,17 @@ final class ControllerMappingsResolver
         return UrlEscapers.urlFormParameterEscaper().escape( value );
     }
 
-    private String getSiteRelativePath( final PortalRequest request, final Site site )
+    private String getSiteRelativePath( final PortalRequest request )
     {
-        final String sitePath = site.getPath().toString();
-        final String contentPath = request.getContentPath().toString();
-
-        final String relativePath = contentPath.substring( sitePath.length() );
+        final ContentPath sitePath = siteResolved.getPath();
+        final ContentPath path = RenderMode.EDIT == request.getMode() ? contentResolved.getPath() : request.getContentPath();
+        final String relativePath = path.toString().substring( sitePath.toString().length() );
         return relativePath.isEmpty() ? "/" : relativePath;
     }
 
-    private boolean matchesUrlPattern( final ControllerMappingDescriptor descriptor, final PortalRequest request, final Site site )
+    private boolean matchesUrlPattern( final ControllerMappingDescriptor descriptor, final PortalRequest request )
     {
-        String siteRelativePath = getSiteRelativePath( request, site );
+        String siteRelativePath = getSiteRelativePath( request );
         final boolean patternWithQueryParameters = descriptor.getPattern().toString().contains( "\\?" );
         if ( patternWithQueryParameters )
         {
