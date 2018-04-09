@@ -1,7 +1,6 @@
 package com.enonic.xp.portal.impl.handler.mapping;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -90,22 +89,21 @@ final class ControllerMappingsResolver
         final Map<ApplicationKey, Integer> appsOrder = getAppsOrder( site.getSiteConfigs() );
 
         return descriptors.stream().
-            filter( ( d ) -> matchesUrlPattern( d, request ) ).
+            filter( ( d ) -> matchesUrlPattern( d, request, site ) ).
             filter( ( d ) -> matchesContent( d, request ) ).
-            sorted( ( d1, d2 ) ->
-                    {
-                        if ( d2.compareTo( d1 ) == 0 )
-                        {
-                            // if same order, use the apps order
-                            int d1AppIndex = appsOrder.get( d1.getApplication() );
-                            int d2AppIndex = appsOrder.get( d2.getApplication() );
-                            return Integer.compare( d1AppIndex, d2AppIndex );
-                        }
-                        else
-                        {
-                            return d2.compareTo( d1 );
-                        }
-                    } ).
+            sorted( ( d1, d2 ) -> {
+                if ( d2.compareTo( d1 ) == 0 )
+                {
+                    // if same order, use the apps order
+                    int d1AppIndex = appsOrder.get( d1.getApplication() );
+                    int d2AppIndex = appsOrder.get( d2.getApplication() );
+                    return Integer.compare( d1AppIndex, d2AppIndex );
+                }
+                else
+                {
+                    return d2.compareTo( d1 );
+                }
+            } ).
             findFirst().
             orElse( null );
     }
@@ -238,13 +236,12 @@ final class ControllerMappingsResolver
         params.keySet().stream().
             sorted().
             map( this::urlEscape ).
-            forEach( ( key ) ->
-                     {
-                         for ( String value : params.get( key ) )
-                         {
-                             paramList.add( key + "=" + urlEscape( value ) );
-                         }
-                     } );
+            forEach( ( key ) -> {
+                for ( String value : params.get( key ) )
+                {
+                    paramList.add( key + "=" + urlEscape( value ) );
+                }
+            } );
         queryParams = paramList.stream().collect( Collectors.joining( "&", "?", "" ) );
         return queryParams;
     }
@@ -254,15 +251,18 @@ final class ControllerMappingsResolver
         return UrlEscapers.urlFormParameterEscaper().escape( value );
     }
 
-    private String getSiteRelativePath( final PortalRequest request )
+    private String getSiteRelativePath( final PortalRequest request, final Site site )
     {
+        final String sitePath = site.getPath().toString();
         final String contentPath = request.getContentPath().toString();
-        return Arrays.stream( contentPath.split( "/" ) ).skip( 2 ).collect( Collectors.joining( "/", "/", "" ) );
+
+        final String relativePath = contentPath.substring( sitePath.length() );
+        return relativePath.isEmpty() ? "/" : relativePath;
     }
 
-    private boolean matchesUrlPattern( final ControllerMappingDescriptor descriptor, final PortalRequest request )
+    private boolean matchesUrlPattern( final ControllerMappingDescriptor descriptor, final PortalRequest request, final Site site )
     {
-        String siteRelativePath = getSiteRelativePath( request );
+        String siteRelativePath = getSiteRelativePath( request, site );
         final boolean patternWithQueryParameters = descriptor.getPattern().toString().contains( "\\?" );
         if ( patternWithQueryParameters )
         {
