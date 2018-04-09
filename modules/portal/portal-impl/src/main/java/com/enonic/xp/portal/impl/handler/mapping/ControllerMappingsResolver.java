@@ -251,18 +251,17 @@ final class ControllerMappingsResolver
         return UrlEscapers.urlFormParameterEscaper().escape( value );
     }
 
-    private String getSiteRelativePath()
+    private String getSiteRelativePath( final PortalRequest request )
     {
-        final String sitePath = siteResolved.getPath().toString();
-        final String contentPath = contentResolved.getPath().toString();
-
-        final String relativePath = contentPath.substring( sitePath.length() );
+        final ContentPath sitePath = siteResolved.getPath();
+        final ContentPath path = RenderMode.EDIT == request.getMode() ? contentResolved.getPath() : request.getContentPath();
+        final String relativePath = path.toString().substring( sitePath.toString().length() );
         return relativePath.isEmpty() ? "/" : relativePath;
     }
 
     private boolean matchesUrlPattern( final ControllerMappingDescriptor descriptor, final PortalRequest request )
     {
-        String siteRelativePath = getSiteRelativePath();
+        String siteRelativePath = getSiteRelativePath( request );
         final boolean patternWithQueryParameters = descriptor.getPattern().toString().contains( "\\?" );
         if ( patternWithQueryParameters )
         {
