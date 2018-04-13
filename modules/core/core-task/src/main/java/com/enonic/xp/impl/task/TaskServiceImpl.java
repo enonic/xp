@@ -41,7 +41,7 @@ public final class TaskServiceImpl
     public TaskId submitTask( final DescriptorKey key, final PropertyTree config )
     {
         final TaskDescriptor descriptor = taskDescriptorService.getTasks( key.getApplicationKey() ).
-            filter( key.getApplicationKey() ).first();
+            filter( ( taskDesc ) -> taskDesc.getKey().equals( key ) ).first();
         if ( descriptor == null )
         {
             throw new TaskNotFoundException( key );
