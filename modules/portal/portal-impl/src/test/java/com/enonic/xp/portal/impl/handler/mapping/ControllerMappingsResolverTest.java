@@ -339,7 +339,7 @@ public class ControllerMappingsResolverTest
         final Site.Builder site = Site.create();
         site.id( ContentId.from( "100123" ) );
         site.siteConfigs( SiteConfigs.from( siteConfig, siteConfig2 ) );
-        site.name( "my-content" );
+        site.name( "mysite" );
         site.parentPath( ContentPath.ROOT );
         return site.build();
     }
