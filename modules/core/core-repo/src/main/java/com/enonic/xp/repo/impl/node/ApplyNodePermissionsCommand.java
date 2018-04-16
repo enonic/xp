@@ -92,20 +92,17 @@ final class ApplyNodePermissionsCommand
         if ( params.isOverwriteChildPermissions() || node.inheritsPermissions() )
         {
             updatedNode = createUpdatedNode( node, parentPermissions, true );
-        }
-        else
-        {
-            final AccessControlList mergedPermissions = mergingStrategy.mergePermissions( node.getPermissions(), parentPermissions );
-            updatedNode = createUpdatedNode( node, mergedPermissions, false );
-        }
 
-        final Node result = StoreNodeCommand.create( this ).
-            node( updatedNode ).
-            updateMetadataOnly( false ).
-            build().
-            execute();
+            final Node result = StoreNodeCommand.create( this ).
+                node( updatedNode ).
+                updateMetadataOnly( false ).
+                build().
+                execute();
 
-        return result;
+            return result;
+        }
+        return node;
+
     }
 
     private Node createUpdatedNode( final Node persistedNode, final AccessControlList permissions, final boolean inheritsPermissions )
