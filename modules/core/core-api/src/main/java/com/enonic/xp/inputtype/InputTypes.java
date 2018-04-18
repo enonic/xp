@@ -20,6 +20,7 @@ public final class InputTypes
         add( DoubleType.INSTANCE ).
         add( GeoPointType.INSTANCE ).
         add( HtmlAreaType.INSTANCE ).
+        add( _HtmlAreaType.INSTANCE ).
         add( ImageUploaderType.INSTANCE ).
         add( MediaUploaderType.INSTANCE ).
         add( AttachmentUploaderType.INSTANCE ).
