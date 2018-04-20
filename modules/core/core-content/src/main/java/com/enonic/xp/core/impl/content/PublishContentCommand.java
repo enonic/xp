@@ -168,6 +168,7 @@ public class PublishContentCommand
         SetPublishInfoCommand.create( this ).
             nodeIds( nodesToPush ).
             contentPublishInfo( contentPublishInfo ).
+            pushListener( pushContentListener ).
             build().
             execute();
 
