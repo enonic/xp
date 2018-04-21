@@ -4,7 +4,9 @@ import java.awt.image.BufferedImage;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -13,6 +15,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.common.io.Resources;
 
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
@@ -33,6 +36,7 @@ import com.enonic.xp.icon.Icon;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.content.GetAllContentTypesParams;
@@ -529,6 +533,24 @@ public class ContentTypeResourceTest
             assertEquals( 404, e.getResponse().getStatus() ); // HTTP Not Found
             throw e;
         }
+    }
+
+    @Test
+    public void getMimeTypes()
+    {
+        final Set<String> mimeTypes = Sets.newHashSet();
+        mimeTypes.add( "mimeType1" );
+        mimeTypes.add( "mimeType2" );
+
+        final ContentTypeNames contentTypeNames = ContentTypeNames.from( ContentTypeName.documentMedia(), ContentTypeName.audioMedia() );
+
+        Mockito.when( contentTypeService.getMimeTypes( contentTypeNames ) ).thenReturn( mimeTypes );
+
+        final Collection<String> result = this.resource.getMimeTypes( ContentTypeName.documentMedia().toString()+","+ ContentTypeName.audioMedia().toString() );
+
+        assertEquals( mimeTypes.size(), result.size() );
+        assertTrue( result.contains( "mimeType1" ) );
+        assertTrue( result.contains( "mimeType2" ) );
     }
 
     private void setupContentType( final ContentType contentType )

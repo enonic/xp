@@ -24,6 +24,7 @@ public final class InputTypes
         add( MediaUploaderType.INSTANCE ).
         add( AttachmentUploaderType.INSTANCE ).
         add( ImageSelectorType.INSTANCE ).
+        add( MediaSelectorType.INSTANCE ).
         add( ContentSelectorType.INSTANCE ).
         add( CustomSelectorType.INSTANCE ).
         add( RadioButtonType.INSTANCE ).
