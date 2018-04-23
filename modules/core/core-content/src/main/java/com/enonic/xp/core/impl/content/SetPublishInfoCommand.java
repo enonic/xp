@@ -5,6 +5,7 @@ import java.time.Instant;
 import com.enonic.xp.content.ContentIndexPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentPublishInfo;
+import com.enonic.xp.content.PushContentListener;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.node.FindNodesByQueryResult;
@@ -25,11 +26,14 @@ public class SetPublishInfoCommand
 
     private final ContentPublishInfo contentPublishInfo;
 
+    private final PushContentListener pushContentListener;
+
     private SetPublishInfoCommand( final Builder builder )
     {
         super( builder );
         this.nodeIds = builder.nodeIds;
         this.contentPublishInfo = builder.contentPublishInfo == null ? ContentPublishInfo.create().build() : builder.contentPublishInfo;
+        this.pushContentListener = builder.pushContentListener;
     }
 
     public void execute()
@@ -92,6 +96,10 @@ public class SetPublishInfoCommand
                 } ).
                 id( id ).
                 build() );
+            if ( pushContentListener != null )
+            {
+                pushContentListener.contentPushed( 1 );
+            }
         }
 
         this.nodeService.refresh( RefreshMode.ALL );
@@ -148,6 +156,8 @@ public class SetPublishInfoCommand
 
         private ContentPublishInfo contentPublishInfo;
 
+        private PushContentListener pushContentListener;
+
         public Builder()
         {
         }
@@ -166,6 +176,12 @@ public class SetPublishInfoCommand
         public Builder contentPublishInfo( final ContentPublishInfo contentPublishInfo )
         {
             this.contentPublishInfo = contentPublishInfo;
+            return this;
+        }
+
+        public SetPublishInfoCommand.Builder pushListener( final PushContentListener pushContentListener )
+        {
+            this.pushContentListener = pushContentListener;
             return this;
         }
 
