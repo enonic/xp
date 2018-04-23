@@ -18,7 +18,7 @@ public class InputTypesTest
     @Test
     public void countBuiltinTypes()
     {
-        assertEquals( 21, Lists.newArrayList( this.types.iterator() ).size() );
+        assertEquals( 22, Lists.newArrayList( this.types.iterator() ).size() );
     }
 
     @Test
