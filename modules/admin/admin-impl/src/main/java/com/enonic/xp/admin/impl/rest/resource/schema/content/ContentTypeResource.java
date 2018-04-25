@@ -1,11 +1,13 @@
 package com.enonic.xp.admin.impl.rest.resource.schema.content;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -33,6 +35,7 @@ import com.enonic.xp.icon.Icon;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.content.GetAllContentTypesParams;
@@ -104,6 +107,12 @@ public final class ContentTypeResource
         } );
 
         return new ContentTypeSummaryListJson( summariesJsonBuilder.build() );
+    }
+
+    @GET
+    @Path( "getMimeTypes" )
+    public Collection<String> getMimeTypes( @QueryParam("typeNames") final String typeNames ) {
+        return contentTypeService.getMimeTypes( ContentTypeNames.from( typeNames.split( "," ) ));
     }
 
     @GET
