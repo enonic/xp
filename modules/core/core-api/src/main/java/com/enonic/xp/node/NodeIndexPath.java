@@ -11,6 +11,8 @@ public class NodeIndexPath
 
     private static final String PERMISSIONS_ROOT = "_permissions";
 
+    private static final String PUBLISH_ROOT = "_publish";
+
     public static final IndexPath TIMESTAMP = IndexPath.from( "_timestamp" );
 
     public static final IndexPath STATE = IndexPath.from( "_state" );
@@ -34,6 +36,8 @@ public class NodeIndexPath
     public static final IndexPath REFERENCE = IndexPath.from( "_references" );
 
     public static final IndexPath PARENT_PATH = IndexPath.from( "_parentPath" );
+
+    public static final IndexPath PUBLISH_FROM = IndexPath.from( PUBLISH_ROOT + DIVIDER + "from" );
 
     public static final IndexPath PERMISSIONS_READ = IndexPath.from( PERMISSIONS_ROOT + DIVIDER + "read" );
 
