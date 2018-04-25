@@ -18,7 +18,9 @@ import com.enonic.xp.query.expr.LogicalExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.query.parser.QueryParser;
+import com.enonic.xp.schema.content.ContentTypeNameWildcardResolver;
 import com.enonic.xp.schema.content.ContentTypeNames;
+import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.relationship.RelationshipType;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
@@ -29,6 +31,8 @@ public class ContentSelectorQueryJsonToContentQueryConverter
     final private ContentSelectorQueryJson contentQueryJson;
 
     final private ContentService contentService;
+
+    final private ContentTypeNameWildcardResolver contentTypeWildcardResolver;
 
     final private RelationshipTypeService relationshipTypeService;
 
@@ -44,6 +48,7 @@ public class ContentSelectorQueryJsonToContentQueryConverter
         this.contentService = builder.contentService;
         this.relationshipTypeService = builder.relationshipTypeService;
         this.content = contentQueryJson.getContentId() != null ? contentService.getById( contentQueryJson.getContentId() ) : null;
+        this.contentTypeWildcardResolver = new ContentTypeNameWildcardResolver( builder.contentTypeService );
     }
 
     public ContentQuery createQuery()
@@ -59,12 +64,18 @@ public class ContentSelectorQueryJsonToContentQueryConverter
 
     private ContentTypeNames getContentTypeNamesFromJson()
     {
-        if ( this.contentQueryJson.getContentTypeNames().getSize() == 0 )
+        List<String> contentTypeNames = this.contentQueryJson.getContentTypeNames();
+        if ( contentTypeNames.size() == 0 )
         {
             return this.getContentTypeNamesFromRelationshipType();
         }
 
-        return this.contentQueryJson.getContentTypeNames();
+        if ( this.content != null && this.contentTypeWildcardResolver.anyTypeHasWildcard( contentTypeNames ) )
+        {
+            return ContentTypeNames.from( this.contentTypeWildcardResolver.resolveWildcards( contentTypeNames, this.content.getType() ) );
+        }
+
+        return ContentTypeNames.from( contentTypeNames );
     }
 
     private ContentTypeNames getContentTypeNamesFromRelationshipType()
@@ -204,6 +215,8 @@ public class ContentSelectorQueryJsonToContentQueryConverter
 
         private RelationshipTypeService relationshipTypeService;
 
+        private ContentTypeService contentTypeService;
+
         public Builder contentQueryJson( final ContentSelectorQueryJson contentQueryJson )
         {
             this.contentQueryJson = contentQueryJson;
@@ -219,6 +232,12 @@ public class ContentSelectorQueryJsonToContentQueryConverter
         public Builder relationshipTypeService( final RelationshipTypeService relationshipTypeService )
         {
             this.relationshipTypeService = relationshipTypeService;
+            return this;
+        }
+
+        public Builder contentTypeService( final ContentTypeService contentTypeService )
+        {
+            this.contentTypeService = contentTypeService;
             return this;
         }
 

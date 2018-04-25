@@ -1,5 +1,20 @@
 package com.enonic.xp.admin.impl.rest.resource.content;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.Set;
+
+import javax.ws.rs.core.MediaType;
+
+import org.junit.Test;
+import org.mockito.ArgumentMatcher;
+import org.mockito.Mockito;
+
 import com.enonic.xp.admin.impl.json.content.ContentTreeSelectorListJson;
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentIdsJson;
@@ -7,7 +22,37 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.ContentTreeSelectorQu
 import com.enonic.xp.admin.impl.rest.resource.content.json.GetDescendantsOfContents;
 import com.enonic.xp.admin.impl.rest.resource.content.json.HasUnpublishedChildrenResultJson;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.content.*;
+import com.enonic.xp.content.ApplyContentPermissionsParams;
+import com.enonic.xp.content.CompareContentResult;
+import com.enonic.xp.content.CompareContentResults;
+import com.enonic.xp.content.CompareContentsParams;
+import com.enonic.xp.content.CompareStatus;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentNotFoundException;
+import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentPaths;
+import com.enonic.xp.content.ContentPublishInfo;
+import com.enonic.xp.content.ContentQuery;
+import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.Contents;
+import com.enonic.xp.content.CreateContentParams;
+import com.enonic.xp.content.ExtraData;
+import com.enonic.xp.content.FindContentByParentParams;
+import com.enonic.xp.content.FindContentByParentResult;
+import com.enonic.xp.content.FindContentIdsByQueryResult;
+import com.enonic.xp.content.GetContentByIdsParams;
+import com.enonic.xp.content.HasUnpublishedChildrenParams;
+import com.enonic.xp.content.RenameContentParams;
+import com.enonic.xp.content.ReorderChildContentsParams;
+import com.enonic.xp.content.ReorderChildContentsResult;
+import com.enonic.xp.content.ReorderChildParams;
+import com.enonic.xp.content.ResolvePublishDependenciesParams;
+import com.enonic.xp.content.ResolveRequiredDependenciesParams;
+import com.enonic.xp.content.SetContentChildOrderParams;
+import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.LocalScope;
 import com.enonic.xp.data.PropertyTree;
@@ -20,9 +65,21 @@ import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
-import com.enonic.xp.schema.content.*;
+import com.enonic.xp.schema.content.ContentType;
+import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.content.ContentTypeService;
+import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.mixin.MixinName;
-import com.enonic.xp.security.*;
+import com.enonic.xp.security.Principal;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalQuery;
+import com.enonic.xp.security.PrincipalQueryResult;
+import com.enonic.xp.security.PrincipalRelationship;
+import com.enonic.xp.security.PrincipalRelationships;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.SecurityService;
+import com.enonic.xp.security.User;
+import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
@@ -33,18 +90,15 @@ import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.util.BinaryReferences;
-import org.junit.Test;
-import org.mockito.ArgumentMatcher;
-import org.mockito.Mockito;
 
-import javax.ws.rs.core.MediaType;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.util.*;
-
-import static com.enonic.xp.security.acl.Permission.*;
+import static com.enonic.xp.security.acl.Permission.CREATE;
+import static com.enonic.xp.security.acl.Permission.DELETE;
+import static com.enonic.xp.security.acl.Permission.MODIFY;
+import static com.enonic.xp.security.acl.Permission.READ;
 import static java.util.Arrays.asList;
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.eq;
 
 public class ContentResourceTest
     extends AdminResourceTestSupport
@@ -1045,7 +1099,7 @@ public class ContentResourceTest
         Mockito.when( json.getFrom() ).thenReturn( 0 );
         Mockito.when( json.getSize() ).thenReturn( -1 );
         Mockito.when( json.getQueryExprString() ).thenReturn( "" );
-        Mockito.when( json.getContentTypeNames() ).thenReturn( ContentTypeNames.empty() );
+        Mockito.when( json.getContentTypeNames() ).thenReturn( Collections.emptyList() );
         Mockito.when( json.getParentPath() ).thenReturn( parentPath );
 
         return json;
