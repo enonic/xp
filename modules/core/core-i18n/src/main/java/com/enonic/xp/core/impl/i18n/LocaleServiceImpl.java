@@ -42,9 +42,12 @@ public final class LocaleServiceImpl
 
     private final ConcurrentMap<String, MessageBundle> bundleCache;
 
+    private final ConcurrentMap<String, Set<Locale>> appLocalesCache;
+
     public LocaleServiceImpl()
     {
         this.bundleCache = new ConcurrentHashMap<>();
+        this.appLocalesCache = new ConcurrentHashMap<>();
     }
 
     @Override
@@ -72,20 +75,8 @@ public final class LocaleServiceImpl
             return Collections.emptySet();
         }
 
-        final Set<Locale> locales = new LinkedHashSet<>();
-        for ( final String bundleName : bundleNames )
-        {
-            final String bundlePattern = Pattern.quote( bundleName ) + ".*\\.properties";
-            final ResourceKeys resourceKeys = resourceService.findFiles( applicationKey, bundlePattern );
-            for ( ResourceKey resourceKey : resourceKeys )
-            {
-                if ( resourceService.getResource( resourceKey ).exists() )
-                {
-                    locales.add( localeFromResource( resourceKey.getName() ) );
-                }
-            }
-        }
-        return new LinkedHashSet<>( locales );
+        final String key = appBundlesCacheKey( applicationKey, bundleNames );
+        return this.appLocalesCache.computeIfAbsent( key, ( k ) -> getAppLocales( applicationKey, bundleNames ) );
     }
 
     @Override
@@ -123,6 +114,24 @@ public final class LocaleServiceImpl
         return null;
     }
 
+    private Set<Locale> getAppLocales( final ApplicationKey applicationKey, final String... bundleNames )
+    {
+        final Set<Locale> locales = new LinkedHashSet<>();
+        for ( final String bundleName : bundleNames )
+        {
+            final String bundlePattern = Pattern.quote( bundleName ) + ".*\\.properties";
+            final ResourceKeys resourceKeys = resourceService.findFiles( applicationKey, bundlePattern );
+            for ( ResourceKey resourceKey : resourceKeys )
+            {
+                if ( resourceService.getResource( resourceKey ).exists() )
+                {
+                    locales.add( localeFromResource( resourceKey.getName() ) );
+                }
+            }
+        }
+        return new LinkedHashSet<>( locales );
+    }
+
     private Locale localeFromResource( final String resourceName )
     {
         if ( !resourceName.contains( "_" ) )
@@ -155,6 +164,20 @@ public final class LocaleServiceImpl
             add( lang ).
             add( country ).
             add( variant );
+        if ( bundleNames != null )
+        {
+            for ( String bundleName : bundleNames )
+            {
+                key.add( bundleName );
+            }
+        }
+        return key.toString();
+    }
+
+    private String appBundlesCacheKey( final ApplicationKey applicationKey, final String... bundleNames )
+    {
+        StringJoiner key = new StringJoiner( KEY_SEPARATOR ).
+            add( applicationKey.toString() );
         if ( bundleNames != null )
         {
             for ( String bundleName : bundleNames )
@@ -251,6 +274,7 @@ public final class LocaleServiceImpl
     {
         final String cacheKeyPrefix = appKey.toString() + KEY_SEPARATOR;
         bundleCache.keySet().removeIf( ( k ) -> k.startsWith( cacheKeyPrefix ) );
+        appLocalesCache.keySet().removeIf( ( k ) -> k.startsWith( cacheKeyPrefix ) );
     }
 
     @Reference
