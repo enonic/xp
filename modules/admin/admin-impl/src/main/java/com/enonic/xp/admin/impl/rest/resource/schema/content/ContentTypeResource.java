@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -110,9 +109,10 @@ public final class ContentTypeResource
     }
 
     @GET
-    @Path( "getMimeTypes" )
-    public Collection<String> getMimeTypes( @QueryParam("typeNames") final String typeNames ) {
-        return contentTypeService.getMimeTypes( ContentTypeNames.from( typeNames.split( "," ) ));
+    @Path("getMimeTypes")
+    public Collection<String> getMimeTypes( @QueryParam("typeNames") final String typeNames )
+    {
+        return contentTypeService.getMimeTypes( ContentTypeNames.from( typeNames.split( "," ) ) );
     }
 
     @GET
@@ -139,12 +139,10 @@ public final class ContentTypeResource
 
         ImmutableList.Builder<ContentTypeSummaryJson> summariesJsonBuilder = new ImmutableList.Builder();
 
-        contentTypes.forEach( contentType -> {
-            summariesJsonBuilder.addAll( this.contentTypeService.getByApplication( contentType.getName().getApplicationKey() ).
-                stream().
-                map( type -> new ContentTypeSummaryJson( type, this.contentTypeIconUrlResolver,
-                                                         new LocaleMessageResolver( localeService, type.getName().getApplicationKey() ) ) ).
-                collect( Collectors.toList() ) );
+        contentTypes.forEach( type -> {
+            summariesJsonBuilder.add( new ContentTypeSummaryJson( type, this.contentTypeIconUrlResolver,
+                                                                  new LocaleMessageResolver( localeService,
+                                                                                             type.getName().getApplicationKey() ) ) );
         } );
 
         return new ContentTypeSummaryListJson( summariesJsonBuilder.build() );
