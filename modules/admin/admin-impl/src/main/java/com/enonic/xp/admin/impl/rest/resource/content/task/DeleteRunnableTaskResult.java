@@ -1,9 +1,11 @@
 package com.enonic.xp.admin.impl.rest.resource.content.task;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 
 
@@ -60,6 +62,12 @@ public class DeleteRunnableTaskResult
         public DeleteRunnableTaskResult build()
         {
             return new DeleteRunnableTaskResult( this );
+        }
+
+        public Builder pending( final ContentIds items )
+        {
+            this.pending.addAll( items.stream().map( i -> ContentPath.from( i.toString() ) ).collect( Collectors.toList() ) );
+            return this;
         }
     }
 }

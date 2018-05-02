@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import com.enonic.xp.admin.impl.rest.resource.content.DeleteContentProgressListener;
 import com.enonic.xp.admin.impl.rest.resource.content.json.DeleteContentJson;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.ContentService;
@@ -51,13 +52,23 @@ public class DeleteRunnableTask
             {
                 DeleteContentsResult deleteResult = contentService.deleteWithoutFetch( deleteContentParams );
 
-                if ( deleteResult.getDeletedContents().getSize() > 0 )
+                final ContentIds deletedContents = deleteResult.getDeletedContents();
+                if ( deletedContents.getSize() == 1 )
                 {
                     resultBuilder.succeeded( contentToDelete );
                 }
-                if ( deleteResult.getPendingContents().getSize() > 0 )
+                else
+                {
+                    resultBuilder.succeeded( deletedContents );
+                }
+                final ContentIds pendingContents = deleteResult.getPendingContents();
+                if ( pendingContents.getSize() == 1 )
                 {
                     resultBuilder.pending( contentToDelete );
+                }
+                else if ( pendingContents.getSize() > 1 )
+                {
+                    resultBuilder.pending( pendingContents );
                 }
             }
             catch ( final Exception e )
