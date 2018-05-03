@@ -83,6 +83,10 @@ public class IdentityHandler
         trace.put( "path", webRequest.getPath() );
         trace.put( "method", webRequest.getMethod().toString() );
         trace.put( "host", webRequest.getHost() );
+        trace.put( "httpRequest", webRequest );
+        trace.put( "httpResponse", webResponse );
+        trace.put( "context", ContextAccessor.current() );
+
         return Tracer.traceEx( trace, () -> {
             final PortalResponse response = worker.execute();
             addTraceInfo( trace, response );
