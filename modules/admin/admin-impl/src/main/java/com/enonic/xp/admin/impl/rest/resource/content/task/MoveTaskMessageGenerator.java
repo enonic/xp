@@ -22,19 +22,20 @@ class MoveTaskMessageGenerator
 
         if ( existsFailed != null && existsFailed.size() == 1 )
         {
-            builder.append( String.format( "\"%s\" already exists at \"%s\".", existsFailed.get( 0 ).getName(), result.getDestination() ) );
+            builder.append( String.format( "Item \"%s\" already exists at \"%s\".", existsFailed.get( 0 ).getName(),
+                                           result.getDestination().toString() ) );
         }
         else if ( notExistsFailed != null && notExistsFailed.size() == 1 )
         {
-            builder.append( String.format( "\"%s\" was not found.", notExistsFailed.get( 0 ).getName() ) );
+            builder.append( String.format( "Item \"%s\" was not found.", notExistsFailed.get( 0 ).getName() ) );
         }
         else if ( accessFailed != null && accessFailed.size() == 1 )
         {
-            builder.append( String.format( "You don't have to access \"%s\".", result.getDestination() ) );
+            builder.append( String.format( "You don't have access to item \"%s\".", result.getDestination().getName() ) );
         }
         else if ( failed != null && failed.size() == 1 )
         {
-            builder.append( String.format( "\"%s\" could not be moved.", failed.get( 0 ).getName() ) );
+            builder.append( String.format( "Item \"%s\" could not be moved.", failed.get( 0 ).getName() ) );
         }
     }
 
@@ -77,11 +78,11 @@ class MoveTaskMessageGenerator
         final List<ContentPath> moved = result.getSucceeded();
         if ( alreadyMoved != null && alreadyMoved.size() == 1 )
         {
-            builder.append( String.format( "\"%s\" is already moved.", alreadyMoved.get( 0 ).getName() ) );
+            builder.append( String.format( "Item \"%s\" is already moved.", alreadyMoved.get( 0 ).getName() ) );
         }
         else if ( moved != null && moved.size() == 1 )
         {
-            builder.append( String.format( "\"%s\" was moved.", moved.get( 0 ) ) );
+            builder.append( String.format( "Item \"%s\" was moved.", moved.get( 0 ).getName() ) );
         }
     }
 

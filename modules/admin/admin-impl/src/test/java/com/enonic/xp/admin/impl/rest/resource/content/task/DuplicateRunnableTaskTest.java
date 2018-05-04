@@ -75,7 +75,7 @@ public class DuplicateRunnableTaskTest
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
 
         Assert.assertEquals(
-            "{\"state\":\"WARNING\",\"message\":\"Duplicated 2 items ( Already duplicated: \\\"content3\\\" ). Item \\\"id2\\\" failed to be duplicated.\"}",
+            "{\"state\":\"WARNING\",\"message\":\"Duplicated 2 items ( Already duplicated: \\\"content3\\\" ). Item \\\"id2\\\" could not be duplicated.\"}",
             resultMessage );
     }
 
