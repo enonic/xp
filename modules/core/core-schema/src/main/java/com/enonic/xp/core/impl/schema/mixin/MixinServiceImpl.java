@@ -59,6 +59,12 @@ public final class MixinServiceImpl
             return this.builtInTypes.getAll().getMixin( name );
         }
 
+        final Mixin xData = new XDataLoader( this.resourceService ).get( name );
+
+        if(xData != null) {
+            return xData;
+        }
+
         return new MixinLoader( this.resourceService ).get( name );
     }
 
@@ -117,7 +123,11 @@ public final class MixinServiceImpl
 
     private Set<MixinName> findNames( final ApplicationKey key )
     {
-        return new MixinLoader( this.resourceService ).findNames( key );
+        final Set<MixinName> result = Sets.newHashSet();
+        result.addAll( new XDataLoader( this.resourceService ).findNames( key ) );
+        result.addAll( new MixinLoader( this.resourceService ).findNames( key ) );
+
+        return result;
     }
 
     @Override

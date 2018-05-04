@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.schema.AbstractSchemaTest;
+import com.enonic.xp.core.impl.schema.content.ContentTypeServiceImpl;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.FormOptionSet;
@@ -14,6 +15,7 @@ import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinNames;
@@ -26,6 +28,8 @@ public class MixinServiceImplTest
 {
     protected MixinServiceImpl service;
 
+    protected ContentTypeServiceImpl contentTypeService;
+
     @Override
     protected void initialize()
         throws Exception
@@ -33,6 +37,11 @@ public class MixinServiceImplTest
         this.service = new MixinServiceImpl();
         this.service.setApplicationService( this.applicationService );
         this.service.setResourceService( this.resourceService );
+
+        this.contentTypeService = new ContentTypeServiceImpl();
+        this.contentTypeService.setResourceService( this.resourceService );
+        this.contentTypeService.setApplicationService( this.applicationService );
+        this.contentTypeService.setMixinService( this.service );
     }
 
     @Test
@@ -102,17 +111,38 @@ public class MixinServiceImplTest
     }
 
     @Test
+    public void testXData_LinkedFromContentType() {
+        initializeApps();
+
+        final ContentType contentType = this.contentTypeService.getByName( GetContentTypeParams.from( ContentTypeName.from( "myapp1:tag" ) ) );
+        final Mixins mixins = this.service.getByContentType( contentType );
+
+        assertEquals( 3, mixins.getSize() );
+
+        final Mixin intersectedMixin = mixins.getMixin( MixinName.from( "myapp1:address" ) );
+        assertEquals( "X-Data Address", intersectedMixin.getDisplayName() );
+    }
+
+    @Test
+    public void testXData_NameFormat() {
+        initializeApps();
+
+        final Mixin mixin = this.service.getByName( MixinName.from( "myapp1:address") );
+        assertEquals( "X-Data Address", mixin.getDisplayName());
+    }
+
+    @Test
     public void testApplications()
     {
         initializeApps();
 
         final Mixins types1 = this.service.getAll();
         assertNotNull( types1 );
-        assertEquals( 11, types1.getSize() );
+        assertEquals( 12, types1.getSize() );
 
         final Mixins types2 = this.service.getByApplication( ApplicationKey.from( "myapp1" ) );
         assertNotNull( types2 );
-        assertEquals( 2, types2.getSize() );
+        assertEquals( 3, types2.getSize() );
 
         final Mixins types3 = this.service.getByApplication( ApplicationKey.from( "myapp2" ) );
         assertNotNull( types3 );

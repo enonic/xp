@@ -1,6 +1,10 @@
 package com.enonic.xp.xml.parser;
 
+import java.util.Collections;
+
 import com.google.common.annotations.Beta;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import com.enonic.xp.form.Form;
 import com.enonic.xp.schema.mixin.Mixin;
@@ -22,7 +26,7 @@ public final class XmlMixinParser
     protected void doParse( final DomElement root )
         throws Exception
     {
-        assertTagName( root, "mixin" );
+        assertTagNames( root, Lists.newArrayList( "mixin", "x-data" ));
         this.builder.displayName( root.getChildValue( "display-name" ) );
         this.builder.displayNameI18nKey(
             root.getChild( "display-name" ) != null ? root.getChild( "display-name" ).getAttribute( "i18n" ) : null );

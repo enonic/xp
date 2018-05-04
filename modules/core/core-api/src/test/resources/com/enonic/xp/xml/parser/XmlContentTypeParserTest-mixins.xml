@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<content-type xmlns="urn:enonic:xp:model:1.0">
+  <display-name>All the Base Types</display-name>
+  <description>description</description>
+  <content-display-name-script>$('firstName') + ' ' + $('lastName')</content-display-name-script>
+  <super-type>content</super-type>
+  <is-abstract>false</is-abstract>
+  <is-final>true</is-final>
+  <allow-child-content>true</allow-child-content>
+
+  <x-data mixin="myapplication:metadata1"/>
+  <x-data name="myapplication:metadata2"/>
+
+</content-type>
