@@ -58,4 +58,40 @@ final class ArrayScriptValue
 
         return result;
     }
+
+    @Override
+    public List<Object> getList()
+    {
+        final List<Object> result = Lists.newArrayList();
+        for ( final Object val : this.value.values() )
+        {
+            final ScriptValue item = this.factory.newValue( val );
+            if ( item == null )
+            {
+                result.add( null );
+            }
+            else if ( item.isValue() )
+            {
+                final Object converted = item.getValue( Object.class );
+                result.add( converted );
+            }
+            else if ( item.isObject() )
+            {
+                final Object obj = item.getMap();
+                if ( obj != null )
+                {
+                    result.add( obj );
+                }
+            }
+            else if ( item.isArray() )
+            {
+                final Object obj = item.getList();
+                if ( obj != null )
+                {
+                    result.add( obj );
+                }
+            }
+        }
+        return result;
+    }
 }
