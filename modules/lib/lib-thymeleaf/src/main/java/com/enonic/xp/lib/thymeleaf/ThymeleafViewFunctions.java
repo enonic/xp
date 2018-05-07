@@ -41,17 +41,17 @@ final class ThymeleafViewFunctions
     {
         return execute( "serviceUrl", params ).toString();
     }
-    
+
     public String idProviderUrl( final List<String> params )
     {
         return execute( "idProviderUrl", params ).toString();
     }
-    
+
     public String loginUrl( final List<String> params )
     {
         return execute( "loginUrl", params ).toString();
     }
-    
+
     public String logoutUrl( final List<String> params )
     {
         return execute( "logoutUrl", params ).toString();

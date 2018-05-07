@@ -7,7 +7,6 @@ import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalNotFoundException;
 import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.security.UserStoreKey;
 
 public final class DeletePrincipalHandler
     implements ScriptBean
