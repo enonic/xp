@@ -3,6 +3,7 @@ package com.enonic.xp.admin.tool;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKey;
@@ -41,6 +42,16 @@ public class AdminToolDescriptor
     public String getDisplayName()
     {
         return displayName;
+    }
+
+    public final String getName()
+    {
+        return this.key.getName();
+    }
+
+    public final ApplicationKey getApplicationKey()
+    {
+        return this.key.getApplicationKey();
     }
 
     public String getDescription()

@@ -48,14 +48,12 @@ final class FindContentByParentCommand
 
         setNodePathOrIdAsIdentifier( findNodesParam );
 
-        findNodesParam.
+        return findNodesParam.
             queryFilters( createFilters() ).
             from( params.getFrom() ).
             size( params.getSize() ).
             childOrder( params.getChildOrder() ).
             build();
-
-        return findNodesParam.build();
     }
 
     private void setNodePathOrIdAsIdentifier( final FindNodesByParentParams.Builder findNodesParam )

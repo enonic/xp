@@ -11,4 +11,9 @@ public class ContentAlreadyMovedException
     {
         super( message );
     }
+
+    public ContentAlreadyMovedException( final String message, final ContentPath path )
+    {
+        super( message, path );
+    }
 }

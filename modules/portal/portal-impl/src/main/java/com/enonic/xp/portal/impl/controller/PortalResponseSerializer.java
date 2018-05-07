@@ -143,7 +143,7 @@ public final class PortalResponseSerializer
 
         if ( value.isArray() )
         {
-            builder.body( value.getValue( String.class ) );
+            builder.body( value.getList() );
             return;
         }
 

@@ -1,6 +1,7 @@
 package com.enonic.xp.web.impl.serializer;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.Cookie;
@@ -68,6 +69,12 @@ public final class ResponseSerializer
         }
 
         if ( body instanceof Map )
+        {
+            serializeBody( response, convertToJson( body ) );
+            return;
+        }
+
+        if ( body instanceof List )
         {
             serializeBody( response, convertToJson( body ) );
             return;

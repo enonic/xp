@@ -31,6 +31,8 @@ public final class InputTypeName
 
     public final static InputTypeName IMAGE_SELECTOR = InputTypeName.from( "ImageSelector" );
 
+    public final static InputTypeName MEDIA_SELECTOR = InputTypeName.from( "MediaSelector" );
+
     public final static InputTypeName IMAGE_UPLOADER = InputTypeName.from( "ImageUploader" );
 
     public final static InputTypeName LONG = InputTypeName.from( "Long" );

@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.schema.content;
 
+import java.util.Set;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -7,6 +9,8 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.content.ContentType;
+import com.enonic.xp.schema.content.ContentTypeFromMimeTypeResolver;
+import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.content.GetAllContentTypesParams;
@@ -56,6 +60,12 @@ public final class ContentTypeServiceImpl
         command.mixinService = this.mixinService;
         command.params = params;
         return command.execute();
+    }
+
+    @Override
+    public Set<String> getMimeTypes( final ContentTypeNames names )
+    {
+        return ContentTypeFromMimeTypeResolver.resolveMimeTypes( names );
     }
 
     @Override

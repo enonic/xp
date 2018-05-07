@@ -79,6 +79,12 @@ abstract class AbstractScriptValue
     }
 
     @Override
+    public List<Object> getList()
+    {
+        return Collections.emptyList();
+    }
+
+    @Override
     public Map<String, Object> getMap()
     {
         return Collections.emptyMap();

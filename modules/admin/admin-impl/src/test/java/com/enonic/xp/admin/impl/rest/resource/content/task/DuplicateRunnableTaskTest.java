@@ -63,8 +63,7 @@ public class DuplicateRunnableTaskTest
             thenReturn( DuplicateContentsResult.create().addDuplicated( contents.get( 0 ).getId() ).setContentName(
                 contents.get( 0 ).getDisplayName() ).build() ).
             thenThrow( new ContentNotFoundException( contents.get( 1 ).getPath(), Branch.from( "master" ) ) ).
-            thenReturn( DuplicateContentsResult.create().addDuplicated( contents.get( 2 ).getId() ).setContentName(
-                contents.get( 2 ).getDisplayName() ).build() );
+            thenThrow( new ContentAlreadyMovedException( contents.get( 2 ).getDisplayName(), contents.get( 2 ).getPath() ) );
 
         final DuplicateRunnableTask task = createAndRunTask();
         task.createTaskResult();
@@ -75,7 +74,9 @@ public class DuplicateRunnableTaskTest
 
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
 
-        Assert.assertEquals( "2 items are duplicated. 1 item failed to be duplicated.", resultMessage );
+        Assert.assertEquals(
+            "{\"state\":\"WARNING\",\"message\":\"Duplicated 2 items ( Already duplicated: \\\"content3\\\" ). Item \\\"id2\\\" failed to be duplicated.\"}",
+            resultMessage );
     }
 
     @Test
@@ -98,7 +99,7 @@ public class DuplicateRunnableTaskTest
 
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
 
-        Assert.assertEquals( "\"Content 1\" item is duplicated.", resultMessage );
+        Assert.assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"Item \\\"Content 1\\\" was duplicated.\"}", resultMessage );
     }
 
     @Test
@@ -112,7 +113,7 @@ public class DuplicateRunnableTaskTest
         Mockito.when( contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn(
             FindContentIdsByQueryResult.create().totalHits( 1 ).build() );
         Mockito.when( contentService.duplicate( Mockito.isA( DuplicateContentParams.class ) ) ).
-            thenThrow( new ContentAlreadyMovedException( contents.get( 0 ).getDisplayName() ) ).
+            thenThrow( new ContentNotFoundException( contents.get( 1 ).getPath(), Branch.from( "master" ) ) ).
             thenThrow( new ContentNotFoundException( contents.get( 1 ).getPath(), Branch.from( "master" ) ) );
 
         createAndRunTask();
@@ -121,6 +122,6 @@ public class DuplicateRunnableTaskTest
 
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
 
-        Assert.assertEquals( "Content could not be duplicated.", resultMessage );
+        Assert.assertEquals( "{\"state\":\"ERROR\",\"message\":\"Failed to duplicate 2 items.\"}", resultMessage );
     }
 }

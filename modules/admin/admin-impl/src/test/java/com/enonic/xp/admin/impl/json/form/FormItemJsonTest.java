@@ -16,6 +16,8 @@ import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.Occurrences;
 import com.enonic.xp.i18n.LocaleService;
+import com.enonic.xp.i18n.MessageBundle;
+import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.support.JsonTestHelper;
@@ -69,6 +71,38 @@ public class FormItemJsonTest
 
         JsonNode json = jsonTestHelper.objectToJson( inputJson );
         this.jsonTestHelper.assertJsonEquals( jsonTestHelper.loadTestJson( "inputWithConfig.json" ), json );
+    }
+
+    @Test
+    public void serialization_of_Input_with_config_translation()
+        throws IOException
+    {
+        final LocaleService localeService = Mockito.mock( LocaleService.class );
+
+        final MessageBundle messageBundle = Mockito.mock( MessageBundle.class );
+        Mockito.when( messageBundle.localize( "translate.option" ) ).thenReturn( "translatedOptionValue" );
+
+        Mockito.when( localeService.getBundle( Mockito.any(), Mockito.any() ) ).thenReturn( messageBundle );
+
+        InputJson inputJson = new InputJson( Input.create().
+            name( "myTextLine" ).
+            label( "My TextLine" ).
+            immutable( true ).
+            indexed( true ).
+            validationRegexp( "script" ).
+            customText( "Custom text" ).
+            helpText( "Help text" ).
+            occurrences( 1, 3 ).
+            inputType( InputTypeName.RADIO_BUTTON ).
+            inputTypeConfig( InputTypeConfig.create().property( InputTypeProperty.
+                create( "option", "notTranslatedValue" ).
+                attribute( "i18n", "translate.option" ).
+                build() ).
+                build() ).
+            build(), new LocaleMessageResolver( localeService ) );
+
+        JsonNode json = jsonTestHelper.objectToJson( inputJson );
+        this.jsonTestHelper.assertJsonEquals( jsonTestHelper.loadTestJson( "inputWithConfigTranslation.json" ), json );
     }
 
     @Test

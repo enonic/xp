@@ -21,6 +21,7 @@ final class InputTypeAliasConverters
         this.map = Maps.newConcurrentMap();
         this.map.put( InputTypeName.CONTENT_SELECTOR, ContentSelectorAliasConverter.INSTANCE );
         this.map.put( InputTypeName.IMAGE_SELECTOR, ContentSelectorAliasConverter.INSTANCE );
+        this.map.put( InputTypeName.MEDIA_SELECTOR, ContentSelectorAliasConverter.INSTANCE );
     }
 
     public static InputTypeAliasConverter getConverter( final InputTypeName inputTypeName )
