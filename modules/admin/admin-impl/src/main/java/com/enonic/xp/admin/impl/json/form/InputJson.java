@@ -16,6 +16,7 @@ import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolv
 import com.enonic.xp.data.Value;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeConfig;
+import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 
 @Beta
@@ -137,7 +138,7 @@ public class InputJson
         this.defaultValue = defaultValue;
     }
 
-    private static ArrayNode toJson( final Collection<InputTypeProperty> properties )
+    private ArrayNode toJson( final Collection<InputTypeProperty> properties )
     {
         final ArrayNode json = JsonNodeFactory.instance.arrayNode();
         for ( final InputTypeProperty property : properties )
@@ -148,15 +149,25 @@ public class InputJson
         return json;
     }
 
-    private static ObjectNode toJson( final InputTypeProperty property )
+    private ObjectNode toJson( final InputTypeProperty property )
     {
         final ObjectNode json = JsonNodeFactory.instance.objectNode();
-        json.put( "value", property.getValue() );
+
+        String propertyValue = property.getValue();
 
         for ( final Map.Entry<String, String> attribute : property.getAttributes().entrySet() )
         {
+            if ( InputTypeName.RADIO_BUTTON.equals( this.input.getInputType() ) )
+            {
+                if ( "i18n".equals( attribute.getKey() ) )
+                {
+                    propertyValue = this.localeMessageResolver.localizeMessage( attribute.getValue(), propertyValue );
+                }
+            }
             json.put( "@" + attribute.getKey(), attribute.getValue() );
         }
+
+        json.put( "value", propertyValue );
 
         return json;
     }

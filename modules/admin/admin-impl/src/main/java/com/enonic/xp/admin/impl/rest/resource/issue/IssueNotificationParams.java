@@ -11,7 +11,7 @@ import com.enonic.xp.issue.Issue;
 import com.enonic.xp.issue.IssueComment;
 import com.enonic.xp.security.User;
 
-public class IssueMailMessageParams
+public class IssueNotificationParams
 {
     private final Issue issue;
 
@@ -29,7 +29,7 @@ public class IssueMailMessageParams
 
     private final List<IssueComment> comments;
 
-    public IssueMailMessageParams( final Builder builder )
+    public IssueNotificationParams( final Builder builder )
     {
         this.issue = builder.issue;
         this.url = builder.url;
@@ -113,7 +113,7 @@ public class IssueMailMessageParams
         {
         }
 
-        protected Builder( final IssueMailMessageParams source )
+        protected Builder( final IssueNotificationParams source )
         {
             this.issue = source.issue;
             this.creator = source.creator;
@@ -173,9 +173,9 @@ public class IssueMailMessageParams
             return (B) this;
         }
 
-        public IssueMailMessageParams build()
+        public IssueNotificationParams build()
         {
-            return new IssueMailMessageParams( this );
+            return new IssueNotificationParams( this );
         }
     }
 }

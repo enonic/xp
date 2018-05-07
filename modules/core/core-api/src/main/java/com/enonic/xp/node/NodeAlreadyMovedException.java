@@ -10,4 +10,9 @@ public class NodeAlreadyMovedException
     {
         super( message );
     }
+
+    public NodeAlreadyMovedException( final String message, final NodePath path )
+    {
+        super( message, path );
+    }
 }

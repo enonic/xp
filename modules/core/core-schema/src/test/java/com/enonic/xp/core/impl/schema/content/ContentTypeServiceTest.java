@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.schema.content;
 
+import java.util.Collection;
+
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -7,6 +9,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.schema.AbstractSchemaTest;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.content.GetAllContentTypesParams;
 import com.enonic.xp.schema.content.GetContentTypeParams;
@@ -93,5 +96,46 @@ public class ContentTypeServiceTest
 
         contentType = service.getByName( new GetContentTypeParams().contentTypeName( ContentTypeName.site() ) );
         assertNotNull( contentType );
+    }
+
+    @Test
+    public void getMimeTypes() {
+        final Collection<String> audioMimeTypes = this.service.getMimeTypes( ContentTypeNames.from( ContentTypeName.audioMedia() ) );
+        assertEquals(audioMimeTypes.size(), 11 );
+
+        final Collection<String> imageMimeTypes = this.service.getMimeTypes( ContentTypeNames.from( ContentTypeName.imageMedia() ) );
+        assertEquals(imageMimeTypes.size(), 9 );
+
+        final Collection<String> videoMimeTypes = this.service.getMimeTypes( ContentTypeNames.from( ContentTypeName.videoMedia() ) );
+        assertEquals(videoMimeTypes.size(), 10 );
+
+        final Collection<String> archiveMimeTypes = this.service.getMimeTypes( ContentTypeNames.from( ContentTypeName.archiveMedia() ) );
+        assertEquals(archiveMimeTypes.size(), 3 );
+
+        final Collection<String> textMimeTypes = this.service.getMimeTypes( ContentTypeNames.from( ContentTypeName.textMedia() ) );
+        assertEquals(textMimeTypes.size(), 3 );
+
+        final Collection<String> codeMimeTypes = this.service.getMimeTypes( ContentTypeNames.from( ContentTypeName.codeMedia() ) );
+        assertEquals(codeMimeTypes.size(), 11 );
+
+        final Collection<String> dataMimeTypes = this.service.getMimeTypes( ContentTypeNames.from( ContentTypeName.dataMedia() ) );
+        assertEquals(dataMimeTypes.size(), 0 );
+
+        final Collection<String> documentMimeTypes = this.service.getMimeTypes( ContentTypeNames.from( ContentTypeName.documentMedia() ) );
+        assertEquals(documentMimeTypes.size(), 5 );
+
+        final Collection<String> execMimeTypes = this.service.getMimeTypes( ContentTypeNames.from( ContentTypeName.executableMedia() ) );
+        assertEquals(execMimeTypes.size(), 14 );
+
+        final Collection<String> presentationMimeTypes = this.service.getMimeTypes( ContentTypeNames.from( ContentTypeName.presentationMedia() ) );
+        assertEquals(presentationMimeTypes.size(), 4 );
+
+        final Collection<String> spreadsheetMimeTypes = this.service.getMimeTypes( ContentTypeNames.from( ContentTypeName.spreadsheetMedia() ) );
+        assertEquals(spreadsheetMimeTypes.size(), 2 );
+
+        final Collection<String> vectorMimeTypes = this.service.getMimeTypes( ContentTypeNames.from( ContentTypeName.vectorMedia() ) );
+        assertEquals(vectorMimeTypes.size(), 1 );
+
+
     }
 }

@@ -3,10 +3,14 @@ package com.enonic.xp.admin.impl.rest.resource.content.task;
 import com.enonic.xp.admin.impl.rest.resource.content.MoveContentProgressListener;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.query.ContentQueryWithChildren;
+import com.enonic.xp.content.ContentAccessException;
+import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentAlreadyMovedException;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.MoveContentException;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
 import com.enonic.xp.task.ProgressReporter;
@@ -41,9 +45,9 @@ public class MoveRunnableTask
         final int contentIds = contentToMoveList.getSize();
 
         listener.setTotal( Math.toIntExact( childrenIds + contentIds ) );
-        int moved = 0;
-        int failed = 0;
-        String contentName = "";
+
+        MoveRunnableTaskResult.Builder result = MoveRunnableTaskResult.create().destination( params.getParentContentPath() );
+
         for ( ContentId contentId : contentToMoveList )
         {
             final MoveContentParams moveContentParams = MoveContentParams.create().
@@ -53,54 +57,32 @@ public class MoveRunnableTask
                 build();
             try
             {
-                final MoveContentsResult result = contentService.move( moveContentParams );
-
-                contentName = result.getContentName();
-                moved++;
+                final MoveContentsResult moveResult = contentService.move( moveContentParams );
+                result.succeeded( moveResult.getContentName() );
             }
             catch ( ContentAlreadyMovedException e )
             {
-                continue;
+                result.alreadyMoved( e.getPath() );
             }
-            catch ( final Exception e )
+            catch ( ContentAlreadyExistsException e )
             {
-                failed++;
+                result.existsFailed( e.getContentPath() );
+            }
+            catch ( ContentNotFoundException e )
+            {
+                result.notExistsFailed( e.getPath() );
+            }
+            catch ( ContentAccessException e )
+            {
+                result.accessFailed( e.getContentPath() );
+            }
+            catch ( MoveContentException e )
+            {
+                result.failed( e.getPath() );
             }
         }
 
-        progressReporter.info( getMessage( moved, failed, contentName ) );
-    }
-
-    private String getMessage( final int moved, final int failed, final String contentName )
-    {
-        final int total = moved + failed;
-        switch ( total )
-        {
-            case 0:
-                return "The item is already moved.";
-
-            case 1:
-                if ( moved == 1 )
-                {
-                    return "\"" + contentName + "\" item is moved.";
-                }
-                else
-                {
-                    return "Content could not be moved.";
-                }
-
-            default:
-                final StringBuilder builder = new StringBuilder();
-                if ( moved > 0 )
-                {
-                    builder.append( moved ).append( moved > 1 ? " items are " : " item is " ).append( "moved. " );
-                }
-                if ( failed > 0 )
-                {
-                    builder.append( failed ).append( failed > 1 ? " items " : " item " ).append( "failed to be moved. " );
-                }
-                return builder.toString().trim();
-        }
+        progressReporter.info( result.build().toJson() );
     }
 
     public static Builder create()

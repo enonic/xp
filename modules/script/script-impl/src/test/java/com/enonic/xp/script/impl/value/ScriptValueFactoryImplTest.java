@@ -1,5 +1,8 @@
 package com.enonic.xp.script.impl.value;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.script.ScriptEngine;
 
 import org.junit.Before;
@@ -51,6 +54,7 @@ public class ScriptValueFactoryImplTest
 
         assertEquals( "2", value.getValue() );
         assertEquals( new Integer( 2 ), value.getValue( Integer.class ) );
+        assertTrue( value.getList().isEmpty() );
 
         assertNonArray( value );
         assertNonObject( value );
@@ -101,6 +105,33 @@ public class ScriptValueFactoryImplTest
         assertEquals( "2", value.getArray().get( 1 ).getValue() );
         assertEquals( new Integer( 1 ), value.getArray( Integer.class ).get( 0 ) );
         assertEquals( new Integer( 2 ), value.getArray( Integer.class ).get( 1 ) );
+        assertEquals( 2, value.getList().size() );
+        assertEquals( "1", value.getList().get( 0 ) );
+        assertEquals( "2", value.getList().get( 1 ) );
+    }
+
+    @Test
+    public void array_toList()
+        throws Exception
+    {
+        final Object obj = execute( "var result = ['1', null, 2, {'key': 'value'}, [42]]; result;" );
+        final ScriptValue value = this.factory.newValue( obj );
+
+        assertNotNull( value );
+        assertTrue( value.isArray() );
+
+        assertNonValue( value );
+        assertNonObject( value );
+        assertNonFunction( value );
+
+        final List<Object> list = value.getList();
+        assertNotNull( list );
+        assertEquals( 5, list.size() );
+        assertEquals( "1", list.get( 0 ) );
+        assertNull( list.get( 1 ) );
+        assertEquals( 2, list.get( 2 ) );
+        assertTrue( list.get( 3 ) instanceof Map );
+        assertTrue( list.get( 4 ) instanceof List );
     }
 
     @Test

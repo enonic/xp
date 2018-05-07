@@ -191,6 +191,24 @@ public class LiveEditAttributeInjectionTest
         assertEquals( expectedResult, outputHtml );
     }
 
+    @Test
+    public void injectEmptyHtml()
+        throws Exception
+    {
+        final String html = "";
+
+        final LiveEditAttributeInjection liveEditAttributeInjection = new LiveEditAttributeInjection();
+        final PortalResponse.Builder responseBuilder = PortalResponse.create().body( html );
+
+        final PortalResponse portalResponse =
+            liveEditAttributeInjection.injectLiveEditAttribute( responseBuilder.build(), TextComponentType.INSTANCE );
+
+        final String outputHtml = portalResponse.getBody().toString();
+        final String expectedResult = "";
+
+        assertEquals( expectedResult, outputHtml );
+    }
+
     private String readResource( final String resourceName )
         throws Exception
     {

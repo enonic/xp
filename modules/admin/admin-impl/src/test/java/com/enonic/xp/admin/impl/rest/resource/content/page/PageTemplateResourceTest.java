@@ -139,6 +139,21 @@ public class PageTemplateResourceTest
     }
 
     @Test
+    public void isRenderablePageTemplateNoController()
+        throws Exception
+    {
+        PageTemplate pageTemplate =
+            createPageTemplate( "88811414-9967-4f59-a76e-5de250441e50", "content-name", "myapplication:content-type", null );
+        Mockito.when( contentService.getById( Mockito.eq( pageTemplate.getId() ) ) ).thenReturn( pageTemplate );
+
+        String response = request().path( "content/page/template/isRenderable" ).
+            queryParam( "contentId", pageTemplate.getId().toString() ).
+            get().getAsString();
+
+        assertEquals( "false", response );
+    }
+
+    @Test
     public void isRenderableSupportedByPageTemplate()
         throws Exception
     {
@@ -230,13 +245,13 @@ public class PageTemplateResourceTest
         assertJson( "create_template_success.json", response );
     }
 
-    private PageTemplate createPageTemplate( final String id, final String name, final String canRender )
+    private PageTemplate createPageTemplate( final String id, final String name, final String canRender, final DescriptorKey controller )
     {
         final PropertyTree data = new PropertyTree();
         data.addString( "supports", canRender );
 
         final Page page = Page.create().
-            controller( DescriptorKey.from( "my-descriptor" ) ).
+            controller( controller ).
             config( new PropertyTree() ).
             regions( PageRegions.create().build() ).
             build();
@@ -253,6 +268,12 @@ public class PageTemplateResourceTest
             parentPath( ContentPath.from( "/site/_templates" ) ).
             page( page ).
             build();
+
+    }
+
+    private PageTemplate createPageTemplate( final String id, final String name, final String canRender )
+    {
+        return createPageTemplate( id, name, canRender, DescriptorKey.from( "my-descriptor" ) );
     }
 
     private Content createContent( final String id, final ContentPath parentPath, final String name, final String contentTypeName )

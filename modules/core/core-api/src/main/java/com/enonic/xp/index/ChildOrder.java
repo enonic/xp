@@ -8,6 +8,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
+import com.enonic.xp.content.ContentIndexPath;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
@@ -26,6 +27,10 @@ public class ChildOrder
     private static final FieldOrderExpr PATH_ASC = FieldOrderExpr.create( NodeIndexPath.PATH, OrderExpr.Direction.ASC );
 
     private static final FieldOrderExpr PATH_DESC = FieldOrderExpr.create( NodeIndexPath.PATH, OrderExpr.Direction.DESC );
+
+    private static final FieldOrderExpr PUBLISH_ASC = FieldOrderExpr.create( ContentIndexPath.PUBLISH_FIRST, OrderExpr.Direction.ASC );
+
+    private static final FieldOrderExpr PUBLISH_DESC = FieldOrderExpr.create( ContentIndexPath.PUBLISH_FIRST, OrderExpr.Direction.DESC );
 
     private static final FieldOrderExpr MANUAL_ORDER_REVERSE =
         FieldOrderExpr.create( NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.ASC );
@@ -71,6 +76,20 @@ public class ChildOrder
     {
         return ChildOrder.create().
             add( PATH_DESC ).
+            build();
+    }
+
+    public static ChildOrder publish()
+    {
+        return ChildOrder.create().
+            add( PUBLISH_ASC ).
+            build();
+    }
+
+    public static ChildOrder reversePublish()
+    {
+        return ChildOrder.create().
+            add( PUBLISH_DESC ).
             build();
     }
 

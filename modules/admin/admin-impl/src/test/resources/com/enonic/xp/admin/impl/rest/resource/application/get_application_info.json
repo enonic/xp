@@ -1,0 +1,62 @@
+{
+  "contentTypes": {
+    "contentTypes": [],
+    "total": 0
+  },
+  "deployment": {
+    "url": "http://localhost:80/app/testapplication"
+  },
+  "idProvider": {
+    "mode": null,
+    "userStores": null
+  },
+  "layouts": {
+    "descriptors": []
+  },
+  "macros": {
+    "macros": []
+  },
+  "pages": {
+    "descriptors": []
+  },
+  "parts": {
+    "descriptors": []
+  },
+  "references": {
+    "references": []
+  },
+  "relations": {
+    "relationshipTypes": [],
+    "total": 0
+  },
+  "tasks": {
+    "tasks": []
+  },
+  "tools": {
+    "descriptors": [
+      {
+        "application": "myapp",
+        "description": null,
+        "displayName": "My tool",
+        "icon": "icon-source",
+        "key": "myapp:my-tool",
+        "name": "my-tool",
+        "toolUrl": "url/to/tool"
+      }
+    ]
+  },
+  "widgets": {
+    "descriptors": [
+      {
+        "config": {},
+        "displayName": "My widget",
+        "interfaces": [
+          "com.enonic.xp.my-interface",
+          "com.enonic.xp.my-interface-2"
+        ],
+        "key": "myapp:my-widget",
+        "url": "_/widgets/myapp/my-widget"
+      }
+    ]
+  }
+}

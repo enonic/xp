@@ -1,5 +1,6 @@
 package com.enonic.xp.admin.impl.rest.resource.schema.content;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,6 +34,7 @@ import com.enonic.xp.icon.Icon;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.content.GetAllContentTypesParams;
@@ -107,6 +109,13 @@ public final class ContentTypeResource
     }
 
     @GET
+    @Path("getMimeTypes")
+    public Collection<String> getMimeTypes( @QueryParam("typeNames") final String typeNames )
+    {
+        return contentTypeService.getMimeTypes( ContentTypeNames.from( typeNames.split( "," ) ) );
+    }
+
+    @GET
     @Path("byContent")
     public ContentTypeSummaryListJson byContent( @QueryParam("contentId") final String content )
     {
@@ -130,12 +139,10 @@ public final class ContentTypeResource
 
         ImmutableList.Builder<ContentTypeSummaryJson> summariesJsonBuilder = new ImmutableList.Builder();
 
-        contentTypes.forEach( contentType -> {
-            summariesJsonBuilder.addAll( this.contentTypeService.getByApplication( contentType.getName().getApplicationKey() ).
-                stream().
-                map( type -> new ContentTypeSummaryJson( type, this.contentTypeIconUrlResolver,
-                                                         new LocaleMessageResolver( localeService, type.getName().getApplicationKey() ) ) ).
-                collect( Collectors.toList() ) );
+        contentTypes.forEach( type -> {
+            summariesJsonBuilder.add( new ContentTypeSummaryJson( type, this.contentTypeIconUrlResolver,
+                                                                  new LocaleMessageResolver( localeService,
+                                                                                             type.getName().getApplicationKey() ) ) );
         } );
 
         return new ContentTypeSummaryListJson( summariesJsonBuilder.build() );

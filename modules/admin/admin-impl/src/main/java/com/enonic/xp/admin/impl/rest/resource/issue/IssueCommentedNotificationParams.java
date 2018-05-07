@@ -2,12 +2,12 @@ package com.enonic.xp.admin.impl.rest.resource.issue;
 
 import com.enonic.xp.security.User;
 
-public class IssueCommentedMailMessageParams
-    extends IssueMailMessageParams
+public class IssueCommentedNotificationParams
+    extends IssueNotificationParams
 {
     private User modifier;
 
-    public IssueCommentedMailMessageParams( final Builder builder )
+    public IssueCommentedNotificationParams( final Builder builder )
     {
         super( builder );
         this.modifier = builder.modifier;
@@ -18,25 +18,25 @@ public class IssueCommentedMailMessageParams
         return modifier;
     }
 
-    public static Builder create( final User modifier, final IssueMailMessageParams source )
+    public static Builder create( final User modifier, final IssueNotificationParams source )
     {
         return new Builder( modifier, source );
     }
 
     public static class Builder
-        extends IssueMailMessageParams.Builder<Builder>
+        extends IssueNotificationParams.Builder<Builder>
     {
         private User modifier;
 
-        private Builder( final User modifier, final IssueMailMessageParams source )
+        private Builder( final User modifier, final IssueNotificationParams source )
         {
             super( source );
             this.modifier = modifier;
         }
 
-        public IssueCommentedMailMessageParams build()
+        public IssueCommentedNotificationParams build()
         {
-            return new IssueCommentedMailMessageParams( this );
+            return new IssueCommentedNotificationParams( this );
         }
     }
 }

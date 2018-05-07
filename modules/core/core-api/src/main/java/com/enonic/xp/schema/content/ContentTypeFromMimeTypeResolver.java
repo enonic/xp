@@ -1,13 +1,14 @@
-package com.enonic.xp.core.impl.content;
+package com.enonic.xp.schema.content;
 
-
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.Maps;
 
-import com.enonic.xp.schema.content.ContentTypeName;
-
-final class ContentTypeFromMimeTypeResolver
+public final class ContentTypeFromMimeTypeResolver
 {
     private final static Map<String, ContentTypeName> MAP = Maps.newHashMap();
 
@@ -57,6 +58,7 @@ final class ContentTypeFromMimeTypeResolver
         // Text
         MAP.put( "text/plain", ContentTypeName.textMedia() );
         MAP.put( "text/csv", ContentTypeName.textMedia() );
+        MAP.put( "text/rtf", ContentTypeName.textMedia() );
 
         // Code
         MAP.put( "application/xml", ContentTypeName.codeMedia() );
@@ -70,9 +72,6 @@ final class ContentTypeFromMimeTypeResolver
         MAP.put( "text/css", ContentTypeName.codeMedia() );
         MAP.put( "text/javascript", ContentTypeName.codeMedia() );
         MAP.put( "application/soap+xml", ContentTypeName.codeMedia() );
-
-        // Data
-        MAP.put( "text/rtf", ContentTypeName.textMedia() );
 
         // Document
         MAP.put( "application/pdf", ContentTypeName.documentMedia() );
@@ -112,8 +111,17 @@ final class ContentTypeFromMimeTypeResolver
 
     }
 
-    static ContentTypeName resolve( final String mimeType )
+    public static ContentTypeName resolve( final String mimeType )
     {
         return MAP.get( mimeType );
+    }
+
+    public static Set<String> resolveMimeTypes( final ContentTypeNames contentTypeNames )
+    {
+        return MAP.entrySet().stream().
+            filter( entry -> contentTypeNames.contains( entry.getValue() ) ).
+            map( HashMap.Entry::getKey ).
+            collect( Collectors.toSet() );
+
     }
 }

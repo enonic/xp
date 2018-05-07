@@ -31,6 +31,8 @@ public interface ScriptValue
 
     <T> List<T> getArray( Class<T> type );
 
+    List<Object> getList();
+
     Map<String, Object> getMap();
 
     ScriptValue call( Object... args );

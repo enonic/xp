@@ -99,6 +99,8 @@ import com.enonic.xp.security.auth.UsernamePasswordAuthToken;
 import com.enonic.xp.security.auth.VerifiedEmailAuthToken;
 import com.enonic.xp.security.auth.VerifiedUsernameAuthToken;
 
+import static com.enonic.xp.core.impl.security.SecurityInitializer.DEFAULT_USER_STORE_ACL;
+
 @Component(immediate = true)
 public final class SecurityServiceImpl
     implements SecurityService
@@ -196,9 +198,7 @@ public final class SecurityServiceImpl
     @Override
     public UserStoreAccessControlList getDefaultUserStorePermissions()
     {
-        final Node rootNode = callWithContext( this.nodeService::getRoot );
-
-        return UserStoreNodeTranslator.userStorePermissionsFromNode( rootNode, rootNode, rootNode );
+        return DEFAULT_USER_STORE_ACL;
     }
 
     @Override
@@ -414,7 +414,7 @@ public final class SecurityServiceImpl
         {
             final User admin = User.create().
                 key( SecurityInitializer.SUPER_USER ).
-                login( "su" ).
+                login( SecurityInitializer.SUPER_USER.getId() ).
                 displayName( "Super User" ).
                 build();
             return AuthenticationInfo.create().

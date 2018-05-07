@@ -25,7 +25,7 @@ import com.enonic.xp.issue.IssueStatus;
 import com.enonic.xp.mail.MailMessage;
 import com.enonic.xp.security.User;
 
-public abstract class IssueMailMessageGenerator<P extends IssueMailMessageParams>
+public abstract class IssueMailMessageGenerator<P extends IssueNotificationParams>
 {
     protected final P params;
 
@@ -223,6 +223,10 @@ public abstract class IssueMailMessageGenerator<P extends IssueMailMessageParams
         if ( displayName == null || displayName.length() == 0 )
         {
             return "";
+        }
+        else if ( displayName.length() == 1 )
+        {
+            return displayName;
         }
 
         final String[] nameParts = displayName.split( " " );

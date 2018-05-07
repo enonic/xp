@@ -6,6 +6,7 @@ import java.util.Map;
 import org.osgi.framework.BundleEvent;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.impl.app.ApplicationHelper;
 import com.enonic.xp.event.Event;
 
 public final class ApplicationEvents
@@ -15,6 +16,8 @@ public final class ApplicationEvents
     public static final String APPLICATION_KEY_KEY = "applicationKey";
 
     public static final String APPLICATION_URL_KEY = "applicationUrl";
+
+    public static final String SYSTEM_APPLICATION = "systemApplication";
 
     public static final String INSTALLATION_PROGRESS_KEY = "progress";
 
@@ -63,6 +66,7 @@ public final class ApplicationEvents
         return Event.create( EVENT_TYPE ).
             distributed( false ).
             value( APPLICATION_KEY_KEY, ApplicationKey.from( bundleEvent.getBundle() ) ).
+            value( SYSTEM_APPLICATION, ApplicationHelper.isSystemApplication( bundleEvent.getBundle() ) ).
             value( EVENT_TYPE_KEY, STATE_LOOKUP_TABLE.get( bundleEvent.getType() ) ).
             build();
     }

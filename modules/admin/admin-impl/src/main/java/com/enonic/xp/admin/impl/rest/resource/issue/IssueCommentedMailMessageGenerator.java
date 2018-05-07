@@ -1,9 +1,9 @@
 package com.enonic.xp.admin.impl.rest.resource.issue;
 
 public class IssueCommentedMailMessageGenerator
-    extends IssueMailMessageGenerator<IssueCommentedMailMessageParams>
+    extends IssueMailMessageGenerator<IssueCommentedNotificationParams>
 {
-    public IssueCommentedMailMessageGenerator( final IssueCommentedMailMessageParams params )
+    public IssueCommentedMailMessageGenerator( final IssueCommentedNotificationParams params )
     {
         super( params );
     }
