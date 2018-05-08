@@ -102,12 +102,6 @@ public class SetPublishInfoCommand
         this.nodeService.refresh( RefreshMode.ALL );
     }
 
-    private User getCurrentUser()
-    {
-        final User user = ContextAccessor.current().getAuthInfo().getUser();
-        return user != null ? user : User.ANONYMOUS;
-    }
-
     private NodeIds findNodesWithoutPublishFirstAndFrom( final NodeIds nodesToPush )
     {
         if ( nodesToPush.isEmpty() )
