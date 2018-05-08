@@ -13,6 +13,8 @@ import org.osgi.framework.Filter;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 
+import com.enonic.xp.cluster.ClusterConfig;
+import com.enonic.xp.cluster.ClusterNodeId;
 import com.enonic.xp.web.dispatch.DispatchServlet;
 
 import static org.junit.Assert.*;
@@ -42,6 +44,10 @@ public class JettyActivatorTest
 
         this.activator = new JettyActivator();
         this.activator.setDispatchServlet( Mockito.mock( DispatchServlet.class ) );
+
+        final ClusterConfig clusterConfig = Mockito.mock( ClusterConfig.class );
+        Mockito.when( clusterConfig.name() ).thenReturn( ClusterNodeId.from( "localNodeName" ) );
+        this.activator.setClusterConfig( clusterConfig );
 
         this.config = new JettyConfigMockFactory().newConfig();
         Mockito.when( this.config.http_port() ).thenReturn( 0 );

@@ -4,6 +4,7 @@ import javax.servlet.Servlet;
 
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.session.DefaultSessionIdManager;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.slf4j.Logger;
@@ -29,6 +30,8 @@ final class JettyService
     protected Servlet dispatcherServlet;
 
     protected ServletContextHandler context;
+
+    protected String workerName;
 
     public void start()
     {
@@ -82,6 +85,11 @@ final class JettyService
         instrumentedHandler.setHandler( this.context );
 
         this.server.setHandler( instrumentedHandler );
+
+        final DefaultSessionIdManager sessionManager = new DefaultSessionIdManager( this.server );
+        sessionManager.setWorkerName( this.workerName );
+        this.server.setSessionIdManager( sessionManager );
+
         this.server.start();
     }
 
