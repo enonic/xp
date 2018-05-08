@@ -54,9 +54,6 @@ public class SetPublishInfoCommand
             this.nodeService.update( UpdateNodeParams.create().
                 editor( toBeEdited -> {
 
-                    toBeEdited.data.setInstant( ContentPropertyNames.MODIFIED_TIME, now );
-                    toBeEdited.data.setString( ContentPropertyNames.MODIFIER, getCurrentUser().getKey().toString() );
-
                     PropertySet publishInfo = toBeEdited.data.getSet( ContentPropertyNames.PUBLISH_INFO );
                     if ( publishInfo == null )
                     {
