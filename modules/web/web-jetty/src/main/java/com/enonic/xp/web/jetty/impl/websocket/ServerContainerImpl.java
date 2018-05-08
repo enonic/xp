@@ -12,7 +12,9 @@ import javax.websocket.Extension;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpointConfig;
 
+import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.websocket.jsr356.server.ServerContainer;
+import org.eclipse.jetty.websocket.server.NativeWebSocketConfiguration;
 import org.eclipse.jetty.websocket.server.WebSocketServerFactory;
 
 final class ServerContainerImpl
@@ -20,7 +22,14 @@ final class ServerContainerImpl
 {
     public ServerContainerImpl( final WebSocketServerFactory serverFactory )
     {
-        super( null, serverFactory, null );
+        super( new NativeWebSocketConfiguration( serverFactory ), (HttpClient) null );
+    }
+
+    @Override
+    protected void doStart()
+        throws Exception
+    {
+        super.doStart();
     }
 
     @Override

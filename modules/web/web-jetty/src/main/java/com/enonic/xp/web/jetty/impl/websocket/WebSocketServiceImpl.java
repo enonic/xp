@@ -3,6 +3,7 @@ package com.enonic.xp.web.jetty.impl.websocket;
 import java.io.IOException;
 import java.util.List;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.websocket.Endpoint;
@@ -22,6 +23,8 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.web.jetty.impl.JettyController;
 import com.enonic.xp.web.websocket.EndpointFactory;
@@ -35,21 +38,45 @@ public final class WebSocketServiceImpl
 
     private WebSocketServerFactory serverFactory;
 
+    private final static Logger LOG = LoggerFactory.getLogger( WebSocketServiceImpl.class );
+
+    @SuppressWarnings("WeakerAccess")
     @Activate
     public void activate()
         throws Exception
     {
         final WebSocketPolicy policy = WebSocketPolicy.newServerPolicy();
-        this.serverFactory = new WebSocketServerFactory( policy );
-        this.serverFactory.init( this.controller.getServletContext() );
 
-        new ServerContainerImpl( this.serverFactory );
+        this.serverFactory = new WebSocketServerFactory( this.controller.getServletContext(), policy );
+        final ServerContainerImpl serverContainer = new ServerContainerImpl( this.serverFactory );
+
+        try
+        {
+            this.serverFactory.start();
+            serverContainer.start();
+        }
+        catch ( ServletException e )
+        {
+            throw e;
+        }
+        catch ( Exception e )
+        {
+            throw new ServletException( e );
+        }
     }
 
+    @SuppressWarnings("WeakerAccess")
     @Deactivate
     public void deactivate()
     {
-        this.serverFactory.cleanup();
+        try
+        {
+            this.serverFactory.stop();
+        }
+        catch ( Exception e )
+        {
+            LOG.warn( "failed to stop WebSocketServiceImpl", e );
+        }
     }
 
     @Override
