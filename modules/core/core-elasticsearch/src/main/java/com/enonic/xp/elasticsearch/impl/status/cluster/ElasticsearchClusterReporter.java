@@ -9,7 +9,7 @@ import com.enonic.xp.status.JsonStatusReporter;
 import com.enonic.xp.status.StatusReporter;
 
 @Component(immediate = true, service = StatusReporter.class)
-public final class ClusterReporter
+public final class ElasticsearchClusterReporter
     extends JsonStatusReporter
 {
     private ClusterStateProvider clusterStateProvider;
@@ -19,26 +19,28 @@ public final class ClusterReporter
     @Override
     public String getName()
     {
-        return "cluster";
+        return "cluster.elasticsearch";
     }
 
     @Override
     public JsonNode getReport()
     {
-        final ClusterReport clusterReport = ClusterReport.create().
+        final ElasticsearchClusterReport elasticsearchClusterReport = ElasticsearchClusterReport.create().
             clusterState( clusterStateProvider.getInfo() ).
             clusterHealth( clusterHealthProvider.getInfo() ).
             build();
 
-        return clusterReport.toJson();
+        return elasticsearchClusterReport.toJson();
     }
 
+    @SuppressWarnings("WeakerAccess")
     @Reference
     public void setClusterStateProvider( final ClusterStateProvider clusterStateProvider )
     {
         this.clusterStateProvider = clusterStateProvider;
     }
 
+    @SuppressWarnings("WeakerAccess")
     @Reference
     public void setClusterHealthProvider( final ClusterHealthProvider clusterHealthProvider )
     {

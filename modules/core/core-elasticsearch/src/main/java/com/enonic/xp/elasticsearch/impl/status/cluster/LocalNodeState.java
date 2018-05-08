@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 final class LocalNodeState
     extends NodeState
 {
-    private Integer numberOfNodesSeen;
+    private final Integer numberOfNodesSeen;
 
     private LocalNodeState( Builder builder )
     {

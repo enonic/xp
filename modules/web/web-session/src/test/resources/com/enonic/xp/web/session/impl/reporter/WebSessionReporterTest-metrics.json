@@ -1,0 +1,17 @@
+{
+  "cache": {
+    "name": "com.enonic.xp.webSessionCache",
+    "size": 123,
+    "metrics": {
+      "gets": 0,
+      "puts": 0,
+      "valueType": "java.lang.Object",
+      "hits": 0,
+      "hitsPercentage": 0.0,
+      "misses": 0,
+      "evictions": 0,
+      "heapEntries": 0,
+      "offHeapSize": 0
+    }
+  }
+}

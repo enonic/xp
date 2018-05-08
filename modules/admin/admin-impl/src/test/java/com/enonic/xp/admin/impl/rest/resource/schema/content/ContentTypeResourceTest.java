@@ -546,7 +546,8 @@ public class ContentTypeResourceTest
 
         Mockito.when( contentTypeService.getMimeTypes( contentTypeNames ) ).thenReturn( mimeTypes );
 
-        final Collection<String> result = this.resource.getMimeTypes( ContentTypeName.documentMedia().toString()+","+ ContentTypeName.audioMedia().toString() );
+        final Collection<String> result =
+            this.resource.getMimeTypes( ContentTypeName.documentMedia().toString() + "," + ContentTypeName.audioMedia().toString() );
 
         assertEquals( mimeTypes.size(), result.size() );
         assertTrue( result.contains( "mimeType1" ) );

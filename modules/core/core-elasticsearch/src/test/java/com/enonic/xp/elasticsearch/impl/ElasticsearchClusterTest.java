@@ -14,11 +14,15 @@ import org.mockito.Mockito;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
-public class ClientActivatorTest
+import com.enonic.xp.cluster.ClusterHealth;
+
+import static org.junit.Assert.*;
+
+public class ElasticsearchClusterTest
 {
     private BundleContext context;
 
-    private ClientActivator activator;
+    private ElasticsearchCluster activator;
 
     private ServiceRegistration<Client> clientReg;
 
@@ -29,7 +33,7 @@ public class ClientActivatorTest
         throws Exception
     {
         this.context = Mockito.mock( BundleContext.class );
-        this.activator = new ClientActivator();
+        this.activator = new ElasticsearchCluster();
 
         this.clientReg = mockRegisterService( Client.class );
 
@@ -58,48 +62,44 @@ public class ClientActivatorTest
     }
 
     @Test
-    public void testLifeCycle_green()
+    public void test_enable()
         throws Exception
     {
         setClusterHealth( ClusterHealthStatus.GREEN );
 
         this.activator.activate( this.context );
+        Assert.assertNull( this.activator.reg );
+
+        this.activator.enable();
         Assert.assertNotNull( this.activator.reg );
         Assert.assertSame( this.clientReg, this.activator.reg );
 
-        this.activator.deactivate();
+        this.activator.disable();
         Mockito.verify( this.clientReg, Mockito.times( 1 ) ).unregister();
     }
 
     @Test
-    public void testLifeCycle_red()
+    public void health_red()
         throws Exception
     {
         setClusterHealth( ClusterHealthStatus.RED );
-
-        this.activator.activate( this.context );
-        Assert.assertNull( this.activator.reg );
-
-        this.activator.deactivate();
+        assertEquals( ClusterHealth.RED, this.activator.getHealth() );
     }
 
     @Test
-    public void testLifeCycle_red_then_green()
+    public void health_green()
         throws Exception
     {
-        setClusterHealth( ClusterHealthStatus.RED );
+        setClusterHealth( ClusterHealthStatus.YELLOW );
+        assertEquals( ClusterHealth.YELLOW, this.activator.getHealth() );
+    }
 
-        this.activator.activate( this.context );
-        Assert.assertNull( this.activator.reg );
-
+    @Test
+    public void health_yellow()
+        throws Exception
+    {
         setClusterHealth( ClusterHealthStatus.GREEN );
-        Thread.sleep( 1200L );
-
-        Assert.assertNotNull( this.activator.reg );
-        Assert.assertSame( this.clientReg, this.activator.reg );
-
-        this.activator.deactivate();
-        Mockito.verify( this.clientReg, Mockito.times( 1 ) ).unregister();
+        assertEquals( ClusterHealth.GREEN, this.activator.getHealth() );
     }
 
     @SuppressWarnings("unchecked")

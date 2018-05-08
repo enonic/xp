@@ -30,9 +30,9 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
 
-public class ClusterReporterTest
+public class ElasticsearchClusterReporterTest
 {
-    private final ClusterReporter clusterReporter = new ClusterReporter();
+    private final ElasticsearchClusterReporter clusterReporter = new ElasticsearchClusterReporter();
 
     private ClusterState clusterState;
 
@@ -86,7 +86,7 @@ public class ClusterReporterTest
     public void assertName()
         throws Exception
     {
-        assertEquals( "cluster", clusterReporter.getName() );
+        assertEquals( "cluster.elasticsearch", clusterReporter.getName() );
     }
 
     @Test

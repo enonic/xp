@@ -10,7 +10,6 @@ import com.enonic.xp.node.NodeService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
-import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 class ApplicationRepoInitializer
