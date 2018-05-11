@@ -61,7 +61,8 @@ public final class MixinServiceImpl
 
         final Mixin xData = new XDataLoader( this.resourceService ).get( name );
 
-        if(xData != null) {
+        if ( xData != null )
+        {
             return xData;
         }
 

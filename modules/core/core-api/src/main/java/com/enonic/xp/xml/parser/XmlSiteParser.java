@@ -109,7 +109,8 @@ public final class XmlSiteParser
     {
         final ApplicationRelativeResolver resolver = new ApplicationRelativeResolver( this.currentApplication );
         String name = metaStep.getAttribute( X_DATA_ATTRIBUTE_NAME );
-        if( StringUtils.isEmpty( name )) {
+        if ( StringUtils.isEmpty( name ) )
+        {
             name = metaStep.getAttribute( MIXIN_ATTRIBUTE_NAME );
         }
         return resolver.toMixinName( name );

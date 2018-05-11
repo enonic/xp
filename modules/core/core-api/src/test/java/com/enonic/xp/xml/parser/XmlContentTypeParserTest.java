@@ -126,8 +126,8 @@ public class XmlContentTypeParserTest
         final MixinNames mixinNames = result.getMetadata();
 
         assertEquals( 2, mixinNames.getSize() );
-        assertTrue( mixinNames.contains( MixinName.from( "myapplication:metadata1" )) );
-        assertTrue( mixinNames.contains( MixinName.from( "myapplication:metadata2" )) );
+        assertTrue( mixinNames.contains( MixinName.from( "myapplication:metadata1" ) ) );
+        assertTrue( mixinNames.contains( MixinName.from( "myapplication:metadata2" ) ) );
 
     }
 

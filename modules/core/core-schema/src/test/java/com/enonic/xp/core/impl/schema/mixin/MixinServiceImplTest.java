@@ -111,10 +111,12 @@ public class MixinServiceImplTest
     }
 
     @Test
-    public void testXData_LinkedFromContentType() {
+    public void testXData_LinkedFromContentType()
+    {
         initializeApps();
 
-        final ContentType contentType = this.contentTypeService.getByName( GetContentTypeParams.from( ContentTypeName.from( "myapp1:tag" ) ) );
+        final ContentType contentType =
+            this.contentTypeService.getByName( GetContentTypeParams.from( ContentTypeName.from( "myapp1:tag" ) ) );
         final Mixins mixins = this.service.getByContentType( contentType );
 
         assertEquals( 3, mixins.getSize() );
@@ -124,11 +126,12 @@ public class MixinServiceImplTest
     }
 
     @Test
-    public void testXData_NameFormat() {
+    public void testXData_NameFormat()
+    {
         initializeApps();
 
-        final Mixin mixin = this.service.getByName( MixinName.from( "myapp1:address") );
-        assertEquals( "X-Data Address", mixin.getDisplayName());
+        final Mixin mixin = this.service.getByName( MixinName.from( "myapp1:address" ) );
+        assertEquals( "X-Data Address", mixin.getDisplayName() );
     }
 
     @Test
