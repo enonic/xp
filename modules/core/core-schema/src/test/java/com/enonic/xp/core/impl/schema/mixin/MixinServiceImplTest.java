@@ -15,6 +15,7 @@ import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.content.ContentTypeNameWildcardResolver;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
@@ -288,5 +289,20 @@ public class MixinServiceImplTest
         assertNotNull( transformedForm.getInput( "myOptionSet.myOptionSetOption1.address.country" ) );
         assertNotNull( transformedForm.getOptionSetOption( "myOptionSet.myOptionSetOption2" ) );
         assertNotNull( transformedForm.getInput( "myOptionSet.myOptionSetOption2.myTextLine2" ) );
+    }
+
+    @Test
+    public void testFilterByContentType()
+    {
+        initializeApps();
+
+        Mixins mixins = service.filterByContentType( MixinNames.from( "myapp1:address" ), ContentTypeName.from( "myapp1:tag" ),
+                                                     new ContentTypeNameWildcardResolver( this.contentTypeService ) );
+        assertEquals( 1, mixins.getSize() );
+        assertEquals( "myapp1:address", mixins.get( 0 ).getName().toString() );
+
+        mixins = service.filterByContentType( MixinNames.from( "myapp1:address" ), ContentTypeName.from( "myapp1:unknown" ),
+                                              new ContentTypeNameWildcardResolver( this.contentTypeService ) );
+        assertEquals( 0, mixins.getSize() );
     }
 }

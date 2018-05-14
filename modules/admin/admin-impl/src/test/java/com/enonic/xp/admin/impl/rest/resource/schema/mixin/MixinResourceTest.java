@@ -16,16 +16,32 @@ import com.google.common.io.ByteStreams;
 import com.google.common.io.Resources;
 
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentService;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.jaxrs.impl.MockRestResponse;
+import com.enonic.xp.schema.content.ContentType;
+import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.content.ContentTypeNameWildcardResolver;
+import com.enonic.xp.schema.content.ContentTypeService;
+import com.enonic.xp.schema.content.ContentTypes;
+import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.mixin.MixinNames;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.schema.mixin.Mixins;
+import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.site.SiteDescriptor;
+import com.enonic.xp.site.SiteService;
 
 import static org.junit.Assert.*;
 
@@ -44,6 +60,12 @@ public class MixinResourceTest
 
     private LocaleService localeService;
 
+    private ContentService contentService;
+
+    private SiteService siteService;
+
+    private ContentTypeService contentTypeService;
+
     private MixinResource resource;
 
     @Override
@@ -51,10 +73,16 @@ public class MixinResourceTest
     {
         mixinService = Mockito.mock( MixinService.class );
         localeService = Mockito.mock( LocaleService.class );
+        contentService = Mockito.mock( ContentService.class );
+        siteService = Mockito.mock( SiteService.class );
+        contentTypeService = Mockito.mock( ContentTypeService.class );
 
         resource = new MixinResource();
         resource.setMixinService( mixinService );
         resource.setLocaleService( localeService );
+        resource.setContentService( contentService );
+        resource.setSiteService( siteService );
+        resource.setContentTypeService( contentTypeService );
 
         return resource;
     }
@@ -135,6 +163,56 @@ public class MixinResourceTest
         assertJson( "list_mixins.json", result );
     }
 
+    @Test
+    public void getContentXData()
+        throws Exception
+    {
+        final Mixin mixin1 = Mixin.create().createdTime( LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC ) ).name(
+            MY_MIXIN_QUALIFIED_NAME_1.toString() ).addFormItem(
+            Input.create().name( MY_MIXIN_INPUT_NAME_1 ).inputType( InputTypeName.TEXT_LINE ).label( "Line Text 1" ).required(
+                true ).helpText( "Help text line 1" ).required( true ).build() ).allowContentType( "^app:*" ).build();
+
+        final Mixin mixin2 = Mixin.create().createdTime( LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC ) ).name(
+            MY_MIXIN_QUALIFIED_NAME_2.toString() ).addFormItem(
+            Input.create().name( MY_MIXIN_INPUT_NAME_2 ).inputType( InputTypeName.TEXT_AREA ).label( "Text Area" ).required(
+                true ).helpText( "Help text area" ).required( true ).build() ).allowContentType( "app:testContentType" ).build();
+
+        final ContentType contentType = ContentType.create().name( "app:testContentType" ).superType( ContentTypeName.folder() ).metadata(
+            MixinNames.from( mixin1.getName() ) ).build();
+        Mockito.when( contentTypeService.getByName( GetContentTypeParams.from( contentType.getName() ) ) ).thenReturn( contentType );
+        Mockito.when( contentTypeService.getAll( Mockito.any() ) ).thenReturn( ContentTypes.from( contentType ) );
+
+        final Content content = Mockito.mock( Content.class );
+        Mockito.when( content.getType() ).thenReturn( contentType.getName() );
+        Mockito.when( content.getId() ).thenReturn( ContentId.from( "contentId" ) );
+
+        final SiteConfig siteConfig =
+            SiteConfig.create().config( new PropertyTree() ).application( contentType.getName().getApplicationKey() ).build();
+
+        final Site site = Site.create().name( "site" ).parentPath( ContentPath.ROOT ).addSiteConfig( siteConfig ).build();
+
+        final SiteDescriptor siteDescriptor = SiteDescriptor.create().metaSteps( MixinNames.from( mixin2.getName() ) ).build();
+        Mockito.when( siteService.getDescriptor( contentType.getName().getApplicationKey() ) ).thenReturn( siteDescriptor );
+
+        Mockito.when( contentService.getById( ContentId.from( "contentId" ) ) ).thenReturn( content );
+        Mockito.when( contentService.getNearestSite( ContentId.from( "contentId" ) ) ).thenReturn( site );
+
+        Mockito.when( mixinService.getByNames( MixinNames.from( mixin1.getName() ) ) ).thenReturn( Mixins.from( mixin1 ) );
+        Mockito.when( mixinService.getByNames( MixinNames.from( mixin2.getName() ) ) ).thenReturn( Mixins.from( mixin2 ) );
+
+        Mockito.when( mixinService.filterByContentType( contentType.getMetadata(), contentType.getName(),
+                                                        new ContentTypeNameWildcardResolver( this.contentTypeService ) ) ).thenReturn(
+            Mixins.from( mixin1 ) );
+
+        Mockito.when( mixinService.filterByContentType( MixinNames.from( mixin2.getName() ), contentType.getName(),
+                                                        new ContentTypeNameWildcardResolver( this.contentTypeService ) ) ).thenReturn(
+            Mixins.from( mixin2 ) );
+
+        String result = request().path( "schema/mixin/getContentXData" ).queryParam( "contentId", "contentId" ).get().getAsString();
+
+        assertJson( "get_content_x_data.json", result );
+    }
+
 
     @Test
     public void testMixinIcon()
@@ -167,7 +245,7 @@ public class MixinResourceTest
         final Response response = this.resource.getIcon( "myapplication:icon_svg_test", 20, null );
 
         assertNotNull( response.getEntity() );
-        org.junit.Assert.assertArrayEquals( ByteStreams.toByteArray( in ), ( byte[] )response.getEntity() );
+        org.junit.Assert.assertArrayEquals( ByteStreams.toByteArray( in ), (byte[]) response.getEntity() );
     }
 
     @Test
@@ -178,18 +256,18 @@ public class MixinResourceTest
         final Icon icon = Icon.from( data, "image/svg+xml", Instant.now() );
 
         Mixin mixin = Mixin.create().
-                name( "myapplication:icon_svg_test" ).
-                displayName( "My content type" ).
-                icon( icon ).
-                addFormItem( Input.create().name( "icon_svg_test" ).label( "SVG icon test" ).inputType( InputTypeName.TEXT_LINE ).build() ).
-                build();
+            name( "myapplication:icon_svg_test" ).
+            displayName( "My content type" ).
+            icon( icon ).
+            addFormItem( Input.create().name( "icon_svg_test" ).label( "SVG icon test" ).inputType( InputTypeName.TEXT_LINE ).build() ).
+            build();
         setupMixin( mixin );
 
         final Response response = this.resource.getIcon( "myapplication:icon_svg_test", 20, null );
 
         assertNotNull( response.getEntity() );
         assertEquals( icon.getMimeType(), response.getMediaType().toString() );
-        org.junit.Assert.assertArrayEquals( data, ( byte[] )response.getEntity() );
+        org.junit.Assert.assertArrayEquals( data, (byte[]) response.getEntity() );
     }
 
     private void setupMixin( final Mixin mixin )

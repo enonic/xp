@@ -110,6 +110,18 @@ public final class Mixins
             return this;
         }
 
+        public Builder addAll( Mixins nodes )
+        {
+            builder.addAll( nodes );
+            return this;
+        }
+
+        public Builder addAll( Collection<Mixin> nodes )
+        {
+            builder.addAll( nodes );
+            return this;
+        }
+
         public Mixins build()
         {
             return new Mixins( builder.build() );

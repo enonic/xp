@@ -1,5 +1,9 @@
 package com.enonic.xp.admin.impl.rest.resource.schema.mixin;
 
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -17,6 +21,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Sets;
 
 import com.enonic.xp.admin.impl.json.schema.mixin.MixinJson;
 import com.enonic.xp.admin.impl.json.schema.mixin.MixinListJson;
@@ -24,14 +29,25 @@ import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.schema.SchemaImageHelper;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentService;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.jaxrs.JaxRsComponent;
+import com.enonic.xp.schema.content.ContentType;
+import com.enonic.xp.schema.content.ContentTypeNameWildcardResolver;
+import com.enonic.xp.schema.content.ContentTypeService;
+import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.schema.mixin.Mixins;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.site.SiteDescriptor;
+import com.enonic.xp.site.SiteService;
 
 @Path(ResourceConstants.REST_ROOT + "schema/mixin")
 @Produces(MediaType.APPLICATION_JSON)
@@ -45,6 +61,12 @@ public final class MixinResource
     private static final SchemaImageHelper HELPER = new SchemaImageHelper();
 
     private MixinService mixinService;
+
+    private ContentService contentService;
+
+    private SiteService siteService;
+
+    private ContentTypeService contentTypeService;
 
     private MixinIconUrlResolver mixinIconUrlResolver;
 
@@ -69,6 +91,24 @@ public final class MixinResource
     }
 
     @GET
+    @Path("getContentXData")
+    public MixinListJson getContentXData( @QueryParam("contentId") final String id )
+    {
+        final Set<Mixin> allContentXData = Sets.newLinkedHashSet();
+
+        final ContentId contentId = ContentId.from( id );
+        final Content content = this.contentService.getById( contentId );
+
+        allContentXData.addAll( getContentLocalXData( content ).getList() );
+        allContentXData.addAll( getContentInheritedXData( content ).getList() );
+
+        return new MixinListJson( allContentXData.stream().map( mixin -> new MixinJson( mixin, this.mixinIconUrlResolver,
+                                                                                        new LocaleMessageResolver( localeService,
+                                                                                                                   mixin.getName().getApplicationKey() ) ) ).collect(
+            Collectors.toList() ) );
+    }
+
+    @GET
     @Path("list")
     public MixinListJson list()
     {
@@ -77,8 +117,7 @@ public final class MixinResource
         ImmutableList.Builder<MixinJson> mixinJsonBuilder = new ImmutableList.Builder();
 
         mixins.forEach( mixin -> {
-            mixinJsonBuilder.add( new MixinJson( mixin, this.mixinIconUrlResolver,
-                                                 new LocaleMessageResolver( localeService, mixin.getName().getApplicationKey() ) ) );
+            mixinJsonBuilder.add( new MixinJson( mixin, this.mixinIconUrlResolver, new LocaleMessageResolver( localeService, mixin.getName().getApplicationKey() ) ) );
         } );
 
         return new MixinListJson( mixinJsonBuilder.build() );
@@ -94,8 +133,7 @@ public final class MixinResource
         ImmutableList.Builder<MixinJson> mixinJsonBuilder = new ImmutableList.Builder();
 
         mixins.forEach( mixin -> {
-            mixinJsonBuilder.add( new MixinJson( mixin, this.mixinIconUrlResolver,
-                                                 new LocaleMessageResolver( localeService, mixin.getName().getApplicationKey() ) ) );
+            mixinJsonBuilder.add( new MixinJson( mixin, this.mixinIconUrlResolver, new LocaleMessageResolver( localeService, mixin.getName().getApplicationKey() ) ) );
         } );
 
         return new MixinListJson( mixinJsonBuilder.build() );
@@ -104,8 +142,7 @@ public final class MixinResource
     @GET
     @Path("icon/{mixinName}")
     @Produces("image/*")
-    public Response getIcon( @PathParam("mixinName") final String mixinNameStr, @QueryParam("size") @DefaultValue("128") final int size,
-                             @QueryParam("hash") final String hash )
+    public Response getIcon( @PathParam("mixinName") final String mixinNameStr, @QueryParam("size") @DefaultValue("128") final int size, @QueryParam("hash") final String hash )
         throws Exception
     {
         final MixinName mixinName = MixinName.from( mixinNameStr );
@@ -143,6 +180,37 @@ public final class MixinResource
         return mixinService.getByName( name );
     }
 
+    private Mixins getContentLocalXData( final Content content )
+    {
+        final ContentType contentType = this.contentTypeService.getByName( GetContentTypeParams.from( content.getType() ) );
+
+        return this.mixinService.filterByContentType( contentType.getMetadata(), contentType.getName(),
+                                                      new ContentTypeNameWildcardResolver( this.contentTypeService ) );
+    }
+
+    private Mixins getContentInheritedXData( final Content content )
+    {
+        final Mixins.Builder applicationXDataBuilder = Mixins.create();
+
+        final Site nearestSite = this.contentService.getNearestSite( content.getId() );
+
+        if ( nearestSite != null )
+        {
+            final List<ApplicationKey> applicationKeys =
+                nearestSite.getSiteConfigs().stream().map( SiteConfig::getApplicationKey ).collect( Collectors.toList() );
+
+            final List<SiteDescriptor> siteDescriptors =
+                applicationKeys.stream().map( applicationKey -> siteService.getDescriptor( applicationKey ) ).collect(
+                    Collectors.toList() );
+
+            siteDescriptors.forEach( siteDescriptor -> applicationXDataBuilder.addAll(
+                this.mixinService.filterByContentType( siteDescriptor.getMetaSteps(), content.getType(),
+                                                       new ContentTypeNameWildcardResolver( this.contentTypeService ) ).getList() ) );
+
+        }
+        return applicationXDataBuilder.build();
+    }
+
     @Reference
     public void setMixinService( final MixinService mixinService )
     {
@@ -156,4 +224,25 @@ public final class MixinResource
     {
         this.localeService = localeService;
     }
+
+
+    @Reference
+    public void setContentService( final ContentService contentService )
+    {
+        this.contentService = contentService;
+    }
+
+
+    @Reference
+    public void setSiteService( final SiteService siteService )
+    {
+        this.siteService = siteService;
+    }
+
+    @Reference
+    public void setContentTypeService( final ContentTypeService contentTypeService )
+    {
+        this.contentTypeService = contentTypeService;
+    }
 }
+

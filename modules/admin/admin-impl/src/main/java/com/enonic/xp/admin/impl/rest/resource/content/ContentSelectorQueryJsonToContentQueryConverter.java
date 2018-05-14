@@ -72,7 +72,8 @@ public class ContentSelectorQueryJsonToContentQueryConverter
 
         if ( this.content != null && this.contentTypeWildcardResolver.anyTypeHasWildcard( contentTypeNames ) )
         {
-            return ContentTypeNames.from( this.contentTypeWildcardResolver.resolveWildcards( contentTypeNames, this.content.getType() ) );
+            return ContentTypeNames.from(
+                this.contentTypeWildcardResolver.resolveWildcards( contentTypeNames, this.content.getType().getApplicationKey() ) );
         }
 
         return ContentTypeNames.from( contentTypeNames );

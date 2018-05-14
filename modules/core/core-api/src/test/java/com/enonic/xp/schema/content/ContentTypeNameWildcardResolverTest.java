@@ -45,7 +45,7 @@ public class ContentTypeNameWildcardResolverTest
     public void no_wildcards()
     {
         List<String> toResolve = Lists.newArrayList( "myapp:foo", "myapp:bar" );
-        List<String> resolved = resolver.resolveWildcards( toResolve, ContentTypeName.from( ApplicationKey.from( "myapp" ), "myname" ) );
+        List<String> resolved = resolver.resolveWildcards( toResolve, ( ApplicationKey.from( "myapp" ) ) );
 
         assertEquals( toResolve, resolved );
     }
@@ -54,7 +54,7 @@ public class ContentTypeNameWildcardResolverTest
     public void appWildcards()
     {
         List<String> toResolve = Lists.newArrayList( "${app}:test1", "myapp:bar" );
-        List<String> resolved = resolver.resolveWildcards( toResolve, ContentTypeName.from( ApplicationKey.from( "myapp" ), "myname" ) );
+        List<String> resolved = resolver.resolveWildcards( toResolve, ApplicationKey.from( "myapp" ) );
 
         assertEquals( 2, resolved.size() );
         assertEquals( "myapp:test1", resolved.get( 0 ) );
@@ -65,7 +65,7 @@ public class ContentTypeNameWildcardResolverTest
     public void anyWildcards()
     {
         List<String> toResolve = Lists.newArrayList( "*:test1", "myapp:bar" );
-        List<String> resolved = resolver.resolveWildcards( toResolve, ContentTypeName.from( ApplicationKey.from( "myapp" ), "myname" ) );
+        List<String> resolved = resolver.resolveWildcards( toResolve, ApplicationKey.from( "myapp" ) );
 
         assertEquals( 3, resolved.size() );
         assertEquals( "myapp:test1", resolved.get( 0 ) );
@@ -77,7 +77,7 @@ public class ContentTypeNameWildcardResolverTest
     public void anyAndAppWildcards()
     {
         List<String> toResolve = Lists.newArrayList( "${app}:test*", "myapp:bar" );
-        List<String> resolved = resolver.resolveWildcards( toResolve, ContentTypeName.from( ApplicationKey.from( "myapp" ), "myname" ) );
+        List<String> resolved = resolver.resolveWildcards( toResolve, ApplicationKey.from( "myapp" ) );
 
         assertEquals( 3, resolved.size() );
         assertEquals( "myapp:test1", resolved.get( 0 ) );
