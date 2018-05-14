@@ -10,12 +10,12 @@ public class UnpublishContentsResult
 {
     private final ContentIds unpublishedContents;
 
-    private final String contentName;
+    private final ContentPath contentPath;
 
     private UnpublishContentsResult( Builder builder )
     {
         this.unpublishedContents = ContentIds.from( builder.unpublishedContents );
-        this.contentName = builder.contentName;
+        this.contentPath = builder.contentPath;
     }
 
     public static Builder create()
@@ -28,16 +28,16 @@ public class UnpublishContentsResult
         return unpublishedContents;
     }
 
-    public String getContentName()
+    public ContentPath getContentPath()
     {
-        return contentName;
+        return contentPath;
     }
 
     public static final class Builder
     {
         private List<ContentId> unpublishedContents = Lists.newArrayList();
 
-        private String contentName;
+        private ContentPath contentPath;
 
         private Builder()
         {
@@ -53,9 +53,9 @@ public class UnpublishContentsResult
             return this;
         }
 
-        public Builder setContentName( final String contentName )
+        public Builder setContentPath( final ContentPath contentPath )
         {
-            this.contentName = contentName;
+            this.contentPath = contentPath;
             return this;
         }
 

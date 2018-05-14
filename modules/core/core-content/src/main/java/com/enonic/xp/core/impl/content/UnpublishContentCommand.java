@@ -75,7 +75,7 @@ public class UnpublishContentCommand
         {
 
             draftContext.callWith( () -> {
-                resultBuilder.setContentName( this.getContent( contentIds.first() ).getDisplayName() );
+                resultBuilder.setContentPath( this.getContent( contentIds.first() ).getPath() );
                 return null;
             } );
         }

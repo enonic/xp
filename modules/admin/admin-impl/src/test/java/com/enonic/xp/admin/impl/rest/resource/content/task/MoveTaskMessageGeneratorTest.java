@@ -28,7 +28,7 @@ public class MoveTaskMessageGeneratorTest
 
         final String message = generator.generate( result );
 
-        assertEquals( "\"moved-1\" was moved.", message );
+        assertEquals( "Item \"moved-1\" was moved.", message );
     }
 
     @Test
@@ -72,7 +72,7 @@ public class MoveTaskMessageGeneratorTest
 
         final String message = generator.generate( result );
 
-        assertEquals( "\"exists-1\" already exists at \"dest/path\".", message );
+        assertEquals( "Item \"exists-1\" already exists at \"dest/path\".", message );
     }
 
     @Test

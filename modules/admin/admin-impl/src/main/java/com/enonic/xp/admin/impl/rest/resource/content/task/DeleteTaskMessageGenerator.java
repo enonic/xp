@@ -33,7 +33,7 @@ class DeleteTaskMessageGenerator
         }
         else if ( deleted != null && deleted.size() == 1 )
         {
-            builder.append( String.format( "Item \"%s\" was deleted.", deleted.get( 0 ) ) );
+            builder.append( String.format( "Item \"%s\" was deleted.", deleted.get( 0 ).getName() ) );
         }
     }
 
