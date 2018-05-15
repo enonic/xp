@@ -588,7 +588,7 @@ public class AbstractContentServiceTest
 
             if ( lastModified != null )
             {
-                assertTrue( next.getModified().isBefore( lastModified ) );
+                assertFalse( next.getModified().isAfter( lastModified ) );
             }
 
             lastModified = next.getModified();
