@@ -139,10 +139,6 @@ public class UnpublishContentCommand
 
                     if ( toBeEdited.data.getInstant( ContentPropertyNames.PUBLISH_INFO + PropertyPath.ELEMENT_DIVIDER + ContentPropertyNames.PUBLISH_FROM ) != null )
                     {
-                        toBeEdited.data.setInstant( ContentPropertyNames.MODIFIED_TIME, now );
-                        toBeEdited.data.setString( ContentPropertyNames.MODIFIER, ContextAccessor.current().
-                            getAuthInfo().getUser().getKey().toString() );
-
                         PropertySet publishInfo = toBeEdited.data.getSet( ContentPropertyNames.PUBLISH_INFO );
 
                         if(publishInfo.hasProperty( ContentPropertyNames.PUBLISH_FROM ))
