@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.enonic.xp.app.ApplicationRelativeResolver;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.schema.mixin.MixinName;
@@ -36,6 +38,8 @@ public final class XmlSiteParser
     private static final String MAPPING_DESCRIPTOR_TAG_NAME = "mapping";
 
     private static final String MIXIN_ATTRIBUTE_NAME = "mixin";
+
+    private static final String X_DATA_ATTRIBUTE_NAME = "name";
 
     private static final String FILTER_DESCRIPTOR_NAME_ATTRIBUTE = "name";
 
@@ -104,7 +108,11 @@ public final class XmlSiteParser
     private MixinName toMixinName( final DomElement metaStep )
     {
         final ApplicationRelativeResolver resolver = new ApplicationRelativeResolver( this.currentApplication );
-        final String name = metaStep.getAttribute( MIXIN_ATTRIBUTE_NAME );
+        String name = metaStep.getAttribute( X_DATA_ATTRIBUTE_NAME );
+        if ( StringUtils.isEmpty( name ) )
+        {
+            name = metaStep.getAttribute( MIXIN_ATTRIBUTE_NAME );
+        }
         return resolver.toMixinName( name );
     }
 

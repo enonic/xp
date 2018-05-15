@@ -3,12 +3,14 @@ package com.enonic.xp.xml.parser;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collection;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
@@ -129,5 +131,11 @@ public abstract class XmlObjectParser<P extends XmlObjectParser<P>>
     protected final void assertTagName( final DomElement elem, final String name )
     {
         Preconditions.checkArgument( elem.getTagName().equals( name ), "Element [" + name + "] is required" );
+    }
+
+    protected final void assertTagNames( final DomElement elem, final Collection<String> names )
+    {
+        Preconditions.checkArgument( names.stream().anyMatch( name -> elem.getTagName().equals( name ) ),
+                                     "Any of tag names: [" + StringUtils.join( names, ", " ) + "] is required" );
     }
 }

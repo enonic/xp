@@ -5,6 +5,11 @@
   <is-abstract>false</is-abstract>
   <is-final>true</is-final>
   <allow-child-content>true</allow-child-content>
+
+  <x-data name="myapp1:address"/>
+  <x-data mixin="myapp1:full-name"/>
+  <x-data mixin="myapp1:x-data-full-name"/>
+
   <form>
     <input name="tag_unlimited" type="Tag">
       <label>Tag, unlimited occurrences</label>
