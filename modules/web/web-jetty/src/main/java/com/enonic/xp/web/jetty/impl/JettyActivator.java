@@ -12,6 +12,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.cluster.ClusterConfig;
 import com.enonic.xp.status.StatusReporter;
 import com.enonic.xp.web.dispatch.DispatchServlet;
 import com.enonic.xp.web.thread.ThreadPoolInfo;
@@ -32,6 +33,8 @@ public final class JettyActivator
 
     private DispatchServlet dispatchServlet;
 
+    private ClusterConfig clusterConfig;
+
     @Activate
     public void activate( final BundleContext context, final JettyConfig config )
         throws Exception
@@ -42,6 +45,7 @@ public final class JettyActivator
         this.config = config;
         this.service = new JettyService();
         this.service.config = this.config;
+        this.service.workerName = clusterConfig.name().toString();
 
         this.service.dispatcherServlet = this.dispatchServlet;
         this.service.start();
@@ -102,5 +106,11 @@ public final class JettyActivator
     public void setDispatchServlet( final DispatchServlet dispatchServlet )
     {
         this.dispatchServlet = dispatchServlet;
+    }
+
+    @Reference
+    public void setClusterConfig( final ClusterConfig clusterConfig )
+    {
+        this.clusterConfig = clusterConfig;
     }
 }
