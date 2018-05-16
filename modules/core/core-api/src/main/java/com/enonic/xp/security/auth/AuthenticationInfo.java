@@ -107,9 +107,9 @@ public final class AuthenticationInfo
         throws IOException
     {
         oos.writeUTF( user.getKey().toString() );
-        oos.writeUTF( user.getDisplayName() );
+        oos.writeObject( user.getDisplayName() );
         oos.writeObject( user.getModifiedTime() );
-        oos.writeUTF( user.getEmail() );
+        oos.writeObject( user.getEmail() );
         oos.writeUTF( user.getLogin() );
         oos.writeBoolean( user.isDisabled() );
         oos.writeObject( user.getProfile() );
@@ -120,9 +120,9 @@ public final class AuthenticationInfo
     {
         User.Builder user = User.create();
         user.key( PrincipalKey.from( ois.readUTF() ) );
-        user.displayName( ois.readUTF() );
+        user.displayName( (String) ois.readObject() );
         user.modifiedTime( (Instant) ois.readObject() );
-        user.email( ois.readUTF() );
+        user.email( (String) ois.readObject() );
         user.login( ois.readUTF() );
         user.disabled( ois.readBoolean() );
         user.profile( (PropertyTree) ois.readObject() );

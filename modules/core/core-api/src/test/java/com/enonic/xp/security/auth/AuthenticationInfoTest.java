@@ -167,4 +167,22 @@ public class AuthenticationInfoTest
 
         assertEquals( deserializedObject, info );
     }
+
+    @Test
+    public void testSerializationMinimalFields()
+    {
+        final User user = User.create().
+            login( "userlogin" ).
+            key( PrincipalKey.ofUser( UserStoreKey.from( "myuserstore" ), "userid" ) ).
+            build();
+
+        final AuthenticationInfo info = AuthenticationInfo.create().
+            user( user ).
+            build();
+
+        final byte[] serializedObject = SerializationUtils.serialize( info );
+        final AuthenticationInfo deserializedObject = (AuthenticationInfo) SerializationUtils.deserialize( serializedObject );
+
+        assertEquals( deserializedObject, info );
+    }
 }
