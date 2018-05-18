@@ -29,13 +29,14 @@ public abstract class Initializer
             for ( int i = 0; i < INITIALIZATION_CHECK_MAX_COUNT; i++ )
             {
                 final boolean initialized = isInitialized();
-                LOG.info( "Is " + getInitializationSubject() + " initialized? " + initialized );
                 if ( initialized )
                 {
                     return;
                 }
                 try
                 {
+                    LOG.info( "Waiting [" + ( INITIALIZATION_CHECK_PERIOD / 1000 ) + "s] for " + getInitializationSubject() +
+                                  " to be initialized" );
                     Thread.sleep( INITIALIZATION_CHECK_PERIOD );
                 }
                 catch ( InterruptedException e )
