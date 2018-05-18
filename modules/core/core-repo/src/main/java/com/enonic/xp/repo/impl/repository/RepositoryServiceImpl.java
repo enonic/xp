@@ -63,11 +63,10 @@ public class RepositoryServiceImpl
     @SuppressWarnings("unused")
     @Activate
     public void initialize()
+        throws InterruptedException
     {
-        if ( this.indexServiceInternal.isMaster() )
-        {
-            new SystemRepoInitializer( this, this.nodeStorageService ).initialize();
-        }
+        new SystemRepoInitializer( indexServiceInternal, this, this.nodeStorageService ).
+            initialize();
     }
 
     @Override

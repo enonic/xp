@@ -5,6 +5,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.index.IndexService;
 import com.enonic.xp.issue.CreateIssueCommentParams;
 import com.enonic.xp.issue.CreateIssueParams;
 import com.enonic.xp.issue.DeleteIssueCommentParams;
@@ -27,6 +28,8 @@ public class IssueServiceImpl
 {
     private NodeService nodeService;
 
+    private IndexService indexService;
+
     @SuppressWarnings("unused")
     // Just needed for now to ensure that the content-service is initialized first, since we need the content-repo initialized
     private ContentService contentService;
@@ -34,8 +37,9 @@ public class IssueServiceImpl
     @SuppressWarnings("unused")
     @Activate
     public void initialize()
+        throws InterruptedException
     {
-        new IssueInitializer( this.nodeService ).initialize();
+        new IssueInitializer( indexService, nodeService ).initialize();
     }
 
     @Override
@@ -118,6 +122,12 @@ public class IssueServiceImpl
     public void setNodeService( final NodeService nodeService )
     {
         this.nodeService = nodeService;
+    }
+
+    @Reference
+    public void setIndexService( final IndexService indexService )
+    {
+        this.indexService = indexService;
     }
 
     @SuppressWarnings("unused")
