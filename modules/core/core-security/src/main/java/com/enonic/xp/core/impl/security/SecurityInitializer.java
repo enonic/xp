@@ -71,7 +71,6 @@ final class SecurityInitializer
     public final void doInitialize()
     {
         createAdminContext().runWith( () -> {
-            LOG.info( "Initializing system-repo [security] layout" );
 
             initializeUserStoreParentFolder();
             initializeRoleFolder();
@@ -79,8 +78,6 @@ final class SecurityInitializer
 
             createRoles();
             createUsers();
-
-            LOG.info( "System-repo [security] layout successfully initialized" );
         } );
     }
 

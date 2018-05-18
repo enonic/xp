@@ -20,7 +20,9 @@ public abstract class Initializer
         {
             if ( !isInitialized() )
             {
+                LOG.info( "Initializing " + getInitializationSubject() );
                 doInitialize();
+                LOG.info( getInitializationSubject() + " successfully initialized" );
             }
         }
         else

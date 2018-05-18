@@ -36,11 +36,10 @@ public class ApplicationRepoServiceImpl
     @SuppressWarnings("unused")
     @Activate
     public void initialize( final BundleContext context )
+        throws InterruptedException
     {
-        if ( indexService.isMaster() )
-        {
-            new ApplicationRepoInitializer( this.nodeService ).initialize();
-        }
+        new ApplicationRepoInitializer(this.indexService, this.nodeService ).
+            initialize();
     }
 
     public Node createApplicationNode( final Application application, final ByteSource source )
