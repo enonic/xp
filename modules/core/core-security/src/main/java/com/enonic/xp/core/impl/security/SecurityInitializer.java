@@ -14,6 +14,7 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.security.AuthConfig;
@@ -271,6 +272,7 @@ final class SecurityInitializer
         {
             if ( !securityService.getRole( createRoleParams.getKey() ).isPresent() )
             {
+                securityService.createRole( createRoleParams );
                 LOG.info( "Role created: " + createRoleParams.getKey().toString() );
             }
         }
