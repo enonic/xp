@@ -177,10 +177,8 @@ public class ContentServiceImpl
     @Activate
     public void initialize()
     {
-        if ( this.indexService.isMaster() )
-        {
-            new ContentInitializer( this.nodeService, this.repositoryService ).initialize();
-        }
+        new ContentInitializer( this.indexService, this.nodeService, this.repositoryService ).
+            initialize();
     }
 
     @Override
