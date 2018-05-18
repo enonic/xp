@@ -176,7 +176,6 @@ public class ContentServiceImpl
 
     @Activate
     public void initialize()
-        throws InterruptedException
     {
         new ContentInitializer( this.indexService, this.nodeService, this.repositoryService ).
             initialize();

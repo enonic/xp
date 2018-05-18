@@ -26,6 +26,7 @@ import com.enonic.xp.repo.impl.elasticsearch.AbstractElasticsearchIntegrationTes
 import com.enonic.xp.repo.impl.elasticsearch.IndexServiceInternalImpl;
 import com.enonic.xp.repo.impl.elasticsearch.search.SearchDaoImpl;
 import com.enonic.xp.repo.impl.elasticsearch.storage.StorageDaoImpl;
+import com.enonic.xp.repo.impl.index.IndexServiceImpl;
 import com.enonic.xp.repo.impl.node.NodeServiceImpl;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionServiceImpl;
 import com.enonic.xp.repo.impl.repository.NodeRepositoryServiceImpl;
@@ -75,13 +76,15 @@ public class AbstractIssueServiceTest
 
     private BranchServiceImpl branchService;
 
-    private IndexServiceInternalImpl indexService;
+    private IndexServiceInternalImpl indexServiceInternal;
 
     private NodeStorageServiceImpl storageService;
 
     private NodeSearchServiceImpl searchService;
 
     private IndexDataServiceImpl indexedDataService;
+
+    private IndexServiceImpl indexService;
 
     private RepositoryServiceImpl repositoryService;
 
@@ -115,8 +118,8 @@ public class AbstractIssueServiceTest
         this.versionService = new VersionServiceImpl();
         this.versionService.setStorageDao( storageDao );
 
-        this.indexService = new IndexServiceInternalImpl();
-        this.indexService.setClient( client );
+        this.indexServiceInternal = new IndexServiceInternalImpl();
+        this.indexServiceInternal.setClient( client );
 
         this.nodeDao = new NodeVersionServiceImpl();
         this.nodeDao.setBlobStore( blobStore );
@@ -125,6 +128,9 @@ public class AbstractIssueServiceTest
 
         this.indexedDataService = new IndexDataServiceImpl();
         this.indexedDataService.setStorageDao( storageDao );
+
+        this.indexService = new IndexServiceImpl();
+        this.indexService.setIndexServiceInternal( this.indexServiceInternal );
 
         this.storageService = new NodeStorageServiceImpl();
         this.storageService.setBranchService( this.branchService );
@@ -136,7 +142,7 @@ public class AbstractIssueServiceTest
         this.searchService.setSearchDao( this.searchDao );
 
         final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl();
-        nodeRepositoryService.setIndexServiceInternal( this.indexService );
+        nodeRepositoryService.setIndexServiceInternal( this.indexServiceInternal );
 
         final RepositoryEntryServiceImpl repositoryEntryService = new RepositoryEntryServiceImpl();
         repositoryEntryService.setIndexServiceInternal( elasticsearchIndexService );
@@ -154,7 +160,7 @@ public class AbstractIssueServiceTest
         this.repositoryService.initialize();
 
         this.nodeService = new NodeServiceImpl();
-        this.nodeService.setIndexServiceInternal( indexService );
+        this.nodeService.setIndexServiceInternal( indexServiceInternal );
         this.nodeService.setNodeStorageService( storageService );
         this.nodeService.setNodeSearchService( searchService );
         this.nodeService.setEventPublisher( eventPublisher );
@@ -177,8 +183,8 @@ public class AbstractIssueServiceTest
 
     private void initializeRepository()
     {
-        new ContentInitializer( this.nodeService, this.repositoryService ).initialize();
-        new IssueInitializer( this.nodeService ).initialize();
+        new ContentInitializer( this.indexService, this.nodeService, this.repositoryService ).initialize();
+        new IssueInitializer( this.indexService, this.nodeService ).initialize();
         waitForClusterHealth();
     }
 }

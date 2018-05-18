@@ -36,7 +36,6 @@ public class ApplicationRepoServiceImpl
     @SuppressWarnings("unused")
     @Activate
     public void initialize( final BundleContext context )
-        throws InterruptedException
     {
         new ApplicationRepoInitializer(this.indexService, this.nodeService ).
             initialize();

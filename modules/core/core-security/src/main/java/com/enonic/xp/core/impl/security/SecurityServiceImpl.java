@@ -144,7 +144,6 @@ public final class SecurityServiceImpl
 
     @Activate
     public void initialize()
-        throws InterruptedException
     {
         initializeSuPassword();
         new SecurityInitializer( indexService, this, this.nodeService ).initialize();

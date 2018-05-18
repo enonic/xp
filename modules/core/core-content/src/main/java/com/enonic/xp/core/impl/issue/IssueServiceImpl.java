@@ -37,7 +37,6 @@ public class IssueServiceImpl
     @SuppressWarnings("unused")
     @Activate
     public void initialize()
-        throws InterruptedException
     {
         new IssueInitializer( indexService, nodeService ).initialize();
     }

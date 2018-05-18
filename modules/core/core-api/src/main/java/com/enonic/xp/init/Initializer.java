@@ -3,7 +3,7 @@ package com.enonic.xp.init;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.exception.TimeoutException;
+import com.enonic.xp.exception.InitializationException;
 
 public abstract class Initializer
 {
@@ -14,7 +14,6 @@ public abstract class Initializer
     private static final long INITIALIZATION_CHECK_MAX_COUNT = 30;
 
     public void initialize()
-        throws InterruptedException
     {
         if ( isMaster() )
         {
@@ -35,9 +34,16 @@ public abstract class Initializer
                 {
                     return;
                 }
-                Thread.sleep( INITIALIZATION_CHECK_PERIOD );
+                try
+                {
+                    Thread.sleep( INITIALIZATION_CHECK_PERIOD );
+                }
+                catch ( InterruptedException e )
+                {
+                    throw new InitializationException( getInitializationSubject() + " initialization check thread interrupted", e );
+                }
             }
-            throw new TimeoutException( getInitializationSubject() + " not initialized by master node" );
+            throw new InitializationException( getInitializationSubject() + " not initialized by master node" );
         }
     }
 
