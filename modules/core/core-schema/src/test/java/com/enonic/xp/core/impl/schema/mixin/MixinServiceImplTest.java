@@ -296,13 +296,13 @@ public class MixinServiceImplTest
     {
         initializeApps();
 
-        Mixins mixins = service.filterByContentType( MixinNames.from( "myapp1:address" ), ContentTypeName.from( "myapp1:tag" ),
-                                                     new ContentTypeNameWildcardResolver( this.contentTypeService ) );
+        Mixins mixins = service.filterMixinsByContentType( MixinNames.from( "myapp1:address" ), ContentTypeName.from( "myapp1:tag" ),
+                                                           new ContentTypeNameWildcardResolver( this.contentTypeService ) );
         assertEquals( 1, mixins.getSize() );
         assertEquals( "myapp1:address", mixins.get( 0 ).getName().toString() );
 
-        mixins = service.filterByContentType( MixinNames.from( "myapp1:address" ), ContentTypeName.from( "myapp1:unknown" ),
-                                              new ContentTypeNameWildcardResolver( this.contentTypeService ) );
+        mixins = service.filterMixinsByContentType( MixinNames.from( "myapp1:address" ), ContentTypeName.from( "myapp1:unknown" ),
+                                                    new ContentTypeNameWildcardResolver( this.contentTypeService ) );
         assertEquals( 0, mixins.getSize() );
     }
 }

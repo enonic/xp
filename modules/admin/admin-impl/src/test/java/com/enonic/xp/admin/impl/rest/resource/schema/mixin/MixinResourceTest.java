@@ -200,12 +200,12 @@ public class MixinResourceTest
         Mockito.when( mixinService.getByNames( MixinNames.from( mixin1.getName() ) ) ).thenReturn( Mixins.from( mixin1 ) );
         Mockito.when( mixinService.getByNames( MixinNames.from( mixin2.getName() ) ) ).thenReturn( Mixins.from( mixin2 ) );
 
-        Mockito.when( mixinService.filterByContentType( contentType.getMetadata(), contentType.getName(),
-                                                        new ContentTypeNameWildcardResolver( this.contentTypeService ) ) ).thenReturn(
+        Mockito.when( mixinService.filterMixinsByContentType( contentType.getMetadata(), contentType.getName(),
+                                                              new ContentTypeNameWildcardResolver( this.contentTypeService ) ) ).thenReturn(
             Mixins.from( mixin1 ) );
 
-        Mockito.when( mixinService.filterByContentType( MixinNames.from( mixin2.getName() ), contentType.getName(),
-                                                        new ContentTypeNameWildcardResolver( this.contentTypeService ) ) ).thenReturn(
+        Mockito.when( mixinService.filterMixinsByContentType( MixinNames.from( mixin2.getName() ), contentType.getName(),
+                                                              new ContentTypeNameWildcardResolver( this.contentTypeService ) ) ).thenReturn(
             Mixins.from( mixin2 ) );
 
         String result = request().path( "schema/mixin/getContentXData" ).queryParam( "contentId", "contentId" ).get().getAsString();

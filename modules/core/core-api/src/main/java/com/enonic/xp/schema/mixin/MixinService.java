@@ -21,8 +21,8 @@ public interface MixinService
 
     Mixins getByContentType( ContentType contentType );
 
-    Mixins filterByContentType( final MixinNames mixinNames, final ContentTypeName contentTypeName,
-                                final ContentTypeNameWildcardResolver contentTypeNameWildcardResolver );
+    Mixins filterMixinsByContentType( final MixinNames mixinNames, final ContentTypeName contentTypeName,
+                                      final ContentTypeNameWildcardResolver contentTypeNameWildcardResolver );
 
     Form inlineFormItems( Form form );
 }

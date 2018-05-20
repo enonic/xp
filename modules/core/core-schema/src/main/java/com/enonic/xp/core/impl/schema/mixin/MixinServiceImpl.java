@@ -143,8 +143,8 @@ public final class MixinServiceImpl
             collect( Collectors.toSet() ) );
     }
 
-    public Mixins filterByContentType( final MixinNames mixinNames, final ContentTypeName contentTypeName,
-                                       final ContentTypeNameWildcardResolver contentTypeNameWildcardResolver )
+    public Mixins filterMixinsByContentType( final MixinNames mixinNames, final ContentTypeName contentTypeName,
+                                             final ContentTypeNameWildcardResolver contentTypeNameWildcardResolver )
     {
         final Mixins mixins = this.getByNames( mixinNames );
 

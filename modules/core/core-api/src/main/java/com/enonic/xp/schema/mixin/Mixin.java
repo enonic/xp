@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
@@ -17,13 +17,13 @@ public final class Mixin
 {
     private final Form form;
 
-    private final List<String> allowContentTypes;
+    private final ImmutableList<String> allowContentTypes;
 
     private Mixin( final Builder builder )
     {
         super( builder );
         this.form = builder.formBuilder.build();
-        this.allowContentTypes = builder.allowContentTypes;
+        this.allowContentTypes = builder.allowContentTypes.build();
     }
 
     public Form getForm()
@@ -73,7 +73,7 @@ public final class Mixin
     {
         private Form.Builder formBuilder = Form.create();
 
-        private List<String> allowContentTypes = Lists.newArrayList();
+        private ImmutableList.Builder<String> allowContentTypes = ImmutableList.builder();
 
         public Builder()
         {

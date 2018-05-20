@@ -184,8 +184,8 @@ public final class MixinResource
     {
         final ContentType contentType = this.contentTypeService.getByName( GetContentTypeParams.from( content.getType() ) );
 
-        return this.mixinService.filterByContentType( contentType.getMetadata(), contentType.getName(),
-                                                      new ContentTypeNameWildcardResolver( this.contentTypeService ) );
+        return this.mixinService.filterMixinsByContentType( contentType.getMetadata(), contentType.getName(),
+                                                            new ContentTypeNameWildcardResolver( this.contentTypeService ) );
     }
 
     private Mixins getContentInheritedXData( final Content content )
@@ -204,8 +204,8 @@ public final class MixinResource
                     Collectors.toList() );
 
             siteDescriptors.forEach( siteDescriptor -> applicationXDataBuilder.addAll(
-                this.mixinService.filterByContentType( siteDescriptor.getMetaSteps(), content.getType(),
-                                                       new ContentTypeNameWildcardResolver( this.contentTypeService ) ).getList() ) );
+                this.mixinService.filterMixinsByContentType( siteDescriptor.getMetaSteps(), content.getType(),
+                                                             new ContentTypeNameWildcardResolver( this.contentTypeService ) ).getList() ) );
 
         }
         return applicationXDataBuilder.build();
