@@ -6,6 +6,7 @@
   "description": null,
   "displayName": "input_text_1",
   "editable": false,
+  "external": false,
   "form": {
     "formItems": [
       {

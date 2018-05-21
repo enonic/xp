@@ -200,6 +200,8 @@ public class MixinResourceTest
         Mockito.when( mixinService.getByNames( MixinNames.from( mixin1.getName() ) ) ).thenReturn( Mixins.from( mixin1 ) );
         Mockito.when( mixinService.getByNames( MixinNames.from( mixin2.getName() ) ) ).thenReturn( Mixins.from( mixin2 ) );
 
+        Mockito.when( mixinService.getByApplication( Mockito.any() ) ).thenReturn( Mixins.from( mixin2 ) );
+
         Mockito.when( mixinService.filterMixinsByContentType( contentType.getMetadata(), contentType.getName(),
                                                               new ContentTypeNameWildcardResolver( this.contentTypeService ) ) ).thenReturn(
             Mixins.from( mixin1 ) );

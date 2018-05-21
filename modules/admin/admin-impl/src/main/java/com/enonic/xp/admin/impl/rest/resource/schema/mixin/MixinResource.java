@@ -1,5 +1,6 @@
 package com.enonic.xp.admin.impl.rest.resource.schema.mixin;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -20,7 +21,6 @@ import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.admin.impl.json.schema.mixin.MixinJson;
@@ -41,6 +41,7 @@ import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.mixin.MixinNames;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.schema.mixin.Mixins;
 import com.enonic.xp.security.RoleKeys;
@@ -87,25 +88,45 @@ public final class MixinResource
 
         final LocaleMessageResolver localeMessageResolver = new LocaleMessageResolver( this.localeService, mixinName.getApplicationKey() );
 
-        return new MixinJson( mixin, this.mixinIconUrlResolver, localeMessageResolver );
+        return MixinJson.create().setMixin( mixin ).setIconUrlResolver( this.mixinIconUrlResolver ).setLocaleMessageResolver(
+            localeMessageResolver ).build();
     }
 
     @GET
     @Path("getContentXData")
     public MixinListJson getContentXData( @QueryParam("contentId") final String id )
     {
-        final Set<Mixin> allContentXData = Sets.newLinkedHashSet();
-
         final ContentId contentId = ContentId.from( id );
         final Content content = this.contentService.getById( contentId );
 
-        allContentXData.addAll( getContentLocalXData( content ).getList() );
-        allContentXData.addAll( getContentInheritedXData( content ).getList() );
+        final Set<Mixin> internalXData = Sets.newLinkedHashSet();
 
-        return new MixinListJson( allContentXData.stream().map( mixin -> new MixinJson( mixin, this.mixinIconUrlResolver,
-                                                                                        new LocaleMessageResolver( localeService,
-                                                                                                                   mixin.getName().getApplicationKey() ) ) ).collect(
-            Collectors.toList() ) );
+        internalXData.addAll( getContentTypeXData( content ).getList() );
+        internalXData.addAll( getSiteXData( content ).getList() );
+
+        final Set<Mixin> externalXData = getApplicationXData( content ).getList().
+            stream().
+            filter( externalMixin -> !internalXData.contains( externalMixin ) ).
+            collect( Collectors.toSet() );
+
+        final MixinListJson result = new MixinListJson();
+        result.addMixins( createMixinListJson( internalXData ) );
+        result.addMixins( createMixinListJson( externalXData, true ) );
+
+        return result;
+    }
+
+    private List<MixinJson> createMixinListJson( final Collection<Mixin> xDatas, final Boolean isExternal )
+    {
+        return xDatas.stream().map(
+            mixin -> MixinJson.create().setMixin( mixin ).setIconUrlResolver( this.mixinIconUrlResolver ).setLocaleMessageResolver(
+                new LocaleMessageResolver( localeService, mixin.getName().getApplicationKey() ) ).setExternal(
+                isExternal ).build() ).collect( Collectors.toList() );
+    }
+
+    private List<MixinJson> createMixinListJson( final Collection<Mixin> xDatas )
+    {
+        return this.createMixinListJson( xDatas, false );
     }
 
     @GET
@@ -114,14 +135,7 @@ public final class MixinResource
     {
         final Mixins mixins = mixinService.getAll();
 
-        ImmutableList.Builder<MixinJson> mixinJsonBuilder = new ImmutableList.Builder();
-
-        mixins.forEach( mixin -> {
-            mixinJsonBuilder.add( new MixinJson( mixin, this.mixinIconUrlResolver, new LocaleMessageResolver( localeService, mixin.getName().getApplicationKey() ) ) );
-        } );
-
-        return new MixinListJson( mixinJsonBuilder.build() );
-
+        return new MixinListJson( createMixinListJson( mixins.getList() ) );
     }
 
     @GET
@@ -130,19 +144,14 @@ public final class MixinResource
     {
         final Mixins mixins = mixinService.getByApplication( ApplicationKey.from( applicationKey ) );
 
-        ImmutableList.Builder<MixinJson> mixinJsonBuilder = new ImmutableList.Builder();
-
-        mixins.forEach( mixin -> {
-            mixinJsonBuilder.add( new MixinJson( mixin, this.mixinIconUrlResolver, new LocaleMessageResolver( localeService, mixin.getName().getApplicationKey() ) ) );
-        } );
-
-        return new MixinListJson( mixinJsonBuilder.build() );
+        return new MixinListJson( createMixinListJson( mixins.getList() ) );
     }
 
     @GET
     @Path("icon/{mixinName}")
     @Produces("image/*")
-    public Response getIcon( @PathParam("mixinName") final String mixinNameStr, @QueryParam("size") @DefaultValue("128") final int size, @QueryParam("hash") final String hash )
+    public Response getIcon( @PathParam("mixinName") final String mixinNameStr, @QueryParam("size") @DefaultValue("128") final int size,
+                             @QueryParam("hash") final String hash )
         throws Exception
     {
         final MixinName mixinName = MixinName.from( mixinNameStr );
@@ -180,7 +189,7 @@ public final class MixinResource
         return mixinService.getByName( name );
     }
 
-    private Mixins getContentLocalXData( final Content content )
+    private Mixins getContentTypeXData( final Content content )
     {
         final ContentType contentType = this.contentTypeService.getByName( GetContentTypeParams.from( content.getType() ) );
 
@@ -188,7 +197,7 @@ public final class MixinResource
                                                             new ContentTypeNameWildcardResolver( this.contentTypeService ) );
     }
 
-    private Mixins getContentInheritedXData( final Content content )
+    private Mixins getSiteXData( final Content content )
     {
         final Mixins.Builder applicationXDataBuilder = Mixins.create();
 
@@ -209,6 +218,27 @@ public final class MixinResource
 
         }
         return applicationXDataBuilder.build();
+    }
+
+    private Mixins getApplicationXData( final Content content )
+    {
+        final Site nearestSite = this.contentService.getNearestSite( content.getId() );
+
+        if ( nearestSite != null )
+        {
+            final List<ApplicationKey> applicationKeys =
+                nearestSite.getSiteConfigs().stream().map( SiteConfig::getApplicationKey ).collect( Collectors.toList() );
+
+            final List<MixinName> applicationMixinNames =
+                applicationKeys.stream().flatMap( key -> this.mixinService.getByApplication( key ).stream() ).map( Mixin::getName ).collect(
+                    Collectors.toList() );
+
+            return this.mixinService.filterMixinsByContentType( MixinNames.from( applicationMixinNames ), content.getType(),
+                                                                new ContentTypeNameWildcardResolver( this.contentTypeService ) );
+
+        }
+
+        return Mixins.empty();
     }
 
     @Reference
