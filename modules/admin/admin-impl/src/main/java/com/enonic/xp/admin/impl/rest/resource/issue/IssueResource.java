@@ -35,6 +35,7 @@ import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.CreateIssueCommentJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.CreateIssueJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.DeleteIssueCommentJson;
+import com.enonic.xp.admin.impl.rest.resource.issue.json.FindIssuesJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.GetIssuesJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.ListIssueCommentsJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.ListIssuesJson;
@@ -135,6 +136,19 @@ public final class IssueResource
         {
             result.addIssue( issueService.getIssue( id ) );
         }
+
+        return result;
+    }
+
+    @POST
+    @Path("findIssues")
+    public IssuesJson find( final FindIssuesJson params )
+    {
+        final IssueQuery query = createIssueQuery( params.getFindIssuesParams() );
+        final FindIssuesResult findResult = issueService.findIssues( query );
+
+        final IssuesJson result = new IssuesJson();
+        result.addIssues( findResult.getIssues() );
 
         return result;
     }
@@ -322,6 +336,7 @@ public final class IssueResource
         builder.status( params.getStatus() );
         builder.from( params.getFrom() );
         builder.size( params.getSize() );
+        builder.items( params.getItems() );
 
         if ( params.isCreatedByMe() )
         {

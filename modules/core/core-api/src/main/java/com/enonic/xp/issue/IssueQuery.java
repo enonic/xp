@@ -1,5 +1,6 @@
 package com.enonic.xp.issue;
 
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 
@@ -13,6 +14,8 @@ public final class IssueQuery
 
     private final IssueStatus status;
 
+    private final ContentIds items;
+
     private final int from;
 
     private final int size;
@@ -23,6 +26,7 @@ public final class IssueQuery
     {
         this.creator = builder.creator;
         this.approvers = builder.approvers;
+        this.items = builder.items;
         this.status = builder.status;
         this.from = builder.from;
         this.size = builder.size;
@@ -59,6 +63,11 @@ public final class IssueQuery
         return count;
     }
 
+    public ContentIds getItems()
+    {
+        return items;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -70,6 +79,8 @@ public final class IssueQuery
         private PrincipalKey creator;
 
         private PrincipalKeys approvers;
+
+        private ContentIds items;
 
         private IssueStatus status;
 
@@ -97,15 +108,21 @@ public final class IssueQuery
             return this;
         }
 
-        public Builder from( final int from )
+        public Builder from( final Integer from )
         {
-            this.from = from;
+            if ( from != null )
+            {
+                this.from = from;
+            }
             return this;
         }
 
-        public Builder size( final int size )
+        public Builder size( final Integer size )
         {
-            this.size = size;
+            if ( size != null )
+            {
+                this.size = size;
+            }
             return this;
         }
 
@@ -115,6 +132,11 @@ public final class IssueQuery
             return this;
         }
 
+        public Builder items( final ContentIds items )
+        {
+            this.items = items;
+            return this;
+        }
 
         public IssueQuery build()
         {
