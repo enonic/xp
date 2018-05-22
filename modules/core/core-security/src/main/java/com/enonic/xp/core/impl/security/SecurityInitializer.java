@@ -4,13 +4,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.index.IndexService;
+import com.enonic.xp.init.ExternalInitializer;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.security.AuthConfig;
@@ -35,6 +39,7 @@ import static com.enonic.xp.security.acl.UserStoreAccess.ADMINISTRATOR;
 import static com.enonic.xp.security.acl.UserStoreAccess.READ;
 
 final class SecurityInitializer
+    extends ExternalInitializer
 {
     public static final PrincipalKey SUPER_USER = PrincipalKey.ofSuperUser();
 
@@ -56,22 +61,17 @@ final class SecurityInitializer
 
     private final NodeService nodeService;
 
-    public SecurityInitializer( final SecurityService securityService, final NodeService nodeService )
+    public SecurityInitializer( final IndexService indexService, final SecurityService securityService, final NodeService nodeService )
     {
+        super( indexService );
         this.securityService = securityService;
         this.nodeService = nodeService;
     }
 
-    public final void initialize()
+    @Override
+    public final void doInitialize()
     {
-        runAsAdmin( () -> {
-            if ( isInitialized() )
-            {
-                LOG.info( "System-repo [security] layout already initialized" );
-                return;
-            }
-
-            LOG.info( "Initializing system-repo [security] layout" );
+        createAdminContext().runWith( () -> {
 
             initializeUserStoreParentFolder();
             initializeRoleFolder();
@@ -79,23 +79,35 @@ final class SecurityInitializer
 
             createRoles();
             createUsers();
-
-            LOG.info( "System-repo [security] layout successfully initialized" );
-
         } );
     }
 
-    private boolean isInitialized()
+    @Override
+    public boolean isInitialized()
     {
-        return this.nodeService.getByPath( UserStoreNodeTranslator.getRolesNodePath() ) != null &&
-            this.nodeService.getByPath( UserStoreNodeTranslator.getUserStoresParentPath() ) != null;
+        return createAdminContext().
+            callWith( () -> this.nodeService.getByPath( SUPER_USER.toPath()) != null );
     }
 
-    private void runAsAdmin( Runnable runnable )
+    @Override
+    protected String getInitializationSubject()
     {
-        final User admin = User.create().key( SUPER_USER ).login( SUPER_USER.getId() ).build();
-        final AuthenticationInfo authInfo = AuthenticationInfo.create().principals( RoleKeys.ADMIN ).user( admin ).build();
-        ContextBuilder.from( SecurityConstants.CONTEXT_SECURITY ).authInfo( authInfo ).build().runWith( runnable );
+        return "System-repo [security] layout";
+    }
+
+    private Context createAdminContext()
+    {
+        final User admin = User.create().
+            key( SUPER_USER ).
+            login( SUPER_USER.getId() ).
+            build();
+        final AuthenticationInfo authInfo = AuthenticationInfo.create().
+            principals( RoleKeys.ADMIN ).
+            user( admin ).
+            build();
+        return ContextBuilder.from( SecurityConstants.CONTEXT_SECURITY ).
+            authInfo( authInfo ).
+            build();
     }
 
     private void initializeUserStoreParentFolder()

@@ -3,7 +3,10 @@ package com.enonic.xp.core.impl.app;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.index.IndexService;
+import com.enonic.xp.init.ExternalInitializer;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
@@ -13,6 +16,7 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 class ApplicationRepoInitializer
+    extends ExternalInitializer
 {
     private final NodeService nodeService;
 
@@ -20,32 +24,30 @@ class ApplicationRepoInitializer
 
     private static final Logger LOG = LoggerFactory.getLogger( ApplicationRepoInitializer.class );
 
-    public ApplicationRepoInitializer( final NodeService nodeService )
+    public ApplicationRepoInitializer( final IndexService indexService, final NodeService nodeService )
     {
+        super( indexService );
         this.nodeService = nodeService;
     }
 
-    public final void initialize()
+    @Override
+    public final void doInitialize()
     {
-        runAsAdmin( () -> {
-            if ( isInitialized() )
-            {
-                LOG.info( "System-repo [applications] layout already initialized" );
-                return;
-            }
-
-            LOG.info( "Initializing system-repo [applications] layout" );
-
-            initApplicationFolder();
-
-            LOG.info( "System-repo [applications] layout successfully initialized" );
-
-        } );
+        createAdminContext().
+            runWith( () -> initApplicationFolder() );
     }
 
-    private boolean isInitialized()
+    @Override
+    public boolean isInitialized()
     {
-        return this.nodeService.getByPath( ApplicationRepoServiceImpl.APPLICATION_PATH ) != null;
+        return createAdminContext().
+            callWith( () -> this.nodeService.getByPath( ApplicationRepoServiceImpl.APPLICATION_PATH ) != null );
+    }
+
+    @Override
+    protected String getInitializationSubject()
+    {
+        return "System-repo [applications] layout";
     }
 
     private void initApplicationFolder()
@@ -60,11 +62,11 @@ class ApplicationRepoInitializer
             build() );
     }
 
-    private void runAsAdmin( Runnable runnable )
+    private Context createAdminContext()
     {
         final User admin = User.create().key( SUPER_USER ).login( SUPER_USER.getId() ).build();
         final AuthenticationInfo authInfo = AuthenticationInfo.create().principals( RoleKeys.ADMIN ).user( admin ).build();
-        ContextBuilder.from( ApplicationConstants.CONTEXT_APPLICATIONS ).authInfo( authInfo ).build().runWith( runnable );
+        return ContextBuilder.from( ApplicationConstants.CONTEXT_APPLICATIONS ).authInfo( authInfo ).build();
     }
 
 }
