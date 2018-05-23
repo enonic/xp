@@ -183,8 +183,17 @@ public class AbstractIssueServiceTest
 
     private void initializeRepository()
     {
-        new ContentInitializer( this.indexService, this.nodeService, this.repositoryService ).initialize();
-        new IssueInitializer( this.indexService, this.nodeService ).initialize();
+        ContentInitializer.create().
+            setIndexService( indexService ).
+            setNodeService( nodeService ).
+            setRepositoryService( repositoryService ).
+            build().
+            initialize();
+        IssueInitializer.create().
+            setIndexService( indexService ).
+            setNodeService( nodeService ).
+            build().
+            initialize();
         waitForClusterHealth();
     }
 }

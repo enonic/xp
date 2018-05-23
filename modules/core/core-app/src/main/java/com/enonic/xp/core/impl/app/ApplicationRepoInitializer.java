@@ -3,9 +3,10 @@ package com.enonic.xp.core.impl.app;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.index.IndexService;
 import com.enonic.xp.init.ExternalInitializer;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.NodePath;
@@ -24,10 +25,10 @@ class ApplicationRepoInitializer
 
     private static final Logger LOG = LoggerFactory.getLogger( ApplicationRepoInitializer.class );
 
-    public ApplicationRepoInitializer( final IndexService indexService, final NodeService nodeService )
+    public ApplicationRepoInitializer( final Builder builder )
     {
-        super( indexService );
-        this.nodeService = nodeService;
+        super( builder );
+        this.nodeService = builder.nodeService;
     }
 
     @Override
@@ -69,4 +70,33 @@ class ApplicationRepoInitializer
         return ContextBuilder.from( ApplicationConstants.CONTEXT_APPLICATIONS ).authInfo( authInfo ).build();
     }
 
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public static class Builder
+        extends ExternalInitializer.Builder<Builder>
+    {
+        private NodeService nodeService;
+
+        public Builder setNodeService( final NodeService nodeService )
+        {
+            this.nodeService = nodeService;
+            return this;
+        }
+
+        @Override
+        protected void validate()
+        {
+            super.validate();
+            Preconditions.checkNotNull( nodeService );
+        }
+
+        public ApplicationRepoInitializer build()
+        {
+            validate();
+            return new ApplicationRepoInitializer( this );
+        }
+    }
 }

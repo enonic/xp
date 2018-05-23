@@ -23,25 +23,10 @@ public class ExternalInitializerTest
 
     private ExternalInitializer createExternalInitializer( final IndexService indexService )
     {
-        return new ExternalInitializer( indexService )
-        {
-            @Override
-            protected boolean isInitialized()
-            {
-                return false;
-            }
-
-            @Override
-            protected void doInitialize()
-            {
-
-            }
-
-            @Override
-            protected String getInitializationSubject()
-            {
-                return null;
-            }
-        };
+        return TestExternalInitializer.create().
+            setInitializationCheckMaxCount( 2l ).
+            setInitializationCheckPeriod( 1l ).
+            setIndexService( indexService ).
+            build();
     }
 }

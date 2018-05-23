@@ -5,6 +5,8 @@ import java.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.context.Context;
@@ -76,13 +78,13 @@ public final class ContentInitializer
 
     private final NodeService nodeService;
 
-    private final RepositoryService repositoryService;
+    private final RepositoryService repositoryService;  
 
-    public ContentInitializer( final IndexService indexService, final NodeService nodeService, final RepositoryService repositoryService )
+    public ContentInitializer( final Builder builder )
     {
-        super( indexService );
-        this.nodeService = nodeService;
-        this.repositoryService = repositoryService;
+        super( builder );
+        this.nodeService = builder.nodeService;
+        this.repositoryService = builder.repositoryService;
     }
 
     @Override
@@ -173,6 +175,44 @@ public final class ContentInitializer
             principals( RoleKeys.ADMIN ).
             user( SUPER_USER ).
             build();
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public static class Builder
+        extends ExternalInitializer.Builder<Builder>
+    {
+        private NodeService nodeService;
+
+        private RepositoryService repositoryService;
+
+        public Builder setNodeService( final NodeService nodeService )
+        {
+            this.nodeService = nodeService;
+            return this;
+        }
+
+        public Builder setRepositoryService( final RepositoryService repositoryService )
+        {
+            this.repositoryService = repositoryService;
+            return this;
+        }
+
+        @Override
+        protected void validate()
+        {
+            super.validate();
+            Preconditions.checkNotNull( nodeService );
+        }
+
+        public ContentInitializer build()
+        {
+            validate();
+            return new ContentInitializer( this );
+        }
     }
 
 }

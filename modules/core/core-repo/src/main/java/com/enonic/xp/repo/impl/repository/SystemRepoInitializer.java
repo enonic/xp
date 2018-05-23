@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl.repository;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -29,14 +31,15 @@ public class SystemRepoInitializer
 
     private final RepositoryService repositoryService;
 
-    private NodeStorageService nodeStorageService;
+    private final NodeStorageService nodeStorageService;
 
-    public SystemRepoInitializer( final IndexServiceInternal indexServiceInternal, final RepositoryService repositoryService,
-                                  final NodeStorageService nodeStorageService )
+
+    public SystemRepoInitializer( final Builder builder )
     {
-        this.indexServiceInternal = indexServiceInternal;
-        this.repositoryService = repositoryService;
-        this.nodeStorageService = nodeStorageService;
+        super( builder );
+        this.indexServiceInternal = builder.indexServiceInternal;
+        this.repositoryService = builder.repositoryService;
+        this.nodeStorageService = builder.nodeStorageService;
     }
 
     @Override
@@ -104,5 +107,51 @@ public class SystemRepoInitializer
         final User admin = User.create().key( SUPER_USER ).login( SUPER_USER.getId() ).build();
         final AuthenticationInfo authInfo = AuthenticationInfo.create().principals( RoleKeys.ADMIN ).user( admin ).build();
         return ContextBuilder.from( SecurityConstants.CONTEXT_SECURITY ).authInfo( authInfo ).build();
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public static class Builder
+        extends Initializer.Builder<Builder>
+    {
+        private IndexServiceInternal indexServiceInternal;
+
+        private RepositoryService repositoryService;
+
+        private NodeStorageService nodeStorageService;
+
+        public Builder setIndexServiceInternal( final IndexServiceInternal indexServiceInternal )
+        {
+            this.indexServiceInternal = indexServiceInternal;
+            return this;
+        }
+
+        public Builder setRepositoryService( final RepositoryService repositoryService )
+        {
+            this.repositoryService = repositoryService;
+            return this;
+        }
+
+        public Builder setNodeStorageService( final NodeStorageService nodeStorageService )
+        {
+            this.nodeStorageService = nodeStorageService;
+            return this;
+        }
+
+        protected void validate()
+        {
+            Preconditions.checkNotNull( indexServiceInternal );
+            Preconditions.checkNotNull( repositoryService );
+            Preconditions.checkNotNull( nodeStorageService );
+        }
+
+        public SystemRepoInitializer build()
+        {
+            validate();
+            return new SystemRepoInitializer( this );
+        }
     }
 }

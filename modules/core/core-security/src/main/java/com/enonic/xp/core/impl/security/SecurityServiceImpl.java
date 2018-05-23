@@ -146,7 +146,12 @@ public final class SecurityServiceImpl
     public void initialize()
     {
         initializeSuPassword();
-        new SecurityInitializer( indexService, this, this.nodeService ).initialize();
+        SecurityInitializer.create().
+            setIndexService( indexService ).
+            setSecurityService( this ).
+            setNodeService( nodeService ).
+            build().
+            initialize();
     }
 
     private void initializeSuPassword()

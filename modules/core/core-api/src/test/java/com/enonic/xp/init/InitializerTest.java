@@ -52,31 +52,11 @@ public class InitializerTest
 
     private Initializer createInitializer( final boolean isMaster, final boolean isInitialized, final Runnable initialization )
     {
-        return new Initializer()
-        {
-            @Override
-            protected boolean isMaster()
-            {
-                return isMaster;
-            }
-
-            @Override
-            protected boolean isInitialized()
-            {
-                return isInitialized;
-            }
-
-            @Override
-            protected void doInitialize()
-            {
-                initialization.run();
-            }
-
-            @Override
-            protected String getInitializationSubject()
-            {
-                return "Initialization test";
-            }
-        };
+        return TestInitializer.create().
+            setInitializationCheckMaxCount( 2l ).
+            setInitializationCheckPeriod( 1l ).
+            setMaster( isMaster ).
+            setInitialized( isInitialized ).setInitialization( initialization ).
+            build();
     }
 }

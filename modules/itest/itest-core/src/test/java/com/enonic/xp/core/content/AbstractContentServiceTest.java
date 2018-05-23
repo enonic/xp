@@ -306,7 +306,11 @@ public class AbstractContentServiceTest
 
     private void initializeRepository()
     {
-        new ContentInitializer(this.indexService, this.nodeService, this.repositoryService ).
+        ContentInitializer.create().
+            setIndexService( indexService ).
+            setNodeService( nodeService ).
+            setRepositoryService( repositoryService ).
+            build().
             initialize();
         waitForClusterHealth();
     }
