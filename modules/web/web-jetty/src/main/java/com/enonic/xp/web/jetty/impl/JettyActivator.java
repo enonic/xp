@@ -5,6 +5,7 @@ import java.util.Hashtable;
 
 import javax.servlet.ServletContext;
 
+import org.eclipse.jetty.server.session.SessionDataStore;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Activate;
@@ -35,6 +36,8 @@ public final class JettyActivator
 
     private ClusterConfig clusterConfig;
 
+    private SessionDataStore sessionDataStore;
+
     @Activate
     public void activate( final BundleContext context, final JettyConfig config )
         throws Exception
@@ -46,6 +49,7 @@ public final class JettyActivator
         this.service = new JettyService();
         this.service.config = this.config;
         this.service.workerName = clusterConfig.name().toString();
+        this.service.sessionDataStore = sessionDataStore;
 
         this.service.dispatcherServlet = this.dispatchServlet;
         this.service.start();
@@ -112,5 +116,11 @@ public final class JettyActivator
     public void setClusterConfig( final ClusterConfig clusterConfig )
     {
         this.clusterConfig = clusterConfig;
+    }
+
+    @Reference
+    public void setSessionDataStore( final SessionDataStore sessionDataStore )
+    {
+        this.sessionDataStore = sessionDataStore;
     }
 }

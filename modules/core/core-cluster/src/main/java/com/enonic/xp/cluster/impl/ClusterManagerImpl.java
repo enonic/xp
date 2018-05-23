@@ -70,7 +70,7 @@ public class ClusterManagerImpl
     {
         if ( !this.isHealthy )
         {
-            LOG.info( "Deactivating all providers" );
+            LOG.info( "Activating all providers" );
         }
 
         this.instances.forEach( Cluster::enable );

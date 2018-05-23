@@ -10,7 +10,7 @@ import org.mockito.Mockito;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import com.enonic.xp.support.JsonTestHelper;
-import com.enonic.xp.web.session.impl.WebSessionFilter;
+import com.enonic.xp.web.session.impl.IgniteSessionDataStore;
 
 import static org.junit.Assert.*;
 
@@ -32,10 +32,10 @@ public class WebSessionReporterTest
         this.cache = (IgniteCache<Object, Object>) Mockito.mock( IgniteCache.class );
         this.cacheMetrics = Mockito.mock( CacheMetrics.class );
 
-        Mockito.when( this.ignite.cache( WebSessionFilter.WEB_SESSION_CACHE ) ).thenReturn( this.cache );
+        Mockito.when( this.ignite.cache( IgniteSessionDataStore.WEB_SESSION_CACHE ) ).thenReturn( this.cache );
         Mockito.when( this.cache.metrics() ).thenReturn( this.cacheMetrics );
         Mockito.when( this.cache.size() ).thenReturn( 123 );
-        Mockito.when( this.cache.getName() ).thenReturn( WebSessionFilter.WEB_SESSION_CACHE );
+        Mockito.when( this.cache.getName() ).thenReturn( IgniteSessionDataStore.WEB_SESSION_CACHE );
     }
 
     @Test
@@ -48,7 +48,7 @@ public class WebSessionReporterTest
         final WebSessionReporter reporter = new WebSessionReporter();
         reporter.setIgnite( this.ignite );
 
-        assertEquals( reporter.getName(), "cache." + WebSessionFilter.WEB_SESSION_CACHE );
+        assertEquals( reporter.getName(), "cache." + IgniteSessionDataStore.WEB_SESSION_CACHE );
 
         final JsonNode result = reporter.getReport();
         assertJson( "metrics.json", result );
