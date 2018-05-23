@@ -28,9 +28,6 @@ import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.InlineMixin;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.content.ContentType;
-import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.content.ContentTypeNameWildcardResolver;
-import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinNames;
@@ -141,40 +138,6 @@ public final class MixinServiceImpl
             map( this::getByName ).
             filter( Objects::nonNull ).
             collect( Collectors.toSet() ) );
-    }
-
-    public Mixins filterMixinsByContentType( final MixinNames mixinNames, final ContentTypeName contentTypeName,
-                                             final ContentTypeNameWildcardResolver contentTypeNameWildcardResolver )
-    {
-        final Mixins mixins = this.getByNames( mixinNames );
-
-        final Mixins.Builder filteredMixins = Mixins.create();
-
-        mixins.forEach( mixin -> {
-            if ( contentTypeNameWildcardResolver.anyTypeHasWildcard( mixin.getAllowContentTypes() ) )
-            {
-                final ContentTypeNames validContentTypes = ContentTypeNames.from(
-                    contentTypeNameWildcardResolver.resolveWildcards( mixin.getAllowContentTypes(), mixin.getName().getApplicationKey() ) );
-
-                if ( validContentTypes.contains( contentTypeName ) )
-                {
-                    filteredMixins.add( mixin );
-                }
-            }
-            else if ( mixin.getAllowContentTypes().size() > 0 )
-            {
-                if ( ContentTypeNames.from( mixin.getAllowContentTypes() ).contains( contentTypeName ) )
-                {
-                    filteredMixins.add( mixin );
-                }
-            }
-            else
-            {
-                filteredMixins.add( mixin );
-            }
-        } );
-
-        return filteredMixins.build();
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.enonic.xp.schema.content;
+package com.enonic.xp.admin.impl.rest.resource.schema.mixin;
 
 import java.time.Instant;
 import java.util.List;
@@ -11,6 +11,10 @@ import com.google.common.collect.Lists;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.icon.Icon;
+import com.enonic.xp.schema.content.ContentType;
+import com.enonic.xp.schema.content.ContentTypeService;
+import com.enonic.xp.schema.content.ContentTypes;
+import com.enonic.xp.schema.content.GetAllContentTypesParams;
 
 import static org.junit.Assert.*;
 

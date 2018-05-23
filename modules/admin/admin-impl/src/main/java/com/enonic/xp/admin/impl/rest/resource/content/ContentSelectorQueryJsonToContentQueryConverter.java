@@ -5,6 +5,7 @@ import java.util.List;
 import com.google.common.base.Strings;
 
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentSelectorQueryJson;
+import com.enonic.xp.admin.impl.rest.resource.schema.mixin.ContentTypeNameWildcardResolver;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentQuery;
@@ -18,7 +19,6 @@ import com.enonic.xp.query.expr.LogicalExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.query.parser.QueryParser;
-import com.enonic.xp.schema.content.ContentTypeNameWildcardResolver;
 import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.relationship.RelationshipType;

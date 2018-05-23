@@ -1,4 +1,4 @@
-package com.enonic.xp.schema.content;
+package com.enonic.xp.admin.impl.rest.resource.schema.mixin;
 
 import java.util.List;
 import java.util.Objects;
@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 import org.codehaus.jparsec.util.Lists;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.schema.content.ContentTypeService;
+import com.enonic.xp.schema.content.GetAllContentTypesParams;
 
 public class ContentTypeNameWildcardResolver
 {

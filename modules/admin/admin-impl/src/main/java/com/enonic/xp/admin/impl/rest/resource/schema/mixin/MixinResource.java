@@ -36,7 +36,8 @@ import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.schema.content.ContentType;
-import com.enonic.xp.schema.content.ContentTypeNameWildcardResolver;
+import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.mixin.Mixin;
@@ -193,8 +194,7 @@ public final class MixinResource
     {
         final ContentType contentType = this.contentTypeService.getByName( GetContentTypeParams.from( content.getType() ) );
 
-        return this.mixinService.filterMixinsByContentType( contentType.getMetadata(), contentType.getName(),
-                                                            new ContentTypeNameWildcardResolver( this.contentTypeService ) );
+        return this.filterMixinsByContentType( contentType.getMetadata(), contentType.getName() );
     }
 
     private Mixins getSiteXData( final Content content )
@@ -213,11 +213,46 @@ public final class MixinResource
                     Collectors.toList() );
 
             siteDescriptors.forEach( siteDescriptor -> applicationXDataBuilder.addAll(
-                this.mixinService.filterMixinsByContentType( siteDescriptor.getMetaSteps(), content.getType(),
-                                                             new ContentTypeNameWildcardResolver( this.contentTypeService ) ).getList() ) );
+                this.filterMixinsByContentType( siteDescriptor.getMetaSteps(), content.getType() ).getList() ) );
 
         }
         return applicationXDataBuilder.build();
+    }
+
+    private Mixins filterMixinsByContentType( final MixinNames mixinNames, final ContentTypeName contentTypeName )
+    {
+        final Mixins mixins = this.mixinService.getByNames( mixinNames );
+
+        final Mixins.Builder filteredMixins = Mixins.create();
+
+        final ContentTypeNameWildcardResolver contentTypeNameWildcardResolver =
+            new ContentTypeNameWildcardResolver( this.contentTypeService );
+
+        mixins.forEach( mixin -> {
+            if ( contentTypeNameWildcardResolver.anyTypeHasWildcard( mixin.getAllowContentTypes() ) )
+            {
+                final ContentTypeNames validContentTypes = ContentTypeNames.from(
+                    contentTypeNameWildcardResolver.resolveWildcards( mixin.getAllowContentTypes(), mixin.getName().getApplicationKey() ) );
+
+                if ( validContentTypes.contains( contentTypeName ) )
+                {
+                    filteredMixins.add( mixin );
+                }
+            }
+            else if ( mixin.getAllowContentTypes().size() > 0 )
+            {
+                if ( ContentTypeNames.from( mixin.getAllowContentTypes() ).contains( contentTypeName ) )
+                {
+                    filteredMixins.add( mixin );
+                }
+            }
+            else
+            {
+                filteredMixins.add( mixin );
+            }
+        } );
+
+        return filteredMixins.build();
     }
 
     private Mixins getApplicationXData( final Content content )
@@ -233,8 +268,7 @@ public final class MixinResource
                 applicationKeys.stream().flatMap( key -> this.mixinService.getByApplication( key ).stream() ).map( Mixin::getName ).collect(
                     Collectors.toList() );
 
-            return this.mixinService.filterMixinsByContentType( MixinNames.from( applicationMixinNames ), content.getType(),
-                                                                new ContentTypeNameWildcardResolver( this.contentTypeService ) );
+            return this.filterMixinsByContentType( MixinNames.from( applicationMixinNames ), content.getType() );
 
         }
 
