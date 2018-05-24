@@ -27,6 +27,7 @@ public abstract class ExternalInitializer
     {
         protected IndexService indexService;
 
+        @SuppressWarnings("unchecked")
         public T setIndexService( final IndexService indexService )
         {
             this.indexService = indexService;

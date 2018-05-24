@@ -74,12 +74,14 @@ public abstract class Initializer
 
         private Long initializationCheckMaxCount;
 
+        @SuppressWarnings("unchecked")
         public T setInitializationCheckPeriod( final Long initializationCheckPeriod )
         {
             this.initializationCheckPeriod = initializationCheckPeriod;
             return (T) this;
         }
 
+        @SuppressWarnings("unchecked")
         public T setInitializationCheckMaxCount( final Long initializationCheckMaxCount )
         {
             this.initializationCheckMaxCount = initializationCheckMaxCount;
