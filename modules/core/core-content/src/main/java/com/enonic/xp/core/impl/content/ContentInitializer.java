@@ -80,7 +80,7 @@ public final class ContentInitializer
 
     private final RepositoryService repositoryService;  
 
-    public ContentInitializer( final Builder builder )
+    private ContentInitializer( final Builder builder )
     {
         super( builder );
         this.nodeService = builder.nodeService;

@@ -61,7 +61,7 @@ final class SecurityInitializer
 
     private final NodeService nodeService;
 
-    public SecurityInitializer( final Builder builder )
+    private SecurityInitializer( final Builder builder )
     {
         super( builder );
         this.securityService = builder.securityService;

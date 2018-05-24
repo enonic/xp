@@ -25,7 +25,7 @@ class ApplicationRepoInitializer
 
     private static final Logger LOG = LoggerFactory.getLogger( ApplicationRepoInitializer.class );
 
-    public ApplicationRepoInitializer( final Builder builder )
+    private ApplicationRepoInitializer( final Builder builder )
     {
         super( builder );
         this.nodeService = builder.nodeService;

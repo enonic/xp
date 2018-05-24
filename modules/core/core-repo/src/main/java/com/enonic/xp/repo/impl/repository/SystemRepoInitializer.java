@@ -34,7 +34,7 @@ public class SystemRepoInitializer
     private final NodeStorageService nodeStorageService;
 
 
-    public SystemRepoInitializer( final Builder builder )
+    private SystemRepoInitializer( final Builder builder )
     {
         super( builder );
         this.indexServiceInternal = builder.indexServiceInternal;

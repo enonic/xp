@@ -56,7 +56,7 @@ public class IssueInitializer
         login( PrincipalKey.ofSuperUser().getId() ).
         build();
 
-    public IssueInitializer( final Builder builder )
+    private IssueInitializer( final Builder builder )
     {
         super( builder );
         this.nodeService = builder.nodeService;
