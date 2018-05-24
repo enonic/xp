@@ -5,6 +5,9 @@ import javax.servlet.Servlet;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.session.DefaultSessionIdManager;
+import org.eclipse.jetty.server.session.NullSessionCache;
+import org.eclipse.jetty.server.session.SessionDataStore;
+import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.slf4j.Logger;
@@ -32,6 +35,8 @@ final class JettyService
     protected ServletContextHandler context;
 
     protected String workerName;
+
+    protected SessionDataStore sessionDataStore;
 
     public void start()
     {
@@ -69,7 +74,8 @@ final class JettyService
         this.server = new Server();
 
         this.context = new ServletContextHandler( null, "/", ServletContextHandler.SESSIONS );
-        new SessionConfigurator().configure( this.config, this.context.getSessionHandler() );
+        final SessionHandler sessionHandler = this.context.getSessionHandler();
+        new SessionConfigurator().configure( this.config, sessionHandler );
         new GZipConfigurator().configure( this.config, this.context );
         new RequestLogConfigurator().configure( this.config, this.server );
 
@@ -89,6 +95,16 @@ final class JettyService
         final DefaultSessionIdManager sessionManager = new DefaultSessionIdManager( this.server );
         sessionManager.setWorkerName( this.workerName );
         this.server.setSessionIdManager( sessionManager );
+
+        if ( sessionDataStore != null )
+        {
+            final NullSessionCache sessionCache = new NullSessionCache( sessionHandler );
+            sessionCache.setSaveOnCreate( true );
+            sessionCache.setSaveOnInactiveEviction( true );
+            sessionCache.setRemoveUnloadableSessions( true );
+            sessionCache.setSessionDataStore( sessionDataStore );
+            sessionHandler.setSessionCache( sessionCache );
+        }
 
         this.server.start();
     }

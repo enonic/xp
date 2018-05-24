@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.enonic.xp.status.JsonStatusReporter;
 import com.enonic.xp.status.StatusReporter;
 
-import static com.enonic.xp.web.session.impl.WebSessionFilter.WEB_SESSION_CACHE;
+import static com.enonic.xp.web.session.impl.IgniteSessionDataStore.WEB_SESSION_CACHE;
 
 @SuppressWarnings("unused")
 @Component(immediate = true, service = StatusReporter.class)
