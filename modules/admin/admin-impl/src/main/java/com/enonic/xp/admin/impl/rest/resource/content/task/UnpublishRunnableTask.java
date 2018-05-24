@@ -13,7 +13,6 @@ import com.enonic.xp.content.CompareContentsParams;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentIds;
-import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.PushContentListener;
 import com.enonic.xp.content.UnpublishContentParams;
@@ -81,7 +80,7 @@ public class UnpublishRunnableTask
 
             if ( unpublishedContents.getSize() == 1 )
             {
-                resultBuilder.succeeded( ContentPath.from( result.getContentName() ) );
+                resultBuilder.succeeded( result.getContentPath() );
             }
             else
             {

@@ -1,8 +1,17 @@
 package com.enonic.xp.security.auth;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.time.Instant;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
@@ -12,12 +21,15 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 @Beta
 public final class AuthenticationInfo
+    implements Serializable
 {
-    private final User user;
+    private static final long serialVersionUID = 5464920698278527343L;
 
-    private final PrincipalKeys principals;
+    private transient User user;
 
-    private final boolean authenticated;
+    private transient PrincipalKeys principals;
+
+    private transient boolean authenticated;
 
     private AuthenticationInfo( final Builder builder )
     {
@@ -74,6 +86,70 @@ public final class AuthenticationInfo
         return new Builder( false ).principals( PrincipalKey.ofAnonymous(), RoleKeys.EVERYONE ).build();
     }
 
+    private void readObject( ObjectInputStream ois )
+        throws ClassNotFoundException, IOException
+    {
+        this.authenticated = ois.readBoolean();
+        this.principals = PrincipalKeys.from( ois.readUTF().split( "," ) );
+        this.user = deserializeUser( ois );
+    }
+
+    private void writeObject( ObjectOutputStream oos )
+        throws IOException
+    {
+        oos.writeBoolean( authenticated );
+        String principalKeys = principals.stream().map( PrincipalKey::toString ).collect( Collectors.joining( "," ) );
+        oos.writeUTF( principalKeys );
+        serializeUser( oos, this.user );
+    }
+
+    private void serializeUser( final ObjectOutputStream oos, final User user )
+        throws IOException
+    {
+        oos.writeUTF( user.getKey().toString() );
+        oos.writeObject( user.getDisplayName() );
+        oos.writeObject( user.getModifiedTime() );
+        oos.writeObject( user.getEmail() );
+        oos.writeUTF( user.getLogin() );
+        oos.writeBoolean( user.isDisabled() );
+        oos.writeObject( user.getProfile() );
+    }
+
+    private User deserializeUser( final ObjectInputStream ois )
+        throws IOException, ClassNotFoundException
+    {
+        User.Builder user = User.create();
+        user.key( PrincipalKey.from( ois.readUTF() ) );
+        user.displayName( (String) ois.readObject() );
+        user.modifiedTime( (Instant) ois.readObject() );
+        user.email( (String) ois.readObject() );
+        user.login( ois.readUTF() );
+        user.disabled( ois.readBoolean() );
+        user.profile( (PropertyTree) ois.readObject() );
+        return user.build();
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+        final AuthenticationInfo that = (AuthenticationInfo) o;
+        return authenticated == that.authenticated && Objects.equals( user, that.user ) && Objects.equals( principals, that.principals );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( user, principals, authenticated );
+    }
+
     public static class Builder
     {
         private User user;
@@ -123,42 +199,4 @@ public final class AuthenticationInfo
         }
     }
 
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-
-        final AuthenticationInfo that = (AuthenticationInfo) o;
-
-        if ( authenticated != that.authenticated )
-        {
-            return false;
-        }
-        if ( principals != null ? !principals.equals( that.principals ) : that.principals != null )
-        {
-            return false;
-        }
-        if ( user != null ? !user.equals( that.user ) : that.user != null )
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public int hashCode()
-    {
-        int result = user != null ? user.hashCode() : 0;
-        result = 31 * result + ( principals != null ? principals.hashCode() : 0 );
-        result = 31 * result + ( authenticated ? 1 : 0 );
-        return result;
-    }
 }

@@ -11,7 +11,7 @@ class UnpublishTaskMessageGenerator
 
     void appendMessageForSingleFailure( final StringBuilder builder, final UnpublishRunnableTaskResult result )
     {
-        builder.append( String.format( "Item \"%s\" could not be unpublished.", result.getFailed().get( 0 ).toString() ) );
+        builder.append( String.format( "Item \"%s\" could not be unpublished.", result.getFailed().get( 0 ).getName() ) );
     }
 
     void appendMessageForMultipleFailure( final StringBuilder builder, final UnpublishRunnableTaskResult result )
@@ -21,7 +21,7 @@ class UnpublishTaskMessageGenerator
 
     void appendMessageForSingleSuccess( final StringBuilder builder, final UnpublishRunnableTaskResult result )
     {
-        builder.append( String.format( "Item \"%s\" was unpublished.", result.getSucceeded().get( 0 ).toString() ) );
+        builder.append( String.format( "Item \"%s\" was unpublished.", result.getSucceeded().get( 0 ).getName() ) );
     }
 
     void appendMessageForMultipleSuccess( final StringBuilder builder, final UnpublishRunnableTaskResult result )

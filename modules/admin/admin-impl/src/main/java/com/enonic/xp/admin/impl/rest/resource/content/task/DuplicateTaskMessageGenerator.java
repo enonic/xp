@@ -10,12 +10,12 @@ class DuplicateTaskMessageGenerator
     @Override
     String getNoResultsMessage()
     {
-        return "Nothing to duplicate duplicated.";
+        return "Nothing to duplicate.";
     }
 
     void appendMessageForSingleFailure( final StringBuilder builder, final DuplicateRunnableTaskResult result )
     {
-        builder.append( String.format( "Item \"%s\" failed to be duplicated.", result.getFailed().get( 0 ).getName() ) );
+        builder.append( String.format( "Item \"%s\" could not be duplicated.", result.getFailed().get( 0 ).getName() ) );
     }
 
     void appendMessageForMultipleFailure( final StringBuilder builder, final DuplicateRunnableTaskResult result )
@@ -33,7 +33,7 @@ class DuplicateTaskMessageGenerator
         }
         else if ( succeeded != null && succeeded.size() == 1 )
         {
-            builder.append( String.format( "Item \"%s\" was duplicated.", succeeded.get( 0 ) ) );
+            builder.append( String.format( "Item \"%s\" was duplicated.", succeeded.get( 0 ).getName() ) );
         }
     }
 

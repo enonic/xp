@@ -15,7 +15,7 @@ class PublishTaskMessageGenerator
 
     void appendMessageForSingleFailure( final StringBuilder builder, final PublishRunnableTaskResult result )
     {
-        builder.append( String.format( "Item \"%s\" could not be published.", result.getFailed().get( 0 ).toString() ) );
+        builder.append( String.format( "Item \"%s\" could not be published.", result.getFailed().get( 0 ).getName() ) );
     }
 
     void appendMessageForMultipleFailure( final StringBuilder builder, final PublishRunnableTaskResult result )
@@ -29,11 +29,11 @@ class PublishTaskMessageGenerator
         final List<ContentPath> published = result.getSucceeded();
         if ( deleted != null && deleted.size() == 1 )
         {
-            builder.append( String.format( "Item \"%s\" was deleted.", deleted.get( 0 ).toString() ) );
+            builder.append( String.format( "Item \"%s\" was deleted.", deleted.get( 0 ).getName() ) );
         }
         else if ( published != null && published.size() == 1 )
         {
-            builder.append( String.format( "Item \"%s\" was published.", published.get( 0 ) ) );
+            builder.append( String.format( "Item \"%s\" was published.", published.get( 0 ).getName() ) );
         }
     }
 

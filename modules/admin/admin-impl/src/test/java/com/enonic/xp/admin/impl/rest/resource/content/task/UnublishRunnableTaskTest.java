@@ -98,7 +98,7 @@ public class UnublishRunnableTaskTest
     {
         final UnpublishContentsResult result = UnpublishContentsResult.create().
             addUnpublished( contents.get( 0 ).getId() ).
-            setContentName( contents.get( 0 ).getDisplayName() ).
+            setContentPath( contents.get( 0 ).getPath() ).
             build();
 
         Set<String> ids = Collections.singleton( contents.get( 0 ).getId().toString() );
@@ -117,7 +117,7 @@ public class UnublishRunnableTaskTest
 
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
 
-        Assert.assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"Item \\\"Content 1\\\" was unpublished.\"}", resultMessage );
+        Assert.assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"Item \\\"content1\\\" was unpublished.\"}", resultMessage );
     }
 
     @Test

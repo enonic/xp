@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.SerializationUtils;
 import org.junit.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -772,6 +773,63 @@ public class PropertyTreeTest
         assertEquals( instant3, tree.getInstants( "instant3" ).iterator().next() );
     }
 
+    @Test
+    public void setSerialization()
+    {
+        PropertyTree source = createTreeWithAllTypes();
+
+        final byte[] serializedObject = SerializationUtils.serialize( source );
+        final PropertyTree deserializedObject = (PropertyTree) SerializationUtils.deserialize( serializedObject );
+
+        assertEquals( source, deserializedObject );
+    }
+
+    private PropertyTree createTreeWithAllTypes()
+    {
+        final PropertyTree tree = new PropertyTree();
+        tree.addString( "singleString", "a" );
+        tree.addString( "nullString", null );
+        tree.addXml( "singleXML", "<xml>Hello</xml>" );
+        tree.addBoolean( "singleBoolean", true );
+        tree.addLong( "singleLong", 1L );
+        tree.addDouble( "singleDouble", 1.1 );
+        tree.addGeoPoint( "singleGeoPoint", GeoPoint.from( "1.1,-2.2" ) );
+        tree.addLocalDate( "singleLocalDate", LocalDate.of( 2006, 1, 8 ) );
+        tree.addLocalDateTime( "singleLocalDateTime", LocalDateTime.of( 2006, 1, 8, 12, 0, 0 ) );
+        tree.addLocalTime( "singleLocalTime", LocalTime.of( 12, 0, 0 ) );
+        tree.addInstant( "singleInstant", Instant.parse( "2007-12-03T10:15:30.00Z" ) );
+        tree.addReference( "reference", Reference.from( "my-node-id" ) );
+        tree.addBinaryReference( "binaryRef", BinaryReference.from( "myImage" ) );
+        tree.addLink( "link", Link.from( "/root/my-node" ) );
+        PropertySet singleSet = tree.addSet( "singleSet" );
+        singleSet.addLong( "long", 1L );
+        PropertySet setWithinSet = singleSet.addSet( "setWithinSet" );
+        setWithinSet.addLong( "long", 1L );
+
+        tree.addStrings( "arrayString", "a", "b" );
+        tree.addXmls( "arrayXML", "<xml>Hello</xml>", "<xml>World</xml>" );
+        tree.addBooleans( "arrayBoolean", true, false );
+        tree.addLongs( "arrayLong", 1L, 2L );
+        tree.addDoubles( "arrayDouble", 1.1, 1.2 );
+        tree.addLocalDates( "arrayLocalDates", LocalDate.of( 2006, 1, 8 ), LocalDate.of( 2015, 1, 31 ) );
+        tree.addLocalDateTimes( "arrayLocalDateTimes", LocalDateTime.of( 2006, 1, 8, 12, 0, 0 ),
+                                LocalDateTime.of( 2015, 1, 31, 12, 0, 0 ) );
+        tree.addGeoPoints( "arrayGeoPoint", GeoPoint.from( "1.1,-2.2" ), GeoPoint.from( "-2.2,1.1" ) );
+        tree.addReferences( "references", Reference.from( "my-node-id-1" ), Reference.from( "my-node-id-2" ) );
+        tree.addLinks( "links", Link.from( "/root/my-node-1" ), Link.from( "/root/my-node-2" ) );
+        tree.addBinaryReferences( "binaryReferences", BinaryReference.from( "image1" ), BinaryReference.from( "image2" ) );
+
+        PropertySet arraySet1 = tree.addSet( "arraySet" );
+        arraySet1.addString( "string", "a" );
+        arraySet1.addLongs( "long", 1L, 2L );
+        PropertySet arraySet2 = tree.addSet( "arraySet" );
+        arraySet2.addStrings( "string", "b", "c" );
+        arraySet2.addLong( "long", 2L );
+
+        tree.addSet( "nullSet", null );
+
+        return tree;
+    }
 
 }
 

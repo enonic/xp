@@ -8,6 +8,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.admin.tool.AdminToolDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
@@ -88,6 +89,10 @@ public final class AdminToolHandler
         trace.put( "path", webRequest.getPath() );
         trace.put( "method", webRequest.getMethod().toString() );
         trace.put( "host", webRequest.getHost() );
+        trace.put( "httpRequest", webRequest );
+        trace.put( "httpResponse", webResponse );
+        trace.put( "context", ContextAccessor.current() );
+
         return Tracer.traceEx( trace, () -> {
             final PortalResponse response = worker.execute();
             addTraceInfo( trace, response );

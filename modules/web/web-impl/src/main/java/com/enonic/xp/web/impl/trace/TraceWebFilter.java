@@ -2,6 +2,7 @@ package com.enonic.xp.web.impl.trace;
 
 import org.osgi.service.component.annotations.Component;
 
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.WebRequest;
@@ -42,9 +43,11 @@ public final class TraceWebFilter
         trace.put( "url", ServletRequestUrlHelper.getFullUrl( req.getRawRequest() ) );
         trace.put( "method", req.getMethod().toString() );
         trace.put( "host", req.getHost() );
+        trace.put( "httpRequest", req );
+        trace.put( "httpResponse", res );
+        trace.put( "context", ContextAccessor.current() );
 
-        return Tracer.traceEx( trace, () ->
-        {
+        return Tracer.traceEx( trace, () -> {
             final WebResponse webResponse = chain.handle( req, res );
             addTraceInfo( trace, webResponse );
             return webResponse;

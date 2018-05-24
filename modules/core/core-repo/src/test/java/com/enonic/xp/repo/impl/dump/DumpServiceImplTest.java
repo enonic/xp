@@ -683,7 +683,8 @@ public class DumpServiceImplTest
         this.indexServiceInternal.deleteIndices( IndexNameResolver.resolveSearchIndexName( SystemConstants.SYSTEM_REPO.getId() ) );
         this.indexServiceInternal.deleteIndices( IndexNameResolver.resolveStorageIndexName( SystemConstants.SYSTEM_REPO.getId() ) );
 
-        new SystemRepoInitializer( this.repositoryService, this.storageService ).initialize();
+        new SystemRepoInitializer(this.indexServiceInternal, this.repositoryService, this.storageService ).
+            initialize();
 
         final SystemLoadResult result = doLoad();
 

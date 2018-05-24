@@ -187,7 +187,8 @@ public abstract class AbstractNodeTest
 
         setUpRepositoryServices();
 
-        new SystemRepoInitializer( this.repositoryService, this.storageService ).initialize();
+        new SystemRepoInitializer( this.indexServiceInternal, this.repositoryService, this.storageService ).
+            initialize();
         createRepository( TEST_REPO );
         waitForClusterHealth();
     }

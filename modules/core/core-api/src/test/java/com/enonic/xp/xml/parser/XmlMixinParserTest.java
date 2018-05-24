@@ -43,6 +43,14 @@ public class XmlMixinParserTest
         assertResult();
     }
 
+    @Test
+    public void testParse_x_data_format()
+        throws Exception
+    {
+        parse( this.parser, "-x-data.xml" );
+        assertResult();
+    }
+
     private void assertResult()
         throws Exception
     {

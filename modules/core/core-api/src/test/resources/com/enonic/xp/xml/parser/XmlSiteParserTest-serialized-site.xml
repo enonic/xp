@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site xmlns="urn:enonic:xp:model:1.0">
   <x-data mixin="system:menu-item"/>
-  <x-data mixin="myapplication:my-meta-mixin"/>
+  <x-data name="myapplication:my-meta-mixin"/>
   <config>
     <input type="TextLine" name="some-name">
       <label>Textline</label>
