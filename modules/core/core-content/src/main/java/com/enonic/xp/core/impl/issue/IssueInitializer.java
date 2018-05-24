@@ -5,13 +5,14 @@ import java.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.index.IndexService;
 import com.enonic.xp.init.ExternalInitializer;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
@@ -55,10 +56,10 @@ public class IssueInitializer
         login( PrincipalKey.ofSuperUser().getId() ).
         build();
 
-    public IssueInitializer( final IndexService indexService, final NodeService nodeService )
+    private IssueInitializer( final Builder builder )
     {
-        super( indexService );
-        this.nodeService = nodeService;
+        super( builder );
+        this.nodeService = builder.nodeService;
     }
 
     @Override
@@ -120,5 +121,35 @@ public class IssueInitializer
             principals( RoleKeys.ADMIN ).
             user( SUPER_USER ).
             build();
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public static class Builder
+        extends ExternalInitializer.Builder<Builder>
+    {
+        private NodeService nodeService;
+
+        public Builder setNodeService( final NodeService nodeService )
+        {
+            this.nodeService = nodeService;
+            return this;
+        }
+
+        @Override
+        protected void validate()
+        {
+            super.validate();
+            Preconditions.checkNotNull( nodeService );
+        }
+
+        public IssueInitializer build()
+        {
+            validate();
+            return new IssueInitializer( this );
+        }
     }
 }

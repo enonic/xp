@@ -64,7 +64,11 @@ public class RepositoryServiceImpl
     @Activate
     public void initialize()
     {
-        new SystemRepoInitializer( indexServiceInternal, this, this.nodeStorageService ).
+        SystemRepoInitializer.create().
+            setIndexServiceInternal( indexServiceInternal ).
+            setRepositoryService( this ).
+            setNodeStorageService( nodeStorageService ).
+            build().
             initialize();
     }
 

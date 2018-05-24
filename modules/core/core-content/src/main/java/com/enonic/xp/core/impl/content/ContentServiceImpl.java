@@ -177,7 +177,11 @@ public class ContentServiceImpl
     @Activate
     public void initialize()
     {
-        new ContentInitializer( this.indexService, this.nodeService, this.repositoryService ).
+        ContentInitializer.create().
+            setIndexService( indexService ).
+            setNodeService( nodeService ).
+            setRepositoryService( repositoryService ).
+            build().
             initialize();
     }
 

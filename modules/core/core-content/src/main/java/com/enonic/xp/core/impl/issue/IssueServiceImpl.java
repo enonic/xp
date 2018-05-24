@@ -38,7 +38,11 @@ public class IssueServiceImpl
     @Activate
     public void initialize()
     {
-        new IssueInitializer( indexService, nodeService ).initialize();
+        IssueInitializer.create().
+            setIndexService( indexService ).
+            setNodeService( nodeService ).
+            build().
+            initialize();
     }
 
     @Override

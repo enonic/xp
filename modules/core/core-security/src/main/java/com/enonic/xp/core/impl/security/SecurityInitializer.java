@@ -3,18 +3,18 @@ package com.enonic.xp.core.impl.security;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
-import com.enonic.xp.index.IndexService;
 import com.enonic.xp.init.ExternalInitializer;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.security.AuthConfig;
@@ -61,11 +61,11 @@ final class SecurityInitializer
 
     private final NodeService nodeService;
 
-    public SecurityInitializer( final IndexService indexService, final SecurityService securityService, final NodeService nodeService )
+    private SecurityInitializer( final Builder builder )
     {
-        super( indexService );
-        this.securityService = securityService;
-        this.nodeService = nodeService;
+        super( builder );
+        this.securityService = builder.securityService;
+        this.nodeService = builder.nodeService;
     }
 
     @Override
@@ -86,7 +86,7 @@ final class SecurityInitializer
     public boolean isInitialized()
     {
         return createAdminContext().
-            callWith( () -> this.nodeService.getByPath( SUPER_USER.toPath()) != null );
+            callWith( () -> this.nodeService.getByPath( SUPER_USER.toPath() ) != null );
     }
 
     @Override
@@ -292,6 +292,45 @@ final class SecurityInitializer
         catch ( final Exception t )
         {
             LOG.error( "Unable to add member: " + container + " -> " + member, t );
+        }
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public static class Builder
+        extends ExternalInitializer.Builder<Builder>
+    {
+        private SecurityService securityService;
+
+        private NodeService nodeService;
+
+        public Builder setSecurityService( final SecurityService securityService )
+        {
+            this.securityService = securityService;
+            return this;
+        }
+
+        public Builder setNodeService( final NodeService nodeService )
+        {
+            this.nodeService = nodeService;
+            return this;
+        }
+
+        @Override
+        protected void validate()
+        {
+            super.validate();
+            Preconditions.checkNotNull( securityService );
+            Preconditions.checkNotNull( nodeService );
+        }
+
+        public SecurityInitializer build()
+        {
+            validate();
+            return new SecurityInitializer( this );
         }
     }
 }

@@ -37,7 +37,10 @@ public class ApplicationRepoServiceImpl
     @Activate
     public void initialize( final BundleContext context )
     {
-        new ApplicationRepoInitializer( this.indexService, this.nodeService ).
+        ApplicationRepoInitializer.create().
+            setIndexService( indexService ).
+            setNodeService( nodeService ).
+            build().
             initialize();
     }
 
