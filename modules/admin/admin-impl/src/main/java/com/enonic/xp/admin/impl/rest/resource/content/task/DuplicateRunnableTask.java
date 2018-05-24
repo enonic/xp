@@ -1,7 +1,10 @@
 package com.enonic.xp.admin.impl.rest.resource.content.task;
 
+import java.util.stream.Collectors;
+
 import com.enonic.xp.admin.impl.rest.resource.content.DuplicateContentProgressListener;
 import com.enonic.xp.admin.impl.rest.resource.content.json.DuplicateContentJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.DuplicateContentsJson;
 import com.enonic.xp.admin.impl.rest.resource.content.query.ContentQueryWithChildren;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAlreadyMovedException;
@@ -20,7 +23,7 @@ public class DuplicateRunnableTask
 {
     private final AuthenticationInfo authInfo;
 
-    private final DuplicateContentJson params;
+    private final DuplicateContentsJson params;
 
     private DuplicateRunnableTask( Builder builder )
     {
@@ -32,7 +35,9 @@ public class DuplicateRunnableTask
     @Override
     public void run( final TaskId id, final ProgressReporter progressReporter )
     {
-        final ContentIds contentToDuplicateList = ContentIds.from( params.getContentIds() );
+        final ContentIds contentToDuplicateList =
+            ContentIds.from( params.getContents().stream().map( DuplicateContentJson::getContentId ).collect( Collectors.toList() ) );
+
         progressReporter.info( "Duplicating content" );
 
         final DuplicateContentProgressListener listener = new DuplicateContentProgressListener( progressReporter );
@@ -90,7 +95,7 @@ public class DuplicateRunnableTask
     {
         private AuthenticationInfo authInfo;
 
-        private DuplicateContentJson params;
+        private DuplicateContentsJson params;
 
         public Builder authInfo( AuthenticationInfo authInfo )
         {
@@ -98,7 +103,7 @@ public class DuplicateRunnableTask
             return this;
         }
 
-        public Builder params( DuplicateContentJson params )
+        public Builder params( DuplicateContentsJson params )
         {
             this.params = params;
             return this;

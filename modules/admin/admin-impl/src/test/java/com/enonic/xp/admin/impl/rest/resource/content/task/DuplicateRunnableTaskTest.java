@@ -7,7 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.admin.impl.rest.resource.content.json.DuplicateContentJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.DuplicateContentsJson;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentAlreadyMovedException;
 import com.enonic.xp.content.ContentNotFoundException;
@@ -23,7 +23,7 @@ import com.enonic.xp.task.TaskId;
 public class DuplicateRunnableTaskTest
     extends AbstractRunnableTaskTest
 {
-    private DuplicateContentJson params;
+    private DuplicateContentsJson params;
 
     @Before
     @Override
@@ -31,7 +31,7 @@ public class DuplicateRunnableTaskTest
         throws Exception
     {
         super.setUp();
-        this.params = Mockito.mock( DuplicateContentJson.class );
+        this.params = Mockito.mock( DuplicateContentsJson.class );
     }
 
     @Override

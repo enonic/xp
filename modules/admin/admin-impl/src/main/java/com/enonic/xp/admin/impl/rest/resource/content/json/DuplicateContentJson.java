@@ -1,19 +1,39 @@
 package com.enonic.xp.admin.impl.rest.resource.content.json;
 
-
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class DuplicateContentJson
 {
-    private List<String> contentIds;
+    private String contentId;
 
-    public List<String> getContentIds()
+    private Boolean includeChildren;
+
+    @JsonCreator
+    public DuplicateContentJson( @JsonProperty("contentId") final String contentId,
+                                 @JsonProperty("includeChildren") final Boolean includeChildren )
     {
-        return contentIds;
+        this.contentId = contentId;
+        this.includeChildren = includeChildren;
     }
 
-    public void setContentIds( final List<String> contentIds )
+    public String getContentId()
     {
-        this.contentIds = contentIds;
+        return contentId;
+    }
+
+    public void setContentId( final String contentId )
+    {
+        this.contentId = contentId;
+    }
+
+    public Boolean getIncludeChildren()
+    {
+        return includeChildren;
+    }
+
+    public void setIncludeChildren( final Boolean includeChildren )
+    {
+        this.includeChildren = includeChildren;
     }
 }

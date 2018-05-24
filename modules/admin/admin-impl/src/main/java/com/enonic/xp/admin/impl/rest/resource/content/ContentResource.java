@@ -76,7 +76,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.ContentTreeSelectorQu
 import com.enonic.xp.admin.impl.rest.resource.content.json.CreateContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.DeleteAttachmentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.DeleteContentJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.DuplicateContentJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.DuplicateContentsJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.EffectivePermissionAccessJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.EffectivePermissionJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.EffectivePermissionMemberJson;
@@ -344,7 +344,7 @@ public final class ContentResource
 
     @POST
     @Path("duplicate")
-    public TaskResultJson duplicate( final DuplicateContentJson params )
+    public TaskResultJson duplicate( final DuplicateContentsJson params )
     {
         return DuplicateRunnableTask.create().
             params( params ).
