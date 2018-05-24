@@ -1,6 +1,7 @@
 package com.enonic.xp.schema.mixin;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
@@ -60,6 +61,19 @@ public class MixinsTest
 
         assertEquals( 0, mixins.getSize() );
         assertEquals( 2, newMixins.getSize() );
+    }
+
+    @Test
+    public void add_multiple()
+    {
+        Mixin mixin1 = Mixin.create().name( MixinName.from( "myapplication:my1" ) ).build();
+        Mixin mixin2 = Mixin.create().name( MixinName.from( "myapplication:my2" ) ).build();
+
+        Mixins mixinsFromList = Mixins.create().addAll( Arrays.asList( mixin1, mixin2 ) ).build();
+        Mixins mixinsFromMixins = Mixins.create().addAll( Mixins.create().add( mixin1 ).add( mixin2 ).build() ).build();
+
+        assertEquals( 2, mixinsFromList.getSize() );
+        assertEquals( 2, mixinsFromMixins.getSize() );
     }
 
     @Test

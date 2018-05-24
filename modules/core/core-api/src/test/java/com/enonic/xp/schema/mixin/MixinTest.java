@@ -48,8 +48,9 @@ public class MixinTest
         final Form.Builder formBuilder = Form.create();
         formBuilder.addFormItem( Input.create().name( "name" ).label( "Name" ).inputType( InputTypeName.TEXT_LINE ).build() );
 
-        Mixin mixin1 = Mixin.create().name( MixinName.from( "myapplication:my1" ) ).form( formBuilder.build() ).build();
-        Mixin mixin2 = Mixin.create( mixin1 ).build();
+        Mixin mixin1 = Mixin.create().name( MixinName.from( "myapplication:my1" ) ).form( formBuilder.build() ).allowContentType(
+            "test.ContentType1" ).build();
+        Mixin mixin2 = Mixin.create( mixin1 ).allowContentType( "test.ContentType1" ).build();
         assertEquals( mixin1.getForm(), mixin2.getForm() );
     }
 

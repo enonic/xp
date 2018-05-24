@@ -8,10 +8,10 @@ import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.xml.DomElement;
 
 @Beta
-public final class XmlMixinParser
-    extends XmlModelParser<XmlMixinParser>
+public class XmlMixinParser<P extends XmlMixinParser<P>>
+    extends XmlModelParser<P>
 {
-    private Mixin.Builder builder;
+    protected Mixin.Builder builder;
 
     public XmlMixinParser builder( final Mixin.Builder builder )
     {

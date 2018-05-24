@@ -1,11 +1,16 @@
-package com.enonic.xp.schema.content;
+package com.enonic.xp.admin.impl.rest.resource.schema.mixin;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.codehaus.jparsec.util.Lists;
+
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.schema.content.ContentTypeService;
+import com.enonic.xp.schema.content.GetAllContentTypesParams;
 
 public class ContentTypeNameWildcardResolver
 {
@@ -35,7 +40,7 @@ public class ContentTypeNameWildcardResolver
         return s.contains( ANY_WILDCARD );
     }
 
-    public List<String> resolveWildcards( final List<String> namesToResolve, final ContentTypeName contentTypeName )
+    public List<String> resolveWildcards( final List<String> namesToResolve, final ApplicationKey currentApplicationKey )
     {
         List<String> allContentTypes = contentTypeService.
             getAll( new GetAllContentTypesParams().inlineMixinsToFormItems( false ) ).
@@ -51,7 +56,7 @@ public class ContentTypeNameWildcardResolver
                 String resolvedName;
                 if ( this.hasAppWildcard( name ) )
                 {
-                    resolvedName = this.resolveAppWildcard( name, contentTypeName );
+                    resolvedName = this.resolveAppWildcard( name, currentApplicationKey );
                 }
                 else
                 {
@@ -81,8 +86,30 @@ public class ContentTypeNameWildcardResolver
         return allContentTypes.stream().filter( pattern ).collect( Collectors.toList() );
     }
 
-    private String resolveAppWildcard( final String nameToResolve, final ContentTypeName contentTypeName )
+    private String resolveAppWildcard( final String nameToResolve, final ApplicationKey applicationKey )
     {
-        return nameToResolve.replace( APP_WILDCARD, contentTypeName.getApplicationKey().toString() );
+        return nameToResolve.replace( APP_WILDCARD, applicationKey.toString() );
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+        final ContentTypeNameWildcardResolver that = (ContentTypeNameWildcardResolver) o;
+        return Objects.equals( contentTypeService, that.contentTypeService );
+    }
+
+    @Override
+    public int hashCode()
+    {
+
+        return Objects.hash( contentTypeService );
     }
 }

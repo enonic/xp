@@ -8,7 +8,7 @@ import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
-import com.enonic.xp.xml.parser.XmlMixinParser;
+import com.enonic.xp.xml.parser.XmlXDataParser;
 
 final class XDataLoader
     extends SchemaLoader<MixinName, Mixin>
@@ -34,7 +34,7 @@ final class XDataLoader
 
     private void parseXml( final Resource resource, final Mixin.Builder builder )
     {
-        final XmlMixinParser parser = new XmlMixinParser();
+        final XmlXDataParser parser = new XmlXDataParser();
         parser.currentApplication( resource.getKey().getApplicationKey() );
         parser.source( resource.readString() );
         parser.builder( builder );

@@ -9,7 +9,7 @@ import com.enonic.xp.schema.mixin.MixinName;
 
 import static org.junit.Assert.*;
 
-public class XmlMixinParserTest
+public class XmlXDataParserTest
     extends XmlModelParserTest
 {
     private XmlMixinParser parser;
@@ -19,7 +19,7 @@ public class XmlMixinParserTest
     @Before
     public void setup()
     {
-        this.parser = new XmlMixinParser();
+        this.parser = new XmlXDataParser();
         this.parser.currentApplication( ApplicationKey.from( "myapplication" ) );
 
         this.builder = Mixin.create();
@@ -52,6 +52,9 @@ public class XmlMixinParserTest
         assertEquals( "key.display-name", result.getDisplayNameI18nKey() );
         assertEquals( "description", result.getDescription() );
         assertEquals( "key.description", result.getDescriptionI18nKey() );
+        assertEquals( 2, result.getAllowContentTypes().size() );
+        assertTrue( result.getAllowContentTypes().contains( "test.contentType1" ) );
+        assertTrue( result.getAllowContentTypes().contains( "test.contentType2" ) );
 
         assertEquals( 1, result.getForm().size() );
     }

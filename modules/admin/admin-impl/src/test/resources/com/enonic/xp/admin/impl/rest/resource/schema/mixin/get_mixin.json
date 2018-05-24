@@ -1,10 +1,12 @@
 {
+  "allowedContentTypes": [],
   "createdTime": "2013-01-01T12:00:00Z",
   "creator": null,
   "deletable": false,
   "description": null,
   "displayName": "input_text_1",
   "editable": false,
+  "external": false,
   "form": {
     "formItems": [
       {

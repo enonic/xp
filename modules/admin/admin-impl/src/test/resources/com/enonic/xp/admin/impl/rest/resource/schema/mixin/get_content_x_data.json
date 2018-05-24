@@ -1,7 +1,9 @@
 {
   "mixins": [
     {
-      "allowedContentTypes": [],
+      "allowedContentTypes": [
+        "^app:*"
+      ],
       "createdTime": "2013-01-01T12:00:00Z",
       "creator": null,
       "deletable": false,
@@ -37,7 +39,9 @@
       "name": "myapplication:input_text_1"
     },
     {
-      "allowedContentTypes": [],
+      "allowedContentTypes": [
+        "app:testContentType"
+      ],
       "createdTime": "2013-01-01T12:00:00Z",
       "creator": null,
       "deletable": false,

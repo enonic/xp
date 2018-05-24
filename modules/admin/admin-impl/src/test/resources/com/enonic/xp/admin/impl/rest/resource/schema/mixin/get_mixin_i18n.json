@@ -1,10 +1,12 @@
 {
+  "allowedContentTypes": [],
   "createdTime": "2013-01-01T12:00:00Z",
   "creator": null,
   "deletable": false,
   "description": "translated.description",
   "displayName": "translated.displayName",
   "editable": false,
+  "external": false,
   "form": {
     "formItems": [
       {
