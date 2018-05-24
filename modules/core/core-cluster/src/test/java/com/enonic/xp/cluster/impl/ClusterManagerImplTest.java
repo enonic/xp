@@ -48,7 +48,6 @@ public class ClusterManagerImplTest
         assertActive( provider );
         provider.setHealth( ClusterHealth.RED );
         assertClusterError();
-        assertDeactivated( provider );
         provider.setHealth( ClusterHealth.GREEN );
         assertClusterOk();
         assertActive( provider );
@@ -84,7 +83,6 @@ public class ClusterManagerImplTest
 
         provider1.setHealth( ClusterHealth.RED );
         assertClusterError();
-        assertDeactivated( provider1, provider2 );
     }
 
     @Test
@@ -119,7 +117,6 @@ public class ClusterManagerImplTest
             build() );
 
         assertClusterError();
-        assertDeactivated( provider1, provider2 );
     }
 
     @Test
@@ -172,11 +169,7 @@ public class ClusterManagerImplTest
             requiredIds.add( ClusterId.from( req ) );
         }
 
-        this.clusterManager = ClusterManagerImpl.create().
-            checkIntervalMs( 0L ).
-            requiredInstances( new Clusters( requiredIds ) ).
-            build();
-
+        this.clusterManager = new ClusterManagerImpl( new Clusters( requiredIds ) );
     }
 
     private void assertActive( final TestCluster... providers )
