@@ -30,8 +30,6 @@ public class ConfigurationFactoryTest
         this.igniteSettings = Mockito.mock( IgniteSettings.class );
         Mockito.when( this.igniteSettings.metrics_log_frequency() ).thenReturn( 0 );
         Mockito.when( this.igniteSettings.connector_enabled() ).thenReturn( false );
-        Mockito.when( this.igniteSettings.odbc_enabled() ).thenReturn( false );
-        Mockito.when( this.igniteSettings.discovery_tcp_ipFinder() ).thenReturn( "staticIP" );
         Mockito.when( this.igniteSettings.discovery_tcp_localAddress() ).thenReturn( "localhost" );
         Mockito.when( this.igniteSettings.discovery_tcp_port() ).thenReturn( 47500 );
         Mockito.when( this.igniteSettings.discovery_tcp_port_range() ).thenReturn( 0 );

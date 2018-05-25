@@ -10,17 +10,13 @@ public @interface IgniteSettings
 
     boolean connector_enabled() default false;
 
-    boolean odbc_enabled() default false;
-
-    String discovery_tcp_ipFinder() default "staticIP";
-
     String discovery_tcp_localAddress() default "localhost";
 
     int discovery_tcp_port() default 47500;
 
     int discovery_tcp_port_range() default 0;
 
-    int discovery_tcp_reconnect() default 2;
+    int discovery_tcp_reconnect() default 10;
 
     long discovery_tcp_network_timeout() default 5000L;
 
