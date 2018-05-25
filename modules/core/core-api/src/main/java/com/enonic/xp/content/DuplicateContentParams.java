@@ -14,11 +14,14 @@ public final class DuplicateContentParams
 
     private DuplicateContentListener duplicateContentListener;
 
+    private Boolean includeChildren;
+
     public DuplicateContentParams( Builder builder )
     {
         this.contentId = builder.contentId;
         this.creator = builder.creator;
         this.duplicateContentListener = builder.duplicateContentListener;
+        this.includeChildren = builder.includeChildren;
     }
 
     public static DuplicateContentParams.Builder create()
@@ -47,6 +50,11 @@ public final class DuplicateContentParams
         return creator;
     }
 
+    public Boolean getIncludeChildren()
+    {
+        return includeChildren;
+    }
+
     public void validate()
     {
         Preconditions.checkNotNull( this.contentId, "Content id cannot be null" );
@@ -71,6 +79,11 @@ public final class DuplicateContentParams
             return false;
         }
 
+        if ( !includeChildren.equals( that.includeChildren ) )
+        {
+            return false;
+        }
+
         return true;
     }
 
@@ -88,6 +101,8 @@ public final class DuplicateContentParams
         private PrincipalKey creator;
 
         private DuplicateContentListener duplicateContentListener;
+
+        private Boolean includeChildren = true;
 
         private Builder()
         {
@@ -108,6 +123,12 @@ public final class DuplicateContentParams
         public Builder duplicateContentListener( DuplicateContentListener duplicateContentListener )
         {
             this.duplicateContentListener = duplicateContentListener;
+            return this;
+        }
+
+        public Builder includeChildren( final Boolean includeChildren )
+        {
+            this.includeChildren = includeChildren;
             return this;
         }
 

@@ -12,6 +12,7 @@ import com.google.common.collect.Sets;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.DuplicateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
@@ -1467,8 +1468,7 @@ public class ResolveSyncWorkCommandTest
 
     private Node duplicateNode( final Node node1 )
     {
-        return DuplicateNodeCommand.create().
-            id( node1.id() ).
+        return DuplicateNodeCommand.create().params( DuplicateNodeParams.create().nodeId( node1.id() ).build() ).
             indexServiceInternal( indexServiceInternal ).
             binaryService( this.binaryService ).
             storageService( this.storageService ).

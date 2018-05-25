@@ -691,12 +691,9 @@ public class ContentServiceImpl
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
-            contentService( this ).
             duplicateListener( params.getDuplicateContentListener() ).
             build().
             execute();
-//        final Node createdNode = nodeService.duplicate( NodeId.from( params.getContentId() ), new DuplicateContentProcessor() );
-//        return translator.fromNode( createdNode, true );
     }
 
     @Override

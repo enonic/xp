@@ -35,8 +35,9 @@ public class DuplicateRunnableTask
     @Override
     public void run( final TaskId id, final ProgressReporter progressReporter )
     {
-        final ContentIds contentToDuplicateList =
-            ContentIds.from( params.getContents().stream().map( DuplicateContentJson::getContentId ).collect( Collectors.toList() ) );
+        final ContentIds contentToDuplicateWithChildrenList = ContentIds.from(
+            params.getContents().stream().filter( DuplicateContentJson::getIncludeChildren ).map(
+                DuplicateContentJson::getContentId ).collect( Collectors.toList() ) );
 
         progressReporter.info( "Duplicating content" );
 
@@ -44,20 +45,24 @@ public class DuplicateRunnableTask
 
         final long childrenIds = ContentQueryWithChildren.create().
             contentService( this.contentService ).
-            contentsIds( contentToDuplicateList ).
+            contentsIds( contentToDuplicateWithChildrenList ).
             build().
             find().
             getTotalHits();
-        final int contentIds = contentToDuplicateList.getSize();
+        final int contentIds = params.getContents().size();
 
         listener.setTotal( Math.toIntExact( childrenIds + contentIds ) );
         final DuplicateRunnableTaskResult.Builder resultBuilder = DuplicateRunnableTaskResult.create();
-        for ( ContentId contentId : contentToDuplicateList )
+        for ( DuplicateContentJson content : params.getContents() )
         {
+
+            final ContentId contentId = ContentId.from( content.getContentId() );
+
             final DuplicateContentParams duplicateContentParams = DuplicateContentParams.create().
                 contentId( contentId ).
                 creator( authInfo.getUser().getKey() ).
                 duplicateContentListener( listener ).
+                includeChildren( content.getIncludeChildren() ).
                 build();
             try
             {

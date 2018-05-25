@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.admin.impl.rest.resource.content.json.DuplicateContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.DuplicateContentsJson;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentAlreadyMovedException;
@@ -54,8 +55,9 @@ public class DuplicateRunnableTaskTest
     public void create_message_multiple()
         throws Exception
     {
-        Mockito.when( params.getContentIds() ).thenReturn(
-            contents.stream().map( content -> content.getId().toString() ).collect( Collectors.toList() ) );
+        Mockito.when( params.getContents() ).thenReturn(
+            contents.stream().map( content -> new DuplicateContentJson( content.getId().toString(), true ) ).collect(
+                Collectors.toList() ) );
         Mockito.when( contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ) ) ).thenReturn( Contents.from( contents ) );
         Mockito.when( contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn(
             FindContentIdsByQueryResult.create().totalHits( 3 ).build() );
@@ -83,8 +85,9 @@ public class DuplicateRunnableTaskTest
     public void create_message_single()
         throws Exception
     {
-        Mockito.when( params.getContentIds() ).thenReturn(
-            contents.subList( 0, 1 ).stream().map( content -> content.getId().toString() ).collect( Collectors.toList() ) );
+        Mockito.when( params.getContents() ).thenReturn(
+            contents.subList( 0, 1 ).stream().map( content -> new DuplicateContentJson( content.getId().toString(), true ) ).collect(
+                Collectors.toList() ) );
         Mockito.when( contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ) ) ).thenReturn(
             Contents.from( contents.subList( 0, 1 ) ) );
         Mockito.when( contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn(
@@ -106,8 +109,9 @@ public class DuplicateRunnableTaskTest
     public void create_message_failed()
         throws Exception
     {
-        Mockito.when( params.getContentIds() ).thenReturn(
-            contents.subList( 0, 2 ).stream().map( content -> content.getId().toString() ).collect( Collectors.toList() ) );
+        Mockito.when( params.getContents() ).thenReturn(
+            contents.subList( 0, 2 ).stream().map( content -> new DuplicateContentJson( content.getId().toString(), true ) ).collect(
+                Collectors.toList() ) );
         Mockito.when( contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ) ) ).thenReturn(
             Contents.from( contents.subList( 0, 2 ) ) );
         Mockito.when( contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn(

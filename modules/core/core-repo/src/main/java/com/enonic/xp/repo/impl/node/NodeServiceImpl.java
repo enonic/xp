@@ -14,8 +14,7 @@ import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
-import com.enonic.xp.node.DuplicateNodeListener;
-import com.enonic.xp.node.DuplicateNodeProcessor;
+import com.enonic.xp.node.DuplicateNodeParams;
 import com.enonic.xp.node.FindNodePathsByQueryResult;
 import com.enonic.xp.node.FindNodesByMultiRepoQueryResult;
 import com.enonic.xp.node.FindNodesByParentParams;
@@ -478,17 +477,15 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Node duplicate( final NodeId nodeId, final DuplicateNodeProcessor processor, final DuplicateNodeListener duplicateListener )
+    public Node duplicate( final DuplicateNodeParams params )
     {
         verifyContext();
         final Node duplicatedNode = DuplicateNodeCommand.create().
-            id( nodeId ).
-            processor( processor ).
+            params( params ).
             indexServiceInternal( this.indexServiceInternal ).
             binaryService( this.binaryService ).
             storageService( this.nodeStorageService ).
             searchService( this.nodeSearchService ).
-            duplicateListener( duplicateListener ).
             build().
             execute();
 

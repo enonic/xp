@@ -9,6 +9,7 @@ import org.junit.Test;
 import com.google.common.base.Stopwatch;
 
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.DuplicateNodeParams;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
@@ -55,7 +56,7 @@ public class DuplicateNodeCommandPerformanceTest
         final Stopwatch started = Stopwatch.createStarted();
 
         final Node duplicate = DuplicateNodeCommand.create().
-            id( rootNode.id() ).
+            params( DuplicateNodeParams.create().nodeId( rootNode.id() ).build() ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).

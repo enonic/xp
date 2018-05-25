@@ -17,12 +17,15 @@ import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
+import com.enonic.xp.node.DuplicateNodeParams;
+import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
@@ -184,6 +187,100 @@ public class NodeServiceImplTest
         assertTrue( node.getPermissions() != null );
         assertEquals( aclList, node.getPermissions() );
         assertEquals( childOrder, node.getChildOrder() );
+    }
+
+    @Test
+    public void test_duplicate_binary()
+    {
+        final PropertyTree data = new PropertyTree();
+        final BinaryReference binaryRef1 = BinaryReference.from( "binary" );
+        data.addBinaryReference( "my-binary-1", binaryRef1 );
+
+        final String binarySource = "binary_source";
+
+        final Node node = this.nodeService.create( CreateNodeParams.create().
+            name( "my-node" ).
+            parent( NodePath.ROOT ).
+            data( data ).
+            attachBinary( binaryRef1, ByteSource.wrap( binarySource.getBytes() ) ).
+            build() );
+
+        this.nodeService.refresh( RefreshMode.SEARCH );
+
+        final Node duplicatedNode = this.nodeService.duplicate( DuplicateNodeParams.create().nodeId( node.id() ).build() );
+
+        assertNotEquals( node, duplicatedNode );
+        assertEquals( node.getAttachedBinaries(), duplicatedNode.getAttachedBinaries() );
+    }
+
+    @Test
+    public void test_duplicate_with_children()
+    {
+        final PropertyTree data = new PropertyTree();
+
+        final Node node_1 = this.nodeService.create( CreateNodeParams.create().
+            name( "parent" ).
+            parent( NodePath.ROOT ).
+            data( data ).
+            build() );
+
+        final Node node_1_2 = this.nodeService.create( CreateNodeParams.create().
+            name( "child" ).
+            parent( node_1.path() ).
+            data( data ).
+            build() );
+
+        final Node node_1_2_3 = this.nodeService.create( CreateNodeParams.create().
+            name( "child_of_child" ).
+            parent( node_1_2.path() ).
+            data( data ).
+            build() );
+
+        this.nodeService.refresh( RefreshMode.SEARCH );
+
+        final Node duplicatedNode = this.nodeService.duplicate( DuplicateNodeParams.create().nodeId( node_1.id() ).build() );
+
+        final NodeId node_1_2_dup_id =
+            this.nodeService.findByParent( FindNodesByParentParams.create().parentId( duplicatedNode.id() ).build() ).getNodeIds().first();
+
+        final Node node_1_2_dup = this.nodeService.getById( node_1_2_dup_id );
+
+        assertEquals( node_1_2.name(), node_1_2_dup.name() );
+
+        final NodeId node_1_2_3_dup_id = this.nodeService.findByParent(
+            FindNodesByParentParams.create().parentPath( node_1_2_dup.path() ).build() ).getNodeIds().first();
+
+        final Node node_1_2_3_dup = this.nodeService.getById( node_1_2_3_dup_id );
+
+        assertEquals( node_1_2_3.name(), node_1_2_3_dup.name() );
+    }
+
+    @Test
+    public void test_duplicate_without_children()
+    {
+        final PropertyTree data = new PropertyTree();
+
+        final Node node_1 = this.nodeService.create( CreateNodeParams.create().
+            name( "parent" ).
+            parent( NodePath.ROOT ).
+            data( data ).
+            build() );
+
+        final Node node_1_2 = this.nodeService.create( CreateNodeParams.create().
+            name( "child" ).
+            parent( node_1.path() ).
+            data( data ).
+            build() );
+
+        this.nodeService.refresh( RefreshMode.SEARCH );
+
+        final Node duplicatedNode =
+            this.nodeService.duplicate( DuplicateNodeParams.create().includeChildren( false ).nodeId( node_1.id() ).build() );
+
+        final Long childrenNumber =
+            this.nodeService.findByParent( FindNodesByParentParams.create().parentId( duplicatedNode.id() ).build() ).getTotalHits();
+
+        assertEquals( Long.valueOf( 0 ), childrenNumber );
     }
 
     @Test

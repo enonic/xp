@@ -32,7 +32,7 @@ public interface NodeService
 
     Nodes getByPaths( NodePaths paths );
 
-    Node duplicate( NodeId nodeId, DuplicateNodeProcessor processor, DuplicateNodeListener duplicateListener );
+    Node duplicate( DuplicateNodeParams params );
 
     Node move( NodeId nodeId, NodePath parentNodePath, MoveNodeListener moveListener );
 

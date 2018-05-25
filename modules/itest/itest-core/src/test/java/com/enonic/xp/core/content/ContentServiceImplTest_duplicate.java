@@ -61,6 +61,19 @@ public class ContentServiceImplTest_duplicate
     }
 
     @Test
+    public void skip_children()
+        throws Exception
+    {
+        final Content rootContent = createContent( ContentPath.ROOT );
+        final Content childrenLevel1 = createContent( rootContent.getPath() );
+        final Content childrenLevel2 = createContent( childrenLevel1.getPath() );
+
+        final Content duplicatedContent = doDuplicateContent( rootContent, false );
+
+        assertFalse( duplicatedContent.hasChildren() );
+    }
+
+    @Test
     public void some_metadata_reset_on_duplicate()
         throws Exception
     {
@@ -102,7 +115,13 @@ public class ContentServiceImplTest_duplicate
 
     private Content doDuplicateContent( final Content content )
     {
-        final DuplicateContentParams params = DuplicateContentParams.create().contentId( content.getId() ).build();
+        return this.doDuplicateContent( content, true );
+    }
+
+    private Content doDuplicateContent( final Content content, final Boolean includeChildren )
+    {
+        final DuplicateContentParams params =
+            DuplicateContentParams.create().contentId( content.getId() ).includeChildren( includeChildren ).build();
         final DuplicateContentsResult result = contentService.duplicate( params );
 
         return this.contentService.getById( result.getDuplicatedContents().first() );
