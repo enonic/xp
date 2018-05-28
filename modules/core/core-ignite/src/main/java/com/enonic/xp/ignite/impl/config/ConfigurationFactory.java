@@ -40,6 +40,11 @@ public class ConfigurationFactory
             config.setConnectorConfiguration( null );
         }
 
+        if ( !igniteSettings.odbc_enabled() )
+        {
+            config.setClientConnectorConfiguration( null );
+        }
+
         if ( !Strings.isNullOrEmpty( igniteSettings.localhost() ) )
         {
             config.setLocalHost( igniteSettings.localhost() );
