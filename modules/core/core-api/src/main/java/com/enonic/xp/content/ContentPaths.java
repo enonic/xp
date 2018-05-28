@@ -2,9 +2,9 @@ package com.enonic.xp.content;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
@@ -119,6 +119,11 @@ public final class ContentPaths
         return new ContentPaths( ImmutableSet.copyOf( paths ) );
     }
 
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
     private static ImmutableSet<ContentPath> parsePaths( final String... paths )
     {
         final Collection<String> list = Lists.newArrayList( paths );
@@ -133,6 +138,29 @@ public final class ContentPaths
         public ContentPath apply( final String value )
         {
             return ContentPath.from( value );
+        }
+    }
+
+    public static class Builder
+    {
+        private List<ContentPath> paths = Lists.newArrayList();
+
+        public Builder add( final ContentPath contentPath )
+        {
+            this.paths.add( contentPath );
+            return this;
+        }
+
+        public Builder addAll( final ContentPaths contentPaths )
+        {
+            this.paths.addAll( contentPaths.getSet() );
+            return this;
+        }
+
+
+        public ContentPaths build()
+        {
+            return ContentPaths.from( paths );
         }
     }
 }

@@ -1,5 +1,7 @@
 package com.enonic.xp.content;
 
+import java.util.Objects;
+
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.aggregation.Aggregations;
@@ -28,6 +30,12 @@ public final class FindContentIdsByQueryResult
         return new Builder();
     }
 
+    public static FindContentIdsByQueryResult empty()
+    {
+        return FindContentIdsByQueryResult.create().contents( ContentIds.empty() ).hits( 0 ).totalHits( 0 ).aggregations(
+            Aggregations.empty() ).build();
+    }
+
     public ContentIds getContentIds()
     {
         return contentIds;
@@ -46,6 +54,30 @@ public final class FindContentIdsByQueryResult
     public long getHits()
     {
         return hits;
+    }
+
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+        final FindContentIdsByQueryResult that = (FindContentIdsByQueryResult) o;
+        return totalHits == that.totalHits && hits == that.hits && Objects.equals( aggregations, that.aggregations ) &&
+            Objects.equals( contentIds, that.contentIds );
+    }
+
+    @Override
+    public int hashCode()
+    {
+
+        return Objects.hash( aggregations, contentIds, totalHits, hits );
     }
 
     public static final class Builder

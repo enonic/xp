@@ -33,10 +33,10 @@ public class ContentQueryWithChildren
 
     private ContentService contentService;
 
-    ContentQueryWithChildren( Builder builder )
+    private ContentQueryWithChildren( Builder builder )
     {
-        this.contentsIds = builder.contentsIds;
-        this.contentsPaths = builder.contentsPaths;
+        this.contentsIds = builder.contentsIds.build();
+        this.contentsPaths = builder.contentsPaths.build();
         this.order = builder.order;
         this.size = builder.size;
         this.from = builder.from;
@@ -80,11 +80,11 @@ public class ContentQueryWithChildren
 
     public ContentPaths getPaths()
     {
-        if ( this.contentsPaths != null )
+        if ( !this.contentsPaths.isEmpty() )
         {
             return this.contentsPaths;
         }
-        else if ( this.contentsIds != null )
+        else if ( !this.contentsIds.isEmpty() )
         {
             return contentService.getByIds( new GetContentByIdsParams( contentsIds ) ).getPaths();
         }
@@ -93,6 +93,10 @@ public class ContentQueryWithChildren
 
     public FindContentIdsByQueryResult find()
     {
+        if ( contentsPaths.getSize() == 0 && contentsIds.getSize() == 0 )
+        {
+            return FindContentIdsByQueryResult.empty();
+        }
         final QueryExpr expr = constructExprToFindChildren();
         final ContentQuery query = ContentQuery.create().from( this.from ).size( this.size ).queryExpr( expr ).build();
         return this.contentService.find( query );
@@ -100,6 +104,10 @@ public class ContentQueryWithChildren
 
     public FindContentIdsByQueryResult findOrdered()
     {
+        if ( contentsPaths.getSize() == 0 && contentsIds.getSize() == 0 )
+        {
+            return FindContentIdsByQueryResult.empty();
+        }
         final QueryExpr expr = constructExprToFindOrdered();
         final ContentQuery query = ContentQuery.create().from( this.from ).size( this.size ).queryExpr( expr ).build();
         return this.contentService.find( query );
@@ -112,10 +120,9 @@ public class ContentQueryWithChildren
 
     public static class Builder
     {
+        private ContentIds.Builder contentsIds = ContentIds.create();
 
-        private ContentIds contentsIds;
-
-        private ContentPaths contentsPaths;
+        private ContentPaths.Builder contentsPaths = ContentPaths.create();
 
         private ChildOrder order;
 
@@ -131,13 +138,13 @@ public class ContentQueryWithChildren
 
         public Builder contentsIds( ContentIds contentsIds )
         {
-            this.contentsIds = contentsIds;
+            this.contentsIds.addAll( contentsIds );
             return this;
         }
 
         public Builder contentsPaths( ContentPaths contentsPaths )
         {
-            this.contentsPaths = contentsPaths;
+            this.contentsPaths.addAll( contentsPaths );
             return this;
         }
 
