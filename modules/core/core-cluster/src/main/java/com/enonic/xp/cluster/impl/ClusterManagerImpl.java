@@ -63,7 +63,14 @@ public class ClusterManagerImpl
             @Override
             public void run()
             {
-                checkProviders();
+                try
+                {
+                    checkProviders();
+                }
+                catch ( Exception e )
+                {
+                    LOG.error( "Error while checking cluster providers", e );
+                }
             }
         }, checkIntervalMs, checkIntervalMs );
     }
@@ -121,7 +128,7 @@ public class ClusterManagerImpl
         {
             return ClusterState.ERROR;
         }
-        
+
         for ( final ClusterValidator validator : this.validators )
         {
             final ClusterValidatorResult result = validator.validate( this.instances );
