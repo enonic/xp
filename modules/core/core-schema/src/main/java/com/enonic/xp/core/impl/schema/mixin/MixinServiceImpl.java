@@ -33,6 +33,7 @@ import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinNames;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.schema.mixin.Mixins;
+import com.enonic.xp.schema.mixin.XData;
 
 @Component(immediate = true)
 public final class MixinServiceImpl
@@ -59,11 +60,16 @@ public final class MixinServiceImpl
             return this.builtInTypes.getAll().getMixin( name );
         }
 
-        final Mixin xData = new XDataLoader( this.resourceService ).get( name );
-
-        if ( xData != null )
+        try
         {
-            return xData;
+            final XData xData = new XDataLoader( this.resourceService ).get( name );
+            if ( xData != null )
+            {
+                return xData;
+            }
+        }
+        catch ( ClassCastException e )
+        {
         }
 
         return new MixinLoader( this.resourceService ).get( name );

@@ -97,7 +97,7 @@ public abstract class BaseSchema<T extends BaseSchemaName>
         return icon;
     }
 
-    public static class Builder<T extends Builder, SCHEMA_NAME extends BaseSchemaName>
+    public static class Builder<T extends Builder<T, SCHEMA_NAME>, SCHEMA_NAME extends BaseSchemaName>
     {
         protected SCHEMA_NAME name;
 

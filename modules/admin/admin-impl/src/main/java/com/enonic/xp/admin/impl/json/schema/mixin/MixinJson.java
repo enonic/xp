@@ -6,12 +6,14 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.admin.impl.json.ItemJson;
 import com.enonic.xp.admin.impl.json.form.FormJson;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.mixin.MixinIconUrlResolver;
 import com.enonic.xp.schema.mixin.Mixin;
+import com.enonic.xp.schema.mixin.XData;
 
 public class MixinJson
     implements ItemJson
@@ -100,7 +102,7 @@ public class MixinJson
 
     public List<String> getAllowedContentTypes()
     {
-        return mixin.getAllowContentTypes() != null ? mixin.getAllowContentTypes() : null;
+        return this.mixin instanceof XData ? ( (XData) this.mixin ).getAllowContentTypes() : ImmutableList.of();
     }
 
     public Boolean getExternal()
