@@ -19,6 +19,8 @@ import static junit.framework.TestCase.assertTrue;
 
 public class ClusterManagerImplTest
 {
+    private static final long CHECK_INTERVAL_MS = 200l;
+
     private ClusterManagerImpl clusterManager;
 
     @Before
@@ -43,13 +45,18 @@ public class ClusterManagerImplTest
             build();
 
         this.clusterManager.addProvider( provider );
+        Thread.sleep( CHECK_INTERVAL_MS );
         assertActive( provider );
         this.clusterManager.getClusterState();
         assertActive( provider );
+
         provider.setHealth( ClusterHealth.RED );
+        Thread.sleep( CHECK_INTERVAL_MS );
         assertClusterError();
         assertDeactivated( provider );
+
         provider.setHealth( ClusterHealth.GREEN );
+        Thread.sleep( CHECK_INTERVAL_MS );
         assertClusterOk();
         assertActive( provider );
     }
@@ -77,47 +84,15 @@ public class ClusterManagerImplTest
             build();
 
         this.clusterManager.addProvider( provider1 );
+        Thread.sleep( CHECK_INTERVAL_MS );
         assertDeactivated( provider1 );
 
         this.clusterManager.addProvider( provider2 );
+        Thread.sleep( CHECK_INTERVAL_MS );
         assertActive( provider1, provider2 );
 
         provider1.setHealth( ClusterHealth.RED );
-        assertClusterError();
-        assertDeactivated( provider1, provider2 );
-    }
-
-    @Test
-    public void multiple_providers_nodes_mismatch()
-        throws Exception
-    {
-        final TestCluster provider1 = TestCluster.create().
-            health( ClusterHealth.GREEN ).
-            id( ClusterId.from( "elasticsearch" ) ).
-            nodes( ClusterNodes.create().
-                add( ClusterNode.from( "a" ) ).
-                build() ).
-            build();
-
-        final TestCluster provider2 = TestCluster.create().
-            health( ClusterHealth.GREEN ).
-            id( ClusterId.from( "another" ) ).nodes( ClusterNodes.create().
-            add( ClusterNode.from( "a" ) ).
-            build() ).
-            build();
-
-        createManager( "elasticsearch", "another" );
-
-        this.clusterManager.addProvider( provider1 );
-        this.clusterManager.addProvider( provider2 );
-        assertClusterOk();
-        assertActive( provider1, provider2 );
-
-        provider1.setNodes( ClusterNodes.create().
-            add( ClusterNode.from( "a" ) ).
-            add( ClusterNode.from( "b" ) ).
-            build() );
-
+        Thread.sleep( CHECK_INTERVAL_MS );
         assertClusterError();
         assertDeactivated( provider1, provider2 );
     }
@@ -173,9 +148,10 @@ public class ClusterManagerImplTest
         }
 
         this.clusterManager = ClusterManagerImpl.create().
-            checkIntervalMs( 0L ).
+            checkIntervalMs( CHECK_INTERVAL_MS / 2 ).
             requiredInstances( new Clusters( requiredIds ) ).
             build();
+        this.clusterManager.activate();
 
     }
 

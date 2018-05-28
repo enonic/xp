@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
@@ -37,7 +38,7 @@ public class ClusterManagerImpl
 
     private final Timer timer = new Timer();
 
-    private final List<ClusterValidator> validators = Lists.newArrayList( new HealthValidator(), new ClusterMembersValidator() );
+    private final List<ClusterValidator> validators = Lists.newArrayList( new HealthValidator() );
 
     private boolean isHealthy;
 
@@ -52,6 +53,19 @@ public class ClusterManagerImpl
     {
         this.checkIntervalMs = builder.checkIntervalMs;
         this.instances = builder.clusters;
+    }
+
+    @Activate
+    public void activate()
+    {
+        this.timer.schedule( new TimerTask()
+        {
+            @Override
+            public void run()
+            {
+                checkProviders();
+            }
+        }, checkIntervalMs, checkIntervalMs );
     }
 
     @Override
@@ -88,13 +102,19 @@ public class ClusterManagerImpl
         this.isHealthy = false;
     }
 
-    private void registerProvider()
+    private void checkProviders()
     {
         if ( this.instances.hasRequiredProviders() )
         {
-            LOG.info( "Has all required cluster-providers, activate and start polling health" );
-            activateProviders();
-            startPolling();
+            final ClusterState clusterState = doGetClusterState();
+            if ( ClusterState.OK == clusterState )
+            {
+                activateProviders();
+            }
+            else
+            {
+                deactivateProviders();
+            }
         }
         else
         {
@@ -102,52 +122,46 @@ public class ClusterManagerImpl
         }
     }
 
-    private void startPolling()
-    {
-        if ( checkIntervalMs > 0 )
-        {
-            this.timer.schedule( new TimerTask()
-            {
-                @Override
-                public void run()
-                {
-                    doGetClusterState();
-                }
-            }, this.checkIntervalMs, this.checkIntervalMs );
-        }
-    }
-
     private ClusterState doGetClusterState()
     {
+        if ( !this.instances.hasRequiredProviders() )
+        {
+            return ClusterState.ERROR;
+        }
+        
         for ( final ClusterValidator validator : this.validators )
         {
             final ClusterValidatorResult result = validator.validate( this.instances );
 
             if ( !result.isOk() )
             {
-                deactivateProviders();
                 return ClusterState.ERROR;
             }
         }
 
-        if ( this.instances.hasRequiredProviders() )
-        {
-            activateProviders();
-            return ClusterState.OK;
-        }
-        else
-        {
-            return ClusterState.ERROR;
-        }
+        return ClusterState.OK;
     }
 
+    @SuppressWarnings("WeakerAccess")
+    @Reference(cardinality = ReferenceCardinality.AT_LEAST_ONE, policy = ReferencePolicy.DYNAMIC)
+    public void addProvider( final Cluster instance )
+    {
+        LOG.info( "Adding cluster-provider: " + instance.getId() );
+        this.instances.add( instance );
+    }
 
     @SuppressWarnings("unused")
     public void removeProvider( final Cluster provider )
     {
         LOG.info( "Removing cluster-provider: " + provider.getId() );
         this.instances.remove( provider );
-        this.registerProvider();
+    }
+
+    @SuppressWarnings("unused")
+    @Deactivate
+    public void deactivate()
+    {
+        this.timer.cancel();
     }
 
     static Builder create()
@@ -181,22 +195,5 @@ public class ClusterManagerImpl
         {
             return new ClusterManagerImpl( this );
         }
-    }
-
-    @SuppressWarnings("WeakerAccess")
-    @Reference(cardinality = ReferenceCardinality.AT_LEAST_ONE, policy = ReferencePolicy.DYNAMIC)
-    public void addProvider( final Cluster instance )
-    {
-        LOG.info( "Adding cluster-provider: " + instance.getId() );
-        this.instances.add( instance );
-        this.registerProvider();
-    }
-
-
-    @SuppressWarnings("unused")
-    @Deactivate
-    public void deactivate()
-    {
-        this.timer.cancel();
     }
 }

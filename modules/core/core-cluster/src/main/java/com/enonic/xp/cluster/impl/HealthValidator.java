@@ -11,7 +11,7 @@ import com.enonic.xp.cluster.Clusters;
 class HealthValidator
     implements ClusterValidator
 {
-    private final static Logger LOG = LoggerFactory.getLogger( ClusterMembersValidator.class );
+    private final static Logger LOG = LoggerFactory.getLogger( HealthValidator.class );
 
     @Override
     public ClusterValidatorResult validate( final Clusters clusters )
