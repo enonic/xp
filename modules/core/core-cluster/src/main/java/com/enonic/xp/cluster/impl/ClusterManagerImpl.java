@@ -104,17 +104,10 @@ public class ClusterManagerImpl
 
     private void checkProviders()
     {
-        if ( this.instances.hasRequiredProviders() )
+        final ClusterState clusterState = doGetClusterState();
+        if ( ClusterState.OK == clusterState )
         {
-            final ClusterState clusterState = doGetClusterState();
-            if ( ClusterState.OK == clusterState )
-            {
-                activateProviders();
-            }
-            else
-            {
-                deactivateProviders();
-            }
+            activateProviders();
         }
         else
         {
