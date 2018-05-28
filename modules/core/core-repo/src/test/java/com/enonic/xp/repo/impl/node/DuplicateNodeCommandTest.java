@@ -17,6 +17,7 @@ import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.DuplicateNodeParams;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
@@ -486,7 +487,7 @@ public class DuplicateNodeCommandTest
     private Node duplicateNode( final Node node1 )
     {
         return DuplicateNodeCommand.create().
-            id( node1.id() ).
+            params( DuplicateNodeParams.create().nodeId( node1.id() ).build() ).
             indexServiceInternal( indexServiceInternal ).
             binaryService( this.binaryService ).
             storageService( this.storageService ).

@@ -18,8 +18,7 @@ import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
-import com.enonic.xp.node.DuplicateNodeListener;
-import com.enonic.xp.node.DuplicateNodeProcessor;
+import com.enonic.xp.node.DuplicateNodeParams;
 import com.enonic.xp.node.EditableNode;
 import com.enonic.xp.node.FindNodePathsByQueryResult;
 import com.enonic.xp.node.FindNodesByMultiRepoQueryResult;
@@ -249,7 +248,7 @@ class NodeServiceMock
     }
 
     @Override
-    public Node duplicate( final NodeId nodeId, final DuplicateNodeProcessor processor, final DuplicateNodeListener duplicateListener )
+    public Node duplicate( final DuplicateNodeParams params )
     {
         return null;
     }

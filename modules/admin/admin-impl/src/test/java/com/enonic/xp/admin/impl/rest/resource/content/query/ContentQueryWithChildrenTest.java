@@ -2,7 +2,6 @@ package com.enonic.xp.admin.impl.rest.resource.content.query;
 
 import java.util.List;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -15,8 +14,11 @@ import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
+import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.index.ChildOrder;
+
+import static org.junit.Assert.*;
 
 public class ContentQueryWithChildrenTest
 {
@@ -27,32 +29,6 @@ public class ContentQueryWithChildrenTest
         throws Exception
     {
         this.contentService = Mockito.mock( ContentService.class );
-    }
-
-    @Test
-    public void initialize_default()
-        throws Exception
-    {
-        final ArgumentCaptor<ContentQuery> contentQueryArgumentCaptor = ArgumentCaptor.forClass( ContentQuery.class );
-        final ContentQueryWithChildren contentQueryWithChildren =
-            ContentQueryWithChildren.create().contentService( contentService ).build();
-
-        contentQueryWithChildren.find();
-        contentQueryWithChildren.findOrdered();
-
-        Mockito.verify( contentService, Mockito.times( 2 ) ).find( contentQueryArgumentCaptor.capture() );
-
-        final List<ContentQuery> contentQueries = contentQueryArgumentCaptor.getAllValues();
-        final ContentQuery query = contentQueries.get( 0 );
-        final ContentQuery orderedQuery = contentQueries.get( 1 );
-
-        Assert.assertEquals( query.getSize(), 0 );
-        Assert.assertEquals( query.getFrom(), 0 );
-        Assert.assertEquals( query.getQueryExpr().toString(), "(_path LIKE '/contentnull/*' AND _path NOT IN ()) ORDER BY _path ASC" );
-
-        Assert.assertEquals( orderedQuery.getSize(), 0 );
-        Assert.assertEquals( orderedQuery.getFrom(), 0 );
-        Assert.assertEquals( orderedQuery.getQueryExpr().toString(), "_path IN ()" );
     }
 
     @Test
@@ -77,15 +53,15 @@ public class ContentQueryWithChildrenTest
         final ContentQuery query = contentQueries.get( 0 );
         final ContentQuery orderedQuery = contentQueries.get( 1 );
 
-        Assert.assertEquals( query.getSize(), -1 );
-        Assert.assertEquals( query.getFrom(), 1 );
-        Assert.assertEquals( query.getQueryExpr().toString(),
-                             "(_path LIKE '/contentmy-path/*' AND _path NOT IN ('/contentmy-path')) ORDER BY _path ASC" );
+        assertEquals( query.getSize(), -1 );
+        assertEquals( query.getFrom(), 1 );
+        assertEquals( query.getQueryExpr().toString(),
+                      "(_path LIKE '/contentmy-path/*' AND _path NOT IN ('/contentmy-path')) ORDER BY _path ASC" );
 
-        Assert.assertEquals( orderedQuery.getSize(), -1 );
-        Assert.assertEquals( orderedQuery.getFrom(), 1 );
-        Assert.assertEquals( orderedQuery.getQueryExpr().toString(),
-                             "_path IN ('/content/my-path') ORDER BY _manualordervalue DESC, _timestamp DESC" );
+        assertEquals( orderedQuery.getSize(), -1 );
+        assertEquals( orderedQuery.getFrom(), 1 );
+        assertEquals( orderedQuery.getQueryExpr().toString(),
+                      "_path IN ('/content/my-path') ORDER BY _manualordervalue DESC, _timestamp DESC" );
     }
 
     @Test
@@ -114,9 +90,23 @@ public class ContentQueryWithChildrenTest
         final ContentQuery query = contentQueries.get( 0 );
         final ContentQuery orderedQuery = contentQueries.get( 1 );
 
-        Assert.assertEquals( query.getQueryExpr().toString(),
-                             "(_path LIKE '/content/my-path/*' AND _path NOT IN ('/content/my-path')) ORDER BY _path ASC" );
-        Assert.assertEquals( orderedQuery.getQueryExpr().toString(),
-                             "_path IN ('/content//my-path') ORDER BY _manualordervalue DESC, _timestamp DESC" );
+        assertEquals( "(_path LIKE '/content/my-path/*' AND _path NOT IN ('/content/my-path')) ORDER BY _path ASC",
+                      query.getQueryExpr().toString() );
+        assertEquals( "_path IN ('/content//my-path') ORDER BY _manualordervalue DESC, _timestamp DESC",
+                      orderedQuery.getQueryExpr().toString() );
+    }
+
+    @Test
+    public void empty()
+        throws Exception
+    {
+        final ContentQueryWithChildren contentQueryWithChildren =
+            ContentQueryWithChildren.create().contentService( contentService ).build();
+
+        FindContentIdsByQueryResult result = contentQueryWithChildren.find();
+        assertEquals( result, FindContentIdsByQueryResult.empty() );
+
+        result = contentQueryWithChildren.findOrdered();
+        assertEquals( result, FindContentIdsByQueryResult.empty() );
     }
 }

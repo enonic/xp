@@ -1,7 +1,10 @@
 package com.enonic.xp.admin.impl.rest.resource.content.task;
 
+import java.util.stream.Collectors;
+
 import com.enonic.xp.admin.impl.rest.resource.content.DuplicateContentProgressListener;
 import com.enonic.xp.admin.impl.rest.resource.content.json.DuplicateContentJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.DuplicateContentsJson;
 import com.enonic.xp.admin.impl.rest.resource.content.query.ContentQueryWithChildren;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAlreadyMovedException;
@@ -20,7 +23,7 @@ public class DuplicateRunnableTask
 {
     private final AuthenticationInfo authInfo;
 
-    private final DuplicateContentJson params;
+    private final DuplicateContentsJson params;
 
     private DuplicateRunnableTask( Builder builder )
     {
@@ -32,27 +35,34 @@ public class DuplicateRunnableTask
     @Override
     public void run( final TaskId id, final ProgressReporter progressReporter )
     {
-        final ContentIds contentToDuplicateList = ContentIds.from( params.getContentIds() );
+        final ContentIds contentToDuplicateWithChildrenList = ContentIds.from(
+            params.getContents().stream().filter( DuplicateContentJson::getIncludeChildren ).map(
+                DuplicateContentJson::getContentId ).collect( Collectors.toList() ) );
+
         progressReporter.info( "Duplicating content" );
 
         final DuplicateContentProgressListener listener = new DuplicateContentProgressListener( progressReporter );
 
         final long childrenIds = ContentQueryWithChildren.create().
             contentService( this.contentService ).
-            contentsIds( contentToDuplicateList ).
+            contentsIds( contentToDuplicateWithChildrenList ).
             build().
             find().
             getTotalHits();
-        final int contentIds = contentToDuplicateList.getSize();
+        final int contentIds = params.getContents().size();
 
         listener.setTotal( Math.toIntExact( childrenIds + contentIds ) );
         final DuplicateRunnableTaskResult.Builder resultBuilder = DuplicateRunnableTaskResult.create();
-        for ( ContentId contentId : contentToDuplicateList )
+        for ( DuplicateContentJson content : params.getContents() )
         {
+
+            final ContentId contentId = ContentId.from( content.getContentId() );
+
             final DuplicateContentParams duplicateContentParams = DuplicateContentParams.create().
                 contentId( contentId ).
                 creator( authInfo.getUser().getKey() ).
                 duplicateContentListener( listener ).
+                includeChildren( content.getIncludeChildren() ).
                 build();
             try
             {
@@ -90,7 +100,7 @@ public class DuplicateRunnableTask
     {
         private AuthenticationInfo authInfo;
 
-        private DuplicateContentJson params;
+        private DuplicateContentsJson params;
 
         public Builder authInfo( AuthenticationInfo authInfo )
         {
@@ -98,7 +108,7 @@ public class DuplicateRunnableTask
             return this;
         }
 
-        public Builder params( DuplicateContentJson params )
+        public Builder params( DuplicateContentsJson params )
         {
             this.params = params;
             return this;
