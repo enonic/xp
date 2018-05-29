@@ -19,6 +19,7 @@ import com.enonic.xp.cluster.Cluster;
 import com.enonic.xp.cluster.ClusterId;
 import com.enonic.xp.cluster.ClusterManager;
 import com.enonic.xp.cluster.ClusterState;
+import com.enonic.xp.cluster.ClusterValidationStatus;
 import com.enonic.xp.cluster.ClusterValidator;
 import com.enonic.xp.cluster.ClusterValidatorResult;
 import com.enonic.xp.cluster.Clusters;
@@ -136,7 +137,7 @@ public class ClusterManagerImpl
                 forEach( error -> LOG.error( error.getMessage() ) );
             result.getWarnings().
                 forEach( warning -> LOG.warn( warning.getMessage() ) );
-            if ( !result.isOk() )
+            if ( result.getStatus() == ClusterValidationStatus.RED )
             {
                 return ClusterState.ERROR;
             }

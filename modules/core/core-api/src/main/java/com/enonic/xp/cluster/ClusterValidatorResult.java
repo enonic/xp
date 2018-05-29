@@ -6,22 +6,25 @@ import com.google.common.collect.Lists;
 
 public class ClusterValidatorResult
 {
-    private final boolean ok;
-
     private final List<ClusterValidationError> errors;
     
     private final List<ClusterValidationWarning> warnings;
 
     private ClusterValidatorResult( final Builder builder )
     {
-        ok = builder.ok;
         errors = builder.errors;
         warnings = builder.warnings;
     }
 
-    public boolean isOk()
+    public ClusterValidationStatus getStatus()
     {
-        return ok;
+        if (!errors.isEmpty()) {
+            return ClusterValidationStatus.RED;
+        }
+        if (!warnings.isEmpty()) {
+            return ClusterValidationStatus.YELLOW;
+        }
+        return ClusterValidationStatus.GREEN;
     }
 
     public List<ClusterValidationError> getErrors()
@@ -41,13 +44,11 @@ public class ClusterValidatorResult
 
     public static ClusterValidatorResult ok()
     {
-        return create().ok( true ).build();
+        return create().build();
     }
 
     public static final class Builder
     {
-        private boolean ok = true;
-
         private List<ClusterValidationError> errors = Lists.newArrayList();
         
         private List<ClusterValidationWarning> warnings = Lists.newArrayList();
@@ -56,22 +57,14 @@ public class ClusterValidatorResult
         {
         }
 
-        public Builder ok( final boolean val )
-        {
-            ok = val;
-            return this;
-        }
-
         public Builder errors( final List<ClusterValidationError> errors )
         {
-            this.ok = false;
             this.errors = errors;
             return this;
         }
 
         public Builder error( final ClusterValidationError error )
         {
-            this.ok = false;
             this.errors.add( error );
             return this;
         }
@@ -87,7 +80,6 @@ public class ClusterValidatorResult
             this.warnings.add( warning );
             return this;
         }
-
 
         public ClusterValidatorResult build()
         {
