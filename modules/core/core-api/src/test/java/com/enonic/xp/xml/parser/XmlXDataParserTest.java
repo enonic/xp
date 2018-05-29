@@ -52,9 +52,11 @@ public class XmlXDataParserTest
         assertEquals( "key.display-name", result.getDisplayNameI18nKey() );
         assertEquals( "description", result.getDescription() );
         assertEquals( "key.description", result.getDescriptionI18nKey() );
-        assertEquals( 2, result.getAllowContentTypes().size() );
-        assertTrue( result.getAllowContentTypes().contains( "test.contentType1" ) );
-        assertTrue( result.getAllowContentTypes().contains( "test.contentType2" ) );
+        assertEquals( 4, result.getAllowContentTypes().size() );
+        assertTrue( result.getAllowContentTypes().contains( "myapplication:test.contentType1" ) );
+        assertTrue( result.getAllowContentTypes().contains( "myapplication:test.contentType2" ) );
+        assertTrue( result.getAllowContentTypes().contains( "${app}:contentType3" ) );
+        assertTrue( result.getAllowContentTypes().contains( "*contentType4" ) );
 
         assertEquals( 1, result.getForm().size() );
     }

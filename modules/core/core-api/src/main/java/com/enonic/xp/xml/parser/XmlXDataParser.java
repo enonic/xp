@@ -10,11 +10,8 @@ import com.enonic.xp.xml.DomElement;
 public final class XmlXDataParser
     extends XmlMixinParser<XmlXDataParser>
 {
-    private ApplicationRelativeResolver relativeResolver;
-
     public XmlMixinParser builder( final XData.Builder builder )
     {
-        this.relativeResolver = new ApplicationRelativeResolver( this.currentApplication );
         this.builder = builder;
         return this;
     }
@@ -25,8 +22,15 @@ public final class XmlXDataParser
     {
         super.doParse( root );
 
+        final ApplicationRelativeResolver applicationRelativeResolver =
+            this.currentApplication != null ? new ApplicationRelativeResolver( this.currentApplication ) : null;
+
         root.getChildren( "allowContentType" ).forEach( domElement -> {
-            final String value = this.relativeResolver.toContentTypeName( domElement.getValue() ).toString();
+
+            final String value = applicationRelativeResolver != null
+                ? applicationRelativeResolver.toContentTypeNameRegexp( domElement.getValue() )
+                : domElement.getValue();
+
             ( (XData.Builder) this.builder ).allowContentType( value );
         } );
     }

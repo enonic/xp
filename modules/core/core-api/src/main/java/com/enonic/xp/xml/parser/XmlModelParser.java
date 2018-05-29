@@ -10,7 +10,7 @@ public abstract class XmlModelParser<P extends XmlModelParser<P>>
 {
     protected ApplicationKey currentApplication;
 
-    public final P currentApplication( final ApplicationKey value )
+    public P currentApplication( final ApplicationKey value )
     {
         this.currentApplication = value;
         return typecastThis();
