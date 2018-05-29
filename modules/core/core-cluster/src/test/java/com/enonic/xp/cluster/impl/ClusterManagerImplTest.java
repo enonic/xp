@@ -98,6 +98,41 @@ public class ClusterManagerImplTest
     }
 
     @Test
+    public void multiple_providers_nodes_mismatch()
+        throws Exception
+    {
+        final TestCluster provider1 = TestCluster.create().
+            health( ClusterHealth.GREEN ).
+            id( ClusterId.from( "elasticsearch" ) ).
+            nodes( ClusterNodes.create().
+                add( ClusterNode.from( "a" ) ).
+                build() ).
+            build();
+
+        final TestCluster provider2 = TestCluster.create().
+            health( ClusterHealth.GREEN ).
+            id( ClusterId.from( "another" ) ).nodes( ClusterNodes.create().
+            add( ClusterNode.from( "a" ) ).
+            build() ).
+            build();
+
+        createManager( "elasticsearch", "another" );
+
+        this.clusterManager.addProvider( provider1 );
+        this.clusterManager.addProvider( provider2 );
+        Thread.sleep( CHECK_INTERVAL_MS );
+        assertClusterOk();
+        assertActive( provider1, provider2 );
+
+        provider1.setNodes( ClusterNodes.create().
+            add( ClusterNode.from( "a" ) ).
+            add( ClusterNode.from( "b" ) ).
+            build() );
+        Thread.sleep( CHECK_INTERVAL_MS );
+        assertClusterOk();
+    }
+
+    @Test
     public void fail_after_register()
         throws Exception
     {

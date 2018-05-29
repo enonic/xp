@@ -4,10 +4,10 @@ import java.util.Set;
 
 import com.enonic.xp.cluster.Cluster;
 import com.enonic.xp.cluster.ClusterNodeId;
-import com.enonic.xp.cluster.ClusterValidationError;
+import com.enonic.xp.cluster.ClusterValidationWarning;
 
-class NodesMismatchError
-    implements ClusterValidationError
+class NodesMismatchWarning
+    implements ClusterValidationWarning
 {
     private final Cluster p1;
 
@@ -17,7 +17,7 @@ class NodesMismatchError
 
     private final Set<ClusterNodeId> c2;
 
-    NodesMismatchError( final Cluster p1, final Cluster p2, final Set<ClusterNodeId> c1, final Set<ClusterNodeId> c2 )
+    NodesMismatchWarning( final Cluster p1, final Cluster p2, final Set<ClusterNodeId> c1, final Set<ClusterNodeId> c2 )
     {
         this.p1 = p1;
         this.p2 = p2;

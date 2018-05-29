@@ -38,7 +38,7 @@ public class ClusterManagerImpl
 
     private final Timer timer = new Timer();
 
-    private final List<ClusterValidator> validators = Lists.newArrayList( new HealthValidator() );
+    private final List<ClusterValidator> validators = Lists.newArrayList( new HealthValidator(), new ClusterMembersValidator() );
 
     private boolean isHealthy;
 
@@ -132,7 +132,10 @@ public class ClusterManagerImpl
         for ( final ClusterValidator validator : this.validators )
         {
             final ClusterValidatorResult result = validator.validate( this.instances );
-
+            result.getErrors().
+                forEach( error -> LOG.error( error.getMessage() ) );
+            result.getWarnings().
+                forEach( warning -> LOG.warn( warning.getMessage() ) );
             if ( !result.isOk() )
             {
                 return ClusterState.ERROR;
