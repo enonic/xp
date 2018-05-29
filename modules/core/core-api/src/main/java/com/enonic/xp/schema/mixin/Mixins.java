@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
@@ -83,6 +85,11 @@ public final class Mixins
     public static Mixins from( final Iterator<? extends Mixin> mixins )
     {
         return new Mixins( ImmutableList.copyOf( mixins ) );
+    }
+
+    public static Mixins from( final Stream<? extends Mixin> mixins )
+    {
+        return new Mixins( ImmutableList.copyOf( mixins.collect( Collectors.toList() ) ) );
     }
 
     private final static class ToNameFunction

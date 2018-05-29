@@ -4,8 +4,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.mixin.XData;
 
 import static org.junit.Assert.*;
 
@@ -14,7 +14,7 @@ public class XmlXDataParserTest
 {
     private XmlMixinParser parser;
 
-    private Mixin.Builder builder;
+    private XData.Builder builder;
 
     @Before
     public void setup()
@@ -22,7 +22,7 @@ public class XmlXDataParserTest
         this.parser = new XmlXDataParser();
         this.parser.currentApplication( ApplicationKey.from( "myapplication" ) );
 
-        this.builder = Mixin.create();
+        this.builder = XData.create();
         this.builder.name( MixinName.from( "myapplication:mymixin" ) );
         this.parser.builder( this.builder );
     }
@@ -46,7 +46,7 @@ public class XmlXDataParserTest
     private void assertResult()
         throws Exception
     {
-        final Mixin result = this.builder.build();
+        final XData result = this.builder.build();
         assertEquals( "myapplication:mymixin", result.getName().toString() );
         assertEquals( "display name", result.getDisplayName() );
         assertEquals( "key.display-name", result.getDisplayNameI18nKey() );

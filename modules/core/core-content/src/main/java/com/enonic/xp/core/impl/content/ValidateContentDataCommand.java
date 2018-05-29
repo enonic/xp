@@ -182,7 +182,10 @@ final class ValidateContentDataCommand
                 }
 
                 final Form mixinForm = mixin.getForm();
-                this.resultBuilder.addAll( new OccurrenceValidator( mixinForm ).validate( extraData.getData().getRoot() ) );
+                if ( extraData.getData().getRoot().getPropertySize() > 0 )
+                {
+                    this.resultBuilder.addAll( new OccurrenceValidator( mixinForm ).validate( extraData.getData().getRoot() ) );
+                }
             }
         }
     }

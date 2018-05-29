@@ -45,6 +45,7 @@ import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinNames;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.schema.mixin.Mixins;
+import com.enonic.xp.schema.mixin.XData;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
@@ -194,7 +195,7 @@ public final class MixinResource
     {
         final ContentType contentType = this.contentTypeService.getByName( GetContentTypeParams.from( content.getType() ) );
 
-        return this.filterMixinsByContentType( contentType.getMetadata(), contentType.getName() );
+        return Mixins.from( this.filterMixinsByContentType( contentType.getMetadata(), contentType.getName() ) );
     }
 
     private Mixins getSiteXData( final Content content )
@@ -213,7 +214,7 @@ public final class MixinResource
                     Collectors.toList() );
 
             siteDescriptors.forEach( siteDescriptor -> applicationXDataBuilder.addAll(
-                this.filterMixinsByContentType( siteDescriptor.getMetaSteps(), content.getType() ).getList() ) );
+                Mixins.from( this.filterMixinsByContentType( siteDescriptor.getMetaSteps(), content.getType() ) ) ) );
 
         }
         return applicationXDataBuilder.build();
@@ -229,26 +230,35 @@ public final class MixinResource
             new ContentTypeNameWildcardResolver( this.contentTypeService );
 
         mixins.forEach( mixin -> {
-            if ( contentTypeNameWildcardResolver.anyTypeHasWildcard( mixin.getAllowContentTypes() ) )
+
+            if ( !( mixin instanceof XData ) )
+            {
+                filteredMixins.add( mixin );
+                return;
+            }
+
+            final XData xData = (XData) mixin;
+
+            if ( contentTypeNameWildcardResolver.anyTypeHasWildcard( xData.getAllowContentTypes() ) )
             {
                 final ContentTypeNames validContentTypes = ContentTypeNames.from(
-                    contentTypeNameWildcardResolver.resolveWildcards( mixin.getAllowContentTypes(), mixin.getName().getApplicationKey() ) );
+                    contentTypeNameWildcardResolver.resolveWildcards( xData.getAllowContentTypes(), xData.getName().getApplicationKey() ) );
 
                 if ( validContentTypes.contains( contentTypeName ) )
                 {
-                    filteredMixins.add( mixin );
+                    filteredMixins.add( xData );
                 }
             }
-            else if ( mixin.getAllowContentTypes().size() > 0 )
+            else if ( xData.getAllowContentTypes().size() > 0 )
             {
-                if ( ContentTypeNames.from( mixin.getAllowContentTypes() ).contains( contentTypeName ) )
+                if ( ContentTypeNames.from( xData.getAllowContentTypes() ).contains( contentTypeName ) )
                 {
-                    filteredMixins.add( mixin );
+                    filteredMixins.add( xData );
                 }
             }
             else
             {
-                filteredMixins.add( mixin );
+                filteredMixins.add( xData );
             }
         } );
 
@@ -268,7 +278,9 @@ public final class MixinResource
                 applicationKeys.stream().flatMap( key -> this.mixinService.getByApplication( key ).stream() ).map( Mixin::getName ).collect(
                     Collectors.toList() );
 
-            return this.filterMixinsByContentType( MixinNames.from( applicationMixinNames ), content.getType() );
+            return Mixins.from( this.filterMixinsByContentType( MixinNames.from( applicationMixinNames ), content.getType() ).
+                stream().
+                filter( mixin -> mixin instanceof XData ) );
 
         }
 
