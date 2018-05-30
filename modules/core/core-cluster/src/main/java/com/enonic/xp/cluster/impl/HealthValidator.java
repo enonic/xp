@@ -15,7 +15,7 @@ class HealthValidator
         {
             if ( !provider.getHealth().isHealthy() )
             {
-                final ClusterHealthError error = new ClusterHealthError( provider.getId() );
+                final ClusterHealthError error = new ClusterHealthError( provider.getId(), provider.getHealth().getErrorMessage() );
 
                 return ClusterValidatorResult.create().
                     error( error ).
