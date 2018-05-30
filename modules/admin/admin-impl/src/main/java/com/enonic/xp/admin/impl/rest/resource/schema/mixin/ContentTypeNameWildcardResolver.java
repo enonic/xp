@@ -9,35 +9,26 @@ import java.util.stream.Collectors;
 import org.codehaus.jparsec.util.Lists;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationWildcardResolver;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetAllContentTypesParams;
 
 public class ContentTypeNameWildcardResolver
 {
-    public static final String APP_WILDCARD = "${app}";
-
-    public static final String ANY_WILDCARD = "*";
-
     private final ContentTypeService contentTypeService;
+
+    private final ApplicationWildcardResolver applicationWildcardResolver;
 
     public ContentTypeNameWildcardResolver( final ContentTypeService contentTypeService )
     {
         this.contentTypeService = contentTypeService;
+        this.applicationWildcardResolver = new ApplicationWildcardResolver();
     }
 
     public boolean anyTypeHasWildcard( final List<String> contentTypeNames )
     {
-        return contentTypeNames.stream().anyMatch( s -> this.hasAnyWildcard( s ) || this.hasAppWildcard( s ) );
-    }
-
-    private boolean hasAppWildcard( String s )
-    {
-        return s.startsWith( APP_WILDCARD );
-    }
-
-    private boolean hasAnyWildcard( String s )
-    {
-        return s.contains( ANY_WILDCARD );
+        return contentTypeNames.stream().anyMatch(
+            s -> this.applicationWildcardResolver.hasAnyWildcard( s ) || this.applicationWildcardResolver.startWithAppWildcard( s ) );
     }
 
     public List<String> resolveWildcards( final List<String> namesToResolve, final ApplicationKey currentApplicationKey )
@@ -51,18 +42,18 @@ public class ContentTypeNameWildcardResolver
         List<String> resolvedNames = Lists.arrayList();
 
         namesToResolve.forEach( name -> {
-            if ( this.hasAnyWildcard( name ) || this.hasAppWildcard( name ) )
+            if ( this.applicationWildcardResolver.hasAnyWildcard( name ) || this.applicationWildcardResolver.startWithAppWildcard( name ) )
             {
                 String resolvedName;
-                if ( this.hasAppWildcard( name ) )
+                if ( this.applicationWildcardResolver.startWithAppWildcard( name ) )
                 {
-                    resolvedName = this.resolveAppWildcard( name, currentApplicationKey );
+                    resolvedName = this.applicationWildcardResolver.resolveAppWildcard( name, currentApplicationKey );
                 }
                 else
                 {
                     resolvedName = name;
                 }
-                if ( this.hasAnyWildcard( resolvedName ) )
+                if ( this.applicationWildcardResolver.hasAnyWildcard( resolvedName ) )
                 {
                     resolvedNames.addAll( this.resolveAnyWildcard( resolvedName, allContentTypes ) );
                 }
@@ -84,11 +75,6 @@ public class ContentTypeNameWildcardResolver
     {
         Predicate<String> pattern = Pattern.compile( nameToResolve.replaceAll( "\\*", ".*" ) ).asPredicate();
         return allContentTypes.stream().filter( pattern ).collect( Collectors.toList() );
-    }
-
-    private String resolveAppWildcard( final String nameToResolve, final ApplicationKey applicationKey )
-    {
-        return nameToResolve.replace( APP_WILDCARD, applicationKey.toString() );
     }
 
     @Override

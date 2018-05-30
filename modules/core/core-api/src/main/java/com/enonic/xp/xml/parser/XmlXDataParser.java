@@ -2,6 +2,7 @@ package com.enonic.xp.xml.parser;
 
 import com.google.common.annotations.Beta;
 
+import com.enonic.xp.app.ApplicationRelativeResolver;
 import com.enonic.xp.schema.mixin.XData;
 import com.enonic.xp.xml.DomElement;
 
@@ -21,7 +22,16 @@ public final class XmlXDataParser
     {
         super.doParse( root );
 
-        root.getChildren( "allowContentType" ).forEach(
-            domElement -> ( (XData.Builder) this.builder ).allowContentType( domElement.getValue() ) );
+        final ApplicationRelativeResolver applicationRelativeResolver =
+            this.currentApplication != null ? new ApplicationRelativeResolver( this.currentApplication ) : null;
+
+        root.getChildren( "allowContentType" ).forEach( domElement -> {
+
+            final String value = applicationRelativeResolver != null
+                ? applicationRelativeResolver.toContentTypeNameRegexp( domElement.getValue() )
+                : domElement.getValue();
+
+            ( (XData.Builder) this.builder ).allowContentType( value );
+        } );
     }
 }
