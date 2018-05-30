@@ -39,6 +39,19 @@ public class RangeFunctionTest
     }
 
     @Test
+    public void instant_string_range_includes()
+        throws Exception
+    {
+        final String expected = load( "range_instant_includes.json" );
+
+        final QueryBuilder query = RangeFunction.create(
+            FunctionExpr.from( "range", ValueExpr.string( "MyField" ), ValueExpr.string( "1975-08-01T10:00Z" ),
+                               ValueExpr.string( "1975-08-01T10:00Z" ), ValueExpr.string( "true" ), ValueExpr.string( "false" ) ) );
+
+        Assert.assertEquals( cleanString( expected ), cleanString( query.toString() ) );
+    }
+
+    @Test
     public void string_range_includes()
         throws Exception
     {
