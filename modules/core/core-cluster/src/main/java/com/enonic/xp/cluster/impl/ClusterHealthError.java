@@ -8,14 +8,17 @@ class ClusterHealthError
 {
     private final ClusterId providerId;
 
-    ClusterHealthError( final ClusterId providerId )
+    private final String errorMessage;
+
+    ClusterHealthError( final ClusterId providerId, final String errorMessage )
     {
         this.providerId = providerId;
+        this.errorMessage = errorMessage;
     }
 
     @Override
     public String getMessage()
     {
-        return "Provider " + providerId + " not healthy";
+        return "Provider " + providerId + " not healthy" + ( errorMessage == null ? "" : ": " + errorMessage );
     }
 }

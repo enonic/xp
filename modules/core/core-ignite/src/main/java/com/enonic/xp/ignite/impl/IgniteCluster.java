@@ -78,7 +78,7 @@ public class IgniteCluster
     @Override
     public ClusterHealth getHealth()
     {
-        return ClusterHealth.GREEN;
+        return ClusterHealth.green();
     }
 
     @Override
