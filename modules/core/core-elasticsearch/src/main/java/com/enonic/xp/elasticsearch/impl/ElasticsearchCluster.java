@@ -4,7 +4,6 @@ import java.util.Hashtable;
 
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
-import org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus;
 import org.elasticsearch.action.admin.cluster.state.ClusterStateRequest;
 import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
 import org.elasticsearch.client.Client;
@@ -22,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.cluster.Cluster;
 import com.enonic.xp.cluster.ClusterHealth;
+import com.enonic.xp.cluster.ClusterHealthStatus;
 import com.enonic.xp.cluster.ClusterId;
 import com.enonic.xp.cluster.ClusterNodes;
 
@@ -71,8 +71,18 @@ public final class ElasticsearchCluster
     @Override
     public ClusterHealth getHealth()
     {
-        final ClusterHealthResponse healthResponse = doGetHealth();
-        return getProviderState( healthResponse.getStatus() );
+        try
+        {
+            final ClusterHealthResponse healthResponse = doGetHealth();
+            return toClusterHealth( healthResponse.getStatus() );
+        }
+        catch ( Exception e )
+        {
+            return ClusterHealth.create().
+                status( ClusterHealthStatus.RED ).
+                errorMessage( e.getClass().getSimpleName() + "[" + e.getMessage() + "]" ).
+                build();
+        }
     }
 
     @Override
@@ -144,19 +154,19 @@ public final class ElasticsearchCluster
         return response.getState().getNodes();
     }
 
-    private ClusterHealth getProviderState( final ClusterHealthStatus status )
+    private ClusterHealth toClusterHealth( final org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus status )
     {
-        if ( status == ClusterHealthStatus.RED )
+        if ( status == org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus.RED )
         {
-            return ClusterHealth.RED;
+            return ClusterHealth.red();
         }
 
-        if ( status == ClusterHealthStatus.YELLOW )
+        if ( status == org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus.YELLOW )
         {
-            return ClusterHealth.YELLOW;
+            return ClusterHealth.yellow();
         }
 
-        return ClusterHealth.GREEN;
+        return ClusterHealth.green();
     }
 
 
