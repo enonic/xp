@@ -4,15 +4,15 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.schema.mixin.MixinName;
-import com.enonic.xp.schema.mixin.XData;
+import com.enonic.xp.schema.xdata.XData;
+import com.enonic.xp.schema.xdata.XDataName;
 
 import static org.junit.Assert.*;
 
 public class XmlXDataParserTest
     extends XmlModelParserTest
 {
-    private XmlMixinParser parser;
+    private XmlXDataParser parser;
 
     private XData.Builder builder;
 
@@ -23,7 +23,7 @@ public class XmlXDataParserTest
         this.parser.currentApplication( ApplicationKey.from( "myapplication" ) );
 
         this.builder = XData.create();
-        this.builder.name( MixinName.from( "myapplication:mymixin" ) );
+        this.builder.name( XDataName.from( "myapplication:mymixin" ) );
         this.parser.builder( this.builder );
     }
 

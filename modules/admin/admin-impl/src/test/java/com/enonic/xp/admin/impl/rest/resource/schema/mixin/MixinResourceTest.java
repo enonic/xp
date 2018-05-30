@@ -37,26 +37,37 @@ import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinNames;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.schema.mixin.Mixins;
-import com.enonic.xp.schema.mixin.XData;
+import com.enonic.xp.schema.xdata.XData;
+import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.xdata.XDataNames;
+import com.enonic.xp.schema.xdata.XDataService;
+import com.enonic.xp.schema.xdata.XDatas;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 
 import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
 
 public class MixinResourceTest
     extends AdminResourceTestSupport
 {
     private final static MixinName MY_MIXIN_QUALIFIED_NAME_1 = MixinName.from( "myapplication:input_text_1" );
 
+    private final static XDataName MY_XDATA_QUALIFIED_NAME_1 = XDataName.from( "myapplication:input_text_1" );
+
     private final static String MY_MIXIN_INPUT_NAME_1 = "input_text_1";
 
     private final static MixinName MY_MIXIN_QUALIFIED_NAME_2 = MixinName.from( "myapplication:text_area_2" );
 
+    private final static XDataName MY_XDATA_QUALIFIED_NAME_2 = XDataName.from( "myapplication:text_area_2" );
+
     private final static String MY_MIXIN_INPUT_NAME_2 = "text_area_2";
 
     private MixinService mixinService;
+
+    private XDataService xDataService;
 
     private LocaleService localeService;
 
@@ -72,6 +83,7 @@ public class MixinResourceTest
     protected Object getResourceInstance()
     {
         mixinService = Mockito.mock( MixinService.class );
+        xDataService = Mockito.mock( XDataService.class );
         localeService = Mockito.mock( LocaleService.class );
         contentService = Mockito.mock( ContentService.class );
         siteService = Mockito.mock( SiteService.class );
@@ -79,6 +91,7 @@ public class MixinResourceTest
 
         resource = new MixinResource();
         resource.setMixinService( mixinService );
+        resource.setXDataService( xDataService );
         resource.setLocaleService( localeService );
         resource.setContentService( contentService );
         resource.setSiteService( siteService );
@@ -125,7 +138,7 @@ public class MixinResourceTest
         Mockito.when( messageBundle.localize( "key.display-name" ) ).thenReturn( "translated.displayName" );
         Mockito.when( messageBundle.localize( "key.description" ) ).thenReturn( "translated.description" );
 
-        Mockito.when( this.localeService.getBundle( Mockito.any(), Mockito.any() ) ).thenReturn( messageBundle );
+        Mockito.when( this.localeService.getBundle( any(), any() ) ).thenReturn( messageBundle );
 
         String response = request().path( "schema/mixin" ).queryParam( "name", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get().getAsString();
 
@@ -136,7 +149,7 @@ public class MixinResourceTest
     public final void test_get_mixin_not_found()
         throws Exception
     {
-        Mockito.when( mixinService.getByName( Mockito.any( MixinName.class ) ) ).thenReturn( null );
+        Mockito.when( mixinService.getByName( any( MixinName.class ) ) ).thenReturn( null );
 
         final MockRestResponse response = request().path( "schema/mixin" ).queryParam( "name", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get();
         Assert.assertEquals( 404, response.getStatus() );
@@ -168,19 +181,19 @@ public class MixinResourceTest
         throws Exception
     {
         final XData xdata1 = XData.create().createdTime( LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC ) ).name(
-            MY_MIXIN_QUALIFIED_NAME_1.toString() ).addFormItem(
+            MY_XDATA_QUALIFIED_NAME_1 ).addFormItem(
             Input.create().name( MY_MIXIN_INPUT_NAME_1 ).inputType( InputTypeName.TEXT_LINE ).label( "Line Text 1" ).required(
                 true ).helpText( "Help text line 1" ).required( true ).build() ).allowContentType( "^app:*" ).build();
 
         final XData xdata2 = XData.create().createdTime( LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC ) ).name(
-            MY_MIXIN_QUALIFIED_NAME_2.toString() ).addFormItem(
+            MY_XDATA_QUALIFIED_NAME_2 ).addFormItem(
             Input.create().name( MY_MIXIN_INPUT_NAME_2 ).inputType( InputTypeName.TEXT_AREA ).label( "Text Area" ).required(
                 true ).helpText( "Help text area" ).required( true ).build() ).allowContentType( "app:testContentType" ).build();
 
         final ContentType contentType = ContentType.create().name( "app:testContentType" ).superType( ContentTypeName.folder() ).metadata(
-            MixinNames.from( xdata1.getName() ) ).build();
+            MixinNames.from( xdata1.getName().toString() ) ).build();
         Mockito.when( contentTypeService.getByName( GetContentTypeParams.from( contentType.getName() ) ) ).thenReturn( contentType );
-        Mockito.when( contentTypeService.getAll( Mockito.any() ) ).thenReturn( ContentTypes.from( contentType ) );
+        Mockito.when( contentTypeService.getAll( any() ) ).thenReturn( ContentTypes.from( contentType ) );
 
         final Content content = Mockito.mock( Content.class );
         Mockito.when( content.getType() ).thenReturn( contentType.getName() );
@@ -191,16 +204,17 @@ public class MixinResourceTest
 
         final Site site = Site.create().name( "site" ).parentPath( ContentPath.ROOT ).addSiteConfig( siteConfig ).build();
 
-        final SiteDescriptor siteDescriptor = SiteDescriptor.create().metaSteps( MixinNames.from( xdata2.getName() ) ).build();
+        final SiteDescriptor siteDescriptor = SiteDescriptor.create().metaSteps( MixinNames.from( xdata2.getName().toString() ) ).build();
         Mockito.when( siteService.getDescriptor( contentType.getName().getApplicationKey() ) ).thenReturn( siteDescriptor );
 
         Mockito.when( contentService.getById( ContentId.from( "contentId" ) ) ).thenReturn( content );
         Mockito.when( contentService.getNearestSite( ContentId.from( "contentId" ) ) ).thenReturn( site );
 
-        Mockito.when( mixinService.getByNames( MixinNames.from( xdata1.getName() ) ) ).thenReturn( Mixins.from( xdata1 ) );
-        Mockito.when( mixinService.getByNames( MixinNames.from( xdata2.getName() ) ) ).thenReturn( Mixins.from( xdata2 ) );
+        Mockito.when( mixinService.getByNames( any() ) ).thenReturn( Mixins.empty() );
+        Mockito.when( xDataService.getByNames( XDataNames.from( xdata1.getName() ) ) ).thenReturn( XDatas.from( xdata1 ) );
+        Mockito.when( xDataService.getByNames( XDataNames.from( xdata2.getName() ) ) ).thenReturn( XDatas.from( xdata2 ) );
 
-        Mockito.when( mixinService.getByApplication( Mockito.any() ) ).thenReturn( Mixins.from( xdata2 ) );
+        Mockito.when( xDataService.getByApplication( any() ) ).thenReturn( XDatas.from( xdata2 ) );
 
         String result = request().path( "schema/mixin/getContentXData" ).queryParam( "contentId", "contentId" ).get().getAsString();
 

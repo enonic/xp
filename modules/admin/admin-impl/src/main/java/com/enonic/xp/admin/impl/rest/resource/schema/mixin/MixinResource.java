@@ -25,6 +25,8 @@ import com.google.common.collect.Sets;
 
 import com.enonic.xp.admin.impl.json.schema.mixin.MixinJson;
 import com.enonic.xp.admin.impl.json.schema.mixin.MixinListJson;
+import com.enonic.xp.admin.impl.json.schema.xdata.XDataJson;
+import com.enonic.xp.admin.impl.json.schema.xdata.XDataListJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.schema.SchemaImageHelper;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
@@ -45,12 +47,18 @@ import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinNames;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.schema.mixin.Mixins;
-import com.enonic.xp.schema.mixin.XData;
+import com.enonic.xp.schema.xdata.XData;
+import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.xdata.XDataNames;
+import com.enonic.xp.schema.xdata.XDataService;
+import com.enonic.xp.schema.xdata.XDatas;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
+
+import static java.util.stream.Collectors.toList;
 
 @Path(ResourceConstants.REST_ROOT + "schema/mixin")
 @Produces(MediaType.APPLICATION_JSON)
@@ -64,6 +72,8 @@ public final class MixinResource
     private static final SchemaImageHelper HELPER = new SchemaImageHelper();
 
     private MixinService mixinService;
+
+    private XDataService xDataService;
 
     private ContentService contentService;
 
@@ -96,39 +106,42 @@ public final class MixinResource
 
     @GET
     @Path("getContentXData")
-    public MixinListJson getContentXData( @QueryParam("contentId") final String id )
+    public XDataListJson getContentXData( @QueryParam("contentId") final String id )
     {
         final ContentId contentId = ContentId.from( id );
         final Content content = this.contentService.getById( contentId );
 
-        final Set<Mixin> internalXData = Sets.newLinkedHashSet();
+        final Set<XData> internalXData = Sets.newLinkedHashSet();
 
         internalXData.addAll( getContentTypeXData( content ).getList() );
         internalXData.addAll( getSiteXData( content ).getList() );
 
-        final Set<Mixin> externalXData = getApplicationXData( content ).getList().
+        final Set<XData> externalXData = getApplicationXData( content ).
             stream().
             filter( externalMixin -> !internalXData.contains( externalMixin ) ).
             collect( Collectors.toSet() );
 
-        final MixinListJson result = new MixinListJson();
-        result.addMixins( createMixinListJson( internalXData ) );
-        result.addMixins( createMixinListJson( externalXData, true ) );
+        final XDataListJson result = new XDataListJson();
+        result.addXDatas( createXDataListJson( internalXData, false ) );
+        result.addXDatas( createXDataListJson( externalXData, true ) );
 
         return result;
     }
 
-    private List<MixinJson> createMixinListJson( final Collection<Mixin> xDatas, final Boolean isExternal )
+    private List<XDataJson> createXDataListJson( final Collection<XData> xDatas, final Boolean isExternal )
     {
         return xDatas.stream().map(
-            mixin -> MixinJson.create().setMixin( mixin ).setIconUrlResolver( this.mixinIconUrlResolver ).setLocaleMessageResolver(
-                new LocaleMessageResolver( localeService, mixin.getName().getApplicationKey() ) ).setExternal(
-                isExternal ).build() ).collect( Collectors.toList() );
+            xData -> XDataJson.create().setXData( xData ).setIconUrlResolver( this.mixinIconUrlResolver ).setLocaleMessageResolver(
+                new LocaleMessageResolver( localeService, xData.getName().getApplicationKey() ) ).setExternal(
+                isExternal ).build() ).collect( toList() );
     }
 
-    private List<MixinJson> createMixinListJson( final Collection<Mixin> xDatas )
+    private List<MixinJson> createMixinListJson( final Collection<Mixin> mixins )
     {
-        return this.createMixinListJson( xDatas, false );
+        return mixins.stream().map(
+            mixin -> MixinJson.create().setMixin( mixin ).setIconUrlResolver( this.mixinIconUrlResolver ).setLocaleMessageResolver(
+                new LocaleMessageResolver( localeService, mixin.getName().getApplicationKey() ) ).setExternal( false ).build() ).collect(
+            toList() );
     }
 
     @GET
@@ -191,54 +204,56 @@ public final class MixinResource
         return mixinService.getByName( name );
     }
 
-    private Mixins getContentTypeXData( final Content content )
+    private XDatas getContentTypeXData( final Content content )
     {
         final ContentType contentType = this.contentTypeService.getByName( GetContentTypeParams.from( content.getType() ) );
 
-        return Mixins.from( this.filterMixinsByContentType( contentType.getMetadata(), contentType.getName() ) );
+        return XDatas.from( this.filterXDatasByContentType( contentType.getMetadata(), contentType.getName() ) );
     }
 
-    private Mixins getSiteXData( final Content content )
+    private XDatas getSiteXData( final Content content )
     {
-        final Mixins.Builder applicationXDataBuilder = Mixins.create();
+        final XDatas.Builder applicationXDataBuilder = XDatas.create();
 
         final Site nearestSite = this.contentService.getNearestSite( content.getId() );
 
         if ( nearestSite != null )
         {
             final List<ApplicationKey> applicationKeys =
-                nearestSite.getSiteConfigs().stream().map( SiteConfig::getApplicationKey ).collect( Collectors.toList() );
+                nearestSite.getSiteConfigs().stream().map( SiteConfig::getApplicationKey ).collect( toList() );
 
             final List<SiteDescriptor> siteDescriptors =
-                applicationKeys.stream().map( applicationKey -> siteService.getDescriptor( applicationKey ) ).collect(
-                    Collectors.toList() );
+                applicationKeys.stream().map( applicationKey -> siteService.getDescriptor( applicationKey ) ).collect( toList() );
 
             siteDescriptors.forEach( siteDescriptor -> applicationXDataBuilder.addAll(
-                Mixins.from( this.filterMixinsByContentType( siteDescriptor.getMetaSteps(), content.getType() ) ) ) );
+                XDatas.from( this.filterXDatasByContentType( siteDescriptor.getMetaSteps(), content.getType() ) ) ) );
 
         }
         return applicationXDataBuilder.build();
     }
 
-    private Mixins filterMixinsByContentType( final MixinNames mixinNames, final ContentTypeName contentTypeName )
+    private XDatas filterXDatasByContentType( final MixinNames mixinNames, final ContentTypeName contentTypeName )
     {
+        // add mixins for backwards compatibility (mixins are not filtered by content type)
         final Mixins mixins = this.mixinService.getByNames( mixinNames );
+        final XDatas.Builder resultXDatas = XDatas.create();
+        mixins.forEach( mixin -> resultXDatas.add( toXData( mixin ) ) );
 
-        final Mixins.Builder filteredMixins = Mixins.create();
+        final XDatas xDatas = this.xDataService.getByNames( toXDataNames( mixinNames ) );
+        final XDatas filteredXDatas = filterXDatasByContentType( xDatas, contentTypeName );
+        resultXDatas.addAll( filteredXDatas );
+
+        return resultXDatas.build();
+    }
+
+    private XDatas filterXDatasByContentType( final XDatas xDatas, final ContentTypeName contentTypeName )
+    {
+        final XDatas.Builder filteredXDatas = XDatas.create();
 
         final ContentTypeNameWildcardResolver contentTypeNameWildcardResolver =
             new ContentTypeNameWildcardResolver( this.contentTypeService );
 
-        mixins.forEach( mixin -> {
-
-            if ( !( mixin instanceof XData ) )
-            {
-                filteredMixins.add( mixin );
-                return;
-            }
-
-            final XData xData = (XData) mixin;
-
+        xDatas.forEach( xData -> {
             if ( contentTypeNameWildcardResolver.anyTypeHasWildcard( xData.getAllowContentTypes() ) )
             {
                 final ContentTypeNames validContentTypes = ContentTypeNames.from(
@@ -246,45 +261,67 @@ public final class MixinResource
 
                 if ( validContentTypes.contains( contentTypeName ) )
                 {
-                    filteredMixins.add( xData );
+                    filteredXDatas.add( xData );
                 }
             }
             else if ( xData.getAllowContentTypes().size() > 0 )
             {
                 if ( ContentTypeNames.from( xData.getAllowContentTypes() ).contains( contentTypeName ) )
                 {
-                    filteredMixins.add( xData );
+                    filteredXDatas.add( xData );
                 }
             }
             else
             {
-                filteredMixins.add( xData );
+                filteredXDatas.add( xData );
             }
         } );
 
-        return filteredMixins.build();
+        return filteredXDatas.build();
     }
 
-    private Mixins getApplicationXData( final Content content )
+    private XDatas getApplicationXData( final Content content )
     {
         final Site nearestSite = this.contentService.getNearestSite( content.getId() );
 
         if ( nearestSite != null )
         {
             final List<ApplicationKey> applicationKeys =
-                nearestSite.getSiteConfigs().stream().map( SiteConfig::getApplicationKey ).collect( Collectors.toList() );
+                nearestSite.getSiteConfigs().stream().map( SiteConfig::getApplicationKey ).collect( toList() );
 
-            final List<MixinName> applicationMixinNames =
-                applicationKeys.stream().flatMap( key -> this.mixinService.getByApplication( key ).stream() ).map( Mixin::getName ).collect(
-                    Collectors.toList() );
+            final List<XData> applicationXDatas =
+                applicationKeys.stream().flatMap( key -> this.xDataService.getByApplication( key ).stream() ).collect( toList() );
 
-            return Mixins.from( this.filterMixinsByContentType( MixinNames.from( applicationMixinNames ), content.getType() ).
-                stream().
-                filter( mixin -> mixin instanceof XData ) );
+            return XDatas.from( this.filterXDatasByContentType( XDatas.from( applicationXDatas ), content.getType() ).
+                stream().iterator() );
 
         }
 
-        return Mixins.empty();
+        return XDatas.empty();
+    }
+
+    private XData toXData( final Mixin mixin )
+    {
+        XData.Builder xData = XData.create();
+        xData.name( XDataName.from( mixin.getName().getApplicationKey(), mixin.getName().getLocalName() ) );
+        xData.displayName( mixin.getDisplayName() );
+        xData.displayNameI18nKey( mixin.getDisplayNameI18nKey() );
+        xData.description( mixin.getDescription() );
+        xData.descriptionI18nKey( mixin.getDescriptionI18nKey() );
+        xData.createdTime( mixin.getCreatedTime() );
+        xData.modifiedTime( mixin.getModifiedTime() );
+        xData.creator( mixin.getCreator() );
+        xData.modifier( mixin.getModifier() );
+        xData.icon( mixin.getIcon() );
+        xData.form( mixin.getForm() );
+        return xData.build();
+    }
+
+    private XDataNames toXDataNames( final MixinNames mixinNames )
+    {
+        return XDataNames.from( mixinNames.stream().
+            map( ( mixinName ) -> XDataName.from( mixinName.getApplicationKey(), mixinName.getLocalName() ) ).
+            collect( toList() ) );
     }
 
     @Reference
@@ -293,6 +330,12 @@ public final class MixinResource
         this.mixinService = mixinService;
         this.mixinIconResolver = new MixinIconResolver( mixinService );
         this.mixinIconUrlResolver = new MixinIconUrlResolver( this.mixinIconResolver );
+    }
+
+    @Reference
+    public void setXDataService( final XDataService xDataService )
+    {
+        this.xDataService = xDataService;
     }
 
     @Reference

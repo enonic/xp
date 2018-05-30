@@ -33,7 +33,6 @@ import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinNames;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.schema.mixin.Mixins;
-import com.enonic.xp.schema.mixin.XData;
 
 @Component(immediate = true)
 public final class MixinServiceImpl
@@ -60,18 +59,6 @@ public final class MixinServiceImpl
             return this.builtInTypes.getAll().getMixin( name );
         }
 
-        try
-        {
-            final XData xData = new XDataLoader( this.resourceService ).get( name );
-            if ( xData != null )
-            {
-                return xData;
-            }
-        }
-        catch ( ClassCastException e )
-        {
-        }
-
         return new MixinLoader( this.resourceService ).get( name );
     }
 
@@ -83,7 +70,7 @@ public final class MixinServiceImpl
             return Mixins.empty();
         }
 
-        return Mixins.from( names.stream().map( name -> getByName( name ) ).collect( Collectors.toList() ) );
+        return Mixins.from( names.stream().map( this::getByName ).filter( Objects::nonNull ).collect( Collectors.toList() ) );
     }
 
     private boolean isSystem( final MixinName name )
@@ -130,11 +117,7 @@ public final class MixinServiceImpl
 
     private Set<MixinName> findNames( final ApplicationKey key )
     {
-        final Set<MixinName> result = Sets.newHashSet();
-        result.addAll( new XDataLoader( this.resourceService ).findNames( key ) );
-        result.addAll( new MixinLoader( this.resourceService ).findNames( key ) );
-
-        return result;
+        return new MixinLoader( this.resourceService ).findNames( key );
     }
 
     @Override
