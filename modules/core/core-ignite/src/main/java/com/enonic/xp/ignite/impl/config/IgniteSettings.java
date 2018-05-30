@@ -10,6 +10,8 @@ public @interface IgniteSettings
 
     boolean connector_enabled() default false;
 
+    boolean odbc_enabled() default false;
+
     String discovery_tcp_localAddress() default "localhost";
 
     int discovery_tcp_port() default 47500;

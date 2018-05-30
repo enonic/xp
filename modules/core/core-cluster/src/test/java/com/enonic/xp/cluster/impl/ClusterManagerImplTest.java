@@ -19,6 +19,8 @@ import static junit.framework.TestCase.assertTrue;
 
 public class ClusterManagerImplTest
 {
+    private static final long CHECK_INTERVAL_MS = 200l;
+
     private ClusterManagerImpl clusterManager;
 
     @Before
@@ -43,12 +45,18 @@ public class ClusterManagerImplTest
             build();
 
         this.clusterManager.addProvider( provider );
+        Thread.sleep( CHECK_INTERVAL_MS );
         assertActive( provider );
         this.clusterManager.getClusterState();
         assertActive( provider );
+
         provider.setHealth( ClusterHealth.RED );
+        Thread.sleep( CHECK_INTERVAL_MS );
         assertClusterError();
+        assertDeactivated( provider );
+
         provider.setHealth( ClusterHealth.GREEN );
+        Thread.sleep( CHECK_INTERVAL_MS );
         assertClusterOk();
         assertActive( provider );
     }
@@ -76,13 +84,17 @@ public class ClusterManagerImplTest
             build();
 
         this.clusterManager.addProvider( provider1 );
+        Thread.sleep( CHECK_INTERVAL_MS );
         assertDeactivated( provider1 );
 
         this.clusterManager.addProvider( provider2 );
+        Thread.sleep( CHECK_INTERVAL_MS );
         assertActive( provider1, provider2 );
 
         provider1.setHealth( ClusterHealth.RED );
+        Thread.sleep( CHECK_INTERVAL_MS );
         assertClusterError();
+        assertDeactivated( provider1, provider2 );
     }
 
     @Test
@@ -108,6 +120,7 @@ public class ClusterManagerImplTest
 
         this.clusterManager.addProvider( provider1 );
         this.clusterManager.addProvider( provider2 );
+        Thread.sleep( CHECK_INTERVAL_MS );
         assertClusterOk();
         assertActive( provider1, provider2 );
 
@@ -115,8 +128,8 @@ public class ClusterManagerImplTest
             add( ClusterNode.from( "a" ) ).
             add( ClusterNode.from( "b" ) ).
             build() );
-
-        assertClusterError();
+        Thread.sleep( CHECK_INTERVAL_MS );
+        assertClusterOk();
     }
 
     @Test
@@ -169,7 +182,12 @@ public class ClusterManagerImplTest
             requiredIds.add( ClusterId.from( req ) );
         }
 
-        this.clusterManager = new ClusterManagerImpl( new Clusters( requiredIds ) );
+        this.clusterManager = ClusterManagerImpl.create().
+            checkIntervalMs( CHECK_INTERVAL_MS / 2 ).
+            requiredInstances( new Clusters( requiredIds ) ).
+            build();
+        this.clusterManager.activate();
+
     }
 
     private void assertActive( final TestCluster... providers )

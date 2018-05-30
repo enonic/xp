@@ -6,24 +6,35 @@ import com.google.common.collect.Lists;
 
 public class ClusterValidatorResult
 {
-    private final boolean ok;
-
     private final List<ClusterValidationError> errors;
+    
+    private final List<ClusterValidationWarning> warnings;
 
     private ClusterValidatorResult( final Builder builder )
     {
-        ok = builder.ok;
         errors = builder.errors;
+        warnings = builder.warnings;
     }
 
-    public boolean isOk()
+    public ClusterValidationStatus getStatus()
     {
-        return ok;
+        if (!errors.isEmpty()) {
+            return ClusterValidationStatus.RED;
+        }
+        if (!warnings.isEmpty()) {
+            return ClusterValidationStatus.YELLOW;
+        }
+        return ClusterValidationStatus.GREEN;
     }
 
     public List<ClusterValidationError> getErrors()
     {
         return errors;
+    }
+
+    public List<ClusterValidationWarning> getWarnings()
+    {
+        return warnings;
     }
 
     public static Builder create()
@@ -33,39 +44,42 @@ public class ClusterValidatorResult
 
     public static ClusterValidatorResult ok()
     {
-        return create().ok( true ).build();
+        return create().build();
     }
 
     public static final class Builder
     {
-        private boolean ok = true;
-
         private List<ClusterValidationError> errors = Lists.newArrayList();
+        
+        private List<ClusterValidationWarning> warnings = Lists.newArrayList();
 
         private Builder()
         {
         }
 
-        public Builder ok( final boolean val )
+        public Builder errors( final List<ClusterValidationError> errors )
         {
-            ok = val;
+            this.errors = errors;
             return this;
         }
 
-        public Builder errors( final List<ClusterValidationError> val )
+        public Builder error( final ClusterValidationError error )
         {
-            this.ok = false;
-            this.errors = val;
+            this.errors.add( error );
             return this;
         }
 
-        public Builder error( final ClusterValidationError val )
+        public Builder warnings( final List<ClusterValidationWarning> warnings )
         {
-            this.ok = false;
-            this.errors.add( val );
+            this.warnings = warnings;
             return this;
         }
 
+        public Builder warning( final ClusterValidationWarning warning )
+        {
+            this.warnings.add( warning );
+            return this;
+        }
 
         public ClusterValidatorResult build()
         {
