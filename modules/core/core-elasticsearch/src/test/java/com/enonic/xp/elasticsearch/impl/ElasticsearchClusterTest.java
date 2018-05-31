@@ -83,7 +83,7 @@ public class ElasticsearchClusterTest
         throws Exception
     {
         setClusterHealth( ClusterHealthStatus.RED );
-        assertEquals( ClusterHealth.RED, this.activator.getHealth() );
+        assertEquals( ClusterHealth.red(), this.activator.getHealth() );
     }
 
     @Test
@@ -91,7 +91,7 @@ public class ElasticsearchClusterTest
         throws Exception
     {
         setClusterHealth( ClusterHealthStatus.YELLOW );
-        assertEquals( ClusterHealth.YELLOW, this.activator.getHealth() );
+        assertEquals( ClusterHealth.yellow(), this.activator.getHealth() );
     }
 
     @Test
@@ -99,7 +99,7 @@ public class ElasticsearchClusterTest
         throws Exception
     {
         setClusterHealth( ClusterHealthStatus.GREEN );
-        assertEquals( ClusterHealth.GREEN, this.activator.getHealth() );
+        assertEquals( ClusterHealth.green(), this.activator.getHealth() );
     }
 
     @SuppressWarnings("unchecked")

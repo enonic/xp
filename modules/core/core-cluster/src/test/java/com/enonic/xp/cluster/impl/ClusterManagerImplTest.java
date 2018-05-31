@@ -37,7 +37,7 @@ public class ClusterManagerImplTest
         createManager( "elasticsearch" );
 
         final TestCluster provider = TestCluster.create().
-            health( ClusterHealth.GREEN ).
+            health( ClusterHealth.green() ).
             id( ClusterId.from( "elasticsearch" ) ).
             nodes( ClusterNodes.create().
                 add( ClusterNode.from( "a" ) ).
@@ -50,12 +50,12 @@ public class ClusterManagerImplTest
         this.clusterManager.getClusterState();
         assertActive( provider );
 
-        provider.setHealth( ClusterHealth.RED );
+        provider.setHealth( ClusterHealth.red() );
         Thread.sleep( CHECK_INTERVAL_MS );
         assertClusterError();
         assertDeactivated( provider );
 
-        provider.setHealth( ClusterHealth.GREEN );
+        provider.setHealth( ClusterHealth.green() );
         Thread.sleep( CHECK_INTERVAL_MS );
         assertClusterOk();
         assertActive( provider );
@@ -68,7 +68,7 @@ public class ClusterManagerImplTest
         createManager( "elasticsearch", "another" );
 
         final TestCluster provider1 = TestCluster.create().
-            health( ClusterHealth.GREEN ).
+            health( ClusterHealth.green() ).
             id( ClusterId.from( "elasticsearch" ) ).
             nodes( ClusterNodes.create().
                 add( ClusterNode.from( "a" ) ).
@@ -76,7 +76,7 @@ public class ClusterManagerImplTest
             build();
 
         final TestCluster provider2 = TestCluster.create().
-            health( ClusterHealth.GREEN ).
+            health( ClusterHealth.green() ).
             id( ClusterId.from( "another" ) ).
             nodes( ClusterNodes.create().
                 add( ClusterNode.from( "a" ) ).
@@ -91,7 +91,7 @@ public class ClusterManagerImplTest
         Thread.sleep( CHECK_INTERVAL_MS );
         assertActive( provider1, provider2 );
 
-        provider1.setHealth( ClusterHealth.RED );
+        provider1.setHealth( ClusterHealth.red() );
         Thread.sleep( CHECK_INTERVAL_MS );
         assertClusterError();
         assertDeactivated( provider1, provider2 );
@@ -102,7 +102,7 @@ public class ClusterManagerImplTest
         throws Exception
     {
         final TestCluster provider1 = TestCluster.create().
-            health( ClusterHealth.GREEN ).
+            health( ClusterHealth.green() ).
             id( ClusterId.from( "elasticsearch" ) ).
             nodes( ClusterNodes.create().
                 add( ClusterNode.from( "a" ) ).
@@ -110,7 +110,7 @@ public class ClusterManagerImplTest
             build();
 
         final TestCluster provider2 = TestCluster.create().
-            health( ClusterHealth.GREEN ).
+            health( ClusterHealth.green() ).
             id( ClusterId.from( "another" ) ).nodes( ClusterNodes.create().
             add( ClusterNode.from( "a" ) ).
             build() ).
@@ -137,7 +137,7 @@ public class ClusterManagerImplTest
         throws Exception
     {
         final TestCluster provider1 = TestCluster.create().
-            health( ClusterHealth.GREEN ).
+            health( ClusterHealth.green() ).
             id( ClusterId.from( "elasticsearch" ) ).
             nodes( ClusterNodes.create().
                 add( ClusterNode.from( "a" ) ).
@@ -145,7 +145,7 @@ public class ClusterManagerImplTest
             build();
 
         final TestCluster provider2 = TestCluster.create().
-            health( ClusterHealth.GREEN ).
+            health( ClusterHealth.green() ).
             id( ClusterId.from( "another" ) ).nodes( ClusterNodes.create().
             add( ClusterNode.from( "a" ) ).
             build() ).

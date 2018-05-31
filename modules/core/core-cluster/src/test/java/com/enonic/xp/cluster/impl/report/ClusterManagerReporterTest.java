@@ -61,7 +61,7 @@ public class ClusterManagerReporterTest
     private Cluster createCluster( final ClusterId cluster1Id )
     {
         return TestCluster.create().
-            health( ClusterHealth.GREEN ).
+            health( ClusterHealth.green() ).
             id( cluster1Id ).
             nodes( ClusterNodes.create().
                 add( ClusterNode.from( "node1" ) ).
