@@ -1,7 +1,9 @@
 package com.enonic.xp.admin.impl.rest.resource.schema.mixin;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -236,14 +238,17 @@ public final class MixinResource
     {
         // add mixins for backwards compatibility (mixins are not filtered by content type)
         final Mixins mixins = this.mixinService.getByNames( mixinNames );
-        final XDatas.Builder resultXDatas = XDatas.create();
-        mixins.forEach( mixin -> resultXDatas.add( toXData( mixin ) ) );
+        final Map<XDataName, XData> resultXDatas = new HashMap<>();
+        mixins.forEach( mixin -> {
+            final XData xData = toXData( mixin );
+            resultXDatas.put( xData.getName(), xData );
+        } );
 
         final XDatas xDatas = this.xDataService.getByNames( toXDataNames( mixinNames ) );
         final XDatas filteredXDatas = filterXDatasByContentType( xDatas, contentTypeName );
-        resultXDatas.addAll( filteredXDatas );
+        filteredXDatas.forEach( ( xData ) -> resultXDatas.put( xData.getName(), xData ) );
 
-        return resultXDatas.build();
+        return XDatas.from( resultXDatas.values() );
     }
 
     private XDatas filterXDatasByContentType( final XDatas xDatas, final ContentTypeName contentTypeName )

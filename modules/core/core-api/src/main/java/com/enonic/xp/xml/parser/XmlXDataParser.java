@@ -2,10 +2,10 @@ package com.enonic.xp.xml.parser;
 
 import com.google.common.annotations.Beta;
 
+import com.enonic.xp.app.ApplicationRelativeResolver;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.xml.DomElement;
-import com.enonic.xp.app.ApplicationRelativeResolver;
 
 @Beta
 public final class XmlXDataParser
@@ -36,8 +36,6 @@ public final class XmlXDataParser
         final Form form = mapper.buildForm( root.getChild( "items" ) );
         this.builder.form( form );
 
-        root.getChildren( "allowContentType" ).forEach( domElement -> this.builder.allowContentType( domElement.getValue() ) );
-
         final ApplicationRelativeResolver applicationRelativeResolver =
             this.currentApplication != null ? new ApplicationRelativeResolver( this.currentApplication ) : null;
 
@@ -47,7 +45,7 @@ public final class XmlXDataParser
                 ? applicationRelativeResolver.toContentTypeNameRegexp( domElement.getValue() )
                 : domElement.getValue();
 
-            ( (XData.Builder) this.builder ).allowContentType( value );
+            this.builder.allowContentType( value );
         } );
     }
 }
