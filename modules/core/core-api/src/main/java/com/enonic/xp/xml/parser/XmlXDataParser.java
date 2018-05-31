@@ -5,6 +5,7 @@ import com.google.common.annotations.Beta;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.xml.DomElement;
+import com.enonic.xp.app.ApplicationRelativeResolver;
 
 @Beta
 public final class XmlXDataParser
@@ -36,5 +37,17 @@ public final class XmlXDataParser
         this.builder.form( form );
 
         root.getChildren( "allowContentType" ).forEach( domElement -> this.builder.allowContentType( domElement.getValue() ) );
+
+        final ApplicationRelativeResolver applicationRelativeResolver =
+            this.currentApplication != null ? new ApplicationRelativeResolver( this.currentApplication ) : null;
+
+        root.getChildren( "allowContentType" ).forEach( domElement -> {
+
+            final String value = applicationRelativeResolver != null
+                ? applicationRelativeResolver.toContentTypeNameRegexp( domElement.getValue() )
+                : domElement.getValue();
+
+            ( (XData.Builder) this.builder ).allowContentType( value );
+        } );
     }
 }
