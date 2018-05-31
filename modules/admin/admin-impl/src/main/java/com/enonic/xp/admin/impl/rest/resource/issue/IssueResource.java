@@ -355,23 +355,23 @@ public final class IssueResource
 
     private IssueStatsJson countIssues()
     {
-        final long open =
-            this.issueService.findIssues( createIssueQuery( FindIssuesParams.create().status( IssueStatus.OPEN ).build() ) ).getTotalHits();
+        final long open = this.issueService.findIssues(
+            createIssueQuery( FindIssuesParams.create().status( IssueStatus.OPEN ).size( 0 ).build() ) ).getTotalHits();
 
-        final long openAssignedToMe = this.issueService.findIssues(
-            createIssueQuery( FindIssuesParams.create().status( IssueStatus.OPEN ).assignedToMe( true ).build() ) ).getTotalHits();
+        final long openAssignedToMe = this.issueService.findIssues( createIssueQuery(
+            FindIssuesParams.create().status( IssueStatus.OPEN ).assignedToMe( true ).size( 0 ).build() ) ).getTotalHits();
 
         final long openCreatedByMe = this.issueService.findIssues(
-            createIssueQuery( FindIssuesParams.create().status( IssueStatus.OPEN ).createdByMe( true ).build() ) ).getTotalHits();
+            createIssueQuery( FindIssuesParams.create().status( IssueStatus.OPEN ).createdByMe( true ).size( 0 ).build() ) ).getTotalHits();
 
         final long closed = this.issueService.findIssues(
-            createIssueQuery( FindIssuesParams.create().status( IssueStatus.CLOSED ).build() ) ).getTotalHits();
+            createIssueQuery( FindIssuesParams.create().status( IssueStatus.CLOSED ).size( 0 ).build() ) ).getTotalHits();
 
-        final long closedAssignedToMe = this.issueService.findIssues(
-            createIssueQuery( FindIssuesParams.create().status( IssueStatus.CLOSED ).assignedToMe( true ).build() ) ).getTotalHits();
+        final long closedAssignedToMe = this.issueService.findIssues( createIssueQuery(
+            FindIssuesParams.create().status( IssueStatus.CLOSED ).size( 0 ).assignedToMe( true ).build() ) ).getTotalHits();
 
-        final long closedCreatedByMe = this.issueService.findIssues(
-            createIssueQuery( FindIssuesParams.create().status( IssueStatus.CLOSED ).createdByMe( true ).build() ) ).getTotalHits();
+        final long closedCreatedByMe = this.issueService.findIssues( createIssueQuery(
+            FindIssuesParams.create().status( IssueStatus.CLOSED ).size( 0 ).createdByMe( true ).build() ) ).getTotalHits();
 
         return IssueStatsJson.create().open( open ).openAssignedToMe( openAssignedToMe ).openCreatedByMe( openCreatedByMe ).closed(
             closed ).closedAssignedToMe( closedAssignedToMe ).closedCreatedByMe( closedCreatedByMe ).build();
