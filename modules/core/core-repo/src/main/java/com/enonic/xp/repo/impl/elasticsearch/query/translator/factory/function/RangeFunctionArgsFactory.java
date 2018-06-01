@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.function;
 
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 import com.google.common.base.Strings;
@@ -42,7 +44,7 @@ class RangeFunctionArgsFactory
             includeTo = arguments.get( INCLUDE_TO_INDEX ).getValue().asBoolean();
         }
 
-        if ( isInstant( from.getValue(), to.getValue() ) )
+        if ( isInstant( from.getValue(), to.getValue() ) || isInstantString( from.getValue(), to.getValue() ) )
         {
             return createInstantArgs( fieldName, from, to, includeFrom, includeTo );
         }
@@ -63,6 +65,29 @@ class RangeFunctionArgsFactory
         }
 
         return value2.isDateType();
+    }
+
+    private static boolean isInstantIsoString( final Value value )
+    {
+        try
+        {
+            DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse( value.asString() );
+            return true;
+        }
+        catch ( DateTimeParseException e )
+        {
+            return false;
+        }
+    }
+
+    private static boolean isInstantString( final Value value1, final Value value2 )
+    {
+        if ( value1 != null )
+        {
+            return isInstantIsoString( value1 );
+        }
+
+        return isInstantIsoString( value2 );
     }
 
     private static boolean isNumeric( final Value value1, final Value value2 )
