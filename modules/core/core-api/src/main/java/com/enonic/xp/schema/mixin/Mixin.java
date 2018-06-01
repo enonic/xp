@@ -9,12 +9,12 @@ import com.enonic.xp.form.FormItem;
 import com.enonic.xp.schema.BaseSchema;
 
 @Beta
-public class Mixin
+public final class Mixin
     extends BaseSchema<MixinName>
 {
     private final Form form;
 
-    protected Mixin( final Builder builder )
+    private Mixin( final Builder builder )
     {
         super( builder );
         this.form = builder.formBuilder.build();
@@ -25,12 +25,12 @@ public class Mixin
         return this.form;
     }
 
-    public static Builder<? extends Builder> create()
+    public static Builder create()
     {
         return new Builder();
     }
 
-    public static Builder<? extends Builder> create( final Mixin mixin )
+    public static Builder create( final Mixin mixin )
     {
         return new Builder( mixin );
     }
@@ -46,6 +46,10 @@ public class Mixin
         {
             return false;
         }
+        if ( !super.equals( o ) )
+        {
+            return false;
+        }
         final Mixin mixin = (Mixin) o;
         return Objects.equals( form, mixin.form );
     }
@@ -54,11 +58,11 @@ public class Mixin
     public int hashCode()
     {
 
-        return Objects.hash( form );
+        return Objects.hash( super.hashCode(), form );
     }
 
-    public static class Builder<BUILDER extends Builder<BUILDER>>
-        extends BaseSchema.Builder<BUILDER, MixinName>
+    public static class Builder
+        extends BaseSchema.Builder<Builder, MixinName>
     {
         private Form.Builder formBuilder = Form.create();
 
@@ -74,28 +78,28 @@ public class Mixin
         }
 
         @Override
-        public BUILDER name( final MixinName value )
+        public Builder name( final MixinName value )
         {
             super.name( value );
-            return (BUILDER) this;
+            return this;
         }
 
-        public BUILDER name( final String value )
+        public Builder name( final String value )
         {
             super.name( MixinName.from( value ) );
-            return (BUILDER) this;
+            return this;
         }
 
-        public BUILDER form( final Form value )
+        public Builder form( final Form value )
         {
             this.formBuilder = Form.create( value );
-            return (BUILDER) this;
+            return this;
         }
 
-        public BUILDER addFormItem( final FormItem value )
+        public Builder addFormItem( final FormItem value )
         {
             this.formBuilder.addFormItem( value );
-            return (BUILDER) this;
+            return this;
         }
 
         public Mixin build()

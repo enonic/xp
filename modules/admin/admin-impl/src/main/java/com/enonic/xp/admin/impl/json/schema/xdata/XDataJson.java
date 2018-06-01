@@ -1,7 +1,6 @@
-package com.enonic.xp.admin.impl.json.schema.mixin;
+package com.enonic.xp.admin.impl.json.schema.xdata;
 
 import java.time.Instant;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -12,26 +11,23 @@ import com.enonic.xp.admin.impl.json.ItemJson;
 import com.enonic.xp.admin.impl.json.form.FormJson;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.mixin.MixinIconUrlResolver;
-import com.enonic.xp.schema.mixin.Mixin;
+import com.enonic.xp.schema.xdata.XData;
 
-public class MixinJson
+public class XDataJson
     implements ItemJson
 {
-    private final Mixin mixin;
+    private final XData xData;
 
     private final Boolean isExternal;
 
-    private final String iconUrl;
-
     private final LocaleMessageResolver localeMessageResolver;
 
-    public MixinJson( final Builder builder )
+    public XDataJson( final Builder builder )
     {
         Preconditions.checkNotNull( builder.localeMessageResolver );
 
-        this.mixin = builder.mixin;
+        this.xData = builder.xData;
         this.isExternal = builder.isExternal;
-        this.iconUrl = builder.iconUrlResolver.resolve( mixin );
         this.localeMessageResolver = builder.localeMessageResolver;
     }
 
@@ -42,66 +38,61 @@ public class MixinJson
 
     public String getName()
     {
-        return mixin.getName() != null ? mixin.getName().toString() : null;
+        return xData.getName() != null ? xData.getName().toString() : null;
     }
 
     public String getDisplayName()
     {
-        if ( StringUtils.isNotBlank( mixin.getDisplayNameI18nKey() ) )
+        if ( StringUtils.isNotBlank( xData.getDisplayNameI18nKey() ) )
         {
-            return localeMessageResolver.localizeMessage( mixin.getDisplayNameI18nKey(), mixin.getDisplayName() );
+            return localeMessageResolver.localizeMessage( xData.getDisplayNameI18nKey(), xData.getDisplayName() );
         }
         else
         {
-            return mixin.getDisplayName();
+            return xData.getDisplayName();
         }
     }
 
     public String getDescription()
     {
-        if ( StringUtils.isNotBlank( mixin.getDescriptionI18nKey() ) )
+        if ( StringUtils.isNotBlank( xData.getDescriptionI18nKey() ) )
         {
-            return localeMessageResolver.localizeMessage( mixin.getDescriptionI18nKey(), mixin.getDescription() );
+            return localeMessageResolver.localizeMessage( xData.getDescriptionI18nKey(), xData.getDescription() );
         }
         else
         {
-            return mixin.getDescription();
+            return xData.getDescription();
         }
     }
 
     public Instant getCreatedTime()
     {
-        return mixin.getCreatedTime();
+        return xData.getCreatedTime();
     }
 
     public Instant getModifiedTime()
     {
-        return mixin.getModifiedTime();
-    }
-
-    public String getIconUrl()
-    {
-        return iconUrl;
+        return xData.getModifiedTime();
     }
 
     public FormJson getForm()
     {
-        return new FormJson( mixin.getForm(), this.localeMessageResolver );
+        return new FormJson( xData.getForm(), this.localeMessageResolver );
     }
 
     public String getCreator()
     {
-        return mixin.getCreator() != null ? mixin.getCreator().toString() : null;
+        return xData.getCreator() != null ? xData.getCreator().toString() : null;
     }
 
     public String getModifier()
     {
-        return mixin.getModifier() != null ? mixin.getModifier().toString() : null;
+        return xData.getModifier() != null ? xData.getModifier().toString() : null;
     }
 
     public List<String> getAllowedContentTypes()
     {
-        return Collections.emptyList();
+        return this.xData.getAllowContentTypes();
     }
 
     public Boolean getExternal()
@@ -123,7 +114,7 @@ public class MixinJson
 
     public static final class Builder
     {
-        private Mixin mixin;
+        private XData xData;
 
         private Boolean isExternal = false;
 
@@ -135,9 +126,9 @@ public class MixinJson
         {
         }
 
-        public Builder setMixin( final Mixin mixin )
+        public Builder setXData( final XData xData )
         {
-            this.mixin = mixin;
+            this.xData = xData;
             return this;
         }
 
@@ -165,10 +156,10 @@ public class MixinJson
             Preconditions.checkNotNull( iconUrlResolver );
         }
 
-        public MixinJson build()
+        public XDataJson build()
         {
             validate();
-            return new MixinJson( this );
+            return new XDataJson( this );
         }
     }
 

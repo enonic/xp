@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.schema.mixin;
+package com.enonic.xp.core.impl.schema.xdata;
 
 import java.time.Instant;
 
@@ -6,12 +6,12 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.schema.SchemaLoader;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.schema.mixin.MixinName;
-import com.enonic.xp.schema.mixin.XData;
+import com.enonic.xp.schema.xdata.XData;
+import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.xml.parser.XmlXDataParser;
 
 final class XDataLoader
-    extends SchemaLoader<MixinName, XData>
+    extends SchemaLoader<XDataName, XData>
 {
     public XDataLoader( final ResourceService resourceService )
     {
@@ -19,7 +19,7 @@ final class XDataLoader
     }
 
     @Override
-    protected XData load( final MixinName name, final Resource resource )
+    protected XData load( final XDataName name, final Resource resource )
     {
         final XData.Builder builder = XData.create();
         parseXml( resource, builder );
@@ -42,8 +42,8 @@ final class XDataLoader
     }
 
     @Override
-    protected MixinName newName( final ApplicationKey appKey, final String name )
+    protected XDataName newName( final ApplicationKey appKey, final String name )
     {
-        return MixinName.from( appKey, name );
+        return XDataName.from( appKey, name );
     }
 }

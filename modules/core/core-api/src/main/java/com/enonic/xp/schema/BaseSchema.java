@@ -2,6 +2,7 @@ package com.enonic.xp.schema;
 
 
 import java.time.Instant;
+import java.util.Objects;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
@@ -97,7 +98,33 @@ public abstract class BaseSchema<T extends BaseSchemaName>
         return icon;
     }
 
-    public static class Builder<T extends Builder<T, SCHEMA_NAME>, SCHEMA_NAME extends BaseSchemaName>
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+        final BaseSchema<?> that = (BaseSchema<?>) o;
+        return Objects.equals( name, that.name ) && Objects.equals( displayName, that.displayName ) &&
+            Objects.equals( displayNameI18nKey, that.displayNameI18nKey ) && Objects.equals( description, that.description ) &&
+            Objects.equals( descriptionI18nKey, that.descriptionI18nKey ) && Objects.equals( createdTime, that.createdTime ) &&
+            Objects.equals( modifiedTime, that.modifiedTime ) && Objects.equals( creator, that.creator ) &&
+            Objects.equals( modifier, that.modifier ) && Objects.equals( icon, that.icon );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( name, displayName, displayNameI18nKey, description, descriptionI18nKey, createdTime, modifiedTime, creator,
+                             modifier, icon );
+    }
+
+    public static class Builder<T extends Builder, SCHEMA_NAME extends BaseSchemaName>
     {
         protected SCHEMA_NAME name;
 

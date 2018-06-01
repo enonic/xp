@@ -1,4 +1,4 @@
-package com.enonic.xp.schema.mixin;
+package com.enonic.xp.schema.xdata;
 
 import org.junit.Test;
 
@@ -16,7 +16,7 @@ public class XDataTest
         final Form.Builder formBuilder = Form.create();
         formBuilder.addFormItem( Input.create().name( "name" ).label( "Name" ).inputType( InputTypeName.TEXT_LINE ).build() );
 
-        XData xData1 = XData.create().name( MixinName.from( "myapplication:my1" ) ).form( formBuilder.build() ).allowContentType(
+        XData xData1 = XData.create().name( XDataName.from( "myapplication:my1" ) ).form( formBuilder.build() ).allowContentType(
             "test.ContentType1" ).build();
         XData xData2 = XData.create( xData1 ).allowContentType( "test.ContentType1" ).build();
         assertEquals( xData1.getForm(), xData2.getForm() );
