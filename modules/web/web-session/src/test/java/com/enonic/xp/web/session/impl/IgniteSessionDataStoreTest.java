@@ -32,6 +32,8 @@ public class IgniteSessionDataStoreTest
 
     private IgniteCache<String, SessionData> cache;
 
+    private Ignite ignite;
+
     @Before
     public void setup()
         throws Exception
@@ -43,7 +45,7 @@ public class IgniteSessionDataStoreTest
         when( ctx.getWorkerName() ).thenReturn( NODE );
         mockContextRun( ctx );
         store.initialize( ctx );
-        final Ignite ignite = Mockito.mock( Ignite.class );
+        ignite = Mockito.mock( Ignite.class );
         cache = (IgniteCache<String, SessionData>) Mockito.mock( IgniteCache.class );
         when( ignite.getOrCreateCache( any( CacheConfiguration.class ) ) ).thenReturn( cache );
         store.addIgnite( ignite );
@@ -57,7 +59,7 @@ public class IgniteSessionDataStoreTest
         final SessionData sessionData = new SessionData( "123", null, null, 0, 0, 0, 0 );
         when( cache.get( anyString() ) ).thenReturn( sessionData );
 
-        store.load( "123" );
+        Assert.assertEquals( sessionData, store.load( "123" ) );
     }
 
     @Test
@@ -170,6 +172,28 @@ public class IgniteSessionDataStoreTest
     {
         final Set<String> expiredSessionIds = store.doGetExpired( Sets.newHashSet() );
         assertEquals( Sets.newHashSet(), expiredSessionIds );
+    }
+
+    @Test
+    public void withoutIgnite()
+        throws Exception
+    {
+        final SessionData sessionData = new SessionData( "123", null, null, 0, 0, 0, 0 );
+        when( cache.get( anyString() ) ).thenReturn( sessionData );
+        when( cache.remove( anyString() ) ).thenReturn( true );
+
+        store.removeIgnite( ignite );
+        Assert.assertNull( store.load( "123" ) );
+        Assert.assertFalse( store.delete( "123" ) );
+        store.doStore( "123", sessionData, 0 );
+        Assert.assertEquals( sessionData, store.load( "123" ) );
+        Assert.assertTrue( store.delete( "123" ) );
+
+        store.addIgnite( ignite );
+        Assert.assertEquals( sessionData, store.load( "123" ) );
+        Assert.assertTrue( store.delete( "123" ) );
+        store.store( "123", sessionData );
+        verify( cache, Mockito.times( 1 ) ).put( eq( "cpath_vhost_123" ), any( SessionData.class ) );
     }
 
     private void mockContextRun( final SessionContext context )
