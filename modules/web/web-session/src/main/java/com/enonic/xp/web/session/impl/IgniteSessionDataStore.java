@@ -2,6 +2,7 @@ package com.enonic.xp.web.session.impl;
 
 import java.util.Collections;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -15,6 +16,8 @@ import org.eclipse.jetty.server.session.UnreadableSessionDataException;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,19 +30,27 @@ public final class IgniteSessionDataStore
 
     public static final String WEB_SESSION_CACHE = "com.enonic.xp.webSessionCache";
 
-    private IgniteCache<String, SessionData> cache;
+    private WebSessionConfig webSessionConfig;
 
     private Ignite ignite;
+
+    private IgniteCache<String, SessionData> igniteCache;
+
+    private ConcurrentHashMap<String, SessionData> defaultCache = new ConcurrentHashMap<>();
 
     public IgniteSessionDataStore()
     {
     }
 
     @Activate
-    public void activate( final WebSessionConfig config )
+    public synchronized void activate( final WebSessionConfig config )
         throws Exception
     {
-        this.cache = this.ignite.getOrCreateCache( SessionCacheConfigFactory.create( WEB_SESSION_CACHE, config ) );
+        this.webSessionConfig = config;
+        if ( this.ignite != null )
+        {
+            this.igniteCache = ignite.getOrCreateCache( SessionCacheConfigFactory.create( WEB_SESSION_CACHE, this.webSessionConfig ) );
+        }
     }
 
     @Override
@@ -58,7 +69,7 @@ public final class IgniteSessionDataStore
                 {
                     LOG.trace( "Loading session {} from Ignite", id );
                 }
-                SessionData sd = cache.get( getCacheKey( id ) );
+                SessionData sd = doGet( getCacheKey( id ) );
 
                 reference.set( sd );
             }
@@ -75,11 +86,33 @@ public final class IgniteSessionDataStore
         return reference.get();
     }
 
+    private SessionData doGet( final String cacheKey )
+    {
+        final IgniteCache<String, SessionData> igniteCache = this.igniteCache;
+        if ( igniteCache == null )
+        {
+            return defaultCache.get( cacheKey );
+        }
+        else
+        {
+            return igniteCache.get( cacheKey );
+        }
+    }
+
     @Override
     public boolean delete( String id )
         throws Exception
     {
-        return cache != null && cache.remove( getCacheKey( id ) );
+        final String cacheKey = getCacheKey( id );
+        final IgniteCache<String, SessionData> igniteCache = this.igniteCache;
+        if ( igniteCache == null )
+        {
+            return defaultCache.remove( cacheKey ) != null;
+        }
+        else
+        {
+            return igniteCache.remove( cacheKey );
+        }
     }
 
     @Override
@@ -93,7 +126,16 @@ public final class IgniteSessionDataStore
     public void doStore( String id, SessionData data, long lastSaveTime )
         throws Exception
     {
-        this.cache.put( getCacheKey( id ), data );
+        final String cacheKey = getCacheKey( id );
+        final IgniteCache<String, SessionData> igniteCache = this.igniteCache;
+        if ( igniteCache == null )
+        {
+            defaultCache.put( cacheKey, data );
+        }
+        else
+        {
+            igniteCache.put( cacheKey, data );
+        }
     }
 
     @Override
@@ -202,10 +244,20 @@ public final class IgniteSessionDataStore
         return _context.getCanonicalContextPath() + "_" + _context.getVhost() + "_" + id;
     }
 
-    @Reference
-    public void setIgnite( final Ignite ignite )
+    @Reference(cardinality = ReferenceCardinality.OPTIONAL, policy = ReferencePolicy.DYNAMIC)
+    public synchronized void addIgnite( final Ignite ignite )
     {
         this.ignite = ignite;
+        if ( this.webSessionConfig != null )
+        {
+            this.igniteCache = ignite.getOrCreateCache( SessionCacheConfigFactory.create( WEB_SESSION_CACHE, this.webSessionConfig ) );
+            this.defaultCache.clear();
+        }
     }
 
+    public synchronized void removeIgnite( final Ignite ignite )
+    {
+        this.ignite = null;
+        this.igniteCache = null;
+    }
 }
