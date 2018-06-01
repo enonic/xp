@@ -1,5 +1,9 @@
 package com.enonic.xp.issue;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import com.enonic.xp.content.ContentIds;
+
 public final class FindIssuesParams
 {
     private final IssueStatus status;
@@ -8,9 +12,11 @@ public final class FindIssuesParams
 
     private final boolean createdByMe;
 
-    private final int from;
+    private final ContentIds items;
 
-    private final int size;
+    private final Integer from;
+
+    private final Integer size;
 
     private FindIssuesParams( final Builder builder )
     {
@@ -19,6 +25,7 @@ public final class FindIssuesParams
         this.createdByMe = builder.createdByMe;
         this.from = builder.from;
         this.size = builder.size;
+        this.items = builder.items;
     }
 
     public IssueStatus getStatus()
@@ -36,14 +43,20 @@ public final class FindIssuesParams
         return createdByMe;
     }
 
-    public int getFrom()
+    public Integer getFrom()
     {
         return from;
     }
 
-    public int getSize()
+    public Integer getSize()
     {
         return size;
+    }
+
+    @JsonIgnore
+    public ContentIds getItems()
+    {
+        return items;
     }
 
     public static Builder create()
@@ -59,9 +72,11 @@ public final class FindIssuesParams
 
         private boolean createdByMe = false;
 
-        private int from = 0;
+        private ContentIds items;
 
-        private int size = 0;
+        private Integer from;
+
+        private Integer size;
 
         private Builder()
         {
@@ -87,19 +102,19 @@ public final class FindIssuesParams
 
         public Builder from( final Integer value )
         {
-            if ( value != null )
-            {
-                this.from = value;
-            }
+            this.from = value;
             return this;
         }
 
         public Builder size( final Integer value )
         {
-            if ( value != null )
-            {
-                this.size = value;
-            }
+            this.size = value;
+            return this;
+        }
+
+        public Builder items( final ContentIds contentIds )
+        {
+            this.items = contentIds;
             return this;
         }
 

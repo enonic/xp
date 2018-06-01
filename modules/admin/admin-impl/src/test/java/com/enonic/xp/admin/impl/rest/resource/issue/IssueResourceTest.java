@@ -282,6 +282,23 @@ public class IssueResourceTest
     }
 
     @Test
+    public void test_find_issues()
+        throws Exception
+    {
+        createLocalSession();
+
+        final FindIssuesResult result =
+            FindIssuesResult.create().hits( 2 ).totalHits( 4 ).issues( Lists.newArrayList( createIssue() ) ).build();
+
+        Mockito.when( issueService.findIssues( Mockito.any( IssueQuery.class ) ) ).thenReturn( result );
+        Mockito.when( securityService.getUser( Mockito.any( PrincipalKey.class ) ) ).thenReturn( Optional.empty() );
+
+        request().path( "issue/findIssues" ).entity( "{}", MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
+
+        Mockito.verify( issueService, Mockito.times( 1 ) ).findIssues( Mockito.any( IssueQuery.class ) );
+    }
+
+    @Test
     public void test_getIssue()
         throws Exception
     {
