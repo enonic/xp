@@ -7,7 +7,7 @@
   <xs:element name="image" type="imageDescriptor"/>
   <xs:element name="layout" type="layoutDescriptor"/>
   <xs:element name="mixin" type="mixin"/>
-  <xs:element name="x-data" type="mixin"/>
+  <xs:element name="x-data" type="xdataType"/>
   <xs:element name="site" type="site"/>
   <xs:element name="page" type="pageDescriptor"/>
   <xs:element name="part" type="partDescriptor"/>
@@ -34,8 +34,8 @@
   </xs:complexType>
 
   <xs:complexType name="xdata">
-    <xs:attribute name="mixin" type="xs:string" />
-    <xs:attribute name="name" type="xs:string" />
+    <xs:attribute name="mixin" type="xs:string"/>
+    <xs:attribute name="name" type="xs:string"/>
   </xs:complexType>
 
   <xs:complexType name="form">
@@ -194,6 +194,14 @@
   </xs:complexType>
 
   <xs:complexType name="mixin">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="display-name" type="i18n"/>
+      <xs:element minOccurs="0" name="description" type="i18n"/>
+      <xs:element minOccurs="0" name="items" type="formItems"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="xdataType">
     <xs:sequence>
       <xs:element minOccurs="0" name="display-name" type="i18n"/>
       <xs:element minOccurs="0" name="description" type="i18n"/>
