@@ -46,7 +46,7 @@ public class IgniteSessionDataStoreTest
         final Ignite ignite = Mockito.mock( Ignite.class );
         cache = (IgniteCache<String, SessionData>) Mockito.mock( IgniteCache.class );
         when( ignite.getOrCreateCache( any( CacheConfiguration.class ) ) ).thenReturn( cache );
-        store.setIgnite( ignite );
+        store.addIgnite( ignite );
         store.activate( getWebSessionConfig() );
     }
 
