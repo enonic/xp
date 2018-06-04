@@ -4,12 +4,15 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.DuplicateContentException;
 import com.enonic.xp.content.DuplicateContentListener;
 import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.DuplicateContentsResult;
 import com.enonic.xp.node.DuplicateNodeListener;
 import com.enonic.xp.node.DuplicateNodeParams;
+import com.enonic.xp.node.FindNodesByParentParams;
+import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 
@@ -68,9 +71,12 @@ final class DuplicateContentCommand
         String contentName = duplicatedContent.getDisplayName();
         ContentId contentId = duplicatedContent.getId();
 
+        ContentIds childrenIds = params.getIncludeChildren() ? getAllChildren( duplicatedContent ) : ContentIds.empty();
+
         final DuplicateContentsResult result = DuplicateContentsResult.create().
             setContentName( contentName ).
             addDuplicated( contentId ).
+            addDuplicated( childrenIds ).
             build();
 
         return result;
@@ -83,6 +89,16 @@ final class DuplicateContentCommand
         {
             duplicateContentListener.contentDuplicated( count );
         }
+    }
+
+    private ContentIds getAllChildren( final Content duplicatedContent )
+    {
+        final FindNodesByParentResult findNodesByParentResult = this.nodeService.findByParent( FindNodesByParentParams.create().
+            parentId( NodeId.from( duplicatedContent.getId().toString() ) ).
+            recursive( true ).
+            build() );
+
+        return ContentNodeHelper.toContentIds( findNodesByParentResult.getNodeIds() );
     }
 
     public static class Builder
