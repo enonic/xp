@@ -227,6 +227,85 @@ public class XmlContentTypeParserTest
 
     }
 
+    @Test
+    public void testI18nParseOmittingElementValue()
+        throws Exception
+    {
+        parse( this.parser, "-i18n-only-attribute.xml" );
+        final ContentType result = this.builder.build();
+
+        assertEquals( "translated.display-name", result.getDisplayNameI18nKey() );
+        assertEquals( "translated.description", result.getDescriptionI18nKey() );
+
+        // input type
+        final Input input = (Input) result.getForm().getFormItem( "textLine" );
+
+        assertEquals( "translated.label", input.getLabelI18nKey() );
+        assertEquals( "translated.label", input.getLabel() );
+        assertEquals( "translated.help-text", input.getHelpTextI18nKey() );
+        assertEquals( "translated.help-text", input.getHelpText() );
+
+        // option set
+        final FormItem item = result.getForm().getFormItem( "radioOptionSet" );
+        assertNotNull( item );
+
+        final FormOptionSet radioOptionSet = (FormOptionSet) item;
+        assertEquals( FormItemType.FORM_OPTION_SET, radioOptionSet.getType() );
+
+        assertEquals( "translated.help-text", radioOptionSet.getHelpTextI18nKey() );
+        assertEquals( "translated.help-text", radioOptionSet.getHelpText() );
+        assertEquals( "translated.label", radioOptionSet.getLabelI18nKey() );
+        assertEquals( "translated.label", radioOptionSet.getLabel() );
+
+        final Input inputInsideOption = radioOptionSet.getFormItems().getInput( FormItemPath.from( "option_1.text-input" ) );
+
+        assertEquals( "translated.help-text", inputInsideOption.getHelpTextI18nKey() );
+        assertEquals( "translated.help-text", inputInsideOption.getHelpText() );
+        assertEquals( "translated.label", inputInsideOption.getLabelI18nKey() );
+        assertEquals( "translated.label", inputInsideOption.getLabel() );
+
+        final FormOptionSetOption radioOption = radioOptionSet.getFormItems().getItemByName( "option_1" ).toFormOptionSetOption();
+
+        assertEquals( "translated.help-text", radioOption.getHelpTextI18nKey() );
+        assertEquals( "translated.help-text", radioOption.getHelpText() );
+        assertEquals( "translated.label", radioOption.getLabelI18nKey() );
+        assertEquals( "translated.label", radioOption.getLabel() );
+
+        // field set
+        final FormItem fieldSetItem = result.getForm().getFormItem( "field-set" );
+        assertNotNull( fieldSetItem );
+
+        final FieldSet fieldSet = (FieldSet) fieldSetItem;
+
+        assertEquals( "translated.label", fieldSet.getLabelI18nKey() );
+        assertEquals( "translated.label", fieldSet.getLabel() );
+
+        final Input inputInsideFieldSet = fieldSet.getFormItems().getInput( FormItemPath.from( "textLine2" ) );
+
+        assertEquals( "translated.help-text", inputInsideFieldSet.getHelpTextI18nKey() );
+        assertEquals( "translated.help-text", inputInsideFieldSet.getHelpText() );
+        assertEquals( "translated.label", inputInsideFieldSet.getLabelI18nKey() );
+        assertEquals( "translated.label", inputInsideFieldSet.getLabel() );
+
+        // item set
+        final FormItem itemSet = result.getForm().getFormItem( "item-set" );
+        assertNotNull( item );
+
+        final FormItemSet formItemSet = (FormItemSet) itemSet;
+
+        assertEquals( "translated.label", formItemSet.getLabelI18nKey() );
+        assertEquals( "translated.label", formItemSet.getLabel() );
+        assertEquals( "translated.help-text", formItemSet.getHelpTextI18nKey() );
+        assertEquals( "translated.help-text", formItemSet.getHelpText() );
+
+        final Input inputInsideFormItemSet = formItemSet.getFormItems().getInput( FormItemPath.from( "textLine1" ) );
+
+        assertEquals( "translated.help-text", inputInsideFormItemSet.getHelpTextI18nKey() );
+        assertEquals( "translated.help-text", inputInsideFormItemSet.getHelpText() );
+        assertEquals( "translated.label", inputInsideFormItemSet.getLabelI18nKey() );
+        assertEquals( "translated.label", inputInsideFormItemSet.getLabel() );
+    }
+
     private void assertOptionSetResult()
         throws Exception
     {

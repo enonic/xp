@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<content-type xmlns="urn:enonic:xp:model:1.0">
+  <display-name i18n="translated.display-name"/>
+  <description i18n="translated.description"/>
+  <super-type>base:structured</super-type>
+  <form>
+    <input type="TextLine" name="textLine">
+      <label i18n="translated.label"/>
+      <immutable>false</immutable>
+      <indexed>false</indexed>
+      <help-text i18n="translated.help-text"/>
+    </input>
+    <option-set name="radioOptionSet">
+      <label i18n="translated.label"/>
+      <expanded>false</expanded>
+      <help-text i18n="translated.help-text"/>
+      <occurrences minimum="0" maximum="1"/>
+      <options minimum="1" maximum="1">
+        <option name="option_1">
+          <label i18n="translated.label"/>
+          <help-text i18n="translated.help-text"/>
+          <default>false</default>
+          <items>
+            <input name="text-input" type="TextLine">
+              <label i18n="translated.label"/>
+              <help-text i18n="translated.help-text"/>
+              <occurrences minimum="1" maximum="1"/>
+            </input>
+            <item-set name="minimum3">
+              <label i18n="translated.label"/>
+              <occurrences minimum="3" maximum="0"/>
+              <items>
+                <input name="label" type="TextLine">
+                  <label i18n="translated.label"/>
+                  <occurrences minimum="0" maximum="1"/>
+                </input>
+                <input name="value" type="TextLine">
+                  <label i18n="translated.label"/>
+                  <occurrences minimum="0" maximum="1"/>
+                </input>
+              </items>
+            </item-set>
+          </items>
+        </option>
+      </options>
+    </option-set>
+    <item-set name="item-set">
+      <label i18n="translated.label"/>
+      <help-text i18n="translated.help-text"/>
+      <items>
+        <input name="textLine1" type="TextLine">
+          <label i18n="translated.label"/>
+          <help-text i18n="translated.help-text"/>
+          <occurrences minimum="1" maximum="1"/>
+        </input>
+      </items>
+    </item-set>
+    <field-set name="field-set">
+      <label i18n="translated.label"/>
+      <items>
+        <input name="textLine2" type="TextLine">
+          <immutable>false</immutable>
+          <indexed>false</indexed>
+          <occurrences minimum="0" maximum="1"/>
+          <label i18n="translated.label"/>
+          <help-text i18n="translated.help-text"/>
+        </input>
+      </items>
+    </field-set>
+  </form>
+</content-type>
