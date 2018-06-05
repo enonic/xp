@@ -303,40 +303,6 @@ public class ApplicationServiceImplTest
         verifyStartedEvent( updatedApplication, Mockito.never() );
     }
 
-
-    @Test
-    public void install_all_stored_applications_at_activate()
-        throws Exception
-    {
-        final PropertyTree data = new PropertyTree();
-        data.setBoolean( ApplicationPropertyNames.STARTED, true );
-
-        final Node node = Node.create().
-            id( NodeId.from( "myNodeId" ) ).
-            name( "myBundle" ).
-            parentPath( ApplicationRepoServiceImpl.APPLICATION_PATH ).
-            data( data ).
-            build();
-
-        Mockito.when( this.repoService.getApplications() ).
-            thenReturn( Nodes.create().
-                add( node ).
-                build() );
-
-        Mockito.when( this.repoService.getApplicationSource( node.id() ) ).
-            thenReturn( ByteSource.wrap( ByteStreams.toByteArray( newBundle( "my-bundle", true, "1.0.1" ).
-                build() ) ) );
-
-        this.service.activate( getBundleContext() );
-
-        Mockito.verify( this.repoService, Mockito.times( 1 ) ).getApplications();
-        Mockito.verify( this.repoService, Mockito.times( 1 ) ).getApplicationSource( node.id() );
-        Mockito.verify( this.eventPublisher, Mockito.never() ).publish( Mockito.isA( Event.class ) );
-
-        assertNotNull( this.service.getInstalledApplication( ApplicationKey.from( "my-bundle" ) ) );
-    }
-
-
     @Test(expected = ApplicationInstallException.class)
     public void install_stored_application_not_found()
         throws Exception

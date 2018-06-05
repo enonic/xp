@@ -12,7 +12,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationService;
 
-@Component(immediate = true, configurationPid = "com.enonic.xp.server.deploy")
+@Component(configurationPid = "com.enonic.xp.server.deploy", service = AutoDeployer.class)
 public final class AutoDeployer
 {
     private ApplicationService applicationService;
@@ -60,4 +60,11 @@ public final class AutoDeployer
     {
         this.applicationService = applicationService;
     }
+
+    @Reference
+    public void setStoredApplicationsDeployer( final StoredApplicationsDeployer storedApplicationsDeployer )
+    {
+        // dependency to execute after StoredApplicationDeployer
+    }
+
 }

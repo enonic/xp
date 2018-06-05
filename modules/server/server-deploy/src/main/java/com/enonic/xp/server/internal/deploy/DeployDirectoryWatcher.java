@@ -231,6 +231,12 @@ public final class DeployDirectoryWatcher
         this.applicationService = applicationService;
     }
 
+    @Reference
+    public void setAutoDeployer( final AutoDeployer autoDeployer )
+    {
+        // dependency to execute after AutoDeployer
+    }
+
     private static File getDeployFolder()
     {
         final File homeDir = ServerInfo.get().getHomeDir();
