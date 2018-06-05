@@ -88,8 +88,15 @@ public final class ElasticsearchCluster
     @Override
     public ClusterNodes getNodes()
     {
-        final DiscoveryNodes members = getMembers();
-        return ClusterNodesFactory.create( members );
+        try
+        {
+            final DiscoveryNodes members = getMembers();
+            return ClusterNodesFactory.create( members );
+        }
+        catch ( Exception e )
+        {
+            return ClusterNodes.create().build();
+        }
     }
 
     @Override
