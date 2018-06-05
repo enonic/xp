@@ -40,8 +40,8 @@ public class IssueServiceImplTest_updateComment
 
         final IssueComment comment = this.issueService.createComment( params );
 
-        final IssueComment updatedComment = this.issueService.updateComment(
-            UpdateIssueCommentParams.create().comment( comment.getId() ).text( "updated text" ).build() );
+        final IssueComment updatedComment =
+            this.issueService.updateComment( UpdateIssueCommentParams.create().comment( comment.getId() ).text( "updated text" ).build() );
 
         assertNotNull( updatedComment );
         assertEquals( "updated text", updatedComment.getText() );

@@ -6,9 +6,12 @@
       "id": "nodeId",
       "hostName": "hostName",
       "version": "1.0.0",
-      "address": "local[10.10.10.1]"
+      "address": "local[10.10.10.1]",
+      "name": "nodeName"
     }
   ],
   "state": "GREEN",
-  "errorMessages": ["ElasticsearchException[local node info exception]"]
+  "errorMessages": [
+    "ElasticsearchException[local node info exception]"
+  ]
 }

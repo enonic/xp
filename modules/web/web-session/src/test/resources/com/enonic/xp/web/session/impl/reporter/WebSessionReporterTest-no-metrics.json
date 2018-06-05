@@ -1,0 +1,9 @@
+{
+  "cache": {
+    "name": "com.enonic.xp.webSessionCache",
+    "size": 123,
+    "metrics": {
+      "statsEnabled": false
+    }
+  }
+}

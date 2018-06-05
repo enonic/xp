@@ -26,7 +26,7 @@ public final class IdProviderUrlFunction
         final IdentityUrlParams urlParams = new IdentityUrlParams().
             portalRequest( params.getPortalRequest() ).
             setAsMap( params.getArgs() );
-        
+
         return this.urlService.identityUrl( urlParams );
     }
 

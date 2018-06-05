@@ -5,10 +5,10 @@ import java.util.Collections;
 import javax.servlet.SessionCookieConfig;
 import javax.servlet.SessionTrackingMode;
 
-import org.eclipse.jetty.server.SessionManager;
+import org.eclipse.jetty.server.session.SessionHandler;
 
 public final class SessionConfigurator
-    extends JettyConfigurator<SessionManager>
+    extends JettyConfigurator<SessionHandler>
 {
     @Override
     protected void doConfigure()

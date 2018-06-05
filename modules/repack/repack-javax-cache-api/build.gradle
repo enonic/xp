@@ -1,0 +1,11 @@
+apply from: "$rootDir/gradle/osgi.gradle"
+
+dependencies {
+    compile 'javax.cache:cache-api:1.0.0'
+}
+
+bundle {
+    instruction 'Bundle-Name', 'Javax Cache-API'
+    instruction 'Export-Package', 'javax.cache.*;version=1.0'
+    instruction 'Import-Package', '*;resolution:=optional'
+}

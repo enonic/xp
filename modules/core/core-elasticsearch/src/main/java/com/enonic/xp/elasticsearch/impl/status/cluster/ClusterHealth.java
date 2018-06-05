@@ -1,10 +1,10 @@
 package com.enonic.xp.elasticsearch.impl.status.cluster;
 
-public final class ClusterHealth
+final class ClusterHealth
 {
-    private String clusterHealthStatus;
+    private final String clusterHealthStatus;
 
-    private String errorMessage;
+    private final String errorMessage;
 
     private ClusterHealth( Builder builder )
     {
@@ -12,50 +12,47 @@ public final class ClusterHealth
         this.errorMessage = builder.errorMessage;
     }
 
-    public String getClusterHealthStatus()
+    String getClusterHealthStatus()
     {
         return clusterHealthStatus;
     }
 
-    public String getErrorMessage()
+    String getErrorMessage()
     {
         return errorMessage;
     }
 
-    public static ClusterHealth.Builder create()
+    static ClusterHealth.Builder create()
     {
         return new Builder();
     }
 
-    public static class Builder
+    static class Builder
     {
-
         private String clusterHealthStatus;
 
         private String errorMessage;
-
 
         private Builder()
         {
         }
 
-        public Builder clusterHealthStatus( final String clusterHealthStatus )
+        Builder clusterHealthStatus( final String clusterHealthStatus )
         {
             this.clusterHealthStatus = clusterHealthStatus;
             return this;
         }
 
-        public Builder errorMessage( final String errorMessage )
+        Builder errorMessage( final String errorMessage )
         {
             this.errorMessage = errorMessage;
             return this;
         }
 
-        public ClusterHealth build()
+        ClusterHealth build()
         {
             return new ClusterHealth( this );
         }
     }
-
 
 }

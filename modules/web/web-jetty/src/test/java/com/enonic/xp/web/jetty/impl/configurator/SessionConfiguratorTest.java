@@ -1,6 +1,7 @@
 package com.enonic.xp.web.jetty.impl.configurator;
 
-import org.eclipse.jetty.server.SessionManager;
+
+import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -8,17 +9,17 @@ import org.mockito.Mockito;
 import static org.junit.Assert.*;
 
 public class SessionConfiguratorTest
-    extends JettyConfiguratorTest<SessionManager>
+    extends JettyConfiguratorTest<SessionHandler>
 {
     @Override
-    protected SessionManager setupObject()
+    protected SessionHandler setupObject()
     {
         final ServletContextHandler context = new ServletContextHandler( null, "/", ServletContextHandler.SESSIONS );
-        return context.getSessionHandler().getSessionManager();
+        return context.getSessionHandler();
     }
 
     @Override
-    protected JettyConfigurator<SessionManager> newConfigurator()
+    protected JettyConfigurator<SessionHandler> newConfigurator()
     {
         return new SessionConfigurator();
     }

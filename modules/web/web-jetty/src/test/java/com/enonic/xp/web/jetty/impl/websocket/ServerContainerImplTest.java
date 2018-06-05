@@ -2,6 +2,7 @@ package com.enonic.xp.web.jetty.impl.websocket;
 
 import java.net.URI;
 
+import javax.servlet.ServletContext;
 import javax.websocket.ClientEndpointConfig;
 import javax.websocket.DeploymentException;
 import javax.websocket.Endpoint;
@@ -21,7 +22,9 @@ public class ServerContainerImplTest
     @Before
     public void setup()
     {
-        this.container = new ServerContainerImpl( new WebSocketServerFactory() );
+        final ServletContext context = Mockito.mock( ServletContext.class );
+
+        this.container = new ServerContainerImpl( new WebSocketServerFactory( context ) );
     }
 
     @Test(expected = DeploymentException.class)

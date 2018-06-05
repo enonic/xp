@@ -19,6 +19,9 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+
+import com.enonic.xp.cluster.ClusterConfig;
 
 @Component(immediate = true, configurationPid = "com.enonic.xp.elasticsearch")
 public final class ElasticsearchActivator
@@ -35,15 +38,19 @@ public final class ElasticsearchActivator
 
     private ServiceRegistration<TransportService> transportServiceReg;
 
+    private ClusterConfig clusterConfig;
+
+    @SuppressWarnings("WeakerAccess")
     public ElasticsearchActivator()
     {
         ESLoggerFactory.setDefaultFactory( new Slf4jESLoggerFactory() );
     }
 
     @Activate
+    @SuppressWarnings("WeakerAccess")
     public void activate( final BundleContext context, final Map<String, String> map )
     {
-        final Settings settings = new NodeSettingsBuilder( context ).
+        final Settings settings = new NodeSettingsBuilder( context, this.clusterConfig ).
             buildSettings( map );
 
         this.node = NodeBuilder.nodeBuilder().settings( settings ).build();
@@ -62,6 +69,7 @@ public final class ElasticsearchActivator
     }
 
     @Deactivate
+    @SuppressWarnings("WeakerAccess")
     public void deactivate()
     {
         this.nodeReg.unregister();
@@ -71,4 +79,12 @@ public final class ElasticsearchActivator
         this.clusterAdminClientReg.unregister();
         this.node.close();
     }
+
+    @Reference
+    @SuppressWarnings("WeakerAccess")
+    public void setClusterConfig( final ClusterConfig clusterConfig )
+    {
+        this.clusterConfig = clusterConfig;
+    }
 }
+

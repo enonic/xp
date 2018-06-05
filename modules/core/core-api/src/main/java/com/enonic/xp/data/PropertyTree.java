@@ -1,5 +1,9 @@
 package com.enonic.xp.data;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -10,6 +14,7 @@ import java.util.Objects;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.GeoPoint;
@@ -18,9 +23,11 @@ import com.enonic.xp.util.Reference;
 
 @Beta
 public final class PropertyTree
+    implements Serializable
 {
+    private static final long serialVersionUID = 4701275024713970175L;
 
-    private final PropertySet root;
+    private transient PropertySet root;
 
     /**
      * Creates a new PropertyTree using a default PropertyIdProvider which uses UUID.randomUUID().
@@ -923,4 +930,119 @@ public final class PropertyTree
         return this.root.getInstants( name );
     }
 
+    // serialization
+
+    private void writeObject( ObjectOutputStream oos )
+        throws IOException
+    {
+        final Iterable<PropertyArray> propertyArrays = this.getRoot().getPropertyArrays();
+        oos.writeInt( Iterables.size( propertyArrays ) );
+
+        for ( final PropertyArray propertyArray : propertyArrays )
+        {
+            writeArray( propertyArray, oos );
+        }
+    }
+
+    private void writeArray( final PropertyArray propertyArray, final ObjectOutputStream oos )
+        throws IOException
+    {
+        oos.writeUTF( propertyArray.getName() );
+        oos.writeUTF( propertyArray.getValueType().getName() );
+
+        oos.writeInt( propertyArray.size() );
+        for ( final Property property : propertyArray.getProperties() )
+        {
+            writeProperty( property, oos );
+        }
+    }
+
+    private void writeProperty( final Property property, final ObjectOutputStream oos )
+        throws IOException
+    {
+        oos.writeBoolean( property.getValue().isNull() );
+        if ( property.getType().equals( ValueTypes.PROPERTY_SET ) )
+        {
+            final PropertySet propertySet = property.getSet();
+            if ( propertySet != null )
+            {
+                oos.writeInt( Iterables.size( propertySet.getPropertyArrays() ) );
+                for ( final PropertyArray propertyArray : propertySet.getPropertyArrays() )
+                {
+                    writeArray( propertyArray, oos );
+                }
+            }
+            else
+            {
+                oos.writeInt( 0 );
+            }
+        }
+        else
+        {
+            oos.writeObject( property.getValue().asString() );
+        }
+    }
+
+    private void readObject( ObjectInputStream ois )
+        throws ClassNotFoundException, IOException
+    {
+        root = new PropertySet( this );
+
+        final int arraysSize = ois.readInt();
+
+        for ( int i = 0; i < arraysSize; i++ )
+        {
+            readArray( root, ois );
+        }
+    }
+
+    private void readArray( final PropertySet set, final ObjectInputStream ois )
+        throws IOException, ClassNotFoundException
+    {
+        final String name = ois.readUTF();
+        final String valueTypeName = ois.readUTF();
+        final ValueType valueType = ValueTypes.getByName( valueTypeName );
+
+        final int propertyArraySize = ois.readInt();
+        for ( int i = 0; i < propertyArraySize; i++ )
+        {
+            readProperty( set, name, valueType, ois );
+        }
+    }
+
+    private void readProperty( final PropertySet set, final String name, final ValueType valueType, final ObjectInputStream ois )
+        throws IOException, ClassNotFoundException
+    {
+        final boolean isNull = ois.readBoolean();
+        if ( valueType.equals( ValueTypes.PROPERTY_SET ) )
+        {
+            final int propertyArraySize = ois.readInt();
+
+            if ( isNull )
+            {
+                set.addSet( name, null );
+                return;
+            }
+
+            final PropertySet propertySet = new PropertySet();
+            set.addSet( name, propertySet );
+
+            for ( int i = 0; i < propertyArraySize; i++ )
+            {
+                readArray( propertySet, ois );
+            }
+        }
+        else
+        {
+            String value = (String) ois.readObject();
+            if ( isNull )
+            {
+                set.addProperty( name, valueType.fromJsonValue( null ) );
+            }
+            else
+            {
+                set.addProperty( name, valueType.fromJsonValue( value ) );
+            }
+        }
+    }
 }

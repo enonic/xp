@@ -1,0 +1,17 @@
+{
+  "state": "OK",
+  "clusters": [
+    {
+      "id": "cluster1",
+      "enabled": false,
+      "healthy": true,
+      "numberOfNodesSeen": 2
+    },
+    {
+      "id": "cluster2",
+      "enabled": false,
+      "healthy": true,
+      "numberOfNodesSeen": 2
+    }
+  ]
+}

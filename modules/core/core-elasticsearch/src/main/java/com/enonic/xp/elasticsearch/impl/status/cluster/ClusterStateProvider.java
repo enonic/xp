@@ -85,6 +85,7 @@ public final class ClusterStateProvider
                 id( node.id() ).
                 hostName( node.getHostName() ).
                 version( node.getVersion().toString() ).
+                name( node.getName() ).
                 master( node.getId().equals( members.getMasterNodeId() ) ).
                 isDataNode( node.isDataNode() ).
                 isClientNode( node.isClientNode() ).

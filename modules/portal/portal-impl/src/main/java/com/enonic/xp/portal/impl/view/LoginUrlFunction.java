@@ -32,7 +32,7 @@ public final class LoginUrlFunction
             idProviderFunction( "login" ).
             portalRequest( params.getPortalRequest() ).
             setAsMap( params.getArgs() );
-        
+
         return this.urlService.identityUrl( urlParams );
     }
 

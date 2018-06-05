@@ -32,7 +32,7 @@ public final class LogoutUrlFunction
             idProviderFunction( "logout" ).
             portalRequest( params.getPortalRequest() ).
             setAsMap( params.getArgs() );
-        
+
         return this.urlService.identityUrl( urlParams );
     }
 

@@ -1,4 +1,0 @@
-dependencies {
-    compile project( ':web:web-api' )
-    compile 'org.eclipse.jetty.aggregate:jetty-all:9.4.7.RC0:uber@jar'
-}

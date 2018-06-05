@@ -76,6 +76,32 @@ public final class User
         return profile;
     }
 
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( !( o instanceof User ) )
+        {
+            return false;
+        }
+        if ( !super.equals( o ) )
+        {
+            return false;
+        }
+        final User user = (User) o;
+        return loginDisabled == user.loginDisabled && Objects.equals( email, user.email ) && Objects.equals( login, user.login ) &&
+            Objects.equals( authenticationHash, user.authenticationHash ) && Objects.equals( profile, user.profile );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( super.hashCode(), email, login, authenticationHash, loginDisabled, profile );
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -139,27 +165,10 @@ public final class User
             return this;
         }
 
-        @Override
-        public boolean equals( final Object o )
+        public Builder disabled( final boolean loginDisabled )
         {
-            if ( this == o )
-            {
-                return true;
-            }
-            if ( !( o instanceof User ) )
-            {
-                return false;
-            }
-
-            final User other = (User) o;
-
-            return super.equals( o ) &&
-                Objects.equals( email, other.email ) &&
-                Objects.equals( authenticationHash, other.authenticationHash ) &&
-                Objects.equals( login, other.login ) &&
-                Objects.equals( loginDisabled, other.loginDisabled ) &&
-                Objects.equals( profile, other.profile );
-
+            this.loginDisabled = loginDisabled;
+            return this;
         }
 
         @Override
