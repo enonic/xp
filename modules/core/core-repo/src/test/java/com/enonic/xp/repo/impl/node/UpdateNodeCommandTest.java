@@ -13,6 +13,7 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBinaryReferenceException;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.util.BinaryReference;
 
@@ -365,4 +366,49 @@ public class UpdateNodeCommandTest
         assertTrue( updatedNode.getTimestamp().equals( node.getTimestamp() ) );
     }
 
+    @Test
+    public void updating_data_in_root_node_fails()
+        throws Exception
+    {
+        final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
+            editor( editableNode -> {
+                editableNode.data.setString( "property", "value" );
+            } ).
+            path( NodePath.ROOT ).
+            build();
+
+        try
+        {
+            updateNode( updateNodeParams );
+
+            fail( "Expected exception updating the data of a root node" );
+        }
+        catch ( OperationNotPermittedException e )
+        {
+            assertEquals( "Data not allowed in root-node", e.getMessage() );
+        }
+    }
+
+    @Test
+    public void updating_attachments_in_root_node_fails()
+        throws Exception
+    {
+        final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
+            editor( toBeEdited -> {
+            } ).
+            attachBinary( BinaryReference.from( "unreferred binary" ), ByteSource.wrap( "nothing to see here".getBytes() ) ).
+            path( NodePath.ROOT ).
+            build();
+
+        try
+        {
+            updateNode( updateNodeParams );
+
+            fail( "Expected exception updating the attachments of a root node" );
+        }
+        catch ( OperationNotPermittedException e )
+        {
+            assertEquals( "Attachments not allowed in root-node", e.getMessage() );
+        }
+    }
 }

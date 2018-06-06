@@ -10,6 +10,7 @@ import com.enonic.xp.node.EditableNode;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -50,8 +51,18 @@ public final class UpdateNodeCommand
 
         requireContextUserPermissionOrAdmin( Permission.MODIFY, persistedNode );
 
+        if ( persistedNode.isRoot() && ( params.getBinaryAttachments().isNotEmpty() ) )
+        {
+            throw new OperationNotPermittedException( "Attachments not allowed in root-node" );
+        }
+
         final EditableNode editableNode = new EditableNode( persistedNode );
         params.getEditor().edit( editableNode );
+
+        if ( persistedNode.isRoot() && ( editableNode.data != null && editableNode.data.getRoot().getPropertySize() > 0 ) )
+        {
+            throw new OperationNotPermittedException( "Data not allowed in root-node" );
+        }
 
         if ( editableNode.inheritPermissions != persistedNode.inheritsPermissions() ||
             !persistedNode.getPermissions().equals( editableNode.permissions ) )
