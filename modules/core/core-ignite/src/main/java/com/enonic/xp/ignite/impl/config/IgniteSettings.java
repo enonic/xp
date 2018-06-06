@@ -32,6 +32,4 @@ public @interface IgniteSettings
 
     String off_heap_max_size() default "512MB";
 
-    boolean logging_verbose() default false;
-
 }

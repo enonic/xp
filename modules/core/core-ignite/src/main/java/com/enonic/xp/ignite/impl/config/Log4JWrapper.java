@@ -10,12 +10,9 @@ class Log4JWrapper
 {
     private Logger underLyingLogger;
 
-    private final boolean verbose;
-
-    Log4JWrapper( final Logger underLyingLogger, final boolean verbose )
+    Log4JWrapper( final Logger underLyingLogger )
     {
         this.underLyingLogger = underLyingLogger;
-        this.verbose = verbose;
     }
 
     @Override
@@ -32,7 +29,7 @@ class Log4JWrapper
             className = ( (Class) o ).getName();
         }
 
-        return new Log4JWrapper( LoggerFactory.getLogger( className ), this.verbose );
+        return new Log4JWrapper( LoggerFactory.getLogger( className ) );
     }
 
     @Override
@@ -80,19 +77,19 @@ class Log4JWrapper
     @Override
     public boolean isTraceEnabled()
     {
-        return verbose && underLyingLogger.isTraceEnabled();
+        return underLyingLogger.isTraceEnabled();
     }
 
     @Override
     public boolean isDebugEnabled()
     {
-        return verbose && underLyingLogger.isDebugEnabled();
+        return underLyingLogger.isDebugEnabled();
     }
 
     @Override
     public boolean isInfoEnabled()
     {
-        return verbose && underLyingLogger.isInfoEnabled();
+        return underLyingLogger.isInfoEnabled();
     }
 
     @Override
