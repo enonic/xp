@@ -46,6 +46,8 @@ public class IgniteCluster
         this.context = context;
         this.igniteSettings = igniteSettings;
 
+        adjustLoggingVerbosity();
+
         final IgniteConfiguration igniteConfig = ConfigurationFactory.create().
             clusterConfig( this.clusterConfig ).
             igniteConfig( this.igniteSettings ).
@@ -59,6 +61,16 @@ public class IgniteCluster
 
         // Register admin-client to use in e.g reporting
         context.registerService( IgniteAdminClient.class, new IgniteAdminClientImpl( this.ignite ), new Hashtable<>() );
+    }
+
+    private void adjustLoggingVerbosity()
+    {
+        System.setProperty( "IGNITE_NO_ASCII", "false" );
+        System.setProperty( "IGNITE_PERFORMANCE_SUGGESTIONS_DISABLED", "true" );
+        System.setProperty( "IGNITE_DEV_ONLY_LOGGING_DISABLED", "true" );
+        System.setProperty( "IGNITE_UPDATE_NOTIFIER", "false" );
+        System.setProperty( "IGNITE_GRID_CLIENT_LOG_ENABLED", "false" );
+        System.setProperty( "IGNITE_TROUBLESHOOTING_LOGGER", "false" );
     }
 
     @SuppressWarnings("unused")

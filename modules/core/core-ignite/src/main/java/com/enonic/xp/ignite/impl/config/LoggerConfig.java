@@ -6,9 +6,9 @@ import org.slf4j.LoggerFactory;
 
 class LoggerConfig
 {
-    static IgniteLogger create()
+    static IgniteLogger create( final boolean verbose )
     {
-        return new Log4JWrapper( LoggerFactory.getLogger( Logger.ROOT_LOGGER_NAME ) );
+        return new Log4JWrapper( LoggerFactory.getLogger( Logger.ROOT_LOGGER_NAME ), verbose );
     }
 
 }

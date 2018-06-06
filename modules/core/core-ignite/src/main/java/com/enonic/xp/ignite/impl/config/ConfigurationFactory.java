@@ -56,7 +56,7 @@ public class ConfigurationFactory
             build().
             execute() );
 
-        config.setGridLogger( LoggerConfig.create() );
+        config.setGridLogger( LoggerConfig.create( igniteSettings.logging_verbose() ) );
 
         config.setMetricsLogFrequency( igniteSettings.metrics_log_frequency() );
 
