@@ -131,7 +131,12 @@ public final class FormItems
 
     public Input getInput( final FormItemPath path )
     {
-        return typeCast( getFormItem( path, true ), Input.class );
+        return typeCast( getFormItem( path ), Input.class );
+    }
+
+    public Input getInput( final FormItemPath path, final boolean skipLayout )
+    {
+        return typeCast( getFormItem( path, skipLayout ), Input.class );
     }
 
     FormItemSet getFormItemSet( final FormItemPath path )
