@@ -49,15 +49,12 @@ public class ContentQueryWithChildren
 
         final FieldExpr fieldExpr = FieldExpr.from( "_path" );
 
-        ConstraintExpr expr = CompareExpr.like( fieldExpr, ValueExpr.string( "/content" + contentsPaths.first() + "/*" ) );
+        ConstraintExpr expr = null;
 
         for ( ContentPath contentPath : contentsPaths )
         {
-            if ( !contentPath.equals( contentsPaths.first() ) )
-            {
-                ConstraintExpr likeExpr = CompareExpr.like( fieldExpr, ValueExpr.string( "/content" + contentPath + "/*" ) );
-                expr = LogicalExpr.or( expr, likeExpr );
-            }
+            ConstraintExpr likeExpr = CompareExpr.like( fieldExpr, ValueExpr.string( "/content" + contentPath + "/*" ) );
+            expr = expr != null ? LogicalExpr.or( expr, likeExpr ) : likeExpr;
         }
 
         expr = LogicalExpr.and( expr, CompareExpr.notIn( fieldExpr, contentsPaths.stream().
