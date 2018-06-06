@@ -17,11 +17,17 @@ public final class AutoDeployer
 {
     private ApplicationService applicationService;
 
+    private Set<URL> urlSet;
+
     @Activate
     public void activate( final Map<String, String> config )
     {
-        final Set<URL> set = findDeployList( config );
-        set.forEach( this::deploy );
+        urlSet = findDeployList( config );
+    }
+
+    public void deploy()
+    {
+        urlSet.forEach( this::deploy );
     }
 
     private Set<URL> findDeployList( final Map<String, String> config )
@@ -59,12 +65,6 @@ public final class AutoDeployer
     public void setApplicationService( final ApplicationService applicationService )
     {
         this.applicationService = applicationService;
-    }
-
-    @Reference
-    public void setStoredApplicationsDeployer( final StoredApplicationsDeployer storedApplicationsDeployer )
-    {
-        // dependency to execute after StoredApplicationDeployer
     }
 
 }
