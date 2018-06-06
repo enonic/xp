@@ -91,20 +91,22 @@ final class ComponentHandlerWorker
             pageController = pageTemplate.getController();
         }
 
-        final Page effectivePage = new EffectivePageResolver( content, pageTemplate ).resolve();
-        final Content effectiveContent = Content.create( content ).
-            page( effectivePage ).
-            build();
+        Page effectivePage = new EffectivePageResolver( content, pageTemplate ).resolve();
 
         if ( component == null )
         {
-            final Page page = inlineFragments( effectiveContent.getPage(), this.componentPath );
-            component = page.getRegions().getComponent( this.componentPath );
+            effectivePage = inlineFragments( effectivePage, this.componentPath );
+            component = effectivePage.getRegions().getComponent( this.componentPath );
         }
+
         if ( component == null )
         {
             throw notFound( "Page component for [%s] not found", this.componentPath );
         }
+
+        final Content effectiveContent = Content.create( content ).
+            page( effectivePage ).
+            build();
 
         this.request.setSite( site );
         this.request.setContent( effectiveContent );
