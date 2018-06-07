@@ -26,7 +26,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.server.ServerInfo;
 
-@Component(immediate = true, configurationPid = "com.enonic.xp.server.deploy")
+@Component(configurationPid = "com.enonic.xp.server.deploy", service = {DeployDirectoryWatcher.class, FileAlterationListener.class})
 public final class DeployDirectoryWatcher
     implements FileAlterationListener
 {
@@ -43,13 +43,20 @@ public final class DeployDirectoryWatcher
 
     private FileAlterationMonitor monitor;
 
+    private long interval;
+
     @Activate
     public void activate( final DeployConfig config )
         throws Exception
     {
-        final FileAlterationObserver observer1 = addListenerDir( getDeployFolder() );
+        interval = config.interval();
+    }
 
-        this.monitor = new FileAlterationMonitor( config.interval(), observer1 );
+    public void deploy()
+        throws Exception
+    {
+        final FileAlterationObserver observer1 = addListenerDir( getDeployFolder() );
+        this.monitor = new FileAlterationMonitor( interval, observer1 );
         this.monitor.start();
     }
 
@@ -170,8 +177,7 @@ public final class DeployDirectoryWatcher
         this.applicationKeyByPath.put( path, applicationKey );
 
         //Updates the mapping applicationKey -> stack<fileName>. Needed in some particular case for uninstallatioon
-        this.pathsByApplicationKey.compute( applicationKey, ( applicationKeyParam, fileNameStack ) ->
-        {
+        this.pathsByApplicationKey.compute( applicationKey, ( applicationKeyParam, fileNameStack ) -> {
             if ( fileNameStack == null )
             {
                 fileNameStack = new Stack<>();
@@ -189,8 +195,7 @@ public final class DeployDirectoryWatcher
         final String path = file.getPath();
         final ApplicationKey applicationKey = applicationKeyByPath.remove( path );
 
-        this.pathsByApplicationKey.computeIfPresent( applicationKey, ( applicationKeyParam, fileNameStack ) ->
-        {
+        this.pathsByApplicationKey.computeIfPresent( applicationKey, ( applicationKeyParam, fileNameStack ) -> {
 
             if ( fileNameStack == null )
             {

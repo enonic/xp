@@ -85,11 +85,11 @@ addBundle( project( ':core:core-extractor' ), 22 )
 addBundle( project( ':core:core-auth' ), 22 )
 addBundle( project( ':core:core-macro' ), 22 )
 addBundle( project( ':core:core-task' ), 22 )
-addBundle( project( ':core:core-cluster' ), 22 )
+addBundle( project( ':core:core-cluster' ), 23 )
 
 // Server bundles
 addBundle( project( ':server:server-config' ), 12 )
-addBundle( project( ':server:server-deploy' ), 30 )
+addBundle( project( ':server:server-deploy' ), 32 )
 addBundle( project( ':server:server-shell' ), 17 )
 addBundle( project( ':server:server-status' ), 17 )
 addBundle( project( ':server:server-udc' ), 17 )

@@ -12,16 +12,22 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationService;
 
-@Component(immediate = true, configurationPid = "com.enonic.xp.server.deploy")
+@Component(configurationPid = "com.enonic.xp.server.deploy", service = AutoDeployer.class)
 public final class AutoDeployer
 {
     private ApplicationService applicationService;
 
+    private Set<URL> urlSet;
+
     @Activate
     public void activate( final Map<String, String> config )
     {
-        final Set<URL> set = findDeployList( config );
-        set.forEach( this::deploy );
+        urlSet = findDeployList( config );
+    }
+
+    public void deploy()
+    {
+        urlSet.forEach( this::deploy );
     }
 
     private Set<URL> findDeployList( final Map<String, String> config )
@@ -60,4 +66,5 @@ public final class AutoDeployer
     {
         this.applicationService = applicationService;
     }
+
 }

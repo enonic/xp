@@ -58,7 +58,10 @@ public class ClusterManagerImpl
 
     @Activate
     public void activate()
+        throws Exception
     {
+        waitForProviders();
+
         this.timer.schedule( new TimerTask()
         {
             @Override
@@ -108,6 +111,25 @@ public class ClusterManagerImpl
 
         this.instances.forEach( Cluster::disable );
         this.isHealthy = false;
+    }
+
+    private void waitForProviders()
+        throws InterruptedException
+    {
+        while ( true )
+        {
+            final ClusterState clusterState = doGetClusterState();
+            if ( ClusterState.OK == clusterState )
+            {
+                activateProviders();
+                break;
+            }
+            else
+            {
+                LOG.warn( "Waiting for cluster providers" );
+                Thread.sleep( checkIntervalMs );
+            }
+        }
     }
 
     private void checkProviders()

@@ -58,8 +58,6 @@ public final class ApplicationServiceImpl
     {
         this.context = context;
         this.registry.activate( context );
-
-        ApplicationHelper.runAsAdmin( this::installAllStoredApplications );
     }
 
     @Override
