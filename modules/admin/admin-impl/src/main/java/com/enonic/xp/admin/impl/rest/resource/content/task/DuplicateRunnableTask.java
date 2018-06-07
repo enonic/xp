@@ -43,15 +43,17 @@ public class DuplicateRunnableTask
 
         final DuplicateContentProgressListener listener = new DuplicateContentProgressListener( progressReporter );
 
-        final long childrenIds = ContentQueryWithChildren.create().
+        final int parentIdsCount = params.getContents().size();
+
+        final int childIdsCount = contentToDuplicateWithChildrenList.stream().map( parentId -> ContentQueryWithChildren.create().
             contentService( this.contentService ).
-            contentsIds( contentToDuplicateWithChildrenList ).
+            contentsIds( ContentIds.from( parentId ) ).
             build().
             find().
-            getTotalHits();
-        final int contentIds = params.getContents().size();
+            getTotalHits() ).mapToInt( Long::intValue ).sum();
 
-        listener.setTotal( Math.toIntExact( childrenIds + contentIds ) );
+        listener.setTotal( parentIdsCount + childIdsCount );
+
         final DuplicateRunnableTaskResult.Builder resultBuilder = DuplicateRunnableTaskResult.create();
         for ( DuplicateContentJson content : params.getContents() )
         {
