@@ -215,6 +215,20 @@ public class MacroParserTest
         assertEquals( "something", parsedMacro.getParameter( "par3" ).stream().collect( Collectors.joining( "," ) ) );
     }
 
+    @Test
+    public void testParseWithHtmlEncodedAttributes()
+    {
+        final String macro = "[macroName par1=\"&oslash;&aelig;&aring;\" par2=\"oea\"]body[/macroName]";
+        final MacroParser parser = new MacroParser();
+        final Macro parsedMacro = parser.parse( macro );
+
+        assertEquals( "macroName", parsedMacro.getName() );
+        assertEquals( "body", parsedMacro.getBody() );
+        assertEquals( 2, parsedMacro.getParameters().size() );
+        assertEquals( "øæå", first( parsedMacro.getParameter( "par1" ) ) );
+        assertEquals( "oea", first( parsedMacro.getParameter( "par2" ) ) );
+    }
+
     private <T> T first( final Collection<T> values )
     {
         final Iterator<T> ite = values.iterator();
