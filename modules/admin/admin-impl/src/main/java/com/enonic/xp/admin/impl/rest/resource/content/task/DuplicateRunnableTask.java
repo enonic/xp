@@ -69,7 +69,7 @@ public class DuplicateRunnableTask
             try
             {
                 final DuplicateContentsResult result = contentService.duplicate( duplicateContentParams );
-                resultBuilder.succeeded( result.getContentName() );
+                resultBuilder.succeeded( result.getDuplicatedContents() );
             }
             catch ( ContentAlreadyMovedException e )
             {

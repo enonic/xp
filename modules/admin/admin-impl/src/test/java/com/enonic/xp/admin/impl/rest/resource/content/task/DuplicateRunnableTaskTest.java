@@ -10,8 +10,12 @@ import org.mockito.Mockito;
 import com.enonic.xp.admin.impl.rest.resource.content.json.DuplicateContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.DuplicateContentsJson;
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAlreadyMovedException;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentNotFoundException;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.DuplicateContentParams;
@@ -55,6 +59,14 @@ public class DuplicateRunnableTaskTest
     public void create_message_multiple()
         throws Exception
     {
+
+        final Content child4 =
+            Content.create().id( ContentId.from( "id4" ) ).path( ContentPath.from( contents.get( 0 ).getPath(), "content4" ) ).name(
+                "content4" ).displayName( "Content 4" ).build();
+        final Content child5 = Content.create().id( ContentId.from( "id5" ) ).path( ContentPath.from( child4.getPath(), "content5" ) ).name(
+            "content5" ).displayName( "Content 5" ).build();
+        final ContentIds childrenIds = ContentIds.from( child4.getId(), child5.getId() );
+
         Mockito.when( params.getContents() ).thenReturn(
             contents.stream().map( content -> new DuplicateContentJson( content.getId().toString(), true ) ).collect(
                 Collectors.toList() ) );
@@ -62,8 +74,9 @@ public class DuplicateRunnableTaskTest
         Mockito.when( contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn(
             FindContentIdsByQueryResult.create().totalHits( 3 ).build() );
         Mockito.when( contentService.duplicate( Mockito.isA( DuplicateContentParams.class ) ) ).
-            thenReturn( DuplicateContentsResult.create().addDuplicated( contents.get( 0 ).getId() ).setContentName(
-                contents.get( 0 ).getDisplayName() ).build() ).
+            thenReturn(
+                DuplicateContentsResult.create().addDuplicated( contents.get( 0 ).getId() ).addDuplicated( childrenIds ).setContentName(
+                    contents.get( 0 ).getDisplayName() ).build() ).
             thenThrow( new ContentNotFoundException( contents.get( 1 ).getPath(), Branch.from( "master" ) ) ).
             thenThrow( new ContentAlreadyMovedException( contents.get( 2 ).getDisplayName(), contents.get( 2 ).getPath() ) );
 
@@ -77,7 +90,7 @@ public class DuplicateRunnableTaskTest
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
 
         Assert.assertEquals(
-            "{\"state\":\"WARNING\",\"message\":\"Duplicated 2 items ( Already duplicated: \\\"content3\\\" ). Item \\\"id2\\\" could not be duplicated.\"}",
+            "{\"state\":\"WARNING\",\"message\":\"Duplicated 4 items ( Already duplicated: \\\"content3\\\" ). Item \\\"id2\\\" could not be duplicated.\"}",
             resultMessage );
     }
 
@@ -102,7 +115,7 @@ public class DuplicateRunnableTaskTest
 
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
 
-        Assert.assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"Item \\\"Content 1\\\" was duplicated.\"}", resultMessage );
+        Assert.assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"Item \\\"id1\\\" was duplicated.\"}", resultMessage );
     }
 
     @Test
