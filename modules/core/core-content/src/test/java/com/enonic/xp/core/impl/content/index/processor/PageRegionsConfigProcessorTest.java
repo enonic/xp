@@ -7,16 +7,19 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
+import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.PathIndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
+import com.enonic.xp.region.FragmentComponent;
 import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.LayoutComponentType;
 import com.enonic.xp.region.LayoutDescriptor;
@@ -32,6 +35,7 @@ import com.enonic.xp.region.RegionDescriptors;
 
 import static com.enonic.xp.core.impl.content.index.processor.PageRegionsConfigProcessor.PAGE_TEXT_COMPONENT_PROPERTY_PATH_PATTERN;
 import static com.enonic.xp.core.impl.content.index.processor.PageRegionsConfigProcessor.TEXT_COMPONENT_INDEX_CONFIG;
+import static java.util.Collections.singletonList;
 import static org.junit.Assert.*;
 
 public class PageRegionsConfigProcessorTest
@@ -65,7 +69,7 @@ public class PageRegionsConfigProcessorTest
         throws Exception
     {
         final PatternIndexConfigDocument result = processPage( Page.create().regions( PageRegions.create().build() ).build(), null, null );
-        assertEquals( 6, result.getPathIndexConfigs().size() );
+        assertEquals( 7, result.getPathIndexConfigs().size() );
     }
 
     @Test
@@ -163,6 +167,31 @@ public class PageRegionsConfigProcessorTest
             0 ).getName() );
     }
 
+    @Test
+    public void test_fragment_component()
+        throws Exception
+    {
+        final Page page = Page.
+            create().
+            regions( PageRegions.create().
+                add( Region.create().
+                    name( "region1" ).
+                    add( FragmentComponent.create().
+                        name( "part1" ).
+                        fragment( ContentId.from( "content-id" ) ).
+                        build() ).
+                    build() ).
+                build() ).
+            build();
+
+        final PatternIndexConfigDocument result = processPage( page, singletonList( configFormWithHtmlArea ).listIterator(), null );
+
+        assertTrue( result.getPathIndexConfigs().contains(
+            PathIndexConfig.create().path( PropertyPath.from( "page.region.**.FragmentComponent.*" ) ).indexConfig(
+                IndexConfig.MINIMAL ).build() ) );
+
+    }
+
     private PatternIndexConfigDocument processPage( final Page page, final ListIterator<Form> partForms,
                                                     final ListIterator<Form> layoutForms )
     {
@@ -224,7 +253,6 @@ public class PageRegionsConfigProcessorTest
                 }
             } );
         } );
-        return;
     }
 }
 
