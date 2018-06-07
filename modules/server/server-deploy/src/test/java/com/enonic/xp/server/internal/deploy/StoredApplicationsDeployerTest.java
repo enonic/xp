@@ -8,7 +8,7 @@ import com.enonic.xp.app.ApplicationService;
 
 public class StoredApplicationsDeployerTest
 {
-    private ApplicationService service;
+    private ApplicationService applicationService;
 
     private StoredApplicationsDeployer deployer;
 
@@ -16,14 +16,14 @@ public class StoredApplicationsDeployerTest
     public void setup()
     {
         this.deployer = new StoredApplicationsDeployer();
-        this.service = Mockito.mock( ApplicationService.class );
-        this.deployer.setApplicationService( this.service );
+        this.applicationService = Mockito.mock( ApplicationService.class );
+        this.deployer.setApplicationService( this.applicationService );
     }
 
     @Test
-    public void activate()
+    public void deploy()
     {
-        this.deployer.activate();
-        Mockito.verify( this.service, Mockito.times( 1 ) ).installAllStoredApplications();
+        this.deployer.deploy();
+        Mockito.verify( this.applicationService, Mockito.times( 1 ) ).installAllStoredApplications();
     }
 }

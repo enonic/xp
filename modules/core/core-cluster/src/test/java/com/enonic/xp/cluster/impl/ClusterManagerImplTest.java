@@ -45,6 +45,7 @@ public class ClusterManagerImplTest
             build();
 
         this.clusterManager.addProvider( provider );
+        this.clusterManager.activate();
         Thread.sleep( CHECK_INTERVAL_MS );
         assertActive( provider );
         this.clusterManager.getClusterState();
@@ -84,11 +85,8 @@ public class ClusterManagerImplTest
             build();
 
         this.clusterManager.addProvider( provider1 );
-        Thread.sleep( CHECK_INTERVAL_MS );
-        assertDeactivated( provider1 );
-
         this.clusterManager.addProvider( provider2 );
-        Thread.sleep( CHECK_INTERVAL_MS );
+        this.clusterManager.activate();
         assertActive( provider1, provider2 );
 
         provider1.setHealth( ClusterHealth.red() );
@@ -120,6 +118,7 @@ public class ClusterManagerImplTest
 
         this.clusterManager.addProvider( provider1 );
         this.clusterManager.addProvider( provider2 );
+        this.clusterManager.activate();
         Thread.sleep( CHECK_INTERVAL_MS );
         assertClusterOk();
         assertActive( provider1, provider2 );
@@ -152,9 +151,9 @@ public class ClusterManagerImplTest
             build();
 
         createManager( "elasticsearch", "another" );
-
         this.clusterManager.addProvider( provider1 );
         this.clusterManager.addProvider( provider2 );
+        this.clusterManager.activate();
 
         assertClusterOk();
 
@@ -174,6 +173,7 @@ public class ClusterManagerImplTest
     }
 
     private void createManager( final String... required )
+        throws Exception
     {
         List<ClusterId> requiredIds = Lists.newArrayList();
 
@@ -186,8 +186,6 @@ public class ClusterManagerImplTest
             checkIntervalMs( CHECK_INTERVAL_MS / 2 ).
             requiredInstances( new Clusters( requiredIds ) ).
             build();
-        this.clusterManager.activate();
-
     }
 
     private void assertActive( final TestCluster... providers )

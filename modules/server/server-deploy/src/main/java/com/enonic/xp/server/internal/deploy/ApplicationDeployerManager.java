@@ -5,7 +5,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 @Component(immediate = true)
-public class ApplicationDeploymentServiceImpl
+public class ApplicationDeployerManager
 {
     private StoredApplicationsDeployer storedApplicationsDeployer;
 
@@ -14,7 +14,7 @@ public class ApplicationDeploymentServiceImpl
     private DeployDirectoryWatcher deployDirectoryWatcher;
 
     @Activate
-    public void activate( final DeployConfig config )
+    public void activate()
         throws Exception
     {
         storedApplicationsDeployer.deploy();
