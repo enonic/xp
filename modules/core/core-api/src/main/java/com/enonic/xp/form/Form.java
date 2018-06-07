@@ -70,6 +70,11 @@ public final class Form
         return formItems.getInput( path );
     }
 
+    public Input getInput( final FormItemPath path, final boolean skipLayout )
+    {
+        return formItems.getInput( path, skipLayout );
+    }
+
     public InlineMixin getInlineMixin( final String path )
     {
         return formItems.getInlineMixin( FormItemPath.from( path ) );

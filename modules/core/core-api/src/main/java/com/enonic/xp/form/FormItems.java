@@ -65,22 +65,27 @@ public final class FormItems
 
     FormItem getFormItem( final FormItemPath path )
     {
+        return getFormItem( path, false );
+    }
+
+    FormItem getFormItem( final FormItemPath path, final boolean skipLayout )
+    {
         Preconditions.checkNotNull( path, "path cannot be null" );
         Preconditions.checkArgument( path.elementCount() >= 1, "path must be something: " + path );
 
         if ( path.elementCount() > 1 )
         {
-            return doForwardGetFormItem( path );
+            return doForwardGetFormItem( path, skipLayout );
         }
         else
         {
-            return doGetFormItem( path.getFirstElement() );
+            return doGetFormItem( path.getFirstElement(), skipLayout );
         }
     }
 
-    private FormItem doForwardGetFormItem( final FormItemPath path )
+    private FormItem doForwardGetFormItem( final FormItemPath path, final boolean skipLayout )
     {
-        FormItem foundFormItem = doGetFormItem( path.getFirstElement() );
+        FormItem foundFormItem = doGetFormItem( path.getFirstElement(), skipLayout );
         if ( foundFormItem == null )
         {
             return null;
@@ -112,12 +117,12 @@ public final class FormItems
         }
     }
 
-    FormItem doGetFormItem( final String name )
+    FormItem doGetFormItem( final String name, final boolean skipLayout )
     {
         Preconditions.checkArgument( FormItemPath.hasNotPathElementDivider( name ), "name cannot be a path: %s", name );
 
         FormItem foundFormItem = formItemByName.get( name );
-        if ( foundFormItem == null )
+        if ( foundFormItem == null || ( skipLayout && foundFormItem.getType() == FormItemType.LAYOUT ) )
         {
             foundFormItem = searchFormItemInLayouts( name );
         }
@@ -127,6 +132,11 @@ public final class FormItems
     public Input getInput( final FormItemPath path )
     {
         return typeCast( getFormItem( path ), Input.class );
+    }
+
+    public Input getInput( final FormItemPath path, final boolean skipLayout )
+    {
+        return typeCast( getFormItem( path, skipLayout ), Input.class );
     }
 
     FormItemSet getFormItemSet( final FormItemPath path )

@@ -173,7 +173,7 @@ public final class FormJsonToPropertyTreeTranslator
 
     private Input getInput( final Property parentProperty, final String key )
     {
-        return this.form.getInput( resolveInputPath( key, parentProperty ) );
+        return this.form.getInput( resolveInputPath( key, parentProperty ), true );
     }
 
     private boolean isOptionSetSelection( final String key, final Property parentProperty )

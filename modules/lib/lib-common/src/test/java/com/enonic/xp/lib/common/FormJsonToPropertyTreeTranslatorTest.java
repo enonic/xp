@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
+import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.FormOptionSet;
@@ -123,6 +124,22 @@ public class FormJsonToPropertyTreeTranslatorTest
         assertNotNull( optionSetOption1TextLine1 );
         assertEquals( ValueTypes.STRING.getName(), optionSetOption1TextLine1.getType().getName() );
         assertEquals( "My Text 1", optionSetOption1TextLine1.getString() );
+    }
+
+    @Test
+    public void translateFormWithFieldSet()
+        throws Exception
+    {
+        final JsonNode node = loadJson( "fieldset" );
+        final PropertyTree data = new FormJsonToPropertyTreeTranslator( createFormForFieldSet(), true ).translate( node );
+
+        final Property key = data.getProperty( "attributes.key" );
+        final Property numberProp = data.getProperty( "attributes.number" );
+
+        assertEquals( ValueTypes.STRING.getName(), key.getType().getName() );
+        assertEquals( "value", key.getValue().asString() );
+        assertEquals( ValueTypes.LONG.getName(), numberProp.getType().getName() );
+        assertEquals( 42L, numberProp.getValue().asLong().longValue() );
     }
 
     private JsonNode loadJson( final String name )
@@ -259,5 +276,38 @@ public class FormJsonToPropertyTreeTranslatorTest
             build();
     }
 
+    private Form createFormForFieldSet()
+    {
+        final FieldSet fieldSet1 = FieldSet.create().
+            name( "properties" ).
+            label( "Properties" ).
+            addFormItem( Input.create().
+                name( "number" ).
+                label( "Number" ).
+                inputType( InputTypeName.LONG ).
+                build() ).
+            build();
+
+        final FormItemSet itemSet = FormItemSet.create().
+            name( "attributes" ).
+            occurrences( 0, 0 ).
+            addFormItem( Input.create().
+                name( "key" ).
+                label( "Key" ).
+                inputType( InputTypeName.TEXT_LINE ).
+                build() ).
+            addFormItem( fieldSet1 ).
+            build();
+
+        final FieldSet fieldSet = FieldSet.create().
+            name( "attributes" ).
+            label( "Attributes" ).
+            addFormItem( itemSet ).
+            build();
+
+        return Form.create().
+            addFormItem( fieldSet ).
+            build();
+    }
 }
 

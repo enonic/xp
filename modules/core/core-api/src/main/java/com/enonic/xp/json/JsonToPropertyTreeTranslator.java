@@ -183,7 +183,7 @@ public final class JsonToPropertyTreeTranslator
 
     private Input getInput( final Property parentProperty, final String key )
     {
-        return this.form.getInput( resolveInputPath( key, parentProperty ) );
+        return this.form.getInput( resolveInputPath( key, parentProperty ), true );
     }
 
 }
