@@ -33,6 +33,7 @@ import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.schema.SchemaImageHelper;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
@@ -79,6 +80,8 @@ public final class MixinResource
 
     private ContentService contentService;
 
+    private ApplicationService applicationService;
+
     private SiteService siteService;
 
     private ContentTypeService contentTypeService;
@@ -104,6 +107,29 @@ public final class MixinResource
 
         return MixinJson.create().setMixin( mixin ).setIconUrlResolver( this.mixinIconUrlResolver ).setLocaleMessageResolver(
             localeMessageResolver ).build();
+    }
+
+    @GET
+    @Path("getApplicationXDataForContentType")
+    public XDataListJson getApplicationXDataForContentType( @QueryParam("contentTypeName") final String contentTypeName,
+                                                            @QueryParam("applicationKey") final String key )
+    {
+        final ContentTypeName contentType = ContentTypeName.from( contentTypeName );
+        final ApplicationKey applicationKey = ApplicationKey.from( key );
+
+        final SiteDescriptor siteDescriptor = siteService.getDescriptor( applicationKey );
+
+        final XDatas siteXData = this.filterXDatasByContentType( siteDescriptor.getMetaSteps(), contentType );
+
+        final XDatas applicationXData =
+            XDatas.from( this.filterXDatasByContentType( this.xDataService.getByApplication( applicationKey ), contentType ).
+                stream().filter( externalMixin -> !siteXData.contains( externalMixin ) ).iterator() );
+
+        final XDataListJson result = new XDataListJson();
+        result.addXDatas( createXDataListJson( siteXData.getList(), false ) );
+        result.addXDatas( createXDataListJson( applicationXData.getList(), true ) );
+
+        return result;
     }
 
     @GET
@@ -213,6 +239,13 @@ public final class MixinResource
         return XDatas.from( this.filterXDatasByContentType( contentType.getMetadata(), contentType.getName() ) );
     }
 
+/*    private XDatas getSiteXData( final ApplicationKey applicationKey, final ContentTypeName contentType )
+    {
+        final SiteDescriptor siteDescriptor = siteService.getDescriptor( applicationKey );
+
+        return this.filterXDatasByContentType( siteDescriptor.getMetaSteps(), contentType );
+    }*/
+
     private XDatas getSiteXData( final Content content )
     {
         final XDatas.Builder applicationXDataBuilder = XDatas.create();
@@ -305,6 +338,14 @@ public final class MixinResource
         return XDatas.empty();
     }
 
+ /*   private XDatas getApplicationXData( final ApplicationKey applicationKey, final ContentTypeName contentType )
+    {
+        final XDatas applicationXDatas = this.xDataService.getByApplication( applicationKey );
+
+        return XDatas.from( this.filterXDatasByContentType( XDatas.from( applicationXDatas ), contentType ).
+            stream().iterator() );
+    }*/
+
     private XData toXData( final Mixin mixin )
     {
         XData.Builder xData = XData.create();
@@ -367,6 +408,12 @@ public final class MixinResource
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
         this.contentTypeService = contentTypeService;
+    }
+
+    @Reference
+    public void setApplicationService( final ApplicationService applicationService )
+    {
+        this.applicationService = applicationService;
     }
 }
 
