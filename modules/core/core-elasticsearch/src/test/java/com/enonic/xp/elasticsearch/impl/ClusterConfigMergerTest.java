@@ -56,6 +56,12 @@ public class ClusterConfigMergerTest
             {
                 return ClusterNodeId.from( "fisk" );
             }
+
+            @Override
+            public boolean isEnabled()
+            {
+                return true;
+            }
         };
     }
 

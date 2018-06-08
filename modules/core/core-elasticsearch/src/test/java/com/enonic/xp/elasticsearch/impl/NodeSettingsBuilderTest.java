@@ -46,6 +46,12 @@ public class NodeSettingsBuilderTest
             {
                 return ClusterNodeId.from( "FISKEPUDDING" );
             }
+
+            @Override
+            public boolean isEnabled()
+            {
+                return true;
+            }
         } );
 
         final File homeDir = this.temporaryFolder.newFolder( "home" );

@@ -74,4 +74,10 @@ public class ClusterConfigImpl
 
         return ClusterNodeId.from( nodeName );
     }
+
+    @Override
+    public boolean isEnabled()
+    {
+        return Boolean.parseBoolean( this.config.get( "cluster.enabled" ) );
+    }
 }

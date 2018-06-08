@@ -52,6 +52,7 @@ final class NodeSettingsBuilder
         return ImmutableSettings.settingsBuilder().
             classLoader( ImmutableSettings.class.getClassLoader() ).
             put( config.asMap() ).
+            put( "node.local", !this.clusterConfig.isEnabled() ).
             build();
     }
 }
