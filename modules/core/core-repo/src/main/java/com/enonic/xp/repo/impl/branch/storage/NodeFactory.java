@@ -12,11 +12,16 @@ public class NodeFactory
         if ( nodeBranchEntry.getNodeId().equals( Node.ROOT_UUID ) )
         {
             return Node.createRoot().
+                nodeType( nodeVersion.getNodeType() ).
                 nodeVersionId( nodeVersion.getVersionId() ).
                 timestamp( nodeBranchEntry.getTimestamp() ).
                 permissions( nodeVersion.getPermissions() ).
                 nodeState( nodeBranchEntry.getNodeState() ).
                 childOrder( nodeVersion.getChildOrder() ).
+                manualOrderValue( nodeVersion.getManualOrderValue() ).
+                data( nodeVersion.getData() ).
+                attachedBinaries( nodeVersion.getAttachedBinaries() ).
+                indexConfigDocument( nodeVersion.getIndexConfigDocument() ).
                 build();
         }
 
