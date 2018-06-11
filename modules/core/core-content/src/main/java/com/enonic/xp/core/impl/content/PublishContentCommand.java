@@ -11,6 +11,7 @@ import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentListener;
@@ -19,6 +20,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.PushNodesListener;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RefreshMode;
@@ -182,8 +184,13 @@ public class PublishContentCommand
 
     private void doDeleteNodes( final NodeIds nodeIdsToDelete )
     {
+        final Nodes nodesToDelete = nodeService.getByIds( nodeIdsToDelete );
         final ContentIds contentIdsToDelete = ContentNodeHelper.toContentIds( NodeIds.from( nodeIdsToDelete ) );
         this.resultBuilder.setDeleted( contentIdsToDelete );
+        final ContentPaths contentPathsToDelete = ContentPaths.from(
+            nodesToDelete.stream().map( n -> ContentNodeHelper.translateNodePathToContentPath( n.path() ).toString() ).collect(
+                Collectors.toList() ) );
+        this.resultBuilder.setDeletedPaths( contentPathsToDelete );
 
         final Context currentContext = ContextAccessor.current();
         deleteNodesInContext( nodeIdsToDelete, currentContext );

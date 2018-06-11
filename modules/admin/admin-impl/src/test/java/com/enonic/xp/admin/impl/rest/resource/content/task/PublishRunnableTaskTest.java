@@ -11,6 +11,7 @@ import org.mockito.Mockito;
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishContentJson;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.task.RunnableTask;
@@ -52,6 +53,7 @@ public class PublishRunnableTaskTest
         final PublishContentResult result = PublishContentResult.create().
             setPushed( ContentIds.from( contents.get( 0 ).getId() ) ).
             setDeleted( ContentIds.from( contents.get( 1 ).getId() ) ).
+            setDeletedPaths( ContentPaths.from( contents.get( 1 ).getPath() ) ).
             setFailed( ContentIds.from( contents.get( 2 ).getId() ) ).
             build();
 
@@ -110,6 +112,7 @@ public class PublishRunnableTaskTest
     {
         final PublishContentResult result = PublishContentResult.create().
             setDeleted( ContentIds.from( contents.get( 0 ).getId() ) ).
+            setDeletedPaths( ContentPaths.from( contents.get( 0 ).getPath() ) ).
             build();
 
         Assert.assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"Item \\\"content1\\\" was deleted.\"}", runTask( result ) );
