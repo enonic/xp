@@ -107,6 +107,29 @@ public final class MixinResource
     }
 
     @GET
+    @Path("getApplicationXDataForContentType")
+    public XDataListJson getApplicationXDataForContentType( @QueryParam("contentTypeName") final String contentTypeName,
+                                                            @QueryParam("applicationKey") final String key )
+    {
+        final ContentTypeName contentType = ContentTypeName.from( contentTypeName );
+        final ApplicationKey applicationKey = ApplicationKey.from( key );
+
+        final SiteDescriptor siteDescriptor = siteService.getDescriptor( applicationKey );
+
+        final XDatas siteXData = this.filterXDatasByContentType( siteDescriptor.getMetaSteps(), contentType );
+
+        final XDatas applicationXData =
+            XDatas.from( this.filterXDatasByContentType( this.xDataService.getByApplication( applicationKey ), contentType ).
+                stream().filter( externalMixin -> !siteXData.contains( externalMixin ) ).iterator() );
+
+        final XDataListJson result = new XDataListJson();
+        result.addXDatas( createXDataListJson( siteXData.getList(), false ) );
+        result.addXDatas( createXDataListJson( applicationXData.getList(), true ) );
+
+        return result;
+    }
+
+    @GET
     @Path("getContentXData")
     public XDataListJson getContentXData( @QueryParam("contentId") final String id )
     {

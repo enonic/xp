@@ -177,6 +177,50 @@ public class MixinResourceTest
     }
 
     @Test
+    public void getApplicationXDataForContentType()
+        throws Exception
+    {
+
+        final ContentTypeName contentTypeName = ContentTypeName.from( "app:testContentType" );
+
+        final XData xdata1 = XData.create().createdTime( LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC ) ).name(
+            MY_XDATA_QUALIFIED_NAME_1 ).addFormItem(
+            Input.create().name( MY_MIXIN_INPUT_NAME_1 ).inputType( InputTypeName.TEXT_LINE ).label( "Line Text 1" ).required(
+                true ).helpText( "Help text line 1" ).required( true ).build() ).allowContentType( contentTypeName.toString() ).build();
+
+        final XData xdata2 = XData.create().createdTime( LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC ) ).name(
+            MY_XDATA_QUALIFIED_NAME_2 ).addFormItem(
+            Input.create().name( MY_MIXIN_INPUT_NAME_2 ).inputType( InputTypeName.TEXT_AREA ).label( "Text Area" ).required(
+                true ).helpText( "Help text area" ).required( true ).build() ).build();
+
+        final XData xdata3 = XData.create().createdTime( LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC ) ).name(
+            XDataName.from( "myapplication:text_area_3" ) ).addFormItem(
+            Input.create().name( "input_name_3" ).inputType( InputTypeName.TEXT_AREA ).label( "Text Area" ).required( true ).helpText(
+                "Help text area" ).required( true ).build() ).allowContentType( "app:anotherContentType" ).build();
+
+        final SiteDescriptor siteDescriptor =
+            SiteDescriptor.create().metaSteps( MixinNames.from( xdata1.getName().toString(), xdata3.getName().toString() ) ).build();
+        Mockito.when( siteService.getDescriptor( contentTypeName.getApplicationKey() ) ).thenReturn( siteDescriptor );
+
+        Mockito.when( mixinService.getByNames( any() ) ).thenReturn( Mixins.empty() );
+        Mockito.when( xDataService.getByNames( XDataNames.from( xdata1.getName().toString(), xdata3.getName().toString() ) ) ).thenReturn(
+            XDatas.from( xdata1 ) );
+        Mockito.when( xDataService.getByNames( XDataNames.from( xdata2.getName().toString(), xdata3.getName().toString() ) ) ).thenReturn(
+            XDatas.from( xdata2 ) );
+
+        Mockito.when( xDataService.getByApplication( any() ) ).thenReturn( XDatas.from( xdata2, xdata3 ) );
+
+        String result = request().path( "schema/mixin/getApplicationXDataForContentType" ).
+            queryParam( "contentTypeName", contentTypeName.toString() ).
+            queryParam( "applicationKey", contentTypeName.getApplicationKey().toString() ).
+            get().
+            getAsString();
+
+        assertJson( "get_content_x_data_for_content_type.json", result );
+
+    }
+
+    @Test
     public void getContentXData()
         throws Exception
     {
