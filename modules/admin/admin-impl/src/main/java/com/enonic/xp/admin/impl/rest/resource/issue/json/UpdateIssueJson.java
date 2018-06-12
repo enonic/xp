@@ -5,7 +5,6 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishRequestJson;
 import com.enonic.xp.issue.IssueId;
@@ -44,8 +43,7 @@ public class UpdateIssueJson
         this.title = title;
         this.description = description;
         this.issueStatus = status != null ? IssueStatus.valueOf( status.trim().toUpperCase() ) : null;
-        this.approverIds =
-            approverIds != null ? approverIds.stream().map( PrincipalKey::from ).collect( Collectors.toList() ) : Lists.newArrayList();
+        this.approverIds = approverIds != null ? approverIds.stream().map( PrincipalKey::from ).collect( Collectors.toList() ) : null;
         this.publishRequest = publishRequest != null ? publishRequest.toRequest() : null;
     }
 
