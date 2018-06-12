@@ -30,9 +30,7 @@ class ContentNodeHelper
         final NodePaths.Builder builder = NodePaths.create();
 
         builder.addNodePaths(
-            contentPaths.stream().map( ( contentPath -> ContentNodeHelper.translateContentPathToNodePath( contentPath ) ) ).collect(
-                Collectors.toList() )
-         );
+            contentPaths.stream().map( ( ContentNodeHelper::translateContentPathToNodePath ) ).collect( Collectors.toList() ) );
 
         return builder.build();
     }
@@ -40,14 +38,13 @@ class ContentNodeHelper
     public static ContentPaths translateNodePathsToContentPaths( final NodePaths nodePaths )
     {
         return ContentPaths.from(
-            nodePaths.stream().map( ( nodePath -> ContentNodeHelper.translateNodePathToContentPath( nodePath ) ) ).collect(
-                Collectors.toList() ) );
+            nodePaths.stream().map( ( ContentNodeHelper::translateNodePathToContentPath ) ).collect( Collectors.toList() ) );
     }
 
     public static ContentPath translateNodePathToContentPath( final NodePath nodePath )
     {
         final String contentPath = StringUtils.substringAfter( nodePath.asAbsolute().toString(), CONTENT_ROOT_NODE_NAME + "/" );
-        return ContentPath.from( contentPath );
+        return ContentPath.from( contentPath ).asAbsolute();
     }
 
     public static NodePath translateContentParentToNodeParentPath( final ContentPath parentContentPath )
