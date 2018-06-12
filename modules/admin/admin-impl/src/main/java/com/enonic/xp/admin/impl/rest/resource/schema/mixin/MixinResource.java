@@ -33,7 +33,6 @@ import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.schema.SchemaImageHelper;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
@@ -79,8 +78,6 @@ public final class MixinResource
     private XDataService xDataService;
 
     private ContentService contentService;
-
-    private ApplicationService applicationService;
 
     private SiteService siteService;
 
@@ -239,13 +236,6 @@ public final class MixinResource
         return XDatas.from( this.filterXDatasByContentType( contentType.getMetadata(), contentType.getName() ) );
     }
 
-/*    private XDatas getSiteXData( final ApplicationKey applicationKey, final ContentTypeName contentType )
-    {
-        final SiteDescriptor siteDescriptor = siteService.getDescriptor( applicationKey );
-
-        return this.filterXDatasByContentType( siteDescriptor.getMetaSteps(), contentType );
-    }*/
-
     private XDatas getSiteXData( final Content content )
     {
         final XDatas.Builder applicationXDataBuilder = XDatas.create();
@@ -338,14 +328,6 @@ public final class MixinResource
         return XDatas.empty();
     }
 
- /*   private XDatas getApplicationXData( final ApplicationKey applicationKey, final ContentTypeName contentType )
-    {
-        final XDatas applicationXDatas = this.xDataService.getByApplication( applicationKey );
-
-        return XDatas.from( this.filterXDatasByContentType( XDatas.from( applicationXDatas ), contentType ).
-            stream().iterator() );
-    }*/
-
     private XData toXData( final Mixin mixin )
     {
         XData.Builder xData = XData.create();
@@ -408,12 +390,6 @@ public final class MixinResource
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
         this.contentTypeService = contentTypeService;
-    }
-
-    @Reference
-    public void setApplicationService( final ApplicationService applicationService )
-    {
-        this.applicationService = applicationService;
     }
 }
 
