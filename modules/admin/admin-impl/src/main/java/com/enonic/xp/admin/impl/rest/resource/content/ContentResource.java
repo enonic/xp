@@ -123,6 +123,7 @@ import com.enonic.xp.content.ContentDependencies;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentListMetaData;
+import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
@@ -400,7 +401,7 @@ public final class ContentResource
         try
         {
             // in case content with same name and path was created in between content updated and renamed
-            final RenameContentParams renameParams = json.getRenameContentParams();
+            final RenameContentParams renameParams = makeRenameParams( json.getRenameContentParams() );
             final Content renamedContent = contentService.rename( renameParams );
             return new ContentJson( renamedContent, contentIconUrlResolver, principalsResolver );
         }
@@ -411,6 +412,16 @@ public final class ContentResource
                                                 "Content could not be renamed to [%s]. A content with that name already exists",
                                                 json.getRenameContentParams().getNewName().toString() );
         }
+    }
+
+    private RenameContentParams makeRenameParams( final RenameContentParams renameParams )
+    {
+        if ( renameParams.getNewName().isUnnamed() && !renameParams.getNewName().hasUniqueness() )
+        {
+            return RenameContentParams.create().newName( ContentName.uniqueUnnamed() ).contentId( renameParams.getContentId() ).build();
+        }
+
+        return renameParams;
     }
 
     @POST
