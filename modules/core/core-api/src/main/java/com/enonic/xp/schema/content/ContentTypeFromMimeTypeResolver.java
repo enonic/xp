@@ -53,6 +53,8 @@ public final class ContentTypeFromMimeTypeResolver
         MAP.put( "application/zip", ContentTypeName.archiveMedia() );
         MAP.put( "application/gzip", ContentTypeName.archiveMedia() );
         MAP.put( "application/x-rar-compressed", ContentTypeName.archiveMedia() );
+        MAP.put( "application/x-zip-compressed", ContentTypeName.archiveMedia() );
+        MAP.put( "application/x-tar", ContentTypeName.archiveMedia() );
 
         // Text
         MAP.put( "text/plain", ContentTypeName.textMedia() );
