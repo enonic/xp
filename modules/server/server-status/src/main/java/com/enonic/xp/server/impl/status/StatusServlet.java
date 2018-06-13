@@ -75,9 +75,15 @@ public final class StatusServlet
         serializeJson( res, 200, getRootInfo() );
     }
 
-    private void reportFromReporter( final HttpServletRequest req, final HttpServletResponse res, final String name )
+    private void reportFromReporter( final HttpServletRequest req, final HttpServletResponse res, String name )
         throws IOException
     {
+        //TODO Backward compatibility fix. Remove in 7.0
+        if ( "cluster".equals( name ) )
+        {
+            name = "cluster.elasticsearch";
+        }
+        
         final StatusReporter reporter = this.reporters.get( name );
         if ( reporter == null )
         {
