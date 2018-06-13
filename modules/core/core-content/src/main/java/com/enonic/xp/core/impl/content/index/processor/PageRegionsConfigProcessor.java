@@ -37,6 +37,8 @@ public class PageRegionsConfigProcessor
 
     public static final String TEXT_COMPONENT = "TextComponent";
 
+    public static final String FRAGMENT_COMPONENT = "FragmentComponent";
+
     public static final String ANY_PATH_PATTERN = "**";
 
     public static final String PAGE_REGION = String.join( ELEMENT_DIVIDER, "page", REGION );
@@ -46,6 +48,8 @@ public class PageRegionsConfigProcessor
     public static final String PART_COMPONENT_PATH = String.join( ELEMENT_DIVIDER, PAGE_REGION, ANY_PATH_PATTERN, PART_COMPONENT );
 
     public static final String TEXT_COMPONENT_PATH = String.join( ELEMENT_DIVIDER, PAGE_REGION, ANY_PATH_PATTERN, TEXT_COMPONENT );
+
+    public static final String FRAGMENT_COMPONENT_PATH = String.join( ELEMENT_DIVIDER, PAGE_REGION, ANY_PATH_PATTERN, FRAGMENT_COMPONENT );
 
     public static final String PAGE_TEXT_COMPONENT_PROPERTY_PATH_PATTERN = String.join( ELEMENT_DIVIDER, TEXT_COMPONENT_PATH, "text" );
 
@@ -81,6 +85,7 @@ public class PageRegionsConfigProcessor
         builder.add( String.join( ELEMENT_DIVIDER, TEXT_COMPONENT_PATH, ALL_PATTERN ), IndexConfig.MINIMAL );
         builder.add( String.join( ELEMENT_DIVIDER, PART_COMPONENT_PATH, ALL_PATTERN ), IndexConfig.MINIMAL );
         builder.add( String.join( ELEMENT_DIVIDER, LAYOUT_COMPONENT_PATH, ALL_PATTERN ), IndexConfig.MINIMAL );
+        builder.add( String.join( ELEMENT_DIVIDER, FRAGMENT_COMPONENT_PATH, ALL_PATTERN ), IndexConfig.MINIMAL );
 
         builder.add( PAGE_TEXT_COMPONENT_PROPERTY_PATH_PATTERN, TEXT_COMPONENT_INDEX_CONFIG );
 
