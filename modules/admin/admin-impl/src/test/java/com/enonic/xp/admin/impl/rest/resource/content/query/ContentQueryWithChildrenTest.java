@@ -55,13 +55,13 @@ public class ContentQueryWithChildrenTest
 
         assertEquals( query.getSize(), -1 );
         assertEquals( query.getFrom(), 1 );
-        assertEquals( query.getQueryExpr().toString(),
-                      "(_path LIKE '/contentmy-path/*' AND _path NOT IN ('/contentmy-path')) ORDER BY _path ASC" );
+        assertEquals( "(_path LIKE '/content/my-path/*' AND _path NOT IN ('/content/my-path')) ORDER BY _path ASC",
+                      query.getQueryExpr().toString() );
 
         assertEquals( orderedQuery.getSize(), -1 );
         assertEquals( orderedQuery.getFrom(), 1 );
-        assertEquals( orderedQuery.getQueryExpr().toString(),
-                      "_path IN ('/content/my-path') ORDER BY _manualordervalue DESC, _timestamp DESC" );
+        assertEquals( "_path IN ('/content/my-path') ORDER BY _manualordervalue DESC, _timestamp DESC",
+                      orderedQuery.getQueryExpr().toString() );
     }
 
     @Test
@@ -92,7 +92,7 @@ public class ContentQueryWithChildrenTest
 
         assertEquals( "(_path LIKE '/content/my-path/*' AND _path NOT IN ('/content/my-path')) ORDER BY _path ASC",
                       query.getQueryExpr().toString() );
-        assertEquals( "_path IN ('/content//my-path') ORDER BY _manualordervalue DESC, _timestamp DESC",
+        assertEquals( "_path IN ('/content/my-path') ORDER BY _manualordervalue DESC, _timestamp DESC",
                       orderedQuery.getQueryExpr().toString() );
     }
 
