@@ -76,6 +76,12 @@ public class ElasticsearchActivatorTest
             {
                 return ClusterNodeId.from( "ClusterNodeId" );
             }
+
+            @Override
+            public boolean isEnabled()
+            {
+                return true;
+            }
         } );
 
         final File homeDir = this.temporaryFolder.newFolder( "home" );

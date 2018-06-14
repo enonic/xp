@@ -102,6 +102,12 @@ public class ConfigurationFactoryTest
             {
                 return ClusterNodeId.from( name );
             }
+
+            @Override
+            public boolean isEnabled()
+            {
+                return true;
+            }
         };
     }
 
