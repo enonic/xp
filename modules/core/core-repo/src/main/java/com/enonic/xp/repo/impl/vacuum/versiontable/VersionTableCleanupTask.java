@@ -2,7 +2,6 @@ package com.enonic.xp.repo.impl.vacuum.versiontable;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -94,8 +93,12 @@ public class VersionTableCleanupTask
 
         final List<NodeVersionDocumentId> toBeDeleted = Lists.newArrayList();
 
-        final Long versionTotal = executor.getTotalHits();
-        AtomicLong versionCount = new AtomicLong( 0 );
+        if ( listener != null )
+        {
+            final Long versionTotal = executor.getTotalHits();
+            listener.vacuumingVersionRepository( repositoryId, versionTotal );
+        }
+
         while ( executor.hasMore() )
         {
             final NodeVersionsMetadata versions = executor.execute();
@@ -103,7 +106,7 @@ public class VersionTableCleanupTask
                 processVersion( repository, result, toBeDeleted, version );
                 if ( listener != null )
                 {
-                    listener.vacuumingVersion( repositoryId, versionCount.incrementAndGet(), versionTotal );
+                    listener.vacuumingVersion( 1L );
                 }
             } );
         }

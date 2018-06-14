@@ -162,19 +162,24 @@ public class VersionFileCleanerTaskTest
         final VacuumListener progressListener = new VacuumListener()
         {
             @Override
-            public void vacuumTaskStarted( final String taskName, final int taskIndex, final int taskTotal )
+            public void vacuumingBlobSegment( final Segment segment )
             {
+                assertEquals( Segment.from( "node" ), segment );
             }
 
             @Override
-            public void vacuumingBlob( final Segment segment, final long blobCount )
+            public void vacuumingBlob( final long count )
             {
-                assertEquals( Segment.from( "node" ), segment );
                 blobReportCount.incrementAndGet();
             }
 
             @Override
-            public void vacuumingVersion( final RepositoryId repository, final long versionIndex, final long versionTotal )
+            public void vacuumingVersionRepository( final RepositoryId repository, final long total )
+            {
+            }
+
+            @Override
+            public void vacuumingVersion( final long count )
             {
             }
         };

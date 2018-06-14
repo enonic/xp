@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.repo.impl.SecurityHelper;
-import com.enonic.xp.vacuum.VacuumListener;
 import com.enonic.xp.vacuum.VacuumParameters;
 import com.enonic.xp.vacuum.VacuumResult;
 import com.enonic.xp.vacuum.VacuumService;
@@ -41,17 +40,11 @@ public class VacuumServiceImpl
     {
         final VacuumResult.Builder taskResults = VacuumResult.create();
 
-        final VacuumListener listener = params.getListener();
-        final VacuumTaskParams taskParams = VacuumTaskParams.create().listener( listener ).build();
-        int taskIndex = 0;
+        final VacuumTaskParams taskParams = VacuumTaskParams.create().listener( params.getListener() ).build();
+
         for ( final VacuumTask task : this.tasks )
         {
             LOG.info( "Running VacuumTask:" + task.name() );
-            if ( listener != null )
-            {
-                taskIndex++;
-                listener.vacuumTaskStarted( task.name(), taskIndex, this.tasks.size() );
-            }
             final VacuumTaskResult taskResult = task.execute( taskParams );
             LOG.info( task.name() + " : " + taskResult.toString() );
             taskResults.add( taskResult );

@@ -19,34 +19,58 @@ public final class VacuumProgressLogger
 
     private Instant lastProgressLogged;
 
+    private Segment segment;
+
+    private RepositoryId repositoryId;
+
+    private long total;
+
+    private long currentCount;
+
     @Override
-    public void vacuumTaskStarted( final String taskName, final int taskIndex, final int taskTotal )
+    public void vacuumingBlobSegment( final Segment segment )
     {
-        LOG.info( "Starting Vacuum Task (" + taskIndex + " of " + taskTotal + "): " + taskName );
-        lastProgressLogged = null;
+        this.lastProgressLogged = null;
+        this.segment = segment;
+        this.currentCount = 0;
+        LOG.info( "Starting vacuum of blob store segment '" + segment + "'" );
     }
 
     @Override
-    public void vacuumingBlob( final Segment segment, final long blobCount )
+    public void vacuumingBlob( final long count )
     {
         final Instant now = Instant.now();
+        currentCount += count;
+
         if ( lastProgressLogged == null || Math.abs( ChronoUnit.SECONDS.between( now, lastProgressLogged ) ) > REPORTING_PERIOD_SEC )
         {
             lastProgressLogged = now;
-            LOG.info( "Vacuum '" + segment + "' blob store: " + blobCount + " blobs processed" );
+            LOG.info( "Vacuum '" + segment + "' blob store: " + currentCount + " blobs processed" );
         }
     }
 
     @Override
-    public void vacuumingVersion( final RepositoryId repository, final long versionIndex, final long versionTotal )
+    public void vacuumingVersionRepository( final RepositoryId repository, final long total )
+    {
+        this.lastProgressLogged = null;
+        this.repositoryId = repository;
+        this.total = total;
+        this.currentCount = 0;
+        LOG.info( "Starting of versions in repository '" + repositoryId + "'" );
+    }
+
+    @Override
+    public void vacuumingVersion( final long count )
     {
         final Instant now = Instant.now();
-        if ( lastProgressLogged == null || ( versionIndex == versionTotal ) ||
+        currentCount += count;
+
+        if ( lastProgressLogged == null || ( count == total ) ||
             Math.abs( ChronoUnit.SECONDS.between( now, lastProgressLogged ) ) > REPORTING_PERIOD_SEC )
         {
             lastProgressLogged = now;
-            LOG.info( "Vacuum Versions in repository '" + repository + "': " + percentage( versionIndex, versionTotal ) +
-                          "% versions processed" );
+            LOG.info(
+                "Vacuum Versions in repository '" + repositoryId + "': " + percentage( currentCount, total ) + "% versions processed" );
         }
     }
 

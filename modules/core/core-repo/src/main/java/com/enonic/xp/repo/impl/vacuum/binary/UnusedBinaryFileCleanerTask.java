@@ -3,7 +3,6 @@ package com.enonic.xp.repo.impl.vacuum.binary;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicLong;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -64,7 +63,10 @@ public class UnusedBinaryFileCleanerTask
         LOG.info( "Traversing binary-folder....." );
         final List<BlobKey> toBeDeleted = Lists.newArrayList();
 
-        AtomicLong blobCount = new AtomicLong( 0 );
+        if ( listener != null )
+        {
+            listener.vacuumingBlobSegment( NodeConstants.BINARY_SEGMENT );
+        }
 
         this.blobStore.list( NodeConstants.BINARY_SEGMENT ).
             forEach( rec -> {
@@ -75,7 +77,7 @@ public class UnusedBinaryFileCleanerTask
 
                 if ( listener != null )
                 {
-                    listener.vacuumingBlob( NodeConstants.BINARY_SEGMENT, blobCount.incrementAndGet() );
+                    listener.vacuumingBlob( 1L );
                 }
             } );
 

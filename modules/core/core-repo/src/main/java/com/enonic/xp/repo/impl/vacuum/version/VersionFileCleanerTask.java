@@ -2,7 +2,6 @@ package com.enonic.xp.repo.impl.vacuum.version;
 
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -64,7 +63,10 @@ public class VersionFileCleanerTask
 
         LOG.info( "Traversing node-folder....." );
 
-        AtomicLong blobCount = new AtomicLong( 0 );
+        if ( listener != null )
+        {
+            listener.vacuumingBlobSegment( NodeConstants.NODE_SEGMENT );
+        }
 
         this.blobStore.list( NodeConstants.NODE_SEGMENT ).
             forEach( rec -> {
@@ -75,7 +77,7 @@ public class VersionFileCleanerTask
 
                 if ( listener != null )
                 {
-                    listener.vacuumingBlob( NodeConstants.NODE_SEGMENT, blobCount.incrementAndGet() );
+                    listener.vacuumingBlob( 1L );
                 }
             } );
 

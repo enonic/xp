@@ -5,9 +5,11 @@ import com.enonic.xp.repository.RepositoryId;
 
 public interface VacuumListener
 {
-    void vacuumTaskStarted( String taskName, int taskIndex, int taskTotal );
+    void vacuumingBlobSegment( Segment segment );
 
-    void vacuumingBlob( Segment segment, long blobCount );
+    void vacuumingBlob( long count );
 
-    void vacuumingVersion( RepositoryId repository, long versionIndex, long versionTotal );
+    void vacuumingVersionRepository( RepositoryId repository, long total );
+
+    void vacuumingVersion( long count );
 }
