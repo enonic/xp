@@ -78,7 +78,7 @@ public class UnusedBinaryFileCleanerTaskTest
             @Override
             public void vacuumingBlob( final Segment segment, final long blobCount )
             {
-                assertEquals( Segment.from( "node" ), segment );
+                assertEquals( Segment.from( "binary" ), segment );
                 blobReportCount.incrementAndGet();
             }
 

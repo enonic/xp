@@ -75,7 +75,7 @@ public class UnusedBinaryFileCleanerTask
 
                 if ( listener != null )
                 {
-                    listener.vacuumingBlob( NodeConstants.NODE_SEGMENT, blobCount.incrementAndGet() );
+                    listener.vacuumingBlob( NodeConstants.BINARY_SEGMENT, blobCount.incrementAndGet() );
                 }
             } );
 
