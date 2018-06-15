@@ -70,7 +70,7 @@ public class PublishRunnableTask
             }
             if ( deleted.getSize() == 1 )
             {
-                resultBuilder.deleted( result.getDeletedPaths().first() );
+                resultBuilder.deleted( result.getDeletedPath() );
             }
             else
             {

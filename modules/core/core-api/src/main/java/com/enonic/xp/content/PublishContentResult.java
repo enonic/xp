@@ -11,14 +11,14 @@ public class PublishContentResult
 
     private final ContentIds failedContents;
 
-    private final ContentPaths deletedPaths;
+    private final ContentPath deletedPath;
 
     private PublishContentResult( Builder builder )
     {
         this.pushedContents = builder.pushedContents;
         this.deletedContents = builder.deletedContents;
         this.failedContents = builder.failedContents;
-        this.deletedPaths = builder.deletedPaths;
+        this.deletedPath = builder.deletedPath;
     }
 
     public static Builder create()
@@ -41,9 +41,9 @@ public class PublishContentResult
         return failedContents;
     }
 
-    public ContentPaths getDeletedPaths()
+    public ContentPath getDeletedPath()
     {
-        return deletedPaths;
+        return deletedPath;
     }
 
     public static final class Builder
@@ -54,7 +54,7 @@ public class PublishContentResult
 
         private ContentIds failedContents = ContentIds.empty();
 
-        private ContentPaths deletedPaths = ContentPaths.empty();
+        private ContentPath deletedPath;
 
         private Builder()
         {
@@ -78,9 +78,9 @@ public class PublishContentResult
             return this;
         }
 
-        public Builder setDeletedPaths( final ContentPaths deletedPaths )
+        public Builder setDeletedPath( final ContentPath deletedPath )
         {
-            this.deletedPaths = deletedPaths;
+            this.deletedPath = deletedPath;
             return this;
         }
 
