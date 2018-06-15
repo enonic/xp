@@ -13,7 +13,9 @@ public class FindPrincipalsResultJson
 
     private final Integer totalSize;
 
-    public FindPrincipalsResultJson( final Principals principals, final Integer totalSize )
+    private final Integer hits;
+
+    public FindPrincipalsResultJson( final Principals principals, final Integer hits, final Integer totalSize )
     {
         this.principalsJson = new ArrayList<>();
         if ( principals != null )
@@ -25,6 +27,12 @@ public class FindPrincipalsResultJson
             }
         }
         this.totalSize = totalSize;
+        this.hits = hits;
+    }
+
+    public Integer getHits()
+    {
+        return hits;
     }
 
     public Integer getTotalSize()
