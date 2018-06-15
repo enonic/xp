@@ -320,9 +320,7 @@ public final class ContentResource
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public AttachmentJson createAttachment( final MultipartForm form )
     {
-
-        final MultipartItem mediaFile = form.get( "file" );
-        final String attachmentName = mediaFile.getFileName();
+        final String attachmentName = form.getAsString( "name" );
 
         final Content persistedContent = this.doCreateAttachment( attachmentName, form );
 
