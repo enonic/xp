@@ -30,7 +30,9 @@ import com.enonic.xp.repo.impl.version.VersionIndexPath;
 import com.enonic.xp.repo.impl.version.VersionService;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.vacuum.VacuumListener;
 import com.enonic.xp.vacuum.VacuumTaskResult;
 
 @Component(immediate = true)
@@ -63,23 +65,26 @@ public class VersionTableCleanupTask
         final NodeVersionQuery query = createQuery( params );
         final VacuumTaskResult.Builder result = VacuumTaskResult.create().taskName( this.name() );
 
-        this.repositoryService.list().forEach( repo -> cleanRepository( repo, query, result ) );
+        this.repositoryService.list().forEach( repo -> cleanRepository( repo, query, result, params.getListener() ) );
 
         return result.build();
     }
 
-    private void cleanRepository( final Repository repository, final NodeVersionQuery query, final VacuumTaskResult.Builder result )
+    private void cleanRepository( final Repository repository, final NodeVersionQuery query, final VacuumTaskResult.Builder result,
+                                  final VacuumListener listener )
     {
         ContextBuilder.from( ContextAccessor.current() ).
             repositoryId( repository.getId() ).
             branch( RepositoryConstants.MASTER_BRANCH ).
             build().
-            runWith( () -> doCleanRepository( repository, query, result ) );
+            runWith( () -> doCleanRepository( repository, query, result, listener ) );
     }
 
-    private void doCleanRepository( final Repository repository, final NodeVersionQuery query, final VacuumTaskResult.Builder result )
+    private void doCleanRepository( final Repository repository, final NodeVersionQuery query, final VacuumTaskResult.Builder result,
+                                    final VacuumListener listener )
     {
-        LOG.info( "Cleaning repository: " + repository.getId() );
+        final RepositoryId repositoryId = repository.getId();
+        LOG.info( "Cleaning repository: " + repositoryId );
 
         final BatchedGetVersionsExecutor executor = BatchedGetVersionsExecutor.create().
             query( query ).
@@ -88,15 +93,25 @@ public class VersionTableCleanupTask
 
         final List<NodeVersionDocumentId> toBeDeleted = Lists.newArrayList();
 
+        if ( listener != null )
+        {
+            final Long versionTotal = executor.getTotalHits();
+            listener.vacuumingVersionRepository( repositoryId, versionTotal );
+        }
+
         while ( executor.hasMore() )
         {
             final NodeVersionsMetadata versions = executor.execute();
             versions.forEach( ( version ) -> {
                 processVersion( repository, result, toBeDeleted, version );
+                if ( listener != null )
+                {
+                    listener.vacuumingVersion( 1L );
+                }
             } );
         }
 
-        LOG.info( "Deleting: " + toBeDeleted.size() + " versions from repository: " + repository.getId() );
+        LOG.info( "Deleting: " + toBeDeleted.size() + " versions from repository: " + repositoryId );
 
         versionService.delete( toBeDeleted, InternalContext.from( ContextAccessor.current() ) );
     }
