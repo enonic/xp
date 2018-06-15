@@ -320,25 +320,12 @@ public final class ContentResource
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public AttachmentJson createAttachment( final MultipartForm form )
     {
-
-        final MultipartItem mediaFile = form.get( "file" );
-        final String attachmentName = filterAttachmentName( mediaFile.getFileName() );
+        final String attachmentName = form.getAsString( "name" );
 
         final Content persistedContent = this.doCreateAttachment( attachmentName, form );
 
         return new AttachmentJson( persistedContent.getAttachments().byName( attachmentName ) );
 
-    }
-
-    // Using to remove file path when uploaded via IE browsers
-    private String filterAttachmentName( final String name )
-    {
-        if ( name.contains( "\\" ) )
-        {
-            return name.substring( name.lastIndexOf( "\\" ) + 1 );
-        }
-
-        return name;
     }
 
     @POST
