@@ -484,3 +484,24 @@ exports.getTypes = function () {
     var bean = __.newBean('com.enonic.xp.lib.content.ContentTypeHandler');
     return __.toNativeObject(bean.getAllContentTypes());
 };
+
+/**
+ * Gets versions of a content.
+ *
+ * @example-ref examples/content/getVersions.js
+ *
+ * @param {object} params JSON parameters.
+ * @param {string} params.key Path or id of the content.
+ * @param {number} [params.start=0] Start index (used for paging).
+ * @param {number} [params.count=10] Number of content versions to fetch.
+ * @returns {object} Content versions result.
+ */
+exports.getVersions = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.content.GetVersionsHandler');
+    bean.key = required(params, 'key');
+    bean.start = nullOrValue(params.start);
+    bean.count = nullOrValue(params.count);
+    return __.toNativeObject(bean.execute());
+};
+
+
