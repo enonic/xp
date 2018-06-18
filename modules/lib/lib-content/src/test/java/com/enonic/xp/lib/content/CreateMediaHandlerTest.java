@@ -3,6 +3,7 @@ package com.enonic.xp.lib.content;
 import java.time.Instant;
 
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
@@ -13,6 +14,8 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.security.PrincipalKey;
+
+import static org.junit.Assert.*;
 
 public class CreateMediaHandlerTest
     extends BaseContentHandlerTest
@@ -30,10 +33,31 @@ public class CreateMediaHandlerTest
     public void createMedia()
         throws Exception
     {
+        Mockito.when( this.contentService.create( Mockito.any( CreateMediaParams.class ) ) ).thenAnswer( mock -> createContent( (CreateMediaParams) mock.getArguments()[0] ) );
+
+        runFunction( "/site/test/CreateMediaHandlerTest.js", "createMedia" );
+
+        final ArgumentCaptor<CreateMediaParams> argumentCaptor = ArgumentCaptor.forClass( CreateMediaParams.class );
+        Mockito.verify( this.contentService, Mockito.times( 1 ) ).create( argumentCaptor.capture() );
+
+        assertEquals( 0.5, argumentCaptor.getValue().getFocalX(), 0 );
+        assertEquals( 0.5, argumentCaptor.getValue().getFocalY(), 0 );
+    }
+
+    @Test
+    public void createMediaWithFocalPoints()
+        throws Exception
+    {
         Mockito.when( this.contentService.create( Mockito.any( CreateMediaParams.class ) ) ).thenAnswer(
             mock -> createContent( (CreateMediaParams) mock.getArguments()[0] ) );
 
-        runFunction( "/site/test/CreateMediaHandlerTest.js", "createMedia" );
+        runFunction( "/site/test/CreateMediaHandlerTest.js", "createMediaWithFocalPoints" );
+
+        final ArgumentCaptor<CreateMediaParams> argumentCaptor = ArgumentCaptor.forClass( CreateMediaParams.class );
+        Mockito.verify( this.contentService, Mockito.times( 1 ) ).create( argumentCaptor.capture() );
+
+        assertEquals( 0.3, argumentCaptor.getValue().getFocalX(), 0 );
+        assertEquals( 0.1, argumentCaptor.getValue().getFocalY(), 0 );
     }
 
     private Content createContent( final CreateMediaParams params )

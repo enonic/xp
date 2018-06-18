@@ -30,6 +30,19 @@ exports.createMedia = function () {
     assert.assertJsonEquals(expectedJson, result);
 };
 
+exports.createMediaWithFocalPoints = function () {
+    var result = content.createMedia({
+        name: 'mycontent',
+        parentPath: '/a/b',
+        mimeType: 'text/plain',
+        focalY: '0.1',
+        focalX: '0.3',
+        data: TestClass.createByteSource('Hello World')
+    });
+
+    assert.assertJsonEquals(expectedJson, result);
+};
+
 var expectedJsonAutoGenerateName = {
     "_id": "123456",
     "_name": "my-content-3.jpg",
