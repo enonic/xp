@@ -442,7 +442,7 @@ public final class IssueResource
 
     private boolean isValidAssignee( final PrincipalKey principalKey )
     {
-        final PrincipalKeys membershipKeys = securityService.getMemberships( principalKey );
+        final PrincipalKeys membershipKeys = securityService.getAllMemberships( principalKey );
         if ( membershipKeys.getSize() > 0 )
         {
             final Principals memberships = securityService.getPrincipals( membershipKeys );
