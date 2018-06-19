@@ -21,6 +21,7 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.PushNodesListener;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RefreshMode;
@@ -186,18 +187,26 @@ public class PublishContentCommand
     {
         final ContentIds contentIdsToDelete = ContentNodeHelper.toContentIds( NodeIds.from( nodeIdsToDelete ) );
         this.resultBuilder.setDeleted( contentIdsToDelete );
-        if ( nodeIdsToDelete.getSize() == 1 )
-        {
-            final Node nodeToDelete = nodeService.getById( nodeIdsToDelete.first() );
-            final ContentPath contentPathToDelete = ContentNodeHelper.translateNodePathToContentPath( nodeToDelete.path() );
-            this.resultBuilder.setDeletedPath( contentPathToDelete );
-        }
 
-        final Context currentContext = ContextAccessor.current();
-        deleteNodesInContext( nodeIdsToDelete, currentContext );
-        deleteNodesInContext( nodeIdsToDelete, ContextBuilder.from( currentContext ).
-            branch( target ).
-            build() );
+        try
+        {
+            if ( nodeIdsToDelete.getSize() == 1 )
+            {
+                final Node nodeToDelete = nodeService.getById( nodeIdsToDelete.first() );
+                final ContentPath contentPathToDelete = ContentNodeHelper.translateNodePathToContentPath( nodeToDelete.path() );
+                this.resultBuilder.setDeletedPath( contentPathToDelete );
+            }
+
+            final Context currentContext = ContextAccessor.current();
+            deleteNodesInContext( nodeIdsToDelete, currentContext );
+            deleteNodesInContext( nodeIdsToDelete, ContextBuilder.from( currentContext ).
+                branch( target ).
+                build() );
+        }
+        catch ( NodeNotFoundException e )
+        {
+            // node to delete doesn't exist
+        }
 
         if ( pushContentListener != null )
         {
