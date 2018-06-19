@@ -70,7 +70,7 @@ public class PublishRunnableTask
             }
             if ( deleted.getSize() == 1 )
             {
-                resultBuilder.deleted( contentService.getById( deleted.first() ).getPath() );
+                resultBuilder.deleted( result.getDeletedPath() );
             }
             else
             {
@@ -79,14 +79,7 @@ public class PublishRunnableTask
         }
         catch ( final Exception e )
         {
-            if ( contentIds.getSize() == 1 )
-            {
-                resultBuilder.failed( contentService.getById( contentIds.first() ).getPath() );
-            }
-            else
-            {
-                resultBuilder.failed( contentIds );
-            }
+            resultBuilder.failed( contentIds );
         }
 
         progressReporter.info( resultBuilder.build().toJson() );
