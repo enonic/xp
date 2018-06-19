@@ -30,6 +30,8 @@ public @interface IgniteSettings
 
     int discovery_tcp_stat_printFreq() default 0;
 
+    String discovery_tcp_publish_address() default "";
+
     String off_heap_max_size() default "512MB";
 
 }

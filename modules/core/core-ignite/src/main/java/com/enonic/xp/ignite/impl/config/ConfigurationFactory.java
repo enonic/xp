@@ -1,7 +1,12 @@
 package com.enonic.xp.ignite.impl.config;
 
 import java.io.File;
+import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.apache.ignite.configuration.AddressResolver;
+import org.apache.ignite.configuration.BasicAddressResolver;
 import org.apache.ignite.configuration.IgniteConfiguration;
 import org.osgi.framework.BundleContext;
 
@@ -9,6 +14,8 @@ import com.google.common.base.Strings;
 
 import com.enonic.xp.cluster.ClusterConfig;
 import com.enonic.xp.home.HomeDir;
+
+import static org.apache.commons.lang.StringUtils.isEmpty;
 
 public class ConfigurationFactory
 {
@@ -32,6 +39,7 @@ public class ConfigurationFactory
         config.setIgniteInstanceName( InstanceNameResolver.resolve() );
         config.setConsistentId( clusterConfig.name().toString() );
         config.setIgniteHome( resolveIgniteHome() );
+        config.setAddressResolver( getAddressResolver() );
 
         config.setDataStorageConfiguration( DataStorageConfigFactory.create( this.igniteSettings ) );
 
@@ -63,6 +71,27 @@ public class ConfigurationFactory
         config.setClassLoader( ClassLoaderFactory.create( this.bundleContext ) );
 
         return config;
+    }
+
+    private AddressResolver getAddressResolver()
+    {
+        final String discoveryTcpLocalAddress = igniteSettings.discovery_tcp_localAddress();
+        final String publishAddress = igniteSettings.discovery_tcp_publish_address();
+        if ( isEmpty( publishAddress ) || isEmpty( discoveryTcpLocalAddress ) )
+        {
+            return null;
+        }
+
+        final Map<String, String> addressMapping = new HashMap<>();
+        addressMapping.put( discoveryTcpLocalAddress, publishAddress );
+        try
+        {
+            return new BasicAddressResolver( addressMapping );
+        }
+        catch ( UnknownHostException e )
+        {
+            throw new RuntimeException( "Error creating Ignite AddressResolver", e );
+        }
     }
 
     private String resolveIgniteHome()
