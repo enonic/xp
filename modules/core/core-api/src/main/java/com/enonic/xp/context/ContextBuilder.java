@@ -66,11 +66,11 @@ public final class ContextBuilder
             final Map<String, Object> localScopeAttributes = this.localScope.getAttributes();
             this.localScope = new LocalScopeImpl();
 
-            for ( Map.Entry<String, Object> attribute : localScopeAttributes.entrySet() )
+            for ( Map.Entry<String, Object> attribute : sessionAttributes.entrySet() )
             {
                 this.localScope.setAttribute( attribute.getKey(), attribute.getValue() );
             }
-            for ( Map.Entry<String, Object> attribute : sessionAttributes.entrySet() )
+            for ( Map.Entry<String, Object> attribute : localScopeAttributes.entrySet() )
             {
                 this.localScope.setAttribute( attribute.getKey(), attribute.getValue() );
             }
