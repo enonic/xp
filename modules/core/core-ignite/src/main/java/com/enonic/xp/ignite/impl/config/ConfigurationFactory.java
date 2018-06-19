@@ -9,6 +9,8 @@ import org.apache.ignite.configuration.AddressResolver;
 import org.apache.ignite.configuration.BasicAddressResolver;
 import org.apache.ignite.configuration.IgniteConfiguration;
 import org.osgi.framework.BundleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
@@ -19,6 +21,8 @@ import static org.apache.commons.lang.StringUtils.isEmpty;
 
 public class ConfigurationFactory
 {
+    private final static Logger LOG = LoggerFactory.getLogger( ConfigurationFactory.class );
+
     private final ClusterConfig clusterConfig;
 
     private final IgniteSettings igniteSettings;
@@ -84,6 +88,8 @@ public class ConfigurationFactory
 
         final Map<String, String> addressMapping = new HashMap<>();
         addressMapping.put( discoveryTcpLocalAddress, publishAddress );
+
+        LOG.info( "Ignite address mapping " + discoveryTcpLocalAddress + " -> " + publishAddress );
         try
         {
             return new BasicAddressResolver( addressMapping );
