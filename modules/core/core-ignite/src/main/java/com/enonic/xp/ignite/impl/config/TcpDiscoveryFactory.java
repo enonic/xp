@@ -24,7 +24,7 @@ class TcpDiscoveryFactory
         discoverySpi.setIpFinder( createStaticIpConfig() ).
             setLocalPort( igniteConfig.discovery_tcp_port() ).
             setLocalPortRange( igniteConfig.discovery_tcp_port_range() ).
-            setLocalAddress( igniteConfig.discovery_tcp_localAddress() ).
+            setLocalAddress( new NetworkInterfaceResolver().resolveAddress( igniteConfig.discovery_tcp_localAddress() ) ).
             setReconnectCount( igniteConfig.discovery_tcp_reconnect() ).
             setAckTimeout( igniteConfig.discovery_tcp_ack_timeout() ).
             setJoinTimeout( igniteConfig.discovery_tcp_join_timeout() ).
