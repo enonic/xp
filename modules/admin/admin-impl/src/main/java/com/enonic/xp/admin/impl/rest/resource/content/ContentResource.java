@@ -1129,12 +1129,17 @@ public final class ContentResource
             build().
             findOrdered();
 
-        final List<ContentTreeSelectorJson> resultItems = contentService.getByIds( new GetContentByIdsParams( findLayerContentsResult.getContentIds() ) ).
-            stream().
-            map( content -> new ContentTreeSelectorJson( new ContentJson( content, contentIconUrlResolver, principalsResolver ),
-                                                         targetContentPaths.contains( content.getPath().asRelative() ),
-                                                         targetContentPaths.stream().anyMatch( path -> path.isChildOf( content.getPath() )) )).
-            collect( Collectors.toList() );
+        final List<ContentPath> relativeTargetContentPaths =
+            targetContentPaths.stream().map( ContentPath::asRelative ).collect( Collectors.toList() );
+
+        final List<ContentTreeSelectorJson> resultItems =
+            contentService.getByIds( new GetContentByIdsParams( findLayerContentsResult.getContentIds() ) ).
+                stream().
+                map( content -> new ContentTreeSelectorJson( new ContentJson( content, contentIconUrlResolver, principalsResolver ),
+                                                             relativeTargetContentPaths.contains( content.getPath().asRelative() ),
+                                                             relativeTargetContentPaths.stream().anyMatch(
+                                                                 path -> path.isChildOf( content.getPath().asRelative() ) ) ) ).
+                collect( Collectors.toList() );
 
         final ContentListMetaData metaData = ContentListMetaData.create().hits( findLayerContentsResult.getHits() ).totalHits(
             findLayerContentsResult.getTotalHits() ).build();
