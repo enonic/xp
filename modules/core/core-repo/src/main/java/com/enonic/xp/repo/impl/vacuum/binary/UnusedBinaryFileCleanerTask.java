@@ -3,7 +3,6 @@ package com.enonic.xp.repo.impl.vacuum.binary;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Consumer;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -24,6 +23,7 @@ import com.enonic.xp.repo.impl.vacuum.EntryState;
 import com.enonic.xp.repo.impl.vacuum.VacuumException;
 import com.enonic.xp.repo.impl.vacuum.VacuumTask;
 import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
+import com.enonic.xp.vacuum.VacuumListener;
 import com.enonic.xp.vacuum.VacuumTaskResult;
 
 @Component(immediate = true)
@@ -52,36 +52,48 @@ public class UnusedBinaryFileCleanerTask
         final VacuumTaskResult.Builder result = VacuumTaskResult.create().taskName( this.name() );
 
         final BinaryNodeStateResolver stateResolver = new BinaryNodeStateResolver( getAllBinaryReferences() );
-        doExecute( result, stateResolver, params.getAgeThreshold() );
+        doExecute( result, stateResolver, params.getAgeThreshold(), params.getListener() );
 
         return result.build();
     }
 
-    private void doExecute( final VacuumTaskResult.Builder result, final BinaryNodeStateResolver stateResolver, final long ageThreshold )
+    private void doExecute( final VacuumTaskResult.Builder result, final BinaryNodeStateResolver stateResolver, final long ageThreshold,
+                            final VacuumListener listener )
     {
         LOG.info( "Traversing binary-folder....." );
         final List<BlobKey> toBeDeleted = Lists.newArrayList();
 
+        if ( listener != null )
+        {
+            listener.vacuumingBlobSegment( NodeConstants.BINARY_SEGMENT );
+        }
+
         this.blobStore.list( NodeConstants.BINARY_SEGMENT ).
-            filter( rec -> includeRecord( rec, ageThreshold ) ).
-            forEach( handleEntry( result, stateResolver, toBeDeleted ) );
+            forEach( rec -> {
+                if ( includeRecord( rec, ageThreshold ) )
+                {
+                    handleEntry( rec, result, stateResolver, toBeDeleted );
+                }
+
+                if ( listener != null )
+                {
+                    listener.vacuumingBlob( 1L );
+                }
+            } );
 
         toBeDeleted.forEach( entry -> this.blobStore.removeRecord( NodeConstants.BINARY_SEGMENT, entry ) );
     }
 
-    private Consumer<BlobRecord> handleEntry( final VacuumTaskResult.Builder result, final BinaryNodeStateResolver stateResolver,
-                                              final List<BlobKey> toBeDeleted )
+    private void handleEntry( final BlobRecord record, final VacuumTaskResult.Builder result, final BinaryNodeStateResolver stateResolver,
+                              final List<BlobKey> toBeDeleted )
     {
-        return record -> {
-            final EntryState state = stateResolver.resolve( record.getKey().toString() );
-            report( state, result );
+        final EntryState state = stateResolver.resolve( record.getKey().toString() );
+        report( state, result );
 
-            if ( state.equals( EntryState.NOT_IN_USE ) )
-            {
-                toBeDeleted.add( record.getKey() );
-            }
-
-        };
+        if ( state.equals( EntryState.NOT_IN_USE ) )
+        {
+            toBeDeleted.add( record.getKey() );
+        }
     }
 
     private Set<String> getAllBinaryReferences()

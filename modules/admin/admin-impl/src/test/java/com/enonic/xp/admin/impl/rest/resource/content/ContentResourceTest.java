@@ -12,6 +12,7 @@ import java.util.Set;
 import javax.ws.rs.core.MediaType;
 
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 
@@ -96,6 +97,7 @@ import static com.enonic.xp.security.acl.Permission.DELETE;
 import static com.enonic.xp.security.acl.Permission.MODIFY;
 import static com.enonic.xp.security.acl.Permission.READ;
 import static java.util.Arrays.asList;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
@@ -552,6 +554,45 @@ public class ContentResourceTest
 
         assertJson( "update_content_success.json", jsonString );
     }
+
+    @Test
+    public void update_content_renamed_to_unnamed()
+        throws Exception
+    {
+        Content content = createContent( "content-id", "content-name", "myapplication:content-type" );
+        Mockito.when( contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenReturn( content );
+        Mockito.when( contentService.getById( Mockito.any() ) ).thenReturn( content );
+        Mockito.when( contentService.rename( Mockito.any() ) ).thenReturn( content );
+        Mockito.when( contentService.getByPath( Mockito.any() ) ).thenThrow( ContentNotFoundException.class );
+        Mockito.when( contentService.getPermissionsById( content.getId() ) ).thenReturn( AccessControlList.empty() );
+        String jsonString = request().path( "content/update" ).
+            entity( readFromFile( "update_content_renamed_to_unnamed.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+        ArgumentCaptor<RenameContentParams> argumentCaptor = ArgumentCaptor.forClass( RenameContentParams.class );
+
+        Mockito.verify( contentService, Mockito.times( 1 ) ).rename( argumentCaptor.capture() );
+        assertTrue( argumentCaptor.getValue().getNewName().hasUniqueness() );
+    }
+
+    @Test
+    public void update_content_renamed()
+        throws Exception
+    {
+        Content content = createContent( "content-id", "content-name", "myapplication:content-type" );
+        Mockito.when( contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenReturn( content );
+        Mockito.when( contentService.getById( Mockito.any() ) ).thenReturn( content );
+        Mockito.when( contentService.rename( Mockito.any() ) ).thenReturn( content );
+        Mockito.when( contentService.getByPath( Mockito.any() ) ).thenThrow( ContentNotFoundException.class );
+        Mockito.when( contentService.getPermissionsById( content.getId() ) ).thenReturn( AccessControlList.empty() );
+        String jsonString = request().path( "content/update" ).
+            entity( readFromFile( "update_content_renamed.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+        ArgumentCaptor<RenameContentParams> argumentCaptor = ArgumentCaptor.forClass( RenameContentParams.class );
+
+        Mockito.verify( contentService, Mockito.times( 1 ) ).rename( argumentCaptor.capture() );
+        assertTrue( argumentCaptor.getValue().getNewName().toString().equals( "new-name" ) );
+    }
+
 
     @Test
     public void update_content_success_publish_dates_are_updated()

@@ -31,19 +31,21 @@ public class VacuumServiceImpl
 
         LOG.info( " Starting vacuum, running " + tasks.size() + " tasks" );
 
-        final VacuumResult.Builder taskResults = doVacuum();
+        final VacuumResult.Builder taskResults = doVacuum( params );
 
         return taskResults.build();
     }
 
-    private VacuumResult.Builder doVacuum()
+    private VacuumResult.Builder doVacuum( final VacuumParameters params )
     {
         final VacuumResult.Builder taskResults = VacuumResult.create();
+
+        final VacuumTaskParams taskParams = VacuumTaskParams.create().listener( params.getListener() ).build();
 
         for ( final VacuumTask task : this.tasks )
         {
             LOG.info( "Running VacuumTask:" + task.name() );
-            final VacuumTaskResult taskResult = task.execute( VacuumTaskParams.create().build() );
+            final VacuumTaskResult taskResult = task.execute( taskParams );
             LOG.info( task.name() + " : " + taskResult.toString() );
             taskResults.add( taskResult );
             LOG.info( "VacuumTask done: " + task.name() );

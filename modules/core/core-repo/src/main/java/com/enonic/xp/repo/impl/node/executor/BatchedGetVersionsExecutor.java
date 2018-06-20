@@ -15,7 +15,7 @@ public class BatchedGetVersionsExecutor
 
     private boolean hasMore = true;
 
-    private final Long totalHits;
+    private final long totalHits;
 
     private final NodeVersionQuery query;
 
@@ -57,7 +57,7 @@ public class BatchedGetVersionsExecutor
         return result.getNodeVersionsMetadata();
     }
 
-    public Long getTotalHits()
+    public long getTotalHits()
     {
         return totalHits;
     }

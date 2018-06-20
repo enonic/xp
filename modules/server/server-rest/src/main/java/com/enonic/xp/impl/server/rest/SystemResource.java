@@ -106,7 +106,10 @@ public final class SystemResource
     public VacuumResultJson vacuum( final SystemDumpRequestJson request )
         throws Exception
     {
-        final VacuumResult result = this.vacuumService.vacuum( new VacuumParameters() );
+        final VacuumParameters vacuumParams = VacuumParameters.create().
+            listener( new VacuumProgressLogger() ).
+            build();
+        final VacuumResult result = this.vacuumService.vacuum( vacuumParams );
         return VacuumResultJson.from( result );
     }
 

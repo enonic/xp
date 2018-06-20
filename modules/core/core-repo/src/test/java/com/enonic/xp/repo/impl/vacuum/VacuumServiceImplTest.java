@@ -62,7 +62,7 @@ public class VacuumServiceImplTest
             }
         } );
 
-        final VacuumResult result = NodeHelper.runAsAdmin( () -> service.vacuum( new VacuumParameters() ) );
+        final VacuumResult result = NodeHelper.runAsAdmin( () -> service.vacuum( VacuumParameters.create().build() ) );
 
         assertEquals( 2, result.getResults().size() );
     }

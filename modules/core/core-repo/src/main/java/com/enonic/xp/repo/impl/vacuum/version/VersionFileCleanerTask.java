@@ -2,7 +2,6 @@ package com.enonic.xp.repo.impl.vacuum.version;
 
 
 import java.util.List;
-import java.util.function.Consumer;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -20,6 +19,7 @@ import com.enonic.xp.repo.impl.vacuum.AbstractVacuumTask;
 import com.enonic.xp.repo.impl.vacuum.EntryState;
 import com.enonic.xp.repo.impl.vacuum.VacuumTask;
 import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
+import com.enonic.xp.vacuum.VacuumListener;
 import com.enonic.xp.vacuum.VacuumTaskResult;
 
 @Component(immediate = true)
@@ -52,34 +52,46 @@ public class VersionFileCleanerTask
     {
         final VacuumTaskResult.Builder result = VacuumTaskResult.create().taskName( this.name() );
 
-        doExecute( result, params.getAgeThreshold() );
+        doExecute( result, params.getAgeThreshold(), params.getListener() );
 
         return result.build();
     }
 
-    private void doExecute( final VacuumTaskResult.Builder result, final long ageThreshold )
+    private void doExecute( final VacuumTaskResult.Builder result, final long ageThreshold, final VacuumListener listener )
     {
         List<BlobKey> toBeRemoved = Lists.newArrayList();
 
         LOG.info( "Traversing node-folder....." );
 
+        if ( listener != null )
+        {
+            listener.vacuumingBlobSegment( NodeConstants.NODE_SEGMENT );
+        }
+
         this.blobStore.list( NodeConstants.NODE_SEGMENT ).
-            filter( rec -> includeRecord( rec, ageThreshold ) ).
-            forEach( handleEntry( result, toBeRemoved ) );
+            forEach( rec -> {
+                if ( includeRecord( rec, ageThreshold ) )
+                {
+                    handleEntry( rec, result, toBeRemoved );
+                }
+
+                if ( listener != null )
+                {
+                    listener.vacuumingBlob( 1L );
+                }
+            } );
 
         toBeRemoved.forEach( key -> this.blobStore.removeRecord( NodeConstants.NODE_SEGMENT, key ) );
     }
 
-    private Consumer<BlobRecord> handleEntry( final VacuumTaskResult.Builder result, final List<BlobKey> toBeRemoved )
+    private void handleEntry( final BlobRecord record, final VacuumTaskResult.Builder result, final List<BlobKey> toBeRemoved )
     {
-        return record -> {
-            final EntryState entryState = resolveState( record );
-            report( entryState, result );
-            if ( entryState.equals( EntryState.NOT_IN_USE ) )
-            {
-                toBeRemoved.add( record.getKey() );
-            }
-        };
+        final EntryState entryState = resolveState( record );
+        report( entryState, result );
+        if ( entryState == EntryState.NOT_IN_USE )
+        {
+            toBeRemoved.add( record.getKey() );
+        }
     }
 
     private EntryState resolveState( final BlobRecord record )
