@@ -100,7 +100,7 @@ public class IssueResourceTest
         contentTypeService = Mockito.mock( ContentTypeService.class );
         issueNotificationsSender = Mockito.mock( IssueNotificationsSender.class );
         securityService = Mockito.mock( SecurityService.class );
-        Mockito.when( securityService.getMemberships( Mockito.isA( PrincipalKey.class ) ) ).thenReturn(
+        Mockito.when( securityService.getAllMemberships( Mockito.isA( PrincipalKey.class ) ) ).thenReturn(
             PrincipalKeys.from( "role:system:one" ) );
         Mockito.when( securityService.getPrincipals( Mockito.isA( PrincipalKeys.class ) ) ).thenReturn(
             Principals.from( Role.create().key( RoleKeys.ADMIN ).displayName( "Admin" ).build() ) );
