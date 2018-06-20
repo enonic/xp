@@ -2,6 +2,7 @@ package com.enonic.xp.ignite.impl.config;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
 import org.slf4j.Logger;
@@ -29,8 +30,11 @@ class StaticIpFinderFactory
 
         final String portPrefix = getPortPrefix();
 
-        final List<String> hostStrings =
-            this.discovery.get().stream().map( host -> host.getCanonicalHostName() + portPrefix ).collect( Collectors.toList() );
+        final Stream<String> configLocalAddress = Stream.of( igniteConfig.discovery_tcp_localAddress() + portPrefix );
+        final Stream<String> discoveryAddresses = this.discovery.get().stream().map( host -> host.getCanonicalHostName() + portPrefix );
+        final List<String> hostStrings = Stream.concat( discoveryAddresses, configLocalAddress ).
+            distinct().
+            collect( Collectors.toList() );
 
         staticIpFinder.setAddresses( hostStrings );
 
