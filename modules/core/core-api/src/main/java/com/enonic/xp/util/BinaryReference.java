@@ -1,5 +1,7 @@
 package com.enonic.xp.util;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -11,7 +13,7 @@ public class BinaryReference
 
     private BinaryReference( final String value )
     {
-        this.value = value;
+        this.value = sanitizeValue( value );
     }
 
     public static BinaryReference from( final String value )
@@ -24,6 +26,11 @@ public class BinaryReference
     public String toString()
     {
         return this.value;
+    }
+
+    private String sanitizeValue( final String value )
+    {
+        return StringUtils.stripToEmpty( value ).replaceAll( "[\\\\/:\"*?<>|]+", "" );
     }
 
     @Override
