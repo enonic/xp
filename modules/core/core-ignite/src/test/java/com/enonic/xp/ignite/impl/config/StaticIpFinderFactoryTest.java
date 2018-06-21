@@ -12,18 +12,23 @@ import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.xp.cluster.ClusterConfig;
+
 import static org.junit.Assert.*;
 
 public class StaticIpFinderFactoryTest
 {
 
-    private com.enonic.xp.ignite.impl.config.IgniteSettings igniteSettings;
+    private IgniteSettings igniteSettings;
+
+    private ClusterConfig clusterConfig;
 
     @Before
     public void setUp()
         throws Exception
     {
         this.igniteSettings = Mockito.mock( IgniteSettings.class );
+        this.clusterConfig = Mockito.mock( ClusterConfig.class );
     }
 
     @Test
@@ -32,7 +37,7 @@ public class StaticIpFinderFactoryTest
     {
         Mockito.when( this.igniteSettings.discovery_tcp_port() ).thenReturn( 45000 );
         Mockito.when( this.igniteSettings.discovery_tcp_port_range() ).thenReturn( 5 );
-        Mockito.when( this.igniteSettings.discovery_tcp_localAddress() ).thenReturn( "localhost" );
+        Mockito.when( this.clusterConfig.networkHost() ).thenReturn( "localhost" );
 
         final TcpDiscoveryVmIpFinder finder = createFinder();
 
@@ -48,7 +53,7 @@ public class StaticIpFinderFactoryTest
     {
         Mockito.when( this.igniteSettings.discovery_tcp_port() ).thenReturn( 45000 );
         Mockito.when( this.igniteSettings.discovery_tcp_port_range() ).thenReturn( 0 );
-        Mockito.when( this.igniteSettings.discovery_tcp_localAddress() ).thenReturn( "localhost" );
+        Mockito.when( this.clusterConfig.networkHost() ).thenReturn( "localhost" );
 
         final TcpDiscoveryVmIpFinder finder = createFinder();
 
@@ -65,7 +70,7 @@ public class StaticIpFinderFactoryTest
     {
         Mockito.when( this.igniteSettings.discovery_tcp_port() ).thenReturn( 45000 );
         Mockito.when( this.igniteSettings.discovery_tcp_port_range() ).thenReturn( 5 );
-        Mockito.when( this.igniteSettings.discovery_tcp_localAddress() ).thenReturn( "10.0.0.1" );
+        Mockito.when( this.clusterConfig.networkHost() ).thenReturn( "10.0.0.1" );
 
         final TcpDiscoveryVmIpFinder finder = createFinder();
 
@@ -107,6 +112,7 @@ public class StaticIpFinderFactoryTest
                 }
             } ).
             igniteConfig( igniteSettings ).
+            clusterConfig( clusterConfig ).
             build().
             execute();
     }

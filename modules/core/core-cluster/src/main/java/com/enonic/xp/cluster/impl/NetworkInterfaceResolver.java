@@ -1,4 +1,4 @@
-package com.enonic.xp.ignite.impl.config;
+package com.enonic.xp.cluster.impl;
 
 import java.net.Inet4Address;
 import java.net.Inet6Address;

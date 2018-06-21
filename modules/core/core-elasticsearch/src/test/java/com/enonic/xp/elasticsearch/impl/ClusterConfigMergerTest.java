@@ -62,6 +62,18 @@ public class ClusterConfigMergerTest
             {
                 return true;
             }
+
+            @Override
+            public String networkPublishHost()
+            {
+                return "127.0.0.1";
+            }
+
+            @Override
+            public String networkHost()
+            {
+                return "127.0.0.1";
+            }
         };
     }
 

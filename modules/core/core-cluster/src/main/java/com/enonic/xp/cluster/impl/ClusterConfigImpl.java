@@ -24,9 +24,12 @@ public class ClusterConfigImpl
 {
     private Configuration config;
 
+    private NetworkInterfaceResolver networkInterfaceResolver;
+
     @Activate
     public void activate( final Map<String, String> map )
     {
+        this.networkInterfaceResolver = new NetworkInterfaceResolver();
         this.config = ConfigBuilder.create().
             load( getClass(), "default.properties" ).
             addAll( map ).
@@ -79,5 +82,19 @@ public class ClusterConfigImpl
     public boolean isEnabled()
     {
         return Boolean.parseBoolean( this.config.get( "cluster.enabled" ) );
+    }
+
+    @Override
+    public String networkPublishHost()
+    {
+        final String host = this.config.get( "network.publish.host" );
+        return host == null ? host : networkInterfaceResolver.resolveAddress( host );
+    }
+
+    @Override
+    public String networkHost()
+    {
+        final String host = this.config.get( "network.host" );
+        return host == null ? host : networkInterfaceResolver.resolveAddress( host );
     }
 }

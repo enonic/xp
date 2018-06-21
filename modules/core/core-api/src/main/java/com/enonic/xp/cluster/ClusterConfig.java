@@ -7,4 +7,8 @@ public interface ClusterConfig
     ClusterNodeId name();
 
     boolean isEnabled();
+
+    String networkPublishHost();
+
+    String networkHost();
 }
