@@ -4,6 +4,7 @@ import java.util.EnumSet;
 
 import com.google.common.base.Strings;
 
+import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.handler.BaseWebHandler;
@@ -35,5 +36,10 @@ public abstract class EndpointHandler
     {
         final String endpointPath = Strings.nullToEmpty( req.getEndpointPath() );
         return endpointPath.substring( this.pathPrefix.length() );
+    }
+
+    protected boolean isPortalBase( final WebRequest req )
+    {
+        return req instanceof PortalRequest && ( (PortalRequest) req ).isPortalBase();
     }
 }

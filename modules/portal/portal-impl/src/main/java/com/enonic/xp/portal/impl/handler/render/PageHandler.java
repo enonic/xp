@@ -41,7 +41,7 @@ public final class PageHandler
     @Override
     public boolean canHandle( final WebRequest webRequest )
     {
-        return webRequest instanceof PortalRequest;
+        return webRequest instanceof PortalRequest && ( (PortalRequest) webRequest ).isPortalBase();
     }
 
     @Override
