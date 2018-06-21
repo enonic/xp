@@ -79,7 +79,8 @@ public class ConfigurationFactory
 
     private AddressResolver getAddressResolver()
     {
-        final String discoveryTcpLocalAddress = igniteSettings.discovery_tcp_localAddress();
+        final String discoveryTcpLocalAddress =
+            new NetworkInterfaceResolver().resolveAddress( igniteSettings.discovery_tcp_localAddress() );
         final String publishAddress = igniteSettings.discovery_tcp_publish_address();
         if ( isEmpty( publishAddress ) || isEmpty( discoveryTcpLocalAddress ) )
         {

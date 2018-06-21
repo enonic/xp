@@ -30,7 +30,8 @@ class StaticIpFinderFactory
 
         final String portPrefix = getPortPrefix();
 
-        final Stream<String> configLocalAddress = Stream.of( igniteConfig.discovery_tcp_localAddress() + portPrefix );
+        final String discoveryTcpLocalAddress = new NetworkInterfaceResolver().resolveAddress( igniteConfig.discovery_tcp_localAddress() );
+        final Stream<String> configLocalAddress = Stream.of( discoveryTcpLocalAddress + portPrefix );
         final Stream<String> discoveryAddresses = this.discovery.get().stream().map( host -> host.getCanonicalHostName() + portPrefix );
         final List<String> hostStrings = Stream.concat( discoveryAddresses, configLocalAddress ).
             distinct().
