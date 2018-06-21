@@ -58,6 +58,26 @@ public final class ContextBuilder
         return attribute( value.getClass().getName(), value );
     }
 
+    public ContextBuilder detachSession()
+    {
+        if ( this.localScope != null && this.localScope.getSession() != null )
+        {
+            final Map<String, Object> sessionAttributes = this.localScope.getSession().getAttributes();
+            final Map<String, Object> localScopeAttributes = this.localScope.getAttributes();
+            this.localScope = new LocalScopeImpl();
+
+            for ( Map.Entry<String, Object> attribute : sessionAttributes.entrySet() )
+            {
+                this.localScope.setAttribute( attribute.getKey(), attribute.getValue() );
+            }
+            for ( Map.Entry<String, Object> attribute : localScopeAttributes.entrySet() )
+            {
+                this.localScope.setAttribute( attribute.getKey(), attribute.getValue() );
+            }
+        }
+        return this;
+    }
+
     public Context build()
     {
         if ( this.localScope == null )

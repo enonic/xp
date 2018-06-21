@@ -3,7 +3,10 @@ package com.enonic.xp.context;
 import org.junit.Test;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.session.SessionKey;
+import com.enonic.xp.session.SimpleSession;
 
 import static org.junit.Assert.*;
 
@@ -61,7 +64,7 @@ public class ContextBuilderTest
     }
 
     @Test
-    public void copy_construct_with_overwrite()
+    public void copyConstructWithOverwrite()
         throws Exception
     {
 
@@ -78,5 +81,33 @@ public class ContextBuilderTest
 
         assertEquals( newWS, newContext.getBranch() );
         assertEquals( "repository", newContext.getRepositoryId().toString() );
+    }
+
+    @Test
+    public void detachSession()
+        throws Exception
+    {
+        final Context oldCtx = ContextBuilder.create().
+            attribute( "key1", "value1" ).
+            build();
+
+        oldCtx.getLocalScope().setAttribute( Branch.from( "draft" ) );
+        oldCtx.getLocalScope().setAttribute( RepositoryId.from( "repository" ) );
+        oldCtx.getLocalScope().setSession( new SimpleSession( SessionKey.generate() ) );
+        oldCtx.getLocalScope().getSession().setAttribute( "sessionKey", "sessionValue" );
+
+        assertNotNull( oldCtx.getLocalScope().getSession() );
+        assertEquals( "repository", oldCtx.getRepositoryId().toString() );
+        assertEquals( "draft", oldCtx.getBranch().toString() );
+        assertEquals( "sessionValue", oldCtx.getAttribute( "sessionKey" ) );
+
+        final Context newContext = ContextBuilder.from( oldCtx ).
+            detachSession().
+            build();
+
+        assertNull( newContext.getLocalScope().getSession() );
+        assertEquals( "repository", newContext.getRepositoryId().toString() );
+        assertEquals( "draft", newContext.getBranch().toString() );
+        assertEquals( "sessionValue", newContext.getAttribute( "sessionKey" ) );
     }
 }
