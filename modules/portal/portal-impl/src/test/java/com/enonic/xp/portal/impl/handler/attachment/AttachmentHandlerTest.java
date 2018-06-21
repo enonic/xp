@@ -51,6 +51,7 @@ public class AttachmentHandlerTest
         this.handler.setContentService( this.contentService );
 
         this.request.setMethod( HttpMethod.GET );
+        this.request.setBaseUri( "/portal" );
         this.request.setContentPath( ContentPath.from( "/path/to/content" ) );
         this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
 

@@ -113,6 +113,7 @@ public class MappingHandlerTest
         throws Exception
     {
         setupContentAndSite();
+        this.request.setBaseUri( "/portal" );
         this.request.setContentPath( ContentPath.from( "/somepath/content" ) );
         this.request.setSite( this.contentService.getNearestSite( ContentId.from( "id" ) ) );
         this.request.setEndpointPath( "" );
@@ -124,6 +125,7 @@ public class MappingHandlerTest
         throws Exception
     {
         setupContentAndSite();
+        this.request.setBaseUri( "/portal" );
         this.request.setContentPath( ContentPath.from( "/somepath/content" ) );
         this.request.setSite( this.contentService.getNearestSite( ContentId.from( "id" ) ) );
         this.request.setEndpointPath( "" );
