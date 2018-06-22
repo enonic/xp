@@ -1,4 +1,4 @@
-package com.enonic.xp.ignite.impl.config;
+package com.enonic.xp.cluster.impl;
 
 import org.junit.Test;
 

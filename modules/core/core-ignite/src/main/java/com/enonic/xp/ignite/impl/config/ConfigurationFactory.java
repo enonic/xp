@@ -65,6 +65,7 @@ public class ConfigurationFactory
         config.setDiscoverySpi( DiscoveryFactory.create().
             discovery( clusterConfig.discovery() ).
             igniteConfig( igniteSettings ).
+            clusterConfig( clusterConfig ).
             build().
             execute() );
 
@@ -79,9 +80,8 @@ public class ConfigurationFactory
 
     private AddressResolver getAddressResolver()
     {
-        final String discoveryTcpLocalAddress =
-            new NetworkInterfaceResolver().resolveAddress( igniteSettings.discovery_tcp_localAddress() );
-        final String publishAddress = igniteSettings.discovery_tcp_publish_address();
+        final String discoveryTcpLocalAddress = clusterConfig.networkHost();
+        final String publishAddress = clusterConfig.networkPublishHost();
         if ( isEmpty( publishAddress ) || isEmpty( discoveryTcpLocalAddress ) )
         {
             return null;

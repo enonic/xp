@@ -52,6 +52,18 @@ public class NodeSettingsBuilderTest
             {
                 return true;
             }
+
+            @Override
+            public String networkPublishHost()
+            {
+                return "127.0.0.1";
+            }
+
+            @Override
+            public String networkHost()
+            {
+                return "127.0.0.1";
+            }
         } );
 
         final File homeDir = this.temporaryFolder.newFolder( "home" );

@@ -5,17 +5,22 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.cluster.ClusterConfig;
+
 import static org.junit.Assert.*;
 
 public class TcpDiscoveryFactoryTest
 {
     private IgniteSettings igniteSettings;
 
+    private ClusterConfig clusterConfig;
+
     @Before
     public void setUp()
         throws Exception
     {
         this.igniteSettings = Mockito.mock( IgniteSettings.class );
+        this.clusterConfig = Mockito.mock( ClusterConfig.class );
     }
 
     @Test
@@ -27,11 +32,12 @@ public class TcpDiscoveryFactoryTest
         Mockito.when( igniteSettings.discovery_tcp_join_timeout() ).thenReturn( 5000L );
         Mockito.when( igniteSettings.discovery_tcp_socket_timeout() ).thenReturn( 6000L );
         Mockito.when( igniteSettings.discovery_tcp_port() ).thenReturn( 1234 );
-        Mockito.when( igniteSettings.discovery_tcp_localAddress() ).thenReturn( "localhost" );
+        Mockito.when( this.clusterConfig.networkHost() ).thenReturn( "localhost" );
 
         final TcpDiscoverySpi tcpDiscoverySpi = TcpDiscoveryFactory.create().
             discovery( new TestDiscovery( "localhost", "192.168.0.1" ) ).
             igniteConfig( this.igniteSettings ).
+            clusterConfig( this.clusterConfig ).
             build().
             execute();
 

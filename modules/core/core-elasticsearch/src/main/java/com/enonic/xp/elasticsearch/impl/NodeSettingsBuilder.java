@@ -51,6 +51,8 @@ final class NodeSettingsBuilder
     {
         return ImmutableSettings.settingsBuilder().
             classLoader( ImmutableSettings.class.getClassLoader() ).
+            put( "network.publish_host", this.clusterConfig.networkPublishHost() ).
+            put( "network.host", this.clusterConfig.networkHost() ).
             put( config.asMap() ).
             put( "node.local", !this.clusterConfig.isEnabled() ).
             build();
