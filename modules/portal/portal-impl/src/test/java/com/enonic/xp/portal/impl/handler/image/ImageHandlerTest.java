@@ -62,6 +62,7 @@ public class ImageHandlerTest
         this.handler.setMediaInfoService( this.mediaInfoService );
 
         this.request.setMethod( HttpMethod.GET );
+        this.request.setBaseUri( "/portal" );
         this.request.setContentPath( ContentPath.from( "/path/to/content" ) );
         this.request.setEndpointPath( "/_/image/123456/scale-100-100/image-name.jpg" );
     }
@@ -190,6 +191,7 @@ public class ImageHandlerTest
     {
         setupContent();
         this.request.setMethod( HttpMethod.OPTIONS );
+        this.request.setBaseUri( "/portal" );
         this.request.setEndpointPath( "/_/image/123456/scale-100-100/image-name.jpg" );
 
         final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );

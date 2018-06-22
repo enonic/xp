@@ -35,7 +35,7 @@ public final class AttachmentHandler
     @Override
     public boolean canHandle( final WebRequest webRequest )
     {
-        return super.canHandle( webRequest ) && webRequest instanceof PortalRequest;
+        return super.canHandle( webRequest ) && isPortalBase( webRequest );
     }
 
     @Override
@@ -43,7 +43,7 @@ public final class AttachmentHandler
         throws Exception
     {
         WebHandlerHelper.checkAdminAccess( webRequest );
-        
+
         final String restPath = findRestPath( webRequest );
         final Matcher matcher = PATTERN.matcher( restPath );
 
