@@ -45,7 +45,7 @@ public class ConfigurationFactory
         config.setConsistentId( clusterConfig.name().toString() );
         config.setIgniteHome( resolveIgniteHome() );
         config.setAddressResolver( getAddressResolver() );
-        config.setMarshaller( new OptimizedMarshaller().setRequireSerializable( true ) );
+        config.setMarshaller( new OptimizedMarshaller( true ) );
 
         config.setDataStorageConfiguration( DataStorageConfigFactory.create( this.igniteSettings ) );
 
