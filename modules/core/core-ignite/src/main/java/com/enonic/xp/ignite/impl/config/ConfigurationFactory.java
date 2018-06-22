@@ -8,6 +8,7 @@ import java.util.Map;
 import org.apache.ignite.configuration.AddressResolver;
 import org.apache.ignite.configuration.BasicAddressResolver;
 import org.apache.ignite.configuration.IgniteConfiguration;
+import org.apache.ignite.internal.marshaller.optimized.OptimizedMarshaller;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +45,7 @@ public class ConfigurationFactory
         config.setConsistentId( clusterConfig.name().toString() );
         config.setIgniteHome( resolveIgniteHome() );
         config.setAddressResolver( getAddressResolver() );
+        config.setMarshaller( new OptimizedMarshaller().setRequireSerializable( true ) );
 
         config.setDataStorageConfiguration( DataStorageConfigFactory.create( this.igniteSettings ) );
 
