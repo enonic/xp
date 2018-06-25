@@ -2,6 +2,7 @@ package com.enonic.xp.admin.impl.rest.resource.content.task;
 
 import java.util.List;
 
+import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 
 class DeleteTaskMessageGenerator
@@ -33,7 +34,15 @@ class DeleteTaskMessageGenerator
         }
         else if ( deleted != null && deleted.size() == 1 )
         {
-            builder.append( String.format( "Item \"%s\" was deleted.", deleted.get( 0 ).getName() ) );
+            ContentName name = ContentName.from( deleted.get( 0 ).getName() );
+            if ( name.isUnnamed() )
+            {
+                builder.append( "Item was deleted" );
+            }
+            else
+            {
+                builder.append( String.format( "Item \"%s\" was deleted.", name ) );
+            }
         }
     }
 

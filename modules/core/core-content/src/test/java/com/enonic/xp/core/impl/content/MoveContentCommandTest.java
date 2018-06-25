@@ -65,50 +65,51 @@ public class MoveContentCommandTest
 
     @Test
     public void move_fragment_to_the_same_site()
-            throws Exception {
+        throws Exception
+    {
         final PropertyTree existingContentData = new PropertyTree();
-        existingContentData.addString("myData", "aaa");
+        existingContentData.addString( "myData", "aaa" );
 
-        final Site parentSite = createSite(existingContentData, ContentPath.ROOT);
-        final Content existingContent
-                = createContent(existingContentData, parentSite.getPath(), ContentTypeName.fragment());
-        final Content existingFolder = createContent(existingContentData, parentSite.getPath(), ContentTypeName.folder());
+        final Site parentSite = createSite( existingContentData, ContentPath.ROOT );
+        final Content existingContent = createContent( existingContentData, parentSite.getPath(), ContentTypeName.fragment() );
+        final Content existingFolder = createContent( existingContentData, parentSite.getPath(), ContentTypeName.folder() );
 
         MoveContentParams params = MoveContentParams.create().
-                contentId(existingContent.getId()).
-                parentContentPath(existingFolder.getPath()).
-                build();
+            contentId( existingContent.getId() ).
+            parentContentPath( existingFolder.getPath() ).
+            build();
 
-        final MoveContentCommand command = MoveContentCommand.create(params).
-                contentTypeService(this.contentTypeService).
-                nodeService(this.nodeService).
-                contentService(this.contentService).
-                translator(this.translator).
-                eventPublisher(this.eventPublisher).
-                build();
+        final MoveContentCommand command = MoveContentCommand.create( params ).
+            contentTypeService( this.contentTypeService ).
+            nodeService( this.nodeService ).
+            contentService( this.contentService ).
+            translator( this.translator ).
+            eventPublisher( this.eventPublisher ).
+            build();
 
-        final Node mockNode = Node.create().parentPath(NodePath.ROOT).build();
+        final Node mockNode = Node.create().parentPath( NodePath.ROOT ).build();
 
-        Mockito.when(nodeService.getById(NodeId.from(existingContent.getId()))).thenReturn(mockNode);
+        Mockito.when( nodeService.getById( NodeId.from( existingContent.getId() ) ) ).thenReturn( mockNode );
 
-        Mockito.when(nodeService.move(Mockito.any(NodeId.class), Mockito.any(), Mockito.any())).thenReturn(mockNode);
+        Mockito.when( nodeService.move( Mockito.any( NodeId.class ), Mockito.any(), Mockito.any() ) ).thenReturn( mockNode );
 
-        Mockito.when(translator.fromNode(mockNode, true)).thenReturn(existingContent);
-        Mockito.when(translator.fromNode(mockNode, false)).thenReturn(existingContent);
+        Mockito.when( translator.fromNode( mockNode, true ) ).thenReturn( existingContent );
+        Mockito.when( translator.fromNode( mockNode, false ) ).thenReturn( existingContent );
 
-        Mockito.when(contentService.getByPath(existingFolder.getPath())).thenReturn(existingFolder);
-        Mockito.when(contentService.getNearestSite(existingContent.getId())).thenReturn(parentSite);
+        Mockito.when( contentService.getByPath( existingFolder.getPath() ) ).thenReturn( existingFolder );
+        Mockito.when( contentService.getNearestSite( existingContent.getId() ) ).thenReturn( parentSite );
 
         final ContentType contentType = ContentType.create().
-                name("folder").
-                displayName("folder").
-                setBuiltIn().setFinal(false).setAbstract(false).build();
+            name( "folder" ).
+            displayName( "folder" ).
+            setBuiltIn().setFinal( false ).setAbstract( false ).build();
 
-        Mockito.when(contentTypeService.getByName(new GetContentTypeParams().contentTypeName(existingFolder.getType()))).thenReturn(contentType);
+        Mockito.when( contentTypeService.getByName( new GetContentTypeParams().contentTypeName( existingFolder.getType() ) ) ).thenReturn(
+            contentType );
 
         // exercise
         command.execute();
-        Mockito.verify(nodeService, Mockito.times(1)).move(Mockito.any(NodeId.class), Mockito.any(), Mockito.any());
+        Mockito.verify( nodeService, Mockito.times( 1 ) ).move( Mockito.any( NodeId.class ), Mockito.any(), Mockito.any() );
 
     }
 
@@ -134,8 +135,8 @@ public class MoveContentCommandTest
             eventPublisher( this.eventPublisher ).
             build();
 
-        final Node mockNode =
-            Node.create().parentPath( ContentNodeHelper.translateContentParentToNodeParentPath( existingContent.getParentPath() ) ).build();
+        final Node mockNode = Node.create().name( existingContent.getName().toString() ).parentPath(
+            ContentNodeHelper.translateContentParentToNodeParentPath( existingContent.getParentPath() ) ).build();
 
         Mockito.when( nodeService.getById( NodeId.from( existingContent.getId() ) ) ).thenReturn( mockNode );
         Mockito.when( translator.fromNode( mockNode, true ) ).thenReturn( existingContent );
