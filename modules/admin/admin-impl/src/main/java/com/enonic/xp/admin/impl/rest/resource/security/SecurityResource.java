@@ -1,9 +1,9 @@
 package com.enonic.xp.admin.impl.rest.resource.security;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
@@ -210,15 +210,10 @@ public final class SecurityResource
 
     @GET
     @Path("principals")
-    public FindPrincipalsResultJson findPrincipals( @QueryParam("types") final String types,
-
+    public FindPrincipalsResultJson findPrincipals( @QueryParam("types") final String types, @QueryParam("roles") final String roles,
                                                     @QueryParam("query") final String query,
-
                                                     @QueryParam("userStoreKey") final String storeKey,
-
-                                                    @QueryParam("from") final Integer from,
-
-                                                    @QueryParam("size") final Integer size )
+                                                    @QueryParam("from") final Integer from, @QueryParam("size") final Integer size )
     {
 
         final List<PrincipalType> principalTypes = new ArrayList<>();
@@ -259,12 +254,29 @@ public final class SecurityResource
         }
 
         final PrincipalQueryResult result = securityService.query( principalQuery.build() );
-        return new FindPrincipalsResultJson( result.getPrincipals(), result.getTotalSize() );
+
+        final Principals resultingPrincipals;
+        if ( roles != null )
+        {
+            final PrincipalKeys roleKeys = PrincipalKeys.from( roles.split( "," ) );
+            Predicate<? super Principal> rolesFilter =
+                p -> securityService.getAllMemberships( p.getKey() ).stream().anyMatch( roleKeys::contains );
+
+            resultingPrincipals = Principals.from( result.getPrincipals().stream().filter( rolesFilter ).collect( Collectors.toList() ) );
+        }
+        else
+        {
+            resultingPrincipals = Principals.from( result.getPrincipals() );
+        }
+
+        return new FindPrincipalsResultJson( resultingPrincipals, result.getPrincipals().getSize(), result.getTotalSize() );
     }
 
-    private PrincipalJson principalToJson(final Principal principal, final Boolean resolveMemberships) {
+    private PrincipalJson principalToJson( final Principal principal, final Boolean resolveMemberships )
+    {
 
-        if(principal == null) {
+        if ( principal == null )
+        {
             return null;
         }
 
@@ -313,7 +325,8 @@ public final class SecurityResource
 
         final Principals principalsResult = securityService.getPrincipals( principalKeys );
 
-        return principalsResult.stream().map( principal -> this.principalToJson( principal, json.getResolveMemberships() ) ).collect( Collectors.toList() );
+        return principalsResult.stream().map( principal -> this.principalToJson( principal, json.getResolveMemberships() ) ).collect(
+            Collectors.toList() );
     }
 
     @GET
@@ -334,7 +347,7 @@ public final class SecurityResource
 
         final PrincipalJson jsonResult = this.principalToJson( principal, resolveMemberships );
 
-        if(jsonResult == null)
+        if ( jsonResult == null )
         {
             throw JaxRsExceptions.notFound( String.format( "Principal [%s] was not found", keyParam ) );
         }
