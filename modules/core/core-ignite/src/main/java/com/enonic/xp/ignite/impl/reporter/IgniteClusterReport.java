@@ -51,6 +51,7 @@ class IgniteClusterReport
     {
         ObjectNode clusterNode = JsonNodeFactory.instance.objectNode();
         clusterNode.put( "id", n.id().toString() );
+        clusterNode.put( "name", n.consistentId().toString() );
         clusterNode.put( "local", n.isLocal() );
         clusterNode.put( "isClient", n.isClient() );
         clusterNode.put( "isDeamon", n.isDaemon() );
