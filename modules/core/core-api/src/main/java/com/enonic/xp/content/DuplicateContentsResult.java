@@ -12,10 +12,13 @@ public class DuplicateContentsResult
 
     private final String contentName;
 
+    private final ContentPath contentPath;
+
     private DuplicateContentsResult( Builder builder )
     {
         this.duplicatedContents = ContentIds.from( builder.duplicatedContents );
         this.contentName = builder.contentName;
+        this.contentPath = builder.contentPath;
     }
 
     public static Builder create()
@@ -33,11 +36,18 @@ public class DuplicateContentsResult
         return contentName;
     }
 
+    public ContentPath getSourceContentPath()
+    {
+        return contentPath;
+    }
+
     public static final class Builder
     {
         private List<ContentId> duplicatedContents = Lists.newArrayList();
 
         private String contentName;
+
+        private ContentPath contentPath;
 
         private Builder()
         {
@@ -58,6 +68,12 @@ public class DuplicateContentsResult
         public Builder setContentName( final String contentName )
         {
             this.contentName = contentName;
+            return this;
+        }
+
+        public Builder setSourceContentPath( final ContentPath contentPath )
+        {
+            this.contentPath = contentPath;
             return this;
         }
 

@@ -49,9 +49,9 @@ public class DuplicateRunnableTaskResult
             super();
         }
 
-        public Builder succeeded( String item )
+        public Builder succeeded( ContentPath item )
         {
-            super.succeeded( ContentPath.from( item ) );
+            super.succeeded( item );
             return this;
         }
 
