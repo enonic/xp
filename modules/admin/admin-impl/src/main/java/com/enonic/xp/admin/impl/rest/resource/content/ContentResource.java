@@ -51,6 +51,7 @@ import com.enonic.xp.admin.impl.json.content.ContentPermissionsJson;
 import com.enonic.xp.admin.impl.json.content.ContentSummaryJson;
 import com.enonic.xp.admin.impl.json.content.ContentSummaryListJson;
 import com.enonic.xp.admin.impl.json.content.ContentTreeSelectorListJson;
+import com.enonic.xp.admin.impl.json.content.ContentsExistByPathJson;
 import com.enonic.xp.admin.impl.json.content.ContentsExistJson;
 import com.enonic.xp.admin.impl.json.content.DependenciesAggregationJson;
 import com.enonic.xp.admin.impl.json.content.DependenciesJson;
@@ -68,6 +69,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.BatchContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.CompareContentsJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentIdsJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentIdsPermissionsJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.ContentPathsJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentPublishItemJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentQueryJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentSelectorQueryJson;
@@ -859,6 +861,19 @@ public final class ContentResource
         for ( final ContentId contentId : params.getContentIds() )
         {
             result.add( contentId, contentService.contentExists( contentId ) );
+        }
+
+        return result;
+    }
+
+    @POST
+    @Path("contentsExistByPath")
+    public ContentsExistByPathJson contentsExistByPath( final ContentPathsJson params )
+    {
+        final ContentsExistByPathJson result = new ContentsExistByPathJson();
+        for ( final ContentPath contentPath : params.getContentPaths() )
+        {
+            result.add( contentPath, contentService.contentExists( contentPath ) );
         }
 
         return result;
