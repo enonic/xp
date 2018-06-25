@@ -37,11 +37,11 @@ class DeleteTaskMessageGenerator
             ContentName name = ContentName.from( deleted.get( 0 ).getName() );
             if ( name.isUnnamed() )
             {
-                builder.append( "Item was deleted" );
+                builder.append( "Item is deleted" );
             }
             else
             {
-                builder.append( String.format( "Item \"%s\" was deleted.", name ) );
+                builder.append( String.format( "Item \"%s\" is deleted.", name ) );
             }
         }
     }
