@@ -49,10 +49,11 @@ class DeleteTaskMessageGenerator
     void appendMessageForMultipleSuccess( final StringBuilder builder, final DeleteRunnableTaskResult result )
     {
         final List<ContentPath> pending = result.getPending();
-        builder.append( String.format( "Deleted %s items", result.getSuccessCount() ) );
+        builder.append( String.format( "%s items are deleted", result.getSuccessCount() ) );
         if ( pending.size() > 0 )
         {
-            builder.append( String.format( " ( Marked for deletion: %s )", getNameOrSize( pending ) ) );
+            final String isOrAre = pending.size() > 1 ? "are" : "is";
+            builder.append( String.format( " ( %s %s marked for deletion )", getNameOrSize( pending ), isOrAre ) );
         }
         builder.append( "." );
     }
