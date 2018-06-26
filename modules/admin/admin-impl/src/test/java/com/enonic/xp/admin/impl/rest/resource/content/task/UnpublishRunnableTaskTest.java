@@ -26,7 +26,7 @@ import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
 
-public class UnublishRunnableTaskTest
+public class UnpublishRunnableTaskTest
     extends AbstractRunnableTaskTest
 {
     private UnpublishContentJson params;
@@ -89,7 +89,7 @@ public class UnublishRunnableTaskTest
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
 
         Assert.assertEquals( 4, progressArgumentCaptor.getValue().intValue() );
-        Assert.assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"Unpublished 3 items\"}", resultMessage );
+        Assert.assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"3 items are unpublished\"}", resultMessage );
     }
 
     @Test
@@ -117,7 +117,7 @@ public class UnublishRunnableTaskTest
 
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
 
-        Assert.assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"Item \\\"content1\\\" was unpublished.\"}", resultMessage );
+        Assert.assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"Item \\\"content1\\\" is unpublished.\"}", resultMessage );
     }
 
     @Test
