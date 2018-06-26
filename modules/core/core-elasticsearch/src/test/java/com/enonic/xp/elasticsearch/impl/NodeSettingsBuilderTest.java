@@ -1,6 +1,8 @@
 package com.enonic.xp.elasticsearch.impl;
 
 import java.io.File;
+import java.net.InetAddress;
+import java.util.Collections;
 import java.util.Map;
 
 import org.elasticsearch.common.settings.Settings;
@@ -33,18 +35,22 @@ public class NodeSettingsBuilderTest
         throws Exception
     {
         final BundleContext context = Mockito.mock( BundleContext.class );
+        final NodeDiscovery nodeDiscovery = Mockito.mock( NodeDiscovery.class );
+        final InetAddress inetAddress = Mockito.mock( InetAddress.class );
+        Mockito.when( inetAddress.getCanonicalHostName() ).thenReturn( "127.0.0.1" );
+        Mockito.when( nodeDiscovery.get() ).thenReturn( Collections.singletonList( inetAddress ) );
         this.builder = new NodeSettingsBuilder( context, new ClusterConfig()
         {
             @Override
             public NodeDiscovery discovery()
             {
-                return null;
+                return nodeDiscovery;
             }
 
             @Override
             public ClusterNodeId name()
             {
-                return ClusterNodeId.from( "FISKEPUDDING" );
+                return ClusterNodeId.from( "local-node" );
             }
 
             @Override
@@ -77,7 +83,6 @@ public class NodeSettingsBuilderTest
         final Settings settings = this.builder.buildSettings( map );
 
         assertNotNull( settings );
-        //   assertEquals( 23, settings.getAsMap().size() );
         assertSettings( System.getProperty( "xp.home" ) + "/repo/index", settings );
     }
 
