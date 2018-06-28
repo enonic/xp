@@ -1,0 +1,41 @@
+{
+  "authConfig": {
+    "formItems": [
+      {
+        "Input": {
+          "config": {},
+          "customText": null,
+          "helpText": null,
+          "immutable": false,
+          "indexed": false,
+          "inputType": "TextLine",
+          "label": "some-label",
+          "maximizeUIInputWidth": true,
+          "name": "some-name",
+          "occurrences": {
+            "maximum": 1,
+            "minimum": 0
+          },
+          "validationRegexp": null
+        }
+      }
+    ]
+  },
+  "config": null,
+  "deletable": false,
+  "description": "Application description",
+  "displayName": "application display name",
+  "editable": false,
+  "iconUrl": "/admin/rest/application/icon/testapplication",
+  "key": "testapplication",
+  "local": false,
+  "maxSystemVersion": "5.1",
+  "metaSteps": [],
+  "minSystemVersion": "5.0",
+  "modifiedTime": "2012-01-01T00:00:00Z",
+  "state": "started",
+  "url": "http://enonic.net",
+  "vendorName": "Enonic",
+  "vendorUrl": "https://www.enonic.com",
+  "version": "1.0.0"
+}
