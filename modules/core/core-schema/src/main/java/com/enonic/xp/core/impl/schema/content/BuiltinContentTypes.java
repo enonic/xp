@@ -183,7 +183,7 @@ final class BuiltinContentTypes
         addFormItem( Input.create().name( "tags" ).
             inputType( InputTypeName.TAG ).
             label( "Tags" ).
-            label( "media.default.tags.label" ).
+            labelI18nKey( "media.default.tags.label" ).
             occurrences( 0, 0 ).
             build() ).
         build();
