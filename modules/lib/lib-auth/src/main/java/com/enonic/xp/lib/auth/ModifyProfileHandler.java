@@ -111,9 +111,6 @@ public final class ModifyProfileHandler
         final ScriptValueTranslatorResult scriptValueTranslatorResult = new ScriptValueTranslator( false ).create( value );
         final PropertyTree propertyTree = scriptValueTranslatorResult.getPropertyTree();
 
-//        final Map<String, Object> map = value.getMap();
-        //final PropertyTree propertyTree = createPropertyTree( map );
-
         if ( this.scope == null )
         {
             target.profile = propertyTree;
