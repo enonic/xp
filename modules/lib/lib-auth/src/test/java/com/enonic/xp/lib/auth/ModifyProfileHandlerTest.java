@@ -73,7 +73,7 @@ public class ModifyProfileHandlerTest
                 return editedUser;
             } );
 
-        runScript( "/site/lib/xp/examples/auth/modifyProfile-keep-types.js" );
+        runScript( "/site/test/modifyProfile-test.js" );
 
     }
 

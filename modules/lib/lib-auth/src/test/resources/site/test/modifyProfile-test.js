@@ -5,7 +5,6 @@ var t = require('/lib/xp/testing');
 // Callback to edit the user profile.
 function editor(c) {
     if (!c) {
-        log.info(c);
         c = {};
     }
     c.newField = "New field";
