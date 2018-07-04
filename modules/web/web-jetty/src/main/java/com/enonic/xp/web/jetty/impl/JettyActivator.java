@@ -49,7 +49,10 @@ public final class JettyActivator
         this.service = new JettyService();
         this.service.config = this.config;
         this.service.workerName = clusterConfig.name().toString();
-        this.service.sessionDataStore = sessionDataStore;
+        if ( clusterConfig.isEnabled() )
+        {
+            this.service.sessionDataStore = sessionDataStore;
+        }
 
         this.service.dispatcherServlet = this.dispatchServlet;
         this.service.start();
