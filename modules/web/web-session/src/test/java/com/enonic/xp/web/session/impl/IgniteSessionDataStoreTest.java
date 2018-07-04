@@ -262,6 +262,12 @@ public class IgniteSessionDataStoreTest
             {
                 return false;
             }
+
+            @Override
+            public int jetty_session_savePeriod_seconds()
+            {
+                return 10;
+            }
         };
 
         return annotation;
