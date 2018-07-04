@@ -2,6 +2,7 @@ dependencies {
     provided project( ':core:core-api' )
     provided project( ':script:script-api' )
     provided project( ':portal:portal-api' )
-    compile project( ':lib:lib-common' )
     testCompile project( ':tools:testing' )
+    compile project( ':lib:lib-common' )
+    compile project( ':lib:lib-value' )
 }
