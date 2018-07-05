@@ -101,7 +101,7 @@ public class IgniteSessionDataStoreTest
     {
         final SessionData sessionData = new SessionData( "123", null, null, 0, 0, 0, 0 );
         final IgniteFuture<Void> putFuture = new IgniteFinishedFutureImpl<>();
-        when( cache.putAsync( eq( "cpath_vhost_123" ), any( SessionData.class ) ) ).thenReturn( putFuture );
+        when( cache.putAsync( eq( "cpath_vhost_123" ), any( SessionDataWrapper.class ) ) ).thenReturn( putFuture );
         store.activate( getWebSessionConfig() );
 
         store.doStore( "123", sessionData, 0 );
