@@ -3,11 +3,14 @@ package com.enonic.xp.web.session.impl;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
+import org.apache.ignite.IgniteException;
+import org.apache.ignite.lang.IgniteFuture;
 import org.eclipse.jetty.server.session.AbstractSessionDataStore;
 import org.eclipse.jetty.server.session.SessionContext;
 import org.eclipse.jetty.server.session.SessionData;
@@ -111,7 +114,7 @@ public final class IgniteSessionDataStore
         }
         else
         {
-            return igniteCache.remove( cacheKey );
+            return asyncRemove( cacheKey, webSessionConfig.write_timeout() );
         }
     }
 
@@ -134,8 +137,22 @@ public final class IgniteSessionDataStore
         }
         else
         {
-            igniteCache.put( cacheKey, data );
+            asyncPut( cacheKey, data, webSessionConfig.write_timeout() );
         }
+    }
+
+    private void asyncPut( final String cacheKey, final SessionData data, final int timeoutMillis )
+        throws IgniteException
+    {
+        final IgniteFuture<Void> future = igniteCache.putAsync( cacheKey, data );
+        future.get( timeoutMillis, TimeUnit.MILLISECONDS );
+    }
+
+    private boolean asyncRemove( final String cacheKey, final int timeoutMillis )
+        throws IgniteException
+    {
+        final IgniteFuture<Boolean> future = igniteCache.removeAsync( cacheKey );
+        return future.get( timeoutMillis, TimeUnit.MILLISECONDS );
     }
 
     @Override
