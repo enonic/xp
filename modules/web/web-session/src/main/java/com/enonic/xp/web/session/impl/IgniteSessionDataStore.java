@@ -34,7 +34,7 @@ public final class IgniteSessionDataStore
 
     private Ignite ignite;
 
-    private IgniteCache<String, SessionData> igniteCache;
+    private IgniteCache<String, SessionDataWrapper> igniteCache;
 
     private ConcurrentHashMap<String, SessionData> defaultCache = new ConcurrentHashMap<>();
 
@@ -90,14 +90,15 @@ public final class IgniteSessionDataStore
 
     private SessionData doGet( final String cacheKey )
     {
-        final IgniteCache<String, SessionData> igniteCache = this.igniteCache;
+        final IgniteCache<String, SessionDataWrapper> igniteCache = this.igniteCache;
         if ( igniteCache == null )
         {
             return defaultCache.get( cacheKey );
         }
         else
         {
-            return igniteCache.get( cacheKey );
+            final SessionDataWrapper sessionDataWrapper = igniteCache.get( cacheKey );
+            return sessionDataWrapper == null ? null : sessionDataWrapper.getSessionData();
         }
     }
 
@@ -106,7 +107,7 @@ public final class IgniteSessionDataStore
         throws Exception
     {
         final String cacheKey = getCacheKey( id );
-        final IgniteCache<String, SessionData> igniteCache = this.igniteCache;
+        final IgniteCache<String, SessionDataWrapper> igniteCache = this.igniteCache;
         if ( igniteCache == null )
         {
             return defaultCache.remove( cacheKey ) != null;
@@ -129,14 +130,14 @@ public final class IgniteSessionDataStore
         throws Exception
     {
         final String cacheKey = getCacheKey( id );
-        final IgniteCache<String, SessionData> igniteCache = this.igniteCache;
+        final IgniteCache<String, SessionDataWrapper> igniteCache = this.igniteCache;
         if ( igniteCache == null )
         {
             defaultCache.put( cacheKey, data );
         }
         else
         {
-            igniteCache.put( cacheKey, data );
+            igniteCache.put( cacheKey, new SessionDataWrapper( data ) );
         }
     }
 
