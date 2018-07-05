@@ -47,7 +47,7 @@ public final class IgniteSessionDataStore
         throws Exception
     {
         this.webSessionConfig = config;
-        setSavePeriodSec( config.jetty_session_savePeriod_seconds() );
+        setSavePeriodSec( config.session_save_period() );
 
         if ( this.ignite != null )
         {

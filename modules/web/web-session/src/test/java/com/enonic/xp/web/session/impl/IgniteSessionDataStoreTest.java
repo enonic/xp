@@ -264,7 +264,7 @@ public class IgniteSessionDataStoreTest
             }
 
             @Override
-            public int jetty_session_savePeriod_seconds()
+            public int session_save_period()
             {
                 return 10;
             }

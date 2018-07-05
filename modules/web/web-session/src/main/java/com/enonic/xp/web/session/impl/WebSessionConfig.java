@@ -16,5 +16,5 @@ public @interface WebSessionConfig
 
     boolean cache_stats_enabled() default true;
 
-    int jetty_session_savePeriod_seconds() default 10;
+    int session_save_period() default 10;
 }
