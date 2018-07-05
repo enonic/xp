@@ -70,6 +70,12 @@ public class NodeSettingsBuilderTest
             {
                 return "127.0.0.1";
             }
+
+            @Override
+            public boolean isSessionReplicationEnabled()
+            {
+                return true;
+            }
         } );
 
         final File homeDir = this.temporaryFolder.newFolder( "home" );

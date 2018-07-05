@@ -2,8 +2,6 @@ package com.enonic.xp.web.session.impl;
 
 public @interface WebSessionConfig
 {
-    boolean transactional() default false;
-
     int retries() default 3;
 
     int eviction_max_size() default 1000;
@@ -17,4 +15,6 @@ public @interface WebSessionConfig
     boolean cache_stats_enabled() default true;
 
     int session_save_period() default 10;
+    
+    int write_timeout() default 10_000;
 }

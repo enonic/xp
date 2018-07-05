@@ -11,6 +11,8 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.lib.common.JsonToPropertyTreeTranslator;
 import com.enonic.xp.lib.common.PropertyTreeMapper;
+import com.enonic.xp.lib.value.ScriptValueTranslator;
+import com.enonic.xp.lib.value.ScriptValueTranslatorResult;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
@@ -61,7 +63,7 @@ public final class ModifyProfileHandler
 
             final User updatedUser = this.securityService.get().updateUser( params );
             final PropertyTree updatedProfile = updatedUser.getProfile();
-            return createPropertyTreeMapper( updatedProfile );
+            return createPropertyTreeMapper( updatedProfile, false );
         }
 
         return null;
@@ -71,13 +73,13 @@ public final class ModifyProfileHandler
     {
         return edit -> {
             final PropertyTree profile = edit.source.getProfile();
-            final PropertyTreeMapper mapper = createPropertyTreeMapper( profile );
+            final PropertyTreeMapper mapper = createPropertyTreeMapper( profile, true );
             final ScriptValue scriptValue = this.editor.call( mapper );
             updateUser( edit, scriptValue );
         };
     }
 
-    private PropertyTreeMapper createPropertyTreeMapper( PropertyTree profile )
+    private PropertyTreeMapper createPropertyTreeMapper( PropertyTree profile, Boolean useRawValue )
     {
         if ( profile == null )
         {
@@ -86,12 +88,12 @@ public final class ModifyProfileHandler
 
         if ( this.scope == null )
         {
-            return new PropertyTreeMapper( profile );
+            return new PropertyTreeMapper( useRawValue, profile );
         }
         else
         {
             final PropertySet scopedProfile = profile.getSet( scope );
-            return scopedProfile == null ? null : new PropertyTreeMapper( scopedProfile.toTree() );
+            return scopedProfile == null ? null : new PropertyTreeMapper( useRawValue, scopedProfile.toTree() );
         }
     }
 
@@ -106,8 +108,8 @@ public final class ModifyProfileHandler
             return;
         }
 
-        final Map<String, Object> map = value.getMap();
-        final PropertyTree propertyTree = createPropertyTree( map );
+        final ScriptValueTranslatorResult scriptValueTranslatorResult = new ScriptValueTranslator( false ).create( value );
+        final PropertyTree propertyTree = scriptValueTranslatorResult.getPropertyTree();
 
         if ( this.scope == null )
         {

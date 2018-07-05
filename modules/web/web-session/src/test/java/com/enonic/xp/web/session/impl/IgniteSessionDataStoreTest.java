@@ -6,6 +6,8 @@ import java.util.Set;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.configuration.CacheConfiguration;
+import org.apache.ignite.internal.util.future.IgniteFinishedFutureImpl;
+import org.apache.ignite.lang.IgniteFuture;
 import org.eclipse.jetty.server.session.SessionContext;
 import org.eclipse.jetty.server.session.SessionData;
 import org.eclipse.jetty.server.session.UnreadableSessionDataException;
@@ -85,7 +87,8 @@ public class IgniteSessionDataStoreTest
     public void delete()
         throws Exception
     {
-        when( cache.remove( anyString() ) ).thenReturn( true );
+        final IgniteFuture<Boolean> removeFuture = new IgniteFinishedFutureImpl<>( true );
+        when( cache.removeAsync( anyString() ) ).thenReturn( removeFuture );
         store.activate( getWebSessionConfig() );
 
         final boolean deleted = store.delete( "123" );
@@ -97,12 +100,13 @@ public class IgniteSessionDataStoreTest
         throws Exception
     {
         final SessionData sessionData = new SessionData( "123", null, null, 0, 0, 0, 0 );
-        when( cache.remove( anyString() ) ).thenReturn( true );
+        final IgniteFuture<Void> putFuture = new IgniteFinishedFutureImpl<>();
+        when( cache.putAsync( eq( "cpath_vhost_123" ), any( SessionData.class ) ) ).thenReturn( putFuture );
         store.activate( getWebSessionConfig() );
 
         store.doStore( "123", sessionData, 0 );
 
-        verify( cache, Mockito.times( 1 ) ).put( eq( "cpath_vhost_123" ), any( SessionDataWrapper.class ) );
+        verify( cache, Mockito.times( 1 ) ).putAsync( eq( "cpath_vhost_123" ), any( SessionDataWrapper.class ) );
     }
 
     @Test
@@ -180,7 +184,10 @@ public class IgniteSessionDataStoreTest
     {
         final SessionData sessionData = new SessionData( "123", null, null, 0, 0, 0, 0 );
         when( cache.get( anyString() ) ).thenReturn( new SessionDataWrapper( sessionData ) );
-        when( cache.remove( anyString() ) ).thenReturn( true );
+        final IgniteFuture<Boolean> removeFuture = new IgniteFinishedFutureImpl<>( true );
+        when( cache.removeAsync( anyString() ) ).thenReturn( removeFuture );
+        final IgniteFuture<Void> putFuture = new IgniteFinishedFutureImpl<>();
+        when( cache.putAsync( anyString(), any( SessionDataWrapper.class ) ) ).thenReturn( putFuture );
 
         store.removeIgnite( ignite );
         Assert.assertNull( store.load( "123" ) );
@@ -193,7 +200,7 @@ public class IgniteSessionDataStoreTest
         Assert.assertEquals( sessionData, store.load( "123" ) );
         Assert.assertTrue( store.delete( "123" ) );
         store.store( "123", sessionData );
-        verify( cache, Mockito.times( 1 ) ).put( eq( "cpath_vhost_123" ), any( SessionDataWrapper.class ) );
+        verify( cache, Mockito.times( 1 ) ).putAsync( eq( "cpath_vhost_123" ), any( SessionDataWrapper.class ) );
     }
 
     private void mockContextRun( final SessionContext context )
@@ -219,12 +226,6 @@ public class IgniteSessionDataStoreTest
             public Class<? extends Annotation> annotationType()
             {
                 return null;
-            }
-
-            @Override
-            public boolean transactional()
-            {
-                return false;
             }
 
             @Override
@@ -267,6 +268,11 @@ public class IgniteSessionDataStoreTest
             public int session_save_period()
             {
                 return 10;
+            }
+            
+            public int write_timeout()
+            {
+                return 1000;
             }
         };
 
