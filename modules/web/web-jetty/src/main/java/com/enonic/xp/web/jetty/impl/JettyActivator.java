@@ -49,7 +49,7 @@ public final class JettyActivator
         this.service = new JettyService();
         this.service.config = this.config;
         this.service.workerName = clusterConfig.name().toString();
-        if ( clusterConfig.isEnabled() )
+        if ( clusterConfig.isEnabled() && clusterConfig.isSessionReplicationEnabled() )
         {
             this.service.sessionDataStore = sessionDataStore;
         }
