@@ -71,6 +71,8 @@ public class ConfigurationFactory
             build().
             execute() );
 
+        config.setCommunicationSpi( CommunicationFactory.create( this.igniteSettings ) );
+
         config.setGridLogger( LoggerConfig.create() );
 
         config.setMetricsLogFrequency( igniteSettings.metrics_log_frequency() );

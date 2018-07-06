@@ -30,4 +30,6 @@ public @interface IgniteSettings
 
     String off_heap_max_size() default "512MB";
 
+    int message_queue_limit() default 1024;
+
 }
