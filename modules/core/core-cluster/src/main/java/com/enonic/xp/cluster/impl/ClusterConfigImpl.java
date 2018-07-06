@@ -87,7 +87,7 @@ public class ClusterConfigImpl
     @Override
     public boolean isSessionReplicationEnabled()
     {
-        return Boolean.parseBoolean( this.config.getOrDefault( "session.replication.enabled", "true" ) );
+        return Boolean.parseBoolean( this.config.getOrDefault( "session.replication.enabled", "false" ) );
     }
 
     @Override
