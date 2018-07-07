@@ -1,5 +1,7 @@
 package com.enonic.xp.content;
 
+import java.util.Objects;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
@@ -107,5 +109,30 @@ public final class UpdateContentParams
     public boolean isClearAttachments()
     {
         return clearAttachments;
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+        final UpdateContentParams that = (UpdateContentParams) o;
+        return clearAttachments == that.clearAttachments && requireValid == that.requireValid &&
+            Objects.equals( contentId, that.contentId ) && Objects.equals( editor, that.editor ) &&
+            Objects.equals( modifier, that.modifier ) && Objects.equals( createAttachments, that.createAttachments ) &&
+            Objects.equals( removeAttachments, that.removeAttachments );
+    }
+
+    @Override
+    public int hashCode()
+    {
+
+        return Objects.hash( contentId, editor, modifier, createAttachments, removeAttachments, clearAttachments, requireValid );
     }
 }

@@ -401,7 +401,7 @@ public final class ContentResource
         try
         {
             // in case content with same name and path was created in between content updated and renamed
-            final RenameContentParams renameParams = makeRenameParams( json.getRenameContentParams() );
+                final RenameContentParams renameParams = makeRenameParams( json.getRenameContentParams() );
             final Content renamedContent = contentService.rename( renameParams );
             return new ContentJson( renamedContent, contentIconUrlResolver, principalsResolver );
         }
@@ -606,41 +606,6 @@ public final class ContentResource
             ContentIds.from( compareResults.stream().filter( ( result ) -> result.getCompareStatus() != CompareStatus.PENDING_DELETE ).
                 map( CompareContentResult::getContentId ).
                 collect( Collectors.toList() ) ) );
-    }
-
-    private Boolean isAnyContentRemovableFromPublish( final ContentIds contentIds )
-    {
-        final CompareContentResults compareContentResults =
-            contentService.compare( new CompareContentsParams( contentIds, ContentConstants.BRANCH_MASTER ) );
-
-        return compareContentResults.getCompareContentResultsMap().values().stream().anyMatch(
-            result -> CompareStatus.NEWER == result.getCompareStatus() );
-    }
-
-    private List<ContentPublishItemJson> resolveContentPublishItems( final ContentIds contentIds )
-    {
-        //Retrieves the contents
-        final Contents contents = contentService.getByIds( new GetContentByIdsParams( contentIds ) );
-
-        //Retrieves the compare contents
-        final CompareContentResults compareContentResults =
-            contentService.compare( new CompareContentsParams( contentIds, ContentConstants.BRANCH_MASTER ) );
-        final Map<ContentId, CompareContentResult> compareContentResultsMap = compareContentResults.getCompareContentResultsMap();
-
-        // Sorts the contents by path and for each
-        return contents.stream().
-            // sorted( ( content1, content2 ) -> content1.getPath().compareTo( content2.getPath() ) ).
-                map( content ->
-                     {
-                         //Creates a ContentPublishItem
-                         final CompareContentResult compareContentResult = compareContentResultsMap.get( content.getId() );
-                         return ContentPublishItemJson.create().
-                             content( content ).
-                             compareStatus( compareContentResult.getCompareStatus().name() ).
-                             iconUrl( contentIconUrlResolver.resolve( content ) ).
-                             build();
-                     } ).
-                collect( Collectors.toList() );
     }
 
     @POST
@@ -1128,7 +1093,7 @@ public final class ContentResource
             collect( Collectors.toSet() );
 
         if(layerPaths.size() == 0) {
-            return ContentTreeSelectorListJson.empty();
+                return ContentTreeSelectorListJson.empty();
         }
 
         final ChildOrder layerOrder = parentPath == null
@@ -1404,16 +1369,6 @@ public final class ContentResource
     private String getFormattedDisplayName( Locale locale )
     {
         return locale.getDisplayName( locale ) + " (" + locale.toLanguageTag() + ")";
-    }
-
-    private List<Attachment> parseAttachments( final List<AttachmentJson> attachmentJsonList )
-    {
-        List<Attachment> attachments = new ArrayList<>();
-        if ( attachmentJsonList != null )
-        {
-            attachments.addAll( attachmentJsonList.stream().map( AttachmentJson::getAttachment ).collect( Collectors.toList() ) );
-        }
-        return attachments;
     }
 
     private ByteSource getFileItemByteSource( final MultipartItem item )
