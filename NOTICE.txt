@@ -89,3 +89,7 @@ Licenses used by Enonic XP
     Apache Tika
     Apache License 2.0
     https://tika.apache.org/license.html
+    
+    Apache Ignite
+    Apache License 2.0
+    https://apacheignite.readme.io/v2.3/docs/license
