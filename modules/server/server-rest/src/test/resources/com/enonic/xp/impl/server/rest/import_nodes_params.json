@@ -1,0 +1,9 @@
+{
+  "exportName": "exportName",
+  "targetRepoPath": "system-repo:master:node1",
+  "importWithIds": true,
+  "importWithPermissions": true,
+  "dryRun": true,
+  "xslSource": true,
+  "xslParams": {"a":"b"}
+}

@@ -1,0 +1,7 @@
+{
+  "sourceRepoPath": "repo1:branch1:node1",
+  "exportName": "exportName",
+  "exportWithIds": true,
+  "includeVersions": true,
+  "dryRun": true
+}
