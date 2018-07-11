@@ -86,7 +86,6 @@ public class ContentVersionJson
     @Override
     public int hashCode()
     {
-
         return Objects.hash( modifier, modifierDisplayName, displayName, modified, comment, id );
     }
 }

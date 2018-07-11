@@ -4,11 +4,8 @@ import java.io.File;
 
 import javax.ws.rs.core.MediaType;
 
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -19,7 +16,6 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.dump.BranchDumpResult;
 import com.enonic.xp.dump.BranchLoadResult;
 import com.enonic.xp.dump.DumpError;
@@ -32,12 +28,8 @@ import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.dump.SystemLoadParams;
 import com.enonic.xp.dump.SystemLoadResult;
 import com.enonic.xp.dump.VersionsLoadResult;
-import com.enonic.xp.exception.InitializationException;
-import com.enonic.xp.export.ExportError;
-import com.enonic.xp.export.ExportNodesParams;
 import com.enonic.xp.export.ExportService;
 import com.enonic.xp.export.ImportNodesParams;
-import com.enonic.xp.export.NodeExportResult;
 import com.enonic.xp.export.NodeImportResult;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repository.NodeRepositoryService;
@@ -45,14 +37,10 @@ import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
-import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.vacuum.VacuumParameters;
 import com.enonic.xp.vacuum.VacuumResult;
 import com.enonic.xp.vacuum.VacuumService;
 import com.enonic.xp.vacuum.VacuumTaskResult;
-import com.enonic.xp.vfs.VirtualFile;
-import com.enonic.xp.vfs.VirtualFilePaths;
-import com.enonic.xp.vfs.VirtualFiles;
 
 import static org.mockito.Matchers.isA;
 

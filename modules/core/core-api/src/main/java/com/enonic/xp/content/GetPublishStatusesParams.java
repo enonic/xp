@@ -47,7 +47,6 @@ public class GetPublishStatusesParams
     @Override
     public int hashCode()
     {
-
         return Objects.hash( contentIds, target );
     }
 }

@@ -95,7 +95,6 @@ public class LocaleJson
     @Override
     public int hashCode()
     {
-
         return Objects.hash( tag, displayName, language, displayLanguage, variant, displayVariant, country, displayCountry );
     }
 }

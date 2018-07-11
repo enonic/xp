@@ -169,7 +169,6 @@ public final class UpdateMediaParams
     @Override
     public int hashCode()
     {
-
         return Objects.hash( content, name, mimeType, inputStream, focalX, focalY, caption, artist, copyright, tags );
     }
 }

@@ -169,7 +169,6 @@ public final class CreateMediaParams
     @Override
     public int hashCode()
     {
-
         return Objects.hash( parent, name, mimeType, byteSource, focalX, focalY, caption, artist, copyright, tags );
     }
 }

@@ -60,7 +60,6 @@ public class ContentTreeSelectorListJson
     @Override
     public int hashCode()
     {
-
         return Objects.hash( items, metadata );
     }
 }

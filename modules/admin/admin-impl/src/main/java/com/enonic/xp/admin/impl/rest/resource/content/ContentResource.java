@@ -70,7 +70,6 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.CompareContentsJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentIdsJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentIdsPermissionsJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentPathsJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.ContentPublishItemJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentQueryJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentSelectorQueryJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentTreeSelectorJson;
@@ -108,7 +107,6 @@ import com.enonic.xp.admin.impl.rest.resource.content.task.PublishRunnableTask;
 import com.enonic.xp.admin.impl.rest.resource.content.task.UnpublishRunnableTask;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
-import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.AttachmentNames;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
@@ -401,7 +399,7 @@ public final class ContentResource
         try
         {
             // in case content with same name and path was created in between content updated and renamed
-                final RenameContentParams renameParams = makeRenameParams( json.getRenameContentParams() );
+            final RenameContentParams renameParams = makeRenameParams( json.getRenameContentParams() );
             final Content renamedContent = contentService.rename( renameParams );
             return new ContentJson( renamedContent, contentIconUrlResolver, principalsResolver );
         }
@@ -455,7 +453,7 @@ public final class ContentResource
     {
         final Map<String, DependenciesJson> result = Maps.newHashMap();
 
-        params.getContentIds().forEach( (id -> {
+        params.getContentIds().forEach( ( id -> {
             final ContentDependencies dependencies = contentService.getDependencies( id );
 
             final List<DependenciesAggregationJson> inbound = dependencies.getInbound().stream().
@@ -466,10 +464,10 @@ public final class ContentResource
                 map( aggregation -> new DependenciesAggregationJson( aggregation, this.contentTypeIconUrlResolver ) ).collect(
                 Collectors.toList() );
 
-            result.put( id.toString(), new DependenciesJson( inbound, outbound ));
-        }) );
+            result.put( id.toString(), new DependenciesJson( inbound, outbound ) );
+        } ) );
 
-        return new GetDependenciesResultJson(result);
+        return new GetDependenciesResultJson( result );
     }
 
     @POST
@@ -504,13 +502,12 @@ public final class ContentResource
     {
         final HasUnpublishedChildrenResultJson.Builder result = HasUnpublishedChildrenResultJson.create();
 
-        ids.getContentIds().forEach( contentId ->
-                                     {
-                                         final Boolean hasChildren = this.contentService.hasUnpublishedChildren(
-                                             new HasUnpublishedChildrenParams( contentId, ContentConstants.BRANCH_MASTER ) );
+        ids.getContentIds().forEach( contentId -> {
+            final Boolean hasChildren =
+                this.contentService.hasUnpublishedChildren( new HasUnpublishedChildrenParams( contentId, ContentConstants.BRANCH_MASTER ) );
 
-                                         result.addHasChildren( contentId, hasChildren );
-                                     } );
+            result.addHasChildren( contentId, hasChildren );
+        } );
 
         return result.build();
     }
@@ -548,10 +545,12 @@ public final class ContentResource
 
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
 
-        final Predicate<ContentId> publishAllowedCondition = id -> this.contentService.getPermissionsById( id ).isAllowedFor( ContextAccessor.current().getAuthInfo().getPrincipals(),
-                                                                                                                        Permission.PUBLISH );
+        final Predicate<ContentId> publishAllowedCondition =
+            id -> this.contentService.getPermissionsById( id ).isAllowedFor( ContextAccessor.current().getAuthInfo().getPrincipals(),
+                                                                             Permission.PUBLISH );
         //check if user has access to publish every content
-        final Boolean isAllPublishable = authInfo.hasRole( RoleKeys.ADMIN ) ? true : fullPublishList.stream().allMatch(publishAllowedCondition);
+        final Boolean isAllPublishable =
+            authInfo.hasRole( RoleKeys.ADMIN ) ? true : fullPublishList.stream().allMatch( publishAllowedCondition );
 
         //filter required dependant ids
         final ContentIds requiredDependantIds = ContentIds.from( requiredIds.stream().
@@ -760,13 +759,12 @@ public final class ContentResource
 
         final List<String> result = new ArrayList<>();
 
-        contents.stream().forEach( content ->
-                                   {
-                                       if ( !content.getPermissions().isAllowedFor( authInfo.getPrincipals(), Permission.MODIFY ) )
-                                       {
-                                           result.add( content.getId().toString() );
-                                       }
-                                   } );
+        contents.stream().forEach( content -> {
+            if ( !content.getPermissions().isAllowedFor( authInfo.getPrincipals(), Permission.MODIFY ) )
+            {
+                result.add( content.getId().toString() );
+            }
+        } );
 
         return result;
     }
@@ -866,13 +864,12 @@ public final class ContentResource
 
         final List<String> result = new ArrayList<>();
 
-        permissions.forEach( permission ->
-                             {
-                                 if ( userHasPermission( authInfo, permission, contentsPermissions ) )
-                                 {
-                                     result.add( permission.name() );
-                                 }
-                             } );
+        permissions.forEach( permission -> {
+            if ( userHasPermission( authInfo, permission, contentsPermissions ) )
+            {
+                result.add( permission.name() );
+            }
+        } );
 
         return result;
     }
@@ -1075,7 +1072,7 @@ public final class ContentResource
     @Consumes(MediaType.APPLICATION_JSON)
     public ContentTreeSelectorListJson treeSelectorQuery( final ContentTreeSelectorQueryJson contentQueryJson )
     {
-        final Integer from  = contentQueryJson.getFrom();
+        final Integer from = contentQueryJson.getFrom();
         contentQueryJson.setFrom( 0 );
 
         final Integer size = contentQueryJson.getSize();
@@ -1092,8 +1089,9 @@ public final class ContentResource
 
             collect( Collectors.toSet() );
 
-        if(layerPaths.size() == 0) {
-                return ContentTreeSelectorListJson.empty();
+        if ( layerPaths.size() == 0 )
+        {
+            return ContentTreeSelectorListJson.empty();
         }
 
         final ChildOrder layerOrder = parentPath == null

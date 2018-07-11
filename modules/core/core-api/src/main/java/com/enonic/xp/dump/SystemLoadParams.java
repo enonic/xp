@@ -56,7 +56,6 @@ public class SystemLoadParams
     @Override
     public int hashCode()
     {
-
         return Objects.hash( dumpName, includeVersions, listener );
     }
 

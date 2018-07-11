@@ -50,7 +50,6 @@ public class ContentListMetaDataJson
     @Override
     public int hashCode()
     {
-
         return Objects.hash( totalHits, hits );
     }
 }

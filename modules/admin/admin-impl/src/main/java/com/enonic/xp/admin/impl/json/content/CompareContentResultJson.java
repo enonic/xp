@@ -59,7 +59,6 @@ public class CompareContentResultJson
     @Override
     public int hashCode()
     {
-
         return Objects.hash( id, compareStatus, publishStatus );
     }
 }

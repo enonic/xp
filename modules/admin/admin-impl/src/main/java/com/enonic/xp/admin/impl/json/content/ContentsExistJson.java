@@ -4,8 +4,6 @@ import java.util.List;
 
 import org.codehaus.jparsec.util.Lists;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.enonic.xp.content.ContentId;
 
 public class ContentsExistJson

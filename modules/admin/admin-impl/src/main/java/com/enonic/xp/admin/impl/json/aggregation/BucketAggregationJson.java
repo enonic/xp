@@ -57,7 +57,6 @@ public class BucketAggregationJson
     @Override
     public int hashCode()
     {
-
         return Objects.hash( buckets );
     }
 }

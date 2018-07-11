@@ -49,7 +49,6 @@ public class BucketJson
     @Override
     public int hashCode()
     {
-
         return Objects.hash( key, docCount );
     }
 }

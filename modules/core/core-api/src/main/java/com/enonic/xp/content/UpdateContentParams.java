@@ -132,7 +132,6 @@ public final class UpdateContentParams
     @Override
     public int hashCode()
     {
-
         return Objects.hash( contentId, editor, modifier, createAttachments, removeAttachments, clearAttachments, requireValid );
     }
 }

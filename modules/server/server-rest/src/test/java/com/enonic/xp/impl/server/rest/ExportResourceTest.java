@@ -1,7 +1,6 @@
 package com.enonic.xp.impl.server.rest;
 
 import java.io.File;
-import java.time.LocalDate;
 
 import javax.ws.rs.core.MediaType;
 
@@ -12,22 +11,11 @@ import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.export.ExportNodesParams;
 import com.enonic.xp.export.ExportService;
 import com.enonic.xp.export.ImportNodesParams;
 import com.enonic.xp.export.NodeExportResult;
 import com.enonic.xp.export.NodeImportResult;
-import com.enonic.xp.home.HomeDir;
-import com.enonic.xp.index.ChildOrder;
-import com.enonic.xp.index.IndexConfig;
-import com.enonic.xp.index.PatternIndexConfigDocument;
-import com.enonic.xp.issue.CreateIssueParams;
-import com.enonic.xp.jaxrs.impl.JaxRsResourceTestSupport;
-import com.enonic.xp.node.ImportNodeResult;
-import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.NodeRepositoryService;

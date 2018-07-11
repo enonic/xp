@@ -69,7 +69,6 @@ public class CreateRepositoryParams
     @Override
     public int hashCode()
     {
-
         return Objects.hash( repositoryId, repositorySettings, rootPermissions, rootChildOrder );
     }
 
