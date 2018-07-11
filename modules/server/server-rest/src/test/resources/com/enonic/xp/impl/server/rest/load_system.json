@@ -9,11 +9,18 @@
               "message": "error-message"
             }
           ],
-          "successful": 3
+          "successful": 2
         }
       ],
-      "repositoryId": "my-repo",
-      "versions": 3
+      "repository": "my-repo",
+      "versions": {
+        "errors": [
+          {
+            "message": "version-load-error-message"
+          }
+        ],
+        "successful": 1
+      }
     }
   ]
 }

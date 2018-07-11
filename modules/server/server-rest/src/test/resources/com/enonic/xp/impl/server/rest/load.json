@@ -1,37 +1,32 @@
 {
-  "nodeImportResults": [
+  "repositories": [
     {
-      "addedNodes": [
-        "/path/to/node1"
+      "branches": [
+        {
+          "branch": "master",
+          "errors": [],
+          "successful": 1
+        }
       ],
-      "dryRun": true,
-      "importErrors": [],
-      "importedBinaries": [],
-      "updateNodes": [
-        "/path/to/node2"
-      ]
+      "repository": "system-repo",
+      "versions": {
+        "errors": [],
+        "successful": 0
+      }
     },
     {
-      "addedNodes": [
-        "/path/to/node1"
+      "branches": [
+        {
+          "branch": "master",
+          "errors": [],
+          "successful": 1
+        }
       ],
-      "dryRun": true,
-      "importErrors": [],
-      "importedBinaries": [],
-      "updateNodes": [
-        "/path/to/node2"
-      ]
-    },
-    {
-      "addedNodes": [
-        "/path/to/node1"
-      ],
-      "dryRun": true,
-      "importErrors": [],
-      "importedBinaries": [],
-      "updateNodes": [
-        "/path/to/node2"
-      ]
+      "repository": "my-repo",
+      "versions": {
+        "errors": [],
+        "successful": 0
+      }
     }
   ]
 }
