@@ -2,6 +2,7 @@ package com.enonic.xp.admin.impl.json.content;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentTreeSelectorJson;
 import com.enonic.xp.content.ContentListMetaData;
@@ -39,5 +40,27 @@ public class ContentTreeSelectorListJson
     public ContentListMetaDataJson getMetadata()
     {
         return metadata;
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+        final ContentTreeSelectorListJson that = (ContentTreeSelectorListJson) o;
+        return Objects.equals( items, that.items ) && Objects.equals( metadata, that.metadata );
+    }
+
+    @Override
+    public int hashCode()
+    {
+
+        return Objects.hash( items, metadata );
     }
 }

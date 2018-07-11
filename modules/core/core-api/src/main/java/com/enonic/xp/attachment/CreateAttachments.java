@@ -1,6 +1,7 @@
 package com.enonic.xp.attachment;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
@@ -71,6 +72,32 @@ public final class CreateAttachments
     public static Builder create()
     {
         return new Builder();
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+        if ( !super.equals( o ) )
+        {
+            return false;
+        }
+        final CreateAttachments that = (CreateAttachments) o;
+        return Objects.equals( map, that.map );
+    }
+
+    @Override
+    public int hashCode()
+    {
+
+        return Objects.hash( super.hashCode(), map );
     }
 
     public static class Builder
