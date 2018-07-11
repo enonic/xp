@@ -23,7 +23,7 @@ public class CommunicationFactoryTest
     public void message_queue_limit_setting()
         throws Exception
     {
-        Mockito.when( this.igniteSettings.message_queue_limit() ).thenReturn( 42 );
+        Mockito.when( this.igniteSettings.communication_message_queue_limit() ).thenReturn( 42 );
 
         final TcpCommunicationSpi communicationSpi = CommunicationFactory.create( this.igniteSettings );
 

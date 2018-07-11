@@ -7,6 +7,6 @@ class CommunicationFactory
     static TcpCommunicationSpi create( final IgniteSettings igniteSettings )
     {
         return new TcpCommunicationSpi().
-            setMessageQueueLimit( igniteSettings.message_queue_limit() );
+            setMessageQueueLimit( igniteSettings.communication_message_queue_limit() );
     }
 }
