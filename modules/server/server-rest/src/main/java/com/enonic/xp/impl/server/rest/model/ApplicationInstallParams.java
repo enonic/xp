@@ -7,7 +7,6 @@ public class ApplicationInstallParams
     @JsonProperty("URL")
     private String URL;
 
-
     public String getURL()
     {
         return URL;
