@@ -4,5 +4,7 @@
   "login": "user1",
   "email": "user1@enonic.com",
   "password": "password",
-  "memberships": []
+  "memberships": [
+    "role:superuser"
+  ]
 }
