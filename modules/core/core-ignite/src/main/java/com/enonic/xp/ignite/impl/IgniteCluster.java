@@ -23,6 +23,12 @@ import com.enonic.xp.cluster.ClusterNodes;
 import com.enonic.xp.ignite.impl.config.ConfigurationFactory;
 import com.enonic.xp.ignite.impl.config.IgniteSettings;
 
+import static org.apache.ignite.IgniteSystemProperties.IGNITE_NO_ASCII;
+import static org.apache.ignite.IgniteSystemProperties.IGNITE_NO_SHUTDOWN_HOOK;
+import static org.apache.ignite.IgniteSystemProperties.IGNITE_PERFORMANCE_SUGGESTIONS_DISABLED;
+import static org.apache.ignite.IgniteSystemProperties.IGNITE_TROUBLESHOOTING_LOGGER;
+import static org.apache.ignite.IgniteSystemProperties.IGNITE_UPDATE_NOTIFIER;
+
 @Component(immediate = true, configurationPid = "com.enonic.xp.ignite")
 public class IgniteCluster
     implements Cluster
@@ -55,8 +61,7 @@ public class IgniteCluster
             build().
             execute();
 
-        final ClassLoader classLoader = igniteConfig.getClassLoader();
-
+        System.setProperty( IGNITE_NO_SHUTDOWN_HOOK, "true" );
         this.ignite = Ignition.start( igniteConfig );
 
         // Register admin-client to use in e.g reporting
@@ -65,12 +70,10 @@ public class IgniteCluster
 
     private void adjustLoggingVerbosity()
     {
-        System.setProperty( "IGNITE_NO_ASCII", "false" );
-        System.setProperty( "IGNITE_PERFORMANCE_SUGGESTIONS_DISABLED", "true" );
-        System.setProperty( "IGNITE_DEV_ONLY_LOGGING_DISABLED", "true" );
-        System.setProperty( "IGNITE_UPDATE_NOTIFIER", "false" );
-        System.setProperty( "IGNITE_GRID_CLIENT_LOG_ENABLED", "false" );
-        System.setProperty( "IGNITE_TROUBLESHOOTING_LOGGER", "false" );
+        System.setProperty( IGNITE_NO_ASCII, "false" );
+        System.setProperty( IGNITE_PERFORMANCE_SUGGESTIONS_DISABLED, "true" );
+        System.setProperty( IGNITE_UPDATE_NOTIFIER, "false" );
+        System.setProperty( IGNITE_TROUBLESHOOTING_LOGGER, "false" );
     }
 
     @SuppressWarnings("unused")

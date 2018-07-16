@@ -12,18 +12,23 @@ import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.xp.cluster.ClusterConfig;
+
 import static org.junit.Assert.*;
 
 public class StaticIpFinderFactoryTest
 {
 
-    private com.enonic.xp.ignite.impl.config.IgniteSettings igniteSettings;
+    private IgniteSettings igniteSettings;
+
+    private ClusterConfig clusterConfig;
 
     @Before
     public void setUp()
         throws Exception
     {
         this.igniteSettings = Mockito.mock( IgniteSettings.class );
+        this.clusterConfig = Mockito.mock( ClusterConfig.class );
     }
 
     @Test
@@ -32,6 +37,7 @@ public class StaticIpFinderFactoryTest
     {
         Mockito.when( this.igniteSettings.discovery_tcp_port() ).thenReturn( 45000 );
         Mockito.when( this.igniteSettings.discovery_tcp_port_range() ).thenReturn( 5 );
+        Mockito.when( this.clusterConfig.networkHost() ).thenReturn( "localhost" );
 
         final TcpDiscoveryVmIpFinder finder = createFinder();
 
@@ -47,6 +53,7 @@ public class StaticIpFinderFactoryTest
     {
         Mockito.when( this.igniteSettings.discovery_tcp_port() ).thenReturn( 45000 );
         Mockito.when( this.igniteSettings.discovery_tcp_port_range() ).thenReturn( 0 );
+        Mockito.when( this.clusterConfig.networkHost() ).thenReturn( "localhost" );
 
         final TcpDiscoveryVmIpFinder finder = createFinder();
 
@@ -55,6 +62,23 @@ public class StaticIpFinderFactoryTest
         assertHost( finder, "192.168.0.1", 45000 );
         assertHost( finder, "localhost", 45000 );
 
+    }
+
+    @Test
+    public void test_discovery_tcp_localAddress()
+        throws Exception
+    {
+        Mockito.when( this.igniteSettings.discovery_tcp_port() ).thenReturn( 45000 );
+        Mockito.when( this.igniteSettings.discovery_tcp_port_range() ).thenReturn( 5 );
+        Mockito.when( this.clusterConfig.networkHost() ).thenReturn( "10.0.0.1" );
+
+        final TcpDiscoveryVmIpFinder finder = createFinder();
+
+        assertEquals( 15, finder.getRegisteredAddresses().size() );
+
+        assertHost( finder, "192.168.0.1", 45000, 45001, 45002, 45003, 45004 );
+        assertHost( finder, "localhost", 45000, 45001, 45002, 45003, 45004 );
+        assertHost( finder, "10.0.0.1", 45000, 45001, 45002, 45003, 45004 );
     }
 
     private void assertHost( final TcpDiscoveryVmIpFinder finder, final String host, final int... ports )
@@ -88,6 +112,7 @@ public class StaticIpFinderFactoryTest
                 }
             } ).
             igniteConfig( igniteSettings ).
+            clusterConfig( clusterConfig ).
             build().
             execute();
     }

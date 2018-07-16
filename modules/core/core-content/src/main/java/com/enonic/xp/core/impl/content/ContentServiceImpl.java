@@ -958,11 +958,17 @@ public class ContentServiceImpl
         final Context context = ContextAccessor.current();
 
         return CompletableFuture.supplyAsync( () -> {
-            // set current context as background thread context
-            final Context futureContext = ContextBuilder.from( context ).build();
-
-            return futureContext.callWith( applyPermissionsCommand::execute );
-
+            try
+            {
+                // set current context as background thread context
+                final Context futureContext = ContextBuilder.from( context ).detachSession().build();
+                return futureContext.callWith( applyPermissionsCommand::execute );
+            }
+            catch ( Throwable t )
+            {
+                LOG.warn( "Error applying permissions", t );
+                return 0;
+            }
         }, applyPermissionsExecutor );
     }
 

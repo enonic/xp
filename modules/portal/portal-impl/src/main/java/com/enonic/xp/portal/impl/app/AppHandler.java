@@ -38,7 +38,7 @@ import com.enonic.xp.web.websocket.WebSocketEndpoint;
 public final class AppHandler
     extends BaseWebHandler
 {
-    public final static Pattern PATTERN = Pattern.compile( "/app/([^/]+)(.+)?" );
+    public final static Pattern PATTERN = Pattern.compile( "/app/([^/]+)(/(?:.)*)?" );
 
     private final static String ROOT_ASSET_PREFIX = "assets/";
 
@@ -62,14 +62,12 @@ public final class AppHandler
     }
 
     @Override
-    protected WebResponse doHandle( final WebRequest req, final WebResponse res, final WebHandlerChain chain )
+    protected WebResponse doHandle( final WebRequest webRequest, final WebResponse res, final WebHandlerChain chain )
         throws Exception
     {
-        final Matcher matcher = PATTERN.matcher( req.getRawPath() );
-        if ( !matcher.matches() )
-        {
-            return chain.handle( req, res );
-        }
+        PortalRequest portalRequest = (PortalRequest) webRequest;
+        final Matcher matcher = PATTERN.matcher( portalRequest.getRawPath() );
+        matcher.matches();
 
         final ApplicationKey applicationKey = ApplicationKey.from( matcher.group( 1 ) );
         final String restPath = matcher.group( 2 );
@@ -77,18 +75,18 @@ public final class AppHandler
         final Trace trace = Tracer.newTrace( "renderApp" );
         if ( trace == null )
         {
-            return handleAppRequest( req, applicationKey, restPath );
+            return handleAppRequest( portalRequest, applicationKey, restPath );
         }
         return Tracer.traceEx( trace, () -> {
-            final WebResponse resp = handleAppRequest( req, applicationKey, restPath );
+            final WebResponse resp = handleAppRequest( portalRequest, applicationKey, restPath );
             addTraceInfo( trace, applicationKey, restPath );
             return resp;
         } );
     }
 
-    private WebResponse handleAppRequest( final WebRequest req, final ApplicationKey applicationKey, final String path )
+    private WebResponse handleAppRequest( final PortalRequest portalRequest, final ApplicationKey applicationKey, final String path )
     {
-        if ( path != null && !"/".equals( path ) && req.getMethod() == HttpMethod.GET )
+        if ( path != null && !"/".equals( path ) && portalRequest.getMethod() == HttpMethod.GET )
         {
             final WebResponse response = serveAsset( applicationKey, path );
             if ( response != null )
@@ -97,7 +95,6 @@ public final class AppHandler
             }
         }
 
-        final PortalRequest portalRequest = createRequest( req, applicationKey );
         return handleRequest( portalRequest );
     }
 
@@ -115,15 +112,6 @@ public final class AppHandler
         {
             return handleError( req, e );
         }
-    }
-
-    private PortalRequest createRequest( final WebRequest req, final ApplicationKey applicationKey )
-    {
-        final PortalRequest portalRequest = ( req instanceof PortalRequest ) ? (PortalRequest) req : new PortalRequest( req );
-        portalRequest.setApplicationKey( applicationKey );
-        portalRequest.setBaseUri( "/app/" + applicationKey.getName() );
-
-        return portalRequest;
     }
 
     private PortalResponse executeController( final PortalRequest req )

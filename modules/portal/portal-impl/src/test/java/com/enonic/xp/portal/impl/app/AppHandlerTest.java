@@ -7,6 +7,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
@@ -19,7 +21,6 @@ import com.enonic.xp.trace.TraceManager;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
-import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.handler.WebHandlerChain;
@@ -37,7 +38,7 @@ public class AppHandlerTest
 
     private ExceptionRenderer exceptionRenderer;
 
-    private WebRequest request;
+    private PortalRequest request;
 
     private WebHandlerChain chain;
 
@@ -54,7 +55,7 @@ public class AppHandlerTest
         this.handler.setExceptionMapper( new ExceptionMapperImpl() );
         this.handler.setExceptionRenderer( this.exceptionRenderer );
 
-        this.request = new WebRequest();
+        this.request = new PortalRequest();
         this.request.setRawRequest( Mockito.mock( HttpServletRequest.class ) );
         this.chain = Mockito.mock( WebHandlerChain.class );
 
@@ -89,17 +90,6 @@ public class AppHandlerTest
         assertEquals( true, this.handler.canHandle( this.request ) );
     }
 
-    @Test
-    public void handle_noMatch()
-        throws Exception
-    {
-        final WebResponse response = WebResponse.create().build();
-        Mockito.when( this.chain.handle( Mockito.any(), Mockito.any() ) ).thenReturn( response );
-
-        this.request.setRawPath( "/portal/a/b" );
-        assertSame( response, this.handler.doHandle( this.request, null, this.chain ) );
-    }
-
     private Resource mockResource( final String uri, final byte[] data )
     {
         final ResourceKey key = ResourceKey.from( uri );
@@ -128,6 +118,7 @@ public class AppHandlerTest
     {
         mockResource( "myapp:/assets/a.txt", null );
 
+        this.request.setApplicationKey( ApplicationKey.from( "myapp" ) );
         this.request.setRawPath( "/app/myapp/a.txt" );
 
         final ControllerScript script = Mockito.mock( ControllerScript.class );
@@ -145,6 +136,7 @@ public class AppHandlerTest
     {
         mockResource( "myapp:/assets/a.txt", null );
 
+        this.request.setApplicationKey( ApplicationKey.from( "myapp" ) );
         this.request.setRawPath( "/app/myapp/a.txt" );
 
         final WebResponse response = this.handler.doHandle( this.request, null, this.chain );

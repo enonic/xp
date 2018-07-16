@@ -95,7 +95,7 @@ public class PageRendererTest
 
         // verify
         final String response =
-            "<html><head><meta charset=\"utf-8\"/><title>My Content</title></head><body data-portal-component-type=\"page\"><!--#COMPONENT fragment--></body></html>";
+            "<!DOCTYPE html><html><head><meta charset=\"utf-8\"/><title>My Content</title></head><body data-portal-component-type=\"page\"><!--#COMPONENT fragment--></body></html>";
         assertEquals( response, portalResponse.getAsString() );
     }
 

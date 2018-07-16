@@ -50,6 +50,7 @@ public final class TraceWebFilter
         return Tracer.traceEx( trace, () -> {
             final WebResponse webResponse = chain.handle( req, res );
             addTraceInfo( trace, webResponse );
+            trace.put( "httpResponse", webResponse );
             return webResponse;
         } );
     }

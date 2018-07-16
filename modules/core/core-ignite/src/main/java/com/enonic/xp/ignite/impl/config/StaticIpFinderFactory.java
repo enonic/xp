@@ -2,11 +2,13 @@ package com.enonic.xp.ignite.impl.config;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.cluster.ClusterConfig;
 import com.enonic.xp.cluster.NodeDiscovery;
 
 class StaticIpFinderFactory
@@ -17,10 +19,13 @@ class StaticIpFinderFactory
 
     private final IgniteSettings igniteConfig;
 
+    private final ClusterConfig clusterConfig;
+
     private StaticIpFinderFactory( final Builder builder )
     {
         discovery = builder.discovery;
         igniteConfig = builder.igniteConfig;
+        clusterConfig = builder.clusterConfig;
     }
 
     TcpDiscoveryVmIpFinder execute()
@@ -29,8 +34,12 @@ class StaticIpFinderFactory
 
         final String portPrefix = getPortPrefix();
 
-        final List<String> hostStrings =
-            this.discovery.get().stream().map( host -> host.getCanonicalHostName() + portPrefix ).collect( Collectors.toList() );
+        final String discoveryTcpLocalAddress = clusterConfig.networkHost();
+        final Stream<String> configLocalAddress = Stream.of( discoveryTcpLocalAddress + portPrefix );
+        final Stream<String> discoveryAddresses = this.discovery.get().stream().map( host -> host.getCanonicalHostName() + portPrefix );
+        final List<String> hostStrings = Stream.concat( discoveryAddresses, configLocalAddress ).
+            distinct().
+            collect( Collectors.toList() );
 
         staticIpFinder.setAddresses( hostStrings );
 
@@ -63,6 +72,8 @@ class StaticIpFinderFactory
 
         private IgniteSettings igniteConfig;
 
+        private ClusterConfig clusterConfig;
+
         private Builder()
         {
         }
@@ -76,6 +87,12 @@ class StaticIpFinderFactory
         Builder igniteConfig( final IgniteSettings val )
         {
             igniteConfig = val;
+            return this;
+        }
+
+        Builder clusterConfig( final ClusterConfig clusterConfig )
+        {
+            this.clusterConfig = clusterConfig;
             return this;
         }
 

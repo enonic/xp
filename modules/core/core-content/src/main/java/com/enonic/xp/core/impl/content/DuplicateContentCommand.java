@@ -3,8 +3,8 @@ package com.enonic.xp.core.impl.content;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.DuplicateContentException;
 import com.enonic.xp.content.DuplicateContentListener;
 import com.enonic.xp.content.DuplicateContentParams;
@@ -68,18 +68,14 @@ final class DuplicateContentCommand
 
         final Content duplicatedContent = translator.fromNode( duplicatedNode, true );
 
-        String contentName = duplicatedContent.getDisplayName();
-        ContentId contentId = duplicatedContent.getId();
-
         ContentIds childrenIds = params.getIncludeChildren() ? getAllChildren( duplicatedContent ) : ContentIds.empty();
 
-        final DuplicateContentsResult result = DuplicateContentsResult.create().
-            setContentName( contentName ).
-            addDuplicated( contentId ).
+        return DuplicateContentsResult.create().
+            setSourceContentPath( ContentPath.from( sourceNode.path().toString() ) ).
+            setContentName( duplicatedContent.getDisplayName() ).
+            addDuplicated( duplicatedContent.getId() ).
             addDuplicated( childrenIds ).
             build();
-
-        return result;
     }
 
     @Override

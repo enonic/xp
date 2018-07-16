@@ -51,6 +51,7 @@ import com.enonic.xp.admin.impl.json.content.ContentPermissionsJson;
 import com.enonic.xp.admin.impl.json.content.ContentSummaryJson;
 import com.enonic.xp.admin.impl.json.content.ContentSummaryListJson;
 import com.enonic.xp.admin.impl.json.content.ContentTreeSelectorListJson;
+import com.enonic.xp.admin.impl.json.content.ContentsExistByPathJson;
 import com.enonic.xp.admin.impl.json.content.ContentsExistJson;
 import com.enonic.xp.admin.impl.json.content.DependenciesAggregationJson;
 import com.enonic.xp.admin.impl.json.content.DependenciesJson;
@@ -68,6 +69,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.BatchContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.CompareContentsJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentIdsJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentIdsPermissionsJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.ContentPathsJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentPublishItemJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentQueryJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentSelectorQueryJson;
@@ -123,6 +125,7 @@ import com.enonic.xp.content.ContentDependencies;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentListMetaData;
+import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
@@ -320,9 +323,7 @@ public final class ContentResource
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public AttachmentJson createAttachment( final MultipartForm form )
     {
-
-        final MultipartItem mediaFile = form.get( "file" );
-        final String attachmentName = mediaFile.getFileName();
+        final String attachmentName = form.getAsString( "name" );
 
         final Content persistedContent = this.doCreateAttachment( attachmentName, form );
 
@@ -400,7 +401,7 @@ public final class ContentResource
         try
         {
             // in case content with same name and path was created in between content updated and renamed
-            final RenameContentParams renameParams = json.getRenameContentParams();
+            final RenameContentParams renameParams = makeRenameParams( json.getRenameContentParams() );
             final Content renamedContent = contentService.rename( renameParams );
             return new ContentJson( renamedContent, contentIconUrlResolver, principalsResolver );
         }
@@ -411,6 +412,16 @@ public final class ContentResource
                                                 "Content could not be renamed to [%s]. A content with that name already exists",
                                                 json.getRenameContentParams().getNewName().toString() );
         }
+    }
+
+    private RenameContentParams makeRenameParams( final RenameContentParams renameParams )
+    {
+        if ( renameParams.getNewName().isUnnamed() && !renameParams.getNewName().hasUniqueness() )
+        {
+            return RenameContentParams.create().newName( ContentName.uniqueUnnamed() ).contentId( renameParams.getContentId() ).build();
+        }
+
+        return renameParams;
     }
 
     @POST
@@ -856,6 +867,19 @@ public final class ContentResource
     }
 
     @POST
+    @Path("contentsExistByPath")
+    public ContentsExistByPathJson contentsExistByPath( final ContentPathsJson params )
+    {
+        final ContentsExistByPathJson result = new ContentsExistByPathJson();
+        for ( final ContentPath contentPath : params.getContentPaths() )
+        {
+            result.add( contentPath, contentService.contentExists( contentPath ) );
+        }
+
+        return result;
+    }
+
+    @POST
     @Path("allowedActions")
     public List<String> getPermittedActions( final ContentIdsPermissionsJson params )
     {
@@ -1120,12 +1144,17 @@ public final class ContentResource
             build().
             findOrdered();
 
-        final List<ContentTreeSelectorJson> resultItems = contentService.getByIds( new GetContentByIdsParams( findLayerContentsResult.getContentIds() ) ).
-            stream().
-            map( content -> new ContentTreeSelectorJson( new ContentJson( content, contentIconUrlResolver, principalsResolver ),
-                                                         targetContentPaths.contains( content.getPath().asRelative() ),
-                                                         targetContentPaths.stream().anyMatch( path -> path.isChildOf( content.getPath() )) )).
-            collect( Collectors.toList() );
+        final List<ContentPath> relativeTargetContentPaths =
+            targetContentPaths.stream().map( ContentPath::asRelative ).collect( Collectors.toList() );
+
+        final List<ContentTreeSelectorJson> resultItems =
+            contentService.getByIds( new GetContentByIdsParams( findLayerContentsResult.getContentIds() ) ).
+                stream().
+                map( content -> new ContentTreeSelectorJson( new ContentJson( content, contentIconUrlResolver, principalsResolver ),
+                                                             relativeTargetContentPaths.contains( content.getPath().asRelative() ),
+                                                             relativeTargetContentPaths.stream().anyMatch(
+                                                                 path -> path.isChildOf( content.getPath().asRelative() ) ) ) ).
+                collect( Collectors.toList() );
 
         final ContentListMetaData metaData = ContentListMetaData.create().hits( findLayerContentsResult.getHits() ).totalHits(
             findLayerContentsResult.getTotalHits() ).build();

@@ -52,6 +52,7 @@ public class PublishRunnableTaskTest
         final PublishContentResult result = PublishContentResult.create().
             setPushed( ContentIds.from( contents.get( 0 ).getId() ) ).
             setDeleted( ContentIds.from( contents.get( 1 ).getId() ) ).
+            setDeletedPath( contents.get( 1 ).getPath() ).
             setFailed( ContentIds.from( contents.get( 2 ).getId() ) ).
             build();
 
@@ -75,7 +76,7 @@ public class PublishRunnableTaskTest
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
 
         Assert.assertEquals(
-            "{\"state\":\"WARNING\",\"message\":\"Published 2 items ( Deleted: \\\"content2\\\" ). Item \\\"content3\\\" could not be published.\"}",
+            "{\"state\":\"WARNING\",\"message\":\"2 items are published ( \\\"content2\\\" deleted ). Item \\\"content3\\\" could not be published.\"}",
             resultMessage );
     }
 
@@ -101,7 +102,7 @@ public class PublishRunnableTaskTest
             setPushed( ContentIds.from( contents.get( 0 ).getId() ) ).
             build();
 
-        Assert.assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"Item \\\"content1\\\" was published.\"}", runTask( result ) );
+        Assert.assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"Item \\\"content1\\\" is published.\"}", runTask( result ) );
     }
 
     @Test
@@ -110,9 +111,10 @@ public class PublishRunnableTaskTest
     {
         final PublishContentResult result = PublishContentResult.create().
             setDeleted( ContentIds.from( contents.get( 0 ).getId() ) ).
+            setDeletedPath( contents.get( 0 ).getPath() ).
             build();
 
-        Assert.assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"Item \\\"content1\\\" was deleted.\"}", runTask( result ) );
+        Assert.assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"Item \\\"content1\\\" is deleted.\"}", runTask( result ) );
     }
 
     @Test

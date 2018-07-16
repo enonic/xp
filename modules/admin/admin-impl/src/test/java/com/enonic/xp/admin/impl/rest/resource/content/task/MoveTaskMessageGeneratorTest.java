@@ -28,7 +28,7 @@ public class MoveTaskMessageGeneratorTest
 
         final String message = generator.generate( result );
 
-        assertEquals( "Item \"moved-1\" was moved.", message );
+        assertEquals( "Item \"moved-1\" is moved.", message );
     }
 
     @Test

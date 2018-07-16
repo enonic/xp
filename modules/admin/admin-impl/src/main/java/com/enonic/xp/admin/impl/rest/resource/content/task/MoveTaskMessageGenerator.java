@@ -82,7 +82,7 @@ class MoveTaskMessageGenerator
         }
         else if ( moved != null && moved.size() == 1 )
         {
-            builder.append( String.format( "Item \"%s\" was moved.", moved.get( 0 ).getName() ) );
+            builder.append( String.format( "Item \"%s\" is moved.", moved.get( 0 ).getName() ) );
         }
     }
 

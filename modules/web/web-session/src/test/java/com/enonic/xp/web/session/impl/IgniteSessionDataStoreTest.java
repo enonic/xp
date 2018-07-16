@@ -6,6 +6,8 @@ import java.util.Set;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.configuration.CacheConfiguration;
+import org.apache.ignite.internal.util.future.IgniteFinishedFutureImpl;
+import org.apache.ignite.lang.IgniteFuture;
 import org.eclipse.jetty.server.session.SessionContext;
 import org.eclipse.jetty.server.session.SessionData;
 import org.eclipse.jetty.server.session.UnreadableSessionDataException;
@@ -30,7 +32,7 @@ public class IgniteSessionDataStoreTest
 
     private IgniteSessionDataStore store;
 
-    private IgniteCache<String, SessionData> cache;
+    private IgniteCache<String, SessionDataWrapper> cache;
 
     private Ignite ignite;
 
@@ -46,7 +48,7 @@ public class IgniteSessionDataStoreTest
         mockContextRun( ctx );
         store.initialize( ctx );
         ignite = Mockito.mock( Ignite.class );
-        cache = (IgniteCache<String, SessionData>) Mockito.mock( IgniteCache.class );
+        cache = (IgniteCache<String, SessionDataWrapper>) Mockito.mock( IgniteCache.class );
         when( ignite.getOrCreateCache( any( CacheConfiguration.class ) ) ).thenReturn( cache );
         store.addIgnite( ignite );
         store.activate( getWebSessionConfig() );
@@ -57,7 +59,7 @@ public class IgniteSessionDataStoreTest
         throws Exception
     {
         final SessionData sessionData = new SessionData( "123", null, null, 0, 0, 0, 0 );
-        when( cache.get( anyString() ) ).thenReturn( sessionData );
+        when( cache.get( anyString() ) ).thenReturn( new SessionDataWrapper( sessionData ) );
 
         Assert.assertEquals( sessionData, store.load( "123" ) );
     }
@@ -85,7 +87,8 @@ public class IgniteSessionDataStoreTest
     public void delete()
         throws Exception
     {
-        when( cache.remove( anyString() ) ).thenReturn( true );
+        final IgniteFuture<Boolean> removeFuture = new IgniteFinishedFutureImpl<>( true );
+        when( cache.removeAsync( anyString() ) ).thenReturn( removeFuture );
         store.activate( getWebSessionConfig() );
 
         final boolean deleted = store.delete( "123" );
@@ -97,12 +100,13 @@ public class IgniteSessionDataStoreTest
         throws Exception
     {
         final SessionData sessionData = new SessionData( "123", null, null, 0, 0, 0, 0 );
-        when( cache.remove( anyString() ) ).thenReturn( true );
+        final IgniteFuture<Void> putFuture = new IgniteFinishedFutureImpl<>();
+        when( cache.putAsync( eq( "cpath_vhost_123" ), any( SessionDataWrapper.class ) ) ).thenReturn( putFuture );
         store.activate( getWebSessionConfig() );
 
         store.doStore( "123", sessionData, 0 );
 
-        verify( cache, Mockito.times( 1 ) ).put( eq( "cpath_vhost_123" ), any( SessionData.class ) );
+        verify( cache, Mockito.times( 1 ) ).putAsync( eq( "cpath_vhost_123" ), any( SessionDataWrapper.class ) );
     }
 
     @Test
@@ -110,7 +114,7 @@ public class IgniteSessionDataStoreTest
         throws Exception
     {
         final SessionData sessionData = new SessionData( "123", null, null, 0, 0, 0, 0 );
-        when( cache.get( anyString() ) ).thenReturn( sessionData );
+        when( cache.get( anyString() ) ).thenReturn( new SessionDataWrapper( sessionData ) );
 
         final boolean exists = store.exists( "123" );
         assertTrue( exists );
@@ -130,7 +134,7 @@ public class IgniteSessionDataStoreTest
     {
         final SessionData sessionData = new SessionData( "123", null, null, 0, 0, 0, 0 );
         sessionData.setExpiry( System.currentTimeMillis() + 1000 );
-        when( cache.get( anyString() ) ).thenReturn( sessionData );
+        when( cache.get( anyString() ) ).thenReturn( new SessionDataWrapper( sessionData ) );
 
         final boolean exists = store.exists( "123" );
         assertTrue( exists );
@@ -150,12 +154,12 @@ public class IgniteSessionDataStoreTest
         final SessionData sessionData = new SessionData( "123", "cpath", "vhost", 0, 0, 0, 0 );
         sessionData.setExpiry( System.currentTimeMillis() - 10000 );
         sessionData.setLastNode( NODE );
-        when( cache.get( eq( getCacheKey( "123" ) ) ) ).thenReturn( sessionData );
+        when( cache.get( eq( getCacheKey( "123" ) ) ) ).thenReturn( new SessionDataWrapper( sessionData ) );
 
         final SessionData sessionData2 = new SessionData( "456", "cpath", "vhost", 0, 0, 0, 0 );
         sessionData2.setExpiry( System.currentTimeMillis() - 1000000000 );
         sessionData2.setLastNode( "OTHER" );
-        when( cache.get( eq( getCacheKey( "456" ) ) ) ).thenReturn( sessionData2 );
+        when( cache.get( eq( getCacheKey( "456" ) ) ) ).thenReturn( new SessionDataWrapper( sessionData2 ) );
 
         final Set<String> expiredSessionIds = store.doGetExpired( Sets.newHashSet( "123", "456", "789" ) );
         assertEquals( Sets.newHashSet( "123", "456", "789" ), expiredSessionIds );
@@ -179,8 +183,11 @@ public class IgniteSessionDataStoreTest
         throws Exception
     {
         final SessionData sessionData = new SessionData( "123", null, null, 0, 0, 0, 0 );
-        when( cache.get( anyString() ) ).thenReturn( sessionData );
-        when( cache.remove( anyString() ) ).thenReturn( true );
+        when( cache.get( anyString() ) ).thenReturn( new SessionDataWrapper( sessionData ) );
+        final IgniteFuture<Boolean> removeFuture = new IgniteFinishedFutureImpl<>( true );
+        when( cache.removeAsync( anyString() ) ).thenReturn( removeFuture );
+        final IgniteFuture<Void> putFuture = new IgniteFinishedFutureImpl<>();
+        when( cache.putAsync( anyString(), any( SessionDataWrapper.class ) ) ).thenReturn( putFuture );
 
         store.removeIgnite( ignite );
         Assert.assertNull( store.load( "123" ) );
@@ -193,7 +200,7 @@ public class IgniteSessionDataStoreTest
         Assert.assertEquals( sessionData, store.load( "123" ) );
         Assert.assertTrue( store.delete( "123" ) );
         store.store( "123", sessionData );
-        verify( cache, Mockito.times( 1 ) ).put( eq( "cpath_vhost_123" ), any( SessionData.class ) );
+        verify( cache, Mockito.times( 1 ) ).putAsync( eq( "cpath_vhost_123" ), any( SessionDataWrapper.class ) );
     }
 
     private void mockContextRun( final SessionContext context )
@@ -219,12 +226,6 @@ public class IgniteSessionDataStoreTest
             public Class<? extends Annotation> annotationType()
             {
                 return null;
-            }
-
-            @Override
-            public boolean transactional()
-            {
-                return false;
             }
 
             @Override
@@ -261,6 +262,17 @@ public class IgniteSessionDataStoreTest
             public boolean cache_stats_enabled()
             {
                 return false;
+            }
+
+            @Override
+            public int session_save_period()
+            {
+                return 10;
+            }
+            
+            public int write_timeout()
+            {
+                return 1000;
             }
         };
 

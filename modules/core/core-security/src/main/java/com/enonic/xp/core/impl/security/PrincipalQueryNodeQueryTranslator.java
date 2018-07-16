@@ -20,7 +20,7 @@ import com.enonic.xp.security.UserStoreKeys;
 
 import static com.enonic.xp.core.impl.security.PrincipalPropertyNames.DISPLAY_NAME_KEY;
 import static com.enonic.xp.core.impl.security.PrincipalPropertyNames.EMAIL_KEY;
-import static com.enonic.xp.core.impl.security.PrincipalPropertyNames.LOGIN_KEY;
+import static com.enonic.xp.core.impl.security.PrincipalPropertyNames.NAME_KEY;
 import static com.enonic.xp.core.impl.security.PrincipalPropertyNames.PRINCIPAL_TYPE_KEY;
 import static com.enonic.xp.core.impl.security.PrincipalPropertyNames.USER_STORE_KEY;
 import static java.util.stream.Collectors.toList;
@@ -71,7 +71,7 @@ final class PrincipalQueryNodeQueryTranslator
         if ( StringUtils.isNotBlank( name ) )
         {
             nodeQueryBuilder.addQueryFilter( ValueFilter.create().
-                fieldName( LOGIN_KEY ).
+                fieldName( NAME_KEY ).
                 addValues( name ).
                 build() );
         }
