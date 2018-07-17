@@ -9,18 +9,11 @@ import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.lib.content.mapper.ContentVersionsResultMapper;
 
 public class FindVersionsHandler
-    extends BaseContextHandler
+    extends BaseVersionHandler
 {
-    private String key;
-
     private Integer from;
 
     private Integer size;
-
-    public void setKey( final String key )
-    {
-        this.key = key;
-    }
 
     public void setStart( final Integer start )
     {
@@ -59,25 +52,5 @@ public class FindVersionsHandler
         }
 
         return new ContentVersionsResultMapper( result );
-    }
-
-    private ContentId getContentId()
-    {
-        if ( this.key.startsWith( "/" ) )
-        {
-            try
-            {
-                return this.contentService.getByPath( ContentPath.from( key ) ).
-                    getId();
-            }
-            catch ( final ContentNotFoundException e )
-            {
-                return null;
-            }
-        }
-        else
-        {
-            return ContentId.from( key );
-        }
     }
 }
