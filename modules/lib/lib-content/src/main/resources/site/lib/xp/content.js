@@ -486,9 +486,9 @@ exports.getTypes = function () {
 };
 
 /**
- * Gets versions of a content.
+ * Finds versions of a content.
  *
- * @example-ref examples/content/getVersions.js
+ * @example-ref examples/content/findVersions.js
  *
  * @param {object} params JSON parameters.
  * @param {string} params.key Path or id of the content.
@@ -496,8 +496,8 @@ exports.getTypes = function () {
  * @param {number} [params.count=10] Number of content versions to fetch.
  * @returns {object} Content versions result.
  */
-exports.getVersions = function (params) {
-    var bean = __.newBean('com.enonic.xp.lib.content.GetVersionsHandler');
+exports.findVersions = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.content.FindVersionsHandler');
     bean.key = required(params, 'key');
     bean.start = nullOrValue(params.start);
     bean.count = nullOrValue(params.count);

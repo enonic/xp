@@ -22,7 +22,7 @@ public final class ContentVersionMapper
 
     private void serialize( final MapGenerator gen, final ContentVersion value )
     {
-        gen.value( "id", value.getId() );
+        gen.value( "versionId", value.getId() );
         gen.value( "displayName", value.getDisplayName() );
         gen.value( "modifiedTime", value.getModified() );
         gen.value( "modifier", value.getModifier() );

@@ -14,20 +14,20 @@ import com.enonic.xp.content.ContentVersions;
 import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.security.PrincipalKey;
 
-public class GetVersionsHandlerTest
+public class FindVersionsHandlerTest
     extends BaseContentHandlerTest
 {
     @Test
     public void testExample()
     {
         final ContentVersion newContentVersion = ContentVersion.create().
-            id( ContentVersionId.from( "newVersion" ) ).
+            id( ContentVersionId.from( "1b5c7c8dc0db8a99287b288d965ac4002b22a560" ) ).
             displayName( "My content" ).
             modified( Instant.ofEpochSecond( 1529280000 ) ).
             modifier( PrincipalKey.ofSuperUser() ).
             build();
         final ContentVersion oldContentVersion = ContentVersion.create().
-            id( ContentVersionId.from( "olderVersion" ) ).
+            id( ContentVersionId.from( "90398ddd1b22db08d6a0f9f0d1629a5f4c4fe41d" ) ).
             displayName( "My content" ).
             modified( Instant.ofEpochSecond( 1529020800 ) ).
             modifier( PrincipalKey.ofSuperUser() ).
@@ -52,6 +52,6 @@ public class GetVersionsHandlerTest
             build();
         Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
 
-        runScript( "/site/lib/xp/examples/content/getVersions.js" );
+        runScript( "/site/lib/xp/examples/content/findVersions.js" );
     }
 }

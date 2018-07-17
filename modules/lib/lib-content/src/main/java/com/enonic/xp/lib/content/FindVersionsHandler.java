@@ -8,7 +8,7 @@ import com.enonic.xp.content.FindContentVersionsParams;
 import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.lib.content.mapper.ContentVersionsResultMapper;
 
-public class GetVersionsHandler
+public class FindVersionsHandler
     extends BaseContextHandler
 {
     private String key;
