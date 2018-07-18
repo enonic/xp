@@ -7,7 +7,7 @@ var result = contentLib.findVersions({
     key: '/path/to/mycontent'
 });
 
-log.info('Content versions result: ' + result);
+log.info('Content versions result: ' + JSON.stringify(result, null, 2));
 // END
 
 // BEGIN

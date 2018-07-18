@@ -8,7 +8,7 @@ var result = contentLib.getActiveVersions({
     branches: ['draft', 'master']
 });
 
-log.info('Active content versions result: ' + result);
+log.info('Active content versions result: ' + JSON.stringify(result, null, 2));
 // END
 
 // BEGIN

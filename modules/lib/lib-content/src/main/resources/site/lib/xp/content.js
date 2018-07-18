@@ -521,4 +521,21 @@ exports.getActiveVersions = function (params) {
     return __.toNativeObject(bean.execute());
 };
 
+/**
+ * Set the active version for a content.
+ *
+ * @example-ref examples/content/setActiveVersion.js
+ *
+ * @param {object} params JSON parameters.
+ * @param {string} params.key Path or id of the content.
+ * @param {string} params.versionId Version to set as active.
+ * @returns {boolean} True if successful, false otherwise.
+ */
+exports.setActiveVersion = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.content.SetActiveVersionHandler');
+    bean.key = required(params, 'key');
+    bean.versionId = nullOrValue(params.versionId);
+    return __.toNativeObject(bean.execute());
+};
+
 
