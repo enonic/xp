@@ -11,7 +11,7 @@ var result = contentLib.setActiveVersion({
 if (result) {
     log.info('Version set');
 } else {
-    log.info('Content not found');
+    log.info('Content or version not found');
 }
 // END
 
