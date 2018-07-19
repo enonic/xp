@@ -3,6 +3,7 @@ package com.enonic.xp.admin.impl.rest.resource.security;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -37,6 +38,7 @@ import com.enonic.xp.admin.impl.rest.resource.security.json.DeleteUserStoresResu
 import com.enonic.xp.admin.impl.rest.resource.security.json.EmailAvailabilityJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.FetchPrincipalsByKeysJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.FindPrincipalsResultJson;
+import com.enonic.xp.admin.impl.rest.resource.security.json.FindPrincipalsWithRolesResultJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.GroupJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.PrincipalJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.RoleJson;
@@ -208,14 +210,8 @@ public final class SecurityResource
         return resultsJson;
     }
 
-    @GET
-    @Path("principals")
-    public FindPrincipalsResultJson findPrincipals( @QueryParam("types") final String types, @QueryParam("roles") final String roles,
-                                                    @QueryParam("query") final String query,
-                                                    @QueryParam("userStoreKey") final String storeKey,
-                                                    @QueryParam("from") final Integer from, @QueryParam("size") final Integer size )
+    private List<PrincipalType> parsePrincipalTypes( final String types )
     {
-
         final List<PrincipalType> principalTypes = new ArrayList<>();
         if ( StringUtils.isNotBlank( types ) )
         {
@@ -232,6 +228,17 @@ public final class SecurityResource
                 }
             }
         }
+        return principalTypes;
+    }
+
+    @GET
+    @Path("principals")
+    public FindPrincipalsResultJson findPrincipals( @QueryParam("types") final String types, @QueryParam("query") final String query,
+                                                    @QueryParam("userStoreKey") final String storeKey,
+                                                    @QueryParam("from") final Integer from, @QueryParam("size") final Integer size )
+    {
+
+        final List<PrincipalType> principalTypes = parsePrincipalTypes( types );
 
         final PrincipalQuery.Builder principalQuery = PrincipalQuery.create().
             getAll().
@@ -254,22 +261,84 @@ public final class SecurityResource
         }
 
         final PrincipalQueryResult result = securityService.query( principalQuery.build() );
+        return new FindPrincipalsResultJson( result.getPrincipals(), result.getTotalSize() );
+    }
 
-        final Principals resultingPrincipals;
-        if ( roles != null )
+    @GET
+    @Path("principalsWithRoles")
+    public FindPrincipalsWithRolesResultJson findPrincipals( @QueryParam("types") final String types,
+                                                             @QueryParam("roles") final String roles,
+                                                             @QueryParam("query") final String query,
+                                                             @QueryParam("userStoreKey") final String storeKey,
+                                                             @QueryParam("from") final Integer from,
+                                                             @QueryParam("size") final Integer size )
+    {
+        final List<PrincipalType> principalTypes = parsePrincipalTypes( types );
+
+        final PrincipalQuery.Builder principalQuery = PrincipalQuery.create().
+            getAll().
+            includeTypes( principalTypes ).
+            searchText( query );
+
+        if ( StringUtils.isNotEmpty( storeKey ) )
         {
-            final PrincipalKeys roleKeys = PrincipalKeys.from( roles.split( "," ) );
-            Predicate<? super Principal> rolesFilter =
-                p -> securityService.getAllMemberships( p.getKey() ).stream().anyMatch( roleKeys::contains );
-
-            resultingPrincipals = Principals.from( result.getPrincipals().stream().filter( rolesFilter ).collect( Collectors.toList() ) );
+            principalQuery.userStore( UserStoreKey.from( storeKey ) );
         }
-        else
+
+        FetchPrincipalsWithRolesResult fwResult =
+            fetchPrincipalsWithRoles( principalQuery, roles, from == null ? 0 : from, size == null ? PrincipalQuery.DEFAULT_SIZE : size );
+
+        return new FindPrincipalsWithRolesResultJson( Principals.from( fwResult.getPrincipals() ), fwResult.getUnfilteredSize(),
+                                                      fwResult.getUnfilteredTotal() );
+    }
+
+    private FetchPrincipalsWithRolesResult fetchPrincipalsWithRoles( PrincipalQuery.Builder principalQuery, String roles, int from,
+                                                                     int size )
+    {
+        List<Principal> resultingPrincipals = Lists.arrayList();
+        int totalCount;
+        final AtomicInteger unfilteredCount = new AtomicInteger( 0 );
+        final AtomicInteger filteredCount = new AtomicInteger( 0 );
+        final PrincipalKeys roleKeys = roles != null ? PrincipalKeys.from( roles.split( "," ) ) : null;
+
+        do
         {
-            resultingPrincipals = Principals.from( result.getPrincipals() );
-        }
+            unfilteredCount.set( from );
+            principalQuery.from( from );
+            principalQuery.size( size );
+            final PrincipalQueryResult pqResult = securityService.query( principalQuery.build() );
+            totalCount = pqResult.getTotalSize();
 
-        return new FindPrincipalsResultJson( resultingPrincipals, result.getPrincipals().getSize(), result.getTotalSize() );
+            if ( roleKeys != null )
+            {
+                Predicate<? super Principal> rolesFilter = p -> {
+                    if ( filteredCount.get() < size )
+                    {
+                        unfilteredCount.incrementAndGet();
+                        final boolean satisfies = securityService.getAllMemberships( p.getKey() ).stream().anyMatch( roleKeys::contains );
+                        if ( satisfies )
+                        {
+                            filteredCount.incrementAndGet();
+                        }
+                        return satisfies;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                };
+                resultingPrincipals.addAll( pqResult.getPrincipals().stream().filter( rolesFilter ).collect( Collectors.toList() ) );
+            }
+            else
+            {
+                unfilteredCount.addAndGet( pqResult.getPrincipals().getSize() );
+                resultingPrincipals.addAll( pqResult.getPrincipals().getList() );
+            }
+            from += size;
+        }
+        while ( filteredCount.get() < size && unfilteredCount.get() < totalCount );
+
+        return new FetchPrincipalsWithRolesResult( resultingPrincipals, unfilteredCount.get(), totalCount );
     }
 
     private PrincipalJson principalToJson( final Principal principal, final Boolean resolveMemberships )
@@ -589,5 +658,36 @@ public final class SecurityResource
     public void setAuthControllerService( final AuthControllerService authControllerService )
     {
         this.authControllerService = authControllerService;
+    }
+
+    private class FetchPrincipalsWithRolesResult
+    {
+        private int unfilteredSize;
+
+        private int unfilteredTotal;
+
+        private List<Principal> principals;
+
+        FetchPrincipalsWithRolesResult( final List<Principal> principals, final int unfilteredSize, final int unfilteredTotal )
+        {
+            this.unfilteredSize = unfilteredSize;
+            this.principals = principals;
+            this.unfilteredTotal = unfilteredTotal;
+        }
+
+        public int getUnfilteredSize()
+        {
+            return unfilteredSize;
+        }
+
+        public List<Principal> getPrincipals()
+        {
+            return principals;
+        }
+
+        public int getUnfilteredTotal()
+        {
+            return unfilteredTotal;
+        }
     }
 }
