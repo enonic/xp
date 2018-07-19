@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
@@ -292,20 +291,21 @@ public final class SecurityResource
                                                       fwResult.getUnfilteredTotal() );
     }
 
-    private FetchPrincipalsWithRolesResult fetchPrincipalsWithRoles( PrincipalQuery.Builder principalQuery, String roles, int from,
-                                                                     int size )
+    private FetchPrincipalsWithRolesResult fetchPrincipalsWithRoles( final PrincipalQuery.Builder principalQuery, final String roles,
+                                                                     final int from, final int size )
     {
         List<Principal> resultingPrincipals = Lists.arrayList();
         int totalCount;
+        int fromTemp = from;
         final AtomicInteger unfilteredCount = new AtomicInteger( 0 );
         final AtomicInteger filteredCount = new AtomicInteger( 0 );
         final PrincipalKeys roleKeys = roles != null ? PrincipalKeys.from( roles.split( "," ) ) : null;
+        principalQuery.size( size );
 
         do
         {
             unfilteredCount.set( from );
-            principalQuery.from( from );
-            principalQuery.size( size );
+            principalQuery.from( fromTemp );
             final PrincipalQueryResult pqResult = securityService.query( principalQuery.build() );
             totalCount = pqResult.getTotalSize();
 
@@ -327,14 +327,14 @@ public final class SecurityResource
                         return false;
                     }
                 };
-                resultingPrincipals.addAll( pqResult.getPrincipals().stream().filter( rolesFilter ).collect( Collectors.toList() ) );
+                resultingPrincipals.addAll( pqResult.getPrincipals().stream().filter( rolesFilter ).collect( toList() ) );
             }
             else
             {
                 unfilteredCount.addAndGet( pqResult.getPrincipals().getSize() );
                 resultingPrincipals.addAll( pqResult.getPrincipals().getList() );
             }
-            from += size;
+            fromTemp += size;
         }
         while ( filteredCount.get() < size && unfilteredCount.get() < totalCount );
 
@@ -389,13 +389,12 @@ public final class SecurityResource
     @Path("principals/resolveByKeys")
     public List<PrincipalJson> getPrincipalsByKeys( final FetchPrincipalsByKeysJson json )
     {
-        final PrincipalKeys principalKeys =
-            PrincipalKeys.from( json.getKeys().stream().map( key -> PrincipalKey.from( key ) ).collect( Collectors.toList() ) );
+        final PrincipalKeys principalKeys = PrincipalKeys.from( json.getKeys().stream().map( PrincipalKey::from ).collect( toList() ) );
 
         final Principals principalsResult = securityService.getPrincipals( principalKeys );
 
         return principalsResult.stream().map( principal -> this.principalToJson( principal, json.getResolveMemberships() ) ).collect(
-            Collectors.toList() );
+            toList() );
     }
 
     @GET
