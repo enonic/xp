@@ -17,6 +17,8 @@ public final class GetMembershipsHandler
 {
     private PrincipalKey principalKey;
 
+    private boolean transitive;
+
     private Supplier<SecurityService> securityService;
 
     public void setPrincipalKey( final String value )
@@ -24,9 +26,22 @@ public final class GetMembershipsHandler
         this.principalKey = value == null ? null : PrincipalKey.from( value );
     }
 
+    public void setTransitive( final Boolean transitive )
+    {
+        this.transitive = transitive != null && transitive;
+    }
+
     public List<PrincipalMapper> getMemberships()
     {
-        final PrincipalKeys principalKeys = this.securityService.get().getMemberships( this.principalKey );
+        PrincipalKeys principalKeys;
+        if ( transitive )
+        {
+            principalKeys = this.securityService.get().getAllMemberships( this.principalKey );
+        }
+        else
+        {
+            principalKeys = this.securityService.get().getMemberships( this.principalKey );
+        }
         final Principals principals = this.securityService.get().getPrincipals( principalKeys );
         return principals.stream().map( PrincipalMapper::new ).collect( Collectors.toList() );
     }
