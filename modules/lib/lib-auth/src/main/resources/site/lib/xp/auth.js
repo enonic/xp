@@ -156,12 +156,14 @@ exports.getPrincipal = function (principalKey) {
  * @example-ref examples/auth/getMemberships.js
  *
  * @param {string} principalKey Principal key to retrieve memberships for.
+ * @param {boolean} [transitive=false] Retrieve transitive memberships.
  * @returns {object[]} Returns the list of principals.
  */
-exports.getMemberships = function (principalKey) {
+exports.getMemberships = function (principalKey, transitive) {
     var bean = __.newBean('com.enonic.xp.lib.auth.GetMembershipsHandler');
 
     bean.principalKey = __.nullOrValue(principalKey);
+    bean.transitive = transitive;
 
     return __.toNativeObject(bean.getMemberships());
 };
