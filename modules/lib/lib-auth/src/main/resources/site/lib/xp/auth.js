@@ -156,7 +156,7 @@ exports.getPrincipal = function (principalKey) {
  * @example-ref examples/auth/getMemberships.js
  *
  * @param {string} principalKey Principal key to retrieve memberships for.
- * @param transitive Flag to load transitive memberships as well
+ * @param {boolean} [transitive=false] Retrieve transitive memberships.
  * @returns {object[]} Returns the list of principals.
  */
 exports.getMemberships = function (principalKey, transitive) {

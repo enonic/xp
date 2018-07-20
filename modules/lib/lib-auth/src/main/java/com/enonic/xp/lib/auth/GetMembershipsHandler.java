@@ -28,22 +28,27 @@ public final class GetMembershipsHandler
 
     public void setTransitive( final Boolean transitive )
     {
-        this.transitive = transitive != null && transitive;
+        this.transitive = Boolean.TRUE.equals( transitive);
     }
 
     public List<PrincipalMapper> getMemberships()
     {
-        PrincipalKeys principalKeys;
+        final PrincipalKeys principalKeys;
         if ( transitive )
         {
-            principalKeys = this.securityService.get().getAllMemberships( this.principalKey );
+            principalKeys = this.securityService.get().
+                getAllMemberships( this.principalKey );
         }
         else
         {
-            principalKeys = this.securityService.get().getMemberships( this.principalKey );
+            principalKeys = this.securityService.get().
+                getMemberships( this.principalKey );
         }
-        final Principals principals = this.securityService.get().getPrincipals( principalKeys );
-        return principals.stream().map( PrincipalMapper::new ).collect( Collectors.toList() );
+        final Principals principals = this.securityService.get().
+            getPrincipals( principalKeys );
+        return principals.stream().
+            map( PrincipalMapper::new ).
+            collect( Collectors.toList() );
     }
 
     @Override
