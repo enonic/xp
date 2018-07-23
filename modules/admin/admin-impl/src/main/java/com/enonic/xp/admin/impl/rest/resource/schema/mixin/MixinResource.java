@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -248,7 +249,8 @@ public final class MixinResource
                 nearestSite.getSiteConfigs().stream().map( SiteConfig::getApplicationKey ).collect( toList() );
 
             final List<SiteDescriptor> siteDescriptors =
-                applicationKeys.stream().map( applicationKey -> siteService.getDescriptor( applicationKey ) ).collect( toList() );
+                applicationKeys.stream().map( applicationKey -> siteService.getDescriptor( applicationKey ) ).filter(
+                    Objects::nonNull ).collect( toList() );
 
             siteDescriptors.forEach( siteDescriptor -> applicationXDataBuilder.addAll(
                 XDatas.from( this.filterXDatasByContentType( siteDescriptor.getMetaSteps(), content.getType() ) ) ) );
