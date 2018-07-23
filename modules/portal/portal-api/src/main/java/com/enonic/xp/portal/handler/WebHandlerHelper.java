@@ -23,7 +23,8 @@ public class WebHandlerHelper
 
     private static boolean hasAdminRight( final WebRequest webRequest )
     {
-        return webRequest.getRawRequest().isUserInRole( RoleKeys.ADMIN_LOGIN_ID );
+        return webRequest.getRawRequest().isUserInRole( RoleKeys.ADMIN_LOGIN_ID ) ||
+            webRequest.getRawRequest().isUserInRole( RoleKeys.ADMIN_ID );
     }
 
 }

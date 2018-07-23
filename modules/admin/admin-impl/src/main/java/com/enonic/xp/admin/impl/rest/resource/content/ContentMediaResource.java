@@ -35,7 +35,7 @@ import static org.apache.commons.lang.StringUtils.isNotEmpty;
 @SuppressWarnings("UnusedDeclaration")
 @Path(ResourceConstants.REST_ROOT + "content/media")
 @Produces("application/octet-stream")
-@RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
+@RolesAllowed({RoleKeys.ADMIN_LOGIN_ID, RoleKeys.ADMIN_ID})
 @Component(immediate = true, property = "group=admin")
 public final class ContentMediaResource
     implements JaxRsComponent

@@ -247,7 +247,6 @@ final class SecurityInitializer
         addUser( createSuperUser );
 
         addMember( RoleKeys.ADMIN, createSuperUser.getKey() );
-        addMember( RoleKeys.ADMIN_LOGIN, createSuperUser.getKey() );
     }
 
     private void addUser( final CreateUserParams createUser )
