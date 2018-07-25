@@ -45,6 +45,16 @@ public class NodeHandler
     }
 
     @SuppressWarnings("unused")
+    public Object setChildOrder( final String key, final String childOrder )
+    {
+        return execute( SetChildOrderHandler.create().
+            nodeService( this.nodeService ).
+            key( NodeKey.from( key ) ).
+            childOrder( ChildOrder.from( childOrder ) ).
+            build() );
+    }
+
+    @SuppressWarnings("unused")
     public Object get( final String[] keys )
     {
         return execute( GetNodeHandler.create().
