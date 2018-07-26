@@ -68,7 +68,10 @@ public class InputValidatorTest
         data.addLocalDate( "date", LocalDate.parse( "2015-01-15" ) );
         data.addLocalTime( "time", LocalTime.parse( "10:00:32.123" ) );
         data.addGeoPoint( "geoPoint", GeoPoint.from( "-45,34" ) );
-        data.addString( "htmlArea", "<stuff>staff</stuff>" );
+
+        final PropertySet htmlAreaPropertySet = new PropertySet();
+        htmlAreaPropertySet.addString( "value", "<stuff>staff</stuff>" );
+        data.addSet( "htmlArea", htmlAreaPropertySet );
 
         //Validates the correct data
         inputValidator.validate( data );

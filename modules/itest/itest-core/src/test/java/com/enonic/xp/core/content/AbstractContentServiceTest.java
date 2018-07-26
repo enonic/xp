@@ -435,11 +435,14 @@ public class AbstractContentServiceTest
         data.addLocalDate( "date", LocalDate.of( 2015, 03, 13 ) );
         data.addLocalTime( "time", LocalTime.NOON );
         data.addGeoPoint( "geoPoint", GeoPoint.from( "59.9127300 ,10.7460900" ) );
-        data.addString( "htmlArea", "<p>paragraph</p>" );
         data.addString( "xml", "<elem>paragraph</elem>" );
         data.addLocalDateTime( "localDateTime", LocalDateTime.of( 2015, 03, 13, 10, 00, 0 ) );
         data.addInstant( "dateTime", Instant.now() );
         data.addSet( "set", propertySet );
+
+        final PropertySet htmlAreaPropertySet = new PropertySet();
+        htmlAreaPropertySet.addString( "value", "<p>paragraph</p>" );
+        data.addSet( "htmlArea", htmlAreaPropertySet );
 
         return data;
     }

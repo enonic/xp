@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import com.enonic.xp.data.Property;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.util.GeoPoint;
@@ -78,6 +79,12 @@ public abstract class BaseInputTypeTest
     {
         final PropertyTree tree = new PropertyTree();
         return tree.addLong( "test", value );
+    }
+
+    protected final Property dataProperty( final PropertySet value )
+    {
+        final PropertyTree tree = new PropertyTree();
+        return tree.addSet( "test", value );
     }
 
     protected final Input.Builder getDefaultInputBuilder( final InputTypeName inputTypeName, final String defaultValue ) {
