@@ -288,7 +288,55 @@ MultiRepoConnection.prototype.query = function (params) {
     return __.toNativeObject(this.multiRepoConnection.query(handlerParams));
 };
 
+/**
+ * This function sets node's active version.
+ *
+ * @example-ref examples/node/setActiveVersion.js
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Path or id to the node.
+ * @param {string} params.nodeVersionId version to set as active.
+ *
+ * @returns {*} Node version id.
+ */
+RepoConnection.prototype.setActiveVersion = function (params) {
+    var key = required(params, 'key');
+    var versionId = required(params, 'versionId');
+    return __.toNativeObject(this.repoConnection.setActiveVersion(key, versionId));
+};
 
+/**
+ * This function returns node versions.
+ *
+ * @example-ref examples/node/findVersions.js
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Path or id to the node.
+ * @param {number} [params.from=0] Start index (used for paging).
+ * @param {number} [params.size=10] Number of node versions to fetch.
+ *
+ * @returns {*} Node versions.
+ */
+RepoConnection.prototype.findVersions = function (params) {
+    var key = required(params, 'key');
+    var from = valueOrDefault(params.from, 0);
+    var size = valueOrDefault(params.size, 10);
+    return __.toNativeObject(this.repoConnection.findVersions(key, from, size));
+};
+
+/**
+ * This function returns active version per branch of a node.
+ *
+ * @example-ref examples/node/getActiveVersions.js
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Path or id to the node.
+ * @param {string[]} [params.branches] Branches to include. By default the current branch.
+ *
+ * @returns {object} Active content versions per branch.
+ */
+RepoConnection.prototype.getActiveVersions = function (params) {
+    var key = required(params, 'key');
+    var branches = nullOrValue(params.branches);
+    return __.toNativeObject(this.repoConnection.getActiveVersions(key, branches));
+};
 /**
  * Get children for given node.
  *

@@ -1,14 +1,22 @@
 package com.enonic.xp.lib.node;
 
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.lib.value.ScriptValueTranslator;
 import com.enonic.xp.lib.value.ScriptValueTranslatorResult;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -60,6 +68,51 @@ public class NodeHandler
             nodeService( this.nodeService ).
             keys( NodeKeys.from( keys ) ).
             build() );
+    }
+
+    @SuppressWarnings("unused")
+    public Object setActiveVersion( final String key, final String nodeVersionId )
+    {
+        return execute( SetActiveVersionHandler.create().
+            nodeService( this.nodeService ).
+            key( NodeKey.from( key ) ).
+            versionId( NodeVersionId.from( nodeVersionId ) ).
+            build() );
+    }
+
+    @SuppressWarnings("unused")
+    public Object findVersions( final String key, final int from, final int size )
+    {
+        return execute( FindVersionsHandler.create().
+            nodeService( this.nodeService ).
+            key( NodeKey.from( key ) ).
+            from( from ).
+            size( size ).
+            build() );
+    }
+
+    @SuppressWarnings("unused")
+    public Object getActiveVersions( final String key, final String[] branches )
+    {
+        return execute( GetActiveVersionsHandler.create().
+            nodeService( this.nodeService ).
+            key( NodeKey.from( key ) ).
+            branches( makeBranches( branches ) ).
+            build() );
+    }
+
+    private Branches makeBranches( final String[] branches )
+    {
+        if ( branches == null )
+        {
+            final Branch currentBranch = ContextAccessor.current().getBranch();
+            return Branches.from( currentBranch );
+        }
+        else
+        {
+            final Set<Branch> branchSet = Arrays.stream( branches ).map( Branch::from ).collect( Collectors.toSet() );
+            return Branches.from( branchSet );
+        }
     }
 
     @SuppressWarnings("unused")
