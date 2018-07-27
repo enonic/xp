@@ -25,7 +25,6 @@ final class HtmlAreaType
         {
             PropertySet propertySet = new PropertySet();
             propertySet.addString( "value", rootValue );
-//          propertySet.addBinaryReference( "references" );
 
             return ValueFactory.newPropertySet( propertySet );
         }
@@ -43,6 +42,11 @@ final class HtmlAreaType
     {
         validateType( property, ValueTypes.PROPERTY_SET );
         validateType( property.getSet().getProperty( "value" ), ValueTypes.STRING );
-//      validateType(property.getSet().getProperty( "references" ), ValueTypes.BINARY_REFERENCE);
+
+        final Property references = property.getSet().getProperty( "references" );
+        if ( references != null )
+        {
+            validateType( property.getSet().getProperty( "references" ), ValueTypes.PROPERTY_SET );
+        }
     }
 }
