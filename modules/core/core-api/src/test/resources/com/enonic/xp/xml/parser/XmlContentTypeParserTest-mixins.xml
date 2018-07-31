@@ -8,7 +8,7 @@
   <is-final>true</is-final>
   <allow-child-content>true</allow-child-content>
 
-  <x-data mixin="myapplication:metadata1"/>
+  <x-data name="myapplication:metadata1"/>
   <x-data name="myapplication:metadata2"/>
 
 </content-type>

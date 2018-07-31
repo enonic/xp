@@ -34,7 +34,6 @@
   </xs:complexType>
 
   <xs:complexType name="xdata">
-    <xs:attribute name="mixin" type="xs:string"/>
     <xs:attribute name="name" type="xs:string"/>
   </xs:complexType>
 
