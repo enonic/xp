@@ -46,7 +46,7 @@ final class HtmlAreaType
         final Property references = property.getSet().getProperty( "references" );
         if ( references != null )
         {
-            validateType( property.getSet().getProperty( "references" ), ValueTypes.PROPERTY_SET );
+            validateType( property.getSet().getProperty( "references" ), ValueTypes.REFERENCE );
         }
     }
 }
