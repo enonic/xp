@@ -59,8 +59,6 @@ public class XDataResourceTest
 
     private ContentTypeService contentTypeService;
 
-    private XDataResource resource;
-
     @Override
     protected XDataResource getResourceInstance()
     {
@@ -71,7 +69,7 @@ public class XDataResourceTest
         siteService = Mockito.mock( SiteService.class );
         contentTypeService = Mockito.mock( ContentTypeService.class );
 
-        resource = new XDataResource();
+        final XDataResource resource = new XDataResource();
         resource.setMixinService( mixinService );
         resource.setXDataService( xDataService );
         resource.setLocaleService( localeService );

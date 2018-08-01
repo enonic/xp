@@ -72,12 +72,7 @@ public final class XDataResource
 
     private LocaleService localeService;
 
-    private MixinService mixinService;
-
     private MixinIconUrlResolver mixinIconUrlResolver;
-
-    private MixinIconResolver mixinIconResolver;
-
 
     @GET
     @Path("getContentXData")
@@ -295,9 +290,7 @@ public final class XDataResource
     @Reference
     public void setMixinService( final MixinService mixinService )
     {
-        this.mixinService = mixinService;
-        this.mixinIconResolver = new MixinIconResolver( mixinService );
-        this.mixinIconUrlResolver = new MixinIconUrlResolver( this.mixinIconResolver );
+        this.mixinIconUrlResolver = new MixinIconUrlResolver( new MixinIconResolver( mixinService ) );
     }
 }
 
