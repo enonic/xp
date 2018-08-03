@@ -1,5 +1,6 @@
 package com.enonic.xp.admin.impl.rest.resource.content;
 
+import java.net.URL;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -40,6 +41,7 @@ import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.CreateContentParams;
+import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
@@ -1131,6 +1133,36 @@ public class ContentResourceTest
         json = initContentTreeSelectorQueryJson( content2.getPath() );
         result = contentResource.treeSelectorQuery( json );
         assertEquals( result.getItems().get( 0 ).getContent().getId(), content3.getId().toString() );
+    }
+
+    @Test
+    public void testLoadImage()
+        throws Exception
+    {
+        final Content content = createContent( "aaa", "my_a_content", "myapplication:my_type" );
+        final URL url = getClass().getResource( "coliseum.jpg" );
+        final String json = "{\"url\": \"" + url.toString() + "\",\"parent\": \"/content\", \"name\": \"imageToUpload\"}";
+
+        Mockito.when( contentService.create( Mockito.any( CreateMediaParams.class ) ) ).thenReturn( content );
+
+        request().
+            path( "content/loadImageFromUrl" ).
+            entity( json, MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        Mockito.verify( contentService ).create( Mockito.isA( CreateMediaParams.class ) );
+    }
+
+    @Test
+    public void testLoadImageThrowsExceptionWhenUrlBroken()
+        throws Exception
+    {
+        final String result = request().
+            path( "content/loadImageFromUrl" ).
+            entity( readFromFile( "load_image_from_url.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertEquals( "", result );
     }
 
     private ContentTreeSelectorQueryJson initContentTreeSelectorQueryJson( final ContentPath parentPath )
