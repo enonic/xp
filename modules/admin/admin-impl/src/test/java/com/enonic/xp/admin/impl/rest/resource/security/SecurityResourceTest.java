@@ -4,16 +4,20 @@ import java.net.URLEncoder;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang.StringUtils;
+
+import static org.junit.Assert.*;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Matchers;
 import org.mockito.Mockito;
 
 import com.google.common.collect.Iterables;
@@ -21,6 +25,10 @@ import com.google.common.collect.Iterables;
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.admin.impl.rest.resource.security.json.CreateUserJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UpdatePasswordJson;
+import com.enonic.xp.auth.AuthDescriptorService;
+import com.enonic.xp.jaxrs.impl.MockRestResponse;
+import com.enonic.xp.portal.auth.AuthControllerExecutionParams;
+import com.enonic.xp.portal.auth.AuthControllerService;
 import com.enonic.xp.security.CreateGroupParams;
 import com.enonic.xp.security.CreateRoleParams;
 import com.enonic.xp.security.CreateUserParams;
@@ -36,6 +44,7 @@ import com.enonic.xp.security.PrincipalRelationship;
 import com.enonic.xp.security.PrincipalRelationships;
 import com.enonic.xp.security.Principals;
 import com.enonic.xp.security.Role;
+import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.UpdateGroupParams;
 import com.enonic.xp.security.UpdateRoleParams;
@@ -48,6 +57,7 @@ import com.enonic.xp.security.UserStores;
 import com.enonic.xp.security.acl.UserStoreAccess;
 import com.enonic.xp.security.acl.UserStoreAccessControlEntry;
 import com.enonic.xp.security.acl.UserStoreAccessControlList;
+import com.enonic.xp.web.HttpStatus;
 
 import static com.enonic.xp.security.PrincipalRelationship.from;
 import static com.enonic.xp.security.acl.UserStoreAccess.ADMINISTRATOR;
@@ -60,21 +70,31 @@ public class SecurityResourceTest
 
     private static Clock clock = Clock.fixed( NOW, ZoneId.of( "UTC" ) );
 
-    private SecurityService securityService;
-
     private static final UserStoreKey USER_STORE_1 = UserStoreKey.from( "local" );
 
     private static final UserStoreKey USER_STORE_2 = UserStoreKey.from( "file-store" );
 
+    private SecurityService securityService;
+
+    private AuthControllerService authControllerService;
+
+    private AuthDescriptorService authDescriptorService;
+
+    @Rule
+    public ExpectedException expectedEx = ExpectedException.none();
+
     @Override
-    protected Object getResourceInstance()
+    protected SecurityResource getResourceInstance()
     {
         securityService = Mockito.mock( SecurityService.class );
+        authControllerService = Mockito.mock( AuthControllerService.class );
+        authDescriptorService = Mockito.mock( AuthDescriptorService.class );
 
         final SecurityResource resource = new SecurityResource();
 
-        securityService = Mockito.mock( SecurityService.class );
         resource.setSecurityService( securityService );
+        resource.setAuthControllerService( authControllerService );
+        resource.setAuthDescriptorService( authDescriptorService );
 
         return resource;
     }
@@ -129,6 +149,25 @@ public class SecurityResourceTest
 
         assertJson( "getUserstoreByKey.json", jsonString );
     }
+
+    @Test
+    public void getUserStore_not_found()
+        throws Exception
+    {
+        MockRestResponse result = request().path( "security/userstore" ).queryParam( "key", "local" ).get();
+        assertEquals( HttpStatus.NOT_FOUND.value(), result.getStatus() );
+    }
+
+    @Test
+    public void getUserStore_null_param()
+        throws Exception
+    {
+        MockRestResponse result = request().path( "security/userstore" ).get();
+
+        assertTrue( StringUtils.isBlank( result.getAsString() ) );
+        assertEquals( HttpStatus.NO_CONTENT.value(), result.getStatus() );
+    }
+
 
     @Test
     public void getDefaultUserStorePermissions()
@@ -213,6 +252,114 @@ public class SecurityResourceTest
             post().getAsString();
 
         assertJson( "updateUserStoreSuccess.json", jsonString );
+    }
+
+    @Test
+    public void deleteUserStore()
+        throws Exception
+    {
+        final UserStoreKey userStoreKey = UserStoreKey.from( "enonic" );
+
+        String result = request().
+            entity( "{\"keys\":[\"" + userStoreKey.toString() + "\"]}", MediaType.APPLICATION_JSON_TYPE ).
+            path( "security/userstore/delete" ).post().getAsString();
+
+        assertJson( "deleteUserStoreResult.json", result );
+    }
+
+    @Test
+    public void deleteUserStore_error()
+        throws Exception
+    {
+        final UserStoreKey userStoreKey = UserStoreKey.from( "enonic" );
+
+        Mockito.doThrow( new RuntimeException( "errorMessage" ) ).when( this.securityService ).deleteUserStore( userStoreKey );
+
+        String result = request().
+            entity( "{\"keys\":[\"" + userStoreKey.toString() + "\"]}", MediaType.APPLICATION_JSON_TYPE ).
+            path( "security/userstore/delete" ).post().getAsString();
+
+        assertJson( "deleteUserStoreResult_error.json", result );
+    }
+
+    @Test
+    public void syncUserStore_error()
+        throws Exception
+    {
+        final UserStoreKey userStoreKey = UserStoreKey.from( "enonic" );
+        final ArgumentCaptor<AuthControllerExecutionParams> paramsCaptor = ArgumentCaptor.forClass( AuthControllerExecutionParams.class );
+
+        Mockito.doThrow( new RuntimeException( "errorMessage" ) ).when( this.authControllerService ).execute(
+            Mockito.isA( AuthControllerExecutionParams.class ) );
+
+        String result = request().
+            entity( "{\"keys\":[\"" + userStoreKey.toString() + "\"]}", MediaType.APPLICATION_JSON_TYPE ).
+            path( "security/userstore/sync" ).post().getAsString();
+
+        Mockito.verify( authControllerService, Mockito.times( 1 ) ).execute( paramsCaptor.capture() );
+
+        assertEquals( "sync", paramsCaptor.getValue().getFunctionName() );
+        assertEquals( userStoreKey, paramsCaptor.getValue().getUserStoreKey() );
+
+        assertJson( "syncUserStoreResult_error.json", result );
+
+    }
+
+    @Test
+    public void syncUserStore()
+        throws Exception
+    {
+        final UserStoreKey userStoreKey = UserStoreKey.from( "enonic" );
+
+        String result = request().
+            entity( "{\"keys\":[\"" + userStoreKey.toString() + "\"]}", MediaType.APPLICATION_JSON_TYPE ).
+            path( "security/userstore/sync" ).post().getAsString();
+
+        assertJson( "syncUserStoreResult.json", result );
+    }
+
+    @Test
+    public void findPrincipals()
+        throws Exception
+    {
+        final ArgumentCaptor<PrincipalQuery> queryCaptor = ArgumentCaptor.forClass( PrincipalQuery.class );
+
+        final PrincipalQueryResult principalQueryResult = PrincipalQueryResult.create().
+            addPrincipal( User.ANONYMOUS ).
+            addPrincipal( Role.create().key( RoleKeys.EVERYONE ).displayName( "everyone" ).build() ).
+            build();
+
+        Mockito.when( securityService.query( Mockito.isA( PrincipalQuery.class ) ) ).thenReturn( principalQueryResult );
+
+        String result = request().
+            path( "security/principals" ).
+            queryParam( "types", "user,role" ).
+            queryParam( "query", "query" ).
+            queryParam( "userStoreKey", "enonic" ).
+            queryParam( "from", "0" ).
+            queryParam( "size", "10" ).
+            get().getAsString();
+
+        Mockito.verify( securityService, Mockito.times( 1 ) ).query( queryCaptor.capture() );
+
+        assertEquals( "query", queryCaptor.getValue().getSearchText() );
+        assertEquals( 2, queryCaptor.getValue().getPrincipalTypes().size() );
+        assertEquals( 0, queryCaptor.getValue().getFrom() );
+        assertEquals( 10, queryCaptor.getValue().getSize() );
+
+        assertJson( "findPrincipalsResult.json", result );
+    }
+
+    @Test
+    public void findPrincipals_wrong_principal_type()
+        throws Exception
+    {
+        MockRestResponse result = request().
+            path( "security/principals" ).
+            queryParam( "types", "wrongType" ).
+            get();
+
+        assertEquals( HttpStatus.INTERNAL_SERVER_ERROR.value(), result.getStatus() );
     }
 
     @Test
@@ -397,6 +544,21 @@ public class SecurityResourceTest
     }
 
     @Test
+    public void getPrincipalById_not_found()
+    {
+        SecurityResource securityResource = getResourceInstance();
+
+        final Optional<? extends Principal> userRes = Optional.ofNullable( null );
+        Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( PrincipalKey.from( "role:superuser" ) ) ).thenReturn(
+            userRes );
+
+        expectedEx.expect( WebApplicationException.class );
+        expectedEx.expectMessage( "Principal [role:superuser] was not found" );
+
+        securityResource.getPrincipalByKey( "role:superuser", null );
+    }
+
+    @Test
     public void getPrincipalsByKeys()
         throws Exception
     {
@@ -431,8 +593,8 @@ public class SecurityResourceTest
             PrincipalRelationships.empty() );
 
         final String jsonString = request().
-            path( "security/principals/resolveByKeys" )
-            .entity( readFromFile( "getPrincipalsByKeysParams.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            path( "security/principals/resolveByKeys" ).entity( readFromFile( "getPrincipalsByKeysParams.json" ),
+                                                                MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
 
         assertJson( "getPrincipalsByKeys.json", jsonString );
@@ -476,6 +638,18 @@ public class SecurityResourceTest
             get().getAsString();
 
         assertJson( "emailAvailableSuccess.json", jsonString );
+    }
+
+    @Test
+    public void isEmailAvailable_empty()
+    {
+        SecurityResource resource = getResourceInstance();
+
+        expectedEx.expect( WebApplicationException.class );
+        expectedEx.expectMessage( "Expected email parameter" );
+
+        resource.isEmailAvailable( "userStoreKey", "" );
+
     }
 
     @Test
@@ -586,6 +760,9 @@ public class SecurityResourceTest
             entity( readFromFile( "updateGroupParams.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
 
+        Mockito.verify( securityService, Mockito.times( 2 ) ).removeRelationship( Mockito.isA( PrincipalRelationship.class ) );
+        Mockito.verify( securityService, Mockito.times( 3 ) ).addRelationship( Mockito.isA( PrincipalRelationship.class ) );
+
         assertJson( "createGroupSuccess.json", jsonString );
     }
 
@@ -652,6 +829,28 @@ public class SecurityResourceTest
 
         exception.expect( WebApplicationException.class );
         resource.setPassword( params );
+    }
+
+    @Test
+    public void setPassword()
+        throws Exception
+    {
+        final User user = User.create().
+            key( PrincipalKey.ofUser( USER_STORE_1, "user1" ) ).
+            displayName( "User 1" ).
+            modifiedTime( Instant.now( clock ) ).
+            email( "user1@enonic.com" ).
+            login( "user1" ).
+            build();
+
+        Mockito.doReturn( user ).when( this.securityService ).setPassword( Mockito.any(), Matchers.eq( "myPassword" ) );
+
+        request().
+            path( "security/principals/setPassword" ).
+            entity( readFromFile( "setPasswordParams.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        Mockito.verify( this.securityService, Mockito.times( 1 ) ).setPassword( Mockito.any(), Matchers.eq( "myPassword" ) );
     }
 
     @Test

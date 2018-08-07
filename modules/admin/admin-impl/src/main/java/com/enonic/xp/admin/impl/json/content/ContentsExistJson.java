@@ -4,8 +4,6 @@ import java.util.List;
 
 import org.codehaus.jparsec.util.Lists;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.enonic.xp.content.ContentId;
 
 public class ContentsExistJson
@@ -25,31 +23,5 @@ public class ContentsExistJson
     public List<ContentExistJson> getContentsExistJson()
     {
         return contentsExistJson;
-    }
-}
-
-class ContentExistJson
-{
-
-    private final String contentId;
-
-    private final boolean exists;
-
-    public ContentExistJson( final String contentId, final boolean exists )
-    {
-        this.contentId = contentId;
-        this.exists = exists;
-    }
-
-    public String getContentId()
-    {
-        return contentId;
-    }
-
-    @JsonProperty("exists")
-    @SuppressWarnings("UnusedDeclaration")
-    public boolean exists()
-    {
-        return exists;
     }
 }

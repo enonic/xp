@@ -8,6 +8,6 @@
   "removeMembers": [
     "user:system:user3"
   ],
-  "addMemberships": [],
-  "removeMemberships": []
+  "addMemberships": ["role:system:role1"],
+  "removeMemberships": ["role:system:role2"]
 }

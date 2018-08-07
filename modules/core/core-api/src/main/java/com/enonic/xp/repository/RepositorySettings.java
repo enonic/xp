@@ -1,5 +1,7 @@
 package com.enonic.xp.repository;
 
+import java.util.Objects;
+
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.index.IndexType;
@@ -52,6 +54,27 @@ public class RepositorySettings
         }
 
         return null;
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+        final RepositorySettings that = (RepositorySettings) o;
+        return Objects.equals( indexDefinitions, that.indexDefinitions );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( indexDefinitions );
     }
 
     public static final class Builder

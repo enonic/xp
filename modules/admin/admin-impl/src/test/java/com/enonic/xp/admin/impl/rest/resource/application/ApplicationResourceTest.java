@@ -1,20 +1,30 @@
 package com.enonic.xp.admin.impl.rest.resource.application;
 
+import java.net.URL;
 import java.time.Instant;
+import java.util.Arrays;
+import java.util.Collections;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
+import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.Version;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
+import com.google.common.io.ByteSource;
 
 import com.enonic.xp.admin.impl.market.MarketService;
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
+import com.enonic.xp.admin.impl.rest.resource.application.json.MarketAppVersionInfoJson;
+import com.enonic.xp.admin.impl.rest.resource.application.json.MarketApplicationJson;
+import com.enonic.xp.admin.impl.rest.resource.application.json.MarketApplicationsJson;
 import com.enonic.xp.admin.tool.AdminToolDescriptor;
 import com.enonic.xp.admin.tool.AdminToolDescriptorService;
 import com.enonic.xp.admin.tool.AdminToolDescriptors;
@@ -30,11 +40,13 @@ import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.auth.AuthDescriptor;
 import com.enonic.xp.auth.AuthDescriptorService;
+import com.enonic.xp.core.impl.app.ApplicationInstallException;
 import com.enonic.xp.descriptor.Descriptors;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
+import com.enonic.xp.icon.Icon;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.macro.MacroDescriptorService;
 import com.enonic.xp.page.DescriptorKey;
@@ -47,6 +59,8 @@ import com.enonic.xp.schema.relationship.RelationshipTypeService;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
+import com.enonic.xp.web.multipart.MultipartForm;
+import com.enonic.xp.web.multipart.MultipartItem;
 
 public class ApplicationResourceTest
     extends AdminResourceTestSupport
@@ -292,6 +306,267 @@ public class ApplicationResourceTest
         assertJson( "get_id_provider_applications.json", response );
     }
 
+    @Test
+    public void get_id_provider_empty()
+        throws Exception
+    {
+        String response = request().
+            path( "application/getIdProvider" ).
+            queryParam( "applicationKey", "nonexistentAppKey" ).
+            get().getAsString();
+        assertEquals( "", response );
+    }
+
+    @Test
+    public void get_id_provider()
+        throws Exception
+    {
+        final Application application = createApplication();
+        Mockito.when( this.applicationService.getInstalledApplication( application.getKey() ) ).thenReturn( application );
+
+        final AuthDescriptor authDescriptor = createAuthDescriptor();
+        Mockito.when( this.authDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( authDescriptor );
+
+        final ApplicationDescriptor appDescriptor = createApplicationDescriptor();
+        Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
+
+        String response = request().
+            path( "application/getIdProvider" ).
+            queryParam( "applicationKey", "testapplication" ).
+            get().getAsString();
+        assertJson( "get_id_provider.json", response );
+    }
+
+    @Test
+    public void get_site_applications_validQuery()
+        throws Exception
+    {
+        final Application application = createApplication();
+        final Applications applications = Applications.from( application );
+        Mockito.when( this.applicationService.getInstalledApplications() ).thenReturn( applications );
+
+        final SiteDescriptor siteDescriptor = createSiteDescriptor();
+        Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
+
+        final ApplicationDescriptor appDescriptor = createApplicationDescriptor();
+        Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
+
+        String response = request().
+            path( "application/getSiteApplications" ).
+            queryParam( "query", "" ).
+            get().getAsString();
+        assertJson( "get_site_applications.json", response );
+    }
+
+    @Test
+    public void get_site_applications_empty()
+        throws Exception
+    {
+        final Application application = createApplication();
+        final Applications applications = Applications.from( application );
+        Mockito.when( this.applicationService.getInstalledApplications() ).thenReturn( applications );
+
+        String response = request().
+            path( "application/getSiteApplications" ).
+            queryParam( "query", "skip all applications" ).
+            get().getAsString();
+        assertEquals( "{\"applications\":[],\"total\":0}", response );
+    }
+
+    @Test
+    public void get_market_applications()
+        throws Exception
+    {
+        final MarketApplicationJson marketApplicationJson = new MarketApplicationJson();
+        marketApplicationJson.setName( "app1" );
+        marketApplicationJson.setDisplayName( "market application displayname" );
+        marketApplicationJson.setDescription( "market application description" );
+        marketApplicationJson.setIconUrl( "http://market.enonic.com/app1" );
+        marketApplicationJson.setVersions( Collections.singletonMap( "1", new MarketAppVersionInfoJson() ) );
+        marketApplicationJson.setLatestVersion( "version-1.0" );
+
+        final MarketApplicationsJson json = new MarketApplicationsJson();
+        json.add( "appKey", marketApplicationJson );
+
+        Mockito.when( this.marketService.get( Arrays.asList( "a", "b" ), "version-1.0", 0, 10 ) ).thenReturn( json );
+
+        String response = request().
+            path( "application/getMarketApplications" ).
+            entity( "{\"version\":\"version-1.0\", \"start\":\"0\", \"count\":\"10\", \"ids\":[\"a\",\"b\"]}",
+                    MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+        assertJson( "get_market_applications.json", response );
+    }
+
+    @Test
+    public void get_icon_default()
+        throws Exception
+    {
+        String response = request().
+            path( "application/icon/applicationKey" ).
+            queryParam( "appKey", "applicationKey" ).
+            queryParam( "hash", "123" ).
+            get().getDataAsString();
+
+        String expected = (String) Response.ok( readFromFile( "app_default.svg" ), "image/svg+xml" ).build().getEntity();
+
+        assertEquals( expected, response );
+    }
+
+    @Test
+    public void get_icon()
+        throws Exception
+    {
+        final Icon icon = Icon.from( new byte[]{0, 1, 2}, "image/png", Instant.now() );
+
+        final ApplicationDescriptor appDescriptor = createApplicationDescriptor( icon );
+        Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
+
+        byte[] response = request().
+            path( "application/icon/applicationKey" ).
+            queryParam( "appKey", "applicationKey" ).
+            queryParam( "hash", "123" ).
+            get().getData();
+
+        byte[] expected = icon.toByteArray();
+
+        Assert.assertTrue( Arrays.equals( expected, response ) );
+    }
+
+    @Test
+    public void install_url_invalid_url()
+        throws Exception
+    {
+        String response = request().
+            path( "application/installUrl" ).
+            entity( "{\"URL\":\"" + "http://enonic.net" + "\"}", MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+    }
+
+    @Test
+    public void install_url_invalid_protocol()
+        throws Exception
+    {
+        String response = request().
+            path( "application/installUrl" ).
+            entity( "{\"URL\":\"" + "inv://enonic.net" + "\"}", MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertEquals( "{\"applicationInstalledJson\":null,\"failure\":\"Failed to upload application from inv://enonic.net\"}", response );
+    }
+
+    @Test
+    public void install_url_not_allowed_protocol()
+        throws Exception
+    {
+        String response = request().
+            path( "application/installUrl" ).
+            entity( "{\"URL\":\"" + "ftp://enonic.net" + "\"}", MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertEquals( "{\"applicationInstalledJson\":null,\"failure\":\"Illegal protocol: ftp\"}", response );
+    }
+
+    @Test
+    public void install_url()
+        throws Exception
+    {
+        final Application application = createApplication();
+        Mockito.when( this.applicationService.installGlobalApplication( new URL( application.getUrl() ) ) ).thenReturn( application );
+
+        String response = request().
+            path( "application/installUrl" ).
+            entity( "{\"URL\":\"" + application.getUrl() + "\"}", MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+        assertJson( "install_url.json", response );
+    }
+
+    @Test(expected = ApplicationInstallException.class)
+    public void test_uninstall_failed()
+        throws Exception
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "testapplication" );
+        Mockito.doThrow( new ApplicationInstallException( "" ) ).when( this.applicationService ).uninstallApplication( applicationKey,
+                                                                                                                       true );
+
+        request().
+            path( "application/uninstall" ).
+            entity( "{\"key\":[\"" + applicationKey.toString() + "\"]}", MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+    }
+
+    @Test
+    public void test_uninstall()
+        throws Exception
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "testapplication" );
+
+        final String response = request().
+            path( "application/uninstall" ).
+            entity( "{\"key\":[\"" + applicationKey.toString() + "\"]}", MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertEquals( "{}", response );
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void test_install_empty()
+        throws Exception
+    {
+        final MultipartForm form = Mockito.mock( MultipartForm.class );
+        Mockito.when( form.get( "file" ) ).thenReturn( null );
+
+        Mockito.when( this.multipartService.parse( Mockito.any() ) ).thenReturn( form );
+
+        request().path( "application/install" ).multipart( "file", "file.jar", new byte[]{0, 1, 2}, MediaType.MULTIPART_FORM_DATA_TYPE ).
+            post();
+    }
+
+    @Test
+    public void test_install_invalid()
+        throws Exception
+    {
+        final MultipartForm form = Mockito.mock( MultipartForm.class );
+
+        final MultipartItem file = createItem( "file", 10, "jar", "image/png" );
+
+        Mockito.when( form.iterator() ).thenReturn( Lists.newArrayList( file ).iterator() );
+        Mockito.when( form.get( "file" ) ).thenReturn( file );
+        Mockito.when( this.multipartService.parse( Mockito.any() ) ).thenReturn( form );
+
+        Mockito.when( this.applicationService.installGlobalApplication( file.getBytes(), "file.jar" ) ).thenThrow( new RuntimeException() );
+
+        String response = request().
+            path( "application/install" ).multipart( "file", "file.jar", new byte[]{0, 1, 2}, MediaType.MULTIPART_FORM_DATA_TYPE ).
+            post().getAsString();
+
+        assertEquals( "{\"applicationInstalledJson\":null,\"failure\":\"Failed to process application file.jar\"}", response );
+    }
+
+    @Test
+    public void test_install()
+        throws Exception
+    {
+
+        final MultipartForm form = Mockito.mock( MultipartForm.class );
+
+        final MultipartItem file = createItem( "file", 10, "jar", "image/png" );
+
+        Mockito.when( form.iterator() ).thenReturn( Lists.newArrayList( file ).iterator() );
+        Mockito.when( form.get( "file" ) ).thenReturn( file );
+        Mockito.when( this.multipartService.parse( Mockito.any() ) ).thenReturn( form );
+
+        final Application application = createApplication();
+
+        Mockito.when( this.applicationService.installGlobalApplication( file.getBytes(), "file.jar" ) ).thenReturn( application );
+
+        String response = request().
+            path( "application/install" ).multipart( "file", "file.jar", new byte[]{0, 1, 2}, MediaType.MULTIPART_FORM_DATA_TYPE ).
+            post().getAsString();
+
+        assertJson( "install_url.json", response );
+    }
+
     private Application createApplication()
     {
         final Application application = Mockito.mock( Application.class );
@@ -311,9 +586,15 @@ public class ApplicationResourceTest
 
     private ApplicationDescriptor createApplicationDescriptor()
     {
+        return createApplicationDescriptor( null );
+    }
+
+    private ApplicationDescriptor createApplicationDescriptor( final Icon icon )
+    {
         return ApplicationDescriptor.create().
             key( ApplicationKey.from( "testapplication" ) ).
             description( "Application description" ).
+            icon( icon ).
             build();
     }
 
@@ -368,6 +649,22 @@ public class ApplicationResourceTest
         Mockito.when( this.adminToolDescriptorService.getIconByKey( adminToolDescriptor.getKey() ) ).thenReturn( "icon-source" );
 
         return AdminToolDescriptors.from( adminToolDescriptor );
+    }
+
+    private MultipartItem createItem( final String name, final long size, final String ext, final String type )
+    {
+        return createItem( name, name, size, ext, type );
+    }
+
+    private MultipartItem createItem( final String name, final String fileName, final long size, final String ext, final String type )
+    {
+        final MultipartItem item = Mockito.mock( MultipartItem.class );
+        Mockito.when( item.getName() ).thenReturn( name );
+        Mockito.when( item.getFileName() ).thenReturn( fileName + "." + ext );
+        Mockito.when( item.getContentType() ).thenReturn( com.google.common.net.MediaType.parse( type ) );
+        Mockito.when( item.getSize() ).thenReturn( size );
+        Mockito.when( item.getBytes() ).thenReturn( ByteSource.wrap( name.getBytes() ) );
+        return item;
     }
 
     @Override
