@@ -1,6 +1,8 @@
 package com.enonic.xp.lib.node;
 
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.lib.node.mapper.NodeMapper;
+import com.enonic.xp.node.Node;
 import com.enonic.xp.node.SetNodeChildOrderParams;
 
 public class SetChildOrderHandler
@@ -21,7 +23,8 @@ public class SetChildOrderHandler
     @Override
     public Object execute()
     {
-        return nodeService.setChildOrder( makeSetNodeChildOrderParams() );
+        final Node node = nodeService.setChildOrder( makeSetNodeChildOrderParams() );
+        return new NodeMapper( node );
     }
 
     private SetNodeChildOrderParams makeSetNodeChildOrderParams()

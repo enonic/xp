@@ -241,7 +241,7 @@ RepoConnection.prototype.move = function (params) {
  * @param {object} params JSON with the parameters.
  * @param {string} params.key node's path or id
  * @param {string} params.childOrder children order
- * @returns {object} Result of getChildren
+ * @returns {object} updated node
  */
 RepoConnection.prototype.setChildOrder = function (params) {
     var key = required(params, 'key');
