@@ -74,9 +74,9 @@ public final class XmlFormMapper
             return buildFieldSetItem( root );
         }
 
-        if ( "inline".equals( tagName ) )
+        if ( "mixin".equals( tagName ) )
         {
-            return buildInlineItem( root );
+            return buildInlineMixinItem( root );
         }
 
         if ( "item-set".equals( tagName ) )
@@ -139,10 +139,10 @@ public final class XmlFormMapper
         return builder.build();
     }
 
-    private InlineMixin buildInlineItem( final DomElement root )
+    private InlineMixin buildInlineMixinItem( final DomElement root )
     {
         final InlineMixin.Builder builder = InlineMixin.create();
-        builder.mixin( new ApplicationRelativeResolver( this.currentApplication ).toMixinName( root.getAttribute( "mixin" ) ) );
+        builder.mixin( new ApplicationRelativeResolver( this.currentApplication ).toMixinName( root.getAttribute( "name" ) ) );
         return builder.build();
     }
 

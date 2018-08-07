@@ -12,7 +12,7 @@
                     </input>
                 </items>
             </field-set>
-          <inline mixin="myapplication:my_shared_input"/>
+          <mixin name="myapplication:my_shared_input"/>
         </items>
         <immutable>false</immutable>
         <occurrences minimum="0" maximum="1"/>
