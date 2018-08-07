@@ -1,8 +1,7 @@
-package com.enonic.xp.core.impl.content;
+package com.enonic.xp.content;
 
 import java.time.Instant;
 
-import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;

@@ -9,13 +9,11 @@ import com.enonic.xp.content.ContentAlreadyMovedException;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentNotFoundException;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.MoveContentException;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskId;
-import com.enonic.xp.task.TaskService;
 
 public class MoveRunnableTask
     extends AbstractRunnableTask
@@ -91,34 +89,13 @@ public class MoveRunnableTask
     }
 
     public static class Builder
-        extends AbstractRunnableTask.Builder
+        extends AbstractRunnableTask.Builder<Builder>
     {
         private MoveContentJson params;
 
         public Builder params( MoveContentJson params )
         {
             this.params = params;
-            return this;
-        }
-
-        @Override
-        public Builder description( String description )
-        {
-            super.description( description );
-            return this;
-        }
-
-        @Override
-        public Builder taskService( TaskService taskService )
-        {
-            super.taskService( taskService );
-            return this;
-        }
-
-        @Override
-        public Builder contentService( ContentService contentService )
-        {
-            super.contentService( contentService );
             return this;
         }
 

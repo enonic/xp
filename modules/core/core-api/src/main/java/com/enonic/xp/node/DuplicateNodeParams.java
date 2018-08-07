@@ -10,7 +10,11 @@ public class DuplicateNodeParams
 
     private final DuplicateNodeProcessor processor;
 
+    private final DuplicateValueResolver duplicateValueResolver;
+
     private final DuplicateNodeListener duplicateListener;
+
+    private final NodePath parent;
 
     private final Boolean includeChildren;
 
@@ -19,7 +23,9 @@ public class DuplicateNodeParams
         nodeId = builder.nodeId;
         processor = builder.processor;
         duplicateListener = builder.duplicateListener;
+        duplicateValueResolver = builder.duplicateValueResolver;
         includeChildren = builder.includeChildren;
+        parent = builder.parent;
     }
 
     public static Builder create()
@@ -42,9 +48,19 @@ public class DuplicateNodeParams
         return duplicateListener;
     }
 
+    public DuplicateValueResolver getDuplicateValueResolver()
+    {
+        return duplicateValueResolver;
+    }
+
     public Boolean getIncludeChildren()
     {
         return includeChildren;
+    }
+
+    public NodePath getParent()
+    {
+        return parent;
     }
 
     public static final class Builder
@@ -55,7 +71,11 @@ public class DuplicateNodeParams
 
         private DuplicateNodeListener duplicateListener;
 
+        private DuplicateValueResolver duplicateValueResolver;
+
         private Boolean includeChildren = true;
+
+        private NodePath parent;
 
         private Builder()
         {
@@ -82,6 +102,18 @@ public class DuplicateNodeParams
         public Builder includeChildren( final Boolean includeChildren )
         {
             this.includeChildren = includeChildren;
+            return this;
+        }
+
+        public Builder duplicateValueResolver( final DuplicateValueResolver duplicateValueResolver )
+        {
+            this.duplicateValueResolver = duplicateValueResolver;
+            return this;
+        }
+
+        public Builder parent( final NodePath parent )
+        {
+            this.parent = parent;
             return this;
         }
 

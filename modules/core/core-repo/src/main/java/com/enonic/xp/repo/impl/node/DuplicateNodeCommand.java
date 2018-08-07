@@ -57,8 +57,15 @@ public final class DuplicateNodeCommand
 
         final String newNodeName = resolveNewNodeName( existingNode );
 
-        final CreateNodeParams.Builder createNodeParams = CreateNodeParams.from( existingNode ).
+        final CreateNodeParams.Builder createNodeParams = CreateNodeParams.
+            from( existingNode ).
             name( newNodeName );
+
+        if ( params.getParent() != null )
+        {
+            createNodeParams.parent( params.getParent() );
+        }
+
         attachBinaries( existingNode, createNodeParams );
         final CreateNodeParams originalParams = createNodeParams.build();
 
@@ -190,6 +197,13 @@ public final class DuplicateNodeCommand
         for ( final Property property : node.data().getProperties( ValueTypes.REFERENCE ) )
         {
             final Reference reference = property.getReference();
+
+            //TODO: to handle properly
+            if ( property.getName().equalsIgnoreCase( "copyOf" ) )
+            {
+                continue;
+            }
+
             if ( reference != null && nodeReferenceUpdatesHolder.mustUpdate( reference ) )
             {
                 changes = true;
@@ -213,13 +227,14 @@ public final class DuplicateNodeCommand
     private String resolveNewNodeName( final Node existingNode )
     {
         // Process as file name as it is so for images
-        String newNodeName = DuplicateValueResolver.fileName( existingNode.name().toString() );
+        String newNodeName = existingNode.name().toString();
 
         boolean resolvedUnique = false;
 
         while ( !resolvedUnique )
         {
-            final NodePath checkIfExistsPath = NodePath.create( existingNode.parentPath(), newNodeName ).build();
+            final NodePath parentPath = params.getParent() != null ? params.getParent() : existingNode.parentPath();
+            final NodePath checkIfExistsPath = NodePath.create( parentPath, newNodeName ).build();
 
             final boolean exists = CheckNodeExistsCommand.create( this ).
                 nodePath( checkIfExistsPath ).
@@ -232,7 +247,7 @@ public final class DuplicateNodeCommand
             }
             else
             {
-                newNodeName = DuplicateValueResolver.name( newNodeName );
+                newNodeName = params.getDuplicateValueResolver().name( newNodeName );
             }
         }
 
