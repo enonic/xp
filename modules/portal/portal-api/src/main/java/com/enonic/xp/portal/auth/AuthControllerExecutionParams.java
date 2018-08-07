@@ -1,5 +1,7 @@
 package com.enonic.xp.portal.auth;
 
+import java.util.Objects;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -59,6 +61,29 @@ public class AuthControllerExecutionParams
         return new Builder();
     }
 
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+        final AuthControllerExecutionParams that = (AuthControllerExecutionParams) o;
+        return Objects.equals( userStoreKey, that.userStoreKey ) && Objects.equals( functionName, that.functionName ) &&
+            Objects.equals( servletRequest, that.servletRequest ) && Objects.equals( portalRequest, that.portalRequest ) &&
+            Objects.equals( response, that.response );
+    }
+
+    @Override
+    public int hashCode()
+    {
+
+        return Objects.hash( userStoreKey, functionName, servletRequest, portalRequest, response );
+    }
 
     public static final class Builder
     {
