@@ -8,6 +8,7 @@ import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DuplicateNodeParams;
+import com.enonic.xp.node.DuplicateValueResolver;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.InsertManualStrategy;
@@ -247,7 +248,9 @@ public final class DuplicateNodeCommand
             }
             else
             {
-                newNodeName = params.getDuplicateValueResolver().name( newNodeName );
+                final DuplicateValueResolver valueResolver =
+                    params.getDuplicateValueResolver() != null ? params.getDuplicateValueResolver() : new DuplicateValueResolver();
+                newNodeName = valueResolver.name( newNodeName );
             }
         }
 

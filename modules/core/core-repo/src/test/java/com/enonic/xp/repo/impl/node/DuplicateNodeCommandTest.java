@@ -18,6 +18,7 @@ import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DuplicateNodeParams;
+import com.enonic.xp.node.DuplicateValueResolver;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
@@ -57,7 +58,7 @@ public class DuplicateNodeCommandTest
 
         assertDuplicatedTree( node.path(), node, duplicatedNode );
 
-        assertEquals( nodeName + "-" + DuplicateValueResolver.COPY_TOKEN, duplicatedNode.name().toString() );
+        assertEquals( nodeName + "-" + new DuplicateValueResolver().getPostfix(), duplicatedNode.name().toString() );
     }
 
     @Test
@@ -228,7 +229,7 @@ public class DuplicateNodeCommandTest
         final Node duplicatedNode = duplicateNode( createdNode );
 
         assertDuplicatedTree( createdNode.path(), createdNode, duplicatedNode );
-        assertEquals( nodeName + "-" + DuplicateValueResolver.COPY_TOKEN, duplicatedNode.name().toString() );
+        assertEquals( nodeName + "-" + new DuplicateValueResolver().getPostfix(), duplicatedNode.name().toString() );
         assertEquals( 2, duplicatedNode.getAttachedBinaries().getSize() );
     }
 

@@ -43,7 +43,7 @@ public class DuplicateValueResolver
         return doResolve( name, NAME_SEPARATOR, extension );
     }
 
-    protected String getPostfix()
+    public String getPostfix()
     {
         return COPY_TOKEN;
     }
