@@ -241,7 +241,7 @@ public final class XmlFormMapper
         {
             label = null;
         }
-        return label != null ? label : defaultValue;
+        return label != null ? label : defaultValue != null ? defaultValue : "";
     }
 
     private String getHelpTextI18n( final DomElement element )
