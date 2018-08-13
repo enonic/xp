@@ -6,13 +6,14 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DuplicateNodeProcessor;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.security.User;
 
 public class DuplicateContentProcessor
     implements DuplicateNodeProcessor
 {
     @Override
-    public CreateNodeParams process( final CreateNodeParams originalParams )
+    public CreateNodeParams process( final NodeId nodeId, final CreateNodeParams originalParams )
     {
         CreateNodeParams.Builder builder = CreateNodeParams.create( originalParams );
 

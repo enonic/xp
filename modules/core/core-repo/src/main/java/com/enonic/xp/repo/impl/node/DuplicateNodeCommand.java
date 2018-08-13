@@ -13,6 +13,7 @@ import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.Nodes;
@@ -70,7 +71,7 @@ public final class DuplicateNodeCommand
         attachBinaries( existingNode, createNodeParams );
         final CreateNodeParams originalParams = createNodeParams.build();
 
-        final CreateNodeParams processedParams = executeProcessors( originalParams );
+        final CreateNodeParams processedParams = executeProcessors( existingNode.id(), originalParams );
 
         final Node duplicatedNode = CreateNodeCommand.create( this ).
             params( processedParams ).
@@ -102,11 +103,11 @@ public final class DuplicateNodeCommand
         return duplicatedNode;
     }
 
-    private CreateNodeParams executeProcessors( final CreateNodeParams originalParams )
+    private CreateNodeParams executeProcessors( final NodeId originalNodeId, final CreateNodeParams originalParams )
     {
         if ( params.getProcessor() != null )
         {
-            return params.getProcessor().process( originalParams );
+            return params.getProcessor().process( originalNodeId, originalParams );
         }
 
         return originalParams;
@@ -136,7 +137,7 @@ public final class DuplicateNodeCommand
 
             final CreateNodeParams originalParams = paramsBuilder.build();
 
-            final CreateNodeParams processedParams = executeProcessors( originalParams );
+            final CreateNodeParams processedParams = executeProcessors( node.id(), originalParams );
 
             final Node newChildNode = CreateNodeCommand.create( this ).
                 params( processedParams ).
