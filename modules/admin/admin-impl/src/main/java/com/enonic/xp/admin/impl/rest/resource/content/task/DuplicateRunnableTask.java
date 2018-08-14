@@ -59,6 +59,11 @@ public class DuplicateRunnableTask
         return null;
     }
 
+    protected DuplicateRunnableTaskResult.Builder getTaskResultBuilder()
+    {
+        return DuplicateRunnableTaskResult.create();
+    }
+
     @Override
     public void run( final TaskId id, final ProgressReporter progressReporter )
     {
@@ -79,7 +84,7 @@ public class DuplicateRunnableTask
 
         listener.setTotal( parentIdsCount + childIdsCount );
 
-        final DuplicateRunnableTaskResult.Builder resultBuilder = DuplicateRunnableTaskResult.create();
+        final DuplicateRunnableTaskResult.Builder resultBuilder = this.getTaskResultBuilder();
         for ( DuplicateContentJson content : params.getContents() )
         {
 
