@@ -587,6 +587,20 @@ public class NodeServiceImpl
     }
 
     @Override
+    public Nodes findInternalDependencies( final NodeIds sourceNodeIds )
+    {
+        verifyContext();
+
+        return FindInternalDependenciesCommand.create().
+            searchService( this.nodeSearchService ).
+            storageService( this.nodeStorageService ).
+            indexServiceInternal( this.indexServiceInternal ).
+            nodeIds( sourceNodeIds ).
+            build().
+            execute();
+    }
+
+    @Override
     public boolean deleteVersion( final NodeVersionId nodeVersionId )
     {
         return DeleteVersionCommand.create().

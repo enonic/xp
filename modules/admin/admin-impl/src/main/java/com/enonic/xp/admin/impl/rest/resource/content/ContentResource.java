@@ -90,6 +90,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ReorderChildJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ReorderChildrenJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.ResolveDuplicateDependenciesJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ResolvePublishContentResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ResolvePublishDependenciesJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.SetActiveVersionJson;
@@ -147,6 +148,7 @@ import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
 import com.enonic.xp.content.ReorderChildParams;
+import com.enonic.xp.content.ResolveDuplicateDependenciesParams;
 import com.enonic.xp.content.ResolvePublishDependenciesParams;
 import com.enonic.xp.content.ResolveRequiredDependenciesParams;
 import com.enonic.xp.content.SetActiveContentVersionResult;
@@ -510,6 +512,17 @@ public final class ContentResource
         } );
 
         return result.build();
+    }
+
+    @POST
+    @Path("resolveDuplicateDependencies")
+    public List<ContentIdJson> resolveDuplicateDependencies( final ResolveDuplicateDependenciesJson params )
+    {
+        final ContentIds result = this.contentService.resolveDuplicateDependencies(
+            ResolveDuplicateDependenciesParams.create().contentIds( ContentIds.from( params.getIds() ) ).excludeChildrenIds(
+                ContentIds.from( params.getExcludeChildrenIds() ) ).build() );
+
+        return result.stream().map( ContentIdJson::new ).collect( Collectors.toList() );
     }
 
     @POST

@@ -113,6 +113,12 @@ class NodeServiceMock
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }
 
+    @Override
+    public Nodes findInternalDependencies( final NodeIds sourceNodeIds )
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
+    }
+
     private Node doCreate( final CreateNodeParams params, final Instant timestamp )
     {
         final Node.Builder builder = Node.create().
