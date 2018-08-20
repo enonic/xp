@@ -14,7 +14,7 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
 
-class ContentNodeHelper
+public class ContentNodeHelper
 {
     private final static String CONTENT_ROOT_NODE_NAME = "content";
 
