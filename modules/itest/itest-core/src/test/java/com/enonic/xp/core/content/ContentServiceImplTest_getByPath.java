@@ -98,4 +98,11 @@ public class ContentServiceImplTest_getByPath
             return null;
         } );
     }
+
+    @Test(expected = ContentNotFoundException.class)
+    public void test_get_root_content_path()
+        throws Exception
+    {
+        assertNull( this.contentService.getByPath( ContentPath.ROOT ) );
+    }
 }
