@@ -23,10 +23,7 @@ final class GetContentByPathCommand
 
     Content execute()
     {
-        final NodePath nodePath = ContentNodeHelper.translateContentPathToNodePath( contentPath );
-
-        final Node node = nodeService.getByPath( nodePath );
-
+        final Node node = getNode();
         if ( node == null )
         {
             throw new ContentNotFoundException( contentPath, ContextAccessor.current().getBranch() );
@@ -39,6 +36,16 @@ final class GetContentByPathCommand
             throw new ContentNotFoundException( contentPath, ContextAccessor.current().getBranch() );
         }
         return filteredContent;
+    }
+
+    private Node getNode()
+    {
+        if ( ContentPath.ROOT.equals( contentPath ) )
+        {
+            return null;
+        }
+        final NodePath nodePath = ContentNodeHelper.translateContentPathToNodePath( contentPath );
+        return nodeService.getByPath( nodePath );
     }
 
     static Builder create( final ContentPath contentPath, final AbstractContentCommand source )

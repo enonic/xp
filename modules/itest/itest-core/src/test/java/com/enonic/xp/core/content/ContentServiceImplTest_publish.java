@@ -21,9 +21,13 @@ import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.RenameContentParams;
+import com.enonic.xp.core.impl.content.ContentNodeHelper;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.GetContentTypeParams;
@@ -366,8 +370,8 @@ public class ContentServiceImplTest_publish
         doPublish( ContentIds.empty(), a.getId() );
 
         System.out.println( "After initial push:" );
-        printContentTree( getByPath( ContentPath.ROOT ).getId() );
-        printContentTree( getByPath( ContentPath.ROOT ).getId(), CTX_OTHER );
+        printContentTree( getContentRootId() );
+        printContentTree( getContentRootId() , CTX_OTHER );
 
         doRename( a.getId(), "a_old" );
         doRename( b.getId(), "a" );
@@ -379,8 +383,8 @@ public class ContentServiceImplTest_publish
 
         System.out.println( "" );
         System.out.println( "After second push:" );
-        printContentTree( getByPath( ContentPath.ROOT ).getId() );
-        printContentTree( getByPath( ContentPath.ROOT ).getId(), CTX_OTHER );
+        printContentTree( getContentRootId()  );
+        printContentTree( getContentRootId() , CTX_OTHER );
 
         assertStatus( b.getId(), CompareStatus.EQUAL );
     }
@@ -401,6 +405,18 @@ public class ContentServiceImplTest_publish
     private Content getByPath( final ContentPath path )
     {
         return this.contentService.getByPath( path );
+    }
+    
+    private ContentId getContentRootId()
+    {
+        final NodePath contentRootNodePath = ContentNodeHelper.translateContentPathToNodePath( ContentPath.ROOT );
+        final NodeId contentRootNodeId = getNodeByPath( contentRootNodePath ).id();
+        return ContentId.from( contentRootNodeId.toString() );
+    }
+
+    private Node getNodeByPath( final NodePath path )
+    {
+        return this.nodeService.getByPath( path );
     }
 
     private Content doGet( final ContentId contentId )
@@ -427,7 +443,7 @@ public class ContentServiceImplTest_publish
     {
         final MoveContentParams params = MoveContentParams.create().
             contentId( contentId ).
-            parentContentPath( ContentPath.from( newParent )  ).
+            parentContentPath( ContentPath.from( newParent ) ).
             build();
         this.contentService.move( params );
     }
