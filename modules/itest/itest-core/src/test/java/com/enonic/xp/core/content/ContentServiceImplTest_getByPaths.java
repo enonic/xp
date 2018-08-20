@@ -56,8 +56,8 @@ public class ContentServiceImplTest_getByPaths
         final Content content2 = createContent( content1.getPath() );
         final Content content3 = createContent( content2.getPath() );
 
-        final Contents contents =
-            this.contentService.getByPaths( ContentPaths.from( content1.getPath(), content2.getPath(), content3.getPath() ) );
+        final Contents contents = this.contentService.getByPaths(
+            ContentPaths.from( ContentPath.ROOT, content1.getPath(), content2.getPath(), content3.getPath() ) );
 
         assertNotNull( contents );
         assertEquals( 3, contents.getSize() );

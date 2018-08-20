@@ -60,9 +60,15 @@ public class AdminToolHandlerTest
         this.handler.setControllerScriptFactory( controllerScriptFactory );
 
         this.rawRequest = Mockito.mock( HttpServletRequest.class );
+        Mockito.when( this.rawRequest.isUserInRole( Mockito.anyString() ) ).thenReturn( true );
 
         this.portalRequest = new PortalRequest();
         this.portalRequest.setRawRequest( this.rawRequest );
+        this.portalRequest.setMode( RenderMode.ADMIN );
+        final DescriptorKey defaultDescriptorKey = AdminToolPortalHandler.DEFAULT_DESCRIPTOR_KEY;
+        this.portalRequest.setBaseUri(
+            AdminToolPortalHandler.ADMIN_TOOL_PREFIX + defaultDescriptorKey.getApplicationKey() + "/" + defaultDescriptorKey.getName() );
+        this.portalRequest.setApplicationKey( defaultDescriptorKey.getApplicationKey() );
 
         this.webResponse = WebResponse.create().build();
 
@@ -72,72 +78,58 @@ public class AdminToolHandlerTest
     @Test
     public void testCanHandle()
     {
-        this.portalRequest.setRawPath( "/admin/tool/master/content/1" );
+        this.portalRequest.setRawPath( "/admin/tool/app/tool/1" );
         assertTrue( this.handler.canHandle( this.portalRequest ) );
     }
 
     @Test
     public void testCannotHandle()
     {
-        this.portalRequest.setRawPath( "/admin/master/content/1" );
+        this.portalRequest.setRawPath( "/admin/app/tool/1" );
         assertFalse( this.handler.canHandle( this.portalRequest ) );
     }
 
     @Test(expected = WebException.class)
-    public void testCreatePortalRequestWithoutPermissions()
+    public void testWithoutPermissions()
         throws Exception
     {
-        this.portalRequest.setRawPath( "/admin/tool/master/content/1" );
-        this.portalRequest.setMode( RenderMode.ADMIN );
+        this.portalRequest.setRawPath( "/admin/tool/app/tool/1" );
         Mockito.when( this.rawRequest.isUserInRole( Mockito.anyString() ) ).thenReturn( false );
         this.handler.doHandle( this.portalRequest, this.webResponse, this.chain );
     }
 
     @Test(expected = WebException.class)
-    public void testCreatePortalRequestWithNoDescriptor()
+    public void testWithNoDescriptor()
         throws Exception
     {
         Mockito.when( this.adminToolDescriptorService.getByKey( Mockito.any( DescriptorKey.class ) ) ).thenReturn( null );
-
         this.portalRequest.setRawPath( "/admin/tool/app/tool/1" );
         this.handler.doHandle( this.portalRequest, this.webResponse, this.chain );
     }
 
     @Test(expected = WebException.class)
-    public void testCreatePortalRequestWithNoAccessToApplication()
+    public void testWithNoAccessToApplication()
         throws Exception
     {
-        this.mockDescriptor( false );
-
+        this.mockDescriptor( DescriptorKey.from( "app:tool" ), false );
         this.portalRequest.setRawPath( "/admin/tool/app/tool/1" );
         this.handler.doHandle( this.portalRequest, this.webResponse, this.chain );
     }
 
     @Test
-    public void testCreatePortalRequestWithDefaultDescriptor()
+    public void test()
         throws Exception
     {
-        this.mockDescriptor( true );
-
-        this.portalRequest.setRawPath( "/admin/tool" );
-        WebResponse response = this.handler.doHandle( this.portalRequest, this.webResponse, this.chain );
-        assertEquals( this.portalResponse, response );
-    }
-
-    @Test
-    public void testCreatePortalRequest()
-        throws Exception
-    {
-        this.mockDescriptor( true );
-
+        this.mockDescriptor( DescriptorKey.from( "app:tool" ), true );
         this.portalRequest.setRawPath( "/admin/tool/app/tool/1" );
         WebResponse response = this.handler.doHandle( this.portalRequest, this.webResponse, this.chain );
         assertEquals( this.portalResponse, response );
     }
 
-    private void mockDescriptor( boolean hasAccess )
+    private void mockDescriptor( DescriptorKey descriptorKey, boolean hasAccess )
     {
         AdminToolDescriptor descriptor = Mockito.mock( AdminToolDescriptor.class );
+        Mockito.when( descriptor.getKey() ).thenReturn( descriptorKey );
         Mockito.when( descriptor.isAccessAllowed( Mockito.any( PrincipalKeys.class ) ) ).thenReturn( hasAccess );
         Mockito.when( this.adminToolDescriptorService.getByKey( Mockito.any( DescriptorKey.class ) ) ).thenReturn( descriptor );
     }

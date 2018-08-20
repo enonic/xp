@@ -32,8 +32,12 @@ final class GetContentByPathsCommand
 
     private Contents doExecute()
     {
-        final NodePaths paths = ContentNodeHelper.translateContentPathsToNodePaths( contentPaths );
-        final Nodes nodes = nodeService.getByPaths( paths );
+        final NodePaths.Builder nodePaths = NodePaths.create();
+        contentPaths.stream().
+            filter( contentPath -> !ContentPath.ROOT.equals( contentPath ) ).
+            map( ContentNodeHelper::translateContentParentToNodeParentPath).
+            forEach( nodePaths::addNodePath );
+        final Nodes nodes = nodeService.getByPaths( nodePaths.build() );
 
         return this.translator.fromNodes( nodes, true );
     }
