@@ -33,6 +33,7 @@ public class GetCurrentSiteConfigScriptTest
         final Content content = TestDataFixtures.newContent();
         final Site site = TestDataFixtures.newSite();
         this.portalRequest.setContent( null );
+        this.portalRequest.setContentPath( content.getPath() );
         this.portalRequest.setSite( null );
         Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
         Mockito.when( this.contentService.getNearestSite( Mockito.any() ) ).thenReturn( site );
