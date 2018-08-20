@@ -27,7 +27,7 @@ public class AdminToolPortalHandler
 
     public final static DescriptorKey DEFAULT_DESCRIPTOR_KEY = DescriptorKey.from( "com.enonic.xp.app.main:home" );
 
-    public final static Pattern PATTERN = Pattern.compile( "^([^/^_]+)/([^/]+)" );
+    public final static Pattern PATTERN = Pattern.compile( "^([^/^_]+)/([^/^_]+)" );
 
     @Override
     protected boolean canHandle( final WebRequest webRequest )
@@ -38,18 +38,23 @@ public class AdminToolPortalHandler
     @Override
     protected PortalRequest createPortalRequest( final WebRequest webRequest, final WebResponse webResponse )
     {
+        final PortalRequest portalRequest = new PortalRequest( webRequest );        
+        
         final DescriptorKey descriptorKey = getDescriptorKey( webRequest );
-        final PortalRequest portalRequest = new PortalRequest( webRequest );
-        portalRequest.setBaseUri( ADMIN_TOOL_PREFIX + descriptorKey.getApplicationKey() + "/" + descriptorKey.getName() );
-        portalRequest.setApplicationKey( descriptorKey.getApplicationKey() );
+        if (descriptorKey == null) {
+            portalRequest.setBaseUri( ADMIN_TOOL_PREFIX );
+            portalRequest.setApplicationKey( DEFAULT_DESCRIPTOR_KEY.getApplicationKey() );
+        } else {
+            portalRequest.setBaseUri( ADMIN_TOOL_PREFIX + descriptorKey.getApplicationKey() + "/" + descriptorKey.getName() );
+            portalRequest.setApplicationKey( descriptorKey.getApplicationKey() );
+        }        
         portalRequest.setMode( RenderMode.ADMIN );
         return portalRequest;
     }
 
     public static DescriptorKey getDescriptorKey( final WebRequest webRequest )
     {
-        final String path = webRequest.getRawPath();
-        
+        final String path = webRequest.getRawPath();        
         if (path.startsWith( ADMIN_TOOL_PREFIX ) ) {
             final String subPath = path.substring( ADMIN_TOOL_PREFIX.length() );
             final Matcher matcher = PATTERN.matcher( subPath );
@@ -60,7 +65,7 @@ public class AdminToolPortalHandler
                 return DescriptorKey.from( applicationKey, adminToolName );
             }            
         }
-        return DEFAULT_DESCRIPTOR_KEY;
+        return null;
     }
 
     @Reference

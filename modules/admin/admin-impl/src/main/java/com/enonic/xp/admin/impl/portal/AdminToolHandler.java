@@ -5,6 +5,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.admin.tool.AdminToolDescriptorService;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
@@ -46,8 +47,9 @@ public final class AdminToolHandler
         final AdminToolHandlerWorker worker = new AdminToolHandlerWorker( portalRequest );
         worker.controllerScriptFactory = this.controllerScriptFactory;
         worker.adminToolDescriptorService = adminToolDescriptorService;
-        worker.descriptorKey = AdminToolPortalHandler.getDescriptorKey( webRequest );
-
+        final DescriptorKey descriptorKey = AdminToolPortalHandler.getDescriptorKey( webRequest );
+        worker.descriptorKey = descriptorKey == null ? AdminToolPortalHandler.DEFAULT_DESCRIPTOR_KEY : descriptorKey;
+        
         final Trace trace = Tracer.newTrace( "portalRequest" );
         if ( trace == null )
         {
