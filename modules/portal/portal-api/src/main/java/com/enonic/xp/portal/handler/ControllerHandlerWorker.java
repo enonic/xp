@@ -61,6 +61,10 @@ public abstract class ControllerHandlerWorker
 
     private Content getContentByPath( final ContentPath contentPath )
     {
+        if ( ContentPath.ROOT.equals( contentPath ) )
+        {
+            return null;
+        }
         try
         {
             return this.contentService.getByPath( contentPath );
@@ -103,7 +107,7 @@ public abstract class ControllerHandlerWorker
     {
         final ContentId contentId = ContentId.from( contentSelector.substring( 1 ) );
         final ContentPath contentPath = ContentPath.from( contentSelector ).asAbsolute();
-        return this.contentService.contentExists( contentId ) || this.contentService.contentExists( contentPath );
+        return this.contentService.contentExists( contentId ) || (!ContentPath.ROOT.equals( contentPath ) && this.contentService.contentExists( contentPath ));
     }
 
     public final void setContentService( final ContentService contentService )
