@@ -25,6 +25,8 @@ public final class DuplicateContentParams
 
     private ContentPath parent;
 
+    private ContentPath dependenciesToDuplicatePath;
+
     public DuplicateContentParams( Builder builder )
     {
         this.contentId = builder.contentId;
@@ -34,6 +36,7 @@ public final class DuplicateContentParams
         this.duplicateContentListener = builder.duplicateContentListener;
         this.includeChildren = builder.includeChildren;
         this.parent = builder.parent;
+        this.dependenciesToDuplicatePath = builder.dependenciesToDuplicatePath;
     }
 
     public static DuplicateContentParams.Builder create()
@@ -82,6 +85,11 @@ public final class DuplicateContentParams
         return includeChildren;
     }
 
+    public ContentPath getDependenciesToDuplicatePath()
+    {
+        return dependenciesToDuplicatePath;
+    }
+
     public void validate()
     {
         Preconditions.checkNotNull( this.contentId, "Content id cannot be null" );
@@ -116,6 +124,11 @@ public final class DuplicateContentParams
             return false;
         }
 
+        if ( !dependenciesToDuplicatePath.equals( that.dependenciesToDuplicatePath ) )
+        {
+            return false;
+        }
+
         return true;
     }
 
@@ -123,7 +136,7 @@ public final class DuplicateContentParams
     public int hashCode()
     {
 
-        return Objects.hash( contentId, creator, includeChildren, parent );
+        return Objects.hash( contentId, creator, includeChildren, parent, dependenciesToDuplicatePath );
     }
 
     public static final class Builder
@@ -142,6 +155,8 @@ public final class DuplicateContentParams
         private Boolean includeChildren = true;
 
         private ContentPath parent;
+
+        private ContentPath dependenciesToDuplicatePath;
 
         private Builder()
         {
@@ -186,6 +201,12 @@ public final class DuplicateContentParams
         public Builder parent( final ContentPath parent )
         {
             this.parent = parent;
+            return this;
+        }
+
+        public Builder dependenciesToDuplicatePath( final ContentPath dependenciesToDuplicatePath )
+        {
+            this.dependenciesToDuplicatePath = dependenciesToDuplicatePath;
             return this;
         }
 

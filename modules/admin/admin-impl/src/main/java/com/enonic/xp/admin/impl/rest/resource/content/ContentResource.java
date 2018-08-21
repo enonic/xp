@@ -518,9 +518,12 @@ public final class ContentResource
     @Path("resolveDuplicateDependencies")
     public List<ContentIdJson> resolveDuplicateDependencies( final ResolveDuplicateDependenciesJson params )
     {
-        final ContentIds result = this.contentService.resolveDuplicateDependencies(
-            ResolveDuplicateDependenciesParams.create().contentIds( ContentIds.from( params.getIds() ) ).excludeChildrenIds(
-                ContentIds.from( params.getExcludeChildrenIds() ) ).build() );
+        final ContentIds result = this.contentService.resolveDuplicateDependencies( ResolveDuplicateDependenciesParams.create().
+            contentIds( params.getIds().
+                stream().
+                map( ContentId::from ).
+                collect( HashMap::new, ( map, id ) -> map.put( id, null ), HashMap::putAll ) ).
+            excludeChildrenIds( ContentIds.from( params.getExcludeChildrenIds() ) ).build() );
 
         return result.stream().map( ContentIdJson::new ).collect( Collectors.toList() );
     }

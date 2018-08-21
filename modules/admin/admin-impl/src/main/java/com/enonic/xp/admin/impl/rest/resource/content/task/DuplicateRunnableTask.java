@@ -59,6 +59,11 @@ public class DuplicateRunnableTask
         return null;
     }
 
+    protected ContentPath getDependenciesPath( final ContentId contentId )
+    {
+        return null;
+    }
+
     protected DuplicateRunnableTaskResult.Builder getTaskResultBuilder()
     {
         return DuplicateRunnableTaskResult.create();
@@ -98,6 +103,7 @@ public class DuplicateRunnableTask
                 parent( getParent( content ) ).
                 duplicateContentListener( listener ).
                 includeChildren( content.getIncludeChildren() ).
+                dependenciesToDuplicatePath( getDependenciesPath( contentId ) ).
                 build();
             try
             {

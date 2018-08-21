@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Activate;
@@ -587,11 +588,11 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Nodes findInternalDependencies( final NodeIds sourceNodeIds )
+    public Nodes findInternalDependencies( final Map<NodeId, NodePath> sourceNodeIds )
     {
         verifyContext();
 
-        return FindInternalDependenciesCommand.create().
+        return FindDependenciesWithinPathCommand.create().
             searchService( this.nodeSearchService ).
             storageService( this.nodeStorageService ).
             indexServiceInternal( this.indexServiceInternal ).

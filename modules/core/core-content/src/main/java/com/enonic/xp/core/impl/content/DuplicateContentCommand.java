@@ -69,6 +69,8 @@ final class DuplicateContentCommand
             duplicateValueResolver( params.getValueResolver() != null ? params.getValueResolver() : new DuplicateValueResolver() ).
             includeChildren( params.getIncludeChildren() ).
             parent( params.getParent() != null ? ContentNodeHelper.translateContentPathToNodePath( params.getParent() ) : null ).
+            dependenciesToDuplicatePath( params.getDependenciesToDuplicatePath() != null ? ContentNodeHelper.translateContentPathToNodePath(
+                params.getDependenciesToDuplicatePath() ) : null ).
             build();
 
         final Node duplicatedNode = nodeService.duplicate( duplicateNodeParams );

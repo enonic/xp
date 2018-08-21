@@ -1,6 +1,8 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.codehaus.jparsec.util.Lists;
 
@@ -9,6 +11,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
+import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DuplicateNodeParams;
@@ -18,7 +21,6 @@ import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.Nodes;
@@ -93,10 +95,8 @@ public final class DuplicateNodeCommand
         {
             storeChildNodes( existingNode, duplicatedNode, builder );
         }
-        else
-        {
-            storeDependentChildrenNodes( existingNode, duplicatedNode, builder );
-        }
+
+        storeDependentNodes( existingNode, duplicatedNode, builder );
 
         final NodeReferenceUpdatesHolder nodesToBeUpdated = builder.build();
 
@@ -122,15 +122,15 @@ public final class DuplicateNodeCommand
         return originalParams;
     }
 
-    private void storeDependentChildrenNodes( final Node originalParent, final Node newParent,
-                                              final NodeReferenceUpdatesHolder.Builder builder )
+    private void storeDependentNodes( final Node originalNode, final Node newNode, final NodeReferenceUpdatesHolder.Builder builder )
     {
 
-        final Nodes internalDependencies = FindInternalDependenciesCommand.create().
+        final Nodes internalDependencies = FindDependenciesWithinPathCommand.create().
             searchService( this.nodeSearchService ).
             storageService( this.nodeStorageService ).
             indexServiceInternal( this.indexServiceInternal ).
-            nodeIds( NodeIds.from( originalParent.id() ) ).
+            nodeIds( Collections.singletonMap( params.getNodeId(), params.getDependenciesToDuplicatePath() ) ).
+            skipChildren( params.getIncludeChildren() ).
             build().
             execute();
 
@@ -141,10 +141,38 @@ public final class DuplicateNodeCommand
 
         for ( final Node dependency : internalDependenciesList )
         {
-            final NodePath newNodePath = NodePath.create(
-                dependency.path().toString().replace( originalParent.path().toString(), newParent.path().toString() ) ).build();
 
-            this.storeChildNode( originalParent, dependency, newNodePath.getParentPath(), builder );
+            NodePath oldDependencyParentPath, newDependencyParentPath;
+            if ( params.getDependenciesToDuplicatePath() != null )
+            {
+                final int dependencyPathCount = params.getDependenciesToDuplicatePath().elementCount();
+
+                final Optional<NodePath> optionalNewDependencyParentPath = newNode.path().getParentPaths().stream().filter(
+                    parentPath -> parentPath.elementCount() == dependencyPathCount ).findFirst();
+
+                newDependencyParentPath =
+                    optionalNewDependencyParentPath.isPresent() ? optionalNewDependencyParentPath.get() : newNode.path();
+                oldDependencyParentPath = params.getDependenciesToDuplicatePath();
+            }
+            else
+            {
+                newDependencyParentPath = newNode.path();
+                oldDependencyParentPath = originalNode.path();
+            }
+
+            final NodePath newDependencyPath = NodePath.create(
+                dependency.path().toString().replace( oldDependencyParentPath.toString(), newDependencyParentPath.toString() ) ).build();
+
+            final Node alreadyExistedDependency = doGetByPath( newDependencyPath );
+            if ( alreadyExistedDependency == null )
+            {
+                this.storeChildNode( dependency, newDependencyPath.getParentPath(), doGetByPath( dependency.parentPath() ).getChildOrder(),
+                                     builder );
+            }
+            else
+            {
+                builder.add( dependency.id(), alreadyExistedDependency.id() );
+            }
         }
 
     }
@@ -164,19 +192,19 @@ public final class DuplicateNodeCommand
 
         for ( final Node node : children )
         {
-            final Node newChildNode = this.storeChildNode( originalParent, node, newParent.path(), builder );
+            final Node newChildNode = this.storeChildNode( node, newParent.path(), originalParent.getChildOrder(), builder );
 
             storeChildNodes( node, newChildNode, builder );
         }
     }
 
-    private Node storeChildNode( final Node originalParent, final Node originalChild, final NodePath newParentPath,
+    private Node storeChildNode( final Node originalChild, final NodePath newParentPath, final ChildOrder parentChildOrder,
                                  final NodeReferenceUpdatesHolder.Builder builder )
     {
         final CreateNodeParams.Builder paramsBuilder = CreateNodeParams.from( originalChild ).
             parent( newParentPath );
 
-        decideInsertStrategy( originalParent, originalChild, paramsBuilder );
+        decideInsertStrategy( originalChild, paramsBuilder, parentChildOrder );
 
         attachBinaries( originalChild, paramsBuilder );
 
@@ -197,9 +225,9 @@ public final class DuplicateNodeCommand
         return newChildNode;
     }
 
-    private void decideInsertStrategy( final Node originalParent, final Node node, final CreateNodeParams.Builder paramsBuilder )
+    private void decideInsertStrategy( final Node node, final CreateNodeParams.Builder paramsBuilder, final ChildOrder parentChildOrder )
     {
-        if ( originalParent.getChildOrder().isManualOrder() )
+        if ( parentChildOrder.isManualOrder() )
         {
             paramsBuilder.manualOrderValue( node.getManualOrderValue() ).
                 insertManualStrategy( InsertManualStrategy.MANUAL );
@@ -243,13 +271,6 @@ public final class DuplicateNodeCommand
         for ( final Property property : node.data().getProperties( ValueTypes.REFERENCE ) )
         {
             final Reference reference = property.getReference();
-
-            //TODO: to handle properly
-            if ( property.getName().equalsIgnoreCase( "copyOf" ) )
-            {
-                continue;
-            }
-
             if ( reference != null && nodeReferenceUpdatesHolder.mustUpdate( reference ) )
             {
                 changes = true;

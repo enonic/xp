@@ -1,16 +1,21 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
 
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.GetContentByIdsParams;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.ConstraintExpr;
@@ -24,7 +29,7 @@ import com.enonic.xp.query.expr.ValueExpr;
 public class ResolveDuplicateDependenciesCommand
     extends AbstractContentCommand
 {
-    private final ContentIds contentIds;
+    private final Map<ContentId, ContentPath> contentIds;
 
     private final ContentIds excludeChildrenIds;
 
@@ -55,22 +60,26 @@ public class ResolveDuplicateDependenciesCommand
 
     private NodeIds findDependentNodeIds()
     {
-        final ContentIds contentsWithInnerDependenciesIds =
-            ContentIds.from( contentIds.stream().filter( excludeChildrenIds::contains ).collect( Collectors.toList() ) );
+        final Map<NodeId, NodePath> nodesWithDependencies = Maps.newHashMap();
 
-        if ( contentsWithInnerDependenciesIds.getSize() == 0 )
+        contentIds.entrySet().forEach( entry -> {
+            nodesWithDependencies.put( NodeId.from( entry.getKey().toString() ), entry.getValue() != null
+                ? ContentNodeHelper.translateContentPathToNodePath( entry.getValue() )
+                : null );
+        } );
+        if ( nodesWithDependencies.keySet().size() == 0 )
         {
             return NodeIds.empty();
         }
 
-        return this.nodeService.findInternalDependencies( ContentNodeHelper.toNodeIds( contentsWithInnerDependenciesIds ) ).getIds();
+        return this.nodeService.findInternalDependencies( nodesWithDependencies ).getIds();
 
     }
 
     private NodeIds findChildrenNodeIds()
     {
-        final ContentIds contentsWithChildrenIds =
-            ContentIds.from( contentIds.stream().filter( id -> !excludeChildrenIds.contains( id ) ).collect( Collectors.toList() ) );
+        final ContentIds contentsWithChildrenIds = ContentIds.from(
+            contentIds.keySet().stream().filter( id -> !excludeChildrenIds.contains( id ) ).collect( Collectors.toList() ) );
 
         if ( contentsWithChildrenIds.getSize() == 0 )
         {
@@ -118,11 +127,11 @@ public class ResolveDuplicateDependenciesCommand
     public static class Builder
         extends AbstractContentCommand.Builder<Builder>
     {
-        private ContentIds contentIds;
+        private Map<ContentId, ContentPath> contentIds;
 
         private ContentIds excludeChildrenIds;
 
-        public Builder contentIds( final ContentIds contentIds )
+        public Builder contentIds( final Map<ContentId, ContentPath> contentIds )
         {
             this.contentIds = contentIds;
             return this;

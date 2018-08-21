@@ -1,5 +1,7 @@
 package com.enonic.xp.node;
 
+import java.util.Map;
+
 import com.google.common.annotations.Beta;
 import com.google.common.io.ByteSource;
 
@@ -55,7 +57,7 @@ public interface NodeService
 
     NodeVersionQueryResult findVersions( NodeVersionQuery nodeVersionQuery );
 
-    Nodes findInternalDependencies( NodeIds sourceNodeIds );
+    Nodes findInternalDependencies( Map<NodeId, NodePath> sourceNodeIds );
 
     boolean deleteVersion( NodeVersionId nodeVersionId);
 

@@ -1,11 +1,13 @@
 package com.enonic.xp.content;
 
+import java.util.Map;
+
 import com.google.common.annotations.Beta;
 
 @Beta
 public class ResolveDuplicateDependenciesParams
 {
-    private final ContentIds contentIds;
+    private final Map<ContentId, ContentPath> contentIds;
 
     private final ContentIds excludeChildrenIds;
 
@@ -21,7 +23,7 @@ public class ResolveDuplicateDependenciesParams
         return new Builder();
     }
 
-    public ContentIds getContentIds()
+    public Map<ContentId, ContentPath> getContentIds()
     {
         return contentIds;
     }
@@ -33,7 +35,7 @@ public class ResolveDuplicateDependenciesParams
 
     public static final class Builder
     {
-        private ContentIds contentIds;
+        private Map<ContentId, ContentPath> contentIds;
 
         private ContentIds excludeChildrenIds;
 
@@ -41,7 +43,7 @@ public class ResolveDuplicateDependenciesParams
         {
         }
 
-        public Builder contentIds( ContentIds contentIds )
+        public Builder contentIds( Map<ContentId, ContentPath> contentIds )
         {
             this.contentIds = contentIds;
             return this;
