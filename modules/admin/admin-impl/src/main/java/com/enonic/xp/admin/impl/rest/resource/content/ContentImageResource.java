@@ -38,7 +38,7 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.util.Exceptions;
 
@@ -224,7 +224,7 @@ public final class ContentImageResource
 
     private int getOriginalWidth( final Media media )
     {
-        ExtraData imageData = media.getAllExtraData().getMetadata( MixinName.from( "media:imageInfo" ) );
+        ExtraData imageData = media.getAllExtraData().getMetadata( XDataName.from( "media:imageInfo" ) );
         if ( imageData != null )
         {
             return imageData.getData().getProperty( "imageWidth" ).getValue().asLong().intValue();

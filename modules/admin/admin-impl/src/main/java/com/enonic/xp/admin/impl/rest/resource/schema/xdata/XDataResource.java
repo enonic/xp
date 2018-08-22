@@ -166,11 +166,11 @@ public final class XDataResource
         return applicationXDataBuilder.build();
     }
 
-    private XDatas filterXDatasByContentType( final MixinNames mixinNames, final ContentTypeName contentTypeName )
+    private XDatas filterXDatasByContentType( final XDataNames xDataNames, final ContentTypeName contentTypeName )
     {
         final Map<XDataName, XData> resultXDatas = new HashMap<>();
 
-        final XDatas xDatas = this.xDataService.getByNames( toXDataNames( mixinNames ) );
+        final XDatas xDatas = this.xDataService.getByNames( xDataNames );
         final XDatas filteredXDatas = filterXDatasByContentType( xDatas, contentTypeName );
         filteredXDatas.forEach( ( xData ) -> resultXDatas.put( xData.getName(), xData ) );
 

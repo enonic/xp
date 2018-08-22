@@ -28,7 +28,7 @@ import com.enonic.xp.region.LayoutRegions;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.GeoPoint;
@@ -53,7 +53,7 @@ public final class TestDataFixtures
             from( Instant.parse( "2016-11-03T10:00:00Z" ) ).
             to( Instant.parse( "2016-11-23T10:00:00Z" ) ).
             build() );
-        builder.addExtraData( new ExtraData( MixinName.from( "com.enonic.myapplication:myschema" ), newTinyPropertyTree() ) );
+        builder.addExtraData( new ExtraData( XDataName.from( "com.enonic.myapplication:myschema" ), newTinyPropertyTree() ) );
         builder.page( newPage() );
         builder.attachments( newAttachments() );
 
@@ -106,7 +106,7 @@ public final class TestDataFixtures
                 from( Instant.parse( "2016-11-02T10:36:00Z" ) ).
                 to( Instant.parse( "2016-11-22T10:36:00Z" ) ).
                 build() ).
-            addExtraData( new ExtraData( MixinName.from( "com.enonic.myapplication:myschema" ), newTinyPropertyTree() ) ).
+            addExtraData( new ExtraData( XDataName.from( "com.enonic.myapplication:myschema" ), newTinyPropertyTree() ) ).
             page( newPage() );
 
         return builder.build();

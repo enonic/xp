@@ -20,7 +20,6 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.mixin.MixinNames;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.schema.mixin.Mixins;
 import com.enonic.xp.schema.xdata.XData;
@@ -103,7 +102,7 @@ public class XDataResourceTest
                 "Help text area" ).required( true ).build() ).allowContentType( "app:anotherContentType" ).build();
 
         final SiteDescriptor siteDescriptor =
-            SiteDescriptor.create().metaSteps( MixinNames.from( xdata1.getName().toString(), xdata3.getName().toString() ) ).build();
+            SiteDescriptor.create().metaSteps( XDataNames.from( xdata1.getName().toString(), xdata3.getName().toString() ) ).build();
         Mockito.when( siteService.getDescriptor( contentTypeName.getApplicationKey() ) ).thenReturn( siteDescriptor );
 
         Mockito.when( mixinService.getByNames( any() ) ).thenReturn( Mixins.empty() );
@@ -139,7 +138,7 @@ public class XDataResourceTest
                 true ).helpText( "Help text area" ).required( true ).build() ).allowContentType( "app:testContentType" ).build();
 
         final ContentType contentType = ContentType.create().name( "app:testContentType" ).superType( ContentTypeName.folder() ).metadata(
-            MixinNames.from( xdata1.getName().toString() ) ).build();
+            XDataNames.from( xdata1.getName().toString() ) ).build();
         Mockito.when( contentTypeService.getByName( GetContentTypeParams.from( contentType.getName() ) ) ).thenReturn( contentType );
         Mockito.when( contentTypeService.getAll( any() ) ).thenReturn( ContentTypes.from( contentType ) );
 
@@ -152,7 +151,7 @@ public class XDataResourceTest
 
         final Site site = Site.create().name( "site" ).parentPath( ContentPath.ROOT ).addSiteConfig( siteConfig ).build();
 
-        final SiteDescriptor siteDescriptor = SiteDescriptor.create().metaSteps( MixinNames.from( xdata2.getName().toString() ) ).build();
+        final SiteDescriptor siteDescriptor = SiteDescriptor.create().metaSteps( XDataNames.from( xdata2.getName().toString() ) ).build();
         Mockito.when( siteService.getDescriptor( contentType.getName().getApplicationKey() ) ).thenReturn( siteDescriptor );
 
         Mockito.when( contentService.getById( ContentId.from( "contentId" ) ) ).thenReturn( content );

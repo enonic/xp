@@ -2,15 +2,13 @@ package com.enonic.xp.xml.parser;
 
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.annotations.Beta;
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.app.ApplicationRelativeResolver;
 import com.enonic.xp.schema.content.ContentType;
-import com.enonic.xp.schema.mixin.MixinName;
-import com.enonic.xp.schema.mixin.MixinNames;
+import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.xdata.XDataNames;
 import com.enonic.xp.xml.DomElement;
 
 @Beta
@@ -54,19 +52,15 @@ public final class XmlContentTypeParser
         this.builder.form( mapper.buildForm( root.getChild( "form" ) ) );
     }
 
-    private MixinNames buildMetaData( final DomElement root )
+    private XDataNames buildMetaData( final DomElement root )
     {
-        final List<MixinName> names = Lists.newArrayList();
+        final List<XDataName> names = Lists.newArrayList();
         for ( final DomElement child : root.getChildren( "x-data" ) )
         {
             String name = child.getAttribute( "name" );
-            if ( StringUtils.isEmpty( name ) )
-            {
-                name = child.getAttribute( "mixin" );
-            }
-            names.add( this.resolver.toMixinName( name ) );
+            names.add( this.resolver.toXDataName( name ) );
         }
 
-        return MixinNames.from( names );
+        return XDataNames.from( names );
     }
 }

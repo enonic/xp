@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<x-data xmlns="urn:enonic:xp:model:1.0">
+  <display-name>display name</display-name>
+  <description>description</description>
+  <items>
+    <item-set name="address">
+      <occurrences minimum="0" maximum="1"/>
+      <items>
+        <field-set name="fieldSet">
+          <label>My Field Set</label>
+          <items>
+            <input type="TextLine" name="myFieldInLayout">
+              <label>MyFieldInLayout</label>
+              <immutable>false</immutable>
+              <indexed>true</indexed>
+              <custom-text/>
+              <help-text/>
+              <occurrences minimum="1" maximum="1"/>
+            </input>
+          </items>
+        </field-set>
+        <input type="TextLine" name="label">
+          <label>Label</label>
+          <immutable>false</immutable>
+          <indexed>true</indexed>
+          <custom-text/>
+          <help-text/>
+          <occurrences minimum="0" maximum="2"/>
+        </input>
+        <input type="TextLine" name="street">
+          <label>Street</label>
+          <immutable>false</immutable>
+          <indexed>true</indexed>
+          <custom-text/>
+          <help-text/>
+          <occurrences minimum="0" maximum="2"/>
+        </input>
+        <input type="TextLine" name="postalNo">
+          <label>Postal No</label>
+          <immutable>false</immutable>
+          <indexed>true</indexed>
+          <custom-text/>
+          <help-text/>
+          <occurrences minimum="1" maximum="1"/>
+        </input>
+        <input type="TextLine" name="country">
+          <label>Country</label>
+          <immutable>false</immutable>
+          <indexed>true</indexed>
+          <custom-text/>
+          <help-text/>
+          <occurrences minimum="0" maximum="1"/>
+        </input>
+      </items>
+    </item-set>
+  </items>
+</x-data>

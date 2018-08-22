@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.schema.mixin;
+package com.enonic.xp.core.impl.schema.xdata;
 
 import java.util.List;
 
@@ -10,8 +10,8 @@ import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.inputtype.InputTypeName;
-import com.enonic.xp.schema.mixin.Mixin;
-import com.enonic.xp.schema.mixin.Mixins;
+import com.enonic.xp.schema.xdata.XData;
+import com.enonic.xp.schema.xdata.XDatas;
 
 import static com.enonic.xp.media.MediaInfo.CAMERA_INFO_METADATA_NAME;
 import static com.enonic.xp.media.MediaInfo.GPS_INFO_GEO_POINT;
@@ -22,34 +22,42 @@ import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_METADATA_NAME;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_PIXEL_SIZE;
 import static com.enonic.xp.media.MediaInfo.MEDIA_INFO_BYTE_SIZE;
 
-final class BuiltinMixinsTypes
+final class BuiltinXDataTypes
 {
-    private static final String MIXINS_FOLDER = "mixins";
+    private static final String XDATA_FOLDER = "x-data";
 
-    private static final Mixin IMAGE_METADATA = Mixin.create().
+    private static final XData IMAGE_METADATA = XData.create().
         name( IMAGE_INFO_METADATA_NAME ).
         displayName( "Image Info" ).
         displayNameI18nKey( "media.imageInfo.displayName" ).
-        form( createImageInfoMixinForm() ).
+        form( createImageInfoXDataForm() ).
         build();
 
-    private static final Mixin CAMERA_METADATA = Mixin.create().
+    private static final XData CAMERA_METADATA = XData.create().
         name( CAMERA_INFO_METADATA_NAME ).
         displayName( "Photo Info" ).
         displayNameI18nKey( "media.cameraInfo.displayName" ).
-        form( createPhotoInfoMixinForm() ).
+        form( createPhotoInfoXDataForm() ).
         build();
 
-    private static final Mixin GPS_METADATA = Mixin.create().
+    private static final XData GPS_METADATA = XData.create().
         name( GPS_INFO_METADATA_NAME ).
         displayName( "Gps Info" ).
         displayNameI18nKey( "base.gpsInfo.displayName" ).
-        form( createGpsInfoMixinForm() ).
+        form( createGpsInfoXDataForm() ).
         build();
 
-    private static final Mixins MIXINS = Mixins.from( IMAGE_METADATA, CAMERA_METADATA, GPS_METADATA );
+    private static final XDatas MIXINS = XDatas.from( IMAGE_METADATA, CAMERA_METADATA, GPS_METADATA );
 
-    private static Form createImageInfoMixinForm()
+    private final XDatas mixins;
+
+    public BuiltinXDataTypes()
+    {
+        final List<XData> generatedSystemXDatas = generateSystemXDatas( MIXINS );
+        this.mixins = XDatas.from( generatedSystemXDatas );
+    }
+
+    private static Form createImageInfoXDataForm()
     {
         final String i18n = "media.imageInfo";
         final Form.Builder form = Form.create();
@@ -61,44 +69,6 @@ final class BuiltinMixinsTypes
         form.addFormItem( createLong( MEDIA_INFO_BYTE_SIZE, "Size (bytes)", i18n ).occurrences( 0, 1 ).build() );
         form.addFormItem( createTextLine( "colorSpace", "Color Space", i18n ).occurrences( 0, 0 ).build() );
         form.addFormItem( createTextLine( "fileSource", "File Source", i18n ).occurrences( 0, 1 ).build() );
-
-        return form.build();
-    }
-
-    private static Form createGpsInfoMixinForm()
-    {
-        final String i18n = "base.gpsInfo";
-        final Form.Builder form = Form.create();
-        form.addFormItem( createGeoPoint( GPS_INFO_GEO_POINT, "Geo Point", i18n ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "altitude", "Altitude", i18n ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "direction", "Direction", i18n ).occurrences( 0, 1 ).build() );
-
-        return form.build();
-    }
-
-    private static Form createPhotoInfoMixinForm()
-    {
-        final String i18n = "media.cameraInfo";
-        final Form.Builder form = Form.create();
-        form.addFormItem( createDate( "date", "Date", i18n ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "make", "Make", i18n ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "model", "Model", i18n ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "lens", "Lens", i18n ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "iso", "ISO", i18n ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "focalLength", "Focal Length", i18n ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "focalLength35", "Focal Length 35mm", i18n ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "exposureBias", "Exposure Bias", i18n ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "aperture", "Aperture", i18n ).occurrences( 0, 0 ).build() );
-        form.addFormItem( createTextLine( "shutterTime", "Shutter Time", i18n ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "flash", "Flash", i18n ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "autoFlashCompensation", "Auto Flash Compensation", i18n ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "whiteBalance", "White Balance", i18n ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "exposureProgram", "Exposure Program", i18n ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "shootingMode", "Shooting Mode", i18n ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "meteringMode", "Metering Mode", i18n ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "exposureMode", "Exposure Mode", i18n ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "focusDistance", "Focus Distance", i18n ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "orientation", "Orientation", i18n ).occurrences( 0, 1 ).build() );
 
         return form.build();
     }
@@ -127,33 +97,63 @@ final class BuiltinMixinsTypes
             labelI18nKey( i18n + "." + name + ".label" ).immutable( true );
     }
 
-    private final Mixins mixins;
-
-    public BuiltinMixinsTypes()
+    private static Form createGpsInfoXDataForm()
     {
-        final List<Mixin> generatedSystemMixins = generateSystemMixins( MIXINS );
-        this.mixins = Mixins.from( generatedSystemMixins );
+        final String i18n = "base.gpsInfo";
+        final Form.Builder form = Form.create();
+        form.addFormItem( createGeoPoint( GPS_INFO_GEO_POINT, "Geo Point", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createTextLine( "altitude", "Altitude", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createTextLine( "direction", "Direction", i18n ).occurrences( 0, 1 ).build() );
+
+        return form.build();
     }
 
-    private List<Mixin> generateSystemMixins( Iterable<Mixin> systemMixins )
+    private static Form createPhotoInfoXDataForm()
     {
-        final List<Mixin> generatedSystemMixins = Lists.newArrayList();
-        for ( Mixin mixin : systemMixins )
+        final String i18n = "media.cameraInfo";
+        final Form.Builder form = Form.create();
+        form.addFormItem( createDate( "date", "Date", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createTextLine( "make", "Make", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createTextLine( "model", "Model", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createTextLine( "lens", "Lens", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createTextLine( "iso", "ISO", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createTextLine( "focalLength", "Focal Length", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createTextLine( "focalLength35", "Focal Length 35mm", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createTextLine( "exposureBias", "Exposure Bias", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createTextLine( "aperture", "Aperture", i18n ).occurrences( 0, 0 ).build() );
+        form.addFormItem( createTextLine( "shutterTime", "Shutter Time", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createTextLine( "flash", "Flash", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createTextLine( "autoFlashCompensation", "Auto Flash Compensation", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createTextLine( "whiteBalance", "White Balance", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createTextLine( "exposureProgram", "Exposure Program", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createTextLine( "shootingMode", "Shooting Mode", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createTextLine( "meteringMode", "Metering Mode", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createTextLine( "exposureMode", "Exposure Mode", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createTextLine( "focusDistance", "Focus Distance", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createTextLine( "orientation", "Orientation", i18n ).occurrences( 0, 1 ).build() );
+
+        return form.build();
+    }
+
+    private List<XData> generateSystemXDatas( Iterable<XData> systemXDatas )
+    {
+        final List<XData> generatedSystemXDatas = Lists.newArrayList();
+        for ( XData mixin : systemXDatas )
         {
-            mixin = Mixin.create( mixin ).
-                icon( loadSchemaIcon( MIXINS_FOLDER, mixin.getName().getLocalName() ) ).
+            mixin = XData.create( mixin ).
+                icon( loadSchemaIcon( XDATA_FOLDER, mixin.getName().getLocalName() ) ).
                 build();
-            generatedSystemMixins.add( mixin );
+            generatedSystemXDatas.add( mixin );
         }
-        return generatedSystemMixins;
+        return generatedSystemXDatas;
     }
 
-    public Mixins getAll()
+    public XDatas getAll()
     {
         return this.mixins;
     }
 
-    public Mixins getByApplication( final ApplicationKey key )
+    public XDatas getByApplication( final ApplicationKey key )
     {
         return this.mixins.filter( ( type ) -> type.getName().getApplicationKey().equals( key ) );
     }

@@ -30,6 +30,11 @@ public final class XDataName
         return new XDataName( xdataName );
     }
 
+    public String getApplicationPrefix()
+    {
+        return this.getApplicationKey() == null ? "" : this.getApplicationKey().toString().replace( '.', '-' );
+    }
+
     @Override
     public int compareTo( final XDataName that )
     {

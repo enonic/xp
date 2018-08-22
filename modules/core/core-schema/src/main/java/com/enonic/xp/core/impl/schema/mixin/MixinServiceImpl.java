@@ -18,7 +18,6 @@ import com.google.common.collect.Sets;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.core.impl.schema.SchemaHelper;
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
@@ -27,7 +26,6 @@ import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.InlineMixin;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinNames;
@@ -40,25 +38,17 @@ public final class MixinServiceImpl
 {
     private final static Logger LOG = LoggerFactory.getLogger( MixinServiceImpl.class );
 
-    private final BuiltinMixinsTypes builtInTypes;
-
     private ApplicationService applicationService;
 
     private ResourceService resourceService;
 
     public MixinServiceImpl()
     {
-        this.builtInTypes = new BuiltinMixinsTypes();
     }
 
     @Override
     public Mixin getByName( final MixinName name )
     {
-        if ( isSystem( name ) )
-        {
-            return this.builtInTypes.getAll().getMixin( name );
-        }
-
         return new MixinLoader( this.resourceService ).get( name );
     }
 
@@ -73,16 +63,10 @@ public final class MixinServiceImpl
         return Mixins.from( names.stream().map( this::getByName ).filter( Objects::nonNull ).collect( Collectors.toList() ) );
     }
 
-    private boolean isSystem( final MixinName name )
-    {
-        return SchemaHelper.isSystem( name.getApplicationKey() );
-    }
-
     @Override
     public Mixins getAll()
     {
         final Set<Mixin> list = Sets.newLinkedHashSet();
-        list.addAll( this.builtInTypes.getAll().getList() );
 
         for ( final Application application : this.applicationService.getInstalledApplications() )
         {
@@ -96,11 +80,6 @@ public final class MixinServiceImpl
     @Override
     public Mixins getByApplication( final ApplicationKey key )
     {
-        if ( SchemaHelper.isSystem( key ) )
-        {
-            return this.builtInTypes.getByApplication( key );
-        }
-
         final List<Mixin> list = Lists.newArrayList();
         for ( final MixinName name : findNames( key ) )
         {
@@ -118,15 +97,6 @@ public final class MixinServiceImpl
     private Set<MixinName> findNames( final ApplicationKey key )
     {
         return new MixinLoader( this.resourceService ).findNames( key );
-    }
-
-    @Override
-    public Mixins getByContentType( final ContentType contentType )
-    {
-        return Mixins.from( contentType.getMetadata().stream().
-            map( this::getByName ).
-            filter( Objects::nonNull ).
-            collect( Collectors.toSet() ) );
     }
 
     @Override

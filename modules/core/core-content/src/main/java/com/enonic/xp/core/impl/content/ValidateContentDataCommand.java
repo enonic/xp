@@ -22,9 +22,9 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.mixin.Mixin;
-import com.enonic.xp.schema.mixin.MixinName;
-import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.schema.xdata.XData;
+import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
@@ -37,7 +37,7 @@ final class ValidateContentDataCommand
 
     private final ContentTypeService contentTypeService;
 
-    private final MixinService mixinService;
+    private final XDataService xDataService;
 
     private final SiteService siteService;
 
@@ -56,7 +56,7 @@ final class ValidateContentDataCommand
     private ValidateContentDataCommand( Builder builder )
     {
         contentTypeService = builder.contentTypeService;
-        mixinService = builder.mixinService;
+        xDataService = builder.xDataService;
         siteService = builder.siteService;
         contentData = builder.contentData;
         extraDatas = builder.extraDatas;
@@ -172,16 +172,16 @@ final class ValidateContentDataCommand
         {
             for ( final ExtraData extraData : this.extraDatas )
             {
-                final MixinName name = extraData.getName();
+                final XDataName name = extraData.getName();
 
-                final Mixin mixin = this.mixinService.getByName( name );
-                if ( mixin == null )
+                final XData xData = this.xDataService.getByName( name );
+                if ( xData == null )
                 {
                     LOG.warn( "Mixin not found: '" + name );
                     continue;
                 }
 
-                final Form mixinForm = mixin.getForm();
+                final Form mixinForm = xData.getForm();
                 if ( extraData.getData().getRoot().getPropertySize() > 0 )
                 {
                     this.resultBuilder.addAll( new OccurrenceValidator( mixinForm ).validate( extraData.getData().getRoot() ) );
@@ -195,7 +195,7 @@ final class ValidateContentDataCommand
     {
         private ContentTypeService contentTypeService;
 
-        private MixinService mixinService;
+        private XDataService xDataService;
 
         private SiteService siteService;
 
@@ -219,9 +219,9 @@ final class ValidateContentDataCommand
             return this;
         }
 
-        public Builder mixinService( MixinService mixinService )
+        public Builder xDataService( XDataService xDataService )
         {
-            this.mixinService = mixinService;
+            this.xDataService = xDataService;
             return this;
         }
 

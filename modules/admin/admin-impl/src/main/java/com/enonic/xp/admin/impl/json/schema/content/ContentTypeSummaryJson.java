@@ -12,7 +12,7 @@ import com.enonic.xp.admin.impl.json.ItemJson;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.schema.content.ContentType;
-import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.xdata.XDataName;
 
 @SuppressWarnings("UnusedDeclaration")
 public class ContentTypeSummaryJson
@@ -33,15 +33,15 @@ public class ContentTypeSummaryJson
         this.localeMessageResolver = localeMessageResolver;
         this.iconUrl = iconUrlResolver.resolve( contentType );
 
-        ImmutableList.Builder<String> mixinNamesBuilder = new ImmutableList.Builder<>();
+        ImmutableList.Builder<String> xDataNamesBuilder = new ImmutableList.Builder<>();
         if ( this.contentType.getMetadata() != null )
         {
-            for ( MixinName mixinName : this.contentType.getMetadata() )
+            for ( XDataName xDataName : this.contentType.getMetadata() )
             {
-                mixinNamesBuilder.add( mixinName.toString() );
+                xDataNamesBuilder.add( xDataName.toString() );
             }
         }
-        this.metadataMixinNames = mixinNamesBuilder.build();
+        this.metadataMixinNames = xDataNamesBuilder.build();
     }
 
     public String getName()

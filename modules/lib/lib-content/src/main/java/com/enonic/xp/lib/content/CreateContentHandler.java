@@ -19,7 +19,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.lib.content.mapper.ContentMapper;
 import com.enonic.xp.name.NamePrettyfier;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.script.ScriptValue;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
@@ -104,14 +104,14 @@ public final class CreateContentHandler
         return this.translateToPropertyTree( createJson( value ), contentTypeName );
     }
 
-    private PropertyTree createPropertyTree( final Map<?, ?> value, final MixinName mixinName )
+    private PropertyTree createPropertyTree( final Map<?, ?> value, final XDataName xDataName )
     {
         if ( value == null )
         {
             return null;
         }
 
-        return this.translateToPropertyTree( createJson( value ), mixinName );
+        return this.translateToPropertyTree( createJson( value ), xDataName );
     }
 
     private JsonNode createJson( final Map<?, ?> value )
@@ -140,8 +140,8 @@ public final class CreateContentHandler
             final Map<?, ?> extradatas = (Map<?, ?>) extradatasObject;
             for ( final Map.Entry<?, ?> entry : extradatas.entrySet() )
             {
-                final MixinName mixinName = MixinName.from( applicationKey, entry.getKey().toString() );
-                final ExtraData item = createExtraData( mixinName, entry.getValue() );
+                final XDataName xDataName = XDataName.from( applicationKey, entry.getKey().toString() );
+                final ExtraData item = createExtraData( xDataName, entry.getValue() );
                 if ( item != null )
                 {
                     extradatasBuilder.add( item );
@@ -152,12 +152,12 @@ public final class CreateContentHandler
         return extradatasBuilder.build();
     }
 
-    private ExtraData createExtraData( final MixinName mixinName, final Object value )
+    private ExtraData createExtraData( final XDataName xDataName, final Object value )
     {
         if ( value instanceof Map )
         {
-            final PropertyTree tree = createPropertyTree( (Map) value, mixinName );
-            return tree != null ? new ExtraData( mixinName, tree ) : null;
+            final PropertyTree tree = createPropertyTree( (Map) value, xDataName );
+            return tree != null ? new ExtraData( xDataName, tree ) : null;
         }
 
         return null;

@@ -4,18 +4,18 @@ import com.enonic.xp.core.impl.content.index.IndexConfigVisitor;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
-import com.enonic.xp.schema.mixin.Mixins;
+import com.enonic.xp.schema.xdata.XDatas;
 
 import static com.enonic.xp.content.ContentPropertyNames.EXTRA_DATA;
 
 public class XDataConfigProcessor
     implements ContentIndexConfigProcessor
 {
-    private final Mixins mixins;
+    private final XDatas xDatas;
 
-    public XDataConfigProcessor( final Mixins mixins )
+    public XDataConfigProcessor( final XDatas xDatas )
     {
-        this.mixins = mixins;
+        this.xDatas = xDatas;
     }
 
     @Override
@@ -23,12 +23,12 @@ public class XDataConfigProcessor
     {
         builder.add( PropertyPath.from( EXTRA_DATA, "*" ), IndexConfig.BY_TYPE );
 
-        if ( this.mixins != null )
+        if ( this.xDatas != null )
         {
-            this.mixins.forEach( mixin -> {
-                final IndexConfigVisitor indexConfigVisitor =
-                    new IndexConfigVisitor( String.join( ".", EXTRA_DATA, mixin.getName().getApplicationPrefix(), mixin.getName().getLocalName() ), builder );
-                indexConfigVisitor.traverse( mixin.getForm() );
+            this.xDatas.forEach( xData -> {
+                final IndexConfigVisitor indexConfigVisitor = new IndexConfigVisitor(
+                    String.join( ".", EXTRA_DATA, xData.getName().getApplicationPrefix(), xData.getName().getLocalName() ), builder );
+                indexConfigVisitor.traverse( xData.getForm() );
             } );
         }
 
