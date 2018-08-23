@@ -31,7 +31,8 @@ class MoveTaskMessageGenerator
         }
         else if ( accessFailed != null && accessFailed.size() == 1 )
         {
-            builder.append( String.format( "You don't have access to item \"%s\".", result.getDestination().getName() ) );
+            ContentPath dest = result.getDestination();
+            builder.append( String.format( "You don't have permissions to move to \"%s\".", !dest.isRoot() ? dest.getName() : "/" ) );
         }
         else if ( failed != null && failed.size() == 1 )
         {
