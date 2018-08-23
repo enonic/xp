@@ -588,7 +588,7 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Nodes findInternalDependencies( final Map<NodeId, NodePath> sourceNodeIds )
+    public Nodes findDependenciesWithinPath( final Map<NodeId, NodePath> sourceNodeIds )
     {
         verifyContext();
 

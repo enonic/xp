@@ -57,7 +57,7 @@ public interface NodeService
 
     NodeVersionQueryResult findVersions( NodeVersionQuery nodeVersionQuery );
 
-    Nodes findInternalDependencies( Map<NodeId, NodePath> sourceNodeIds );
+    Nodes findDependenciesWithinPath( Map<NodeId, NodePath> sourceNodeIds );
 
     boolean deleteVersion( NodeVersionId nodeVersionId);
 

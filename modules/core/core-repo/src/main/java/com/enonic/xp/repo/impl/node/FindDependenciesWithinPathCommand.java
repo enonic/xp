@@ -53,7 +53,8 @@ public final class FindDependenciesWithinPathCommand
                 nodeIds.get( originalNode.id() ) != null ? nodeIds.get( originalNode.id() ) : originalNode.path();
 
             final Nodes internalDependencies = Nodes.from( dependencies.stream().
-                filter( dependency -> dependency.path().isChildOf( dependenciesLookingPath ) ).
+                filter( dependency -> dependency.path().equals( dependenciesLookingPath ) ||
+                    dependency.path().isChildOf( dependenciesLookingPath ) ).
                 filter( dependency -> !skipChildren || !dependency.path().isChildOf( originalNode.path() ) ).
                 collect( Collectors.toSet() ) );
 

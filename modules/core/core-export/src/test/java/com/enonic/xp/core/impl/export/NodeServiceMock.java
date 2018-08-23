@@ -114,7 +114,7 @@ class NodeServiceMock
     }
 
     @Override
-    public Nodes findInternalDependencies( final Map<NodeId, NodePath> sourceNodeIds )
+    public Nodes findDependenciesWithinPath( final Map<NodeId, NodePath> sourceNodeIds )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }

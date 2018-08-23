@@ -72,7 +72,7 @@ public class ResolveDuplicateDependenciesCommand
             return NodeIds.empty();
         }
 
-        return this.nodeService.findInternalDependencies( nodesWithDependencies ).getIds();
+        return this.nodeService.findDependenciesWithinPath( nodesWithDependencies ).getIds();
 
     }
 
