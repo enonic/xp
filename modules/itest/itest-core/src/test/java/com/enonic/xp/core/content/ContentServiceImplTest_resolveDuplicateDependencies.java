@@ -14,7 +14,6 @@ import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.ResolveDuplicateDependenciesParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.node.NodeId;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.util.Reference;
 
@@ -23,10 +22,6 @@ import static org.junit.Assert.*;
 public class ContentServiceImplTest_resolveDuplicateDependencies
     extends AbstractContentServiceTest
 {
-    private final static NodeId ROOT_UUID = NodeId.from( "000-000-000-000" );
-
-    private Content content1, content2, child1, child2;
-
     @Override
     public void setUp()
         throws Exception

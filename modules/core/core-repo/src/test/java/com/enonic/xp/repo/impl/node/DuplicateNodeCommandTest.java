@@ -141,7 +141,7 @@ public class DuplicateNodeCommandTest
             name( nodeName ).data( data ).
             build() );
 
-        final Node outerNode = createNode( CreateNodeParams.create().
+        createNode( CreateNodeParams.create().
             setNodeId( NodeId.from( "outer-ref" ) ).
             parent( NodePath.ROOT ).
             name( "my-reference" ).
@@ -153,7 +153,7 @@ public class DuplicateNodeCommandTest
             name( "my-child" ).
             build() );
 
-        final Node innerNode = createNode( CreateNodeParams.create().
+        createNode( CreateNodeParams.create().
             setNodeId( NodeId.from( "child-ref" ) ).
             parent( childNode.path() ).
             name( "my-ref-child" ).
@@ -174,13 +174,13 @@ public class DuplicateNodeCommandTest
             data( createDataWithReferences( Reference.from( "node1_1-id" ), Reference.from( "node2-id" ) ) ).
             build() );
 
-        final Node node2 = createNode( CreateNodeParams.create().
+        createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
             setNodeId( NodeId.from( "node2-id" ) ).
             name( "node2" ).
             build() );
 
-        final Node node1_1 = createNode( CreateNodeParams.create().
+        createNode( CreateNodeParams.create().
             setNodeId( NodeId.from( "node1_1-id" ) ).
             parent( node1.path() ).
             name( "node1_1" ).

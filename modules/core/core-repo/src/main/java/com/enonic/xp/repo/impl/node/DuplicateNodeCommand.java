@@ -142,7 +142,9 @@ public final class DuplicateNodeCommand
         for ( final Node dependency : internalDependenciesList )
         {
 
-            NodePath oldDependencyParentPath, newDependencyParentPath;
+            NodePath oldDependencyParentPath;
+            NodePath newDependencyParentPath;
+
             if ( params.getDependenciesToDuplicatePath() != null )
             {
                 final int dependencyPathCount = params.getDependenciesToDuplicatePath().elementCount();

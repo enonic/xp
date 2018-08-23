@@ -48,7 +48,7 @@ public class ResolveDuplicateDependenciesCommand
         return new Builder();
     }
 
-    ContentIds execute()
+    protected ContentIds execute()
     {
         final NodeIds dependentNodeIds = findDependentNodeIds();
         final NodeIds childrenNodeIds = findChildrenNodeIds();
@@ -144,7 +144,7 @@ public class ResolveDuplicateDependenciesCommand
         }
 
         @Override
-        void validate()
+        protected void validate()
         {
             super.validate();
             Preconditions.checkNotNull( contentIds );
