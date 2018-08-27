@@ -9,22 +9,22 @@ class DuplicateTaskMessageGenerator
     extends TaskMessageGenerator<DuplicateRunnableTaskResult>
 {
     @Override
-    String getNoResultsMessage()
+    protected String getNoResultsMessage()
     {
         return "Nothing to duplicate.";
     }
 
-    void appendMessageForSingleFailure( final StringBuilder builder, final DuplicateRunnableTaskResult result )
+    protected void appendMessageForSingleFailure( final StringBuilder builder, final DuplicateRunnableTaskResult result )
     {
         builder.append( String.format( "Item \"%s\" could not be duplicated.", result.getFailed().get( 0 ).getName() ) );
     }
 
-    void appendMessageForMultipleFailure( final StringBuilder builder, final DuplicateRunnableTaskResult result )
+    protected void appendMessageForMultipleFailure( final StringBuilder builder, final DuplicateRunnableTaskResult result )
     {
         builder.append( String.format( "Failed to duplicate %s items.", result.getFailureCount() ) );
     }
 
-    void appendMessageForSingleSuccess( final StringBuilder builder, final DuplicateRunnableTaskResult result )
+    protected void appendMessageForSingleSuccess( final StringBuilder builder, final DuplicateRunnableTaskResult result )
     {
         final List<ContentPath> alreadyDuplicated = result.getAlreadyDuplicated();
         final List<ContentPath> succeeded = result.getSucceeded();
@@ -46,7 +46,7 @@ class DuplicateTaskMessageGenerator
         }
     }
 
-    void appendMessageForMultipleSuccess( final StringBuilder builder, final DuplicateRunnableTaskResult result )
+    protected void appendMessageForMultipleSuccess( final StringBuilder builder, final DuplicateRunnableTaskResult result )
     {
         final List<ContentPath> alreadyDuplicated = result.getAlreadyDuplicated();
         builder.append( String.format( "%s items are duplicated", result.getSuccessCount() ) );

@@ -8,12 +8,12 @@ class MoveTaskMessageGenerator
     extends TaskMessageGenerator<MoveRunnableTaskResult>
 {
     @Override
-    String getNoResultsMessage()
+    protected String getNoResultsMessage()
     {
         return "Nothing was moved.";
     }
 
-    void appendMessageForSingleFailure( final StringBuilder builder, final MoveRunnableTaskResult result )
+    protected void appendMessageForSingleFailure( final StringBuilder builder, final MoveRunnableTaskResult result )
     {
         final List<ContentPath> existsFailed = result.getExistsFailed();
         final List<ContentPath> notExistsFailed = result.getNotExistsFailed();
@@ -40,7 +40,7 @@ class MoveTaskMessageGenerator
         }
     }
 
-    void appendMessageForMultipleFailure( final StringBuilder builder, final MoveRunnableTaskResult result )
+    protected void appendMessageForMultipleFailure( final StringBuilder builder, final MoveRunnableTaskResult result )
     {
         builder.append( "Failed to move " ).append( result.getFailureCount() ).append( " items" );
         if ( result.getExistsFailed().size() > 0 || result.getAccessFailed().size() > 0 || result.getNotExistsFailed().size() > 0 )
@@ -73,7 +73,7 @@ class MoveTaskMessageGenerator
         builder.append( "." );
     }
 
-    void appendMessageForSingleSuccess( final StringBuilder builder, final MoveRunnableTaskResult result )
+    protected void appendMessageForSingleSuccess( final StringBuilder builder, final MoveRunnableTaskResult result )
     {
         final List<ContentPath> alreadyMoved = result.getAlreadyMoved();
         final List<ContentPath> moved = result.getSucceeded();
@@ -87,7 +87,7 @@ class MoveTaskMessageGenerator
         }
     }
 
-    void appendMessageForMultipleSuccess( final StringBuilder builder, final MoveRunnableTaskResult result )
+    protected void appendMessageForMultipleSuccess( final StringBuilder builder, final MoveRunnableTaskResult result )
     {
         builder.append( result.getSuccessCount() ).append( " items were moved" );
         if ( result.getAlreadyMoved().size() > 0 )

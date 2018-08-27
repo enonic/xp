@@ -9,22 +9,22 @@ class DeleteTaskMessageGenerator
     extends TaskMessageGenerator<DeleteRunnableTaskResult>
 {
     @Override
-    String getNoResultsMessage()
+    protected String getNoResultsMessage()
     {
         return "Nothing to delete.";
     }
 
-    void appendMessageForSingleFailure( final StringBuilder builder, final DeleteRunnableTaskResult result )
+    protected void appendMessageForSingleFailure( final StringBuilder builder, final DeleteRunnableTaskResult result )
     {
         builder.append( String.format( "Item \"%s\" could not be deleted.", result.getFailed().get( 0 ).getName() ) );
     }
 
-    void appendMessageForMultipleFailure( final StringBuilder builder, final DeleteRunnableTaskResult result )
+    protected void appendMessageForMultipleFailure( final StringBuilder builder, final DeleteRunnableTaskResult result )
     {
         builder.append( String.format( "Failed to delete %s items. ", result.getFailureCount() ) );
     }
 
-    void appendMessageForSingleSuccess( final StringBuilder builder, final DeleteRunnableTaskResult result )
+    protected void appendMessageForSingleSuccess( final StringBuilder builder, final DeleteRunnableTaskResult result )
     {
         final List<ContentPath> pending = result.getPending();
         final List<ContentPath> deleted = result.getSucceeded();
@@ -46,7 +46,7 @@ class DeleteTaskMessageGenerator
         }
     }
 
-    void appendMessageForMultipleSuccess( final StringBuilder builder, final DeleteRunnableTaskResult result )
+    protected void appendMessageForMultipleSuccess( final StringBuilder builder, final DeleteRunnableTaskResult result )
     {
         final List<ContentPath> pending = result.getPending();
         builder.append( String.format( "%s items are deleted", result.getSuccessCount() ) );

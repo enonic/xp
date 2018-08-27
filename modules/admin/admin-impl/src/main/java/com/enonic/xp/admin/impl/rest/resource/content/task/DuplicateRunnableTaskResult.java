@@ -11,7 +11,7 @@ public class DuplicateRunnableTaskResult
 {
     private final List<ContentPath> alreadyDuplicated;
 
-    private DuplicateRunnableTaskResult( Builder builder )
+    protected DuplicateRunnableTaskResult( Builder builder )
     {
         super( builder );
         this.alreadyDuplicated = builder.alreadyDuplicated;
@@ -39,26 +39,26 @@ public class DuplicateRunnableTaskResult
         return new Builder();
     }
 
-    public static class Builder
-        extends RunnableTaskResult.Builder<Builder>
+    public static class Builder<BUILDER extends Builder>
+        extends RunnableTaskResult.Builder<BUILDER>
     {
         private List<ContentPath> alreadyDuplicated = Lists.newArrayList();
 
-        private Builder()
+        protected Builder()
         {
             super();
         }
 
-        public Builder succeeded( ContentPath item )
+        public BUILDER succeeded( ContentPath item )
         {
             super.succeeded( item );
-            return this;
+            return (BUILDER) this;
         }
 
-        public Builder alreadyDuplicated( ContentPath item )
+        public BUILDER alreadyDuplicated( ContentPath item )
         {
             this.alreadyDuplicated.add( item );
-            return this;
+            return (BUILDER) this;
         }
 
         public DuplicateRunnableTaskResult build()

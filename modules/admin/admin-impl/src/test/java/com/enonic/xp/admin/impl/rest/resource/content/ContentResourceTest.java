@@ -130,6 +130,7 @@ import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
 import com.enonic.xp.content.ReorderChildParams;
+import com.enonic.xp.content.ResolveDuplicateDependenciesParams;
 import com.enonic.xp.content.ResolvePublishDependenciesParams;
 import com.enonic.xp.content.ResolveRequiredDependenciesParams;
 import com.enonic.xp.content.SetActiveContentVersionResult;
@@ -1035,6 +1036,31 @@ public class ContentResourceTest
             result.getContents().contains( new HasUnpublishedChildrenResultJson.HasUnpublishedChildrenJson( contentB.getId(), false ) ),
             true );
     }
+
+    @Test
+    public void resolve_duplicate_dependencies()
+        throws Exception
+    {
+        final ContentId contentId1 = ContentId.from( "contentId1" );
+        final ContentId contentId2 = ContentId.from( "contentId2" );
+
+        final ContentIds result = ContentIds.from( "contentId3", "contentId4" );
+
+        final Map<ContentId, ContentPath> idsToDuplicate = Maps.newHashMap();
+        idsToDuplicate.put( contentId1, null );
+        idsToDuplicate.put( contentId2, null );
+
+        Mockito.when( contentService.resolveDuplicateDependencies(
+            ResolveDuplicateDependenciesParams.create().contentIds( idsToDuplicate ).excludeChildrenIds(
+                ContentIds.from( contentId2 ) ).build() ) ).thenReturn( result );
+
+        String jsonString = request().path( "content/resolveDuplicateDependencies" ).
+            entity( readFromFile( "resolve_duplicate_dependencies_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertJson( "resolve_duplicate_dependencies.json", jsonString );
+    }
+
 
     @Test
     public void resolve_publish_contents()
