@@ -174,7 +174,7 @@ public class MoveRunnableTaskTest
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
 
         Assert.assertEquals(
-            "{\"state\":\"WARNING\",\"message\":\"Item \\\"content1\\\" is already moved. You don't have access to item \\\"path\\\".\"}",
+            "{\"state\":\"WARNING\",\"message\":\"Item \\\"content1\\\" is already moved. You don't have permissions to move to \\\"path\\\".\"}",
             resultMessage );
     }
 
