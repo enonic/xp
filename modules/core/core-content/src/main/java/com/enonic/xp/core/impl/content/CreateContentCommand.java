@@ -196,14 +196,14 @@ final class CreateContentCommand
             if ( !parent.getType().isTemplateFolder() )
             {
                 final ContentPath path = ContentPath.from( params.getParent(), params.getName().toString() );
-                throw new IllegalArgumentException(
+                throw new RuntimeException(
                     "A page template can only be created below a content of type 'template-folder'. Path: " + path );
             }
         }
         catch ( ContentNotFoundException e )
         {
             final ContentPath path = ContentPath.from( params.getParent(), params.getName().toString() );
-            throw new IllegalArgumentException(
+            throw new RuntimeException(
                 "Parent not found; A page template can only be created below a content of type 'template-folder'. Path: " + path, e );
         }
     }

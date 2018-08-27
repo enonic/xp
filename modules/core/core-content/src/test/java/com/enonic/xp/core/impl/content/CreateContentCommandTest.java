@@ -385,7 +385,7 @@ public class CreateContentCommandTest
             command.execute();
             Assert.fail( "Expected exception" );
         }
-        catch ( IllegalArgumentException e )
+        catch ( RuntimeException e )
         {
             assertEquals( "A page template can only be created below a content of type 'template-folder'. Path: /_templates/mytemplate",
                           e.getMessage() );
