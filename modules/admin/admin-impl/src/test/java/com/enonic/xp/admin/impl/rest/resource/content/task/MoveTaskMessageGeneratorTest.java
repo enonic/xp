@@ -47,18 +47,20 @@ public class MoveTaskMessageGeneratorTest
     }
 
     @Test
-    public void test_3success_desc_multi()
+    public void test_3success_1fail_desc_multi()
     {
 
         final MoveRunnableTaskResult result = MoveRunnableTaskResult.create().
             succeeded( "moved-1" ).
+            destination( ContentPath.ROOT ).
             alreadyMoved( ContentPath.from( "already-moved-2" ) ).
             alreadyMoved( ContentPath.from( "already-moved-3" ) ).
+            accessFailed( ContentPath.ROOT ).
             build();
 
         final String message = generator.generate( result );
 
-        assertEquals( "3 items were moved ( Already moved: 2 ).", message );
+        assertEquals( "3 items were moved ( Already moved: 2 ). You don't have permissions to move to \"/\".", message );
     }
 
     @Test
