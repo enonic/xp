@@ -1,6 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.content;
 
 import java.io.IOException;
+import java.net.URL;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -2109,6 +2110,36 @@ public class ContentResourceTest
         assertTrue( result.contains( new ContentIdJson( content1.getId() ) ) );
         assertTrue( result.contains( new ContentIdJson( content2.getId() ) ) );
         assertTrue( result.contains( new ContentIdJson( content3.getId() ) ) );
+    }
+
+    @Test
+    public void testLoadImage()
+        throws Exception
+    {
+        final Content content = createContent( "aaa", "my_a_content", "myapplication:my_type" );
+        final URL url = getClass().getResource( "coliseum.jpg" );
+        final String json = "{\"url\": \"" + url.toString() + "\",\"parent\": \"/content\", \"name\": \"imageToUpload\"}";
+
+        Mockito.when( contentService.create( Mockito.any( CreateMediaParams.class ) ) ).thenReturn( content );
+
+        request().
+            path( "content/loadImageFromUrl" ).
+            entity( json, MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        Mockito.verify( contentService ).create( Mockito.isA( CreateMediaParams.class ) );
+    }
+
+    @Test
+    public void testLoadImageThrowsExceptionWhenUrlBroken()
+        throws Exception
+    {
+        final String result = request().
+            path( "content/loadImageFromUrl" ).
+            entity( readFromFile( "load_image_from_url.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertEquals( "", result );
     }
 
     private ContentTreeSelectorQueryJson initContentTreeSelectorQueryJson( final ContentPath parentPath )
