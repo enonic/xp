@@ -31,10 +31,10 @@ import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
-import com.enonic.xp.schema.mixin.Mixin;
-import com.enonic.xp.schema.mixin.MixinName;
-import com.enonic.xp.schema.mixin.MixinService;
-import com.enonic.xp.schema.mixin.Mixins;
+import com.enonic.xp.schema.xdata.XData;
+import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.xdata.XDataService;
+import com.enonic.xp.schema.xdata.XDatas;
 import com.enonic.xp.util.GeoPoint;
 
 import static com.enonic.xp.media.MediaInfo.GPS_INFO_GEO_POINT;
@@ -50,7 +50,7 @@ public class ImageContentProcessorTest
 
     private ContentTypeService contentTypeService;
 
-    private MixinService mixinService;
+    private XDataService xDataService;
 
     @Before
     public void setUp()
@@ -58,12 +58,12 @@ public class ImageContentProcessorTest
     {
 
         this.contentService = Mockito.mock( ContentService.class );
-        this.mixinService = Mockito.mock( MixinService.class );
+        this.xDataService = Mockito.mock( XDataService.class );
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
 
         imageContentProcessor.setContentService( this.contentService );
         imageContentProcessor.setContentTypeService( this.contentTypeService );
-        imageContentProcessor.setMixinService( this.mixinService );
+        imageContentProcessor.setXDataService( this.xDataService );
     }
 
     @Test
@@ -107,7 +107,7 @@ public class ImageContentProcessorTest
         throws IOException
     {
 
-        Mockito.when( this.mixinService.getByContentType( Mockito.any( ContentType.class ) ) ).thenReturn( Mixins.empty() );
+        Mockito.when( this.xDataService.getFromContentType( Mockito.any( ContentType.class ) ) ).thenReturn( XDatas.empty() );
 
         final CreateAttachments createAttachments = createAttachments();
         final CreateContentParams params = createContentParams( createAttachments );
@@ -125,9 +125,9 @@ public class ImageContentProcessorTest
         throws IOException
     {
 
-        final Mixin gpsInfo = createMixin( GPS_INFO_METADATA_NAME, "Gps Info", createGpsInfoMixinForm() );
+        final XData gpsInfo = createXData( GPS_INFO_METADATA_NAME, "Gps Info", createGpsInfoMixinForm() );
 
-        Mockito.when( this.mixinService.getByContentType( Mockito.any( ContentType.class ) ) ).thenReturn( Mixins.from( gpsInfo ) );
+        Mockito.when( this.xDataService.getFromContentType( Mockito.any( ContentType.class ) ) ).thenReturn( XDatas.from( gpsInfo ) );
 
         final CreateContentParams params = createContentParams( createAttachments() );
 
@@ -152,9 +152,9 @@ public class ImageContentProcessorTest
         form.addFormItem( createTextLine( "shutterTime", "Exposure Time" ).occurrences( 0, 1 ).build() );
         form.addFormItem( createTextLine( "altitude", "Gps Altitude" ).occurrences( 0, 1 ).build() );
 
-        final Mixin mixinInfo = createMixin( MediaInfo.IMAGE_INFO_METADATA_NAME, "Extra Info", form.build() );
+        final XData xDataInfo = createXData( MediaInfo.IMAGE_INFO_METADATA_NAME, "Extra Info", form.build() );
 
-        Mockito.when( this.mixinService.getByContentType( Mockito.any( ContentType.class ) ) ).thenReturn( Mixins.from( mixinInfo ) );
+        Mockito.when( this.xDataService.getFromContentType( Mockito.any( ContentType.class ) ) ).thenReturn( XDatas.from( xDataInfo ) );
 
         final CreateContentParams params = createContentParams( createAttachments() );
 
@@ -164,7 +164,7 @@ public class ImageContentProcessorTest
         final ProcessCreateResult result = this.imageContentProcessor.processCreate( processCreateParams );
 
         final ExtraData extraData = result.getCreateContentParams().getExtraDatas().first();
-        assertEquals( mixinInfo.getName(), extraData.getName() );
+        assertEquals( xDataInfo.getName(), extraData.getName() );
         assertEquals( extraData.getData().getString( "shutterTime", 0 ), "1" );
         assertEquals( extraData.getData().getString( "altitude", 0 ), "2" );
         assertEquals( extraData.getData().getLong( MediaInfo.MEDIA_INFO_BYTE_SIZE, 0 ), new Long( 13 ) );
@@ -218,9 +218,9 @@ public class ImageContentProcessorTest
         form.addFormItem( createTextLine( "shutterTime", "Exposure Time" ).occurrences( 0, 1 ).build() );
         form.addFormItem( createTextLine( "altitude", "Gps Altitude" ).occurrences( 0, 1 ).build() );
 
-        final Mixin mixinInfo = createMixin( MediaInfo.IMAGE_INFO_METADATA_NAME, "Extra Info", form.build() );
+        final XData xDataInfo = createXData( MediaInfo.IMAGE_INFO_METADATA_NAME, "Extra Info", form.build() );
 
-        Mockito.when( this.mixinService.getByContentType( Mockito.any( ContentType.class ) ) ).thenReturn( Mixins.from( mixinInfo ) );
+        Mockito.when( this.xDataService.getFromContentType( Mockito.any( ContentType.class ) ) ).thenReturn( XDatas.from( xDataInfo ) );
 
         final CreateAttachments createAttachments = createAttachments();
 
@@ -271,9 +271,9 @@ public class ImageContentProcessorTest
         return Input.create().inputType( InputTypeName.GEO_POINT ).label( label ).name( name ).immutable( true );
     }
 
-    private Mixin createMixin( final MixinName name, final String displayName, final Form form )
+    private XData createXData( final XDataName name, final String displayName, final Form form )
     {
-        return Mixin.create().
+        return XData.create().
             name( name ).
             displayName( displayName ).
             form( form ).

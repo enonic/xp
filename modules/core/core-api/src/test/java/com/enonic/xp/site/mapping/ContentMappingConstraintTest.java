@@ -21,7 +21,7 @@ import com.enonic.xp.region.LayoutRegions;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.PrincipalKey;
 
 import static org.junit.Assert.*;
@@ -210,7 +210,7 @@ public class ContentMappingConstraintTest
         builder.valid( true );
         builder.language( Locale.FRENCH );
 
-        builder.addExtraData( new ExtraData( MixinName.from( "myapplication:myschema" ), newTinyPropertyTree() ) );
+        builder.addExtraData( new ExtraData( XDataName.from( "myapplication:myschema" ), newTinyPropertyTree() ) );
         builder.page( newPage() );
 
         return builder.build();

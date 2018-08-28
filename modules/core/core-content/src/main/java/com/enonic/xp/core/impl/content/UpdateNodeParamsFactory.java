@@ -16,7 +16,7 @@ import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeService;
-import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteService;
 
@@ -26,7 +26,7 @@ public class UpdateNodeParamsFactory
 
     private final ContentTypeService contentTypeService;
 
-    private final MixinService mixinService;
+    private final XDataService xDataService;
 
     private final PageDescriptorService pageDescriptorService;
 
@@ -42,7 +42,7 @@ public class UpdateNodeParamsFactory
     {
         this.params = builder.params;
         this.contentTypeService = builder.contentTypeService;
-        this.mixinService = builder.mixinService;
+        this.xDataService = builder.xDataService;
         this.pageDescriptorService = builder.pageDescriptorService;
         this.partDescriptorService = builder.partDescriptorService;
         this.layoutDescriptorService = builder.layoutDescriptorService;
@@ -87,7 +87,7 @@ public class UpdateNodeParamsFactory
             partDescriptorService( partDescriptorService ).
             layoutDescriptorService( layoutDescriptorService ).
             siteService( this.siteService ).
-            mixinService( this.mixinService ).
+            xDataService( this.xDataService ).
             contentTypeName( content.getType() ).
             page( content.getPage() != null ? content.getPage() : null ).
             siteConfigs( content.isSite() ? ( (Site) content ).getSiteConfigs() : null ).
@@ -108,7 +108,7 @@ public class UpdateNodeParamsFactory
 
         private ContentTypeService contentTypeService;
 
-        private MixinService mixinService;
+        private XDataService xDataService;
 
         private PageDescriptorService pageDescriptorService;
 
@@ -129,9 +129,9 @@ public class UpdateNodeParamsFactory
             return this;
         }
 
-        Builder mixinService( final MixinService value )
+        Builder xDataService( final XDataService value )
         {
-            this.mixinService = value;
+            this.xDataService = value;
             return this;
         }
 
@@ -163,7 +163,7 @@ public class UpdateNodeParamsFactory
         {
             Preconditions.checkNotNull( params );
             Preconditions.checkNotNull( contentTypeService );
-            Preconditions.checkNotNull( mixinService );
+            Preconditions.checkNotNull( xDataService );
             Preconditions.checkNotNull( pageDescriptorService );
             Preconditions.checkNotNull( partDescriptorService );
             Preconditions.checkNotNull( layoutDescriptorService );

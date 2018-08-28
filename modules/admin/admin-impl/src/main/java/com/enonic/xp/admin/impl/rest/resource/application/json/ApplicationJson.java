@@ -12,7 +12,7 @@ import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolv
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.auth.AuthDescriptor;
-import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.site.SiteDescriptor;
 
 public class ApplicationJson
@@ -47,9 +47,9 @@ public class ApplicationJson
         ImmutableList.Builder<String> mixinNamesBuilder = new ImmutableList.Builder<>();
         if ( builder.siteDescriptor != null && builder.siteDescriptor.getMetaSteps() != null )
         {
-            for ( MixinName mixinName : builder.siteDescriptor.getMetaSteps() )
+            for ( XDataName xDataName : builder.siteDescriptor.getMetaSteps() )
             {
-                mixinNamesBuilder.add( mixinName.toString() );
+                mixinNamesBuilder.add( xDataName.toString() );
             }
         }
         this.metaStepMixinNames = mixinNamesBuilder.build();

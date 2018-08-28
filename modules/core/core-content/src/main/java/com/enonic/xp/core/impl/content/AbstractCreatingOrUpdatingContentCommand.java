@@ -7,7 +7,7 @@ import com.google.common.net.MediaType;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.content.processor.ContentProcessors;
-import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.security.User;
 import com.enonic.xp.site.SiteService;
 
@@ -21,7 +21,7 @@ class AbstractCreatingOrUpdatingContentCommand
     private final static ImmutableList<MediaType> EXECUTABLE_CONTENT_TYPES =
         ImmutableList.of( MediaType.OCTET_STREAM, MediaType.create( "text", "plain" ), MediaType.create( "application", "x-bzip2" ) );
 
-    final MixinService mixinService;
+    final XDataService xDataService;
 
     final SiteService siteService;
 
@@ -30,7 +30,7 @@ class AbstractCreatingOrUpdatingContentCommand
     AbstractCreatingOrUpdatingContentCommand( final Builder builder )
     {
         super( builder );
-        this.mixinService = builder.mixinService;
+        this.xDataService = builder.xDataService;
         this.siteService = builder.siteService;
         this.contentProcessors = builder.contentProcessors;
     }
@@ -38,7 +38,7 @@ class AbstractCreatingOrUpdatingContentCommand
     public static class Builder<B extends Builder>
         extends AbstractContentCommand.Builder<B>
     {
-        private MixinService mixinService;
+        private XDataService xDataService;
 
         private SiteService siteService;
 
@@ -51,15 +51,15 @@ class AbstractCreatingOrUpdatingContentCommand
         Builder( final AbstractCreatingOrUpdatingContentCommand source )
         {
             super( source );
-            this.mixinService = source.mixinService;
+            this.xDataService = source.xDataService;
             this.siteService = source.siteService;
             this.contentProcessors = source.contentProcessors;
         }
 
         @SuppressWarnings("unchecked")
-        B mixinService( final MixinService mixinService )
+        B xDataService( final XDataService xDataService )
         {
-            this.mixinService = mixinService;
+            this.xDataService = xDataService;
             return (B) this;
         }
 
@@ -81,7 +81,7 @@ class AbstractCreatingOrUpdatingContentCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( mixinService, "mixinService cannot be null" );
+            Preconditions.checkNotNull( xDataService, "xDataService cannot be null" );
         }
     }
 

@@ -23,9 +23,9 @@ import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
-import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.relationship.RelationshipType;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
+import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.Site;
 
@@ -288,7 +288,7 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
             modifiedTime( Instant.parse( this.currentTime ) ).
             modifier( PrincipalKey.from( "user:system:admin" ) ).
             type( contentTypeName ).
-            addExtraData( new ExtraData( MixinName.from( "myApplication:myField" ), metadata ) ).
+            addExtraData( new ExtraData( XDataName.from( "myApplication:myField" ), metadata ) ).
             build();
 
         final Content parent2 = Content.create().
@@ -304,7 +304,7 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
             modifiedTime( Instant.parse( this.currentTime ) ).
             modifier( PrincipalKey.from( "user:system:admin" ) ).
             type( contentTypeName ).
-            addExtraData( new ExtraData( MixinName.from( "myApplication:myField" ), metadata ) ).
+            addExtraData( new ExtraData( XDataName.from( "myApplication:myField" ), metadata ) ).
             build();
 
         return Content.create().
@@ -320,7 +320,7 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
             modifiedTime( Instant.parse( this.currentTime ) ).
             modifier( PrincipalKey.from( "user:system:admin" ) ).
             type( contentTypeName ).
-            addExtraData( new ExtraData( MixinName.from( "myApplication:myField" ), metadata ) ).
+            addExtraData( new ExtraData( XDataName.from( "myApplication:myField" ), metadata ) ).
             build();
     }
 

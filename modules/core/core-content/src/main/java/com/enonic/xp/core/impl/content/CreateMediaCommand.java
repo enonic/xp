@@ -103,7 +103,7 @@ final class CreateMediaCommand
             mediaInfo( mediaInfo ).
             params( createContentParams ).
             siteService( this.siteService ).
-            mixinService( this.mixinService ).
+            xDataService( this.xDataService ).
             formDefaultValuesProcessor( this.formDefaultValuesProcessor ).
             pageDescriptorService( this.pageDescriptorService ).
             partDescriptorService( this.partDescriptorService ).

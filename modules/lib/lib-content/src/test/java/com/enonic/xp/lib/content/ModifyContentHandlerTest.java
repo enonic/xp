@@ -16,7 +16,8 @@ import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.mixin.Mixin;
+import com.enonic.xp.schema.xdata.XData;
+import com.enonic.xp.schema.xdata.XDataName;
 
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.Matchers.any;
@@ -129,25 +130,26 @@ public class ModifyContentHandlerTest
         GetContentTypeParams getContentType = GetContentTypeParams.from( ContentTypeName.from( "test:myContentType" ) );
         when( this.contentTypeService.getByName( Mockito.eq( getContentType ) ) ).thenReturn( contentType );
 
-        final Mixin mixin1 = Mixin.create().
-            name( "com.enonic.myapplication:myschema" ).
+        final XData xData1 = XData.create().
+            name( XDataName.from( "com.enonic.myapplication:myschema" ) ).
             addFormItem( Input.create().
                 label( "a" ).
                 name( "a" ).
                 inputType( InputTypeName.DOUBLE ).
                 build() ).
             build();
-        when( this.mixinService.getByName( Mockito.eq( mixin1.getName() ) ) ).thenReturn( mixin1 );
+        when( this.xDataService.getByName( Mockito.eq( xData1.getName() ) ) ).thenReturn( xData1 );
 
-        final Mixin mixin2 = Mixin.create().
-            name( "com.enonic.myapplication:other" ).
+        final XData xData2 = XData.create().
+            name( XDataName.from( "com.enonic.myapplication:other" ) ).
             addFormItem( Input.create().
                 label( "name" ).
                 name( "name" ).
                 inputType( InputTypeName.TEXT_LINE ).
                 build() ).
             build();
-        when( this.mixinService.getByName( Mockito.eq( mixin2.getName() ) ) ).thenReturn( mixin2 );
+        when( this.xDataService.getByName( Mockito.eq( xData1.getName() ) ) ).thenReturn( xData1 );
+        when( this.xDataService.getByName( Mockito.eq( xData2.getName() ) ) ).thenReturn( xData2 );
         when( this.mixinService.inlineFormItems( any( Form.class ) ) ).then( returnsFirstArg() );
     }
 

@@ -110,7 +110,7 @@ import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
-import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -146,7 +146,7 @@ public class ContentServiceImpl
 
     private MediaInfoService mediaInfoService;
 
-    private MixinService mixinService;
+    private XDataService xDataService;
 
     private SiteService siteService;
 
@@ -208,7 +208,7 @@ public class ContentServiceImpl
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             siteService( this.siteService ).
-            mixinService( this.mixinService ).
+            xDataService( this.xDataService ).
             contentProcessors( this.contentProcessors ).
             formDefaultValuesProcessor( this.formDefaultValuesProcessor ).
             pageDescriptorService( this.pageDescriptorService ).
@@ -241,7 +241,7 @@ public class ContentServiceImpl
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             siteService( this.siteService ).
-            mixinService( this.mixinService ).
+            xDataService( this.xDataService ).
             contentProcessors( this.contentProcessors ).
             formDefaultValuesProcessor( this.formDefaultValuesProcessor ).
             pageDescriptorService( this.pageDescriptorService ).
@@ -281,7 +281,7 @@ public class ContentServiceImpl
             eventPublisher( this.eventPublisher ).
             mediaInfoService( this.mediaInfoService ).
             siteService( this.siteService ).
-            mixinService( this.mixinService ).
+            xDataService( this.xDataService ).
             contentProcessors( this.contentProcessors ).
             formDefaultValuesProcessor( this.formDefaultValuesProcessor ).
             pageDescriptorService( this.pageDescriptorService ).
@@ -300,7 +300,7 @@ public class ContentServiceImpl
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             siteService( this.siteService ).
-            mixinService( this.mixinService ).
+            xDataService( this.xDataService ).
             contentProcessors( this.contentProcessors ).
             pageDescriptorService( this.pageDescriptorService ).
             partDescriptorService( this.partDescriptorService ).
@@ -322,7 +322,7 @@ public class ContentServiceImpl
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
             siteService( this.siteService ).
-            mixinService( this.mixinService ).
+            xDataService( this.xDataService ).
             contentProcessors( this.contentProcessors ).
             build().
             execute();
@@ -719,7 +719,7 @@ public class ContentServiceImpl
     {
         return RenameContentCommand.create( params ).
             nodeService( this.nodeService ).
-            mixinService( this.mixinService ).
+            xDataService( this.xDataService ).
             siteService( this.siteService ).
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
@@ -1074,7 +1074,7 @@ public class ContentServiceImpl
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
             siteService( this.siteService ).
-            mixinService( this.mixinService ).
+            xDataService( this.xDataService ).
             contentProcessors( this.contentProcessors ).
             build().
             execute();
@@ -1126,9 +1126,9 @@ public class ContentServiceImpl
     }
 
     @Reference
-    public void setMixinService( final MixinService mixinService )
+    public void setxDataService( final XDataService xDataService )
     {
-        this.mixinService = mixinService;
+        this.xDataService = xDataService;
     }
 
     @Reference

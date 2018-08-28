@@ -31,6 +31,7 @@ import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.acl.AccessControlList;
 
 import static org.junit.Assert.*;
@@ -298,7 +299,7 @@ public class ContentServiceImplTest_update
         Mockito.when( this.mixinService.getByName( Mockito.isA( MixinName.class ) ) ).
             thenReturn( mixin );
 
-        final ExtraData extraData = new ExtraData( MixinName.from( "myapplication:my_mixin" ), new PropertyTree() );
+        final ExtraData extraData = new ExtraData( XDataName.from( "myapplication:my_mixin" ), new PropertyTree() );
 
         ExtraDatas extraDatas = ExtraDatas.from( Lists.newArrayList( extraData ) );
 

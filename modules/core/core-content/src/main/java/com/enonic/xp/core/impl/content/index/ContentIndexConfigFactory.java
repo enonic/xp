@@ -24,8 +24,8 @@ import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.mixin.MixinService;
-import com.enonic.xp.schema.mixin.Mixins;
+import com.enonic.xp.schema.xdata.XDataService;
+import com.enonic.xp.schema.xdata.XDatas;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteService;
 
@@ -41,7 +41,7 @@ public class ContentIndexConfigFactory
 
         indexConfigProcessors.add( new DataConfigProcessor( getDataForm( builder.contentTypeService, builder.contentTypeName ) ) );
 
-        indexConfigProcessors.add( new XDataConfigProcessor( getMixins( builder.mixinService, builder.extraDatas ) ) );
+        indexConfigProcessors.add( new XDataConfigProcessor( getXDatas( builder.xDataService, builder.extraDatas ) ) );
 
         indexConfigProcessors.add( new PageConfigProcessor( getPageConfigForm( builder.pageDescriptorService, builder.page ) ) );
 
@@ -63,13 +63,13 @@ public class ContentIndexConfigFactory
             getForm();
     }
 
-    private Mixins getMixins( final MixinService mixinService, final ExtraDatas extraDatas )
+    private XDatas getXDatas( final XDataService xDataService, final ExtraDatas extraDatas )
     {
-        if ( mixinService == null || extraDatas == null )
+        if ( xDataService == null || extraDatas == null )
         {
             return null;
         }
-        return mixinService.getByNames( extraDatas.getNames() );
+        return xDataService.getByNames( extraDatas.getNames() );
     }
 
     private Form getPageConfigForm( final PageDescriptorService pageDescriptorService, final Page page )
@@ -113,7 +113,7 @@ public class ContentIndexConfigFactory
     {
         private ContentTypeService contentTypeService;
 
-        private MixinService mixinService;
+        private XDataService xDataService;
 
         private PageDescriptorService pageDescriptorService;
 
@@ -137,9 +137,9 @@ public class ContentIndexConfigFactory
             return this;
         }
 
-        public Builder mixinService( final MixinService value )
+        public Builder xDataService( final XDataService value )
         {
-            this.mixinService = value;
+            this.xDataService = value;
             return this;
         }
 

@@ -107,7 +107,7 @@ final class CreateContentCommand
         final CreateNodeParams createNodeParams = CreateNodeParamsFactory.create( createContentTranslatorParams ).
             contentTypeService(this.contentTypeService ).
             pageDescriptorService( this.pageDescriptorService ).
-            mixinService( this.mixinService ).
+            xDataService( this.xDataService ).
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
             siteService( this.siteService ).
@@ -411,7 +411,7 @@ final class CreateContentCommand
             name( builder.getName() ).
             displayName( builder.getDisplayName() ).
             extradatas( builder.getExtraDatas() != null ? ExtraDatas.from( builder.getExtraDatas() ) : ExtraDatas.empty() ).
-            mixinService( this.mixinService ).
+            xDataService( this.xDataService ).
             siteService( this.siteService ).
             contentTypeService( this.contentTypeService ).
             build().
