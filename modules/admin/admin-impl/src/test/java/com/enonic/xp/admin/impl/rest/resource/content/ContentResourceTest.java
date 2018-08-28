@@ -2118,28 +2118,28 @@ public class ContentResourceTest
     {
         final Content content = createContent( "aaa", "my_a_content", "myapplication:my_type" );
         final URL url = getClass().getResource( "coliseum.jpg" );
-        final String json = "{\"url\": \"" + url.toString() + "\",\"parent\": \"/content\", \"name\": \"imageToUpload\"}";
+        final String json = "{\"url\": \"" + url.toString() + "\",\"parent\": \"/content\", \"name\": \"imageToUpload.jpg\"}";
 
         Mockito.when( contentService.create( Mockito.any( CreateMediaParams.class ) ) ).thenReturn( content );
 
         request().
-            path( "content/loadImageFromUrl" ).
+            path( "content/createMediaFromUrl" ).
             entity( json, MediaType.APPLICATION_JSON_TYPE ).
-            post().getAsString();
+            post().
+            getAsString();
 
         Mockito.verify( contentService ).create( Mockito.isA( CreateMediaParams.class ) );
     }
 
-    @Test
-    public void testLoadImageThrowsExceptionWhenUrlBroken()
+    @Test(expected = java.net.MalformedURLException.class)
+    public void testLoadImageWithMalformedUrl()
         throws Exception
     {
         final String result = request().
-            path( "content/loadImageFromUrl" ).
-            entity( readFromFile( "load_image_from_url.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post().getAsString();
-
-        assertEquals( "", result );
+            path( "content/createMediaFromUrl" ).
+            entity( readFromFile( "create_media_from_url.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().
+            getAsString();
     }
 
     private ContentTreeSelectorQueryJson initContentTreeSelectorQueryJson( final ContentPath parentPath )

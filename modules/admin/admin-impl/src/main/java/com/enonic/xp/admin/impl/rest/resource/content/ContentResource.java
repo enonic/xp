@@ -1,8 +1,5 @@
 package com.enonic.xp.admin.impl.rest.resource.content;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.net.URL;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -21,7 +18,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.annotation.security.RolesAllowed;
-import javax.imageio.ImageIO;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -45,6 +41,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.io.ByteSource;
+import com.google.common.io.Resources;
 
 import com.enonic.xp.admin.impl.json.content.AbstractContentListJson;
 import com.enonic.xp.admin.impl.json.content.CompareContentResultsJson;
@@ -80,6 +77,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.ContentSelectorQueryJ
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentTreeSelectorJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentTreeSelectorQueryJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.CreateContentJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.CreateMediaFromUrlJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.DeleteAttachmentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.DeleteContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.DuplicateContentsJson;
@@ -90,7 +88,6 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.GetContentVersionsJso
 import com.enonic.xp.admin.impl.rest.resource.content.json.GetDependenciesResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.GetDescendantsOfContents;
 import com.enonic.xp.admin.impl.rest.resource.content.json.HasUnpublishedChildrenResultJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.LoadImageJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.LocaleListJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishContentJson;
@@ -283,6 +280,35 @@ public final class ContentResource
     }
 
     @POST
+    @Path("createMediaFromUrl")
+    public ContentJson createMediaFromUrl( final CreateMediaFromUrlJson params )
+        throws Exception
+    {
+        final Content persistedContent;
+        final CreateMediaParams createMediaParams = new CreateMediaParams();
+        final String parent = params.getParent();
+        if ( parent.startsWith( "/" ) )
+        {
+            createMediaParams.parent( ContentPath.from( parent ) );
+        }
+        else
+        {
+            final Content parentContent = contentService.getById( ContentId.from( parent ) );
+            createMediaParams.parent( parentContent.getPath() );
+        }
+
+        createMediaParams.name( params.getName() );
+
+        URL url = new URL( params.getUrl() );
+        ByteSource byteSource = Resources.asByteSource( url );
+        createMediaParams.byteSource( byteSource );
+
+        persistedContent = contentService.create( createMediaParams );
+
+        return new ContentJson( persistedContent, contentIconUrlResolver, principalsResolver );
+    }
+
+    @POST
     @Path("updateMedia")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public ContentJson updateMedia( final MultipartForm form )
@@ -310,48 +336,6 @@ public final class ContentResource
         persistedContent = contentService.update( params );
 
         return new ContentJson( persistedContent, contentIconUrlResolver, principalsResolver );
-    }
-
-    @POST
-    @Path("loadImageFromUrl")
-    public ContentJson loadImageFromUrl( final LoadImageJson params )
-    {
-        final CreateMediaParams createMediaParams = new CreateMediaParams();
-
-        try
-        {
-            createMediaParams.byteSource( loadImage( params.getUrl() ) );
-        }
-        catch ( IOException e )
-        {
-            throw JaxRsExceptions.badRequest( "Failed to load remote image", e.getMessage() );
-        }
-
-        createMediaParams.name( params.getName() );
-
-        if ( params.getParent().startsWith( "/" ) )
-        {
-            createMediaParams.parent( ContentPath.from( params.getParent() ) );
-        }
-        else
-        {
-            final Content parentContent = contentService.getById( ContentId.from( params.getParent() ) );
-            createMediaParams.parent( parentContent.getPath() );
-        }
-
-        final Content persistedContent = contentService.create( createMediaParams );
-
-        return new ContentJson( persistedContent, contentIconUrlResolver, principalsResolver );
-    }
-
-    private ByteSource loadImage( final String url )
-        throws IOException
-    {
-        final BufferedImage bufferedImage = ImageIO.read( new URL( url ) );
-        final ByteArrayOutputStream os = new ByteArrayOutputStream();
-        ImageIO.write( bufferedImage, "jpeg", os );
-
-        return ByteSource.wrap( os.toByteArray() );
     }
 
     @POST
