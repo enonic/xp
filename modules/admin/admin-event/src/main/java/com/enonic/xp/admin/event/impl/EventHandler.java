@@ -44,7 +44,7 @@ public final class EventHandler
     protected void doGet( final HttpServletRequest req, final HttpServletResponse res )
         throws ServletException, IOException
     {
-        if ( !req.isUserInRole( RoleKeys.ADMIN_LOGIN.getId() ) )
+        if ( !req.isUserInRole( RoleKeys.ADMIN_LOGIN.getId() ) && !req.isUserInRole( RoleKeys.ADMIN.getId() ) )
         {
             res.sendError( HttpServletResponse.SC_FORBIDDEN );
             return;

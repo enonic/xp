@@ -84,7 +84,7 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 @SuppressWarnings("UnusedDeclaration")
 @Path(ResourceConstants.REST_ROOT + "security")
 @Produces(MediaType.APPLICATION_JSON)
-@RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
+@RolesAllowed({RoleKeys.ADMIN_LOGIN_ID, RoleKeys.ADMIN_ID})
 @Component(immediate = true, property = "group=admin")
 public final class SecurityResource
     implements JaxRsComponent
