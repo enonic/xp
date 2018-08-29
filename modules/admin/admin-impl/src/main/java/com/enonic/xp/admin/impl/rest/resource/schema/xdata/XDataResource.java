@@ -57,7 +57,7 @@ import static java.util.stream.Collectors.toList;
 
 @Path(ResourceConstants.REST_ROOT + "schema/xdata")
 @Produces(MediaType.APPLICATION_JSON)
-@RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
+@RolesAllowed({RoleKeys.ADMIN_LOGIN_ID, RoleKeys.ADMIN_ID})
 @Component(immediate = true, property = "group=admin")
 public final class XDataResource
     implements JaxRsComponent
