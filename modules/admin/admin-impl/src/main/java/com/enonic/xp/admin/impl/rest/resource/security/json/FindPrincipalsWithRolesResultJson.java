@@ -14,7 +14,7 @@ public class FindPrincipalsWithRolesResultJson
 
     private final Integer unfilteredSize;
 
-    public FindPrincipalsWithRolesResultJson( final Principals principals, final Integer unfilteredSize, final Integer unfilteredTotal )
+    public FindPrincipalsWithRolesResultJson( final Principals principals, final Integer unfilteredSize, final boolean hasMore )
     {
         this.principalsJson = new ArrayList<>();
         if ( principals != null )
@@ -26,7 +26,7 @@ public class FindPrincipalsWithRolesResultJson
             }
         }
         this.unfilteredSize = unfilteredSize;
-        this.hasMore = unfilteredSize < unfilteredTotal;
+        this.hasMore = hasMore;
     }
 
     public Integer getUnfilteredSize()

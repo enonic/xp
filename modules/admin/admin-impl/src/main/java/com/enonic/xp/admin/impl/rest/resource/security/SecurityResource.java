@@ -288,7 +288,7 @@ public final class SecurityResource
             fetchPrincipalsWithRoles( principalQuery, roles, from == null ? 0 : from, size == null ? PrincipalQuery.DEFAULT_SIZE : size );
 
         return new FindPrincipalsWithRolesResultJson( Principals.from( fwResult.getPrincipals() ), fwResult.getUnfilteredSize(),
-                                                      fwResult.getUnfilteredTotal() );
+                                                      fwResult.hasMore() );
     }
 
     private FetchPrincipalsWithRolesResult fetchPrincipalsWithRoles( final PrincipalQuery.Builder principalQuery, final String roles,
@@ -304,7 +304,6 @@ public final class SecurityResource
 
         do
         {
-            unfilteredCount.set( from );
             principalQuery.from( fromTemp );
             final PrincipalQueryResult pqResult = securityService.query( principalQuery.build() );
             totalCount = pqResult.getTotalSize();
@@ -336,9 +335,10 @@ public final class SecurityResource
             }
             fromTemp += size;
         }
-        while ( filteredCount.get() < size && unfilteredCount.get() < totalCount );
+        while ( filteredCount.get() < size && ( from + unfilteredCount.get() ) < totalCount );
 
-        return new FetchPrincipalsWithRolesResult( resultingPrincipals, unfilteredCount.get(), totalCount );
+        return new FetchPrincipalsWithRolesResult( resultingPrincipals, unfilteredCount.get(),
+                                                   ( unfilteredCount.get() + from ) < totalCount );
     }
 
     private PrincipalJson principalToJson( final Principal principal, final Boolean resolveMemberships )
@@ -641,22 +641,17 @@ public final class SecurityResource
 
     private class FetchPrincipalsWithRolesResult
     {
-        private int unfilteredSize;
-
-        private int unfilteredTotal;
-
         private List<Principal> principals;
 
-        FetchPrincipalsWithRolesResult( final List<Principal> principals, final int unfilteredSize, final int unfilteredTotal )
-        {
-            this.unfilteredSize = unfilteredSize;
-            this.principals = principals;
-            this.unfilteredTotal = unfilteredTotal;
-        }
+        private int unfilteredSize;
 
-        public int getUnfilteredSize()
+        private boolean hasMore;
+
+        FetchPrincipalsWithRolesResult( final List<Principal> principals, final int unfilteredSize, final boolean hasMore )
         {
-            return unfilteredSize;
+            this.principals = principals;
+            this.unfilteredSize = unfilteredSize;
+            this.hasMore = hasMore;
         }
 
         public List<Principal> getPrincipals()
@@ -664,9 +659,14 @@ public final class SecurityResource
             return principals;
         }
 
-        public int getUnfilteredTotal()
+        public int getUnfilteredSize()
         {
-            return unfilteredTotal;
+            return unfilteredSize;
+        }
+
+        public boolean hasMore()
+        {
+            return hasMore;
         }
     }
 }
