@@ -6,7 +6,7 @@ import com.google.common.annotations.Beta;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.schema.mixin.MixinNames;
+import com.enonic.xp.schema.xdata.XDataNames;
 import com.enonic.xp.site.filter.FilterDescriptors;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptors;
 
@@ -17,7 +17,7 @@ public final class SiteDescriptor
 
     private final Form form;
 
-    private final MixinNames metaSteps;
+    private final XDataNames metaSteps;
 
     private final FilterDescriptors filterDescriptors;
 
@@ -36,7 +36,7 @@ public final class SiteDescriptor
         return form;
     }
 
-    public MixinNames getMetaSteps()
+    public XDataNames getMetaSteps()
     {
         return metaSteps;
     }
@@ -70,7 +70,7 @@ public final class SiteDescriptor
     {
         private Form form;
 
-        private MixinNames metaSteps;
+        private XDataNames metaSteps;
 
         private FilterDescriptors filterDescriptors;
 
@@ -94,7 +94,7 @@ public final class SiteDescriptor
             return this;
         }
 
-        public Builder metaSteps( final MixinNames metaSteps )
+        public Builder metaSteps( final XDataNames metaSteps )
         {
             this.metaSteps = metaSteps;
             return this;

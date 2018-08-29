@@ -91,7 +91,7 @@ final class RenameContentCommand
             displayName( content.getDisplayName() ).
             extradatas( content.getAllExtraData() ).
             contentTypeService( this.contentTypeService ).
-            mixinService( this.mixinService ).
+            xDataService( this.xDataService ).
             siteService( this.siteService ).
             build().
             execute();
@@ -111,7 +111,7 @@ final class RenameContentCommand
         return UpdateContentCommand.create( this ).params( updateContentParams ).
             siteService( siteService ).
             contentTypeService( contentTypeService ).
-            mixinService( this.mixinService ).
+            xDataService( this.xDataService ).
             pageDescriptorService( this.pageDescriptorService ).
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).

@@ -7,7 +7,7 @@
   <is-abstract>false</is-abstract>
   <is-final>true</is-final>
   <allow-child-content>true</allow-child-content>
-  <x-data mixin="myapplication:metadata"/>
+  <x-data name="myapplication:metadata"/>
   <form>
     <input type="Date" name="myDate">
       <label>label</label>

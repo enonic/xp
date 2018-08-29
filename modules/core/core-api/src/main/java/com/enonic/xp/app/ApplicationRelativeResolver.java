@@ -6,6 +6,7 @@ import com.google.common.base.Joiner;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
+import com.enonic.xp.schema.xdata.XDataName;
 
 @Beta
 public final class ApplicationRelativeResolver
@@ -89,6 +90,21 @@ public final class ApplicationRelativeResolver
         }
 
         return MixinName.from( this.current, name );
+    }
+
+    public XDataName toXDataName( final String name )
+    {
+        if ( name.contains( ":" ) )
+        {
+            return XDataName.from( name );
+        }
+
+        if ( this.current == null )
+        {
+            throw new IllegalArgumentException( "Unable to resolve application for XData [" + name + "]" );
+        }
+
+        return XDataName.from( this.current, name );
     }
 
     public RelationshipTypeName toRelationshipTypeName( final String name )

@@ -81,6 +81,7 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
+import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
@@ -144,6 +145,8 @@ public class AbstractContentServiceTest
     protected BinaryServiceImpl binaryService;
 
     protected MixinService mixinService;
+
+    protected XDataService xDataService;
 
     protected ContentNodeTranslatorImpl translator;
 
@@ -257,6 +260,8 @@ public class AbstractContentServiceTest
         this.mixinService = Mockito.mock( MixinService.class );
         Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).thenReturn( Form.create().build() );
 
+        this.xDataService = Mockito.mock( XDataService.class );
+
         Map<String, List<String>> metadata = Maps.newHashMap();
         metadata.put( HttpHeaders.CONTENT_TYPE, Lists.newArrayList( "image/jpg" ) );
 
@@ -291,7 +296,7 @@ public class AbstractContentServiceTest
         this.contentService.setMediaInfoService( mediaInfoService );
         this.contentService.setSiteService( siteService );
         this.contentService.setContentTypeService( contentTypeService );
-        this.contentService.setMixinService( mixinService );
+        this.contentService.setxDataService( xDataService );
         this.contentService.setTranslator( this.translator );
         this.contentService.setPageDescriptorService( this.pageDescriptorService );
         this.contentService.setPartDescriptorService( this.partDescriptorService );

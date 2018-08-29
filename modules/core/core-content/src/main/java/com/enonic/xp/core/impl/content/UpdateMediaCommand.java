@@ -105,7 +105,7 @@ final class UpdateMediaCommand
             mediaInfo( mediaInfo ).
             contentTypeService( this.contentTypeService ).
             siteService( this.siteService ).
-            mixinService( this.mixinService ).
+            xDataService( this.xDataService ).
             pageDescriptorService( this.pageDescriptorService ).
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).

@@ -28,7 +28,7 @@ import com.enonic.xp.region.Region;
 import com.enonic.xp.region.RegionDescriptor;
 import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
@@ -54,7 +54,7 @@ public final class ContentFixtures
         builder.createdTime( Instant.ofEpochSecond( 0 ) );
         builder.data( newPropertyTree() );
 
-        builder.addExtraData( new ExtraData( MixinName.from( "myapplication:myschema" ), newTinyPropertyTree() ) );
+        builder.addExtraData( new ExtraData( XDataName.from( "myapplication:myschema" ), newTinyPropertyTree() ) );
         builder.page( newPage() );
 
         return builder.build();
@@ -91,7 +91,7 @@ public final class ContentFixtures
         builder.attachments( Attachments.from( attachment ) );
         builder.data( data );
 
-        builder.addExtraData( new ExtraData( MixinName.from( "myapplication:myschema" ), newTinyPropertyTree() ) );
+        builder.addExtraData( new ExtraData( XDataName.from( "myapplication:myschema" ), newTinyPropertyTree() ) );
         builder.addExtraData( mediaExtraData );
         builder.page( newPage() );
 

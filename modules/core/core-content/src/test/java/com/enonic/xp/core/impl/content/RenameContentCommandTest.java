@@ -28,7 +28,7 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.security.PrincipalKey;
 
 public class RenameContentCommandTest
@@ -53,7 +53,7 @@ public class RenameContentCommandTest
 
     private ContentType contentType;
 
-    private MixinService mixinService;
+    private XDataService xDataService;
 
     private ContentProcessors contentProcessors;
 
@@ -66,7 +66,7 @@ public class RenameContentCommandTest
         this.nodeService = Mockito.mock( NodeService.class );
         this.eventPublisher = Mockito.mock( EventPublisher.class );
         this.translator = Mockito.mock( ContentNodeTranslator.class );
-        this.mixinService = Mockito.mock( MixinService.class );
+        this.xDataService = Mockito.mock( XDataService.class );
         this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
         this.partDescriptorService = Mockito.mock( PartDescriptorService.class );
         this.layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
@@ -146,7 +146,7 @@ public class RenameContentCommandTest
             nodeService( this.nodeService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
-            mixinService( this.mixinService ).
+            xDataService( this.xDataService ).
             contentProcessors( this.contentProcessors ).
             pageDescriptorService( this.pageDescriptorService ).
             partDescriptorService( this.partDescriptorService ).

@@ -48,8 +48,6 @@ final class AdminToolHandlerWorker
         }
 
         //Renders the Admin application
-        this.request.setBaseUri( AdminToolHandler.ADMIN_TOOL_PREFIX + descriptorKey.getApplicationKey() + "/" + descriptorKey.getName() );
-        this.request.setApplicationKey( descriptorKey.getApplicationKey() );
         final ResourceKey scriptDir = ResourceKey.from( descriptorKey.getApplicationKey(), "admin/tools/" + descriptorKey.getName() );
         final ControllerScript controllerScript = this.controllerScriptFactory.fromDir( scriptDir );
         return controllerScript.execute( this.request );

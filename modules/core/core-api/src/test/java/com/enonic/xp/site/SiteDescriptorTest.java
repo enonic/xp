@@ -10,8 +10,8 @@ import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
-import com.enonic.xp.schema.mixin.MixinName;
-import com.enonic.xp.schema.mixin.MixinNames;
+import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.xdata.XDataNames;
 
 import static org.junit.Assert.*;
 
@@ -42,9 +42,9 @@ public class SiteDescriptorTest
             build();
 
         //Builds MixinNames
-        List<MixinName> mixinNameList = Lists.newArrayList();
-        mixinNameList.add( MixinName.from( "myapplication:my" ) );
-        MixinNames metaSteps = MixinNames.from( mixinNameList );
+        List<XDataName> xDataNameList = Lists.newArrayList();
+        xDataNameList.add( XDataName.from( "myapplication:my" ) );
+        XDataNames metaSteps = XDataNames.from( xDataNameList );
 
         //Builds a SiteDescriptor
         SiteDescriptor siteDescriptor = SiteDescriptor.create().

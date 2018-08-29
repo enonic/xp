@@ -107,7 +107,7 @@ final class CreateContentCommand
         final CreateNodeParams createNodeParams = CreateNodeParamsFactory.create( createContentTranslatorParams ).
             contentTypeService(this.contentTypeService ).
             pageDescriptorService( this.pageDescriptorService ).
-            mixinService( this.mixinService ).
+            xDataService( this.xDataService ).
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
             siteService( this.siteService ).
@@ -196,14 +196,14 @@ final class CreateContentCommand
             if ( !parent.getType().isTemplateFolder() )
             {
                 final ContentPath path = ContentPath.from( params.getParent(), params.getName().toString() );
-                throw new IllegalArgumentException(
+                throw new RuntimeException(
                     "A page template can only be created below a content of type 'template-folder'. Path: " + path );
             }
         }
         catch ( ContentNotFoundException e )
         {
             final ContentPath path = ContentPath.from( params.getParent(), params.getName().toString() );
-            throw new IllegalArgumentException(
+            throw new RuntimeException(
                 "Parent not found; A page template can only be created below a content of type 'template-folder'. Path: " + path, e );
         }
     }
@@ -411,7 +411,7 @@ final class CreateContentCommand
             name( builder.getName() ).
             displayName( builder.getDisplayName() ).
             extradatas( builder.getExtraDatas() != null ? ExtraDatas.from( builder.getExtraDatas() ) : ExtraDatas.empty() ).
-            mixinService( this.mixinService ).
+            xDataService( this.xDataService ).
             siteService( this.siteService ).
             contentTypeService( this.contentTypeService ).
             build().

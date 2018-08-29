@@ -19,8 +19,8 @@ import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.mixin.Mixin;
-import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.xdata.XData;
+import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.PrincipalKey;
 
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
@@ -82,15 +82,15 @@ public class CreateContentHandlerTest
         final PropertyTree extraData = new PropertyTree();
         extraData.addDouble( "a", 1.0 );
 
-        final Mixin mixin = Mixin.create().
-            name( "com.enonic.myapplication:myschema" ).
+        final XData xData = XData.create().
+            name( XDataName.from( "com.enonic.myapplication:myschema" ) ).
             addFormItem( Input.create().
                 label( "a" ).
                 name( "a" ).
                 inputType( InputTypeName.DOUBLE ).
                 build() ).
             build();
-        when( this.mixinService.getByName( Mockito.eq( MixinName.from( "com.enonic.myapplication:myschema" ) ) ) ).thenReturn( mixin );
+        when( this.xDataService.getByName( Mockito.eq( XDataName.from( "com.enonic.myapplication:myschema" ) ) ) ).thenReturn( xData );
         when( this.mixinService.inlineFormItems( any( Form.class ) ) ).then( returnsFirstArg() );
     }
 

@@ -22,7 +22,7 @@ public class LayoutDescriptorsJson
     public LayoutDescriptorsJson( final LayoutDescriptors descriptors, final LocaleMessageResolver localeMessageResolver )
     {
         ImmutableList.Builder<LayoutDescriptorJson> builder = new ImmutableList.Builder<>();
-        if(descriptors != null)
+        if ( descriptors != null )
         {
             for ( LayoutDescriptor descriptor : descriptors )
             {

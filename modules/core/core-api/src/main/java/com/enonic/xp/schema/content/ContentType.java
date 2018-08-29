@@ -7,7 +7,7 @@ import com.google.common.base.MoreObjects;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.schema.BaseSchema;
-import com.enonic.xp.schema.mixin.MixinNames;
+import com.enonic.xp.schema.xdata.XDataNames;
 
 @Beta
 public final class ContentType
@@ -27,7 +27,7 @@ public final class ContentType
 
     private final String contentDisplayNameScript;
 
-    private final MixinNames metadata;
+    private final XDataNames metadata;
 
     ContentType( final Builder builder )
     {
@@ -100,7 +100,7 @@ public final class ContentType
         return contentDisplayNameScript;
     }
 
-    public MixinNames getMetadata()
+    public XDataNames getMetadata()
     {
         return metadata;
     }
@@ -142,7 +142,7 @@ public final class ContentType
 
         private String contentDisplayNameScript;
 
-        private MixinNames metadata;
+        private XDataNames metadata;
 
         private Builder()
         {
@@ -152,7 +152,7 @@ public final class ContentType
             isFinal = true;
             allowChildContent = true;
             isBuiltIn = false;
-            metadata = MixinNames.empty();
+            metadata = XDataNames.empty();
         }
 
         private Builder( final ContentType source )
@@ -249,7 +249,7 @@ public final class ContentType
             return this;
         }
 
-        public Builder metadata( final MixinNames metadata )
+        public Builder metadata( final XDataNames metadata )
         {
             this.metadata = metadata;
             return this;

@@ -39,5 +39,5 @@
         <immutable>false</immutable>
       <occurrences minimum="0" maximum="1"/>
   </item-set>
-  <inline mixin="myapplication:reference"/>
+  <mixin name="myapplication:reference"/>
 </form>

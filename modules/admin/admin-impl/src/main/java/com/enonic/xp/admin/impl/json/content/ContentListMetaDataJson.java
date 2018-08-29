@@ -1,5 +1,7 @@
 package com.enonic.xp.admin.impl.json.content;
 
+import java.util.Objects;
+
 import com.enonic.xp.content.ContentListMetaData;
 
 
@@ -28,5 +30,26 @@ public class ContentListMetaDataJson
     public long getHits()
     {
         return hits;
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+        final ContentListMetaDataJson that = (ContentListMetaDataJson) o;
+        return totalHits == that.totalHits && hits == that.hits;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( totalHits, hits );
     }
 }

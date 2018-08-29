@@ -8,8 +8,14 @@ import com.enonic.xp.data.PropertyPath;
 public class ContentPropertyNames
 {
     public static final String PAGE = "page";
+    
+    public static final String PAGE_CONTROLLER = PAGE + PropertyPath.ELEMENT_DIVIDER + "controller";
+    
+    public static final String PAGE_TEMPLATE = PAGE + PropertyPath.ELEMENT_DIVIDER + "template";
 
-    public static final String PAGE_CONFIG = "page.config";
+    public static final String PAGE_CONFIG = PAGE + PropertyPath.ELEMENT_DIVIDER + "config";
+    
+    public static final String PAGE_REGIONS = PAGE + PropertyPath.ELEMENT_DIVIDER + "regions";
 
     public static final String PAGE_TEXT_COMPONENT_PROPERTY_PATH_PATTERN = "page.region.**.TextComponent.text";
 

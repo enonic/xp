@@ -234,6 +234,22 @@ RepoConnection.prototype.move = function (params) {
 };
 
 /**
+ * Set node's children order
+ *
+ * @example-ref examples/node/setChildOrder.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key node's path or id
+ * @param {string} params.childOrder children order
+ * @returns {object} updated node
+ */
+RepoConnection.prototype.setChildOrder = function (params) {
+    var key = required(params, 'key');
+    var childOrder = required(params, 'childOrder');
+    return __.toNativeObject(this.repoConnection.setChildOrder(key, childOrder));
+};
+
+/**
  * This command queries nodes.
  *
  * @example-ref examples/node/query.js
