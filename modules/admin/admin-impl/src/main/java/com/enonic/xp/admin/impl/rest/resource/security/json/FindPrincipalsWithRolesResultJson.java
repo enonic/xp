@@ -6,14 +6,15 @@ import java.util.List;
 import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.Principals;
 
-public class FindPrincipalsResultJson
+public class FindPrincipalsWithRolesResultJson
 {
-
     private final List<PrincipalJson> principalsJson;
 
-    private final Integer totalSize;
+    private final Boolean hasMore;
 
-    public FindPrincipalsResultJson( final Principals principals, final Integer totalSize )
+    private final Integer unfilteredSize;
+
+    public FindPrincipalsWithRolesResultJson( final Principals principals, final Integer unfilteredSize, final boolean hasMore )
     {
         this.principalsJson = new ArrayList<>();
         if ( principals != null )
@@ -24,12 +25,18 @@ public class FindPrincipalsResultJson
 
             }
         }
-        this.totalSize = totalSize;
+        this.unfilteredSize = unfilteredSize;
+        this.hasMore = hasMore;
     }
 
-    public Integer getTotalSize()
+    public Integer getUnfilteredSize()
     {
-        return totalSize;
+        return unfilteredSize;
+    }
+
+    public Boolean getHasMore()
+    {
+        return hasMore;
     }
 
     public List<PrincipalJson> getPrincipals()

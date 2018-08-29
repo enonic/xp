@@ -14,7 +14,7 @@ import com.google.common.collect.Sets;
 @Beta
 public final class PrincipalQuery
 {
-    private static final int DEFAULT_SIZE = 10;
+    public static final int DEFAULT_SIZE = 10;
 
     private static final int GET_ALL_SIZE_FLAG = -1;
 
