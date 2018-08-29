@@ -488,3 +488,56 @@ exports.getTypes = function () {
     var bean = __.newBean('com.enonic.xp.lib.content.ContentTypeHandler');
     return __.toNativeObject(bean.getAllContentTypes());
 };
+
+/**
+ * Finds versions of a content.
+ *
+ * @example-ref examples/content/findVersions.js
+ *
+ * @param {object} params JSON parameters.
+ * @param {string} params.key Path or id of the content.
+ * @param {number} [params.start=0] Start index (used for paging).
+ * @param {number} [params.count=10] Number of content versions to fetch.
+ * @returns {object} Content versions result.
+ */
+exports.findVersions = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.content.FindVersionsHandler');
+    bean.key = required(params, 'key');
+    bean.start = nullOrValue(params.start);
+    bean.count = nullOrValue(params.count);
+    return __.toNativeObject(bean.execute());
+};
+
+/**
+ * Get the active version of a content.
+ *
+ * @example-ref examples/content/getActiveVersions.js
+ *
+ * @param {object} params JSON parameters.
+ * @param {string} params.key Path or id of the content.
+ * @returns {object} Active content version.
+ */
+exports.getActiveVersion = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.content.GetActiveVersionHandler');
+    bean.key = required(params, 'key');
+    return __.toNativeObject(bean.execute());
+};
+
+/**
+ * Set the active version for a content.
+ *
+ * @example-ref examples/content/setActiveVersion.js
+ *
+ * @param {object} params JSON parameters.
+ * @param {string} params.key Path or id of the content.
+ * @param {string} params.versionId Version to set as active.
+ * @returns {boolean} True if successful, false otherwise.
+ */
+exports.setActiveVersion = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.content.SetActiveVersionHandler');
+    bean.key = required(params, 'key');
+    bean.versionId = nullOrValue(params.versionId);
+    return __.toNativeObject(bean.execute());
+};
+
+
