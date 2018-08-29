@@ -114,7 +114,7 @@ final class UpdateContentCommand
 
         final UpdateNodeParams updateNodeParams = UpdateNodeParamsFactory.create( updateContentTranslatorParams ).
             contentTypeService( this.contentTypeService ).
-            mixinService( this.mixinService ).
+            xDataService( this.xDataService ).
             pageDescriptorService( this.pageDescriptorService ).
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
@@ -268,7 +268,7 @@ final class UpdateContentCommand
             name( edited.getName() ).
             displayName( edited.getDisplayName() ).
             extradatas( edited.getAllExtraData() ).
-            mixinService( this.mixinService ).
+            xDataService( this.xDataService ).
             siteService( this.siteService ).
             contentTypeService( this.contentTypeService ).
             build().

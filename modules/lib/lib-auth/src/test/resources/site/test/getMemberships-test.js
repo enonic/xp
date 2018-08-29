@@ -19,6 +19,24 @@ exports.getUserMemberships = function () {
 
 };
 
+exports.getTransitiveUserMemberships = function () {
+
+    var result = auth.getMemberships('user:myUserStore:userId', true);
+
+    var expectedJson = [
+        {
+            "type": "group",
+            "key": "group:system:group-a",
+            "displayName": "Group A",
+            "modifiedTime": "1970-01-01T00:00:00Z",
+            "description": "description"
+        }
+    ];
+
+    t.assertJsonEquals(expectedJson, result);
+
+};
+
 exports.getUserMembershipsWithRoleAndGroup = function () {
 
     var result = auth.getMemberships('user:myUserStore:userId');

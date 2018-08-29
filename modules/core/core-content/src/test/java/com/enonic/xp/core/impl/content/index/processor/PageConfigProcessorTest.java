@@ -17,7 +17,7 @@ import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.region.RegionDescriptors;
 
 import static com.enonic.xp.content.ContentPropertyNames.PAGE;
-import static com.enonic.xp.core.impl.content.index.processor.PageConfigProcessor.PAGE_CONFIG;
+import static com.enonic.xp.content.ContentPropertyNames.PAGE_CONFIG;
 import static org.junit.Assert.*;
 
 public class PageConfigProcessorTest
@@ -39,7 +39,7 @@ public class PageConfigProcessorTest
         throws Exception
     {
         final PatternIndexConfigDocument result = processForm( Form.create().build() );
-        assertEquals( 4, result.getPathIndexConfigs().size() );
+        assertEquals( 5, result.getPathIndexConfigs().size() );
     }
 
     @Test
@@ -70,7 +70,6 @@ public class PageConfigProcessorTest
     }
 
 
-
     @Test
     public void test_page_regions()
         throws Exception
@@ -96,7 +95,7 @@ public class PageConfigProcessorTest
 
         final PatternIndexConfigDocument result = processForm( form );
 
-        assertEquals( 5, result.getPathIndexConfigs().size() );
+        assertEquals( 6, result.getPathIndexConfigs().size() );
 
         assertEquals( "htmlStripper",
                       result.getConfigForPath( PropertyPath.from( PAGE + ".config.htmlArea" ) ).getIndexValueProcessors().get(

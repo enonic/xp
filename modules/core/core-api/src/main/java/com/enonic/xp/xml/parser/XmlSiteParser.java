@@ -8,8 +8,8 @@ import org.apache.commons.lang.StringUtils;
 
 import com.enonic.xp.app.ApplicationRelativeResolver;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.schema.mixin.MixinName;
-import com.enonic.xp.schema.mixin.MixinNames;
+import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.xdata.XDataNames;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.filter.FilterDescriptor;
 import com.enonic.xp.site.filter.FilterDescriptors;
@@ -71,16 +71,16 @@ public final class XmlSiteParser
 
         final XmlFormMapper formMapper = new XmlFormMapper( this.currentApplication );
         this.siteDescriptorBuilder.form( formMapper.buildForm( root.getChild( CONFIG_TAG_NAME ) ) );
-        this.siteDescriptorBuilder.metaSteps( MixinNames.from( parseMetaSteps( root ) ) );
+        this.siteDescriptorBuilder.metaSteps( XDataNames.from( parseMetaSteps( root ) ) );
         this.siteDescriptorBuilder.filterDescriptors(
             FilterDescriptors.from( parseFilterDescriptors( root.getChild( FILTER_DESCRIPTORS_PARENT_TAG_NAME ) ) ) );
         this.siteDescriptorBuilder.mappingDescriptors(
             ControllerMappingDescriptors.from( parseMappingDescriptors( root.getChild( MAPPINGS_DESCRIPTOR_TAG_NAME ) ) ) );
     }
 
-    private List<MixinName> parseMetaSteps( final DomElement root )
+    private List<XDataName> parseMetaSteps( final DomElement root )
     {
-        return root.getChildren( META_STEP_TAG_NAME ).stream().map( this::toMixinName ).collect( Collectors.toList() );
+        return root.getChildren( META_STEP_TAG_NAME ).stream().map( this::toXDataName ).collect( Collectors.toList() );
     }
 
     private List<FilterDescriptor> parseFilterDescriptors( final DomElement filterDescriptorsParent )
@@ -105,7 +105,7 @@ public final class XmlSiteParser
         return Collections.emptyList();
     }
 
-    private MixinName toMixinName( final DomElement metaStep )
+    private XDataName toXDataName( final DomElement metaStep )
     {
         final ApplicationRelativeResolver resolver = new ApplicationRelativeResolver( this.currentApplication );
         String name = metaStep.getAttribute( X_DATA_ATTRIBUTE_NAME );
@@ -113,7 +113,7 @@ public final class XmlSiteParser
         {
             name = metaStep.getAttribute( MIXIN_ATTRIBUTE_NAME );
         }
-        return resolver.toMixinName( name );
+        return resolver.toXDataName( name );
     }
 
     private FilterDescriptor toFilterDescriptor( final DomElement filterElement )

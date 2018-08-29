@@ -11,7 +11,7 @@ import com.enonic.xp.content.MoveContentsResult;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.xdata.XDataName;
 
 import static org.junit.Assert.*;
 
@@ -81,7 +81,7 @@ public class ContentServiceImplTest_move
     private ExtraDatas createExtraDatas()
     {
         return ExtraDatas.create().
-            add( new ExtraData( MixinName.from( "com.enonic.app.test:mixin" ), new PropertyTree() ) ).
+            add( new ExtraData( XDataName.from( "com.enonic.app.test:mixin" ), new PropertyTree() ) ).
             build();
     }
 

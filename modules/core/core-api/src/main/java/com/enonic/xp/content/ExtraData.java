@@ -7,16 +7,16 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.xdata.XDataName;
 
 @Beta
 public final class ExtraData
 {
-    private MixinName name;
+    private XDataName name;
 
     private PropertyTree data;
 
-    public ExtraData( final MixinName name, final PropertyTree data )
+    public ExtraData( final XDataName name, final PropertyTree data )
     {
         Preconditions.checkNotNull( name, "name cannot be null" );
         Preconditions.checkNotNull( data, "data cannot be null" );
@@ -34,7 +34,7 @@ public final class ExtraData
         this.data = data;
     }
 
-    public MixinName getName()
+    public XDataName getName()
     {
         return name;
     }
@@ -49,7 +49,7 @@ public final class ExtraData
         return ApplicationKey.from( applicationPrefixName, "-" );
     }
 
-    public void setName( final MixinName name )
+    public void setName( final XDataName name )
     {
         this.name = name;
     }

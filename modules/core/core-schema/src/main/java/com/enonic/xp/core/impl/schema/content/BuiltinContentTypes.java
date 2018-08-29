@@ -19,8 +19,8 @@ import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypes;
-import com.enonic.xp.schema.mixin.MixinNames;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
+import com.enonic.xp.schema.xdata.XDataNames;
 
 final class BuiltinContentTypes
 {
@@ -258,7 +258,7 @@ final class BuiltinContentTypes
 
     private static final ContentType MEDIA_IMAGE = createSystemType( ContentTypeName.imageMedia() ).superType( ContentTypeName.media() ).
         setFinal( true ).setAbstract( false ).allowChildContent( false ).form( MEDIA_IMAGE_FORM ).
-        metadata( MixinNames.from( MediaInfo.IMAGE_INFO_METADATA_NAME, MediaInfo.CAMERA_INFO_METADATA_NAME,
+        metadata( XDataNames.from( MediaInfo.IMAGE_INFO_METADATA_NAME, MediaInfo.CAMERA_INFO_METADATA_NAME,
                                    MediaInfo.GPS_INFO_METADATA_NAME ) ).build();
 
     private static final ContentType MEDIA_VECTOR = createSystemType( ContentTypeName.vectorMedia() ).superType( ContentTypeName.media() ).

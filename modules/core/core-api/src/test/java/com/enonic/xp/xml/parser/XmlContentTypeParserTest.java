@@ -18,8 +18,8 @@ import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.mixin.MixinName;
-import com.enonic.xp.schema.mixin.MixinNames;
+import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.xdata.XDataNames;
 
 import static org.junit.Assert.*;
 
@@ -123,11 +123,11 @@ public class XmlContentTypeParserTest
         parse( this.parser, "-mixins.xml" );
         final ContentType result = this.builder.build();
 
-        final MixinNames mixinNames = result.getMetadata();
+        final XDataNames xDataNames = result.getMetadata();
 
-        assertEquals( 2, mixinNames.getSize() );
-        assertTrue( mixinNames.contains( MixinName.from( "myapplication:metadata1" ) ) );
-        assertTrue( mixinNames.contains( MixinName.from( "myapplication:metadata2" ) ) );
+        assertEquals( 2, xDataNames.getSize() );
+        assertTrue( xDataNames.contains( XDataName.from( "myapplication:metadata1" ) ) );
+        assertTrue( xDataNames.contains( XDataName.from( "myapplication:metadata2" ) ) );
 
     }
 

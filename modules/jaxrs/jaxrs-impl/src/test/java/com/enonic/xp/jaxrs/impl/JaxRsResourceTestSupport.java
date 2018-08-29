@@ -23,6 +23,7 @@ import com.enonic.xp.jaxrs.impl.multipart.MultipartFormReader;
 import com.enonic.xp.json.ObjectMapperHelper;
 import com.enonic.xp.session.SessionKey;
 import com.enonic.xp.session.SimpleSession;
+import com.enonic.xp.web.multipart.MultipartService;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 public abstract class JaxRsResourceTestSupport
@@ -31,11 +32,14 @@ public abstract class JaxRsResourceTestSupport
 
     private Dispatcher dispatcher;
 
+    protected MultipartService multipartService;
+
     @Before
     public final void setUp()
         throws Exception
     {
-        final MultipartFormReader reader = new MultipartFormReader( null );
+        this.multipartService = Mockito.mock( MultipartService.class );
+        final MultipartFormReader reader = new MultipartFormReader( multipartService );
 
         this.dispatcher = MockDispatcherFactory.createDispatcher();
         this.dispatcher.getProviderFactory().register( JsonObjectProvider.class );

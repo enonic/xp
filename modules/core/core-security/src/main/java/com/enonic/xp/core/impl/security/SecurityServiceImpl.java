@@ -427,7 +427,7 @@ public final class SecurityServiceImpl
                 displayName( "Super User" ).
                 build();
             return AuthenticationInfo.create().
-                principals( RoleKeys.ADMIN, RoleKeys.ADMIN_LOGIN, RoleKeys.AUTHENTICATED, RoleKeys.EVERYONE ).
+                principals( RoleKeys.ADMIN, RoleKeys.AUTHENTICATED, RoleKeys.EVERYONE ).
                 user( admin ).
                 build();
         }

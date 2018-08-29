@@ -4,5 +4,8 @@
   "members": [
     "user:system:user1",
     "user:system:user2"
+  ],
+  "memberships": [
+    "role:superuser"
   ]
 }

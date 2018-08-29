@@ -31,6 +31,7 @@ public class GetCurrentContentScriptTest
     {
         final Content content = TestDataFixtures.newContent();
         this.portalRequest.setContent( null );
+        this.portalRequest.setContentPath( content.getPath() );
         Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
         runFunction( "/site/test/getCurrentContent-test.js", "currentContent" );
     }

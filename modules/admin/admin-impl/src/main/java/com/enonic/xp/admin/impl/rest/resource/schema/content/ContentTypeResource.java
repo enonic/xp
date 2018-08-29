@@ -46,7 +46,7 @@ import com.enonic.xp.support.AbstractImmutableEntityList;
 
 @Path(ResourceConstants.REST_ROOT + "schema/content")
 @Produces("application/json")
-@RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
+@RolesAllowed({RoleKeys.ADMIN_LOGIN_ID, RoleKeys.ADMIN_ID})
 @Component(immediate = true, property = "group=admin")
 public final class ContentTypeResource
     implements JaxRsComponent

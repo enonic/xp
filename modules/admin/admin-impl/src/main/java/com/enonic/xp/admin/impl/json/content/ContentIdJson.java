@@ -25,13 +25,12 @@ public class ContentIdJson
         {
             return true;
         }
-        if ( !( o instanceof ContentIdJson) )
+        if ( !( o instanceof ContentIdJson ) )
         {
             return false;
         }
 
-        final ContentIdJson
-            that = (ContentIdJson) o;
+        final ContentIdJson that = (ContentIdJson) o;
 
         if ( !id.equals( that.id ) )
         {

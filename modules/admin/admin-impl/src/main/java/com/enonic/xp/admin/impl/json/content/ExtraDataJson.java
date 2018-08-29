@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.data.PropertyArrayJson;
 import com.enonic.xp.data.PropertyTreeJson;
-import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.xdata.XDataName;
 
 public class ExtraDataJson
 {
@@ -43,6 +43,6 @@ public class ExtraDataJson
     @JsonIgnore
     public ExtraData getExtraData()
     {
-        return new ExtraData( MixinName.from( name ), PropertyTreeJson.fromJson( data ) );
+        return new ExtraData( XDataName.from( name ), PropertyTreeJson.fromJson( data ) );
     }
 }

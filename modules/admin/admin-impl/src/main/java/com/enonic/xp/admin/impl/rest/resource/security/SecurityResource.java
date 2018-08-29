@@ -19,7 +19,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jparsec.util.Lists;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -87,7 +86,7 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 @SuppressWarnings("UnusedDeclaration")
 @Path(ResourceConstants.REST_ROOT + "security")
 @Produces(MediaType.APPLICATION_JSON)
-@RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
+@RolesAllowed({RoleKeys.ADMIN_LOGIN_ID, RoleKeys.ADMIN_ID})
 @Component(immediate = true, property = "group=admin")
 public final class SecurityResource
     implements JaxRsComponent
@@ -413,14 +412,7 @@ public final class SecurityResource
 
         final Principal principal = principalResult.get();
 
-        final PrincipalJson jsonResult = this.principalToJson( principal, resolveMemberships );
-
-        if ( jsonResult == null )
-        {
-            throw JaxRsExceptions.notFound( String.format( "Principal [%s] was not found", keyParam ) );
-        }
-
-        return jsonResult;
+        return this.principalToJson( principal, resolveMemberships );
     }
 
     @GET
@@ -617,19 +609,6 @@ public final class SecurityResource
         final PrincipalRelationships relationships = this.securityService.getRelationships( principal );
         final List<PrincipalKey> members = relationships.stream().map( PrincipalRelationship::getTo ).collect( toList() );
         return PrincipalKeys.from( members );
-    }
-
-    private PrincipalKeys getUserMembers( final PrincipalKey principal )
-    {
-        PrincipalKeys members = this.getMembers( principal );
-
-        List<PrincipalKey> subMembers = Lists.arrayList();
-        members.stream().filter( member -> member.isGroup() || member.isRole() ).forEach( member -> {
-            subMembers.addAll( getUserMembers( member ).getSet() );
-        } );
-        members = PrincipalKeys.from( members, subMembers );
-
-        return PrincipalKeys.from( members.stream().filter( PrincipalKey::isUser ).collect( toList() ) );
     }
 
     private AuthDescriptorMode retrieveIdProviderMode( UserStore userStore )

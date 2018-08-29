@@ -17,10 +17,11 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.mixin.Mixin;
-import com.enonic.xp.schema.mixin.MixinNames;
-import com.enonic.xp.schema.mixin.MixinService;
-import com.enonic.xp.schema.mixin.Mixins;
+import com.enonic.xp.schema.xdata.XData;
+import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.xdata.XDataNames;
+import com.enonic.xp.schema.xdata.XDataService;
+import com.enonic.xp.schema.xdata.XDatas;
 
 import static com.enonic.xp.content.ContentPropertyNames.EXTRA_DATA;
 import static org.junit.Assert.*;
@@ -29,7 +30,7 @@ public class XDataConfigProcessorTest
 {
     private ContentTypeService contentTypeService;
 
-    private MixinService mixinService;
+    private XDataService xDataService;
 
     private ContentTypeName contentTypeName;
 
@@ -38,7 +39,7 @@ public class XDataConfigProcessorTest
         throws Exception
     {
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
-        this.mixinService = Mockito.mock( MixinService.class );
+        this.xDataService = Mockito.mock( XDataService.class );
         this.contentTypeName = ContentTypeName.folder();
     }
 
@@ -83,45 +84,25 @@ public class XDataConfigProcessorTest
             return PatternIndexConfigDocument.create().build();
         }
 
-        final Mixins.Builder mixinsBuilder = Mixins.create();
+        final XDatas.Builder xDatasBuilder = XDatas.create();
 
         for ( int i = 0; i < forms.size(); i++ )
         {
-            mixinsBuilder.add( Mixin.create().form( forms.get( i ) ).name( "appName:localName" + i ).build() );
+            xDatasBuilder.add( XData.create().form( forms.get( i ) ).name( XDataName.from( "appName:localName" + i ) ).build() );
         }
 
-        final Mixins mixins = mixinsBuilder.build();
+        final XDatas xDatas = xDatasBuilder.build();
 
         final ContentType contentType =
-            ContentType.create().superType( ContentTypeName.folder() ).metadata( MixinNames.from( mixins.getNames() ) ).name(
+            ContentType.create().superType( ContentTypeName.folder() ).metadata( XDataNames.from( xDatas.getNames() ) ).name(
                 "contentType" ).build();
 
         Mockito.when( contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) ) ).thenReturn(
             contentType );
-        Mockito.when( mixinService.getByContentType( contentType ) ).thenReturn( mixinsBuilder.build() );
+        Mockito.when( xDataService.getFromContentType( contentType ) ).thenReturn( xDatasBuilder.build() );
 
-        final XDataConfigProcessor configProcessor =
-            new XDataConfigProcessor( mixins );
+        final XDataConfigProcessor configProcessor = new XDataConfigProcessor( xDatas );
 
         return configProcessor.processDocument( PatternIndexConfigDocument.create() ).build();
-    }
-
-    private Mixins getMixins( final ContentTypeService contentTypeService, final MixinService mixinService,
-                              final ContentTypeName contentTypeName )
-    {
-        if ( contentTypeName == null || mixinService == null || contentTypeService != null )
-        {
-            return null;
-        }
-        final ContentType contentType = contentTypeService.getByName( new GetContentTypeParams().
-            inlineMixinsToFormItems( true ).
-            contentTypeName( contentTypeName ) );
-
-        if ( contentType != null )
-        {
-            return mixinService.getByContentType( contentType );
-        }
-
-        return null;
     }
 }

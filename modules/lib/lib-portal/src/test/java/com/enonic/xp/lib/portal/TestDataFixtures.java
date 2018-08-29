@@ -20,7 +20,7 @@ import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.LayoutRegions;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
-import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.UserStore;
 import com.enonic.xp.security.UserStoreKey;
@@ -47,7 +47,7 @@ public final class TestDataFixtures
         builder.language( Locale.ENGLISH );
         builder.data( newPropertyTree() );
 
-        builder.addExtraData( new ExtraData( MixinName.from( "com.enonic.myapplication:myschema" ), newTinyPropertyTree() ) );
+        builder.addExtraData( new ExtraData( XDataName.from( "com.enonic.myapplication:myschema" ), newTinyPropertyTree() ) );
         builder.page( newPage() );
 
         return builder.build();

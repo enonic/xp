@@ -1,0 +1,20 @@
+{
+  "applicationInstalledJson": {
+    "application": {
+      "deletable": false,
+      "displayName": "application name",
+      "editable": false,
+      "key": "testapplication",
+      "local": false,
+      "maxSystemVersion": "5.1",
+      "minSystemVersion": "5.0",
+      "modifiedTime": "2012-01-01T00:00:00Z",
+      "state": "started",
+      "url": "http://enonic.net",
+      "vendorName": "Enonic",
+      "vendorUrl": "https://www.enonic.com",
+      "version": "1.0.0"
+    }
+  },
+  "failure": null
+}

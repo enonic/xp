@@ -1,0 +1,4 @@
+{
+  "sourceBranchPath": "branch:/path/to/content",
+  "skipChildren": "false"
+}

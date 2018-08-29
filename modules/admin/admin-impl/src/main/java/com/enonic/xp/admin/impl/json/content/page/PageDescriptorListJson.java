@@ -19,7 +19,7 @@ public class PageDescriptorListJson
     public PageDescriptorListJson( final PageDescriptors pageDescriptors, final LocaleMessageResolver localeMessageResolver )
     {
         final ImmutableList.Builder<PageDescriptorJson> builder = ImmutableList.builder();
-        if(pageDescriptors != null)
+        if ( pageDescriptors != null )
         {
             for ( final PageDescriptor pageDescriptor : pageDescriptors )
             {

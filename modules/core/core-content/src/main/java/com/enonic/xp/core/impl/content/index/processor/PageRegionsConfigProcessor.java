@@ -21,7 +21,6 @@ import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.region.PartDescriptorService;
 
 import static com.enonic.xp.core.impl.content.index.processor.PageConfigProcessor.ALL_PATTERN;
-import static com.enonic.xp.core.impl.content.index.processor.PageConfigProcessor.CONFIG;
 import static com.enonic.xp.data.PropertyPath.ELEMENT_DIVIDER;
 
 public class PageRegionsConfigProcessor
@@ -30,6 +29,8 @@ public class PageRegionsConfigProcessor
     public static final String REGION = "region";
 
     public static final String COMPONENT = "component";
+
+    public static final String CONFIG = "config";
 
     public static final String LAYOUT_COMPONENT = "LayoutComponent";
 

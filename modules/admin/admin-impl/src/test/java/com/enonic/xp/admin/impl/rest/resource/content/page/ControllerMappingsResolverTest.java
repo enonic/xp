@@ -15,7 +15,7 @@ import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
@@ -125,7 +125,7 @@ public class ControllerMappingsResolverTest
             modifiedTime( Instant.parse( this.currentTime ) ).
             modifier( PrincipalKey.from( "user:system:admin" ) ).
             type( ContentTypeName.from( "myapplication:content-type" ) ).
-            addExtraData( new ExtraData( MixinName.from( "myApplication:myField" ), metadata ) ).
+            addExtraData( new ExtraData( XDataName.from( "myApplication:myField" ), metadata ) ).
             publishInfo( ContentPublishInfo.create().
                 from( Instant.parse( "2016-11-02T10:36:00Z" ) ).
                 to( Instant.parse( "2016-11-22T10:36:00Z" ) ).

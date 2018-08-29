@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<x-data xmlns="urn:enonic:xp:model:1.0">
+  <display-name>display name</display-name>
+  <description>description</description>
+  <items>
+    <item-set name="mySet">
+      <immutable>false</immutable>
+      <occurrences minimum="0" maximum="1"/>
+      <items>
+        <field-set name="myFieldSet">
+          <label>My field set</label>
+          <items>
+            <input type="TextLine" name="myTextLine">
+              <label>Textline</label>
+              <immutable>false</immutable>
+              <indexed>false</indexed>
+              <occurrences minimum="0" maximum="1"/>
+            </input>
+          </items>
+        </field-set>
+      </items>
+    </item-set>
+  </items>
+</x-data>
