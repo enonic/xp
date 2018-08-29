@@ -42,8 +42,12 @@ public final class MappingHandler
     @Override
     public final boolean canHandle( final WebRequest req )
     {
-        return req instanceof PortalRequest &&
-            new ControllerMappingsResolver( siteService, contentService ).canHandle( (PortalRequest) req );
+        if ( !( req instanceof PortalRequest ) )
+        {
+            return false;
+        }
+        PortalRequest portalRequest = (PortalRequest) req;
+        return portalRequest.isPortalBase() && new ControllerMappingsResolver( siteService, contentService ).canHandle( portalRequest );
     }
 
     @Override

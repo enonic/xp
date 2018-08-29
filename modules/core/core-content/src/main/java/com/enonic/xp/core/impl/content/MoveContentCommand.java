@@ -96,7 +96,7 @@ final class MoveContentCommand
         {
             throw new NodeAlreadyMovedException(
                 String.format( "Content with id [%s] is already a child of [%s]", params.getContentId(), params.getParentContentPath() ),
-                nodePath );
+                sourceNode.path() );
         }
 
         final Node movedNode = nodeService.move( sourceNodeId, nodePath, this );

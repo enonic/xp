@@ -18,7 +18,7 @@ import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueType;
 import com.enonic.xp.data.ValueTypes;
-import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.xdata.XDataName;
 
 import static org.apache.commons.lang.StringUtils.substringAfter;
 import static org.apache.commons.lang.StringUtils.substringBefore;
@@ -140,8 +140,8 @@ public final class ContentMappingConstraint
         try
         {
             final ApplicationKey app = ExtraData.fromApplicationPrefix( appPrefix );
-            final MixinName mixinName = MixinName.from( app, name );
-            final ExtraData extraData = xDatas.getMetadata( mixinName );
+            final XDataName xDataName = XDataName.from( app, name );
+            final ExtraData extraData = xDatas.getMetadata( xDataName );
             if ( extraData == null )
             {
                 return null;

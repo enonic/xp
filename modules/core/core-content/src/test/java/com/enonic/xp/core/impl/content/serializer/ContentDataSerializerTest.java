@@ -18,7 +18,7 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.PrincipalKey;
 
 import static org.junit.Assert.*;
@@ -120,7 +120,7 @@ public class ContentDataSerializerTest
             creator( PrincipalKey.ofAnonymous() ).
             childOrder( ChildOrder.defaultOrder() ).
             extraDatas( ExtraDatas.create().
-                add( new ExtraData( MixinName.from( ApplicationKey.SYSTEM, "myMixin" ), mixinData ) ).
+                add( new ExtraData( XDataName.from( ApplicationKey.SYSTEM, "myMixin" ), mixinData ) ).
                 build() ).
             build() );
 
@@ -151,7 +151,7 @@ public class ContentDataSerializerTest
                 parentPath( ContentPath.ROOT ).
                 creator( PrincipalKey.ofAnonymous() ).
                 extraDatas( ExtraDatas.create().
-                    add( new ExtraData( MixinName.from( ApplicationKey.SYSTEM, "myMixin" ), mixinData ) ).
+                    add( new ExtraData( XDataName.from( ApplicationKey.SYSTEM, "myMixin" ), mixinData ) ).
                     build() ).
                 build() ).
             modifier( PrincipalKey.ofAnonymous() ).

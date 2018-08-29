@@ -3,11 +3,14 @@ package com.enonic.xp.web.session.impl;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
+import org.apache.ignite.IgniteException;
+import org.apache.ignite.lang.IgniteFuture;
 import org.eclipse.jetty.server.session.AbstractSessionDataStore;
 import org.eclipse.jetty.server.session.SessionContext;
 import org.eclipse.jetty.server.session.SessionData;
@@ -34,7 +37,7 @@ public final class IgniteSessionDataStore
 
     private Ignite ignite;
 
-    private IgniteCache<String, SessionData> igniteCache;
+    private IgniteCache<String, SessionDataWrapper> igniteCache;
 
     private ConcurrentHashMap<String, SessionData> defaultCache = new ConcurrentHashMap<>();
 
@@ -47,6 +50,8 @@ public final class IgniteSessionDataStore
         throws Exception
     {
         this.webSessionConfig = config;
+        setSavePeriodSec( config.session_save_period() );
+
         if ( this.ignite != null )
         {
             this.igniteCache = ignite.getOrCreateCache( SessionCacheConfigFactory.create( WEB_SESSION_CACHE, this.webSessionConfig ) );
@@ -88,14 +93,15 @@ public final class IgniteSessionDataStore
 
     private SessionData doGet( final String cacheKey )
     {
-        final IgniteCache<String, SessionData> igniteCache = this.igniteCache;
+        final IgniteCache<String, SessionDataWrapper> igniteCache = this.igniteCache;
         if ( igniteCache == null )
         {
             return defaultCache.get( cacheKey );
         }
         else
         {
-            return igniteCache.get( cacheKey );
+            final SessionDataWrapper sessionDataWrapper = igniteCache.get( cacheKey );
+            return sessionDataWrapper == null ? null : sessionDataWrapper.getSessionData();
         }
     }
 
@@ -104,14 +110,14 @@ public final class IgniteSessionDataStore
         throws Exception
     {
         final String cacheKey = getCacheKey( id );
-        final IgniteCache<String, SessionData> igniteCache = this.igniteCache;
+        final IgniteCache<String, SessionDataWrapper> igniteCache = this.igniteCache;
         if ( igniteCache == null )
         {
             return defaultCache.remove( cacheKey ) != null;
         }
         else
         {
-            return igniteCache.remove( cacheKey );
+            return asyncRemove( cacheKey, webSessionConfig.write_timeout() );
         }
     }
 
@@ -127,15 +133,29 @@ public final class IgniteSessionDataStore
         throws Exception
     {
         final String cacheKey = getCacheKey( id );
-        final IgniteCache<String, SessionData> igniteCache = this.igniteCache;
+        final IgniteCache<String, SessionDataWrapper> igniteCache = this.igniteCache;
         if ( igniteCache == null )
         {
             defaultCache.put( cacheKey, data );
         }
         else
         {
-            igniteCache.put( cacheKey, data );
+            asyncPut( cacheKey, new SessionDataWrapper( data ), webSessionConfig.write_timeout() );
         }
+    }
+
+    private void asyncPut( final String cacheKey, final SessionDataWrapper data, final int timeoutMillis )
+        throws IgniteException
+    {
+        final IgniteFuture<Void> future = igniteCache.putAsync( cacheKey, data );
+        future.get( timeoutMillis, TimeUnit.MILLISECONDS );
+    }
+
+    private boolean asyncRemove( final String cacheKey, final int timeoutMillis )
+        throws IgniteException
+    {
+        final IgniteFuture<Boolean> future = igniteCache.removeAsync( cacheKey );
+        return future.get( timeoutMillis, TimeUnit.MILLISECONDS );
     }
 
     @Override

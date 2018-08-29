@@ -12,8 +12,6 @@ public @interface IgniteSettings
 
     boolean odbc_enabled() default false;
 
-    String discovery_tcp_localAddress() default "localhost";
-
     int discovery_tcp_port() default 47500;
 
     int discovery_tcp_port_range() default 0;
@@ -31,5 +29,7 @@ public @interface IgniteSettings
     int discovery_tcp_stat_printFreq() default 0;
 
     String off_heap_max_size() default "512MB";
+
+    int communication_message_queue_limit() default 1024;
 
 }

@@ -21,7 +21,7 @@ import com.enonic.xp.portal.impl.filter.FilterChainResolver;
 import com.enonic.xp.portal.impl.postprocess.PostProcessorImpl;
 import com.enonic.xp.portal.impl.postprocess.TestPostProcessInjection;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.filter.FilterDescriptors;
 
@@ -95,7 +95,7 @@ public class PageRendererTest
 
         // verify
         final String response =
-            "<html><head><meta charset=\"utf-8\"/><title>My Content</title></head><body data-portal-component-type=\"page\"><!--#COMPONENT fragment--></body></html>";
+            "<!DOCTYPE html><html><head><meta charset=\"utf-8\"/><title>My Content</title></head><body data-portal-component-type=\"page\"><!--#COMPONENT fragment--></body></html>";
         assertEquals( response, portalResponse.getAsString() );
     }
 
@@ -132,7 +132,7 @@ public class PageRendererTest
             modifiedTime( Instant.parse( "2013-08-23T12:55:09.162Z" ) ).
             modifier( PrincipalKey.from( "user:system:admin" ) ).
             type( ContentTypeName.from( contentTypeName ) ).
-            addExtraData( new ExtraData( MixinName.from( "myApplication:myField" ), metadata ) ).
+            addExtraData( new ExtraData( XDataName.from( "myApplication:myField" ), metadata ) ).
             build();
     }
 
@@ -154,7 +154,7 @@ public class PageRendererTest
             modifiedTime( Instant.parse( "2013-08-23T12:55:09.162Z" ) ).
             modifier( PrincipalKey.from( "user:system:admin" ) ).
             type( ContentTypeName.fragment() ).
-            addExtraData( new ExtraData( MixinName.from( "myApplication:myField" ), metadata ) ).
+            addExtraData( new ExtraData( XDataName.from( "myApplication:myField" ), metadata ) ).
             build();
     }
 }

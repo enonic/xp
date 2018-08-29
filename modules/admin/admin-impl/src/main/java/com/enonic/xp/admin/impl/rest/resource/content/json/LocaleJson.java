@@ -1,6 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.content.json;
 
 import java.util.Locale;
+import java.util.Objects;
 
 
 public class LocaleJson
@@ -71,5 +72,29 @@ public class LocaleJson
     public String getDisplayCountry()
     {
         return displayCountry;
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+        final LocaleJson that = (LocaleJson) o;
+        return Objects.equals( tag, that.tag ) && Objects.equals( displayName, that.displayName ) &&
+            Objects.equals( language, that.language ) && Objects.equals( displayLanguage, that.displayLanguage ) &&
+            Objects.equals( variant, that.variant ) && Objects.equals( displayVariant, that.displayVariant ) &&
+            Objects.equals( country, that.country ) && Objects.equals( displayCountry, that.displayCountry );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( tag, displayName, language, displayLanguage, variant, displayVariant, country, displayCountry );
     }
 }

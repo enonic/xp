@@ -22,7 +22,7 @@ public class PartDescriptorsJson
     public PartDescriptorsJson( final PartDescriptors descriptors, final LocaleMessageResolver localeMessageResolver )
     {
         ImmutableList.Builder<PartDescriptorJson> builder = new ImmutableList.Builder<>();
-        if(descriptors != null)
+        if ( descriptors != null )
         {
             for ( PartDescriptor descriptor : descriptors )
             {

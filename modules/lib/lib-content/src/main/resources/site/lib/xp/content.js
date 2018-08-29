@@ -378,8 +378,12 @@ exports.createMedia = function (params) {
     bean.name = required(params, 'name');
     bean.parentPath = nullOrValue(params.parentPath);
     bean.mimeType = nullOrValue(params.mimeType);
-    bean.focalX = nullOrValue(params.focalX);
-    bean.focalY = nullOrValue(params.focalY);
+    if (params.focalX) {
+        bean.focalX = params.focalX;
+    }
+    if (params.focalY) {
+        bean.focalY = params.focalY;
+    }
     bean.branch = nullOrValue(params.branch);
     bean.data = nullOrValue(params.data);
     bean.idGenerator = nullOrValue(params.idGenerator);

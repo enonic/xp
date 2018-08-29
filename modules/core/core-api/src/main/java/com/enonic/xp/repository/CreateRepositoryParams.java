@@ -1,5 +1,7 @@
 package com.enonic.xp.repository;
 
+import java.util.Objects;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.index.ChildOrder;
@@ -46,6 +48,28 @@ public class CreateRepositoryParams
     public static Builder create()
     {
         return new Builder();
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+        final CreateRepositoryParams that = (CreateRepositoryParams) o;
+        return Objects.equals( repositoryId, that.repositoryId ) && Objects.equals( repositorySettings, that.repositorySettings ) &&
+            Objects.equals( rootPermissions, that.rootPermissions ) && Objects.equals( rootChildOrder, that.rootChildOrder );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( repositoryId, repositorySettings, rootPermissions, rootChildOrder );
     }
 
     public static final class Builder

@@ -4,7 +4,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.data.PropertySet;
-import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.xdata.XDataName;
 
 import static com.enonic.xp.content.ContentPropertyNames.EXTRA_DATA;
 
@@ -58,7 +58,7 @@ public final class ExtraDataSerializer
 
                     final ApplicationKey applicationKey = ExtraData.fromApplicationPrefix( metadataApplicationPrefix );
 
-                    final MixinName metadataName = MixinName.from( applicationKey, metadataLocalName );
+                    final XDataName metadataName = XDataName.from( applicationKey, metadataLocalName );
                     extradatasBuilder.add( new ExtraData( metadataName, xDataApplication.getSet( metadataLocalName ).toTree() ) );
                 }
             }

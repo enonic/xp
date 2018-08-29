@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<x-data xmlns="urn:enonic:xp:model:1.0">
+  <display-name>display name</display-name>
+  <description>description</description>
+  <items>
+    <input type="TextLine" name="input1">
+      <label>Input</label>
+      <help-text>myHelpText</help-text>
+      <occurrences minimum="0" maximum="1"/>
+    </input>
+  </items>
+</x-data>

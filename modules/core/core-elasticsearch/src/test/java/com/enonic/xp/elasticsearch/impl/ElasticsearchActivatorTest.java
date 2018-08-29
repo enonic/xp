@@ -82,6 +82,24 @@ public class ElasticsearchActivatorTest
             {
                 return true;
             }
+
+            @Override
+            public String networkPublishHost()
+            {
+                return "127.0.0.1";
+            }
+
+            @Override
+            public String networkHost()
+            {
+                return "127.0.0.1";
+            }
+
+            @Override
+            public boolean isSessionReplicationEnabled()
+            {
+                return true;
+            }
         } );
 
         final File homeDir = this.temporaryFolder.newFolder( "home" );

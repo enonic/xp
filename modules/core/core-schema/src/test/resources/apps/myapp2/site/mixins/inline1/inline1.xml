@@ -6,6 +6,6 @@
       <label>Text 1</label>
     </input>
 
-    <inline mixin="myapp2:inline2"/>
+    <mixin name="myapp2:inline2"/>
   </items>
 </mixin>

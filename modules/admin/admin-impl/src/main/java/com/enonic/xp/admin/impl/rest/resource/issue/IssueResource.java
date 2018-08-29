@@ -166,7 +166,8 @@ public final class IssueResource
     public IssueJson update( final UpdateIssueJson params, @Context HttpServletRequest request )
     {
         final Issue issueToEdit = issueService.getIssue( params.issueId );
-        final PrincipalKeys validAssignees = filterInvalidAssignees( params.approverIds );
+        final PrincipalKeys validAssignees =
+            params.approverIds != null ? filterInvalidAssignees( params.approverIds ) : PrincipalKeys.empty();
 
         final PrincipalKeys addedAssignees = filterKeys( issueToEdit.getApproverIds(), validAssignees, false );
         final PrincipalKeys existingAssignees = filterKeys( issueToEdit.getApproverIds(), validAssignees, true );
@@ -441,7 +442,7 @@ public final class IssueResource
 
     private boolean isValidAssignee( final PrincipalKey principalKey )
     {
-        final PrincipalKeys membershipKeys = securityService.getMemberships( principalKey );
+        final PrincipalKeys membershipKeys = securityService.getAllMemberships( principalKey );
         if ( membershipKeys.getSize() > 0 )
         {
             final Principals memberships = securityService.getPrincipals( membershipKeys );

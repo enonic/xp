@@ -14,9 +14,10 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.mixin.Mixin;
-import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.schema.xdata.XData;
+import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 
@@ -30,6 +31,8 @@ public abstract class BaseContextHandler
     private ContentTypeService contentTypeService;
 
     private MixinService mixinService;
+
+    private XDataService xDataService;
 
     public void setBranch( final String branch )
     {
@@ -76,16 +79,16 @@ public abstract class BaseContextHandler
         return new FormJsonToPropertyTreeTranslator( inlineMixins( contentType.getForm() ), strict ).translate( json );
     }
 
-    protected PropertyTree translateToPropertyTree( final JsonNode json, final MixinName mixinName )
+    protected PropertyTree translateToPropertyTree( final JsonNode json, final XDataName xDataName )
     {
-        final Mixin mixin = this.mixinService.getByName( mixinName );
+        final XData xData = this.xDataService.getByName( xDataName );
 
-        if ( mixin == null )
+        if ( xData == null )
         {
-            throw new IllegalArgumentException( "Mixin not found [" + mixinName + "]" );
+            throw new IllegalArgumentException( "XData not found [" + xDataName + "]" );
         }
 
-        return new FormJsonToPropertyTreeTranslator( inlineMixins( mixin.getForm() ), true ).translate( json );
+        return new FormJsonToPropertyTreeTranslator( inlineMixins( xData.getForm() ), true ).translate( json );
     }
 
     private Form inlineMixins( final Form form )
@@ -99,5 +102,6 @@ public abstract class BaseContextHandler
         this.contentService = context.getService( ContentService.class ).get();
         this.contentTypeService = context.getService( ContentTypeService.class ).get();
         this.mixinService = context.getService( MixinService.class ).get();
+        this.xDataService = context.getService( XDataService.class ).get();
     }
 }

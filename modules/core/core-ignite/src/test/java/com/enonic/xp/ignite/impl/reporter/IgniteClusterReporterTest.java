@@ -59,6 +59,7 @@ public class IgniteClusterReporterTest
         Mockito.when( node.addresses() ).thenReturn( Lists.newArrayList( "addr1", "addr2" ) );
         Mockito.when( node.hostNames() ).thenReturn( Lists.newArrayList( "host1", "host2" ) );
         Mockito.when( node.id() ).thenReturn( UUID.fromString( id ) );
+        Mockito.when( node.consistentId() ).thenReturn( "node" + id.charAt( 0 ) );
     }
 
     private void assertJson( final String fileName, final JsonNode json )

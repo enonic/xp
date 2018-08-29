@@ -64,7 +64,7 @@ public final class PageRenderer
 
     private PortalResponse renderDefaultFragmentPage( final PortalRequest portalRequest, final Content content )
     {
-        String html = "<html>" +
+        String html = "<!DOCTYPE html>" + "<html>" +
             "<head>" +
             "<meta charset=\"utf-8\"/><title>" + content.getDisplayName() + "</title>" +
             "</head>";

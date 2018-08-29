@@ -16,7 +16,9 @@ import static org.junit.Assert.*;
 
 public class ConfigurationFactoryTest
 {
-    private com.enonic.xp.ignite.impl.config.IgniteSettings igniteSettings;
+    private IgniteSettings igniteSettings;
+
+    private ClusterConfig clusterConfig;
 
     private BundleContext bundleContext;
 
@@ -28,9 +30,9 @@ public class ConfigurationFactoryTest
         this.bundleContext = Mockito.mock( BundleContext.class );
 
         this.igniteSettings = Mockito.mock( IgniteSettings.class );
+        this.clusterConfig = Mockito.mock( ClusterConfig.class );
         Mockito.when( this.igniteSettings.metrics_log_frequency() ).thenReturn( 0 );
         Mockito.when( this.igniteSettings.connector_enabled() ).thenReturn( false );
-        Mockito.when( this.igniteSettings.discovery_tcp_localAddress() ).thenReturn( "localhost" );
         Mockito.when( this.igniteSettings.discovery_tcp_port() ).thenReturn( 47500 );
         Mockito.when( this.igniteSettings.discovery_tcp_port_range() ).thenReturn( 0 );
         Mockito.when( this.igniteSettings.discovery_tcp_reconnect() ).thenReturn( 2 );
@@ -40,6 +42,9 @@ public class ConfigurationFactoryTest
         Mockito.when( this.igniteSettings.discovery_tcp_join_timeout() ).thenReturn( 0L );
         Mockito.when( this.igniteSettings.discovery_tcp_stat_printFreq() ).thenReturn( 0 );
         Mockito.when( this.igniteSettings.off_heap_max_size() ).thenReturn( "512mb" );
+
+        Mockito.when( this.clusterConfig.networkHost() ).thenReturn( "localhost" );
+        Mockito.when( this.clusterConfig.networkPublishHost() ).thenReturn( "localhost" );
     }
 
     @Test
@@ -105,6 +110,24 @@ public class ConfigurationFactoryTest
 
             @Override
             public boolean isEnabled()
+            {
+                return true;
+            }
+
+            @Override
+            public String networkPublishHost()
+            {
+                return "127.0.0.1";
+            }
+
+            @Override
+            public String networkHost()
+            {
+                return "127.0.0.1";
+            }
+
+            @Override
+            public boolean isSessionReplicationEnabled()
             {
                 return true;
             }

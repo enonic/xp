@@ -69,7 +69,14 @@ public class DuplicateRunnableTask
             try
             {
                 final DuplicateContentsResult result = contentService.duplicate( duplicateContentParams );
-                resultBuilder.succeeded( result.getDuplicatedContents() );
+                if ( result.getDuplicatedContents().getSize() == 1 )
+                {
+                    resultBuilder.succeeded( result.getSourceContentPath() );
+                }
+                else
+                {
+                    resultBuilder.succeeded( result.getDuplicatedContents() );
+                }
             }
             catch ( ContentAlreadyMovedException e )
             {
@@ -77,12 +84,12 @@ public class DuplicateRunnableTask
             }
             catch ( final Exception e )
             {
-                final Content item = contentService.getById( contentId );
-                if ( item != null )
+                try
                 {
+                    final Content item = contentService.getById( contentId );
                     resultBuilder.failed( item.getPath() );
                 }
-                else
+                catch ( Exception exc )
                 {
                     resultBuilder.failed( ContentIds.from( contentId ) );
                 }

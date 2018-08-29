@@ -1,6 +1,7 @@
 package com.enonic.xp.admin.impl.json.content;
 
 import java.time.Instant;
+import java.util.Objects;
 
 import com.enonic.xp.content.ContentVersion;
 import com.enonic.xp.security.Principal;
@@ -63,5 +64,28 @@ public class ContentVersionJson
     public String getModifierDisplayName()
     {
         return modifierDisplayName;
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+        final ContentVersionJson that = (ContentVersionJson) o;
+        return Objects.equals( modifier, that.modifier ) && Objects.equals( modifierDisplayName, that.modifierDisplayName ) &&
+            Objects.equals( displayName, that.displayName ) && Objects.equals( modified, that.modified ) &&
+            Objects.equals( comment, that.comment ) && Objects.equals( id, that.id );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( modifier, modifierDisplayName, displayName, modified, comment, id );
     }
 }

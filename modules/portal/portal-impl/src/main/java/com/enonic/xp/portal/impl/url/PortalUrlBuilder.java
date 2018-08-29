@@ -17,7 +17,6 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.exception.NotFoundException;
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.exception.OutOfScopeException;
 import com.enonic.xp.portal.url.AbstractUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
@@ -200,7 +199,7 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
 
     private boolean isPortalBase()
     {
-        return this.portalRequest.getBaseUri().startsWith( "/portal" ) || this.portalRequest.getBaseUri().startsWith( "/admin/portal" );
+        return this.portalRequest.isPortalBase();
     }
 
     protected final String buildErrorUrl( final int code, final String message )

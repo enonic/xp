@@ -1,0 +1,7 @@
+{
+  "addedNodes" : [ "/node/path" ],
+  "dryRun" : false,
+  "importErrors" : [ ],
+  "importedBinaries" : [ "binary [binaryRef]" ],
+  "updateNodes" : [ "/node2/path2" ]
+}

@@ -9,6 +9,6 @@
       <help-text i18n="key.help-text"/>
       <occurrences minimum="0" maximum="1"/>
     </input>
-    <inline mixin="myapplication:link-urls"/>
+    <mixin name="myapplication:link-urls"/>
   </config>
 </part>
