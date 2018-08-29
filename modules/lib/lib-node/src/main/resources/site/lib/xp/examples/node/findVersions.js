@@ -8,13 +8,13 @@ var repo = nodeLib.connect({
 
 var result = repo.findVersions({
     key: 'nodeId',
-    from: 0,
-    size: 20
+    start: 0,
+    count: 2
 });
 
 var expected = {
     "total": 40,
-    "count": 20,
+    "count": 2,
     "hits": [
         {
             "versionId": "nodeVersionNew",
@@ -26,7 +26,7 @@ var expected = {
             "versionId": "nodeVersionOld",
             "nodeId": "nodeId1",
             "nodePath": "/",
-            "timestamp": "1970-01-01T00:16:40Z"
+            "timestamp": "1970-01-01T00:08:20Z"
         }
     ]
 };

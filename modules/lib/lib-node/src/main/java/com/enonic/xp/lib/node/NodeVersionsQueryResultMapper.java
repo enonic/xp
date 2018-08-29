@@ -6,7 +6,7 @@ import com.enonic.xp.node.NodeVersionsMetadata;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 
-public class NodeVersionsResultMapper
+public class NodeVersionsQueryResultMapper
     implements MapSerializable
 {
     private final NodeVersionsMetadata nodeVersions;
@@ -15,7 +15,7 @@ public class NodeVersionsResultMapper
 
     private final long total;
 
-    public NodeVersionsResultMapper( final NodeVersionQueryResult nodeVersionQueryResult )
+    public NodeVersionsQueryResultMapper( final NodeVersionQueryResult nodeVersionQueryResult )
     {
         this.nodeVersions = nodeVersionQueryResult.getNodeVersionsMetadata();
         this.count = nodeVersionQueryResult.getHits();
@@ -25,9 +25,9 @@ public class NodeVersionsResultMapper
     @Override
     public void serialize( final MapGenerator gen )
     {
-        gen.value( "total", this.total );
-        gen.value( "count", this.count );
-        serialize( gen, this.nodeVersions );
+        gen.value( "total", total );
+        gen.value( "count", count );
+        serialize( gen, nodeVersions );
     }
 
     private void serialize( final MapGenerator gen, final NodeVersionsMetadata nodeVersions )

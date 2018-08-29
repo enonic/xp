@@ -305,14 +305,47 @@ MultiRepoConnection.prototype.query = function (params) {
 };
 
 /**
- * This function sets node's active version.
+ * This function returns node versions.
+ *
+ * @example-ref examples/node/findVersions.js
+ * @param {object} params JSON parameters.
+ * @param {string} params.key Path or ID of the node.
+ * @param {number} [params.start=0] Start index (used for paging).
+ * @param {number} [params.count=10] Number of node versions to fetch.
+ *
+ * @returns {object[]} Node versions.
+ */
+RepoConnection.prototype.findVersions = function (params) {
+    var handlerParams = __.newBean('com.enonic.xp.lib.node.FindVersionsHandlerParams');
+    handlerParams.key = required(params, 'key');
+    handlerParams.start = nullOrValue(params.start);
+    handlerParams.count = nullOrValue(params.count);
+    return __.toNativeObject(this.repoConnection.findVersions(handlerParams));
+};
+
+/**
+ * This function returns the active version of a node.
+ *
+ * @example-ref examples/node/getActiveVersion.js
+ * @param {object} params JSON parameters.
+ * @param {string} params.key Path or ID of the node.
+ *
+ * @returns {object} Active content versions per branch.
+ */
+RepoConnection.prototype.getActiveVersion = function (params) {
+    var key = required(params, 'key');
+    return __.toNativeObject(this.repoConnection.getActiveVersion(key));
+};
+
+/**
+ * This function sets the active version of a node.
  *
  * @example-ref examples/node/setActiveVersion.js
- * @param {object} params JSON with the parameters.
- * @param {string} params.key Path or id to the node.
- * @param {string} params.nodeVersionId version to set as active.
+ * @param {object} params JSON parameters.
+ * @param {string} params.key Path or ID of the node.
+ * @param {string} params.versionId Version to set as active.
  *
- * @returns {*} Node version id.
+ * @returns {boolean} True if deleted, false otherwise.
  */
 RepoConnection.prototype.setActiveVersion = function (params) {
     var key = required(params, 'key');
@@ -320,39 +353,6 @@ RepoConnection.prototype.setActiveVersion = function (params) {
     return __.toNativeObject(this.repoConnection.setActiveVersion(key, versionId));
 };
 
-/**
- * This function returns node versions.
- *
- * @example-ref examples/node/findVersions.js
- * @param {object} params JSON with the parameters.
- * @param {string} params.key Path or id to the node.
- * @param {number} [params.from=0] Start index (used for paging).
- * @param {number} [params.size=10] Number of node versions to fetch.
- *
- * @returns {*} Node versions.
- */
-RepoConnection.prototype.findVersions = function (params) {
-    var key = required(params, 'key');
-    var from = valueOrDefault(params.from, 0);
-    var size = valueOrDefault(params.size, 10);
-    return __.toNativeObject(this.repoConnection.findVersions(key, from, size));
-};
-
-/**
- * This function returns active version per branch of a node.
- *
- * @example-ref examples/node/getActiveVersions.js
- * @param {object} params JSON with the parameters.
- * @param {string} params.key Path or id to the node.
- * @param {string[]} [params.branches] Branches to include. By default the current branch.
- *
- * @returns {object} Active content versions per branch.
- */
-RepoConnection.prototype.getActiveVersions = function (params) {
-    var key = required(params, 'key');
-    var branches = nullOrValue(params.branches);
-    return __.toNativeObject(this.repoConnection.getActiveVersions(key, branches));
-};
 /**
  * Get children for given node.
  *

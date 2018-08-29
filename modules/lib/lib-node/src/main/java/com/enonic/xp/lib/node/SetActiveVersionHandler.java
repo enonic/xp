@@ -1,26 +1,31 @@
 package com.enonic.xp.lib.node;
 
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeVersionId;
 
 public class SetActiveVersionHandler
     extends AbstractNodeHandler
 {
-    private final NodeKey nodeKey;
+    private final NodeKey key;
 
     private final NodeVersionId versionId;
 
     private SetActiveVersionHandler( final Builder builder )
     {
         super( builder );
-
-        nodeKey = builder.nodeKey;
+        key = builder.key;
         versionId = builder.versionId;
     }
 
     @Override
-    public Object execute()
+    public Boolean execute()
     {
-        return nodeService.setActiveVersion( getNodeId( nodeKey ), versionId ).toString();
+        final NodeId nodeId = getNodeId( key );
+        if ( nodeId == null )
+        {
+            return false;
+        }
+        return nodeService.setActiveVersion( nodeId, versionId ) != null;
     }
 
     public static Builder create()
@@ -31,7 +36,7 @@ public class SetActiveVersionHandler
     public static final class Builder
         extends AbstractNodeHandler.Builder<Builder>
     {
-        private NodeKey nodeKey;
+        private NodeKey key;
 
         private NodeVersionId versionId;
 
@@ -41,7 +46,7 @@ public class SetActiveVersionHandler
 
         public Builder key( final NodeKey val )
         {
-            nodeKey = val;
+            key = val;
             return this;
         }
 

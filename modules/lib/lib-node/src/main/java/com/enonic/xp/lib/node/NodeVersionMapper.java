@@ -17,11 +17,6 @@ public final class NodeVersionMapper
     @Override
     public void serialize( final MapGenerator gen )
     {
-        serialize( gen, this.value );
-    }
-
-    private void serialize( final MapGenerator gen, final NodeVersionMetadata value )
-    {
         gen.value( "versionId", value.getNodeVersionId() );
         gen.value( "nodeId", value.getNodeId() );
         gen.value( "nodePath", value.getNodePath() );

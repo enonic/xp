@@ -16,39 +16,30 @@ import com.enonic.xp.node.NodeVersionMetadata;
 
 import static org.junit.Assert.*;
 
-public class GetActiveVersionsHandlerTest
+public class GetActiveVersionHandlerTest
     extends BaseNodeHandlerTest
 {
     @Test
     public void testGetActiveVersionsHandler()
     {
-        final NodeVersionMetadata nodeVersionMetaDraft = NodeVersionMetadata.create().
+        final NodeVersionMetadata nodeVersionMeta = NodeVersionMetadata.create().
             nodeId( NodeId.from( "nodeId1" ) ).
             nodeVersionId( NodeVersionId.from( "nodeVersionId1" ) ).
             nodePath( NodePath.ROOT ).
             timestamp( Instant.ofEpochSecond( 1000 ) ).
             build();
 
-        final NodeVersionMetadata nodeVersionMetaMaster = NodeVersionMetadata.create().
-            nodeId( NodeId.from( "nodeId2" ) ).
-            nodeVersionId( NodeVersionId.from( "nodeVersionId2" ) ).
-            nodePath( NodePath.ROOT ).
-            timestamp( Instant.ofEpochSecond( 1000 ) ).
-            build();
-
         final GetActiveNodeVersionsResult getActiveNodeVersionsResult = GetActiveNodeVersionsResult.create().
-            add( Branch.from( "draft" ), nodeVersionMetaDraft ).
-            add( Branch.from( "master" ), nodeVersionMetaMaster ).
+            add( Branch.from( "master" ), nodeVersionMeta ).
             build();
         final ArgumentCaptor<GetActiveNodeVersionsParams> getActiveNodeVersionsParamsCaptor =
             ArgumentCaptor.forClass( GetActiveNodeVersionsParams.class );
         Mockito.when( nodeService.getActiveVersions( Mockito.any() ) ).thenReturn( getActiveNodeVersionsResult );
-        runScript( "/site/lib/xp/examples/node/getActiveVersions.js" );
+        runScript( "/site/lib/xp/examples/node/getActiveVersion.js" );
         Mockito.verify( nodeService ).getActiveVersions( getActiveNodeVersionsParamsCaptor.capture() );
 
         final GetActiveNodeVersionsParams params = getActiveNodeVersionsParamsCaptor.getValue();
         assertEquals( "nodeId", params.getNodeId().toString() );
-        assertTrue( params.getBranches().contains( Branch.from( "draft" ) ) );
         assertTrue( params.getBranches().contains( Branch.from( "master" ) ) );
     }
 }

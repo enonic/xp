@@ -33,7 +33,7 @@ public class FindVersionsHandlerTest
             nodeId( NodeId.from( "nodeId1" ) ).
             nodeVersionId( NodeVersionId.from( "nodeVersionOld" ) ).
             nodePath( NodePath.ROOT ).
-            timestamp( Instant.ofEpochSecond( 1000 ) ).
+            timestamp( Instant.ofEpochSecond( 500 ) ).
             build();
 
         final NodeVersionsMetadata nodeVersionsMetadata = NodeVersionsMetadata.create( NodeId.from( "nodeId1" ) ).
@@ -44,8 +44,8 @@ public class FindVersionsHandlerTest
         final NodeVersionQueryResult result = NodeVersionQueryResult.create().
             entityVersions( nodeVersionsMetadata ).
             from( 0 ).
-            to( 10 ).
-            hits( 20 ).
+            to( 2 ).
+            hits( 2 ).
             totalHits( 40 ).
             build();
 
@@ -56,6 +56,6 @@ public class FindVersionsHandlerTest
 
         assertEquals( "nodeId", getNodeVersionsParamsCaptor.getValue().getNodeId().toString() );
         assertEquals( 0, getNodeVersionsParamsCaptor.getValue().getFrom() );
-        assertEquals( 20, getNodeVersionsParamsCaptor.getValue().getSize() );
+        assertEquals( 2, getNodeVersionsParamsCaptor.getValue().getSize() );
     }
 }

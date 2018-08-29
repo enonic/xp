@@ -81,51 +81,6 @@ public class NodeHandler
     }
 
     @SuppressWarnings("unused")
-    public Object setActiveVersion( final String key, final String nodeVersionId )
-    {
-        return execute( SetActiveVersionHandler.create().
-            nodeService( this.nodeService ).
-            key( NodeKey.from( key ) ).
-            versionId( NodeVersionId.from( nodeVersionId ) ).
-            build() );
-    }
-
-    @SuppressWarnings("unused")
-    public Object findVersions( final String key, final int from, final int size )
-    {
-        return execute( FindVersionsHandler.create().
-            nodeService( this.nodeService ).
-            key( NodeKey.from( key ) ).
-            from( from ).
-            size( size ).
-            build() );
-    }
-
-    @SuppressWarnings("unused")
-    public Object getActiveVersions( final String key, final String[] branches )
-    {
-        return execute( GetActiveVersionsHandler.create().
-            nodeService( this.nodeService ).
-            key( NodeKey.from( key ) ).
-            branches( makeBranches( branches ) ).
-            build() );
-    }
-
-    private Branches makeBranches( final String[] branches )
-    {
-        if ( branches == null )
-        {
-            final Branch currentBranch = ContextAccessor.current().getBranch();
-            return Branches.from( currentBranch );
-        }
-        else
-        {
-            final Set<Branch> branchSet = Arrays.stream( branches ).map( Branch::from ).collect( Collectors.toSet() );
-            return Branches.from( branchSet );
-        }
-    }
-
-    @SuppressWarnings("unused")
     public Object push( final PushNodeHandlerParams params )
     {
         final PushNodeHandler handler = PushNodeHandler.create().
@@ -174,6 +129,36 @@ public class NodeHandler
             filters( params.getFilters() ).
             explain( params.isExplain() ).
             nodeService( this.nodeService ).
+            build() );
+    }
+
+    @SuppressWarnings("unused")
+    public Object findVersions( final FindVersionsHandlerParams params )
+    {
+        return execute( FindVersionsHandler.create().
+            nodeService( this.nodeService ).
+            key( NodeKey.from( params.getKey() ) ).
+            from( params.getStart() ).
+            size( params.getCount() ).
+            build() );
+    }
+
+    @SuppressWarnings("unused")
+    public Object getActiveVersion( final String key )
+    {
+        return execute( GetActiveVersionHandler.create().
+            nodeService( this.nodeService ).
+            key( NodeKey.from( key ) ).
+            build() );
+    }
+
+    @SuppressWarnings("unused")
+    public Object setActiveVersion( final String key, final String versionId )
+    {
+        return execute( SetActiveVersionHandler.create().
+            nodeService( this.nodeService ).
+            key( NodeKey.from( key ) ).
+            versionId( NodeVersionId.from( versionId ) ).
             build() );
     }
 
