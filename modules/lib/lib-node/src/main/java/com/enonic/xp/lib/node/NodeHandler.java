@@ -1,14 +1,22 @@
 package com.enonic.xp.lib.node;
 
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.lib.value.ScriptValueTranslator;
 import com.enonic.xp.lib.value.ScriptValueTranslatorResult;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -121,6 +129,36 @@ public class NodeHandler
             filters( params.getFilters() ).
             explain( params.isExplain() ).
             nodeService( this.nodeService ).
+            build() );
+    }
+
+    @SuppressWarnings("unused")
+    public Object findVersions( final FindVersionsHandlerParams params )
+    {
+        return execute( FindVersionsHandler.create().
+            nodeService( this.nodeService ).
+            key( NodeKey.from( params.getKey() ) ).
+            from( params.getStart() ).
+            size( params.getCount() ).
+            build() );
+    }
+
+    @SuppressWarnings("unused")
+    public Object getActiveVersion( final String key )
+    {
+        return execute( GetActiveVersionHandler.create().
+            nodeService( this.nodeService ).
+            key( NodeKey.from( key ) ).
+            build() );
+    }
+
+    @SuppressWarnings("unused")
+    public Object setActiveVersion( final String key, final String versionId )
+    {
+        return execute( SetActiveVersionHandler.create().
+            nodeService( this.nodeService ).
+            key( NodeKey.from( key ) ).
+            versionId( NodeVersionId.from( versionId ) ).
             build() );
     }
 
