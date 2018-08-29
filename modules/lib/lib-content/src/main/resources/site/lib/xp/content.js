@@ -509,19 +509,17 @@ exports.findVersions = function (params) {
 };
 
 /**
- * Get the active version per branch of a content.
+ * Get the active version of a content.
  *
  * @example-ref examples/content/getActiveVersions.js
  *
  * @param {object} params JSON parameters.
  * @param {string} params.key Path or id of the content.
- * @param {string[]} [params.branches] Branches to include. By default the current branch.
- * @returns {object} Active content versions per branch.
+ * @returns {object} Active content version.
  */
-exports.getActiveVersions = function (params) {
-    var bean = __.newBean('com.enonic.xp.lib.content.GetActiveVersionsHandler');
+exports.getActiveVersion = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.content.GetActiveVersionHandler');
     bean.key = required(params, 'key');
-    bean.branches = nullOrValue(params.branches);
     return __.toNativeObject(bean.execute());
 };
 
