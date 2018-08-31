@@ -23,8 +23,10 @@ ext {
 addBundle( 'org.apache.felix:org.apache.felix.metatype:1.1.2', 5 )
 addBundle( 'org.apache.felix:org.apache.felix.eventadmin:1.4.4', 5 )
 addBundle( 'org.apache.felix:org.apache.felix.configadmin:1.8.8', 5 )
+addBundle( 'org.apache.felix:org.apache.felix.scr:2.0.2', 5 )
 addBundle( 'org.slf4j:slf4j-simple:1.7.25', 5 )
 addBundle( 'org.slf4j:slf4j-api:1.7.25', 5 )
+addBundle( 'javax.mail:mail:1.4.7', 5 )
 
 // Java Cryptography Extension
 addBundle( 'org.bouncycastle:bcprov-jdk15on:1.54', 6 )
