@@ -7,7 +7,6 @@ import javax.script.ScriptEngine;
 import jdk.nashorn.api.scripting.JSObject;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
-import jdk.nashorn.internal.runtime.ScriptRuntime;
 
 public final class NashornHelper
 {
@@ -20,7 +19,7 @@ public final class NashornHelper
 
     public static boolean isUndefined( final Object value )
     {
-        return value == null || ScriptRuntime.UNDEFINED == value;
+        return value == null || ScriptObjectMirror.isUndefined( value );
     }
 
     static boolean isNativeArray( final Object value )
