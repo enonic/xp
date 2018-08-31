@@ -46,7 +46,8 @@ public final class LauncherImpl
 
     private void checkRequirements()
     {
-        new RequirementChecker( this.systemProperties ).check();
+        //TODO Java10
+//        new RequirementChecker( this.systemProperties ).check();
     }
 
     private void resolveEnv()
