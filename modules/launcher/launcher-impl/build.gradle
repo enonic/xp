@@ -2,8 +2,8 @@ dependencies {
     compile project( ':launcher:launcher-api' )
     compile 'org.osgi:osgi.core:7.0.0'
     compile 'org.osgi:osgi.cmpn:7.0.0'
-    compile 'org.apache.felix:org.apache.felix.framework:5.2.0'
-    compile( 'org.apache.felix:org.apache.felix.utils:1.8.0' ) {
+    compile 'org.apache.felix:org.apache.felix.framework:6.0.1'
+    compile( 'org.apache.felix:org.apache.felix.utils:1.11.0' ) {
         transitive = false
     }
     compile 'commons-io:commons-io:2.4'
