@@ -1,6 +1,7 @@
 package com.enonic.xp.inputtype;
 
 import com.enonic.xp.data.Property;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
@@ -22,7 +23,10 @@ final class HtmlAreaType
         final String rootValue = input.getDefaultValue().getRootValue();
         if ( rootValue != null )
         {
-            return ValueFactory.newString( rootValue );
+            PropertySet propertySet = new PropertySet();
+            propertySet.addString( "value", rootValue );
+
+            return ValueFactory.newPropertySet( propertySet );
         }
         return super.createDefaultValue( input );
     }
@@ -30,12 +34,19 @@ final class HtmlAreaType
     @Override
     public Value createValue( final Value value, final InputTypeConfig config )
     {
-        return ValueFactory.newString( value.asString() );
+        return ValueFactory.newPropertySet( value.asData() );
     }
 
     @Override
     public void validate( final Property property, final InputTypeConfig config )
     {
-        validateType( property, ValueTypes.STRING );
+        validateType( property, ValueTypes.PROPERTY_SET );
+        validateType( property.getSet().getProperty( "value" ), ValueTypes.STRING );
+
+        final Property references = property.getSet().getProperty( "references" );
+        if ( references != null )
+        {
+            validateType( property.getSet().getProperty( "references" ), ValueTypes.REFERENCE );
+        }
     }
 }

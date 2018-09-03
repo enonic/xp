@@ -10,7 +10,7 @@ import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueType;
 import com.enonic.xp.data.ValueTypes;
 
-    final class HtmlStripper
+final class HtmlStripper
     implements IndexValueProcessor
 {
     public final static String NAME = "htmlStripper";
@@ -20,16 +20,18 @@ import com.enonic.xp.data.ValueTypes;
     @Override
     public Value process( final Value value )
     {
-        if ( value == null || !value.isText() )
+        if ( value == null || !value.isPropertySet() )
         {
             return value;
         }
 
-        final Matcher matcher = XML_TAG_PATTERN.matcher( value.toString() );
+        final Value stringValue = value.asData().getValue( "value" );
+
+        final Matcher matcher = XML_TAG_PATTERN.matcher( stringValue.toString() );
         final String strippedHtml = matcher.replaceAll( " " );
         final String unescapedHtml = StringEscapeUtils.unescapeHtml( strippedHtml );
 
-        final ValueType valueType = value.getType();
+        final ValueType valueType = stringValue.getType();
         if ( valueType == ValueTypes.XML )
         {
             return ValueFactory.newXml( unescapedHtml );

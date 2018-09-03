@@ -18,7 +18,9 @@
   "date": "2015-01-15",
   "time": "10:00:32.123",
   "geoPoint": "-45,34",
-  "htmlArea": "<stuff>staff</stuff>",
+  "htmlArea": {
+    "value": "<stuff>staff</stuff>"
+  },
   "media": {
     "attachment": "MyImage.JPG",
     "focalPoint": {

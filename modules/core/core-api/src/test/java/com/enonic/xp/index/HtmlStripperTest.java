@@ -6,8 +6,11 @@ import java.time.LocalDateTime;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.data.ValueType;
+import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Reference;
 
@@ -27,26 +30,25 @@ public class HtmlStripperTest
     public void processEmpty()
     {
         assertNull( this.htmlStripper.process( null ) );
-        assertEquals( ValueFactory.newString( "" ), this.htmlStripper.process( ValueFactory.newString( "" ) ) );
-        assertEquals( ValueFactory.newString( " " ), this.htmlStripper.process( ValueFactory.newString( "<tag/>" ) ) );
+        assertEquals( ValueFactory.newString( "" ), this.htmlStripper.process( propertySetValue( "" ) ) );
+        assertEquals( ValueFactory.newString( " " ), this.htmlStripper.process( propertySetValue( "<tag/>" ) ) );
     }
 
     @Test
     public void process()
     {
-        assertEquals( ValueFactory.newString( "ValueWithoutTags" ),
-                      this.htmlStripper.process( ValueFactory.newString( "ValueWithoutTags" ) ) );
-        assertEquals( ValueFactory.newString( " Value " ), this.htmlStripper.process( ValueFactory.newString( "<a>Value</a>" ) ) );
-        assertEquals( ValueFactory.newString( " TextBefore TextBetween TextAfter " ), this.htmlStripper.process( ValueFactory.newString(
+        assertEquals( ValueFactory.newString( "ValueWithoutTags" ), this.htmlStripper.process( propertySetValue( "ValueWithoutTags" ) ) );
+        assertEquals( ValueFactory.newString( " Value " ), this.htmlStripper.process( propertySetValue( "<a>Value</a>" ) ) );
+        assertEquals( ValueFactory.newString( " TextBefore TextBetween TextAfter " ), this.htmlStripper.process( propertySetValue(
             "<!-- Comment -->TextBefore<tag param=\"paramValue\">TextBetween</tag>TextAfter<EmptyNode/><SecondEmptyNode/>" ) ) );
     }
 
     @Test
     public void processDifferentTypes()
     {
-        Value valueToProcess = ValueFactory.newString( "abc<tag>def</tag><secondtag/>" );
+        Value valueToProcess = propertySetValue( "abc<tag>def</tag><secondtag/>" );
         assertEquals( ValueFactory.newString( "abc def " ), this.htmlStripper.process( valueToProcess ) );
-        valueToProcess = ValueFactory.newXml( "<xml>xmlValue</xml>" );
+        valueToProcess = propertySetValue( "<xml>xmlValue</xml>", ValueTypes.XML );
         assertEquals( ValueFactory.newXml( " xmlValue " ), this.htmlStripper.process( valueToProcess ) );
 
         valueToProcess = ValueFactory.newBoolean( false );
@@ -68,9 +70,30 @@ public class HtmlStripperTest
     @Test
     public void processEscapedCharacters()
     {
-        Value valueToProcess = ValueFactory.newString( "&lt;tag value=\"&aelig;&oslash;&aring;\"/&gt;" );
+        Value valueToProcess = propertySetValue( "&lt;tag value=\"&aelig;&oslash;&aring;\"/&gt;" );
         assertEquals( ValueFactory.newString( "<tag value=\"æøå\"/>" ), this.htmlStripper.process( valueToProcess ) );
-        valueToProcess = ValueFactory.newXml( "&lt;tag value=\"&aelig;&oslash;&aring;\"/&gt;" );
+        valueToProcess = propertySetValue( "&lt;tag value=\"&aelig;&oslash;&aring;\"/&gt;", ValueTypes.XML );
         assertEquals( ValueFactory.newXml( "<tag value=\"æøå\"/>" ), this.htmlStripper.process( valueToProcess ) );
+    }
+
+    private Value propertySetValue( final String stringValue )
+    {
+        return this.propertySetValue( stringValue, ValueTypes.STRING );
+    }
+
+    private Value propertySetValue( final String stringValue, final ValueType valueType )
+    {
+        final PropertySet propertySet = new PropertySet();
+
+        if ( valueType == ValueTypes.XML )
+        {
+            propertySet.addXml( "value", stringValue );
+        }
+        else
+        {
+            propertySet.addString( "value", stringValue );
+        }
+
+        return ValueFactory.newPropertySet( propertySet );
     }
 }

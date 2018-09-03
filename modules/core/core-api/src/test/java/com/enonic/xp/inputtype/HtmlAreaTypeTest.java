@@ -2,6 +2,7 @@ package com.enonic.xp.inputtype;
 
 import org.junit.Test;
 
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
@@ -33,10 +34,10 @@ public class HtmlAreaTypeTest
     public void testCreateProperty()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
-        final Value value = this.type.createValue( ValueFactory.newString( "test"), config );
+        final Value value = this.type.createValue( ValueFactory.newPropertySet( new PropertySet() ), config );
 
         assertNotNull( value );
-        assertSame( ValueTypes.STRING, value.getType() );
+        assertSame( ValueTypes.PROPERTY_SET, value.getType() );
     }
 
     @Test
@@ -47,15 +48,18 @@ public class HtmlAreaTypeTest
         final Value value = this.type.createDefaultValue( input );
 
         assertNotNull( value );
-        assertEquals( "<p>test</p>", value.toString() );
+        assertEquals( "value: [<p>test</p>]", value.toString().trim() );
 
     }
 
     @Test
     public void testValidate()
     {
+        final PropertySet propertySet = new PropertySet();
+        propertySet.addString( "value", "<b>html content </b>" );
+
         final InputTypeConfig config = InputTypeConfig.create().build();
-        this.type.validate( stringProperty( "test" ), config );
+        this.type.validate( dataProperty( propertySet ), config );
     }
 
     @Test(expected = InputTypeValidationException.class)
