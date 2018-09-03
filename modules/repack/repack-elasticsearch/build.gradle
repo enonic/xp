@@ -1,7 +1,7 @@
 apply from: "$rootDir/gradle/osgi.gradle"
 
 dependencies {
-    compile( 'org.elasticsearch:elasticsearch:1.5.2' ) {
+    compile( 'org.elasticsearch:elasticsearch:2.4.6' ) {
         exclude group: 'org.antlr'
         exclude group: 'org.ow2.asm'
     }

@@ -1,18 +1,21 @@
 package com.enonic.xp.repo.impl.elasticsearch.aggregation;
 
 
+import java.time.Instant;
+
 import org.elasticsearch.search.aggregations.HasAggregations;
 import org.elasticsearch.search.aggregations.bucket.MultiBucketsAggregation;
-import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogram;
 import org.elasticsearch.search.aggregations.bucket.histogram.Histogram;
+import org.elasticsearch.search.aggregations.bucket.histogram.InternalHistogram;
 import org.elasticsearch.search.aggregations.bucket.range.Range;
-import org.elasticsearch.search.aggregations.bucket.range.date.DateRange;
-import org.elasticsearch.search.aggregations.bucket.range.geodistance.GeoDistance;
+import org.elasticsearch.search.aggregations.bucket.range.date.InternalDateRange;
+import org.elasticsearch.search.aggregations.bucket.range.geodistance.InternalGeoDistance;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.metrics.max.Max;
 import org.elasticsearch.search.aggregations.metrics.min.Min;
 import org.elasticsearch.search.aggregations.metrics.stats.Stats;
 import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCount;
+import org.joda.time.DateTime;
 
 import com.enonic.xp.aggregation.Aggregations;
 import com.enonic.xp.aggregation.Bucket;
@@ -41,21 +44,21 @@ public class AggregationsFactory
             {
                 aggregationsBuilder.add( TermsAggregationFactory.create( (Terms) aggregation ) );
             }
-            else if ( aggregation instanceof GeoDistance )
+            else if ( aggregation instanceof InternalGeoDistance )
             {
-                aggregationsBuilder.add( GeoDistanceAggregationFactory.create( (GeoDistance) aggregation ) );
+                aggregationsBuilder.add( GeoDistanceAggregationFactory.create( (InternalGeoDistance) aggregation ) );
             }
-            else if ( aggregation instanceof DateRange )
+            else if ( aggregation instanceof InternalDateRange )
             {
-                aggregationsBuilder.add( DateRangeAggregationFactory.create( (DateRange) aggregation ) );
+                aggregationsBuilder.add( DateRangeAggregationFactory.create( (InternalDateRange) aggregation ) );
             }
             else if ( aggregation instanceof Range )
             {
                 aggregationsBuilder.add( NumericRangeAggregationFactory.create( (Range) aggregation ) );
             }
-            else if ( aggregation instanceof DateHistogram )
+            else if ( aggregation instanceof InternalHistogram )
             {
-                aggregationsBuilder.add( DateHistogramAggregationFactory.create( (DateHistogram) aggregation ) );
+                aggregationsBuilder.add( DateHistogramAggregationFactory.create( (InternalHistogram) aggregation ) );
             }
             else if ( aggregation instanceof Histogram )
             {
@@ -89,7 +92,7 @@ public class AggregationsFactory
     static void createAndAddBucket( final Buckets.Builder bucketsBuilder, final MultiBucketsAggregation.Bucket bucket )
     {
         final Bucket.Builder builder = Bucket.create().
-            key( bucket.getKey() ).
+            key( bucket.getKeyAsString() ).
             docCount( bucket.getDocCount() );
 
         doAddSubAggregations( bucket, builder );
@@ -102,6 +105,16 @@ public class AggregationsFactory
         final org.elasticsearch.search.aggregations.Aggregations subAggregations = bucket.getAggregations();
 
         builder.addAggregations( doCreate( subAggregations ) );
+    }
+
+    static Instant toInstant( final DateTime dateTime )
+    {
+        return dateTime == null ? null : java.time.Instant.ofEpochMilli( dateTime.getMillis() );
+    }
+
+    static Instant toInstant( final Long millis )
+    {
+        return millis == null ? null : java.time.Instant.ofEpochMilli( millis );
     }
 }
 

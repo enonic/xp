@@ -1,6 +1,5 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory;
 
-import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.FilteredQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -11,8 +10,8 @@ import com.enonic.xp.query.expr.ConstraintExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.filter.Filter;
 import com.enonic.xp.query.filter.Filters;
-import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.query.ConstraintExpressionBuilder;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
 
 public class QueryBuilderFactory
     extends AbstractBuilderFactory
@@ -47,7 +46,7 @@ public class QueryBuilderFactory
 
         if ( wrapInFilteredQuery )
         {
-            final FilterBuilder filterBuilder = new FilterBuilderFactory( fieldNameResolver ).create( filters );
+            final QueryBuilder filterBuilder = new FilterBuilderFactory( fieldNameResolver ).create( filters );
             return new FilteredQueryBuilder( queryBuilder, filterBuilder );
         }
         else

@@ -3,10 +3,12 @@ package com.enonic.xp.repo.impl.elasticsearch.storage;
 import java.util.Collection;
 
 import org.elasticsearch.ElasticsearchException;
+import org.elasticsearch.action.delete.DeleteAction;
 import org.elasticsearch.action.delete.DeleteRequestBuilder;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.action.get.MultiGetAction;
 import org.elasticsearch.action.get.MultiGetRequest;
 import org.elasticsearch.action.get.MultiGetRequestBuilder;
 import org.elasticsearch.action.get.MultiGetResponse;
@@ -80,7 +82,7 @@ public class StorageDaoImpl
         final StorageSource settings = request.getSettings();
         final String id = request.getId();
 
-        final DeleteRequestBuilder builder = new DeleteRequestBuilder( this.client ).
+        final DeleteRequestBuilder builder = new DeleteRequestBuilder( this.client, DeleteAction.INSTANCE ).
             setId( id ).
             setIndex( settings.getStorageName().getName() ).
             setType( settings.getStorageType().getName() ).
@@ -113,12 +115,13 @@ public class StorageDaoImpl
         {
             try
             {
-                final org.elasticsearch.action.delete.DeleteRequest request = new DeleteRequestBuilder( this.client ).
-                    setIndex( settings.getStorageName().getName() ).
-                    setType( settings.getStorageType().getName() ).
-                    setRefresh( requests.isForceRefresh() ).
-                    setId( id ).
-                    request();
+                final org.elasticsearch.action.delete.DeleteRequest request =
+                    new DeleteRequestBuilder( this.client, DeleteAction.INSTANCE ).
+                        setIndex( settings.getStorageName().getName() ).
+                        setType( settings.getStorageType().getName() ).
+                        setRefresh( requests.isForceRefresh() ).
+                        setId( id ).
+                        request();
 
                 this.client.delete( request ).actionGet( requests.getTimeoutAsString() );
             }
@@ -186,7 +189,7 @@ public class StorageDaoImpl
             return new GetResults();
         }
 
-        final MultiGetRequestBuilder multiGetRequestBuilder = new MultiGetRequestBuilder( this.client );
+        final MultiGetRequestBuilder multiGetRequestBuilder = new MultiGetRequestBuilder( this.client, MultiGetAction.INSTANCE );
 
         for ( final GetByIdRequest request : requests.getRequests() )
         {

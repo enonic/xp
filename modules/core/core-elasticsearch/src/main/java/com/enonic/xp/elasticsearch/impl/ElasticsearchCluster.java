@@ -161,14 +161,14 @@ public final class ElasticsearchCluster
         return response.getState().getNodes();
     }
 
-    private ClusterHealth toClusterHealth( final org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus status )
+    private ClusterHealth toClusterHealth( final org.elasticsearch.cluster.health.ClusterHealthStatus status )
     {
-        if ( status == org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus.RED )
+        if ( status == org.elasticsearch.cluster.health.ClusterHealthStatus.RED )
         {
             return ClusterHealth.red();
         }
 
-        if ( status == org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus.YELLOW )
+        if ( status == org.elasticsearch.cluster.health.ClusterHealthStatus.YELLOW )
         {
             return ClusterHealth.yellow();
         }
