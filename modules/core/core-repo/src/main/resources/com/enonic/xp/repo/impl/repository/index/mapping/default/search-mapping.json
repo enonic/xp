@@ -39,8 +39,7 @@
             "type": "string",
             "store": "no",
             "index": "analyzed",
-            "index_analyzer": "path_analyzer",
-            "search_analyzer": "path_analyzer",
+            "analyzer": "path_analyzer",
             "include_in_all": false
           }
         }
