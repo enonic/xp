@@ -104,8 +104,8 @@ public class NodeRepositoryServiceImpl
     private void applyMappings( final CreateRepositoryParams params )
     {
         applyMapping( params, IndexType.SEARCH );
-        applyMapping( params, IndexType.VERSION );
         applyMapping( params, IndexType.BRANCH );
+        applyMapping( params, IndexType.VERSION );
     }
 
     private void applyMapping( final CreateRepositoryParams params, final IndexType indexType )
