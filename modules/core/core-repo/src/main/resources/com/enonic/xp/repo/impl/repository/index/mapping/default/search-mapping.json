@@ -1,8 +1,5 @@
 {
   "_default_": {
-    "_analyzer": {
-      "path": "_document_analyzer"
-    },
     "_all": {
       "enabled": false
     },
@@ -55,7 +52,8 @@
             "type": "string",
             "store": "no",
             "index": "analyzed",
-            "index_analyzer": "ngram_index_front",
+            "analyzer": "ngram_index_front",
+            "search_analyzer": "standard",
             "include_in_all": false
           }
         }
