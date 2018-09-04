@@ -19,7 +19,7 @@
         "type": "string",
         "store": "no",
         "index": "analyzed",
-        "index_analyzer": "ngram_index",
+        "analyzer": "ngram_index",
         "include_in_all": false
       }
     },
