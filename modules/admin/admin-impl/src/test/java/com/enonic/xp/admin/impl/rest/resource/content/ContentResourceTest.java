@@ -906,7 +906,7 @@ public class ContentResourceTest
         Mockito.when( contentService.setChildOrder( Mockito.isA( SetContentChildOrderParams.class ) ) ).thenReturn( content );
 
         expectedEx.expect( WebApplicationException.class );
-        expectedEx.expectMessage( "Not allowed to reorder children manually, current parentOrder = [_timestamp DESC]" );
+        expectedEx.expectMessage( "Not allowed to reorder children manually, current parentOrder = [_ts DESC]" );
 
         contentResource.reorderChildContents(
             new ReorderChildrenJson( false, false, content.getId().toString(), null, Lists.newArrayList() ) );
