@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory;
 
-import org.elasticsearch.index.query.FilterBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -25,7 +25,7 @@ public class FilterBuilderFactoryTest
             build();
 
         final String expected = load( "filter_values_string.json" );
-        final FilterBuilder filterBuilder =
+        final QueryBuilder filterBuilder =
             new FilterBuilderFactory( new SearchQueryFieldNameResolver() ).create( Filters.from( queryFilter ) );
 
         Assert.assertEquals( cleanString( expected ), cleanString( filterBuilder.toString() ) );
@@ -42,7 +42,7 @@ public class FilterBuilderFactoryTest
             build();
 
         final String expected = load( "filter_values_number.json" );
-        final FilterBuilder filterBuilder =
+        final QueryBuilder filterBuilder =
             new FilterBuilderFactory( new SearchQueryFieldNameResolver() ).create( Filters.from( queryFilter ) );
 
         Assert.assertEquals( cleanString( expected ), cleanString( filterBuilder.toString() ) );
@@ -57,7 +57,7 @@ public class FilterBuilderFactoryTest
             build();
 
         final String expected = load( "filter_exists.json" );
-        final FilterBuilder filterBuilder =
+        final QueryBuilder filterBuilder =
             new FilterBuilderFactory( new SearchQueryFieldNameResolver() ).create( Filters.from( queryFilter ) );
 
         Assert.assertEquals( cleanString( expected ), cleanString( filterBuilder.toString() ) );
@@ -77,7 +77,7 @@ public class FilterBuilderFactoryTest
         builder.should( ExistsFilter.create().fieldName( "MyOptional" ).build() );
 
         final String expected = load( "filter_boolean.json" );
-        final FilterBuilder filterBuilder =
+        final QueryBuilder filterBuilder =
             new FilterBuilderFactory( new SearchQueryFieldNameResolver() ).create( Filters.from( builder.build() ) );
 
         Assert.assertEquals( cleanString( expected ), cleanString( filterBuilder.toString() ) );
