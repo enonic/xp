@@ -38,7 +38,7 @@ var expected = {
     "_id": "abc",
     "_name": "myNode",
     "_path": "/myNode",
-    "_childOrder": "_timestamp DESC",
+    "_childOrder": "_ts DESC",
     "_indexConfig": {
         "default": {
             "decideByType": true,

@@ -26,7 +26,7 @@ log.info('Node created with id ' + result1._id);
 // Node created.
 var expected = {
     "_id": "a-random-node-id",
-    "_childOrder": "_timestamp DESC",
+    "_childOrder": "_ts DESC",
     "_indexConfig": {
         "default": {
             "decideByType": true,
