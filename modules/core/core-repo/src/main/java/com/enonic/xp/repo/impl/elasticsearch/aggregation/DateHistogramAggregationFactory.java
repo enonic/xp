@@ -27,8 +27,16 @@ class DateHistogramAggregationFactory
         {
             final DateHistogramBucket.Builder builder = DateHistogramBucket.create().
                 key( bucket.getKeyAsString() ).
-                docCount( bucket.getDocCount() ).
-                keyAsInstant( toInstant( (DateTime) bucket.getKey() ) );
+                docCount( bucket.getDocCount() );
+            final Object key = bucket.getKey();
+            if ( key instanceof DateTime )
+            {
+                builder.keyAsInstant( toInstant( (DateTime) key ) );
+            }
+            else if ( key instanceof Long )
+            {
+                builder.keyAsInstant( java.time.Instant.ofEpochMilli( (Long) key ) );
+            }
 
             doAddSubAggregations( bucket, builder );
 
