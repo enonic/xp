@@ -3,6 +3,7 @@ package com.enonic.xp.repo.impl.elasticsearch.aggregation;
 import java.util.Collection;
 
 import org.elasticsearch.search.aggregations.bucket.histogram.InternalHistogram;
+import org.joda.time.DateTime;
 
 import com.enonic.xp.aggregation.BucketAggregation;
 import com.enonic.xp.aggregation.Buckets;
@@ -27,7 +28,7 @@ class DateHistogramAggregationFactory
             final DateHistogramBucket.Builder builder = DateHistogramBucket.create().
                 key( bucket.getKeyAsString() ).
                 docCount( bucket.getDocCount() ).
-                keyAsInstant( toInstant( (Long) bucket.getKey() ) );
+                keyAsInstant( toInstant( (DateTime) bucket.getKey() ) );
 
             doAddSubAggregations( bucket, builder );
 

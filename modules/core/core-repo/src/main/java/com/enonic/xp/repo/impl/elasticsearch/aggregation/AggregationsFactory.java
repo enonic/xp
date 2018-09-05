@@ -111,11 +111,6 @@ public class AggregationsFactory
     {
         return dateTime == null ? null : java.time.Instant.ofEpochMilli( dateTime.getMillis() );
     }
-
-    static Instant toInstant( final Long millis )
-    {
-        return millis == null ? null : java.time.Instant.ofEpochMilli( millis );
-    }
 }
 
 
