@@ -14,7 +14,7 @@ public final class NashornHelper
 
     public static ScriptEngine getScriptEngine( final ClassLoader loader )
     {
-        return FACTORY.getScriptEngine( new String[]{"--global-per-engine", "-strict"}, loader );
+        return FACTORY.getScriptEngine( new String[]{"--global-per-engine", "-strict", "--language=es6"}, loader ); //TODO Java10
     }
 
     public static boolean isUndefined( final Object value )
