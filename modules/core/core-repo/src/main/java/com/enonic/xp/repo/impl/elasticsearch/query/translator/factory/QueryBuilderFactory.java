@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory;
 
-import org.elasticsearch.index.query.FilteredQueryBuilder;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 
@@ -47,7 +47,9 @@ public class QueryBuilderFactory
         if ( wrapInFilteredQuery )
         {
             final QueryBuilder filterBuilder = new FilterBuilderFactory( fieldNameResolver ).create( filters );
-            return new FilteredQueryBuilder( queryBuilder, filterBuilder );
+            final BoolQueryBuilder boolBuilder = new BoolQueryBuilder();
+            boolBuilder.filter( filterBuilder );
+            return boolBuilder.must( queryBuilder );
         }
         else
         {
