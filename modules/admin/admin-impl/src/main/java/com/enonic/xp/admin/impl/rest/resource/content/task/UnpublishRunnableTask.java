@@ -13,13 +13,11 @@ import com.enonic.xp.content.CompareContentsParams;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentIds;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.PushContentListener;
 import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskId;
-import com.enonic.xp.task.TaskService;
 
 public class UnpublishRunnableTask
     extends AbstractRunnableTask
@@ -108,34 +106,13 @@ public class UnpublishRunnableTask
     }
 
     public static class Builder
-        extends AbstractRunnableTask.Builder
+        extends AbstractRunnableTask.Builder<Builder>
     {
         private UnpublishContentJson params;
 
         public Builder params( UnpublishContentJson params )
         {
             this.params = params;
-            return this;
-        }
-
-        @Override
-        public Builder description( String description )
-        {
-            super.description( description );
-            return this;
-        }
-
-        @Override
-        public Builder taskService( TaskService taskService )
-        {
-            super.taskService( taskService );
-            return this;
-        }
-
-        @Override
-        public Builder contentService( ContentService contentService )
-        {
-            super.contentService( contentService );
             return this;
         }
 

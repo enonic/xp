@@ -13,7 +13,7 @@ public abstract class AbstractRunnableTask
 
     private final TaskService taskService;
 
-    final ContentService contentService;
+    protected final ContentService contentService;
 
     AbstractRunnableTask( Builder builder )
     {
@@ -28,35 +28,34 @@ public abstract class AbstractRunnableTask
         return new TaskResultJson( taskId );
     }
 
-    public static abstract class Builder
+    public static abstract class Builder<T extends Builder<T>>
     {
-
         private String description;
 
         private TaskService taskService;
 
         private ContentService contentService;
 
-        Builder()
+        protected Builder()
         {
         }
 
-        public Builder description( String description )
+        public T description( String description )
         {
             this.description = description;
-            return this;
+            return (T) this;
         }
 
-        public Builder taskService( TaskService taskService )
+        public T taskService( TaskService taskService )
         {
             this.taskService = taskService;
-            return this;
+            return (T) this;
         }
 
-        public Builder contentService( ContentService contentService )
+        public T contentService( ContentService contentService )
         {
             this.contentService = contentService;
-            return this;
+            return (T) this;
         }
 
         public abstract AbstractRunnableTask build();

@@ -4,9 +4,9 @@ import java.util.List;
 
 import com.enonic.xp.content.ContentPath;
 
-abstract class TaskMessageGenerator<R extends RunnableTaskResult>
+public abstract class TaskMessageGenerator<R extends RunnableTaskResult>
 {
-    String generate( final R result )
+    public String generate( final R result )
     {
         final int total = result.getTotalCount();
         if ( total == 0 )
@@ -46,17 +46,17 @@ abstract class TaskMessageGenerator<R extends RunnableTaskResult>
         return builder.toString();
     }
 
-    abstract String getNoResultsMessage();
+    protected abstract String getNoResultsMessage();
 
-    abstract void appendMessageForMultipleFailure( final StringBuilder builder, final R result );
+    protected abstract void appendMessageForMultipleFailure( final StringBuilder builder, final R result );
 
-    abstract void appendMessageForSingleFailure( final StringBuilder builder, final R result );
+    protected abstract void appendMessageForSingleFailure( final StringBuilder builder, final R result );
 
-    abstract void appendMessageForMultipleSuccess( final StringBuilder builder, final R result );
+    protected abstract void appendMessageForMultipleSuccess( final StringBuilder builder, final R result );
 
-    abstract void appendMessageForSingleSuccess( final StringBuilder builder, final R result );
+    protected abstract void appendMessageForSingleSuccess( final StringBuilder builder, final R result );
 
-    String getNameOrSize( final List<ContentPath> items )
+    protected String getNameOrSize( final List<ContentPath> items )
     {
         return items.size() != 1 ? String.valueOf( items.size() ) : String.format( "\"%s\"", items.get( 0 ).getName() );
     }

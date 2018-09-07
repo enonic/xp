@@ -8,12 +8,10 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskId;
-import com.enonic.xp.task.TaskService;
 
 public class DeleteRunnableTask
     extends AbstractRunnableTask
@@ -99,34 +97,13 @@ public class DeleteRunnableTask
     }
 
     public static class Builder
-        extends AbstractRunnableTask.Builder
+        extends AbstractRunnableTask.Builder<Builder>
     {
         private DeleteContentJson params;
 
         public Builder params( DeleteContentJson params )
         {
             this.params = params;
-            return this;
-        }
-
-        @Override
-        public Builder description( String description )
-        {
-            super.description( description );
-            return this;
-        }
-
-        @Override
-        public Builder taskService( TaskService taskService )
-        {
-            super.taskService( taskService );
-            return this;
-        }
-
-        @Override
-        public Builder contentService( ContentService contentService )
-        {
-            super.contentService( contentService );
             return this;
         }
 

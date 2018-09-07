@@ -1,8 +1,11 @@
 package com.enonic.xp.content;
 
+import java.util.Objects;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.node.DuplicateValueResolver;
 import com.enonic.xp.security.PrincipalKey;
 
 @Beta
@@ -12,16 +15,28 @@ public final class DuplicateContentParams
 
     private PrincipalKey creator;
 
+    private DuplicateContentProcessor processor;
+
+    private DuplicateValueResolver valueResolver;
+
     private DuplicateContentListener duplicateContentListener;
 
     private Boolean includeChildren;
+
+    private ContentPath parent;
+
+    private ContentPath dependenciesToDuplicatePath;
 
     public DuplicateContentParams( Builder builder )
     {
         this.contentId = builder.contentId;
         this.creator = builder.creator;
+        this.processor = builder.processor;
+        this.valueResolver = builder.valueResolver;
         this.duplicateContentListener = builder.duplicateContentListener;
         this.includeChildren = builder.includeChildren;
+        this.parent = builder.parent;
+        this.dependenciesToDuplicatePath = builder.dependenciesToDuplicatePath;
     }
 
     public static DuplicateContentParams.Builder create()
@@ -50,9 +65,29 @@ public final class DuplicateContentParams
         return creator;
     }
 
+    public DuplicateContentProcessor getProcessor()
+    {
+        return processor;
+    }
+
+    public DuplicateValueResolver getValueResolver()
+    {
+        return valueResolver;
+    }
+
+    public ContentPath getParent()
+    {
+        return parent;
+    }
+
     public Boolean getIncludeChildren()
     {
         return includeChildren;
+    }
+
+    public ContentPath getDependenciesToDuplicatePath()
+    {
+        return dependenciesToDuplicatePath;
     }
 
     public void validate()
@@ -84,13 +119,24 @@ public final class DuplicateContentParams
             return false;
         }
 
+        if ( !parent.equals( that.parent ) )
+        {
+            return false;
+        }
+
+        if ( !dependenciesToDuplicatePath.equals( that.dependenciesToDuplicatePath ) )
+        {
+            return false;
+        }
+
         return true;
     }
 
     @Override
     public int hashCode()
     {
-        return contentId.hashCode();
+
+        return Objects.hash( contentId, creator, includeChildren, parent, dependenciesToDuplicatePath );
     }
 
     public static final class Builder
@@ -102,7 +148,15 @@ public final class DuplicateContentParams
 
         private DuplicateContentListener duplicateContentListener;
 
+        private DuplicateContentProcessor processor;
+
+        private DuplicateValueResolver valueResolver;
+
         private Boolean includeChildren = true;
+
+        private ContentPath parent;
+
+        private ContentPath dependenciesToDuplicatePath;
 
         private Builder()
         {
@@ -120,6 +174,18 @@ public final class DuplicateContentParams
             return this;
         }
 
+        public Builder processor( final DuplicateContentProcessor processor )
+        {
+            this.processor = processor;
+            return this;
+        }
+
+        public Builder valueResolver( final DuplicateValueResolver valueResolver )
+        {
+            this.valueResolver = valueResolver;
+            return this;
+        }
+
         public Builder duplicateContentListener( DuplicateContentListener duplicateContentListener )
         {
             this.duplicateContentListener = duplicateContentListener;
@@ -129,6 +195,18 @@ public final class DuplicateContentParams
         public Builder includeChildren( final Boolean includeChildren )
         {
             this.includeChildren = includeChildren;
+            return this;
+        }
+
+        public Builder parent( final ContentPath parent )
+        {
+            this.parent = parent;
+            return this;
+        }
+
+        public Builder dependenciesToDuplicatePath( final ContentPath dependenciesToDuplicatePath )
+        {
+            this.dependenciesToDuplicatePath = dependenciesToDuplicatePath;
             return this;
         }
 

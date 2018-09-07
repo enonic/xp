@@ -8,22 +8,22 @@ class PublishTaskMessageGenerator
     extends TaskMessageGenerator<PublishRunnableTaskResult>
 {
     @Override
-    String getNoResultsMessage()
+    protected String getNoResultsMessage()
     {
         return "Nothing to publish.";
     }
 
-    void appendMessageForSingleFailure( final StringBuilder builder, final PublishRunnableTaskResult result )
+    protected void appendMessageForSingleFailure( final StringBuilder builder, final PublishRunnableTaskResult result )
     {
         builder.append( String.format( "Item \"%s\" could not be published.", result.getFailed().get( 0 ).getName() ) );
     }
 
-    void appendMessageForMultipleFailure( final StringBuilder builder, final PublishRunnableTaskResult result )
+    protected void appendMessageForMultipleFailure( final StringBuilder builder, final PublishRunnableTaskResult result )
     {
         builder.append( String.format( "Failed to publish %s items. ", result.getFailureCount() ) );
     }
 
-    void appendMessageForSingleSuccess( final StringBuilder builder, final PublishRunnableTaskResult result )
+    protected void appendMessageForSingleSuccess( final StringBuilder builder, final PublishRunnableTaskResult result )
     {
         final List<ContentPath> deleted = result.getDeleted();
         final List<ContentPath> published = result.getSucceeded();
@@ -37,7 +37,7 @@ class PublishTaskMessageGenerator
         }
     }
 
-    void appendMessageForMultipleSuccess( final StringBuilder builder, final PublishRunnableTaskResult result )
+    protected void appendMessageForMultipleSuccess( final StringBuilder builder, final PublishRunnableTaskResult result )
     {
         final List<ContentPath> deleted = result.getDeleted();
         builder.append( String.format( "%s items are published", result.getSuccessCount() ) );

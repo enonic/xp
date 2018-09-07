@@ -1,10 +1,8 @@
-package com.enonic.xp.repo.impl.node;
+package com.enonic.xp.node;
 
 import com.google.common.base.Strings;
 
-import com.enonic.xp.node.NodeName;
-
-abstract class DuplicateValueResolver
+public class DuplicateValueResolver
 {
     final static String COPY_TOKEN = "copy";
 
@@ -12,27 +10,27 @@ abstract class DuplicateValueResolver
 
     private final static String DISPLAY_NAME_SEPARATOR = " ";
 
-    public static String name( final NodeName nodeName )
+    public String name( final NodeName nodeName )
     {
         return doResolve( nodeName.toString(), NAME_SEPARATOR );
     }
 
-    public static String name( final String existingName )
+    public String name( final String existingName )
     {
         return doResolve( existingName, NAME_SEPARATOR );
     }
 
-    public static String displayName( final NodeName nodeName )
+    public String displayName( final NodeName nodeName )
     {
         return doResolve( nodeName.toString(), DISPLAY_NAME_SEPARATOR );
     }
 
-    public static String displayName( final String existingName )
+    public String displayName( final String existingName )
     {
         return doResolve( existingName, DISPLAY_NAME_SEPARATOR );
     }
 
-    public static String fileName( final String existingName )
+    public String fileName( final String existingName )
     {
         int dotIndex = existingName.lastIndexOf( "." );
         String name = existingName;
@@ -45,15 +43,20 @@ abstract class DuplicateValueResolver
         return doResolve( name, NAME_SEPARATOR, extension );
     }
 
-    private static String doResolve( final String existingName, final String separator )
+    public String getPostfix()
+    {
+        return COPY_TOKEN;
+    }
+
+    private String doResolve( final String existingName, final String separator )
     {
         return doResolve( existingName, separator, null );
     }
 
 
-    private static String doResolve( final String existingName, final String separator, final String extension )
+    private String doResolve( final String existingName, final String separator, final String extension )
     {
-        final DuplicateName duplicateName = DuplicateName.from( existingName, separator, extension );
+        final DuplicateName duplicateName = DuplicateName.from( existingName, separator, extension, getPostfix() );
 
         return duplicateName.getNextValue();
     }
@@ -68,29 +71,7 @@ abstract class DuplicateValueResolver
 
         private String separator;
 
-        private boolean isCopy()
-        {
-            return copyCounter != null;
-        }
-
-        private boolean hasExtension()
-        {
-            return extension != null;
-        }
-
-        private String getNextValue()
-        {
-            if ( this.copyCounter == null )
-            {
-                this.copyCounter = 1;
-            }
-            else
-            {
-                this.copyCounter++;
-            }
-
-            return this.toString();
-        }
+        private String postfix;
 
         private DuplicateName()
         {
@@ -101,21 +82,22 @@ abstract class DuplicateValueResolver
             return name.trim();
         }
 
-        private static DuplicateName from( final String name, final String separator, final String extension )
+        private static DuplicateName from( final String name, final String separator, final String extension, final String postfix )
         {
             DuplicateName duplicateName = new DuplicateName();
             duplicateName.separator = separator;
             duplicateName.extension = extension;
+            duplicateName.postfix = postfix;
 
             final String normalizedName = normalizeName( name );
 
-            final int copyTokenIndex = normalizedName.toLowerCase().lastIndexOf( separator + COPY_TOKEN );
+            final int copyTokenIndex = normalizedName.toLowerCase().lastIndexOf( separator + postfix );
 
             if ( copyTokenIndex > 0 )
             {
                 duplicateName.baseName = normalizedName.substring( 0, copyTokenIndex );
 
-                final String counterToken = normalizedName.substring( copyTokenIndex + COPY_TOKEN.length() + 1 );
+                final String counterToken = normalizedName.substring( copyTokenIndex + postfix.length() + 1 );
 
                 if ( isFirstCopy( counterToken ) )
                 {
@@ -149,13 +131,37 @@ abstract class DuplicateValueResolver
             return Strings.isNullOrEmpty( counterToken );
         }
 
+        private boolean isCopy()
+        {
+            return copyCounter != null;
+        }
+
+        private boolean hasExtension()
+        {
+            return extension != null;
+        }
+
+        private String getNextValue()
+        {
+            if ( this.copyCounter == null )
+            {
+                this.copyCounter = 1;
+            }
+            else
+            {
+                this.copyCounter++;
+            }
+
+            return this.toString();
+        }
+
         @Override
         public String toString()
         {
             StringBuilder builder = new StringBuilder().append( baseName );
             if ( isCopy() )
             {
-                builder.append( this.separator ).append( COPY_TOKEN );
+                builder.append( this.separator ).append( postfix );
                 if ( copyCounter > 1 )
                 {
                     builder.append( this.separator ).append( copyCounter );
