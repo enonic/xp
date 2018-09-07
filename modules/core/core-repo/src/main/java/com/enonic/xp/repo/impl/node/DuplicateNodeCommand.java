@@ -1,10 +1,17 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import org.codehaus.jparsec.util.Lists;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
+import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DuplicateNodeParams;
@@ -12,6 +19,7 @@ import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.Nodes;
@@ -57,12 +65,19 @@ public final class DuplicateNodeCommand
 
         final String newNodeName = resolveNewNodeName( existingNode );
 
-        final CreateNodeParams.Builder createNodeParams = CreateNodeParams.from( existingNode ).
+        final CreateNodeParams.Builder createNodeParams = CreateNodeParams.
+            from( existingNode ).
             name( newNodeName );
+
+        if ( params.getParent() != null )
+        {
+            createNodeParams.parent( params.getParent() );
+        }
+
         attachBinaries( existingNode, createNodeParams );
         final CreateNodeParams originalParams = createNodeParams.build();
 
-        final CreateNodeParams processedParams = executeProcessors( originalParams );
+        final CreateNodeParams processedParams = executeProcessors( existingNode.id(), originalParams );
 
         final Node duplicatedNode = CreateNodeCommand.create( this ).
             params( processedParams ).
@@ -80,6 +95,8 @@ public final class DuplicateNodeCommand
             storeChildNodes( existingNode, duplicatedNode, builder );
         }
 
+        storeDependentNodes( existingNode, duplicatedNode, builder );
+
         final NodeReferenceUpdatesHolder nodesToBeUpdated = builder.build();
 
         RefreshCommand.create().
@@ -94,14 +111,71 @@ public final class DuplicateNodeCommand
         return duplicatedNode;
     }
 
-    private CreateNodeParams executeProcessors( final CreateNodeParams originalParams )
+    private CreateNodeParams executeProcessors( final NodeId originalNodeId, final CreateNodeParams originalParams )
     {
         if ( params.getProcessor() != null )
         {
-            return params.getProcessor().process( originalParams );
+            return params.getProcessor().process( originalNodeId, originalParams );
         }
 
         return originalParams;
+    }
+
+    private void storeDependentNodes( final Node originalNode, final Node newNode, final NodeReferenceUpdatesHolder.Builder builder )
+    {
+
+        final Nodes internalDependencies = FindDependenciesWithinPathCommand.create().
+            searchService( this.nodeSearchService ).
+            storageService( this.nodeStorageService ).
+            indexServiceInternal( this.indexServiceInternal ).
+            nodeIds( Collections.singletonMap( params.getNodeId(), params.getDependenciesToDuplicatePath() ) ).
+            skipChildren( params.getIncludeChildren() ).
+            build().
+            execute();
+
+        final List<Node> internalDependenciesList = Lists.arrayList();
+
+        internalDependenciesList.addAll( internalDependencies.getSet() );
+        internalDependenciesList.sort( ( o1, o2 ) -> o1.path().elementCount() - o2.path().elementCount() );
+
+        for ( final Node dependency : internalDependenciesList )
+        {
+
+            NodePath oldDependencyParentPath;
+            NodePath newDependencyParentPath;
+
+            if ( params.getDependenciesToDuplicatePath() != null )
+            {
+                final int dependencyPathCount = params.getDependenciesToDuplicatePath().elementCount();
+
+                final Optional<NodePath> optionalNewDependencyParentPath = newNode.path().getParentPaths().stream().filter(
+                    parentPath -> parentPath.elementCount() == dependencyPathCount ).findFirst();
+
+                newDependencyParentPath =
+                    optionalNewDependencyParentPath.isPresent() ? optionalNewDependencyParentPath.get() : newNode.path();
+                oldDependencyParentPath = params.getDependenciesToDuplicatePath();
+            }
+            else
+            {
+                newDependencyParentPath = newNode.path();
+                oldDependencyParentPath = originalNode.path();
+            }
+
+            final NodePath newDependencyPath = NodePath.create(
+                dependency.path().toString().replace( oldDependencyParentPath.toString(), newDependencyParentPath.toString() ) ).build();
+
+            final Node alreadyExistedDependency = doGetByPath( newDependencyPath );
+            if ( alreadyExistedDependency == null )
+            {
+                this.storeChildNode( dependency, newDependencyPath.getParentPath(), doGetByPath( dependency.parentPath() ).getChildOrder(),
+                                     builder );
+            }
+            else
+            {
+                builder.add( dependency.id(), alreadyExistedDependency.id() );
+            }
+        }
+
     }
 
     private void storeChildNodes( final Node originalParent, final Node newParent, final NodeReferenceUpdatesHolder.Builder builder )
@@ -119,34 +193,42 @@ public final class DuplicateNodeCommand
 
         for ( final Node node : children )
         {
-            final CreateNodeParams.Builder paramsBuilder = CreateNodeParams.from( node ).
-                parent( newParent.path() );
-
-            decideInsertStrategy( originalParent, node, paramsBuilder );
-
-            attachBinaries( node, paramsBuilder );
-
-            final CreateNodeParams originalParams = paramsBuilder.build();
-
-            final CreateNodeParams processedParams = executeProcessors( originalParams );
-
-            final Node newChildNode = CreateNodeCommand.create( this ).
-                params( processedParams ).
-                binaryService( this.binaryService ).
-                build().
-                execute();
-
-            builder.add( node.id(), newChildNode.id() );
+            final Node newChildNode = this.storeChildNode( node, newParent.path(), originalParent.getChildOrder(), builder );
 
             storeChildNodes( node, newChildNode, builder );
-
-            nodeDuplicated( 1 );
         }
     }
 
-    private void decideInsertStrategy( final Node originalParent, final Node node, final CreateNodeParams.Builder paramsBuilder )
+    private Node storeChildNode( final Node originalChild, final NodePath newParentPath, final ChildOrder parentChildOrder,
+                                 final NodeReferenceUpdatesHolder.Builder builder )
     {
-        if ( originalParent.getChildOrder().isManualOrder() )
+        final CreateNodeParams.Builder paramsBuilder = CreateNodeParams.from( originalChild ).
+            parent( newParentPath );
+
+        decideInsertStrategy( originalChild, paramsBuilder, parentChildOrder );
+
+        attachBinaries( originalChild, paramsBuilder );
+
+        final CreateNodeParams originalParams = paramsBuilder.build();
+
+        final CreateNodeParams processedParams = executeProcessors( originalChild.id(), originalParams );
+
+        final Node newChildNode = CreateNodeCommand.create( this ).
+            params( processedParams ).
+            binaryService( this.binaryService ).
+            build().
+            execute();
+
+        builder.add( originalChild.id(), newChildNode.id() );
+
+        nodeDuplicated( 1 );
+
+        return newChildNode;
+    }
+
+    private void decideInsertStrategy( final Node node, final CreateNodeParams.Builder paramsBuilder, final ChildOrder parentChildOrder )
+    {
+        if ( parentChildOrder.isManualOrder() )
         {
             paramsBuilder.manualOrderValue( node.getManualOrderValue() ).
                 insertManualStrategy( InsertManualStrategy.MANUAL );
@@ -213,13 +295,14 @@ public final class DuplicateNodeCommand
     private String resolveNewNodeName( final Node existingNode )
     {
         // Process as file name as it is so for images
-        String newNodeName = DuplicateValueResolver.fileName( existingNode.name().toString() );
+        String newNodeName = existingNode.name().toString();
 
         boolean resolvedUnique = false;
 
         while ( !resolvedUnique )
         {
-            final NodePath checkIfExistsPath = NodePath.create( existingNode.parentPath(), newNodeName ).build();
+            final NodePath parentPath = params.getParent() != null ? params.getParent() : existingNode.parentPath();
+            final NodePath checkIfExistsPath = NodePath.create( parentPath, newNodeName ).build();
 
             final boolean exists = CheckNodeExistsCommand.create( this ).
                 nodePath( checkIfExistsPath ).
@@ -232,7 +315,9 @@ public final class DuplicateNodeCommand
             }
             else
             {
-                newNodeName = DuplicateValueResolver.name( newNodeName );
+                final DuplicateValueResolver valueResolver =
+                    params.getDuplicateValueResolver() != null ? params.getDuplicateValueResolver() : new DuplicateValueResolver();
+                newNodeName = valueResolver.name( newNodeName );
             }
         }
 
