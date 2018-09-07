@@ -259,7 +259,7 @@ final class QueryAggregationParams
             Double from, to;
             if ( rangeParams.getOrDefault( "from", null ) != null )
             {
-                from = ( (Integer) rangeParams.getOrDefault( "from", null ) ).doubleValue();
+                from = ( (Number) rangeParams.getOrDefault( "from", null ) ).doubleValue();
             }
             else
             {
@@ -267,7 +267,7 @@ final class QueryAggregationParams
             }
             if ( rangeParams.getOrDefault( "to", null ) != null )
             {
-                to = ( (Integer) rangeParams.getOrDefault( "to", null ) ).doubleValue();
+                to = ( (Number) rangeParams.getOrDefault( "to", null ) ).doubleValue();
             }
             else
             {
