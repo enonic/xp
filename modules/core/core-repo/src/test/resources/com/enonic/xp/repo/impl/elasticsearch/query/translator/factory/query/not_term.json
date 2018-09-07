@@ -2,7 +2,10 @@
   "bool": {
     "must_not": {
       "term": {
-        "fisk": "ost"
+        "fisk": {
+          "value": "ost",
+          "_name": "fisk"
+        }
       }
     }
   }
