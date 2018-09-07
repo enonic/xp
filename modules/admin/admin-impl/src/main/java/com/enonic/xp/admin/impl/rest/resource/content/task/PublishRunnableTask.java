@@ -5,12 +5,10 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.PublishContentJson;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPublishInfo;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskId;
-import com.enonic.xp.task.TaskService;
 
 public class PublishRunnableTask
     extends AbstractRunnableTask
@@ -91,34 +89,13 @@ public class PublishRunnableTask
     }
 
     public static class Builder
-        extends AbstractRunnableTask.Builder
+        extends AbstractRunnableTask.Builder<Builder>
     {
         private PublishContentJson params;
 
         public Builder params( PublishContentJson params )
         {
             this.params = params;
-            return this;
-        }
-
-        @Override
-        public Builder description( String description )
-        {
-            super.description( description );
-            return this;
-        }
-
-        @Override
-        public Builder taskService( TaskService taskService )
-        {
-            super.taskService( taskService );
-            return this;
-        }
-
-        @Override
-        public Builder contentService( ContentService contentService )
-        {
-            super.contentService( contentService );
             return this;
         }
 
