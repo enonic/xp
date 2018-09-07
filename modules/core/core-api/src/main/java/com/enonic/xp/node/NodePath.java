@@ -125,6 +125,24 @@ public final class NodePath
         return !this.absolute;
     }
 
+    public boolean isChildOf( final NodePath possibleParentPath )
+    {
+        if ( elementCount() <= possibleParentPath.elementCount() )
+        {
+            return false;
+        }
+
+        for ( int i = 0; i < possibleParentPath.elementCount(); i++ )
+        {
+            if ( !elements.get( i ).equals( possibleParentPath.getElement( i ) ) )
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public boolean hasTrailingDivider()
     {
         return this.trailingDivider;

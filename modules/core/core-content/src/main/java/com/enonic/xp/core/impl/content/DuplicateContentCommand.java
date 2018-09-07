@@ -11,6 +11,7 @@ import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.DuplicateContentsResult;
 import com.enonic.xp.node.DuplicateNodeListener;
 import com.enonic.xp.node.DuplicateNodeParams;
+import com.enonic.xp.node.DuplicateValueResolver;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
@@ -60,9 +61,16 @@ final class DuplicateContentCommand
             throw new IllegalArgumentException( String.format( "Content with id [%s] not found", params.getContentId() ) );
         }
 
-        final DuplicateNodeParams duplicateNodeParams =
-            DuplicateNodeParams.create().duplicateListener( this ).nodeId( sourceNodeId ).processor(
-                new DuplicateContentProcessor() ).includeChildren( params.getIncludeChildren() ).build();
+        final DuplicateNodeParams duplicateNodeParams = DuplicateNodeParams.create().
+            duplicateListener( this ).
+            nodeId( sourceNodeId ).
+            processor( params.getProcessor() != null ? params.getProcessor() : new DuplicateContentProcessor() ).
+            duplicateValueResolver( params.getValueResolver() != null ? params.getValueResolver() : new DuplicateValueResolver() ).
+            includeChildren( params.getIncludeChildren() ).
+            parent( params.getParent() != null ? ContentNodeHelper.translateContentPathToNodePath( params.getParent() ) : null ).
+            dependenciesToDuplicatePath( params.getDependenciesToDuplicatePath() != null ? ContentNodeHelper.translateContentPathToNodePath(
+                params.getDependenciesToDuplicatePath() ) : null ).
+            build();
 
         final Node duplicatedNode = nodeService.duplicate( duplicateNodeParams );
 

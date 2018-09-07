@@ -81,6 +81,89 @@ public class DuplicateNodeCommandTest
     }
 
     @Test
+    public void duplicate_with_dependencies_in_other_path()
+        throws Exception
+    {
+
+        final String nodeName = "my-node";
+        final Node node = createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( nodeName ).
+            build() );
+
+        final Node childNode1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "child1" ) ).
+            parent( node.path() ).
+            name( "my-reference" ).
+            build() );
+
+        final PropertyTree data = new PropertyTree();
+        data.addReference( "innerRef", Reference.from( "child-ref2" ) );
+
+        final Node innerNode1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "child-ref1" ) ).
+            parent( childNode1.path() ).
+            name( "my-reference" ).data( data ).
+            build() );
+
+        final Node childNode2 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "child2" ) ).
+            parent( node.path() ).
+            name( "my-child" ).
+            build() );
+
+        final Node innerNode2 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "child-ref2" ) ).
+            parent( childNode2.path() ).
+            name( "my-ref-child" ).
+            build() );
+
+        final Node duplicatedNode = duplicateNode( innerNode1, false, NodePath.ROOT, childNode2.path() );
+
+        final NodeId duplicatedNodeRefId = duplicatedNode.data().getReference( "innerRef" ).getNodeId();
+
+        assertNotEquals( innerNode2.id(), duplicatedNodeRefId );
+        assertEquals( "/my-reference/my-ref-child", getNodeById( duplicatedNodeRefId ).path().toString() );
+    }
+
+    @Test
+    public void with_dependencies()
+        throws Exception
+    {
+        final PropertyTree data = new PropertyTree();
+        data.addReference( "innerRef", Reference.from( "child-ref" ) );
+        data.addReference( "outerRef", Reference.from( "outer-ref" ) );
+
+        final String nodeName = "my-node";
+        final Node node = createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( nodeName ).data( data ).
+            build() );
+
+        createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "outer-ref" ) ).
+            parent( NodePath.ROOT ).
+            name( "my-reference" ).
+            build() );
+
+        final Node childNode = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "child" ) ).
+            parent( node.path() ).
+            name( "my-child" ).
+            build() );
+
+        createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "child-ref" ) ).
+            parent( childNode.path() ).
+            name( "my-ref-child" ).
+            build() );
+
+        final Node duplicatedNode = duplicateNode( node, false );
+
+        assertDuplicatedTree( node.path(), node, duplicatedNode );
+    }
+
+    @Test
     public void references_outside_tree()
         throws Exception
     {
@@ -90,13 +173,13 @@ public class DuplicateNodeCommandTest
             data( createDataWithReferences( Reference.from( "node1_1-id" ), Reference.from( "node2-id" ) ) ).
             build() );
 
-        final Node node2 = createNode( CreateNodeParams.create().
+        createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
             setNodeId( NodeId.from( "node2-id" ) ).
             name( "node2" ).
             build() );
 
-        final Node node1_1 = createNode( CreateNodeParams.create().
+        createNode( CreateNodeParams.create().
             setNodeId( NodeId.from( "node1_1-id" ) ).
             parent( node1.path() ).
             name( "node1_1" ).
@@ -486,8 +569,20 @@ public class DuplicateNodeCommandTest
 
     private Node duplicateNode( final Node node1 )
     {
+        return this.duplicateNode( node1, true, null, null );
+    }
+
+    private Node duplicateNode( final Node node1, final Boolean includeChildren )
+    {
+        return this.duplicateNode( node1, includeChildren, null, null );
+    }
+
+    private Node duplicateNode( final Node node1, final Boolean includeChildren, final NodePath parentPath,
+                                final NodePath dependenciesPath )
+    {
         return DuplicateNodeCommand.create().
-            params( DuplicateNodeParams.create().nodeId( node1.id() ).build() ).
+            params( DuplicateNodeParams.create().nodeId( node1.id() ).includeChildren( includeChildren ).parent(
+                parentPath ).dependenciesToDuplicatePath( dependenciesPath ).build() ).
             indexServiceInternal( indexServiceInternal ).
             binaryService( this.binaryService ).
             storageService( this.storageService ).

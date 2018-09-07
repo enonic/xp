@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Activate;
@@ -582,6 +583,20 @@ public class NodeServiceImpl
         return FindNodeVersionsCommand.create().
             query( query ).
             searchService( this.nodeSearchService ).
+            build().
+            execute();
+    }
+
+    @Override
+    public Nodes findDependenciesWithinPath( final Map<NodeId, NodePath> sourceNodeIds )
+    {
+        verifyContext();
+
+        return FindDependenciesWithinPathCommand.create().
+            searchService( this.nodeSearchService ).
+            storageService( this.nodeStorageService ).
+            indexServiceInternal( this.indexServiceInternal ).
+            nodeIds( sourceNodeIds ).
             build().
             execute();
     }

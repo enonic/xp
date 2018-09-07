@@ -1,5 +1,6 @@
 package com.enonic.xp.admin.impl.rest.resource.content.task;
 
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.enonic.xp.admin.impl.rest.resource.content.DuplicateContentProgressListener;
@@ -10,34 +11,68 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAlreadyMovedException;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
-import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.DuplicateContentParams;
+import com.enonic.xp.content.DuplicateContentProcessor;
 import com.enonic.xp.content.DuplicateContentsResult;
+import com.enonic.xp.node.DuplicateValueResolver;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskId;
-import com.enonic.xp.task.TaskService;
 
 public class DuplicateRunnableTask
     extends AbstractRunnableTask
 {
     private final AuthenticationInfo authInfo;
 
-    private final DuplicateContentsJson params;
+    protected final DuplicateContentsJson params;
 
-    private DuplicateRunnableTask( Builder builder )
+    protected DuplicateRunnableTask( Builder builder )
     {
         super( builder );
         this.authInfo = builder.authInfo;
         this.params = builder.params;
     }
 
+    public static Builder<?> create()
+    {
+        return new Builder();
+    }
+
+    protected Set<DuplicateContentJson> getContentsToDuplicateWithChildren()
+    {
+        return params.getContents().stream().filter( DuplicateContentJson::getIncludeChildren ).collect( Collectors.toSet() );
+    }
+
+    protected DuplicateContentProcessor getProcessor( final DuplicateContentJson content )
+    {
+        return new DuplicateContentProcessor();
+    }
+
+    protected DuplicateValueResolver getValueResolver( final DuplicateContentJson content )
+    {
+        return new DuplicateValueResolver();
+    }
+
+    protected ContentPath getParent( final DuplicateContentJson content )
+    {
+        return null;
+    }
+
+    protected ContentPath getDependenciesPath( final ContentId contentId )
+    {
+        return null;
+    }
+
+    protected DuplicateRunnableTaskResult.Builder getTaskResultBuilder()
+    {
+        return DuplicateRunnableTaskResult.create();
+    }
+
     @Override
     public void run( final TaskId id, final ProgressReporter progressReporter )
     {
-        final ContentIds contentToDuplicateWithChildrenList = ContentIds.from(
-            params.getContents().stream().filter( DuplicateContentJson::getIncludeChildren ).map(
-                DuplicateContentJson::getContentId ).collect( Collectors.toList() ) );
+        final Set<DuplicateContentJson> contentToDuplicateWithChildrenSet = getContentsToDuplicateWithChildren();
 
         progressReporter.info( "Duplicating content" );
 
@@ -45,16 +80,16 @@ public class DuplicateRunnableTask
 
         final int parentIdsCount = params.getContents().size();
 
-        final int childIdsCount = contentToDuplicateWithChildrenList.stream().map( parentId -> ContentQueryWithChildren.create().
+        final int childIdsCount = contentToDuplicateWithChildrenSet.stream().map( parent -> ContentQueryWithChildren.create().
             contentService( this.contentService ).
-            contentsIds( ContentIds.from( parentId ) ).
+            contentsIds( ContentIds.from( parent.getContentId() ) ).
             build().
             find().
             getTotalHits() ).mapToInt( Long::intValue ).sum();
 
         listener.setTotal( parentIdsCount + childIdsCount );
 
-        final DuplicateRunnableTaskResult.Builder resultBuilder = DuplicateRunnableTaskResult.create();
+        final DuplicateRunnableTaskResult.Builder resultBuilder = this.getTaskResultBuilder();
         for ( DuplicateContentJson content : params.getContents() )
         {
 
@@ -63,8 +98,12 @@ public class DuplicateRunnableTask
             final DuplicateContentParams duplicateContentParams = DuplicateContentParams.create().
                 contentId( contentId ).
                 creator( authInfo.getUser().getKey() ).
+                processor( getProcessor( content ) ).
+                valueResolver( getValueResolver( content ) ).
+                parent( getParent( content ) ).
                 duplicateContentListener( listener ).
                 includeChildren( content.getIncludeChildren() ).
+                dependenciesToDuplicatePath( getDependenciesPath( contentId ) ).
                 build();
             try
             {
@@ -99,49 +138,23 @@ public class DuplicateRunnableTask
         progressReporter.info( resultBuilder.build().toJson() );
     }
 
-    public static Builder create()
-    {
-        return new Builder();
-    }
-
-    public static class Builder
-        extends AbstractRunnableTask.Builder
+    public static class Builder<T extends Builder<T>>
+        extends AbstractRunnableTask.Builder<T>
     {
         private AuthenticationInfo authInfo;
 
         private DuplicateContentsJson params;
 
-        public Builder authInfo( AuthenticationInfo authInfo )
+        public T authInfo( AuthenticationInfo authInfo )
         {
             this.authInfo = authInfo;
-            return this;
+            return (T) this;
         }
 
-        public Builder params( DuplicateContentsJson params )
+        public T params( DuplicateContentsJson params )
         {
             this.params = params;
-            return this;
-        }
-
-        @Override
-        public Builder description( String description )
-        {
-            super.description( description );
-            return this;
-        }
-
-        @Override
-        public Builder taskService( TaskService taskService )
-        {
-            super.taskService( taskService );
-            return this;
-        }
-
-        @Override
-        public Builder contentService( ContentService contentService )
-        {
-            super.contentService( contentService );
-            return this;
+            return (T) this;
         }
 
         public DuplicateRunnableTask build()
