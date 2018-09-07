@@ -113,6 +113,12 @@ class NodeServiceMock
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }
 
+    @Override
+    public Nodes findDependenciesWithinPath( final Map<NodeId, NodePath> sourceNodeIds )
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
+    }
+
     private Node doCreate( final CreateNodeParams params, final Instant timestamp )
     {
         final Node.Builder builder = Node.create().
@@ -272,7 +278,7 @@ class NodeServiceMock
         final FindNodesByParentResult.Builder resultBuilder = FindNodesByParentResult.create();
 
         final Nodes.Builder nodesBuilder = Nodes.create();
-        getNodes(parentNode, nodesBuilder, params.isRecursive());
+        getNodes( parentNode, nodesBuilder, params.isRecursive() );
         final Nodes nodes = nodesBuilder.build();
 
         return resultBuilder.hits( nodes.getSize() ).
@@ -282,12 +288,14 @@ class NodeServiceMock
             totalHits( nodes.getSize() ).
             build();
     }
-    
-    private void getNodes(MockNodeTree<NodePath> parentNode, Nodes.Builder nodesBuilder, final boolean recursive) {
+
+    private void getNodes( MockNodeTree<NodePath> parentNode, Nodes.Builder nodesBuilder, final boolean recursive )
+    {
         for ( final MockNodeTree<NodePath> treeNode : parentNode.children )
         {
             nodesBuilder.add( nodePathMap.get( treeNode.data ) );
-            if (recursive) {
+            if ( recursive )
+            {
                 getNodes( treeNode, nodesBuilder, recursive );
             }
         }

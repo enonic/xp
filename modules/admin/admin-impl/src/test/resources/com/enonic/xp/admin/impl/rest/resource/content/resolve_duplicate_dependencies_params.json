@@ -1,0 +1,9 @@
+{
+  "ids": [
+    "contentId1",
+    "contentId2"
+  ],
+  "excludeChildrenIds": [
+    "contentId2"
+  ]
+}
