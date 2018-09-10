@@ -1063,28 +1063,32 @@ public final class ContentResource
     @Consumes(MediaType.APPLICATION_JSON)
     public AbstractContentQueryResultJson query( final ContentQueryJson contentQueryJson )
     {
-        //TODO: do we need this param? it does not seem to be checked at all
-        final boolean getChildrenIds = !Expand.NONE.matches( contentQueryJson.getExpand() );
-
         final ContentQueryJsonToContentQueryConverter selectorQueryProcessor = ContentQueryJsonToContentQueryConverter.create().
             contentQueryJson( contentQueryJson ).
             contentService( this.contentService ).
             build();
 
-        final ContentIconUrlResolver iconUrlResolver = contentIconUrlResolver;
-        final FindContentIdsByQueryResult findResult = contentService.find( selectorQueryProcessor.createQuery() );
+        final ContentQuery contentQuery = selectorQueryProcessor.createQuery();
+
+        if ( contentQuery == null )
+        {
+            return FindContentByQuertResultJsonFactory.create().expand( contentQueryJson.getExpand() ).build().execute();
+        }
+
+        final FindContentIdsByQueryResult findResult = contentService.find( contentQuery );
 
         return FindContentByQuertResultJsonFactory.create().
             contents( this.contentService.getByIds( new GetContentByIdsParams( findResult.getContentIds() ) ) ).
             aggregations( findResult.getAggregations() ).
             contentPrincipalsResolver( principalsResolver ).
-            iconUrlResolver( iconUrlResolver ).
+            iconUrlResolver( contentIconUrlResolver ).
             expand( contentQueryJson.getExpand() ).
             hits( findResult.getHits() ).
             totalHits( findResult.getTotalHits() ).
             build().
             execute();
     }
+
 
     @POST
     @Path("selectorQuery")
