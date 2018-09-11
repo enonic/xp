@@ -1,9 +1,11 @@
 package com.enonic.xp.core.impl.event.cluster;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
-import org.elasticsearch.common.io.stream.BytesStreamInput;
+import org.elasticsearch.common.io.stream.ByteBufferStreamInput;
 import org.elasticsearch.common.io.stream.BytesStreamOutput;
+import org.elasticsearch.common.io.stream.StreamInput;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -28,7 +30,7 @@ public class SendEventRequestTest
         sendEventRequestOut.writeTo( bytesStreamOutput );
 
         //Reads the event
-        final BytesStreamInput bytesStreamInput = new BytesStreamInput( bytesStreamOutput.bytes() );
+        final StreamInput bytesStreamInput = new ByteBufferStreamInput( ByteBuffer.wrap( bytesStreamOutput.bytes().array() ) );
         final SendEventRequest sendEventRequestIn = new SendEventRequest();
         sendEventRequestIn.readFrom( bytesStreamInput );
 
