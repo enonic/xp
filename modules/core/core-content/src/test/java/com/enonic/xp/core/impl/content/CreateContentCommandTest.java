@@ -34,6 +34,7 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -46,6 +47,8 @@ public class CreateContentCommandTest
     private ContentTypeService contentTypeService;
 
     private MixinService mixinService;
+
+    private XDataService xDataService;
 
     private SiteService siteService;
 
@@ -68,6 +71,7 @@ public class CreateContentCommandTest
         this.translator.setNodeService( this.nodeService );
         this.eventPublisher = Mockito.mock( EventPublisher.class );
         this.mixinService = Mockito.mock( MixinService.class );
+        this.xDataService = Mockito.mock( XDataService.class );
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
 
         Mockito.when( this.nodeService.hasChildren( Mockito.any( Node.class ) ) ).thenReturn( false );
@@ -415,6 +419,7 @@ public class CreateContentCommandTest
             eventPublisher( this.eventPublisher ).
             mediaInfo( mediaInfo ).
             mixinService( this.mixinService ).
+            xDataService( this.xDataService ).
             siteService( this.siteService ).
             pageDescriptorService( this.pageDescriptorService ).
             contentProcessors( new ContentProcessors() ).

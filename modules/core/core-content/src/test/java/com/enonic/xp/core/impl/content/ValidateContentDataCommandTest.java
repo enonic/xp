@@ -20,6 +20,7 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
@@ -34,6 +35,8 @@ public class ValidateContentDataCommandTest
 
     private MixinService mixinService;
 
+    private XDataService xDataService;
+
     private SiteService siteService;
 
     @Before
@@ -42,6 +45,7 @@ public class ValidateContentDataCommandTest
     {
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
         this.mixinService = Mockito.mock( MixinService.class );
+        this.xDataService = Mockito.mock( XDataService.class );
         this.siteService = Mockito.mock( SiteService.class );
     }
 
@@ -246,6 +250,7 @@ public class ValidateContentDataCommandTest
             displayName( displayName ).
             contentTypeService( this.contentTypeService ).
             mixinService( this.mixinService ).
+            xDataService( this.xDataService ).
             siteService( this.siteService ).
             build().
             execute();
