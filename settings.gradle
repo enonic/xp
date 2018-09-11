@@ -78,6 +78,7 @@ include 'launcher:launcher-api'
 include 'launcher:launcher-impl'
 include 'launcher:launcher-ui'
 include 'launcher:launcher-main'
+include 'launcher:launcher-log'
 
 include 'blobstore:blobstore-file'
 
