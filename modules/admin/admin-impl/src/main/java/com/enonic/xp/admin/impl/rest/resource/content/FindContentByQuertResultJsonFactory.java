@@ -104,13 +104,13 @@ public class FindContentByQuertResultJsonFactory
 
     public static final class Builder
     {
-        private long totalHits;
+        private long totalHits = 0;
 
-        private long hits;
+        private long hits = 0;
 
-        private Contents contents;
+        private Contents contents = Contents.empty();
 
-        private Aggregations aggregations;
+        private Aggregations aggregations = Aggregations.empty();
 
         private ContentIconUrlResolver iconUrlResolver;
 
