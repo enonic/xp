@@ -3,13 +3,10 @@ package com.enonic.xp.admin.impl.rest.resource.content;
 import java.util.List;
 
 import org.codehaus.jparsec.util.Lists;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.admin.impl.rest.resource.content.json.AggregationQueryJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentQueryJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.filter.FilterJson;
-import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentQuery;
@@ -23,8 +20,6 @@ public class ContentQueryJsonToContentQueryConverter
     final private ContentQueryJson contentQueryJson;
 
     final private ContentService contentService;
-
-    private final static Logger LOG = LoggerFactory.getLogger( ContentQueryJsonToContentQueryConverter.class );
 
     private ContentQueryJsonToContentQueryConverter( final Builder builder )
     {
@@ -45,7 +40,6 @@ public class ContentQueryJsonToContentQueryConverter
         }
         catch ( ContentQueryJsonConvertException ex )
         {
-            LOG.info( ex.getMessage() );
             return null;
         }
     }
@@ -72,13 +66,12 @@ public class ContentQueryJsonToContentQueryConverter
     {
         if ( contentQueryJson.getMustBeReferencedById() != null )
         {
-            final Content sourceContent = this.contentService.getById( contentQueryJson.getMustBeReferencedById() );
-
             final ContentIds ids = this.contentService.getOutboundDependencies( contentQueryJson.getMustBeReferencedById() );
 
             final ContentIds existingContentIds = getExistingContentIds( ContentIds.from( ids ) );
 
-            if ( sourceContent != null && existingContentIds.isEmpty() )
+            //TODO Delete ContentQueryJsonConvertException after fixing ContentQueryNodeQueryTranslator in 7.0
+            if ( existingContentIds.isEmpty() )
             {
                 throw new ContentQueryJsonConvertException(
                     "'mustBeReferencedById' content exists, but doesn't have any outbound references" );
