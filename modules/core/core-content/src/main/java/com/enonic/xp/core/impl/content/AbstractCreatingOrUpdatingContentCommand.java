@@ -8,6 +8,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.content.processor.ContentProcessors;
 import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.security.User;
 import com.enonic.xp.site.SiteService;
 
@@ -23,6 +24,8 @@ class AbstractCreatingOrUpdatingContentCommand
 
     final MixinService mixinService;
 
+    final XDataService xDataService;
+
     final SiteService siteService;
 
     final ContentProcessors contentProcessors;
@@ -31,6 +34,7 @@ class AbstractCreatingOrUpdatingContentCommand
     {
         super( builder );
         this.mixinService = builder.mixinService;
+        this.xDataService = builder.xDataService;
         this.siteService = builder.siteService;
         this.contentProcessors = builder.contentProcessors;
     }
@@ -39,6 +43,8 @@ class AbstractCreatingOrUpdatingContentCommand
         extends AbstractContentCommand.Builder<B>
     {
         private MixinService mixinService;
+
+        private XDataService xDataService;
 
         private SiteService siteService;
 
@@ -52,6 +58,7 @@ class AbstractCreatingOrUpdatingContentCommand
         {
             super( source );
             this.mixinService = source.mixinService;
+            this.xDataService = source.xDataService;
             this.siteService = source.siteService;
             this.contentProcessors = source.contentProcessors;
         }
@@ -60,6 +67,13 @@ class AbstractCreatingOrUpdatingContentCommand
         B mixinService( final MixinService mixinService )
         {
             this.mixinService = mixinService;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        B xDataService( final XDataService xDataService )
+        {
+            this.xDataService = xDataService;
             return (B) this;
         }
 

@@ -22,6 +22,7 @@ import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.SiteService;
 
@@ -32,6 +33,8 @@ public class UpdateContentCommandTest
     private final ContentTypeService contentTypeService = Mockito.mock( ContentTypeService.class );
 
     private final MixinService mixinService = Mockito.mock( MixinService.class );
+
+    private final XDataService xDataService = Mockito.mock( XDataService.class );
 
     private final SiteService siteService = Mockito.mock( SiteService.class );
 
@@ -65,6 +68,7 @@ public class UpdateContentCommandTest
             eventPublisher( this.eventPublisher ).
             mediaInfo( this.mediaInfo ).
             mixinService( this.mixinService ).
+            xDataService( this.xDataService ).
             siteService( this.siteService ).
             build();
 
@@ -97,6 +101,7 @@ public class UpdateContentCommandTest
             eventPublisher( this.eventPublisher ).
             mediaInfo( this.mediaInfo ).
             mixinService( this.mixinService ).
+            xDataService( this.xDataService ).
             siteService( this.siteService ).
             build();
 
