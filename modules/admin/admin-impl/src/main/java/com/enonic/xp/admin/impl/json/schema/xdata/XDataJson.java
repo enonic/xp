@@ -1,7 +1,6 @@
 package com.enonic.xp.admin.impl.json.schema.xdata;
 
 import java.time.Instant;
-import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -88,11 +87,6 @@ public class XDataJson
     public String getModifier()
     {
         return xData.getModifier() != null ? xData.getModifier().toString() : null;
-    }
-
-    public List<String> getAllowedContentTypes()
-    {
-        return this.xData.getAllowContentTypes();
     }
 
     public Boolean getExternal()

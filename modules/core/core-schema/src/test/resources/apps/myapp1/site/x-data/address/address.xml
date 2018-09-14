@@ -36,5 +36,4 @@
       </items>
     </item-set>
   </items>
-  <allowContentType>${app}:*</allowContentType>
 </x-data>

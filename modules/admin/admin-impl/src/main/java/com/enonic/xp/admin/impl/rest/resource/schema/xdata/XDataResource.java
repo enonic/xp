@@ -36,7 +36,6 @@ import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.mixin.Mixin;
@@ -184,29 +183,29 @@ public final class XDataResource
         final ContentTypeNameWildcardResolver contentTypeNameWildcardResolver =
             new ContentTypeNameWildcardResolver( this.contentTypeService );
 
-        xDatas.forEach( xData -> {
-            if ( contentTypeNameWildcardResolver.anyTypeHasWildcard( xData.getAllowContentTypes() ) )
-            {
-                final ContentTypeNames validContentTypes = ContentTypeNames.from(
-                    contentTypeNameWildcardResolver.resolveWildcards( xData.getAllowContentTypes(), xData.getName().getApplicationKey() ) );
-
-                if ( validContentTypes.contains( contentTypeName ) )
-                {
-                    filteredXDatas.add( xData );
-                }
-            }
-            else if ( xData.getAllowContentTypes().size() > 0 )
-            {
-                if ( ContentTypeNames.from( xData.getAllowContentTypes() ).contains( contentTypeName ) )
-                {
-                    filteredXDatas.add( xData );
-                }
-            }
-            else
-            {
-                filteredXDatas.add( xData );
-            }
-        } );
+//        xDatas.forEach( xData -> {
+//            if ( contentTypeNameWildcardResolver.anyTypeHasWildcard( xData.getAllowContentTypes() ) )
+//            {
+//                final ContentTypeNames validContentTypes = ContentTypeNames.from(
+//                    contentTypeNameWildcardResolver.resolveWildcards( xData.getAllowContentTypes(), xData.getName().getApplicationKey() ) );
+//
+//                if ( validContentTypes.contains( contentTypeName ) )
+//                {
+//                    filteredXDatas.add( xData );
+//                }
+//            }
+//            else if ( xData.getAllowContentTypes().size() > 0 )
+//            {
+//                if ( ContentTypeNames.from( xData.getAllowContentTypes() ).contains( contentTypeName ) )
+//                {
+//                    filteredXDatas.add( xData );
+//                }
+//            }
+//            else
+//            {
+//                filteredXDatas.add( xData );
+//            }
+//        } );
 
         return filteredXDatas.build();
     }
