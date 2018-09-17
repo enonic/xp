@@ -6,7 +6,6 @@ import com.google.common.annotations.Beta;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.schema.xdata.XDataNames;
 import com.enonic.xp.site.filter.FilterDescriptors;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptors;
 
@@ -17,7 +16,7 @@ public final class SiteDescriptor
 
     private final Form form;
 
-    private final XDataNames metaSteps;
+    private final XDataMappings xDataMappings;
 
     private final FilterDescriptors filterDescriptors;
 
@@ -26,7 +25,7 @@ public final class SiteDescriptor
     private SiteDescriptor( final Builder builder )
     {
         this.form = builder.form;
-        this.metaSteps = builder.metaSteps;
+        this.xDataMappings = builder.xDataMappings;
         this.filterDescriptors = builder.filterDescriptors != null ? builder.filterDescriptors : FilterDescriptors.empty();
         this.mappingDescriptors = builder.mappingDescriptors != null ? builder.mappingDescriptors : ControllerMappingDescriptors.empty();
     }
@@ -36,9 +35,9 @@ public final class SiteDescriptor
         return form;
     }
 
-    public XDataNames getMetaSteps()
+    public XDataMappings getXDataMappings()
     {
-        return metaSteps;
+        return xDataMappings;
     }
 
     public FilterDescriptors getFilterDescriptors()
@@ -70,7 +69,7 @@ public final class SiteDescriptor
     {
         private Form form;
 
-        private XDataNames metaSteps;
+        private XDataMappings xDataMappings;
 
         private FilterDescriptors filterDescriptors;
 
@@ -83,7 +82,7 @@ public final class SiteDescriptor
         private Builder( final SiteDescriptor siteDescriptor )
         {
             this.form = siteDescriptor.form != null ? siteDescriptor.form.copy() : null;
-            this.metaSteps = siteDescriptor.metaSteps;
+            this.xDataMappings = siteDescriptor.xDataMappings;
             this.filterDescriptors = siteDescriptor.filterDescriptors;
             this.mappingDescriptors = siteDescriptor.mappingDescriptors;
         }
@@ -94,9 +93,9 @@ public final class SiteDescriptor
             return this;
         }
 
-        public Builder metaSteps( final XDataNames metaSteps )
+        public Builder xDataMappings( final XDataMappings xDataMappings )
         {
-            this.metaSteps = metaSteps;
+            this.xDataMappings = xDataMappings;
             return this;
         }
 

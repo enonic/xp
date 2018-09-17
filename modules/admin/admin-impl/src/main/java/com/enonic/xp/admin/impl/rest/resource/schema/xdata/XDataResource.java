@@ -1,9 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.schema.xdata;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -49,6 +47,7 @@ import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
+import com.enonic.xp.site.XDataMappings;
 
 import static java.util.stream.Collectors.toList;
 
@@ -105,7 +104,7 @@ public final class XDataResource
 
         final SiteDescriptor siteDescriptor = siteService.getDescriptor( applicationKey );
 
-        final XDatas siteXData = this.filterXDatasByContentType( siteDescriptor.getMetaSteps(), contentType );
+        final XDatas siteXData = this.filterXDatasByContentType( siteDescriptor.getXDataMappings(), contentType );
 
         final XDatas applicationXData =
             XDatas.from( this.filterXDatasByContentType( this.xDataService.getByApplication( applicationKey ), contentType ).
@@ -157,21 +156,22 @@ public final class XDataResource
                     Objects::nonNull ).collect( toList() );
 
             siteDescriptors.forEach( siteDescriptor -> applicationXDataBuilder.addAll(
-                XDatas.from( this.filterXDatasByContentType( siteDescriptor.getMetaSteps(), content.getType() ) ) ) );
+                XDatas.from( this.filterXDatasByContentType( siteDescriptor.getXDataMappings(), content.getType() ) ) ) );
 
         }
         return applicationXDataBuilder.build();
     }
 
-    private XDatas filterXDatasByContentType( final XDataNames xDataNames, final ContentTypeName contentTypeName )
+    private XDatas filterXDatasByContentType( final XDataMappings xDataMappings, final ContentTypeName contentTypeName )
     {
-        final Map<XDataName, XData> resultXDatas = new HashMap<>();
+        /*final Map<XDataName, XData> resultXDatas = new HashMap<>();
 
-        final XDatas xDatas = this.xDataService.getByNames( xDataNames );
+        final XDatas xDatas = this.xDataService.getByNames( xDataMappings.getXDataName() );
         final XDatas filteredXDatas = filterXDatasByContentType( xDatas, contentTypeName );
         filteredXDatas.forEach( ( xData ) -> resultXDatas.put( xData.getName(), xData ) );
 
-        return XDatas.from( resultXDatas.values() );
+        return XDatas.from( resultXDatas.values() );*/
+        return XDatas.empty();
     }
 
     private XDatas filterXDatasByContentType( final XDatas xDatas, final ContentTypeName contentTypeName )
