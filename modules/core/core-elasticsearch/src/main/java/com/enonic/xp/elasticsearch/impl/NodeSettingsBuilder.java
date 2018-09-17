@@ -81,6 +81,6 @@ final class NodeSettingsBuilder
 
     private String getPortPrefix( final String port )
     {
-        return "[" + port + "]";
+        return ":" + port;
     }
 }
