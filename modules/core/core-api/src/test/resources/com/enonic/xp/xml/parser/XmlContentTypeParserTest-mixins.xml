@@ -7,8 +7,4 @@
   <is-abstract>false</is-abstract>
   <is-final>true</is-final>
   <allow-child-content>true</allow-child-content>
-
-  <x-data name="myapplication:metadata1"/>
-  <x-data name="myapplication:metadata2"/>
-
 </content-type>

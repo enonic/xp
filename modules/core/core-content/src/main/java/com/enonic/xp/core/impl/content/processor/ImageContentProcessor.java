@@ -37,9 +37,7 @@ import com.enonic.xp.image.Cropping;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.schema.content.ContentType;
-import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
-import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.schema.xdata.XDataService;
@@ -86,12 +84,12 @@ public final class ImageContentProcessor
         return contentType.getName().isImageMedia();
     }
 
-    protected XDatas getXDatas( final ContentTypeName contentTypeName )
+   /* protected XDatas getXDatas( final ContentTypeName contentTypeName )
     {
         final ContentType contentType = contentTypeService.getByName( GetContentTypeParams.from( contentTypeName ) );
 
         return xDataService.getFromContentType( contentType );
-    }
+    }*/
 
     @Override
     public ProcessCreateResult processCreate( final ProcessCreateParams params )
@@ -104,19 +102,19 @@ public final class ImageContentProcessor
 
         final CreateAttachment sourceAttachment = originalAttachments.first();
 
-        final XDatas contentXDatas = getXDatas( createContentParams.getType() );
+       /* final XDatas contentXDatas = getXDatas( createContentParams.getType() );
 
         ExtraDatas extraDatas = null;
         if ( mediaInfo != null )
         {
             extraDatas = extractMetadata( mediaInfo, contentXDatas, sourceAttachment );
-        }
+        }*/
 
         final CreateAttachments.Builder builder = CreateAttachments.create();
         builder.add( sourceAttachment );
 
         return new ProcessCreateResult( CreateContentParams.create( createContentParams ).
-            createAttachments( builder.build() ).extraDatas( extraDatas ).
+            createAttachments( builder.build() )/*.extraDatas( extraDatas )*/.
             build() );
     }
 
@@ -133,8 +131,8 @@ public final class ImageContentProcessor
         {
             editor = editable -> {
 
-                final XDatas contentXDatas = getXDatas( params.getContentType().getName() );
-                editable.extraDatas = extractMetadata( mediaInfo, contentXDatas, sourceAttachment );
+//                final XDatas contentXDatas = getXDatas( params.getContentType().getName() );
+//                editable.extraDatas = extractMetadata( mediaInfo, contentXDatas, sourceAttachment );
 
             };
         }

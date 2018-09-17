@@ -187,7 +187,6 @@
       <xs:element minOccurs="0" name="is-abstract" type="xs:boolean"/>
       <xs:element minOccurs="0" name="is-final" type="xs:boolean"/>
       <xs:element minOccurs="0" name="allow-child-content" type="xs:boolean"/>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="x-data" type="xdata"/>
       <xs:element minOccurs="0" name="form" type="formItems"/>
     </xs:sequence>
   </xs:complexType>

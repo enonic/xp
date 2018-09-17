@@ -1,14 +1,9 @@
 package com.enonic.xp.xml.parser;
 
-import java.util.List;
-
 import com.google.common.annotations.Beta;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.app.ApplicationRelativeResolver;
 import com.enonic.xp.schema.content.ContentType;
-import com.enonic.xp.schema.xdata.XDataName;
-import com.enonic.xp.schema.xdata.XDataNames;
 import com.enonic.xp.xml.DomElement;
 
 @Beta
@@ -46,21 +41,7 @@ public final class XmlContentTypeParser
         this.builder.setFinal( root.getChildValueAs( "is-final", Boolean.class, false ) );
         this.builder.allowChildContent( root.getChildValueAs( "allow-child-content", Boolean.class, true ) );
 
-        this.builder.metadata( buildMetaData( root ) );
-
         final XmlFormMapper mapper = new XmlFormMapper( this.currentApplication );
         this.builder.form( mapper.buildForm( root.getChild( "form" ) ) );
-    }
-
-    private XDataNames buildMetaData( final DomElement root )
-    {
-        final List<XDataName> names = Lists.newArrayList();
-        for ( final DomElement child : root.getChildren( "x-data" ) )
-        {
-            String name = child.getAttribute( "name" );
-            names.add( this.resolver.toXDataName( name ) );
-        }
-
-        return XDataNames.from( names );
     }
 }

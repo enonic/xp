@@ -34,10 +34,8 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.jaxrs.JaxRsComponent;
-import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
-import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinNames;
 import com.enonic.xp.schema.mixin.MixinService;
@@ -82,7 +80,7 @@ public final class XDataResource
 
         final Set<XData> internalXData = Sets.newLinkedHashSet();
 
-        internalXData.addAll( getContentTypeXData( content ).getList() );
+//        internalXData.addAll( getContentTypeXData( content ).getList() );
         internalXData.addAll( getSiteXData( content ).getList() );
 
         final Set<XData> externalXData = getApplicationXData( content ).
@@ -136,12 +134,12 @@ public final class XDataResource
             toList() );
     }
 
-    private XDatas getContentTypeXData( final Content content )
+   /* private XDatas getContentTypeXData( final Content content )
     {
         final ContentType contentType = this.contentTypeService.getByName( GetContentTypeParams.from( content.getType() ) );
 
         return XDatas.from( this.filterXDatasByContentType( contentType.getMetadata(), contentType.getName() ) );
-    }
+    }*/
 
     private XDatas getSiteXData( final Content content )
     {
