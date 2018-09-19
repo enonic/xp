@@ -19,7 +19,7 @@ public class MixinJson
 {
     private final Mixin mixin;
 
-    private final Boolean isExternal;
+    private final Boolean isOptional;
 
     private final String iconUrl;
 
@@ -30,7 +30,7 @@ public class MixinJson
         Preconditions.checkNotNull( builder.localeMessageResolver );
 
         this.mixin = builder.mixin;
-        this.isExternal = builder.isExternal;
+        this.isOptional = builder.isOptional;
         this.iconUrl = builder.iconUrlResolver.resolve( mixin );
         this.localeMessageResolver = builder.localeMessageResolver;
     }
@@ -104,9 +104,9 @@ public class MixinJson
         return Collections.emptyList();
     }
 
-    public Boolean getExternal()
+    public Boolean getIsOptional()
     {
-        return isExternal;
+        return isOptional;
     }
 
     @Override
@@ -125,7 +125,7 @@ public class MixinJson
     {
         private Mixin mixin;
 
-        private Boolean isExternal = false;
+        private Boolean isOptional = false;
 
         private MixinIconUrlResolver iconUrlResolver;
 
@@ -141,9 +141,9 @@ public class MixinJson
             return this;
         }
 
-        public Builder setExternal( final Boolean external )
+        public Builder setOptional( final Boolean optional )
         {
-            isExternal = external;
+            isOptional = optional;
             return this;
         }
 

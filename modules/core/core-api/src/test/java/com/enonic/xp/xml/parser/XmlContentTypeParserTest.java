@@ -125,8 +125,8 @@ public class XmlContentTypeParserTest
 
         assertEquals( 2, xDataNames.getSize() );
         assertTrue( xDataNames.contains( XDataName.from( "myapplication:metadata1" ) ) );
-        assertTrue( xDataNames.contains( XDataName.from( "myapplication:metadata2" ) ) );*/
-
+        assertTrue( xDataNames.contains( XDataName.from( "myapplication:metadata2" ) ) );
+*/
     }
 
     @Test

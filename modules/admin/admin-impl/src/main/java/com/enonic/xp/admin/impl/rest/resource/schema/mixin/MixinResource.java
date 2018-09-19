@@ -76,7 +76,7 @@ public final class MixinResource
     {
         return mixins.stream().map(
             mixin -> MixinJson.create().setMixin( mixin ).setIconUrlResolver( this.mixinIconUrlResolver ).setLocaleMessageResolver(
-                new LocaleMessageResolver( localeService, mixin.getName().getApplicationKey() ) ).setExternal( false ).build() ).collect(
+                new LocaleMessageResolver( localeService, mixin.getName().getApplicationKey() ) ).setOptional( false ).build() ).collect(
             toList() );
     }
 

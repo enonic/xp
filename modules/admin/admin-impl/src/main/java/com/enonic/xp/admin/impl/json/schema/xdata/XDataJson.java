@@ -17,7 +17,7 @@ public class XDataJson
 {
     private final XData xData;
 
-    private final Boolean isExternal;
+    private final Boolean isOptional;
 
     private final LocaleMessageResolver localeMessageResolver;
 
@@ -26,7 +26,7 @@ public class XDataJson
         Preconditions.checkNotNull( builder.localeMessageResolver );
 
         this.xData = builder.xData;
-        this.isExternal = builder.isExternal;
+        this.isOptional = builder.isOptional;
         this.localeMessageResolver = builder.localeMessageResolver;
     }
 
@@ -89,9 +89,9 @@ public class XDataJson
         return xData.getModifier() != null ? xData.getModifier().toString() : null;
     }
 
-    public Boolean getExternal()
+    public Boolean getIsOptional()
     {
-        return isExternal;
+        return isOptional;
     }
 
     @Override
@@ -110,7 +110,7 @@ public class XDataJson
     {
         private XData xData;
 
-        private Boolean isExternal = false;
+        private Boolean isOptional = false;
 
         private MixinIconUrlResolver iconUrlResolver;
 
@@ -126,9 +126,9 @@ public class XDataJson
             return this;
         }
 
-        public Builder setExternal( final Boolean external )
+        public Builder setOptional( final Boolean optional )
         {
-            isExternal = external;
+            isOptional = optional;
             return this;
         }
 

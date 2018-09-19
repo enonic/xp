@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -15,7 +14,6 @@ import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
-import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentService;
@@ -35,10 +33,8 @@ import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.schema.xdata.XDataService;
-import com.enonic.xp.util.GeoPoint;
 
 import static com.enonic.xp.media.MediaInfo.GPS_INFO_GEO_POINT;
-import static com.enonic.xp.media.MediaInfo.GPS_INFO_METADATA_NAME;
 import static org.junit.Assert.*;
 
 public class ImageContentProcessorTest
@@ -118,53 +114,6 @@ public class ImageContentProcessorTest
     }
 
     @Test
-    @Ignore
-    public void testProcessCreateWithGeoData()
-        throws IOException
-    {
-
-        final XData gpsInfo = createXData( GPS_INFO_METADATA_NAME, "Gps Info", createGpsInfoMixinForm() );
-
-        final CreateContentParams params = createContentParams( createAttachments() );
-
-        final ProcessCreateParams processCreateParams = new ProcessCreateParams( params, MediaInfo.create().
-            addMetadata( "geo lat", "1" ).addMetadata( "geo long", "2" ).build() );
-
-        final GeoPoint geoPoint = new GeoPoint( 1.0, 2.0 );
-
-        final ProcessCreateResult result = this.imageContentProcessor.processCreate( processCreateParams );
-
-        final ExtraData geoExtraData = result.getCreateContentParams().getExtraDatas().first();
-        assertEquals( geoExtraData.getName(), GPS_INFO_METADATA_NAME );
-        assertEquals( geoExtraData.getData().getGeoPoint( MediaInfo.GPS_INFO_GEO_POINT, 0 ), geoPoint );
-    }
-
-    @Test
-    @Ignore
-    public void testProcessCreateWithExtraData()
-        throws IOException
-    {
-        final Form.Builder form = Form.create();
-        form.addFormItem( createTextLine( "shutterTime", "Exposure Time" ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "altitude", "Gps Altitude" ).occurrences( 0, 1 ).build() );
-
-        final XData xDataInfo = createXData( MediaInfo.IMAGE_INFO_METADATA_NAME, "Extra Info", form.build() );
-
-        final CreateContentParams params = createContentParams( createAttachments() );
-
-        final ProcessCreateParams processCreateParams = new ProcessCreateParams( params, MediaInfo.create().
-            addMetadata( "exposure time", "1" ).addMetadata( "gps altitude ", "2" ).build() );
-
-        final ProcessCreateResult result = this.imageContentProcessor.processCreate( processCreateParams );
-
-        final ExtraData extraData = result.getCreateContentParams().getExtraDatas().first();
-        assertEquals( xDataInfo.getName(), extraData.getName() );
-        assertEquals( extraData.getData().getString( "shutterTime", 0 ), "1" );
-        assertEquals( extraData.getData().getString( "altitude", 0 ), "2" );
-        assertEquals( extraData.getData().getLong( MediaInfo.MEDIA_INFO_BYTE_SIZE, 0 ), new Long( 13 ) );
-    }
-
-    @Test
     public void testProcessUpdate()
         throws IOException
     {
@@ -200,45 +149,6 @@ public class ImageContentProcessorTest
         assertNotNull( editableContent.extraDatas.first().getData().getLong( "imageHeight", 0 ) );
         assertNotNull( editableContent.extraDatas.first().getData().getLong( "imageWidth", 0 ) );
         assertNotNull( editableContent.extraDatas.first().getData().getLong( "byteSize", 0 ) );
-    }
-
-    @Test
-    @Ignore
-    public void testProcessUpdateWithMediaInfo()
-        throws IOException
-    {
-
-        final Form.Builder form = Form.create();
-        form.addFormItem( createTextLine( "shutterTime", "Exposure Time" ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "altitude", "Gps Altitude" ).occurrences( 0, 1 ).build() );
-
-        final CreateAttachments createAttachments = createAttachments();
-
-        final ProcessUpdateParams processUpdateParams = ProcessUpdateParams.create().
-            contentType( ContentType.create().
-                superType( ContentTypeName.imageMedia() ).
-                name( "myContent" ).
-                build() ).
-            mediaInfo( MediaInfo.create().
-                addMetadata( "exposure time", "1" ).addMetadata( "gps altitude ", "2" ).build() ).
-            createAttachments( createAttachments ).
-            build();
-
-        final ProcessUpdateResult result = this.imageContentProcessor.processUpdate( processUpdateParams );
-
-        final PropertyTree data = new PropertyTree();
-
-        final EditableContent editableContent = new EditableContent( Content.create().
-            name( "myContentName" ).
-            parentPath( ContentPath.ROOT ).
-            data( data ).
-            build() );
-
-        result.getEditor().edit( editableContent );
-
-        assertEquals( editableContent.extraDatas.first().getData().getString( "shutterTime", 0 ), "1" );
-        assertEquals( editableContent.extraDatas.first().getData().getString( "altitude", 0 ), "2" );
-        assertEquals( editableContent.extraDatas.first().getData().getLong( MediaInfo.MEDIA_INFO_BYTE_SIZE, 0 ), new Long( 13 ) );
     }
 
     private static Form createGpsInfoMixinForm()

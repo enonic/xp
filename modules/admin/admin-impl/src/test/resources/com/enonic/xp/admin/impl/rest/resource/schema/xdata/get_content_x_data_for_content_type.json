@@ -1,16 +1,12 @@
 {
   "mixins": [
     {
-      "allowedContentTypes": [
-        "app:testContentType"
-      ],
       "createdTime": "2013-01-01T12:00:00Z",
       "creator": null,
       "deletable": false,
       "description": null,
       "displayName": "input_text_1",
       "editable": false,
-      "external": false,
       "form": {
         "formItems": [
           {
@@ -33,44 +29,10 @@
           }
         ]
       },
+      "isOptional": false,
       "modifiedTime": null,
       "modifier": null,
       "name": "myapplication:input_text_1"
-    },
-    {
-      "allowedContentTypes": [],
-      "createdTime": "2013-01-01T12:00:00Z",
-      "creator": null,
-      "deletable": false,
-      "description": null,
-      "displayName": "text_area_2",
-      "editable": false,
-      "external": true,
-      "form": {
-        "formItems": [
-          {
-            "Input": {
-              "config": {},
-              "customText": null,
-              "helpText": "Help text area",
-              "immutable": false,
-              "indexed": false,
-              "inputType": "TextArea",
-              "label": "Text Area",
-              "maximizeUIInputWidth": true,
-              "name": "text_area_2",
-              "occurrences": {
-                "maximum": 1,
-                "minimum": 1
-              },
-              "validationRegexp": null
-            }
-          }
-        ]
-      },
-      "modifiedTime": null,
-      "modifier": null,
-      "name": "myapplication:text_area_2"
     }
   ]
 }
