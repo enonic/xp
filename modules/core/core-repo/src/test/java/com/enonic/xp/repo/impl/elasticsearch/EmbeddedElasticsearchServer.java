@@ -32,6 +32,7 @@ public class EmbeddedElasticsearchServer
     {
         LOG.info( " --- Starting ES integration test server instance" );
 
+        System.setProperty( "mapper.allow_dots_in_name", "true" );
         this.dataDirectory = new File( rootDirectory, ROOT_DATA_DIRECTORY ).toString();
 
         final File pathHome = new File( this.dataDirectory, "index" );
