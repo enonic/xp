@@ -22,6 +22,7 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.cluster.ClusterConfig;
+import com.enonic.xp.elasticsearch.impl.config.NodeSettingsBuilder;
 
 @Component(immediate = true, configurationPid = "com.enonic.xp.elasticsearch")
 public final class ElasticsearchActivator
