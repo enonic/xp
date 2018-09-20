@@ -8,6 +8,8 @@ public @interface IgniteSettings
 
     String localhost();
 
+    String discovery_hosts();
+
     int metrics_log_frequency() default 0;
 
     boolean connector_enabled() default false;

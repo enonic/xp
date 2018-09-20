@@ -65,7 +65,6 @@ public class ConfigurationFactory
         }
 
         config.setDiscoverySpi( DiscoveryFactory.create().
-            discovery( clusterConfig.discovery() ).
             igniteConfig( igniteSettings ).
             clusterConfig( clusterConfig ).
             build().
