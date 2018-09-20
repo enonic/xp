@@ -1,6 +1,7 @@
 package com.enonic.xp.testing;
 
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Hashtable;
 
 import org.junit.Assert;
@@ -201,7 +202,7 @@ public abstract class ScriptTestSupport
     {
         final ApplicationBuilder builder = new ApplicationBuilder();
         builder.classLoader( getClass().getClassLoader() );
-        builder.urlResolver( new ClassLoaderApplicationUrlResolver( getClass().getClassLoader() ) );
+        builder.urlResolver( new ClassLoaderApplicationUrlResolver( (URLClassLoader) getClass().getClassLoader() ) );
         builder.config( ConfigBuilder.create().build() );
         builder.bundle( createBundle() );
         return builder.build();

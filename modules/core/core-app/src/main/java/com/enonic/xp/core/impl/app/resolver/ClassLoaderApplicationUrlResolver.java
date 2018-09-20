@@ -16,7 +16,7 @@ public final class ClassLoaderApplicationUrlResolver
 {
     private final ClassLoader loader;
 
-    public ClassLoaderApplicationUrlResolver( final ClassLoader loader )
+    public ClassLoaderApplicationUrlResolver( final URLClassLoader loader )
     {
         this.loader = loader;
     }
