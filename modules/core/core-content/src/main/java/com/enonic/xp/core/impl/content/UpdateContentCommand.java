@@ -269,6 +269,7 @@ final class UpdateContentCommand
             displayName( edited.getDisplayName() ).
             extradatas( edited.getAllExtraData() ).
             mixinService( this.mixinService ).
+            xDataService( this.xDataService ).
             siteService( this.siteService ).
             contentTypeService( this.contentTypeService ).
             build().

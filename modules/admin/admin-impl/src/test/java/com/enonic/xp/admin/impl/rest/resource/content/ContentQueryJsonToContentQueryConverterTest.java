@@ -16,6 +16,7 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
+import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
@@ -70,6 +71,9 @@ public class ContentQueryJsonToContentQueryConverterTest
         Mockito.when( contentService.getByIds( Mockito.any() ) ).thenReturn( Contents.from( folderRefContent1, folderRefContent2 ) );
         Mockito.when( contentService.getById( content.getId() ) ).thenReturn( content );
 
+        Mockito.when( contentService.getOutboundDependencies( content.getId() ) ).thenReturn(
+            ContentIds.from( folderRefContent1.getId(), folderRefContent2.getId() ) );
+
         final ContentQueryJson contentQueryJson =
             new ContentQueryJson( "", 0, 100, new ArrayList(), content.getId().toString(), "summary", null, null );
 
@@ -83,6 +87,29 @@ public class ContentQueryJsonToContentQueryConverterTest
         assertEquals( 0, contentQuery.getFrom() );
         assertEquals( 100, contentQuery.getSize() );
         assertEquals( contentQuery.getFilterContentIds(), ContentIds.from( folderRefContent1.getId(), folderRefContent2.getId() ) );
+    }
+
+    @Test
+    public void testEmptyOutboundContentIds_query_is_null()
+    {
+        final Content content = createContent( "content", new PropertyTree(), ContentTypeName.site() );
+
+        Mockito.when( contentService.getOutboundDependencies( content.getId() ) ).thenReturn( ContentIds.empty() );
+
+        final ContentQueryJson contentQueryJson =
+            new ContentQueryJson( "", 0, 100, new ArrayList(), content.getId().toString(), "summary", null, null );
+
+        Mockito.when( contentService.getById( content.getId() ) ).thenReturn( content );
+        Mockito.when( contentService.getByIds( new GetContentByIdsParams( ContentIds.empty() ) ) ).thenReturn( Contents.empty() );
+
+        ContentQueryJsonToContentQueryConverter processor = ContentQueryJsonToContentQueryConverter.create().
+            contentQueryJson( contentQueryJson ).
+            contentService( contentService ).
+            build();
+
+        final ContentQuery contentQuery = processor.createQuery();
+
+        assertNull( contentQuery );
     }
 
     @Test
