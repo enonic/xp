@@ -28,6 +28,7 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
+import static com.enonic.xp.repo.impl.node.NodeConstants.CLOCK;
 import static com.enonic.xp.repo.impl.node.NodePermissionsResolver.requireContextUserPermission;
 
 public final class CreateNodeCommand
@@ -93,7 +94,7 @@ public final class CreateNodeCommand
             inheritPermissions( params.inheritPermissions() ).
             nodeType( params.getNodeType() != null ? params.getNodeType() : NodeType.DEFAULT_NODE_COLLECTION ).
             attachedBinaries( attachedBinaries ).
-            timestamp( this.timestamp != null ? this.timestamp : Instant.now() );
+            timestamp( this.timestamp != null ? this.timestamp : Instant.now( CLOCK ) );
 
         final Node newNode = nodeBuilder.build();
 

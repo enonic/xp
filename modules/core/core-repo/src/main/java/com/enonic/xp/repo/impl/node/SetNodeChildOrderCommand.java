@@ -18,6 +18,8 @@ import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.security.acl.Permission;
 
+import static com.enonic.xp.repo.impl.node.NodeConstants.CLOCK;
+
 public class SetNodeChildOrderCommand
     extends AbstractNodeCommand
 {
@@ -57,7 +59,7 @@ public class SetNodeChildOrderCommand
 
         final Node editedNode = Node.create( parentNode ).
             childOrder( childOrder ).
-            timestamp( Instant.now() ).
+            timestamp( Instant.now( CLOCK ) ).
             build();
 
         StoreNodeCommand.create( this ).
@@ -93,7 +95,7 @@ public class SetNodeChildOrderCommand
 
             final Node editedNode = Node.create( node ).
                 manualOrderValue( nodeIdOrderValue.getManualOrderValue() ).
-                timestamp( Instant.now() ).
+                timestamp( Instant.now( CLOCK ) ).
                 build();
 
             StoreNodeCommand.create( this ).
