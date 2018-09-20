@@ -7,10 +7,6 @@ import org.apache.ignite.Ignition;
 import org.apache.ignite.configuration.IgniteConfiguration;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,43 +25,34 @@ import static org.apache.ignite.IgniteSystemProperties.IGNITE_PERFORMANCE_SUGGES
 import static org.apache.ignite.IgniteSystemProperties.IGNITE_TROUBLESHOOTING_LOGGER;
 import static org.apache.ignite.IgniteSystemProperties.IGNITE_UPDATE_NOTIFIER;
 
-@Component(immediate = true, configurationPid = "com.enonic.xp.ignite")
 public class IgniteCluster
     implements Cluster
 {
     private Ignite ignite;
 
-    private ServiceRegistration<Ignite> reg;
+    private ServiceRegistration<Ignite> igniteServiceReg;
+
+    private ServiceRegistration<IgniteAdminClient> igniteAdminClientServiceReg;
 
     private BundleContext context;
 
     private static final Logger LOG = LoggerFactory.getLogger( IgniteCluster.class );
 
-    private IgniteSettings igniteSettings;
-
-    private ClusterConfig clusterConfig;
-
-    @SuppressWarnings("unused")
-    @Activate
-    public void activate( final BundleContext context, final IgniteSettings igniteSettings )
+    public IgniteCluster( final BundleContext context, final IgniteSettings igniteSettings, final ClusterConfig clusterConfig )
     {
         this.context = context;
-        this.igniteSettings = igniteSettings;
 
         adjustLoggingVerbosity();
 
         final IgniteConfiguration igniteConfig = ConfigurationFactory.create().
-            clusterConfig( this.clusterConfig ).
-            igniteConfig( this.igniteSettings ).
+            clusterConfig( clusterConfig ).
+            igniteConfig( igniteSettings ).
             bundleContext( context ).
             build().
             execute();
 
         System.setProperty( IGNITE_NO_SHUTDOWN_HOOK, "true" );
         this.ignite = Ignition.start( igniteConfig );
-
-        // Register admin-client to use in e.g reporting
-        context.registerService( IgniteAdminClient.class, new IgniteAdminClientImpl( this.ignite ), new Hashtable<>() );
     }
 
     private void adjustLoggingVerbosity()
@@ -76,12 +63,10 @@ public class IgniteCluster
         System.setProperty( IGNITE_TROUBLESHOOTING_LOGGER, "false" );
     }
 
-    @SuppressWarnings("unused")
-    @Deactivate
-    public void deactivate()
+    void deactivate()
     {
+        unregisterService();
         this.ignite.close();
-        unregisterClient();
     }
 
     @Override
@@ -132,49 +117,56 @@ public class IgniteCluster
     @Override
     public void disable()
     {
-        unregisterClient();
+        unregisterService();
     }
 
     @Override
     public boolean isEnabled()
     {
-        return this.reg != null;
+        return this.igniteServiceReg != null;
     }
 
     private void registerService()
     {
-        if ( this.reg != null )
+        if ( this.igniteServiceReg != null )
         {
             return;
         }
 
         LOG.info( "Cluster operational, register " + this.getId() );
 
-        this.reg = context.registerService( Ignite.class, ignite, new Hashtable<>() );
+        this.igniteServiceReg = context.registerService( Ignite.class, ignite, new Hashtable<>() );
+
+        // Register admin-client to use in e.g reporting
+        this.igniteAdminClientServiceReg =
+            context.registerService( IgniteAdminClient.class, new IgniteAdminClientImpl( this.ignite ), new Hashtable<>() );
     }
 
-    private void unregisterClient()
+    private void unregisterService()
     {
-        if ( this.reg == null )
+        if ( this.igniteServiceReg != null )
         {
-            return;
+            try
+            {
+                LOG.info( "Cluster not operational, unregister " + this.getId() );
+                this.igniteServiceReg.unregister();
+            }
+            finally
+            {
+                this.igniteServiceReg = null;
+            }
         }
 
-        try
+        if ( this.igniteAdminClientServiceReg != null )
         {
-            LOG.info( "Cluster not operational, unregister " + this.getId() );
-            this.reg.unregister();
+            try
+            {
+                this.igniteAdminClientServiceReg.unregister();
+            }
+            finally
+            {
+                this.igniteAdminClientServiceReg = null;
+            }
         }
-        finally
-        {
-            this.reg = null;
-        }
-    }
-
-    @SuppressWarnings("unused")
-    @Reference
-    public void setClusterConfig( final ClusterConfig clusterConfig )
-    {
-        this.clusterConfig = clusterConfig;
     }
 }

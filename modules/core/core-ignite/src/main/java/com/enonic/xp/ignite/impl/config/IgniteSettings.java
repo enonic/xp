@@ -2,6 +2,8 @@ package com.enonic.xp.ignite.impl.config;
 
 public @interface IgniteSettings
 {
+    boolean enabled();
+
     String home();
 
     String localhost();
