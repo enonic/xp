@@ -2,7 +2,7 @@ package com.enonic.xp.cluster;
 
 public interface ClusterConfig
 {
-    NodeDiscovery discovery();
+    DiscoveryConfig discoveryConfig();
 
     ClusterNodeId name();
 

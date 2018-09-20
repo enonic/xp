@@ -4,20 +4,15 @@ import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi;
 import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
 
 import com.enonic.xp.cluster.ClusterConfig;
-import com.enonic.xp.cluster.NodeDiscovery;
 
 class TcpDiscoveryFactory
 {
-    private final NodeDiscovery discovery;
-
     private final IgniteSettings igniteConfig;
 
     private final ClusterConfig clusterConfig;
 
-
     private TcpDiscoveryFactory( final Builder builder )
     {
-        discovery = builder.discovery;
         igniteConfig = builder.igniteConfig;
         clusterConfig = builder.clusterConfig;
     }
@@ -43,7 +38,6 @@ class TcpDiscoveryFactory
     private TcpDiscoveryVmIpFinder createStaticIpConfig()
     {
         return StaticIpFinderFactory.create().
-            discovery( this.discovery ).
             igniteConfig( this.igniteConfig ).
             clusterConfig( this.clusterConfig ).
             build().
@@ -57,20 +51,12 @@ class TcpDiscoveryFactory
 
     static final class Builder
     {
-        private NodeDiscovery discovery;
-
         private IgniteSettings igniteConfig;
 
         private ClusterConfig clusterConfig;
 
         private Builder()
         {
-        }
-
-        Builder discovery( final NodeDiscovery val )
-        {
-            discovery = val;
-            return this;
         }
 
         Builder igniteConfig( final IgniteSettings val )

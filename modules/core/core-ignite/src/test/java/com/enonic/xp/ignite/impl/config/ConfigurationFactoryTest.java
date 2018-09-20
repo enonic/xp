@@ -10,7 +10,8 @@ import org.osgi.framework.BundleContext;
 
 import com.enonic.xp.cluster.ClusterConfig;
 import com.enonic.xp.cluster.ClusterNodeId;
-import com.enonic.xp.cluster.NodeDiscovery;
+import com.enonic.xp.cluster.DiscoveryConfig;
+import com.enonic.xp.cluster.DiscoveryType;
 
 import static org.junit.Assert.*;
 
@@ -24,7 +25,6 @@ public class ConfigurationFactoryTest
 
     @Before
     public void setUp()
-        throws Exception
     {
         System.setProperty( "xp.home", Paths.get( "my", "xp", "home" ).toString() );
         this.bundleContext = Mockito.mock( BundleContext.class );
@@ -65,7 +65,6 @@ public class ConfigurationFactoryTest
     public void ignite_home()
         throws Exception
     {
-
         Mockito.when( this.igniteSettings.home() ).thenReturn( Paths.get( "fisk", "ost" ).toString() );
 
         final IgniteConfiguration config = com.enonic.xp.ignite.impl.config.ConfigurationFactory.create().
@@ -97,9 +96,12 @@ public class ConfigurationFactoryTest
         return new ClusterConfig()
         {
             @Override
-            public NodeDiscovery discovery()
+            public DiscoveryConfig discoveryConfig()
             {
-                return TestDiscovery.from( "localhost", "192.168.0.1" );
+                return DiscoveryConfig.create().
+                    add( "type", DiscoveryType.STATIC_IP.toString() ).
+                    add( "unicast.hosts", "127.0.0.1" ).
+                    build();
             }
 
             @Override

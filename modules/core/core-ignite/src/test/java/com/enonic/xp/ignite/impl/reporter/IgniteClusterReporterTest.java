@@ -15,6 +15,8 @@ import com.google.common.collect.Lists;
 import com.enonic.xp.ignite.impl.IgniteAdminClientImpl;
 import com.enonic.xp.support.JsonTestHelper;
 
+import static org.junit.Assert.*;
+
 public class IgniteClusterReporterTest
 {
     private Ignite ignite;
@@ -28,6 +30,13 @@ public class IgniteClusterReporterTest
         this.ignite = Mockito.mock( Ignite.class );
         this.igniteCluster = Mockito.mock( IgniteCluster.class );
         Mockito.when( this.ignite.cluster() ).thenReturn( this.igniteCluster );
+    }
+
+    @Test
+    public void name()
+    {
+        final IgniteClusterReporter reporter = new IgniteClusterReporter();
+        assertEquals( "cluster.ignite", reporter.getName() );
     }
 
     @Test
