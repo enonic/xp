@@ -10,9 +10,11 @@ import org.elasticsearch.client.ClusterAdminClient;
 import org.elasticsearch.cluster.ClusterState;
 import org.elasticsearch.cluster.node.DiscoveryNode;
 import org.elasticsearch.cluster.node.DiscoveryNodes;
+import org.elasticsearch.cluster.routing.RestoreSource;
 import org.elasticsearch.cluster.routing.RoutingTable;
 import org.elasticsearch.cluster.routing.ShardRouting;
 import org.elasticsearch.cluster.routing.ShardRoutingState;
+import org.elasticsearch.cluster.routing.UnassignedInfo;
 import org.elasticsearch.common.transport.TransportAddress;
 import org.junit.Assert;
 import org.junit.Before;
@@ -39,49 +41,6 @@ public class IndexReporterTest
     {
 
         clusterAdminClient = Mockito.mock( ClusterAdminClient.class );
-        Mockito.doAnswer( invocation ->
-                          {
-                              final ShardRouting shardRouting = Mockito.mock( ShardRouting.class );
-                              Mockito.when( shardRouting.index() ).thenReturn( "myindex" );
-                              Mockito.when( shardRouting.id() ).thenReturn( 0 );
-                              Mockito.when( shardRouting.primary() ).thenReturn( true );
-                              Mockito.when( shardRouting.index() ).thenReturn( "myindex" );
-                              Mockito.when( shardRouting.state() ).thenReturn( ShardRoutingState.STARTED );
-                              Mockito.when( shardRouting.currentNodeId() ).thenReturn( "nodeId" );
-
-                              final RoutingTable routingTable = Mockito.mock( RoutingTable.class );
-                              Mockito.when( routingTable.shardsWithState( ShardRoutingState.STARTED ) ).thenReturn(
-                                  Arrays.asList( shardRouting ) );
-
-                              final ClusterState clusterState = Mockito.mock( ClusterState.class );
-                              Mockito.when( clusterState.getRoutingTable() ).thenReturn( routingTable );
-
-                              // Mock discoveryNode
-                              DiscoveryNode discoveryNode = Mockito.mock( DiscoveryNode.class );
-
-                              final TransportAddress transportAddress = Mockito.mock( TransportAddress.class );
-                              Mockito.when( transportAddress.toString() ).thenReturn( "hostAddress" );
-
-                              Mockito.when( discoveryNode.address() ).thenReturn( transportAddress );
-                              Mockito.when( discoveryNode.getId() ).thenReturn( "hostId" );
-
-                              // Mock discoveryNodes
-                              DiscoveryNodes discoveryNodes = Mockito.mock( DiscoveryNodes.class );
-                              Mockito.when( discoveryNodes.get( Mockito.any() ) ).thenReturn( discoveryNode );
-
-                              // Mock clusterState.getNodes()
-                              Mockito.when( clusterState.getNodes() ).thenReturn( discoveryNodes );
-
-                              // Mock getState()
-                              final ClusterStateResponse clusterStateResponse = Mockito.mock( ClusterStateResponse.class );
-                              Mockito.when( clusterStateResponse.getState() ).thenReturn( clusterState );
-
-                              ActionListener<ClusterStateResponse> listener =
-                                  (ActionListener<ClusterStateResponse>) invocation.getArguments()[1];
-                              listener.onResponse( clusterStateResponse );
-                              return null;
-                          } ).when( clusterAdminClient ).
-            state( Mockito.any(), Mockito.any() );
 
         final AdminClient adminClient = Mockito.mock( AdminClient.class );
         Mockito.when( adminClient.cluster() ).thenReturn( clusterAdminClient );
@@ -97,6 +56,43 @@ public class IndexReporterTest
     public void testGetReport()
         throws Exception
     {
+        Mockito.doAnswer( invocation -> {
+            final RestoreSource restoreResource = null;
+            final UnassignedInfo unassignedInfo = new UnassignedInfo( UnassignedInfo.Reason.INDEX_CREATED, "" );
+            final ShardRouting shardRouting = ShardRouting.newUnassigned( "myindex", 0, restoreResource, true, unassignedInfo );
+
+            final RoutingTable routingTable = Mockito.mock( RoutingTable.class );
+            Mockito.when( routingTable.shardsWithState( ShardRoutingState.STARTED ) ).thenReturn( Arrays.asList( shardRouting ) );
+
+            final ClusterState clusterState = Mockito.mock( ClusterState.class );
+            Mockito.when( clusterState.getRoutingTable() ).thenReturn( routingTable );
+
+            // Mock discoveryNode
+            DiscoveryNode discoveryNode = Mockito.mock( DiscoveryNode.class );
+
+            final TransportAddress transportAddress = Mockito.mock( TransportAddress.class );
+            Mockito.when( transportAddress.toString() ).thenReturn( "hostAddress" );
+
+            Mockito.when( discoveryNode.address() ).thenReturn( transportAddress );
+            Mockito.when( discoveryNode.getId() ).thenReturn( "hostId" );
+
+            // Mock discoveryNodes
+            DiscoveryNodes discoveryNodes = Mockito.mock( DiscoveryNodes.class );
+            Mockito.when( discoveryNodes.get( Mockito.any() ) ).thenReturn( discoveryNode );
+
+            // Mock clusterState.getNodes()
+            Mockito.when( clusterState.getNodes() ).thenReturn( discoveryNodes );
+
+            // Mock getState()
+            final ClusterStateResponse clusterStateResponse = Mockito.mock( ClusterStateResponse.class );
+            Mockito.when( clusterStateResponse.getState() ).thenReturn( clusterState );
+
+            ActionListener<ClusterStateResponse> listener = (ActionListener<ClusterStateResponse>) invocation.getArguments()[2];
+            listener.onResponse( clusterStateResponse );
+            return null;
+        } ).when( clusterAdminClient ).
+            execute( Mockito.any(), Mockito.any(), Mockito.any() );
+
         Assert.assertEquals( "index", indexReporter.getName() );
         final JsonNode report = indexReporter.getReport();
         Assert.assertEquals( parseJson( readFromFile( "index_report.json" ) ), report );
