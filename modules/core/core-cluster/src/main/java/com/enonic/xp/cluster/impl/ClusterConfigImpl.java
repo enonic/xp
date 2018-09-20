@@ -1,7 +1,5 @@
 package com.enonic.xp.cluster.impl;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.Map;
 
 import org.osgi.service.component.annotations.Activate;
@@ -11,9 +9,7 @@ import com.google.common.base.Strings;
 
 import com.enonic.xp.cluster.ClusterConfig;
 import com.enonic.xp.cluster.ClusterNodeId;
-import com.enonic.xp.cluster.NodeDiscovery;
-import com.enonic.xp.cluster.impl.discovery.ClusterNodeNameProvider;
-import com.enonic.xp.cluster.impl.discovery.StaticIpNodeDiscovery;
+import com.enonic.xp.cluster.DiscoveryConfig;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.config.ConfigInterpolator;
 import com.enonic.xp.config.Configuration;
@@ -24,45 +20,27 @@ public class ClusterConfigImpl
 {
     private Configuration config;
 
-    private NetworkInterfaceResolver networkInterfaceResolver;
+    private NetworkInterfaceResolver networkInterfaceResolver = new NetworkInterfaceResolver();
+
+    private DiscoveryConfig discoveryConfig;
 
     @Activate
     public void activate( final Map<String, String> map )
     {
-        this.networkInterfaceResolver = new NetworkInterfaceResolver();
         this.config = ConfigBuilder.create().
             load( getClass(), "default.properties" ).
             addAll( map ).
             build();
 
         this.config = new ConfigInterpolator().interpolate( this.config );
+
+        this.discoveryConfig = new DiscoveryConfig( this.config.subConfig( "discovery." ).asMap() );
     }
 
     @Override
-    public NodeDiscovery discovery()
+    public DiscoveryConfig discoveryConfig()
     {
-        final String unicastHosts = this.config.get( "discovery.unicast.hosts" );
-
-        final StaticIpNodeDiscovery.Builder builder = StaticIpNodeDiscovery.create();
-
-        for ( final String entry : unicastHosts.split( "," ) )
-        {
-            try
-            {
-                builder.add( InetAddress.getByName( normalizeHostEntry( entry ) ) );
-            }
-            catch ( UnknownHostException e )
-            {
-                throw new IllegalArgumentException( "Cannot create host entry for value [" + entry + "]", e );
-            }
-        }
-
-        return builder.build();
-    }
-
-    private String normalizeHostEntry( final String entry )
-    {
-        return Strings.isNullOrEmpty( entry ) ? "" : entry.trim();
+        return this.discoveryConfig;
     }
 
     @Override
@@ -102,5 +80,10 @@ public class ClusterConfigImpl
     {
         final String host = this.config.get( "network.host" );
         return host == null ? null : networkInterfaceResolver.resolveAddress( host );
+    }
+
+    public void setNetworkInterfaceResolver( final NetworkInterfaceResolver networkInterfaceResolver )
+    {
+        this.networkInterfaceResolver = networkInterfaceResolver;
     }
 }

@@ -95,7 +95,8 @@ class Log4JWrapper
     @Override
     public boolean isQuiet()
     {
-        return false;
+        return !( underLyingLogger.isTraceEnabled() && underLyingLogger.isDebugEnabled() && underLyingLogger.isErrorEnabled() &&
+            underLyingLogger.isWarnEnabled() );
     }
 
     @Override

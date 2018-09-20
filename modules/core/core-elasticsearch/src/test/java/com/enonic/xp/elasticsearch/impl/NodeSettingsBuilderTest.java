@@ -2,7 +2,6 @@ package com.enonic.xp.elasticsearch.impl;
 
 import java.io.File;
 import java.net.InetAddress;
-import java.util.Collections;
 import java.util.Map;
 
 import org.elasticsearch.common.settings.Settings;
@@ -18,7 +17,9 @@ import com.google.common.collect.Maps;
 
 import com.enonic.xp.cluster.ClusterConfig;
 import com.enonic.xp.cluster.ClusterNodeId;
-import com.enonic.xp.cluster.NodeDiscovery;
+import com.enonic.xp.cluster.DiscoveryConfig;
+import com.enonic.xp.cluster.DiscoveryType;
+import com.enonic.xp.elasticsearch.impl.config.NodeSettingsBuilder;
 
 import static org.junit.Assert.*;
 
@@ -35,16 +36,16 @@ public class NodeSettingsBuilderTest
         throws Exception
     {
         final BundleContext context = Mockito.mock( BundleContext.class );
-        final NodeDiscovery nodeDiscovery = Mockito.mock( NodeDiscovery.class );
+        final DiscoveryConfig nodeDiscoveryConfig = Mockito.mock( DiscoveryConfig.class );
         final InetAddress inetAddress = Mockito.mock( InetAddress.class );
         Mockito.when( inetAddress.getCanonicalHostName() ).thenReturn( "127.0.0.1" );
-        Mockito.when( nodeDiscovery.get() ).thenReturn( Collections.singletonList( inetAddress ) );
+        Mockito.when( nodeDiscoveryConfig.getType() ).thenReturn( DiscoveryType.STATIC_IP );
         this.builder = new NodeSettingsBuilder( context, new ClusterConfig()
         {
             @Override
-            public NodeDiscovery discovery()
+            public DiscoveryConfig discoveryConfig()
             {
-                return nodeDiscovery;
+                return nodeDiscoveryConfig;
             }
 
             @Override

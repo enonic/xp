@@ -1,4 +1,4 @@
-package com.enonic.xp.cluster.impl.discovery;
+package com.enonic.xp.cluster.impl;
 
 import java.util.UUID;
 

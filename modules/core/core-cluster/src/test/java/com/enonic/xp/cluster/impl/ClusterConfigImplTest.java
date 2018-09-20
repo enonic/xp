@@ -1,43 +1,81 @@
 package com.enonic.xp.cluster.impl;
 
-import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
 
 import com.google.common.collect.Maps;
 
-import com.enonic.xp.cluster.NodeDiscovery;
-
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.*;
 
 public class ClusterConfigImplTest
 {
-    @Test
-    public void discovery()
-        throws Exception
-    {
-        final ClusterConfigImpl config = new ClusterConfigImpl();
 
+    @Test
+    public void discovery_options_separated()
+    {
         final Map<String, String> settings = Maps.newHashMap();
-        settings.put( "discovery.unicast.hosts", "localhost, 192.168.0.1, beast.enonic.net" );
+        settings.put( "discovery.some.option", "fish" );
+        settings.put( "discovery.some.other.option", "onion" );
+        settings.put( "some.option", "cheese" );
+
+        final ClusterConfigImpl config = new ClusterConfigImpl();
         config.activate( settings );
 
-        final NodeDiscovery discovery = config.discovery();
-        assertNotNull( discovery );
-
-        final List hosts = discovery.get();
-        assertEquals( 3, hosts.size() );
+        assertTrue( config.discoveryConfig().exists( "some.option" ) );
+        assertTrue( config.discoveryConfig().exists( "some.other.option" ) );
+        assertEquals( "fish", config.discoveryConfig().get( "some.option" ) );
+        assertEquals( "onion", config.discoveryConfig().get( "some.other.option" ) );
     }
 
     @Test
-    public void default_name()
-        throws Exception
+    public void name()
+    {
+        final Map<String, String> settings = Maps.newHashMap();
+        settings.put( "node.name", "fish" );
+        final ClusterConfigImpl config = new ClusterConfigImpl();
+        config.activate( settings );
+        assertNotNull( config.name() );
+        assertEquals( "fish", config.name().toString() );
+    }
+
+    @Test
+    public void generated_name()
     {
         final Map<String, String> settings = Maps.newHashMap();
         final ClusterConfigImpl config = new ClusterConfigImpl();
         config.activate( settings );
-
         assertNotNull( config.name() );
     }
+
+    @Test
+    public void enabled_default()
+    {
+        final Map<String, String> settings = Maps.newHashMap();
+        final ClusterConfigImpl config = new ClusterConfigImpl();
+        config.activate( settings );
+        assertFalse( config.isEnabled() );
+    }
+
+    @Test
+    public void enabled()
+    {
+        final Map<String, String> settings = Maps.newHashMap();
+        settings.put( "cluster.enabled", "true" );
+        final ClusterConfigImpl config = new ClusterConfigImpl();
+        config.activate( settings );
+        assertTrue( config.isEnabled() );
+    }
+
+    @Test
+    public void session_replication()
+    {
+        final Map<String, String> settings = Maps.newHashMap();
+        settings.put( "session.replication.enabled", "true" );
+        final ClusterConfigImpl config = new ClusterConfigImpl();
+        config.activate( settings );
+        assertTrue( config.isSessionReplicationEnabled() );
+    }
+
 }

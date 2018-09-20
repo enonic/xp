@@ -1,8 +1,6 @@
 package com.enonic.xp.elasticsearch.impl;
 
 import java.io.File;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.Map;
 
 import org.elasticsearch.client.AdminClient;
@@ -18,12 +16,12 @@ import org.mockito.Mockito;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.cluster.ClusterConfig;
 import com.enonic.xp.cluster.ClusterNodeId;
-import com.enonic.xp.cluster.NodeDiscovery;
+import com.enonic.xp.cluster.DiscoveryConfig;
+
 
 public class ElasticsearchActivatorTest
 {
@@ -53,22 +51,9 @@ public class ElasticsearchActivatorTest
         this.activator.setClusterConfig( new ClusterConfig()
         {
             @Override
-            public NodeDiscovery discovery()
+            public DiscoveryConfig discoveryConfig()
             {
-                return () -> {
-                    final InetAddress local1;
-                    final InetAddress local2;
-                    try
-                    {
-                        local1 = InetAddress.getByName( "localhost" );
-                        local2 = InetAddress.getByName( "192.168.0.1" );
-                    }
-                    catch ( UnknownHostException e )
-                    {
-                        throw new RuntimeException( e );
-                    }
-                    return Lists.newArrayList( local1, local2 );
-                };
+                return DiscoveryConfig.empty();
             }
 
             @Override
