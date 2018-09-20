@@ -3,7 +3,6 @@ package com.enonic.xp.cluster.impl;
 import java.util.Map;
 
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import com.google.common.collect.Maps;
 
@@ -78,24 +77,5 @@ public class ClusterConfigImplTest
         config.activate( settings );
         assertTrue( config.isSessionReplicationEnabled() );
     }
-
-    // network.publish.host
-    // network.host
-
-    @Test
-    public void network_publish_host()
-    {
-        final NetworkInterfaceResolver networkInterfaceResolver = Mockito.mock( NetworkInterfaceResolver.class );
-        Mockito.when( networkInterfaceResolver.resolveAddress( Mockito.any() ) ).thenReturn( "localhost" );
-
-        final Map<String, String> settings = Maps.newHashMap();
-
-        final ClusterConfigImpl config = new ClusterConfigImpl();
-        config.setNetworkInterfaceResolver( networkInterfaceResolver );
-        config.activate( settings );
-        assertEquals( "localhost", config.networkPublishHost() );
-        assertEquals( "localhost", config.networkHost() );
-    }
-
 
 }
