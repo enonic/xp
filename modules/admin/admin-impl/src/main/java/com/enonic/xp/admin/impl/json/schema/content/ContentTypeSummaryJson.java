@@ -1,14 +1,18 @@
 package com.enonic.xp.admin.impl.json.schema.content;
 
 import java.time.Instant;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+
+import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.admin.impl.json.ChangeTraceableJson;
 import com.enonic.xp.admin.impl.json.ItemJson;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.schema.content.ContentType;
+import com.enonic.xp.schema.xdata.XDataName;
 
 @SuppressWarnings("UnusedDeclaration")
 public class ContentTypeSummaryJson
@@ -20,12 +24,24 @@ public class ContentTypeSummaryJson
 
     private final LocaleMessageResolver localeMessageResolver;
 
+    private final ImmutableList<String> metadataMixinNames;
+
     public ContentTypeSummaryJson( final ContentType contentType, final ContentTypeIconUrlResolver iconUrlResolver,
                                    final LocaleMessageResolver localeMessageResolver )
     {
         this.contentType = contentType;
         this.localeMessageResolver = localeMessageResolver;
         this.iconUrl = iconUrlResolver.resolve( contentType );
+
+        ImmutableList.Builder<String> xDataNamesBuilder = new ImmutableList.Builder<>();
+        if ( this.contentType.getMetadata() != null )
+        {
+            for ( XDataName xDataName : this.contentType.getMetadata() )
+            {
+                xDataNamesBuilder.add( xDataName.toString() );
+            }
+        }
+        this.metadataMixinNames = xDataNamesBuilder.build();
     }
 
     public String getName()
@@ -82,6 +98,11 @@ public class ContentTypeSummaryJson
     public String getSuperType()
     {
         return contentType.getSuperType() != null ? contentType.getSuperType().toString() : null;
+    }
+
+    public List<String> getMetadata()
+    {
+        return metadataMixinNames;
     }
 
     public boolean isAbstract()

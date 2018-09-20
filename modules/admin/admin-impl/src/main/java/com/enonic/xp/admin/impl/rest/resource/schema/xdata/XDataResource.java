@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
@@ -16,6 +17,7 @@ import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.admin.impl.json.schema.xdata.XDataJson;
@@ -31,12 +33,18 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.jaxrs.JaxRsComponent;
+import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.schema.content.ContentTypeService;
+import com.enonic.xp.schema.content.ContentTypes;
+import com.enonic.xp.schema.content.GetAllContentTypesParams;
+import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.schema.xdata.XData;
+import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.schema.xdata.XDataService;
+import com.enonic.xp.schema.xdata.XDatas;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
@@ -73,7 +81,19 @@ public final class XDataResource
         final Content content = this.contentService.getById( contentId );
 
         final XDataListJson result = new XDataListJson();
-        result.addXDatas( createXDataListJson( getSiteXData( content ) ) );
+
+        final Map<XData, Boolean> resultXData = Maps.newLinkedHashMap();
+
+        getContentTypeXData( content ).forEach( xData -> resultXData.put( xData, false ) );
+
+        getSiteXData( content ).entrySet().forEach( entry -> {
+            if ( !resultXData.containsKey( entry.getKey() ) )
+            {
+                resultXData.put( entry.getKey(), entry.getValue() );
+            }
+        } );
+
+        result.addXDatas( createXDataListJson( resultXData ) );
 
         return result;
     }
@@ -83,12 +103,24 @@ public final class XDataResource
     public XDataListJson getApplicationXDataForContentType( @QueryParam("contentTypeName") final String contentTypeName,
                                                             @QueryParam("applicationKey") final String key )
     {
+        final ContentTypeName contentType = ContentTypeName.from( contentTypeName );
+        final ApplicationKey applicationKey = ApplicationKey.from( key );
+
         final XDataListJson result = new XDataListJson();
 
         final SiteDescriptor siteDescriptor = siteService.getDescriptor( ApplicationKey.from( key ) );
 
-        result.addXDatas( createXDataListJson(
-            this.getXDatasByContentType( siteDescriptor.getXDataMappings(), ContentTypeName.from( contentTypeName ) ) ) );
+        final ContentTypes contentTypes = contentTypeService.getAll( new GetAllContentTypesParams().inlineMixinsToFormItems( false ) );
+
+        final Map<XData, Boolean> siteXData =
+            this.getXDatasByContentType( siteDescriptor.getXDataMappings(), ContentTypeName.from( contentTypeName ), contentTypes );
+
+        final XDatas applicationXData =
+            XDatas.from( this.filterXDataByContentType( this.xDataService.getByApplication( applicationKey ), contentType, contentTypes ).
+                stream().filter( externalMixin -> !siteXData.keySet().contains( externalMixin ) ).iterator() );
+
+        result.addXDatas( createXDataListJson( siteXData ) );
+        result.addXDatas( createXDataListJson( applicationXData.stream().collect( Collectors.toMap( xdata -> xdata, xdata -> false ) ) ) );
 
         return result;
     }
@@ -116,59 +148,95 @@ public final class XDataResource
                 applicationKeys.stream().map( applicationKey -> siteService.getDescriptor( applicationKey ) ).filter(
                     Objects::nonNull ).collect( toList() );
 
-            siteDescriptors.forEach(
-                siteDescriptor -> result.putAll( this.getXDatasByContentType( siteDescriptor.getXDataMappings(), content.getType() ) ) );
+            final ContentTypes contentTypes = contentTypeService.getAll( new GetAllContentTypesParams().inlineMixinsToFormItems( false ) );
+
+            siteDescriptors.forEach( siteDescriptor -> result.putAll(
+                this.getXDatasByContentType( siteDescriptor.getXDataMappings(), content.getType(), contentTypes ) ) );
 
         }
         return result;
     }
 
-    private Map<XData, Boolean> getXDatasByContentType( final XDataMappings xDataMappings, final ContentTypeName contentTypeName )
+    private Map<XData, Boolean> getXDatasByContentType( final XDataMappings xDataMappings, final ContentTypeName contentTypeName,
+                                                        final ContentTypes contentTypes )
     {
         final Map<XData, Boolean> result = Maps.newHashMap();
 
-        filterXDataMappingsByContentType( xDataMappings, contentTypeName ).forEach(
+        filterXDataMappingsByContentType( xDataMappings, contentTypeName, contentTypes ).forEach(
             xDataMapping -> result.put( this.xDataService.getByName( xDataMapping.getXDataName() ), xDataMapping.getOptional() ) );
 
         return result;
     }
 
-    private XDataMappings filterXDataMappingsByContentType( final XDataMappings xDataMappings, final ContentTypeName contentTypeName )
+    private Boolean isXDataAllowed( final XDataName xDataName, final String allowContentType, final ContentTypeName contentTypeName,
+                                    final ContentTypes contentTypes )
     {
-        final XDataMappings.Builder filteredXDatas = XDataMappings.create();
-
         final ContentTypeNameWildcardResolver contentTypeNameWildcardResolver =
             new ContentTypeNameWildcardResolver( this.contentTypeService );
 
+        final List<String> allowContentTypes =
+            StringUtils.isNotBlank( allowContentType ) ? Collections.singletonList( allowContentType ) : Lists.newArrayList();
+
+        if ( contentTypeNameWildcardResolver.anyTypeHasWildcard( allowContentTypes ) )
+        {
+            final ContentTypeNames validContentTypes = ContentTypeNames.from(
+                contentTypeNameWildcardResolver.resolveWildcards( contentTypes, allowContentTypes, xDataName.getApplicationKey() ) );
+
+            if ( validContentTypes.contains( contentTypeName ) )
+            {
+                return true;
+            }
+        }
+        else if ( StringUtils.isNotBlank( allowContentType ) )
+        {
+            if ( contentTypeName.equals( ContentTypeName.from( allowContentType ) ) )
+            {
+                return true;
+            }
+        }
+        else
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    private XDatas filterXDataByContentType( final XDatas xDatas, final ContentTypeName contentTypeName, final ContentTypes contentTypes )
+    {
+        final XDatas.Builder result = XDatas.create();
+
+        xDatas.forEach( xData -> {
+            if ( isXDataAllowed( xData.getName(), null, contentTypeName, contentTypes ) )
+            {
+                result.add( xData );
+            }
+        } );
+
+        return result.build();
+    }
+
+    private XDataMappings filterXDataMappingsByContentType( final XDataMappings xDataMappings, final ContentTypeName contentTypeName,
+                                                            final ContentTypes contentTypes )
+    {
+        final XDataMappings.Builder filteredXDatas = XDataMappings.create();
+
         xDataMappings.forEach( xDataMapping -> {
 
-            final List<String> allowContentTypes = Collections.singletonList( xDataMapping.getAllowContentTypes() );
-
-            if ( contentTypeNameWildcardResolver.anyTypeHasWildcard( allowContentTypes ) )
-            {
-                final ContentTypeNames validContentTypes = ContentTypeNames.from(
-                    contentTypeNameWildcardResolver.resolveWildcards( allowContentTypes,
-                                                                      xDataMapping.getXDataName().getApplicationKey() ) );
-
-                if ( validContentTypes.contains( contentTypeName ) )
-                {
-                    filteredXDatas.add( xDataMapping );
-                }
-            }
-            else if ( StringUtils.isNotBlank( xDataMapping.getAllowContentTypes() ) )
-            {
-                if ( contentTypeName.equals( ContentTypeName.from( xDataMapping.getAllowContentTypes() ) ) )
-                {
-                    filteredXDatas.add( xDataMapping );
-                }
-            }
-            else
+            if ( isXDataAllowed( xDataMapping.getXDataName(), xDataMapping.getAllowContentTypes(), contentTypeName, contentTypes ) )
             {
                 filteredXDatas.add( xDataMapping );
             }
         } );
 
         return filteredXDatas.build();
+    }
+
+    private XDatas getContentTypeXData( final Content content )
+    {
+        final ContentType contentType = this.contentTypeService.getByName( GetContentTypeParams.from( content.getType() ) );
+
+        return XDatas.from( this.xDataService.getByNames( contentType.getMetadata() ) );
     }
 
     @Reference

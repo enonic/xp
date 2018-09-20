@@ -108,8 +108,6 @@ public class XDataResourceTest
         Mockito.when( siteService.getDescriptor( contentTypeName.getApplicationKey() ) ).thenReturn( siteDescriptor );
 
         Mockito.when( mixinService.getByNames( Mockito.any() ) ).thenReturn( Mixins.empty() );
-        Mockito.when( xDataService.getByNames( XDataNames.from( xdata1.getName().toString(), xdata3.getName().toString() ) ) ).thenReturn(
-            XDatas.from( xdata1 ) );
         Mockito.when( xDataService.getByNames( XDataNames.from( xdata2.getName().toString(), xdata3.getName().toString() ) ) ).thenReturn(
             XDatas.from( xdata2 ) );
 
@@ -117,7 +115,7 @@ public class XDataResourceTest
         Mockito.when( xDataService.getByName( xdata2.getName() ) ).thenReturn( xdata2 );
         Mockito.when( xDataService.getByName( xdata3.getName() ) ).thenReturn( xdata3 );
 
-        Mockito.when( xDataService.getByApplication( Mockito.any() ) ).thenReturn( XDatas.from( xdata2, xdata3 ) );
+        Mockito.when( xDataService.getByApplication( Mockito.any() ) ).thenReturn( XDatas.from( xdata2 ) );
 
         String result = request().path( "schema/xdata/getApplicationXDataForContentType" ).
             queryParam( "contentTypeName", contentTypeName.toString() ).
@@ -143,7 +141,8 @@ public class XDataResourceTest
             Input.create().name( MY_MIXIN_INPUT_NAME_2 ).inputType( InputTypeName.TEXT_AREA ).label( "Text Area" ).required(
                 true ).helpText( "Help text area" ).required( true ).build() )/*.allowContentType( "app:testContentType" )*/.build();
 
-        final ContentType contentType = ContentType.create().name( "app:testContentType" ).superType( ContentTypeName.folder() ).build();
+        final ContentType contentType = ContentType.create().name( "app:testContentType" ).superType( ContentTypeName.folder() ).metadata(
+            XDataNames.from( xdata1.getName().toString() ) ).build();
         Mockito.when( contentTypeService.getByName( GetContentTypeParams.from( contentType.getName() ) ) ).thenReturn( contentType );
         Mockito.when( contentTypeService.getAll( Mockito.any() ) ).thenReturn( ContentTypes.from( contentType ) );
 

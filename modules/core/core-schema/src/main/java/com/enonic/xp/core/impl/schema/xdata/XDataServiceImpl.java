@@ -16,6 +16,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.core.impl.schema.SchemaHelper;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.schema.xdata.XDataNames;
@@ -99,6 +100,15 @@ public final class XDataServiceImpl
         }
 
         return XDatas.from( list );
+    }
+
+    @Override
+    public XDatas getFromContentType( final ContentType contentType )
+    {
+        return XDatas.from( contentType.getMetadata().stream().
+            map( this::getByName ).
+            filter( Objects::nonNull ).
+            collect( Collectors.toSet() ) );
     }
 
     private Set<XDataName> findNames( final ApplicationKey key )

@@ -1,6 +1,7 @@
 package com.enonic.xp.core.content;
 
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
@@ -9,6 +10,8 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.content.UpdateMediaParams;
+import com.enonic.xp.schema.content.ContentType;
+import com.enonic.xp.schema.xdata.XDatas;
 
 import static org.junit.Assert.*;
 
@@ -30,6 +33,8 @@ public class ContentServiceImplTest_media
         createMediaParams.byteSource( loadImage( "cat-small.jpg" ) ).
             name( "Small cat" ).
             parent( ContentPath.ROOT );
+
+        Mockito.when( this.xDataService.getFromContentType( Mockito.any( ContentType.class ) ) ).thenReturn( XDatas.empty() );
 
         final Content content = this.contentService.create( createMediaParams );
 
@@ -54,6 +59,8 @@ public class ContentServiceImplTest_media
             name( "Small cat.jpg" ).
             parent( ContentPath.ROOT );
 
+        Mockito.when( this.xDataService.getFromContentType( Mockito.any( ContentType.class ) ) ).thenReturn( XDatas.empty() );
+
         final Content content = this.contentService.create( createMediaParams );
 
         final Content storedContent = this.contentService.getById( content.getId() );
@@ -71,6 +78,8 @@ public class ContentServiceImplTest_media
         createMediaParams.byteSource( loadImage( "cat-small.jpg" ) ).
             name( "Small cat" ).
             parent( ContentPath.ROOT );
+
+        Mockito.when( this.xDataService.getFromContentType( Mockito.any( ContentType.class ) ) ).thenReturn( XDatas.empty() );
 
         final Content content = this.contentService.create( createMediaParams );
 

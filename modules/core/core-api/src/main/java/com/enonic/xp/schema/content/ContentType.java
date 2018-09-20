@@ -7,6 +7,7 @@ import com.google.common.base.MoreObjects;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.schema.BaseSchema;
+import com.enonic.xp.schema.xdata.XDataNames;
 
 @Beta
 public final class ContentType
@@ -26,6 +27,8 @@ public final class ContentType
 
     private final String contentDisplayNameScript;
 
+    private final XDataNames metadata;
+
     ContentType( final Builder builder )
     {
         super( builder );
@@ -44,6 +47,7 @@ public final class ContentType
         this.isBuiltIn = builder.isBuiltIn;
         this.form = builder.formBuilder != null ? builder.formBuilder.build() : Form.create().build();
         this.contentDisplayNameScript = builder.contentDisplayNameScript;
+        this.metadata = builder.metadata;
     }
 
     public static Builder create()
@@ -96,6 +100,11 @@ public final class ContentType
         return contentDisplayNameScript;
     }
 
+    public XDataNames getMetadata()
+    {
+        return metadata;
+    }
+
     @Override
     public String toString()
     {
@@ -103,6 +112,7 @@ public final class ContentType
         s.add( "name", getName() );
         s.add( "displayName", getDisplayName() );
         s.add( "description", getDescription() );
+        s.add( "metadata", metadata );
         s.add( "superType", superType );
         s.add( "isAbstract", isAbstract );
         s.add( "isFinal", isFinal );
@@ -131,6 +141,8 @@ public final class ContentType
 
         private String contentDisplayNameScript;
 
+        private XDataNames metadata;
+
         private Builder()
         {
             super();
@@ -139,6 +151,7 @@ public final class ContentType
             isFinal = true;
             allowChildContent = true;
             isBuiltIn = false;
+            metadata = XDataNames.empty();
         }
 
         private Builder( final ContentType source )
@@ -154,6 +167,7 @@ public final class ContentType
                 this.formBuilder = Form.create( source.getForm() );
             }
             this.contentDisplayNameScript = source.getContentDisplayNameScript();
+            this.metadata = source.metadata;
         }
 
         @Override
@@ -231,6 +245,12 @@ public final class ContentType
         public Builder contentDisplayNameScript( final String contentDisplayNameScript )
         {
             this.contentDisplayNameScript = contentDisplayNameScript;
+            return this;
+        }
+
+        public Builder metadata( final XDataNames metadata )
+        {
+            this.metadata = metadata;
             return this;
         }
 
