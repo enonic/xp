@@ -77,7 +77,7 @@ var expected = {
         "_id": "nodeId",
         "_name": "my-name",
         "_path": "/my-name",
-        "_childOrder": "_s DESC",
+        "_childOrder": "_ts DESC",
         "_indexConfig": {
             "default": {
                 "decideByType": false,
