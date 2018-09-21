@@ -10,6 +10,7 @@ import com.enonic.xp.launcher.impl.config.ConfigLoader;
 import com.enonic.xp.launcher.impl.config.ConfigProperties;
 import com.enonic.xp.launcher.impl.env.Environment;
 import com.enonic.xp.launcher.impl.env.EnvironmentResolver;
+import com.enonic.xp.launcher.impl.env.RequirementChecker;
 import com.enonic.xp.launcher.impl.env.SystemProperties;
 import com.enonic.xp.launcher.impl.framework.FrameworkService;
 import com.enonic.xp.launcher.impl.logging.LogActivator;
@@ -45,8 +46,7 @@ public final class LauncherImpl
 
     private void checkRequirements()
     {
-        //TODO Java10
-//        new RequirementChecker( this.systemProperties ).check();
+        new RequirementChecker( this.systemProperties ).check();
     }
 
     private void resolveEnv()

@@ -12,7 +12,7 @@ public class RequirementCheckerTest
     public void rightJavaVersion()
     {
         final SystemProperties props = new SystemProperties();
-        props.put( JAVA_VERSION.key(), "1.8.0_92" );
+        props.put( JAVA_VERSION.key(), "10.0.2" );
 
         new RequirementChecker( props ).check();
     }
@@ -21,16 +21,7 @@ public class RequirementCheckerTest
     public void rightJavaVersion_withClassifier()
     {
         final SystemProperties props = new SystemProperties();
-        props.put( JAVA_VERSION.key(), "1.8.0_94-internal" );
-
-        new RequirementChecker( props ).check();
-    }
-
-    @Test(expected = LauncherException.class)
-    public void rightJavaVersion_wrongUpdate()
-    {
-        final SystemProperties props = new SystemProperties();
-        props.put( JAVA_VERSION.key(), "1.8.0_20" );
+        props.put( JAVA_VERSION.key(), "10.0.2_94-internal" );
 
         new RequirementChecker( props ).check();
     }

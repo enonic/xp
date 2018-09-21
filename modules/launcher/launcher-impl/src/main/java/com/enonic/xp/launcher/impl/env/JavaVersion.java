@@ -9,9 +9,9 @@ final class JavaVersion
         this.value = props.get( "java.version" );
     }
 
-    boolean isJava8()
+    boolean isJava10()
     {
-        return this.value.startsWith( "1.8" );
+        return this.value.startsWith( "10." );
     }
 
     int getUpdate()
