@@ -11,8 +11,7 @@ public class ImageHelperTest
     {
         final String str = ImageHelper.createImagePlaceholder( 2, 2 );
         assertNotNull( str );
-        assertEquals(
-            "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAHUlEQVR4AQESAO3/AAAAAAAAAAAAAAAAAAAAAAAAABIAAYmOiYwAAAAASUVORK5CYII=",
-            str );
+        assertEquals( "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAC0lEQVR42mNgQAcAABIAAeRVjecAAAAASUVORK5CYII=",
+                      str );
     }
 }

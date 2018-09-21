@@ -36,7 +36,7 @@ public final class ImageHelper
         try
         {
             final BufferedImage image = createImage( width, height, true );
-            final byte[] bytes = writeImage( image, "png", 100 );
+            final byte[] bytes = writeImage( image, "png", -1 );
 
             final BaseEncoding encoding = BaseEncoding.base64();
             return "data:image/png;base64," + encoding.encode( bytes );
@@ -94,7 +94,7 @@ public final class ImageHelper
         return out.toByteArray();
     }
 
-    public static void writeImage( OutputStream out, final BufferedImage image, final String format, final int quality )
+    private static void writeImage( OutputStream out, final BufferedImage image, final String format, final int quality )
         throws IOException
     {
         final ImageWriter writer = getWriterByFormat( format );
@@ -109,7 +109,11 @@ public final class ImageHelper
 
     private static void setCompressionQuality( ImageWriteParam params, int quality )
     {
-        if ( quality <= 0 )
+        if ( quality == -1 )
+        {
+            quality = 0;
+        }
+        else if ( quality <= 0 )
         {
             quality = 1;
         }
