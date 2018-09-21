@@ -1,6 +1,7 @@
 package com.enonic.xp.node;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
 import com.google.common.annotations.Beta;
@@ -374,6 +375,10 @@ public final class Node
         public Builder timestamp( final Instant timestamp )
         {
             this.timestamp = timestamp;
+            if ( timestamp != null && timestamp.getNano() % 1_000_000 != 0 )
+            {
+                this.timestamp = timestamp.truncatedTo( ChronoUnit.MILLIS );
+            }
             return this;
         }
 

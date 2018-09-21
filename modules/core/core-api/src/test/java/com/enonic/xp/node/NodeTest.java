@@ -1,5 +1,7 @@
 package com.enonic.xp.node;
 
+import java.time.Instant;
+
 import org.junit.Test;
 
 import com.enonic.xp.data.PropertyTree;
@@ -32,7 +34,7 @@ public class NodeTest
 
         assertEquals( Node.ROOT_UUID.toString(), rootNode.id().toString() );
         assertEquals( "", rootNode.name().toString() );
-        assertEquals( null, rootNode.parentPath() );
+        assertNull( rootNode.parentPath() );
         assertEquals( NodePath.create( NodePath.ROOT ).addElement( "" ).build(), rootNode.path() );
     }
 
@@ -108,4 +110,31 @@ public class NodeTest
         equalsTest.assertEqualsAndHashCodeContract();
     }
 
+    @Test
+    public void timestampWithNanoSecondPrecisionTruncatedToMillis()
+    {
+        Instant timestamp = Instant.parse( "2017-10-01T09:00:00.123456789Z" );
+        PropertyTree data1 = new PropertyTree();
+        Node node = Node.create().
+            name( "name1" ).
+            data( data1 ).
+            timestamp( timestamp ).
+            build();
+
+        assertEquals( Instant.parse( "2017-10-01T09:00:00.123Z" ), node.getTimestamp() );
+    }
+
+    @Test
+    public void timestampWithMillisecondPrecision()
+    {
+        Instant timestamp = Instant.parse( "2017-10-01T09:00:00.123Z" );
+        PropertyTree data1 = new PropertyTree();
+        Node node = Node.create().
+            name( "name1" ).
+            data( data1 ).
+            timestamp( timestamp ).
+            build();
+
+        assertEquals( Instant.parse( "2017-10-01T09:00:00.123Z" ), node.getTimestamp() );
+    }
 }
