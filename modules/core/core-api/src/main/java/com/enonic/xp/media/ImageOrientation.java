@@ -3,7 +3,7 @@ package com.enonic.xp.media;
 import java.util.HashMap;
 import java.util.Map;
 
-// Image orientation values from EXIF xData
+// Image orientation values from EXIF metadata
 // See http://www.impulseadventure.com/photo/exif-orientation.html
 public enum ImageOrientation
 {
