@@ -78,7 +78,7 @@ public class XDataServiceImplTest
         final ContentType contentType = ContentType.create().
             superType( ContentTypeName.structured() ).
             name( "myapp2:address" ).
-            metadata( XDataNames.from( "myapp2:address", "myapp2:address1" ) ).
+            xData( XDataNames.from( "myapp2:address", "myapp2:address1" ) ).
             build();
         final XDatas xDatas = service.getFromContentType( contentType );
         assertNotNull( xDatas );

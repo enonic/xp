@@ -34,9 +34,9 @@ public class ContentTypeSummaryJson
         this.iconUrl = iconUrlResolver.resolve( contentType );
 
         ImmutableList.Builder<String> xDataNamesBuilder = new ImmutableList.Builder<>();
-        if ( this.contentType.getMetadata() != null )
+        if ( this.contentType.getXData() != null )
         {
-            for ( XDataName xDataName : this.contentType.getMetadata() )
+            for ( XDataName xDataName : this.contentType.getXData() )
             {
                 xDataNamesBuilder.add( xDataName.toString() );
             }

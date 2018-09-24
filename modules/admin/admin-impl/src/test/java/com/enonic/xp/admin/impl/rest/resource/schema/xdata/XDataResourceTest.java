@@ -141,7 +141,7 @@ public class XDataResourceTest
             Input.create().name( MY_MIXIN_INPUT_NAME_2 ).inputType( InputTypeName.TEXT_AREA ).label( "Text Area" ).required(
                 true ).helpText( "Help text area" ).required( true ).build() )/*.allowContentType( "app:testContentType" )*/.build();
 
-        final ContentType contentType = ContentType.create().name( "app:testContentType" ).superType( ContentTypeName.folder() ).metadata(
+        final ContentType contentType = ContentType.create().name( "app:testContentType" ).superType( ContentTypeName.folder() ).xData(
             XDataNames.from( xdata1.getName().toString() ) ).build();
         Mockito.when( contentTypeService.getByName( GetContentTypeParams.from( contentType.getName() ) ) ).thenReturn( contentType );
         Mockito.when( contentTypeService.getAll( Mockito.any() ) ).thenReturn( ContentTypes.from( contentType ) );

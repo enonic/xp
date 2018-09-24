@@ -44,7 +44,7 @@ public final class MediaInfo
         this.mediaType = builder.mediaType;
         this.metadata = builder.metadata.build();
         this.textContent = builder.textContent;
-        Preconditions.checkNotNull( this.metadata, "metadata cannot be null" );
+        Preconditions.checkNotNull( this.metadata, "xData cannot be null" );
     }
 
     public String getMediaType()

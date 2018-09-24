@@ -121,7 +121,7 @@ public class XmlContentTypeParserTest
         parse( this.parser, "-mixins.xml" );
         final ContentType result = this.builder.build();
 
-        final XDataNames xDataNames = result.getMetadata();
+        final XDataNames xDataNames = result.getXData();
 
         assertEquals( 2, xDataNames.getSize() );
         assertTrue( xDataNames.contains( XDataName.from( "myapplication:metadata1" ) ) );

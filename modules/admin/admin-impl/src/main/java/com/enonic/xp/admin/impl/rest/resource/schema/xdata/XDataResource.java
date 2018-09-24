@@ -236,7 +236,7 @@ public final class XDataResource
     {
         final ContentType contentType = this.contentTypeService.getByName( GetContentTypeParams.from( content.getType() ) );
 
-        return XDatas.from( this.xDataService.getByNames( contentType.getMetadata() ) );
+        return XDatas.from( this.xDataService.getByNames( contentType.getXData() ) );
     }
 
     @Reference

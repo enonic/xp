@@ -29,7 +29,6 @@
     ]
   },
   "iconUrl": "/admin/rest/schema/mixin/icon/myapplication:input_text_1",
-  "isOptional": false,
   "modifiedTime": null,
   "modifier": null,
   "name": "myapplication:input_text_1"

@@ -105,7 +105,7 @@ public final class XDataServiceImpl
     @Override
     public XDatas getFromContentType( final ContentType contentType )
     {
-        return XDatas.from( contentType.getMetadata().stream().
+        return XDatas.from( contentType.getXData().stream().
             map( this::getByName ).
             filter( Objects::nonNull ).
             collect( Collectors.toSet() ) );
