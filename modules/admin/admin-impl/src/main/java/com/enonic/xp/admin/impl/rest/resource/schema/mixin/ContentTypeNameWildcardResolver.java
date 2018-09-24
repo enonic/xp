@@ -11,7 +11,6 @@ import org.codehaus.jparsec.util.Lists;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationWildcardResolver;
 import com.enonic.xp.schema.content.ContentTypeService;
-import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.content.GetAllContentTypesParams;
 
 public class ContentTypeNameWildcardResolver
@@ -32,10 +31,11 @@ public class ContentTypeNameWildcardResolver
             s -> this.applicationWildcardResolver.hasAnyWildcard( s ) || this.applicationWildcardResolver.startWithAppWildcard( s ) );
     }
 
-    public List<String> resolveWildcards( final ContentTypes contentTypes, final List<String> namesToResolve,
-                                          final ApplicationKey currentApplicationKey )
+    public List<String> resolveWildcards( final List<String> namesToResolve, final ApplicationKey currentApplicationKey )
     {
-        List<String> contentTypesList = contentTypes.stream().
+        List<String> allContentTypes = contentTypeService.
+            getAll( new GetAllContentTypesParams().inlineMixinsToFormItems( false ) ).
+            stream().
             map( type -> type.getName().toString() ).
             collect( Collectors.toList() );
 
@@ -55,7 +55,7 @@ public class ContentTypeNameWildcardResolver
                 }
                 if ( this.applicationWildcardResolver.hasAnyWildcard( resolvedName ) )
                 {
-                    resolvedNames.addAll( this.resolveAnyWildcard( resolvedName, contentTypesList ) );
+                    resolvedNames.addAll( this.resolveAnyWildcard( resolvedName, allContentTypes ) );
                 }
                 else
                 {
@@ -69,13 +69,6 @@ public class ContentTypeNameWildcardResolver
         } );
 
         return resolvedNames;
-    }
-
-    public List<String> resolveWildcards( final List<String> namesToResolve, final ApplicationKey currentApplicationKey )
-    {
-        return this.resolveWildcards( contentTypeService.getAll( new GetAllContentTypesParams().inlineMixinsToFormItems( false ) ),
-                                      namesToResolve, currentApplicationKey );
-
     }
 
     private List<String> resolveAnyWildcard( final String nameToResolve, final List<String> allContentTypes )
