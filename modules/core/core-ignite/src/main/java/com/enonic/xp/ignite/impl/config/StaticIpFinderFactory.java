@@ -1,5 +1,6 @@
 package com.enonic.xp.ignite.impl.config;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -7,6 +8,8 @@ import java.util.stream.Stream;
 import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
 
 import com.enonic.xp.cluster.ClusterConfig;
 import com.enonic.xp.cluster.NodeDiscovery;
@@ -36,7 +39,7 @@ class StaticIpFinderFactory
 
         final String discoveryTcpLocalAddress = clusterConfig.networkHost();
         final Stream<String> configLocalAddress = Stream.of( discoveryTcpLocalAddress + portPrefix );
-        final Stream<String> discoveryAddresses = this.discovery.get().stream().map( host -> host.getCanonicalHostName() + portPrefix );
+        final Stream<String> discoveryAddresses = getDiscoveryAddresses( portPrefix );
         final List<String> hostStrings = Stream.concat( discoveryAddresses, configLocalAddress ).
             distinct().
             collect( Collectors.toList() );
@@ -46,6 +49,19 @@ class StaticIpFinderFactory
         LOG.info( "Setting discovery [staticIP] with address: [" + hostStrings + "]" );
 
         return staticIpFinder;
+    }
+
+    private Stream<String> getDiscoveryAddresses( final String portPrefix )
+    {
+        final String discoveryUnicastSockets = igniteConfig.discovery_unicast_sockets();
+        if ( !Strings.isNullOrEmpty( discoveryUnicastSockets ) )
+        {
+            return Arrays.stream( discoveryUnicastSockets.split( "," ) );
+        }
+
+        return this.discovery.get().
+            stream().
+            map( host -> host.getCanonicalHostName() + portPrefix );
     }
 
     private String getPortPrefix()

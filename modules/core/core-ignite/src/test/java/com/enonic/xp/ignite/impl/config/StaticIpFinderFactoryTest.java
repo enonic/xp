@@ -81,6 +81,23 @@ public class StaticIpFinderFactoryTest
         assertHost( finder, "10.0.0.1", 45000, 45001, 45002, 45003, 45004 );
     }
 
+    @Test
+    public void test_socket_addresses()
+        throws Exception
+    {
+        Mockito.when( this.igniteSettings.discovery_tcp_port() ).thenReturn( 45000 );
+        Mockito.when( this.igniteSettings.discovery_tcp_port_range() ).thenReturn( 3 );
+        Mockito.when( this.igniteSettings.discovery_unicast_sockets() ).thenReturn( "1.2.3.5:47500..47502, 1.2.3.4:47504..47506" );
+        Mockito.when( this.clusterConfig.networkHost() ).thenReturn( "10.0.0.1" );
+
+        final TcpDiscoveryVmIpFinder finder = createFinder();
+
+        assertEquals( 9, finder.getRegisteredAddresses().size() );
+        assertHost( finder, "1.2.3.5", 47500, 47501, 47502 );
+        assertHost( finder, "1.2.3.4", 47504, 47505, 47506 );
+        assertHost( finder, "10.0.0.1", 45000, 45001, 45002 );
+    }
+
     private void assertHost( final TcpDiscoveryVmIpFinder finder, final String host, final int... ports )
         throws Exception
     {
@@ -90,7 +107,8 @@ public class StaticIpFinderFactoryTest
 
         for ( final int port : ports )
         {
-            assertTrue( registeredAddresses.contains( new InetSocketAddress( inetAddress, port ) ) );
+            assertTrue( String.format( "Should contain: %s : %s", inetAddress, port ),
+                        registeredAddresses.contains( new InetSocketAddress( inetAddress, port ) ) );
         }
     }
 
