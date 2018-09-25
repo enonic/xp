@@ -1,9 +1,6 @@
 package com.enonic.xp.schema.xdata;
 
-import java.util.Collection;
 import java.util.Objects;
-
-import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
@@ -14,23 +11,15 @@ public final class XData
 {
     private final Form form;
 
-    private final ImmutableList<String> allowContentTypes;
-
     private XData( final Builder builder )
     {
         super( builder );
         this.form = builder.formBuilder.build();
-        this.allowContentTypes = builder.allowContentTypes.build();
     }
 
     public Form getForm()
     {
         return this.form;
-    }
-
-    public ImmutableList<String> getAllowContentTypes()
-    {
-        return allowContentTypes;
     }
 
     public static Builder create()
@@ -59,20 +48,18 @@ public final class XData
             return false;
         }
         final XData xData = (XData) o;
-        return Objects.equals( allowContentTypes, xData.allowContentTypes ) && Objects.equals( form, xData.form );
+        return Objects.equals( form, xData.form );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( super.hashCode(), allowContentTypes, form );
+        return Objects.hash( super.hashCode(), form );
     }
 
     public static class Builder
         extends BaseSchema.Builder<Builder, XDataName>
     {
-        private ImmutableList.Builder<String> allowContentTypes = ImmutableList.builder();
-
         private Form.Builder formBuilder = Form.create();
 
         public Builder()
@@ -83,20 +70,7 @@ public final class XData
         public Builder( final XData xData )
         {
             super( xData );
-            this.allowContentTypes = ImmutableList.<String>builder().addAll( xData.getAllowContentTypes() );
             this.formBuilder = Form.create( xData.getForm() );
-        }
-
-        public Builder allowContentType( final String value )
-        {
-            this.allowContentTypes.add( value );
-            return this;
-        }
-
-        public Builder allowContentTypes( final Collection<String> value )
-        {
-            this.allowContentTypes.addAll( value );
-            return this;
         }
 
         public Builder form( final Form value )

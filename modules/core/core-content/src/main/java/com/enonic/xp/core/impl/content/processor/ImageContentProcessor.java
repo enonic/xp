@@ -89,7 +89,6 @@ public final class ImageContentProcessor
     protected XDatas getXDatas( final ContentTypeName contentTypeName )
     {
         final ContentType contentType = contentTypeService.getByName( GetContentTypeParams.from( contentTypeName ) );
-
         return xDataService.getFromContentType( contentType );
     }
 
@@ -105,7 +104,6 @@ public final class ImageContentProcessor
         final CreateAttachment sourceAttachment = originalAttachments.first();
 
         final XDatas contentXDatas = getXDatas( createContentParams.getType() );
-
         ExtraDatas extraDatas = null;
         if ( mediaInfo != null )
         {
@@ -132,7 +130,6 @@ public final class ImageContentProcessor
         if ( mediaInfo != null )
         {
             editor = editable -> {
-
                 final XDatas contentXDatas = getXDatas( params.getContentType().getName() );
                 editable.extraDatas = extractMetadata( mediaInfo, contentXDatas, sourceAttachment );
 
@@ -154,6 +151,7 @@ public final class ImageContentProcessor
         return new ProcessUpdateResult( createAttachments, editor );
 
     }
+
 
     private ExtraDatas updateImageMetadata( final EditableContent editable )
     {
@@ -238,14 +236,12 @@ public final class ImageContentProcessor
     {
         final ExtraDatas.Builder extradatasBuilder = ExtraDatas.create();
         final Map<XDataName, ExtraData> metadataMap = new HashMap<>();
-
         final ExtraData geoData = extractGeoLocation( mediaInfo, xDatas );
         if ( geoData != null )
         {
             metadataMap.put( MediaInfo.GPS_INFO_METADATA_NAME, geoData );
             extradatasBuilder.add( geoData );
         }
-
         for ( Map.Entry<String, Collection<String>> entry : mediaInfo.getMetadata().asMap().entrySet() )
         {
             for ( XData xData : xDatas )
@@ -256,7 +252,6 @@ public final class ImageContentProcessor
                 {
                     continue;
                 }
-
                 ExtraData extraData = metadataMap.get( xData.getName() );
                 if ( extraData == null )
                 {
@@ -282,11 +277,9 @@ public final class ImageContentProcessor
                         extraData.getData().addStrings( formItemName, entry.getValue() );
                     }
                 }
-
             }
         }
         fillComputedFormItems( metadataMap.values(), mediaInfo, sourceAttachment );
-
         return extradatasBuilder.build();
     }
 
@@ -299,7 +292,6 @@ public final class ImageContentProcessor
         {
             return null;
         }
-
         final XData geoMixin = xDatas.getXData( MediaInfo.GPS_INFO_METADATA_NAME );
         if ( geoMixin == null )
         {
@@ -361,7 +353,6 @@ public final class ImageContentProcessor
                     xData.setLong( IMAGE_INFO_IMAGE_HEIGHT, tiffImageLength );
                     xData.setLong( IMAGE_INFO_IMAGE_WIDTH, tiffImageWidth );
                 }
-
                 if ( sourceAttachment != null )
                 {
                     try

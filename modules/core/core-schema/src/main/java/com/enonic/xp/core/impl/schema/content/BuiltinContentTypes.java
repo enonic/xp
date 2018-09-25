@@ -258,8 +258,8 @@ final class BuiltinContentTypes
 
     private static final ContentType MEDIA_IMAGE = createSystemType( ContentTypeName.imageMedia() ).superType( ContentTypeName.media() ).
         setFinal( true ).setAbstract( false ).allowChildContent( false ).form( MEDIA_IMAGE_FORM ).
-        metadata( XDataNames.from( MediaInfo.IMAGE_INFO_METADATA_NAME, MediaInfo.CAMERA_INFO_METADATA_NAME,
-                                   MediaInfo.GPS_INFO_METADATA_NAME ) ).build();
+        xData( XDataNames.from( MediaInfo.IMAGE_INFO_METADATA_NAME, MediaInfo.CAMERA_INFO_METADATA_NAME,
+                                MediaInfo.GPS_INFO_METADATA_NAME ) ).build();
 
     private static final ContentType MEDIA_VECTOR = createSystemType( ContentTypeName.vectorMedia() ).superType( ContentTypeName.media() ).
         setFinal( true ).setAbstract( false ).allowChildContent( false ).form( MEDIA_VECTOR_FORM ).build();

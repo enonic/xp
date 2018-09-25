@@ -46,7 +46,7 @@ public final class XmlContentTypeParser
         this.builder.setFinal( root.getChildValueAs( "is-final", Boolean.class, false ) );
         this.builder.allowChildContent( root.getChildValueAs( "allow-child-content", Boolean.class, true ) );
 
-        this.builder.metadata( buildMetaData( root ) );
+        this.builder.xData( buildMetaData( root ) );
 
         final XmlFormMapper mapper = new XmlFormMapper( this.currentApplication );
         this.builder.form( mapper.buildForm( root.getChild( "form" ) ) );
@@ -60,7 +60,6 @@ public final class XmlContentTypeParser
             String name = child.getAttribute( "name" );
             names.add( this.resolver.toXDataName( name ) );
         }
-
         return XDataNames.from( names );
     }
 }

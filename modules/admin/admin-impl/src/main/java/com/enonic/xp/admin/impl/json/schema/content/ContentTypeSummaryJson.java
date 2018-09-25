@@ -22,9 +22,9 @@ public class ContentTypeSummaryJson
 
     private final String iconUrl;
 
-    private final ImmutableList<String> metadataMixinNames;
-
     private final LocaleMessageResolver localeMessageResolver;
+
+    private final ImmutableList<String> metadataMixinNames;
 
     public ContentTypeSummaryJson( final ContentType contentType, final ContentTypeIconUrlResolver iconUrlResolver,
                                    final LocaleMessageResolver localeMessageResolver )
@@ -34,9 +34,9 @@ public class ContentTypeSummaryJson
         this.iconUrl = iconUrlResolver.resolve( contentType );
 
         ImmutableList.Builder<String> xDataNamesBuilder = new ImmutableList.Builder<>();
-        if ( this.contentType.getMetadata() != null )
+        if ( this.contentType.getXData() != null )
         {
-            for ( XDataName xDataName : this.contentType.getMetadata() )
+            for ( XDataName xDataName : this.contentType.getXData() )
             {
                 xDataNamesBuilder.add( xDataName.toString() );
             }
@@ -100,6 +100,11 @@ public class ContentTypeSummaryJson
         return contentType.getSuperType() != null ? contentType.getSuperType().toString() : null;
     }
 
+    public List<String> getMetadata()
+    {
+        return metadataMixinNames;
+    }
+
     public boolean isAbstract()
     {
         return contentType.isAbstract();
@@ -125,11 +130,6 @@ public class ContentTypeSummaryJson
     public String getModifier()
     {
         return contentType.getModifier() != null ? contentType.getModifier().toString() : null;
-    }
-
-    public List<String> getMetadata()
-    {
-        return metadataMixinNames;
     }
 
     @Override

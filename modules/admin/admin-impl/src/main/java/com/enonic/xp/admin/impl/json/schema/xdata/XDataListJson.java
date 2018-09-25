@@ -36,8 +36,7 @@ public class XDataListJson
         this.list.addAll( xDatas );
     }
 
-    // TODO rename to getXData, requires changes in front-end code
-    public List<XDataJson> getMixins()
+    public List<XDataJson> getXDatas()
     {
         return this.list;
     }

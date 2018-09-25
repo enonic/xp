@@ -27,7 +27,7 @@ public final class ContentType
 
     private final String contentDisplayNameScript;
 
-    private final XDataNames metadata;
+    private final XDataNames xData;
 
     ContentType( final Builder builder )
     {
@@ -47,7 +47,7 @@ public final class ContentType
         this.isBuiltIn = builder.isBuiltIn;
         this.form = builder.formBuilder != null ? builder.formBuilder.build() : Form.create().build();
         this.contentDisplayNameScript = builder.contentDisplayNameScript;
-        this.metadata = builder.metadata;
+        this.xData = builder.xData;
     }
 
     public static Builder create()
@@ -100,11 +100,10 @@ public final class ContentType
         return contentDisplayNameScript;
     }
 
-    public XDataNames getMetadata()
+    public XDataNames getXData()
     {
-        return metadata;
+        return xData;
     }
-
 
     @Override
     public String toString()
@@ -113,7 +112,7 @@ public final class ContentType
         s.add( "name", getName() );
         s.add( "displayName", getDisplayName() );
         s.add( "description", getDescription() );
-        s.add( "metadata", metadata );
+        s.add( "metadata", xData );
         s.add( "superType", superType );
         s.add( "isAbstract", isAbstract );
         s.add( "isFinal", isFinal );
@@ -142,7 +141,7 @@ public final class ContentType
 
         private String contentDisplayNameScript;
 
-        private XDataNames metadata;
+        private XDataNames xData;
 
         private Builder()
         {
@@ -152,7 +151,7 @@ public final class ContentType
             isFinal = true;
             allowChildContent = true;
             isBuiltIn = false;
-            metadata = XDataNames.empty();
+            xData = XDataNames.empty();
         }
 
         private Builder( final ContentType source )
@@ -168,7 +167,7 @@ public final class ContentType
                 this.formBuilder = Form.create( source.getForm() );
             }
             this.contentDisplayNameScript = source.getContentDisplayNameScript();
-            this.metadata = source.metadata;
+            this.xData = source.xData;
         }
 
         @Override
@@ -249,9 +248,9 @@ public final class ContentType
             return this;
         }
 
-        public Builder metadata( final XDataNames metadata )
+        public Builder xData( final XDataNames xData )
         {
-            this.metadata = metadata;
+            this.xData = xData;
             return this;
         }
 

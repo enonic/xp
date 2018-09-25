@@ -21,8 +21,4 @@
       </items>
     </item-set>
   </items>
-  <allowContentType>test.contentType1</allowContentType>
-  <allowContentType>test.contentType2</allowContentType>
-  <allowContentType>${app}:contentType3</allowContentType>
-  <allowContentType>*contentType4</allowContentType>
 </x-data>

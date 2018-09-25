@@ -35,6 +35,7 @@ public class ContentServiceImplTest_media
             parent( ContentPath.ROOT );
 
         Mockito.when( this.xDataService.getFromContentType( Mockito.any( ContentType.class ) ) ).thenReturn( XDatas.empty() );
+
         final Content content = this.contentService.create( createMediaParams );
 
         final Content storedContent = this.contentService.getById( content.getId() );
@@ -59,6 +60,7 @@ public class ContentServiceImplTest_media
             parent( ContentPath.ROOT );
 
         Mockito.when( this.xDataService.getFromContentType( Mockito.any( ContentType.class ) ) ).thenReturn( XDatas.empty() );
+
         final Content content = this.contentService.create( createMediaParams );
 
         final Content storedContent = this.contentService.getById( content.getId() );
@@ -78,6 +80,7 @@ public class ContentServiceImplTest_media
             parent( ContentPath.ROOT );
 
         Mockito.when( this.xDataService.getFromContentType( Mockito.any( ContentType.class ) ) ).thenReturn( XDatas.empty() );
+
         final Content content = this.contentService.create( createMediaParams );
 
         final Content storedContent = this.contentService.getById( content.getId() );

@@ -106,7 +106,6 @@ public class ImageContentProcessorTest
     public void testProcessCreate()
         throws IOException
     {
-
         Mockito.when( this.xDataService.getFromContentType( Mockito.any( ContentType.class ) ) ).thenReturn( XDatas.empty() );
 
         final CreateAttachments createAttachments = createAttachments();
@@ -124,20 +123,13 @@ public class ImageContentProcessorTest
     public void testProcessCreateWithGeoData()
         throws IOException
     {
-
         final XData gpsInfo = createXData( GPS_INFO_METADATA_NAME, "Gps Info", createGpsInfoMixinForm() );
-
         Mockito.when( this.xDataService.getFromContentType( Mockito.any( ContentType.class ) ) ).thenReturn( XDatas.from( gpsInfo ) );
-
         final CreateContentParams params = createContentParams( createAttachments() );
-
         final ProcessCreateParams processCreateParams = new ProcessCreateParams( params, MediaInfo.create().
             addMetadata( "geo lat", "1" ).addMetadata( "geo long", "2" ).build() );
-
         final GeoPoint geoPoint = new GeoPoint( 1.0, 2.0 );
-
         final ProcessCreateResult result = this.imageContentProcessor.processCreate( processCreateParams );
-
         final ExtraData geoExtraData = result.getCreateContentParams().getExtraDatas().first();
         assertEquals( geoExtraData.getName(), GPS_INFO_METADATA_NAME );
         assertEquals( geoExtraData.getData().getGeoPoint( MediaInfo.GPS_INFO_GEO_POINT, 0 ), geoPoint );
@@ -147,22 +139,15 @@ public class ImageContentProcessorTest
     public void testProcessCreateWithExtraData()
         throws IOException
     {
-
         final Form.Builder form = Form.create();
         form.addFormItem( createTextLine( "shutterTime", "Exposure Time" ).occurrences( 0, 1 ).build() );
         form.addFormItem( createTextLine( "altitude", "Gps Altitude" ).occurrences( 0, 1 ).build() );
-
         final XData xDataInfo = createXData( MediaInfo.IMAGE_INFO_METADATA_NAME, "Extra Info", form.build() );
-
         Mockito.when( this.xDataService.getFromContentType( Mockito.any( ContentType.class ) ) ).thenReturn( XDatas.from( xDataInfo ) );
-
         final CreateContentParams params = createContentParams( createAttachments() );
-
         final ProcessCreateParams processCreateParams = new ProcessCreateParams( params, MediaInfo.create().
             addMetadata( "exposure time", "1" ).addMetadata( "gps altitude ", "2" ).build() );
-
         final ProcessCreateResult result = this.imageContentProcessor.processCreate( processCreateParams );
-
         final ExtraData extraData = result.getCreateContentParams().getExtraDatas().first();
         assertEquals( xDataInfo.getName(), extraData.getName() );
         assertEquals( extraData.getData().getString( "shutterTime", 0 ), "1" );
@@ -174,7 +159,6 @@ public class ImageContentProcessorTest
     public void testProcessUpdate()
         throws IOException
     {
-
         Mockito.when( contentService.getBinary( Mockito.any(), Mockito.any() ) ).thenReturn( this.loadImage( "cat-small.jpg" ) );
 
         final ProcessUpdateParams processUpdateParams = ProcessUpdateParams.create().
@@ -213,17 +197,12 @@ public class ImageContentProcessorTest
     public void testProcessUpdateWithMediaInfo()
         throws IOException
     {
-
         final Form.Builder form = Form.create();
         form.addFormItem( createTextLine( "shutterTime", "Exposure Time" ).occurrences( 0, 1 ).build() );
         form.addFormItem( createTextLine( "altitude", "Gps Altitude" ).occurrences( 0, 1 ).build() );
-
         final XData xDataInfo = createXData( MediaInfo.IMAGE_INFO_METADATA_NAME, "Extra Info", form.build() );
-
         Mockito.when( this.xDataService.getFromContentType( Mockito.any( ContentType.class ) ) ).thenReturn( XDatas.from( xDataInfo ) );
-
         final CreateAttachments createAttachments = createAttachments();
-
         final ProcessUpdateParams processUpdateParams = ProcessUpdateParams.create().
             contentType( ContentType.create().
                 superType( ContentTypeName.imageMedia() ).
@@ -233,19 +212,14 @@ public class ImageContentProcessorTest
                 addMetadata( "exposure time", "1" ).addMetadata( "gps altitude ", "2" ).build() ).
             createAttachments( createAttachments ).
             build();
-
         final ProcessUpdateResult result = this.imageContentProcessor.processUpdate( processUpdateParams );
-
         final PropertyTree data = new PropertyTree();
-
         final EditableContent editableContent = new EditableContent( Content.create().
             name( "myContentName" ).
             parentPath( ContentPath.ROOT ).
             data( data ).
             build() );
-
         result.getEditor().edit( editableContent );
-
         assertEquals( editableContent.extraDatas.first().getData().getString( "shutterTime", 0 ), "1" );
         assertEquals( editableContent.extraDatas.first().getData().getString( "altitude", 0 ), "2" );
         assertEquals( editableContent.extraDatas.first().getData().getLong( MediaInfo.MEDIA_INFO_BYTE_SIZE, 0 ), new Long( 13 ) );

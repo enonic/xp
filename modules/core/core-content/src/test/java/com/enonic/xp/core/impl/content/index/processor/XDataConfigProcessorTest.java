@@ -94,7 +94,7 @@ public class XDataConfigProcessorTest
         final XDatas xDatas = xDatasBuilder.build();
 
         final ContentType contentType =
-            ContentType.create().superType( ContentTypeName.folder() ).metadata( XDataNames.from( xDatas.getNames() ) ).name(
+            ContentType.create().superType( ContentTypeName.folder() ).xData( XDataNames.from( xDatas.getNames() ) ).name(
                 "contentType" ).build();
 
         Mockito.when( contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) ) ).thenReturn(
