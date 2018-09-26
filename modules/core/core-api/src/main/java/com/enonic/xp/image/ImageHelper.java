@@ -36,7 +36,7 @@ public final class ImageHelper
         try
         {
             final BufferedImage image = createImage( width, height, true );
-            final byte[] bytes = writeImage( image, "png", 100 );
+            final byte[] bytes = writeImage( image, "png", 0 );
 
             final BaseEncoding encoding = BaseEncoding.base64();
             return "data:image/png;base64," + encoding.encode( bytes );
@@ -109,11 +109,6 @@ public final class ImageHelper
 
     private static void setCompressionQuality( ImageWriteParam params, int quality )
     {
-        if ( quality <= 0 )
-        {
-            quality = 1;
-        }
-
         if ( quality > 100 )
         {
             quality = 100;
