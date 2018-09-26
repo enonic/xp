@@ -4,6 +4,10 @@ apply plugin: 'jacoco'
 apply plugin: 'optional-base'
 apply plugin: 'provided-base'
 
+jacoco {
+    toolVersion = "0.8.2"
+}
+
 def defaultEncoding = 'UTF-8'
 
 compileJava {
