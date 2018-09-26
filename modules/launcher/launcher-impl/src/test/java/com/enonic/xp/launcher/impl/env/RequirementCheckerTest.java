@@ -12,7 +12,16 @@ public class RequirementCheckerTest
     public void rightJavaVersion()
     {
         final SystemProperties props = new SystemProperties();
-        props.put( JAVA_VERSION.key(), "10.0.2" );
+        props.put( JAVA_VERSION.key(), "11" );
+
+        new RequirementChecker( props ).check();
+    }
+
+    @Test
+    public void rightJavaVersionWithMinorVersion()
+    {
+        final SystemProperties props = new SystemProperties();
+        props.put( JAVA_VERSION.key(), "11.0.2" );
 
         new RequirementChecker( props ).check();
     }
@@ -21,7 +30,7 @@ public class RequirementCheckerTest
     public void rightJavaVersion_withClassifier()
     {
         final SystemProperties props = new SystemProperties();
-        props.put( JAVA_VERSION.key(), "10.0.2_94-internal" );
+        props.put( JAVA_VERSION.key(), "11.0.2_94-internal" );
 
         new RequirementChecker( props ).check();
     }

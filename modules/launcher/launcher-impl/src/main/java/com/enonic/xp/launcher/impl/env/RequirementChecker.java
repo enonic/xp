@@ -19,7 +19,7 @@ public final class RequirementChecker
     private void checkJavaVersion()
     {
         final JavaVersion version = new JavaVersion( this.properties );
-        if ( !version.isJava10() )
+        if ( !version.isJava11() )
         {
             throw new LauncherException( javaVersionRequirementsMessage( version ) );
         }
@@ -27,6 +27,6 @@ public final class RequirementChecker
 
     private String javaVersionRequirementsMessage( final JavaVersion version )
     {
-        throw new LauncherException( "Java 10 is required. You are running %s.", version );
+        throw new LauncherException( "Java 11 is required. You are running %s.", version );
     }
 }
