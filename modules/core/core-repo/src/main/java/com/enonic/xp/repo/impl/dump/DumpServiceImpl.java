@@ -110,7 +110,8 @@ public class DumpServiceImpl
         }
 
         final SystemDumpResult systemDumpResult = dumpResults.build();
-        writer.writeDumpMetaData( new DumpMeta( this.xpVersion, Instant.now(), systemDumpResult ) );   
+        writer.writeDumpMetaData(
+            DumpMeta.create().xpVersion( this.xpVersion ).timestamp( Instant.now() ).systemDumpResult( systemDumpResult ).build() );
         
         return systemDumpResult;
     }

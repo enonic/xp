@@ -3,6 +3,8 @@ package com.enonic.xp.repo.impl.dump.model;
 import java.time.Instant;
 
 import com.enonic.xp.dump.SystemDumpResult;
+import com.enonic.xp.dump.Version;
+import com.enonic.xp.repo.impl.dump.DumpConstants;
 
 public class DumpMeta
 {
@@ -11,12 +13,15 @@ public class DumpMeta
     private final Instant timestamp;
     
     private final SystemDumpResult systemDumpResult;
-    
-    public DumpMeta( final String xpVersion, final Instant timestamp, final SystemDumpResult systemDumpResult )
+
+    private final Version modelVersion;
+
+    public DumpMeta( final Builder builder )
     {
-        this.timestamp = timestamp;
-        this.xpVersion = xpVersion;
-        this.systemDumpResult = systemDumpResult;
+        this.timestamp = builder.timestamp;
+        this.xpVersion = builder.xpVersion;
+        this.systemDumpResult = builder.systemDumpResult;
+        this.modelVersion = builder.modelVersion;
     }
 
     public String getXpVersion()
@@ -32,5 +37,55 @@ public class DumpMeta
     public SystemDumpResult getSystemDumpResult()
     {
         return systemDumpResult;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public Version getModelVersion()
+    {
+        return modelVersion;
+    }
+
+    public static class Builder
+    {
+        private String xpVersion;
+
+        private Instant timestamp;
+
+        private SystemDumpResult systemDumpResult;
+
+        private Version modelVersion = DumpConstants.MODEL_VERSION;
+
+        public Builder xpVersion( final String xpVersion )
+        {
+            this.xpVersion = xpVersion;
+            return this;
+        }
+
+        public Builder timestamp( final Instant timestamp )
+        {
+            this.timestamp = timestamp;
+            return this;
+        }
+
+        public Builder systemDumpResult( final SystemDumpResult systemDumpResult )
+        {
+            this.systemDumpResult = systemDumpResult;
+            return this;
+        }
+
+        public Builder modelVersion( final Version modelVersion )
+        {
+            this.modelVersion = modelVersion;
+            return this;
+        }
+
+        public DumpMeta build()
+        {
+            return new DumpMeta( this );
+        }
     }
 }
