@@ -50,7 +50,7 @@ artifacts {
     archives sourceJar
 }
 
-sourceCompatibility = JavaVersion.VERSION_11
+sourceCompatibility = '1.8'
 targetCompatibility = sourceCompatibility
 
 test {
