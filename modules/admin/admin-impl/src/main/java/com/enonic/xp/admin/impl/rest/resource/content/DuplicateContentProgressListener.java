@@ -10,7 +10,11 @@ public final class DuplicateContentProgressListener
 
     private int total = 0;
 
-    private int progressCount = 0;
+    private float progressCount = 0;
+
+    private float DUPLICATE_WEIGHT = 0.94f;
+
+    private float REFERENCES_WEIGHT = 0.06f;
 
     public DuplicateContentProgressListener( final ProgressReporter progressReporter )
     {
@@ -26,7 +30,14 @@ public final class DuplicateContentProgressListener
     @Override
     public void contentDuplicated( final int count )
     {
-        progressCount = progressCount + count;
-        progressReporter.progress( progressCount, total );
+        progressCount += count * DUPLICATE_WEIGHT;
+        progressReporter.progress( Math.round( progressCount ), total );
+    }
+
+    @Override
+    public void contentReferencesUpdated( final int count )
+    {
+        progressCount += count * REFERENCES_WEIGHT;
+        progressReporter.progress( Math.round( progressCount ), total );
     }
 }

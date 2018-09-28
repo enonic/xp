@@ -5,4 +5,6 @@ public interface DuplicateContentListener
     void setTotal( int count );
 
     void contentDuplicated( int count );
+
+    void contentReferencesUpdated( int count );
 }
