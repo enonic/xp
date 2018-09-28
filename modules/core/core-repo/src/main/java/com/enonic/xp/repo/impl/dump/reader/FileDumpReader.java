@@ -332,4 +332,10 @@ public class FileDumpReader
 
         return record.getBytes();
     }
+
+    @Override
+    public DumpMeta getDumpMeta()
+    {
+        return this.dumpMeta;
+    }
 }

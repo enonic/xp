@@ -180,7 +180,7 @@ public class SystemResourceTest
         throws Exception
     {
         expectedException.expect( IllegalArgumentException.class );
-        expectedException.expectMessage( "No dump with name 'name' found in "+ dataDir.getPath() );
+        expectedException.expectMessage( "No dump with name 'name' found in " + dataDir.getPath() );
 
         request().path( "system/load" ).
             entity( readFromFile( "load_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
@@ -195,13 +195,26 @@ public class SystemResourceTest
             deleted().deleted().failed().inUse().processed().
             taskName( "vacuum-task-name" ).build() ).build();
 
-        Mockito.when( this.vacuumService.vacuum( Mockito.isA( VacuumParameters.class ) ) ).thenReturn(vacuumResult);
+        Mockito.when( this.vacuumService.vacuum( Mockito.isA( VacuumParameters.class ) ) ).thenReturn( vacuumResult );
 
         final String result = request().path( "system/vacuum" ).
             entity( "{}", MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
 
         assertJson( "vacuum.json", result );
+    }
+
+    @Test
+    public void update()
+        throws Exception
+    {
+        Mockito.when( this.dumpService.update( Mockito.eq( "dumpName" ) ) ).thenReturn( true );
+
+        final String result = request().path( "system/update" ).
+            entity( "{\"name\":\"dumpName\"}", MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertEquals( true, Boolean.valueOf( result ) );
     }
 
     @Override

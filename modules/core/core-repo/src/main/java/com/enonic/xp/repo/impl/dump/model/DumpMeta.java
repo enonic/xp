@@ -11,7 +11,7 @@ public class DumpMeta
     private final String xpVersion;
 
     private final Instant timestamp;
-    
+
     private final SystemDumpResult systemDumpResult;
 
     private final Version modelVersion;
@@ -42,6 +42,12 @@ public class DumpMeta
     public static Builder create()
     {
         return new Builder();
+    }
+
+    public static Builder create( final DumpMeta source )
+    {
+        return new Builder().xpVersion( source.getXpVersion() ).modelVersion( source.getModelVersion() ).timestamp(
+            source.getTimestamp() ).systemDumpResult( source.getSystemDumpResult() );
     }
 
     public Version getModelVersion()

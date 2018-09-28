@@ -30,6 +30,7 @@ import com.enonic.xp.impl.server.rest.model.SystemDumpRequestJson;
 import com.enonic.xp.impl.server.rest.model.SystemDumpResultJson;
 import com.enonic.xp.impl.server.rest.model.SystemLoadRequestJson;
 import com.enonic.xp.impl.server.rest.model.SystemLoadResultJson;
+import com.enonic.xp.impl.server.rest.model.UpdateDumpJson;
 import com.enonic.xp.impl.server.rest.model.VacuumResultJson;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.node.NodePath;
@@ -111,6 +112,13 @@ public final class SystemResource
             build();
         final VacuumResult result = this.vacuumService.vacuum( vacuumParams );
         return VacuumResultJson.from( result );
+    }
+
+    @POST
+    @Path("update")
+    public Boolean update( final UpdateDumpJson params )
+    {
+        return this.dumpService.update( params.getName() );
     }
 
     private boolean isExport( final SystemLoadRequestJson request )

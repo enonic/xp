@@ -3,33 +3,9 @@ package com.enonic.xp.dump;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
-/**
- * Version identifier for capabilities such as bundles and packages.
- * <p>
- * <p>
- * Version identifiers have four components.
- * <ol>
- * <li>Major version. A non-negative integer.</li>
- * <li>Minor version. A non-negative integer.</li>
- * <li>Micro version. A non-negative integer.</li>
- * <li>Qualifier. A text string. See {@code Version(String)} for the format of
- * the qualifier string.</li>
- * </ol>
- * <p>
- * <p>
- * {@code Version} objects are immutable.
- *
- * @author $Id: c24d4d37a0657ac69de29085d2d290cbb0031c4a $
- * @Immutable
- * @since 1.3
- */
-
 public class Version
     implements Comparable<Version>
 {
-    /**
-     * The empty version "0.0.0".
-     */
     public static final Version emptyVersion = new Version( 0, 0, 0 );
 
     private static final String SEPARATOR = ".";
@@ -46,35 +22,11 @@ public class Version
 
     private transient int hash /* default to 0 */;
 
-    /**
-     * Creates a version identifier from the specified numerical components.
-     * <p>
-     * <p>
-     * The qualifier is set to the empty string.
-     *
-     * @param major Major component of the version identifier.
-     * @param minor Minor component of the version identifier.
-     * @param micro Micro component of the version identifier.
-     * @throws IllegalArgumentException If the numerical components are
-     *                                  negative.
-     */
     public Version( int major, int minor, int micro )
     {
         this( major, minor, micro, null );
     }
 
-    /**
-     * Creates a version identifier from the specified components.
-     *
-     * @param major     Major component of the version identifier.
-     * @param minor     Minor component of the version identifier.
-     * @param micro     Micro component of the version identifier.
-     * @param qualifier Qualifier component of the version identifier. If
-     *                  {@code null} is specified, then the qualifier will be set to the
-     *                  empty string.
-     * @throws IllegalArgumentException If the numerical components are negative
-     *                                  or the qualifier string is invalid.
-     */
     public Version( int major, int minor, int micro, String qualifier )
     {
         if ( qualifier == null )
@@ -89,27 +41,6 @@ public class Version
         validate();
     }
 
-    /**
-     * Creates a version identifier from the specified string.
-     * <p>
-     * <p>
-     * Version string grammar:
-     * <p>
-     * <pre>
-     * version ::= major('.'minor('.'micro('.'qualifier)?)?)?
-     * major ::= digit+
-     * minor ::= digit+
-     * micro ::= digit+
-     * qualifier ::= (alpha|digit|'_'|'-')+
-     * digit ::= [0..9]
-     * alpha ::= [a..zA..Z]
-     * </pre>
-     *
-     * @param version String representation of the version identifier. There
-     *                must be no whitespace in the argument.
-     * @throws IllegalArgumentException If {@code version} is improperly
-     *                                  formatted.
-     */
     public Version( String version )
     {
         int maj = 0;
@@ -159,13 +90,6 @@ public class Version
         validate();
     }
 
-    /**
-     * Parse numeric component into an int.
-     *
-     * @param value   Numeric component
-     * @param version Complete version string for exception message, if any
-     * @return int value of numeric component
-     */
     private static int parseInt( String value, String version )
     {
         try
@@ -181,20 +105,6 @@ public class Version
         }
     }
 
-    /**
-     * Parses a version identifier from the specified string.
-     * <p>
-     * <p>
-     * See {@link #Version(String)} for the format of the version string.
-     *
-     * @param version String representation of the version identifier. Leading
-     *                and trailing whitespace will be ignored.
-     * @return A {@code Version} object representing the version identifier. If
-     * {@code version} is {@code null} or the empty string then
-     * {@link #emptyVersion} will be returned.
-     * @throws IllegalArgumentException If {@code version} is improperly
-     *                                  formatted.
-     */
     public static Version parseVersion( String version )
     {
         if ( version == null )
@@ -205,26 +115,6 @@ public class Version
         return valueOf( version );
     }
 
-    /**
-     * Returns a {@code Version} object holding the version identifier in the
-     * specified {@code String}.
-     * <p>
-     * <p>
-     * See {@link #Version(String)} for the format of the version string.
-     * <p>
-     * <p>
-     * This method performs a similar function as {@link #parseVersion(String)}
-     * but has the static factory {@code valueOf(String)} method signature.
-     *
-     * @param version String representation of the version identifier. Leading
-     *                and trailing whitespace will be ignored. Must not be {@code null}.
-     * @return A {@code Version} object representing the version identifier. If
-     * {@code version} is the empty string then {@link #emptyVersion}
-     * will be returned.
-     * @throws IllegalArgumentException If {@code version} is improperly
-     *                                  formatted.
-     * @since 1.8
-     */
     public static Version valueOf( String version )
     {
         version = version.trim();
@@ -236,12 +126,6 @@ public class Version
         return new Version( version );
     }
 
-    /**
-     * Called by the Version constructors to validate the version components.
-     *
-     * @throws IllegalArgumentException If the numerical components are negative
-     *                                  or the qualifier string is invalid.
-     */
     private void validate()
     {
         if ( major < 0 )
@@ -278,67 +162,38 @@ public class Version
         }
     }
 
-    /**
-     * Returns the major component of this version identifier.
-     *
-     * @return The major component.
-     */
     public int getMajor()
     {
         return major;
     }
 
-    /**
-     * Returns the minor component of this version identifier.
-     *
-     * @return The minor component.
-     */
     public int getMinor()
     {
         return minor;
     }
 
-    /**
-     * Returns the micro component of this version identifier.
-     *
-     * @return The micro component.
-     */
     public int getMicro()
     {
         return micro;
     }
 
-    /**
-     * Returns the qualifier component of this version identifier.
-     *
-     * @return The qualifier component.
-     */
     public String getQualifier()
     {
         return qualifier;
     }
 
-    /**
-     * Returns the string representation of this version identifier.
-     * <p>
-     * <p>
-     * The format of the version string will be {@code major.minor.micro} if
-     * qualifier is the empty string or {@code major.minor.micro.qualifier}
-     * otherwise.
-     *
-     * @return The string representation of this version identifier.
-     */
+
+    public boolean lessThan( final Version version )
+    {
+        return this.compareTo( version ) < 0;
+    }
+
     @Override
     public String toString()
     {
         return toString0();
     }
 
-    /**
-     * Internal toString behavior
-     *
-     * @return The string representation of this version identifier.
-     */
     String toString0()
     {
         String s = versionString;
@@ -361,11 +216,6 @@ public class Version
         return versionString = result.toString();
     }
 
-    /**
-     * Returns a hash code value for the object.
-     *
-     * @return An integer which is a hash code value for this object.
-     */
     @Override
     public int hashCode()
     {
@@ -382,18 +232,6 @@ public class Version
         return hash = h;
     }
 
-    /**
-     * Compares this {@code Version} object to another object.
-     * <p>
-     * <p>
-     * A version is considered to be <b>equal to </b> another version if the
-     * major, minor and micro components are equal and the qualifier component
-     * is equal (using {@code String.equals}).
-     *
-     * @param object The {@code Version} object to be compared.
-     * @return {@code true} if {@code object} is a {@code Version} and is equal
-     * to this object; {@code false} otherwise.
-     */
     @Override
     public boolean equals( Object object )
     {
@@ -411,35 +249,10 @@ public class Version
         return ( major == other.major ) && ( minor == other.minor ) && ( micro == other.micro ) && qualifier.equals( other.qualifier );
     }
 
-    /**
-     * Compares this {@code Version} object to another {@code Version}.
-     * <p>
-     * <p>
-     * A version is considered to be <b>less than</b> another version if its
-     * major component is less than the other version's major component, or the
-     * major components are equal and its minor component is less than the other
-     * version's minor component, or the major and minor components are equal
-     * and its micro component is less than the other version's micro component,
-     * or the major, minor and micro components are equal and it's qualifier
-     * component is less than the other version's qualifier component (using
-     * {@code String.compareTo}).
-     * <p>
-     * <p>
-     * A version is considered to be <b>equal to</b> another version if the
-     * major, minor and micro components are equal and the qualifier component
-     * is equal (using {@code String.compareTo}).
-     *
-     * @param other The {@code Version} object to be compared.
-     * @return A negative integer, zero, or a positive integer if this version
-     * is less than, equal to, or greater than the specified
-     * {@code Version} object.
-     * @throws ClassCastException If the specified object is not a
-     *                            {@code Version} object.
-     */
     public int compareTo( Version other )
     {
         if ( other == this )
-        { // quicktest
+        {
             return 0;
         }
 
