@@ -22,7 +22,7 @@ task javadocAll( type: Javadoc ) {
 
     options {
         links 'http://docs.oracle.com/javase/8/docs/api'
-        links 'http://docs.guava-libraries.googlecode.com/git-history/v18.0/javadoc'
+        links 'http://www.javadoc.io/doc/com.google.guava/guava/26.0-jre'
         quiet()
         encoding( 'UTF-8' )
     }

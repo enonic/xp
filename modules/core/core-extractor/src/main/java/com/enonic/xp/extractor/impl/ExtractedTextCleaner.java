@@ -64,6 +64,6 @@ class ExtractedTextCleaner
     {
         CharMatcher charsToPreserve = CharMatcher.anyOf( CONTROL_CHARACTERS_TO_PRESERVE );
         CharMatcher allButPreserved = charsToPreserve.negate();
-        return CharMatcher.JAVA_ISO_CONTROL.and( allButPreserved ).removeFrom( original );
+        return CharMatcher.javaIsoControl().and( allButPreserved ).removeFrom( original );
     }
 }

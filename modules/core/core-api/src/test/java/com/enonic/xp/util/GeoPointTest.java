@@ -45,10 +45,10 @@ public class GeoPointTest
         testNotValidFrom( "1", "Value [1] is not a valid geo-point" );
         testNotValidFrom( "1,2,3", "Value [1,2,3] is not a valid geo-point" );
         testNotValidFrom( "a,1", "Value [a,1] is not a valid geo-point" );
-        testNotValidFrom( "-90.1,-180", "Latitude [-90.1] is not within range [-90.0‥90.0]" );
-        testNotValidFrom( "-90,-180.1", "Longitude [-180.1] is not within range [-180.0‥180.0]" );
-        testNotValidFrom( "90.1,180", "Latitude [90.1] is not within range [-90.0‥90.0]" );
-        testNotValidFrom( "90,180.1", "Longitude [180.1] is not within range [-180.0‥180.0]" );
+        testNotValidFrom( "-90.1,-180", "Latitude [-90.1] is not within range [-90.0..90.0]" );
+        testNotValidFrom( "-90,-180.1", "Longitude [-180.1] is not within range [-180.0..180.0]" );
+        testNotValidFrom( "90.1,180", "Latitude [90.1] is not within range [-90.0..90.0]" );
+        testNotValidFrom( "90,180.1", "Longitude [180.1] is not within range [-180.0..180.0]" );
     }
 
     private void testNotValidFrom( final String value, final String message )

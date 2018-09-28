@@ -7,7 +7,7 @@ import java.util.stream.Stream;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.net.UrlEscapers;
@@ -142,7 +142,7 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
         final StringBuilder str = new StringBuilder();
         appendPart( str, getBaseUri() );
 
-        final Multimap<String, String> params = HashMultimap.create();
+        final Multimap<String, String> params = LinkedListMultimap.create();
         buildUrl( str, params );
         appendParams( str, params.entries() );
 
@@ -217,7 +217,7 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
         appendPart( str, "error" );
         appendPart( str, String.valueOf( code ) );
 
-        final Multimap<String, String> params = HashMultimap.create();
+        final Multimap<String, String> params = LinkedListMultimap.create();
 
         if ( message != null )
         {
