@@ -167,6 +167,11 @@ public class DumpServiceImpl
 
         final FileDumpReader dumpReader = new FileDumpReader( basePath, params.getDumpName(), params.getListener() );
 
+        if ( params.isUpgrade() )
+        {
+            this.update( params.getDumpName() );
+        }
+
         final RepositoryIds dumpRepositories = dumpReader.getRepositories();
 
         if ( !dumpRepositories.contains( SystemConstants.SYSTEM_REPO.getId() ) )

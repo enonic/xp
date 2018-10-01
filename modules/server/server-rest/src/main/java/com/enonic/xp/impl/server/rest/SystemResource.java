@@ -151,6 +151,7 @@ public final class SystemResource
     {
         final SystemLoadResult systemLoadResult = this.dumpService.load( SystemLoadParams.create().
             dumpName( request.getName() ).
+            upgrade( request.isUpgrade() ).
             includeVersions( true ).
             build() );
 
