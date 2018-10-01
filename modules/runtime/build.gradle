@@ -38,7 +38,6 @@ addBundle( 'org.slf4j:jcl-over-slf4j:1.7.25', 5 )
 addBundle( 'org.slf4j:log4j-over-slf4j:1.7.25', 5 )
 
 addBundle( 'javax.mail:mail:1.4.7', 5 )
-addBundle( project( ':launcher:launcher-log' ), 6 )
 
 // Java Cryptography Extension
 addBundle( 'org.bouncycastle:bcprov-jdk15on:1.54', 6 )
