@@ -65,6 +65,7 @@ public final class TextRenderer
 
                 case LIVE:
                 case PREVIEW:
+                case INLINE:
                 default:
                     ProcessHtmlParams params = new ProcessHtmlParams().portalRequest( portalRequest ).value( textComponent.getText() );
                     final String processedHtml = removeEmptyFigCaptionTags( service.processHtml( params ) );
@@ -88,6 +89,7 @@ public final class TextRenderer
                 break;
 
             case PREVIEW:
+            case INLINE:
                 portalResponseBuilder.body( MessageFormat.format( EMPTY_COMPONENT_PREVIEW_MODE_HTML, textComponent.getType().toString() ) );
                 break;
 

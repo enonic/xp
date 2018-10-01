@@ -18,7 +18,6 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.auth.AuthControllerExecutionParams;
 import com.enonic.xp.portal.auth.AuthControllerService;
 import com.enonic.xp.portal.impl.error.ErrorHandlerScript;
@@ -36,6 +35,10 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.exception.ExceptionRenderer;
+
+import static com.enonic.xp.portal.RenderMode.INLINE;
+import static com.enonic.xp.portal.RenderMode.LIVE;
+import static com.enonic.xp.portal.RenderMode.PREVIEW;
 
 @Component
 public final class ExceptionRendererImpl
@@ -99,7 +102,7 @@ public final class ExceptionRendererImpl
 
     private PortalResponse renderCustomError( final PortalRequest req, final WebException cause, final String handlerMethod )
     {
-        if ( RenderMode.LIVE == req.getMode() || RenderMode.PREVIEW == req.getMode() )
+        if ( LIVE == req.getMode() || PREVIEW == req.getMode() || INLINE == req.getMode() )
         {
             try
             {

@@ -24,7 +24,7 @@ public class AdminPortalHandler
 {
     private final static String BASE_URI_START = "/admin/portal";
 
-    private final static Pattern BASE_URI_PATTERN = Pattern.compile( "^" + BASE_URI_START + "/(edit|preview|admin)" );
+    private final static Pattern BASE_URI_PATTERN = Pattern.compile( "^" + BASE_URI_START + "/(edit|preview|admin|inline)" );
 
     @Override
     protected boolean canHandle( final WebRequest webRequest )

@@ -19,6 +19,7 @@ import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.web.HttpStatus;
 
 import static com.enonic.xp.portal.RenderMode.EDIT;
+import static com.enonic.xp.portal.RenderMode.INLINE;
 import static com.enonic.xp.portal.RenderMode.PREVIEW;
 import static com.enonic.xp.portal.impl.postprocess.instruction.ComponentInstruction.COMPONENT_INSTRUCTION_PREFIX;
 import static com.enonic.xp.portal.impl.postprocess.instruction.ComponentInstruction.FRAGMENT_COMPONENT;
@@ -51,7 +52,7 @@ public final class PageRenderer
         {
             portalResponse = portalRequest.getControllerScript().execute( portalRequest );
         }
-        else if ( ( mode == EDIT || mode == PREVIEW ) && portalRequest.getContent().getType().isFragment() )
+        else if ( ( mode == EDIT || mode == PREVIEW || mode == INLINE ) && portalRequest.getContent().getType().isFragment() )
         {
             portalResponse = renderDefaultFragmentPage( portalRequest, content );
         }
