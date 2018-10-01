@@ -36,7 +36,7 @@ final class NameCharacterHelper
 
     public static boolean isInvisible( final char c )
     {
-        return CharMatcher.INVISIBLE.matches( c );
+        return CharMatcher.invisible().matches( c );
     }
 
     private static boolean isExplicitlyAllowed( final char c )

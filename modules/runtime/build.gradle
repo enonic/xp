@@ -38,7 +38,6 @@ addBundle( 'org.slf4j:jcl-over-slf4j:1.7.25', 5 )
 addBundle( 'org.slf4j:log4j-over-slf4j:1.7.25', 5 )
 
 addBundle( 'javax.mail:mail:1.4.7', 5 )
-addBundle( project( ':launcher:launcher-log' ), 6 )
 
 // Java Cryptography Extension
 addBundle( 'org.bouncycastle:bcprov-jdk15on:1.54', 6 )
@@ -47,7 +46,7 @@ addBundle( 'org.bouncycastle:bcprov-jdk15on:1.54', 6 )
 addBundle( 'net.java.dev.jna:jna:4.1.0', 6)
 
 // Library dependencies
-addBundle( 'com.google.guava:guava:18.0', 8 )
+addBundle( 'com.google.guava:guava:26.0-jre', 8 )
 addBundle( 'commons-lang:commons-lang:2.4', 8 )
 addBundle( 'commons-io:commons-io:2.4', 8 )
 addBundle( 'commons-io:commons-io:2.4', 8 )

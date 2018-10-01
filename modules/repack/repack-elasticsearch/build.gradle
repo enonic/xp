@@ -4,6 +4,7 @@ dependencies {
     compile( 'org.elasticsearch:elasticsearch:2.4.6' ) {
         exclude group: 'org.antlr'
         exclude group: 'org.ow2.asm'
+        exclude group: 'com.google.guava'
     }
 }
 
