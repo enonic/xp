@@ -6,6 +6,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -24,6 +25,7 @@ import com.enonic.xp.dump.SystemDumpParams;
 import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.dump.SystemLoadParams;
 import com.enonic.xp.dump.SystemLoadResult;
+import com.enonic.xp.dump.Version;
 import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeIds;
@@ -74,6 +76,43 @@ public class DumpServiceImpl
     }
 
     @Override
+    public Boolean update( final String dumpName )
+    {
+        if ( !SecurityHelper.isAdmin() )
+        {
+            throw new RepoDumpException( "Only admin role users can update dumps" );
+        }
+
+        if ( StringUtils.isBlank( dumpName ) )
+        {
+            throw new RepoDumpException( "dump name cannot be empty" );
+        }
+
+        final FileDumpReader dumpReader = new FileDumpReader( basePath, dumpName, null );
+
+        final DumpMeta dumpMeta = dumpReader.getDumpMeta();
+
+        Version modelVersion = dumpMeta.getModelVersion();
+
+        if ( modelVersion == null || modelVersion.lessThan( DumpConstants.MODEL_VERSION ) )
+        {
+            modelVersion = DumpConstants.MODEL_VERSION;
+            final DumpMeta updatedDumpMeta = DumpMeta.create( dumpMeta ).modelVersion( modelVersion ).build();
+
+            final FileDumpWriter writer = FileDumpWriter.create().
+                basePath( basePath ).
+                dumpName( dumpName ).
+                blobStore( this.blobStore ).
+                build();
+
+            writer.writeDumpMetaData( updatedDumpMeta );
+
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public SystemDumpResult dump( final SystemDumpParams params )
     {
         if ( !SecurityHelper.isAdmin() )
@@ -110,8 +149,13 @@ public class DumpServiceImpl
         }
 
         final SystemDumpResult systemDumpResult = dumpResults.build();
-        writer.writeDumpMetaData( new DumpMeta( this.xpVersion, Instant.now(), systemDumpResult ) );   
-        
+        writer.writeDumpMetaData(
+            DumpMeta.create().
+                xpVersion( this.xpVersion ).
+                modelVersion( DumpConstants.MODEL_VERSION ).
+                timestamp( Instant.now() ).
+                systemDumpResult( systemDumpResult ).build() );
+
         return systemDumpResult;
     }
 
@@ -126,6 +170,11 @@ public class DumpServiceImpl
         }
 
         final FileDumpReader dumpReader = new FileDumpReader( basePath, params.getDumpName(), params.getListener() );
+
+        if ( params.isUpgrade() )
+        {
+            this.update( params.getDumpName() );
+        }
 
         final RepositoryIds dumpRepositories = dumpReader.getRepositories();
 
