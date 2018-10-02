@@ -139,8 +139,8 @@ public final class XDataResource
 
             final ContentTypes contentTypes = contentTypeService.getAll( new GetAllContentTypesParams().inlineMixinsToFormItems( false ) );
 
-            siteDescriptors.forEach( siteDescriptor -> result.putAll(
-                this.getXDatasByContentType( siteDescriptor.getXDataMappings(), content.getType() ) ) );
+            siteDescriptors.forEach(
+                siteDescriptor -> result.putAll( this.getXDatasByContentType( siteDescriptor.getXDataMappings(), content.getType() ) ) );
 
         }
         return result;
@@ -158,6 +158,17 @@ public final class XDataResource
 
     private Boolean isXDataAllowed( final XDataName xDataName, final String allowContentType, final ContentTypeName contentTypeName )
     {
+
+        if ( StringUtils.isBlank( allowContentType ) )
+        {
+            return true;
+        }
+
+        if ( allowContentType.equals( contentTypeName.toString() ) )
+        {
+            return true;
+        }
+
         final ContentTypeNameWildcardResolver contentTypeNameWildcardResolver =
             new ContentTypeNameWildcardResolver( this.contentTypeService );
 
@@ -174,14 +185,9 @@ public final class XDataResource
                 return true;
             }
         }
-        else if ( StringUtils.isNotBlank( allowContentType ) )
-        {
-            if ( contentTypeName.equals( ContentTypeName.from( allowContentType ) ) )
-            {
-                return true;
-            }
-        }
-        else
+
+        final List<String> validContentTypes = contentTypeNameWildcardResolver.resolveContentTypeName( allowContentType );
+        if ( validContentTypes.contains( contentTypeName.toString() ) )
         {
             return true;
         }
