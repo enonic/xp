@@ -46,8 +46,11 @@ public class DumpMeta
 
     public static Builder create( final DumpMeta source )
     {
-        return new Builder().xpVersion( source.getXpVersion() ).modelVersion( source.getModelVersion() ).timestamp(
-            source.getTimestamp() ).systemDumpResult( source.getSystemDumpResult() );
+        return new Builder().
+            xpVersion( source.getXpVersion() ).
+            modelVersion( source.getModelVersion() ).
+            timestamp(source.getTimestamp() ).
+            systemDumpResult( source.getSystemDumpResult() );
     }
 
     public Version getModelVersion()
@@ -63,7 +66,7 @@ public class DumpMeta
 
         private SystemDumpResult systemDumpResult;
 
-        private Version modelVersion = DumpConstants.MODEL_VERSION;
+        private Version modelVersion;
 
         public Builder xpVersion( final String xpVersion )
         {

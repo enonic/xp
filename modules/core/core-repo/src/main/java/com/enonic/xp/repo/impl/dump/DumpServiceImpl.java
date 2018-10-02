@@ -150,7 +150,11 @@ public class DumpServiceImpl
 
         final SystemDumpResult systemDumpResult = dumpResults.build();
         writer.writeDumpMetaData(
-            DumpMeta.create().xpVersion( this.xpVersion ).timestamp( Instant.now() ).systemDumpResult( systemDumpResult ).build() );
+            DumpMeta.create().
+                xpVersion( this.xpVersion ).
+                modelVersion( DumpConstants.MODEL_VERSION ).
+                timestamp( Instant.now() ).
+                systemDumpResult( systemDumpResult ).build() );
 
         return systemDumpResult;
     }

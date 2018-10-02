@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.Strings;
 
 import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.dump.Version;
@@ -53,17 +54,25 @@ public class DumpMetaJson
 
     public static DumpMeta fromJson( final DumpMetaJson dumpMetaJson )
     {
-        SystemDumpResult result = null;
+        final DumpMeta.Builder dumpMeta = DumpMeta.create().
+            xpVersion( dumpMetaJson.getXpVersion() ).
+            timestamp( Instant.parse( dumpMetaJson.getTimestamp() ) );
+
         if ( dumpMetaJson.getResult() != null )
         {
-            SystemDumpResult.Builder resultBuilder = SystemDumpResult.create();
-            dumpMetaJson.getResult().entrySet().forEach(
-                resultEntry -> resultBuilder.add( RepoDumpResultJson.fromJson( resultEntry.getKey(), resultEntry.getValue() ) ) );
-            result = resultBuilder.build();
+            SystemDumpResult.Builder systemDumpResult = SystemDumpResult.create();
+            dumpMetaJson.getResult().
+                entrySet().
+                forEach(
+                    resultEntry -> systemDumpResult.add( RepoDumpResultJson.fromJson( resultEntry.getKey(), resultEntry.getValue() ) ) );
+            dumpMeta.systemDumpResult( systemDumpResult.build() );
         }
-        return DumpMeta.create().xpVersion( dumpMetaJson.getXpVersion() ).timestamp(
-            Instant.parse( dumpMetaJson.getTimestamp() ) ).systemDumpResult( result ).modelVersion(
-            Version.valueOf( dumpMetaJson.getModelVersion() ) ).build();
+        if ( !Strings.isNullOrEmpty( dumpMetaJson.getModelVersion() ) )
+        {
+            final Version modelVersion = Version.valueOf( dumpMetaJson.getModelVersion() );
+            dumpMeta.modelVersion( modelVersion );
+        }
+        return dumpMeta.build();
     }
 
     private String getXpVersion()
