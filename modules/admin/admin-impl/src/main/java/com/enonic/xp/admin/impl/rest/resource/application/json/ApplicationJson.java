@@ -2,6 +2,7 @@ package com.enonic.xp.admin.impl.rest.resource.application.json;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 
@@ -13,7 +14,6 @@ import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.auth.AuthDescriptor;
 import com.enonic.xp.site.SiteDescriptor;
-import com.enonic.xp.site.XDataMapping;
 
 public class ApplicationJson
     implements ItemJson
@@ -37,22 +37,29 @@ public class ApplicationJson
         this.application = builder.application;
         this.applicationDescriptor = builder.applicationDescriptor;
         this.local = builder.local;
-        this.config = builder.siteDescriptor != null && builder.siteDescriptor.getForm() != null ? new FormJson(
-            builder.siteDescriptor.getForm(), builder.localeMessageResolver )
-            : null;
+
+        this.config =
+            builder.siteDescriptor != null && builder.siteDescriptor.getForm() != null
+                ? new FormJson( builder.siteDescriptor.getForm(), builder.localeMessageResolver )
+                : null;
+
         this.authConfig =
             builder.authDescriptor != null && builder.authDescriptor.getConfig() != null
                 ? new FormJson( builder.authDescriptor.getConfig(), builder.localeMessageResolver )
                 : null;
-        ImmutableList.Builder<String> mixinNamesBuilder = new ImmutableList.Builder<>();
+
         if ( builder.siteDescriptor != null && builder.siteDescriptor.getXDataMappings() != null )
         {
-            for ( XDataMapping xDataMapping : builder.siteDescriptor.getXDataMappings() )
-            {
-                mixinNamesBuilder.add( xDataMapping.getXDataName().toString() );
-            }
+            this.metaStepMixinNames = ImmutableList.copyOf( builder.siteDescriptor.getXDataMappings().
+                stream().
+                map( xDataMapping -> xDataMapping.getXDataName().toString() ).
+                distinct().
+                collect( Collectors.toList() ) );
         }
-        this.metaStepMixinNames = mixinNamesBuilder.build();
+        else
+        {
+            this.metaStepMixinNames = ImmutableList.of();
+        }
         this.iconUrl = builder.iconUrlResolver.resolve( application.getKey(), applicationDescriptor );
     }
 
