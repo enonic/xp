@@ -12,9 +12,9 @@ public final class DuplicateContentProgressListener
 
     private float progressCount = 0;
 
-    private float DUPLICATE_WEIGHT = 0.94f;
+    private float DUPLICATE_WEIGHT = 0.88f;
 
-    private float REFERENCES_WEIGHT = 0.06f;
+    private float REFERENCES_WEIGHT = 0.12f;
 
     public DuplicateContentProgressListener( final ProgressReporter progressReporter )
     {
