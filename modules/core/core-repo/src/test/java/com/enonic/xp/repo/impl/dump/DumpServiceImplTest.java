@@ -1,5 +1,8 @@
 package com.enonic.xp.repo.impl.dump;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.time.Instant;
 import java.util.Iterator;
 import java.util.TreeSet;
@@ -15,6 +18,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Sets;
 import com.google.common.io.ByteSource;
+import com.google.common.io.Files;
 
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.branch.Branch;
@@ -47,6 +51,8 @@ import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.repo.impl.dump.model.DumpMeta;
+import com.enonic.xp.repo.impl.dump.reader.FileDumpReader;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 import com.enonic.xp.repo.impl.node.NodeHelper;
 import com.enonic.xp.repo.impl.node.RenameNodeCommand;
@@ -621,6 +627,82 @@ public class DumpServiceImplTest
 
         final Node currentStoredNode = this.nodeService.getById( node.id() );
         assertEquals( currentNode.data(), currentStoredNode.data() );
+    }
+
+    @Test
+    public void update_up_to_date()
+    {
+        NodeHelper.runAsAdmin( () -> {
+            doDump( SystemDumpParams.create().
+                dumpName( "testDump" ).
+                build() );
+
+            final Boolean dump = this.dumpService.update( "testDump" );
+            assertEquals( false, dump );
+        } );
+    }
+
+    @Test
+    public void update()
+        throws Exception
+    {
+        NodeHelper.runAsAdmin( () -> {
+            try
+            {
+                final File dumpFolder = tempFolder.newFolder( "testDump" );
+
+                createDumpUnvalidVersion( dumpFolder );
+
+                final Boolean dump = this.dumpService.update( "testDump" );
+                assertEquals( true, dump );
+            }
+            catch ( IOException ex )
+            {
+            }
+            FileDumpReader reader = new FileDumpReader( tempFolder.getRoot().toPath(), "testDump", null );
+
+            final DumpMeta updatedMeta = reader.getDumpMeta();
+            assertEquals( DumpConstants.MODEL_VERSION, updatedMeta.getModelVersion() );
+        } );
+    }
+
+    @Test
+    public void loadWithUpdate()
+        throws Exception
+    {
+        NodeHelper.runAsAdmin( () -> {
+            try
+            {
+                this.dumpService.dump( SystemDumpParams.create().
+                    dumpName( "testDump" ).
+                    build() );
+
+                final File dumpFolder = new File( tempFolder.getRoot().getPath(), "testDump" );
+
+                createDumpUnvalidVersion( dumpFolder );
+
+                this.dumpService.load( SystemLoadParams.create().
+                    dumpName( "testDump" ).
+                    upgrade( true ).
+                    build() );
+            }
+            catch ( IOException ex )
+            {
+            }
+            FileDumpReader reader = new FileDumpReader( tempFolder.getRoot().toPath(), "testDump", null );
+
+            final DumpMeta updatedMeta = reader.getDumpMeta();
+            assertEquals( DumpConstants.MODEL_VERSION, updatedMeta.getModelVersion() );
+        } );
+    }
+
+    private void createDumpUnvalidVersion( final File dumpFolder )
+        throws IOException
+    {
+        final String content =
+            "{\"xpVersion\":\"X.Y.Z.SNAPSHOT\",\"timestamp\":\"1970-01-01T00:00:00.000Z\",\"modelVersion\":\"0.1.0\",\"result\": {\"system-repo\":{\"versions\":\"37\",\"branchResults\": {\"master\":{\"successful\": \"23\",\"errors\":[]}}}}}";
+        Files.write( content, new File( dumpFolder, "dump.json" ), Charset.defaultCharset() );
+
     }
 
     private void verifyBinaries( final Node node, final Node updatedNode, final NodeVersionQueryResult versions )

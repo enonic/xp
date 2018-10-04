@@ -118,7 +118,7 @@ public class ContentTypeTest
     {
         ContentType.Builder builder =
             ContentType.create().name( ContentTypeName.media() ).form( MEDIA_DEFAULT ).setAbstract().setFinal().allowChildContent(
-                true ).setBuiltIn().contentDisplayNameScript( "contentDisplayNameScript" ).metadata( null ).displayName(
+                true ).setBuiltIn().contentDisplayNameScript( "contentDisplayNameScript" ).displayName(
                 "displayName" ).description( "description" ).modifiedTime( Instant.now() ).createdTime( Instant.now() ).creator(
                 PrincipalKey.ofAnonymous() ).modifier( PrincipalKey.ofAnonymous() );
         ContentType contentType1 = builder.build();

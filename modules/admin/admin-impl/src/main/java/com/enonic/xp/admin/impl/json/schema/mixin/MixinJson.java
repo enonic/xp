@@ -19,8 +19,6 @@ public class MixinJson
 {
     private final Mixin mixin;
 
-    private final Boolean isExternal;
-
     private final String iconUrl;
 
     private final LocaleMessageResolver localeMessageResolver;
@@ -30,7 +28,6 @@ public class MixinJson
         Preconditions.checkNotNull( builder.localeMessageResolver );
 
         this.mixin = builder.mixin;
-        this.isExternal = builder.isExternal;
         this.iconUrl = builder.iconUrlResolver.resolve( mixin );
         this.localeMessageResolver = builder.localeMessageResolver;
     }
@@ -104,11 +101,6 @@ public class MixinJson
         return Collections.emptyList();
     }
 
-    public Boolean getExternal()
-    {
-        return isExternal;
-    }
-
     @Override
     public boolean getDeletable()
     {
@@ -125,8 +117,6 @@ public class MixinJson
     {
         private Mixin mixin;
 
-        private Boolean isExternal = false;
-
         private MixinIconUrlResolver iconUrlResolver;
 
         private LocaleMessageResolver localeMessageResolver;
@@ -138,12 +128,6 @@ public class MixinJson
         public Builder setMixin( final Mixin mixin )
         {
             this.mixin = mixin;
-            return this;
-        }
-
-        public Builder setExternal( final Boolean external )
-        {
-            isExternal = external;
             return this;
         }
 

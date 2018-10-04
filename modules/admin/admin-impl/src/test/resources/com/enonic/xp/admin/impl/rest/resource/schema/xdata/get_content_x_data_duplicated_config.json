@@ -29,7 +29,7 @@
           }
         ]
       },
-      "isOptional": false,
+      "isOptional": true,
       "modifiedTime": null,
       "modifier": null,
       "name": "myapplication:input_text_1"

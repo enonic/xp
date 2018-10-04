@@ -87,6 +87,15 @@ final class DuplicateContentCommand
         }
     }
 
+    @Override
+    public void nodesReferencesUpdated( final int count )
+    {
+        if ( duplicateContentListener != null )
+        {
+            duplicateContentListener.contentReferencesUpdated( count );
+        }
+    }
+
     private ContentIds getAllChildren( final Content duplicatedContent )
     {
         final FindNodesByParentResult findNodesByParentResult = this.nodeService.findByParent( FindNodesByParentParams.create().

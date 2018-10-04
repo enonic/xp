@@ -66,12 +66,10 @@ public class XmlContentTypeParserTest
         assertEquals( "description", result.getDescription() );
         assertEquals( "$('firstName') + ' ' + $('lastName')", result.getContentDisplayNameScript() );
         assertEquals( "myapplication:content", result.getSuperType().toString() );
-        assertEquals( "[myapplication:metadata]", result.getMetadata().toString() );
         assertEquals( false, result.isAbstract() );
         assertEquals( true, result.isFinal() );
 
         assertEquals( 4, result.getForm().size() );
-        assertEquals( "[myapplication:metadata]", result.getMetadata().toString() );
 
         final FormItem item = result.getForm().getFormItem( "myDate" );
         assertNotNull( item );
@@ -123,12 +121,11 @@ public class XmlContentTypeParserTest
         parse( this.parser, "-mixins.xml" );
         final ContentType result = this.builder.build();
 
-        final XDataNames xDataNames = result.getMetadata();
+        final XDataNames xDataNames = result.getXData();
 
         assertEquals( 2, xDataNames.getSize() );
         assertTrue( xDataNames.contains( XDataName.from( "myapplication:metadata1" ) ) );
         assertTrue( xDataNames.contains( XDataName.from( "myapplication:metadata2" ) ) );
-
     }
 
     @Test

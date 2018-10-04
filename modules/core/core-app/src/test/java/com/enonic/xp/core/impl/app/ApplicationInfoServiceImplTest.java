@@ -226,7 +226,7 @@ public class ApplicationInfoServiceImplTest
     {
         final ContentType contentType =
             ContentType.create().name( ContentTypeName.media() ).form( Form.create().build() ).setAbstract().setFinal().allowChildContent(
-                true ).setBuiltIn().contentDisplayNameScript( "contentDisplayNameScript" ).metadata( null ).displayName(
+                true ).setBuiltIn().contentDisplayNameScript( "contentDisplayNameScript" ).displayName(
                 "displayName" ).description( "description" ).modifiedTime( Instant.ofEpochSecond( 1000 ) ).createdTime(
                 Instant.ofEpochSecond( 1000 ) ).creator( PrincipalKey.ofAnonymous() ).modifier( PrincipalKey.ofAnonymous() ).build();
 

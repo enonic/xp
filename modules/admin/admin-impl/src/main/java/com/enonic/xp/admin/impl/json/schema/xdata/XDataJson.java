@@ -1,7 +1,6 @@
 package com.enonic.xp.admin.impl.json.schema.xdata;
 
 import java.time.Instant;
-import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -18,7 +17,7 @@ public class XDataJson
 {
     private final XData xData;
 
-    private final Boolean isExternal;
+    private final Boolean isOptional;
 
     private final LocaleMessageResolver localeMessageResolver;
 
@@ -27,7 +26,7 @@ public class XDataJson
         Preconditions.checkNotNull( builder.localeMessageResolver );
 
         this.xData = builder.xData;
-        this.isExternal = builder.isExternal;
+        this.isOptional = builder.isOptional;
         this.localeMessageResolver = builder.localeMessageResolver;
     }
 
@@ -90,14 +89,9 @@ public class XDataJson
         return xData.getModifier() != null ? xData.getModifier().toString() : null;
     }
 
-    public List<String> getAllowedContentTypes()
+    public Boolean getIsOptional()
     {
-        return this.xData.getAllowContentTypes();
-    }
-
-    public Boolean getExternal()
-    {
-        return isExternal;
+        return isOptional;
     }
 
     @Override
@@ -116,7 +110,7 @@ public class XDataJson
     {
         private XData xData;
 
-        private Boolean isExternal = false;
+        private Boolean isOptional = false;
 
         private MixinIconUrlResolver iconUrlResolver;
 
@@ -132,9 +126,9 @@ public class XDataJson
             return this;
         }
 
-        public Builder setExternal( final Boolean external )
+        public Builder setOptional( final Boolean optional )
         {
-            isExternal = external;
+            isOptional = optional;
             return this;
         }
 

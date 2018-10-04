@@ -10,5 +10,4 @@
 
   <x-data name="myapplication:metadata1"/>
   <x-data name="myapplication:metadata2"/>
-
 </content-type>

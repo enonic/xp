@@ -11,7 +11,6 @@ import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.xdata.XDataName;
-import com.enonic.xp.schema.xdata.XDataNames;
 
 import static org.junit.Assert.*;
 
@@ -23,7 +22,7 @@ public class SiteDescriptorTest
         //Builds an empty SiteDescriptor
         SiteDescriptor siteDescriptor = SiteDescriptor.create().build();
         assertEquals( null, siteDescriptor.getForm() );
-        assertEquals( null, siteDescriptor.getMetaSteps() );
+        assertEquals( null, siteDescriptor.getXDataMappings() );
         assertNotNull( siteDescriptor.getFilterDescriptors() );
     }
 
@@ -42,17 +41,17 @@ public class SiteDescriptorTest
             build();
 
         //Builds MixinNames
-        List<XDataName> xDataNameList = Lists.newArrayList();
-        xDataNameList.add( XDataName.from( "myapplication:my" ) );
-        XDataNames metaSteps = XDataNames.from( xDataNameList );
+        List<XDataMapping> xDataMappingList = Lists.newArrayList();
+        xDataMappingList.add( XDataMapping.create().xDataName( XDataName.from( "myapplication:my" ) ).build() );
+        XDataMappings xDataMappings = XDataMappings.from( xDataMappingList );
 
         //Builds a SiteDescriptor
         SiteDescriptor siteDescriptor = SiteDescriptor.create().
             form( form ).
-            metaSteps( metaSteps ).
+            xDataMappings( xDataMappings ).
             build();
         assertEquals( form, siteDescriptor.getForm() );
-        assertEquals( metaSteps, siteDescriptor.getMetaSteps() );
+        assertEquals( xDataMappings, siteDescriptor.getXDataMappings() );
     }
 
 }

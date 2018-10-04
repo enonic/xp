@@ -208,6 +208,8 @@ public final class DuplicateNodeCommand
                 build().
                 execute();
         }
+
+        nodeReferencesUpdated( 1 );
     }
 
     private String resolveNewNodeName( final Node existingNode )
@@ -244,6 +246,14 @@ public final class DuplicateNodeCommand
         if ( params.getDuplicateListener() != null )
         {
             params.getDuplicateListener().nodesDuplicated( count );
+        }
+    }
+
+    private void nodeReferencesUpdated( final int count )
+    {
+        if ( params.getDuplicateListener() != null )
+        {
+            params.getDuplicateListener().nodesReferencesUpdated( count );
         }
     }
 

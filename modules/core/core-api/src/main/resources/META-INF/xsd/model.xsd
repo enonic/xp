@@ -35,6 +35,8 @@
 
   <xs:complexType name="xdata">
     <xs:attribute name="name" type="xs:string"/>
+    <xs:attribute name="allowContentTypes" type="xs:string"/>
+    <xs:attribute name="optional" type="xs:boolean"/>
   </xs:complexType>
 
   <xs:complexType name="form">
@@ -205,7 +207,6 @@
       <xs:element minOccurs="0" name="display-name" type="i18n"/>
       <xs:element minOccurs="0" name="description" type="i18n"/>
       <xs:element minOccurs="0" name="items" type="formItems"/>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="allowContentType" type="xs:string"/>
     </xs:sequence>
   </xs:complexType>
 

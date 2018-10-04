@@ -8,6 +8,8 @@ public class SystemLoadParams
 
     private final boolean includeVersions;
 
+    private final boolean upgrade;
+
     private final SystemLoadListener listener;
 
     private SystemLoadParams( final Builder builder )
@@ -15,6 +17,7 @@ public class SystemLoadParams
         this.dumpName = builder.dumpName;
         this.includeVersions = builder.includeVersions;
         this.listener = builder.listener;
+        this.upgrade = builder.upgrade;
     }
 
     public String getDumpName()
@@ -30,6 +33,11 @@ public class SystemLoadParams
     public SystemLoadListener getListener()
     {
         return listener;
+    }
+
+    public boolean isUpgrade()
+    {
+        return upgrade;
     }
 
     public static Builder create()
@@ -49,14 +57,14 @@ public class SystemLoadParams
             return false;
         }
         final SystemLoadParams that = (SystemLoadParams) o;
-        return includeVersions == that.includeVersions && Objects.equals( dumpName, that.dumpName ) &&
+        return includeVersions == that.includeVersions && upgrade == that.upgrade && Objects.equals( dumpName, that.dumpName ) &&
             Objects.equals( listener, that.listener );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( dumpName, includeVersions, listener );
+        return Objects.hash( dumpName, includeVersions, upgrade, listener );
     }
 
     public static final class Builder
@@ -64,6 +72,8 @@ public class SystemLoadParams
         private String dumpName;
 
         private boolean includeVersions = false;
+
+        private boolean upgrade = false;
 
         private SystemLoadListener listener;
 
@@ -86,6 +96,12 @@ public class SystemLoadParams
         public Builder includeVersions( final boolean val )
         {
             includeVersions = val;
+            return this;
+        }
+
+        public Builder upgrade( final boolean upgrade )
+        {
+            this.upgrade = upgrade;
             return this;
         }
 

@@ -85,6 +85,22 @@ public class TextRendererTest
         assertEquals( "<section data-portal-component-type=\"text\"></section>", portalResponse.getAsString() );
     }
 
+    @Test
+    public void textComponentWithNoTextAndRenderModeInline()
+    {
+        // setup
+        portalRequest.setMode( RenderMode.INLINE );
+        textComponent = TextComponent.create().name( "myTextComponent" ).build();
+        renderer = new TextRenderer();
+        renderer.setPortalUrlService( service );
+
+        // exercise
+        portalResponse = renderer.render( textComponent, portalRequest );
+
+        // verify
+        assertEquals( "<section data-portal-component-type=\"text\"></section>", portalResponse.getAsString() );
+    }
+
 
     @Test
     public void textComponentWithSomeTextAndRenderModePreview()

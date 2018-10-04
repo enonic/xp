@@ -6,7 +6,6 @@
   "description": "translated.description",
   "displayName": "translated.displayName",
   "editable": false,
-  "external": false,
   "form": {
     "formItems": [
       {
