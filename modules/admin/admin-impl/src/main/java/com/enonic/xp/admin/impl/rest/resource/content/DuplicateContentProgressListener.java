@@ -6,15 +6,15 @@ import com.enonic.xp.task.ProgressReporter;
 public final class DuplicateContentProgressListener
     implements DuplicateContentListener
 {
+    private static final float DUPLICATE_WEIGHT = 0.88f;
+
+    private static final float REFERENCES_WEIGHT = 0.12f;
+
     private final ProgressReporter progressReporter;
 
     private int total = 0;
 
     private float progressCount = 0;
-
-    private float DUPLICATE_WEIGHT = 0.88f;
-
-    private float REFERENCES_WEIGHT = 0.12f;
 
     public DuplicateContentProgressListener( final ProgressReporter progressReporter )
     {
