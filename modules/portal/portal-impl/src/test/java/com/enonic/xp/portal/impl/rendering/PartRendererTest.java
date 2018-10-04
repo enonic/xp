@@ -82,6 +82,15 @@ public class PartRendererTest
     }
 
     @Test
+    public void emptyComponentInlineMode()
+    {
+        // verify
+        String response = this.configureEmptyComponent( RenderMode.INLINE );
+        String result = "<div data-portal-component-type=\"part\"></div>";
+        assertEquals( result, response );
+    }
+
+    @Test
     public void emptyComponentLiveMode()
     {
         // verify
