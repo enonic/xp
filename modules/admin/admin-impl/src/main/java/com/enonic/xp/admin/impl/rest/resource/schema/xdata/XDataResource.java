@@ -36,8 +36,6 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.schema.content.ContentTypeService;
-import com.enonic.xp.schema.content.ContentTypes;
-import com.enonic.xp.schema.content.GetAllContentTypesParams;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.schema.xdata.XData;
@@ -83,14 +81,14 @@ public final class XDataResource
 
         final Map<XData, Boolean> resultXData = Maps.newLinkedHashMap();
 
-        getContentTypeXData( content ).forEach( xData -> resultXData.put( xData, false ) );
+        getContentTypeXData( content ).
+            forEach( xData -> resultXData.putIfAbsent( xData, false ) );
 
-        getSiteXData( content ).entrySet().forEach( entry -> {
-            if ( !resultXData.containsKey( entry.getKey() ) )
-            {
-                resultXData.put( entry.getKey(), entry.getValue() );
-            }
-        } );
+        getSiteXData( content ).
+            entrySet().
+            forEach( entry -> {
+                resultXData.putIfAbsent( entry.getKey(), entry.getValue() );
+            } );
 
         result.addXDatas( createXDataListJson( resultXData ) );
 
@@ -116,10 +114,16 @@ public final class XDataResource
 
     private List<XDataJson> createXDataListJson( final Map<XData, Boolean> xDatas )
     {
-        return xDatas.keySet().stream().map(
-            xData -> XDataJson.create().setXData( xData ).setIconUrlResolver( this.mixinIconUrlResolver ).setLocaleMessageResolver(
-                new LocaleMessageResolver( localeService, xData.getName().getApplicationKey() ) ).setOptional(
-                xDatas.get( xData ) ).build() ).collect( toList() );
+        return xDatas.
+            keySet().
+            stream().
+            map( xData -> XDataJson.create().
+                setXData( xData ).
+                setIconUrlResolver( this.mixinIconUrlResolver ).
+                setLocaleMessageResolver( new LocaleMessageResolver( localeService, xData.getName().getApplicationKey() ) ).
+                setOptional( xDatas.get( xData ) ).build() ).
+            distinct().
+            collect( toList() );
     }
 
     private Map<XData, Boolean> getSiteXData( final Content content )
@@ -130,14 +134,17 @@ public final class XDataResource
 
         if ( nearestSite != null )
         {
-            final List<ApplicationKey> applicationKeys =
-                nearestSite.getSiteConfigs().stream().map( SiteConfig::getApplicationKey ).collect( toList() );
+            final List<ApplicationKey> applicationKeys = nearestSite.
+                getSiteConfigs().
+                stream().
+                map( SiteConfig::getApplicationKey ).
+                collect( toList() );
 
-            final List<SiteDescriptor> siteDescriptors =
-                applicationKeys.stream().map( applicationKey -> siteService.getDescriptor( applicationKey ) ).filter(
-                    Objects::nonNull ).collect( toList() );
-
-            final ContentTypes contentTypes = contentTypeService.getAll( new GetAllContentTypesParams().inlineMixinsToFormItems( false ) );
+            final List<SiteDescriptor> siteDescriptors = applicationKeys.
+                stream().
+                map( applicationKey -> siteService.getDescriptor( applicationKey ) ).
+                filter( Objects::nonNull ).
+                collect( toList() );
 
             siteDescriptors.forEach(
                 siteDescriptor -> result.putAll( this.getXDatasByContentType( siteDescriptor.getXDataMappings(), content.getType() ) ) );
@@ -150,8 +157,9 @@ public final class XDataResource
     {
         final Map<XData, Boolean> result = Maps.newHashMap();
 
-        filterXDataMappingsByContentType( xDataMappings, contentTypeName ).forEach(
-            xDataMapping -> result.put( this.xDataService.getByName( xDataMapping.getXDataName() ), xDataMapping.getOptional() ) );
+        filterXDataMappingsByContentType( xDataMappings, contentTypeName ).
+            forEach( xDataMapping -> result.putIfAbsent( this.xDataService.getByName( xDataMapping.getXDataName() ),
+                                                         xDataMapping.getOptional() ) );
 
         return result;
     }
@@ -214,7 +222,7 @@ public final class XDataResource
     {
         final ContentType contentType = this.contentTypeService.getByName( GetContentTypeParams.from( content.getType() ) );
 
-        return XDatas.from( this.xDataService.getByNames( contentType.getXData() ) );
+        return this.xDataService.getByNames( contentType.getXData() );
     }
 
     @Reference
