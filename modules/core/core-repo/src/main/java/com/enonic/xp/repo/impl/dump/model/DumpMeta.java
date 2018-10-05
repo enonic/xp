@@ -3,8 +3,7 @@ package com.enonic.xp.repo.impl.dump.model;
 import java.time.Instant;
 
 import com.enonic.xp.dump.SystemDumpResult;
-import com.enonic.xp.dump.Version;
-import com.enonic.xp.repo.impl.dump.DumpConstants;
+import com.enonic.xp.util.Version;
 
 public class DumpMeta
 {

@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.dump.update;
 
-import com.enonic.xp.dump.Version;
+import com.enonic.xp.util.Version;
 
 public class MissingModelVersionDumpUpdater
     implements DumpUpdater

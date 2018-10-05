@@ -25,7 +25,7 @@ import com.enonic.xp.dump.SystemDumpParams;
 import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.dump.SystemLoadParams;
 import com.enonic.xp.dump.SystemLoadResult;
-import com.enonic.xp.dump.Version;
+import com.enonic.xp.util.Version;
 import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeIds;
