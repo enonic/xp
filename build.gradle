@@ -29,11 +29,6 @@ configure( javaProjects ) {
     apply from: "$rootDir/gradle/java.gradle"
 }
 
-configure( mavenPublishProjects ) {
-    task install( dependsOn: publishToMavenLocal )
-    task uploadArchives( dependsOn: publish )
-}
-
 configure( rootProject ) {
     apply from: "$rootDir/gradle/coverage.gradle"
     apply from: "$rootDir/gradle/ci.gradle"
