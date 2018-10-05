@@ -4,7 +4,7 @@ apply plugin: 'build-dashboard'
 ext {
     leafProjects = subprojects.findAll { p -> p.subprojects.empty }
     javaProjects = leafProjects - project( ':runtime' ) - project( ':docs' )
-    sourceProjects = leafProjects - project( ':docs' )
+    mavenPublishProjects = leafProjects
 }
 
 allprojects {
@@ -21,7 +21,7 @@ allprojects {
     apply plugin: 'com.enonic.defaults'
 }
 
-configure( leafProjects ) {
+configure( mavenPublishProjects ) {
     apply from: "$rootDir/gradle/maven-publish.gradle"
 }
 
@@ -29,8 +29,9 @@ configure( javaProjects ) {
     apply from: "$rootDir/gradle/java.gradle"
 }
 
-configure( leafProjects ) {
-    task install(dependsOn: publishToMavenLocal)
+configure( mavenPublishProjects ) {
+    task install( dependsOn: publishToMavenLocal )
+    task uploadArchives( dependsOn: publish )
 }
 
 configure( rootProject ) {
