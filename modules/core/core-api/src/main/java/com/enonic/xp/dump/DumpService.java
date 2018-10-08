@@ -6,5 +6,5 @@ public interface DumpService
 
     SystemLoadResult load( final SystemLoadParams param );
 
-    Boolean upgrade( final String dumpName );
+    SystemDumpUpgradeResult upgrade( final SystemDumpUpgradeParams params );
 }

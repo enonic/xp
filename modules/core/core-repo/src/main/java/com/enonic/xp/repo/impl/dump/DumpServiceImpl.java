@@ -23,9 +23,10 @@ import com.enonic.xp.dump.DumpService;
 import com.enonic.xp.dump.RepoDumpResult;
 import com.enonic.xp.dump.SystemDumpParams;
 import com.enonic.xp.dump.SystemDumpResult;
+import com.enonic.xp.dump.SystemDumpUpgradeParams;
+import com.enonic.xp.dump.SystemDumpUpgradeResult;
 import com.enonic.xp.dump.SystemLoadParams;
 import com.enonic.xp.dump.SystemLoadResult;
-import com.enonic.xp.util.Version;
 import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeIds;
@@ -47,6 +48,7 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.SystemConstants;
+import com.enonic.xp.util.Version;
 
 @Component(immediate = true)
 @SuppressWarnings("WeakerAccess")
@@ -80,19 +82,23 @@ public class DumpServiceImpl
     }
 
     @Override
-    public Boolean upgrade( final String dumpName )
+    public SystemDumpUpgradeResult upgrade( final SystemDumpUpgradeParams params )
     {
         if ( !SecurityHelper.isAdmin() )
         {
             throw new RepoDumpException( "Only admin role users can upgrade dumps" );
         }
 
+        final String dumpName = params.getDumpName();
         if ( StringUtils.isBlank( dumpName ) )
         {
             throw new RepoDumpException( "dump name cannot be empty" );
         }
 
+        final SystemDumpUpgradeResult.Builder result = SystemDumpUpgradeResult.create();
+
         Version modelVersion = getDumpModelVersion( dumpName );
+        result.initialVersion( modelVersion );
         if ( modelVersion.lessThan( DumpConstants.MODEL_VERSION ) )
         {
             for ( DumpUpgrader dumpUpgrader : dumpUpgraders )
@@ -105,10 +111,9 @@ public class DumpServiceImpl
                     updateDumpModelVersion( dumpName, modelVersion );
                 }
             }
-
-            return true;
         }
-        return false;
+        result.upgradedVersion( modelVersion );
+        return result.build();
     }
 
     private Version getDumpModelVersion( final String dumpName )
@@ -203,7 +208,10 @@ public class DumpServiceImpl
 
         if ( params.isUpgrade() )
         {
-            this.upgrade( params.getDumpName() );
+            final SystemDumpUpgradeParams dumpUpgradeParams = SystemDumpUpgradeParams.create().
+                dumpName( params.getDumpName() ).
+                build();
+            this.upgrade( dumpUpgradeParams );
         }
 
         final RepositoryIds dumpRepositories = dumpReader.getRepositories();
