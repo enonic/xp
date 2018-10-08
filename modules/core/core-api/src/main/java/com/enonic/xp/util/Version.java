@@ -1,4 +1,4 @@
-package com.enonic.xp.dump;
+package com.enonic.xp.util;
 
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;

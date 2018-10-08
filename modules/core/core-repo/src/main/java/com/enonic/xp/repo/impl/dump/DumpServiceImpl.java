@@ -25,7 +25,7 @@ import com.enonic.xp.dump.SystemDumpParams;
 import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.dump.SystemLoadParams;
 import com.enonic.xp.dump.SystemLoadResult;
-import com.enonic.xp.dump.Version;
+import com.enonic.xp.util.Version;
 import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeIds;
@@ -34,6 +34,8 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.SecurityHelper;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.reader.FileDumpReader;
+import com.enonic.xp.repo.impl.dump.upgrade.DumpUpgrader;
+import com.enonic.xp.repo.impl.dump.upgrade.MissingModelVersionDumpUpgrader;
 import com.enonic.xp.repo.impl.dump.writer.FileDumpWriter;
 import com.enonic.xp.repo.impl.node.NodeHelper;
 import com.enonic.xp.repo.impl.node.executor.BatchedGetChildrenExecutor;
@@ -51,6 +53,8 @@ import com.enonic.xp.security.SystemConstants;
 public class DumpServiceImpl
     implements DumpService
 {
+    private final static Logger LOG = LoggerFactory.getLogger( DumpServiceImpl.class );
+
     private BlobStore blobStore;
 
     private NodeService nodeService;
@@ -63,7 +67,7 @@ public class DumpServiceImpl
 
     private Path basePath = Paths.get( HomeDir.get().toString(), "data", "dump" );
 
-    private final static Logger LOG = LoggerFactory.getLogger( DumpServiceImpl.class );
+    private final DumpUpgrader[] dumpUpgraders = new DumpUpgrader[]{new MissingModelVersionDumpUpgrader()};
 
     @SuppressWarnings("unused")
     @Activate
@@ -76,11 +80,11 @@ public class DumpServiceImpl
     }
 
     @Override
-    public Boolean update( final String dumpName )
+    public Boolean upgrade( final String dumpName )
     {
         if ( !SecurityHelper.isAdmin() )
         {
-            throw new RepoDumpException( "Only admin role users can update dumps" );
+            throw new RepoDumpException( "Only admin role users can upgrade dumps" );
         }
 
         if ( StringUtils.isBlank( dumpName ) )
@@ -88,28 +92,55 @@ public class DumpServiceImpl
             throw new RepoDumpException( "dump name cannot be empty" );
         }
 
-        final FileDumpReader dumpReader = new FileDumpReader( basePath, dumpName, null );
-
-        final DumpMeta dumpMeta = dumpReader.getDumpMeta();
-
-        Version modelVersion = dumpMeta.getModelVersion();
-
-        if ( modelVersion == null || modelVersion.lessThan( DumpConstants.MODEL_VERSION ) )
+        Version modelVersion = getDumpModelVersion( dumpName );
+        if ( modelVersion.lessThan( DumpConstants.MODEL_VERSION ) )
         {
-            modelVersion = DumpConstants.MODEL_VERSION;
-            final DumpMeta updatedDumpMeta = DumpMeta.create( dumpMeta ).modelVersion( modelVersion ).build();
-
-            final FileDumpWriter writer = FileDumpWriter.create().
-                basePath( basePath ).
-                dumpName( dumpName ).
-                blobStore( this.blobStore ).
-                build();
-
-            writer.writeDumpMetaData( updatedDumpMeta );
+            for ( DumpUpgrader dumpUpgrader : dumpUpgraders )
+            {
+                final Version targetModelVersion = dumpUpgrader.getModelVersion();
+                if ( modelVersion.lessThan( targetModelVersion ) )
+                {
+                    dumpUpgrader.upgrade( dumpName );
+                    modelVersion = targetModelVersion;
+                    updateDumpModelVersion( dumpName, modelVersion );
+                }
+            }
 
             return true;
         }
         return false;
+    }
+
+    private Version getDumpModelVersion( final String dumpName )
+    {
+        Version modelVersion = getDumpMeta( dumpName ).
+            getModelVersion();
+        if ( modelVersion == null )
+        {
+            return Version.emptyVersion;
+        }
+        return modelVersion;
+    }
+
+    private void updateDumpModelVersion( final String dumpName, final Version modelVersion )
+    {
+        final DumpMeta dumpMeta = getDumpMeta( dumpName );
+        final DumpMeta updatedDumpMeta = DumpMeta.create( dumpMeta ).
+            modelVersion( modelVersion ).
+            build();
+
+        FileDumpWriter.create().
+            basePath( basePath ).
+            dumpName( dumpName ).
+            blobStore( this.blobStore ).
+            build().
+            writeDumpMetaData( updatedDumpMeta );
+    }
+
+    private DumpMeta getDumpMeta( final String dumpName )
+    {
+        final FileDumpReader dumpReader = new FileDumpReader( basePath, dumpName, null );
+        return dumpReader.getDumpMeta();
     }
 
     @Override
@@ -149,12 +180,11 @@ public class DumpServiceImpl
         }
 
         final SystemDumpResult systemDumpResult = dumpResults.build();
-        writer.writeDumpMetaData(
-            DumpMeta.create().
-                xpVersion( this.xpVersion ).
-                modelVersion( DumpConstants.MODEL_VERSION ).
-                timestamp( Instant.now() ).
-                systemDumpResult( systemDumpResult ).build() );
+        writer.writeDumpMetaData( DumpMeta.create().
+            xpVersion( this.xpVersion ).
+            modelVersion( DumpConstants.MODEL_VERSION ).
+            timestamp( Instant.now() ).
+            systemDumpResult( systemDumpResult ).build() );
 
         return systemDumpResult;
     }
@@ -173,7 +203,7 @@ public class DumpServiceImpl
 
         if ( params.isUpgrade() )
         {
-            this.update( params.getDumpName() );
+            this.upgrade( params.getDumpName() );
         }
 
         final RepositoryIds dumpRepositories = dumpReader.getRepositories();

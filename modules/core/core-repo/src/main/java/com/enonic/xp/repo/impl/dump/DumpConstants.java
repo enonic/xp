@@ -1,7 +1,7 @@
 package com.enonic.xp.repo.impl.dump;
 
 import com.enonic.xp.blob.Segment;
-import com.enonic.xp.dump.Version;
+import com.enonic.xp.util.Version;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 
 public class DumpConstants
