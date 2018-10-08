@@ -34,8 +34,8 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.SecurityHelper;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.reader.FileDumpReader;
-import com.enonic.xp.repo.impl.dump.update.DumpUpdater;
-import com.enonic.xp.repo.impl.dump.update.MissingModelVersionDumpUpdater;
+import com.enonic.xp.repo.impl.dump.upgrade.DumpUpgrader;
+import com.enonic.xp.repo.impl.dump.upgrade.MissingModelVersionDumpUpgrader;
 import com.enonic.xp.repo.impl.dump.writer.FileDumpWriter;
 import com.enonic.xp.repo.impl.node.NodeHelper;
 import com.enonic.xp.repo.impl.node.executor.BatchedGetChildrenExecutor;
@@ -67,7 +67,7 @@ public class DumpServiceImpl
 
     private Path basePath = Paths.get( HomeDir.get().toString(), "data", "dump" );
 
-    private final DumpUpdater[] dumpUpdaters = new DumpUpdater[]{new MissingModelVersionDumpUpdater()};
+    private final DumpUpgrader[] dumpUpgraders = new DumpUpgrader[]{new MissingModelVersionDumpUpgrader()};
 
     @SuppressWarnings("unused")
     @Activate
@@ -80,11 +80,11 @@ public class DumpServiceImpl
     }
 
     @Override
-    public Boolean update( final String dumpName )
+    public Boolean upgrade( final String dumpName )
     {
         if ( !SecurityHelper.isAdmin() )
         {
-            throw new RepoDumpException( "Only admin role users can update dumps" );
+            throw new RepoDumpException( "Only admin role users can upgrade dumps" );
         }
 
         if ( StringUtils.isBlank( dumpName ) )
@@ -95,13 +95,12 @@ public class DumpServiceImpl
         Version modelVersion = getDumpModelVersion( dumpName );
         if ( modelVersion.lessThan( DumpConstants.MODEL_VERSION ) )
         {
-            for ( DumpUpdater dumpUpdater : dumpUpdaters )
+            for ( DumpUpgrader dumpUpgrader : dumpUpgraders )
             {
-                final Version targetModelVersion = dumpUpdater.getModelVersion();
+                final Version targetModelVersion = dumpUpgrader.getModelVersion();
                 if ( modelVersion.lessThan( targetModelVersion ) )
                 {
-                    dumpUpdater.update( dumpName );
-
+                    dumpUpgrader.upgrade( dumpName );
                     modelVersion = targetModelVersion;
                     updateDumpModelVersion( dumpName, modelVersion );
                 }
@@ -204,7 +203,7 @@ public class DumpServiceImpl
 
         if ( params.isUpgrade() )
         {
-            this.update( params.getDumpName() );
+            this.upgrade( params.getDumpName() );
         }
 
         final RepositoryIds dumpRepositories = dumpReader.getRepositories();
