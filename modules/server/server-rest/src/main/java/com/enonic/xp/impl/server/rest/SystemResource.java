@@ -30,7 +30,7 @@ import com.enonic.xp.impl.server.rest.model.SystemDumpRequestJson;
 import com.enonic.xp.impl.server.rest.model.SystemDumpResultJson;
 import com.enonic.xp.impl.server.rest.model.SystemLoadRequestJson;
 import com.enonic.xp.impl.server.rest.model.SystemLoadResultJson;
-import com.enonic.xp.impl.server.rest.model.UpdateDumpJson;
+import com.enonic.xp.impl.server.rest.model.UpgradeDumpJson;
 import com.enonic.xp.impl.server.rest.model.VacuumResultJson;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.node.NodePath;
@@ -116,7 +116,7 @@ public final class SystemResource
 
     @POST
     @Path("upgrade")
-    public Boolean update( final UpdateDumpJson params )
+    public Boolean upgrade( final UpgradeDumpJson params )
     {
         return this.dumpService.upgrade( params.getName() );
     }
