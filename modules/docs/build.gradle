@@ -46,7 +46,9 @@ task libdocZip( type: Zip ) {
     classifier = 'libdoc'
 }
 
-artifacts {
-    archives javadocZip
-    archives libdocZip
+publishing.publications {
+    mavenJava( MavenPublication ) {
+        artifact javadocZip
+        artifact libdocZip
+    }
 }

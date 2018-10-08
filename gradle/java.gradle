@@ -40,14 +40,9 @@ task testJar( type: Jar ) {
     classifier = 'test'
 }
 
-task sourceJar( type: Jar ) {
-    classifier 'sources'
+task sourcesJar( type: Jar ) {
     from sourceSets.main.allJava
-}
-
-artifacts {
-    testOutput testJar
-    archives sourceJar
+    classifier = 'sources'
 }
 
 sourceCompatibility = '1.8'
@@ -69,3 +64,8 @@ jar {
     }
 }
 
+publishing.publications {
+    mavenJava( MavenPublication ) {
+        artifact sourcesJar
+    }
+}

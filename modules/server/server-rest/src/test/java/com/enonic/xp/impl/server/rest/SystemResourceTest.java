@@ -205,12 +205,12 @@ public class SystemResourceTest
     }
 
     @Test
-    public void update()
+    public void upgrade()
         throws Exception
     {
-        Mockito.when( this.dumpService.update( Mockito.eq( "dumpName" ) ) ).thenReturn( true );
+        Mockito.when( this.dumpService.upgrade( Mockito.eq( "dumpName" ) ) ).thenReturn( true );
 
-        final String result = request().path( "system/update" ).
+        final String result = request().path( "system/upgrade" ).
             entity( "{\"name\":\"dumpName\"}", MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
 

@@ -630,20 +630,20 @@ public class DumpServiceImplTest
     }
 
     @Test
-    public void update_up_to_date()
+    public void upgrade_up_to_date()
     {
         NodeHelper.runAsAdmin( () -> {
             doDump( SystemDumpParams.create().
                 dumpName( "testDump" ).
                 build() );
 
-            final Boolean dump = this.dumpService.update( "testDump" );
+            final Boolean dump = this.dumpService.upgrade( "testDump" );
             assertEquals( false, dump );
         } );
     }
 
     @Test
-    public void update()
+    public void upgrade()
         throws Exception
     {
         NodeHelper.runAsAdmin( () -> {
@@ -653,7 +653,7 @@ public class DumpServiceImplTest
 
                 createDumpUnvalidVersion( dumpFolder );
 
-                final Boolean dump = this.dumpService.update( "testDump" );
+                final Boolean dump = this.dumpService.upgrade( "testDump" );
                 assertEquals( true, dump );
             }
             catch ( IOException ex )
@@ -667,7 +667,7 @@ public class DumpServiceImplTest
     }
 
     @Test
-    public void loadWithUpdate()
+    public void loadWithUpgrade()
         throws Exception
     {
         NodeHelper.runAsAdmin( () -> {

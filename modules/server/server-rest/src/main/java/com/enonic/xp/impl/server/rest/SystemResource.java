@@ -115,10 +115,10 @@ public final class SystemResource
     }
 
     @POST
-    @Path("update")
+    @Path("upgrade")
     public Boolean update( final UpdateDumpJson params )
     {
-        return this.dumpService.update( params.getName() );
+        return this.dumpService.upgrade( params.getName() );
     }
 
     private boolean isExport( final SystemLoadRequestJson request )

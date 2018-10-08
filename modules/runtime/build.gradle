@@ -234,10 +234,6 @@ task distZip( type: Zip, dependsOn: installDist ) {
     // into archiveBase
 }
 
-artifacts {
-    archives distZip
-}
-
 task run( type: Exec, dependsOn: 'installDist' ) {
     description = 'Starts the server (use -Pdev for dev-mode or -Pdebug for debug-mode).'
     group = 'Dist'
@@ -270,6 +266,3 @@ publishing.publications {
         artifact distZip
     }
 }
-task install( dependsOn: publishToMavenLocal )
-
-
