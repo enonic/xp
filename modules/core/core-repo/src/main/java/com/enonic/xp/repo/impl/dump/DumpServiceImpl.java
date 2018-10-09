@@ -95,8 +95,13 @@ public class DumpServiceImpl
             throw new RepoDumpException( "dump name cannot be empty" );
         }
 
+        return doUpgrade( params );
+    }
+
+    private SystemDumpUpgradeResult doUpgrade(final SystemDumpUpgradeParams params ) {
         final SystemDumpUpgradeResult.Builder result = SystemDumpUpgradeResult.create();
 
+        final String dumpName = params.getDumpName();
         Version modelVersion = getDumpModelVersion( dumpName );
         result.initialVersion( modelVersion );
         if ( modelVersion.lessThan( DumpConstants.MODEL_VERSION ) )
@@ -206,12 +211,21 @@ public class DumpServiceImpl
 
         final FileDumpReader dumpReader = new FileDumpReader( basePath, params.getDumpName(), params.getListener() );
 
-        if ( params.isUpgrade() )
+        final Version modelVersion = getDumpModelVersion( params.getDumpName() );
+        if ( modelVersion.lessThan( DumpConstants.MODEL_VERSION ) )
         {
-            final SystemDumpUpgradeParams dumpUpgradeParams = SystemDumpUpgradeParams.create().
-                dumpName( params.getDumpName() ).
-                build();
-            this.upgrade( dumpUpgradeParams );
+            if ( params.isUpgrade() )
+            {
+                final SystemDumpUpgradeParams dumpUpgradeParams = SystemDumpUpgradeParams.create().
+                    dumpName( params.getDumpName() ).
+                    build();
+                doUpgrade( dumpUpgradeParams );
+            }
+            else
+            {
+                throw new RepoLoadException(
+                    "Cannot load system-dump; model version anterior to the current version; upgrade the system-dump" );
+            }
         }
 
         final RepositoryIds dumpRepositories = dumpReader.getRepositories();
