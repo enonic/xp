@@ -98,7 +98,8 @@ public class DumpServiceImpl
         return doUpgrade( params );
     }
 
-    private SystemDumpUpgradeResult doUpgrade(final SystemDumpUpgradeParams params ) {
+    private SystemDumpUpgradeResult doUpgrade( final SystemDumpUpgradeParams params )
+    {
         final SystemDumpUpgradeResult.Builder result = SystemDumpUpgradeResult.create();
 
         final String dumpName = params.getDumpName();
@@ -212,7 +213,7 @@ public class DumpServiceImpl
         final FileDumpReader dumpReader = new FileDumpReader( basePath, params.getDumpName(), params.getListener() );
 
         final Version modelVersion = getDumpModelVersion( params.getDumpName() );
-        if ( modelVersion.lessThan( DumpConstants.MODEL_VERSION ) )
+        if ( modelVersion.getMajor() < DumpConstants.MODEL_VERSION.getMajor() )
         {
             if ( params.isUpgrade() )
             {
@@ -224,7 +225,7 @@ public class DumpServiceImpl
             else
             {
                 throw new RepoLoadException(
-                    "Cannot load system-dump; model version anterior to the current version; upgrade the system-dump" );
+                    "Cannot load system-dump; major model version previous to the current version; upgrade the system-dump" );
             }
         }
 
