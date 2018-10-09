@@ -10,17 +10,16 @@ import com.enonic.xp.toolbox.util.JsonHelper;
 
 import static org.junit.Assert.*;
 
-public class LoadCommandTest
+public class UpgradeCommandTest
     extends RepoCommandTest
 {
     @Test
     public void testLoad()
         throws Exception
     {
-        final LoadCommand command = new LoadCommand();
+        final UpgradeCommand command = new UpgradeCommand();
         configure( command );
-        command.source = "source-path";
-        command.interactive = true;
+        command.name = "dump-name";
 
         addResponse( createResponseJson() );
 
@@ -28,15 +27,14 @@ public class LoadCommandTest
 
         final RecordedRequest request = takeRequest();
         assertEquals( "POST", request.getMethod() );
-        assertEquals( "/api/system/load", request.getPath() );
+        assertEquals( "/api/system/upgrade", request.getPath() );
         assertEquals( JsonHelper.serialize( createRequestJson() ), request.getBody().readString( Charsets.UTF_8 ) );
     }
 
     private ObjectNode createRequestJson()
     {
         final ObjectNode json = JsonHelper.newObjectNode();
-        json.put( "name", "source-path" );
-        json.put( "upgrade", Boolean.FALSE );
+        json.put( "name", "dump-name" );
         return json;
     }
 

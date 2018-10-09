@@ -23,6 +23,10 @@ public final class LoadCommand
     @Option(name = "-y", description = "Automatic yes to prompts; assume “Yes” as answer to all prompts and run non-interactively.")
     public boolean interactive = false;
 
+    @SuppressWarnings("WeakerAccess")
+    @Option(name = "--upgrade", description = "Upgrade the dump if necessary (default is false)")
+    public boolean upgrade = false;
+
 
     @Override
     protected void execute()
@@ -59,6 +63,7 @@ public final class LoadCommand
     {
         final ObjectNode json = JsonHelper.newObjectNode();
         json.put( "name", this.source );
+        json.put( "upgrade", this.upgrade );
         return json;
     }
 }

@@ -20,6 +20,8 @@ import com.enonic.xp.dump.DumpService;
 import com.enonic.xp.dump.RepoLoadResult;
 import com.enonic.xp.dump.SystemDumpParams;
 import com.enonic.xp.dump.SystemDumpResult;
+import com.enonic.xp.dump.SystemDumpUpgradeParams;
+import com.enonic.xp.dump.SystemDumpUpgradeResult;
 import com.enonic.xp.dump.SystemLoadParams;
 import com.enonic.xp.dump.SystemLoadResult;
 import com.enonic.xp.export.ExportService;
@@ -28,9 +30,10 @@ import com.enonic.xp.export.NodeImportResult;
 import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.impl.server.rest.model.SystemDumpRequestJson;
 import com.enonic.xp.impl.server.rest.model.SystemDumpResultJson;
+import com.enonic.xp.impl.server.rest.model.SystemDumpUpgradeResultJson;
 import com.enonic.xp.impl.server.rest.model.SystemLoadRequestJson;
 import com.enonic.xp.impl.server.rest.model.SystemLoadResultJson;
-import com.enonic.xp.impl.server.rest.model.UpdateDumpJson;
+import com.enonic.xp.impl.server.rest.model.SystemDumpUpgradeRequestJson;
 import com.enonic.xp.impl.server.rest.model.VacuumResultJson;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.node.NodePath;
@@ -116,9 +119,13 @@ public final class SystemResource
 
     @POST
     @Path("upgrade")
-    public Boolean update( final UpdateDumpJson params )
+    public SystemDumpUpgradeResultJson upgrade( final SystemDumpUpgradeRequestJson params )
     {
-        return this.dumpService.upgrade( params.getName() );
+        final SystemDumpUpgradeParams upgradeParams = SystemDumpUpgradeParams.create().
+            dumpName( params.getName() ).
+            build();
+        final SystemDumpUpgradeResult result = this.dumpService.upgrade( upgradeParams );
+        return SystemDumpUpgradeResultJson.from( result );
     }
 
     private boolean isExport( final SystemLoadRequestJson request )
