@@ -4,7 +4,6 @@
            elementFormDefault="qualified">
 
   <xs:element name="content-type" type="contentType"/>
-  <xs:element name="image" type="imageDescriptor"/>
   <xs:element name="layout" type="layoutDescriptor"/>
   <xs:element name="mixin" type="mixin"/>
   <xs:element name="x-data" type="xdataType"/>
@@ -253,13 +252,6 @@
           </xs:sequence>
         </xs:complexType>
       </xs:element>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="imageDescriptor">
-    <xs:sequence>
-      <xs:element minOccurs="0" name="display-name" type="xs:string"/>
-      <xs:element minOccurs="0" name="form" type="form"/>
     </xs:sequence>
   </xs:complexType>
 
