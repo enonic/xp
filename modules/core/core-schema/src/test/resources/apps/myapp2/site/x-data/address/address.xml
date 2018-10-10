@@ -2,7 +2,7 @@
 <x-data xmlns="urn:enonic:xp:model:1.0">
   <display-name>display name</display-name>
   <description>description</description>
-  <items>
+  <form>
     <item-set name="address">
       <occurrences minimum="0" maximum="1"/>
       <items>
@@ -40,5 +40,5 @@
         </input>
       </items>
     </item-set>
-  </items>
+  </form>
 </x-data>

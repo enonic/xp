@@ -1,5 +1,5 @@
-<task>
+<task xmlns="urn:enonic:xp:model:1.0">
   <description>MyTask</description>
-  <config>
-  </config>
+  <form>
+  </form>
 </task>
