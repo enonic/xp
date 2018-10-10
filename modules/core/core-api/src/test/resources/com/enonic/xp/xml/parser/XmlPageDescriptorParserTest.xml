@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <page xmlns="urn:enonic:xp:model:1.0">
   <display-name i18n="key.display-name">Landing page</display-name>
-  <config>
+  <form>
     <input type="Double" name="pause">
       <label i18n="key1.label">Pause parameter</label>
       <immutable>false</immutable>
@@ -40,7 +40,7 @@
         </field-set>
       </items>
     </item-set>
-  </config>
+  </form>
   <regions>
     <region name="header"/>
     <region name="main"/>

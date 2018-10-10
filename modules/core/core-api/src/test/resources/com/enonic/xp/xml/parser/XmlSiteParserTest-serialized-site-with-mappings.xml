@@ -2,7 +2,7 @@
 <site xmlns="urn:enonic:xp:model:1.0">
   <x-data name="system:menu-item"/>
   <x-data name="myapplication:my-meta-mixin"/>
-  <config>
+  <form>
     <input type="TextLine" name="some-name">
       <label>Textline</label>
       <immutable>false</immutable>
@@ -11,7 +11,7 @@
       <help-text/>
       <occurrences minimum="0" maximum="1"/>
     </input>
-  </config>
+  </form>
   <filters>
     <response-filter name="filter1" order="10"/>
     <response-filter name="filter2" order="10"/>
