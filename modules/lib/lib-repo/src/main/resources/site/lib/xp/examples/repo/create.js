@@ -29,7 +29,7 @@ var result2 = repoLib.create({
             "deny": []
         }
     ],
-    rootChildOrder: "_timestamp DESC"
+    rootChildOrder: "_ts DESC"
 });
 
 log.info('Repository created with id ' + result2.id);

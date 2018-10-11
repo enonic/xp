@@ -1,9 +1,10 @@
 apply from: "$rootDir/gradle/osgi.gradle"
 
 dependencies {
-    compile( 'org.elasticsearch:elasticsearch:1.5.2' ) {
+    compile( 'org.elasticsearch:elasticsearch:2.4.6' ) {
         exclude group: 'org.antlr'
         exclude group: 'org.ow2.asm'
+        exclude group: 'com.google.guava'
     }
 }
 
@@ -13,6 +14,12 @@ bundle {
     instruction 'Export-Package', 'com.spatial4j.*'
     instruction 'Export-Package', 'org.apache.lucene.*;-split-package:=merge-first'
     instruction 'Export-Package', 'org.tartarus.*'
+    instruction 'Export-Package', 'org.joda.time.*'
+    instruction 'Export-Package', 'com.twitter.jsr166e.*'
+    instruction 'Export-Package', 'com.tdunning.math.stats.*'
+    instruction 'Export-Package', 'com.carrotsearch.hppc.*'
+    instruction 'Export-Package', 'org.jboss.netty.*'
+    instruction 'Export-Package', 'com.ning.compress.*'
     instruction 'Import-Package', '*;resolution:=optional'
-    instruction 'Private-Package', 'config.*,META-INF.services.*;-split-package:=merge-first'
+    instruction 'Private-Package', 'config.*,META-INF.services.*,com.fasterxml.jackson.dataformat.smile.*;-split-package:=merge-first'
 }

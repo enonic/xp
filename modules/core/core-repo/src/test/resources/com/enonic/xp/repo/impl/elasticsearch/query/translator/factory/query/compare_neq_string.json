@@ -2,7 +2,10 @@
   "bool": {
     "must_not": {
       "term": {
-        "myfield": "myvalue"
+        "myfield": {
+          "value": "myvalue",
+          "_name": "myfield"
+        }
       }
     }
   }

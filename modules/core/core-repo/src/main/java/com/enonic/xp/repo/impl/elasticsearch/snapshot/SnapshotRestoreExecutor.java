@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.elasticsearch.ElasticsearchException;
+import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotAction;
 import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotRequestBuilder;
 import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotResponse;
 
@@ -95,7 +96,7 @@ public class SnapshotRestoreExecutor
     {
         final RestoreSnapshotResponse response;
         final RestoreSnapshotRequestBuilder restoreSnapshotRequestBuilder =
-            new RestoreSnapshotRequestBuilder( this.client.admin().cluster() ).
+            new RestoreSnapshotRequestBuilder( this.client.admin().cluster(), RestoreSnapshotAction.INSTANCE ).
                 setRestoreGlobalState( false ).
                 setIndices( indices.toArray( new String[indices.size()] ) ).
                 setRepository( this.snapshotRepositoryName ).

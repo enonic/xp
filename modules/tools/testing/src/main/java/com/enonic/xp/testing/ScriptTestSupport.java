@@ -1,6 +1,8 @@
 package com.enonic.xp.testing;
 
+import java.io.File;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Hashtable;
 
 import org.junit.Assert;
@@ -185,6 +187,7 @@ public abstract class ScriptTestSupport
     }
 
     private ScriptExecutor createExecutor()
+        throws Exception
     {
         final ScriptExecutorImpl executor = new ScriptExecutorImpl();
         executor.setResourceService( this.resourceService );
@@ -198,10 +201,13 @@ public abstract class ScriptTestSupport
     }
 
     private Application createApplication()
+        throws Exception
     {
         final ApplicationBuilder builder = new ApplicationBuilder();
         builder.classLoader( getClass().getClassLoader() );
-        builder.urlResolver( new ClassLoaderApplicationUrlResolver( getClass().getClassLoader() ) );
+        URL resourcesPath[] = {new File( "src/test/resources" ).toURI().toURL()};
+        URLClassLoader loader = new URLClassLoader( resourcesPath, ClassLoader.getPlatformClassLoader() );
+        builder.urlResolver( new ClassLoaderApplicationUrlResolver( loader ) );
         builder.config( ConfigBuilder.create().build() );
         builder.bundle( createBundle() );
         return builder.build();

@@ -48,8 +48,8 @@ public class CreateNodeParamsFactoryTest
     public void child_order()
         throws Exception
     {
-        final CreateNodeParams createNodeParams = createWithStringProperty( CHILD_ORDER, "_timestamp DESC" );
-        assertEquals( ChildOrder.from( "_timestamp DESC" ), createNodeParams.getChildOrder() );
+        final CreateNodeParams createNodeParams = createWithStringProperty( CHILD_ORDER, "_ts DESC" );
+        assertEquals( ChildOrder.from( "_ts DESC" ), createNodeParams.getChildOrder() );
     }
 
     @Test

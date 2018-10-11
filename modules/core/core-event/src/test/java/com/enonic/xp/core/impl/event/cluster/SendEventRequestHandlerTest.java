@@ -1,9 +1,11 @@
 package com.enonic.xp.core.impl.event.cluster;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
-import org.elasticsearch.common.io.stream.BytesStreamInput;
+import org.elasticsearch.common.io.stream.ByteBufferStreamInput;
 import org.elasticsearch.common.io.stream.BytesStreamOutput;
+import org.elasticsearch.common.io.stream.StreamInput;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportChannel;
 import org.elasticsearch.transport.TransportService;
@@ -40,7 +42,8 @@ public class SendEventRequestHandlerTest
         throws IOException
     {
         this.sendEventRequestHandler.activate();
-        Mockito.verify( this.transportService ).registerHandler( ClusterEventSender.ACTION, this.sendEventRequestHandler );
+        Mockito.verify( this.transportService ).registerRequestHandler( ClusterEventSender.ACTION, SendEventRequest.class,
+                                                                        ThreadPool.Names.MANAGEMENT, this.sendEventRequestHandler );
         this.sendEventRequestHandler.deactivate();
         Mockito.verify( this.transportService ).removeHandler( ClusterEventSender.ACTION );
     }
@@ -63,8 +66,8 @@ public class SendEventRequestHandlerTest
         sendEventRequestOut.writeTo( bytesStreamOutput );
 
         //Reads the event
-        final BytesStreamInput bytesStreamInput = new BytesStreamInput( bytesStreamOutput.bytes() );
-        final SendEventRequest sendEventRequestIn = this.sendEventRequestHandler.newInstance();
+        final StreamInput bytesStreamInput = new ByteBufferStreamInput( ByteBuffer.wrap( bytesStreamOutput.bytes().array() ) );
+        final SendEventRequest sendEventRequestIn = new SendEventRequest();
         sendEventRequestIn.readFrom( bytesStreamInput );
 
         //Passes the event received to SendEventRequestHandler
@@ -78,11 +81,5 @@ public class SendEventRequestHandlerTest
         Assert.assertEquals( eventForwarded.getTimestamp(), event.getTimestamp() );
         Assert.assertEquals( eventForwarded.isDistributed(), false );
         Assert.assertEquals( eventForwarded.getData(), event.getData() );
-    }
-
-    @Test
-    public void testExecutor()
-    {
-        Assert.assertEquals( ThreadPool.Names.MANAGEMENT, this.sendEventRequestHandler.executor() );
     }
 }

@@ -20,7 +20,7 @@ public class NodePropertyConstants
 
     public final static String MANUAL_ORDER_VALUE = "_manualOrderValue";
 
-    public final static String TIMESTAMP = "_timestamp";
+    public final static String TIMESTAMP = "_ts";
 
     public final static String PERMISSIONS = "_permissions";
 

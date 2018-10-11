@@ -1,15 +1,16 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.elasticsearch.index.query.BoolFilterBuilder;
-import org.elasticsearch.index.query.ExistsFilterBuilder;
-import org.elasticsearch.index.query.FilterBuilder;
-import org.elasticsearch.index.query.IndicesFilterBuilder;
-import org.elasticsearch.index.query.RangeFilterBuilder;
-import org.elasticsearch.index.query.TermsFilterBuilder;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.ExistsQueryBuilder;
+import org.elasticsearch.index.query.IndicesQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.RangeQueryBuilder;
+import org.elasticsearch.index.query.TermsQueryBuilder;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -36,7 +37,7 @@ public class FilterBuilderFactory
         super( fieldNameResolver );
     }
 
-    public FilterBuilder create( final Filters filters )
+    public QueryBuilder create( final Filters filters )
     {
         if ( filters == null || filters.isEmpty() )
         {
@@ -46,15 +47,20 @@ public class FilterBuilderFactory
         return doCreate( ImmutableSet.copyOf( filters ) );
     }
 
-    private FilterBuilder doCreate( final ImmutableSet<Filter> queryFilters )
+    private QueryBuilder doCreate( final ImmutableSet<Filter> queryFilters )
     {
-        List<FilterBuilder> filtersToApply = Lists.newArrayList();
+        List<QueryBuilder> filtersToApply = Lists.newArrayList();
 
         appendFilters( queryFilters, filtersToApply );
 
         if ( filtersToApply.size() > 1 )
         {
-            return new BoolFilterBuilder().must( filtersToApply.toArray( new FilterBuilder[filtersToApply.size()] ) );
+            final BoolQueryBuilder queryBuilder = new BoolQueryBuilder();
+            for ( QueryBuilder filter : filtersToApply )
+            {
+                queryBuilder.must( filter );
+            }
+            return queryBuilder;
         }
         else if ( filtersToApply.size() == 1 )
         {
@@ -64,11 +70,11 @@ public class FilterBuilderFactory
         return null;
     }
 
-    private void appendFilters( final ImmutableSet<Filter> queryFilters, final List<FilterBuilder> filtersToApply )
+    private void appendFilters( final ImmutableSet<Filter> queryFilters, final List<QueryBuilder> filtersToApply )
     {
         for ( final Filter filter : queryFilters )
         {
-            final FilterBuilder filterBuilder = doCreateFilterBuilder( filter );
+            final QueryBuilder filterBuilder = doCreateFilterBuilder( filter );
             if ( filterBuilder != null )
             {
                 filtersToApply.add( filterBuilder );
@@ -76,7 +82,7 @@ public class FilterBuilderFactory
         }
     }
 
-    private FilterBuilder doCreateFilterBuilder( final Filter filter )
+    private QueryBuilder doCreateFilterBuilder( final Filter filter )
     {
         if ( filter instanceof ExistsFilter )
         {
@@ -108,20 +114,20 @@ public class FilterBuilderFactory
         }
     }
 
-    private FilterBuilder createIndicesFilter( final IndicesFilter indicesFilter )
+    private QueryBuilder createIndicesFilter( final IndicesFilter indicesFilter )
     {
-        final IndicesFilterBuilder builder =
-            new IndicesFilterBuilder( doCreateFilterBuilder( indicesFilter.getFilter() ), indicesFilter.getIndices() );
+        final IndicesQueryBuilder builder =
+            new IndicesQueryBuilder( doCreateFilterBuilder( indicesFilter.getFilter() ), indicesFilter.getIndices() );
 
         if ( indicesFilter.getNoMatchFilter() != null )
         {
-            builder.noMatchFilter( doCreateFilterBuilder( indicesFilter.getNoMatchFilter() ) );
+            builder.noMatchQuery( doCreateFilterBuilder( indicesFilter.getNoMatchFilter() ) );
         }
 
         return builder;
     }
 
-    private FilterBuilder createIdFilter( final IdFilter idFilter )
+    private QueryBuilder createIdFilter( final IdFilter idFilter )
     {
         final String queryFieldName = IndexFieldNameNormalizer.normalize( idFilter.getFieldName() );
 
@@ -129,35 +135,36 @@ public class FilterBuilderFactory
 
         values.addAll( idFilter.getValues() );
 
-        return new TermsFilterBuilder( queryFieldName, values );
+        return new TermsQueryBuilder( queryFieldName, values );
     }
 
-    private FilterBuilder createBooleanFilter( final BooleanFilter booleanFilter )
+    private QueryBuilder createBooleanFilter( final BooleanFilter booleanFilter )
     {
-        final BoolFilterBuilder builder = new BoolFilterBuilder().
-            must( createBooleanFilterChildren( booleanFilter.getMust() ) ).
-            mustNot( createBooleanFilterChildren( booleanFilter.getMustNot() ) ).
-            should( createBooleanFilterChildren( booleanFilter.getShould() ) );
+        final BoolQueryBuilder builder = new BoolQueryBuilder();
+        Arrays.stream( createBooleanFilterChildren( booleanFilter.getMust() ) ).forEach( builder::must );
+        Arrays.stream( createBooleanFilterChildren( booleanFilter.getMustNot() ) ).forEach( builder::mustNot );
+        Arrays.stream( createBooleanFilterChildren( booleanFilter.getShould() ) ).forEach( builder::should );
 
-        if ( booleanFilter.isCache() != null )
-        {
-            builder.cache( booleanFilter.isCache() );
-        }
+        //TODO Java10
+//        if ( booleanFilter.isCache() != null )
+//        {
+//            builder.cache( booleanFilter.isCache() );
+//        }
 
         return builder;
     }
 
-    private FilterBuilder[] createBooleanFilterChildren( final ImmutableSet<Filter> queryFilters )
+    private QueryBuilder[] createBooleanFilterChildren( final ImmutableSet<Filter> queryFilters )
     {
-        List<FilterBuilder> filtersToApply = Lists.newArrayList();
+        List<QueryBuilder> filtersToApply = Lists.newArrayList();
 
         appendFilters( queryFilters, filtersToApply );
 
-        return filtersToApply.toArray( new FilterBuilder[filtersToApply.size()] );
+        return filtersToApply.toArray( new QueryBuilder[filtersToApply.size()] );
     }
 
 
-    private FilterBuilder createRangeFilter( final RangeFilter filter )
+    private QueryBuilder createRangeFilter( final RangeFilter filter )
     {
         final Value from = filter.getFrom();
         final Value to = filter.getTo();
@@ -169,21 +176,22 @@ public class FilterBuilderFactory
 
         final String queryFieldName = this.fieldNameResolver.resolve( filter.getFieldName(), from != null ? from : to );
 
-        RangeFilterBuilder builder = new RangeFilterBuilder( queryFieldName ).
+        RangeQueryBuilder builder = new RangeQueryBuilder( queryFieldName ).
             from( from ).
             to( to ).
             includeLower( true ).
             includeUpper( true );
 
-        if ( filter.isCache() != null )
-        {
-            builder.cache( filter.isCache() );
-        }
+        //TODO Java10
+//        if ( filter.isCache() != null )
+//        {
+//            builder.cache( filter.isCache() );
+//        }
 
         return builder;
     }
 
-    private FilterBuilder createTermFilter( final ValueFilter filter )
+    private QueryBuilder createTermFilter( final ValueFilter filter )
     {
         if ( filter.getValues().isEmpty() )
         {
@@ -196,20 +204,21 @@ public class FilterBuilderFactory
 
         values.addAll( filter.getValues().stream().map( ValueHelper::getValueAsType ).collect( Collectors.toList() ) );
 
-        final TermsFilterBuilder builder = new TermsFilterBuilder( queryFieldName, values );
+        final TermsQueryBuilder builder = new TermsQueryBuilder( queryFieldName, values );
 
-        if ( filter.isCache() != null )
-        {
-            builder.cache( filter.isCache() );
-        }
+        //TODO Java10
+//        if ( filter.isCache() != null )
+//        {
+//            builder.cache( filter.isCache() );
+//        }
 
         return builder;
     }
 
-    private FilterBuilder createExistsFilter( final ExistsFilter filter )
+    private QueryBuilder createExistsFilter( final ExistsFilter filter )
     {
         final String resolvedQueryFieldName = this.fieldNameResolver.resolve( filter.getFieldName(), IndexValueType.STRING );
 
-        return new ExistsFilterBuilder( resolvedQueryFieldName );
+        return new ExistsQueryBuilder( resolvedQueryFieldName );
     }
 }

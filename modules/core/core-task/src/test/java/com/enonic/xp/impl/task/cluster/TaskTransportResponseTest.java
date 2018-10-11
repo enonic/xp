@@ -1,11 +1,13 @@
 package com.enonic.xp.impl.task.cluster;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.time.Instant;
 import java.util.Arrays;
 
-import org.elasticsearch.common.io.stream.BytesStreamInput;
+import org.elasticsearch.common.io.stream.ByteBufferStreamInput;
 import org.elasticsearch.common.io.stream.BytesStreamOutput;
+import org.elasticsearch.common.io.stream.StreamInput;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -46,7 +48,8 @@ public class TaskTransportResponseTest
         oldResponse.writeTo( streamOutput );
 
         final TaskTransportResponse newResponse = new TaskTransportResponse();
-        newResponse.readFrom( new BytesStreamInput( streamOutput.bytes() ) );
+        final StreamInput bytesStreamInput = new ByteBufferStreamInput( ByteBuffer.wrap( streamOutput.bytes().array() ) );
+        newResponse.readFrom( bytesStreamInput );
 
         Assert.assertEquals( oldResponse.getTaskInfos(), newResponse.getTaskInfos() );
     }

@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch.executor;
 
+import org.elasticsearch.action.search.SearchAction;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
@@ -23,7 +24,7 @@ class CountExecutor
 
     public SearchResult execute( final ElasticsearchQuery query )
     {
-        SearchRequestBuilder searchRequestBuilder = new SearchRequestBuilder( this.client ).
+        SearchRequestBuilder searchRequestBuilder = new SearchRequestBuilder( this.client, SearchAction.INSTANCE ).
             setIndices( query.getIndexNames() ).
             setTypes( query.getIndexTypes() ).
             setQuery( query.getQuery() ).

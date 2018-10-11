@@ -12,7 +12,6 @@ import org.elasticsearch.common.logging.slf4j.Slf4jESLoggerFactory;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
-import org.elasticsearch.node.internal.InternalNode;
 import org.elasticsearch.transport.TransportService;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -56,7 +55,7 @@ public final class ElasticsearchActivator
         this.node = NodeBuilder.nodeBuilder().settings( settings ).build();
         this.node.start();
 
-        final Injector injector = ( (InternalNode) this.node ).injector();
+        final Injector injector = this.node.injector();
         final ClusterService clusterService = injector.getInstance( ClusterService.class );
         final TransportService transportService = injector.getInstance( TransportService.class );
 

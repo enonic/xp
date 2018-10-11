@@ -19,7 +19,7 @@ include 'core:core-auth'
 include 'core:core-macro'
 include 'core:core-task'
 include 'core:core-cluster'
-include 'core:core-ignite'
+//include 'core:core-ignite'
 
 include 'server:server-config'
 include 'server:server-deploy'

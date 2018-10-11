@@ -3,7 +3,6 @@ package com.enonic.xp.elasticsearch.impl;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
 import org.osgi.framework.BundleContext;
 
@@ -61,8 +60,7 @@ final class NodeSettingsBuilder
 
     private Settings buildSettings( final Configuration config )
     {
-        return ImmutableSettings.settingsBuilder().
-            classLoader( ImmutableSettings.class.getClassLoader() ).
+        return Settings.settingsBuilder().
             put( config.asMap() ).
             put( COMMON_NODE_NAME_OPTION, this.clusterConfig.name().toString() ).
             put( ES_UNICAST_HOST_OPTION, createHostString( config ) ).
@@ -83,6 +81,6 @@ final class NodeSettingsBuilder
 
     private String getPortPrefix( final String port )
     {
-        return "[" + port + "]";
+        return ":" + port;
     }
 }

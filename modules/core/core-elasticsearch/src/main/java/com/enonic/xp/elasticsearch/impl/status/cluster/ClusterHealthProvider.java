@@ -1,6 +1,7 @@
 package com.enonic.xp.elasticsearch.impl.status.cluster;
 
 import org.elasticsearch.ElasticsearchException;
+import org.elasticsearch.action.admin.cluster.health.ClusterHealthAction;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequestBuilder;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
@@ -35,7 +36,7 @@ public final class ClusterHealthProvider
     {
         String[] indices = new String[]{};
 
-        final ClusterHealthRequest request = new ClusterHealthRequestBuilder( clusterAdminClient ).
+        final ClusterHealthRequest request = new ClusterHealthRequestBuilder( clusterAdminClient, ClusterHealthAction.INSTANCE ).
             setTimeout( CLUSTER_HEALTH_TIMEOUT ).
             setIndices( indices ).
             request();

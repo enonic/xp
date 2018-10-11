@@ -40,7 +40,7 @@ var expected = {
     "hasChildren": false,
     "language": "en",
     "valid": true,
-    "childOrder": "_timestamp DESC, _name ASC",
+    "childOrder": "_ts DESC, _name ASC",
     "data": {
         "myfield": "Hello World",
         "myCheckbox": "false",

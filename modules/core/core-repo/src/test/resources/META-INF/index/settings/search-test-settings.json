@@ -12,8 +12,7 @@
         "side": "front",
         "max_gram": 12,
         "min_gram": 1,
-        "type": "edgeNGram",
-        "side": "front"
+        "type": "edgeNGram"
       }
     },
     "analyzer": {
@@ -47,7 +46,6 @@
           "asciifolding",
           "fulltext_ngrams"
         ],
-        "type": "custom",
         "tokenizer": "standard"
       },
       "ngram_search_default": {
@@ -57,7 +55,6 @@
           "lowercase",
           "asciifolding"
         ],
-        "type": "custom",
         "tokenizer": "standard"
       },
       "fulltext_search_default": {
@@ -67,7 +64,6 @@
           "lowercase",
           "asciifolding"
         ],
-        "type": "custom",
         "tokenizer": "standard"
       },
       "document_index_default": {
@@ -77,7 +73,6 @@
           "lowercase",
           "asciifolding"
         ],
-        "type": "custom",
         "tokenizer": "standard"
       },
       "all_field_analyzer": {
@@ -88,7 +83,6 @@
           "asciifolding",
           "fulltext_ngrams"
         ],
-        "type": "custom",
         "tokenizer": "standard"
       }
     }

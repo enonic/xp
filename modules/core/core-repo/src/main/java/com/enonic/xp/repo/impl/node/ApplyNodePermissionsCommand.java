@@ -16,6 +16,7 @@ import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
+import static com.enonic.xp.repo.impl.node.NodeConstants.CLOCK;
 import static com.enonic.xp.repo.impl.node.NodePermissionsResolver.contextUserHasPermissionOrAdmin;
 
 final class ApplyNodePermissionsCommand
@@ -111,7 +112,7 @@ final class ApplyNodePermissionsCommand
     private Node createUpdatedNode( final Node persistedNode, final AccessControlList permissions, final boolean inheritsPermissions )
     {
         final Node.Builder updateNodeBuilder = Node.create( persistedNode ).
-            timestamp( Instant.now() ).
+            timestamp( Instant.now( CLOCK ) ).
             permissions( permissions ).
             inheritPermissions( inheritsPermissions );
         return updateNodeBuilder.build();

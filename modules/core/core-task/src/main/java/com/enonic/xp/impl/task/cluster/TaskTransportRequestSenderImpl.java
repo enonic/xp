@@ -50,8 +50,8 @@ public final class TaskTransportRequestSenderImpl
         final TaskTransportResponseHandler responseHandler = new TaskTransportResponseHandler( discoveryNodes.size() );
         for ( final DiscoveryNode discoveryNode : discoveryNodes )
         {
-            this.transportService.sendRequest( discoveryNode, ACTION, transportRequest,
-                                               TransportRequestOptions.EMPTY.withTimeout( TRANSPORT_REQUEST_TIMEOUT ), responseHandler );
+            final TransportRequestOptions options = TransportRequestOptions.builder().withTimeout( TRANSPORT_REQUEST_TIMEOUT ).build();
+            this.transportService.sendRequest( discoveryNode, ACTION, transportRequest, options, responseHandler );
         }
         return responseHandler.getTaskInfos();
     }

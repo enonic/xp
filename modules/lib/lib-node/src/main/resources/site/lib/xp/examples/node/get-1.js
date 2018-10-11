@@ -31,7 +31,7 @@ var expected = {
     "_id": "nodeId",
     "_name": "my-name",
     "_path": "/my-name",
-    "_childOrder": "_timestamp DESC",
+    "_childOrder": "_ts DESC",
     "_indexConfig": {
         "default": {
             "decideByType": false,
@@ -76,7 +76,7 @@ var expected = {
     "_state": "DEFAULT",
     "_nodeType": "default",
     "_versionKey": "versionKey",
-    "_timestamp": "2010-10-10T10:10:10.100Z",
+    "_ts": "2010-10-10T10:10:10.100Z",
     "displayName": "This is brand new node",
     "someData": {
         "cars": [

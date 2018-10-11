@@ -70,7 +70,7 @@ public final class ServletRequestUrlHelper
 
     public static String getHost( final HttpServletRequest req )
     {
-        return getHostAndPort( req ).getHostText();
+        return getHostAndPort( req ).getHost();
     }
 
     public static int getPort()

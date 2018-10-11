@@ -19,6 +19,8 @@ import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 
+import static com.enonic.xp.repo.impl.node.NodeConstants.CLOCK;
+
 public class ReorderChildNodeCommand
     extends AbstractNodeCommand
 {
@@ -107,7 +109,7 @@ public class ReorderChildNodeCommand
     private Node doUpdateNodeOrderValue( final Long newOrderValue )
     {
         final Node updatedNode = Node.create( nodeToMove ).
-            timestamp( Instant.now() ).
+            timestamp( Instant.now( CLOCK ) ).
             manualOrderValue( newOrderValue ).
             build();
 

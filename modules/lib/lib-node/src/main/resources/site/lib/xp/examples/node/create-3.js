@@ -25,7 +25,7 @@ var expected = {
         "_id": "b186d24f-ac38-42ca-a6db-1c1bda6c6c26",
         "_name": "myName",
         "_path": "/parent/myName",
-        "_childOrder": "_timestamp DESC",
+        "_childOrder": "_ts DESC",
         "_indexConfig": {
             "default": {
                 "decideByType": true,

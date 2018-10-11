@@ -2,7 +2,8 @@ package com.enonic.xp.repo.impl.elasticsearch.aggregation;
 
 import java.util.Collection;
 
-import org.elasticsearch.search.aggregations.bucket.range.geodistance.GeoDistance;
+import org.elasticsearch.search.aggregations.bucket.range.InternalRange;
+import org.elasticsearch.search.aggregations.bucket.range.geodistance.InternalGeoDistance;
 
 import com.enonic.xp.aggregation.BucketAggregation;
 import com.enonic.xp.aggregation.Buckets;
@@ -11,22 +12,22 @@ import com.enonic.xp.aggregation.GeoDistanceRangeBucket;
 class GeoDistanceAggregationFactory
     extends AggregationsFactory
 {
-    static BucketAggregation create( final GeoDistance geoDistance )
+    static BucketAggregation create( final InternalGeoDistance geoDistance )
     {
         return BucketAggregation.bucketAggregation( geoDistance.getName() ).
             buckets( createBuckets( geoDistance.getBuckets() ) ).
             build();
     }
 
-    private static Buckets createBuckets( final Collection<? extends GeoDistance.Bucket> buckets )
+    private static Buckets createBuckets( final Collection<? extends InternalRange.Bucket> buckets )
     {
         final Buckets.Builder bucketsBuilder = new Buckets.Builder();
 
-        for ( final GeoDistance.Bucket bucket : buckets )
+        for ( final InternalRange.Bucket bucket : buckets )
         {
             final GeoDistanceRangeBucket.Builder builder = GeoDistanceRangeBucket.create().
-                from( bucket.getFrom() ).
-                to( bucket.getTo() ).
+                from( (Double) bucket.getFrom() ).
+                to( (Double) bucket.getTo() ).
                 key( bucket.getKey() ).
                 docCount( bucket.getDocCount() );
 

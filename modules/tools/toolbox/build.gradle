@@ -1,9 +1,9 @@
 dependencies {
-    compile 'com.google.guava:guava:18.0'
+    compile 'com.google.guava:guava:26.0-jre'
     compile 'commons-io:commons-io:2.4'
     compile 'io.airlift:airline:0.7'
     compile 'com.squareup.okhttp:okhttp:2.4.0'
-    compile 'com.fasterxml.jackson.core:jackson-databind:2.6.2'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.9.6'
     compile 'org.eclipse.jgit:org.eclipse.jgit:4.0.1.201506240215-r'
     compile 'org.slf4j:slf4j-log4j12:1.7.25'
     testCompile 'com.squareup.okhttp:mockwebserver:2.4.0'

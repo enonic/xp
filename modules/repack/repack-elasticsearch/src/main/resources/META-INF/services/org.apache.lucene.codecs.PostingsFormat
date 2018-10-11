@@ -1,5 +1,6 @@
 org.apache.lucene.codecs.lucene40.Lucene40PostingsFormat
 org.apache.lucene.codecs.lucene41.Lucene41PostingsFormat
+org.apache.lucene.codecs.lucene50.Lucene50PostingsFormat
 org.apache.lucene.codecs.idversion.IDVersionPostingsFormat
 org.elasticsearch.index.codec.postingsformat.BloomFilterPostingsFormat
 org.elasticsearch.index.codec.postingsformat.Elasticsearch090PostingsFormat

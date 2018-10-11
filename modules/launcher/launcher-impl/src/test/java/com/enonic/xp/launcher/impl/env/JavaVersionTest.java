@@ -14,10 +14,11 @@ public class JavaVersionTest
     }
 
     @Test
-    public void testIsJava8()
+    public void testIsJava11()
     {
-        assertEquals( false, newVersion( "1.7.0" ).isJava8() );
-        assertEquals( true, newVersion( "1.8.0_40" ).isJava8() );
+        assertTrue( newVersion( "11.0.2" ).isJava11() );
+        assertFalse( newVersion( "1.7.0" ).isJava11() );
+        assertFalse( newVersion( "1.8.0_40" ).isJava11() );
     }
 
     @Test

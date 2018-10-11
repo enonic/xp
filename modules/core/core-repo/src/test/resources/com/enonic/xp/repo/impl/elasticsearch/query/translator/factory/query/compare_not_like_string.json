@@ -2,9 +2,7 @@
   "bool": {
     "must_not": {
       "wildcard": {
-        "myfield": {
-          "wildcard": "myvalue"
-        }
+        "myfield": "myvalue"
       }
     }
   }

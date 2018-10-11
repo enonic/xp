@@ -4,7 +4,7 @@ dependencies {
     compile project( ':core:core-api' )
     compile project( ':script:script-api' )
     compile project( ':portal:portal-api' )
-    compile 'org.elasticsearch:elasticsearch:1.5.2'
+    compile 'org.elasticsearch:elasticsearch:2.4.6'
     testCompile project( path: ':core:core-api', configuration: 'testOutput' )
     testCompile project( path: ':core:core-app', configuration: 'testOutput' )
     testCompile project( path: ':portal:portal-impl', configuration: 'testOutput' )
