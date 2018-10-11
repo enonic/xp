@@ -28,6 +28,6 @@ public final class XmlAuthDescriptorParser
         this.builder.mode( mode );
 
         final XmlFormMapper formMapper = new XmlFormMapper( this.currentApplication );
-        this.builder.config( formMapper.buildForm( root.getChild( "config" ) ) );
+        this.builder.config( formMapper.buildForm( root.getChild( "form" ) ) );
     }
 }

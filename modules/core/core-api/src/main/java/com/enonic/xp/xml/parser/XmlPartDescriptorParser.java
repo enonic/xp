@@ -27,6 +27,6 @@ public final class XmlPartDescriptorParser
             root.getChild( "display-name" ) != null ? root.getChild( "display-name" ).getAttribute( "i18n" ) : null );
 
         final XmlFormMapper mapper = new XmlFormMapper( this.currentApplication );
-        this.builder.config( mapper.buildForm( root.getChild( "config" ) ) );
+        this.builder.config( mapper.buildForm( root.getChild( "form" ) ) );
     }
 }

@@ -23,7 +23,7 @@ public final class XmlSiteParser
 {
     private static final String ROOT_TAG_NAME = "site";
 
-    private static final String CONFIG_TAG_NAME = "config";
+    private static final String FORM_TAG_NAME = "form";
 
     private static final String X_DATA_TAG_NAME = "x-data";
 
@@ -70,7 +70,7 @@ public final class XmlSiteParser
         assertTagName( root, ROOT_TAG_NAME );
 
         final XmlFormMapper formMapper = new XmlFormMapper( this.currentApplication );
-        this.siteDescriptorBuilder.form( formMapper.buildForm( root.getChild( CONFIG_TAG_NAME ) ) );
+        this.siteDescriptorBuilder.form( formMapper.buildForm( root.getChild( FORM_TAG_NAME ) ) );
         this.siteDescriptorBuilder.xDataMappings( XDataMappings.from( parseXDatas( root ) ) );
         this.siteDescriptorBuilder.filterDescriptors(
             FilterDescriptors.from( parseFilterDescriptors( root.getChild( FILTER_DESCRIPTORS_PARENT_TAG_NAME ) ) ) );

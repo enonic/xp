@@ -32,7 +32,7 @@ public final class XmlXDataParser
             root.getChild( "description" ) != null ? root.getChild( "description" ).getAttribute( "i18n" ) : null );
 
         final XmlFormMapper mapper = new XmlFormMapper( this.currentApplication );
-        final Form form = mapper.buildForm( root.getChild( "items" ) );
+        final Form form = mapper.buildForm( root.getChild( "form" ) );
         this.builder.form( form );
     }
 }

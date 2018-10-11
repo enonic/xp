@@ -24,6 +24,6 @@ final class XmlTaskDescriptorParser
         this.builder.description( root.getChildValue( "description" ) );
 
         final XmlFormMapper mapper = new XmlFormMapper( this.currentApplication );
-        this.builder.config( mapper.buildForm( root.getChild( "config" ) ) );
+        this.builder.config( mapper.buildForm( root.getChild( "form" ) ) );
     }
 }
