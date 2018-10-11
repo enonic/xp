@@ -19,8 +19,8 @@ import com.enonic.xp.toolbox.repo.RestoreCommand;
 import com.enonic.xp.toolbox.repo.SetReadOnlyCommand;
 import com.enonic.xp.toolbox.repo.SetReplicasCommand;
 import com.enonic.xp.toolbox.repo.SnapshotCommand;
+import com.enonic.xp.toolbox.repo.UpgradeCommand;
 import com.enonic.xp.toolbox.repo.VacuumCommand;
-import com.enonic.xp.toolbox.upgrade.UpgradeCommand;
 
 public final class Main
 {
@@ -32,6 +32,7 @@ public final class Main
         builder.withCommand( Help.class );
         builder.withCommand( DumpCommand.class );
         builder.withCommand( LoadCommand.class );
+        builder.withCommand( UpgradeCommand.class );
         builder.withCommand( ExportCommand.class );
         builder.withCommand( ImportCommand.class );
         builder.withCommand( ReindexCommand.class );
@@ -42,7 +43,6 @@ public final class Main
         builder.withCommand( SetReplicasCommand.class );
         builder.withCommand( SetReadOnlyCommand.class );
         builder.withCommand( ReprocessContentCommand.class );
-        builder.withCommand( UpgradeCommand.class );
         builder.withCommand( InitAppCommand.class );
         builder.withCommand( InstallApplicationCommand.class );
         builder.withCommand( VacuumCommand.class );

@@ -233,6 +233,7 @@ task distZip( type: Zip, dependsOn: installDist ) {
     from installDir
     // into archiveBase
 }
+build.dependsOn distZip
 
 task run( type: Exec, dependsOn: 'installDist' ) {
     description = 'Starts the server (use -Pdev for dev-mode or -Pdebug for debug-mode).'
