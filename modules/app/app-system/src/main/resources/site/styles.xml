@@ -1,0 +1,26 @@
+<styles editor-css="styles/styles.css" xmlns="urn:enonic:xp:model:1.0">
+  <image name="editor-style-raw">
+    <display-name i18n="style.editor.processing.none">Unprocessed raw image</display-name>
+  </image>
+  <image name="editor-align-justify">
+    <display-name i18n="style.editor.align.justify">Justify</display-name>
+  </image>
+  <image name="editor-align-left">
+    <display-name i18n="style.editor.align.left">Align left</display-name>
+  </image>
+  <image name="editor-align-center">
+    <display-name i18n="style.editor.align.center">Center</display-name>
+  </image>
+  <image name="editor-align-right">
+    <display-name i18n="style.editor.align.right">Align right</display-name>
+  </image>
+  <image name="editor-width-auto">
+    <display-name i18n="style.editor.width.auto">Auto</display-name>
+  </image>
+  <image name="editor-width-actual">
+    <display-name i18n="style.editor.width.actual">Actual</display-name>
+  </image>
+  <image name="editor-width-custom">
+    <display-name i18n="style.editor.width.custom">Custom</display-name>
+  </image>
+</styles>
