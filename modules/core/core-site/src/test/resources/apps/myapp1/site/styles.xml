@@ -1,0 +1,31 @@
+<styles css="assets/styles.css">
+  <style name="warning">
+    <displayName>Warning</displayName>
+  </style>
+  <image name="editor-align-justify" type="alignment">
+    <displayName i18n="style.editor.align.justify">Justify</displayName>
+    <requires i18n="editor-width-80-text">editor-width-auto</requires>
+  </image>
+  <image name="editor-width-auto" type="width">
+    <displayName i18n="editor-width-auto-text">Override ${width}</displayName>
+  </image>
+  <image name="editor-style-cinema" type="style">
+    <displayName i18n="editor-style-cinema-text">Cinema</displayName>
+    <params>
+      <aspectRatio>21:9</aspectRatio>
+      <filter>pixelate(10)</filter>
+    </params>
+  </image>
+  <image name="editor-style-square" type="style">
+    <displayName i18n="editor-style-square-text">Square</displayName>
+    <params>
+      <aspectRatio>1:1</aspectRatio>
+    </params>
+  </image>
+  <image name="editor-style-tall" type="style">
+    <displayName i18n="editor-style-tall-text">Tall</displayName>
+    <params>
+      <aspectRatio>9:16</aspectRatio>
+    </params>
+  </image>
+</styles>
