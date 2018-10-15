@@ -1,0 +1,24 @@
+figure img {
+    width: 100%;
+}
+
+figure.editor-width-actual img {
+    width: auto;
+}
+
+figure.editor-align-left {
+    float: left;
+    margin: 15px;
+    width: 40%;
+}
+
+figure.editor-align-right {
+    float: right;
+    margin: 15px;
+    width: 40%;
+}
+
+figure.editor-align-center {
+    margin: auto;
+    width: 60%;
+}
