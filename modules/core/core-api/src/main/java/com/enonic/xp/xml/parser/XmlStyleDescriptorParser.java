@@ -15,7 +15,7 @@ public final class XmlStyleDescriptorParser
 {
     private static final String ROOT_TAG_NAME = "styles";
 
-    private static final String ROOT_CSS_ATTRIBUTE_NAME = "editor-css";
+    private static final String ROOT_CSS_ATTRIBUTE_NAME = "css";
 
     private static final String ELEMENT_NAME_ATTRIBUTE_NAME = "name";
 

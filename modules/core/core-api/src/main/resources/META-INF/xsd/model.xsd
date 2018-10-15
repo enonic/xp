@@ -390,7 +390,7 @@
         <xs:element minOccurs="0" name="style" type="styleElement"/>
       </xs:choice>
     </xs:sequence>
-    <xs:attribute name="editor-css" type="xs:string"/>
+    <xs:attribute name="css" type="xs:string"/>
   </xs:complexType>
 
   <xs:complexType name="styleElement">
