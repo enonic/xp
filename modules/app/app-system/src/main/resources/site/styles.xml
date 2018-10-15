@@ -1,6 +1,6 @@
-<styles editor-css="styles/styles.css" xmlns="urn:enonic:xp:model:1.0">
-  <image name="editor-style-raw">
-    <display-name i18n="style.editor.processing.none">Unprocessed raw image</display-name>
+<styles css="styles/styles.css" xmlns="urn:enonic:xp:model:1.0">
+  <image name="editor-style-original">
+    <display-name i18n="style.editor.original">Unprocessed raw image</display-name>
   </image>
   <image name="editor-align-justify">
     <display-name i18n="style.editor.align.justify">Justify</display-name>
@@ -16,9 +16,6 @@
   </image>
   <image name="editor-width-auto">
     <display-name i18n="style.editor.width.auto">Auto</display-name>
-  </image>
-  <image name="editor-width-actual">
-    <display-name i18n="style.editor.width.actual">Actual</display-name>
   </image>
   <image name="editor-width-custom">
     <display-name i18n="style.editor.width.custom">Custom</display-name>
