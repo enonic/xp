@@ -84,7 +84,7 @@ public final class TestDataFixtures
         builder.data( tree );
         builder.attachments( newAttachments() );
         builder.valid( true );
-        builder.childOrder( ChildOrder.from( "_timestamp DESC, _name ASC" ) );
+        builder.childOrder( ChildOrder.from( "_ts DESC, _name ASC" ) );
 
         return builder;
     }

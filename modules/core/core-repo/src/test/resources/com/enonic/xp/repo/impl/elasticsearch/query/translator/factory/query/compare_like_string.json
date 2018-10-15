@@ -1,7 +1,5 @@
 {
   "wildcard": {
-    "myfield": {
-      "wildcard": "myvalue"
-    }
+    "myfield": "myvalue"
   }
 }

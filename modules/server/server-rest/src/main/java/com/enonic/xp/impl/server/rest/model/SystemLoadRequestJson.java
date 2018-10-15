@@ -6,13 +6,21 @@ public class SystemLoadRequestJson
 {
     private final String name;
 
-    public SystemLoadRequestJson( @JsonProperty("name") final String name )
+    private final boolean upgrade;
+
+    public SystemLoadRequestJson( @JsonProperty("name") final String name, @JsonProperty("upgrade") final boolean upgrade )
     {
         this.name = name;
+        this.upgrade = upgrade;
     }
 
     public String getName()
     {
         return name;
+    }
+
+    public boolean isUpgrade()
+    {
+        return upgrade;
     }
 }

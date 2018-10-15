@@ -28,7 +28,7 @@ public final class XmlPageDescriptorParser
 
 
         final XmlFormMapper formMapper = new XmlFormMapper( this.currentApplication );
-        this.builder.config( formMapper.buildForm( root.getChild( "config" ) ) );
+        this.builder.config( formMapper.buildForm( root.getChild( "form" ) ) );
 
         final XmlRegionDescriptorsMapper regionsMapper = new XmlRegionDescriptorsMapper();
         this.builder.regions( regionsMapper.buildRegions( root.getChild( "regions" ) ) );

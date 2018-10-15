@@ -1,5 +1,8 @@
 {
   "term": {
-    "myfield._datetime": "2013-11-29T09:42:00Z"
+    "myfield._datetime": {
+      "value": "2013-11-29T09:42:00Z",
+      "_name": "myfield._datetime"
+    }
   }
 }

@@ -19,7 +19,7 @@ include 'core:core-auth'
 include 'core:core-macro'
 include 'core:core-task'
 include 'core:core-cluster'
-include 'core:core-ignite'
+//include 'core:core-ignite'
 
 include 'server:server-config'
 include 'server:server-deploy'
@@ -53,7 +53,6 @@ include 'admin:admin-event'
 
 include 'itest:itest-core'
 
-include 'tools:upgrade'
 include 'tools:toolbox'
 include 'tools:testing'
 
@@ -95,6 +94,8 @@ include 'docs'
 
 rootProject.name = 'xp'
 
+enableFeaturePreview( 'STABLE_PUBLISHING' )
+
 configureProjects( rootProject )
 
 def configureProjects( root )
@@ -111,4 +112,6 @@ def configureProject( p )
     p.projectDir = new File( (File) settingsDir, "modules/${dirName}" )
     assert p.projectDir.isDirectory()
 }
+
+
 

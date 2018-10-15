@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mixin xmlns="urn:enonic:xp:model:1.0">
   <display-name>Full Name</display-name>
-  <items>
+  <form>
     <item-set name="name">
       <label>Full Name</label>
       <immutable>false</immutable>
@@ -27,5 +27,5 @@
         </input>
       </items>
     </item-set>
-  </items>
+  </form>
 </mixin>

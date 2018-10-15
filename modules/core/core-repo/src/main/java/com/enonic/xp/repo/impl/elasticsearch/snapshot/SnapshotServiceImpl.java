@@ -2,19 +2,21 @@ package com.enonic.xp.repo.impl.elasticsearch.snapshot;
 
 import java.io.File;
 import java.time.Instant;
+import java.util.List;
 import java.util.Set;
 
 import org.elasticsearch.action.admin.cluster.repositories.get.GetRepositoriesRequest;
 import org.elasticsearch.action.admin.cluster.repositories.get.GetRepositoriesResponse;
+import org.elasticsearch.action.admin.cluster.repositories.put.PutRepositoryAction;
 import org.elasticsearch.action.admin.cluster.repositories.put.PutRepositoryRequestBuilder;
 import org.elasticsearch.action.admin.cluster.snapshots.delete.DeleteSnapshotRequest;
+import org.elasticsearch.action.admin.cluster.snapshots.get.GetSnapshotsAction;
 import org.elasticsearch.action.admin.cluster.snapshots.get.GetSnapshotsRequest;
 import org.elasticsearch.action.admin.cluster.snapshots.get.GetSnapshotsRequestBuilder;
 import org.elasticsearch.action.admin.cluster.snapshots.get.GetSnapshotsResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.cluster.metadata.RepositoryMetaData;
-import org.elasticsearch.common.collect.ImmutableList;
-import org.elasticsearch.common.settings.ImmutableSettings;
+import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.repositories.RepositoryException;
 import org.elasticsearch.repositories.RepositoryMissingException;
 import org.elasticsearch.snapshots.SnapshotInfo;
@@ -201,13 +203,14 @@ public class SnapshotServiceImpl
 
     private void registerRepository()
     {
-        final PutRepositoryRequestBuilder requestBuilder = new PutRepositoryRequestBuilder( this.client.admin().cluster() ).
-            setName( SNAPSHOT_REPOSITORY_NAME ).
-            setType( "fs" ).
-            setSettings( ImmutableSettings.settingsBuilder().
-                put( "compress", true ).
-                put( "location", getSnapshotsDir() ).
-                build() );
+        final PutRepositoryRequestBuilder requestBuilder =
+            new PutRepositoryRequestBuilder( this.client.admin().cluster(), PutRepositoryAction.INSTANCE ).
+                setName( SNAPSHOT_REPOSITORY_NAME ).
+                setType( "fs" ).
+                setSettings( Settings.settingsBuilder().
+                    put( "compress", true ).
+                    put( "location", getSnapshotsDir() ).
+                    build() );
 
         this.client.admin().cluster().putRepository( requestBuilder.request() ).actionGet();
     }
@@ -219,14 +222,15 @@ public class SnapshotServiceImpl
 
     private SnapshotInfo getSnapshot( final String snapshotName )
     {
-        final GetSnapshotsRequestBuilder getSnapshotsRequestBuilder = new GetSnapshotsRequestBuilder( this.client.admin().cluster() ).
-            setRepository( SNAPSHOT_REPOSITORY_NAME ).
-            setSnapshots( snapshotName );
+        final GetSnapshotsRequestBuilder getSnapshotsRequestBuilder =
+            new GetSnapshotsRequestBuilder( this.client.admin().cluster(), GetSnapshotsAction.INSTANCE ).
+                setRepository( SNAPSHOT_REPOSITORY_NAME ).
+                setSnapshots( snapshotName );
 
         final GetSnapshotsResponse getSnapshotsResponse =
             this.client.admin().cluster().getSnapshots( getSnapshotsRequestBuilder.request() ).actionGet();
 
-        final ImmutableList<SnapshotInfo> snapshots = getSnapshotsResponse.getSnapshots();
+        final List<SnapshotInfo> snapshots = getSnapshotsResponse.getSnapshots();
 
         if ( snapshots.size() == 0 )
         {

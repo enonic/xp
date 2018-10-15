@@ -31,14 +31,25 @@ public class ContentTypeNameWildcardResolver
             s -> this.applicationWildcardResolver.hasAnyWildcard( s ) || this.applicationWildcardResolver.startWithAppWildcard( s ) );
     }
 
-    public List<String> resolveWildcards( final List<String> namesToResolve, final ApplicationKey currentApplicationKey )
+    public List<String> resolveContentTypeName( final String regex )
     {
-        List<String> allContentTypes = contentTypeService.
+
+        final List<String> allContentTypes = contentTypeService.
             getAll( new GetAllContentTypesParams().inlineMixinsToFormItems( false ) ).
             stream().
             map( type -> type.getName().toString() ).
             collect( Collectors.toList() );
 
+        final Predicate<String> pattern = Pattern.compile( regex ).asPredicate();
+
+        return allContentTypes.
+            stream().
+            filter( pattern ).
+            collect( Collectors.toList() );
+    }
+
+    public List<String> resolveWildcards( final List<String> namesToResolve, final ApplicationKey currentApplicationKey )
+    {
         List<String> resolvedNames = Lists.arrayList();
 
         namesToResolve.forEach( name -> {
@@ -55,7 +66,7 @@ public class ContentTypeNameWildcardResolver
                 }
                 if ( this.applicationWildcardResolver.hasAnyWildcard( resolvedName ) )
                 {
-                    resolvedNames.addAll( this.resolveAnyWildcard( resolvedName, allContentTypes ) );
+                    resolvedNames.addAll( this.resolveAnyWildcard( resolvedName ) );
                 }
                 else
                 {
@@ -71,10 +82,9 @@ public class ContentTypeNameWildcardResolver
         return resolvedNames;
     }
 
-    private List<String> resolveAnyWildcard( final String nameToResolve, final List<String> allContentTypes )
+    private List<String> resolveAnyWildcard( final String nameToResolve )
     {
-        Predicate<String> pattern = Pattern.compile( nameToResolve.replaceAll( "\\*", ".*" ) ).asPredicate();
-        return allContentTypes.stream().filter( pattern ).collect( Collectors.toList() );
+        return resolveContentTypeName( nameToResolve.replaceAll( "\\*", ".*" ) );
     }
 
     @Override

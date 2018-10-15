@@ -3,12 +3,12 @@ package com.enonic.xp.repo.impl.elasticsearch.query.translator;
 import java.util.List;
 import java.util.Set;
 
-import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.query.Query;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
 import com.enonic.xp.repo.impl.elasticsearch.aggregation.query.AggregationQueryBuilderFactory;
@@ -19,7 +19,6 @@ import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.FilterBuil
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.SortQueryBuilderFactory;
 import com.enonic.xp.repo.impl.search.SearchRequest;
 import com.enonic.xp.repo.impl.version.search.NodeVersionDiffQuery;
-import com.enonic.xp.node.NodeVersionQuery;
 
 public class ESQueryTranslator
 {
@@ -63,7 +62,7 @@ public class ESQueryTranslator
         final List<SortBuilder> sortBuilders =
             new SortQueryBuilderFactory( queryTypeTranslator.getFieldNameResolver() ).create( query.getOrderBys() );
 
-        final FilterBuilder filterBuilder =
+        final QueryBuilder filterBuilder =
             new FilterBuilderFactory( queryTypeTranslator.getFieldNameResolver() ).create( query.getPostFilters() );
 
         return ElasticsearchQuery.create().

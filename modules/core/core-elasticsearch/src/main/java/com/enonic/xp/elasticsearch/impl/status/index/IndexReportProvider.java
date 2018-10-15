@@ -2,6 +2,7 @@ package com.enonic.xp.elasticsearch.impl.status.index;
 
 import java.util.List;
 
+import org.elasticsearch.action.admin.cluster.state.ClusterStateAction;
 import org.elasticsearch.action.admin.cluster.state.ClusterStateRequestBuilder;
 import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
 import org.elasticsearch.client.AdminClient;
@@ -95,7 +96,7 @@ public class IndexReportProvider
 
     private ClusterStateResponse getClusterState()
     {
-        return new ClusterStateRequestBuilder( adminClient.cluster() ).
+        return new ClusterStateRequestBuilder( adminClient.cluster(), ClusterStateAction.INSTANCE ).
             clear().
             setRoutingTable( true ).
             setNodes( true ).

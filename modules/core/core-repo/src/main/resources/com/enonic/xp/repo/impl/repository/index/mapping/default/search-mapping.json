@@ -1,8 +1,5 @@
 {
   "_default_": {
-    "_analyzer": {
-      "path": "_document_analyzer"
-    },
     "_all": {
       "enabled": false
     },
@@ -11,15 +8,12 @@
     },
     "date_detection": false,
     "numeric_detection": false,
-    "_timestamp": {
-      "enabled": true
-    },
     "properties": {
       "displayname._ngram": {
         "type": "string",
         "store": "no",
         "index": "analyzed",
-        "index_analyzer": "ngram_index",
+        "analyzer": "ngram_index",
         "include_in_all": false
       }
     },
@@ -31,6 +25,7 @@
             "type": "string",
             "store": "no",
             "index": "analyzed",
+            "analyzer": "document_index_default",
             "include_in_all": false
           }
         }
@@ -42,8 +37,7 @@
             "type": "string",
             "store": "no",
             "index": "analyzed",
-            "index_analyzer": "path_analyzer",
-            "search_analyzer": "path_analyzer",
+            "analyzer": "path_analyzer",
             "include_in_all": false
           }
         }
@@ -55,7 +49,8 @@
             "type": "string",
             "store": "no",
             "index": "analyzed",
-            "index_analyzer": "ngram_index_front",
+            "analyzer": "ngram_index_front",
+            "search_analyzer": "document_index_default",
             "include_in_all": false
           }
         }

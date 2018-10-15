@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.elasticsearch;
 
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.admin.indices.refresh.RefreshResponse;
+import org.elasticsearch.action.search.SearchAction;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
@@ -65,7 +66,7 @@ public abstract class AbstractElasticsearchIntegrationTest
             "  \"query\": { \"match_all\": {} }\n" +
             "}";
 
-        SearchRequestBuilder searchRequest = new SearchRequestBuilder( this.client ).
+        SearchRequestBuilder searchRequest = new SearchRequestBuilder( this.client, SearchAction.INSTANCE ).
             setSize( 100 ).
             setIndices( indexName ).
             setTypes( indexType ).
@@ -88,6 +89,11 @@ public abstract class AbstractElasticsearchIntegrationTest
     {
         RefreshResponse actionGet = client.admin().indices().prepareRefresh().execute().actionGet();
         return actionGet;
+    }
+
+    public EmbeddedElasticsearchServer getServer()
+    {
+        return server;
     }
 
     @After

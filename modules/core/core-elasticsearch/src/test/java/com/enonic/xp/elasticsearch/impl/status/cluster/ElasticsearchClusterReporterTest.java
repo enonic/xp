@@ -7,12 +7,12 @@ import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.Version;
 import org.elasticsearch.action.ActionFuture;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
-import org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus;
 import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
 import org.elasticsearch.client.ClusterAdminClient;
 import org.elasticsearch.cluster.ClusterName;
 import org.elasticsearch.cluster.ClusterService;
 import org.elasticsearch.cluster.ClusterState;
+import org.elasticsearch.cluster.health.ClusterHealthStatus;
 import org.elasticsearch.cluster.node.DiscoveryNode;
 import org.elasticsearch.cluster.node.DiscoveryNodes;
 import org.elasticsearch.common.transport.LocalTransportAddress;
@@ -26,7 +26,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.common.base.Charsets;
+import com.google.common.collect.Iterables;
 import com.google.common.io.Resources;
 
 
@@ -160,7 +162,17 @@ public class ElasticsearchClusterReporterTest
         Mockito.when( clusterState.getNodes() ).thenReturn( nodes );
         Mockito.when( this.clusterService.localNode() ).thenReturn( node1 );
 
-        assertJson( "cluster_with_two_nodes.json", clusterReporter.getReport().toString() );
+        final JsonNode expectedReport = parseJson( readFromFile( "cluster_with_two_nodes.json" ) );
+        final JsonNode report = clusterReporter.getReport();
+        assertEquals( expectedReport.get( "name" ), report.get( "name" ) );
+        assertEquals( expectedReport.get( "localNode" ), report.get( "localNode" ) );
+        assertEquals( expectedReport.get( "state" ), report.get( "state" ) );
+
+        final ArrayNode expectedMembers = (ArrayNode) expectedReport.get( "members" );
+        final ArrayNode members = (ArrayNode) report.get( "members" );
+        Assert.assertEquals( 2, members.size() );
+        Assert.assertTrue( Iterables.contains( expectedMembers, members.get( 0 ) ) );
+        Assert.assertTrue( Iterables.contains( expectedMembers, members.get( 1 ) ) );
     }
 
 

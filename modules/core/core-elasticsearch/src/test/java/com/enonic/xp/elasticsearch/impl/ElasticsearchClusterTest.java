@@ -1,11 +1,11 @@
 package com.enonic.xp.elasticsearch.impl;
 
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
-import org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus;
 import org.elasticsearch.action.support.PlainActionFuture;
 import org.elasticsearch.client.AdminClient;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.ClusterAdminClient;
+import org.elasticsearch.cluster.health.ClusterHealthStatus;
 import org.elasticsearch.node.Node;
 import org.junit.Assert;
 import org.junit.Before;

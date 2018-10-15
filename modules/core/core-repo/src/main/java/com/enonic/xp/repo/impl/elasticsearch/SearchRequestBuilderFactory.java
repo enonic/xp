@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch;
 
+import org.elasticsearch.action.search.SearchAction;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
@@ -32,7 +33,7 @@ public class SearchRequestBuilderFactory
         final SearchType searchType =
             query.getSearchOptimizer().equals( SearchOptimizer.ACCURACY ) ? SearchType.DFS_QUERY_THEN_FETCH : SearchType.DEFAULT;
 
-        final SearchRequestBuilder searchRequestBuilder = new SearchRequestBuilder( this.client ).
+        final SearchRequestBuilder searchRequestBuilder = new SearchRequestBuilder( this.client, SearchAction.INSTANCE ).
             setExplain( query.isExplain() ).
             setIndices( query.getIndexNames() ).
             setTypes( query.getIndexTypes() ).

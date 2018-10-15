@@ -75,7 +75,7 @@ public class PortalUrlServiceImpl_imageUrlTest
 
         final String url = this.service.imageUrl( params );
         assertEquals( "/portal/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.jpg?" +
-                          "filter=scale%2810%2C10%29&background=00ff00&quality=90", url );
+                          "quality=90&background=00ff00&filter=scale%2810%2C10%29", url );
     }
 
     @Test

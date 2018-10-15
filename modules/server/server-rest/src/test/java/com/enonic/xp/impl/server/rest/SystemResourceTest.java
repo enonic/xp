@@ -25,6 +25,8 @@ import com.enonic.xp.dump.RepoDumpResult;
 import com.enonic.xp.dump.RepoLoadResult;
 import com.enonic.xp.dump.SystemDumpParams;
 import com.enonic.xp.dump.SystemDumpResult;
+import com.enonic.xp.dump.SystemDumpUpgradeParams;
+import com.enonic.xp.dump.SystemDumpUpgradeResult;
 import com.enonic.xp.dump.SystemLoadParams;
 import com.enonic.xp.dump.SystemLoadResult;
 import com.enonic.xp.dump.VersionsLoadResult;
@@ -37,6 +39,7 @@ import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.util.Version;
 import com.enonic.xp.vacuum.VacuumParameters;
 import com.enonic.xp.vacuum.VacuumResult;
 import com.enonic.xp.vacuum.VacuumService;
@@ -180,7 +183,7 @@ public class SystemResourceTest
         throws Exception
     {
         expectedException.expect( IllegalArgumentException.class );
-        expectedException.expectMessage( "No dump with name 'name' found in "+ dataDir.getPath() );
+        expectedException.expectMessage( "No dump with name 'name' found in " + dataDir.getPath() );
 
         request().path( "system/load" ).
             entity( readFromFile( "load_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
@@ -195,13 +198,30 @@ public class SystemResourceTest
             deleted().deleted().failed().inUse().processed().
             taskName( "vacuum-task-name" ).build() ).build();
 
-        Mockito.when( this.vacuumService.vacuum( Mockito.isA( VacuumParameters.class ) ) ).thenReturn(vacuumResult);
+        Mockito.when( this.vacuumService.vacuum( Mockito.isA( VacuumParameters.class ) ) ).thenReturn( vacuumResult );
 
         final String result = request().path( "system/vacuum" ).
             entity( "{}", MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
 
         assertJson( "vacuum.json", result );
+    }
+
+    @Test
+    public void upgrade()
+        throws Exception
+    {
+        final SystemDumpUpgradeResult upgradeResult = SystemDumpUpgradeResult.create().
+            initialVersion( Version.emptyVersion ).
+            upgradedVersion( new Version( 1, 0, 0 ) ).
+            build();
+        Mockito.when( this.dumpService.upgrade( Mockito.isA( SystemDumpUpgradeParams.class ) ) ).thenReturn( upgradeResult );
+
+        final String result = request().path( "system/upgrade" ).
+            entity( "{\"name\":\"dumpName\"}", MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertJson( "upgrade.json", result );
     }
 
     @Override

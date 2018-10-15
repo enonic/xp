@@ -31,7 +31,7 @@ public class ClusterManagerImpl
     private final Long checkIntervalMs;
 
     private final static List<ClusterId> DEFAULT_REQUIRED_INSTANCES =
-        Lists.newArrayList( ClusterId.from( "elasticsearch" ), ClusterId.from( "ignite" ) );
+        Lists.newArrayList( ClusterId.from( "elasticsearch" ));
 
     private final Clusters instances;
 

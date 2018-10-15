@@ -9,6 +9,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
+import static com.enonic.xp.repo.impl.node.NodeConstants.CLOCK;
 import static com.enonic.xp.repo.impl.node.NodePermissionsResolver.requireContextUserPermissionOrAdmin;
 
 public class SetRootPermissionsCommand
@@ -40,7 +41,7 @@ public class SetRootPermissionsCommand
             node( Node.create( rootNode ).
                 permissions( this.permissions ).
                 inheritPermissions( this.inheritPermissions ).
-                timestamp( Instant.now() ).
+                timestamp( Instant.now( CLOCK ) ).
                 build() ).
             build().
             execute();

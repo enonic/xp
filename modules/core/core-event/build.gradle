@@ -2,7 +2,7 @@ apply from: "$rootDir/gradle/osgi.gradle"
 
 dependencies {
     compile project( ':core:core-api' )
-    compile 'org.elasticsearch:elasticsearch:1.5.2'
+    compile 'org.elasticsearch:elasticsearch:2.4.6'
     testCompile project( path: ':core:core-api', configuration: 'testOutput' )
 }
 

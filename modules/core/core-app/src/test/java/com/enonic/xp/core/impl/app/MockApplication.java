@@ -131,7 +131,7 @@ public class MockApplication
 
     public void setClassLoaderUrlResolver( final ClassLoader loader, final String prefix )
     {
-        final ApplicationUrlResolver resolver = new ClassLoaderApplicationUrlResolver( loader );
+        final ApplicationUrlResolver resolver = new ClassLoaderApplicationUrlResolver( (URLClassLoader) loader );
         final ApplicationUrlResolver prefixedReslver = new PrefixApplicationUrlResolver( resolver, prefix );
         setUrlResolver( prefixedReslver );
     }

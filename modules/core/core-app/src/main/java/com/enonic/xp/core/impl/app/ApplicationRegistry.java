@@ -114,7 +114,8 @@ final class ApplicationRegistry
     {
         for ( final Bundle bundle : this.context.getBundles() )
         {
-            if ( bundle.getSymbolicName().equals( name ) )
+            final String symbolicName = bundle.getSymbolicName();
+            if ( symbolicName != null && symbolicName.equals( name ) )
             {
                 return bundle;
             }

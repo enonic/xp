@@ -1,5 +1,8 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.time.Clock;
+import java.time.ZoneOffset;
+
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
@@ -27,4 +30,7 @@ public final class NodeConstants
         principals( NODE_SUPER_USER_KEY, RoleKeys.ADMIN ).
         user( NODE_SUPER_USER ).
         build();
+
+    final static Clock CLOCK = Clock.tickMillis( ZoneOffset.UTC );
+
 }

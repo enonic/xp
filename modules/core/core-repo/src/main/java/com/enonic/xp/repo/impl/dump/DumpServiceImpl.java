@@ -6,6 +6,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -22,6 +23,8 @@ import com.enonic.xp.dump.DumpService;
 import com.enonic.xp.dump.RepoDumpResult;
 import com.enonic.xp.dump.SystemDumpParams;
 import com.enonic.xp.dump.SystemDumpResult;
+import com.enonic.xp.dump.SystemDumpUpgradeParams;
+import com.enonic.xp.dump.SystemDumpUpgradeResult;
 import com.enonic.xp.dump.SystemLoadParams;
 import com.enonic.xp.dump.SystemLoadResult;
 import com.enonic.xp.home.HomeDir;
@@ -32,6 +35,8 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.SecurityHelper;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.reader.FileDumpReader;
+import com.enonic.xp.repo.impl.dump.upgrade.DumpUpgrader;
+import com.enonic.xp.repo.impl.dump.upgrade.MissingModelVersionDumpUpgrader;
 import com.enonic.xp.repo.impl.dump.writer.FileDumpWriter;
 import com.enonic.xp.repo.impl.node.NodeHelper;
 import com.enonic.xp.repo.impl.node.executor.BatchedGetChildrenExecutor;
@@ -43,12 +48,15 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.SystemConstants;
+import com.enonic.xp.util.Version;
 
 @Component(immediate = true)
 @SuppressWarnings("WeakerAccess")
 public class DumpServiceImpl
     implements DumpService
 {
+    private final static Logger LOG = LoggerFactory.getLogger( DumpServiceImpl.class );
+
     private BlobStore blobStore;
 
     private NodeService nodeService;
@@ -61,7 +69,7 @@ public class DumpServiceImpl
 
     private Path basePath = Paths.get( HomeDir.get().toString(), "data", "dump" );
 
-    private final static Logger LOG = LoggerFactory.getLogger( DumpServiceImpl.class );
+    private final DumpUpgrader[] dumpUpgraders = new DumpUpgrader[]{new MissingModelVersionDumpUpgrader()};
 
     @SuppressWarnings("unused")
     @Activate
@@ -71,6 +79,79 @@ public class DumpServiceImpl
             getBundle().
             getVersion().
             toString();
+    }
+
+    @Override
+    public SystemDumpUpgradeResult upgrade( final SystemDumpUpgradeParams params )
+    {
+        if ( !SecurityHelper.isAdmin() )
+        {
+            throw new RepoDumpException( "Only admin role users can upgrade dumps" );
+        }
+
+        final String dumpName = params.getDumpName();
+        if ( StringUtils.isBlank( dumpName ) )
+        {
+            throw new RepoDumpException( "dump name cannot be empty" );
+        }
+
+        return doUpgrade( params );
+    }
+
+    private SystemDumpUpgradeResult doUpgrade( final SystemDumpUpgradeParams params )
+    {
+        final SystemDumpUpgradeResult.Builder result = SystemDumpUpgradeResult.create();
+
+        final String dumpName = params.getDumpName();
+        Version modelVersion = getDumpModelVersion( dumpName );
+        result.initialVersion( modelVersion );
+        if ( modelVersion.lessThan( DumpConstants.MODEL_VERSION ) )
+        {
+            for ( DumpUpgrader dumpUpgrader : dumpUpgraders )
+            {
+                final Version targetModelVersion = dumpUpgrader.getModelVersion();
+                if ( modelVersion.lessThan( targetModelVersion ) )
+                {
+                    dumpUpgrader.upgrade( dumpName );
+                    modelVersion = targetModelVersion;
+                    updateDumpModelVersion( dumpName, modelVersion );
+                }
+            }
+        }
+        result.upgradedVersion( modelVersion );
+        return result.build();
+    }
+
+    private Version getDumpModelVersion( final String dumpName )
+    {
+        Version modelVersion = getDumpMeta( dumpName ).
+            getModelVersion();
+        if ( modelVersion == null )
+        {
+            return Version.emptyVersion;
+        }
+        return modelVersion;
+    }
+
+    private void updateDumpModelVersion( final String dumpName, final Version modelVersion )
+    {
+        final DumpMeta dumpMeta = getDumpMeta( dumpName );
+        final DumpMeta updatedDumpMeta = DumpMeta.create( dumpMeta ).
+            modelVersion( modelVersion ).
+            build();
+
+        FileDumpWriter.create().
+            basePath( basePath ).
+            dumpName( dumpName ).
+            blobStore( this.blobStore ).
+            build().
+            writeDumpMetaData( updatedDumpMeta );
+    }
+
+    private DumpMeta getDumpMeta( final String dumpName )
+    {
+        final FileDumpReader dumpReader = new FileDumpReader( basePath, dumpName, null );
+        return dumpReader.getDumpMeta();
     }
 
     @Override
@@ -110,8 +191,12 @@ public class DumpServiceImpl
         }
 
         final SystemDumpResult systemDumpResult = dumpResults.build();
-        writer.writeDumpMetaData( new DumpMeta( this.xpVersion, Instant.now(), systemDumpResult ) );   
-        
+        writer.writeDumpMetaData( DumpMeta.create().
+            xpVersion( this.xpVersion ).
+            modelVersion( DumpConstants.MODEL_VERSION ).
+            timestamp( Instant.now() ).
+            systemDumpResult( systemDumpResult ).build() );
+
         return systemDumpResult;
     }
 
@@ -126,6 +211,23 @@ public class DumpServiceImpl
         }
 
         final FileDumpReader dumpReader = new FileDumpReader( basePath, params.getDumpName(), params.getListener() );
+
+        final Version modelVersion = getDumpModelVersion( params.getDumpName() );
+        if ( modelVersion.getMajor() < DumpConstants.MODEL_VERSION.getMajor() )
+        {
+            if ( params.isUpgrade() )
+            {
+                final SystemDumpUpgradeParams dumpUpgradeParams = SystemDumpUpgradeParams.create().
+                    dumpName( params.getDumpName() ).
+                    build();
+                doUpgrade( dumpUpgradeParams );
+            }
+            else
+            {
+                throw new RepoLoadException(
+                    "Cannot load system-dump; major model version previous to the current version; upgrade the system-dump" );
+            }
+        }
 
         final RepositoryIds dumpRepositories = dumpReader.getRepositories();
 

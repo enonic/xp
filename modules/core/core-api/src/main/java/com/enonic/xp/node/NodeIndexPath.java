@@ -11,7 +11,7 @@ public class NodeIndexPath
 
     private static final String PERMISSIONS_ROOT = "_permissions";
 
-    public static final IndexPath TIMESTAMP = IndexPath.from( "_timestamp" );
+    public static final IndexPath TIMESTAMP = IndexPath.from( "_ts" );
 
     public static final IndexPath STATE = IndexPath.from( "_state" );
 

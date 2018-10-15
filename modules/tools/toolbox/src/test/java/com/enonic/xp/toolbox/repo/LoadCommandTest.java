@@ -36,6 +36,7 @@ public class LoadCommandTest
     {
         final ObjectNode json = JsonHelper.newObjectNode();
         json.put( "name", "source-path" );
+        json.put( "upgrade", Boolean.FALSE );
         return json;
     }
 

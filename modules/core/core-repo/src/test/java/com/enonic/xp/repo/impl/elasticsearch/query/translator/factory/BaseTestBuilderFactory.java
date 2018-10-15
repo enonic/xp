@@ -5,7 +5,7 @@ import java.util.TimeZone;
 import org.elasticsearch.common.xcontent.ToXContent;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
-import org.elasticsearch.search.facet.FacetBuilder;
+import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.junit.Before;
 
 import com.google.common.base.Charsets;
@@ -36,7 +36,7 @@ public abstract class BaseTestBuilderFactory
         return output;
     }
 
-    protected final String getJson( final FacetBuilder facetBuilder )
+    protected final String getJson( final AggregationBuilder facetBuilder )
         throws Exception
     {
         final XContentBuilder builder = XContentFactory.jsonBuilder();
