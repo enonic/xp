@@ -23,6 +23,8 @@ public class FindNodesDependenciesCommand
 {
     private final NodeIds nodeIds;
 
+    private final NodeIds excludedIds;
+
     private final Set<NodeId> processed = Sets.newHashSet();
 
     private final boolean recursive;
@@ -31,7 +33,8 @@ public class FindNodesDependenciesCommand
     {
         super( builder );
         recursive = builder.recursive;
-        nodeIds = builder.nodeIds;
+        nodeIds = builder.nodeIds.build();
+        excludedIds = builder.excludedIds.build();
     }
 
     public static Builder create()
@@ -110,15 +113,19 @@ public class FindNodesDependenciesCommand
             }
 
             returnValue.getValues().stream().
-                filter( ( value ) -> !processed.contains( NodeId.from( value.toString() ) ) ).
-                forEach( ( value ) -> builder.add( NodeId.from( value ) ) );
+                map( ( value ) -> NodeId.from( value.toString() ) ).
+                filter( ( value ) -> !processed.contains( value ) ).
+                filter( ( value ) -> !excludedIds.contains( value ) ).
+                forEach( builder::add );
         }
     }
 
     public static class Builder
         extends AbstractNodeCommand.Builder<Builder>
     {
-        private NodeIds nodeIds;
+        private NodeIds.Builder nodeIds = NodeIds.create();
+
+        private NodeIds.Builder excludedIds = NodeIds.create();
 
         private boolean recursive;
 
@@ -133,7 +140,13 @@ public class FindNodesDependenciesCommand
 
         public Builder nodeIds( final NodeIds val )
         {
-            nodeIds = val;
+            nodeIds.addAll( val );
+            return this;
+        }
+
+        public Builder excludedIds( final NodeIds val )
+        {
+            excludedIds.addAll( val );
             return this;
         }
 
