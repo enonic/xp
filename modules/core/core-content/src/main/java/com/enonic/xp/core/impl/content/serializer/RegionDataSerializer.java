@@ -8,38 +8,25 @@ import com.enonic.xp.region.Region;
 public class RegionDataSerializer
     extends AbstractDataSetSerializer<Region, Region>
 {
-    private static final String NAME = "name";
-
-    private final String propertyName;
-
     private final ComponentsDataSerializer componentsSerializer = new ComponentsDataSerializer();
-
-    public RegionDataSerializer()
-    {
-        this.propertyName = "region";
-    }
-
-    public String getPropertyName()
-    {
-        return propertyName;
-    }
 
     @Override
     public void toData( final Region region, final PropertySet parent )
     {
-        final PropertySet asData = parent.addSet( propertyName );
-        asData.addString( "name", region.getName() );
+        final PropertySet asData = parent.addSet( ComponentDataSerializer.COMPONENTS );
 
-        componentsSerializer.toData( region.getComponents(), asData );
+        asData.addString( ComponentDataSerializer.NAME, region.getName() );
+        asData.addString( ComponentDataSerializer.PATH, region.getRegionPath().toString() );
+        asData.addString( ComponentDataSerializer.TYPE, Region.class.getSimpleName() );
+
+        componentsSerializer.toData( region.getComponents(), parent );
     }
 
-    @Override
-    public Region fromData( final PropertySet asData )
+    public Region fromData( final SerializedData data )
     {
-        final Region.Builder region = Region.create();
-        region.name( asData.getString( NAME ) );
+        final Region.Builder region = Region.create().name( data.getAsData().getString( ComponentDataSerializer.NAME ) );
 
-        for ( Component component : componentsSerializer.fromData( asData.getProperties( "component" ) ) )
+        for ( Component component : componentsSerializer.fromData( data ) )
         {
             region.add( component );
         }

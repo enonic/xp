@@ -1,7 +1,6 @@
 package com.enonic.xp.core.impl.content.serializer;
 
 
-import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.LayoutComponent;
@@ -16,30 +15,34 @@ public class LayoutComponentDataSerializer
     @Override
     public void toData( final LayoutComponent component, final PropertySet parent )
     {
-        final PropertySet asSet = parent.addSet( LayoutComponent.class.getSimpleName() );
+        final PropertySet asSet = parent.addSet( COMPONENTS );
         applyComponentToData( component, asSet );
+
         if ( component.hasRegions() )
         {
             for ( final Region region : component.getRegions() )
             {
-                regionDataSerializer.toData( region, asSet );
+                regionDataSerializer.toData( region, parent );
             }
         }
     }
 
     @Override
-    public LayoutComponent fromData( final PropertySet asData )
+    public LayoutComponent fromData( final SerializedData data )
     {
-        final LayoutComponent.Builder component = LayoutComponent.create();
-        applyComponentFromData( component, asData );
+        final LayoutComponent.Builder layoutComponent = LayoutComponent.create();
+        applyComponentFromData( layoutComponent, data.getAsData() );
 
-        final LayoutRegions.Builder pageRegionsBuilder = LayoutRegions.create();
-        for ( final Property regionAsProp : asData.getProperties( "region" ) )
+        final LayoutRegions.Builder layoutRegionsBuilder = LayoutRegions.create();
+
+        for ( final PropertySet regionAsData : getChildren( data ) )
         {
-            pageRegionsBuilder.add( regionDataSerializer.fromData( regionAsProp.getSet() ) );
+            layoutRegionsBuilder.add( regionDataSerializer.fromData( new SerializedData( regionAsData, data.getComponentsAsData() ) ) );
         }
-        component.regions( pageRegionsBuilder.build() );
-        return component.build();
+
+        layoutComponent.regions( layoutRegionsBuilder.build() );
+
+        return layoutComponent.build();
     }
 
     @Override

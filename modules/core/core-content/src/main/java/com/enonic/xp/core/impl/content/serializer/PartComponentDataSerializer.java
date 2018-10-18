@@ -12,15 +12,15 @@ public class PartComponentDataSerializer
     @Override
     public void toData( final PartComponent component, final PropertySet parent )
     {
-        final PropertySet asData = parent.addSet( PartComponent.class.getSimpleName() );
+        final PropertySet asData = parent.addSet( COMPONENTS );
         applyComponentToData( component, asData );
     }
 
     @Override
-    public PartComponent fromData( final PropertySet asData )
+    public PartComponent fromData( final SerializedData data )
     {
         PartComponent.Builder component = PartComponent.create();
-        applyComponentFromData( component, asData );
+        applyComponentFromData( component, data.getAsData() );
         return component.build();
     }
 

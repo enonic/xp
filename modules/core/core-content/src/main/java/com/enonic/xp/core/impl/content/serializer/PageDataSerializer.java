@@ -1,5 +1,8 @@
 package com.enonic.xp.core.impl.content.serializer;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.enonic.xp.core.impl.content.page.region.ComponentTypes;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
@@ -22,8 +25,6 @@ public final class PageDataSerializer
     private static final String TEMPLATE = "template";
 
     private static final String CONFIG = "config";
-
-    private static final String REGION = "region";
 
     private static final String CUSTOMIZED = "customized";
 
@@ -50,17 +51,7 @@ public final class PageDataSerializer
 
         if ( page.hasRegions() )
         {
-            if ( !page.getRegions().isEmpty() )
-            {
-                for ( Region region : page.getRegions() )
-                {
-                    regionDataSerializer.toData( region, asSet );
-                }
-            }
-            else
-            {
-                asSet.addSet( regionDataSerializer.getPropertyName(), null );
-            }
+            addRegions( page, asSet );
         }
 
         if ( page.hasConfig() )
@@ -72,40 +63,57 @@ public final class PageDataSerializer
 
         if ( page.isFragment() )
         {
-            final PropertySet fragmentAsData = new PropertySet();
-            asSet.addSet( FRAGMENT, fragmentAsData );
-
-            final Component fragment = page.getFragment();
-            fragmentAsData.setString( TYPE, fragment.getType().getComponentClass().getSimpleName() );
-            final ComponentDataSerializer serializer = componentDataSerializerProvider.getDataSerializer( fragment.getType() );
-            serializer.toData( fragment, fragmentAsData );
+            addFragmentComponent( page, asSet );
         }
     }
 
-    @Override
-    public Page fromData( final PropertySet asData )
+    private void addRegions( final Page page, final PropertySet asSet )
     {
+        if ( !page.getRegions().isEmpty() )
+        {
+            for ( Region region : page.getRegions() )
+            {
+                regionDataSerializer.toData( region, asSet );
+            }
+        }
+        else
+        {
+            asSet.addSet( ComponentDataSerializer.COMPONENTS, null );
+        }
+    }
+
+    private void addFragmentComponent( final Page page, final PropertySet asSet )
+    {
+        final PropertySet fragmentAsData = new PropertySet();
+        asSet.addSet( FRAGMENT, fragmentAsData );
+
+        final Component fragment = page.getFragment();
+        fragmentAsData.setString( TYPE, fragment.getType().getComponentClass().getSimpleName() );
+        final ComponentDataSerializer serializer = componentDataSerializerProvider.getDataSerializer( fragment.getType() );
+        serializer.toData( fragment, fragmentAsData );
+    }
+
+    @Override
+    public Page fromData( final SerializedData data )
+    {
+        final PropertySet asData = data.getAsData();
         final Page.Builder page = Page.create();
+
         if ( asData.isNotNull( CONTROLLER ) )
         {
             page.controller( DescriptorKey.from( asData.getString( CONTROLLER ) ) );
         }
+
         if ( asData.isNotNull( TEMPLATE ) )
         {
             page.template( PageTemplateKey.from( asData.getReference( TEMPLATE ).toString() ) );
         }
-        if ( asData.hasProperty( REGION ) )
+
+        if ( asData.hasProperty( ComponentDataSerializer.COMPONENTS ) )
         {
-            final PageRegions.Builder pageRegionsBuilder = PageRegions.create();
-            for ( final Property regionAsProp : asData.getProperties( REGION ) )
-            {
-                if ( regionAsProp.hasNotNullValue() )
-                {
-                    pageRegionsBuilder.add( regionDataSerializer.fromData( regionAsProp.getSet() ) );
-                }
-            }
-            page.regions( pageRegionsBuilder.build() );
+            page.regions( getPageRegions( asData ) );
         }
+
         if ( asData.hasProperty( CONFIG ) )
         {
             page.config( asData.getSet( CONFIG ).toTree() );
@@ -118,14 +126,42 @@ public final class PageDataSerializer
 
         if ( asData.isNotNull( FRAGMENT ) )
         {
-            final PropertySet fragmentAsProperty = asData.getPropertySet( FRAGMENT );
-            final ComponentType type = ComponentTypes.bySimpleClassName( fragmentAsProperty.getString( TYPE ) );
-            final PropertySet componentSet = fragmentAsProperty.getSet( type.getComponentClass().getSimpleName() );
-            final Component component = componentDataSerializerProvider.getDataSerializer( type ).fromData( componentSet );
-            page.fragment( component );
+            page.fragment( getFragmentComponent( asData ) );
         }
 
         return page.build();
     }
 
+    private PageRegions getPageRegions( final PropertySet asData )
+    {
+        final PageRegions.Builder pageRegionsBuilder = PageRegions.create();
+
+        final List<PropertySet> componentsAsData =
+            asData.getProperties( ComponentDataSerializer.COMPONENTS ).stream().filter( Property::hasNotNullValue ).map(
+                item -> item.getSet() ).collect( Collectors.toList() );
+
+        componentsAsData.stream().filter( this::isTopLevelRegion ).forEach( regionAsData -> {
+            pageRegionsBuilder.add( regionDataSerializer.fromData( new SerializedData( regionAsData, componentsAsData ) ) );
+        } );
+
+        return pageRegionsBuilder.build();
+    }
+
+    private Component getFragmentComponent( final PropertySet asData )
+    {
+        final PropertySet fragmentAsProperty = asData.getPropertySet( FRAGMENT );
+        final ComponentType type = ComponentTypes.bySimpleClassName( fragmentAsProperty.getString( TYPE ) );
+        final List<PropertySet> componentsAsData =
+            fragmentAsProperty.getProperties( ComponentDataSerializer.COMPONENTS ).stream().filter( Property::hasNotNullValue ).map(
+                item -> item.getSet() ).collect( Collectors.toList() );
+
+        return componentDataSerializerProvider.getDataSerializer( type ).fromData(
+            new SerializedData( componentsAsData.get( 0 ), componentsAsData ) );
+    }
+
+    private boolean isTopLevelRegion( final PropertySet asData )
+    {
+        return asData.getString( ComponentDataSerializer.TYPE ).equals( Region.class.getSimpleName() ) &&
+            !asData.getString( ComponentDataSerializer.PATH ).contains( "/" );
+    }
 }

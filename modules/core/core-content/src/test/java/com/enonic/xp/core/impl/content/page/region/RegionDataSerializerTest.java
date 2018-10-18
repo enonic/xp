@@ -1,8 +1,14 @@
 package com.enonic.xp.core.impl.content.page.region;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.junit.Test;
 
+import com.enonic.xp.core.impl.content.serializer.ComponentDataSerializer;
 import com.enonic.xp.core.impl.content.serializer.RegionDataSerializer;
+import com.enonic.xp.core.impl.content.serializer.SerializedData;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.region.ImageComponent;
 import com.enonic.xp.region.LayoutComponent;
@@ -58,7 +64,11 @@ public class RegionDataSerializerTest
 
         // exercise
         regionSerializer.toData( region, regionAsData.getRoot() );
-        Region parsedRegion = regionSerializer.fromData( regionAsData.getSet( "region" ) );
+        final List<PropertySet> components =
+            regionAsData.getProperties( ComponentDataSerializer.COMPONENTS ).stream().map( item -> item.getSet() ).collect(
+                Collectors.toList() );
+
+        Region parsedRegion = regionSerializer.fromData( new SerializedData( components.get( 0 ), components ) );
 
         // verify
         assertEquals( region, parsedRegion );

@@ -45,8 +45,10 @@ public final class ExtraDataSerializer
     }
 
     @Override
-    public ExtraDatas fromData( final PropertySet metadataSet )
+    public ExtraDatas fromData( final SerializedData data )
     {
+        final PropertySet metadataSet = data.getAsData();
+
         if ( metadataSet != null )
         {
             final ExtraDatas.Builder extradatasBuilder = ExtraDatas.create();

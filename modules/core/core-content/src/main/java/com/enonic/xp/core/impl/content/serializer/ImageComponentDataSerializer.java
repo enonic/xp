@@ -12,8 +12,9 @@ public class ImageComponentDataSerializer
     @Override
     public void toData( final ImageComponent component, final PropertySet parent )
     {
-        final PropertySet asData = parent.addSet( ImageComponent.class.getSimpleName() );
+        final PropertySet asData = parent.addSet( COMPONENTS );
         applyComponentToData( component, asData );
+
         if ( component.getImage() != null )
         {
             asData.addReference( "image", Reference.from( component.getImage().toString() ) );
@@ -25,18 +26,22 @@ public class ImageComponentDataSerializer
     }
 
     @Override
-    public ImageComponent fromData( final PropertySet asData )
+    public ImageComponent fromData( final SerializedData data )
     {
+        final PropertySet asData = data.getAsData();
         ImageComponent.Builder component = ImageComponent.create();
         applyComponentFromData( component, asData );
+
         if ( asData.isNotNull( "image" ) )
         {
             component.image( ContentId.from( asData.getString( "image" ) ) );
         }
+
         if ( asData.hasProperty( "config" ) )
         {
             component.config( asData.getSet( "config" ).toTree() );
         }
+
         return component.build();
     }
 }

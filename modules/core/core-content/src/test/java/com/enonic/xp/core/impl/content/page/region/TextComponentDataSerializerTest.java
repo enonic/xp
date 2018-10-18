@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.content.page.region;
 
 import org.junit.Test;
 
+import com.enonic.xp.core.impl.content.serializer.ComponentDataSerializer;
 import com.enonic.xp.core.impl.content.serializer.TextComponentDataSerializer;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -22,7 +23,7 @@ public class TextComponentDataSerializerTest
         new TextComponentDataSerializer().toData( textComponent, tree.getRoot() );
 
         // verify
-        PropertySet set = tree.getSet( TextComponent.class.getSimpleName() );
+        PropertySet set = tree.getSet( ComponentDataSerializer.COMPONENTS );
         assertEquals( "myText", set.getString( "name" ) );
         assertEquals( "some text", set.getString( "text" ) );
     }

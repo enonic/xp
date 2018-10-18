@@ -15,12 +15,14 @@ public class FragmentComponentDataSerializer
     @Override
     public void toData( final FragmentComponent component, final PropertySet parent )
     {
-        final PropertySet asData = parent.addSet( FragmentComponent.class.getSimpleName() );
+        final PropertySet asData = parent.addSet( COMPONENTS );
         applyComponentToData( component, asData );
+
         if ( component.getFragment() != null )
         {
             asData.addReference( FRAGMENT_PROPERTY, Reference.from( component.getFragment().toString() ) );
         }
+
         if ( component.hasConfig() )
         {
             asData.addSet( "config", component.getConfig().getRoot().copy( asData.getTree() ) );
@@ -28,18 +30,22 @@ public class FragmentComponentDataSerializer
     }
 
     @Override
-    public FragmentComponent fromData( final PropertySet asData )
+    public FragmentComponent fromData( final SerializedData data )
     {
+        final PropertySet asData = data.getAsData();
         final FragmentComponent.Builder component = FragmentComponent.create();
         applyComponentFromData( component, asData );
+
         if ( asData.isNotNull( FRAGMENT_PROPERTY ) )
         {
             component.fragment( ContentId.from( asData.getReference( FRAGMENT_PROPERTY ) ) );
         }
+
         if ( asData.hasProperty( "config" ) )
         {
             component.config( asData.getSet( "config" ).toTree() );
         }
+
         return component.build();
     }
 }
