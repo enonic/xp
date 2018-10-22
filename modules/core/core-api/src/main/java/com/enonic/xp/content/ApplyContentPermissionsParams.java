@@ -12,10 +12,13 @@ public final class ApplyContentPermissionsParams
 
     private final boolean overwriteChildPermissions;
 
+    private ApplyPermissionsListener listener;
+
     private ApplyContentPermissionsParams( Builder builder )
     {
         contentId = requireNonNull( builder.contentId );
         overwriteChildPermissions = builder.overwriteChildPermissions;
+        listener = builder.listener;
     }
 
     public static Builder create()
@@ -31,6 +34,11 @@ public final class ApplyContentPermissionsParams
     public boolean isOverwriteChildPermissions()
     {
         return overwriteChildPermissions;
+    }
+
+    public ApplyPermissionsListener getListener()
+    {
+        return listener;
     }
 
     @Override
@@ -61,6 +69,8 @@ public final class ApplyContentPermissionsParams
 
         private boolean overwriteChildPermissions;
 
+        private ApplyPermissionsListener listener;
+
         private Builder()
         {
         }
@@ -74,6 +84,12 @@ public final class ApplyContentPermissionsParams
         public Builder overwriteChildPermissions( final boolean overwriteChildPermissions )
         {
             this.overwriteChildPermissions = overwriteChildPermissions;
+            return this;
+        }
+
+        public Builder applyContentPermissionsListener( final ApplyPermissionsListener listener )
+        {
+            this.listener = listener;
             return this;
         }
 

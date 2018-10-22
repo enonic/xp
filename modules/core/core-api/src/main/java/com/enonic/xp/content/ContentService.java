@@ -1,7 +1,6 @@
 package com.enonic.xp.content;
 
 import java.io.InputStream;
-import java.util.concurrent.Future;
 
 import com.google.common.annotations.Beta;
 import com.google.common.io.ByteSource;
@@ -60,7 +59,7 @@ public interface ContentService
 
     Boolean hasUnpublishedChildren( final HasUnpublishedChildrenParams params );
 
-    Future<Integer> applyPermissions( ApplyContentPermissionsParams params );
+    ApplyContentPermissionsResult applyPermissions( ApplyContentPermissionsParams params );
 
     Content getById( ContentId contentId );
 

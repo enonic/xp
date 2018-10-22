@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.node.ApplyNodePermissionsParams;
+import com.enonic.xp.node.ApplyNodePermissionsResult;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
@@ -28,7 +29,7 @@ final class ApplyNodePermissionsCommand
 
     private final PermissionsMergingStrategy mergingStrategy;
 
-    private final Nodes.Builder updatedNodes = Nodes.create();
+    private final ApplyNodePermissionsResult.Builder resultBuilder = ApplyNodePermissionsResult.create();
 
     private ApplyNodePermissionsCommand( final Builder builder )
     {
@@ -42,18 +43,18 @@ final class ApplyNodePermissionsCommand
         return new Builder();
     }
 
-    public Nodes execute()
+    public ApplyNodePermissionsResult execute()
     {
         final Node node = doGetById( params.getNodeId() );
 
         if ( node == null )
         {
-            return Nodes.empty();
+            return resultBuilder.build();
         }
 
         applyPermissionsToChildren( node );
 
-        return updatedNodes.build();
+        return resultBuilder.build();
     }
 
     private void applyPermissionsToChildren( final Node parent )
@@ -77,11 +78,20 @@ final class ApplyNodePermissionsCommand
             if ( contextUserHasPermissionOrAdmin( Permission.WRITE_PERMISSIONS, child ) )
             {
                 final Node childApplied = applyNodePermissions( parentPermissions, child );
+
+                if ( params.getListener() != null )
+                {
+                    params.getListener().permissionsApplied( 1 );
+                }
+
                 applyPermissionsToChildren( childApplied );
-                updatedNodes.add( childApplied );
+                resultBuilder.succeedNode( childApplied );
             }
             else
             {
+                params.getListener().notEnoughRights( 1 );
+                resultBuilder.skippedNode( child );
+
                 LOG.info( "Not enough rights for applying permissions to node [" + child.id() + "] " + child.path() );
             }
         }
