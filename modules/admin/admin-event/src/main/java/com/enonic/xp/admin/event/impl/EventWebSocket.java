@@ -44,7 +44,7 @@ public final class EventWebSocket
         return ( this.session != null ) && this.session.isOpen();
     }
 
-    public void sendMessage( final String message )
+    public synchronized void sendMessage( final String message )
         throws IOException
     {
         if ( isOpen() )

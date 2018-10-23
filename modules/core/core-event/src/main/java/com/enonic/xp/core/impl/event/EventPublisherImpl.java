@@ -1,10 +1,11 @@
 package com.enonic.xp.core.impl.event;
 
 import java.util.Queue;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
@@ -27,13 +28,19 @@ public final class EventPublisherImpl
 
     private final EventMulticaster multicaster;
 
-    private final Executor executor;
+    private final ExecutorService executor;
 
     public EventPublisherImpl()
     {
         this.queue = Queues.newConcurrentLinkedQueue();
         this.multicaster = new EventMulticaster();
-        this.executor = Executors.newSingleThreadExecutor();
+        this.executor = Executors.newCachedThreadPool();
+    }
+
+    @Deactivate
+    public void deactivate()
+    {
+        this.executor.shutdown();
     }
 
     @Override

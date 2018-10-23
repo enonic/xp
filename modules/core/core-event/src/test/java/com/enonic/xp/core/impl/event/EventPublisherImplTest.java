@@ -26,6 +26,8 @@ public class EventPublisherImplTest
     {
         final Event event = Event.create( "test" ).build();
         this.publisher.publish( event );
+
+        this.publisher.deactivate();
     }
 
     @Test
