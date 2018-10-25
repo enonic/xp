@@ -1,8 +1,9 @@
-.preview-frame-body {
+.preview-frame-body, .preview-frame-body figure {
     margin: 0;
 }
 figure img {
     width: 100%;
+    height: 100%;
 }
 
 figure.editor-style-original img {
