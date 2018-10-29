@@ -1,12 +1,14 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
 
-import com.enonic.xp.aggregation.BucketAggregation;
+import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentDependencies;
 import com.enonic.xp.content.ContentDependenciesAggregation;
 import com.enonic.xp.content.ContentId;
@@ -65,27 +67,40 @@ public class ContentDependenciesResolver
                 build() ).
             build() );
 
-        final BucketAggregation bucketAggregation = (BucketAggregation) result.getAggregations().get( "type" );
+        final Contents contents = this.contentService.getByIds( new GetContentByIdsParams( result.getContentIds() ) );
 
-        return bucketAggregation.getBuckets().getSet().stream().map( ContentDependenciesAggregation::new ).collect( toList() );
+        return makeContentDependenciesAggregations( contents );
     }
 
     private Collection<ContentDependenciesAggregation> resolveOutboundDependenciesAggregation( final ContentId contentId )
     {
-        final Map<ContentTypeName, Long> aggregationJsonMap = Maps.newHashMap();
-
         final Contents contents =
             this.contentService.getByIds( new GetContentByIdsParams( this.contentService.getOutboundDependencies( contentId ) ) );
 
+        return makeContentDependenciesAggregations( contents );
+    }
+
+    private Collection<ContentDependenciesAggregation> makeContentDependenciesAggregations( final Contents contents )
+    {
+        final Map<ContentTypeName, List<Content>> aggregationJsonMap = Maps.newHashMap();
+
         contents.forEach( existingContent -> {
             final ContentTypeName contentTypeName = existingContent.getType();
-            final Long count = aggregationJsonMap.containsKey( contentTypeName ) ? aggregationJsonMap.get( contentTypeName ) + 1 : 1;
-            aggregationJsonMap.put( contentTypeName, count );
+            if ( aggregationJsonMap.containsKey( contentTypeName ) )
+            {
+                aggregationJsonMap.get( contentTypeName ).add( existingContent );
+            }
+            else
+            {
+                final List<Content> list = new ArrayList<>();
+                list.add( existingContent );
+                aggregationJsonMap.put( contentTypeName, list );
+            }
         } );
 
         return aggregationJsonMap.entrySet().
             stream().
-            map( entry -> new ContentDependenciesAggregation( entry.getKey(), entry.getValue() ) ).
+            map( entry -> new ContentDependenciesAggregation( entry.getKey(), Contents.from( entry.getValue() ) ) ).
             collect( toList() );
     }
 

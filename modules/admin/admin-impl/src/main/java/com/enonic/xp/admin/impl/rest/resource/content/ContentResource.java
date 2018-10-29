@@ -489,12 +489,12 @@ public final class ContentResource
             final ContentDependencies dependencies = contentService.getDependencies( id );
 
             final List<DependenciesAggregationJson> inbound = dependencies.getInbound().stream().
-                map( aggregation -> new DependenciesAggregationJson( aggregation, this.contentTypeIconUrlResolver ) ).collect(
-                Collectors.toList() );
+                map( aggregation -> new DependenciesAggregationJson( aggregation, this.contentTypeIconUrlResolver,
+                                                                     this.contentIconUrlResolver ) ).collect( Collectors.toList() );
 
             final List<DependenciesAggregationJson> outbound = dependencies.getOutbound().stream().
-                map( aggregation -> new DependenciesAggregationJson( aggregation, this.contentTypeIconUrlResolver ) ).collect(
-                Collectors.toList() );
+                map( aggregation -> new DependenciesAggregationJson( aggregation, this.contentTypeIconUrlResolver,
+                                                                     this.contentIconUrlResolver ) ).collect( Collectors.toList() );
 
             result.put( id.toString(), new DependenciesJson( inbound, outbound ) );
         } ) );

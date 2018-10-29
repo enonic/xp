@@ -1428,8 +1428,9 @@ public class ContentResourceTest
         Content content2 = createContent( "content-id2", "content-name2", "myapplication:content-type" );
 
         Mockito.when( contentService.getDependencies( content1.getId() ) ).thenReturn( ContentDependencies.create().inboundDependencies(
-            Collections.singleton( new ContentDependenciesAggregation( ContentTypeName.folder(), 2L ) ) ).outboundDependencies(
-            Collections.singleton( new ContentDependenciesAggregation( ContentTypeName.media(), 1L ) ) ).build() );
+            Collections.singleton( new ContentDependenciesAggregation( ContentTypeName.folder(),
+                                                                       Contents.from( content1, content2 ) ) ) ).outboundDependencies(
+            Collections.singleton( new ContentDependenciesAggregation( ContentTypeName.media(), Contents.from( content1 ) ) ) ).build() );
 
         Mockito.when( contentService.getDependencies( content2.getId() ) ).thenReturn(
             ContentDependencies.create().inboundDependencies( Sets.newHashSet() ).outboundDependencies( Sets.newHashSet() ).build() );
@@ -1438,12 +1439,12 @@ public class ContentResourceTest
             new ContentIdsJson( Lists.asList( content1.getId().toString(), content2.getId().toString(), new String[]{} ) ) );
 
         assertEquals( 1, result.getDependencies().get( content1.getId().toString() ).getInbound().size() );
-        assertEquals( 2L, result.getDependencies().get( content1.getId().toString() ).getInbound().get( 0 ).getCount() );
+        assertEquals( 2, result.getDependencies().get( content1.getId().toString() ).getInbound().get( 0 ).getContents().size() );
         assertEquals( ContentTypeName.folder().toString(),
                       result.getDependencies().get( content1.getId().toString() ).getInbound().get( 0 ).getType() );
 
         assertEquals( 1, result.getDependencies().get( content1.getId().toString() ).getOutbound().size() );
-        assertEquals( 1L, result.getDependencies().get( content1.getId().toString() ).getOutbound().get( 0 ).getCount() );
+        assertEquals( 1, result.getDependencies().get( content1.getId().toString() ).getOutbound().get( 0 ).getContents().size() );
         assertEquals( ContentTypeName.media().toString(),
                       result.getDependencies().get( content1.getId().toString() ).getOutbound().get( 0 ).getType() );
     }
