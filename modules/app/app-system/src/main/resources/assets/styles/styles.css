@@ -2,6 +2,7 @@
     margin: 0;
 }
 figure img {
+    width: 100%;
     max-width: 100%;
     max-height: 100%;
 }
@@ -12,17 +13,17 @@ figure.editor-style-original img {
 
 figure.editor-align-left {
     float: left;
-    margin: 15px;
     width: 40%;
 }
 
 figure.editor-align-right {
     float: right;
-    margin: 15px;
     width: 40%;
+    text-align: right;
 }
 
 figure.editor-align-center {
     margin: auto;
     width: 60%;
+    text-align: center;
 }
