@@ -4,15 +4,19 @@ import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.EditableSite;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.Media;
+import com.enonic.xp.content.processor.ProcessCreateParams;
+import com.enonic.xp.content.processor.ProcessCreateResult;
 import com.enonic.xp.content.processor.ProcessUpdateParams;
 import com.enonic.xp.content.processor.ProcessUpdateResult;
 import com.enonic.xp.data.PropertyTree;
@@ -142,5 +146,25 @@ public class HtmlAreaContentProcessorTest
             name( ContentTypeName.from( "myContentType" ) ).
             superType( ContentTypeName.folder() ).
             build() ) );
+    }
+
+    @Test
+    public void create()
+        throws IOException
+    {
+        final ProcessCreateParams processCreateParams = Mockito.mock( ProcessCreateParams.class );
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            parent( ContentPath.ROOT ).
+            contentData( new PropertyTree() ).
+            type( ContentTypeName.folder() ).
+            build();
+
+        Mockito.when( processCreateParams.getCreateContentParams() ).thenReturn( createContentParams );
+
+        final ProcessCreateResult result = new HtmlAreaContentProcessor().processCreate( processCreateParams );
+
+        assertEquals( createContentParams.getParent(), result.getCreateContentParams().getParent() );
+        assertEquals( createContentParams.getData(), result.getCreateContentParams().getData() );
+        assertEquals( createContentParams.getType(), result.getCreateContentParams().getType() );
     }
 }
