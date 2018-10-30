@@ -5,6 +5,8 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
+import com.enonic.xp.content.processor.ContentProcessor;
+
 public class ContentProcessors
     implements Iterable<ContentProcessor>
 {
