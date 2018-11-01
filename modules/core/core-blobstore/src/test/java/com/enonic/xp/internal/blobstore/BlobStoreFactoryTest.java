@@ -1,7 +1,5 @@
 package com.enonic.xp.internal.blobstore;
 
-import java.util.Map;
-
 import org.junit.Test;
 
 import com.google.common.io.ByteSource;
@@ -86,12 +84,6 @@ public class BlobStoreFactoryTest
     {
         return new ProviderConfig()
         {
-            @Override
-            public Map<Segment, String> segments()
-            {
-                return null;
-            }
-
             @Override
             public String readThroughProvider()
             {

@@ -7,8 +7,6 @@ import com.google.common.collect.ImmutableList;
 
 public final class Segment
 {
-    public static final Segment[] DEFAULT_REQUIRED_SEGMENTS = new Segment[]{Segment.from( "node" ), Segment.from( "binary" )};
-
     private final ImmutableList<SegmentLevel> levels;
 
     private Segment( final ImmutableList<SegmentLevel> levels )
