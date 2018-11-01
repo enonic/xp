@@ -16,6 +16,7 @@ import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.BlobStoreException;
 import com.enonic.xp.blob.Segment;
+import com.enonic.xp.blob.SegmentLevel;
 
 public final class FileBlobStore
     implements BlobStore
@@ -146,7 +147,10 @@ public final class FileBlobStore
     {
         final String id = key.toString();
         File file = this.baseDir;
-        file = new File( file, segment.getValue() );
+        for ( SegmentLevel level : segment.getLevels() )
+        {
+            file = new File( file, level.getValue() );
+        }
         file = new File( file, id.substring( 0, 2 ) );
         file = new File( file, id.substring( 2, 4 ) );
         file = new File( file, id.substring( 4, 6 ) );

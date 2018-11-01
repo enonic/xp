@@ -1,30 +1,48 @@
 package com.enonic.xp.blob;
 
+import java.util.Arrays;
+import java.util.List;
+
+import com.google.common.collect.ImmutableList;
+
 public final class Segment
 {
     public static final Segment[] DEFAULT_REQUIRED_SEGMENTS = new Segment[]{Segment.from( "node" ), Segment.from( "binary" )};
 
-    private final String value;
+    private final ImmutableList<SegmentLevel> levels;
 
-    private Segment( final String value )
+    private Segment( final ImmutableList<SegmentLevel> levels )
     {
-        this.value = value;
+        this.levels = levels;
     }
 
-    public static Segment from( final String value )
+    public static Segment from( final String... levels )
     {
-        return new Segment( value );
+        final ImmutableList.Builder<SegmentLevel> builder = ImmutableList.builder();
+        Arrays.stream( levels ).
+            forEach( level -> builder.add( SegmentLevel.from( level ) ) );
+        return new Segment( builder.build() );
     }
 
-    public String getValue()
+    public static Segment from( final SegmentLevel... levels )
     {
-        return value;
+        return new Segment( ImmutableList.copyOf( levels ) );
+    }
+
+    public static Segment from( final Iterable<SegmentLevel> levels )
+    {
+        return new Segment( ImmutableList.copyOf( levels ) );
+    }
+
+    public List<SegmentLevel> getLevels()
+    {
+        return levels;
     }
 
     @Override
     public String toString()
     {
-        return this.value;
+        return levels.toString();
     }
 
     @Override
@@ -41,13 +59,13 @@ public final class Segment
 
         final Segment segment = (Segment) o;
 
-        return value != null ? value.equals( segment.value ) : segment.value == null;
+        return levels != null ? levels.equals( segment.levels ) : segment.levels == null;
 
     }
 
     @Override
     public int hashCode()
     {
-        return value != null ? value.hashCode() : 0;
+        return levels != null ? levels.hashCode() : 0;
     }
 }
