@@ -81,7 +81,7 @@ public class VersionEntryProcessor
     {
         try
         {
-            return this.dumpReader.get( meta.getVersion() );
+            return this.dumpReader.get( repositoryId, meta.getVersion() );
         }
         catch ( RepoLoadException e )
         {

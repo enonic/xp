@@ -8,6 +8,7 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
+import com.enonic.xp.blob.Segment;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersion;
@@ -16,6 +17,8 @@ import com.enonic.xp.repo.impl.dump.model.VersionMeta;
 import com.enonic.xp.repo.impl.dump.serializer.DumpSerializer;
 import com.enonic.xp.repo.impl.dump.serializer.json.JsonDumpSerializer;
 import com.enonic.xp.repo.impl.node.NodeConstants;
+import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.RepositorySegmentLevel;
 
 class AbstractEntryProcessor
 {
@@ -29,12 +32,15 @@ class AbstractEntryProcessor
 
     final DumpSerializer serializer;
 
+    final RepositoryId repositoryId;
+
     AbstractEntryProcessor( final Builder builder )
     {
         blobStore = builder.blobStore;
         nodeService = builder.nodeService;
         dumpReader = builder.dumpReader;
         serializer = new JsonDumpSerializer();
+        repositoryId = builder.repositoryId;
     }
 
     void validateOrAddBinary( final NodeVersion nodeVersion, final EntryLoadResult.Builder result )
@@ -47,8 +53,9 @@ class AbstractEntryProcessor
             {
                 try
                 {
-                    final ByteSource dumpBinary = this.dumpReader.getBinary( binary.getBlobKey() );
-                    this.blobStore.addRecord( NodeConstants.BINARY_SEGMENT, dumpBinary );
+                    final Segment segment = Segment.from( RepositorySegmentLevel.from( repositoryId ), NodeConstants.BINARY_SEGMENT_LEVEL );
+                    final ByteSource dumpBinary = this.dumpReader.getBinary( repositoryId, binary.getBlobKey() );
+                    this.blobStore.addRecord( segment, dumpBinary );
                 }
                 catch ( RepoLoadException e )
                 {
@@ -82,6 +89,8 @@ class AbstractEntryProcessor
 
         private DumpReader dumpReader;
 
+        private RepositoryId repositoryId;
+
         Builder()
         {
         }
@@ -104,6 +113,13 @@ class AbstractEntryProcessor
         public B dumpReader( final DumpReader val )
         {
             dumpReader = val;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B repositoryId( final RepositoryId val )
+        {
+            repositoryId = val;
             return (B) this;
         }
     }

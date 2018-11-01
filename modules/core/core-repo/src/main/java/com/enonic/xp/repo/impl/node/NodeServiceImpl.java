@@ -9,6 +9,7 @@ import org.osgi.service.component.annotations.Reference;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
@@ -62,6 +63,7 @@ import com.enonic.xp.node.SyncWorkResolverParams;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
+import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
@@ -641,7 +643,10 @@ public class NodeServiceImpl
     public NodeVersion getByNodeVersion( final NodeVersionId nodeVersionId )
     {
         verifyContext();
-        return this.nodeStorageService.get( nodeVersionId );
+
+
+        final Context currentContext = ContextAccessor.current();
+        return this.nodeStorageService.getNodeVersion( nodeVersionId, InternalContext.from( currentContext ) );
     }
 
     @Override

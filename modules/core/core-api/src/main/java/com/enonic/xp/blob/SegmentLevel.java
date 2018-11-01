@@ -1,10 +1,10 @@
 package com.enonic.xp.blob;
 
-public final class SegmentLevel
+public class SegmentLevel
 {
     private final String value;
 
-    private SegmentLevel( final String value )
+    protected SegmentLevel( final String value )
     {
         this.value = value;
     }

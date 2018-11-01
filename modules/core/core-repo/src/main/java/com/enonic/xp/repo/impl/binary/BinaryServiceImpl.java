@@ -8,10 +8,13 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
+import com.enonic.xp.blob.Segment;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repository.RepositoryExeption;
+import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.RepositorySegmentLevel;
 
 @Component
 public class BinaryServiceImpl
@@ -20,16 +23,18 @@ public class BinaryServiceImpl
     private BlobStore blobStore;
 
     @Override
-    public AttachedBinary store( final BinaryAttachment binaryAttachment )
+    public AttachedBinary store( final RepositoryId repositoryId, final BinaryAttachment binaryAttachment )
     {
-        final BlobRecord blob = this.blobStore.addRecord( NodeConstants.BINARY_SEGMENT, binaryAttachment.getByteSource() );
+        final Segment segment = Segment.from( RepositorySegmentLevel.from( repositoryId ), NodeConstants.BINARY_SEGMENT_LEVEL );
+        final BlobRecord blob = this.blobStore.addRecord( segment, binaryAttachment.getByteSource() );
         return new AttachedBinary( binaryAttachment.getReference(), blob.getKey().toString() );
     }
 
     @Override
-    public ByteSource get( final AttachedBinary attachedBinary )
+    public ByteSource get( final RepositoryId repositoryId, final AttachedBinary attachedBinary )
     {
-        final BlobRecord record = blobStore.getRecord( NodeConstants.BINARY_SEGMENT, BlobKey.from( attachedBinary.getBlobKey() ) );
+        final Segment segment = Segment.from( RepositorySegmentLevel.from( repositoryId ), NodeConstants.BINARY_SEGMENT_LEVEL );
+        final BlobRecord record = blobStore.getRecord( segment, BlobKey.from( attachedBinary.getBlobKey() ) );
 
         if ( record == null )
         {

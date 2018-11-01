@@ -83,7 +83,7 @@ public class BranchEntryProcessor
     {
         try
         {
-            return this.dumpReader.get( meta.getVersion() );
+            return this.dumpReader.get( repositoryId, meta.getVersion() );
         }
         catch ( RepoLoadException e )
         {

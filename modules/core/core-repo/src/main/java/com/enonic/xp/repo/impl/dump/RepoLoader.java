@@ -45,11 +45,13 @@ class RepoLoader
             dumpReader( this.reader ).
             nodeService( this.nodeService ).
             blobStore( builder.blobStore ).
+            repositoryId( repositoryId ).
             build();
         this.versionEntryProcessor = VersionEntryProcessor.create().
             dumpReader( this.reader ).
             nodeService( this.nodeService ).
             blobStore( builder.blobStore ).
+            repositoryId( repositoryId ).
             build();
     }
 
