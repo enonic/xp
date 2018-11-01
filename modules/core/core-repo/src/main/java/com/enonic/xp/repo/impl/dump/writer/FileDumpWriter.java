@@ -208,7 +208,8 @@ public class FileDumpWriter
     @Override
     public void writeBinaryBlob( final RepositoryId repositoryId, final String blobKey )
     {
-        final BlobRecord binaryRecord = blobStore.getRecord( DumpConstants.DUMP_SEGMENT_BINARIES, BlobKey.from( blobKey ) );
+        final Segment dumpSegment = Segment.from( RepositorySegmentLevel.from( repositoryId ), DumpConstants.DUMP_BINARY_SEGMENT_LEVEL );
+        final BlobRecord binaryRecord = blobStore.getRecord( dumpSegment, BlobKey.from( blobKey ) );
 
         if ( binaryRecord == null )
         {

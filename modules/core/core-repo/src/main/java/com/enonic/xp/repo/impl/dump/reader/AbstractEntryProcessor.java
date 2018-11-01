@@ -47,13 +47,13 @@ class AbstractEntryProcessor
     {
         nodeVersion.getAttachedBinaries().forEach( binary -> {
 
-            final BlobRecord existingRecord = this.blobStore.getRecord( NodeConstants.BINARY_SEGMENT, BlobKey.from( binary.getBlobKey() ) );
+            final Segment segment = Segment.from( RepositorySegmentLevel.from( repositoryId ), NodeConstants.BINARY_SEGMENT_LEVEL );
+            final BlobRecord existingRecord = this.blobStore.getRecord( segment, BlobKey.from( binary.getBlobKey() ) );
 
             if ( existingRecord == null )
             {
                 try
                 {
-                    final Segment segment = Segment.from( RepositorySegmentLevel.from( repositoryId ), NodeConstants.BINARY_SEGMENT_LEVEL );
                     final ByteSource dumpBinary = this.dumpReader.getBinary( repositoryId, binary.getBlobKey() );
                     this.blobStore.addRecord( segment, dumpBinary );
                 }
