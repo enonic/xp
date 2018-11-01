@@ -20,6 +20,8 @@ public final class FindContentByParentParams
 
     private final ChildOrder childOrder;
 
+    private final Boolean recursive;
+
     private static final Integer DEFAULT_SIZE = 500;
 
     private FindContentByParentParams( Builder builder )
@@ -35,6 +37,7 @@ public final class FindContentByParentParams
         this.size = builder.size;
         this.from = builder.from;
         this.childOrder = builder.childOrder;
+        this.recursive = builder.recursive;
     }
 
     public ContentPath getParentPath()
@@ -62,6 +65,11 @@ public final class FindContentByParentParams
         return childOrder;
     }
 
+    public Boolean isRecursive()
+    {
+        return recursive;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -77,14 +85,14 @@ public final class FindContentByParentParams
         return Objects.equals( this.parentPath, that.parentPath ) &&
             Objects.equals( this.parentId, that.parentId ) &&
             Objects.equals( this.size, that.size ) &&
-            Objects.equals( this.from, that.from ) &&
-            Objects.equals( this.childOrder, that.childOrder );
+            Objects.equals( this.from, that.from ) && Objects.equals( this.childOrder, that.childOrder ) &&
+            Objects.equals( this.recursive, that.recursive );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( parentPath, parentId, size, from, childOrder );
+        return Objects.hash( parentPath, parentId, size, from, childOrder, recursive );
     }
 
     public static Builder create()
@@ -103,6 +111,8 @@ public final class FindContentByParentParams
         private Integer from = 0;
 
         private ChildOrder childOrder;
+
+        private Boolean recursive = false;
 
         private Builder()
         {
@@ -135,6 +145,12 @@ public final class FindContentByParentParams
         public Builder childOrder( final ChildOrder childOrder )
         {
             this.childOrder = childOrder;
+            return this;
+        }
+
+        public Builder recursive( final Boolean recursive )
+        {
+            this.recursive = recursive;
             return this;
         }
 

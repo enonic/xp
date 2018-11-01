@@ -5,9 +5,8 @@ import java.util.Optional;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.google.common.util.concurrent.Futures;
-
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.content.ApplyContentPermissionsResult;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
@@ -26,7 +25,7 @@ public class SetPermissionsHandlerTest
         final Content content = TestDataFixtures.newExampleContent();
         Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
 
-        Mockito.when( this.contentService.applyPermissions( Mockito.any() ) ).thenReturn( Futures.immediateFuture( 1 ) );
+        Mockito.when( this.contentService.applyPermissions( Mockito.any() ) ).thenReturn( ApplyContentPermissionsResult.create().build() );
 
         SecurityService securityService = Mockito.mock( SecurityService.class );
         addService( SecurityService.class, securityService );
@@ -45,7 +44,7 @@ public class SetPermissionsHandlerTest
         final Content content = TestDataFixtures.newExampleContent();
         Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
 
-        Mockito.when( this.contentService.applyPermissions( Mockito.any() ) ).thenReturn( Futures.immediateFuture( 1 ) );
+        Mockito.when( this.contentService.applyPermissions( Mockito.any() ) ).thenReturn( ApplyContentPermissionsResult.create().build() );
 
         SecurityService securityService = Mockito.mock( SecurityService.class );
         addService( SecurityService.class, securityService );
@@ -63,7 +62,7 @@ public class SetPermissionsHandlerTest
         final Content content = TestDataFixtures.newExampleContent();
         Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
 
-        Mockito.when( this.contentService.applyPermissions( Mockito.any() ) ).thenReturn( Futures.immediateFuture( 1 ) );
+        Mockito.when( this.contentService.applyPermissions( Mockito.any() ) ).thenReturn( ApplyContentPermissionsResult.create().build() );
 
         SecurityService securityService = Mockito.mock( SecurityService.class );
         addService( SecurityService.class, securityService );

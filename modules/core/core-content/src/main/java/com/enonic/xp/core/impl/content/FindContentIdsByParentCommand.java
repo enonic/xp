@@ -50,6 +50,7 @@ final class FindContentIdsByParentCommand
             from( params.getFrom() ).
             size( params.getSize() ).
             childOrder( params.getChildOrder() ).
+            recursive( params.isRecursive() ).
             build();
 
         return findNodesParam.build();
