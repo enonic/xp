@@ -35,7 +35,7 @@ import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
 
 @Component(immediate = true, service = WebHandler.class)
-public final class AppHandler
+public final class WebAppHandler
     extends BaseWebHandler
 {
     public final static Pattern PATTERN = Pattern.compile( "/app/([^/]+)(/(?:.)*)?" );
@@ -50,7 +50,7 @@ public final class AppHandler
 
     private ResourceService resourceService;
 
-    public AppHandler()
+    public WebAppHandler()
     {
         super( 200 );
     }
@@ -143,7 +143,7 @@ public final class AppHandler
 
     private ControllerScript getScript( final ApplicationKey applicationKey )
     {
-        final ResourceKey script = ResourceKey.from( applicationKey, "main.js" );
+        final ResourceKey script = ResourceKey.from( applicationKey, "/webapp/webapp.js" );
         final Trace trace = Tracer.current();
         if ( trace != null )
         {

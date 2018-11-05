@@ -28,9 +28,9 @@ import com.enonic.xp.web.impl.exception.ExceptionMapperImpl;
 
 import static org.junit.Assert.*;
 
-public class AppHandlerTest
+public class WebAppHandlerTest
 {
-    private AppHandler handler;
+    private WebAppHandler handler;
 
     private ResourceService resourceService;
 
@@ -49,7 +49,7 @@ public class AppHandlerTest
         this.controllerScriptFactory = Mockito.mock( ControllerScriptFactory.class );
         this.exceptionRenderer = Mockito.mock( ExceptionRenderer.class );
 
-        this.handler = new AppHandler();
+        this.handler = new WebAppHandler();
         this.handler.setResourceService( this.resourceService );
         this.handler.setControllerScriptFactory( this.controllerScriptFactory );
         this.handler.setExceptionMapper( new ExceptionMapperImpl() );
@@ -122,7 +122,7 @@ public class AppHandlerTest
         this.request.setRawPath( "/app/myapp/a.txt" );
 
         final ControllerScript script = Mockito.mock( ControllerScript.class );
-        Mockito.when( this.controllerScriptFactory.fromScript( ResourceKey.from( "myapp:/main.js" ) ) ).thenReturn( script );
+        Mockito.when( this.controllerScriptFactory.fromScript( ResourceKey.from( "myapp:/webapp/webapp.js" ) ) ).thenReturn( script );
 
         final PortalResponse response = PortalResponse.create().build();
         Mockito.when( script.execute( Mockito.any() ) ).thenReturn( response );

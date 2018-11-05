@@ -199,7 +199,7 @@ public final class ApplicationResource
             setRelationshipTypeIconUrlResolver( this.relationshipTypeIconUrlResolver ).
             setLocaleMessageResolver( new LocaleMessageResolver( this.localeService, applicationKey ) );
 
-        final Resource resource = resourceService.getResource( ResourceKey.from( applicationKey, "/main.js" ) );
+        final Resource resource = resourceService.getResource( ResourceKey.from( applicationKey, "/webapp/webapp.js" ) );
         if ( resource != null && resource.exists() )
         {
             final ScriptExports exports = portalScriptService.execute( resource.getKey() );

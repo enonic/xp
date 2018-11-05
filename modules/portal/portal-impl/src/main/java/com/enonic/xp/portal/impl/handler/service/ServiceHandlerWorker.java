@@ -15,7 +15,7 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.handler.ControllerHandlerWorker;
-import com.enonic.xp.portal.impl.app.AppHandler;
+import com.enonic.xp.portal.impl.app.WebAppHandler;
 import com.enonic.xp.portal.impl.websocket.WebSocketEndpointImpl;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
@@ -132,7 +132,7 @@ final class ServiceHandlerWorker
 
     private ApplicationKey getBaseApplicationKey()
     {
-        final Matcher matcher = AppHandler.PATTERN.matcher( this.request.getRawPath() );
+        final Matcher matcher = WebAppHandler.PATTERN.matcher( this.request.getRawPath() );
         if ( matcher.matches() )
         {
             final String applicationBase = matcher.group( 1 );

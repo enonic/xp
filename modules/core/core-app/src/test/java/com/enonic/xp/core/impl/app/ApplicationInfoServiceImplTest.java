@@ -424,12 +424,5 @@ public class ApplicationInfoServiceImplTest
         mockTasks( applicationKey );
         mockIdProvider( applicationKey );
     }
-/*
-    private void mockDeployment( final ApplicationKey applicationKey )
-    {
-        final Resource resourceMock = Mockito.mock( Resource.class );
-        Mockito.when( resourceMock.exists() ).thenReturn( true );
 
-        Mockito.when( this.resourceService.getResource( ResourceKey.from( applicationKey, "/main.js" ) ) ).thenReturn( resourceMock );
-    }*/
 }
