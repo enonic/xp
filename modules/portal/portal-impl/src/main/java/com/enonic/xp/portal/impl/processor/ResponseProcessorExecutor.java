@@ -26,7 +26,7 @@ public final class ResponseProcessorExecutor
 {
     private final static Logger LOG = LoggerFactory.getLogger( ResponseProcessorExecutor.class );
 
-    private static final String RESPONSE_FILTER_METHOD = "responseFilter";
+    private static final String RESPONSE_PROCESSOR_METHOD = "responseProcessor";
 
     private final PortalScriptService scriptService;
 
@@ -35,8 +35,7 @@ public final class ResponseProcessorExecutor
         this.scriptService = scriptService;
     }
 
-    public PortalResponse executeResponseFilter( final ResponseProcessorDescriptor filter, final PortalRequest request,
-                                                 final PortalResponse response )
+    public PortalResponse execute( final ResponseProcessorDescriptor filter, final PortalRequest request, final PortalResponse response )
     {
         final String filterName = filter.getName();
         final String filterJsPath = "/site/processors/" + filterName + ".js";
@@ -52,10 +51,11 @@ public final class ResponseProcessorExecutor
             throw e;
         }
 
-        final boolean exists = filterExports.hasMethod( RESPONSE_FILTER_METHOD );
+        final boolean exists = filterExports.hasMethod( RESPONSE_PROCESSOR_METHOD );
         if ( !exists )
         {
-            throw new RenderException( "Missing exported function [{0}] in response filter [{1}]", RESPONSE_FILTER_METHOD, filterJsPath );
+            throw new RenderException( "Missing exported function [{0}] in response filter [{1}]", RESPONSE_PROCESSOR_METHOD,
+                                       filterJsPath );
         }
 
         final ApplicationKey previousApp = request.getApplicationKey();
@@ -80,7 +80,7 @@ public final class ResponseProcessorExecutor
         final PortalRequestMapper requestMapper = new PortalRequestMapper( request );
         final PortalResponseMapper responseMapper = new PortalResponseMapper( response );
 
-        final ScriptValue result = filterExports.executeMethod( RESPONSE_FILTER_METHOD, requestMapper, responseMapper );
+        final ScriptValue result = filterExports.executeMethod( RESPONSE_PROCESSOR_METHOD, requestMapper, responseMapper );
         final PortalResponseSerializer portalResponseSerializer = new PortalResponseSerializer( result );
 
         if ( unmodifiedByteSourceBody( response, result ) )

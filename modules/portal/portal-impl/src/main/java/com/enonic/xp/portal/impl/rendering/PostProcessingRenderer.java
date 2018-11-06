@@ -24,14 +24,14 @@ public abstract class PostProcessingRenderer<R>
     {
         PortalResponse portalResponse = doRender( component, portalRequest );
         portalResponse = this.postProcessor.processResponseInstructions( portalRequest, portalResponse );
-        portalResponse = executeResponseFilters( portalRequest, portalResponse );
+        portalResponse = executeResponseProcessors( portalRequest, portalResponse );
         portalResponse = this.postProcessor.processResponseContributions( portalRequest, portalResponse );
         return portalResponse;
     }
 
     protected abstract PortalResponse doRender( final R component, final PortalRequest portalRequest );
 
-    private PortalResponse executeResponseFilters( final PortalRequest portalRequest, final PortalResponse portalResponse )
+    private PortalResponse executeResponseProcessors( final PortalRequest portalRequest, final PortalResponse portalResponse )
     {
         final ResponseProcessorDescriptors filters = this.processorChainResolver.resolve( portalRequest );
         if ( !portalResponse.applyFilters() || filters.isEmpty() )
@@ -47,15 +47,14 @@ public abstract class PostProcessingRenderer<R>
             final Trace trace = Tracer.newTrace( "renderFilter" );
             if ( trace == null )
             {
-                filterResponse = processorExecutor.executeResponseFilter( filter, portalRequest, filterPortalResponse );
+                filterResponse = processorExecutor.execute( filter, portalRequest, filterPortalResponse );
             }
             else
             {
                 trace.put( "app", filter.getApplication().toString() );
                 trace.put( "name", filter.getName() );
                 trace.put( "type", "filter" );
-                filterResponse =
-                    Tracer.trace( trace, () -> processorExecutor.executeResponseFilter( filter, portalRequest, filterPortalResponse ) );
+                filterResponse = Tracer.trace( trace, () -> processorExecutor.execute( filter, portalRequest, filterPortalResponse ) );
             }
 
             if ( !filterResponse.applyFilters() )

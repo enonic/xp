@@ -27,12 +27,12 @@ public class ResponseProcessorExecutorTest
 {
 
     @Test
-    public void testExecuteResponseFilter()
+    public void testExecuteResponseProcessor()
         throws Exception
     {
         final PortalScriptService scriptService = Mockito.mock( PortalScriptService.class );
         final ScriptExports scriptExports = Mockito.mock( ScriptExports.class );
-        when( scriptExports.hasMethod( "responseFilter" ) ).thenReturn( true );
+        when( scriptExports.hasMethod( "responseProcessor" ) ).thenReturn( true );
         when( scriptService.execute( any( ResourceKey.class ) ) ).thenReturn( scriptExports );
 
         final ResponseProcessorExecutor filterExecutor = new ResponseProcessorExecutor( scriptService );
@@ -43,13 +43,13 @@ public class ResponseProcessorExecutorTest
             build();
         final PortalRequest request = new PortalRequest();
         final PortalResponse response = PortalResponse.create().build();
-        final PortalResponse filteredResponse = filterExecutor.executeResponseFilter( filter, request, response );
+        final PortalResponse filteredResponse = filterExecutor.execute( filter, request, response );
 
         assertNotNull( filteredResponse );
     }
 
     @Test
-    public void testExecuteResponseFilterNotImplementingMethod()
+    public void testExecuteResponseProcessorNotImplementingMethod()
         throws Exception
     {
         final PortalScriptService scriptService = Mockito.mock( PortalScriptService.class );
@@ -67,24 +67,25 @@ public class ResponseProcessorExecutorTest
 
         try
         {
-            filterExecutor.executeResponseFilter( filter, request, response );
+            filterExecutor.execute( filter, request, response );
             fail( "Expected exception" );
         }
         catch ( RenderException e )
         {
-            assertEquals( "Missing exported function [responseFilter] in response filter [/site/processors/filter1.js]", e.getMessage() );
+            assertEquals( "Missing exported function [responseProcessor] in response filter [/site/processors/filter1.js]",
+                          e.getMessage() );
         }
     }
 
     @Test
-    public void testExecuteResponseFilterWithByteSourceBody()
+    public void testExecuteResponseProcessorWithByteSourceBody()
         throws Exception
     {
         final ByteSource data = ByteSource.wrap( "DATA".getBytes( StandardCharsets.UTF_8 ) );
 
         final PortalScriptService scriptService = Mockito.mock( PortalScriptService.class );
         final ScriptExports scriptExports = Mockito.mock( ScriptExports.class );
-        when( scriptExports.hasMethod( "responseFilter" ) ).thenReturn( true );
+        when( scriptExports.hasMethod( "responseProcessor" ) ).thenReturn( true );
         when( scriptService.execute( any( ResourceKey.class ) ) ).thenReturn( scriptExports );
 
         final ScriptValue result = Mockito.mock( ScriptValue.class );
@@ -104,7 +105,7 @@ public class ResponseProcessorExecutorTest
         final PortalRequest request = new PortalRequest();
 
         final PortalResponse response = PortalResponse.create().body( data ).build();
-        final PortalResponse filteredResponse = filterExecutor.executeResponseFilter( filter, request, response );
+        final PortalResponse filteredResponse = filterExecutor.execute( filter, request, response );
 
         assertNotNull( filteredResponse );
         assertTrue( filteredResponse.getBody() instanceof ByteSource );
