@@ -9,27 +9,9 @@ public final class Segment
 {
     private final ImmutableList<SegmentLevel> levels;
 
-    private Segment( final ImmutableList<SegmentLevel> levels )
+    private Segment( final Builder builder )
     {
-        this.levels = levels;
-    }
-
-    public static Segment from( final String... levels )
-    {
-        final ImmutableList.Builder<SegmentLevel> builder = ImmutableList.builder();
-        Arrays.stream( levels ).
-            forEach( level -> builder.add( SegmentLevel.from( level ) ) );
-        return new Segment( builder.build() );
-    }
-
-    public static Segment from( final SegmentLevel... levels )
-    {
-        return new Segment( ImmutableList.copyOf( levels ) );
-    }
-
-    public static Segment from( final Iterable<SegmentLevel> levels )
-    {
-        return new Segment( ImmutableList.copyOf( levels ) );
+        this.levels = builder.levels.build();
     }
 
     public List<SegmentLevel> getLevels()
@@ -65,5 +47,62 @@ public final class Segment
     public int hashCode()
     {
         return levels != null ? levels.hashCode() : 0;
+    }
+
+    public static Segment from( final String... levels )
+    {
+        return create().
+            levels( levels ).
+            build();
+    }
+
+    public static Segment from( final SegmentLevel... levels )
+    {
+        return create().
+            levels( levels ).
+            build();
+    }
+
+    public static Segment from( final Iterable<SegmentLevel> levels )
+    {
+        return create().
+            levels( levels ).
+            build();
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public static class Builder
+    {
+        private ImmutableList.Builder<SegmentLevel> levels = ImmutableList.builder();
+
+        public Builder levels( SegmentLevel... levels )
+        {
+            Arrays.stream( levels ).
+                forEach( this.levels::add );
+            return this;
+        }
+
+        public Builder levels( String... levels )
+        {
+            Arrays.stream( levels ).
+                map( SegmentLevel::from ).
+                forEach( this.levels::add );
+            return this;
+        }
+
+        public Builder levels( Iterable<SegmentLevel> levels )
+        {
+            this.levels.addAll( levels );
+            return this;
+        }
+
+        public Segment build()
+        {
+            return new Segment( this );
+        }
     }
 }
