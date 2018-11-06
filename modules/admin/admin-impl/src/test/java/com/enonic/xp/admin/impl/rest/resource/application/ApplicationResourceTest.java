@@ -118,7 +118,7 @@ public class ApplicationResourceTest
         throws Exception
     {
         final ApplicationKey applicationKey = createApplication().getKey();
-        final ResourceKey resourceKey = ResourceKey.from( applicationKey, "/main.js" );
+        final ResourceKey resourceKey = ResourceKey.from( applicationKey, "/webapp/webapp.js" );
 
         final ApplicationInfo applicationInfo = ApplicationInfo.create().build();
 

@@ -126,24 +126,7 @@ public final class ApplicationInfoServiceImpl
             setTasks( this.getTaskDescriptors( applicationKey ) ).
             setAuthDescriptor( this.getAuthDescriptor( applicationKey ) ).
             build();
-
-        //    setDeploymentUrl( this.getDeploymentUrl(applicationKey) );
     }
-
-    /*public String getDeploymentUrl(final ApplicationKey applicationKey) {
-        final Resource resource = resourceService.getResource( ResourceKey.from( applicationKey, "/main.js" ) );
-        if ( resource != null && resource.exists() )
-        {
-            final ScriptExports exports = portalScriptService.execute( resource.getKey() );
-
-            if ( exports.hasMethod( "get" ) || exports.hasMethod( "post" ) || exports.hasMethod( "head" ) ||
-                exports.hasMethod( "all" ) )
-            {
-                return request.getServerName() + ":" + request.getServerPort() + "/app/" + applicationKey.toString();
-            }
-        }
-        return null;
-    }*/
 
     @Reference
     public void setPageDescriptorService( final PageDescriptorService pageDescriptorService )
