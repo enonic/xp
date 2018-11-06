@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.filter;
+package com.enonic.xp.portal.impl.processor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,27 +18,28 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceNotFoundException;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
-import com.enonic.xp.site.filter.FilterDescriptor;
+import com.enonic.xp.site.processor.ResponseProcessorDescriptor;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 
-public final class FilterExecutor
+public final class ResponseProcessorExecutor
 {
-    private final static Logger LOG = LoggerFactory.getLogger( FilterExecutor.class );
+    private final static Logger LOG = LoggerFactory.getLogger( ResponseProcessorExecutor.class );
 
     private static final String RESPONSE_FILTER_METHOD = "responseFilter";
 
     private final PortalScriptService scriptService;
 
-    public FilterExecutor( final PortalScriptService scriptService )
+    public ResponseProcessorExecutor( final PortalScriptService scriptService )
     {
         this.scriptService = scriptService;
     }
 
-    public PortalResponse executeResponseFilter( final FilterDescriptor filter, final PortalRequest request, final PortalResponse response )
+    public PortalResponse executeResponseFilter( final ResponseProcessorDescriptor filter, final PortalRequest request,
+                                                 final PortalResponse response )
     {
         final String filterName = filter.getName();
-        final String filterJsPath = "/site/filters/" + filterName + ".js";
+        final String filterJsPath = "/site/processors/" + filterName + ".js";
         final ResourceKey script = ResourceKey.from( filter.getApplication(), filterJsPath );
         final ScriptExports filterExports;
         try

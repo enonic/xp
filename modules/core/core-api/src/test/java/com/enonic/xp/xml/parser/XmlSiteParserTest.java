@@ -50,7 +50,7 @@ public class XmlSiteParserTest
 
         assertEquals( 1, siteDescriptor.getForm().getFormItems().size() );
         assertEquals( 2, siteDescriptor.getXDataMappings().getSize() );
-        assertEquals( 2, siteDescriptor.getFilterDescriptors().getSize() );
+        assertEquals( 2, siteDescriptor.getResponseProcessors().getSize() );
         assertEquals( 0, siteDescriptor.getMappingDescriptors().getSize() );
     }
 
@@ -71,7 +71,7 @@ public class XmlSiteParserTest
 
         assertEquals( 0, siteDescriptor.getForm().getFormItems().size() );
         assertEquals( 0, siteDescriptor.getXDataMappings().getSize() );
-        assertEquals( 0, siteDescriptor.getFilterDescriptors().getSize() );
+        assertEquals( 0, siteDescriptor.getResponseProcessors().getSize() );
         assertEquals( 0, siteDescriptor.getMappingDescriptors().getSize() );
     }
 
@@ -92,7 +92,7 @@ public class XmlSiteParserTest
 
         assertEquals( 1, siteDescriptor.getForm().getFormItems().size() );
         assertEquals( 2, siteDescriptor.getXDataMappings().getSize() );
-        assertEquals( 2, siteDescriptor.getFilterDescriptors().getSize() );
+        assertEquals( 2, siteDescriptor.getResponseProcessors().getSize() );
         assertEquals( 3, siteDescriptor.getMappingDescriptors().getSize() );
 
         final ControllerMappingDescriptor mapping1 = siteDescriptor.getMappingDescriptors().get( 0 );
@@ -131,7 +131,7 @@ public class XmlSiteParserTest
 
         assertEquals( 1, siteDescriptor.getForm().getFormItems().size() );
         assertEquals( 2, siteDescriptor.getXDataMappings().getSize() );
-        assertEquals( 2, siteDescriptor.getFilterDescriptors().getSize() );
+        assertEquals( 2, siteDescriptor.getResponseProcessors().getSize() );
         assertEquals( 0, siteDescriptor.getMappingDescriptors().getSize() );
     }
 
@@ -152,7 +152,7 @@ public class XmlSiteParserTest
 
         assertEquals( 1, siteDescriptor.getForm().getFormItems().size() );
         assertEquals( 2, siteDescriptor.getXDataMappings().getSize() );
-        assertEquals( 2, siteDescriptor.getFilterDescriptors().getSize() );
+        assertEquals( 2, siteDescriptor.getResponseProcessors().getSize() );
         assertEquals( 0, siteDescriptor.getMappingDescriptors().getSize() );
     }
 
@@ -173,7 +173,7 @@ public class XmlSiteParserTest
 
         assertEquals( 1, siteDescriptor.getForm().getFormItems().size() );
         assertEquals( 2, siteDescriptor.getXDataMappings().getSize() );
-        assertEquals( 2, siteDescriptor.getFilterDescriptors().getSize() );
+        assertEquals( 2, siteDescriptor.getResponseProcessors().getSize() );
         assertEquals( 0, siteDescriptor.getMappingDescriptors().getSize() );
     }
 

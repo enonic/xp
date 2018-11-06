@@ -23,7 +23,7 @@ public class SiteDescriptorTest
         SiteDescriptor siteDescriptor = SiteDescriptor.create().build();
         assertEquals( null, siteDescriptor.getForm() );
         assertEquals( null, siteDescriptor.getXDataMappings() );
-        assertNotNull( siteDescriptor.getFilterDescriptors() );
+        assertNotNull( siteDescriptor.getResponseProcessors() );
     }
 
     @Test

@@ -40,9 +40,9 @@ public class SiteServiceImplTest
         final SiteDescriptor siteDescriptor = this.service.getDescriptor( applicationKey );
         Assert.assertEquals( 1, siteDescriptor.getForm().getFormItems().size() );
         Assert.assertEquals( 2, siteDescriptor.getXDataMappings().getSize() );
-        Assert.assertEquals( 2, siteDescriptor.getFilterDescriptors().getSize() );
-        Assert.assertEquals( "filter1", siteDescriptor.getFilterDescriptors().get( 0 ).getName() );
-        Assert.assertEquals( 20, siteDescriptor.getFilterDescriptors().get( 1 ).getOrder() );
+        Assert.assertEquals( 2, siteDescriptor.getResponseProcessors().getSize() );
+        Assert.assertEquals( "filter1", siteDescriptor.getResponseProcessors().get( 0 ).getName() );
+        Assert.assertEquals( 20, siteDescriptor.getResponseProcessors().get( 1 ).getOrder() );
     }
 
     @Test
