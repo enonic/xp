@@ -3,6 +3,7 @@ package com.enonic.xp.internal.blobstore.file;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.stream.Stream;
 
 import org.slf4j.Logger;
@@ -115,7 +116,16 @@ public final class FileBlobStore
     @Override
     public Stream<Segment> listSegments()
     {
-        throw new BlobStoreException( "Not implemented" );
+        return Arrays.stream( this.baseDir.listFiles() ).
+            flatMap( firstSegmentLevelFile -> {
+                final String firstSegmentLevel = firstSegmentLevelFile.getName();
+
+                return Arrays.stream( firstSegmentLevelFile.listFiles() ).
+                    map( secondSegmentLevelFile -> {
+                        final String secondSegmentLevel = secondSegmentLevelFile.getName();
+                        return Segment.from( firstSegmentLevel, secondSegmentLevel );
+                    } );
+            } );
     }
 
     @SuppressWarnings("unusedReturnValue")
