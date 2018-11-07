@@ -3,7 +3,6 @@ package com.enonic.xp.repo.impl.node;
 import java.time.Clock;
 import java.time.ZoneOffset;
 
-import com.enonic.xp.blob.Segment;
 import com.enonic.xp.blob.SegmentLevel;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
@@ -22,8 +21,6 @@ public final class NodeConstants
     public static final String DEFAULT_NGRAM_SEARCH_ANALYZER = "ngram_search_default";
 
     public static final String DOCUMENT_INDEX_DEFAULT_ANALYZER = "document_index_default";
-
-    public static final Segment NODE_SEGMENT = Segment.from( "node" );
 
     public static final SegmentLevel NODE_SEGMENT_LEVEL = SegmentLevel.from( "node" );
 

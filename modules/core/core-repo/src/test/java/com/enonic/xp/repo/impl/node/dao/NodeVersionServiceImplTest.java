@@ -73,7 +73,7 @@ public class NodeVersionServiceImplTest
 
         final Node createdNode = createNode( createNodeParams );
 
-        final NodeVersion nodeVersion = nodeDao.get( createdNode.getNodeVersionId() );
+        final NodeVersion nodeVersion = nodeDao.get( createdNode.getNodeVersionId(), createInternalContext() );
 
         assertEquals( createdNode.id(), nodeVersion.getId() );
         assertEquals( createdNode.getNodeVersionId(), nodeVersion.getVersionId() );
@@ -100,7 +100,7 @@ public class NodeVersionServiceImplTest
         final Node createdNode2 = createNode( createNodeParams2 );
 
         final NodeVersions nodeVersions =
-            nodeDao.get( NodeVersionIds.from( createdNode.getNodeVersionId(), createdNode2.getNodeVersionId() ) );
+            nodeDao.get( NodeVersionIds.from( createdNode.getNodeVersionId(), createdNode2.getNodeVersionId() ), createInternalContext() );
 
         assertEquals( 2, nodeVersions.getSize() );
         assertEquals( createdNode.id(), nodeVersions.get( 0 ).getId() );

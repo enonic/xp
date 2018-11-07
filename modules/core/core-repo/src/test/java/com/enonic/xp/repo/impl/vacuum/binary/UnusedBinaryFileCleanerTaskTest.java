@@ -49,7 +49,7 @@ public class UnusedBinaryFileCleanerTaskTest
         this.blobStore.addRecord( binarySegment, createBinaryRecord( 'b' ) );
         this.blobStore.addRecord( binarySegment, createBinaryRecord( 'c' ) );
 
-        this.blobStore.addRecord( binarySegment, createVersionRecordWithBinaryRef( "1", 'a' ) );
+        this.blobStore.addRecord( nodeSegment, createVersionRecordWithBinaryRef( "1", 'a' ) );
 
         final UnusedBinaryFileCleanerTask task = new UnusedBinaryFileCleanerTask();
         task.setBlobStore( this.blobStore );

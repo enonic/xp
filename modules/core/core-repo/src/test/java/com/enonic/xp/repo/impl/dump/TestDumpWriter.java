@@ -71,13 +71,13 @@ class TestDumpWriter
     }
 
     @Override
-    public void writeVersionBlob( final NodeVersionId nodeVersionId )
+    public void writeVersionBlob( final RepositoryId repositoryId, final NodeVersionId nodeVersionId )
     {
         nodeVersions.add( nodeVersionId );
     }
 
     @Override
-    public void writeBinaryBlob( final String key )
+    public void writeBinaryBlob( final RepositoryId repositoryId, final String key )
     {
         binaries.add( key );
     }
