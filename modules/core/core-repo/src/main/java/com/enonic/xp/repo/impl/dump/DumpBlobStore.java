@@ -99,6 +99,12 @@ public class DumpBlobStore
         throw new BlobStoreException( "Not implemented" );
     }
 
+    @Override
+    public Stream<Segment> listSegments()
+    {
+        throw new BlobStoreException( "Not implemented" );
+    }
+
     private File getBlobFile( final Segment segment, final BlobKey key )
     {
         final String id = key.toString();

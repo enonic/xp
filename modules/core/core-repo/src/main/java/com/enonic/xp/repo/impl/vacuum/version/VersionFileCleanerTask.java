@@ -59,29 +59,32 @@ public class VersionFileCleanerTask
 
     private void doExecute( final VacuumTaskResult.Builder result, final long ageThreshold, final VacuumListener listener )
     {
-        List<BlobKey> toBeRemoved = Lists.newArrayList();
+        LOG.info( "Traversing node-folders....." );
 
-        LOG.info( "Traversing node-folder....." );
-
-        if ( listener != null )
-        {
-            listener.vacuumingBlobSegment( NodeConstants.NODE_SEGMENT );
-        }
-
-        this.blobStore.list( NodeConstants.NODE_SEGMENT ).
-            forEach( rec -> {
-                if ( includeRecord( rec, ageThreshold ) )
-                {
-                    handleEntry( rec, result, toBeRemoved );
-                }
+        this.blobStore.listSegments().
+            filter( segment -> NodeConstants.NODE_SEGMENT_LEVEL.equals( segment.getLevel( 1 ) ) ).
+            forEach( segment -> {
+                List<BlobKey> toBeRemoved = Lists.newArrayList();
 
                 if ( listener != null )
                 {
-                    listener.vacuumingBlob( 1L );
+                    listener.vacuumingBlobSegment( segment );
                 }
-            } );
 
-        toBeRemoved.forEach( key -> this.blobStore.removeRecord( NodeConstants.NODE_SEGMENT, key ) );
+                this.blobStore.list( segment ).
+                    forEach( rec -> {
+                        if ( includeRecord( rec, ageThreshold ) )
+                        {
+                            handleEntry( rec, result, toBeRemoved );
+                        }
+
+                        if ( listener != null )
+                        {
+                            listener.vacuumingBlob( 1L );
+                        }
+                    } );
+                toBeRemoved.forEach( key -> this.blobStore.removeRecord( segment, key ) );
+            } );
     }
 
     private void handleEntry( final BlobRecord record, final VacuumTaskResult.Builder result, final List<BlobKey> toBeRemoved )

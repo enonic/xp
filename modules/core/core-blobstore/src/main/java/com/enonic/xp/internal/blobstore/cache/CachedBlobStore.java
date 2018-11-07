@@ -100,6 +100,12 @@ public final class CachedBlobStore
         return this.store.list( segment );
     }
 
+    @Override
+    public Stream<Segment> listSegments()
+    {
+        return this.store.listSegments();
+    }
+
     public static Builder create()
     {
         return new Builder();

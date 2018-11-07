@@ -31,7 +31,7 @@ public class BlobStoreFactoryTest
 
         assertNotNull( finalBlobStore );
 
-        final Segment segment = Segment.from( "test" );
+        final Segment segment = Segment.from( "test", "blob" );
         final BlobRecord record = finalBlobStore.addRecord( segment, ByteSource.wrap( "hei".getBytes() ) );
 
         assertEquals( finalBlobStore.getRecord( segment, record.getKey() ), blobStore.getRecord( segment, record.getKey() ) );
@@ -72,7 +72,7 @@ public class BlobStoreFactoryTest
 
         assertNotNull( finalBlobStore );
 
-        final Segment segment = Segment.from( "test" );
+        final Segment segment = Segment.from( "test", "blob" );
         final BlobRecord record = finalBlobStore.addRecord( segment, ByteSource.wrap( "hei".getBytes() ) );
 
         assertEquals( finalBlobStore.getRecord( segment, record.getKey() ), memory1.getRecord( segment, record.getKey() ) );

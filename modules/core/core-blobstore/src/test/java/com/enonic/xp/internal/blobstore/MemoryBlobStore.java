@@ -77,6 +77,12 @@ public class MemoryBlobStore
         return values.stream();
     }
 
+    @Override
+    public Stream<Segment> listSegments()
+    {
+        return store.keySet().stream();
+    }
+
     public void clear()
     {
         this.store = Maps.newHashMap();

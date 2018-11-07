@@ -7,16 +7,28 @@ import com.google.common.collect.ImmutableList;
 
 public final class Segment
 {
+    public static final int SEGMENT_LEVEL_DEPTH = 2;
+
     private final ImmutableList<SegmentLevel> levels;
 
     private Segment( final Builder builder )
     {
+        final ImmutableList<SegmentLevel> levels = builder.levels.build();
+        if ( levels.size() != SEGMENT_LEVEL_DEPTH )
+        {
+            throw new IllegalArgumentException( "Segment must have " + SEGMENT_LEVEL_DEPTH + " levels" );
+        }
         this.levels = builder.levels.build();
     }
 
     public List<SegmentLevel> getLevels()
     {
         return levels;
+    }
+
+    public SegmentLevel getLevel(final int levelIndex)
+    {
+        return levels.get( levelIndex );
     }
 
     @Override
@@ -78,6 +90,18 @@ public final class Segment
     public static class Builder
     {
         private ImmutableList.Builder<SegmentLevel> levels = ImmutableList.builder();
+
+        public Builder level( SegmentLevel level )
+        {
+            this.levels.add( level );
+            return this;
+        }
+
+        public Builder level( String level )
+        {
+            this.levels.add( SegmentLevel.from( level ) );
+            return this;
+        }
 
         public Builder levels( SegmentLevel... levels )
         {

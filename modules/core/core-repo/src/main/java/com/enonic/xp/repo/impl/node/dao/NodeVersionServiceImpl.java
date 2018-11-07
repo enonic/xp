@@ -98,7 +98,7 @@ public class NodeVersionServiceImpl
         {
             if ( blobStore instanceof CachingBlobStore )
             {
-                ( (CachingBlobStore) blobStore ).invalidate( NodeConstants.NODE_SEGMENT, blob.getKey() );
+                ( (CachingBlobStore) blobStore ).invalidate( segment, blob.getKey() );
             }
             throw new RuntimeException( "Failed to load blob with key: " + blob.getKey(), e );
         }

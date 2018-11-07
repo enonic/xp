@@ -61,27 +61,32 @@ public class UnusedBinaryFileCleanerTask
                             final VacuumListener listener )
     {
         LOG.info( "Traversing binary-folder....." );
-        final List<BlobKey> toBeDeleted = Lists.newArrayList();
 
-        if ( listener != null )
-        {
-            listener.vacuumingBlobSegment( NodeConstants.BINARY_SEGMENT );
-        }
-
-        this.blobStore.list( NodeConstants.BINARY_SEGMENT ).
-            forEach( rec -> {
-                if ( includeRecord( rec, ageThreshold ) )
-                {
-                    handleEntry( rec, result, stateResolver, toBeDeleted );
-                }
+        this.blobStore.listSegments().
+            filter( segment -> NodeConstants.BINARY_SEGMENT_LEVEL.equals( segment.getLevel( 1 ) ) ).
+            forEach( segment -> {
+                final List<BlobKey> toBeDeleted = Lists.newArrayList();
 
                 if ( listener != null )
                 {
-                    listener.vacuumingBlob( 1L );
+                    listener.vacuumingBlobSegment( segment );
                 }
-            } );
 
-        toBeDeleted.forEach( entry -> this.blobStore.removeRecord( NodeConstants.BINARY_SEGMENT, entry ) );
+                this.blobStore.list( segment ).
+                    forEach( rec -> {
+                        if ( includeRecord( rec, ageThreshold ) )
+                        {
+                            handleEntry( rec, result, stateResolver, toBeDeleted );
+                        }
+
+                        if ( listener != null )
+                        {
+                            listener.vacuumingBlob( 1L );
+                        }
+                    } );
+
+                toBeDeleted.forEach( entry -> this.blobStore.removeRecord( segment, entry ) );
+            } );
     }
 
     private void handleEntry( final BlobRecord record, final VacuumTaskResult.Builder result, final BinaryNodeStateResolver stateResolver,
@@ -102,7 +107,9 @@ public class UnusedBinaryFileCleanerTask
 
         final Set<String> binaryReferences = Sets.newHashSet();
 
-        this.blobStore.list( NodeConstants.NODE_SEGMENT ).
+        this.blobStore.listSegments().
+            filter( segment -> NodeConstants.NODE_SEGMENT_LEVEL.equals( segment.getLevel( 1 ) ) ).
+            flatMap( segment -> this.blobStore.list( segment ) ).
             forEach( record -> binaryReferences.addAll( getBinaryReference( record ) ) );
 
         return binaryReferences;

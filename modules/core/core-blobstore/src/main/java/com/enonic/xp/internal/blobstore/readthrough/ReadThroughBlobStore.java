@@ -106,6 +106,12 @@ public class ReadThroughBlobStore
         return this.store.list( segment );
     }
 
+    @Override
+    public Stream<Segment> listSegments()
+    {
+        return this.store.listSegments();
+    }
+
     public static final class Builder
     {
         private BlobStore store;

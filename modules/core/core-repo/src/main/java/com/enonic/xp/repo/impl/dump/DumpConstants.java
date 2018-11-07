@@ -9,10 +9,6 @@ public class DumpConstants
 {
     static final String META_BASE_PATH = "meta";
 
-    public static final Segment DUMP_SEGMENT_NODES = NodeConstants.NODE_SEGMENT;
-
-    public static final Segment DUMP_SEGMENT_BINARIES = NodeConstants.BINARY_SEGMENT;
-
     public static final SegmentLevel DUMP_NODE_SEGMENT_LEVEL = NodeConstants.NODE_SEGMENT_LEVEL;
 
     public static final SegmentLevel DUMP_BINARY_SEGMENT_LEVEL = NodeConstants.BINARY_SEGMENT_LEVEL;

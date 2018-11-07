@@ -24,7 +24,7 @@ public class CachedBlobStoreTest
 
     private CachedBlobStore cachedBlobStore;
 
-    private final Segment segment = Segment.from( "test" );
+    private final Segment segment = Segment.from( "test", "blob" );
 
     @Before
     public void setup()

@@ -10,6 +10,7 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.Segment;
+import com.enonic.xp.blob.SegmentLevel;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.node.NodeConstants;
@@ -26,12 +27,15 @@ public class VersionFileCleanerTaskTest
 
     private NodeIdResolver resolver;
 
+    private Segment nodeSegment;
+
     @Before
     public void setUp()
         throws Exception
     {
         this.detector = Mockito.mock( NodeInUseDetector.class );
         this.resolver = Mockito.mock( NodeIdResolver.class );
+        this.nodeSegment = Segment.from( SegmentLevel.from( "test" ), NodeConstants.NODE_SEGMENT_LEVEL );
     }
 
 
@@ -40,7 +44,7 @@ public class VersionFileCleanerTaskTest
         throws Exception
     {
         final MemoryBlobStore blobStore = new MemoryBlobStore();
-        final BlobRecord rec1 = blobStore.addRecord( NodeConstants.NODE_SEGMENT, ByteSource.wrap( "entry1".getBytes() ) );
+        final BlobRecord rec1 = blobStore.addRecord( nodeSegment, ByteSource.wrap( "entry1".getBytes() ) );
 
         final VersionFileCleanerTask task = new VersionFileCleanerTask();
         task.setBlobStore( blobStore );
@@ -54,7 +58,7 @@ public class VersionFileCleanerTaskTest
         final VacuumTaskResult result = task.execute( VacuumTaskParams.create().build() );
         assertEquals( 0, result.getProcessed() );
 
-        assertNotNull( blobStore.getRecord( NodeConstants.NODE_SEGMENT, rec1.getKey() ) );
+        assertNotNull( blobStore.getRecord( nodeSegment, rec1.getKey() ) );
     }
 
     @Test
@@ -62,8 +66,8 @@ public class VersionFileCleanerTaskTest
         throws Exception
     {
         final MemoryBlobStore blobStore = new MemoryBlobStore();
-        final BlobRecord rec1 = blobStore.addRecord( NodeConstants.NODE_SEGMENT, ByteSource.wrap( "entry1".getBytes() ) );
-        final BlobRecord rec2 = blobStore.addRecord( NodeConstants.NODE_SEGMENT, ByteSource.wrap( "entry2".getBytes() ) );
+        final BlobRecord rec1 = blobStore.addRecord( nodeSegment, ByteSource.wrap( "entry1".getBytes() ) );
+        final BlobRecord rec2 = blobStore.addRecord( nodeSegment, ByteSource.wrap( "entry2".getBytes() ) );
 
         final VersionFileCleanerTask task = new VersionFileCleanerTask();
         task.setBlobStore( blobStore );
@@ -86,8 +90,8 @@ public class VersionFileCleanerTaskTest
         assertEquals( 1, result.getInUse() );
         assertEquals( 1, result.getDeleted() );
 
-        assertNull( blobStore.getRecord( NodeConstants.NODE_SEGMENT, rec1.getKey() ) );
-        assertNotNull( blobStore.getRecord( NodeConstants.NODE_SEGMENT, rec2.getKey() ) );
+        assertNull( blobStore.getRecord( nodeSegment, rec1.getKey() ) );
+        assertNotNull( blobStore.getRecord( nodeSegment, rec2.getKey() ) );
     }
 
     @Test
@@ -95,7 +99,7 @@ public class VersionFileCleanerTaskTest
         throws Exception
     {
         final MemoryBlobStore blobStore = new MemoryBlobStore();
-        final BlobRecord rec1 = blobStore.addRecord( NodeConstants.NODE_SEGMENT, ByteSource.wrap( "entry1".getBytes() ) );
+        final BlobRecord rec1 = blobStore.addRecord( nodeSegment, ByteSource.wrap( "entry1".getBytes() ) );
 
         final VersionFileCleanerTask task = new VersionFileCleanerTask();
         task.setBlobStore( blobStore );
@@ -108,7 +112,7 @@ public class VersionFileCleanerTaskTest
         assertEquals( 1, result.getProcessed() );
         assertEquals( 1, result.getFailed() );
 
-        assertNotNull( blobStore.getRecord( NodeConstants.NODE_SEGMENT, rec1.getKey() ) );
+        assertNotNull( blobStore.getRecord( nodeSegment, rec1.getKey() ) );
     }
 
     @Test
@@ -116,7 +120,7 @@ public class VersionFileCleanerTaskTest
         throws Exception
     {
         final MemoryBlobStore blobStore = new MemoryBlobStore();
-        final BlobRecord rec1 = blobStore.addRecord( NodeConstants.NODE_SEGMENT, ByteSource.wrap( "entry1".getBytes() ) );
+        final BlobRecord rec1 = blobStore.addRecord( nodeSegment, ByteSource.wrap( "entry1".getBytes() ) );
 
         final VersionFileCleanerTask task = new VersionFileCleanerTask();
         task.setBlobStore( blobStore );
@@ -135,7 +139,7 @@ public class VersionFileCleanerTaskTest
         assertEquals( 1, result.getProcessed() );
         assertEquals( 1, result.getFailed() );
 
-        assertNotNull( blobStore.getRecord( NodeConstants.NODE_SEGMENT, rec1.getKey() ) );
+        assertNotNull( blobStore.getRecord( nodeSegment, rec1.getKey() ) );
     }
 
     @Test
@@ -143,8 +147,8 @@ public class VersionFileCleanerTaskTest
         throws Exception
     {
         final MemoryBlobStore blobStore = new MemoryBlobStore();
-        final BlobRecord rec1 = blobStore.addRecord( NodeConstants.NODE_SEGMENT, ByteSource.wrap( "entry1".getBytes() ) );
-        final BlobRecord rec2 = blobStore.addRecord( NodeConstants.NODE_SEGMENT, ByteSource.wrap( "entry2".getBytes() ) );
+        final BlobRecord rec1 = blobStore.addRecord( nodeSegment, ByteSource.wrap( "entry1".getBytes() ) );
+        final BlobRecord rec2 = blobStore.addRecord( nodeSegment, ByteSource.wrap( "entry2".getBytes() ) );
 
         final VersionFileCleanerTask task = new VersionFileCleanerTask();
         task.setBlobStore( blobStore );
@@ -164,7 +168,7 @@ public class VersionFileCleanerTaskTest
             @Override
             public void vacuumingBlobSegment( final Segment segment )
             {
-                assertEquals( Segment.from( "node" ), segment );
+                assertEquals( Segment.from( "test", "node" ), segment );
             }
 
             @Override
@@ -189,8 +193,8 @@ public class VersionFileCleanerTaskTest
         assertEquals( 1, result.getInUse() );
         assertEquals( 1, result.getDeleted() );
 
-        assertNull( blobStore.getRecord( NodeConstants.NODE_SEGMENT, rec1.getKey() ) );
-        assertNotNull( blobStore.getRecord( NodeConstants.NODE_SEGMENT, rec2.getKey() ) );
+        assertNull( blobStore.getRecord( nodeSegment, rec1.getKey() ) );
+        assertNotNull( blobStore.getRecord( nodeSegment, rec2.getKey() ) );
 
         assertEquals( 2, blobReportCount.get() );
     }

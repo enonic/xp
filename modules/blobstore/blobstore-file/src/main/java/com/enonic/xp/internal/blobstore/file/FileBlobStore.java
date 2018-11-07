@@ -112,6 +112,12 @@ public final class FileBlobStore
         }
     }
 
+    @Override
+    public Stream<Segment> listSegments()
+    {
+        throw new BlobStoreException( "Not implemented" );
+    }
+
     @SuppressWarnings("unusedReturnValue")
     private BlobRecord addRecord( final Segment segment, final BlobKey key, final ByteSource in )
         throws IOException

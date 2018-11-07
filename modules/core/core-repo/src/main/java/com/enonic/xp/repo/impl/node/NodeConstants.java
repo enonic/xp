@@ -25,8 +25,6 @@ public final class NodeConstants
 
     public static final Segment NODE_SEGMENT = Segment.from( "node" );
 
-    public static final Segment BINARY_SEGMENT = Segment.from( "binary" );
-
     public static final SegmentLevel NODE_SEGMENT_LEVEL = SegmentLevel.from( "node" );
 
     public static final SegmentLevel BINARY_SEGMENT_LEVEL = SegmentLevel.from( "binary" );

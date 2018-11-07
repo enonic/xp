@@ -20,4 +20,6 @@ public interface BlobStore
 
     Stream<BlobRecord> list( Segment segment );
 
+    Stream<Segment> listSegments();
+
 }
