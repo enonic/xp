@@ -109,10 +109,7 @@ public class DumpBlobStore
     {
         final String id = key.toString();
         File file = this.baseDir;
-        for ( SegmentLevel level : segment.getLevels() )
-        {
-            file = new File( file, level.getValue() );
-        }
+        file = new File( file, segment.getLevel(1).toString() );
         file = new File( file, id.substring( 0, 2 ) );
         file = new File( file, id.substring( 2, 4 ) );
         file = new File( file, id.substring( 4, 6 ) );
