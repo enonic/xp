@@ -112,6 +112,13 @@ public class ReadThroughBlobStore
         return this.store.listSegments();
     }
 
+    @Override
+    public void deleteSegment( final Segment segment )
+    {
+        store.deleteSegment( segment );
+        readThroughStore.deleteSegment( segment );
+    }
+
     public static final class Builder
     {
         private BlobStore store;

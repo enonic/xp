@@ -3,6 +3,7 @@ package com.enonic.xp.internal.blobstore.cache;
 import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -181,5 +182,28 @@ public class CachedBlobStoreTest
         final BlobRecord retrievedAfterStore = this.cachedBlobStore.getRecord( this.segment, record.getKey() );
         assertNotNull( retrievedAfterStore );
         assertEquals( updatedRecord.lastModified(), retrievedAfterStore.lastModified() );
+    }
+
+    @Test
+    public void listSegments()
+    {
+        Mockito.when( this.blobStore.listSegments() ).thenReturn( Stream.of( segment ) );
+        assertEquals( 1, cachedBlobStore.listSegments().count() );
+        assertEquals( segment, cachedBlobStore.listSegments().findFirst().get() );
+    }
+
+    @Test
+    public void deleteSegment()
+    {
+        final BlobRecord record = newRecord( "0123", 10L );
+        assertNull( this.cachedBlobStore.getRecord( segment, record.getKey() ) );
+        Mockito.when( this.blobStore.getRecord( segment, record.getKey() ) ).thenReturn( record );
+        assertNotNull( cachedBlobStore.getRecord( segment, record.getKey() ) );
+        Mockito.when( this.blobStore.getRecord( segment, record.getKey() ) ).thenReturn( null );
+        assertNotNull( cachedBlobStore.getRecord( segment, record.getKey() ) );
+
+        cachedBlobStore.deleteSegment( segment );
+        Mockito.verify( blobStore ).deleteSegment( segment );
+        assertNull( cachedBlobStore.getRecord( segment, record.getKey() ) );
     }
 }
