@@ -187,7 +187,7 @@ public class CachedBlobStoreTest
     @Test
     public void listSegments()
     {
-        Mockito.when( this.blobStore.listSegments() ).thenReturn( Stream.of( segment ) );
+        Mockito.when( this.blobStore.listSegments() ).thenAnswer( invocation -> Stream.of( segment ) );
         assertEquals( 1, cachedBlobStore.listSegments().count() );
         assertEquals( segment, cachedBlobStore.listSegments().findFirst().get() );
     }
