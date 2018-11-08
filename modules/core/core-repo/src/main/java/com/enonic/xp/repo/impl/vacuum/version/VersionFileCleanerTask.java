@@ -14,7 +14,7 @@ import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.repo.impl.node.NodeConstants;
+import com.enonic.xp.repo.impl.node.NodeSegmentUtils;
 import com.enonic.xp.repo.impl.vacuum.AbstractVacuumTask;
 import com.enonic.xp.repo.impl.vacuum.EntryState;
 import com.enonic.xp.repo.impl.vacuum.VacuumTask;
@@ -62,7 +62,7 @@ public class VersionFileCleanerTask
         LOG.info( "Traversing node-folders....." );
 
         this.blobStore.listSegments().
-            filter( segment -> NodeConstants.NODE_SEGMENT_LEVEL.equals( segment.getLevel( 1 ) ) ).
+            filter( NodeSegmentUtils::isNodeSegment ).
             forEach( segment -> {
                 List<BlobKey> toBeRemoved = Lists.newArrayList();
 

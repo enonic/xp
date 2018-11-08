@@ -17,7 +17,7 @@ import com.google.common.io.CharSource;
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
-import com.enonic.xp.repo.impl.node.NodeConstants;
+import com.enonic.xp.repo.impl.node.NodeSegmentUtils;
 import com.enonic.xp.repo.impl.vacuum.AbstractVacuumTask;
 import com.enonic.xp.repo.impl.vacuum.EntryState;
 import com.enonic.xp.repo.impl.vacuum.VacuumException;
@@ -63,7 +63,7 @@ public class UnusedBinaryFileCleanerTask
         LOG.info( "Traversing binary-folder....." );
 
         this.blobStore.listSegments().
-            filter( segment -> NodeConstants.BINARY_SEGMENT_LEVEL.equals( segment.getLevel( 1 ) ) ).
+            filter( NodeSegmentUtils::isBinarySegment ).
             forEach( segment -> {
                 final List<BlobKey> toBeDeleted = Lists.newArrayList();
 
@@ -108,7 +108,7 @@ public class UnusedBinaryFileCleanerTask
         final Set<String> binaryReferences = Sets.newHashSet();
 
         this.blobStore.listSegments().
-            filter( segment -> NodeConstants.NODE_SEGMENT_LEVEL.equals( segment.getLevel( 1 ) ) ).
+            filter( NodeSegmentUtils::isNodeSegment ).
             flatMap( segment -> this.blobStore.list( segment ) ).
             forEach( record -> binaryReferences.addAll( getBinaryReference( record ) ) );
 

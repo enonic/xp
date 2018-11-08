@@ -35,7 +35,7 @@ import com.enonic.xp.repo.impl.dump.serializer.json.DumpMetaJsonSerializer;
 import com.enonic.xp.repo.impl.dump.serializer.json.JsonDumpSerializer;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.repository.RepositorySegmentLevel;
+import com.enonic.xp.repository.RepositorySegmentUtils;
 
 public class FileDumpWriter
     extends AbstractFileProcessor
@@ -193,7 +193,7 @@ public class FileDumpWriter
     @Override
     public void writeVersionBlob( final RepositoryId repositoryId, final NodeVersionId nodeVersionId )
     {
-        final Segment dumpSegment = Segment.from( RepositorySegmentLevel.from( repositoryId ), DumpConstants.DUMP_NODE_SEGMENT_LEVEL );
+        final Segment dumpSegment = RepositorySegmentUtils.toSegment( repositoryId, DumpConstants.DUMP_NODE_SEGMENT_LEVEL );
         final BlobRecord existingVersion = blobStore.getRecord( dumpSegment, BlobKey.from( nodeVersionId.toString() ) );
 
         if ( existingVersion == null )
@@ -201,14 +201,14 @@ public class FileDumpWriter
             throw new RepoDumpException( "Cannot write node version with key [" + nodeVersionId + "], not found in blobStore" );
         }
 
-        final Segment segment = Segment.from( RepositorySegmentLevel.from( repositoryId ), NodeConstants.NODE_SEGMENT_LEVEL );
+        final Segment segment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.NODE_SEGMENT_LEVEL );
         this.dumpBlobStore.addRecord( segment, existingVersion.getBytes() );
     }
 
     @Override
     public void writeBinaryBlob( final RepositoryId repositoryId, final String blobKey )
     {
-        final Segment dumpSegment = Segment.from( RepositorySegmentLevel.from( repositoryId ), DumpConstants.DUMP_BINARY_SEGMENT_LEVEL );
+        final Segment dumpSegment = RepositorySegmentUtils.toSegment( repositoryId, DumpConstants.DUMP_BINARY_SEGMENT_LEVEL );
         final BlobRecord binaryRecord = blobStore.getRecord( dumpSegment, BlobKey.from( blobKey ) );
 
         if ( binaryRecord == null )
@@ -216,7 +216,7 @@ public class FileDumpWriter
             throw new RepoDumpException( "Cannot write binary with key [" + blobKey + "], not found in blobStore" );
         }
 
-        final Segment segment = Segment.from( RepositorySegmentLevel.from( repositoryId ), NodeConstants.BINARY_SEGMENT_LEVEL );
+        final Segment segment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.BINARY_SEGMENT_LEVEL );
         this.dumpBlobStore.addRecord( segment, binaryRecord.getBytes() );
     }
 

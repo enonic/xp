@@ -18,7 +18,7 @@ import com.enonic.xp.repo.impl.dump.serializer.DumpSerializer;
 import com.enonic.xp.repo.impl.dump.serializer.json.JsonDumpSerializer;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.repository.RepositorySegmentLevel;
+import com.enonic.xp.repository.RepositorySegmentUtils;
 
 class AbstractEntryProcessor
 {
@@ -47,7 +47,7 @@ class AbstractEntryProcessor
     {
         nodeVersion.getAttachedBinaries().forEach( binary -> {
 
-            final Segment segment = Segment.from( RepositorySegmentLevel.from( repositoryId ), NodeConstants.BINARY_SEGMENT_LEVEL );
+            final Segment segment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.BINARY_SEGMENT_LEVEL );
             final BlobRecord existingRecord = this.blobStore.getRecord( segment, BlobKey.from( binary.getBlobKey() ) );
 
             if ( existingRecord == null )
