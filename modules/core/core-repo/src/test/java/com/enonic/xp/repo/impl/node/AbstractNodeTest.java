@@ -7,6 +7,8 @@ import java.util.Iterator;
 import org.junit.Before;
 import org.mockito.Mockito;
 
+import com.enonic.xp.blob.Segment;
+import com.enonic.xp.blob.SegmentLevel;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
@@ -32,6 +34,7 @@ import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.query.parser.QueryParser;
+import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.binary.BinaryServiceImpl;
 import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
@@ -55,6 +58,7 @@ import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.RepositorySegmentLevel;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
@@ -258,6 +262,22 @@ public abstract class AbstractNodeTest
                 refresh();
                 return null;
             } );
+    }
+
+    protected InternalContext createInternalContext()
+    {
+        final Context currentContext = ContextAccessor.current();
+        return InternalContext.create( currentContext ).
+            build();
+    }
+
+    protected Segment createSegment( SegmentLevel blobTypeLevel )
+    {
+        final RepositoryId repositoryId = ContextAccessor.current().getRepositoryId();
+        return Segment.create().
+            level( RepositorySegmentLevel.from( repositoryId ) ).
+            level( blobTypeLevel ).
+            build();
     }
 
     protected Node createDefaultRootNode()

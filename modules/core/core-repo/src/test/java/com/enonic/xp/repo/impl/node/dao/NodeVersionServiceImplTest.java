@@ -9,6 +9,7 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
+import com.enonic.xp.blob.Segment;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.internal.blobstore.MemoryBlobRecord;
@@ -24,7 +25,7 @@ import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.NodeVersions;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 
-import static com.enonic.xp.repo.impl.node.NodeConstants.NODE_SEGMENT;
+import static com.enonic.xp.repo.impl.node.NodeConstants.NODE_SEGMENT_LEVEL;
 import static org.junit.Assert.*;
 
 public class NodeVersionServiceImplTest
@@ -52,11 +53,12 @@ public class NodeVersionServiceImplTest
             childOrder( ChildOrder.defaultOrder() ).
             data( data ).
             build();
-        final NodeVersionId nodeVersionId = nodeDao.store( nodeVersion );
+        final NodeVersionId nodeVersionId = nodeDao.store( nodeVersion, createInternalContext() );
 
         assertNotNull( nodeVersionId );
 
-        final BlobRecord blob = blobStore.getRecord( NODE_SEGMENT, BlobKey.from( nodeVersionId.toString() ) );
+        final Segment segment = createSegment( NODE_SEGMENT_LEVEL );
+        final BlobRecord blob = blobStore.getRecord( segment, BlobKey.from( nodeVersionId.toString() ) );
         assertNotNull( blob );
     }
 
@@ -71,7 +73,7 @@ public class NodeVersionServiceImplTest
 
         final Node createdNode = createNode( createNodeParams );
 
-        final NodeVersion nodeVersion = nodeDao.get( createdNode.getNodeVersionId() );
+        final NodeVersion nodeVersion = nodeDao.get( createdNode.getNodeVersionId(), createInternalContext() );
 
         assertEquals( createdNode.id(), nodeVersion.getId() );
         assertEquals( createdNode.getNodeVersionId(), nodeVersion.getVersionId() );
@@ -98,7 +100,7 @@ public class NodeVersionServiceImplTest
         final Node createdNode2 = createNode( createNodeParams2 );
 
         final NodeVersions nodeVersions =
-            nodeDao.get( NodeVersionIds.from( createdNode.getNodeVersionId(), createdNode2.getNodeVersionId() ) );
+            nodeDao.get( NodeVersionIds.from( createdNode.getNodeVersionId(), createdNode2.getNodeVersionId() ), createInternalContext() );
 
         assertEquals( 2, nodeVersions.getSize() );
         assertEquals( createdNode.id(), nodeVersions.get( 0 ).getId() );
@@ -120,15 +122,16 @@ public class NodeVersionServiceImplTest
 
         final Node createdNode = createNode( createNodeParams );
 
-        final BlobRecord blob = this.blobStore.getRecord( NODE_SEGMENT, BlobKey.from( createdNode.getNodeVersionId().toString() ) );
+        final Segment segment = createSegment( NODE_SEGMENT_LEVEL );
+        final BlobRecord blob = this.blobStore.getRecord( segment, BlobKey.from( createdNode.getNodeVersionId().toString() ) );
         byte[] blobData = blob.getBytes().read();
         blobData = Arrays.copyOf( blobData, blobData.length / 2 );
         final MemoryBlobRecord corruptedBlob = new MemoryBlobRecord( blob.getKey(), ByteSource.wrap( blobData ) );
-        this.blobStore.addRecord( NODE_SEGMENT, corruptedBlob );
+        this.blobStore.addRecord( segment, corruptedBlob );
 
         try
         {
-            nodeDao.get( createdNode.getNodeVersionId() );
+            nodeDao.get( createdNode.getNodeVersionId(), createInternalContext() );
             fail( "Expected exception" );
         }
         catch ( RuntimeException e )
@@ -151,16 +154,17 @@ public class NodeVersionServiceImplTest
 
         final Node createdNode = createNode( createNodeParams );
 
-        final BlobRecord blob = this.blobStore.getRecord( NODE_SEGMENT, BlobKey.from( createdNode.getNodeVersionId().toString() ) );
+        final Segment segment = createSegment( NODE_SEGMENT_LEVEL );
+        final BlobRecord blob = this.blobStore.getRecord( segment, BlobKey.from( createdNode.getNodeVersionId().toString() ) );
         final byte[] blobData = blob.getBytes().read();
         final byte[] blobDataTruncated = Arrays.copyOf( blobData, blobData.length / 2 );
         final MemoryBlobRecord corruptedBlob = new MemoryBlobRecord( blob.getKey(), ByteSource.wrap( blobDataTruncated ) );
-        this.blobStore.addRecord( NODE_SEGMENT, corruptedBlob );
-        cachedBlobStore.invalidate( NODE_SEGMENT, blob.getKey() );
+        this.blobStore.addRecord( segment, corruptedBlob );
+        cachedBlobStore.invalidate( segment, blob.getKey() );
 
         try
         {
-            nodeDao.get( createdNode.getNodeVersionId() );
+            nodeDao.get( createdNode.getNodeVersionId(), createInternalContext() );
             fail( "Expected exception" );
         }
         catch ( RuntimeException e )
@@ -169,9 +173,9 @@ public class NodeVersionServiceImplTest
         }
 
         // restore original blob in source blob store
-        this.blobStore.addRecord( NODE_SEGMENT, blob );
+        this.blobStore.addRecord( segment, blob );
 
-        final NodeVersion nodeVersion = nodeDao.get( createdNode.getNodeVersionId() );
+        final NodeVersion nodeVersion = nodeDao.get( createdNode.getNodeVersionId(), createInternalContext() );
         assertNotNull( nodeVersion );
     }
 }

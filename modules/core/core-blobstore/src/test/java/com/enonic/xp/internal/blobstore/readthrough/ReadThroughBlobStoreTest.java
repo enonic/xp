@@ -48,7 +48,7 @@ public class ReadThroughBlobStoreTest
 
         final ByteSource binary = ByteSource.wrap( "this is a record".getBytes() );
 
-        final Segment segment = Segment.from( "test" );
+        final Segment segment = Segment.from( "test", "blob" );
         final BlobRecord record = actualBlobStore.addRecord( segment, binary );
 
         assertNotNull( this.readThroughStore.getRecord( segment, record.getKey() ) );
@@ -60,7 +60,7 @@ public class ReadThroughBlobStoreTest
         throws Exception
     {
         final ByteSource binary = ByteSource.wrap( "this is a record".getBytes() );
-        final Segment segment = Segment.from( "test" );
+        final Segment segment = Segment.from( "test", "blob" );
 
         final BlobRecord record = this.finalStore.addRecord( segment, binary );
 
@@ -88,7 +88,7 @@ public class ReadThroughBlobStoreTest
 
         final ByteSource binary = ByteSource.wrap( ByteStreams.toByteArray( this.getClass().getResourceAsStream( "fish-86kb.jpg" ) ) );
 
-        final Segment segment = Segment.from( "test" );
+        final Segment segment = Segment.from( "test", "blob" );
         final BlobRecord record = actualBlobStore.addRecord( segment, binary );
 
         assertNull( this.readThroughStore.getRecord( segment, record.getKey() ) );
@@ -100,7 +100,7 @@ public class ReadThroughBlobStoreTest
         throws Exception
     {
         final ByteSource binary = ByteSource.wrap( "this is a record".getBytes() );
-        final Segment segment = Segment.from( "test" );
+        final Segment segment = Segment.from( "test", "blob" );
 
         final BlobRecord record = this.finalStore.addRecord( segment, binary );
         final ReadThroughBlobStore actualBlobStore = ReadThroughBlobStore.create().
@@ -122,7 +122,7 @@ public class ReadThroughBlobStoreTest
         throws Exception
     {
         final ByteSource binary = ByteSource.wrap( "this is a record".getBytes() );
-        final Segment segment = Segment.from( "test" );
+        final Segment segment = Segment.from( "test", "blob" );
 
         final BlobRecord record = this.finalStore.addRecord( segment, binary );
         final ReadThroughBlobStore actualBlobStore = ReadThroughBlobStore.create().
@@ -141,7 +141,7 @@ public class ReadThroughBlobStoreTest
         throws Exception
     {
         final ByteSource binary = ByteSource.wrap( "this is a record".getBytes() );
-        final Segment segment = Segment.from( "test" );
+        final Segment segment = Segment.from( "test", "blob" );
 
         final BlobRecord record = this.finalStore.addRecord( segment, binary );
         final ReadThroughBlobStore actualBlobStore = ReadThroughBlobStore.create().
@@ -171,7 +171,7 @@ public class ReadThroughBlobStoreTest
 
         final ByteSource binary = ByteSource.wrap( "this is a record".getBytes() );
 
-        final Segment segment = Segment.from( "test" );
+        final Segment segment = Segment.from( "test", "blob" );
         final BlobRecord record = actualBlobStore.addRecord( segment, binary );
 
         final BlobRecord readThroughRecord = this.readThroughStore.getRecord( segment, record.getKey() );
@@ -194,7 +194,7 @@ public class ReadThroughBlobStoreTest
 
         final ByteSource binary = ByteSource.wrap( "this is a record".getBytes() );
 
-        final Segment segment = Segment.from( "test" );
+        final Segment segment = Segment.from( "test", "blob" );
         final BlobRecord record = actualBlobStore.addRecord( segment, binary );
 
         final BlobRecord readThroughRecord = this.readThroughStore.getRecord( segment, record.getKey() );

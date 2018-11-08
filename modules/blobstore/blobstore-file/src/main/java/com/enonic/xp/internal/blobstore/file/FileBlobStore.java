@@ -3,6 +3,7 @@ package com.enonic.xp.internal.blobstore.file;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.stream.Stream;
 
 import org.slf4j.Logger;
@@ -16,6 +17,7 @@ import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.BlobStoreException;
 import com.enonic.xp.blob.Segment;
+import com.enonic.xp.blob.SegmentLevel;
 
 public final class FileBlobStore
     implements BlobStore
@@ -111,6 +113,21 @@ public final class FileBlobStore
         }
     }
 
+    @Override
+    public Stream<Segment> listSegments()
+    {
+        return Arrays.stream( this.baseDir.listFiles() ).
+            flatMap( firstSegmentLevelFile -> {
+                final String firstSegmentLevel = firstSegmentLevelFile.getName();
+
+                return Arrays.stream( firstSegmentLevelFile.listFiles() ).
+                    map( secondSegmentLevelFile -> {
+                        final String secondSegmentLevel = secondSegmentLevelFile.getName();
+                        return Segment.from( firstSegmentLevel, secondSegmentLevel );
+                    } );
+            } );
+    }
+
     @SuppressWarnings("unusedReturnValue")
     private BlobRecord addRecord( final Segment segment, final BlobKey key, final ByteSource in )
         throws IOException
@@ -146,7 +163,10 @@ public final class FileBlobStore
     {
         final String id = key.toString();
         File file = this.baseDir;
-        file = new File( file, segment.getValue() );
+        for ( SegmentLevel level : segment.getLevels() )
+        {
+            file = new File( file, level.getValue() );
+        }
         file = new File( file, id.substring( 0, 2 ) );
         file = new File( file, id.substring( 2, 4 ) );
         file = new File( file, id.substring( 4, 6 ) );

@@ -23,9 +23,9 @@ public interface DumpReader
 
     VersionsLoadResult loadVersions( final RepositoryId repositoryId, final LineProcessor<EntryLoadResult> processor );
 
-    NodeVersion get( final NodeVersionId nodeVersionId );
+    NodeVersion get( final RepositoryId repositoryId, final NodeVersionId nodeVersionId );
 
-    ByteSource getBinary( final String blobKey );
+    ByteSource getBinary( final RepositoryId repositoryId, final String blobKey );
 
     DumpMeta getDumpMeta();
 

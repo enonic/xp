@@ -25,7 +25,7 @@ public class FileBlobStoreTest
 
     private FileBlobStore blobStore;
 
-    private final Segment segment = Segment.from( "test" );
+    private final Segment segment = Segment.from( "test", "blob" );
 
     @Before
     public void setup()

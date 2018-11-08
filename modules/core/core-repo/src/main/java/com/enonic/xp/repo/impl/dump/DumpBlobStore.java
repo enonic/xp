@@ -15,6 +15,7 @@ import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.BlobStoreException;
 import com.enonic.xp.blob.Segment;
+import com.enonic.xp.blob.SegmentLevel;
 
 public class DumpBlobStore
     implements BlobStore
@@ -98,11 +99,17 @@ public class DumpBlobStore
         throw new BlobStoreException( "Not implemented" );
     }
 
+    @Override
+    public Stream<Segment> listSegments()
+    {
+        throw new BlobStoreException( "Not implemented" );
+    }
+
     private File getBlobFile( final Segment segment, final BlobKey key )
     {
         final String id = key.toString();
         File file = this.baseDir;
-        file = new File( file, segment.getValue() );
+        file = new File( file, segment.getLevel(1).toString() );
         file = new File( file, id.substring( 0, 2 ) );
         file = new File( file, id.substring( 2, 4 ) );
         file = new File( file, id.substring( 4, 6 ) );
