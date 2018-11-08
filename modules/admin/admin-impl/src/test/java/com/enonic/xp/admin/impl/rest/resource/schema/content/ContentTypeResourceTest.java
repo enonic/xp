@@ -39,7 +39,6 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.ContentTypes;
-import com.enonic.xp.schema.content.GetAllContentTypesParams;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
@@ -397,7 +396,7 @@ public class ContentTypeResourceTest
                 build() ).
             build();
 
-        Mockito.when( contentTypeService.getAll( isA( GetAllContentTypesParams.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
+        Mockito.when( contentTypeService.getAll() ).thenReturn( ContentTypes.from( contentType ) );
 
         // execute
         String jsonString = request().

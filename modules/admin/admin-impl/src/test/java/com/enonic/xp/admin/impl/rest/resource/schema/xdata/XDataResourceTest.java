@@ -19,7 +19,6 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.ContentTypes;
-import com.enonic.xp.schema.content.GetAllContentTypesParams;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.schema.mixin.Mixins;
@@ -150,7 +149,7 @@ public class XDataResourceTest
 
         Mockito.when( xDataService.getByApplication( Mockito.any() ) ).thenReturn( XDatas.from( xdata2 ) );
 
-        Mockito.when( contentTypeService.getAll( Mockito.isA( GetAllContentTypesParams.class ) ) ).thenReturn(
+        Mockito.when( contentTypeService.getAll() ).thenReturn(
             ContentTypes.from( ContentType.create().superType( ContentTypeName.folder() ).name( contentTypeName.toString() ).build() ) );
 
         String result = request().path( "schema/xdata/getApplicationXDataForContentType" ).
@@ -188,7 +187,7 @@ public class XDataResourceTest
             build();
 
         Mockito.when( contentTypeService.getByName( GetContentTypeParams.from( contentType.getName() ) ) ).thenReturn( contentType );
-        Mockito.when( contentTypeService.getAll( Mockito.any() ) ).thenReturn( ContentTypes.from( contentType ) );
+        Mockito.when( contentTypeService.getAll() ).thenReturn( ContentTypes.from( contentType ) );
 
         final Content content = Mockito.mock( Content.class );
         Mockito.when( content.getType() ).thenReturn( contentType.getName() );
@@ -270,7 +269,7 @@ public class XDataResourceTest
             xData( XDataNames.from( xdata1.getName().toString() ) ).
             build();
         Mockito.when( contentTypeService.getByName( GetContentTypeParams.from( contentType.getName() ) ) ).thenReturn( contentType );
-        Mockito.when( contentTypeService.getAll( Mockito.any() ) ).thenReturn( ContentTypes.from( contentType ) );
+        Mockito.when( contentTypeService.getAll() ).thenReturn( ContentTypes.from( contentType ) );
 
         final Content content = Mockito.mock( Content.class );
         Mockito.when( content.getType() ).thenReturn( contentType.getName() );

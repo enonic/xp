@@ -81,8 +81,7 @@ final class ValidateContentDataCommand
     {
         final PropertyTree contentData = this.contentData;
         final ContentTypeName contentTypeName = this.contentType;
-        final ContentType contentType =
-            contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ).inlineMixinsToFormItems( true ) );
+        final ContentType contentType = contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) );
 
         Preconditions.checkArgument( contentType != null, "ContentType [%s] not found", contentTypeName );
 

@@ -58,7 +58,6 @@ public class ContentIndexConfigFactory
             return null;
         }
         return contentTypeService.getByName( new GetContentTypeParams().
-            inlineMixinsToFormItems( true ).
             contentTypeName( contentTypeName ) ).
             getForm();
     }

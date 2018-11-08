@@ -14,7 +14,6 @@ import com.enonic.xp.icon.Icon;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.ContentTypes;
-import com.enonic.xp.schema.content.GetAllContentTypesParams;
 
 import static org.junit.Assert.*;
 
@@ -26,7 +25,7 @@ public class ContentTypeNameWildcardResolverTest
     public void setUp()
     {
         ContentTypeService service = Mockito.mock( ContentTypeService.class );
-        Mockito.when( service.getAll( Mockito.isA( GetAllContentTypesParams.class ) ) ).thenReturn( getAllContentTypes() );
+        Mockito.when( service.getAll() ).thenReturn( getAllContentTypes() );
         this.resolver = new ContentTypeNameWildcardResolver( service );
     }
 
