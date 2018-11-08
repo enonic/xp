@@ -15,6 +15,7 @@ import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.CreateContentTranslatorParams;
@@ -89,6 +90,8 @@ public final class ContentDataSerializer
             addAttachmentInfoToDataset( params.getCreateAttachments(), contentAsData );
         }
 
+        addProcessedReferences( contentAsData, params.getProcessedIds() );
+
         return propertyTree;
     }
 
@@ -116,10 +119,7 @@ public final class ContentDataSerializer
             PAGE_SERIALIZER.toData( content.getPage(), contentAsData );
         }
 
-        contentAsData.ifNotNull().addReferences( PROCESSED_REFERENCES, content.getProcessedReferences().
-            stream().
-            map( contentId -> new Reference( NodeId.from( contentId ) ) ).
-            toArray( Reference[]::new ) );
+        addProcessedReferences( contentAsData, content.getProcessedReferences() );
 
         return newPropertyTree;
     }
@@ -157,6 +157,18 @@ public final class ContentDataSerializer
         contentAsData.ifNotNull().addString( CREATOR, content.getCreator().toString() );
         contentAsData.ifNotNull().addInstant( CREATED_TIME, content.getCreatedTime() );
         addPublishInfo( contentAsData, content.getPublishInfo() );
+    }
+
+    private void addProcessedReferences( final PropertySet contentAsData, final ContentIds processedIds )
+    {
+        if ( processedIds == null )
+        {
+            return;
+        }
+        contentAsData.ifNotNull().addReferences( PROCESSED_REFERENCES, processedIds.
+            stream().
+            map( contentId -> new Reference( NodeId.from( contentId ) ) ).
+            toArray( Reference[]::new ) );
     }
 
     private void addPublishInfo( final PropertySet contentAsData, final ContentPublishInfo data )

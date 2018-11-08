@@ -15,9 +15,9 @@ import com.enonic.xp.content.ContentEditor;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.EditableSite;
 import com.enonic.xp.content.ExtraData;
+import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.processor.ContentProcessor;
 import com.enonic.xp.content.processor.ProcessCreateParams;
 import com.enonic.xp.content.processor.ProcessCreateResult;
@@ -33,6 +33,7 @@ import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.schema.xdata.XDatas;
+import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 
@@ -57,7 +58,17 @@ public class HtmlAreaContentProcessor
     {
         final CreateContentParams createContentParams = params.getCreateContentParams();
 
-        return new ProcessCreateResult( CreateContentParams.create( createContentParams ).build() );
+        final ContentIds.Builder processedIds = ContentIds.create();
+
+        final ContentType contentType = contentTypeService.getByName( GetContentTypeParams.from( createContentParams.getType() ) );
+
+        processContentData( createContentParams.getData(), contentType, processedIds );
+        processExtraData( createContentParams.getExtraDatas(), contentType, processedIds );
+
+        return new ProcessCreateResult( CreateContentParams.
+            create( createContentParams ).
+            addProcessedIds( processedIds.build() ).
+            build() );
     }
 
     @Override
@@ -72,10 +83,12 @@ public class HtmlAreaContentProcessor
 
             final ContentType contentType = contentTypeService.getByName( GetContentTypeParams.from( editable.source.getType() ) );
 
-            processContentData( editable, contentType, processedIds );
-            processExtraData( editable, contentType, processedIds );
-            processSiteConfigData( editable, processedIds );
-//            processPageData();
+            processContentData( editable.data, contentType, processedIds );
+            processExtraData( editable.extraDatas, contentType, processedIds );
+            if ( editable instanceof EditableSite )
+            {
+                processSiteConfigData( ( (EditableSite) editable ).siteConfigs, processedIds );
+            }
 
             editable.processedReferences.addAll( processedIds.build() );
         };
@@ -83,39 +96,35 @@ public class HtmlAreaContentProcessor
         return new ProcessUpdateResult( createAttachments, editor );
     }
 
-    private void processSiteConfigData( final EditableContent content, final ContentIds.Builder processedIds )
+    private void processSiteConfigData( final SiteConfigs siteConfigs, final ContentIds.Builder processedIds )
     {
-        if ( content instanceof EditableSite )
-        {
-            ( (EditableSite) content ).siteConfigs.forEach( siteConfig -> {
+        siteConfigs.forEach( siteConfig -> {
 
-                final SiteDescriptor siteDescriptor = siteService.getDescriptor( siteConfig.getApplicationKey() );
+            final SiteDescriptor siteDescriptor = siteService.getDescriptor( siteConfig.getApplicationKey() );
 
-                if ( siteDescriptor == null )
-                {
-                    return;
-                }
+            if ( siteDescriptor == null )
+            {
+                return;
+            }
 
-                final Collection<Property> properties = getProperties( siteConfig.getConfig(), siteDescriptor.getForm().getFormItems() );
-                processDataTree( properties, processedIds );
-            } );
-        }
-
+            final Collection<Property> properties = getProperties( siteConfig.getConfig(), siteDescriptor.getForm().getFormItems() );
+            processDataTree( properties, processedIds );
+        } );
     }
 
-    private void processExtraData( final EditableContent content, final ContentType contentType, final ContentIds.Builder processedIds )
+    private void processExtraData( final ExtraDatas extraDatas, final ContentType contentType, final ContentIds.Builder processedIds )
     {
         final XDatas xDatas = xDataService.getByNames( contentType.getXData() );
 
         if ( xDatas.getSize() > 0 )
         {
             xDatas.forEach( xData -> {
-                if ( content.extraDatas == null )
+                if ( extraDatas == null )
                 {
                     return;
                 }
 
-                final ExtraData extraData = content.extraDatas.getMetadata( xData.getName() );
+                final ExtraData extraData = extraDatas.getMetadata( xData.getName() );
                 if ( extraData != null )
                 {
                     final Collection<Property> properties = getProperties( extraData.getData(), xData.getForm().getFormItems() );
@@ -125,9 +134,9 @@ public class HtmlAreaContentProcessor
         }
     }
 
-    private void processContentData( final EditableContent content, final ContentType contentType, final ContentIds.Builder processedIds )
+    private void processContentData( final PropertyTree contentData, final ContentType contentType, final ContentIds.Builder processedIds )
     {
-        final Collection<Property> properties = getProperties( content.data, contentType.getForm().getFormItems() );
+        final Collection<Property> properties = getProperties( contentData, contentType.getForm().getFormItems() );
         processDataTree( properties, processedIds );
     }
 

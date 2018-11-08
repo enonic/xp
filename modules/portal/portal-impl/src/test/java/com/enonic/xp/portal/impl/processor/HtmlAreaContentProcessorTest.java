@@ -55,6 +55,8 @@ public class HtmlAreaContentProcessorTest
 
     private ContentTypeName contentTypeName;
 
+    private ContentType contentType;
+
     @Before
     public void setUp()
         throws Exception
@@ -67,7 +69,7 @@ public class HtmlAreaContentProcessorTest
         contentTypeName = ContentTypeName.from( "myContentType" );
 
         final GetContentTypeParams params = GetContentTypeParams.from( contentTypeName );
-        final ContentType contentType = ContentType.create().
+        contentType = ContentType.create().
             name( contentTypeName ).
             superType( ContentTypeName.folder() ).
             form( Form.create().addFormItem(
@@ -202,7 +204,7 @@ public class HtmlAreaContentProcessorTest
     public void supports()
         throws IOException
     {
-        assertTrue( new HtmlAreaContentProcessor().supports( ContentType.create().
+        assertTrue( htmlAreaContentProcessor.supports( ContentType.create().
             name( contentTypeName ).
             superType( ContentTypeName.folder() ).
             build() ) );
@@ -212,19 +214,39 @@ public class HtmlAreaContentProcessorTest
     public void create()
         throws IOException
     {
+        final PropertyTree data = new PropertyTree();
+        data.addProperty( "htmlData",
+                          ValueFactory.newString( "<img alt=\"Dictyophorus_spumans01.jpg\" data-src=\"image://image-id1\"/>" ) );
+
+        final XDataName xDataName = XDataName.from( "xDataName" );
+
+        final XData xData = XData.create().name( xDataName ).
+            addFormItem( Input.create().name( "htmlData" ).label( "htmlData" ).inputType( InputTypeName.HTML_AREA ).build() ).build();
+
+        final PropertyTree extraData = new PropertyTree();
+        extraData.addProperty( "htmlData",
+                               ValueFactory.newString( "<img alt=\"Dictyophorus_spumans02.jpg\" data-src=\"image://image-id2\"/>" ) );
+
+        Mockito.when( xDataService.getByNames( XDataNames.from( xDataName ) ) ).thenReturn( XDatas.from( xData ) );
+
         final ProcessCreateParams processCreateParams = Mockito.mock( ProcessCreateParams.class );
         final CreateContentParams createContentParams = CreateContentParams.create().
             parent( ContentPath.ROOT ).
-            contentData( new PropertyTree() ).
+            contentData( data ).extraDatas( ExtraDatas.create().
+            add( new ExtraData( XDataName.from( "xDataName" ), extraData ) ).
+            build() ).
             type( contentTypeName ).
             build();
 
+        contentType = ContentType.create( contentType ).xData( XDataNames.from( XDataName.from( "xDataName" ) ) ).build();
+
+        Mockito.when( contentTypeService.getByName( GetContentTypeParams.from( contentTypeName ) ) ).thenReturn( contentType );
         Mockito.when( processCreateParams.getCreateContentParams() ).thenReturn( createContentParams );
 
-        final ProcessCreateResult result = new HtmlAreaContentProcessor().processCreate( processCreateParams );
+        final ProcessCreateResult result = htmlAreaContentProcessor.processCreate( processCreateParams );
 
-        assertEquals( createContentParams.getParent(), result.getCreateContentParams().getParent() );
-        assertEquals( createContentParams.getData(), result.getCreateContentParams().getData() );
-        assertEquals( createContentParams.getType(), result.getCreateContentParams().getType() );
+        assertEquals( 2, result.getCreateContentParams().getProcessedIds().getSize() );
+        assertTrue( result.getCreateContentParams().getProcessedIds().contains( ContentId.from( "image-id1" ) ) );
+        assertTrue( result.getCreateContentParams().getProcessedIds().contains( ContentId.from( "image-id2" ) ) );
     }
 }
