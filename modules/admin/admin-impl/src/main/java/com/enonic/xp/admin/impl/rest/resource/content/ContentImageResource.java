@@ -144,7 +144,7 @@ public final class ContentImageResource
                 try
                 {
                     final Cropping cropping = source ? null : media.getCropping();
-                    final ImageOrientation imageOrientation = mediaInfoService.getImageOrientation( binary, media );
+                    final ImageOrientation imageOrientation = source ? null : mediaInfoService.getImageOrientation( binary, media );
                     final String format = imageService.getFormatByMimeType( attachment.getMimeType() );
                     final ScaleParams scaleParams = source ? null : parseScaleParam( media, scale, size );
                     final FocalPoint focalPoint = scaleParams == null ? new FocalPoint( 0, 0 ) : media.getFocalPoint();
