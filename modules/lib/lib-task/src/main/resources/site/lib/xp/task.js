@@ -127,7 +127,7 @@ exports.get = function (taskId) {
  *
  * @example-ref examples/task/sleep.js
  *
- * @param {string} timeMillis The length of time to sleep in milliseconds.
+ * @param {number} timeMillis The length of time to sleep in milliseconds.
  */
 exports.sleep = function (timeMillis) {
 

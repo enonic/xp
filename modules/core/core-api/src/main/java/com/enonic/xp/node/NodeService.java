@@ -71,7 +71,7 @@ public interface NodeService
 
     void refresh( RefreshMode refreshMode );
 
-    int applyPermissions( ApplyNodePermissionsParams params );
+    ApplyNodePermissionsResult applyPermissions( ApplyNodePermissionsParams params );
 
     ByteSource getBinary( NodeId nodeId, BinaryReference reference );
 
