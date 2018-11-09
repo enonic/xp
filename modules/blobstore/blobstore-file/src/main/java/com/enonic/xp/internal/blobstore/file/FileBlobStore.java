@@ -134,20 +134,15 @@ public final class FileBlobStore
     {
         try
         {
-            final File segmentDirectory = this.baseDir.toPath().
-                resolve( segment.getLevel( 0 ).getValue() ).
-                resolve( segment.getLevel( 1 ).getValue() ).
-                toFile();
+            final File segmentParentDirectory = new File( this.baseDir, segment.getLevel( 0 ).getValue() );
+            final File segmentDirectory = new File( segmentParentDirectory, segment.getLevel( 1 ).getValue() );
 
             if ( segmentDirectory.exists() )
             {
                 FileUtils.deleteDirectory( segmentDirectory );
             }
 
-            final File segmentParentDirectory = this.baseDir.toPath().
-                resolve( segment.getLevel( 0 ).getValue() ).
-                toFile();
-            if ( segmentDirectory.exists() && segmentParentDirectory.list().length == 0 )
+            if ( segmentParentDirectory.exists() && segmentParentDirectory.list().length == 0 )
             {
                 segmentParentDirectory.delete();
             }
