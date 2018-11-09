@@ -2,7 +2,6 @@ package com.enonic.xp.repo.impl.vacuum.segment;
 
 import java.util.List;
 
-import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +18,6 @@ import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.vacuum.VacuumTaskResult;
 
-@Component(immediate = true)
 public class SegmentCleanerCommand
 {
     private static final Logger LOG = LoggerFactory.getLogger( SegmentCleanerCommand.class );
