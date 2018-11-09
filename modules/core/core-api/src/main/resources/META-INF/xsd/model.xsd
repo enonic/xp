@@ -341,7 +341,7 @@
   <xs:complexType name="mappingPattern">
     <xs:simpleContent>
       <xs:extension base="xs:string">
-        <xs:attribute name="invert" type="xs:boolean" use="optional"/>
+        <xs:attribute name="invert" type="xs:boolean"/>
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
@@ -351,8 +351,9 @@
       <xs:element name="match" type="xs:string" minOccurs="0"/>
       <xs:element name="pattern" type="mappingPattern" minOccurs="0"/>
     </xs:all>
-    <xs:attribute name="controller" type="xs:string" use="required"/>
-    <xs:attribute name="order" type="xs:int" use="optional"/>
+    <xs:attribute name="controller" type="xs:string"/>
+    <xs:attribute name="filter" type="xs:string"/>
+    <xs:attribute name="order" type="xs:int"/>
   </xs:complexType>
 
   <xs:complexType name="mappings">

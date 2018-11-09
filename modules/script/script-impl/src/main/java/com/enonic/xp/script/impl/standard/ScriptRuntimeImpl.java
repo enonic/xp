@@ -5,8 +5,10 @@ import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.script.ScriptExports;
+import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.impl.executor.ScriptExecutor;
 import com.enonic.xp.script.impl.executor.ScriptExecutorManager;
+import com.enonic.xp.script.impl.util.JsObjectConverter;
 import com.enonic.xp.script.runtime.ScriptRuntime;
 import com.enonic.xp.script.runtime.ScriptSettings;
 
@@ -38,6 +40,20 @@ final class ScriptRuntimeImpl
     public void invalidate( final ApplicationKey key )
     {
         this.executorManager.invalidate( key );
+    }
+
+    @Override
+    public ScriptValue toScriptValue( final ResourceKey script, final Object value )
+    {
+        final ScriptExecutor executor = this.executorManager.getExecutor( script.getApplicationKey() );
+        return executor.newScriptValue( value );
+    }
+
+    @Override
+    public Object toNativeObject( final ResourceKey script, final Object value )
+    {
+        final ScriptExecutor executor = this.executorManager.getExecutor( script.getApplicationKey() );
+        return new JsObjectConverter( executor.getJavascriptHelper() ).toJs( value );
     }
 
     void setApplicationService( final ApplicationService applicationService )

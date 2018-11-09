@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.enonic.xp.app.ApplicationRelativeResolver;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.site.SiteDescriptor;
@@ -46,6 +48,8 @@ public final class XmlSiteParser
     private static final String FILTER_DESCRIPTOR_ORDER_ATTRIBUTE = "order";
 
     private static final String MAPPING_DESCRIPTOR_CONTROLLER_ATTRIBUTE = "controller";
+
+    private static final String MAPPING_DESCRIPTOR_FILTER_ATTRIBUTE = "filter";
 
     private static final String MAPPING_DESCRIPTOR_ORDER_ATTRIBUTE = "order";
 
@@ -144,7 +148,16 @@ public final class XmlSiteParser
     {
         final ControllerMappingDescriptor.Builder builder = ControllerMappingDescriptor.create();
         final String controllerPath = mappingElement.getAttribute( MAPPING_DESCRIPTOR_CONTROLLER_ATTRIBUTE );
-        builder.controller( ResourceKey.from( this.currentApplication, controllerPath ) );
+        if ( StringUtils.isNotBlank( controllerPath ) )
+        {
+            builder.controller( ResourceKey.from( this.currentApplication, controllerPath ) );
+        }
+
+        final String filterPath = mappingElement.getAttribute( MAPPING_DESCRIPTOR_FILTER_ATTRIBUTE );
+        if ( StringUtils.isNotBlank( filterPath ) )
+        {
+            builder.filter( ResourceKey.from( this.currentApplication, filterPath ) );
+        }
 
         final String orderValue = mappingElement.getAttribute( MAPPING_DESCRIPTOR_ORDER_ATTRIBUTE );
         if ( isNotEmpty( orderValue ) )

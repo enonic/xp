@@ -17,6 +17,8 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
+import com.enonic.xp.portal.filter.FilterScript;
+import com.enonic.xp.portal.filter.FilterScriptFactory;
 import com.enonic.xp.portal.impl.rendering.Renderer;
 import com.enonic.xp.portal.impl.rendering.RendererFactory;
 import com.enonic.xp.region.ComponentName;
@@ -59,6 +61,10 @@ public class MappingHandlerTest
 
     private RendererFactory rendererFactory;
 
+    private FilterScriptFactory filterScriptFactory;
+
+    private FilterScript filterScript;
+
     private SiteService siteService;
 
     @Before
@@ -69,9 +75,13 @@ public class MappingHandlerTest
         final ControllerScriptFactory controllerScriptFactory = Mockito.mock( ControllerScriptFactory.class );
         this.controllerScript = Mockito.mock( ControllerScript.class );
         when( controllerScriptFactory.fromDir( Mockito.anyObject() ) ).thenReturn( this.controllerScript );
-
         final PortalResponse portalResponse = PortalResponse.create().build();
         when( this.controllerScript.execute( Mockito.anyObject() ) ).thenReturn( portalResponse );
+
+        this.filterScriptFactory = Mockito.mock( FilterScriptFactory.class );
+        this.filterScript = Mockito.mock( FilterScript.class );
+        when( filterScriptFactory.fromScript( Mockito.anyObject() ) ).thenReturn( this.filterScript );
+        when( this.filterScript.execute( Mockito.anyObject(), Mockito.anyObject(), Mockito.anyObject() ) ).thenReturn( portalResponse );
 
         this.resourceService = Mockito.mock( ResourceService.class );
         final Resource resourceNotFound = Mockito.mock( Resource.class );
@@ -90,6 +100,7 @@ public class MappingHandlerTest
         this.handler.setResourceService( this.resourceService );
         this.handler.setRendererFactory( this.rendererFactory );
         this.handler.setSiteService( this.siteService );
+        this.handler.setFilterScriptFactory( this.filterScriptFactory );
 
         this.request.setMethod( HttpMethod.GET );
     }
@@ -112,7 +123,12 @@ public class MappingHandlerTest
     public void testMatch()
         throws Exception
     {
-        setupContentAndSite();
+        final ResourceKey controller = ResourceKey.from( "demo:/services/test" );
+        final ControllerMappingDescriptor mapping = ControllerMappingDescriptor.create().
+            controller( controller ).
+            pattern( ".*/content" ).
+            build();
+        setupContentAndSite( mapping );
         this.request.setBaseUri( "/portal" );
         this.request.setContentPath( ContentPath.from( "/somepath/content" ) );
         this.request.setSite( this.contentService.getNearestSite( ContentId.from( "id" ) ) );
@@ -124,7 +140,13 @@ public class MappingHandlerTest
     public void executeScript()
         throws Exception
     {
-        setupContentAndSite();
+        final ResourceKey controller = ResourceKey.from( "demo:/services/test" );
+        final ControllerMappingDescriptor mapping = ControllerMappingDescriptor.create().
+            controller( controller ).
+            pattern( ".*/content" ).
+            build();
+
+        setupContentAndSite( mapping );
         this.request.setBaseUri( "/portal" );
         this.request.setContentPath( ContentPath.from( "/somepath/content" ) );
         this.request.setSite( this.contentService.getNearestSite( ContentId.from( "id" ) ) );
@@ -156,7 +178,33 @@ public class MappingHandlerTest
         assertNotNull( this.request.getContent() );
     }
 
-    private void setupContentAndSite()
+    @Test
+    public void executeFilter()
+        throws Exception
+    {
+        final ResourceKey filter = ResourceKey.from( "demo:/services/test" );
+        final ControllerMappingDescriptor mapping = ControllerMappingDescriptor.create().
+            filter( filter ).
+            pattern( ".*/content" ).
+            build();
+
+        setupContentAndSite( mapping );
+
+        this.request.setBaseUri( "/portal" );
+        this.request.setContentPath( ContentPath.from( "/somepath/content" ) );
+        this.request.setSite( this.contentService.getNearestSite( ContentId.from( "id" ) ) );
+        this.request.setEndpointPath( "" );
+        this.request.setContent( this.contentService.getById( ContentId.from( "id" ) ) );
+
+        final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        assertEquals( HttpStatus.OK, response.getStatus() );
+
+        assertNotNull( this.request.getApplicationKey() );
+        assertNotNull( this.request.getSite() );
+        assertNotNull( this.request.getContent() );
+    }
+
+    private void setupContentAndSite( final ControllerMappingDescriptor mapping )
         throws Exception
     {
         final Content content = createPage( "id", "site/somepath/content", "myapplication:ctype", true );
@@ -168,11 +216,6 @@ public class MappingHandlerTest
 
         when( this.contentService.getById( content.getId() ) ).thenReturn( content );
 
-        final ResourceKey controller = ResourceKey.from( "demo:/services/test" );
-        final ControllerMappingDescriptor mapping = ControllerMappingDescriptor.create().
-            controller( controller ).
-            pattern( ".*/content" ).
-            build();
         final ControllerMappingDescriptors mappings = ControllerMappingDescriptors.from( mapping );
         final SiteDescriptor siteDescriptor = SiteDescriptor.create().mappingDescriptors( mappings ).build();
         when( this.siteService.getDescriptor( any( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
