@@ -143,6 +143,15 @@ public final class FileBlobStore
             {
                 FileUtils.deleteDirectory( segmentDirectory );
             }
+
+            final File segmentParentDirectory = this.baseDir.toPath().
+                resolve( segment.getLevel( 0 ).getValue() ).
+                toFile();
+            if ( segmentDirectory.exists() && segmentParentDirectory.list().length == 0 )
+            {
+                segmentParentDirectory.delete();
+            }
+
         }
         catch ( IOException e )
         {
