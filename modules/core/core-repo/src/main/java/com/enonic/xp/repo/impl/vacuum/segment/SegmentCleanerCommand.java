@@ -53,13 +53,24 @@ public class SegmentCleanerCommand
                 }
                 else
                 {
-                    result.deleted();
                     toBeRemoved.add( segment );
                 }
                 result.processed();
             } );
 
-        toBeRemoved.forEach( blobStore::deleteSegment );
+        toBeRemoved.forEach( segment -> {
+            try
+            {
+                blobStore.deleteSegment( segment );
+                result.deleted();
+            }
+            catch ( Exception e )
+            {
+                LOG.error( "Failed to delete segment [" + segment + "]", e );
+                result.failed();
+            }
+        } );
+
         return result.build();
     }
 
