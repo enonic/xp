@@ -1,6 +1,6 @@
 package com.enonic.xp.admin.impl.json.schema.content;
 
-import jdk.internal.jline.internal.Preconditions;
+import com.google.common.base.Preconditions;
 
 import com.enonic.xp.admin.impl.json.form.FormJson;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
