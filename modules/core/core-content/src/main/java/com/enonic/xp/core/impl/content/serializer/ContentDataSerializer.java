@@ -14,6 +14,8 @@ import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.CreateContentTranslatorParams;
@@ -22,11 +24,13 @@ import com.enonic.xp.content.UpdateContentTranslatorParams;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.icon.Thumbnail;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.BinaryReferences;
 import com.enonic.xp.util.Exceptions;
+import com.enonic.xp.util.Reference;
 
 import static com.enonic.xp.content.ContentPropertyNames.ATTACHMENT;
 import static com.enonic.xp.content.ContentPropertyNames.CREATED_TIME;
@@ -39,6 +43,7 @@ import static com.enonic.xp.content.ContentPropertyNames.MODIFIED_TIME;
 import static com.enonic.xp.content.ContentPropertyNames.MODIFIER;
 import static com.enonic.xp.content.ContentPropertyNames.OWNER;
 import static com.enonic.xp.content.ContentPropertyNames.PAGE;
+import static com.enonic.xp.content.ContentPropertyNames.PROCESSED_REFERENCES;
 import static com.enonic.xp.content.ContentPropertyNames.PUBLISH_FIRST;
 import static com.enonic.xp.content.ContentPropertyNames.PUBLISH_FROM;
 import static com.enonic.xp.content.ContentPropertyNames.PUBLISH_INFO;
@@ -50,7 +55,7 @@ public final class ContentDataSerializer
 {
     public static final PageDataSerializer PAGE_SERIALIZER = new PageDataSerializer( ContentPropertyNames.PAGE );
 
-    public static final ExtraDataSerializer EXTRA_DATA_SERIALIZER = new ExtraDataSerializer( );
+    public static final ExtraDataSerializer EXTRA_DATA_SERIALIZER = new ExtraDataSerializer();
 
     public PropertyTree toCreateNodeData( final CreateContentTranslatorParams params )
     {
@@ -85,6 +90,8 @@ public final class ContentDataSerializer
             addAttachmentInfoToDataset( params.getCreateAttachments(), contentAsData );
         }
 
+        addProcessedReferences( contentAsData, params.getProcessedIds() );
+
         return propertyTree;
     }
 
@@ -112,6 +119,8 @@ public final class ContentDataSerializer
             PAGE_SERIALIZER.toData( content.getPage(), contentAsData );
         }
 
+        addProcessedReferences( contentAsData, content.getProcessedReferences() );
+
         return newPropertyTree;
     }
 
@@ -131,6 +140,7 @@ public final class ContentDataSerializer
         extractPage( contentAsSet, builder );
         extractAttachments( contentAsSet, builder );
         extractPublishInfo( contentAsSet, builder );
+        extractProcessedReferences( contentAsSet, builder );
 
         return builder;
     }
@@ -147,6 +157,18 @@ public final class ContentDataSerializer
         contentAsData.ifNotNull().addString( CREATOR, content.getCreator().toString() );
         contentAsData.ifNotNull().addInstant( CREATED_TIME, content.getCreatedTime() );
         addPublishInfo( contentAsData, content.getPublishInfo() );
+    }
+
+    private void addProcessedReferences( final PropertySet contentAsData, final ContentIds processedIds )
+    {
+        if ( processedIds == null )
+        {
+            return;
+        }
+        contentAsData.ifNotNull().addReferences( PROCESSED_REFERENCES, processedIds.
+            stream().
+            map( contentId -> new Reference( NodeId.from( contentId ) ) ).
+            toArray( Reference[]::new ) );
     }
 
     private void addPublishInfo( final PropertySet contentAsData, final ContentPublishInfo data )
@@ -210,7 +232,8 @@ public final class ContentDataSerializer
     {
         final ExtraDatas extraData = EXTRA_DATA_SERIALIZER.fromData( contentAsSet.getSet( EXTRA_DATA ) );
 
-        if(extraData != null && extraData.isNotEmpty()){
+        if ( extraData != null && extraData.isNotEmpty() )
+        {
             builder.extraDatas( extraData );
         }
     }
@@ -232,6 +255,13 @@ public final class ContentDataSerializer
         {
             builder.owner( PrincipalKey.from( owner ) );
         }
+    }
+
+    private void extractProcessedReferences( final PropertySet contentAsSet, final Content.Builder builder )
+    {
+        Iterable<Reference> references = contentAsSet.getReferences( PROCESSED_REFERENCES );
+
+        references.forEach( reference -> builder.addProcessedReference( ContentId.from( reference ) ) );
     }
 
     private Attachments dataToAttachments( final Iterable<PropertySet> attachmentSets )

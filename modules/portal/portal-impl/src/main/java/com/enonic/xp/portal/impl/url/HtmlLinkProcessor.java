@@ -34,11 +34,11 @@ public class HtmlLinkProcessor
 
     private static final int MODE_INDEX = TYPE_INDEX + 1;
 
-    private static final int ID_INDEX = MODE_INDEX + 1;
+    public static final int ID_INDEX = MODE_INDEX + 1;
 
     private static final int PARAMS_INDEX = ID_INDEX + 1;
 
-    private static final int NB_GROUPS = ID_INDEX;
+    public static final int NB_GROUPS = ID_INDEX;
 
     private static final String CONTENT_TYPE = "content";
 
@@ -49,7 +49,6 @@ public class HtmlLinkProcessor
     private static final String DOWNLOAD_MODE = "download";
 
     private static final String INLINE_MODE = "inline";
-
 
     private static final String IMAGE_SCALE = "width(768)";
 
@@ -72,7 +71,7 @@ public class HtmlLinkProcessor
         this.portalUrlService = portalUrlService;
     }
 
-    private static final Pattern CONTENT_PATTERN =
+    public static final Pattern CONTENT_PATTERN =
         Pattern.compile( "(?:href|src)=(\"((" + CONTENT_TYPE + "|" + MEDIA_TYPE + "|" + IMAGE_TYPE +
                              ")://(?:(" + DOWNLOAD_MODE + "|" + INLINE_MODE + ")/)?([0-9a-z-/]+)(\\?[^\"]+)?)\")",
                          Pattern.MULTILINE | Pattern.UNIX_LINES );

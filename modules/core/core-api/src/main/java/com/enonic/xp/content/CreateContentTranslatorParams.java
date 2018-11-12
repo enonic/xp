@@ -52,6 +52,8 @@ public class CreateContentTranslatorParams
 
     private final Locale language;
 
+    private final ContentIds processedIds;
+
     private CreateContentTranslatorParams( Builder builder )
     {
         final Instant now = Instant.now();
@@ -74,6 +76,7 @@ public class CreateContentTranslatorParams
         this.childOrder = builder.childOrder;
         this.language = builder.language;
         this.contentPublishInfo = builder.contentPublishInfo;
+        this.processedIds = builder.processedIds;
     }
 
     public static Builder create( final CreateContentParams source )
@@ -176,6 +179,11 @@ public class CreateContentTranslatorParams
         return contentPublishInfo;
     }
 
+    public ContentIds getProcessedIds()
+    {
+        return processedIds;
+    }
+
     public static final class Builder
     {
         private PropertyTree data;
@@ -208,6 +216,8 @@ public class CreateContentTranslatorParams
 
         private Locale language;
 
+        private ContentIds processedIds;
+
         private Builder()
         {
         }
@@ -227,6 +237,7 @@ public class CreateContentTranslatorParams
             this.childOrder = params.getChildOrder();
             this.language = params.getLanguage();
             this.contentPublishInfo = params.getContentPublishInfo();
+            this.processedIds = params.getProcessedIds();
         }
 
         public Builder contentData( final PropertyTree data )
@@ -322,6 +333,12 @@ public class CreateContentTranslatorParams
         public Builder contentPublishInfo( final ContentPublishInfo info )
         {
             this.contentPublishInfo = info;
+            return this;
+        }
+
+        public Builder processedIds( final ContentIds processedIds )
+        {
+            this.processedIds = processedIds;
             return this;
         }
 

@@ -9,6 +9,8 @@ import com.google.common.collect.ImmutableList;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.processor.ProcessUpdateParams;
+import com.enonic.xp.content.processor.ProcessUpdateResult;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentType;
