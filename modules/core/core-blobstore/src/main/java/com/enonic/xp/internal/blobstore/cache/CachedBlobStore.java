@@ -106,6 +106,13 @@ public final class CachedBlobStore
         return this.store.listSegments();
     }
 
+    @Override
+    public void deleteSegment( final Segment segment )
+    {
+        store.deleteSegment( segment );
+        cache.invalidateAll();
+    }
+
     public static Builder create()
     {
         return new Builder();

@@ -22,4 +22,5 @@ public interface BlobStore
 
     Stream<Segment> listSegments();
 
+    void deleteSegment( Segment segment );
 }

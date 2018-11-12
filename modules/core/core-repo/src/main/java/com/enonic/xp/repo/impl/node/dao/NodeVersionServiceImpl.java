@@ -21,7 +21,7 @@ import com.enonic.xp.node.NodeVersions;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repo.impl.node.json.NodeVersionJsonSerializer;
-import com.enonic.xp.repository.RepositorySegmentLevel;
+import com.enonic.xp.repository.RepositorySegmentUtils;
 
 @Component
 public class NodeVersionServiceImpl
@@ -41,7 +41,7 @@ public class NodeVersionServiceImpl
 
     private BlobRecord doStoreNodeAsBlob( final NodeVersion nodeVersion, final InternalContext context )
     {
-        final Segment segment = Segment.from( RepositorySegmentLevel.from( context.getRepositoryId() ), NodeConstants.NODE_SEGMENT_LEVEL );
+        final Segment segment = RepositorySegmentUtils.toSegment( context.getRepositoryId(), NodeConstants.NODE_SEGMENT_LEVEL );
         final String serializedNode = this.nodeVersionJsonSerializer.toString( nodeVersion );
         final ByteSource source = ByteSource.wrap( serializedNode.getBytes( StandardCharsets.UTF_8 ) );
         return blobStore.addRecord( segment, source );
@@ -81,7 +81,7 @@ public class NodeVersionServiceImpl
 
     private NodeVersion getFromBlob( final BlobKey blobKey, final InternalContext context )
     {
-        final Segment segment = Segment.from( RepositorySegmentLevel.from( context.getRepositoryId() ), NodeConstants.NODE_SEGMENT_LEVEL );
+        final Segment segment = RepositorySegmentUtils.toSegment( context.getRepositoryId(), NodeConstants.NODE_SEGMENT_LEVEL );
         final BlobRecord blob = blobStore.getRecord( segment, blobKey );
 
         if ( blob == null )

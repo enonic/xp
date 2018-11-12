@@ -58,7 +58,7 @@ import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.repository.RepositorySegmentLevel;
+import com.enonic.xp.repository.RepositorySegmentUtils;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
@@ -274,10 +274,7 @@ public abstract class AbstractNodeTest
     protected Segment createSegment( SegmentLevel blobTypeLevel )
     {
         final RepositoryId repositoryId = ContextAccessor.current().getRepositoryId();
-        return Segment.create().
-            level( RepositorySegmentLevel.from( repositoryId ) ).
-            level( blobTypeLevel ).
-            build();
+        return RepositorySegmentUtils.toSegment( repositoryId, blobTypeLevel );
     }
 
     protected Node createDefaultRootNode()

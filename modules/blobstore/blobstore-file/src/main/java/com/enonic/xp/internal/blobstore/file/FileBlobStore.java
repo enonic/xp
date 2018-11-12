@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -126,6 +127,31 @@ public final class FileBlobStore
                         return Segment.from( firstSegmentLevel, secondSegmentLevel );
                     } );
             } );
+    }
+
+    @Override
+    public void deleteSegment( final Segment segment )
+    {
+        try
+        {
+            final File segmentParentDirectory = new File( this.baseDir, segment.getLevel( 0 ).getValue() );
+            final File segmentDirectory = new File( segmentParentDirectory, segment.getLevel( 1 ).getValue() );
+
+            if ( segmentDirectory.exists() )
+            {
+                FileUtils.deleteDirectory( segmentDirectory );
+            }
+
+            if ( segmentParentDirectory.exists() && segmentParentDirectory.list().length == 0 )
+            {
+                segmentParentDirectory.delete();
+            }
+
+        }
+        catch ( IOException e )
+        {
+            throw new BlobStoreException( "Failed to delete segment", e );
+        }
     }
 
     @SuppressWarnings("unusedReturnValue")

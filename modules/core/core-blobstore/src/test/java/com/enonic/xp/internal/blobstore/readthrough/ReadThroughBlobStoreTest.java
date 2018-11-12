@@ -210,4 +210,42 @@ public class ReadThroughBlobStoreTest
         assertTrue( readThroughUpdated.lastModified() > readThroughRecord.lastModified() );
     }
 
+    @Test
+    public void listSegments()
+    {
+        final ReadThroughBlobStore actualBlobStore = ReadThroughBlobStore.create().
+            readThroughStore( readThroughStore ).
+            store( finalStore ).
+            build();
+
+        assertEquals( 0, actualBlobStore.listSegments().count() );
+
+        final ByteSource binary = ByteSource.wrap( "this is a record".getBytes() );
+        final Segment segment = Segment.from( "test", "blob" );
+        finalStore.addRecord( segment, binary );
+        assertEquals( 1, actualBlobStore.listSegments().count() );
+    }
+
+    @Test
+    public void deleteSegment()
+    {
+        final ReadThroughBlobStore actualBlobStore = ReadThroughBlobStore.create().
+            readThroughStore( readThroughStore ).
+            store( finalStore ).
+            build();
+        final ByteSource binary = ByteSource.wrap( "this is a record".getBytes() );
+        final Segment segment = Segment.from( "test", "blob" );
+        final BlobRecord record = finalStore.addRecord( segment, binary );
+        assertEquals( 1, actualBlobStore.listSegments().count() );
+        assertEquals( record, actualBlobStore.getRecord( segment, record.getKey() ) );
+
+        finalStore.removeRecord( segment, record.getKey() );
+        assertEquals( record, actualBlobStore.getRecord( segment, record.getKey() ) );
+
+        actualBlobStore.deleteSegment( segment );
+        assertEquals( 0, actualBlobStore.listSegments().count() );
+        assertNull( actualBlobStore.getRecord( segment, record.getKey() ) );
+
+    }
+
 }

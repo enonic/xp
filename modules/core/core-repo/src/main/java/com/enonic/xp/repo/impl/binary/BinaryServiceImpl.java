@@ -14,7 +14,7 @@ import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repository.RepositoryExeption;
 import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.repository.RepositorySegmentLevel;
+import com.enonic.xp.repository.RepositorySegmentUtils;
 
 @Component
 public class BinaryServiceImpl
@@ -25,7 +25,7 @@ public class BinaryServiceImpl
     @Override
     public AttachedBinary store( final RepositoryId repositoryId, final BinaryAttachment binaryAttachment )
     {
-        final Segment segment = Segment.from( RepositorySegmentLevel.from( repositoryId ), NodeConstants.BINARY_SEGMENT_LEVEL );
+        final Segment segment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.BINARY_SEGMENT_LEVEL );
         final BlobRecord blob = this.blobStore.addRecord( segment, binaryAttachment.getByteSource() );
         return new AttachedBinary( binaryAttachment.getReference(), blob.getKey().toString() );
     }
@@ -33,7 +33,7 @@ public class BinaryServiceImpl
     @Override
     public ByteSource get( final RepositoryId repositoryId, final AttachedBinary attachedBinary )
     {
-        final Segment segment = Segment.from( RepositorySegmentLevel.from( repositoryId ), NodeConstants.BINARY_SEGMENT_LEVEL );
+        final Segment segment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.BINARY_SEGMENT_LEVEL );
         final BlobRecord record = blobStore.getRecord( segment, BlobKey.from( attachedBinary.getBlobKey() ) );
 
         if ( record == null )
