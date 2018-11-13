@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.AttachmentNames;
 import com.enonic.xp.attachment.AttachmentSerializer;
@@ -16,12 +18,17 @@ import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentPublishInfo;
+import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.CreateContentTranslatorParams;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.UpdateContentTranslatorParams;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.icon.Thumbnail;
+import com.enonic.xp.page.Page;
+import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.region.LayoutDescriptorService;
+import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.util.BinaryReference;
@@ -38,19 +45,31 @@ import static com.enonic.xp.content.ContentPropertyNames.LANGUAGE;
 import static com.enonic.xp.content.ContentPropertyNames.MODIFIED_TIME;
 import static com.enonic.xp.content.ContentPropertyNames.MODIFIER;
 import static com.enonic.xp.content.ContentPropertyNames.OWNER;
-import static com.enonic.xp.content.ContentPropertyNames.PAGE;
 import static com.enonic.xp.content.ContentPropertyNames.PUBLISH_FIRST;
 import static com.enonic.xp.content.ContentPropertyNames.PUBLISH_FROM;
 import static com.enonic.xp.content.ContentPropertyNames.PUBLISH_INFO;
 import static com.enonic.xp.content.ContentPropertyNames.PUBLISH_TO;
 import static com.enonic.xp.content.ContentPropertyNames.TYPE;
 import static com.enonic.xp.content.ContentPropertyNames.VALID;
+import static com.enonic.xp.core.impl.content.serializer.ComponentDataSerializer.COMPONENTS;
 
-public final class ContentDataSerializer
+public class ContentDataSerializer
 {
-    public static final PageDataSerializer PAGE_SERIALIZER = new PageDataSerializer( ContentPropertyNames.PAGE );
+    private PageDataSerializer pageDataSerializer;
 
-    public static final ExtraDataSerializer EXTRA_DATA_SERIALIZER = new ExtraDataSerializer( );
+    private ExtraDataSerializer extraDataSerializer;
+
+    private ContentDataSerializer( final Builder builder )
+    {
+        this.pageDataSerializer = PageDataSerializer.create().
+            pageDescriptorService( builder.pageDescriptorService ).
+            partDescriptorService( builder.partDescriptorService ).
+            layoutDescriptorService( builder.layoutDescriptorService ).
+            contentService( builder.contentService ).
+            build();
+
+        this.extraDataSerializer = new ExtraDataSerializer();
+    }
 
     public PropertyTree toCreateNodeData( final CreateContentTranslatorParams params )
     {
@@ -77,7 +96,7 @@ public final class ContentDataSerializer
 
         if ( extraData != null && !extraData.isEmpty() )
         {
-            EXTRA_DATA_SERIALIZER.toData( extraData, contentAsData );
+            extraDataSerializer.toData( extraData, contentAsData );
         }
 
         if ( params.getCreateAttachments() != null )
@@ -100,7 +119,7 @@ public final class ContentDataSerializer
 
         if ( content.hasExtraData() )
         {
-            EXTRA_DATA_SERIALIZER.toData( content.getAllExtraData(), contentAsData );
+            extraDataSerializer.toData( content.getAllExtraData(), contentAsData );
         }
 
         final Attachments attachments = mergeExistingAndUpdatedAttachments( content.getAttachments(), params );
@@ -109,10 +128,25 @@ public final class ContentDataSerializer
 
         if ( content.hasPage() )
         {
-            PAGE_SERIALIZER.toData( content.getPage(), contentAsData );
+            pageDataSerializer.toData( content.getPage(), contentAsData );
         }
 
         return newPropertyTree;
+    }
+
+    public void toPageData( final Page page, final PropertySet parent )
+    {
+        pageDataSerializer.toData( page, parent );
+    }
+
+    public Page fromPageData( final PropertySet asSet )
+    {
+        return pageDataSerializer.fromData( asSet );
+    }
+
+    public ExtraDatas fromExtraData( final PropertySet asSet )
+    {
+        return extraDataSerializer.fromData( asSet );
     }
 
     public Content.Builder fromData( final PropertySet contentAsSet )
@@ -200,17 +234,18 @@ public final class ContentDataSerializer
 
     private void extractPage( final PropertySet contentAsSet, final Content.Builder builder )
     {
-        if ( contentAsSet.hasProperty( PAGE ) )
+        if ( contentAsSet.hasProperty( COMPONENTS ) )
         {
-            builder.page( PAGE_SERIALIZER.fromData( contentAsSet.getSet( PAGE ) ) );
+            builder.page( pageDataSerializer.fromData( contentAsSet ) );
         }
     }
 
     private void extractExtradata( final PropertySet contentAsSet, final Content.Builder builder )
     {
-        final ExtraDatas extraData = EXTRA_DATA_SERIALIZER.fromData( contentAsSet.getSet( EXTRA_DATA ) );
+        final ExtraDatas extraData = extraDataSerializer.fromData( contentAsSet.getSet( EXTRA_DATA ) );
 
-        if(extraData != null && extraData.isNotEmpty()){
+        if ( extraData != null && extraData.isNotEmpty() )
+        {
             builder.extraDatas( extraData );
         }
     }
@@ -315,4 +350,59 @@ public final class ContentDataSerializer
             throw Exceptions.unchecked( e );
         }
     }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public static class Builder
+    {
+        private PageDescriptorService pageDescriptorService;
+
+        private PartDescriptorService partDescriptorService;
+
+        private LayoutDescriptorService layoutDescriptorService;
+
+        private ContentService contentService;
+
+        public Builder pageDescriptorService( final PageDescriptorService value )
+        {
+            this.pageDescriptorService = value;
+            return this;
+        }
+
+        public Builder partDescriptorService( final PartDescriptorService value )
+        {
+            this.partDescriptorService = value;
+            return this;
+        }
+
+        public Builder layoutDescriptorService( final LayoutDescriptorService value )
+        {
+            this.layoutDescriptorService = value;
+            return this;
+        }
+
+        public Builder contentService( final ContentService value )
+        {
+            this.contentService = value;
+            return this;
+        }
+
+        void validate()
+        {
+            Preconditions.checkNotNull( pageDescriptorService );
+            Preconditions.checkNotNull( partDescriptorService );
+            Preconditions.checkNotNull( layoutDescriptorService );
+            Preconditions.checkNotNull( contentService );
+        }
+
+        public ContentDataSerializer build()
+        {
+            validate();
+            return new ContentDataSerializer( this );
+        }
+    }
+    
 }

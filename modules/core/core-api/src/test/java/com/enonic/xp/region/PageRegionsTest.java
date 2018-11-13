@@ -71,13 +71,13 @@ public class PageRegionsTest
         // verify: components in a-region
         Region nextRegion = iterator.next();
         UnmodifiableIterator<Component> components = nextRegion.getComponents().iterator();
-        assertEquals( "a-region/0", components.next().getPath().toString() );
+        assertEquals( "/a-region/0", components.next().getPath().toString() );
 
         // verify: components in b-region
         nextRegion = iterator.next();
         components = nextRegion.getComponents().iterator();
-        assertEquals( "b-region/0", components.next().getPath().toString() );
-        assertEquals( "b-region/1", components.next().getPath().toString() );
+        assertEquals( "/b-region/0", components.next().getPath().toString() );
+        assertEquals( "/b-region/1", components.next().getPath().toString() );
     }
 
     @Test
@@ -99,12 +99,12 @@ public class PageRegionsTest
         final Region regionLevel1 = regions.iterator().next();
         final UnmodifiableIterator<Component> componentsLevel1 = regionLevel1.getComponents().iterator();
         final LayoutComponent layoutLevel1 = (LayoutComponent) componentsLevel1.next();
-        assertEquals( "region-level-1/0", layoutLevel1.getPath().toString() );
+        assertEquals( "/region-level-1/0", layoutLevel1.getPath().toString() );
 
         final LayoutRegions layoutRegions = layoutLevel1.getRegions();
         final Region regionLevel2 = layoutRegions.iterator().next();
         final UnmodifiableIterator<Component> componentsLevel2 = regionLevel2.getComponents().iterator();
-        assertEquals( "region-level-1/0/region-level-2/0", componentsLevel2.next().getPath().toString() );
+        assertEquals( "/region-level-1/0/region-level-2/0", componentsLevel2.next().getPath().toString() );
     }
 
     @Test

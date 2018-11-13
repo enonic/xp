@@ -1,51 +1,85 @@
 package com.enonic.xp.core.impl.content.serializer;
 
 
-import com.enonic.xp.data.Property;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.LayoutComponent;
+import com.enonic.xp.region.LayoutComponentType;
+import com.enonic.xp.region.LayoutDescriptor;
+import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.LayoutRegions;
 import com.enonic.xp.region.Region;
 
-public class LayoutComponentDataSerializer
-    extends DescriptorBasedComponentDataSerializer<LayoutComponent, LayoutComponent>
+final class LayoutComponentDataSerializer
+    extends DescriptorBasedComponentDataSerializer<LayoutComponent>
 {
-    private final RegionDataSerializer regionDataSerializer = new RegionDataSerializer();
+    private static final String DEFAULT_NAME = "Layout";
+
+    private final LayoutDescriptorService layoutDescriptorService;
+
+    private final RegionDataSerializer regionDataSerializer;
+
+    public LayoutComponentDataSerializer( final LayoutDescriptorService layoutDescriptorService,
+                                          final RegionDataSerializer regionDataSerializer )
+    {
+        this.layoutDescriptorService = layoutDescriptorService;
+        this.regionDataSerializer = regionDataSerializer;
+    }
 
     @Override
     public void toData( final LayoutComponent component, final PropertySet parent )
     {
-        final PropertySet asSet = parent.addSet( LayoutComponent.class.getSimpleName() );
-        applyComponentToData( component, asSet );
+        super.toData( component, parent );
+
         if ( component.hasRegions() )
         {
             for ( final Region region : component.getRegions() )
             {
-                regionDataSerializer.toData( region, asSet );
+                regionDataSerializer.toData( region, parent );
             }
         }
     }
 
     @Override
-    public LayoutComponent fromData( final PropertySet asData )
+    public LayoutComponent fromData( final PropertySet data )
     {
-        final LayoutComponent.Builder component = LayoutComponent.create();
-        applyComponentFromData( component, asData );
+        return fromData( data, new ArrayList<>() );
+    }
 
-        final LayoutRegions.Builder pageRegionsBuilder = LayoutRegions.create();
-        for ( final Property regionAsProp : asData.getProperties( "region" ) )
+    public LayoutComponent fromData( final PropertySet layoutData, final List<PropertySet> componentsAsData )
+    {
+        final LayoutComponent.Builder layoutComponent = LayoutComponent.create().name( DEFAULT_NAME );
+
+        final LayoutRegions.Builder layoutRegionsBuilder = LayoutRegions.create();
+
+        final PropertySet specialBlockSet = layoutData.getSet( LayoutComponentType.INSTANCE.toString() );
+
+        if ( specialBlockSet != null && specialBlockSet.isNotNull( DESCRIPTOR ) )
         {
-            pageRegionsBuilder.add( regionDataSerializer.fromData( regionAsProp.getSet() ) );
+            final DescriptorKey descriptorKey = DescriptorKey.from( specialBlockSet.getString( DESCRIPTOR ) );
+
+            layoutComponent.descriptor( descriptorKey );
+            layoutComponent.config( getConfigFromData( specialBlockSet, descriptorKey ) );
+
+            final LayoutDescriptor layoutDescriptor = layoutDescriptorService.getByKey( descriptorKey );
+
+            final String layoutPath = layoutData.getString( PATH );
+
+            if ( layoutDescriptor.getRegions() != null && layoutDescriptor.getRegions().numberOfRegions() > 0 )
+            {
+                layoutDescriptor.getRegions().forEach( regionDescriptor -> {
+                    layoutRegionsBuilder.add( regionDataSerializer.fromData( regionDescriptor, layoutPath, componentsAsData ) );
+                } );
+            }
+
+            layoutComponent.name( layoutDescriptor.getDisplayName() );
         }
-        component.regions( pageRegionsBuilder.build() );
-        return component.build();
-    }
 
-    @Override
-    protected DescriptorKey toDescriptorKey( final String s )
-    {
-        return DescriptorKey.from( s );
-    }
+        layoutComponent.regions( layoutRegionsBuilder.build() );
 
+        return layoutComponent.build();
+    }
 }

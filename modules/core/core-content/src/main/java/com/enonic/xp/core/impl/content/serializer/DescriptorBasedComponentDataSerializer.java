@@ -2,34 +2,55 @@ package com.enonic.xp.core.impl.content.serializer;
 
 
 import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.DescriptorBasedComponent;
 
-public abstract class DescriptorBasedComponentDataSerializer<TO_DATA_INPUT extends DescriptorBasedComponent, FROM_DATA_OUTPUT extends DescriptorBasedComponent>
-    extends ComponentDataSerializer<TO_DATA_INPUT, FROM_DATA_OUTPUT>
+abstract class DescriptorBasedComponentDataSerializer<DATA extends DescriptorBasedComponent>
+    extends ComponentDataSerializer<DATA>
 {
+    public static final String DESCRIPTOR = "descriptor";
+
+    public static final String CONFIG = "config";
+
     protected void applyComponentToData( final DescriptorBasedComponent component, final PropertySet asData )
     {
-        super.applyComponentToData( component, asData );
-        asData.ifNotNull().setString( "template", component.getDescriptor() != null ? component.getDescriptor().toString() : null );
-        if ( component.getConfig() != null )
+        if ( !component.hasDescriptor() )
         {
-            asData.addSet( "config", component.getConfig().getRoot().copy( asData.getTree() ) );
+            return;
+        }
+
+        final PropertySet specBlock = asData.addSet( component.getType().toString() );
+
+        specBlock.setString( DESCRIPTOR, component.getDescriptor().toString() );
+
+        if ( component.hasConfig() )
+        {
+            final PropertySet configSet = specBlock.addSet( CONFIG );
+            final String appKeyAsString = appNameToConfigPropertyName( component.getDescriptor().getApplicationKey().toString() );
+
+            configSet.addSet( appKeyAsString, component.getConfig().getRoot().copy( asData.getTree() ) );
         }
     }
 
-    protected void applyComponentFromData( final DescriptorBasedComponent.Builder component, final PropertySet asData )
+    public static PropertyTree getConfigFromData( final PropertySet specialBlockSet, final DescriptorKey descriptorKey )
     {
-        super.applyComponentFromData( component, asData );
-        if ( asData.hasProperty( "template" ) )
+        if ( specialBlockSet.hasProperty( CONFIG ) )
         {
-            component.descriptor( toDescriptorKey( asData.getString( "template" ) ) );
+            final PropertySet configSet = specialBlockSet.getSet( CONFIG );
+            final String appKeyAsString = appNameToConfigPropertyName( descriptorKey.getApplicationKey().toString() );
+
+            if ( configSet.hasProperty( appKeyAsString ) )
+            {
+                return configSet.getSet( appKeyAsString ).toTree();
+            }
         }
-        if ( asData.hasProperty( "config" ) )
-        {
-            component.config( asData.getSet( "config" ).toTree() );
-        }
+
+        return null;
     }
 
-    protected abstract DescriptorKey toDescriptorKey( final String s );
+    public static String appNameToConfigPropertyName( final String appKey )
+    {
+        return appKey.replace( ".", "-" );
+    }
 }

@@ -80,7 +80,7 @@ var expectedJson = {
                 "components": [
                     {
                         "name": "mypart",
-                        "path": "top/0",
+                        "path": "/top/0",
                         "type": "part",
                         "descriptor": "myapplication:mypart",
                         "config": {
@@ -89,7 +89,7 @@ var expectedJson = {
                     },
                     {
                         "name": "mylayout",
-                        "path": "top/1",
+                        "path": "/top/1",
                         "type": "layout",
                         "descriptor": "myapplication:mylayout",
                         "config": {
@@ -100,7 +100,7 @@ var expectedJson = {
                                 "components": [
                                     {
                                         "name": "mypart",
-                                        "path": "top/1/bottom/0",
+                                        "path": "/top/1/bottom/0",
                                         "type": "part",
                                         "descriptor": "myapplication:mypart",
                                         "config": {

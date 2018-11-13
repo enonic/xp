@@ -62,11 +62,11 @@ final class ComponentHandlerWorker
             pageTemplate = getDefaultPageTemplate( content.getType(), site );
             pageController = pageTemplate.getController();
         }
-        else if ( content.getPage().hasController() )
+        else if ( content.getPage().hasDescriptor() )
         {
             // content with controller set but no page-template (customized)
             pageTemplate = null;
-            pageController = content.getPage().getController();
+            pageController = content.getPage().getDescriptor();
         }
         else if ( content.getType().isFragment() )
         {

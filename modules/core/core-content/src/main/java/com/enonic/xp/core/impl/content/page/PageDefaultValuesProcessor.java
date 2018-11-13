@@ -42,7 +42,7 @@ final class PageDefaultValuesProcessor
 
     void applyDefaultValues( final Page editedPage, final Page sourcePage )
     {
-        if ( editedPage.getController() != null && !Objects.equals( editedPage.getController(), sourcePage.getController() ) )
+        if ( editedPage.getDescriptor() != null && !Objects.equals( editedPage.getDescriptor(), sourcePage.getDescriptor() ) )
         {
             applyPageDefaultValues( editedPage );
         }
@@ -55,7 +55,7 @@ final class PageDefaultValuesProcessor
 
     void applyDefaultValues( final Page newPage )
     {
-        if ( newPage.getController() != null )
+        if ( newPage.getDescriptor() != null )
         {
             applyPageDefaultValues( newPage );
         }
@@ -142,15 +142,19 @@ final class PageDefaultValuesProcessor
     private void applyPageDefaultValues( final Page editedPage )
     {
         final PropertyTree pageData = editedPage.getConfig();
-        if ( editedPage.getController() == null )
+
+        if ( editedPage.getDescriptor() == null )
         {
             return;
         }
-        final PageDescriptor pageForm = pageDescriptorService.getByKey( editedPage.getController() );
+
+        final PageDescriptor pageForm = pageDescriptorService.getByKey( editedPage.getDescriptor() );
+
         if ( pageForm == null || pageForm.getConfig() == null )
         {
             return;
         }
+
         formDefaultValuesProcessor.setDefaultValues( pageForm.getConfig(), pageData );
     }
 

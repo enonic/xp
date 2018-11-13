@@ -9,7 +9,9 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPropertyNames;
+import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
+import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.Node;
@@ -17,14 +19,24 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.NodesHasChildrenResult;
+import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.region.LayoutDescriptorService;
+import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeName;
 
-public class ContentNodeTranslatorImplTest
+public class ContentNodeTranslatorTest
 {
-
-    private ContentNodeTranslatorImpl contentNodeTranslator;
+    private ContentNodeTranslator contentNodeTranslator;
 
     private NodeService nodeService;
+
+    private PartDescriptorService partDescriptorService;
+
+    private LayoutDescriptorService layoutDescriptorService;
+
+    private ContentService contentService;
+
+    private PageDescriptorService pageDescriptorService;
 
     public static final NodeId ID_1 = NodeId.from( "id1" );
 
@@ -36,9 +48,20 @@ public class ContentNodeTranslatorImplTest
     public void setUp()
         throws Exception
     {
-        this.contentNodeTranslator = new ContentNodeTranslatorImpl();
         this.nodeService = Mockito.mock( NodeService.class );
-        this.contentNodeTranslator.setNodeService( nodeService );
+        this.partDescriptorService = Mockito.mock( PartDescriptorService.class );
+        this.layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
+        this.contentService = Mockito.mock( ContentService.class );
+        this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
+
+        final ContentDataSerializer contentDataSerializer = ContentDataSerializer.create().
+            contentService( contentService ).
+            layoutDescriptorService( layoutDescriptorService ).
+            pageDescriptorService( pageDescriptorService ).
+            partDescriptorService( partDescriptorService ).
+            build();
+
+        this.contentNodeTranslator = new ContentNodeTranslator( nodeService, contentDataSerializer );
     }
 
     @Test

@@ -10,6 +10,6 @@ public final class FragmentComponentType
 
     private FragmentComponentType()
     {
-        super( "fragment", FragmentComponent.class );
+        super( "fragment" );
     }
 }

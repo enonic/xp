@@ -27,7 +27,7 @@ public final class PageMapper
     private void serialize( final MapGenerator gen, final Page value )
     {
         gen.value( "template", value.getTemplate() );
-        gen.value( "controller", value.getController() );
+        gen.value( "descriptor", value.getDescriptor() );
 
         if ( value.hasConfig() )
         {

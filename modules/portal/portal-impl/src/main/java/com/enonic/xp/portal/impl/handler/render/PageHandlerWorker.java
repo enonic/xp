@@ -89,9 +89,9 @@ final class PageHandlerWorker
                     pageTemplate = getDefaultPageTemplate( content.getType(), site );
                 }
             }
-            else if ( page.hasController() )
+            else if ( page.hasDescriptor() )
             {
-                pageDescriptor = getPageDescriptor( page.getController() );
+                pageDescriptor = getPageDescriptor( page.getDescriptor() );
             }
 
         }
