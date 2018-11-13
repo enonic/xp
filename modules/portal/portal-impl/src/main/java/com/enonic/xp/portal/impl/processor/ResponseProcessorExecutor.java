@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.filter;
+package com.enonic.xp.portal.impl.processor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,27 +18,27 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceNotFoundException;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
-import com.enonic.xp.site.filter.FilterDescriptor;
+import com.enonic.xp.site.processor.ResponseProcessorDescriptor;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 
-public final class FilterExecutor
+public final class ResponseProcessorExecutor
 {
-    private final static Logger LOG = LoggerFactory.getLogger( FilterExecutor.class );
+    private final static Logger LOG = LoggerFactory.getLogger( ResponseProcessorExecutor.class );
 
-    private static final String RESPONSE_FILTER_METHOD = "responseFilter";
+    private static final String RESPONSE_PROCESSOR_METHOD = "responseProcessor";
 
     private final PortalScriptService scriptService;
 
-    public FilterExecutor( final PortalScriptService scriptService )
+    public ResponseProcessorExecutor( final PortalScriptService scriptService )
     {
         this.scriptService = scriptService;
     }
 
-    public PortalResponse executeResponseFilter( final FilterDescriptor filter, final PortalRequest request, final PortalResponse response )
+    public PortalResponse execute( final ResponseProcessorDescriptor filter, final PortalRequest request, final PortalResponse response )
     {
         final String filterName = filter.getName();
-        final String filterJsPath = "/site/filters/" + filterName + ".js";
+        final String filterJsPath = "/site/processors/" + filterName + ".js";
         final ResourceKey script = ResourceKey.from( filter.getApplication(), filterJsPath );
         final ScriptExports filterExports;
         try
@@ -51,10 +51,11 @@ public final class FilterExecutor
             throw e;
         }
 
-        final boolean exists = filterExports.hasMethod( RESPONSE_FILTER_METHOD );
+        final boolean exists = filterExports.hasMethod( RESPONSE_PROCESSOR_METHOD );
         if ( !exists )
         {
-            throw new RenderException( "Missing exported function [{0}] in response filter [{1}]", RESPONSE_FILTER_METHOD, filterJsPath );
+            throw new RenderException( "Missing exported function [{0}] in response filter [{1}]", RESPONSE_PROCESSOR_METHOD,
+                                       filterJsPath );
         }
 
         final ApplicationKey previousApp = request.getApplicationKey();
@@ -79,7 +80,7 @@ public final class FilterExecutor
         final PortalRequestMapper requestMapper = new PortalRequestMapper( request );
         final PortalResponseMapper responseMapper = new PortalResponseMapper( response );
 
-        final ScriptValue result = filterExports.executeMethod( RESPONSE_FILTER_METHOD, requestMapper, responseMapper );
+        final ScriptValue result = filterExports.executeMethod( RESPONSE_PROCESSOR_METHOD, requestMapper, responseMapper );
         final PortalResponseSerializer portalResponseSerializer = new PortalResponseSerializer( result );
 
         if ( unmodifiedByteSourceBody( response, result ) )

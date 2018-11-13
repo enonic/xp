@@ -6,8 +6,8 @@ import com.google.common.annotations.Beta;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.site.filter.FilterDescriptors;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptors;
+import com.enonic.xp.site.processor.ResponseProcessorDescriptors;
 
 @Beta
 public final class SiteDescriptor
@@ -18,7 +18,7 @@ public final class SiteDescriptor
 
     private final XDataMappings xDataMappings;
 
-    private final FilterDescriptors filterDescriptors;
+    private final ResponseProcessorDescriptors responseProcessors;
 
     private final ControllerMappingDescriptors mappingDescriptors;
 
@@ -26,7 +26,7 @@ public final class SiteDescriptor
     {
         this.form = builder.form;
         this.xDataMappings = builder.xDataMappings;
-        this.filterDescriptors = builder.filterDescriptors != null ? builder.filterDescriptors : FilterDescriptors.empty();
+        this.responseProcessors = builder.responseProcessors != null ? builder.responseProcessors : ResponseProcessorDescriptors.empty();
         this.mappingDescriptors = builder.mappingDescriptors != null ? builder.mappingDescriptors : ControllerMappingDescriptors.empty();
     }
 
@@ -40,9 +40,9 @@ public final class SiteDescriptor
         return xDataMappings;
     }
 
-    public FilterDescriptors getFilterDescriptors()
+    public ResponseProcessorDescriptors getResponseProcessors()
     {
-        return filterDescriptors;
+        return responseProcessors;
     }
 
     public ControllerMappingDescriptors getMappingDescriptors()
@@ -71,7 +71,7 @@ public final class SiteDescriptor
 
         private XDataMappings xDataMappings;
 
-        private FilterDescriptors filterDescriptors;
+        private ResponseProcessorDescriptors responseProcessors;
 
         private ControllerMappingDescriptors mappingDescriptors;
 
@@ -83,7 +83,7 @@ public final class SiteDescriptor
         {
             this.form = siteDescriptor.form != null ? siteDescriptor.form.copy() : null;
             this.xDataMappings = siteDescriptor.xDataMappings;
-            this.filterDescriptors = siteDescriptor.filterDescriptors;
+            this.responseProcessors = siteDescriptor.responseProcessors;
             this.mappingDescriptors = siteDescriptor.mappingDescriptors;
         }
 
@@ -99,9 +99,9 @@ public final class SiteDescriptor
             return this;
         }
 
-        public Builder filterDescriptors( final FilterDescriptors filterDescriptors )
+        public Builder responseProcessors( final ResponseProcessorDescriptors responseProcessors )
         {
-            this.filterDescriptors = filterDescriptors;
+            this.responseProcessors = responseProcessors;
             return this;
         }
 

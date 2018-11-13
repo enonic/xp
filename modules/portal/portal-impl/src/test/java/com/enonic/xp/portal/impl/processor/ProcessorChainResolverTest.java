@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.filter;
+package com.enonic.xp.portal.impl.processor;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -13,25 +13,25 @@ import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
-import com.enonic.xp.site.filter.FilterDescriptor;
-import com.enonic.xp.site.filter.FilterDescriptors;
+import com.enonic.xp.site.processor.ResponseProcessorDescriptor;
+import com.enonic.xp.site.processor.ResponseProcessorDescriptors;
 
 import static org.junit.Assert.*;
 
-public class FilterChainResolverImplTest
+public class ProcessorChainResolverTest
 {
     private PortalRequest portalRequest;
 
     private SiteService siteService;
 
-    private FilterChainResolverImpl resolver;
+    private ProcessorChainResolver resolver;
 
     @Before
     public void before()
     {
         portalRequest = new PortalRequest();
         siteService = Mockito.mock( SiteService.class );
-        resolver = new FilterChainResolverImpl();
+        resolver = new ProcessorChainResolver();
         resolver.setSiteService( siteService );
     }
 
@@ -52,36 +52,36 @@ public class FilterChainResolverImplTest
             parentPath( ContentPath.ROOT ).
             build() );
 
-        FilterDescriptor fd12 = FilterDescriptor.create().application( ak1 ).name( "ak1-2" ).order( 2 ).build();
-        FilterDescriptor fd13 = FilterDescriptor.create().application( ak1 ).name( "ak1-3" ).order( 3 ).build();
-        FilterDescriptor fd15 = FilterDescriptor.create().application( ak1 ).name( "ak1-5" ).order( 5 ).build();
+        ResponseProcessorDescriptor fd12 = ResponseProcessorDescriptor.create().application( ak1 ).name( "ak1-2" ).order( 2 ).build();
+        ResponseProcessorDescriptor fd13 = ResponseProcessorDescriptor.create().application( ak1 ).name( "ak1-3" ).order( 3 ).build();
+        ResponseProcessorDescriptor fd15 = ResponseProcessorDescriptor.create().application( ak1 ).name( "ak1-5" ).order( 5 ).build();
 
         SiteDescriptor sd1 = SiteDescriptor.create().
-            filterDescriptors( FilterDescriptors.from( fd13, fd15, fd12 ) ).
+            responseProcessors( ResponseProcessorDescriptors.from( fd13, fd15, fd12 ) ).
             build();
         Mockito.when( siteService.getDescriptor( Mockito.eq( ak1 ) ) ).thenReturn( sd1 );
 
-        FilterDescriptor fd21 = FilterDescriptor.create().application( ak2 ).name( "ak2-1" ).order( 1 ).build();
-        FilterDescriptor fd22 = FilterDescriptor.create().application( ak2 ).name( "ak1-2" ).order( 2 ).build();
-        FilterDescriptor fd23 = FilterDescriptor.create().application( ak2 ).name( "ak2-3" ).order( 3 ).build();
+        ResponseProcessorDescriptor fd21 = ResponseProcessorDescriptor.create().application( ak2 ).name( "ak2-1" ).order( 1 ).build();
+        ResponseProcessorDescriptor fd22 = ResponseProcessorDescriptor.create().application( ak2 ).name( "ak1-2" ).order( 2 ).build();
+        ResponseProcessorDescriptor fd23 = ResponseProcessorDescriptor.create().application( ak2 ).name( "ak2-3" ).order( 3 ).build();
 
         SiteDescriptor sd2 = SiteDescriptor.create().
-            filterDescriptors( FilterDescriptors.from( fd22, fd23, fd21 ) ).
+            responseProcessors( ResponseProcessorDescriptors.from( fd22, fd23, fd21 ) ).
             build();
         Mockito.when( siteService.getDescriptor( Mockito.eq( ak2 ) ) ).thenReturn( sd2 );
 
-        FilterDescriptor fd32 = FilterDescriptor.create().application( ak3 ).name( "ak3-2" ).order( 2 ).build();
+        ResponseProcessorDescriptor fd32 = ResponseProcessorDescriptor.create().application( ak3 ).name( "ak3-2" ).order( 2 ).build();
 
         SiteDescriptor sd3 = SiteDescriptor.create().
-            filterDescriptors( FilterDescriptors.from( fd32 ) ).
+            responseProcessors( ResponseProcessorDescriptors.from( fd32 ) ).
             build();
         Mockito.when( siteService.getDescriptor( Mockito.eq( ak3 ) ) ).thenReturn( sd3 );
 
-        FilterDescriptors filters = resolver.resolve( portalRequest );
+        ResponseProcessorDescriptors filters = resolver.resolve( portalRequest );
 
         assertEquals( 7, filters.getSize() );
 
-        FilterDescriptor fd = filters.get( 0 );
+        ResponseProcessorDescriptor fd = filters.get( 0 );
         assertEquals( 1, fd.getOrder() );
         assertEquals( ak2, fd.getApplication() );
 

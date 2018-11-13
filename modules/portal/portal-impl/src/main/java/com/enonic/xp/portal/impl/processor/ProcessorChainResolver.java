@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.filter;
+package com.enonic.xp.portal.impl.processor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,37 +10,39 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
-import com.enonic.xp.site.filter.FilterDescriptor;
-import com.enonic.xp.site.filter.FilterDescriptors;
+import com.enonic.xp.site.processor.ResponseProcessorDescriptor;
+import com.enonic.xp.site.processor.ResponseProcessorDescriptors;
 
-@Component
-public final class FilterChainResolverImpl
-    implements FilterChainResolver
+@Component(service = ProcessorChainResolver.class)
+public class ProcessorChainResolver
 {
     private SiteService siteService;
 
-    @Override
-    public FilterDescriptors resolve( PortalRequest request )
+    public ProcessorChainResolver()
+    {
+    }
+
+    public ResponseProcessorDescriptors resolve( PortalRequest request )
     {
         SiteDescriptor siteDescriptor;
-        List<FilterDescriptor> filterChain = new ArrayList<>();
+        List<ResponseProcessorDescriptor> filterChain = new ArrayList<>();
 
         for ( SiteConfig siteConfig : request.getSite().getSiteConfigs() )
         {
             siteDescriptor = siteService.getDescriptor( siteConfig.getApplicationKey() );
             if ( siteDescriptor != null )
             {
-                for ( FilterDescriptor filterDescriptor : siteDescriptor.getFilterDescriptors() )
+                for ( ResponseProcessorDescriptor filterDescriptor : siteDescriptor.getResponseProcessors() )
                 {
                     filterChain.add( this.findIndexToInsert( filterDescriptor, filterChain ), filterDescriptor );
                 }
             }
         }
 
-        return FilterDescriptors.from( filterChain );
+        return ResponseProcessorDescriptors.from( filterChain );
     }
 
-    private int findIndexToInsert( FilterDescriptor fd, List<FilterDescriptor> list )
+    private int findIndexToInsert( ResponseProcessorDescriptor fd, List<ResponseProcessorDescriptor> list )
     {
         int index = 0;
         // if list is empty or first item's order is bigger than the new ones, add to 0 index
