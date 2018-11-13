@@ -11,7 +11,7 @@ repositories {
 }
 
 dependencies {
-    compile 'org.dm.gradle:gradle-bundle-plugin:0.6.3'
+    compile 'org.dm.gradle:gradle-bundle-plugin:0.10.0'
     compile 'com.moowork.gradle:gradle-node-plugin:1.0.1'
     compile 'org.eclipse.jgit:org.eclipse.jgit:3.7.0.201502260915-r'
     compile 'com.netflix.nebula:gradle-extra-configurations-plugin:2.2.2'

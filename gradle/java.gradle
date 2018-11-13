@@ -45,7 +45,7 @@ task sourcesJar( type: Jar ) {
     classifier = 'sources'
 }
 
-sourceCompatibility = '1.8'
+sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = sourceCompatibility
 
 test {
