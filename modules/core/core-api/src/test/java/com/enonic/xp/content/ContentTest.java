@@ -63,7 +63,7 @@ public class ContentTest
         Content.create().
             path( MY_CONTENT_PATH ).
             page( Page.create().
-                controller( DescriptorKey.from( "abc:abc" ) ).
+                descriptor( DescriptorKey.from( "abc:abc" ) ).
                 template( PageTemplateKey.from( "123" ) ).
                 config( new PropertyTree() ).
                 regions( PageRegions.create().build() ).

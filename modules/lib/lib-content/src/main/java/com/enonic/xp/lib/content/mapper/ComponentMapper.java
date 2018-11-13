@@ -75,12 +75,6 @@ public final class ComponentMapper
     private void serialize( final MapGenerator gen, final FragmentComponent comp )
     {
         gen.value( "fragment", comp.getFragment() );
-        if ( comp.getConfig() != null )
-        {
-            gen.map( "config" );
-            new PropertyTreeMapper( comp.getConfig() ).serialize( gen );
-            gen.end();
-        }
     }
 
     private void serialize( final MapGenerator gen, final TextComponent comp )

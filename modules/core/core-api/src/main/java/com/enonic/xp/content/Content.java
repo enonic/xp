@@ -81,8 +81,8 @@ public class Content
 
         if ( builder.page != null )
         {
-            Preconditions.checkArgument( !( builder.page.getController() != null && builder.page.getTemplate() != null ),
-                                         "A Page cannot have both have a controller and a template set" );
+            Preconditions.checkArgument( !( builder.page.getDescriptor() != null && builder.page.getTemplate() != null ),
+                                         "A Page cannot have both have a descriptor and a template set" );
         }
 
         if ( builder.type == null )

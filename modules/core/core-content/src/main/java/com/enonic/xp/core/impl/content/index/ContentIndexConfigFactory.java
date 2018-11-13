@@ -74,11 +74,11 @@ public class ContentIndexConfigFactory
 
     private Form getPageConfigForm( final PageDescriptorService pageDescriptorService, final Page page )
     {
-        if ( pageDescriptorService == null || page == null || page.getController() == null )
+        if ( pageDescriptorService == null || page == null || page.getDescriptor() == null )
         {
             return null;
         }
-        return pageDescriptorService.getByKey( page.getController() ).getConfig();
+        return pageDescriptorService.getByKey( page.getDescriptor() ).getConfig();
     }
 
     private Collection<Form> getSiteConfigForms( final SiteService siteService, final SiteConfigs siteConfigs )

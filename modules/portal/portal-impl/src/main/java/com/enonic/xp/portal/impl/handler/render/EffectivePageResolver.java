@@ -38,7 +38,7 @@ final class EffectivePageResolver
             else
             {
                 return Page.create( template.getPage() ).
-                    controller( null ).
+                    descriptor( null ).
                     template( template.getKey() ).
                     build();
             }
@@ -47,12 +47,12 @@ final class EffectivePageResolver
         {
             final Page contentPage = content.getPage();
             final Page.Builder effectivePage = Page.create( template.getPage() ).
-                controller( null ).
+                descriptor( null ).
                 template( contentPage.getTemplate() );
 
-            if ( contentPage.hasController() )
+            if ( contentPage.hasDescriptor() )
             {
-                effectivePage.controller( contentPage.getController() );
+                effectivePage.descriptor( contentPage.getDescriptor() );
                 effectivePage.template( null );
             }
             if ( contentPage.hasConfig() )

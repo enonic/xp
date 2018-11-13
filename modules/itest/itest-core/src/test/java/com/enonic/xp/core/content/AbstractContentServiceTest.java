@@ -41,7 +41,6 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.content.ContentInitializer;
-import com.enonic.xp.core.impl.content.ContentNodeTranslatorImpl;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
 import com.enonic.xp.core.impl.media.MediaInfoServiceImpl;
@@ -147,8 +146,6 @@ public class AbstractContentServiceTest
     protected MixinService mixinService;
 
     protected XDataService xDataService;
-
-    protected ContentNodeTranslatorImpl translator;
 
     protected ContentTypeServiceImpl contentTypeService;
 
@@ -284,9 +281,6 @@ public class AbstractContentServiceTest
         this.contentTypeService = new ContentTypeServiceImpl();
         contentTypeService.setMixinService( mixinService );
 
-        this.translator = new ContentNodeTranslatorImpl();
-        this.translator.setNodeService( this.nodeService );
-
         this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
         this.partDescriptorService = Mockito.mock( PartDescriptorService.class );
         this.layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
@@ -297,26 +291,16 @@ public class AbstractContentServiceTest
         this.contentService.setSiteService( siteService );
         this.contentService.setContentTypeService( contentTypeService );
         this.contentService.setxDataService( xDataService );
-        this.contentService.setTranslator( this.translator );
         this.contentService.setPageDescriptorService( this.pageDescriptorService );
         this.contentService.setPartDescriptorService( this.partDescriptorService );
         this.contentService.setLayoutDescriptorService( this.layoutDescriptorService );
         this.contentService.setFormDefaultValuesProcessor( ( form, data ) -> {
         } );
+        this.contentService.setIndexService( indexService );
+        this.contentService.setNodeService( nodeService );
+        this.contentService.setRepositoryService( repositoryService );
+        this.contentService.initialize();
 
-
-        initializeRepository();
-    }
-
-
-    private void initializeRepository()
-    {
-        ContentInitializer.create().
-            setIndexService( indexService ).
-            setNodeService( nodeService ).
-            setRepositoryService( repositoryService ).
-            build().
-            initialize();
         waitForClusterHealth();
     }
 

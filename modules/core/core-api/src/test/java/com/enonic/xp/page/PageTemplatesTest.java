@@ -62,7 +62,7 @@ public class PageTemplatesTest
             id( ContentId.from( "id" ) ).
             parentPath( ContentPath.from( "path" ) ).
             page( Page.create().
-                controller( DescriptorKey.from( "app:page1" ) ).
+                descriptor( DescriptorKey.from( "app:page1" ) ).
                 regions( PageRegions.create().build() ).
                 build() ).
             build();
@@ -77,7 +77,7 @@ public class PageTemplatesTest
             name( "testContentName2" ).
             parentPath( ContentPath.from( "path2" ) ).
             page( Page.create().
-                controller( DescriptorKey.from( "app:page2" ) ).
+                descriptor( DescriptorKey.from( "app:page2" ) ).
                 regions( PageRegions.create().build() ).
                 build() ).
             build();
@@ -92,7 +92,7 @@ public class PageTemplatesTest
             name( "testContentName3" ).
             parentPath( ContentPath.from( "path3" ) ).
             page( Page.create().
-                controller( DescriptorKey.from( "app:page3" ) ).
+                descriptor( DescriptorKey.from( "app:page3" ) ).
                 regions( PageRegions.create().build() ).
                 build() ).
             build();

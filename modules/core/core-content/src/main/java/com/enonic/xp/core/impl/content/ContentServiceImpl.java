@@ -86,6 +86,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.content.processor.ContentProcessors;
+import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.form.FormDefaultValuesProcessor;
@@ -163,6 +164,8 @@ public class ContentServiceImpl
 
     private LayoutDescriptorService layoutDescriptorService;
 
+    private ContentDataSerializer contentDataSerializer;
+
     public ContentServiceImpl()
     {
         final ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().
@@ -182,6 +185,15 @@ public class ContentServiceImpl
             setRepositoryService( repositoryService ).
             build().
             initialize();
+
+        this.contentDataSerializer = ContentDataSerializer.create().
+            contentService( this ).
+            layoutDescriptorService( layoutDescriptorService ).
+            pageDescriptorService( pageDescriptorService ).
+            partDescriptorService( partDescriptorService ).
+            build();
+
+        this.translator = new ContentNodeTranslator( nodeService, contentDataSerializer );
     }
 
     @Override
@@ -213,6 +225,7 @@ public class ContentServiceImpl
             pageDescriptorService( this.pageDescriptorService ).
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
+            contentDataSerializer( this.contentDataSerializer ).
             params( createContentParams ).
             build().
             execute();
@@ -246,6 +259,7 @@ public class ContentServiceImpl
             pageDescriptorService( this.pageDescriptorService ).
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
+            contentDataSerializer( this.contentDataSerializer ).
             params( params ).
             build().
             execute();
@@ -286,6 +300,7 @@ public class ContentServiceImpl
             pageDescriptorService( this.pageDescriptorService ).
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
+            contentDataSerializer( this.contentDataSerializer ).
             build().
             execute();
     }
@@ -304,6 +319,7 @@ public class ContentServiceImpl
             pageDescriptorService( this.pageDescriptorService ).
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
+            contentDataSerializer( this.contentDataSerializer ).
             build().
             execute();
     }
@@ -323,6 +339,7 @@ public class ContentServiceImpl
             siteService( this.siteService ).
             xDataService( this.xDataService ).
             contentProcessors( this.contentProcessors ).
+            contentDataSerializer( this.contentDataSerializer ).
             build().
             execute();
     }
@@ -727,6 +744,7 @@ public class ContentServiceImpl
             pageDescriptorService( this.pageDescriptorService ).
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
+            contentDataSerializer( this.contentDataSerializer ).
             build().
             execute();
     }
@@ -977,7 +995,7 @@ public class ContentServiceImpl
     public ContentIds getOutboundDependencies( final ContentId id )
     {
         final ContentOutboundDependenciesIdsResolver contentOutboundDependenciesIdsResolver =
-            new ContentOutboundDependenciesIdsResolver( this );
+            new ContentOutboundDependenciesIdsResolver( this, contentDataSerializer );
 
         return contentOutboundDependenciesIdsResolver.resolve( id );
     }
@@ -1057,6 +1075,7 @@ public class ContentServiceImpl
             pageDescriptorService( this.pageDescriptorService ).
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
+            contentDataSerializer( this.contentDataSerializer ).
             siteService( this.siteService ).
             xDataService( this.xDataService ).
             contentProcessors( this.contentProcessors ).
@@ -1119,12 +1138,6 @@ public class ContentServiceImpl
     public void setSiteService( final SiteService siteService )
     {
         this.siteService = siteService;
-    }
-
-    @Reference
-    public void setTranslator( final ContentNodeTranslator translator )
-    {
-        this.translator = translator;
     }
 
     @SuppressWarnings("unused")

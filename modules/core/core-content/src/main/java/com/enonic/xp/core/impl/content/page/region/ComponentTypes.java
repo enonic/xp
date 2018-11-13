@@ -15,11 +15,11 @@ public final class ComponentTypes
 {
     private final static ComponentTypes INSTANCE = new ComponentTypes();
 
-    private final LinkedHashMap<String, ComponentType> bySimpleClassName;
+    private final LinkedHashMap<String, ComponentType> byShortName;
 
     private ComponentTypes()
     {
-        this.bySimpleClassName = Maps.newLinkedHashMap();
+        this.byShortName = Maps.newLinkedHashMap();
         register( LayoutComponentType.INSTANCE );
         register( ImageComponentType.INSTANCE );
         register( PartComponentType.INSTANCE );
@@ -29,11 +29,11 @@ public final class ComponentTypes
 
     private void register( final ComponentType type )
     {
-        this.bySimpleClassName.put( type.getComponentClass().getSimpleName(), type );
+        this.byShortName.put( type.toString(), type );
     }
 
-    public static ComponentType bySimpleClassName( final String simpleClassName )
+    public static ComponentType byShortName( final String shortName )
     {
-        return INSTANCE.bySimpleClassName.get( simpleClassName );
+        return INSTANCE.byShortName.get( shortName );
     }
 }
