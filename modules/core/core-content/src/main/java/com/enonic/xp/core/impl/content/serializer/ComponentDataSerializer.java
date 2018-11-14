@@ -8,7 +8,7 @@ import com.enonic.xp.region.Component;
 
 @Beta
 abstract class ComponentDataSerializer<DATA extends Component>
-    extends AbstractDataSetSerializer<DATA, DATA>
+    extends AbstractDataSetSerializer<DATA>
 {
     public static final String COMPONENTS = "components";
 

@@ -9,7 +9,7 @@ import com.enonic.xp.schema.xdata.XDataName;
 import static com.enonic.xp.content.ContentPropertyNames.EXTRA_DATA;
 
 final class ExtraDataSerializer
-    extends AbstractDataSetSerializer<ExtraDatas, ExtraDatas>
+    extends AbstractDataSetSerializer<ExtraDatas>
 {
     @Override
     public void toData( final ExtraDatas extraDatas, final PropertySet parent )

@@ -13,6 +13,9 @@ import com.enonic.xp.region.ComponentType;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.region.RegionDescriptor;
 
+import static com.enonic.xp.core.impl.content.serializer.ComponentDataSerializer.PATH;
+import static com.enonic.xp.core.impl.content.serializer.ComponentDataSerializer.TYPE;
+
 final class RegionDataSerializer
 {
     private final ComponentDataSerializerProvider componentDataSerializerProvider;
@@ -70,7 +73,7 @@ final class RegionDataSerializer
 
     private boolean isItemChildOf( final PropertySet item, final String parentPath )
     {
-        final String itemPath = item.getString( ComponentDataSerializer.PATH );
+        final String itemPath = item.getString( PATH );
 
         return itemPath.startsWith( parentPath ) && ( getLevel( itemPath ) - getLevel( parentPath ) == 1 );
     }
@@ -82,7 +85,7 @@ final class RegionDataSerializer
 
     Component getComponent( final PropertySet componentData, final List<PropertySet> componentsAsData )
     {
-        final ComponentType type = ComponentTypes.byShortName( componentData.getString( ComponentDataSerializer.TYPE ) );
+        final ComponentType type = ComponentTypes.byShortName( componentData.getString( TYPE ) );
         final ComponentDataSerializer componentDataSerializer = componentDataSerializerProvider.getDataSerializer( type );
 
         if ( componentDataSerializer instanceof LayoutComponentDataSerializer )
@@ -96,7 +99,7 @@ final class RegionDataSerializer
 
     private List<PropertySet> getDescendantsOf( final PropertySet item, final List<PropertySet> componentsAsData )
     {
-        final String parentPath = item.getString( ComponentDataSerializer.PATH );
+        final String parentPath = item.getString( PATH );
 
         return componentsAsData.stream().filter( componentAsData -> isItemDescendantOf( componentAsData, parentPath ) ).collect(
             Collectors.toList() );
@@ -104,7 +107,7 @@ final class RegionDataSerializer
 
     private boolean isItemDescendantOf( final PropertySet item, final String parentPath )
     {
-        final String itemPath = item.getString( ComponentDataSerializer.PATH );
+        final String itemPath = item.getString( PATH );
 
         return itemPath.startsWith( parentPath );
     }

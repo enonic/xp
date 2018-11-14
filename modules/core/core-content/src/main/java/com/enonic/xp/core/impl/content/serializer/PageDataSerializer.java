@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.content.serializer;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,7 +33,7 @@ import static com.enonic.xp.core.impl.content.serializer.DescriptorBasedComponen
 import static com.enonic.xp.core.impl.content.serializer.DescriptorBasedComponentDataSerializer.getConfigFromData;
 
 final class PageDataSerializer
-    extends AbstractDataSetSerializer<Page, Page>
+    extends AbstractDataSetSerializer<Page>
 {
     private static final String TEMPLATE = "template";
 
@@ -124,14 +125,35 @@ final class PageDataSerializer
             asSet.getProperties( COMPONENTS ).stream().filter( Property::hasNotNullValue ).map( item -> item.getSet() ).collect(
                 Collectors.toList() );
 
-        if ( componentsAsData.size() > 0 )
+        if ( componentsAsData.size() == 0 )
         {
-            final PropertySet pageData = componentsAsData.get( 0 );
-            componentsAsData.remove( 0 );
-            return fromData( pageData, componentsAsData );
+            return null;
         }
 
-        return null;
+        if ( !isRootComponent( componentsAsData.get( 0 ) ) )
+        {
+            componentsAsData.sort( Comparator.comparing( this::getComponentPath ) );
+        }
+
+        return fromData( componentsAsData );
+    }
+
+    private boolean isRootComponent( final PropertySet componentData )
+    {
+        return getComponentPath( componentData ).equals( ComponentPath.DIVIDER );
+    }
+
+    private String getComponentPath( final PropertySet componentData )
+    {
+        return componentData.getString( PATH );
+    }
+
+    private Page fromData( final List<PropertySet> componentsAsData )
+    {
+        final PropertySet pageData = componentsAsData.get( 0 );
+        componentsAsData.remove( 0 );
+
+        return fromData( pageData, componentsAsData );
     }
 
     private Page fromData( final PropertySet pageData, final List<PropertySet> componentsAsData )

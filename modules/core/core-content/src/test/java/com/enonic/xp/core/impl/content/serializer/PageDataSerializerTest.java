@@ -1,10 +1,16 @@
 package com.enonic.xp.core.impl.content.serializer;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.core.impl.content.page.AbstractDataSerializerTest;
+import com.enonic.xp.data.Property;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.page.DescriptorKey;
@@ -23,6 +29,7 @@ import com.enonic.xp.region.RegionDescriptor;
 import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.region.TextComponent;
 
+import static com.enonic.xp.core.impl.content.serializer.ComponentDataSerializer.COMPONENTS;
 import static org.junit.Assert.*;
 
 public class PageDataSerializerTest
@@ -50,57 +57,46 @@ public class PageDataSerializerTest
     @Test
     public void page()
     {
-        final PropertyTree myPartConfig = new PropertyTree();
-        myPartConfig.addString( "some", "config" );
-        final PropertyTree imageConfig = new PropertyTree();
-        imageConfig.addString( "caption", "Caption" );
-        final DescriptorKey pageDescriptorKey = DescriptorKey.from( "app-key:d-name" );
-        final String regionName1 = "top";
-        final String regionName2 = "bottom";
+        final Page page = createPage();
 
-        Region mainRegion1 = Region.create().
-            name( regionName1 ).
-            add( createPartComponent( "MyPart1", "app-descriptor-x:name-x", myPartConfig ) ).
-            add( createLayoutComponent() ).
-            add( LayoutComponent.create().name( "Layout" ).build() ).
-            build();
-
-        Region mainRegion2 = Region.create().
-            name( regionName2 ).
-            add( createPartComponent( "MyPart2", "app-descriptor-y:name-y", myPartConfig ) ).
-            add( createImageComponent( "img-id-x", "Image Component", imageConfig ) ).
-            add( ImageComponent.create().name( "Image" ).build() ).
-            build();
-
-        PageRegions regions = PageRegions.create().
-            add( mainRegion1 ).
-            add( mainRegion2 ).
-            build();
-
-        PropertyTree pageConfig = new PropertyTree();
-        pageConfig.addString( "some", "config" );
-        pageConfig.addDouble( "aim", 42.0 );
-
-        Page page = Page.create().
-            config( pageConfig ).
-            descriptor( pageDescriptorKey ).
-            regions( regions ).
-            build();
-
-        Mockito.when( pageDescriptorService.getByKey( pageDescriptorKey ) ).thenReturn( PageDescriptor.create().
-            config( Form.create().build() ).
-            key( pageDescriptorKey ).
-            regions( RegionDescriptors.create().
-                add( RegionDescriptor.create().name( regionName1 ).build() ).
-                add( RegionDescriptor.create().name( regionName2 ).build() ).
-                build() ).
-            build() );
-
-        PropertyTree pageAsData = new PropertyTree();
+        final PropertyTree pageAsData = new PropertyTree();
         pageDataSerializer.toData( page, pageAsData.getRoot() );
-        Page parsedPage = pageDataSerializer.fromData( pageAsData.getRoot() );
+        final Page parsedPage = pageDataSerializer.fromData( pageAsData.getRoot() );
 
         // verify
+        assertEquals( page, parsedPage );
+    }
+
+    @Test
+    public void page_deserialize_custom_order_of_components()
+    {
+        final Page page = createPage();
+
+        final PropertyTree pageAsData = new PropertyTree();
+        pageDataSerializer.toData( page, pageAsData.getRoot() );
+
+        final List<PropertySet> componentsAsData =
+            pageAsData.getRoot().getProperties( COMPONENTS ).stream().filter( Property::hasNotNullValue ).map(
+                item -> item.getSet() ).collect( Collectors.toList() );
+
+        final List<PropertySet> customOrdercomponentsAsData = new ArrayList<>();
+        customOrdercomponentsAsData.add( componentsAsData.get( 7 ) );
+        customOrdercomponentsAsData.add( componentsAsData.get( 11 ) );
+        customOrdercomponentsAsData.add( componentsAsData.get( 4 ) );
+        customOrdercomponentsAsData.add( componentsAsData.get( 3 ) );
+        customOrdercomponentsAsData.add( componentsAsData.get( 1 ) );
+        customOrdercomponentsAsData.add( componentsAsData.get( 10 ) );
+        customOrdercomponentsAsData.add( componentsAsData.get( 5 ) );
+        customOrdercomponentsAsData.add( componentsAsData.get( 6 ) );
+        customOrdercomponentsAsData.add( componentsAsData.get( 8 ) );
+        customOrdercomponentsAsData.add( componentsAsData.get( 2 ) );
+        customOrdercomponentsAsData.add( componentsAsData.get( 0 ) );
+        customOrdercomponentsAsData.add( componentsAsData.get( 9 ) );
+
+        final PropertySet root = new PropertySet();
+        customOrdercomponentsAsData.forEach( componentData -> root.addSet( COMPONENTS, componentData ) );
+        final Page parsedPage = pageDataSerializer.fromData( root );
+
         assertEquals( page, parsedPage );
     }
 
@@ -160,6 +156,57 @@ public class PageDataSerializerTest
 
         // verify
         assertEquals( page, parsedPage );
+    }
+
+    private Page createPage()
+    {
+        final PropertyTree myPartConfig = new PropertyTree();
+        myPartConfig.addString( "some", "config" );
+        final PropertyTree imageConfig = new PropertyTree();
+        imageConfig.addString( "caption", "Caption" );
+        final DescriptorKey pageDescriptorKey = DescriptorKey.from( "app-key:d-name" );
+        final String regionName1 = "top";
+        final String regionName2 = "bottom";
+
+        final Region mainRegion1 = Region.create().
+            name( regionName1 ).
+            add( createPartComponent( "MyPart1", "app-descriptor-x:name-x", myPartConfig ) ).
+            add( createLayoutComponent() ).
+            add( LayoutComponent.create().name( "Layout" ).build() ).
+            build();
+
+        final Region mainRegion2 = Region.create().
+            name( regionName2 ).
+            add( createPartComponent( "MyPart2", "app-descriptor-y:name-y", myPartConfig ) ).
+            add( createImageComponent( "img-id-x", "Image Component", imageConfig ) ).
+            add( ImageComponent.create().name( "Image" ).build() ).
+            build();
+
+        final PageRegions regions = PageRegions.create().
+            add( mainRegion1 ).
+            add( mainRegion2 ).
+            build();
+
+        final PropertyTree pageConfig = new PropertyTree();
+        pageConfig.addString( "some", "config" );
+        pageConfig.addDouble( "aim", 42.0 );
+
+        final Page page = Page.create().
+            config( pageConfig ).
+            descriptor( pageDescriptorKey ).
+            regions( regions ).
+            build();
+
+        Mockito.when( pageDescriptorService.getByKey( pageDescriptorKey ) ).thenReturn( PageDescriptor.create().
+            config( Form.create().build() ).
+            key( pageDescriptorKey ).
+            regions( RegionDescriptors.create().
+                add( RegionDescriptor.create().name( regionName1 ).build() ).
+                add( RegionDescriptor.create().name( regionName2 ).build() ).
+                build() ).
+            build() );
+
+        return page;
     }
 
     private LayoutComponent createLayoutComponent()
