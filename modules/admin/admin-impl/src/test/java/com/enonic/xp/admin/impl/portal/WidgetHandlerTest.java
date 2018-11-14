@@ -80,6 +80,7 @@ public class WidgetHandlerTest
         this.request.setMethod( HttpMethod.GET );
         this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
         this.request.setEndpointPath( "/_/widgets/demo/mywidget" );
+        this.request.setRawPath( "/admin/tool/_/service/demo/myservice" );
     }
 
     @Test
@@ -199,6 +200,7 @@ public class WidgetHandlerTest
         assertNotNull( this.request.getApplicationKey() );
         assertNotNull( this.request.getSite() );
         assertNotNull( this.request.getContent() );
+        assertEquals( "/admin/tool/_/widgets/demo/test", this.request.getContextPath() );
     }
 
     @Test

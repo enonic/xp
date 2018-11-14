@@ -121,9 +121,11 @@ public class AdminToolHandlerTest
         throws Exception
     {
         this.mockDescriptor( DescriptorKey.from( "app:tool" ), true );
+        this.portalRequest.setBaseUri( "/admin/tool/app/tool" );
         this.portalRequest.setRawPath( "/admin/tool/app/tool/1" );
         WebResponse response = this.handler.doHandle( this.portalRequest, this.webResponse, this.chain );
         assertEquals( this.portalResponse, response );
+        assertEquals( "/admin/tool/app/tool", this.portalRequest.getContextPath() );
     }
 
     private void mockDescriptor( DescriptorKey descriptorKey, boolean hasAccess )

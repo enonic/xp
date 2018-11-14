@@ -44,12 +44,14 @@ public final class AdminToolHandler
         WebHandlerHelper.checkAdminAccess( webRequest );
 
         PortalRequest portalRequest = (PortalRequest) webRequest;
+        portalRequest.setContextPath( portalRequest.getBaseUri() );
+
         final AdminToolHandlerWorker worker = new AdminToolHandlerWorker( portalRequest );
         worker.controllerScriptFactory = this.controllerScriptFactory;
         worker.adminToolDescriptorService = adminToolDescriptorService;
         final DescriptorKey descriptorKey = AdminToolPortalHandler.getDescriptorKey( webRequest );
         worker.descriptorKey = descriptorKey == null ? AdminToolPortalHandler.DEFAULT_DESCRIPTOR_KEY : descriptorKey;
-        
+
         final Trace trace = Tracer.newTrace( "portalRequest" );
         if ( trace == null )
         {
