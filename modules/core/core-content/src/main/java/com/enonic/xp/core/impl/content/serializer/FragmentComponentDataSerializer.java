@@ -31,7 +31,7 @@ final class FragmentComponentDataSerializer
 
         if ( component.getFragment() != null )
         {
-            specBlock.addReference( "id", Reference.from( component.getFragment().toString() ) );
+            specBlock.addReference( ID, Reference.from( component.getFragment().toString() ) );
         }
     }
 
@@ -42,14 +42,11 @@ final class FragmentComponentDataSerializer
 
         final PropertySet specialBlockSet = data.getSet( FragmentComponentType.INSTANCE.toString() );
 
-        if ( specialBlockSet != null )
+        if ( specialBlockSet != null && specialBlockSet.isNotNull( ID ) )
         {
-            if ( specialBlockSet.isNotNull( "id" ) )
-            {
-                final ContentId contentId = ContentId.from( specialBlockSet.getString( ID ) );
-                component.fragment( contentId );
-                component.name( getContentDisplayName( contentId ) );
-            }
+            final ContentId contentId = ContentId.from( specialBlockSet.getString( ID ) );
+            component.fragment( contentId );
+            component.name( getContentDisplayName( contentId ) );
         }
 
         return component.build();

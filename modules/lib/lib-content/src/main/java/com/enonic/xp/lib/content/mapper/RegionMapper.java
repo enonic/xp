@@ -8,6 +8,8 @@ import com.enonic.xp.script.serializer.MapSerializable;
 public final class RegionMapper
     implements MapSerializable
 {
+    private static final String COMPONENTS = "components";
+
     private final Region value;
 
     public RegionMapper( final Region value )
@@ -30,14 +32,15 @@ public final class RegionMapper
 
     private void serializeComponents( final MapGenerator gen, final Iterable<Component> values )
     {
-        gen.array( "components" );
+        gen.array( COMPONENTS );
+
         for ( final Component component : values )
         {
             gen.map();
             new ComponentMapper( component ).serialize( gen );
             gen.end();
         }
+
         gen.end();
-        gen.value( "name", this.value.getName() );
     }
 }

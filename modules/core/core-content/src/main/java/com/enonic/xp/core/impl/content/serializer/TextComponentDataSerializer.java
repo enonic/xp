@@ -30,12 +30,9 @@ final class TextComponentDataSerializer
 
         final PropertySet specialBlockSet = data.getSet( TextComponentType.INSTANCE.toString() );
 
-        if ( specialBlockSet != null )
+        if ( specialBlockSet != null && specialBlockSet.isNotNull( VALUE ) )
         {
-            if ( specialBlockSet.isNotNull( VALUE ) )
-            {
-                component.text( specialBlockSet.getString( VALUE ) );
-            }
+            component.text( specialBlockSet.getString( VALUE ) );
         }
 
         return component.build();

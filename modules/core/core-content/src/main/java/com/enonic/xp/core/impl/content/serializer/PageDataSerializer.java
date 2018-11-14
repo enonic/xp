@@ -121,8 +121,8 @@ final class PageDataSerializer
     public Page fromData( final PropertySet asSet )
     {
         final List<PropertySet> componentsAsData =
-            asSet.getProperties( ComponentDataSerializer.COMPONENTS ).stream().filter( Property::hasNotNullValue ).map(
-                item -> item.getSet() ).collect( Collectors.toList() );
+            asSet.getProperties( COMPONENTS ).stream().filter( Property::hasNotNullValue ).map( item -> item.getSet() ).collect(
+                Collectors.toList() );
 
         if ( componentsAsData.size() > 0 )
         {

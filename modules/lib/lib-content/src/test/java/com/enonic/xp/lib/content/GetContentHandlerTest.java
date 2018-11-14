@@ -31,6 +31,16 @@ public class GetContentHandlerTest
     }
 
     @Test
+    public void getByIdWithPageAsFragment()
+        throws Exception
+    {
+        final Content content = TestDataFixtures.newContentWithPageAsFragment();
+        Mockito.when( this.contentService.getById( content.getId() ) ).thenReturn( content );
+
+        runFunction( "/site/test/GetContentHandlerTest.js", "getByIdWithPageAsFragment" );
+    }
+
+    @Test
     public void getByPath()
         throws Exception
     {
