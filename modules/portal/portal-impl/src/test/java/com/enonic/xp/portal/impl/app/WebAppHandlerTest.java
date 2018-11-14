@@ -119,6 +119,7 @@ public class WebAppHandlerTest
         mockResource( "myapp:/assets/a.txt", null );
 
         this.request.setApplicationKey( ApplicationKey.from( "myapp" ) );
+        this.request.setBaseUri( "/app/myapp" );
         this.request.setRawPath( "/app/myapp/a.txt" );
 
         final ControllerScript script = Mockito.mock( ControllerScript.class );
@@ -128,6 +129,7 @@ public class WebAppHandlerTest
         Mockito.when( script.execute( Mockito.any() ) ).thenReturn( response );
 
         assertSame( response, this.handler.doHandle( this.request, null, this.chain ) );
+        assertEquals( "/app/myapp", this.request.getContextPath() );
     }
 
     @Test

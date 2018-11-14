@@ -24,6 +24,7 @@ public final class PortalRequestMapper
         gen.value( "host", this.request.getHost() );
         gen.value( "port", this.request.getPort() );
         gen.value( "path", this.request.getPath() );
+        gen.value( "rawPath", this.request.getRawPath() );
         gen.value( "url", this.request.getUrl() );
         gen.value( "remoteAddress", this.request.getRemoteAddress() );
         gen.value( "mode", Objects.toString( this.request.getMode(), null ) );
@@ -37,6 +38,11 @@ public final class PortalRequestMapper
         if ( this.request.getBranch() != null )
         {
             gen.value( "branch", this.request.getBranch().getValue() );
+        }
+
+        if ( this.request.getContextPath() != null )
+        {
+            gen.value( "contextPath", this.request.getContextPath() );
         }
 
         serializeBody( gen );

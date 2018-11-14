@@ -60,7 +60,9 @@ public final class MappingHandler
         WebHandlerHelper.checkAdminAccess( webRequest );
 
         PortalRequest portalRequest = (PortalRequest) webRequest;
-        final ControllerMappingDescriptor mapping = new ControllerMappingsResolver( siteService, contentService ).resolve( portalRequest );
+        final ControllerMappingDescriptor mapping = new ControllerMappingsResolver( siteService, contentService ).
+            resolve( portalRequest );
+        setContextPath( portalRequest );
 
         if ( mapping.isController() )
         {
@@ -70,6 +72,13 @@ public final class MappingHandler
         {
             return handleFilter( portalRequest, webResponse, webHandlerChain, mapping );
         }
+    }
+
+    private void setContextPath( final PortalRequest portalRequest )
+    {
+        final String contextPath =
+            portalRequest.getBaseUri() + "/" + portalRequest.getBranch() + portalRequest.getSite().getPath().toString();
+        portalRequest.setContextPath( contextPath );
     }
 
     private PortalResponse handleController( final PortalRequest portalRequest, final ControllerMappingDescriptor mapping )
