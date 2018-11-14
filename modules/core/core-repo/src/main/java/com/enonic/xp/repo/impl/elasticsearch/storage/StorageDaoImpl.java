@@ -20,6 +20,7 @@ import org.elasticsearch.cluster.block.ClusterBlockException;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.node.DeleteNodeListener;
 import com.enonic.xp.node.NodeStorageException;
 import com.enonic.xp.repo.impl.StorageSource;
 import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
@@ -109,28 +110,39 @@ public class StorageDaoImpl
     @Override
     public void delete( final DeleteRequests requests )
     {
+        delete( requests, null );
+    }
+
+
+    @Override
+    public void delete( final DeleteRequests requests, final DeleteNodeListener deleteListener )
+    {
         final StorageSource settings = requests.getSettings();
 
         for ( final String id : requests.getIds() )
         {
             try
             {
-                final org.elasticsearch.action.delete.DeleteRequest request =
-                    new DeleteRequestBuilder( this.client, DeleteAction.INSTANCE ).
-                        setIndex( settings.getStorageName().getName() ).
-                        setType( settings.getStorageType().getName() ).
-                        setRefresh( requests.isForceRefresh() ).
-                        setId( id ).
-                        setRouting( id ). //TODO Java10
-                        request();
+                final org.elasticsearch.action.delete.DeleteRequest request = new DeleteRequestBuilder( this.client, DeleteAction.INSTANCE ).
+                    setIndex( settings.getStorageName().getName() ).
+                    setType( settings.getStorageType().getName() ).
+                    setRefresh( requests.isForceRefresh() ).
+                    setId( id ).
+                    setRouting( id ). //TODO Java10
+                    request();
 
                 this.client.delete( request ).actionGet( requests.getTimeoutAsString() );
+
+                if ( deleteListener != null )
+                {
+                    deleteListener.nodesDeleted( 1 );
+                }
             }
             catch ( ClusterBlockException e )
             {
                 throw new NodeStorageException( "Cannot delete node " + id + ", Repository in 'READ-ONLY mode'" );
             }
-            catch ( Exception e )
+            catch ( Throwable e )
             {
                 throw new NodeStorageException( "Cannot delete node " + id, e );
             }

@@ -2,15 +2,21 @@ package com.enonic.xp.admin.impl.rest.resource.content.task;
 
 import java.util.stream.Collectors;
 
+import com.enonic.xp.admin.impl.rest.resource.content.ContentResource;
 import com.enonic.xp.admin.impl.rest.resource.content.DeleteContentProgressListener;
 import com.enonic.xp.admin.impl.rest.resource.content.json.DeleteContentJson;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.DeleteContentsResult;
+import com.enonic.xp.content.FindContentByParentParams;
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
@@ -33,6 +39,46 @@ public class DeleteRunnableTask
             collect( Collectors.toList() ) );
     }
 
+    private long countContentsToDelete( final ContentPaths contentsToDeleteList )
+    {
+
+        long result = 0;
+        result += contentsToDeleteList.getSize();
+
+        final long childrenToDeleteNumber = countChildrenToDelete( contentsToDeleteList );
+
+        result += childrenToDeleteNumber;
+
+        if ( params.isDeleteOnline() )
+        {
+            final Context masterContext = ContextBuilder.from( ContextAccessor.current() ).
+                branch( ContentConstants.BRANCH_MASTER ).
+                build();
+
+            final long contentsToDeleteInMaster =
+                masterContext.callWith( () -> this.contentService.getByPaths( contentsToDeleteList ).getSize() );
+
+            final long childrenToDeleteInMaster = masterContext.callWith( () -> countChildrenToDelete( contentsToDeleteList ) );
+
+            result += contentsToDeleteInMaster + childrenToDeleteInMaster;
+        }
+
+        return result * 2;
+    }
+
+    private long countChildrenToDelete( final ContentPaths contentsToDeleteList )
+    {
+        return contentsToDeleteList.
+            stream().
+            mapToLong( contentPath -> this.contentService.findIdsByParent( FindContentByParentParams.create().
+                parentPath( contentPath ).
+                size( ContentResource.GET_ALL_SIZE_FLAG ).
+                recursive( true ).
+                build() ).
+                getTotalHits() ).
+            sum();
+    }
+
     @Override
     public void run( final TaskId id, final ProgressReporter progressReporter )
     {
@@ -41,11 +87,15 @@ public class DeleteRunnableTask
 
         final DeleteContentProgressListener listener = new DeleteContentProgressListener( progressReporter );
         final DeleteRunnableTaskResult.Builder resultBuilder = DeleteRunnableTaskResult.create();
+
+        listener.setTotal( Math.toIntExact( countContentsToDelete( contentsToDeleteList ) ) );
+
         for ( final ContentPath contentToDelete : contentsToDeleteList )
         {
             final DeleteContentParams deleteContentParams = DeleteContentParams.create().
                 contentPath( contentToDelete ).
                 deleteOnline( params.isDeleteOnline() ).
+                deleteContentListener( listener ).
                 build();
 
             try
@@ -86,8 +136,6 @@ public class DeleteRunnableTask
                     resultBuilder.failed( contentToDelete );
                 }
             }
-
-            listener.contentDeleted( 1 );
         }
 
         progressReporter.info( resultBuilder.build().toJson() );

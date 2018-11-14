@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.storage;
 
 import java.util.Collection;
 
+import com.enonic.xp.node.DeleteNodeListener;
 import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
 
 public interface StorageDao
@@ -13,6 +14,8 @@ public interface StorageDao
     boolean delete( final DeleteRequest request );
 
     void delete( final DeleteRequests request );
+
+    void delete( final DeleteRequests requests, final DeleteNodeListener listener );
 
     GetResult getById( final GetByIdRequest request );
 

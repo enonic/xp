@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.branch;
 
+import com.enonic.xp.node.DeleteNodeListener;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
@@ -16,7 +17,7 @@ public interface BranchService
 
     void delete( final NodeId nodeId, final InternalContext context );
 
-    void delete( final NodeIds nodeIds, final InternalContext context );
+    void delete( final NodeIds nodeIds, final InternalContext context, final DeleteNodeListener listener );
 
     NodeBranchEntry get( final NodeId nodeId, final InternalContext context );
 

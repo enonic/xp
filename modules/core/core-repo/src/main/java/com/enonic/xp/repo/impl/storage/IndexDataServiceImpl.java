@@ -5,6 +5,7 @@ import java.util.Collection;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.node.DeleteNodeListener;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
@@ -84,7 +85,7 @@ public class IndexDataServiceImpl
 
 
     @Override
-    public void delete( final NodeIds nodeIds, final InternalContext context )
+    public void delete( final NodeIds nodeIds, final InternalContext context, final DeleteNodeListener listener )
     {
         this.storageDao.delete( DeleteRequests.create().
             settings( StorageSource.create().
@@ -92,7 +93,7 @@ public class IndexDataServiceImpl
                 storageName( SearchStorageName.from( context.getRepositoryId() ) ).
                 build() ).
             ids( nodeIds.getAsStrings() ).
-            build() );
+            build(), listener );
     }
 
     @Override

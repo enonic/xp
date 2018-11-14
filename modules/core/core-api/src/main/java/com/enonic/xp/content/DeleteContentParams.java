@@ -10,10 +10,13 @@ public final class DeleteContentParams
 
     private final boolean deleteOnline;
 
+    private final DeleteContentListener deleteContentListener;
+
     private DeleteContentParams( Builder builder )
     {
         contentPath = builder.contentPath;
         deleteOnline = builder.deleteOnline;
+        deleteContentListener = builder.deleteContentListener;
     }
 
     public static Builder create()
@@ -29,6 +32,11 @@ public final class DeleteContentParams
     public boolean isDeleteOnline()
     {
         return deleteOnline;
+    }
+
+    public DeleteContentListener getDeleteContentListener()
+    {
+        return deleteContentListener;
     }
 
     public void validate()
@@ -71,6 +79,8 @@ public final class DeleteContentParams
 
         private boolean deleteOnline = false;
 
+        private DeleteContentListener deleteContentListener;
+
         private Builder()
         {
         }
@@ -84,6 +94,12 @@ public final class DeleteContentParams
         public Builder deleteOnline( boolean deleteOnline )
         {
             this.deleteOnline = deleteOnline;
+            return this;
+        }
+
+        public Builder deleteContentListener( final DeleteContentListener deleteContentListener )
+        {
+            this.deleteContentListener = deleteContentListener;
             return this;
         }
 

@@ -11,6 +11,7 @@ import org.osgi.service.component.annotations.Reference;
 import com.google.common.util.concurrent.Striped;
 
 import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.node.DeleteNodeListener;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
@@ -145,7 +146,7 @@ public class BranchServiceImpl
     }
 
     @Override
-    public void delete( final NodeIds nodeIds, final InternalContext context )
+    public void delete( final NodeIds nodeIds, final InternalContext context, final DeleteNodeListener listener )
     {
         final NodeBranchEntries nodeBranchEntries = getIgnoreOrder( nodeIds, context );
 
@@ -157,7 +158,7 @@ public class BranchServiceImpl
                 map( nodeId -> new BranchDocumentId( nodeId, context.getBranch() ).toString() ).
                 collect( Collectors.toList() ) ).
             settings( createStorageSettings( context ) ).
-            build() );
+            build(), listener );
     }
 
     @Override

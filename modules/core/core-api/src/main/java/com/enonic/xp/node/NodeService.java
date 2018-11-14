@@ -22,6 +22,8 @@ public interface NodeService
 
     NodeIds deleteById( NodeId id );
 
+    NodeIds deleteById( NodeId id, DeleteNodeListener deleteListener );
+
     NodeIds deleteByPath( NodePath path );
 
     Node getById( NodeId id );

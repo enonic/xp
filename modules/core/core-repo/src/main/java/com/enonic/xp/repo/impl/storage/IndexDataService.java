@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.storage;
 
+import com.enonic.xp.node.DeleteNodeListener;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
@@ -15,7 +16,7 @@ public interface IndexDataService
 
     void delete( final NodeId nodeId, final InternalContext context );
 
-    void delete( final NodeIds nodeIds, final InternalContext context );
+    void delete( final NodeIds nodeIds, final InternalContext context, DeleteNodeListener listener );
 
     void store( final Node node, final InternalContext context );
 

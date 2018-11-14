@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.node;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.node.DeleteNodeListener;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
@@ -26,6 +27,11 @@ abstract class AbstractDeleteNodeCommand
 
     NodeBranchEntries deleteNodeWithChildren( final Node node, final Context context )
     {
+        return deleteNodeWithChildren( node, context, null );
+    }
+
+    NodeBranchEntries deleteNodeWithChildren( final Node node, final Context context, final DeleteNodeListener deleteNodeListener )
+    {
         if ( node.isRoot() && !allowDeleteRootNode )
         {
             throw new OperationNotPermittedException( "Not allowed to delete root-node" );
@@ -48,7 +54,7 @@ abstract class AbstractDeleteNodeCommand
             throw new NodeAccessException( context.getAuthInfo().getUser(), node.path(), Permission.DELETE );
         }
 
-        this.nodeStorageService.delete( nodeIds, InternalContext.from( context ) );
+        this.nodeStorageService.delete( nodeIds, InternalContext.from( context ), deleteNodeListener );
 
         doRefresh();
 

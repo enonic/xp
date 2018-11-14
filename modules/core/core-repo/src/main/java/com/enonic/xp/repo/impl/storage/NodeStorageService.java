@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.storage;
 
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.node.DeleteNodeListener;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
@@ -28,7 +29,7 @@ public interface NodeStorageService
 
     void storeVersion( final StoreNodeVersionParams params, final InternalContext context );
 
-    void delete( final NodeIds nodeIds, final InternalContext context );
+    void delete( final NodeIds nodeIds, final InternalContext context, final DeleteNodeListener deleteNodeListener );
 
     Node updateMetadata( final Node node, final InternalContext context );
 

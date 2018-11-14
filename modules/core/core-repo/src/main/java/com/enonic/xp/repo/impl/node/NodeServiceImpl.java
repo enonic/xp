@@ -16,6 +16,7 @@ import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.ApplyNodePermissionsResult;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
+import com.enonic.xp.node.DeleteNodeListener;
 import com.enonic.xp.node.DuplicateNodeParams;
 import com.enonic.xp.node.FindNodePathsByQueryResult;
 import com.enonic.xp.node.FindNodesByMultiRepoQueryResult;
@@ -413,12 +414,19 @@ public class NodeServiceImpl
     @Override
     public NodeIds deleteById( final NodeId id )
     {
+        return deleteById( id, null );
+    }
+
+    @Override
+    public NodeIds deleteById( final NodeId id, final DeleteNodeListener deleteNodeListener )
+    {
         verifyContext();
         final NodeBranchEntries deletedNodes = DeleteNodeByIdCommand.create().
             nodeId( id ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.nodeStorageService ).
             searchService( this.nodeSearchService ).
+            deleteNodeListener( deleteNodeListener ).
             build().
             execute();
 

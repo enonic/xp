@@ -7,6 +7,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.node.DeleteNodeListener;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
@@ -128,10 +129,10 @@ public class NodeStorageServiceImpl
     }
 
     @Override
-    public void delete( final NodeIds nodeIds, final InternalContext context )
+    public void delete( final NodeIds nodeIds, final InternalContext context, final DeleteNodeListener deleteListener )
     {
-        branchService.delete( nodeIds, context );
-        indexDataService.delete( nodeIds, context );
+        branchService.delete( nodeIds, context, deleteListener );
+        indexDataService.delete( nodeIds, context, deleteListener );
     }
 
     @Override
@@ -369,7 +370,7 @@ public class NodeStorageServiceImpl
     }
 
 
-    private Nodes doReturnNodes( final NodeBranchEntries nodeBranchEntries, final InternalContext context  )
+    private Nodes doReturnNodes( final NodeBranchEntries nodeBranchEntries, final InternalContext context )
     {
         final NodeVersionIds.Builder builder = NodeVersionIds.create();
 
