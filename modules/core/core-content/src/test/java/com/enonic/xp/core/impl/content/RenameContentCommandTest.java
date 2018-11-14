@@ -12,7 +12,7 @@ import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.UpdateContentParams;
-import com.enonic.xp.core.impl.content.processor.ContentProcessor;
+import com.enonic.xp.content.processor.ContentProcessor;
 import com.enonic.xp.core.impl.content.processor.ContentProcessors;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;

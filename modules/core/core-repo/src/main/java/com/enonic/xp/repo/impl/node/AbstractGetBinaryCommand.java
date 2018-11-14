@@ -3,11 +3,13 @@ package com.enonic.xp.repo.impl.node;
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.repo.impl.binary.BinaryService;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.util.BinaryReference;
 
 abstract class AbstractGetBinaryCommand
@@ -62,7 +64,8 @@ abstract class AbstractGetBinaryCommand
 
     private ByteSource doGetByteSource( final AttachedBinary attachedBinary )
     {
-        return this.binaryService.get( attachedBinary );
+        final RepositoryId repositoryId = ContextAccessor.current().getRepositoryId();
+        return this.binaryService.get( repositoryId, attachedBinary );
     }
 
     public static class Builder<B extends Builder>

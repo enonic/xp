@@ -12,6 +12,7 @@ import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.script.ScriptExports;
+import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.runtime.ScriptRuntime;
 import com.enonic.xp.script.runtime.ScriptRuntimeFactory;
 import com.enonic.xp.script.runtime.ScriptSettings;
@@ -51,6 +52,18 @@ public final class PortalScriptServiceImpl
     public ScriptExports execute( final ResourceKey script )
     {
         return this.scriptRuntime.execute( script );
+    }
+
+    @Override
+    public ScriptValue toScriptValue( final ResourceKey script, final Object value )
+    {
+        return this.scriptRuntime.toScriptValue( script, value );
+    }
+
+    @Override
+    public Object toNativeObject( final ResourceKey script, final Object value )
+    {
+        return this.scriptRuntime.toNativeObject( script, value );
     }
 
     @Reference

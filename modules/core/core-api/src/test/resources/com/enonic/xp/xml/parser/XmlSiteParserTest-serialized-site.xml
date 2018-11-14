@@ -12,8 +12,8 @@
       <occurrences minimum="0" maximum="1"/>
     </input>
   </form>
-  <filters>
-    <response-filter name="filter1" order="10"/>
-    <response-filter name="filter2" order="10"/>
-  </filters>
+  <processors>
+    <response-processor name="filter1" order="10"/>
+    <response-processor name="filter2" order="10"/>
+  </processors>
 </site>

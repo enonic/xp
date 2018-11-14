@@ -20,4 +20,7 @@ public interface BlobStore
 
     Stream<BlobRecord> list( Segment segment );
 
+    Stream<Segment> listSegments();
+
+    void deleteSegment( Segment segment );
 }

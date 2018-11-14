@@ -13,12 +13,13 @@ import com.enonic.xp.content.ContentDataValidationException;
 import com.enonic.xp.content.ContentEditor;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.EditableContent;
+import com.enonic.xp.content.EditableSite;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateContentTranslatorParams;
-import com.enonic.xp.core.impl.content.processor.ContentProcessor;
-import com.enonic.xp.core.impl.content.processor.ProcessUpdateParams;
-import com.enonic.xp.core.impl.content.processor.ProcessUpdateResult;
+import com.enonic.xp.content.processor.ContentProcessor;
+import com.enonic.xp.content.processor.ProcessUpdateParams;
+import com.enonic.xp.content.processor.ProcessUpdateResult;
 import com.enonic.xp.core.impl.content.validate.InputValidator;
 import com.enonic.xp.core.impl.content.validate.ValidationError;
 import com.enonic.xp.core.impl.content.validate.ValidationErrors;
@@ -34,6 +35,7 @@ import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.GetContentTypeParams;
+import com.enonic.xp.site.Site;
 
 final class UpdateContentCommand
     extends AbstractCreatingOrUpdatingContentCommand
@@ -184,7 +186,7 @@ final class UpdateContentCommand
 
     private Content editContent( final ContentEditor editor, final Content original )
     {
-        final EditableContent editableContent = new EditableContent( original );
+        final EditableContent editableContent = original.isSite() ? new EditableSite( (Site) original ) : new EditableContent( original );
         if ( editor != null )
         {
             editor.edit( editableContent );

@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.content.processor;
+package com.enonic.xp.content.processor;
 
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.Content;
@@ -30,6 +30,10 @@ public class ProcessUpdateParams
         modifier = builder.modifier;
     }
 
+    public static Builder create()
+    {
+        return new Builder();
+    }
 
     public MediaInfo getMediaInfo()
     {
@@ -60,12 +64,6 @@ public class ProcessUpdateParams
     {
         return modifier;
     }
-
-    public static Builder create()
-    {
-        return new Builder();
-    }
-
 
     public static final class Builder
     {

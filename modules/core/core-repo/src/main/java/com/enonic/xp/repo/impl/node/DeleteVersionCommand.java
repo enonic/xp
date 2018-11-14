@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.Node;
@@ -9,6 +10,7 @@ import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionDeleteException;
 import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryService;
 
@@ -34,7 +36,8 @@ public class DeleteVersionCommand
 
     private void doExecute()
     {
-        final NodeVersion nodeVersion = this.nodeStorageService.get( this.nodeVersionId );
+        final Context currentContext = ContextAccessor.current();
+        final NodeVersion nodeVersion = this.nodeStorageService.getNodeVersion( this.nodeVersionId, InternalContext.from( currentContext ) );
 
         if ( isInUse( nodeVersion.getId() ) )
         {

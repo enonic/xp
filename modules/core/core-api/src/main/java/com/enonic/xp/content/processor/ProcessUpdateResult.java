@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.content.processor;
+package com.enonic.xp.content.processor;
 
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.ContentEditor;

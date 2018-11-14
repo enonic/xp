@@ -77,6 +77,19 @@ public class MemoryBlobStore
         return values.stream();
     }
 
+    @Override
+    public Stream<Segment> listSegments()
+    {
+        return store.keySet().stream();
+    }
+
+    @Override
+    public void deleteSegment( final Segment segment )
+        throws BlobStoreException
+    {
+        store.remove( segment );
+    }
+
     public void clear()
     {
         this.store = Maps.newHashMap();

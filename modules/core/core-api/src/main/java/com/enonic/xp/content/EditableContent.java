@@ -47,6 +47,8 @@ public class EditableContent
 
     public ContentPublishInfo publishInfo;
 
+    public ContentIds.Builder processedReferences;
+
     public EditableContent( final Content source )
     {
         this.source = source;
@@ -63,6 +65,7 @@ public class EditableContent
         this.creator = source.getCreator();
         this.createdTime = source.getCreatedTime();
         this.publishInfo = source.getPublishInfo();
+        this.processedReferences = ContentIds.create().addAll( source.getProcessedReferences() );
     }
 
     public Content build()
@@ -81,6 +84,7 @@ public class EditableContent
             creator( creator ).
             createdTime( createdTime ).
             publishInfo( publishInfo ).
+            addProcessedReferences( processedReferences.build() ).
             build();
     }
 }

@@ -21,8 +21,8 @@ public interface DumpWriter
 
     void writeVersionsEntry( final VersionsDumpEntry versionsDumpEntry );
 
-    void writeVersionBlob( final NodeVersionId nodeVersionId );
+    void writeVersionBlob( final RepositoryId repositoryId, final NodeVersionId nodeVersionId );
 
-    void writeBinaryBlob( final String key );
+    void writeBinaryBlob( final RepositoryId repositoryId, final String key );
 
 }

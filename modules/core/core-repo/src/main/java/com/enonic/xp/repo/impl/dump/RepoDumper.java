@@ -197,7 +197,7 @@ class RepoDumper
     {
         try
         {
-            this.writer.writeVersionBlob( metaData.getNodeVersionId() );
+            this.writer.writeVersionBlob( repositoryId, metaData.getNodeVersionId() );
         }
         catch ( Exception e )
         {
@@ -211,7 +211,7 @@ class RepoDumper
         nodeVersion.getAttachedBinaries().forEach( ( attachedBinary ) -> {
             try
             {
-                this.writer.writeBinaryBlob( attachedBinary.getBlobKey() );
+                this.writer.writeBinaryBlob( repositoryId, attachedBinary.getBlobKey() );
             }
             catch ( Exception e )
             {
@@ -250,7 +250,7 @@ class RepoDumper
         {
             final BranchDumpEntry branchDumpEntry = createDumpEntry( nodeId );
             writer.writeBranchEntry( branchDumpEntry );
-            writer.writeVersionBlob( branchDumpEntry.getMeta().getVersion() );
+            writer.writeVersionBlob( repositoryId, branchDumpEntry.getMeta().getVersion() );
             writeBinaries( dumpResult, branchDumpEntry );
             dumpResult.addedNode();
             reportNodeDumped();
@@ -266,7 +266,7 @@ class RepoDumper
         branchDumpEntry.getBinaryReferences().forEach( ( ref ) -> {
             try
             {
-                this.writer.writeBinaryBlob( ref );
+                this.writer.writeBinaryBlob( repositoryId, ref );
             }
             catch ( RepoDumpException e )
             {

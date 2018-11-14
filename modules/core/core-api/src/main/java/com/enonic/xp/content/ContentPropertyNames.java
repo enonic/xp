@@ -99,6 +99,8 @@ public class ContentPropertyNames
 
     public static final String MODIFIED_TIME = "modifiedTime";
 
+    public static final String PROCESSED_REFERENCES = "processedReferences";
+
     public static final String HTMLAREA_TEXT = DATA + PropertyPath.ELEMENT_DIVIDER + "htmlarea_text";
 
 }

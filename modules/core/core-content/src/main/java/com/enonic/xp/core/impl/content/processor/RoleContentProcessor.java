@@ -7,6 +7,11 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.content.CreateContentParams;
+import com.enonic.xp.content.processor.ContentProcessor;
+import com.enonic.xp.content.processor.ProcessCreateParams;
+import com.enonic.xp.content.processor.ProcessCreateResult;
+import com.enonic.xp.content.processor.ProcessUpdateParams;
+import com.enonic.xp.content.processor.ProcessUpdateResult;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;

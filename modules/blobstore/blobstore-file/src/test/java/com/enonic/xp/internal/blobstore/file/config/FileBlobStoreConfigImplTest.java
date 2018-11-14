@@ -22,7 +22,6 @@ public class FileBlobStoreConfigImplTest
         final FileBlobStoreConfigImpl config = new FileBlobStoreConfigImpl();
         config.activate( Maps.newHashMap() );
 
-        assertEquals( 2, config.segments().size() );
         assertFalse( config.readThroughEnabled() );
         assertEquals( new File( "${xp.home}/repo/blob" ), config.baseDir() );
         assertEquals( 104857600, config.readThroughSizeThreshold() );
@@ -42,21 +41,4 @@ public class FileBlobStoreConfigImplTest
 
         assertTrue( config.readThroughEnabled() );
     }
-
-    @Test
-    public void override_segment()
-        throws Exception
-    {
-        final HashMap<String, String> values = Maps.newHashMap();
-        values.put( "baseDir.node", "fiskeslo" );
-
-        final FileBlobStoreConfigImpl config = new FileBlobStoreConfigImpl();
-
-        config.activate( values );
-
-        final Map<Segment, String> segments = config.segments();
-
-        assertEquals( "fiskeslo", config.segments().get( Segment.from( "node" ) ) );
-    }
-
 }

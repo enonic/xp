@@ -1,13 +1,10 @@
 package com.enonic.xp.internal.blobstore;
 
-import java.util.Map;
-
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.BundleContext;
 
 import com.enonic.xp.blob.ProviderConfig;
-import com.enonic.xp.blob.Segment;
 import com.enonic.xp.internal.blobstore.config.BlobStoreConfig;
 
 public class BlobStoreActivatorTest
@@ -23,12 +20,6 @@ public class BlobStoreActivatorTest
         final MemoryBlobStore blobStore = new MemoryBlobStore();
         final MemoryBlobStoreProvider provider = new MemoryBlobStoreProvider( "memoey", blobStore, new ProviderConfig()
         {
-            @Override
-            public Map<Segment, String> segments()
-            {
-                return null;
-            }
-
             @Override
             public String readThroughProvider()
             {

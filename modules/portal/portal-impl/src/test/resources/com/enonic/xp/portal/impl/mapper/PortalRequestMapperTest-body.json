@@ -13,12 +13,12 @@
   "contentType": "text/plain",
   "body": "Hello World",
   "params": {
-    "param3": [
-      "value3-B",
-      "value3-A"
-    ],
     "param1": "value1",
-    "param2": "value2"
+    "param2": "value2",
+    "param3": [
+      "value3-A",
+      "value3-B"
+    ]
   },
   "headers": {
     "header3": "value3",
