@@ -1,6 +1,11 @@
 .preview-frame-body, .preview-frame-body figure {
     margin: 0;
 }
+
+.preview-frame-body {
+    overflow: hidden;
+}
+
 figure img {
     width: 100%;
     max-width: 100%;
