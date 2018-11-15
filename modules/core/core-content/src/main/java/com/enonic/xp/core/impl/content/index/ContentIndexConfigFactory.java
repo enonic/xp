@@ -43,7 +43,8 @@ public class ContentIndexConfigFactory
 
         indexConfigProcessors.add( new XDataConfigProcessor( getXDatas( builder.xDataService, builder.extraDatas ) ) );
 
-        indexConfigProcessors.add( new PageConfigProcessor( getPageConfigForm( builder.pageDescriptorService, builder.page ) ) );
+        indexConfigProcessors.add(
+            new PageConfigProcessor( builder.page, getPageConfigForm( builder.pageDescriptorService, builder.page ) ) );
 
         indexConfigProcessors.add( new SiteConfigProcessor( getSiteConfigForms( builder.siteService, builder.siteConfigs ) ) );
 
