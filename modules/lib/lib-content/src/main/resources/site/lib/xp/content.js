@@ -227,6 +227,7 @@ exports.getChildren = function (params) {
  * @param {boolean} [params.refresh=true] If refresh is true, the created content will to be searchable through queries immediately, else within 1 second. Since there is a performance penalty doing this refresh, refresh should be set to false for bulk operations.
  * @param {string} params.contentType Content type to use.
  * @param {string} [params.language] The language tag representing the content’s locale.
+ * @param {string} [params.childOrder] order of children.
  * @param {string} [params.branch] Set by portal, depending on context, to either draft or master. May be overridden, but this is not recommended. Default is the current branch set in portal.
  * @param {object} params.data Actual content data.
  * @param {object} [params.x] eXtra data to use.
@@ -242,6 +243,7 @@ exports.create = function (params) {
     bean.requireValid = nullOrValue(params.requireValid);
     bean.refresh = nullOrValue(params.refresh);
     bean.language = nullOrValue(params.language);
+    bean.childOrder = nullOrValue(params.childOrder);
     bean.branch = nullOrValue(params.branch);
 
     bean.data = __.toScriptValue(params.data);
