@@ -128,7 +128,7 @@ public final class XDataResource
 
     private Map<XData, Boolean> getSiteXData( final Content content )
     {
-        final Map<XData, Boolean> result = Maps.newHashMap();
+        final Map<XData, Boolean> result = Maps.newLinkedHashMap();
 
         final Site nearestSite = this.contentService.getNearestSite( content.getId() );
 
@@ -155,11 +155,16 @@ public final class XDataResource
 
     private Map<XData, Boolean> getXDatasByContentType( final XDataMappings xDataMappings, final ContentTypeName contentTypeName )
     {
-        final Map<XData, Boolean> result = Maps.newHashMap();
+        final Map<XData, Boolean> result = Maps.newLinkedHashMap();
 
         filterXDataMappingsByContentType( xDataMappings, contentTypeName ).
-            forEach( xDataMapping -> result.putIfAbsent( this.xDataService.getByName( xDataMapping.getXDataName() ),
-                                                         xDataMapping.getOptional() ) );
+            forEach( xDataMapping -> {
+                final XData xData = this.xDataService.getByName( xDataMapping.getXDataName() );
+                if ( xData != null )
+                {
+                    result.putIfAbsent( xData, xDataMapping.getOptional() );
+                }
+            } );
 
         return result;
     }
