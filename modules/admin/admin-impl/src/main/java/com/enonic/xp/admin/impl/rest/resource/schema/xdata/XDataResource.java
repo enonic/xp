@@ -162,7 +162,7 @@ public final class XDataResource
                 final XData xData = this.xDataService.getByName( xDataMapping.getXDataName() );
                 if ( xData != null )
                 {
-                    result.putIfAbsent( this.xDataService.getByName( xDataMapping.getXDataName() ), xDataMapping.getOptional() );
+                    result.putIfAbsent( xData, xDataMapping.getOptional() );
                 }
             } );
 
