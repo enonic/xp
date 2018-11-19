@@ -10,13 +10,12 @@ import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.blob.BlobKeys;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.CachingBlobStore;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.node.NodeVersion;
-import com.enonic.xp.node.NodeVersionId;
-import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.NodeVersions;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.node.NodeConstants;
@@ -32,11 +31,10 @@ public class NodeVersionServiceImpl
     private BlobStore blobStore;
 
     @Override
-    public NodeVersionId store( final NodeVersion nodeVersion, final InternalContext context )
+    public BlobKey store( final NodeVersion nodeVersion, final InternalContext context )
     {
         final BlobRecord blob = doStoreNodeAsBlob( nodeVersion, context );
-
-        return NodeVersionId.from( blob.getKey().toString() );
+        return blob.getKey();
     }
 
     private BlobRecord doStoreNodeAsBlob( final NodeVersion nodeVersion, final InternalContext context )
@@ -48,35 +46,32 @@ public class NodeVersionServiceImpl
     }
 
     @Override
-    public NodeVersions get( final NodeVersionIds nodeVersionIds, final InternalContext context )
+    public NodeVersions get( final BlobKeys blobKeys, final InternalContext context )
     {
-        return doGetNodeVersions( nodeVersionIds, context );
+        return doGetNodeVersions( blobKeys, context );
     }
 
     @Override
-    public NodeVersion get( final NodeVersionId nodeVersionId, final InternalContext context )
+    public NodeVersion get( final BlobKey blobKey, final InternalContext context )
     {
-        return doGetNodeVersion( nodeVersionId, BlobKey.from( nodeVersionId.toString() ), context );
+        return doGetNodeVersion( blobKey, context );
     }
 
-    private NodeVersions doGetNodeVersions( final NodeVersionIds nodeVersionIds, final InternalContext context )
+    private NodeVersions doGetNodeVersions( final BlobKeys blobKeys, final InternalContext context )
     {
         NodeVersions.Builder builder = NodeVersions.create();
 
-        for ( final NodeVersionId nodeVersionId : nodeVersionIds )
+        for ( final BlobKey blobKey : blobKeys )
         {
-            builder.add( doGetNodeVersion( nodeVersionId, BlobKey.from( nodeVersionId.toString() ), context ) );
+            builder.add( doGetNodeVersion( blobKey, context ) );
         }
 
         return builder.build();
     }
 
-    private NodeVersion doGetNodeVersion( final NodeVersionId nodeVersionId, final BlobKey key, final InternalContext context )
+    private NodeVersion doGetNodeVersion( final BlobKey blobKey, final InternalContext context )
     {
-        final NodeVersion blobVersion = getFromBlob( key, context );
-        return NodeVersion.create( blobVersion ).
-            versionId( nodeVersionId ).
-            build();
+        return getFromBlob( blobKey, context );
     }
 
     private NodeVersion getFromBlob( final BlobKey blobKey, final InternalContext context )

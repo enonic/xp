@@ -8,6 +8,8 @@ public class BranchIndexPath
 
     public static final IndexPath VERSION_ID = IndexPath.from( "versionId" );
 
+    public static final IndexPath BLOB_KEY = IndexPath.from( "blobKey" );
+
     public static final IndexPath BRANCH_NAME = IndexPath.from( "branch" );
 
     public static final IndexPath NODE_ID = IndexPath.from( "nodeId" );

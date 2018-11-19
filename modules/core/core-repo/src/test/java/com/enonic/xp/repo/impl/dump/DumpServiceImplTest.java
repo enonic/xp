@@ -724,7 +724,7 @@ public class DumpServiceImplTest
 
     private void verifyVersionBinaries( final Node node, final Node updatedNode, final NodeVersionMetadata version )
     {
-        final NodeVersion storedNode = nodeService.getByNodeVersion( version.getNodeVersionId() );
+        final NodeVersion storedNode = nodeService.getByBlobKey( version.getBlobKey() );
 
         storedNode.getAttachedBinaries().forEach(
             entry -> assertNotNull( this.nodeService.getBinary( storedNode.getVersionId(), entry.getBinaryReference() ) ) );

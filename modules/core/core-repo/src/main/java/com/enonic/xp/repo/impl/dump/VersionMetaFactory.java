@@ -23,7 +23,7 @@ class VersionMetaFactory
         return VersionMeta.create().
             timestamp( nodeVersion.getTimestamp() ).
             nodePath( metaData.getNodePath() ).
-            version( nodeVersion.getVersionId() ).
+            version( metaData.getNodeVersionId() ).
             nodeState( NodeState.DEFAULT ).
             build();
     }

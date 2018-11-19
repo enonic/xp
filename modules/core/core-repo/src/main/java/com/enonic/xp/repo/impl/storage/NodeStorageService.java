@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.storage;
 
 
+import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
@@ -16,7 +17,6 @@ import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.PushNodeEntries;
 import com.enonic.xp.node.PushNodesListener;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.version.NodeVersionDocumentId;
 
 public interface NodeStorageService
 {
@@ -46,15 +46,15 @@ public interface NodeStorageService
 
     Nodes get( final NodePaths nodePaths, final InternalContext context );
 
-    Node get( final NodeVersionId nodeVersionId, final InternalContext context );
+    Node get( final NodeId nodeId, final NodeVersionId nodeVersionId, final InternalContext context );
 
-    NodeVersion getNodeVersion( final NodeVersionId nodeVersionId, final InternalContext context );
+    NodeVersion getNodeVersion( final BlobKey blobKey, final InternalContext context );
 
     NodeBranchEntry getBranchNodeVersion( final NodeId nodeId, final InternalContext context );
 
     NodeBranchEntries getBranchNodeVersions( final NodeIds nodeIds, final boolean keepOrder, final InternalContext context );
 
-    NodeVersionMetadata getVersion( final NodeVersionDocumentId versionId, final InternalContext context );
+    NodeVersionMetadata getVersion( final NodeId nodeId, final NodeVersionId nodeVersionId, final InternalContext context );
 
     NodeId getIdForPath( final NodePath nodePath, final InternalContext context );
 
