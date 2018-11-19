@@ -87,6 +87,7 @@ public class BranchServiceImplTest
                     add( BranchIndexPath.PATH.getPath(), "/fisk" ).
                     add( BranchIndexPath.STATE.getPath(), "default" ).
                     add( BranchIndexPath.VERSION_ID.getPath(), "nodeVersionId" ).
+                    add( BranchIndexPath.BLOB_KEY.getPath(), "nodeBlobKey" ).
                     add( BranchIndexPath.NODE_ID.getPath(), "123" ).
                     add( BranchIndexPath.TIMESTAMP.getPath(), Instant.now().toString() ).
                     build() ).
