@@ -64,7 +64,7 @@ public class XmlContentTypeParserTest
         assertEquals( "myapplication:mytype", result.getName().toString() );
         assertEquals( "All the Base Types", result.getDisplayName() );
         assertEquals( "description", result.getDescription() );
-        assertEquals( "$('firstName') + ' ' + $('lastName')", result.getDisplayNameExpression() );
+        assertEquals( "${firstName} ${lastName}", result.getDisplayNameExpression() );
         assertEquals( "myapplication:content", result.getSuperType().toString() );
         assertEquals( false, result.isAbstract() );
         assertEquals( true, result.isFinal() );

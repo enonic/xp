@@ -124,7 +124,7 @@ public class ContentTypeHandlerTest
             displayName( "Article" ).
             description( "Article content type" ).
             superType( ContentTypeName.structured() ).
-            displayNameExpression( "${name} ${author}" ).
+            displayNameExpression( "${title} ${author}" ).
             icon( schemaIcon ).
             form( getForm() ).
             build();
