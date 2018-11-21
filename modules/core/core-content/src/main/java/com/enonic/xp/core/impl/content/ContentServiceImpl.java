@@ -400,6 +400,7 @@ public class ContentServiceImpl
             excludeChildrenIds( getExcludeChildrenIds( params ) ).
             includeDependencies( params.isIncludeDependencies() ).
             pushListener( params.getPushContentListener() ).
+            deleteListener( params.getDeleteContentListener() ).
             build().
             execute();
     }
