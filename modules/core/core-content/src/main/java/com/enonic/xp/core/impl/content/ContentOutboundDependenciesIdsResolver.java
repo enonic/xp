@@ -13,6 +13,7 @@ import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.core.impl.content.serializer.PageDataSerializer;
+import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
@@ -45,8 +46,15 @@ public class ContentOutboundDependenciesIdsResolver
             PAGE_SERIALIZER.toData( content.getPage(), contentPageData );
         }
 
-        Stream.concat( content.getData().getProperties( ValueTypes.REFERENCE ).stream(),
-                       contentPageData.getProperties( ValueTypes.REFERENCE ).stream() ).
+        final Stream<Property> extraDataDependencies = content.hasExtraData() ? content.getAllExtraData().
+            stream().
+            flatMap( extraData -> extraData.getData().
+                getProperties( ValueTypes.REFERENCE ).
+                stream() ) : Stream.empty();
+
+        Stream.of( content.getData().getProperties( ValueTypes.REFERENCE ).stream(),
+                   contentPageData.getProperties( ValueTypes.REFERENCE ).stream(), extraDataDependencies ).
+            flatMap( s -> s ).
             forEach( property -> {
                 final String value = property.getValue().toString();
 

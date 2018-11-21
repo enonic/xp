@@ -29,6 +29,8 @@ public final class PortalRequest
 
     private String baseUri;
 
+    private String contextPath;
+
     private Site site;
 
     private Content content;
@@ -165,6 +167,16 @@ public final class PortalRequest
     public void setBaseUri( final String baseUri )
     {
         this.baseUri = baseUri;
+    }
+
+    public String getContextPath()
+    {
+        return contextPath;
+    }
+
+    public void setContextPath( final String contextPath )
+    {
+        this.contextPath = contextPath;
     }
 
     public ControllerScript getControllerScript()

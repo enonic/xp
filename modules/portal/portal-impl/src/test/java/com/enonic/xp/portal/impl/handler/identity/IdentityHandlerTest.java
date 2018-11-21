@@ -49,6 +49,7 @@ public class IdentityHandlerTest
 
         this.request.setMethod( HttpMethod.GET );
         this.request.setEndpointPath( "/_/idprovider/myuserstore?param1=value1" );
+        this.request.setRawPath( "/portal/draft/_/idprovider/myuserstore?param1=value1" );
     }
 
     @Test
@@ -116,5 +117,6 @@ public class IdentityHandlerTest
 
         assertEquals( HttpStatus.OK, portalResponse.getStatus() );
         assertEquals( HttpStatus.OK, portalResponse.getStatus() );
+        assertEquals( "/portal/draft/_/idprovider/myuserstore", this.request.getContextPath() );
     }
 }

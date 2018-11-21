@@ -110,6 +110,14 @@ public class CreateContentHandlerTest
     }
 
     @Test
+    public void createContentWithChildOrder()
+        throws Exception
+    {
+        mockCreateContent();
+        runFunction( "/site/test/CreateContentHandlerTest.js", "createContentWithChildOrder" );
+    }
+
+    @Test
     public void createContentAlreadyExists()
         throws Exception
     {
@@ -180,6 +188,7 @@ public class CreateContentHandlerTest
         builder.creator( PrincipalKey.ofAnonymous() );
         builder.createdTime( Instant.parse( "1975-01-08T00:00:00Z" ) );
         builder.language( params.getLanguage() );
+        builder.childOrder( params.getChildOrder() );
 
         if ( params.getExtraDatas() != null )
         {

@@ -38,7 +38,9 @@ import com.enonic.xp.web.websocket.WebSocketEndpoint;
 public final class WebAppHandler
     extends BaseWebHandler
 {
-    public final static Pattern PATTERN = Pattern.compile( "/app/([^/]+)(/(?:.)*)?" );
+    public final static String PATTERN_PREFIX = "/app/";
+
+    public final static Pattern PATTERN = Pattern.compile( PATTERN_PREFIX + "([^/]+)(/(?:.)*)?" );
 
     private final static String ROOT_ASSET_PREFIX = "assets/";
 
@@ -66,6 +68,8 @@ public final class WebAppHandler
         throws Exception
     {
         PortalRequest portalRequest = (PortalRequest) webRequest;
+        portalRequest.setContextPath( portalRequest.getBaseUri() );
+
         final Matcher matcher = PATTERN.matcher( portalRequest.getRawPath() );
         matcher.matches();
 

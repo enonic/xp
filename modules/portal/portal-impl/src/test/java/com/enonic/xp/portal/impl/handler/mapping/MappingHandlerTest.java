@@ -130,7 +130,7 @@ public class MappingHandlerTest
             build();
         setupContentAndSite( mapping );
         this.request.setBaseUri( "/portal" );
-        this.request.setContentPath( ContentPath.from( "/somepath/content" ) );
+        this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
         this.request.setSite( this.contentService.getNearestSite( ContentId.from( "id" ) ) );
         this.request.setEndpointPath( "" );
         assertEquals( true, this.handler.canHandle( this.request ) );
@@ -148,7 +148,7 @@ public class MappingHandlerTest
 
         setupContentAndSite( mapping );
         this.request.setBaseUri( "/portal" );
-        this.request.setContentPath( ContentPath.from( "/somepath/content" ) );
+        this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
         this.request.setSite( this.contentService.getNearestSite( ContentId.from( "id" ) ) );
         this.request.setEndpointPath( "" );
         this.request.setContent( this.contentService.getById( ContentId.from( "id" ) ) );
@@ -191,7 +191,7 @@ public class MappingHandlerTest
         setupContentAndSite( mapping );
 
         this.request.setBaseUri( "/portal" );
-        this.request.setContentPath( ContentPath.from( "/somepath/content" ) );
+        this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
         this.request.setSite( this.contentService.getNearestSite( ContentId.from( "id" ) ) );
         this.request.setEndpointPath( "" );
         this.request.setContent( this.contentService.getById( ContentId.from( "id" ) ) );
@@ -202,6 +202,7 @@ public class MappingHandlerTest
         assertNotNull( this.request.getApplicationKey() );
         assertNotNull( this.request.getSite() );
         assertNotNull( this.request.getContent() );
+        assertEquals( "/portal/draft/site", this.request.getContextPath() );
     }
 
     private void setupContentAndSite( final ControllerMappingDescriptor mapping )
