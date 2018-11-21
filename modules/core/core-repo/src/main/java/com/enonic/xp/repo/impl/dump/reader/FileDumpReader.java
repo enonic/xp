@@ -309,14 +309,14 @@ public class FileDumpReader
     }
 
     @Override
-    public NodeVersion get( final RepositoryId repositoryId, final NodeVersionId nodeVersionId )
+    public NodeVersion get( final RepositoryId repositoryId, final BlobKey blobKey )
     {
         final Segment segment = RepositorySegmentUtils.toSegment( repositoryId, DumpConstants.DUMP_NODE_SEGMENT_LEVEL );
-        final BlobRecord record = this.dumpBlobStore.getRecord( segment, BlobKey.from( nodeVersionId.toString() ) );
+        final BlobRecord record = this.dumpBlobStore.getRecord( segment, blobKey );
 
         if ( record == null )
         {
-            throw new RepoLoadException( "Cannot find referred version id " + nodeVersionId + " in dump" );
+            throw new RepoLoadException( "Cannot find referred node version " + blobKey + " in dump" );
         }
 
         return this.factory.create( record.getBytes() );

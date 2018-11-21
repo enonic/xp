@@ -14,6 +14,7 @@ class VersionMetaFactory
             timestamp( node.getTimestamp() ).
             nodePath( node.path() ).
             version( node.getNodeVersionId() ).
+            blobKey( node.getBlobKey() ).
             nodeState( node.getNodeState() ).
             build();
     }
@@ -24,6 +25,7 @@ class VersionMetaFactory
             timestamp( nodeVersion.getTimestamp() ).
             nodePath( metaData.getNodePath() ).
             version( metaData.getNodeVersionId() ).
+            blobKey( metaData.getBlobKey() ).
             nodeState( NodeState.DEFAULT ).
             build();
     }

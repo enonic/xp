@@ -16,6 +16,7 @@ public class NodeFromNodeVersionBuilder
             name( metaData.getNodePath().getName() ).
             parentPath( metaData.getNodePath().getParentPath() ).
             nodeVersionId( metaData.getNodeVersionId() ).
+            blobKey( metaData.getBlobKey() ).
             build();
     }
 

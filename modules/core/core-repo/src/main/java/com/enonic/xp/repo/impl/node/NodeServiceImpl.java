@@ -951,6 +951,7 @@ public class NodeServiceImpl
             nodeId( params.getNodeId() ).
             nodePath( params.getNodePath() ).
             nodeVersion( params.getNodeVersion() ).
+            nodeVersionId( params.getNodeVersionId() ).
             timestamp( params.getTimestamp() ).
             storageService( this.nodeStorageService ).
             searchService( this.nodeSearchService ).

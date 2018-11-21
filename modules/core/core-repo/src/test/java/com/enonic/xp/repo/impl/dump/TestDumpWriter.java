@@ -8,6 +8,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Sets;
 
+import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
@@ -25,7 +26,7 @@ class TestDumpWriter
 
     private final Set<String> binaries = Sets.newHashSet();
 
-    private final Set<NodeVersionId> nodeVersions = Sets.newHashSet();
+    private final Set<BlobKey> blobKeys = Sets.newHashSet();
 
     private DumpMeta dumpMeta;
 
@@ -71,9 +72,9 @@ class TestDumpWriter
     }
 
     @Override
-    public void writeVersionBlob( final RepositoryId repositoryId, final NodeVersionId nodeVersionId )
+    public void writeVersionBlob( final RepositoryId repositoryId, final BlobKey blobKey )
     {
-        nodeVersions.add( nodeVersionId );
+        blobKeys.add( blobKey );
     }
 
     @Override
@@ -97,14 +98,14 @@ class TestDumpWriter
         return dumpMeta;
     }
 
-    public boolean hasVersions( final NodeVersionId... versions )
+    public boolean hasNodeVersions( final BlobKey... blobKeys )
     {
-        return this.nodeVersions.containsAll( Arrays.asList( versions ) );
+        return this.blobKeys.containsAll( Arrays.asList( blobKeys ) );
     }
 
-    public Set<NodeVersionId> getNodeVersions()
+    public Set<BlobKey> getBlobKeys()
     {
-        return nodeVersions;
+        return blobKeys;
     }
 
     class RepoBranchEntry

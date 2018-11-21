@@ -4,6 +4,7 @@ import java.time.Instant;
 
 import org.mockito.Mockito;
 
+import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexConfig;
@@ -89,6 +90,7 @@ public class OldBaseNodeHandlerTest
                 build() ).
             nodeState( NodeState.DEFAULT ).
             nodeVersionId( NodeVersionId.from( "versionKey" ) ).
+            blobKey( BlobKey.from( "blobKey" ) ).
             timestamp( Instant.parse( "2010-10-10T10:10:10.10Z" ) ).
             build();
     }

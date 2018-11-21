@@ -14,6 +14,7 @@ public class NodeFactory
             return Node.createRoot().
                 nodeType( nodeVersion.getNodeType() ).
                 nodeVersionId( nodeBranchEntry.getVersionId() ).
+                blobKey( nodeBranchEntry.getBlobKey() ).
                 timestamp( nodeBranchEntry.getTimestamp() ).
                 permissions( nodeVersion.getPermissions() ).
                 nodeState( nodeBranchEntry.getNodeState() ).
@@ -31,6 +32,7 @@ public class NodeFactory
             timestamp( nodeBranchEntry.getTimestamp() ).
             nodeState( nodeBranchEntry.getNodeState() ).
             nodeVersionId( nodeBranchEntry.getVersionId() ).
+            blobKey( nodeBranchEntry.getBlobKey() ).
             build();
     }
 }

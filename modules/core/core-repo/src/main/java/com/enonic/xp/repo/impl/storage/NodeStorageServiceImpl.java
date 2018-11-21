@@ -59,6 +59,7 @@ public class NodeStorageServiceImpl
 
         return Node.create( node ).
             nodeVersionId( nodeVersionId ).
+            blobKey( blobKey ).
             build();
     }
 
@@ -89,17 +90,17 @@ public class NodeStorageServiceImpl
 
         return Node.create( node ).
             nodeVersionId( nodeVersionId ).
+            blobKey( blobKey ).
             build();
     }
 
     @Override
     public void storeVersion( final StoreNodeVersionParams params, final InternalContext context )
     {
-        final NodeVersionId nodeVersionId = new NodeVersionId();
         final BlobKey blobKey = this.nodeVersionService.store( params.getNodeVersion(), context );
 
         this.versionService.store( NodeVersionMetadata.create().
-            nodeVersionId( nodeVersionId ).
+            nodeVersionId( params.getNodeVersionId() ).
             blobKey( blobKey ).
             nodeId( params.getNodeId() ).
             nodePath( params.getNodePath() ).
@@ -155,6 +156,7 @@ public class NodeStorageServiceImpl
 
         return Node.create( node ).
             nodeVersionId( nodeVersionId ).
+            blobKey( blobKey ).
             build();
     }
 
@@ -166,7 +168,7 @@ public class NodeStorageServiceImpl
 
         if ( nodeVersionMetadata == null )
         {
-            throw new NodeNotFoundException( "Cannot find node version with id: " + nodeVersionId  );
+            throw new NodeNotFoundException( "Cannot find node version with id: " + nodeVersionId );
         }
 
         this.branchService.store( NodeBranchEntry.create().
