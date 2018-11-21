@@ -16,7 +16,7 @@ var expected = {
     "abstract": false,
     "final": true,
     "allowChildContent": true,
-    "contentDisplayNameScript": "$('name')",
+    "displayNameExpression": "${name}",
     "icon": {
         "mimeType": "image/png",
         "modifiedTime": "2016-01-01T12:00:00Z"

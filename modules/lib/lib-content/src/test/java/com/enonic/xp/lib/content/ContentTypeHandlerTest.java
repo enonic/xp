@@ -107,7 +107,7 @@ public class ContentTypeHandlerTest
             displayName( "Person" ).
             description( "Person content type" ).
             superType( ContentTypeName.structured() ).
-            contentDisplayNameScript( "$('name')" ).
+            displayNameExpression( "${name}" ).
             icon( schemaIcon ).
             form( getExampleForm() ).
             build();
@@ -124,7 +124,7 @@ public class ContentTypeHandlerTest
             displayName( "Article" ).
             description( "Article content type" ).
             superType( ContentTypeName.structured() ).
-            contentDisplayNameScript( "$('title') + ' ' + $('author')" ).
+            displayNameExpression( "${name} ${author}" ).
             icon( schemaIcon ).
             form( getForm() ).
             build();

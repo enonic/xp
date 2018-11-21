@@ -34,7 +34,7 @@ function nullOrValue(value) {
  * @property {boolean} abstract Whether or not content of this type may be instantiated.
  * @property {boolean} final Whether or not it may be used as super type of other content types.
  * @property {boolean} allowChildContent Whether or not allow creating child items on content of this type.
- * @property {string} contentDisplayNameScript JavaScript code fragment for generating the content name based on values in the content form.
+ * @property {string} displayNameExpression ES6 string template for generating the content name based on values in the content form.
  * @property {object} [icon] Icon of the content type.
  * @property {object} [icon.data] Stream with the binary data for the icon.
  * @property {string} [icon.mimeType] Mime type of the icon image.

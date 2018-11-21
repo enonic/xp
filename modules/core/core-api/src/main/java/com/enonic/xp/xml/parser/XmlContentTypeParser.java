@@ -39,7 +39,7 @@ public final class XmlContentTypeParser
         this.builder.descriptionI18nKey(
             root.getChild( "description" ) != null ? root.getChild( "description" ).getAttribute( "i18n" ) : null );
 
-        this.builder.contentDisplayNameScript( root.getChildValue( "content-display-name-script" ) );
+        this.builder.displayNameExpression( root.getChildValue( "display-name-expression" ) );
         this.builder.superType( this.resolver.toContentTypeName( root.getChildValue( "super-type" ) ) );
 
         this.builder.setAbstract( root.getChildValueAs( "is-abstract", Boolean.class, false ) );

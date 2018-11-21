@@ -117,10 +117,21 @@ public class ContentTypeTest
     public void contentTypeBuilder()
     {
         ContentType.Builder builder =
-            ContentType.create().name( ContentTypeName.media() ).form( MEDIA_DEFAULT ).setAbstract().setFinal().allowChildContent(
-                true ).setBuiltIn().contentDisplayNameScript( "contentDisplayNameScript" ).displayName(
-                "displayName" ).description( "description" ).modifiedTime( Instant.now() ).createdTime( Instant.now() ).creator(
-                PrincipalKey.ofAnonymous() ).modifier( PrincipalKey.ofAnonymous() );
+            ContentType.
+                create().
+                name( ContentTypeName.media() ).
+                form( MEDIA_DEFAULT ).
+                setAbstract().
+                setFinal().
+                allowChildContent( true ).
+                setBuiltIn().
+                displayNameExpression( "displayNameExpression" ).
+                displayName( "displayName" ).
+                description( "description" ).
+                modifiedTime( Instant.now() ).
+                createdTime( Instant.now() ).
+                creator( PrincipalKey.ofAnonymous() ).
+                modifier( PrincipalKey.ofAnonymous() );
         ContentType contentType1 = builder.build();
         ContentType contentType2 = ContentType.create( contentType1 ).build();
         assertEquals( contentType1.getName(), contentType2.getName() );
@@ -129,7 +140,7 @@ public class ContentTypeTest
         assertEquals( contentType1.isFinal(), contentType2.isFinal() );
         assertEquals( contentType1.allowChildContent(), contentType2.allowChildContent() );
         assertEquals( contentType1.isBuiltIn(), contentType2.isBuiltIn() );
-        assertEquals( contentType1.getContentDisplayNameScript(), contentType2.getContentDisplayNameScript() );
+        assertEquals( contentType1.getDisplayNameExpression(), contentType2.getDisplayNameExpression() );
         assertEquals( contentType1.getDisplayName(), contentType2.getDisplayName() );
         assertEquals( contentType1.getDescription(), contentType2.getDescription() );
         assertEquals( contentType1.getModifiedTime(), contentType2.getModifiedTime() );
