@@ -62,13 +62,69 @@ public class Media
         return getAttachments().byName( mediaAttachmentName );
     }
 
-    public ImageOrientation getOrientation()
+    private ImageOrientation getOrientationFromMetaData()
     {
         final ExtraData cameraInfo = getAllExtraData().getMetadata( MediaInfo.CAMERA_INFO_METADATA_NAME );
         if ( cameraInfo != null && cameraInfo.getData().hasProperty( ContentPropertyNames.ORIENTATION ) )
         {
-            return ImageOrientation.from( cameraInfo.getData().getString( ContentPropertyNames.ORIENTATION ) );
+            final String orientationValue = cameraInfo.getData().getString( ContentPropertyNames.ORIENTATION );
+            if ( ImageOrientation.isValid( orientationValue ) )
+            {
+                return ImageOrientation.from( orientationValue );
+            }
         }
+        return null;
+    }
+
+    private ImageOrientation getOrientationFromPropertySet()
+    {
+        final PropertyTree contentData = getData();
+        final Property mediaProperty = contentData.getProperty( ContentPropertyNames.MEDIA );
+        if ( mediaProperty == null )
+        {
+            return null;
+        }
+
+        final ValueType mediaPropertyType = mediaProperty.getType();
+        if ( !mediaPropertyType.equals( ValueTypes.PROPERTY_SET ) )
+        {
+            return null;
+        }
+
+        final PropertySet mediaData = mediaProperty.getSet( );
+        if ( mediaData == null )
+        {
+            return null;
+        }
+
+        if ( !mediaData.hasProperty( ContentPropertyNames.ORIENTATION ) ) {
+            return null;
+        }
+
+        final String orientationValue = mediaData.getString( ContentPropertyNames.ORIENTATION );
+
+        if ( !ImageOrientation.isValid( orientationValue ) )
+        {
+            return null;
+        }
+
+        return ImageOrientation.from( orientationValue );
+    }
+
+
+    public ImageOrientation getOrientation() {
+        final ImageOrientation fromPropertySet = getOrientationFromPropertySet();
+
+        if ( fromPropertySet != null ) {
+            return fromPropertySet;
+        }
+
+        final ImageOrientation fromMetaData = getOrientationFromMetaData();
+
+        if ( fromMetaData != null ) {
+            return fromMetaData;
+        }
+
         return null;
     }
 
