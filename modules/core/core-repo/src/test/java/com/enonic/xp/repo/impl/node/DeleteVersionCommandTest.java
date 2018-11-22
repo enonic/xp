@@ -53,7 +53,9 @@ public class DeleteVersionCommandTest
 
     private void doDeleteVersion( final Node node1 )
     {
-        DeleteVersionCommand.create().nodeVersionId( node1.getNodeVersionId() ).
+        DeleteVersionCommand.create().
+            nodeId( node1.id() ).
+            nodeVersionId( node1.getNodeVersionId() ).
             indexServiceInternal( indexServiceInternal ).
             storageService( storageService ).
             searchService( searchService ).
