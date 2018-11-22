@@ -43,7 +43,7 @@ public class AdminToolPortalHandler
         final DescriptorKey descriptorKey = getDescriptorKey( webRequest );
         if ( descriptorKey == null )
         {
-            portalRequest.setBaseUri( ADMIN_TOOL_PREFIX );
+            portalRequest.setBaseUri( ADMIN_TOOL_START );
             portalRequest.setApplicationKey( DEFAULT_DESCRIPTOR_KEY.getApplicationKey() );
         }
         else

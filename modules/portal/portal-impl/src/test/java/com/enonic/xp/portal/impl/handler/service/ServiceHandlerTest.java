@@ -94,7 +94,7 @@ public class ServiceHandlerTest
         this.request.setMethod( HttpMethod.GET );
         this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
         this.request.setEndpointPath( "/_/service/demo/myservice" );
-        this.request.setRawPath( "portal/draft/site/somepath/content/_/service/demo/myservice" );
+        this.request.setRawPath( "/portal/draft/site/somepath/content/_/service/demo/myservice" );
     }
 
     @Test
@@ -213,9 +213,10 @@ public class ServiceHandlerTest
         assertNotNull( this.request.getApplicationKey() );
         assertNotNull( this.request.getSite() );
         assertNotNull( this.request.getContent() );
+        assertEquals( "/portal/draft/site/somepath/content/_/service/demo/test", this.request.getContextPath() );
     }
 
-    @Test(expected=com.enonic.xp.web.WebException.class)
+    @Test(expected = com.enonic.xp.web.WebException.class)
     public void executeScript_invalidSite()
         throws Exception
     {
@@ -232,12 +233,12 @@ public class ServiceHandlerTest
         this.request.setEndpointPath( "/_/service/demo/test" );
 
         final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), null );
-        assertEquals( HttpStatus.OK, response.getStatus() );        
+        assertEquals( HttpStatus.OK, response.getStatus() );
         Mockito.verify( this.controllerScript ).execute( this.request );
         assertNotNull( this.request.getApplicationKey() );
     }
 
-    @Test(expected=com.enonic.xp.web.WebException.class)
+    @Test(expected = com.enonic.xp.web.WebException.class)
     public void executeScript_invalidApplication()
         throws Exception
     {
@@ -245,7 +246,7 @@ public class ServiceHandlerTest
         this.request.setEndpointPath( "/_/service/demo/test" );
 
         final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), null );
-        assertEquals( HttpStatus.OK, response.getStatus() );        
+        assertEquals( HttpStatus.OK, response.getStatus() );
         Mockito.verify( this.controllerScript ).execute( this.request );
         assertNotNull( this.request.getApplicationKey() );
     }

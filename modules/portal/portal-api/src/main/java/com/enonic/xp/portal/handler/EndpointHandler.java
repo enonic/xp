@@ -14,18 +14,22 @@ import com.enonic.xp.web.handler.BaseWebHandler;
 public abstract class EndpointHandler
     extends BaseWebHandler
 {
+    private final String endpointType;
+
     private final Pattern pathPrefix;
 
 
-    public EndpointHandler( final String type )
+    public EndpointHandler( final String endpointType )
     {
-        pathPrefix = Pattern.compile( "^/_/" + type + "(/|$)" );
+        this.endpointType = endpointType;
+        pathPrefix = Pattern.compile( "^/_/" + endpointType + "(/|$)" );
     }
 
-    public EndpointHandler( final EnumSet<HttpMethod> methodsAllowed, final String type )
+    public EndpointHandler( final EnumSet<HttpMethod> methodsAllowed, final String endpointType )
     {
         super( methodsAllowed );
-        pathPrefix = Pattern.compile( "^/_/" + type + "(/|$)" );
+        this.endpointType = endpointType;
+        pathPrefix = Pattern.compile( "^/_/" + endpointType + "(/|$)" );
     }
 
     @Override
@@ -35,12 +39,20 @@ public abstract class EndpointHandler
         return pathPrefix.matcher( endpointPath ).find();
     }
 
+    protected String findPreRestPath( final WebRequest req )
+    {
+        final String rawPath = req.getRawPath();
+        final int endpointPathIndex = rawPath.indexOf( "/_/" );
+        final String preEndpointPath = endpointPathIndex > -1 ? rawPath.substring( 0, endpointPathIndex ) : "";
+        return preEndpointPath + "/_/" + endpointType;
+    }
+
     protected final String findRestPath( final WebRequest req )
     {
         final String endpointPath = Strings.nullToEmpty( req.getEndpointPath() );
         final Matcher matcher = pathPrefix.matcher( endpointPath );
         matcher.find();
-        return endpointPath.substring(matcher.group( 0 ).length());
+        return endpointPath.substring( matcher.group( 0 ).length() );
     }
 
     protected boolean isPortalBase( final WebRequest req )
