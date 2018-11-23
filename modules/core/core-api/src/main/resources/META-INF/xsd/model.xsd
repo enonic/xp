@@ -183,7 +183,7 @@
     <xs:sequence>
       <xs:element minOccurs="0" name="display-name" type="i18n"/>
       <xs:element minOccurs="0" name="description" type="i18n"/>
-      <xs:element minOccurs="0" name="content-display-name-script" type="xs:string"/>
+      <xs:element minOccurs="0" name="display-name-expression" type="xs:string"/>
       <xs:element minOccurs="0" name="super-type" type="xs:string"/>
       <xs:element minOccurs="0" name="is-abstract" type="xs:boolean"/>
       <xs:element minOccurs="0" name="is-final" type="xs:boolean"/>

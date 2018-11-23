@@ -41,7 +41,7 @@ public final class ContentTypeMapper
         gen.value( "abstract", contentType.isAbstract() );
         gen.value( "final", contentType.isFinal() );
         gen.value( "allowChildContent", contentType.allowChildContent() );
-        gen.value( "contentDisplayNameScript", contentType.getContentDisplayNameScript() );
+        gen.value( "displayNameExpression", contentType.getDisplayNameExpression() );
         serializeIcon( gen, contentType.getIcon() );
         serializeForm( gen, contentType.getForm() );
     }

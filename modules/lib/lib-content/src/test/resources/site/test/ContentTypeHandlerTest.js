@@ -12,7 +12,7 @@ exports.testGet = function () {
         "abstract": false,
         "final": true,
         "allowChildContent": true,
-        "contentDisplayNameScript": "$('title') + ' ' + $('author')",
+        "displayNameExpression": "${title} ${author}",
         "icon": {
             "mimeType": "image/png",
             "modifiedTime": "2016-01-01T12:00:00Z"
@@ -206,7 +206,7 @@ exports.testList = function () {
             "abstract": false,
             "final": true,
             "allowChildContent": true,
-            "contentDisplayNameScript": "$('title') + ' ' + $('author')",
+            "displayNameExpression": "${title} ${author}",
             "icon": {
                 "mimeType": "image/png",
                 "modifiedTime": "2016-01-01T12:00:00Z"
