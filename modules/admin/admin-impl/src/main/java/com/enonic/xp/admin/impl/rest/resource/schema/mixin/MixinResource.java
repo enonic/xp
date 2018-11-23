@@ -68,16 +68,23 @@ public final class MixinResource
 
         final LocaleMessageResolver localeMessageResolver = new LocaleMessageResolver( this.localeService, mixinName.getApplicationKey() );
 
-        return MixinJson.create().setMixin( mixin ).setIconUrlResolver( this.mixinIconUrlResolver ).setLocaleMessageResolver(
-            localeMessageResolver ).build();
+        return MixinJson.create().
+            setMixin( mixin ).
+            setIconUrlResolver( this.mixinIconUrlResolver ).
+            setLocaleMessageResolver( localeMessageResolver ).
+            setInlineMixinResolver( new InlineMixinResolver( mixinService ) ).
+            build();
     }
 
     private List<MixinJson> createMixinListJson( final Collection<Mixin> mixins )
     {
-        return mixins.stream().map(
-            mixin -> MixinJson.create().setMixin( mixin ).setIconUrlResolver( this.mixinIconUrlResolver ).setLocaleMessageResolver(
-                new LocaleMessageResolver( localeService, mixin.getName().getApplicationKey() ) ).build() ).collect(
-            toList() );
+        return mixins.stream().map( mixin -> MixinJson.create().
+            setMixin( mixin ).
+            setIconUrlResolver( this.mixinIconUrlResolver ).
+            setLocaleMessageResolver( new LocaleMessageResolver( localeService, mixin.getName().getApplicationKey() ) ).
+            setInlineMixinResolver( new InlineMixinResolver( mixinService ) ).
+            build() ).
+            collect( toList() );
     }
 
     @GET

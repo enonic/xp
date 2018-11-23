@@ -12,6 +12,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.junit.Test;
+import org.mockito.AdditionalAnswers;
 import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
@@ -25,6 +26,7 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.FieldSet;
+import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.FormOptionSetOption;
@@ -39,8 +41,8 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.ContentTypes;
-import com.enonic.xp.schema.content.GetAllContentTypesParams;
 import com.enonic.xp.schema.content.GetContentTypeParams;
+import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
@@ -62,6 +64,8 @@ public class ContentTypeResourceTest
 
     private LocaleService localeService;
 
+    private MixinService mixinService;
+
     private ContentTypeResource resource;
 
     public ContentTypeResourceTest()
@@ -76,10 +80,12 @@ public class ContentTypeResourceTest
         contentTypeService = Mockito.mock( ContentTypeService.class );
         contentService = Mockito.mock( ContentService.class );
         localeService = Mockito.mock( LocaleService.class );
+        mixinService = Mockito.mock( MixinService.class );
 
         this.resource.setContentTypeService( contentTypeService );
         this.resource.setContentService( contentService );
         this.resource.setLocaleService( localeService );
+        this.resource.setMixinService( mixinService );
 
         return this.resource;
     }
@@ -105,6 +111,7 @@ public class ContentTypeResourceTest
             build();
 
         Mockito.when( contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
+        Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
 
         // execute
         String jsonString =
@@ -148,6 +155,7 @@ public class ContentTypeResourceTest
         Mockito.when( messageBundle.localize( "key.help-text" ) ).thenReturn( "translated.helpText" );
 
         Mockito.when( this.localeService.getBundle( Mockito.any(), Mockito.any() ) ).thenReturn( messageBundle );
+        Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
 
         // execute
         String jsonString =
@@ -191,6 +199,7 @@ public class ContentTypeResourceTest
         Mockito.when( messageBundle.localize( "key.help-text" ) ).thenReturn( "translated.helpText" );
 
         Mockito.when( this.localeService.getBundle( Mockito.any(), Mockito.any() ) ).thenReturn( messageBundle );
+        Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
 
         // execute
         String jsonString =
@@ -242,6 +251,7 @@ public class ContentTypeResourceTest
         Mockito.when( messageBundle.localize( "key.help-text" ) ).thenReturn( "translated.helpText" );
 
         Mockito.when( this.localeService.getBundle( Mockito.any(), Mockito.any() ) ).thenReturn( messageBundle );
+        Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
 
         // execute
         String jsonString =
@@ -285,6 +295,7 @@ public class ContentTypeResourceTest
         Mockito.when( messageBundle.localize( "key.description" ) ).thenReturn( "translated.description" );
 
         Mockito.when( this.localeService.getBundle( Mockito.any(), Mockito.any() ) ).thenReturn( messageBundle );
+        Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
 
         // execute
         String jsonString =
@@ -369,6 +380,7 @@ public class ContentTypeResourceTest
             build();
 
         Mockito.when( contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
+        Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
 
         // execute
         String jsonString =
@@ -397,7 +409,7 @@ public class ContentTypeResourceTest
                 build() ).
             build();
 
-        Mockito.when( contentTypeService.getAll( isA( GetAllContentTypesParams.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
+        Mockito.when( contentTypeService.getAll() ).thenReturn( ContentTypes.from( contentType ) );
 
         // execute
         String jsonString = request().

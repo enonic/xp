@@ -10,7 +10,6 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.ContentTypes;
-import com.enonic.xp.schema.content.GetAllContentTypesParams;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.script.bean.BeanContext;
@@ -31,17 +30,14 @@ public final class ContentTypeHandler
         {
             return null;
         }
-        final GetContentTypeParams params = GetContentTypeParams.from( ContentTypeName.from( name ) ).
-            inlineMixinsToFormItems( true );
+        final GetContentTypeParams params = GetContentTypeParams.from( ContentTypeName.from( name ) );
         final ContentType ctype = contentTypeService.get().getByName( params );
         return ctype == null ? null : new ContentTypeMapper( inlineMixins( ctype ) );
     }
 
     public List<ContentTypeMapper> getAllContentTypes()
     {
-        final GetAllContentTypesParams params = new GetAllContentTypesParams().
-            inlineMixinsToFormItems( true );
-        final ContentTypes types = contentTypeService.get().getAll( params );
+        final ContentTypes types = contentTypeService.get().getAll();
 
         return types.stream().map( this::inlineMixins ).map( ContentTypeMapper::new ).collect( Collectors.toList() );
     }

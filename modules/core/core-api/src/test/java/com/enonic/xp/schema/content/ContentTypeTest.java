@@ -170,14 +170,6 @@ public class ContentTypeTest
     }
 
     @Test
-    public void getAllContentTypesParams()
-    {
-        GetAllContentTypesParams params = new GetAllContentTypesParams();
-        params.inlineMixinsToFormItems( true );
-        assertTrue( params.isInlineMixinsToFormItems() );
-    }
-
-    @Test
     public void getChildContentTypesParams()
     {
         GetChildContentTypesParams params1 = new GetChildContentTypesParams();
@@ -197,17 +189,7 @@ public class ContentTypeTest
     {
         GetContentTypeParams params1 = GetContentTypeParams.from( ContentTypeName.archiveMedia() );
         GetContentTypeParams params2 = GetContentTypeParams.from( ContentTypeName.archiveMedia() );
-        GetContentTypeParams params3 = GetContentTypeParams.from( ContentTypeName.archiveMedia() );
-        params1.inlineMixinsToFormItems( true );
-        params1.validate();
-        assertFalse( params2.isInlineMixinsToFormItems() );
-        assertFalse( params2.equals( params1 ) );
-        assertFalse( params2.hashCode() == params1.hashCode() );
-        assertTrue( params2.getContentTypeName().equals( params1.getContentTypeName() ) );
-        assertEquals( params1, params1 );
-        params1.contentTypeName( "test" );
-        assertNotEquals( params1, params2 );
-        assertEquals( params2, params3 );
+        assertEquals( params1, params2 );
     }
 
     @Test

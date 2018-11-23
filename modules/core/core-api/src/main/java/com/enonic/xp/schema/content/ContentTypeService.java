@@ -14,7 +14,7 @@ public interface ContentTypeService
 
     ContentTypes getByApplication( ApplicationKey applicationKey );
 
-    ContentTypes getAll( GetAllContentTypesParams params );
+    ContentTypes getAll();
 
     Set<String> getMimeTypes( ContentTypeNames napes );
 

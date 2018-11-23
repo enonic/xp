@@ -11,6 +11,7 @@ import com.enonic.xp.admin.impl.json.ItemJson;
 import com.enonic.xp.admin.impl.json.content.page.region.RegionDescriptorJson;
 import com.enonic.xp.admin.impl.json.form.FormJson;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
+import com.enonic.xp.admin.impl.rest.resource.schema.mixin.InlineMixinResolver;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.region.RegionDescriptor;
 import com.enonic.xp.region.RegionDescriptors;
@@ -30,14 +31,15 @@ public class PageDescriptorJson
 
     private final LocaleMessageResolver localeMessageResolver;
 
-    public PageDescriptorJson( final PageDescriptor descriptor, final LocaleMessageResolver localeMessageResolver )
+    public PageDescriptorJson( final PageDescriptor descriptor, final LocaleMessageResolver localeMessageResolver,
+                               final InlineMixinResolver inlineMixinResolver )
     {
         Preconditions.checkNotNull( descriptor );
         Preconditions.checkNotNull( localeMessageResolver );
 
         this.descriptor = descriptor;
         this.localeMessageResolver = localeMessageResolver;
-        this.configJson = new FormJson( descriptor.getConfig(), localeMessageResolver );
+        this.configJson = new FormJson( descriptor.getConfig(), localeMessageResolver, inlineMixinResolver );
 
         this.editable = false;
         this.deletable = false;

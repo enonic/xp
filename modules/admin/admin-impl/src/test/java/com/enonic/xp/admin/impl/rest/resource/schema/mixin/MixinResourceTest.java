@@ -10,12 +10,14 @@ import javax.ws.rs.core.Response;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.AdditionalAnswers;
 import org.mockito.Mockito;
 
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Resources;
 
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
+import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
@@ -71,6 +73,7 @@ public class MixinResourceTest
                 true ).helpText( "Help text line 1" ).required( true ).build() ).build();
 
         Mockito.when( mixinService.getByName( Mockito.isA( MixinName.class ) ) ).thenReturn( mixin );
+        Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
 
         String response = request().path( "schema/mixin" ).queryParam( "name", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get().getAsString();
 
@@ -99,6 +102,7 @@ public class MixinResourceTest
         Mockito.when( messageBundle.localize( "key.description" ) ).thenReturn( "translated.description" );
 
         Mockito.when( this.localeService.getBundle( any(), any() ) ).thenReturn( messageBundle );
+        Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
 
         String response = request().path( "schema/mixin" ).queryParam( "name", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get().getAsString();
 
@@ -130,6 +134,8 @@ public class MixinResourceTest
                 true ).helpText( "Help text area" ).required( true ).build() ).build();
 
         Mockito.when( mixinService.getAll() ).thenReturn( Mixins.from( mixin1, mixin2 ) );
+        Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
+
 
         String result = request().path( "schema/mixin/list" ).get().getAsString();
 
