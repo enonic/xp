@@ -164,6 +164,7 @@ import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.jaxrs.JaxRsExceptions;
 import com.enonic.xp.query.parser.QueryParser;
+import com.enonic.xp.repository.IndexException;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
 import com.enonic.xp.security.Principal;
@@ -1083,7 +1084,16 @@ public final class ContentResource
     @Consumes(MediaType.APPLICATION_JSON)
     public AbstractContentQueryResultJson selectorQuery( final ContentSelectorQueryJson contentQueryJson )
     {
-        final FindContentIdsByQueryResult findResult = findContentsBySelectorQuery( contentQueryJson );
+        FindContentIdsByQueryResult findResult;
+        try
+        {
+            findResult = findContentsBySelectorQuery( contentQueryJson );
+        }
+        catch ( IndexException e )
+        {
+            LOG.warn( e.getMessage() );
+            findResult = FindContentIdsByQueryResult.empty();
+        }
 
         return FindContentByQuertResultJsonFactory.create().
             contents( this.contentService.getByIds( new GetContentByIdsParams( findResult.getContentIds() ) ) ).

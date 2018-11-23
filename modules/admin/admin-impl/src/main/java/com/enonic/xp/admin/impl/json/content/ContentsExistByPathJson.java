@@ -2,13 +2,13 @@ package com.enonic.xp.admin.impl.json.content;
 
 import java.util.List;
 
-import org.codehaus.jparsec.util.Lists;
+import com.google.common.collect.Lists;
 
 import com.enonic.xp.content.ContentPath;
 
 public class ContentsExistByPathJson
 {
-    private final List<ContentExistByPathJson> contentsExistJson = Lists.arrayList();
+    private final List<ContentExistByPathJson> contentsExistJson = Lists.newArrayList();
 
     public ContentsExistByPathJson()
     {

@@ -5,7 +5,8 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jparsec.util.Lists;
+
+import com.google.common.collect.Lists;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
@@ -38,7 +39,7 @@ public class ContentOutboundDependenciesIdsResolver
     {
         final Content content = this.contentService.getById( contentId );
 
-        final List<ContentId> contentIds = Lists.arrayList();
+        final List<ContentId> contentIds = Lists.newArrayList();
 
         final PropertySet contentPageData = new PropertyTree().getRoot();
         if ( content.getPage() != null )

@@ -1,16 +1,16 @@
 package com.enonic.xp.query.parser;
 
 import java.util.List;
+import java.util.function.BinaryOperator;
+import java.util.function.UnaryOperator;
 
-import org.codehaus.jparsec.OperatorTable;
-import org.codehaus.jparsec.Parser;
-import org.codehaus.jparsec.Parsers;
-import org.codehaus.jparsec.Scanners;
-import org.codehaus.jparsec.Terminals;
-import org.codehaus.jparsec.Tokens;
-import org.codehaus.jparsec.functors.Binary;
-import org.codehaus.jparsec.functors.Unary;
-import org.codehaus.jparsec.pattern.Patterns;
+import org.jparsec.OperatorTable;
+import org.jparsec.Parser;
+import org.jparsec.Parsers;
+import org.jparsec.Scanners;
+import org.jparsec.Terminals;
+import org.jparsec.Tokens;
+import org.jparsec.pattern.Patterns;
 
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.ConstraintExpr;
@@ -147,17 +147,17 @@ final class QueryGrammar
         return Parsers.sequence( parseField(), combined, parseValue( true ), QueryMapper.compareValueExpr() );
     }
 
-    private Parser<Unary<ConstraintExpr>> parseNot()
+    private Parser<UnaryOperator<ConstraintExpr>> parseNot()
     {
         return term( "NOT" ).next( Parsers.constant( QueryMapper.notExpr() ) );
     }
 
-    private Parser<Binary<ConstraintExpr>> parseAnd()
+    private Parser<BinaryOperator<ConstraintExpr>> parseAnd()
     {
         return term( "AND" ).next( Parsers.constant( QueryMapper.andExpr() ) );
     }
 
-    private Parser<Binary<ConstraintExpr>> parseOr()
+    private Parser<BinaryOperator<ConstraintExpr>> parseOr()
     {
         return term( "OR" ).next( Parsers.constant( QueryMapper.orExpr() ) );
     }
