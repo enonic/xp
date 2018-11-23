@@ -47,6 +47,11 @@ public final class ContentTypeFromMimeTypeResolver
         MAP.put( "video/x-matroska", ContentTypeName.videoMedia() );
         MAP.put( "video/x-ms-wmv", ContentTypeName.videoMedia() );
         MAP.put( "video/x-flv", ContentTypeName.videoMedia() );
+        MAP.put( "video/MP2T", ContentTypeName.videoMedia() );
+        MAP.put( "video/avchd-stream", ContentTypeName.videoMedia() );
+        MAP.put( "video/mts", ContentTypeName.videoMedia() );
+        MAP.put( "video/vnd.dlna.mpeg-tts", ContentTypeName.videoMedia() );
+        MAP.put( "application/metastream", ContentTypeName.videoMedia() );
         MAP.put( "application/ogg", ContentTypeName.videoMedia() );
 
         // Archive
