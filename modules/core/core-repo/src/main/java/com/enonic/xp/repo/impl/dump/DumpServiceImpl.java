@@ -37,6 +37,7 @@ import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.reader.FileDumpReader;
 import com.enonic.xp.repo.impl.dump.upgrade.DumpUpgrader;
 import com.enonic.xp.repo.impl.dump.upgrade.MissingModelVersionDumpUpgrader;
+import com.enonic.xp.repo.impl.dump.upgrade.VersionIdDumpUpgrader;
 import com.enonic.xp.repo.impl.dump.writer.FileDumpWriter;
 import com.enonic.xp.repo.impl.node.NodeHelper;
 import com.enonic.xp.repo.impl.node.executor.BatchedGetChildrenExecutor;
@@ -68,8 +69,6 @@ public class DumpServiceImpl
     private String xpVersion;
 
     private Path basePath = Paths.get( HomeDir.get().toString(), "data", "dump" );
-
-    private final DumpUpgrader[] dumpUpgraders = new DumpUpgrader[]{new MissingModelVersionDumpUpgrader()};
 
     @SuppressWarnings("unused")
     @Activate
@@ -107,7 +106,7 @@ public class DumpServiceImpl
         result.initialVersion( modelVersion );
         if ( modelVersion.lessThan( DumpConstants.MODEL_VERSION ) )
         {
-            for ( DumpUpgrader dumpUpgrader : dumpUpgraders )
+            for ( DumpUpgrader dumpUpgrader : createDumpUpgraders() )
             {
                 final Version targetModelVersion = dumpUpgrader.getModelVersion();
                 if ( modelVersion.lessThan( targetModelVersion ) )
@@ -120,6 +119,11 @@ public class DumpServiceImpl
         }
         result.upgradedVersion( modelVersion );
         return result.build();
+    }
+
+    private DumpUpgrader[] createDumpUpgraders()
+    {
+        return new DumpUpgrader[]{new MissingModelVersionDumpUpgrader(), new VersionIdDumpUpgrader( this.basePath )};
     }
 
     private Version getDumpModelVersion( final String dumpName )
@@ -140,11 +144,7 @@ public class DumpServiceImpl
             modelVersion( modelVersion ).
             build();
 
-        FileDumpWriter.create().
-            basePath( basePath ).
-            dumpName( dumpName ).
-            blobStore( this.blobStore ).
-            build().
+        new FileDumpWriter( basePath, dumpName, this.blobStore ).
             writeDumpMetaData( updatedDumpMeta );
     }
 
@@ -162,11 +162,7 @@ public class DumpServiceImpl
             throw new RepoDumpException( "Only admin role users can dump repositories" );
         }
 
-        final FileDumpWriter writer = FileDumpWriter.create().
-            basePath( basePath ).
-            dumpName( params.getDumpName() ).
-            blobStore( this.blobStore ).
-            build();
+        final FileDumpWriter writer = new FileDumpWriter( basePath, params.getDumpName(), blobStore );
 
         final Repositories repositories = this.repositoryService.list();
 
