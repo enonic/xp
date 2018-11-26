@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.ReturnFields;
@@ -24,7 +26,7 @@ public class VersionServiceImpl
     implements VersionService
 {
     private static final ReturnFields VERSION_RETURN_FIELDS =
-        ReturnFields.from( VersionIndexPath.VERSION_ID, VersionIndexPath.TIMESTAMP, VersionIndexPath.NODE_PATH, VersionIndexPath.NODE_ID );
+        ReturnFields.from( VersionIndexPath.VERSION_ID, VersionIndexPath.BLOB_KEY, VersionIndexPath.TIMESTAMP, VersionIndexPath.NODE_PATH, VersionIndexPath.NODE_ID );
 
     private StorageDao storageDao;
 
@@ -37,28 +39,28 @@ public class VersionServiceImpl
     }
 
     @Override
-    public void delete( final Collection<NodeVersionDocumentId> nodeVersionDocumentIds, final InternalContext context )
+    public void delete( final Collection<NodeVersionId> nodeVersionIds, final InternalContext context )
     {
         storageDao.delete( DeleteRequests.create().
             forceRefresh( false ).
-            ids( nodeVersionDocumentIds.stream().map( NodeVersionDocumentId::toString ).collect( Collectors.toList() ) ).
+            ids( nodeVersionIds.stream().map( NodeVersionId::toString ).collect( Collectors.toList() ) ).
             settings( createStorageSettings( context ) ).
             build() );
     }
 
     @Override
-    public NodeVersionMetadata getVersion( final NodeVersionDocumentId nodeVersionDocumentId, final InternalContext context )
+    public NodeVersionMetadata getVersion( final NodeId nodeId, final NodeVersionId nodeVersionId, final InternalContext context )
     {
-        return doGetById( nodeVersionDocumentId, context );
+        return doGetById( nodeId, nodeVersionId, context );
     }
 
-    private NodeVersionMetadata doGetById( final NodeVersionDocumentId nodeVersionDocumentId, final InternalContext context )
+    private NodeVersionMetadata doGetById( final NodeId nodeId, final NodeVersionId nodeVersionId, final InternalContext context )
     {
         final GetByIdRequest getByIdRequest = GetByIdRequest.create().
-            id( nodeVersionDocumentId.toString() ).
+            id( nodeVersionId.toString() ).
             returnFields( VERSION_RETURN_FIELDS ).
             storageSettings( createStorageSettings( context ) ).
-            routing( nodeVersionDocumentId.getNodeId().toString() ).
+            routing( nodeId.toString() ).
             build();
 
         final GetResult getResult = this.storageDao.getById( getByIdRequest );

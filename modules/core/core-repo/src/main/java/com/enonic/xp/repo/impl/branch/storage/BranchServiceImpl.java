@@ -50,7 +50,7 @@ public class BranchServiceImpl
     implements BranchService
 {
     private static final ReturnFields BRANCH_RETURN_FIELDS =
-        ReturnFields.from( BranchIndexPath.NODE_ID, BranchIndexPath.VERSION_ID, BranchIndexPath.STATE, BranchIndexPath.PATH,
+        ReturnFields.from( BranchIndexPath.NODE_ID, BranchIndexPath.VERSION_ID, BranchIndexPath.BLOB_KEY, BranchIndexPath.STATE, BranchIndexPath.PATH,
                            BranchIndexPath.TIMESTAMP, BranchIndexPath.REFERENCES );
 
     private static final int BATCHED_EXECUTOR_LIMIT = 1000;

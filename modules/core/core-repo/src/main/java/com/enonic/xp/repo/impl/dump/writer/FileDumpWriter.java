@@ -22,7 +22,6 @@ import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.dump.AbstractFileProcessor;
 import com.enonic.xp.repo.impl.dump.DumpBlobStore;
 import com.enonic.xp.repo.impl.dump.DumpConstants;
@@ -191,14 +190,14 @@ public class FileDumpWriter
 
 
     @Override
-    public void writeVersionBlob( final RepositoryId repositoryId, final NodeVersionId nodeVersionId )
+    public void writeVersionBlob( final RepositoryId repositoryId, final BlobKey blobKey )
     {
         final Segment dumpSegment = RepositorySegmentUtils.toSegment( repositoryId, DumpConstants.DUMP_NODE_SEGMENT_LEVEL );
-        final BlobRecord existingVersion = blobStore.getRecord( dumpSegment, BlobKey.from( nodeVersionId.toString() ) );
+        final BlobRecord existingVersion = blobStore.getRecord( dumpSegment, blobKey );
 
         if ( existingVersion == null )
         {
-            throw new RepoDumpException( "Cannot write node version with key [" + nodeVersionId + "], not found in blobStore" );
+            throw new RepoDumpException( "Cannot write node version with key [" + blobKey + "], not found in blobStore" );
         }
 
         final Segment segment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.NODE_SEGMENT_LEVEL );

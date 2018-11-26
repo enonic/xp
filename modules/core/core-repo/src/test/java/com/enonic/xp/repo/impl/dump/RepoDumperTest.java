@@ -67,7 +67,7 @@ public class RepoDumperTest
 
         doDump( writer );
 
-        assertTrue( writer.hasVersions( node1.getNodeVersionId(), updatedNode.getNodeVersionId() ) );
+        assertTrue( writer.hasNodeVersions( node1.getBlobKey(), updatedNode.getBlobKey() ) );
     }
 
     @Test

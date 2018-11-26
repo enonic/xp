@@ -1,41 +1,49 @@
 package com.enonic.xp.node;
 
+
 import java.util.Objects;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
 @Beta
-public final class NodeVersionId
+public class NodeVersionId
+    extends UUID
 {
-    private final String value;
+    public NodeVersionId()
+    {
+        super();
+    }
 
     private NodeVersionId( final String value )
     {
-        Preconditions.checkNotNull( value );
-        this.value = value;
+        super( value );
     }
 
     @Override
     public boolean equals( final Object o )
     {
-        return ( o instanceof NodeVersionId ) && Objects.equals( this.value, ( (NodeVersionId) o ).value );
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+
+        final NodeVersionId other = (NodeVersionId) o;
+        return Objects.equals( value, other.value );
     }
 
-    @Override
-    public int hashCode()
+    public static NodeVersionId from( String string )
     {
-        return this.value.hashCode();
+        return new NodeVersionId( string );
     }
 
-    @Override
-    public String toString()
+    public static NodeVersionId from( Object object )
     {
-        return this.value;
-    }
-
-    public static NodeVersionId from( final String value )
-    {
-        return new NodeVersionId( value );
+        Preconditions.checkNotNull( object, "object cannot be null" );
+        return new NodeVersionId( object.toString() );
     }
 }

@@ -6,6 +6,7 @@ import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexConfig;
@@ -92,6 +93,7 @@ public class BaseNodeHandlerTest
                 build() ).
             nodeState( NodeState.DEFAULT ).
             nodeVersionId( NodeVersionId.from( "versionKey" ) ).
+            blobKey( BlobKey.from( "blobKey" ) ).
             timestamp( Instant.parse( "2010-10-10T10:10:10.10Z" ) ).
             build();
     }

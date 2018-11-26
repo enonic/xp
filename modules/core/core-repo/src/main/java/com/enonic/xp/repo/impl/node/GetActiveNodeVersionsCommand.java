@@ -10,7 +10,6 @@ import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.version.NodeVersionDocumentId;
 
 public class GetActiveNodeVersionsCommand
     extends AbstractNodeCommand
@@ -51,9 +50,8 @@ public class GetActiveNodeVersionsCommand
 
             if ( nodeBranchEntry != null )
             {
-                builder.add( branch, this.nodeStorageService.getVersion(
-                    new NodeVersionDocumentId( nodeBranchEntry.getNodeId(), nodeBranchEntry.getVersionId() ),
-                    InternalContext.from( context ) ) );
+                builder.add( branch, this.nodeStorageService.getVersion( nodeBranchEntry.getNodeId(), nodeBranchEntry.getVersionId(),
+                                                                         InternalContext.from( context ) ) );
             }
         }
         return builder.build();

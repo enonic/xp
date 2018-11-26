@@ -7,6 +7,7 @@ import java.util.Objects;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexConfig;
@@ -49,6 +50,8 @@ public final class Node
 
     private final NodeVersionId nodeVersionId;
 
+    private final BlobKey blobKey;
+
     protected Node( final Builder builder )
     {
         Preconditions.checkNotNull( builder.permissions, "permissions are required" );
@@ -66,6 +69,7 @@ public final class Node
         this.nodeState = builder.nodeState;
         this.timestamp = builder.timestamp;
         this.nodeVersionId = builder.nodeVersionId;
+        this.blobKey = builder.blobKey;
 
         if ( ROOT_UUID.equals( this.id ) )
         {
@@ -178,6 +182,11 @@ public final class Node
         return nodeVersionId;
     }
 
+    public BlobKey getBlobKey()
+    {
+        return blobKey;
+    }
+
     public void validateForIndexing()
     {
         Preconditions.checkNotNull( this.id, "Id must be set" );
@@ -254,6 +263,8 @@ public final class Node
 
         private NodeVersionId nodeVersionId;
 
+        private BlobKey blobKey;
+
         public Builder()
         {
             super();
@@ -280,6 +291,7 @@ public final class Node
             this.nodeState = node.nodeState;
             this.timestamp = node.timestamp;
             this.nodeVersionId = node.nodeVersionId;
+            this.blobKey = node.blobKey;
         }
 
         public Builder( final NodeId id, final NodeName name )
@@ -388,6 +400,12 @@ public final class Node
             return this;
         }
 
+        public Builder blobKey( final BlobKey blobKey )
+        {
+            this.blobKey = blobKey;
+            return this;
+        }
+
         private void validate()
         {
             if ( ROOT_UUID.equals( this.id ) )
@@ -428,6 +446,7 @@ public final class Node
             Objects.equals( data, node.data ) &&
             Objects.equals( attachedBinaries, node.attachedBinaries ) &&
             Objects.equals( nodeVersionId, node.nodeVersionId ) &&
+            Objects.equals( blobKey, node.blobKey ) &&
             Objects.equals( indexConfigDocument, node.indexConfigDocument );
     }
 
@@ -435,6 +454,6 @@ public final class Node
     public int hashCode()
     {
         return Objects.hash( id, name, parentPath, nodeType, inheritPermissions, manualOrderValue, childOrder, permissions, data,
-                             indexConfigDocument, attachedBinaries, nodeVersionId );
+                             indexConfigDocument, attachedBinaries, nodeVersionId, blobKey );
     }
 }

@@ -10,7 +10,6 @@ import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
-import com.enonic.xp.repo.impl.version.NodeVersionDocumentId;
 
 class CompareStatusResolver
 {
@@ -99,15 +98,13 @@ class CompareStatusResolver
             throw new IllegalArgumentException( "Expected branchNodeVersion to be != null when trying to fetch NodeVersion" );
         }
 
-        final NodeVersionMetadata version =
-            nodeStorageService.getVersion( new NodeVersionDocumentId( nodeBranchEntry.getNodeId(), nodeBranchEntry.getVersionId() ),
-                                           InternalContext.from( ContextAccessor.current() ) );
+        final NodeVersionMetadata version = nodeStorageService.getVersion( nodeBranchEntry.getNodeId(), nodeBranchEntry.getVersionId(),
+                                                                           InternalContext.from( ContextAccessor.current() ) );
 
         if ( version == null )
         {
             throw new NodeNotFoundException(
-                "Didn't find versionId '" + nodeBranchEntry.getVersionId() + "' of Node with id '" + nodeBranchEntry.getNodeId() +
-                    "'" );
+                "Didn't find versionId '" + nodeBranchEntry.getVersionId() + "' of Node with id '" + nodeBranchEntry.getNodeId() + "'" );
         }
 
         return version;

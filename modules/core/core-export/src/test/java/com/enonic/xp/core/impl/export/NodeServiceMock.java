@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.ApplyNodePermissionsResult;
@@ -273,7 +274,7 @@ class NodeServiceMock
         final FindNodesByParentResult.Builder resultBuilder = FindNodesByParentResult.create();
 
         final Nodes.Builder nodesBuilder = Nodes.create();
-        getNodes(parentNode, nodesBuilder, params.isRecursive());
+        getNodes( parentNode, nodesBuilder, params.isRecursive() );
         final Nodes nodes = nodesBuilder.build();
 
         return resultBuilder.hits( nodes.getSize() ).
@@ -283,12 +284,14 @@ class NodeServiceMock
             totalHits( nodes.getSize() ).
             build();
     }
-    
-    private void getNodes(MockNodeTree<NodePath> parentNode, Nodes.Builder nodesBuilder, final boolean recursive) {
+
+    private void getNodes( MockNodeTree<NodePath> parentNode, Nodes.Builder nodesBuilder, final boolean recursive )
+    {
         for ( final MockNodeTree<NodePath> treeNode : parentNode.children )
         {
             nodesBuilder.add( nodePathMap.get( treeNode.data ) );
-            if (recursive) {
+            if ( recursive )
+            {
                 getNodes( treeNode, nodesBuilder, recursive );
             }
         }
@@ -343,7 +346,7 @@ class NodeServiceMock
     }
 
     @Override
-    public NodeVersion getByNodeVersion( final NodeVersionId nodeVersionId )
+    public NodeVersion getByBlobKey( final BlobKey blobKey )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }
@@ -436,7 +439,7 @@ class NodeServiceMock
     }
 
     @Override
-    public ByteSource getBinary( final NodeVersionId nodeVersionId, final BinaryReference reference )
+    public ByteSource getBinary( final NodeId nodeId, final NodeVersionId nodeVersionId, final BinaryReference reference )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }
@@ -490,7 +493,7 @@ class NodeServiceMock
     }
 
     @Override
-    public boolean deleteVersion( final NodeVersionId nodeVersionId )
+    public boolean deleteVersion( final NodeId nodeId, final NodeVersionId nodeVersionId )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }

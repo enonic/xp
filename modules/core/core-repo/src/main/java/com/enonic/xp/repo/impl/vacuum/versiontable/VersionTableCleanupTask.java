@@ -16,6 +16,7 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionsMetadata;
@@ -25,7 +26,6 @@ import com.enonic.xp.repo.impl.node.executor.BatchedGetVersionsExecutor;
 import com.enonic.xp.repo.impl.vacuum.AbstractVacuumTask;
 import com.enonic.xp.repo.impl.vacuum.VacuumTask;
 import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
-import com.enonic.xp.repo.impl.version.NodeVersionDocumentId;
 import com.enonic.xp.repo.impl.version.VersionIndexPath;
 import com.enonic.xp.repo.impl.version.VersionService;
 import com.enonic.xp.repository.Repository;
@@ -91,7 +91,7 @@ public class VersionTableCleanupTask
             nodeService( this.nodeService ).
             build();
 
-        final List<NodeVersionDocumentId> toBeDeleted = Lists.newArrayList();
+        final List<NodeVersionId> toBeDeleted = Lists.newArrayList();
 
         if ( listener != null )
         {
@@ -116,8 +116,8 @@ public class VersionTableCleanupTask
         versionService.delete( toBeDeleted, InternalContext.from( ContextAccessor.current() ) );
     }
 
-    private void processVersion( final Repository repository, final VacuumTaskResult.Builder result,
-                                 final List<NodeVersionDocumentId> toBeDeleted, final NodeVersionMetadata version )
+    private void processVersion( final Repository repository, final VacuumTaskResult.Builder result, final List<NodeVersionId> toBeDeleted,
+                                 final NodeVersionMetadata version )
     {
         result.processed();
 
@@ -128,7 +128,7 @@ public class VersionTableCleanupTask
             if ( !versionInUse )
             {
                 result.deleted();
-                toBeDeleted.add( new NodeVersionDocumentId( version.getNodeId(), version.getNodeVersionId() ) );
+                toBeDeleted.add( version.getNodeVersionId() );
             }
             else
             {
