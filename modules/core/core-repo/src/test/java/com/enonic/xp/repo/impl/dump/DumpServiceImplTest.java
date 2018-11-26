@@ -46,6 +46,7 @@ import com.enonic.xp.node.GetActiveNodeVersionsParams;
 import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
@@ -689,6 +690,14 @@ public class DumpServiceImplTest
             FileDumpReader reader = new FileDumpReader( tempFolder.getRoot().toPath(), dumpName, null );
             final DumpMeta updatedMeta = reader.getDumpMeta();
             assertEquals( DumpConstants.MODEL_VERSION, updatedMeta.getModelVersion() );
+
+            final NodeId nodeId = NodeId.from( "f0fb822c-092d-41f9-a961-f3811d81e55a" );
+            final Node node = nodeService.getById( nodeId );
+            assertNotNull( node );
+            assertEquals( "4085875dceda069f673bc76370be584fe4fa6312", node.getNodeVersionId().toString() );
+//            assertEquals( "4085875dceda069f673bc76370be584fe4fa6312", node.getBlobKey().toString() );
+            assertEquals( "/content/mysite", node.path().toString() );
+            assertEquals( "2018-11-23T11:14:34.659Z", node.getTimestamp().toString() );
         } );
     }
 

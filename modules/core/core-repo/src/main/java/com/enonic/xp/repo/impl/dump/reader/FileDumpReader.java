@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 
@@ -34,7 +35,6 @@ import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.dump.SystemLoadListener;
 import com.enonic.xp.dump.VersionsLoadResult;
 import com.enonic.xp.node.NodeVersion;
-import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.dump.AbstractFileProcessor;
 import com.enonic.xp.repo.impl.dump.DumpBlobStore;
 import com.enonic.xp.repo.impl.dump.DumpConstants;
@@ -231,6 +231,25 @@ public class FileDumpReader
         return result.build();
     }
 
+    public void processEntries( final BiConsumer<String, String> processor, final File tarFile )
+    {
+        try
+        {
+            final TarArchiveInputStream tarInputStream = openStream( tarFile );
+            TarArchiveEntry entry = tarInputStream.getNextTarEntry();
+            while ( entry != null )
+            {
+                String entryContent = readEntry( tarInputStream );
+                processor.accept( entryContent, entry.getName() );
+                entry = tarInputStream.getNextTarEntry();
+            }
+        }
+        catch ( IOException e )
+        {
+            throw new RepoDumpException( "Cannot read meta-data", e );
+        }
+    }
+
     private TarArchiveInputStream openStream( final File tarFile )
         throws IOException
     {
@@ -245,13 +264,13 @@ public class FileDumpReader
         return file.exists() && file.isDirectory() && !file.isHidden();
     }
 
-    private File getBranchEntriesFile( final RepositoryId repositoryId, final Branch branch )
+    public File getBranchEntriesFile( final RepositoryId repositoryId, final Branch branch )
     {
         final Path metaPath = createBranchMetaPath( this.dumpDirectory, repositoryId, branch );
         return doGetFile( metaPath );
     }
 
-    private File getVersionsFile( final RepositoryId repositoryId )
+    public File getVersionsFile( final RepositoryId repositoryId )
     {
         final Path metaPath = createVersionMetaPath( this.dumpDirectory, repositoryId );
         return doGetFile( metaPath, false );

@@ -56,12 +56,12 @@ public class FileDumpWriter
 
     private TarArchiveOutputStream tarOutputStream;
 
-    private FileDumpWriter( final Builder builder )
+    public FileDumpWriter( final Path basePath, final String dumpName, final BlobStore blobStore )
     {
-        this.dumpDirectory = getDumpDirectory( builder.basePath, builder.dumpName );
+        this.dumpDirectory = getDumpDirectory( basePath, dumpName );
         this.dumpBlobStore = new DumpBlobStore( this.dumpDirectory.toFile() );
         this.serializer = new JsonDumpSerializer();
-        this.blobStore = builder.blobStore;
+        this.blobStore = blobStore;
     }
 
     private Path getDumpDirectory( final Path basePath, final String name )
@@ -171,7 +171,7 @@ public class FileDumpWriter
         storeTarEntry( serializedEntry, entryName );
     }
 
-    private void storeTarEntry( final String serializedEntry, final String entryName )
+    public void storeTarEntry( final String serializedEntry, final String entryName )
     {
         try
         {
@@ -242,47 +242,6 @@ public class FileDumpWriter
         catch ( IOException e )
         {
             LOG.warn( "Cannot close stream [" + stream.getClass().getName() + "]", e );
-        }
-    }
-
-    public static Builder create()
-    {
-        return new Builder();
-    }
-
-    public static final class Builder
-    {
-        private Path basePath;
-
-        private String dumpName;
-
-        private BlobStore blobStore;
-
-        private Builder()
-        {
-        }
-
-        public Builder basePath( final Path basePath )
-        {
-            this.basePath = basePath;
-            return this;
-        }
-
-        public Builder dumpName( final String dumpName )
-        {
-            this.dumpName = dumpName;
-            return this;
-        }
-
-        public Builder blobStore( final BlobStore val )
-        {
-            blobStore = val;
-            return this;
-        }
-
-        public FileDumpWriter build()
-        {
-            return new FileDumpWriter( this );
         }
     }
 }
