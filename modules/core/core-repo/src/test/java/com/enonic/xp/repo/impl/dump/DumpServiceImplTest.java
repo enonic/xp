@@ -23,6 +23,7 @@ import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
 
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
@@ -51,6 +52,7 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQueryResult;
@@ -692,12 +694,33 @@ public class DumpServiceImplTest
             assertEquals( DumpConstants.MODEL_VERSION, updatedMeta.getModelVersion() );
 
             final NodeId nodeId = NodeId.from( "f0fb822c-092d-41f9-a961-f3811d81e55a" );
-            final Node node = nodeService.getById( nodeId );
-            assertNotNull( node );
-            assertEquals( "4085875dceda069f673bc76370be584fe4fa6312", node.getNodeVersionId().toString() );
-//            assertEquals( "4085875dceda069f673bc76370be584fe4fa6312", node.getBlobKey().toString() );
-            assertEquals( "/content/mysite", node.path().toString() );
-            assertEquals( "2018-11-23T11:14:34.659Z", node.getTimestamp().toString() );
+            final NodePath nodePath = NodePath.create( "/content/mysite" ).build();
+            final NodeVersionId draftNodeVersionId = NodeVersionId.from( "4085875dceda069f673bc76370be584fe4fa6312" );
+            final NodeVersionId masterNodeVersionId = NodeVersionId.from( "431056fc90e3f25175dba9a2294d42ed9a9da1ee" );
+            final BlobKey draftBlobKey = BlobKey.from( "23368e74a867ac7f0407b46fd2b79d12c3f6d5d8" );
+            final BlobKey masterBlobKey = BlobKey.from( "ac555e940583f1a4d0f25aaff8bc97649ac2de68" );
+
+            final Node draftNode = nodeService.getById( nodeId );
+            assertNotNull( draftNode );
+            assertEquals( draftNodeVersionId, draftNode.getNodeVersionId() );
+            //See issue-6779
+            assertEquals( draftBlobKey, draftNode.getBlobKey() );
+            assertEquals( nodePath, draftNode.path() );
+            assertEquals( "2018-11-23T11:14:34.659Z", draftNode.getTimestamp().toString() );
+
+            final Node masterNode = ContextBuilder.
+                from( ContextAccessor.current() ).
+                branch( Branch.from( "master" ) ).
+                build().
+                callWith( () -> nodeService.getById( nodeId ) );
+            assertNotNull( masterNode );
+            assertEquals( masterNodeVersionId, masterNode.getNodeVersionId() );
+            //See issue-6779
+            assertEquals( masterBlobKey, masterNode.getBlobKey() );
+            assertEquals( nodePath, masterNode.path() );
+            assertEquals( "2018-11-23T11:14:21.662Z", masterNode.getTimestamp().toString() );
+
+
         } );
     }
 
