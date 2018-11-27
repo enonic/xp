@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.PropertyVisitor;
@@ -22,6 +23,7 @@ import com.enonic.xp.node.EditableNode;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBinaryReferenceException;
 import com.enonic.xp.repo.impl.binary.BinaryService;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.BinaryReferences;
 
@@ -124,7 +126,8 @@ class UpdatedAttachedBinariesResolver
 
     private void storeAndAttachBinary( final Map<BinaryReference, AttachedBinary> resolved, final BinaryAttachment newBinaryAttachment )
     {
-        final AttachedBinary attachedBinary = binaryService.store( newBinaryAttachment );
+        final RepositoryId repositoryId = ContextAccessor.current().getRepositoryId();
+        final AttachedBinary attachedBinary = binaryService.store( repositoryId, newBinaryAttachment );
         resolved.put( newBinaryAttachment.getReference(), attachedBinary );
     }
 

@@ -11,7 +11,6 @@ import org.codehaus.jparsec.util.Lists;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationWildcardResolver;
 import com.enonic.xp.schema.content.ContentTypeService;
-import com.enonic.xp.schema.content.GetAllContentTypesParams;
 
 public class ContentTypeNameWildcardResolver
 {
@@ -35,7 +34,7 @@ public class ContentTypeNameWildcardResolver
     {
 
         final List<String> allContentTypes = contentTypeService.
-            getAll( new GetAllContentTypesParams().inlineMixinsToFormItems( false ) ).
+            getAll().
             stream().
             map( type -> type.getName().toString() ).
             collect( Collectors.toList() );

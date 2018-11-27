@@ -103,6 +103,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.UndoPendingDeleteCont
 import com.enonic.xp.admin.impl.rest.resource.content.json.UnpublishContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.UpdateContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.query.ContentQueryWithChildren;
+import com.enonic.xp.admin.impl.rest.resource.content.task.ApplyPermissionsRunnableTask;
 import com.enonic.xp.admin.impl.rest.resource.content.task.DeleteRunnableTask;
 import com.enonic.xp.admin.impl.rest.resource.content.task.DuplicateRunnableTask;
 import com.enonic.xp.admin.impl.rest.resource.content.task.MoveRunnableTask;
@@ -114,7 +115,6 @@ import com.enonic.xp.attachment.AttachmentNames;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.branch.Branches;
-import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.CompareContentResult;
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareContentsParams;
@@ -418,10 +418,10 @@ public final class ContentResource
 
         final Content updatedContent = contentService.update( updateParams );
 
-        if ( !permissionsBeforeSave.equals( updatedContent.getPermissions() ) )
+       /* if ( !permissionsBeforeSave.equals( updatedContent.getPermissions() ) )
         {
             this.contentService.applyPermissions( json.getApplyContentPermissionsParams() );
-        }
+        }*/
 
         if ( json.getContentName().equals( updatedContent.getName() ) )
         {
@@ -641,21 +641,15 @@ public final class ContentResource
 
     @POST
     @Path("applyPermissions")
-    public ContentJson applyPermissions( final ApplyContentPermissionsJson jsonParams )
+    public TaskResultJson applyPermissions( final ApplyContentPermissionsJson jsonParams )
     {
-        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-        final PrincipalKey modifier =
-            authInfo != null && authInfo.isAuthenticated() ? authInfo.getUser().getKey() : PrincipalKey.ofAnonymous();
-
-        final UpdateContentParams updatePermissionsParams = jsonParams.getUpdateContentParams().modifier( modifier );
-        final Content updatedContent = contentService.update( updatePermissionsParams );
-
-        contentService.applyPermissions( ApplyContentPermissionsParams.create().
-            contentId( updatedContent.getId() ).
-            overwriteChildPermissions( jsonParams.isOverwriteChildPermissions() ).
-            build() );
-
-        return new ContentJson( updatedContent, contentIconUrlResolver, principalsResolver );
+        return ApplyPermissionsRunnableTask.create().
+            params( jsonParams ).
+            description( "Apply content permissions" ).
+            taskService( taskService ).
+            contentService( contentService ).
+            build().
+            createTaskResult();
     }
 
     @GET

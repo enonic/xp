@@ -16,6 +16,7 @@ import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.lib.content.mapper.ContentMapper;
 import com.enonic.xp.name.NamePrettyfier;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -47,6 +48,8 @@ public final class CreateContentHandler
     private String contentType;
 
     private String language;
+
+    private String childOrder;
 
     private Supplier<String> idGenerator = () -> Long.toString( Math.abs( RANDOM.nextLong() ) );
 
@@ -80,6 +83,7 @@ public final class CreateContentHandler
             contentData( createPropertyTree( data, contentTypeName ) ).
             extraDatas( createExtraDatas( x ) ).
             language( language != null ? Locale.forLanguageTag( language ) : null ).
+            childOrder( childOrder != null ? ChildOrder.from( childOrder ) : null ).
             refresh( this.refresh ).
             build();
     }
@@ -232,6 +236,11 @@ public final class CreateContentHandler
     public void setLanguage( final String language )
     {
         this.language = language;
+    }
+
+    public void setChildOrder( final String childOrder )
+    {
+        this.childOrder = childOrder;
     }
 
     public void setIdGenerator( final Supplier<String> idGenerator )

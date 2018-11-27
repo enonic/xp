@@ -9,9 +9,11 @@ import org.osgi.service.component.annotations.Reference;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
+import com.enonic.xp.node.ApplyNodePermissionsResult;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.DuplicateNodeParams;
@@ -62,6 +64,7 @@ import com.enonic.xp.node.SyncWorkResolverParams;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
+import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
@@ -641,7 +644,10 @@ public class NodeServiceImpl
     public NodeVersion getByNodeVersion( final NodeVersionId nodeVersionId )
     {
         verifyContext();
-        return this.nodeStorageService.get( nodeVersionId );
+
+
+        final Context currentContext = ContextAccessor.current();
+        return this.nodeStorageService.getNodeVersion( nodeVersionId, InternalContext.from( currentContext ) );
     }
 
     @Override
@@ -714,10 +720,10 @@ public class NodeServiceImpl
     }
 
     @Override
-    public int applyPermissions( final ApplyNodePermissionsParams params )
+    public ApplyNodePermissionsResult applyPermissions( final ApplyNodePermissionsParams params )
     {
         verifyContext();
-        final Nodes updatedNodes = ApplyNodePermissionsCommand.create().
+        final ApplyNodePermissionsResult result = ApplyNodePermissionsCommand.create().
             params( params ).
             indexServiceInternal( this.indexServiceInternal ).
             searchService( this.nodeSearchService ).
@@ -726,12 +732,12 @@ public class NodeServiceImpl
             build().
             execute();
 
-        for ( final Node node : updatedNodes )
+        for ( final Node node : result.getSucceedNodes() )
         {
             this.eventPublisher.publish( NodeEvents.updated( node ) );
         }
 
-        return updatedNodes.getSize();
+        return result;
     }
 
     @Override

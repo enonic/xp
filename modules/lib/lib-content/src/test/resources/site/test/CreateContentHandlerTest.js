@@ -133,6 +133,36 @@ var expectedJsonAutoGenerateName2 = {
     "publish": {}
 };
 
+exports.createContentWithChildOrder = function () {
+    var result = content.create({
+        parentPath: '/a/b',
+        displayName: 'My Content',
+        contentType: 'test:myContentType',
+        childOrder: 'field DESC',
+        data: {}
+    });
+
+    assert.assertJsonEquals(expectedJsonWithChildOrder, result);
+};
+
+var expectedJsonWithChildOrder = {
+    "_id": "123456",
+    "_name": "my-content",
+    "_path": "/a/b/my-content",
+    "creator": "user:system:anonymous",
+    "createdTime": "1975-01-08T00:00:00Z",
+    "type": "test:myContentType",
+    "displayName": "My Content",
+    "hasChildren": false,
+    "valid": false,
+    "childOrder": 'field DESC',
+    "data": {},
+    "x": {},
+    "page": {},
+    "attachments": {},
+    "publish": {}
+};
+
 exports.createContentAutoGenerateNameWithExistingName = function () {
     var counter = 1;
     var result = content.create({

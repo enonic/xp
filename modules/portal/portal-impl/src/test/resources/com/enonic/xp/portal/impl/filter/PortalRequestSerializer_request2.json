@@ -1,0 +1,13 @@
+{
+  "method": "post",
+  "scheme": "https",
+  "host": "myhost",
+  "port": 1234,
+  "path": "/some/path",
+  "url": "https://myhost:1234/some/path/url",
+  "remoteAddress": "127.0.0.42",
+  "mode": "edit",
+  "validTicket": true,
+  "branch": "draft",
+  "contentType": "application/json"
+}

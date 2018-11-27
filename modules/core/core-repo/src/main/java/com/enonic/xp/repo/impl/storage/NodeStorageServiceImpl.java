@@ -50,7 +50,7 @@ public class NodeStorageServiceImpl
     @Override
     public Node store( final Node node, final InternalContext context )
     {
-        final NodeVersionId nodeVersionId = nodeVersionService.store( NodeVersion.from( node ) );
+        final NodeVersionId nodeVersionId = nodeVersionService.store( NodeVersion.from( node ), context );
 
         storeVersionMetadata( node, context, nodeVersionId );
 
@@ -79,7 +79,7 @@ public class NodeStorageServiceImpl
             timestamp( node.getTimestamp() ).
             build();
 
-        final NodeVersionId nodeVersionId = nodeVersionService.store( nodeVersion );
+        final NodeVersionId nodeVersionId = nodeVersionService.store( nodeVersion, context );
 
         storeVersionMetadata( node, context, nodeVersionId );
 
@@ -95,7 +95,7 @@ public class NodeStorageServiceImpl
     @Override
     public void storeVersion( final StoreNodeVersionParams params, final InternalContext context )
     {
-        final NodeVersionId nodeVersionId = this.nodeVersionService.store( params.getNodeVersion() );
+        final NodeVersionId nodeVersionId = this.nodeVersionService.store( params.getNodeVersion(), context );
 
         this.versionService.store( NodeVersionMetadata.create().
             nodeVersionId( nodeVersionId ).
@@ -119,7 +119,7 @@ public class NodeStorageServiceImpl
         }
         else
         {
-            nodeVersionId = nodeVersionService.store( NodeVersion.from( params.getNode() ) );
+            nodeVersionId = nodeVersionService.store( NodeVersion.from( params.getNode() ), context );
         }
 
         storeVersionMetadata( params.getNode(), context, nodeVersionId );
@@ -214,7 +214,7 @@ public class NodeStorageServiceImpl
     {
         final NodeBranchEntry nodeBranchEntry = this.branchService.get( nodeId, context );
 
-        return doGetNode( nodeBranchEntry );
+        return doGetNode( nodeBranchEntry, context );
     }
 
     @Override
@@ -222,7 +222,7 @@ public class NodeStorageServiceImpl
     {
         final NodeBranchEntry nodeBranchEntry = this.branchService.get( nodePath, context );
 
-        return doGetNode( nodeBranchEntry );
+        return doGetNode( nodeBranchEntry, context );
     }
 
     @Override
@@ -230,7 +230,7 @@ public class NodeStorageServiceImpl
     {
         final NodeBranchEntries nodeBranchEntries = this.branchService.get( nodeIds, keepOrder, context );
 
-        return doReturnNodes( nodeBranchEntries );
+        return doReturnNodes( nodeBranchEntries, context );
     }
 
     @Override
@@ -238,13 +238,13 @@ public class NodeStorageServiceImpl
     {
         final NodeBranchEntries nodeBranchEntries = this.branchService.get( nodePaths, context );
 
-        return doReturnNodes( nodeBranchEntries );
+        return doReturnNodes( nodeBranchEntries, context );
     }
 
     @Override
     public Node get( final NodeVersionId nodeVersionId, final InternalContext context )
     {
-        final NodeVersion nodeVersion = nodeVersionService.get( nodeVersionId );
+        final NodeVersion nodeVersion = nodeVersionService.get( nodeVersionId, context );
 
         if ( nodeVersion == null )
         {
@@ -262,9 +262,9 @@ public class NodeStorageServiceImpl
     }
 
     @Override
-    public NodeVersion get( final NodeVersionId nodeVersionId )
+    public NodeVersion getNodeVersion( final NodeVersionId nodeVersionId, final InternalContext context )
     {
-        return this.nodeVersionService.get( nodeVersionId );
+        return this.nodeVersionService.get( nodeVersionId, context );
     }
 
     @Override
@@ -332,14 +332,14 @@ public class NodeStorageServiceImpl
         }
     }
 
-    private Node doGetNode( final NodeBranchEntry nodeBranchEntry )
+    private Node doGetNode( final NodeBranchEntry nodeBranchEntry, final InternalContext context )
     {
         if ( nodeBranchEntry == null )
         {
             return null;
         }
 
-        final NodeVersion nodeVersion = nodeVersionService.get( nodeBranchEntry.getVersionId() );
+        final NodeVersion nodeVersion = nodeVersionService.get( nodeBranchEntry.getVersionId(), context );
 
         return constructNode( nodeBranchEntry, nodeVersion );
     }
@@ -369,14 +369,14 @@ public class NodeStorageServiceImpl
     }
 
 
-    private Nodes doReturnNodes( final NodeBranchEntries nodeBranchEntries )
+    private Nodes doReturnNodes( final NodeBranchEntries nodeBranchEntries, final InternalContext context  )
     {
         final NodeVersionIds.Builder builder = NodeVersionIds.create();
 
         builder.addAll(
             nodeBranchEntries.stream().map( nodeBranchVersion -> nodeBranchVersion.getVersionId() ).collect( Collectors.toList() ) );
 
-        final NodeVersions nodeVersions = nodeVersionService.get( builder.build() );
+        final NodeVersions nodeVersions = nodeVersionService.get( builder.build(), context );
 
         final Nodes.Builder filteredNodes = Nodes.create();
 

@@ -7,6 +7,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.admin.impl.json.ItemJson;
 import com.enonic.xp.admin.impl.json.form.FormJson;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
+import com.enonic.xp.admin.impl.rest.resource.schema.mixin.InlineMixinResolver;
 import com.enonic.xp.region.ComponentDescriptor;
 
 
@@ -19,7 +20,8 @@ public abstract class DescriptorJson
 
     private final LocaleMessageResolver localeMessageResolver;
 
-    public DescriptorJson( final ComponentDescriptor descriptor, final LocaleMessageResolver localeMessageResolver )
+    public DescriptorJson( final ComponentDescriptor descriptor, final LocaleMessageResolver localeMessageResolver,
+                           final InlineMixinResolver inlineMixinResolver )
     {
         Preconditions.checkNotNull( descriptor );
         Preconditions.checkNotNull( localeMessageResolver );
@@ -27,7 +29,7 @@ public abstract class DescriptorJson
         this.localeMessageResolver = localeMessageResolver;
         this.descriptor = descriptor;
 
-        this.configJson = new FormJson( descriptor.getConfig(), localeMessageResolver );
+        this.configJson = new FormJson( descriptor.getConfig(), localeMessageResolver, inlineMixinResolver );
     }
 
     public String getKey()

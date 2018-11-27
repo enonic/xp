@@ -4,10 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.Instant;
 import java.util.concurrent.Callable;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
 
 import org.osgi.service.component.annotations.Activate;
@@ -23,6 +21,7 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
+import com.enonic.xp.content.ApplyContentPermissionsResult;
 import com.enonic.xp.content.CompareContentParams;
 import com.enonic.xp.content.CompareContentResult;
 import com.enonic.xp.content.CompareContentResults;
@@ -82,10 +81,10 @@ import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
+import com.enonic.xp.content.processor.ContentProcessor;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.core.impl.content.processor.ContentProcessor;
 import com.enonic.xp.core.impl.content.processor.ContentProcessors;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
@@ -946,30 +945,15 @@ public class ContentServiceImpl
     }
 
     @Override
-    public Future<Integer> applyPermissions( final ApplyContentPermissionsParams params )
+    public ApplyContentPermissionsResult applyPermissions( final ApplyContentPermissionsParams params )
     {
-        final ApplyContentPermissionsCommand applyPermissionsCommand = ApplyContentPermissionsCommand.create( params ).
+        return ApplyContentPermissionsCommand.create( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
-            build();
-
-        final Context context = ContextAccessor.current();
-
-        return CompletableFuture.supplyAsync( () -> {
-            try
-            {
-                // set current context as background thread context
-                final Context futureContext = ContextBuilder.from( context ).detachSession().build();
-                return futureContext.callWith( applyPermissionsCommand::execute );
-            }
-            catch ( Throwable t )
-            {
-                LOG.warn( "Error applying permissions", t );
-                return 0;
-            }
-        }, applyPermissionsExecutor );
+            build().
+            execute();
     }
 
     @Override

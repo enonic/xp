@@ -48,6 +48,7 @@ import com.enonic.xp.admin.impl.rest.resource.macro.MacroIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
+import com.enonic.xp.admin.impl.rest.resource.schema.mixin.InlineMixinResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.relationship.RelationshipTypeIconResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.relationship.RelationshipTypeIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.tool.json.AdminToolDescriptorJson;
@@ -77,6 +78,7 @@ import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.content.ContentTypeService;
+import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.security.RoleKeys;
@@ -122,6 +124,8 @@ public final class ApplicationResource
 
     private AdminToolDescriptorService adminToolDescriptorService;
 
+    private MixinService mixinService;
+
     private ApplicationIconUrlResolver iconUrlResolver;
 
     private RelationshipTypeIconUrlResolver relationshipTypeIconUrlResolver;
@@ -166,6 +170,7 @@ public final class ApplicationResource
                     setAuthDescriptor( authDescriptor ).
                     setIconUrlResolver( this.iconUrlResolver ).
                     setLocaleMessageResolver( new LocaleMessageResolver( this.localeService, applicationKey ) ).
+                    setInlineMixinResolver( new InlineMixinResolver( this.mixinService ) ).
                     build() );
             }
         }
@@ -197,9 +202,10 @@ public final class ApplicationResource
             setContentTypeIconUrlResolver( this.contentTypeIconUrlResolver ).
             setMacroIconUrlResolver( this.macroIconUrlResolver ).
             setRelationshipTypeIconUrlResolver( this.relationshipTypeIconUrlResolver ).
-            setLocaleMessageResolver( new LocaleMessageResolver( this.localeService, applicationKey ) );
+            setLocaleMessageResolver( new LocaleMessageResolver( this.localeService, applicationKey ) ).
+            setInlineMixinResolver( new InlineMixinResolver( this.mixinService ) );
 
-        final Resource resource = resourceService.getResource( ResourceKey.from( applicationKey, "/main.js" ) );
+        final Resource resource = resourceService.getResource( ResourceKey.from( applicationKey, "/webapp/webapp.js" ) );
         if ( resource != null && resource.exists() )
         {
             final ScriptExports exports = portalScriptService.execute( resource.getKey() );
@@ -258,6 +264,7 @@ public final class ApplicationResource
             setAuthDescriptor( authDescriptor ).
             setIconUrlResolver( this.iconUrlResolver ).
             setLocaleMessageResolver( new LocaleMessageResolver( this.localeService, appKey ) ).
+            setInlineMixinResolver( new InlineMixinResolver( this.mixinService ) ).
             build();
     }
 
@@ -465,6 +472,7 @@ public final class ApplicationResource
                     setAuthDescriptor( authDescriptor ).
                     setIconUrlResolver( this.iconUrlResolver ).
                     setLocaleMessageResolver( new LocaleMessageResolver( this.localeService, applicationKey ) ).
+                    setInlineMixinResolver( new InlineMixinResolver( this.mixinService ) ).
                     build() );
             }
         }
@@ -495,6 +503,7 @@ public final class ApplicationResource
                 setAuthDescriptor( authDescriptor ).
                 setIconUrlResolver( this.iconUrlResolver ).
                 setLocaleMessageResolver( new LocaleMessageResolver( this.localeService, applicationKey ) ).
+                setInlineMixinResolver( new InlineMixinResolver( this.mixinService ) ).
                 build();
         }
         return null;
@@ -526,6 +535,7 @@ public final class ApplicationResource
                     setAuthDescriptor( authDescriptor ).
                     setIconUrlResolver( this.iconUrlResolver ).
                     setLocaleMessageResolver( new LocaleMessageResolver( this.localeService, applicationKey ) ).
+                    setInlineMixinResolver( new InlineMixinResolver( this.mixinService ) ).
                     build() );
             }
         }
@@ -658,5 +668,10 @@ public final class ApplicationResource
         this.localeService = localeService;
     }
 
+    @Reference
+    public void setMixinService( final MixinService mixinService )
+    {
+        this.mixinService = mixinService;
+    }
 }
 

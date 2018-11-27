@@ -12,6 +12,7 @@ import javax.ws.rs.core.Response;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.AdditionalAnswers;
 import org.mockito.Mockito;
 import org.osgi.framework.Version;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -55,6 +56,7 @@ import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.content.ContentTypeService;
+import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.site.SiteDescriptor;
@@ -93,6 +95,8 @@ public class ApplicationResourceTest
 
     private LocaleService localeService;
 
+    private MixinService mixinService;
+
     @Test
     public void get_application_list()
         throws Exception
@@ -106,6 +110,7 @@ public class ApplicationResourceTest
         Mockito.when( this.authDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( authDescriptor );
         final ApplicationDescriptor appDescriptor = createApplicationDescriptor();
         Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
+        Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
 
         String response = request().
             path( "application/list" ).
@@ -118,7 +123,7 @@ public class ApplicationResourceTest
         throws Exception
     {
         final ApplicationKey applicationKey = createApplication().getKey();
-        final ResourceKey resourceKey = ResourceKey.from( applicationKey, "/main.js" );
+        final ResourceKey resourceKey = ResourceKey.from( applicationKey, "/webapp/webapp.js" );
 
         final ApplicationInfo applicationInfo = ApplicationInfo.create().build();
 
@@ -166,6 +171,7 @@ public class ApplicationResourceTest
         Mockito.when( this.authDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( authDescriptor );
         final ApplicationDescriptor appDescriptor = createApplicationDescriptor();
         Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
+        Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
 
         String response = request().
             path( "application/list" ).
@@ -228,6 +234,8 @@ public class ApplicationResourceTest
         final ApplicationDescriptor appDescriptor = createApplicationDescriptor();
         Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
 
+        Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
+
         String response = request().
             path( "application" ).
             queryParam( "applicationKey", "testapplication" ).
@@ -256,6 +264,8 @@ public class ApplicationResourceTest
         Mockito.when( messageBundle.localize( "site.config.label" ) ).thenReturn( "translated.site.label" );
 
         Mockito.when( this.localeService.getBundle( Mockito.any(), Mockito.any() ) ).thenReturn( messageBundle );
+
+        Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
 
         String response = request().
             path( "application" ).
@@ -300,6 +310,8 @@ public class ApplicationResourceTest
         final ApplicationDescriptor appDescriptor = createApplicationDescriptor();
         Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
 
+        Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
+
         String response = request().
             path( "application/getIdProviderApplications" ).
             get().getAsString();
@@ -330,6 +342,8 @@ public class ApplicationResourceTest
         final ApplicationDescriptor appDescriptor = createApplicationDescriptor();
         Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
 
+        Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
+
         String response = request().
             path( "application/getIdProvider" ).
             queryParam( "applicationKey", "testapplication" ).
@@ -350,6 +364,8 @@ public class ApplicationResourceTest
 
         final ApplicationDescriptor appDescriptor = createApplicationDescriptor();
         Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
+
+        Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
 
         String response = request().
             path( "application/getSiteApplications" ).
@@ -684,6 +700,7 @@ public class ApplicationResourceTest
         this.localeService = Mockito.mock( LocaleService.class );
         this.widgetDescriptorService = Mockito.mock( WidgetDescriptorService.class );
         this.adminToolDescriptorService = Mockito.mock( AdminToolDescriptorService.class );
+        this.mixinService = Mockito.mock( MixinService.class );
 
         final ApplicationResource resource = new ApplicationResource();
         resource.setApplicationService( this.applicationService );
@@ -700,6 +717,7 @@ public class ApplicationResourceTest
         resource.setLocaleService( this.localeService );
         resource.setWidgetDescriptorService( this.widgetDescriptorService );
         resource.setAdminToolDescriptorService( this.adminToolDescriptorService );
+        resource.setMixinService( this.mixinService );
 
         return resource;
     }

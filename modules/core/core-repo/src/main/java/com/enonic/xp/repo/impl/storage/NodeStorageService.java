@@ -48,7 +48,7 @@ public interface NodeStorageService
 
     Node get( final NodeVersionId nodeVersionId, final InternalContext context );
 
-    NodeVersion get( final NodeVersionId nodeVersionId );
+    NodeVersion getNodeVersion( final NodeVersionId nodeVersionId, final InternalContext context );
 
     NodeBranchEntry getBranchNodeVersion( final NodeId nodeId, final InternalContext context );
 

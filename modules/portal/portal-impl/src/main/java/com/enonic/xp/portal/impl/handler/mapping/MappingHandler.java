@@ -7,6 +7,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
+import com.enonic.xp.portal.filter.FilterScriptFactory;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
 import com.enonic.xp.portal.impl.rendering.RendererFactory;
 import com.enonic.xp.resource.ResourceService;
@@ -31,6 +32,8 @@ public final class MappingHandler
     private ResourceService resourceService;
 
     private ControllerScriptFactory controllerScriptFactory;
+
+    private FilterScriptFactory filterScriptFactory;
 
     private RendererFactory rendererFactory;
 
@@ -57,14 +60,52 @@ public final class MappingHandler
         WebHandlerHelper.checkAdminAccess( webRequest );
 
         PortalRequest portalRequest = (PortalRequest) webRequest;
-        final ControllerMappingDescriptor mapping = new ControllerMappingsResolver( siteService, contentService ).resolve( portalRequest );
+        final ControllerMappingDescriptor mapping = new ControllerMappingsResolver( siteService, contentService ).
+            resolve( portalRequest );
+        setContextPath( portalRequest );
 
+        if ( mapping.isController() )
+        {
+            return handleController( portalRequest, mapping );
+        }
+        else
+        {
+            return handleFilter( portalRequest, webResponse, webHandlerChain, mapping );
+        }
+    }
+
+    private void setContextPath( final PortalRequest portalRequest )
+    {
+        final String contextPath =
+            portalRequest.getBaseUri() + "/" + portalRequest.getBranch() + portalRequest.getSite().getPath().toString();
+        portalRequest.setContextPath( contextPath );
+    }
+
+    private PortalResponse handleController( final PortalRequest portalRequest, final ControllerMappingDescriptor mapping )
+        throws Exception
+    {
         final MappingHandlerWorker worker = new MappingHandlerWorker( portalRequest );
         worker.mappingDescriptor = mapping;
         worker.resourceService = this.resourceService;
         worker.controllerScriptFactory = this.controllerScriptFactory;
         worker.rendererFactory = rendererFactory;
         final Trace trace = Tracer.newTrace( "renderComponent" );
+        if ( trace == null )
+        {
+            return worker.execute();
+        }
+        return Tracer.traceEx( trace, worker::execute );
+    }
+
+    private PortalResponse handleFilter( final PortalRequest request, final WebResponse response, final WebHandlerChain webHandlerChain,
+                                         final ControllerMappingDescriptor mapping )
+        throws Exception
+    {
+        final MappingFilterHandlerWorker worker = new MappingFilterHandlerWorker( request, response, webHandlerChain );
+        worker.mappingDescriptor = mapping;
+        worker.resourceService = this.resourceService;
+        worker.filterScriptFactory = this.filterScriptFactory;
+        final Trace trace = Tracer.newTrace( "filter" );
         if ( trace == null )
         {
             return worker.execute();
@@ -94,6 +135,12 @@ public final class MappingHandler
     public void setControllerScriptFactory( final ControllerScriptFactory controllerScriptFactory )
     {
         this.controllerScriptFactory = controllerScriptFactory;
+    }
+
+    @Reference
+    public void setFilterScriptFactory( final FilterScriptFactory filterScriptFactory )
+    {
+        this.filterScriptFactory = filterScriptFactory;
     }
 
     @Reference

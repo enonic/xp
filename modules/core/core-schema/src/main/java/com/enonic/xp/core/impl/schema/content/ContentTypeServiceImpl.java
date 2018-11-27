@@ -13,7 +13,6 @@ import com.enonic.xp.schema.content.ContentTypeFromMimeTypeResolver;
 import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.ContentTypes;
-import com.enonic.xp.schema.content.GetAllContentTypesParams;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.content.validator.ContentTypeValidationResult;
 import com.enonic.xp.schema.mixin.MixinService;
@@ -48,17 +47,15 @@ public final class ContentTypeServiceImpl
         command.registry = this.registry;
         command.mixinService = this.mixinService;
         command.applicationKey = applicationKey;
-        command.inlineMixinsToFormItems = true;
         return command.execute();
     }
 
     @Override
-    public ContentTypes getAll( final GetAllContentTypesParams params )
+    public ContentTypes getAll()
     {
         final GetAllContentTypesCommand command = new GetAllContentTypesCommand();
         command.registry = this.registry;
         command.mixinService = this.mixinService;
-        command.params = params;
         return command.execute();
     }
 

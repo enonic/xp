@@ -20,6 +20,8 @@ public final class ControllerMappingDescriptor
 
     private final ResourceKey controller;
 
+    private final ResourceKey filter;
+
     private final Pattern pattern;
 
     private final boolean invertPattern;
@@ -28,10 +30,15 @@ public final class ControllerMappingDescriptor
 
     private final int order;
 
+    private final ApplicationKey applicationKey;
+
     private ControllerMappingDescriptor( final Builder builder )
     {
-        Preconditions.checkNotNull( builder.controller, "controller cannot be null" );
+        Preconditions.checkArgument( builder.controller != null ^ builder.filter != null,
+                                     "only one of either controller or filter must be specified" );
         this.controller = builder.controller;
+        this.filter = builder.filter;
+        this.applicationKey = builder.controller != null ? builder.controller.getApplicationKey() : builder.filter.getApplicationKey();
         this.pattern = builder.pattern != null ? builder.pattern : DEFAULT_PATTERN;
         this.invertPattern = builder.invertPattern;
         this.contentConstraint = builder.contentConstraint;
@@ -40,12 +47,17 @@ public final class ControllerMappingDescriptor
 
     public ApplicationKey getApplication()
     {
-        return this.controller.getApplicationKey();
+        return this.applicationKey;
     }
 
     public ResourceKey getController()
     {
         return controller;
+    }
+
+    public ResourceKey getFilter()
+    {
+        return filter;
     }
 
     public Pattern getPattern()
@@ -68,6 +80,16 @@ public final class ControllerMappingDescriptor
         return order;
     }
 
+    public boolean isController()
+    {
+        return this.controller != null;
+    }
+
+    public boolean isFilter()
+    {
+        return this.filter != null;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -83,6 +105,7 @@ public final class ControllerMappingDescriptor
         return order == that.order &&
             invertPattern == that.invertPattern &&
             Objects.equals( controller, that.controller ) &&
+            Objects.equals( filter, that.filter ) &&
             Objects.equals( pattern.toString(), that.pattern.toString() ) &&
             Objects.equals( contentConstraint, that.contentConstraint );
     }
@@ -90,7 +113,7 @@ public final class ControllerMappingDescriptor
     @Override
     public int hashCode()
     {
-        return Objects.hash( controller, pattern.toString(), invertPattern, contentConstraint, order );
+        return Objects.hash( controller, filter, pattern.toString(), invertPattern, contentConstraint, order );
     }
 
     @Override
@@ -104,6 +127,7 @@ public final class ControllerMappingDescriptor
     {
         return MoreObjects.toStringHelper( this ).
             add( "controller", controller ).
+            add( "filter", filter ).
             add( "pattern", pattern ).
             add( "invertPattern", invertPattern ).
             add( "contentConstraint", contentConstraint ).
@@ -124,6 +148,8 @@ public final class ControllerMappingDescriptor
     {
         private ResourceKey controller;
 
+        private ResourceKey filter;
+
         private Pattern pattern;
 
         private boolean invertPattern = false;
@@ -135,6 +161,7 @@ public final class ControllerMappingDescriptor
         private Builder( final ControllerMappingDescriptor mappingDescriptor )
         {
             this.controller = mappingDescriptor.getController();
+            this.filter = mappingDescriptor.getFilter();
             this.pattern = mappingDescriptor.getPattern();
             this.invertPattern = mappingDescriptor.invertPattern();
             this.contentConstraint = mappingDescriptor.getContentConstraint();
@@ -148,6 +175,12 @@ public final class ControllerMappingDescriptor
         public Builder controller( final ResourceKey controller )
         {
             this.controller = controller;
+            return this;
+        }
+
+        public Builder filter( final ResourceKey filter )
+        {
+            this.filter = filter;
             return this;
         }
 

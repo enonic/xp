@@ -62,6 +62,8 @@ public class PortalErrorMapperTest
         portalRequest.setHost( "localhost" );
         portalRequest.setPort( 80 );
         portalRequest.setPath( "/portal/live/master/a/b" );
+        portalRequest.setRawPath( "/portal/live/master/a/b" );
+        portalRequest.setContextPath( "/portal/live/master/a" );
         portalRequest.setUrl( "http://localhost/portal/live/master/a/b?param1=value1" );
         portalRequest.setRemoteAddress( "10.0.0.1" );
         portalRequest.getParams().put( "param1", "value1" );

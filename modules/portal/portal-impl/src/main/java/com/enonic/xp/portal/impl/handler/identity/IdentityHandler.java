@@ -28,6 +28,8 @@ import com.enonic.xp.web.handler.WebHandlerChain;
 public class IdentityHandler
     extends EndpointHandler
 {
+    private final static int USERSTORE_GROUP_INDEX = 1;
+
     private final static Pattern PATTERN = Pattern.compile( "^([^/^?]+)(?:/(login|logout))?" );
 
     private ContentService contentService;
@@ -51,11 +53,12 @@ public class IdentityHandler
             throw notFound( "Not a valid idprovider url pattern" );
         }
 
-        final UserStoreKey userStoreKey = UserStoreKey.from( matcher.group( 1 ) );
+        final UserStoreKey userStoreKey = UserStoreKey.from( matcher.group( USERSTORE_GROUP_INDEX ) );
         String idProviderFunction = matcher.group( 2 );
 
         final PortalRequest portalRequest =
             webRequest instanceof PortalRequest ? (PortalRequest) webRequest : new PortalRequest( webRequest );
+        portalRequest.setContextPath( findPreRestPath( portalRequest ) + "/" + matcher.group( USERSTORE_GROUP_INDEX ) );
 
         if ( idProviderFunction != null )
         {

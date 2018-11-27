@@ -5,8 +5,8 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.impl.filter.FilterChainResolver;
-import com.enonic.xp.portal.impl.filter.FilterExecutor;
+import com.enonic.xp.portal.impl.processor.ProcessorChainResolver;
+import com.enonic.xp.portal.impl.processor.ResponseProcessorExecutor;
 import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
@@ -36,13 +36,13 @@ public final class ControllerMappingRenderer
     @Reference
     public void setScriptService( final PortalScriptService scriptService )
     {
-        this.filterExecutor = new FilterExecutor( scriptService );
+        this.processorExecutor = new ResponseProcessorExecutor( scriptService );
     }
 
 
     @Reference
-    public void setFilterChainResolver( final FilterChainResolver filterChainResolver )
+    public void setFilterChainResolver( final ProcessorChainResolver filterChainResolver )
     {
-        this.filterChainResolver = filterChainResolver;
+        this.processorChainResolver = filterChainResolver;
     }
 }

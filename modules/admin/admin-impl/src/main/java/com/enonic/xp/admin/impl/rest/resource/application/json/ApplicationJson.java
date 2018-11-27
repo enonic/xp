@@ -10,6 +10,7 @@ import com.enonic.xp.admin.impl.json.ItemJson;
 import com.enonic.xp.admin.impl.json.form.FormJson;
 import com.enonic.xp.admin.impl.rest.resource.application.ApplicationIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
+import com.enonic.xp.admin.impl.rest.resource.schema.mixin.InlineMixinResolver;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.auth.AuthDescriptor;
@@ -39,13 +40,15 @@ public class ApplicationJson
         this.local = builder.local;
 
         this.config =
-            builder.siteDescriptor != null && builder.siteDescriptor.getForm() != null
-                ? new FormJson( builder.siteDescriptor.getForm(), builder.localeMessageResolver )
+            builder.siteDescriptor != null && builder.siteDescriptor.getForm() != null ? new FormJson( builder.siteDescriptor.getForm(),
+                                                                                                       builder.localeMessageResolver,
+                                                                                                       builder.inlineMixinResolver )
                 : null;
 
         this.authConfig =
-            builder.authDescriptor != null && builder.authDescriptor.getConfig() != null
-                ? new FormJson( builder.authDescriptor.getConfig(), builder.localeMessageResolver )
+            builder.authDescriptor != null && builder.authDescriptor.getConfig() != null ? new FormJson( builder.authDescriptor.getConfig(),
+                                                                                                         builder.localeMessageResolver,
+                                                                                                         builder.inlineMixinResolver )
                 : null;
 
         if ( builder.siteDescriptor != null && builder.siteDescriptor.getXDataMappings() != null )
@@ -174,6 +177,8 @@ public class ApplicationJson
 
         private LocaleMessageResolver localeMessageResolver;
 
+        private InlineMixinResolver inlineMixinResolver;
+
         private boolean local;
 
         public ApplicationJson build()
@@ -214,6 +219,12 @@ public class ApplicationJson
         public Builder setLocaleMessageResolver( final LocaleMessageResolver localeMessageResolver )
         {
             this.localeMessageResolver = localeMessageResolver;
+            return this;
+        }
+
+        public Builder setInlineMixinResolver( final InlineMixinResolver inlineMixinResolver )
+        {
+            this.inlineMixinResolver = inlineMixinResolver;
             return this;
         }
 

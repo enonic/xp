@@ -1,30 +1,40 @@
 package com.enonic.xp.blob;
 
+import java.util.Arrays;
+import java.util.List;
+
+import com.google.common.collect.ImmutableList;
+
 public final class Segment
 {
-    public static final Segment[] DEFAULT_REQUIRED_SEGMENTS = new Segment[]{Segment.from( "node" ), Segment.from( "binary" )};
+    public static final int SEGMENT_LEVEL_DEPTH = 2;
 
-    private final String value;
+    private final ImmutableList<SegmentLevel> levels;
 
-    private Segment( final String value )
+    private Segment( final Builder builder )
     {
-        this.value = value;
+        final ImmutableList<SegmentLevel> levels = builder.levels.build();
+        if ( levels.size() != SEGMENT_LEVEL_DEPTH )
+        {
+            throw new IllegalArgumentException( "Segment must have " + SEGMENT_LEVEL_DEPTH + " levels" );
+        }
+        this.levels = builder.levels.build();
     }
 
-    public static Segment from( final String value )
+    public List<SegmentLevel> getLevels()
     {
-        return new Segment( value );
+        return levels;
     }
 
-    public String getValue()
+    public SegmentLevel getLevel(final int levelIndex)
     {
-        return value;
+        return levels.get( levelIndex );
     }
 
     @Override
     public String toString()
     {
-        return this.value;
+        return levels.toString();
     }
 
     @Override
@@ -41,13 +51,82 @@ public final class Segment
 
         final Segment segment = (Segment) o;
 
-        return value != null ? value.equals( segment.value ) : segment.value == null;
+        return levels != null ? levels.equals( segment.levels ) : segment.levels == null;
 
     }
 
     @Override
     public int hashCode()
     {
-        return value != null ? value.hashCode() : 0;
+        return levels != null ? levels.hashCode() : 0;
+    }
+
+    public static Segment from( final String... levels )
+    {
+        return create().
+            levels( levels ).
+            build();
+    }
+
+    public static Segment from( final SegmentLevel... levels )
+    {
+        return create().
+            levels( levels ).
+            build();
+    }
+
+    public static Segment from( final Iterable<SegmentLevel> levels )
+    {
+        return create().
+            levels( levels ).
+            build();
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public static class Builder
+    {
+        private ImmutableList.Builder<SegmentLevel> levels = ImmutableList.builder();
+
+        public Builder level( SegmentLevel level )
+        {
+            this.levels.add( level );
+            return this;
+        }
+
+        public Builder level( String level )
+        {
+            this.levels.add( SegmentLevel.from( level ) );
+            return this;
+        }
+
+        public Builder levels( SegmentLevel... levels )
+        {
+            Arrays.stream( levels ).
+                forEach( this.levels::add );
+            return this;
+        }
+
+        public Builder levels( String... levels )
+        {
+            Arrays.stream( levels ).
+                map( SegmentLevel::from ).
+                forEach( this.levels::add );
+            return this;
+        }
+
+        public Builder levels( Iterable<SegmentLevel> levels )
+        {
+            this.levels.addAll( levels );
+            return this;
+        }
+
+        public Segment build()
+        {
+            return new Segment( this );
+        }
     }
 }

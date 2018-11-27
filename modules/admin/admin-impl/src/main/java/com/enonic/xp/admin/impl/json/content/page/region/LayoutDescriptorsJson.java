@@ -5,6 +5,7 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
+import com.enonic.xp.admin.impl.rest.resource.schema.mixin.InlineMixinResolver;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.LayoutDescriptors;
 
@@ -19,14 +20,15 @@ public class LayoutDescriptorsJson
         this.descriptorJsonList = layoutDescriptorJsons;
     }
 
-    public LayoutDescriptorsJson( final LayoutDescriptors descriptors, final LocaleMessageResolver localeMessageResolver )
+    public LayoutDescriptorsJson( final LayoutDescriptors descriptors, final LocaleMessageResolver localeMessageResolver,
+                                  final InlineMixinResolver inlineMixinResolver )
     {
         ImmutableList.Builder<LayoutDescriptorJson> builder = new ImmutableList.Builder<>();
         if ( descriptors != null )
         {
             for ( LayoutDescriptor descriptor : descriptors )
             {
-                builder.add( new LayoutDescriptorJson( descriptor, localeMessageResolver ) );
+                builder.add( new LayoutDescriptorJson( descriptor, localeMessageResolver, inlineMixinResolver ) );
             }
         }
         this.descriptorJsonList = builder.build();

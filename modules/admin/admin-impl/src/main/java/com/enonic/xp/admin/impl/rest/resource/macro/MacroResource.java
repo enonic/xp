@@ -38,6 +38,7 @@ import com.enonic.xp.admin.impl.rest.resource.macro.json.PreviewMacroResultJson;
 import com.enonic.xp.admin.impl.rest.resource.macro.json.PreviewMacroStringResultJson;
 import com.enonic.xp.admin.impl.rest.resource.macro.json.PreviewStringMacroJson;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
+import com.enonic.xp.admin.impl.rest.resource.schema.mixin.InlineMixinResolver;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.content.Content;
@@ -63,6 +64,7 @@ import com.enonic.xp.portal.macro.MacroProcessorFactory;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.UrlTypeConstants;
+import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.web.HttpMethod;
@@ -90,6 +92,8 @@ public final class MacroResource
 
     private LocaleService localeService;
 
+    private MixinService mixinService;
+
     private static final MacroImageHelper HELPER = new MacroImageHelper();
 
     private static final String DEFAULT_MIME_TYPE = "image/svg+xml";
@@ -106,8 +110,12 @@ public final class MacroResource
         ApplicationKeys.from( keys ).forEach( applicationKey -> {
             macroDescriptorJsons.addAll( this.macroDescriptorService.getByApplication( applicationKey ).
                 stream().
-                map( macroDescriptor -> new MacroDescriptorJson( macroDescriptor, macroIconUrlResolver,
-                                                                 new LocaleMessageResolver( localeService, applicationKey ) ) ).
+                map( macroDescriptor -> MacroDescriptorJson.create().
+                    setMacroDescriptor( macroDescriptor ).
+                    setMacroIconUrlResolver( macroIconUrlResolver ).
+                    setLocaleMessageResolver( new LocaleMessageResolver( localeService, applicationKey ) ).
+                    setInlineMixinResolver( new InlineMixinResolver( mixinService ) ).
+                    build() ).
                 collect( Collectors.toList() ) );
         } );
 
@@ -344,5 +352,11 @@ public final class MacroResource
     public void setLocaleService( final LocaleService localeService )
     {
         this.localeService = localeService;
+    }
+
+    @Reference
+    public void setMixinService( final MixinService mixinService )
+    {
+        this.mixinService = mixinService;
     }
 }

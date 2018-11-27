@@ -13,6 +13,7 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
+import com.enonic.xp.node.ApplyNodePermissionsResult;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.BinaryAttachment;
@@ -360,9 +361,9 @@ class NodeServiceMock
     }
 
     @Override
-    public int applyPermissions( final ApplyNodePermissionsParams params )
+    public ApplyNodePermissionsResult applyPermissions( final ApplyNodePermissionsParams params )
     {
-        return 0;
+        return ApplyNodePermissionsResult.create().build();
     }
 
     @Override

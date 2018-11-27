@@ -25,7 +25,7 @@ public final class ContentType
 
     private final Form form;
 
-    private final String contentDisplayNameScript;
+    private final String displayNameExpression;
 
     private final XDataNames xData;
 
@@ -46,7 +46,7 @@ public final class ContentType
         this.allowChildContent = builder.allowChildContent;
         this.isBuiltIn = builder.isBuiltIn;
         this.form = builder.formBuilder != null ? builder.formBuilder.build() : Form.create().build();
-        this.contentDisplayNameScript = builder.contentDisplayNameScript;
+        this.displayNameExpression = builder.displayNameExpression;
         this.xData = builder.xData;
     }
 
@@ -95,9 +95,9 @@ public final class ContentType
         return this.form;
     }
 
-    public String getContentDisplayNameScript()
+    public String getDisplayNameExpression()
     {
-        return contentDisplayNameScript;
+        return displayNameExpression;
     }
 
     public XDataNames getXData()
@@ -139,7 +139,7 @@ public final class ContentType
 
         private ContentTypeName superType;
 
-        private String contentDisplayNameScript;
+        private String displayNameExpression;
 
         private XDataNames xData;
 
@@ -166,7 +166,7 @@ public final class ContentType
             {
                 this.formBuilder = Form.create( source.getForm() );
             }
-            this.contentDisplayNameScript = source.getContentDisplayNameScript();
+            this.displayNameExpression = source.getDisplayNameExpression();
             this.xData = source.xData;
         }
 
@@ -242,9 +242,9 @@ public final class ContentType
             return this;
         }
 
-        public Builder contentDisplayNameScript( final String contentDisplayNameScript )
+        public Builder displayNameExpression( final String displayNameExpression )
         {
-            this.contentDisplayNameScript = contentDisplayNameScript;
+            this.displayNameExpression = displayNameExpression;
             return this;
         }
 

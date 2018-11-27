@@ -1,7 +1,6 @@
 package com.enonic.xp.lib.content;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -145,18 +144,10 @@ public final class SetPermissionsHandler
                 } );
             contentService.update( updatePermissionsParams );
 
-            try
-            {
-                contentService.applyPermissions( ApplyContentPermissionsParams.create().
-                    contentId( contentId ).
-                    overwriteChildPermissions( overwriteChildPermissions ).
-                    build() ).
-                    get();
-            }
-            catch ( InterruptedException | ExecutionException e )
-            {
-                throw new RuntimeException( "Error applying content permissions", e );
-            }
+            contentService.applyPermissions( ApplyContentPermissionsParams.create().
+                contentId( contentId ).
+                overwriteChildPermissions( overwriteChildPermissions ).
+                build() );
 
             return true;
         }

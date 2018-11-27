@@ -20,6 +20,12 @@ public final class WebException
         this.status = status;
     }
 
+    public WebException( final HttpStatus status, final String message, final Throwable cause )
+    {
+        super( message, cause );
+        this.status = status;
+    }
+
     public HttpStatus getStatus()
     {
         return this.status;

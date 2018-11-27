@@ -24,6 +24,7 @@ import com.enonic.xp.admin.impl.json.schema.xdata.XDataListJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.mixin.ContentTypeNameWildcardResolver;
+import com.enonic.xp.admin.impl.rest.resource.schema.mixin.InlineMixinResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.mixin.MixinIconResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.mixin.MixinIconUrlResolver;
 import com.enonic.xp.app.ApplicationKey;
@@ -67,6 +68,8 @@ public final class XDataResource
     private ContentTypeService contentTypeService;
 
     private LocaleService localeService;
+
+    private MixinService mixinService;
 
     private MixinIconUrlResolver mixinIconUrlResolver;
 
@@ -121,6 +124,7 @@ public final class XDataResource
                 setXData( xData ).
                 setIconUrlResolver( this.mixinIconUrlResolver ).
                 setLocaleMessageResolver( new LocaleMessageResolver( localeService, xData.getName().getApplicationKey() ) ).
+                setInlineMixinResolver( new InlineMixinResolver( mixinService ) ).
                 setOptional( xDatas.get( xData ) ).build() ).
             distinct().
             collect( toList() );
@@ -128,7 +132,7 @@ public final class XDataResource
 
     private Map<XData, Boolean> getSiteXData( final Content content )
     {
-        final Map<XData, Boolean> result = Maps.newHashMap();
+        final Map<XData, Boolean> result = Maps.newLinkedHashMap();
 
         final Site nearestSite = this.contentService.getNearestSite( content.getId() );
 
@@ -155,11 +159,16 @@ public final class XDataResource
 
     private Map<XData, Boolean> getXDatasByContentType( final XDataMappings xDataMappings, final ContentTypeName contentTypeName )
     {
-        final Map<XData, Boolean> result = Maps.newHashMap();
+        final Map<XData, Boolean> result = Maps.newLinkedHashMap();
 
         filterXDataMappingsByContentType( xDataMappings, contentTypeName ).
-            forEach( xDataMapping -> result.putIfAbsent( this.xDataService.getByName( xDataMapping.getXDataName() ),
-                                                         xDataMapping.getOptional() ) );
+            forEach( xDataMapping -> {
+                final XData xData = this.xDataService.getByName( xDataMapping.getXDataName() );
+                if ( xData != null )
+                {
+                    result.putIfAbsent( xData, xDataMapping.getOptional() );
+                }
+            } );
 
         return result;
     }
@@ -260,6 +269,7 @@ public final class XDataResource
     @Reference
     public void setMixinService( final MixinService mixinService )
     {
+        this.mixinService = mixinService;
         this.mixinIconUrlResolver = new MixinIconUrlResolver( new MixinIconResolver( mixinService ) );
     }
 }

@@ -41,8 +41,10 @@ public class ContentConstants
         value( "master" ).
         build();
 
+    public static final RepositoryId CONTENT_REPO_ID = RepositoryId.from( "cms-repo" );
+
     public static final Repository CONTENT_REPO = Repository.create().
-        id( RepositoryId.from( "cms-repo" ) ).
+        id( CONTENT_REPO_ID ).
         branches( Branches.from( BRANCH_DRAFT, BRANCH_MASTER ) ).
         build();
 

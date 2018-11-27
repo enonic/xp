@@ -13,12 +13,15 @@ import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.CachingBlobStore;
+import com.enonic.xp.blob.Segment;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.NodeVersions;
+import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repo.impl.node.json.NodeVersionJsonSerializer;
+import com.enonic.xp.repository.RepositorySegmentUtils;
 
 @Component
 public class NodeVersionServiceImpl
@@ -29,55 +32,57 @@ public class NodeVersionServiceImpl
     private BlobStore blobStore;
 
     @Override
-    public NodeVersionId store( final NodeVersion nodeVersion )
+    public NodeVersionId store( final NodeVersion nodeVersion, final InternalContext context )
     {
-        final BlobRecord blob = doStoreNodeAsBlob( nodeVersion );
+        final BlobRecord blob = doStoreNodeAsBlob( nodeVersion, context );
 
         return NodeVersionId.from( blob.getKey().toString() );
     }
 
-    private BlobRecord doStoreNodeAsBlob( final NodeVersion nodeVersion )
+    private BlobRecord doStoreNodeAsBlob( final NodeVersion nodeVersion, final InternalContext context )
     {
+        final Segment segment = RepositorySegmentUtils.toSegment( context.getRepositoryId(), NodeConstants.NODE_SEGMENT_LEVEL );
         final String serializedNode = this.nodeVersionJsonSerializer.toString( nodeVersion );
         final ByteSource source = ByteSource.wrap( serializedNode.getBytes( StandardCharsets.UTF_8 ) );
-        return blobStore.addRecord( NodeConstants.NODE_SEGMENT, source );
+        return blobStore.addRecord( segment, source );
     }
 
     @Override
-    public NodeVersions get( final NodeVersionIds nodeVersionIds )
+    public NodeVersions get( final NodeVersionIds nodeVersionIds, final InternalContext context )
     {
-        return doGetNodeVersions( nodeVersionIds );
+        return doGetNodeVersions( nodeVersionIds, context );
     }
 
     @Override
-    public NodeVersion get( final NodeVersionId nodeVersionId )
+    public NodeVersion get( final NodeVersionId nodeVersionId, final InternalContext context )
     {
-        return doGetNodeVersion( nodeVersionId, BlobKey.from( nodeVersionId.toString() ) );
+        return doGetNodeVersion( nodeVersionId, BlobKey.from( nodeVersionId.toString() ), context );
     }
 
-    private NodeVersions doGetNodeVersions( final NodeVersionIds nodeVersionIds )
+    private NodeVersions doGetNodeVersions( final NodeVersionIds nodeVersionIds, final InternalContext context )
     {
         NodeVersions.Builder builder = NodeVersions.create();
 
         for ( final NodeVersionId nodeVersionId : nodeVersionIds )
         {
-            builder.add( doGetNodeVersion( nodeVersionId, BlobKey.from( nodeVersionId.toString() ) ) );
+            builder.add( doGetNodeVersion( nodeVersionId, BlobKey.from( nodeVersionId.toString() ), context ) );
         }
 
         return builder.build();
     }
 
-    private NodeVersion doGetNodeVersion( final NodeVersionId nodeVersionId, final BlobKey key )
+    private NodeVersion doGetNodeVersion( final NodeVersionId nodeVersionId, final BlobKey key, final InternalContext context )
     {
-        final NodeVersion blobVersion = getFromBlob( key );
+        final NodeVersion blobVersion = getFromBlob( key, context );
         return NodeVersion.create( blobVersion ).
             versionId( nodeVersionId ).
             build();
     }
 
-    private NodeVersion getFromBlob( final BlobKey blobKey )
+    private NodeVersion getFromBlob( final BlobKey blobKey, final InternalContext context )
     {
-        final BlobRecord blob = blobStore.getRecord( NodeConstants.NODE_SEGMENT, blobKey );
+        final Segment segment = RepositorySegmentUtils.toSegment( context.getRepositoryId(), NodeConstants.NODE_SEGMENT_LEVEL );
+        final BlobRecord blob = blobStore.getRecord( segment, blobKey );
 
         if ( blob == null )
         {
@@ -93,7 +98,7 @@ public class NodeVersionServiceImpl
         {
             if ( blobStore instanceof CachingBlobStore )
             {
-                ( (CachingBlobStore) blobStore ).invalidate( NodeConstants.NODE_SEGMENT, blob.getKey() );
+                ( (CachingBlobStore) blobStore ).invalidate( segment, blob.getKey() );
             }
             throw new RuntimeException( "Failed to load blob with key: " + blob.getKey(), e );
         }

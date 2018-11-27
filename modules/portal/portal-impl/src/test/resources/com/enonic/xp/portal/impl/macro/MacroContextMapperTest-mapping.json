@@ -2,7 +2,10 @@
   "name": "macroName",
   "body": "body",
   "params": {
-    "firstParam" : [ "firstParamValue", "firstParamSecondValue" ],
+    "firstParam": [
+      "firstParamValue",
+      "firstParamSecondValue"
+    ],
     "secondParam": "secondParamValue"
   },
   "request": {
@@ -11,18 +14,20 @@
     "host": "localhost",
     "port": 80,
     "path": "/portal/live/master/a/b",
+    "rawPath": "/portal/live/master/a/b",
     "url": "http://localhost/portal/live/master/a/b?param1=value1",
     "remoteAddress": "127.0.0.1",
     "mode": "live",
     "webSocket": false,
     "branch": "draft",
+    "contextPath": "/portal/live/master/a",
     "params": {
-      "param3": [
-        "value3-B",
-        "value3-A"
-      ],
       "param1": "value1",
-      "param2": "value2"
+      "param2": "value2",
+      "param3": [
+        "value3-A",
+        "value3-B"
+      ]
     },
     "headers": {
       "header3": "value3",

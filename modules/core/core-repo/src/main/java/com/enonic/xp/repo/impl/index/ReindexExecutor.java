@@ -96,14 +96,16 @@ public class ReindexExecutor
                     progressReporter.progress( Math.toIntExact( nodeIndex ), Math.toIntExact( total ) );
                 }
 
-                final NodeVersion nodeVersion = this.nodeVersionService.get( nodeBranchEntry.getVersionId() );
+                final InternalContext context = InternalContext.create( ContextAccessor.current() ).
+                    repositoryId( repositoryId ).
+                    branch( branch ).
+                    build();
+
+                final NodeVersion nodeVersion = this.nodeVersionService.get( nodeBranchEntry.getVersionId(), context );
 
                 final Node node = NodeFactory.create( nodeVersion, nodeBranchEntry );
 
-                this.indexDataService.store( node, InternalContext.create( ContextAccessor.current() ).
-                    repositoryId( repositoryId ).
-                    branch( branch ).
-                    build() );
+                this.indexDataService.store( node, context );
 
                 builder.add( node.id() );
 

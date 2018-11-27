@@ -23,7 +23,7 @@
     <xs:sequence>
       <xs:element minOccurs="0" maxOccurs="unbounded" name="x-data" type="xdata"/>
       <xs:element minOccurs="0" name="form" type="form"/>
-      <xs:element minOccurs="0" name="filters" type="filters"/>
+      <xs:element minOccurs="0" name="processors" type="processors"/>
       <xs:element minOccurs="0" name="mappings" type="mappings"/>
     </xs:sequence>
   </xs:complexType>
@@ -183,7 +183,7 @@
     <xs:sequence>
       <xs:element minOccurs="0" name="display-name" type="i18n"/>
       <xs:element minOccurs="0" name="description" type="i18n"/>
-      <xs:element minOccurs="0" name="content-display-name-script" type="xs:string"/>
+      <xs:element minOccurs="0" name="display-name-expression" type="xs:string"/>
       <xs:element minOccurs="0" name="super-type" type="xs:string"/>
       <xs:element minOccurs="0" name="is-abstract" type="xs:boolean"/>
       <xs:element minOccurs="0" name="is-final" type="xs:boolean"/>
@@ -327,21 +327,21 @@
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="responseFilter">
+  <xs:complexType name="responseProcessor">
     <xs:attribute name="name" type="xs:string" use="required"/>
     <xs:attribute name="order" type="xs:int" use="required"/>
   </xs:complexType>
 
-  <xs:complexType name="filters">
+  <xs:complexType name="processors">
     <xs:sequence>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="response-filter" type="responseFilter"/>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="response-processor" type="responseProcessor"/>
     </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="mappingPattern">
     <xs:simpleContent>
       <xs:extension base="xs:string">
-        <xs:attribute name="invert" type="xs:boolean" use="optional"/>
+        <xs:attribute name="invert" type="xs:boolean"/>
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
@@ -351,8 +351,9 @@
       <xs:element name="match" type="xs:string" minOccurs="0"/>
       <xs:element name="pattern" type="mappingPattern" minOccurs="0"/>
     </xs:all>
-    <xs:attribute name="controller" type="xs:string" use="required"/>
-    <xs:attribute name="order" type="xs:int" use="optional"/>
+    <xs:attribute name="controller" type="xs:string"/>
+    <xs:attribute name="filter" type="xs:string"/>
+    <xs:attribute name="order" type="xs:int"/>
   </xs:complexType>
 
   <xs:complexType name="mappings">

@@ -23,6 +23,7 @@ import com.google.common.io.LineProcessor;
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
+import com.enonic.xp.blob.Segment;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.dump.BranchDumpResult;
@@ -43,6 +44,7 @@ import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.serializer.json.DumpMetaJsonSerializer;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
+import com.enonic.xp.repository.RepositorySegmentUtils;
 
 public class FileDumpReader
     extends AbstractFileProcessor
@@ -307,10 +309,10 @@ public class FileDumpReader
     }
 
     @Override
-    public NodeVersion get( final NodeVersionId nodeVersionId )
+    public NodeVersion get( final RepositoryId repositoryId, final NodeVersionId nodeVersionId )
     {
-        final BlobRecord record =
-            this.dumpBlobStore.getRecord( DumpConstants.DUMP_SEGMENT_NODES, BlobKey.from( nodeVersionId.toString() ) );
+        final Segment segment = RepositorySegmentUtils.toSegment( repositoryId, DumpConstants.DUMP_NODE_SEGMENT_LEVEL );
+        final BlobRecord record = this.dumpBlobStore.getRecord( segment, BlobKey.from( nodeVersionId.toString() ) );
 
         if ( record == null )
         {
@@ -321,9 +323,10 @@ public class FileDumpReader
     }
 
     @Override
-    public ByteSource getBinary( final String blobKey )
+    public ByteSource getBinary( final RepositoryId repositoryId, final String blobKey )
     {
-        final BlobRecord record = this.dumpBlobStore.getRecord( DumpConstants.DUMP_SEGMENT_BINARIES, BlobKey.from( blobKey ) );
+        final Segment segment = RepositorySegmentUtils.toSegment( repositoryId, DumpConstants.DUMP_BINARY_SEGMENT_LEVEL );
+        final BlobRecord record = this.dumpBlobStore.getRecord( segment, BlobKey.from( blobKey ) );
 
         if ( record == null )
         {

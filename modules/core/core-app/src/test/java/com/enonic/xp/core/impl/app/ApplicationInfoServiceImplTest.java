@@ -225,10 +225,22 @@ public class ApplicationInfoServiceImplTest
     private void mockContentTypes( final ApplicationKey applicationKey )
     {
         final ContentType contentType =
-            ContentType.create().name( ContentTypeName.media() ).form( Form.create().build() ).setAbstract().setFinal().allowChildContent(
-                true ).setBuiltIn().contentDisplayNameScript( "contentDisplayNameScript" ).displayName(
-                "displayName" ).description( "description" ).modifiedTime( Instant.ofEpochSecond( 1000 ) ).createdTime(
-                Instant.ofEpochSecond( 1000 ) ).creator( PrincipalKey.ofAnonymous() ).modifier( PrincipalKey.ofAnonymous() ).build();
+            ContentType.
+                create().
+                name( ContentTypeName.media() ).
+                form( Form.create().build() ).
+                setAbstract().
+                setFinal().
+                allowChildContent( true ).
+                setBuiltIn().
+                displayNameExpression( "displayNameExpression" ).
+                displayName( "displayName" ).
+                description( "description" ).
+                modifiedTime( Instant.ofEpochSecond( 1000 ) ).
+                createdTime( Instant.ofEpochSecond( 1000 ) ).
+                creator( PrincipalKey.ofAnonymous() ).
+                modifier( PrincipalKey.ofAnonymous() ).
+                build();
 
         final ContentTypes contentTypes = ContentTypes.from( contentType );
         Mockito.when( this.contentTypeService.getByApplication( applicationKey ) ).thenReturn( contentTypes );
@@ -424,12 +436,5 @@ public class ApplicationInfoServiceImplTest
         mockTasks( applicationKey );
         mockIdProvider( applicationKey );
     }
-/*
-    private void mockDeployment( final ApplicationKey applicationKey )
-    {
-        final Resource resourceMock = Mockito.mock( Resource.class );
-        Mockito.when( resourceMock.exists() ).thenReturn( true );
 
-        Mockito.when( this.resourceService.getResource( ResourceKey.from( applicationKey, "/main.js" ) ) ).thenReturn( resourceMock );
-    }*/
 }

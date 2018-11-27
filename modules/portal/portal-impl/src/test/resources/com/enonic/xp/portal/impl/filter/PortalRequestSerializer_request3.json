@@ -1,0 +1,25 @@
+{
+  "method": "post",
+  "scheme": "https",
+  "host": "myhost",
+  "port": 1234,
+  "path": "/some/path",
+  "url": "https://myhost:1234/some/path/url",
+  "remoteAddress": "127.0.0.42",
+  "mode": "edit",
+  "validTicket": true,
+  "branch": "draft",
+  "contentType": "application/json",
+  "body": {
+    "key1": "value1",
+    "key2": 42
+  },
+  "params": {
+    "param": "param-value",
+    "param2": [
+      "param-value2-a",
+      "param-value2-b",
+      "param-value2-c"
+    ]
+  }
+}
