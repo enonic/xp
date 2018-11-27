@@ -24,7 +24,7 @@ import com.enonic.xp.util.Metrics;
 public final class EventPublisherImpl
     implements EventPublisher
 {
-    private final static int MAX_THREAD_POOL = 20;
+    private final static int MAX_THREAD_POOL = 100;
 
     private final static Meter EVENT_METRIC = Metrics.meter( EventPublisher.class, "event" );
 
