@@ -8,6 +8,8 @@ public final class DeleteContentProgressListener
 {
     private final ProgressReporter progressReporter;
 
+    private int total = 0;
+
     private int progressCount = 0;
 
     public DeleteContentProgressListener( final ProgressReporter progressReporter )
@@ -16,9 +18,15 @@ public final class DeleteContentProgressListener
     }
 
     @Override
+    public void setTotal( final int count )
+    {
+        total = count;
+    }
+
+    @Override
     public void contentDeleted( final int count )
     {
         progressCount = progressCount + count;
-        progressReporter.progress( progressCount, progressCount );
+        progressReporter.progress( progressCount, total );
     }
 }

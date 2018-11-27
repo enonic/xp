@@ -19,6 +19,7 @@ import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
+import com.enonic.xp.node.DeleteNodeListener;
 import com.enonic.xp.node.DuplicateNodeParams;
 import com.enonic.xp.node.EditableNode;
 import com.enonic.xp.node.FindNodePathsByQueryResult;
@@ -194,6 +195,12 @@ class NodeServiceMock
 
     @Override
     public NodeIds deleteById( final NodeId id )
+    {
+        return deleteById( id, null );
+    }
+
+    @Override
+    public NodeIds deleteById( final NodeId id, final DeleteNodeListener deleteNodeListener )
     {
         final Node toBeRemoved = this.nodeIdMap.get( id );
 

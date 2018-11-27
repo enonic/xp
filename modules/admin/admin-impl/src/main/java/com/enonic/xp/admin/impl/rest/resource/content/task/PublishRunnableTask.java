@@ -1,5 +1,6 @@
 package com.enonic.xp.admin.impl.rest.resource.content.task;
 
+import com.enonic.xp.admin.impl.rest.resource.content.DeleteContentProgressListener;
 import com.enonic.xp.admin.impl.rest.resource.content.PublishContentProgressListener;
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishContentJson;
 import com.enonic.xp.content.ContentConstants;
@@ -47,6 +48,7 @@ public class PublishRunnableTask
                 contentPublishInfo( contentPublishInfo ).
                 includeDependencies( true ).
                 pushListener( new PublishContentProgressListener( progressReporter ) ).
+                deleteContentListener( new DeleteContentProgressListener( progressReporter ) ).
                 build() );
 
             ContentIds pushed = result.getPushedContents();
