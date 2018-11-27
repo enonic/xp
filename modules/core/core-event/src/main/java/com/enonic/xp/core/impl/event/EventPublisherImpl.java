@@ -2,7 +2,9 @@ package com.enonic.xp.core.impl.event;
 
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -22,6 +24,8 @@ import com.enonic.xp.util.Metrics;
 public final class EventPublisherImpl
     implements EventPublisher
 {
+    private final static int MAX_THREAD_POOL = 20;
+
     private final static Meter EVENT_METRIC = Metrics.meter( EventPublisher.class, "event" );
 
     private final Queue<Event> queue;
@@ -34,7 +38,7 @@ public final class EventPublisherImpl
     {
         this.queue = Queues.newConcurrentLinkedQueue();
         this.multicaster = new EventMulticaster();
-        this.executor = Executors.newCachedThreadPool();
+        this.executor = new ThreadPoolExecutor( 0, MAX_THREAD_POOL, 60L, TimeUnit.SECONDS, new SynchronousQueue<>() );
     }
 
     @Deactivate
