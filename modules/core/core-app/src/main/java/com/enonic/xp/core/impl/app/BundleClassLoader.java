@@ -25,6 +25,18 @@ final class BundleClassLoader
     }
 
     @Override
+    protected Class<?> loadClass( String name, boolean resolve )
+        throws ClassNotFoundException
+    {
+        final Class<?> clazz = this.bundle.loadClass( name );
+        if ( resolve )
+        {
+            resolveClass( clazz );
+        }
+        return clazz;
+    }
+
+    @Override
     protected URL findResource( final String name )
     {
         return this.bundle.getResource( name );

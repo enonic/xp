@@ -18,6 +18,7 @@ public class BundleClassLoaderTest
         throws Exception
     {
         final TinyBundle builder = newBundle( "foo.bar.bundle", false ).
+            add( BundleBasedTest.class ).//parent
             add( getClass() );
 
         final Bundle bundle = deploy( "bundle", builder );
