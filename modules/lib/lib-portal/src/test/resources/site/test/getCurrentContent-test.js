@@ -71,7 +71,9 @@ var expectedJson = {
         }
     },
     "page": {
-        "controller": "myapplication:mycontroller",
+        "type": "page",
+        "path": "/",
+        "descriptor": "myapplication:mycontroller",
         "config": {
             "a": "1"
         },
@@ -79,8 +81,7 @@ var expectedJson = {
             "top": {
                 "components": [
                     {
-                        "name": "mypart",
-                        "path": "top/0",
+                        "path": "/top/0",
                         "type": "part",
                         "descriptor": "myapplication:mypart",
                         "config": {
@@ -88,8 +89,7 @@ var expectedJson = {
                         }
                     },
                     {
-                        "name": "mylayout",
-                        "path": "top/1",
+                        "path": "/top/1",
                         "type": "layout",
                         "descriptor": "myapplication:mylayout",
                         "config": {
@@ -99,21 +99,18 @@ var expectedJson = {
                             "bottom": {
                                 "components": [
                                     {
-                                        "name": "mypart",
-                                        "path": "top/1/bottom/0",
+                                        "path": "/top/1/bottom/0",
                                         "type": "part",
                                         "descriptor": "myapplication:mypart",
                                         "config": {
                                             "a": "1"
                                         }
                                     }
-                                ],
-                                "name": "bottom"
+                                ]
                             }
                         }
                     }
-                ],
-                "name": "top"
+                ]
             }
         }
     },

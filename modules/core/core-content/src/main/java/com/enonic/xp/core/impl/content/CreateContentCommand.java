@@ -27,6 +27,7 @@ import com.enonic.xp.content.processor.ContentProcessor;
 import com.enonic.xp.content.processor.ProcessCreateParams;
 import com.enonic.xp.content.processor.ProcessCreateResult;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.core.impl.content.validate.InputValidator;
 import com.enonic.xp.core.impl.content.validate.ValidationError;
 import com.enonic.xp.core.impl.content.validate.ValidationErrors;
@@ -66,6 +67,8 @@ final class CreateContentCommand
 
     private final LayoutDescriptorService layoutDescriptorService;
 
+    private final ContentDataSerializer contentDataSerializer;
+
     private CreateContentCommand( final Builder builder )
     {
         super( builder );
@@ -75,6 +78,7 @@ final class CreateContentCommand
         this.pageDescriptorService = builder.pageDescriptorService;
         this.partDescriptorService = builder.partDescriptorService;
         this.layoutDescriptorService = builder.layoutDescriptorService;
+        this.contentDataSerializer = builder.contentDataSerializer;
     }
 
     static Builder create()
@@ -110,6 +114,7 @@ final class CreateContentCommand
             xDataService( this.xDataService ).
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
+            contentDataSerializer( this.contentDataSerializer ).
             siteService( this.siteService ).
             build().produce();
 
@@ -452,6 +457,8 @@ final class CreateContentCommand
 
         private LayoutDescriptorService layoutDescriptorService;
 
+        private ContentDataSerializer contentDataSerializer;
+
         private Builder()
         {
         }
@@ -494,6 +501,12 @@ final class CreateContentCommand
         Builder layoutDescriptorService( final LayoutDescriptorService value )
         {
             this.layoutDescriptorService = value;
+            return this;
+        }
+
+        Builder contentDataSerializer( final ContentDataSerializer value )
+        {
+            this.contentDataSerializer = value;
             return this;
         }
 

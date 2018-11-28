@@ -43,7 +43,8 @@ public class ContentIndexConfigFactory
 
         indexConfigProcessors.add( new XDataConfigProcessor( getXDatas( builder.xDataService, builder.extraDatas ) ) );
 
-        indexConfigProcessors.add( new PageConfigProcessor( getPageConfigForm( builder.pageDescriptorService, builder.page ) ) );
+        indexConfigProcessors.add(
+            new PageConfigProcessor( builder.page, getPageConfigForm( builder.pageDescriptorService, builder.page ) ) );
 
         indexConfigProcessors.add( new SiteConfigProcessor( getSiteConfigForms( builder.siteService, builder.siteConfigs ) ) );
 
@@ -73,11 +74,11 @@ public class ContentIndexConfigFactory
 
     private Form getPageConfigForm( final PageDescriptorService pageDescriptorService, final Page page )
     {
-        if ( pageDescriptorService == null || page == null || page.getController() == null )
+        if ( pageDescriptorService == null || page == null || page.getDescriptor() == null )
         {
             return null;
         }
-        return pageDescriptorService.getByKey( page.getController() ).getConfig();
+        return pageDescriptorService.getByKey( page.getDescriptor() ).getConfig();
     }
 
     private Collection<Form> getSiteConfigForms( final SiteService siteService, final SiteConfigs siteConfigs )

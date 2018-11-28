@@ -38,12 +38,12 @@ public class ImageComponentJson
     {
         super( component );
         this.image = component;
-        this.config = this.image.getConfig() != null ? PropertyTreeJson.toJson( this.image.getConfig() ) : null;
+        this.config = this.image.hasConfig() ? PropertyTreeJson.toJson( this.image.getConfig() ) : null;
     }
 
     public String getImage()
     {
-        return image.getImage() != null ? image.getImage().toString() : null;
+        return image.hasImage() ? image.getImage().toString() : null;
     }
 
     public List<PropertyArrayJson> getConfig()

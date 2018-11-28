@@ -3,58 +3,40 @@ package com.enonic.xp.core.impl.content.index.processor;
 import java.util.List;
 
 import com.enonic.xp.core.impl.content.index.IndexConfigVisitor;
+import com.enonic.xp.form.Form;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexValueProcessors;
 import com.enonic.xp.index.PatternIndexConfigDocument;
-import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.region.Component;
+import com.enonic.xp.region.DescriptorBasedComponent;
+import com.enonic.xp.region.FragmentComponentType;
+import com.enonic.xp.region.ImageComponentType;
 import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.LayoutComponentType;
-import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.LayoutRegions;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.PartComponentType;
-import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.region.PartDescriptorService;
+import com.enonic.xp.region.TextComponentType;
 
 import static com.enonic.xp.core.impl.content.index.processor.PageConfigProcessor.ALL_PATTERN;
+import static com.enonic.xp.core.impl.content.index.processor.PageConfigProcessor.COMPONENTS;
+import static com.enonic.xp.core.impl.content.index.processor.PageConfigProcessor.CONFIG;
+import static com.enonic.xp.core.impl.content.index.processor.PageConfigProcessor.DESCRIPTOR;
+import static com.enonic.xp.core.impl.content.index.processor.PageConfigProcessor.appNameToConfigPropertyName;
 import static com.enonic.xp.data.PropertyPath.ELEMENT_DIVIDER;
 
 public class PageRegionsConfigProcessor
     implements ContentIndexConfigProcessor
 {
-    public static final String REGION = "region";
+    static final String ID = "id";
 
-    public static final String COMPONENT = "component";
+    static final String VALUE = "value";
 
-    public static final String CONFIG = "config";
-
-    public static final String LAYOUT_COMPONENT = "LayoutComponent";
-
-    public static final String PART_COMPONENT = "PartComponent";
-
-    public static final String TEXT_COMPONENT = "TextComponent";
-
-    public static final String FRAGMENT_COMPONENT = "FragmentComponent";
-
-    public static final String ANY_PATH_PATTERN = "**";
-
-    public static final String PAGE_REGION = String.join( ELEMENT_DIVIDER, "page", REGION );
-
-    public static final String LAYOUT_COMPONENT_PATH = String.join( ELEMENT_DIVIDER, PAGE_REGION, ANY_PATH_PATTERN, LAYOUT_COMPONENT );
-
-    public static final String PART_COMPONENT_PATH = String.join( ELEMENT_DIVIDER, PAGE_REGION, ANY_PATH_PATTERN, PART_COMPONENT );
-
-    public static final String TEXT_COMPONENT_PATH = String.join( ELEMENT_DIVIDER, PAGE_REGION, ANY_PATH_PATTERN, TEXT_COMPONENT );
-
-    public static final String FRAGMENT_COMPONENT_PATH = String.join( ELEMENT_DIVIDER, PAGE_REGION, ANY_PATH_PATTERN, FRAGMENT_COMPONENT );
-
-    public static final String PAGE_TEXT_COMPONENT_PROPERTY_PATH_PATTERN = String.join( ELEMENT_DIVIDER, TEXT_COMPONENT_PATH, "text" );
-
-    public final static IndexConfig TEXT_COMPONENT_INDEX_CONFIG = IndexConfig.create( IndexConfig.FULLTEXT ).
+    static final IndexConfig TEXT_COMPONENT_INDEX_CONFIG = IndexConfig.create( IndexConfig.FULLTEXT ).
         addIndexValueProcessor( IndexValueProcessors.HTML_STRIPPER ).
         build();
 
@@ -80,15 +62,13 @@ public class PageRegionsConfigProcessor
             return builder;
         }
 
-        builder.add( String.join( ELEMENT_DIVIDER, LAYOUT_COMPONENT_PATH, CONFIG, ALL_PATTERN ), IndexConfig.BY_TYPE );
-        builder.add( String.join( ELEMENT_DIVIDER, PART_COMPONENT_PATH, CONFIG, ALL_PATTERN ), IndexConfig.BY_TYPE );
+        builder.add( String.join( ELEMENT_DIVIDER, COMPONENTS, ImageComponentType.INSTANCE.toString(), ID ), IndexConfig.MINIMAL );
+        builder.add( String.join( ELEMENT_DIVIDER, COMPONENTS, FragmentComponentType.INSTANCE.toString(), ID ), IndexConfig.MINIMAL );
+        builder.add( String.join( ELEMENT_DIVIDER, COMPONENTS, TextComponentType.INSTANCE.toString(), VALUE ),
+                     TEXT_COMPONENT_INDEX_CONFIG );
 
-        builder.add( String.join( ELEMENT_DIVIDER, TEXT_COMPONENT_PATH, ALL_PATTERN ), IndexConfig.MINIMAL );
-        builder.add( String.join( ELEMENT_DIVIDER, PART_COMPONENT_PATH, ALL_PATTERN ), IndexConfig.MINIMAL );
-        builder.add( String.join( ELEMENT_DIVIDER, LAYOUT_COMPONENT_PATH, ALL_PATTERN ), IndexConfig.MINIMAL );
-        builder.add( String.join( ELEMENT_DIVIDER, FRAGMENT_COMPONENT_PATH, ALL_PATTERN ), IndexConfig.MINIMAL );
-
-        builder.add( PAGE_TEXT_COMPONENT_PROPERTY_PATH_PATTERN, TEXT_COMPONENT_INDEX_CONFIG );
+        builder.add( String.join( ELEMENT_DIVIDER, COMPONENTS, PartComponentType.INSTANCE.toString(), DESCRIPTOR ), IndexConfig.MINIMAL );
+        builder.add( String.join( ELEMENT_DIVIDER, COMPONENTS, LayoutComponentType.INSTANCE.toString(), DESCRIPTOR ), IndexConfig.MINIMAL );
 
         processPageRegions( page.getRegions(), builder );
 
@@ -102,65 +82,59 @@ public class PageRegionsConfigProcessor
             return;
         }
 
-        pageRegions.forEach( pageRegion -> processComponents( pageRegion.getComponents(), builder, PAGE_REGION ) );
+        pageRegions.forEach( pageRegion -> processComponents( pageRegion.getComponents(), builder ) );
     }
 
-    private void parseLayoutRegions( final LayoutRegions layoutRegions, final PatternIndexConfigDocument.Builder builder, String path )
-    {
-        if ( layoutRegions == null )
-        {
-            return;
-        }
-
-        layoutRegions.forEach( pageRegion -> {
-            final String layoutRegionPath = String.join( ELEMENT_DIVIDER, path, REGION );
-            processComponents( pageRegion.getComponents(), builder, layoutRegionPath );
-        } );
-    }
-
-    private void processComponents( final List<Component> components, final PatternIndexConfigDocument.Builder builder, String path )
+    private void processComponents( final List<Component> components, final PatternIndexConfigDocument.Builder builder )
     {
         if ( components == null )
         {
             return;
         }
 
-        components.forEach( component -> {
-            if ( PartComponentType.INSTANCE == component.getType() )
-            {
-                final String partComponentPath =
-                    String.join( ELEMENT_DIVIDER, path, String.join( ELEMENT_DIVIDER, COMPONENT, PART_COMPONENT ) );
+        components.stream().
+            filter( component -> component instanceof DescriptorBasedComponent ).
+            map( component -> (DescriptorBasedComponent) component ).
+            filter( component -> component.hasDescriptor() ).
+            forEach( component -> processDescriptorBasedComponent( component, builder ) );
+    }
 
-                final DescriptorKey descriptorKey = ( (PartComponent) component ).getDescriptor();
+    private void processDescriptorBasedComponent( final DescriptorBasedComponent component,
+                                                  final PatternIndexConfigDocument.Builder builder )
+    {
+        final String appKeyAsString = appNameToConfigPropertyName( component.getDescriptor() );
 
-                if ( descriptorKey != null )
-                {
-                    final PartDescriptor partDescriptor = partDescriptorService.getByKey( ( (PartComponent) component ).getDescriptor() );
+        final IndexConfigVisitor indexConfigVisitor =
+            new IndexConfigVisitor( String.join( ELEMENT_DIVIDER, COMPONENTS, component.getType().toString(), CONFIG, appKeyAsString ),
+                                    builder );
+        indexConfigVisitor.traverse( getComponentConfig( component ) );
 
-                    final IndexConfigVisitor indexConfigVisitor =
-                        new IndexConfigVisitor( String.join( ELEMENT_DIVIDER, partComponentPath, CONFIG ), builder );
-                    indexConfigVisitor.traverse( partDescriptor.getConfig() );
-                }
-            }
-            if ( LayoutComponentType.INSTANCE == component.getType() )
-            {
-                final String layoutComponentPath =
-                    String.join( ELEMENT_DIVIDER, path, String.join( ELEMENT_DIVIDER, COMPONENT, LAYOUT_COMPONENT ) );
+        builder.add( String.join( ELEMENT_DIVIDER, COMPONENTS, component.getType().toString(), CONFIG, appKeyAsString, ALL_PATTERN ),
+                     IndexConfig.BY_TYPE );
 
-                final DescriptorKey descriptorKey = ( (LayoutComponent) component ).getDescriptor();
+        if ( component instanceof LayoutComponent )
+        {
+            parseLayoutRegions( ( (LayoutComponent) component ).getRegions(), builder );
+        }
+    }
 
-                if ( descriptorKey != null )
-                {
-                    final LayoutDescriptor layoutDescriptor =
-                        layoutDescriptorService.getByKey( ( (LayoutComponent) component ).getDescriptor() );
+    private Form getComponentConfig( final DescriptorBasedComponent component )
+    {
+        if ( component instanceof PartComponent )
+        {
+            return partDescriptorService.getByKey( component.getDescriptor() ).getConfig();
+        }
 
-                    final IndexConfigVisitor indexConfigVisitor =
-                        new IndexConfigVisitor( String.join( ELEMENT_DIVIDER, layoutComponentPath, CONFIG ), builder );
-                    indexConfigVisitor.traverse( layoutDescriptor.getConfig() );
+        return layoutDescriptorService.getByKey( component.getDescriptor() ).getConfig();
+    }
 
-                    parseLayoutRegions( ( (LayoutComponent) component ).getRegions(), builder, layoutComponentPath );
-                }
-            }
-        } );
+    private void parseLayoutRegions( final LayoutRegions layoutRegions, final PatternIndexConfigDocument.Builder builder )
+    {
+        if ( layoutRegions == null )
+        {
+            return;
+        }
+
+        layoutRegions.forEach( pageRegion -> processComponents( pageRegion.getComponents(), builder ) );
     }
 }

@@ -15,13 +15,10 @@ import com.enonic.xp.security.PrincipalKey;
 
 class ContentVersionFactory
 {
-    private final ContentNodeTranslator translator;
-
     private final NodeService nodeService;
 
-    public ContentVersionFactory( final ContentNodeTranslator translator, final NodeService nodeService )
+    public ContentVersionFactory( final NodeService nodeService )
     {
-        this.translator = translator;
         this.nodeService = nodeService;
     }
 

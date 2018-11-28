@@ -20,6 +20,7 @@ import com.enonic.xp.content.UpdateContentTranslatorParams;
 import com.enonic.xp.content.processor.ContentProcessor;
 import com.enonic.xp.content.processor.ProcessUpdateParams;
 import com.enonic.xp.content.processor.ProcessUpdateResult;
+import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.core.impl.content.validate.InputValidator;
 import com.enonic.xp.core.impl.content.validate.ValidationError;
 import com.enonic.xp.core.impl.content.validate.ValidationErrors;
@@ -52,6 +53,8 @@ final class UpdateContentCommand
 
     private final LayoutDescriptorService layoutDescriptorService;
 
+    private final ContentDataSerializer contentDataSerializer;
+
     private UpdateContentCommand( final Builder builder )
     {
         super( builder );
@@ -60,6 +63,7 @@ final class UpdateContentCommand
         this.pageDescriptorService = builder.pageDescriptorService;
         this.partDescriptorService = builder.partDescriptorService;
         this.layoutDescriptorService = builder.layoutDescriptorService;
+        this.contentDataSerializer = builder.contentDataSerializer;
     }
 
     public static Builder create( final UpdateContentParams params )
@@ -120,6 +124,7 @@ final class UpdateContentCommand
             pageDescriptorService( this.pageDescriptorService ).
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
+            contentDataSerializer( this.contentDataSerializer ).
             siteService( this.siteService ).
             build().produce();
 
@@ -326,6 +331,8 @@ final class UpdateContentCommand
 
         private LayoutDescriptorService layoutDescriptorService;
 
+        private ContentDataSerializer contentDataSerializer;
+
         Builder( final UpdateContentParams params )
         {
             this.params = params;
@@ -363,6 +370,12 @@ final class UpdateContentCommand
         Builder layoutDescriptorService( final LayoutDescriptorService value )
         {
             this.layoutDescriptorService = value;
+            return this;
+        }
+
+        Builder contentDataSerializer( final ContentDataSerializer value )
+        {
+            this.contentDataSerializer = value;
             return this;
         }
 

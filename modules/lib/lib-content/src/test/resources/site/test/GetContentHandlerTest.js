@@ -71,7 +71,9 @@ var expectedJson = {
         }
     },
     "page": {
-        "controller": "myapplication:mycontroller",
+        "type": "page",
+        "path": "/",
+        "descriptor": "my-app-key:mycontroller",
         "config": {
             "a": "1"
         },
@@ -79,41 +81,80 @@ var expectedJson = {
             "top": {
                 "components": [
                     {
-                        "name": "mypart",
-                        "path": "top/0",
+                        "path": "/top/0",
                         "type": "part",
-                        "descriptor": "myapplication:mypart",
+                        "descriptor": "app-descriptor-x:name-x",
                         "config": {
                             "a": "1"
                         }
                     },
                     {
-                        "name": "mylayout",
-                        "path": "top/1",
+                        "path": "/top/1",
                         "type": "layout",
-                        "descriptor": "myapplication:mylayout",
-                        "config": {
-                            "a": "1"
-                        },
+                        "descriptor": "layoutDescriptor:name",
+                        "config": {},
                         "regions": {
-                            "bottom": {
+                            "left": {
                                 "components": [
                                     {
-                                        "name": "mypart",
-                                        "path": "top/1/bottom/0",
+                                        "path": "/top/1/left/0",
                                         "type": "part",
-                                        "descriptor": "myapplication:mypart",
-                                        "config": {
-                                            "a": "1"
-                                        }
+                                        "config": {}
+                                    },
+                                    {
+                                        "path": "/top/1/left/1",
+                                        "type": "text",
+                                        "text": "text text text"
+                                    },
+                                    {
+                                        "path": "/top/1/left/2",
+                                        "type": "text",
+                                        "text": ""
                                     }
-                                ],
-                                "name": "bottom"
+                                ]
+                            },
+                            "right": {
+                                "components": [
+                                    {
+                                        "path": "/top/1/right/0",
+                                        "type": "image"
+                                    },
+                                    {
+                                        "path": "/top/1/right/1",
+                                        "type": "fragment",
+                                        "fragment": "213sda-ss222"
+                                    }
+                                ]
                             }
                         }
+                    },
+                    {
+                        "path": "/top/2",
+                        "type": "layout",
+                        "config": {},
+                        "regions": {}
                     }
-                ],
-                "name": "top"
+                ]
+            },
+            "bottom": {
+                "components": [
+                    {
+                        "path": "/bottom/0",
+                        "type": "part",
+                        "descriptor": "app-descriptor-y:name-y",
+                        "config": {
+                            "a": "1"
+                        }
+                    },
+                    {
+                        "path": "/bottom/1",
+                        "type": "image"
+                    },
+                    {
+                        "path": "/bottom/2",
+                        "type": "image"
+                    }
+                ]
             }
         }
     },
@@ -136,12 +177,62 @@ var expectedJson = {
     }
 };
 
+var pageAsFragmentJson = {
+    "fragment": {
+        "type": "layout",
+        "descriptor": "layoutDescriptor:name",
+        "config": {},
+        "regions": {
+            "left": {
+                "components": [
+                    {
+                        "path": "/left/0",
+                        "type": "part",
+                        "config": {}
+                    },
+                    {
+                        "path": "/left/1",
+                        "type": "text",
+                        "text": "text text text"
+                    },
+                    {
+                        "path": "/left/2",
+                        "type": "text",
+                        "text": ""
+                    }
+                ]
+            },
+            "right": {
+                "components": [
+                    {
+                        "path": "/right/0",
+                        "type": "image"
+                    },
+                    {
+                        "path": "/right/1",
+                        "type": "fragment",
+                        "fragment": "213sda-ss222"
+                    }
+                ]
+            }
+        }
+    }
+};
+
 exports.getById = function () {
     var result = content.get({
         key: '123456'
     });
 
     assert.assertJsonEquals(expectedJson, result);
+};
+
+exports.getByIdWithPageAsFragment = function () {
+    var result = content.get({
+        key: '123456'
+    });
+
+    assert.assertJsonEquals(pageAsFragmentJson.fragment, result.fragment);
 };
 
 exports.getByPath = function () {

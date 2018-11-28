@@ -111,7 +111,7 @@ public final class TestDataFixtures
     {
         final Page.Builder builder = Page.create();
         builder.config( newTinyPropertyTree() );
-        builder.controller( DescriptorKey.from( "myapplication:mycontroller" ) );
+        builder.descriptor( DescriptorKey.from( "myapplication:mycontroller" ) );
         builder.regions( newPageRegions() );
         return builder.build();
     }

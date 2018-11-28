@@ -43,6 +43,7 @@ public final class PageDescriptorServiceImpl
     {
         final ResourceProcessor<DescriptorKey, PageDescriptor> processor = newProcessor( key );
         final PageDescriptor descriptor = this.resourceService.processResource( processor );
+
         if ( descriptor == null )
         {
             return createDefaultDescriptor( key );

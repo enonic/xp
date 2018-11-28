@@ -36,7 +36,7 @@ public class UpdateNodeParamsFactory
 
     private final SiteService siteService;
 
-    private static final ContentDataSerializer CONTENT_DATA_SERIALIZER = new ContentDataSerializer();
+    private final ContentDataSerializer contentDataSerializer;
 
     public UpdateNodeParamsFactory( final Builder builder )
     {
@@ -46,6 +46,7 @@ public class UpdateNodeParamsFactory
         this.pageDescriptorService = builder.pageDescriptorService;
         this.partDescriptorService = builder.partDescriptorService;
         this.layoutDescriptorService = builder.layoutDescriptorService;
+        this.contentDataSerializer = builder.contentDataSerializer;
         this.siteService = builder.siteService;
     }
 
@@ -79,7 +80,7 @@ public class UpdateNodeParamsFactory
     {
         final Content content = params.getEditedContent();
 
-        final PropertyTree nodeData = CONTENT_DATA_SERIALIZER.toUpdateNodeData( params );
+        final PropertyTree nodeData = contentDataSerializer.toUpdateNodeData( params );
 
         final ContentIndexConfigFactory indexConfigFactory = ContentIndexConfigFactory.create().
             contentTypeService( contentTypeService ).
@@ -115,6 +116,8 @@ public class UpdateNodeParamsFactory
         private PartDescriptorService partDescriptorService;
 
         private LayoutDescriptorService layoutDescriptorService;
+
+        private ContentDataSerializer contentDataSerializer;
 
         private SiteService siteService;
 
@@ -159,6 +162,12 @@ public class UpdateNodeParamsFactory
             return this;
         }
 
+        Builder contentDataSerializer( final ContentDataSerializer contentDataSerializer )
+        {
+            this.contentDataSerializer = contentDataSerializer;
+            return this;
+        }
+
         void validate()
         {
             Preconditions.checkNotNull( params );
@@ -167,6 +176,7 @@ public class UpdateNodeParamsFactory
             Preconditions.checkNotNull( pageDescriptorService );
             Preconditions.checkNotNull( partDescriptorService );
             Preconditions.checkNotNull( layoutDescriptorService );
+            Preconditions.checkNotNull( contentDataSerializer );
         }
 
         public UpdateNodeParamsFactory build()

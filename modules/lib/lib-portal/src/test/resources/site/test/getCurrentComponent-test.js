@@ -2,8 +2,7 @@ var assert = require('/lib/xp/testing.js');
 var portal = require('/lib/xp/portal.js');
 
 var expectedJson = {
-    "name": "mylayout",
-    "path": "main/0",
+    "path": "/main/0",
     "type": "layout",
     "descriptor": "myapplication:mylayout",
     "config": {
@@ -13,16 +12,14 @@ var expectedJson = {
         "bottom": {
             "components": [
                 {
-                    "name": "mypart",
-                    "path": "main/0/bottom/0",
+                    "path": "/main/0/bottom/0",
                     "type": "part",
                     "descriptor": "myapplication:mypart",
                     "config": {
                         "a": "1"
                     }
                 }
-            ],
-            "name": "bottom"
+            ]
         }
     }
 };

@@ -14,7 +14,7 @@ import com.enonic.xp.region.Region;
 @Beta
 public final class Page
 {
-    private final DescriptorKey controller;
+    private final DescriptorKey descriptor;
 
     private final PageTemplateKey template;
 
@@ -28,10 +28,10 @@ public final class Page
 
     private Page( final Builder builder )
     {
-        Preconditions.checkArgument( !( builder.controller != null && builder.template != null ),
-                                     "A Page cannot have both have a controller and a template set" );
+        Preconditions.checkArgument( !( builder.descriptor != null && builder.template != null ),
+                                     "A Page cannot have both have a descriptor and a template set" );
 
-        this.controller = builder.controller;
+        this.descriptor = builder.descriptor;
         this.template = builder.template;
         this.config = builder.config;
         this.regions = builder.regions;
@@ -39,14 +39,14 @@ public final class Page
         this.fragment = builder.fragment;
     }
 
-    public boolean hasController()
+    public boolean hasDescriptor()
     {
-        return controller != null;
+        return descriptor != null;
     }
 
-    public DescriptorKey getController()
+    public DescriptorKey getDescriptor()
     {
-        return controller;
+        return descriptor;
     }
 
     public boolean hasTemplate()
@@ -119,8 +119,7 @@ public final class Page
 
         final Page other = (Page) o;
 
-        return Objects.equals( template, other.template ) &&
-            Objects.equals( controller, other.controller ) &&
+        return Objects.equals( template, other.template ) && Objects.equals( descriptor, other.descriptor ) &&
             Objects.equals( config, other.config ) &&
             Objects.equals( regions, other.regions ) &&
             Objects.equals( fragment, other.fragment );
@@ -129,7 +128,7 @@ public final class Page
     @Override
     public int hashCode()
     {
-        return Objects.hash( controller, template, regions, config, fragment );
+        return Objects.hash( descriptor, template, regions, config, fragment );
     }
 
     public static Builder create()
@@ -149,7 +148,7 @@ public final class Page
 
     public static class Builder
     {
-        private DescriptorKey controller;
+        private DescriptorKey descriptor;
 
         private PageTemplateKey template;
 
@@ -168,7 +167,7 @@ public final class Page
         private Builder( final Page source )
         {
             this.template = source.template;
-            this.controller = source.controller;
+            this.descriptor = source.descriptor;
             this.regions = source.regions != null ? source.regions.copy() : null;
             this.config = source.config != null ? source.config.copy() : null;
             this.customized = source.customized;
@@ -181,9 +180,9 @@ public final class Page
             return this;
         }
 
-        public Builder controller( final DescriptorKey value )
+        public Builder descriptor( final DescriptorKey value )
         {
-            this.controller = value;
+            this.descriptor = value;
             return this;
         }
 

@@ -7,6 +7,7 @@ import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
+import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.page.PageDescriptorService;
@@ -28,6 +29,8 @@ final class UpdateMediaCommand
 
     private final LayoutDescriptorService layoutDescriptorService;
 
+    private final ContentDataSerializer contentDataSerializer;
+
     private UpdateMediaCommand( final Builder builder )
     {
         super( builder );
@@ -36,6 +39,7 @@ final class UpdateMediaCommand
         this.pageDescriptorService = builder.pageDescriptorService;
         this.partDescriptorService = builder.partDescriptorService;
         this.layoutDescriptorService = builder.layoutDescriptorService;
+        this.contentDataSerializer = builder.contentDataSerializer;
     }
 
     public static Builder create( final UpdateMediaParams params )
@@ -109,6 +113,7 @@ final class UpdateMediaCommand
             pageDescriptorService( this.pageDescriptorService ).
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
+            contentDataSerializer( this.contentDataSerializer ).
             build().
             execute();
     }
@@ -125,6 +130,8 @@ final class UpdateMediaCommand
         private PartDescriptorService partDescriptorService;
 
         private LayoutDescriptorService layoutDescriptorService;
+
+        private ContentDataSerializer contentDataSerializer;
 
         Builder( final UpdateMediaParams params )
         {
@@ -161,6 +168,11 @@ final class UpdateMediaCommand
             return this;
         }
 
+        public Builder contentDataSerializer( final ContentDataSerializer value )
+        {
+            this.contentDataSerializer = value;
+            return this;
+        }
 
         @Override
         void validate()

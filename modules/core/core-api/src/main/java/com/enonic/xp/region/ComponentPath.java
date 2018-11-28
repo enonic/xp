@@ -14,7 +14,7 @@ import com.google.common.collect.Lists;
 public final class ComponentPath
     implements Iterable<ComponentPath.RegionAndComponent>
 {
-    private static final String DIVIDER = "/";
+    public static final String DIVIDER = "/";
 
     private final ImmutableList<RegionAndComponent> regionAndComponentList;
 
@@ -112,7 +112,7 @@ public final class ComponentPath
 
     private String toString( final ComponentPath componentPath )
     {
-        return Joiner.on( DIVIDER ).join( componentPath.regionAndComponentList );
+        return Joiner.on( DIVIDER ).appendTo( new StringBuilder( "/" ), componentPath.regionAndComponentList ).toString();
     }
 
     @Override

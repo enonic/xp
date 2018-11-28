@@ -10,7 +10,7 @@ public final class TextComponentType
 
     private TextComponentType()
     {
-        super( "text", TextComponent.class );
+        super( "text" );
     }
 
 }
