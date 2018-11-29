@@ -742,7 +742,7 @@ public class NodeServiceImpl
 
         for ( final Node node : result.getSucceedNodes() )
         {
-            this.eventPublisher.publish( NodeEvents.updated( node ) );
+            this.eventPublisher.publish( NodeEvents.permissionsUpdated( node ) );
         }
 
         return result;

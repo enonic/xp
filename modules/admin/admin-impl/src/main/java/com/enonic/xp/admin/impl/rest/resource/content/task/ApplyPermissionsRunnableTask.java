@@ -6,14 +6,9 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.ApplyContentPermissio
 import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.ApplyContentPermissionsResult;
 import com.enonic.xp.content.ApplyPermissionsListener;
-import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentIdsByParentResult;
-import com.enonic.xp.content.UpdateContentParams;
-import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
@@ -39,26 +34,18 @@ public class ApplyPermissionsRunnableTask
     {
         final ApplyPermissionsListener listener = new ApplyPermissionsProgressListener( progressReporter );
 
-        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-        final PrincipalKey modifier =
-            authInfo != null && authInfo.isAuthenticated() ? authInfo.getUser().getKey() : PrincipalKey.ofAnonymous();
-
         final FindContentIdsByParentResult children = this.contentService.findIdsByParent(
             FindContentByParentParams.create().size( ContentResource.GET_ALL_SIZE_FLAG ).recursive( true ).parentId(
-                params.getUpdateContentParams().getContentId() ).build() );
+                params.getContentId() ).build() );
 
         listener.setTotal( ( (Long) children.getTotalHits() ).intValue() + 1 );
 
         final ApplyPermissionsRunnableTaskResult.Builder resultBuilder = ApplyPermissionsRunnableTaskResult.create();
 
-        final UpdateContentParams updatePermissionsParams = params.getUpdateContentParams().modifier( modifier );
-        final Content updatedContent = contentService.update( updatePermissionsParams );
-
-        resultBuilder.succeeded( updatedContent.getPath() );
-        listener.permissionsApplied( 1 );
-
         final ApplyContentPermissionsResult result = contentService.applyPermissions( ApplyContentPermissionsParams.create().
-            contentId( updatedContent.getId() ).
+            contentId( params.getContentId() ).
+            permissions( params.getPermissions() ).
+            inheritPermissions( params.isInheritPermissions() ).
             overwriteChildPermissions( params.isOverwriteChildPermissions() ).
             applyContentPermissionsListener( listener ).
             build() );

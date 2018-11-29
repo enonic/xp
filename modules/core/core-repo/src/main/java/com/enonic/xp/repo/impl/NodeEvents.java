@@ -38,6 +38,8 @@ public class NodeEvents
 
     public static final String NODE_STATE_UPDATED_EVENT = "node.stateUpdated";
 
+    public static final String NODE_PERMISSIONS_UPDATED = "node.permissionsUpdated";
+
     public static Event created( final Node createdNode )
     {
         return event( NODE_CREATED_EVENT, createdNode );
@@ -84,6 +86,11 @@ public class NodeEvents
     public static Event updated( final Node updatedNode )
     {
         return event( NODE_UPDATED_EVENT, updatedNode );
+    }
+
+    public static Event permissionsUpdated( final Node updatedNode )
+    {
+        return event( NODE_PERMISSIONS_UPDATED, updatedNode );
     }
 
     public static Event moved( final Node sourceNode, final Node targetNode )

@@ -8,12 +8,17 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.security.acl.AccessControlList;
 
 public class ApplyContentPermissionsJson
 {
-    final UpdateContentParams updateContentParams;
+//    final UpdateContentParams updateContentParams;
+
+    final ContentId contentId;
+
+    final AccessControlList permissions;
+
+    final boolean inheritPermissions;
 
     final boolean overwriteChildPermissions;
 
@@ -23,20 +28,28 @@ public class ApplyContentPermissionsJson
                                  @JsonProperty("inheritPermissions") final boolean inheritPermissions,
                                  @JsonProperty("overwriteChildPermissions") final boolean overwriteChildPermissions )
     {
-        this.updateContentParams = new UpdateContentParams().
-            contentId( ContentId.from( contentId ) ).
-            editor( edit -> {
-                edit.inheritPermissions = inheritPermissions;
-                edit.permissions = parseAcl( permissions );
-            } );
-
+        this.contentId = ContentId.from( contentId );
+        this.permissions = parseAcl( permissions );
+        this.inheritPermissions = inheritPermissions;
         this.overwriteChildPermissions = overwriteChildPermissions;
     }
 
     @JsonIgnore
-    public UpdateContentParams getUpdateContentParams()
+    public ContentId getContentId()
     {
-        return updateContentParams;
+        return contentId;
+    }
+
+    @JsonIgnore
+    public AccessControlList getPermissions()
+    {
+        return permissions;
+    }
+
+    @JsonIgnore
+    public boolean isInheritPermissions()
+    {
+        return inheritPermissions;
     }
 
     @JsonIgnore
