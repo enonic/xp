@@ -41,7 +41,7 @@ final class RegionDataSerializer
 
         final StringBuilder regionPathBuilder = new StringBuilder( ComponentPath.DIVIDER + regionDescriptor.getName() );
 
-        if ( parentPath != ComponentPath.DIVIDER )
+        if ( !ComponentPath.DIVIDER.equals( parentPath ) )
         {
             regionPathBuilder.insert( 0, parentPath );
         }
