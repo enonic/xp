@@ -24,11 +24,9 @@ figure.editor-align-left {
 figure.editor-align-right {
     float: right;
     width: 40%;
-    text-align: right;
 }
 
 figure.editor-align-center {
     margin: auto;
     width: 60%;
-    text-align: center;
 }
