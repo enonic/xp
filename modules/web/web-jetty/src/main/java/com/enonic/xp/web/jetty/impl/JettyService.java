@@ -4,6 +4,7 @@ import javax.servlet.Servlet;
 
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.session.DefaultSessionIdManager;
 import org.eclipse.jetty.server.session.NullSessionCache;
 import org.eclipse.jetty.server.session.SessionDataStore;
@@ -31,6 +32,8 @@ final class JettyService
     protected JettyConfig config;
 
     protected Servlet dispatcherServlet;
+
+    protected Servlet dispatcherServletApi;
 
     protected ServletContextHandler context;
 
@@ -82,6 +85,7 @@ final class JettyService
         final ServletHolder holder = new ServletHolder( this.dispatcherServlet );
         holder.setAsyncSupported( true );
         this.context.addServlet( holder, "/*" );
+        this.context.setVirtualHosts( new String[]{"@xp"} );
 
         new MultipartConfigurator().configure( this.config, holder );
         new HttpConfigurator().configure( this.config, this.server );
@@ -90,7 +94,21 @@ final class JettyService
         final InstrumentedHandler instrumentedHandler = new InstrumentedHandler( Metrics.registry(), Handler.class.getName() );
         instrumentedHandler.setHandler( this.context );
 
-        this.server.setHandler( instrumentedHandler );
+        // Configure context for /api
+        final ServletContextHandler apiContext = new ServletContextHandler( null, "/", ServletContextHandler.SESSIONS );
+        final SessionHandler apiSessionHandler = apiContext.getSessionHandler();
+        new SessionConfigurator().configure( this.config, apiSessionHandler );
+        new GZipConfigurator().configure( this.config, apiContext );
+
+        final ServletHolder spiServletHolder = new ServletHolder( this.dispatcherServletApi );
+        spiServletHolder.setAsyncSupported( true );
+        apiContext.addServlet( spiServletHolder, "/*" );
+        apiContext.setVirtualHosts( new String[]{"@api"} );
+
+        HandlerCollection contexts = new HandlerCollection();
+        contexts.addHandler( this.context );
+        contexts.addHandler( apiContext );
+        this.server.setHandler( contexts );
 
         final DefaultSessionIdManager sessionManager = new DefaultSessionIdManager( this.server );
         sessionManager.setWorkerName( this.workerName );

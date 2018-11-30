@@ -7,16 +7,19 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.jaxrs.JaxRsService;
 import com.enonic.xp.jaxrs.JaxRsServiceFactory;
+import com.enonic.xp.web.dispatch.ApiServlet;
 
 @Component(immediate = true)
 public final class RestApiActivator
 {
     private JaxRsService service;
 
+    private ApiServlet apiServlet;
+
     @Activate
     public void activate()
     {
-        this.service.init();
+        this.apiServlet.setServlet( this.service.init2().getResource() );
     }
 
     @Deactivate
@@ -29,5 +32,11 @@ public final class RestApiActivator
     public void setJaxRsServiceFactory( final JaxRsServiceFactory factory )
     {
         this.service = factory.newService( "api", "/api" );
+    }
+
+    @Reference
+    public void setApiServlet( final ApiServlet apiServlet )
+    {
+        this.apiServlet = apiServlet;
     }
 }

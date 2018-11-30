@@ -15,6 +15,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.cluster.ClusterConfig;
 import com.enonic.xp.status.StatusReporter;
+import com.enonic.xp.web.dispatch.ApiServlet;
 import com.enonic.xp.web.dispatch.DispatchServlet;
 import com.enonic.xp.web.thread.ThreadPoolInfo;
 
@@ -33,6 +34,8 @@ public final class JettyActivator
     private ServiceRegistration statusReporterReg;
 
     private DispatchServlet dispatchServlet;
+
+    private ApiServlet apiDispatchServlet;
 
     private ClusterConfig clusterConfig;
 
@@ -55,6 +58,7 @@ public final class JettyActivator
         }
 
         this.service.dispatcherServlet = this.dispatchServlet;
+        this.service.dispatcherServletApi = this.apiDispatchServlet;
         this.service.start();
 
         publishController();
@@ -113,6 +117,12 @@ public final class JettyActivator
     public void setDispatchServlet( final DispatchServlet dispatchServlet )
     {
         this.dispatchServlet = dispatchServlet;
+    }
+
+    @Reference
+    public void setApiDispatchServlet( final ApiServlet apiDispatchServlet )
+    {
+        this.apiDispatchServlet = apiDispatchServlet;
     }
 
     @Reference

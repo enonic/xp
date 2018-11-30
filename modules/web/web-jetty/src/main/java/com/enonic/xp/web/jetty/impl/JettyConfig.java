@@ -28,6 +28,11 @@ public @interface JettyConfig
     int http_port() default 8080;
 
     /**
+     * Http /api port.
+     */
+    int http_api_port() default 8081;
+
+    /**
      * Session timeout in minutes.
      */
     int session_timeout() default 60;

@@ -52,6 +52,16 @@ final class JaxRsServiceImpl
         this.registration = this.context.registerService( ServletMapping.class, mapping, props );
     }
 
+    public ServletMapping init2()
+    {
+        this.tracker.open( true );
+
+        final ServletMapping mapping = MappingBuilder.newBuilder().
+            urlPatterns( this.path + "/*" ).
+            servlet( this.servlet );
+        return mapping;
+    }
+
     @Override
     public void destroy()
     {
