@@ -25,6 +25,8 @@ public class PushContentParams
 
     private final PushContentListener pushContentListener;
 
+    private final DeleteContentListener deleteContentListener;
+
     private PushContentParams( Builder builder )
     {
         contentIds = builder.contentIds;
@@ -35,6 +37,7 @@ public class PushContentParams
         excludeChildrenIds = builder.excludeChildrenIds;
         includeChildren = builder.includeChildren;
         pushContentListener = builder.pushContentListener;
+        deleteContentListener = builder.deleteContentListener;
     }
 
     public static Builder create()
@@ -83,6 +86,11 @@ public class PushContentParams
         return pushContentListener;
     }
 
+    public DeleteContentListener getDeleteContentListener()
+    {
+        return deleteContentListener;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -98,14 +106,15 @@ public class PushContentParams
         return includeChildren == that.includeChildren && includeDependencies == that.includeDependencies &&
             Objects.equals( excludeChildrenIds, that.excludeChildrenIds ) && Objects.equals( contentIds, that.contentIds ) &&
             Objects.equals( excludedContentIds, that.excludedContentIds ) && Objects.equals( target, that.target ) &&
-            Objects.equals( pushContentListener, that.pushContentListener );
+            Objects.equals( pushContentListener, that.pushContentListener ) &&
+            Objects.equals( deleteContentListener, that.deleteContentListener );
     }
 
     @Override
     public int hashCode()
     {
         return Objects.hash( contentIds, excludedContentIds, includeChildren, excludeChildrenIds, target, includeDependencies,
-                             pushContentListener );
+                             pushContentListener, deleteContentListener );
     }
 
     public static final class Builder
@@ -125,6 +134,8 @@ public class PushContentParams
         private boolean includeDependencies = true;
 
         private PushContentListener pushContentListener;
+
+        private DeleteContentListener deleteContentListener;
 
         private Builder()
         {
@@ -177,6 +188,12 @@ public class PushContentParams
         public Builder pushListener( final PushContentListener pushContentListener )
         {
             this.pushContentListener = pushContentListener;
+            return this;
+        }
+
+        public Builder deleteContentListener( final DeleteContentListener deleteContentListener )
+        {
+            this.deleteContentListener = deleteContentListener;
             return this;
         }
 

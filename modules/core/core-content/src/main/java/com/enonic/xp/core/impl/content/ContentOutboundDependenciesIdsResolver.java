@@ -1,12 +1,8 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
@@ -32,14 +28,14 @@ public class ContentOutboundDependenciesIdsResolver
 
     public ContentIds resolve( final ContentId contentId )
     {
-        return ContentIds.from( resolveOutboundDependenciesIds( contentId ) );
+        return resolveOutboundDependenciesIds( contentId );
     }
 
-    private Collection<ContentId> resolveOutboundDependenciesIds( final ContentId contentId )
+    private ContentIds resolveOutboundDependenciesIds( final ContentId contentId )
     {
         final Content content = this.contentService.getById( contentId );
 
-        final List<ContentId> contentIds = Lists.newArrayList();
+        final ContentIds.Builder contentIds = ContentIds.create();
 
         final PropertySet contentPageData = new PropertyTree().getRoot();
         if ( content.getPage() != null )
@@ -65,7 +61,12 @@ public class ContentOutboundDependenciesIdsResolver
                 }
             } );
 
-        return contentIds;
+        if ( content.getProcessedReferences() != null && content.getProcessedReferences().getSize() > 0 )
+        {
+            contentIds.addAll( content.getProcessedReferences() );
+        }
+
+        return contentIds.build();
     }
 
 }

@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 import org.elasticsearch.common.settings.Settings;
 import org.osgi.framework.BundleContext;
 
+import com.google.common.base.Strings;
+
 import com.enonic.xp.cluster.ClusterConfig;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.config.ConfigInterpolator;
@@ -21,7 +23,9 @@ final class NodeSettingsBuilder
 
     private static final String COMMON_NETWORK_PUBLISH_HOST_OPTION = "network.publish_host";
 
-    private static final String ES_UNICAST_HOST_OPTION = "discovery.zen.ping.unicast.hosts";
+    private static final String ES_UNICAST_SOCKETS_OPTION = "discovery.unicast.sockets";
+
+    private static final String ES_ZEN_UNICAST_HOST_OPTION = "discovery.zen.ping.unicast.hosts";
 
     private static final String ES_UNICAST_PORT_OPTION = "discovery.unicast.port";
 
@@ -63,15 +67,21 @@ final class NodeSettingsBuilder
         return Settings.settingsBuilder().
             put( config.asMap() ).
             put( COMMON_NODE_NAME_OPTION, this.clusterConfig.name().toString() ).
-            put( ES_UNICAST_HOST_OPTION, createHostString( config ) ).
+            put( ES_ZEN_UNICAST_HOST_OPTION, createZenUnicastHostString( config ) ).
             put( COMMON_NETWORK_PUBLISH_HOST_OPTION, this.clusterConfig.networkPublishHost() ).
             put( COMMON_NETWORK_HOST_OPTION, this.clusterConfig.networkHost() ).
             put( ES_NODE_LOCAL, !this.clusterConfig.isEnabled() ).
             build();
     }
 
-    private String createHostString( final Configuration source )
+    private String createZenUnicastHostString( final Configuration source )
     {
+        final String sockets = source.get( ES_UNICAST_SOCKETS_OPTION );
+        if ( !Strings.isNullOrEmpty( sockets ) )
+        {
+            return sockets;
+        }
+
         final String port = source.get( ES_UNICAST_PORT_OPTION );
 
         return this.clusterConfig.discovery().get().stream().

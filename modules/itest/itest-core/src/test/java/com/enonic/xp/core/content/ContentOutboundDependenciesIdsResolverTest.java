@@ -148,4 +148,21 @@ public class ContentOutboundDependenciesIdsResolverTest
         Assert.assertTrue( result.contains( folderRefContent2.getId() ) );
         Assert.assertTrue( result.contains( siteRefContent1.getId() ) );
     }
+
+    @Test
+    public void resolve_content_processed_ids()
+        throws Exception
+    {
+        final ContentId ref = ContentId.from( "ref1" );
+        final Content content =
+            Content.create( createContent( "folderRefContent1", new PropertyTree(), ContentTypeName.folder() ) ).addProcessedReference(
+                ref ).build();
+
+        Mockito.when( contentService.getById( content.getId() ) ).thenReturn( content );
+
+        final ContentIds result = resolver.resolve( content.getId() );
+
+        Assert.assertEquals( result.getSize(), 1 );
+        Assert.assertEquals( result.first(), ref );
+    }
 }

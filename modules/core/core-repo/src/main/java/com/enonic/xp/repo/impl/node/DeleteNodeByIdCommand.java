@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.node.DeleteNodeListener;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeId;
@@ -13,10 +14,13 @@ public final class DeleteNodeByIdCommand
 {
     private final NodeId nodeId;
 
+    private final DeleteNodeListener deleteNodeListener;
+
     private DeleteNodeByIdCommand( final Builder builder )
     {
         super( builder );
         this.nodeId = builder.nodeId;
+        this.deleteNodeListener = builder.deleteNodeListener;
     }
 
     public NodeBranchEntries execute()
@@ -25,7 +29,7 @@ public final class DeleteNodeByIdCommand
 
         final Node node = doGetById( nodeId );
 
-        return node != null ? deleteNodeWithChildren( node, context ) : NodeBranchEntries.empty();
+        return node != null ? deleteNodeWithChildren( node, context, deleteNodeListener ) : NodeBranchEntries.empty();
     }
 
     public static Builder create()
@@ -43,6 +47,8 @@ public final class DeleteNodeByIdCommand
     {
         private NodeId nodeId;
 
+        private DeleteNodeListener deleteNodeListener;
+
         Builder()
         {
             super();
@@ -57,6 +63,12 @@ public final class DeleteNodeByIdCommand
         public Builder nodeId( final NodeId nodeId )
         {
             this.nodeId = nodeId;
+            return this;
+        }
+
+        public Builder deleteNodeListener( final DeleteNodeListener deleteNodeListener )
+        {
+            this.deleteNodeListener = deleteNodeListener;
             return this;
         }
 

@@ -13,11 +13,13 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
+import com.enonic.xp.content.DeleteContentListener;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentListener;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.node.DeleteNodeListener;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
@@ -28,7 +30,7 @@ import com.enonic.xp.node.RefreshMode;
 
 public class PublishContentCommand
     extends AbstractContentCommand
-    implements PushNodesListener
+    implements PushNodesListener, DeleteNodeListener
 {
     private final ContentIds contentIds;
 
@@ -48,6 +50,8 @@ public class PublishContentCommand
 
     private final PushContentListener pushContentListener;
 
+    private final DeleteContentListener deleteNodeListener;
+
     private PublishContentCommand( final Builder builder )
     {
         super( builder );
@@ -59,6 +63,7 @@ public class PublishContentCommand
         this.excludeChildrenIds = builder.excludeChildrenIds;
         this.resultBuilder = PublishContentResult.create();
         this.pushContentListener = builder.pushContentListener;
+        this.deleteNodeListener = builder.deleteNodeListener;
     }
 
     public static Builder create()
@@ -197,11 +202,13 @@ public class PublishContentCommand
                 this.resultBuilder.setDeletedPath( contentPathToDelete );
             }
 
+            totalToDelete( nodeIdsToDelete.getSize() * 2 );
+
             final Context currentContext = ContextAccessor.current();
-            deleteNodesInContext( nodeIdsToDelete, currentContext );
+            deleteNodesInContext( nodeIdsToDelete, currentContext, this );
             deleteNodesInContext( nodeIdsToDelete, ContextBuilder.from( currentContext ).
                 branch( target ).
-                build() );
+                build(), this );
         }
         catch ( NodeNotFoundException e )
         {
@@ -214,10 +221,10 @@ public class PublishContentCommand
         }
     }
 
-    private void deleteNodesInContext( final NodeIds nodeIds, final Context context )
+    private void deleteNodesInContext( final NodeIds nodeIds, final Context context, final DeleteNodeListener deleteNodeListener )
     {
         context.callWith( () -> {
-            nodeIds.forEach( nodeService::deleteById );
+            nodeIds.forEach( nodeId -> nodeService.deleteById( nodeId, deleteNodeListener ) );
             return null;
         } );
     }
@@ -228,6 +235,24 @@ public class PublishContentCommand
         if ( pushContentListener != null )
         {
             pushContentListener.contentPushed( count );
+        }
+    }
+
+    @Override
+    public void nodesDeleted( final int count )
+    {
+        if ( deleteNodeListener != null )
+        {
+            deleteNodeListener.contentDeleted( count );
+        }
+    }
+
+    @Override
+    public void totalToDelete( final int count )
+    {
+        if ( deleteNodeListener != null )
+        {
+            deleteNodeListener.setTotal( count );
         }
     }
 
@@ -247,6 +272,8 @@ public class PublishContentCommand
         private boolean includeDependencies = true;
 
         private PushContentListener pushContentListener;
+
+        private DeleteContentListener deleteNodeListener;
 
         public Builder contentIds( final ContentIds contentIds )
         {
@@ -297,6 +324,12 @@ public class PublishContentCommand
         public Builder pushListener( final PushContentListener pushContentListener )
         {
             this.pushContentListener = pushContentListener;
+            return this;
+        }
+
+        public Builder deleteListener( final DeleteContentListener deleteNodeListener )
+        {
+            this.deleteNodeListener = deleteNodeListener;
             return this;
         }
 
