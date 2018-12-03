@@ -90,7 +90,7 @@ public class HtmlAreaContentProcessor
                 processSiteConfigData( ( (EditableSite) editable ).siteConfigs, processedIds );
             }
 
-            editable.processedReferences.addAll( processedIds.build() );
+            editable.processedReferences = processedIds;
         };
 
         return new ProcessUpdateResult( createAttachments, editor );
