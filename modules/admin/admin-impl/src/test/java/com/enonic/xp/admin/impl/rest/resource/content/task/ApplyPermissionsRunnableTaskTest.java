@@ -1,21 +1,32 @@
 package com.enonic.xp.admin.impl.rest.resource.content.task;
 
-import com.enonic.xp.admin.impl.rest.resource.content.json.ApplyContentPermissionsJson;
-import com.enonic.xp.content.*;
-import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.acl.AccessControlEntry;
-import com.enonic.xp.security.acl.AccessControlList;
-import com.enonic.xp.task.RunnableTask;
-import com.enonic.xp.task.TaskId;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.admin.impl.rest.resource.content.json.ApplyContentPermissionsJson;
+import com.enonic.xp.content.ApplyContentPermissionsParams;
+import com.enonic.xp.content.ApplyContentPermissionsResult;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.FindContentByParentParams;
+import com.enonic.xp.content.FindContentIdsByParentResult;
+import com.enonic.xp.content.UpdateContentParams;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.task.AbstractRunnableTaskTest;
+import com.enonic.xp.task.RunnableTask;
+import com.enonic.xp.task.TaskId;
+
 import static com.enonic.xp.security.acl.Permission.READ;
 
 public class ApplyPermissionsRunnableTaskTest
-        extends AbstractRunnableTaskTest {
+    extends AbstractRunnableTaskTest
+{
     private ApplyContentPermissionsJson params;
 
     @Before

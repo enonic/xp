@@ -1,6 +1,4 @@
-package com.enonic.xp.admin.impl.rest.resource.content.json;
-
-import com.enonic.xp.task.TaskId;
+package com.enonic.xp.task;
 
 public class TaskResultJson
 {

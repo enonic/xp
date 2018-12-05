@@ -97,7 +97,6 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.ResolvePublishContent
 import com.enonic.xp.admin.impl.rest.resource.content.json.ResolvePublishDependenciesJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.SetActiveVersionJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.SetChildOrderJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.TaskResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.UndoPendingDeleteContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.UndoPendingDeleteContentResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.UnpublishContentJson;
@@ -177,6 +176,7 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.task.TaskResultJson;
 import com.enonic.xp.task.TaskService;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.multipart.MultipartForm;
