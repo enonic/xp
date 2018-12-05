@@ -1,9 +1,11 @@
 package com.enonic.xp.impl.server.rest.model;
 
-import java.time.Duration;
 import java.util.List;
 
 import org.codehaus.jparsec.util.Lists;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.enonic.xp.dump.RepoDumpResult;
 import com.enonic.xp.dump.SystemDumpResult;
@@ -33,6 +35,20 @@ public class SystemDumpResultJson
     public List<RepoDumpResultJson> getRepositories()
     {
         return repositories;
+    }
+
+    @Override
+    public String toString()
+    {
+        final ObjectMapper mapper = new ObjectMapper();
+        try
+        {
+            return mapper.writeValueAsString( this );
+        }
+        catch ( JsonProcessingException e )
+        {
+            throw new RuntimeException( e );
+        }
     }
 
     private static Builder create()

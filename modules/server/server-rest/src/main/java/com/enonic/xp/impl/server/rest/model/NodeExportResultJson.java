@@ -3,6 +3,8 @@ package com.enonic.xp.impl.server.rest.model;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.export.ExportError;
@@ -83,5 +85,19 @@ public class NodeExportResultJson
     public List<String> getExportedBinaries()
     {
         return exportedBinaries;
+    }
+
+    @Override
+    public String toString()
+    {
+        final ObjectMapper mapper = new ObjectMapper();
+        try
+        {
+            return mapper.writeValueAsString( this );
+        }
+        catch ( JsonProcessingException e )
+        {
+            throw new RuntimeException( e );
+        }
     }
 }
