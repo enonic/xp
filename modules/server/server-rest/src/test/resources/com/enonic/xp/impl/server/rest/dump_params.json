@@ -1,6 +1,0 @@
-{
-  "name": "dump",
-  "includeVersions": true,
-  "maxAge": 10,
-  "maxVersions": 20
-}
