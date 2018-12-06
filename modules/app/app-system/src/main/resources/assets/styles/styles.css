@@ -16,14 +16,19 @@ figure.editor-style-original img {
     width: auto;
 }
 
+figure.editor-align-left,
+figure.editor-align-right {
+    width: 40%;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
 figure.editor-align-left {
     float: left;
-    width: 40%;
 }
 
 figure.editor-align-right {
     float: right;
-    width: 40%;
 }
 
 figure.editor-align-center {
