@@ -59,7 +59,6 @@ public class NodeStorageServiceImpl
 
         return Node.create( node ).
             nodeVersionId( nodeVersionId ).
-            blobKey( blobKey ).
             build();
     }
 
@@ -90,7 +89,6 @@ public class NodeStorageServiceImpl
 
         return Node.create( node ).
             nodeVersionId( nodeVersionId ).
-            blobKey( blobKey ).
             build();
     }
 
@@ -158,7 +156,6 @@ public class NodeStorageServiceImpl
 
         return Node.create( node ).
             nodeVersionId( nodeVersionId ).
-            blobKey( blobKey ).
             build();
     }
 

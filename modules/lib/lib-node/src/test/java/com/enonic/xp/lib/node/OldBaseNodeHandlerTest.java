@@ -90,7 +90,6 @@ public class OldBaseNodeHandlerTest
                 build() ).
             nodeState( NodeState.DEFAULT ).
             nodeVersionId( NodeVersionId.from( "versionKey" ) ).
-            blobKey( BlobKey.from( "blobKey" ) ).
             timestamp( Instant.parse( "2010-10-10T10:10:10.10Z" ) ).
             build();
     }

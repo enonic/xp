@@ -8,13 +8,13 @@ import com.enonic.xp.repo.impl.dump.model.VersionMeta;
 
 class VersionMetaFactory
 {
-    public static VersionMeta create( final Node node )
+    public static VersionMeta create( final Node node, final NodeVersionMetadata metaData )
     {
         return VersionMeta.create().
             timestamp( node.getTimestamp() ).
             nodePath( node.path() ).
             version( node.getNodeVersionId() ).
-            blobKey( node.getBlobKey() ).
+            blobKey( metaData.getBlobKey() ).
             nodeState( node.getNodeState() ).
             build();
     }

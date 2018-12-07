@@ -110,7 +110,6 @@ public class VersionIdDumpUpgrader
             tmpDumpWriter.openVersionsMeta( repositoryId );
 
             dumpReader.processEntries( ( entryContent, entryName ) -> {
-                System.out.println( "contentBefore: " + entryContent );
                 final VersionsDumpEntry sourceEntry = serializer.toNodeVersionsEntry( entryContent );
 
                 final VersionsDumpEntry.Builder upgradedEntry = VersionsDumpEntry.create( sourceEntry.getNodeId() );
@@ -121,7 +120,6 @@ public class VersionIdDumpUpgrader
                     forEach( upgradedEntry::addVersion );
 
                 final String upgradedEntryContent = serializer.serialize( upgradedEntry.build() );
-                System.out.println( "contentAfter: " + upgradedEntryContent );
                 tmpDumpWriter.storeTarEntry( upgradedEntryContent, entryName );
             }, entriesFile );
         }
@@ -138,7 +136,6 @@ public class VersionIdDumpUpgrader
             tmpDumpWriter.openBranchMeta( repositoryId, branch );
 
             dumpReader.processEntries( ( entryContent, entryName ) -> {
-                System.out.println( "contentBefore: " + entryContent );
                 final BranchDumpEntry sourceEntry = serializer.toBranchMetaEntry( entryContent );
 
                 final BranchDumpEntry upgradedEntry = BranchDumpEntry.create().nodeId( sourceEntry.getNodeId() ).
@@ -147,7 +144,6 @@ public class VersionIdDumpUpgrader
                     build();
 
                 final String upgradedEntryContent = serializer.serialize( upgradedEntry );
-                System.out.println( "contentAfter: " + upgradedEntryContent );
                 tmpDumpWriter.storeTarEntry( upgradedEntryContent, entryName );
             }, entriesFile );
         }

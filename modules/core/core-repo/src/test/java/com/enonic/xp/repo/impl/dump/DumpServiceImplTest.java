@@ -697,14 +697,10 @@ public class DumpServiceImplTest
             final NodePath nodePath = NodePath.create( "/content/mysite" ).build();
             final NodeVersionId draftNodeVersionId = NodeVersionId.from( "4085875dceda069f673bc76370be584fe4fa6312" );
             final NodeVersionId masterNodeVersionId = NodeVersionId.from( "431056fc90e3f25175dba9a2294d42ed9a9da1ee" );
-            final BlobKey draftBlobKey = BlobKey.from( "23368e74a867ac7f0407b46fd2b79d12c3f6d5d8" );
-            final BlobKey masterBlobKey = BlobKey.from( "ac555e940583f1a4d0f25aaff8bc97649ac2de68" );
 
             final Node draftNode = nodeService.getById( nodeId );
             assertNotNull( draftNode );
             assertEquals( draftNodeVersionId, draftNode.getNodeVersionId() );
-            //See issue-6779
-            assertEquals( draftBlobKey, draftNode.getBlobKey() );
             assertEquals( nodePath, draftNode.path() );
             assertEquals( "2018-11-23T11:14:34.659Z", draftNode.getTimestamp().toString() );
 
@@ -715,8 +711,6 @@ public class DumpServiceImplTest
                 callWith( () -> nodeService.getById( nodeId ) );
             assertNotNull( masterNode );
             assertEquals( masterNodeVersionId, masterNode.getNodeVersionId() );
-            //See issue-6779
-            assertEquals( masterBlobKey, masterNode.getBlobKey() );
             assertEquals( nodePath, masterNode.path() );
             assertEquals( "2018-11-23T11:14:21.662Z", masterNode.getTimestamp().toString() );
 
