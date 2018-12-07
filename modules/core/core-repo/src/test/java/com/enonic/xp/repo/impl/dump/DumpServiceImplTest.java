@@ -2,11 +2,13 @@ package com.enonic.xp.repo.impl.dump;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.time.Instant;
 import java.util.Iterator;
 import java.util.TreeSet;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -21,6 +23,7 @@ import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
 
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
@@ -44,10 +47,12 @@ import com.enonic.xp.node.GetActiveNodeVersionsParams;
 import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQueryResult;
@@ -653,26 +658,19 @@ public class DumpServiceImplTest
     public void upgrade()
         throws Exception
     {
+        final String dumpName = "testDump";
+        createIncompatibleDump( dumpName );
+
         NodeHelper.runAsAdmin( () -> {
-            try
-            {
-                final File dumpFolder = tempFolder.newFolder( "testDump" );
+            final SystemDumpUpgradeParams params = SystemDumpUpgradeParams.create().
+                dumpName( dumpName ).
+                build();
 
-                createDumpUnvalidVersion( dumpFolder );
+            final SystemDumpUpgradeResult result = this.dumpService.upgrade( params );
+            assertEquals( new Version( 0, 0, 0 ), result.getInitialVersion() );
+            assertEquals( DumpConstants.MODEL_VERSION, result.getUpgradedVersion() );
 
-                final SystemDumpUpgradeParams params = SystemDumpUpgradeParams.create().
-                    dumpName( "testDump" ).
-                    build();
-
-                final SystemDumpUpgradeResult result = this.dumpService.upgrade( params );
-                assertEquals( new Version( 0, 1, 0 ), result.getInitialVersion() );
-                assertEquals( DumpConstants.MODEL_VERSION, result.getUpgradedVersion() );
-            }
-            catch ( IOException ex )
-            {
-            }
-            FileDumpReader reader = new FileDumpReader( tempFolder.getRoot().toPath(), "testDump", null );
-
+            FileDumpReader reader = new FileDumpReader( tempFolder.getRoot().toPath(), dumpName, null );
             final DumpMeta updatedMeta = reader.getDumpMeta();
             assertEquals( DumpConstants.MODEL_VERSION, updatedMeta.getModelVersion() );
         } );
@@ -682,30 +680,54 @@ public class DumpServiceImplTest
     public void loadWithUpgrade()
         throws Exception
     {
+        final String dumpName = "testDump";
+        createIncompatibleDump( dumpName );
+
         NodeHelper.runAsAdmin( () -> {
-            try
-            {
-                this.dumpService.dump( SystemDumpParams.create().
-                    dumpName( "testDump" ).
-                    build() );
+            this.dumpService.load( SystemLoadParams.create().
+                dumpName( dumpName ).
+                upgrade( true ).
+                build() );
 
-                final File dumpFolder = new File( tempFolder.getRoot().getPath(), "testDump" );
-
-                createDumpUnvalidVersion( dumpFolder );
-
-                this.dumpService.load( SystemLoadParams.create().
-                    dumpName( "testDump" ).
-                    upgrade( true ).
-                    build() );
-            }
-            catch ( IOException ex )
-            {
-            }
-            FileDumpReader reader = new FileDumpReader( tempFolder.getRoot().toPath(), "testDump", null );
-
+            FileDumpReader reader = new FileDumpReader( tempFolder.getRoot().toPath(), dumpName, null );
             final DumpMeta updatedMeta = reader.getDumpMeta();
             assertEquals( DumpConstants.MODEL_VERSION, updatedMeta.getModelVersion() );
+
+            final NodeId nodeId = NodeId.from( "f0fb822c-092d-41f9-a961-f3811d81e55a" );
+            final NodePath nodePath = NodePath.create( "/content/mysite" ).build();
+            final NodeVersionId draftNodeVersionId = NodeVersionId.from( "4085875dceda069f673bc76370be584fe4fa6312" );
+            final NodeVersionId masterNodeVersionId = NodeVersionId.from( "431056fc90e3f25175dba9a2294d42ed9a9da1ee" );
+
+            final Node draftNode = nodeService.getById( nodeId );
+            assertNotNull( draftNode );
+            assertEquals( draftNodeVersionId, draftNode.getNodeVersionId() );
+            assertEquals( nodePath, draftNode.path() );
+            assertEquals( "2018-11-23T11:14:34.659Z", draftNode.getTimestamp().toString() );
+
+            final Node masterNode = ContextBuilder.
+                from( ContextAccessor.current() ).
+                branch( Branch.from( "master" ) ).
+                build().
+                callWith( () -> nodeService.getById( nodeId ) );
+            assertNotNull( masterNode );
+            assertEquals( masterNodeVersionId, masterNode.getNodeVersionId() );
+            assertEquals( nodePath, masterNode.path() );
+            assertEquals( "2018-11-23T11:14:21.662Z", masterNode.getTimestamp().toString() );
+
+
         } );
+    }
+
+    private File createIncompatibleDump( final String dumpName )
+        throws Exception
+    {
+        final URI oldDumpUri = getClass().
+            getResource( "/dumps/dump-6-15-5" ).
+            toURI();
+        final File oldDumpFile = new File( oldDumpUri );
+        final File tmpDumpFile = tempFolder.newFolder( dumpName );
+        FileUtils.copyDirectory( oldDumpFile, tmpDumpFile );
+        return tmpDumpFile;
     }
 
     private void createDumpUnvalidVersion( final File dumpFolder )
@@ -724,16 +746,16 @@ public class DumpServiceImplTest
 
     private void verifyVersionBinaries( final Node node, final Node updatedNode, final NodeVersionMetadata version )
     {
-        final NodeVersion storedNode = nodeService.getByNodeVersion( version.getNodeVersionId() );
+        final NodeVersion storedNode = nodeService.getByBlobKey( version.getBlobKey() );
 
-        storedNode.getAttachedBinaries().forEach(
-            entry -> assertNotNull( this.nodeService.getBinary( storedNode.getVersionId(), entry.getBinaryReference() ) ) );
+        storedNode.getAttachedBinaries().forEach( entry -> assertNotNull(
+            this.nodeService.getBinary( version.getNodeId(), version.getNodeVersionId(), entry.getBinaryReference() ) ) );
 
-        if ( storedNode.getVersionId().equals( node.getNodeVersionId() ) )
+        if ( version.getNodeVersionId().equals( node.getNodeVersionId() ) )
         {
             assertEquals( node.getAttachedBinaries(), storedNode.getAttachedBinaries() );
         }
-        else if ( storedNode.getVersionId().equals( updatedNode.getNodeVersionId() ) )
+        else if ( version.getNodeVersionId().equals( updatedNode.getNodeVersionId() ) )
         {
             assertEquals( updatedNode.getAttachedBinaries(), storedNode.getAttachedBinaries() );
         }

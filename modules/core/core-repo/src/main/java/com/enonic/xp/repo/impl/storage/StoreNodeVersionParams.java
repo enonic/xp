@@ -5,6 +5,7 @@ import java.time.Instant;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.node.NodeVersionId;
 
 public class StoreNodeVersionParams
 {
@@ -16,12 +17,16 @@ public class StoreNodeVersionParams
 
     private final NodeVersion nodeVersion;
 
+    private final NodeVersionId nodeVersionId
+        ;
+
     private StoreNodeVersionParams( final Builder builder )
     {
         nodeVersion = builder.nodeVersion;
         timestamp = builder.timestamp;
         nodePath = builder.nodePath;
         nodeId = builder.nodeId;
+        nodeVersionId = builder.nodeVersionId;
     }
 
     public NodeId getNodeId()
@@ -44,6 +49,11 @@ public class StoreNodeVersionParams
         return nodeVersion;
     }
 
+    public NodeVersionId getNodeVersionId()
+    {
+        return nodeVersionId;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -59,6 +69,8 @@ public class StoreNodeVersionParams
         private NodePath nodePath;
 
         private NodeId nodeId;
+
+        private NodeVersionId nodeVersionId;
 
         private Builder()
         {
@@ -85,6 +97,12 @@ public class StoreNodeVersionParams
         public Builder nodeId( final NodeId val )
         {
             nodeId = val;
+            return this;
+        }
+
+        public Builder nodeVersionId( final NodeVersionId val )
+        {
+            nodeVersionId = val;
             return this;
         }
 

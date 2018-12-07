@@ -60,6 +60,7 @@ public class BranchEntryProcessor
             nodePath( meta.getNodePath() ).
             timestamp( nodeVersion.getTimestamp() ).
             nodeState( meta.getNodeState() ).
+            nodeVersionId( meta.getVersion() ).
             build() );
 
         try
@@ -83,7 +84,7 @@ public class BranchEntryProcessor
     {
         try
         {
-            return this.dumpReader.get( repositoryId, meta.getVersion() );
+            return this.dumpReader.get( repositoryId, meta.getBlobKey() );
         }
         catch ( RepoLoadException e )
         {

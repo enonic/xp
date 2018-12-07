@@ -3,6 +3,7 @@ package com.enonic.xp.repo.impl.dump.reader;
 import com.google.common.io.ByteSource;
 import com.google.common.io.LineProcessor;
 
+import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.dump.BranchLoadResult;
@@ -23,7 +24,7 @@ public interface DumpReader
 
     VersionsLoadResult loadVersions( final RepositoryId repositoryId, final LineProcessor<EntryLoadResult> processor );
 
-    NodeVersion get( final RepositoryId repositoryId, final NodeVersionId nodeVersionId );
+    NodeVersion get( final RepositoryId repositoryId, final BlobKey blobKey );
 
     ByteSource getBinary( final RepositoryId repositoryId, final String blobKey );
 

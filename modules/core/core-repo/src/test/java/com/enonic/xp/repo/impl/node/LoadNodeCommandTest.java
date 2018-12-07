@@ -13,6 +13,7 @@ import com.enonic.xp.node.NodeLoadException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeType;
+import com.enonic.xp.node.NodeVersionId;
 
 import static org.junit.Assert.*;
 
@@ -31,6 +32,7 @@ public class LoadNodeCommandTest
             childOrder( ChildOrder.manualOrder() ).
             nodeType( NodeType.from( "myNodes" ) ).
             timestamp( Instant.now() ).
+            nodeVersionId( NodeVersionId.from( "nodeVersionId" ) ).
             build();
 
         final LoadNodeParams loadParams = LoadNodeParams.create().
@@ -65,6 +67,7 @@ public class LoadNodeCommandTest
             parentPath( NodePath.ROOT ).
             name( "fisk" ).
             timestamp( Instant.now() ).
+            nodeVersionId( NodeVersionId.from( "nodeVersionId" ) ).
             build();
 
         final LoadNodeParams loadParams = LoadNodeParams.create().
@@ -92,6 +95,7 @@ public class LoadNodeCommandTest
                 parentPath( NodePath.create( "ost" ).build() ).
                 name( "fisk" ).
                 timestamp( Instant.now() ).
+                nodeVersionId( NodeVersionId.from( "nodeVersionId" ) ).
                 build() ).
             build();
 

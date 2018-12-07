@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.dump.model;
 
 import java.time.Instant;
 
+import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersionId;
@@ -14,6 +15,8 @@ public class VersionMeta
 
     private final NodeVersionId version;
 
+    private final BlobKey blobKey;
+
     private final NodeState nodeState;
 
     private VersionMeta( final Builder builder )
@@ -21,6 +24,7 @@ public class VersionMeta
         nodePath = builder.nodePath;
         timestamp = builder.timestamp;
         version = builder.version;
+        blobKey = builder.blobKey;
         nodeState = builder.nodeState;
     }
 
@@ -37,6 +41,11 @@ public class VersionMeta
     public NodeVersionId getVersion()
     {
         return version;
+    }
+
+    public BlobKey getBlobKey()
+    {
+        return blobKey;
     }
 
     public NodeState getNodeState()
@@ -56,6 +65,8 @@ public class VersionMeta
         private Instant timestamp;
 
         private NodeVersionId version;
+
+        private BlobKey blobKey;
 
         private NodeState nodeState;
 
@@ -78,6 +89,12 @@ public class VersionMeta
         public Builder version( final NodeVersionId val )
         {
             version = val;
+            return this;
+        }
+
+        public Builder blobKey( final BlobKey val )
+        {
+            blobKey = val;
             return this;
         }
 
@@ -119,6 +136,10 @@ public class VersionMeta
         {
             return false;
         }
+        if ( blobKey != null ? !blobKey.equals( meta.blobKey ) : meta.blobKey != null )
+        {
+            return false;
+        }
         return nodeState == meta.nodeState;
 
     }
@@ -129,6 +150,7 @@ public class VersionMeta
         int result = nodePath != null ? nodePath.hashCode() : 0;
         result = 31 * result + ( timestamp != null ? timestamp.hashCode() : 0 );
         result = 31 * result + ( version != null ? version.hashCode() : 0 );
+        result = 31 * result + ( blobKey != null ? blobKey.hashCode() : 0 );
         result = 31 * result + ( nodeState != null ? nodeState.hashCode() : 0 );
         return result;
     }

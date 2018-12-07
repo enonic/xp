@@ -8,6 +8,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -598,9 +599,10 @@ public class NodeServiceImpl
     }
 
     @Override
-    public boolean deleteVersion( final NodeVersionId nodeVersionId )
+    public boolean deleteVersion(final NodeId nodeId, final NodeVersionId nodeVersionId )
     {
         return DeleteVersionCommand.create().
+            nodeId( nodeId ).
             nodeVersionId( nodeVersionId ).
             repositoryService( this.repositoryService ).
             searchService( this.nodeSearchService ).
@@ -649,13 +651,13 @@ public class NodeServiceImpl
     }
 
     @Override
-    public NodeVersion getByNodeVersion( final NodeVersionId nodeVersionId )
+    public NodeVersion getByBlobKey( final BlobKey blobKey )
     {
         verifyContext();
 
 
         final Context currentContext = ContextAccessor.current();
-        return this.nodeStorageService.getNodeVersion( nodeVersionId, InternalContext.from( currentContext ) );
+        return this.nodeStorageService.getNodeVersion( blobKey, InternalContext.from( currentContext ) );
     }
 
     @Override
@@ -764,11 +766,12 @@ public class NodeServiceImpl
     }
 
     @Override
-    public ByteSource getBinary( final NodeVersionId nodeVersionId, final BinaryReference reference )
+    public ByteSource getBinary( final NodeId nodeId, final NodeVersionId nodeVersionId, final BinaryReference reference )
     {
         verifyContext();
         return GetBinaryByVersionCommand.create().
             binaryReference( reference ).
+            nodeId( nodeId ).
             nodeVersionId( nodeVersionId ).
             indexServiceInternal( this.indexServiceInternal ).
             binaryService( this.binaryService ).
@@ -956,6 +959,7 @@ public class NodeServiceImpl
             nodeId( params.getNodeId() ).
             nodePath( params.getNodePath() ).
             nodeVersion( params.getNodeVersion() ).
+            nodeVersionId( params.getNodeVersionId() ).
             timestamp( params.getTimestamp() ).
             storageService( this.nodeStorageService ).
             searchService( this.nodeSearchService ).
