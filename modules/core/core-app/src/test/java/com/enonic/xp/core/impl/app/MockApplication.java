@@ -66,6 +66,12 @@ public class MockApplication
     }
 
     @Override
+    public boolean includesSystemVersion( final Version version )
+    {
+        return true;
+    }
+
+    @Override
     public String getUrl()
     {
         return null;

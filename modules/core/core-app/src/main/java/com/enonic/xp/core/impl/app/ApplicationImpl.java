@@ -84,6 +84,15 @@ final class ApplicationImpl
         return this.systemVersion != null ? this.systemVersion.getLeft().toString() : null;
     }
 
+    public boolean includesSystemVersion( final Version version )
+    {
+        return this.systemVersion == null || this.systemVersion.isEmpty()
+            ? true
+            : this.systemVersion.getLeft() != null && this.systemVersion.getRight() == null
+                ? this.systemVersion.getLeft().equals( version )
+                : this.systemVersion.includes( version );
+    }
+
     @Override
     public String getUrl()
     {

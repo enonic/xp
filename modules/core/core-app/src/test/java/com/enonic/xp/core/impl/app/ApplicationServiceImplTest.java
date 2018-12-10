@@ -9,6 +9,7 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 import org.mockito.verification.VerificationMode;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.VersionRange;
 
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
@@ -110,6 +111,68 @@ public class ApplicationServiceImplTest
         assertEquals( Bundle.INSTALLED, bundle.getState() );
         this.service.startApplication( ApplicationKey.from( "app1" ), false );
         assertEquals( Bundle.ACTIVE, bundle.getState() );
+    }
+
+    @Test
+    public void start_app_exact_version()
+        throws Exception
+    {
+        activateWithNoStoredApplications();
+
+        final Bundle bundle = deployBundle( "app1", true, VersionRange.valueOf( "5.2" ) );
+
+        assertEquals( Bundle.INSTALLED, bundle.getState() );
+        this.service.startApplication( ApplicationKey.from( "app1" ), false );
+        assertEquals( Bundle.ACTIVE, bundle.getState() );
+    }
+
+    @Test
+    public void start_app_version_range()
+        throws Exception
+    {
+        activateWithNoStoredApplications();
+
+        final Bundle bundle = deployBundle( "app1", true, VersionRange.valueOf( "(5.1,5.2]" ) );
+
+        assertEquals( Bundle.INSTALLED, bundle.getState() );
+        this.service.startApplication( ApplicationKey.from( "app1" ), false );
+        assertEquals( Bundle.ACTIVE, bundle.getState() );
+    }
+
+    @Test(expected = ApplicationInvalidVersionException.class)
+    public void start_app_invalid_exact_version_range()
+        throws Exception
+    {
+        activateWithNoStoredApplications();
+
+        final Bundle bundle = deployBundle( "app1", true, VersionRange.valueOf( "5.1" ) );
+
+        assertEquals( Bundle.INSTALLED, bundle.getState() );
+        this.service.startApplication( ApplicationKey.from( "app1" ), false );
+    }
+
+    @Test(expected = ApplicationInvalidVersionException.class)
+    public void start_app_invalid_version_range()
+        throws Exception
+    {
+        activateWithNoStoredApplications();
+
+        final Bundle bundle = deployBundle( "app1", true, VersionRange.valueOf( "[5.1,5.2)" ) );
+
+        assertEquals( Bundle.INSTALLED, bundle.getState() );
+        this.service.startApplication( ApplicationKey.from( "app1" ), false );
+    }
+
+    @Test(expected = ApplicationInvalidVersionException.class)
+    public void start_ex()
+        throws Exception
+    {
+        activateWithNoStoredApplications();
+
+        final Bundle bundle = deployBundle( "app1", true, VersionRange.valueOf( "[5.1,5.1]" ) );
+
+        assertEquals( Bundle.INSTALLED, bundle.getState() );
+        this.service.startApplication( ApplicationKey.from( "app1" ), false );
     }
 
     @Test
@@ -569,7 +632,14 @@ public class ApplicationServiceImplTest
     private Bundle deployBundle( final String key, final boolean isApp )
         throws Exception
     {
+        return this.deployBundle( key, isApp, null );
+    }
+
+    private Bundle deployBundle( final String key, final boolean isApp, final VersionRange systemVersionRange )
+        throws Exception
+    {
         final InputStream in = newBundle( key, isApp ).
+            set( ApplicationHelper.X_SYSTEM_VERSION, systemVersionRange != null ? systemVersionRange.toString() : null ).
             build();
 
         return deploy( key, in );
