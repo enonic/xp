@@ -1,8 +1,6 @@
-package com.enonic.xp.admin.impl.rest.resource.task;
+package com.enonic.xp.task;
 
 import java.time.Instant;
-
-import com.enonic.xp.task.TaskInfo;
 
 public class TaskInfoJson
 {

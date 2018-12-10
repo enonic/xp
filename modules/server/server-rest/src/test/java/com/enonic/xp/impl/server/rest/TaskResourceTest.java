@@ -1,7 +1,6 @@
-package com.enonic.xp.admin.impl.rest.resource.task;
+package com.enonic.xp.impl.server.rest;
 
 import java.time.Instant;
-import java.util.Arrays;
 
 import javax.ws.rs.WebApplicationException;
 
@@ -10,7 +9,6 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 
-import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.task.TaskId;
@@ -20,57 +18,24 @@ import com.enonic.xp.task.TaskService;
 import com.enonic.xp.task.TaskState;
 
 public class TaskResourceTest
-    extends AdminResourceTestSupport
+    extends ServerRestTestSupport
 {
     private TaskService taskService;
 
-    private TaskResource taskResource;
-
     @Rule
     public ExpectedException expectedEx = ExpectedException.none();
+
+    private TaskResource taskResource;
 
     @Override
     protected Object getResourceInstance()
     {
         this.taskService = Mockito.mock( TaskService.class );
 
-        this.taskResource = new TaskResource();
+        taskResource = new TaskResource();
         taskResource.setTaskService( this.taskService );
 
         return taskResource;
-    }
-
-    @Test
-    public void list()
-        throws Exception
-    {
-        final TaskId taskId1 = TaskId.from( "123" );
-        final TaskInfo taskInfo1 = TaskInfo.create().
-            id( taskId1 ).
-            description( "My task" ).
-            state( TaskState.RUNNING ).
-            application( ApplicationKey.from( "com.enonic.myapp" ) ).
-            user( PrincipalKey.from( "user:store:me" ) ).
-            startTime( Instant.parse( "2017-10-01T09:00:00Z" ) ).
-            progress( TaskProgress.create().current( 2 ).total( 10 ).info( "Processing items" ).build() ).
-            build();
-
-        final TaskId taskId2 = TaskId.from( "666" );
-        final TaskInfo taskInfo2 = TaskInfo.create().
-            id( taskId2 ).
-            description( "Old task" ).
-            state( TaskState.FINISHED ).
-            application( ApplicationKey.from( "com.enonic.other" ) ).
-            user( PrincipalKey.from( "user:store:user" ) ).
-            startTime( Instant.parse( "2017-09-11T09:00:00Z" ) ).
-            progress( TaskProgress.create().current( 42 ).total( 42 ).info( "Process completed" ).build() ).
-            build();
-
-        Mockito.when( this.taskService.getAllTasks() ).thenReturn( Arrays.asList( taskInfo1, taskInfo2 ) );
-
-        String response = request().path( "tasks" ).get().getAsString();
-
-        assertJson( "get_task_list_result.json", response );
     }
 
     @Test
@@ -90,7 +55,7 @@ public class TaskResourceTest
 
         Mockito.when( this.taskService.getTaskInfo( taskId ) ).thenReturn( taskInfo );
 
-        String response = request().path( "tasks/" + taskId.toString() ).get().getAsString();
+        String response = request().path( "task/123" ).get().getAsString();
 
         assertJson( "get_task_result.json", response );
     }

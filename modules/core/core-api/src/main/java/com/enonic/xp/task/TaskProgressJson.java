@@ -1,6 +1,4 @@
-package com.enonic.xp.admin.impl.rest.resource.task;
-
-import com.enonic.xp.task.TaskProgress;
+package com.enonic.xp.task;
 
 public class TaskProgressJson
 {
