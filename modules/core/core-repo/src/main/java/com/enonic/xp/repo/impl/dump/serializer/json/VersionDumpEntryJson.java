@@ -5,6 +5,7 @@ import java.time.Instant;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersionId;
@@ -21,6 +22,9 @@ public class VersionDumpEntryJson
     @JsonProperty("version")
     private String version;
 
+    @JsonProperty("blobKey")
+    private String blobKey;
+
     @JsonProperty("nodeState")
     private String nodeState;
 
@@ -33,6 +37,7 @@ public class VersionDumpEntryJson
         nodePath = builder.nodePath;
         timestamp = builder.timestamp;
         version = builder.version;
+        blobKey = builder.blobKey;
         nodeState = builder.nodeState;
     }
 
@@ -42,6 +47,7 @@ public class VersionDumpEntryJson
             nodePath( NodePath.create( json.nodePath ).build() ).
             timestamp( json.getTimestamp() != null ? Instant.parse( json.getTimestamp() ) : null ).
             version( json.getVersion() != null ? NodeVersionId.from( json.getVersion() ) : null ).
+            blobKey( json.getBlobKey() != null ? BlobKey.from( json.getBlobKey() ) : null ).
             nodeState( NodeState.from( json.getNodeState() ) ).
             build();
     }
@@ -52,6 +58,7 @@ public class VersionDumpEntryJson
             nodePath( meta.getNodePath().toString() ).
             timestamp( meta.getTimestamp() != null ? meta.getTimestamp().toString() : null ).
             version( meta.getVersion() != null ? meta.getVersion().toString() : null ).
+            blobKey( meta.getBlobKey() != null ? meta.getBlobKey().toString() : null ).
             build();
     }
 
@@ -75,6 +82,11 @@ public class VersionDumpEntryJson
         return version;
     }
 
+    public String getBlobKey()
+    {
+        return blobKey;
+    }
+
     private String getNodeState()
     {
         return nodeState;
@@ -87,6 +99,8 @@ public class VersionDumpEntryJson
         private String timestamp;
 
         private String version;
+
+        private String blobKey;
 
         private String nodeState;
 
@@ -109,6 +123,12 @@ public class VersionDumpEntryJson
         public Builder version( final String val )
         {
             version = val;
+            return this;
+        }
+
+        public Builder blobKey( final String val )
+        {
+            blobKey = val;
             return this;
         }
 

@@ -119,8 +119,6 @@ final class DeleteContentCommand
 
                 result.addDeleted( childDeleteResult.getDeletedContents() );
                 result.addPending( childDeleteResult.getPendingContents() );
-
-                this.nodesDeleted( childDeleteResult.getDeletedContents().getSize() + childDeleteResult.getPendingContents().getSize() );
             }
         }
         return result.build();

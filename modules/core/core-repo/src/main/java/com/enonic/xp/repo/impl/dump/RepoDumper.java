@@ -23,6 +23,7 @@ import com.enonic.xp.dump.RepoDumpResult;
 import com.enonic.xp.dump.SystemDumpListener;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.AttachedBinary;
+import com.enonic.xp.node.GetActiveNodeVersionsParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
@@ -34,7 +35,6 @@ import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.filter.RangeFilter;
 import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
-import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.model.VersionsDumpEntry;
 import com.enonic.xp.repo.impl.dump.writer.DumpWriter;
 import com.enonic.xp.repo.impl.node.executor.BatchedGetChildrenExecutor;
@@ -186,7 +186,7 @@ class RepoDumper
 
     private void doStoreVersion( final VersionsDumpEntry.Builder builder, final NodeVersionMetadata metaData )
     {
-        final NodeVersion nodeVersion = this.nodeService.getByNodeVersion( metaData.getNodeVersionId() );
+        final NodeVersion nodeVersion = this.nodeService.getByBlobKey( metaData.getBlobKey() );
         builder.addVersion( VersionMetaFactory.create( nodeVersion, metaData ) );
 
         storeVersionBlob( metaData );
@@ -197,7 +197,7 @@ class RepoDumper
     {
         try
         {
-            this.writer.writeVersionBlob( repositoryId, metaData.getNodeVersionId() );
+            this.writer.writeVersionBlob( repositoryId, metaData.getBlobKey() );
         }
         catch ( Exception e )
         {
@@ -250,7 +250,7 @@ class RepoDumper
         {
             final BranchDumpEntry branchDumpEntry = createDumpEntry( nodeId );
             writer.writeBranchEntry( branchDumpEntry );
-            writer.writeVersionBlob( repositoryId, branchDumpEntry.getMeta().getVersion() );
+            writer.writeVersionBlob( repositoryId, branchDumpEntry.getMeta().getBlobKey() );
             writeBinaries( dumpResult, branchDumpEntry );
             dumpResult.addedNode();
             reportNodeDumped();
@@ -290,8 +290,9 @@ class RepoDumper
             nodeId( nodeId );
 
         final Node currentNode = this.nodeService.getById( nodeId );
+        final NodeVersionMetadata currentVersionMetaData = getActiveVersion( nodeId );
 
-        builder.meta( VersionMetaFactory.create( currentNode ) );
+        builder.meta( VersionMetaFactory.create( currentNode, currentVersionMetaData ) );
 
         if ( this.includeBinaries )
         {
@@ -300,6 +301,18 @@ class RepoDumper
         }
 
         return builder.build();
+    }
+
+    private NodeVersionMetadata getActiveVersion( final NodeId nodeId )
+    {
+        final Branch branch = ContextAccessor.current().
+            getBranch();
+        final GetActiveNodeVersionsParams params = GetActiveNodeVersionsParams.create().nodeId( nodeId ).
+            branches( Branches.from( branch ) ).
+            build();
+        return this.nodeService.getActiveVersions( params ).
+            getNodeVersions().
+            get( branch );
     }
 
     private NodeVersionQueryResult getVersions( final NodeId nodeId )
@@ -395,7 +408,7 @@ class RepoDumper
             this.writer = writer;
             return this;
         }
-        
+
         public Builder maxAge( final Integer maxAge )
         {
             this.maxAge = maxAge;

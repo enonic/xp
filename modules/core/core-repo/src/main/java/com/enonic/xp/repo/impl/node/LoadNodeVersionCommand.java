@@ -6,6 +6,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.storage.StoreNodeVersionParams;
 
@@ -20,6 +21,8 @@ public class LoadNodeVersionCommand
 
     private final NodeVersion nodeVersion;
 
+    private final NodeVersionId nodeVersionId;
+
     private LoadNodeVersionCommand( final Builder builder )
     {
         super( builder );
@@ -27,6 +30,7 @@ public class LoadNodeVersionCommand
         nodePath = builder.nodePath;
         timestamp = builder.timestamp;
         nodeVersion = builder.nodeVersion;
+        nodeVersionId = builder.nodeVersionId;
     }
 
     public void execute()
@@ -35,6 +39,7 @@ public class LoadNodeVersionCommand
             nodeId( this.nodeId ).
             nodePath( this.nodePath ).
             nodeVersion( this.nodeVersion ).
+            nodeVersionId( this.nodeVersionId ).
             timestamp( this.timestamp ).
             build(), InternalContext.from( ContextAccessor.current() ) );
     }
@@ -54,6 +59,8 @@ public class LoadNodeVersionCommand
         private Instant timestamp;
 
         private NodeVersion nodeVersion;
+
+        private NodeVersionId nodeVersionId;
 
         private Builder()
         {
@@ -85,6 +92,12 @@ public class LoadNodeVersionCommand
         public Builder nodeVersion( final NodeVersion val )
         {
             nodeVersion = val;
+            return this;
+        }
+
+        public Builder nodeVersionId( final NodeVersionId val )
+        {
+            nodeVersionId = val;
             return this;
         }
     }

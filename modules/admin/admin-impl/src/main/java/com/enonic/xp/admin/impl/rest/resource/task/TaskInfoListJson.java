@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.enonic.xp.task.TaskInfo;
+import com.enonic.xp.task.TaskInfoJson;
 
 public class TaskInfoListJson
 {
