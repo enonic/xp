@@ -55,7 +55,7 @@ public class TaskResourceTest
 
         Mockito.when( this.taskService.getTaskInfo( taskId ) ).thenReturn( taskInfo );
 
-        String response = request().path( "task/info" ).queryParam( "id", "123" ).get().getAsString();
+        String response = request().path( "task/123" ).get().getAsString();
 
         assertJson( "get_task_result.json", response );
     }
@@ -67,7 +67,7 @@ public class TaskResourceTest
         expectedEx.expect( WebApplicationException.class );
         expectedEx.expectMessage( "Task [123] was not found" );
 
-        taskResource.info( "123" );
+        taskResource.getTask( "123" );
     }
 
 }
