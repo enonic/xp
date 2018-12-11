@@ -52,7 +52,7 @@ final class ApplyNodePermissionsCommand
             return resultBuilder.build();
         }
 
-        applyPermissionsToChildren( node );
+        applyPermissions( params.getPermissions() != null ? params.getPermissions() : node.getPermissions(), node );
 
         return resultBuilder.build();
     }
@@ -75,38 +75,49 @@ final class ApplyNodePermissionsCommand
 
         for ( Node child : children )
         {
-            if ( contextUserHasPermissionOrAdmin( Permission.WRITE_PERMISSIONS, child ) )
-            {
-                final Node childApplied = applyNodePermissions( parentPermissions, child );
-
-                if ( params.getListener() != null )
-                {
-                    params.getListener().permissionsApplied( 1 );
-                }
-
-                applyPermissionsToChildren( childApplied );
-                resultBuilder.succeedNode( childApplied );
-            }
-            else
-            {
-                params.getListener().notEnoughRights( 1 );
-                resultBuilder.skippedNode( child );
-
-                LOG.info( "Not enough rights for applying permissions to node [" + child.id() + "] " + child.path() );
-            }
+            applyPermissions( parentPermissions, child );
         }
     }
 
-    private Node applyNodePermissions( final AccessControlList parentPermissions, final Node node )
+    private Node applyPermissions( final AccessControlList permissions, final Node node )
     {
-        final Node updatedNode;
-        if ( params.isOverwriteChildPermissions() || node.inheritsPermissions() )
+        if ( contextUserHasPermissionOrAdmin( Permission.WRITE_PERMISSIONS, node ) )
         {
-            updatedNode = createUpdatedNode( node, parentPermissions, true );
+            final Node childApplied = storePermissions( permissions, node );
+
+            if ( params.getListener() != null )
+            {
+                params.getListener().permissionsApplied( 1 );
+            }
+
+            applyPermissionsToChildren( childApplied );
+            resultBuilder.succeedNode( childApplied );
+
+            return childApplied;
         }
         else
         {
-            final AccessControlList mergedPermissions = mergingStrategy.mergePermissions( node.getPermissions(), parentPermissions );
+            params.getListener().notEnoughRights( 1 );
+            resultBuilder.skippedNode( node );
+
+            LOG.info( "Not enough rights for applying permissions to node [" + node.id() + "] " + node.path() );
+
+            return node;
+        }
+    }
+
+    private Node storePermissions( final AccessControlList permissions, final Node node )
+    {
+        final Node updatedNode;
+        final boolean isParent = node.id().equals( params.getNodeId() );
+
+        if ( params.isOverwriteChildPermissions() || node.inheritsPermissions() || isParent )
+        {
+            updatedNode = createUpdatedNode( node, permissions, !isParent || params.isInheritPermissions() );
+        }
+        else
+        {
+            final AccessControlList mergedPermissions = mergingStrategy.mergePermissions( node.getPermissions(), permissions );
             updatedNode = createUpdatedNode( node, mergedPermissions, false );
         }
 
