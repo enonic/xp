@@ -12,8 +12,6 @@ import com.enonic.xp.security.acl.AccessControlList;
 
 public class ApplyContentPermissionsJson
 {
-//    final UpdateContentParams updateContentParams;
-
     final ContentId contentId;
 
     final AccessControlList permissions;
