@@ -1,6 +1,7 @@
 package com.enonic.xp.server.impl.status;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.management.ManagementFactory;
 
 import org.osgi.service.component.annotations.Component;
@@ -8,7 +9,6 @@ import org.osgi.service.component.annotations.Component;
 import com.codahale.metrics.jvm.ThreadDump;
 import com.google.common.net.MediaType;
 
-import com.enonic.xp.status.StatusContext;
 import com.enonic.xp.status.StatusReporter;
 
 @Component(immediate = true, service = StatusReporter.class)
@@ -35,9 +35,9 @@ public final class ThreadDumpReporter
     }
 
     @Override
-    public void report( final StatusContext context )
+    public void report( final OutputStream outputStream )
         throws IOException
     {
-        this.threadDump.dump( context.getOutputStream() );
+        this.threadDump.dump( outputStream );
     }
 }

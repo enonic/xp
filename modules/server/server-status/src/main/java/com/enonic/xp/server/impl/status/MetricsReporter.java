@@ -1,6 +1,7 @@
 package com.enonic.xp.server.impl.status;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -45,8 +46,21 @@ public final class MetricsReporter
     public void report( final StatusContext context )
         throws IOException
     {
-        final Map<String, Object> map = toMap( context.getParameter( "filter" ).orElse( "" ) );
-        this.mapper.writerWithDefaultPrettyPrinter().writeValue( context.getOutputStream(), map );
+        this.doReport( context.getOutputStream(), context.getParameter( "filter" ).orElse( "" ) );
+    }
+
+    @Override
+    public void report( final OutputStream outputStream )
+        throws IOException
+    {
+        this.doReport( outputStream, "" );
+    }
+
+    private void doReport( final OutputStream outputStream, final String filterParam )
+        throws IOException
+    {
+        final Map<String, Object> map = toMap( filterParam );
+        this.mapper.writerWithDefaultPrettyPrinter().writeValue( outputStream, map );
     }
 
     private Map<String, Object> toMap( final String filter )
