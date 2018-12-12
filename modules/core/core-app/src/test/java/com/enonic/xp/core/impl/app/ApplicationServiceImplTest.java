@@ -140,18 +140,6 @@ public class ApplicationServiceImplTest
     }
 
     @Test(expected = ApplicationInvalidVersionException.class)
-    public void start_app_invalid_exact_version_range()
-        throws Exception
-    {
-        activateWithNoStoredApplications();
-
-        final Bundle bundle = deployBundle( "app1", true, VersionRange.valueOf( "5.1" ) );
-
-        assertEquals( Bundle.INSTALLED, bundle.getState() );
-        this.service.startApplication( ApplicationKey.from( "app1" ), false );
-    }
-
-    @Test(expected = ApplicationInvalidVersionException.class)
     public void start_app_invalid_version_range()
         throws Exception
     {

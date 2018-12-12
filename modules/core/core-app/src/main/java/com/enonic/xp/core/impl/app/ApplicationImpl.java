@@ -86,11 +86,7 @@ final class ApplicationImpl
 
     public boolean includesSystemVersion( final Version version )
     {
-        return this.systemVersion == null || this.systemVersion.isEmpty()
-            ? true
-            : this.systemVersion.getLeft() != null && this.systemVersion.getRight() == null
-                ? this.systemVersion.getLeft().equals( version )
-                : this.systemVersion.includes( version );
+        return this.systemVersion == null || this.systemVersion.isEmpty() || this.systemVersion.includes( version );
     }
 
     @Override
