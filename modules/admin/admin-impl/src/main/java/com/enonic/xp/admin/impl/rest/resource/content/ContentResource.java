@@ -179,6 +179,7 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.task.TaskService;
+import com.enonic.xp.util.Exceptions;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
@@ -1091,8 +1092,7 @@ public final class ContentResource
         }
         catch ( IndexException e )
         {
-            LOG.warn( e.getMessage() );
-            findResult = FindContentIdsByQueryResult.empty();
+            throw Exceptions.newRuntime( "Failed to find contents" ).withCause( e );
         }
 
         return FindContentByQuertResultJsonFactory.create().
