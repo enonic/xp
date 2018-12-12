@@ -1,5 +1,6 @@
 package com.enonic.xp.impl.server.rest;
 
+import java.io.IOException;
 import java.io.OutputStream;
 
 import org.junit.Before;
@@ -42,6 +43,18 @@ public class StatusResourceTest
 
         Mockito.verify( serverReporter ).report( commentCaptor.capture() );
         Mockito.verify( serverReporter, Mockito.times( 1 ) ).report( Mockito.any( OutputStream.class ) );
+    }
+
+    @Test
+    public void server_error()
+        throws Exception
+    {
+        Mockito.doThrow( new IOException( "error_message" ) ).when( serverReporter ).report( Mockito.isA( OutputStream.class ) );
+
+        final String result = request().path( "status/server" ).get().getAsString();
+
+        assertEquals( "{\"status\":500,\"message\":\"error_message\"}", result );
+
     }
 
 
