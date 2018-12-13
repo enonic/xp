@@ -23,12 +23,12 @@ import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
 
 import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.dump.BranchDumpResult;
 import com.enonic.xp.dump.RepoLoadResult;
@@ -695,14 +695,14 @@ public class DumpServiceImplTest
 
             final NodeId nodeId = NodeId.from( "f0fb822c-092d-41f9-a961-f3811d81e55a" );
             final NodePath nodePath = NodePath.create( "/content/mysite" ).build();
-            final NodeVersionId draftNodeVersionId = NodeVersionId.from( "4085875dceda069f673bc76370be584fe4fa6312" );
-            final NodeVersionId masterNodeVersionId = NodeVersionId.from( "431056fc90e3f25175dba9a2294d42ed9a9da1ee" );
+            final NodeVersionId draftNodeVersionId = NodeVersionId.from( "5942426292448495d81af6546ed5a2a4a9c78d5b" );
+            final NodeVersionId masterNodeVersionId = NodeVersionId.from( "ac555e940583f1a4d0f25aaff8bc97649ac2de68" );
 
             final Node draftNode = nodeService.getById( nodeId );
             assertNotNull( draftNode );
             assertEquals( draftNodeVersionId, draftNode.getNodeVersionId() );
             assertEquals( nodePath, draftNode.path() );
-            assertEquals( "2018-11-23T11:14:34.659Z", draftNode.getTimestamp().toString() );
+            assertEquals( "2018-12-13T13:46:09.146Z", draftNode.getTimestamp().toString() );
 
             final Node masterNode = ContextBuilder.
                 from( ContextAccessor.current() ).
@@ -714,8 +714,26 @@ public class DumpServiceImplTest
             assertEquals( nodePath, masterNode.path() );
             assertEquals( "2018-11-23T11:14:21.662Z", masterNode.getTimestamp().toString() );
 
-
+            checkPageFlatteningUpgrade( draftNode );
         } );
+    }
+
+    private void checkPageFlatteningUpgrade( final Node node )
+    {
+        final PropertyTree nodeData = node.data();
+        assertTrue( nodeData.hasProperty( "components" ) );
+        assertFalse( nodeData.hasProperty( "page" ) );
+
+        final Iterable<PropertySet> components = nodeData.getSets( "components" );
+        final PropertySet pageComponent = components.iterator().next();
+        assertEquals( "page", pageComponent.getString( "type" ) );
+        assertEquals( "/", pageComponent.getString( "path" ) );
+        final PropertySet pageComponentData = pageComponent.getSet( "page" );
+        assertEquals( "com.enonic.app.superhero:default", pageComponentData.getString( "descriptor" ) );
+        assertEquals( Boolean.TRUE, pageComponentData.getBoolean( "customized" ) );
+        final PropertySet pageConfig = pageComponentData.getSet( "config" );
+        assertNotNull( pageConfig.getSet( "com-enonic-app-superhero" ) );
+
     }
 
     private File createIncompatibleDump( final String dumpName )
