@@ -8,6 +8,7 @@ import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageSo
 import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageSourceConstants.SRC_CONTROLLER_KEY;
 import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageSourceConstants.SRC_CUSTOMIZED_KEY;
 import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageSourceConstants.SRC_FRAGMENT_KEY;
+import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageSourceConstants.SRC_IMAGE_KEY;
 import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageSourceConstants.SRC_NAME_KEY;
 import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageSourceConstants.SRC_PAGE_KEY;
 import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageSourceConstants.SRC_REGION_KEY;
@@ -78,8 +79,13 @@ public class FlattenedPageDataUpgrader
         pageComponentDataSet.setBoolean( TGT_CUSTOMIZED_KEY, sourcePageSet.getBoolean( SRC_CUSTOMIZED_KEY ) );
 
         final PropertySet configSet = pageComponentDataSet.addSet( TGT_CONFIG_KEY );
-        final String applicationKey = getApplicationKey( sourcePageSet.getString( SRC_CONTROLLER_KEY ) );
-        configSet.setSet( applicationKey, sourcePageSet.getSet( SRC_CONFIG_KEY ) );
+        final String applicationPropertyKey = getApplicationPropertyKey( sourcePageSet.getString( SRC_CONTROLLER_KEY ) );
+        configSet.setSet( applicationPropertyKey, sourcePageSet.getSet( SRC_CONFIG_KEY ) );
+    }
+
+    private String getApplicationPropertyKey( String descriptorKey )
+    {
+        return getApplicationKey( descriptorKey ).replace( '.', '-' );
     }
 
     private String getApplicationKey( String descriptorKey )
@@ -105,6 +111,7 @@ public class FlattenedPageDataUpgrader
             for ( PropertySet sourceComponent : region.getSets( SRC_COMPONENT_KEY ) )
             {
                 addComponent( sourceComponent, ( "/".equals( path ) ? "" : path ) + "/" + regionName + "/" + componentIndex, nodeData );
+                componentIndex++;
             }
         }
     }
@@ -153,7 +160,7 @@ public class FlattenedPageDataUpgrader
 
     private void addImageComponentData( final PropertySet sourceComponentDataSet, final PropertySet targetComponentDataSet )
     {
-        targetComponentDataSet.setReference( TGT_ID_KEY, sourceComponentDataSet.getReference( SRC_FRAGMENT_KEY ) );
+        targetComponentDataSet.setReference( TGT_ID_KEY, sourceComponentDataSet.getReference( SRC_IMAGE_KEY ) );
         targetComponentDataSet.setString( TGT_CAPTION_KEY, sourceComponentDataSet.getSet( SRC_CONFIG_KEY ).
             getString( "caption" ) );
     }
@@ -174,8 +181,8 @@ public class FlattenedPageDataUpgrader
     {
         targetComponentDataSet.setString( TGT_DESCRIPTOR_KEY, sourceComponentDataSet.getString( SRC_TEMPLATE_KEY ) );
         final PropertySet targetConfigSet = targetComponentDataSet.addSet( TGT_CONFIG_KEY );
-        final String applicationKey = getApplicationKey( sourceComponentDataSet.getString( SRC_TEMPLATE_KEY ) );
-        targetConfigSet.setSet( applicationKey, sourceComponentDataSet.getSet( SRC_CONFIG_KEY ) );
+        final String applicationPropertyKey = getApplicationPropertyKey( sourceComponentDataSet.getString( SRC_TEMPLATE_KEY ) );
+        targetConfigSet.setSet( applicationPropertyKey, sourceComponentDataSet.getSet( SRC_CONFIG_KEY ) );
     }
 
     private String getTargetType( final String sourceComponentType )

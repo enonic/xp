@@ -17,6 +17,7 @@ import org.mockito.Mockito;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Sets;
 import com.google.common.io.ByteSource;
@@ -695,14 +696,14 @@ public class DumpServiceImplTest
 
             final NodeId nodeId = NodeId.from( "f0fb822c-092d-41f9-a961-f3811d81e55a" );
             final NodePath nodePath = NodePath.create( "/content/mysite" ).build();
-            final NodeVersionId draftNodeVersionId = NodeVersionId.from( "5942426292448495d81af6546ed5a2a4a9c78d5b" );
+            final NodeVersionId draftNodeVersionId = NodeVersionId.from( "8d617bde8625caaba47924a1bb35b6b101f963ac" );
             final NodeVersionId masterNodeVersionId = NodeVersionId.from( "ac555e940583f1a4d0f25aaff8bc97649ac2de68" );
 
             final Node draftNode = nodeService.getById( nodeId );
             assertNotNull( draftNode );
             assertEquals( draftNodeVersionId, draftNode.getNodeVersionId() );
             assertEquals( nodePath, draftNode.path() );
-            assertEquals( "2018-12-13T13:46:09.146Z", draftNode.getTimestamp().toString() );
+            assertEquals( "2018-12-13T14:50:24.495Z", draftNode.getTimestamp().toString() );
 
             final Node masterNode = ContextBuilder.
                 from( ContextAccessor.current() ).
@@ -724,6 +725,7 @@ public class DumpServiceImplTest
         assertTrue( nodeData.hasProperty( "components" ) );
         assertFalse( nodeData.hasProperty( "page" ) );
 
+        //Check page component
         final Iterable<PropertySet> components = nodeData.getSets( "components" );
         final PropertySet pageComponent = components.iterator().next();
         assertEquals( "page", pageComponent.getString( "type" ) );
@@ -733,6 +735,44 @@ public class DumpServiceImplTest
         assertEquals( Boolean.TRUE, pageComponentData.getBoolean( "customized" ) );
         final PropertySet pageConfig = pageComponentData.getSet( "config" );
         assertNotNull( pageConfig.getSet( "com-enonic-app-superhero" ) );
+
+        //Checks layout component
+        final PropertySet layoutComponent =
+            Iterables.filter( components, component -> "/main/0".equals( component.getString( "path" ) ) ).iterator().next();
+        assertEquals( "layout", layoutComponent.getString( "type" ) );
+        final PropertySet layoutComponentData = layoutComponent.getSet( "layout" );
+        assertEquals( "com.enonic.app.superhero:two-column", layoutComponentData.getString( "descriptor" ) );
+        assertNotNull( layoutComponentData.getSet( "config" ).getSet( "com-enonic-app-superhero" ) );
+
+        //Checks image component
+        final PropertySet imageComponent =
+            Iterables.filter( components, component -> "/main/0/left/0".equals( component.getString( "path" ) ) ).iterator().next();
+        assertEquals( "image", imageComponent.getString( "type" ) );
+        final PropertySet imageComponentData = imageComponent.getSet( "image" );
+        assertEquals( "cf09fe7a-1be9-46bb-ad84-87ba69630cb7", imageComponentData.getString( "id" ) );
+        assertEquals( "A caption", imageComponentData.getString( "caption" ) );
+
+        //Checks part component
+        final PropertySet partComponent =
+            Iterables.filter( components, component -> "/main/0/right/0".equals( component.getString( "path" ) ) ).iterator().next();
+        assertEquals( "part", partComponent.getString( "type" ) );
+        final PropertySet partComponentData = partComponent.getSet( "part" );
+        assertEquals( "com.enonic.app.superhero:tag-cloud", partComponentData.getString( "descriptor" ) );
+        assertNotNull( partComponentData.getSet( "config" ).getSet( "com-enonic-app-superhero" ) );
+
+        //Checks fragment component
+        final PropertySet fragmentComponent =
+            Iterables.filter( components, component -> "/main/0/right/1".equals( component.getString( "path" ) ) ).iterator().next();
+        assertEquals( "fragment", fragmentComponent.getString( "type" ) );
+        final PropertySet fragmentComponentData = fragmentComponent.getSet( "fragment" );
+        assertEquals( "7ee16649-85c6-4a76-8788-74be03be6c7a", fragmentComponentData.getString( "id" ) );
+
+        //Checks text component
+        final PropertySet textComponent =
+            Iterables.filter( components, component -> "/main/1".equals( component.getString( "path" ) ) ).iterator().next();
+        assertEquals( "text", textComponent.getString( "type" ) );
+        final PropertySet textComponentData = textComponent.getSet( "text" );
+        assertEquals( "<p>text1</p>\n" + "\n" + "<p>&nbsp;</p>\n", textComponentData.getString( "value" ) );
 
     }
 

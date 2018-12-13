@@ -16,8 +16,6 @@ class FlattenedPageTargetConstants
 
     static final String TGT_CONFIG_KEY = "config";
 
-    static final String TGT_NAME_KEY = "name";
-
     static final String TGT_VALUE_KEY = "value";
 
     static final String TGT_ID_KEY = "id";
