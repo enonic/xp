@@ -13,6 +13,7 @@ import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.icon.Icon;
+import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.media.MediaInfo;
@@ -65,6 +66,9 @@ final class BuiltinContentTypes
             helpTextI18nKey( "base.shortcut.target.helpText" ).
             inputType( InputTypeName.CONTENT_SELECTOR ).
             inputTypeProperty( InputTypeProperty.create( "relationshipType", RelationshipTypeName.REFERENCE.toString() ).build() ).
+            inputTypeConfig( InputTypeConfig.create().property(
+                InputTypeProperty.create( "allowPath", "*" ).build()
+            ).build() ).
             required( true ).
             build() ).
         addFormItem( FormItemSet.create().name( "parameters" ).
