@@ -1,9 +1,7 @@
 package com.enonic.xp.repo.impl.dump;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
-import java.nio.charset.Charset;
 import java.time.Instant;
 import java.util.Iterator;
 import java.util.TreeSet;
@@ -21,7 +19,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Sets;
 import com.google.common.io.ByteSource;
-import com.google.common.io.Files;
 
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.branch.Branch;
@@ -695,6 +692,7 @@ public class DumpServiceImplTest
             assertEquals( DumpConstants.MODEL_VERSION, updatedMeta.getModelVersion() );
 
             final NodeId nodeId = NodeId.from( "f0fb822c-092d-41f9-a961-f3811d81e55a" );
+            final NodeId fragmentNodeId = NodeId.from( "7ee16649-85c6-4a76-8788-74be03be6c7a" );
             final NodePath nodePath = NodePath.create( "/content/mysite" ).build();
             final NodeVersionId draftNodeVersionId = NodeVersionId.from( "8d617bde8625caaba47924a1bb35b6b101f963ac" );
             final NodeVersionId masterNodeVersionId = NodeVersionId.from( "ac555e940583f1a4d0f25aaff8bc97649ac2de68" );
@@ -715,11 +713,14 @@ public class DumpServiceImplTest
             assertEquals( nodePath, masterNode.path() );
             assertEquals( "2018-11-23T11:14:21.662Z", masterNode.getTimestamp().toString() );
 
-            checkPageFlatteningUpgrade( draftNode );
+            checkPageFlatteningUpgradePage( draftNode );
+
+            final Node fragmentNode = nodeService.getById( fragmentNodeId );
+            checkPageFlatteningUpgradeFragment( fragmentNode );
         } );
     }
 
-    private void checkPageFlatteningUpgrade( final Node node )
+    private void checkPageFlatteningUpgradePage( final Node node )
     {
         final PropertyTree nodeData = node.data();
         assertTrue( nodeData.hasProperty( "components" ) );
@@ -773,7 +774,21 @@ public class DumpServiceImplTest
         assertEquals( "text", textComponent.getString( "type" ) );
         final PropertySet textComponentData = textComponent.getSet( "text" );
         assertEquals( "<p>text1</p>\n" + "\n" + "<p>&nbsp;</p>\n", textComponentData.getString( "value" ) );
+    }
 
+    private void checkPageFlatteningUpgradeFragment( final Node node )
+    {
+        final PropertyTree nodeData = node.data();
+        assertTrue( nodeData.hasProperty( "components" ) );
+        assertFalse( nodeData.hasProperty( "fragment" ) );
+
+        final Iterable<PropertySet> components = nodeData.getSets( "components" );
+        final PropertySet partComponent = components.iterator().next();
+        assertEquals( "part", partComponent.getString( "type" ) );
+        assertEquals( "/", partComponent.getString( "path" ) );
+        final PropertySet partComponentData = partComponent.getSet( "part" );
+        assertEquals( "com.enonic.app.superhero:meta", partComponentData.getString( "descriptor" ) );
+        assertNotNull( partComponentData.getSet( "config" ).getSet( "com-enonic-app-superhero" ) );
     }
 
     private File createIncompatibleDump( final String dumpName )
@@ -786,15 +801,6 @@ public class DumpServiceImplTest
         final File tmpDumpFile = tempFolder.newFolder( dumpName );
         FileUtils.copyDirectory( oldDumpFile, tmpDumpFile );
         return tmpDumpFile;
-    }
-
-    private void createDumpUnvalidVersion( final File dumpFolder )
-        throws IOException
-    {
-        final String content =
-            "{\"xpVersion\":\"X.Y.Z.SNAPSHOT\",\"timestamp\":\"1970-01-01T00:00:00.000Z\",\"modelVersion\":\"0.1.0\",\"result\": {\"system-repo\":{\"versions\":\"37\",\"branchResults\": {\"master\":{\"successful\": \"23\",\"errors\":[]}}}}}";
-        Files.write( content, new File( dumpFolder, "dump.json" ), Charset.defaultCharset() );
-
     }
 
     private void verifyBinaries( final Node node, final Node updatedNode, final NodeVersionQueryResult versions )
