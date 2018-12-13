@@ -45,15 +45,13 @@ public class StatusResourceTest
         Mockito.verify( serverReporter, Mockito.times( 1 ) ).report( Mockito.any( OutputStream.class ) );
     }
 
-    @Test
+    @Test(expected = IOException.class)
     public void server_error()
         throws Exception
     {
         Mockito.doThrow( new IOException( "error_message" ) ).when( serverReporter ).report( Mockito.isA( OutputStream.class ) );
+        request().path( "status/server" ).get();
 
-        final String result = request().path( "status/server" ).get().getAsString();
-
-        assertEquals( "{\"status\":500,\"message\":\"error_message\"}", result );
 
     }
 

@@ -14,13 +14,10 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.base.Charsets;
-
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.status.StatusReporter;
+import com.enonic.xp.util.Exceptions;
 
 @Path("/api/status")
 @Produces(MediaType.APPLICATION_JSON)
@@ -36,7 +33,6 @@ public final class StatusResource
     @GET
     @Path("server")
     public String server()
-        throws Exception
     {
         final ByteArrayOutputStream response = new ByteArrayOutputStream();
         try
@@ -45,11 +41,7 @@ public final class StatusResource
         }
         catch ( IOException e )
         {
-            final ObjectNode json = JsonNodeFactory.instance.objectNode();
-            json.put( "status", 500 );
-            json.put( "message", e.getMessage() );
-
-            response.write( json.toString().getBytes( Charsets.UTF_8 ) );
+            throw Exceptions.unchecked( e );
         }
 
         return response.toString();
