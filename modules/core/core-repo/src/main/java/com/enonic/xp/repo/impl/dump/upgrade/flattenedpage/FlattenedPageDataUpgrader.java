@@ -78,9 +78,13 @@ public class FlattenedPageDataUpgrader
         pageComponentDataSet.setReference( TGT_TEMPLATE_KEY, sourcePageSet.getReference( SRC_TEMPLATE_KEY ) );
         pageComponentDataSet.setBoolean( TGT_CUSTOMIZED_KEY, sourcePageSet.getBoolean( SRC_CUSTOMIZED_KEY ) );
 
-        final PropertySet configSet = pageComponentDataSet.addSet( TGT_CONFIG_KEY );
-        final String applicationPropertyKey = getApplicationPropertyKey( sourcePageSet.getString( SRC_CONTROLLER_KEY ) );
-        configSet.setSet( applicationPropertyKey, sourcePageSet.getSet( SRC_CONFIG_KEY ) );
+        final PropertySet sourceConfigSet = sourcePageSet.getSet( SRC_CONFIG_KEY );
+        final String sourceControllerKey = sourcePageSet.getString( SRC_CONTROLLER_KEY );
+        if (sourceConfigSet != null && sourceControllerKey != null) {
+            final PropertySet configSet = pageComponentDataSet.addSet( TGT_CONFIG_KEY );
+            final String applicationPropertyKey = getApplicationPropertyKey( sourceControllerKey );
+            configSet.setSet( applicationPropertyKey, sourceConfigSet );
+        }
     }
 
     private String getApplicationPropertyKey( String descriptorKey )
@@ -180,9 +184,14 @@ public class FlattenedPageDataUpgrader
     private void addDescriptorBasedComponentData( final PropertySet sourceComponentDataSet, final PropertySet targetComponentDataSet )
     {
         targetComponentDataSet.setString( TGT_DESCRIPTOR_KEY, sourceComponentDataSet.getString( SRC_TEMPLATE_KEY ) );
-        final PropertySet targetConfigSet = targetComponentDataSet.addSet( TGT_CONFIG_KEY );
-        final String applicationPropertyKey = getApplicationPropertyKey( sourceComponentDataSet.getString( SRC_TEMPLATE_KEY ) );
-        targetConfigSet.setSet( applicationPropertyKey, sourceComponentDataSet.getSet( SRC_CONFIG_KEY ) );
+
+        final PropertySet sourceConfigSet = sourceComponentDataSet.getSet( SRC_CONFIG_KEY );
+        final String sourceTemplateKey = sourceComponentDataSet.getString( SRC_TEMPLATE_KEY );
+        if (sourceConfigSet != null && sourceTemplateKey != null) {
+            final PropertySet targetConfigSet = targetComponentDataSet.addSet( TGT_CONFIG_KEY );
+            final String applicationPropertyKey = getApplicationPropertyKey( sourceTemplateKey);
+            targetConfigSet.setSet( applicationPropertyKey, sourceConfigSet );
+        }
     }
 
     private String getTargetType( final String sourceComponentType )
