@@ -13,7 +13,7 @@ public class NodeFactory
         {
             return Node.createRoot().
                 nodeType( nodeVersion.getNodeType() ).
-                nodeVersionId( nodeVersion.getVersionId() ).
+                nodeVersionId( nodeBranchEntry.getVersionId() ).
                 timestamp( nodeBranchEntry.getTimestamp() ).
                 permissions( nodeVersion.getPermissions() ).
                 nodeState( nodeBranchEntry.getNodeState() ).

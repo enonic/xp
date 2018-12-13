@@ -1,0 +1,14 @@
+{
+  "application": "com.enonic.myapp",
+  "description": "My task",
+  "id": "123",
+  "name": "task-123",
+  "progress": {
+    "current": 2,
+    "info": "Processing items",
+    "total": 10
+  },
+  "startTime": "2017-10-01T09:00:00Z",
+  "state": "RUNNING",
+  "user": "user:store:me"
+}

@@ -638,9 +638,9 @@ public class Content
             return (BUILDER) this;
         }
 
-        public BUILDER addProcessedReferences( final ContentIds references )
+        public BUILDER processedReferences( final ContentIds references )
         {
-            this.processedReferences.addAll( references );
+            this.processedReferences = ContentIds.create().addAll( references );
             return (BUILDER) this;
         }
 

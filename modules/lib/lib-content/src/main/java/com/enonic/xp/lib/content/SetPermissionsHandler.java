@@ -14,7 +14,6 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -26,7 +25,6 @@ import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
-import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public final class SetPermissionsHandler
     implements ScriptBean
@@ -131,21 +129,10 @@ public final class SetPermissionsHandler
 
         if ( contentId != null )
         {
-            final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-            final PrincipalKey modifier =
-                authInfo != null && authInfo.isAuthenticated() ? authInfo.getUser().getKey() : PrincipalKey.ofAnonymous();
-
-            final UpdateContentParams updatePermissionsParams = new UpdateContentParams().
-                contentId( contentId ).
-                modifier( modifier ).
-                editor( edit -> {
-                    edit.inheritPermissions = inheritPermissions;
-                    edit.permissions = permissions;
-                } );
-            contentService.update( updatePermissionsParams );
-
             contentService.applyPermissions( ApplyContentPermissionsParams.create().
                 contentId( contentId ).
+                permissions( permissions ).
+                inheritPermissions( inheritPermissions ).
                 overwriteChildPermissions( overwriteChildPermissions ).
                 build() );
 

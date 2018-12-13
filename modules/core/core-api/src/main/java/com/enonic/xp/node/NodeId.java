@@ -2,30 +2,22 @@ package com.enonic.xp.node;
 
 
 import java.util.Objects;
-import java.util.UUID;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
 @Beta
 public class NodeId
+    extends com.enonic.xp.node.UUID
 {
-    private final String value;
-
-    private static final String VALID_NODE_ID_PATTERN = "([a-z0-9A-Z_\\-\\.:])*";
-
     public NodeId()
     {
-        this.value = UUID.randomUUID().toString();
+        super();
     }
 
     private NodeId( final String value )
     {
-        Preconditions.checkNotNull( value, "NodeId cannot be null" );
-        Preconditions.checkArgument( !value.trim().isEmpty(), "NodeId cannot be blank" );
-        Preconditions.checkArgument( value.matches( "^" + VALID_NODE_ID_PATTERN + "$" ), "NodeId format incorrect: " + value );
-
-        this.value = value;
+        super( value );
     }
 
     @Override
@@ -42,18 +34,6 @@ public class NodeId
 
         final NodeId other = (NodeId) o;
         return Objects.equals( value, other.value );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash( value );
-    }
-
-    @Override
-    public String toString()
-    {
-        return value;
     }
 
     public static NodeId from( String string )

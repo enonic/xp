@@ -4,6 +4,7 @@ import java.time.Instant;
 
 import com.google.common.base.Strings;
 
+import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
@@ -53,12 +54,15 @@ public class NodeVersionQueryResultFactory
 
         final String versionId = getStringValue( hit, VersionIndexPath.VERSION_ID, true );
 
+        final String blobKey = getStringValue( hit, VersionIndexPath.BLOB_KEY, true );
+
         final String nodePath = getStringValue( hit, VersionIndexPath.NODE_PATH, true );
 
         final String nodeId = getStringValue( hit, VersionIndexPath.NODE_ID, true );
 
         return NodeVersionMetadata.create().
             nodeVersionId( NodeVersionId.from( versionId ) ).
+            blobKey( BlobKey.from( blobKey ) ).
             timestamp( Strings.isNullOrEmpty( timestamp ) ? null : Instant.parse( timestamp ) ).
             nodePath( NodePath.create( nodePath ).build() ).
             nodeId( NodeId.from( nodeId ) ).

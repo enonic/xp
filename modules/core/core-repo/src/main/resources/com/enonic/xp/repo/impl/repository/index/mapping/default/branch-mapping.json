@@ -17,6 +17,11 @@
         "store": "true",
         "index": "not_analyzed"
       },
+      "blobkey": {
+        "type": "string",
+        "store": "true",
+        "index": "not_analyzed"
+      },
       "timestamp": {
         "type": "date",
         "store": "true",

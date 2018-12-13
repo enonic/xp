@@ -58,7 +58,7 @@ public class RepoDumperTest
     {
         final Node node1 = createNode( NodePath.ROOT, "myNode" );
 
-        final Node updatedNode = updateNode( UpdateNodeParams.create().
+        updateNode( UpdateNodeParams.create().
             id( node1.id() ).
             editor( ( node ) -> node.data.setString( "fisk", "Ost" ) ).
             build() );
@@ -67,7 +67,11 @@ public class RepoDumperTest
 
         doDump( writer );
 
-        assertTrue( writer.hasVersions( node1.getNodeVersionId(), updatedNode.getNodeVersionId() ) );
+        final List<BranchDumpEntry> dumpEntries = writer.get( CTX_DEFAULT.getRepositoryId(), CTX_DEFAULT.getBranch() );
+
+        assertEquals( 2, dumpEntries.size() );
+        // 2 versions for the root node on draft and master + 2 versions of the node
+        assertEquals( 4, writer.getBlobKeys().size() );
     }
 
     @Test

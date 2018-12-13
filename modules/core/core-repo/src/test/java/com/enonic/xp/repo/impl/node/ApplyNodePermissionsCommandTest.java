@@ -63,10 +63,10 @@ public class ApplyNodePermissionsCommandTest
         final PrincipalKey user2 = PrincipalKey.ofUser( USK, "user2" );
         final PrincipalKey group1 = PrincipalKey.ofGroup( USK, "group1" );
 
-        final AccessControlList permissions =
-            AccessControlList.of( AccessControlEntry.create().principal( PrincipalKey.ofAnonymous() ).allow( READ ).build(),
-                                  AccessControlEntry.create().principal( user1 ).allow( READ, MODIFY ).build(),
-                                  AccessControlEntry.create().principal( group1 ).allow( READ, CREATE, DELETE, MODIFY ).build() );
+        final AccessControlList permissions = AccessControlList.of(
+            AccessControlEntry.create().principal( PrincipalKey.ofAnonymous() ).allow( READ, WRITE_PERMISSIONS ).build(),
+            AccessControlEntry.create().principal( user1 ).allow( READ, MODIFY ).build(),
+            AccessControlEntry.create().principal( group1 ).allow( READ, CREATE, DELETE, MODIFY ).build() );
 
         CreateRootNodeCommand.create().
             params( CreateRootNodeParams.create().
@@ -122,6 +122,7 @@ public class ApplyNodePermissionsCommandTest
 
         final ApplyNodePermissionsParams params = ApplyNodePermissionsParams.create().
             nodeId( topNode.id() ).
+            permissions( topNode.getPermissions() ).
             overwriteChildPermissions( true ).
             applyPermissionsListener( Mockito.mock( ApplyPermissionsListener.class ) ).
             build();
@@ -136,7 +137,7 @@ public class ApplyNodePermissionsCommandTest
 
         refresh();
 
-        assertEquals( 5, updateNodes.getSucceedNodes().getSize() );
+        assertEquals( 6, updateNodes.getSucceedNodes().getSize() );
 
         final Node topNodeUpdated = getNodeById( topNode.id() );
         assertEquals( permissions, topNodeUpdated.getPermissions() );
@@ -251,6 +252,7 @@ public class ApplyNodePermissionsCommandTest
         final ApplyNodePermissionsParams params = ApplyNodePermissionsParams.create().
             nodeId( topNode.id() ).
             overwriteChildPermissions( false ).
+            permissions( topNode.getPermissions() ).
             applyPermissionsListener( Mockito.mock( ApplyPermissionsListener.class ) ).
             build();
 
@@ -264,7 +266,7 @@ public class ApplyNodePermissionsCommandTest
 
         refresh();
 
-        assertEquals( 5, updatedNodes.getSucceedNodes().getSize() );
+        assertEquals( 6, updatedNodes.getSucceedNodes().getSize() );
 
         final Node topNodeUpdated = getNodeById( topNode.id() );
         assertEquals( permissions, topNodeUpdated.getPermissions() );

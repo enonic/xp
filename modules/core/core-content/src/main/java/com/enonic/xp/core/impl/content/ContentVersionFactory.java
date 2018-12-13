@@ -9,6 +9,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionsMetadata;
 import com.enonic.xp.security.PrincipalKey;
@@ -29,7 +30,8 @@ class ContentVersionFactory
 
         for ( final NodeVersionMetadata nodeVersionMetadata : nodeVersionsMetadata )
         {
-            contentVersionsBuilder.add( doCreateContentVersion( getNodeVersion( nodeVersionMetadata ) ) );
+            final ContentVersion contentVersion = create( nodeVersionMetadata );
+            contentVersionsBuilder.add( contentVersion );
         }
 
         return contentVersionsBuilder.build();
@@ -37,10 +39,11 @@ class ContentVersionFactory
 
     public ContentVersion create( final NodeVersionMetadata nodeVersionMetadata )
     {
-        return doCreateContentVersion( getNodeVersion( nodeVersionMetadata ) );
+        final NodeVersion nodeVersion = getNodeVersion( nodeVersionMetadata );
+        return doCreateContentVersion( nodeVersionMetadata.getNodeVersionId(), nodeVersion );
     }
 
-    private ContentVersion doCreateContentVersion( final NodeVersion nodeVersion )
+    private ContentVersion doCreateContentVersion( final NodeVersionId nodeVersionId, final NodeVersion nodeVersion )
     {
         final PropertyTree data = nodeVersion.getData();
 
@@ -49,13 +52,13 @@ class ContentVersionFactory
             comment( "No comments" ).
             modified( data.getProperty( ContentPropertyNames.MODIFIED_TIME ).getInstant() ).
             modifier( PrincipalKey.from( data.getProperty( ContentPropertyNames.MODIFIER ).getString() ) ).
-            id( ContentVersionId.from( nodeVersion.getVersionId().toString() ) ).
+            id( ContentVersionId.from( nodeVersionId.toString() ) ).
             build();
     }
 
     private NodeVersion getNodeVersion( final NodeVersionMetadata nodeVersionMetadata )
     {
-        return nodeService.getByNodeVersion( nodeVersionMetadata.getNodeVersionId() );
+        return nodeService.getByBlobKey( nodeVersionMetadata.getBlobKey() );
     }
 
 }
