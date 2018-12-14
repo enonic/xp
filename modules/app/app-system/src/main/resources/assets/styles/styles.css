@@ -1,0 +1,37 @@
+.preview-frame-body, .preview-frame-body figure {
+    margin: 0;
+}
+
+.preview-frame-body {
+    overflow: hidden;
+}
+
+figure img {
+    width: 100%;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+figure.editor-style-original img {
+    width: auto;
+}
+
+figure.editor-align-left,
+figure.editor-align-right {
+    width: 40%;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+figure.editor-align-left {
+    float: left;
+}
+
+figure.editor-align-right {
+    float: right;
+}
+
+figure.editor-align-center {
+    margin: auto;
+    width: 60%;
+}

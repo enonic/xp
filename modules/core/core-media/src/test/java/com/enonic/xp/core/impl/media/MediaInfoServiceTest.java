@@ -14,6 +14,7 @@ import com.google.common.io.Resources;
 import com.google.common.net.HttpHeaders;
 
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.Media;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ExtraData;
@@ -66,7 +67,7 @@ public class MediaInfoServiceTest
     public void loadImageWithNativeOrientation()
     {
         final ByteSource byteSource = Resources.asByteSource( getClass().getResource( "NikonD100.jpg" ) );
-        final Content media = this.createMedia( "image", ContentPath.ROOT, false );
+        final Media media = this.createMedia( "image", ContentPath.ROOT, false );
         final ImageOrientation orientation = this.service.getImageOrientation( byteSource, media );
 
         assertEquals( 1, orientation.getValue() );
@@ -76,7 +77,7 @@ public class MediaInfoServiceTest
     public void loadImageWithEditedOrientation()
     {
         final ByteSource byteSource = Resources.asByteSource( getClass().getResource( "NikonD100.jpg" ) );
-        final Content media = this.createMedia( "image", ContentPath.ROOT, true );
+        final Media media = this.createMedia( "image", ContentPath.ROOT, true );
 
         final ImageOrientation orientation = this.service.getImageOrientation( byteSource, media );
 
@@ -97,7 +98,7 @@ public class MediaInfoServiceTest
         final MediaInfo mediaInfo = this.service.parseMediaInfo( byteSource );
     }
 
-    private Content createMedia( String name, ContentPath parentPath, boolean addOrientation )
+    private Media createMedia( String name, ContentPath parentPath, boolean addOrientation )
     {
         final PropertyTree imageDataTree = new PropertyTree();
         if ( addOrientation )
@@ -106,6 +107,9 @@ public class MediaInfoServiceTest
         }
         final ExtraData eData = new ExtraData( MediaInfo.CAMERA_INFO_METADATA_NAME, imageDataTree );
 
-        return Content.create( ContentTypeName.imageMedia() ).name( name ).parentPath( parentPath ).addExtraData( eData ).build();
+        final Content content = Content.create( ContentTypeName.imageMedia() ).name( name ).parentPath( parentPath ).addExtraData( eData ).build();
+        final Media media = (Media) content;
+
+        return media;
     }
 }

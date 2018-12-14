@@ -43,7 +43,7 @@ public final class ImageHandler
     @Override
     public boolean canHandle( final WebRequest webRequest )
     {
-        return super.canHandle( webRequest ) && isPortalBase(webRequest);
+        return super.canHandle( webRequest ) && isPortalBase( webRequest );
     }
 
     @Override
