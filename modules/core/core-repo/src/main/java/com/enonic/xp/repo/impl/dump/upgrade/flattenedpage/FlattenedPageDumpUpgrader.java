@@ -14,6 +14,7 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.repo.impl.dump.DumpBlobRecord;
 import com.enonic.xp.repo.impl.dump.DumpBlobStore;
+import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.VersionMeta;
 import com.enonic.xp.repo.impl.dump.model.VersionsDumpEntry;
 import com.enonic.xp.repo.impl.dump.reader.FileDumpReader;
@@ -82,8 +83,8 @@ public class FlattenedPageDumpUpgrader
         if ( branchEntriesFile != null )
         {
             dumpReader.processEntries( ( entryContent, entryName ) -> {
-                final VersionsDumpEntry sourceEntry = jsonDumpSerializer.toNodeVersionsEntry( entryContent );
-                sourceEntry.getVersions().forEach( this::upgrade );
+                final BranchDumpEntry sourceEntry = jsonDumpSerializer.toBranchMetaEntry( entryContent );
+                upgrade( sourceEntry.getMeta() );
             }, branchEntriesFile );
         }
         else
