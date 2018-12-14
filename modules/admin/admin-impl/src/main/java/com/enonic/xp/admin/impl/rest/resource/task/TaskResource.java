@@ -14,9 +14,11 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.jaxrs.JaxRsComponent;
+import com.enonic.xp.jaxrs.JaxRsExceptions;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
+import com.enonic.xp.task.TaskInfoJson;
 import com.enonic.xp.task.TaskService;
 
 @Path(ResourceConstants.REST_ROOT + "tasks")
@@ -44,6 +46,11 @@ public final class TaskResource
     {
         final TaskId taskId = TaskId.from( taskIdStr );
         final TaskInfo taskInfo = taskService.getTaskInfo( taskId );
+
+        if ( taskInfo == null )
+        {
+            throw JaxRsExceptions.notFound( String.format( "Task [%s] was not found", taskIdStr ) );
+        }
         return new TaskInfoJson( taskInfo );
     }
 

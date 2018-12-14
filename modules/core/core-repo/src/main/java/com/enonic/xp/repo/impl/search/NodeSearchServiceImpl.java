@@ -18,10 +18,10 @@ public class NodeSearchServiceImpl
     implements NodeSearchService
 {
     private static final ReturnFields VERSION_RETURN_FIELDS =
-        ReturnFields.from( VersionIndexPath.VERSION_ID, VersionIndexPath.TIMESTAMP, VersionIndexPath.NODE_PATH, VersionIndexPath.NODE_ID );
+        ReturnFields.from( VersionIndexPath.VERSION_ID, VersionIndexPath.BLOB_KEY, VersionIndexPath.TIMESTAMP, VersionIndexPath.NODE_PATH, VersionIndexPath.NODE_ID );
 
     private static final ReturnFields BRANCH_RETURN_FIELDS =
-        ReturnFields.from( BranchIndexPath.NODE_ID, BranchIndexPath.VERSION_ID, BranchIndexPath.STATE, BranchIndexPath.PATH,
+        ReturnFields.from( BranchIndexPath.NODE_ID, BranchIndexPath.VERSION_ID, BranchIndexPath.BLOB_KEY, BranchIndexPath.STATE, BranchIndexPath.PATH,
                            BranchIndexPath.TIMESTAMP );
 
     private SearchDao searchDao;

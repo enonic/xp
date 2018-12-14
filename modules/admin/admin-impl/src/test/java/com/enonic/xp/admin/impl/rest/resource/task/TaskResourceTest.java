@@ -3,7 +3,11 @@ package com.enonic.xp.admin.impl.rest.resource.task;
 import java.time.Instant;
 import java.util.Arrays;
 
+import javax.ws.rs.WebApplicationException;
+
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
@@ -21,6 +25,9 @@ public class TaskResourceTest
     private TaskService taskService;
 
     private TaskResource taskResource;
+
+    @Rule
+    public ExpectedException expectedEx = ExpectedException.none();
 
     @Override
     protected Object getResourceInstance()
@@ -92,11 +99,10 @@ public class TaskResourceTest
     public void getTaskNotFound()
         throws Exception
     {
-        final TaskId taskId = TaskId.from( "123" );
+        expectedEx.expect( WebApplicationException.class );
+        expectedEx.expectMessage( "Task [123] was not found" );
 
-        String response = request().path( "tasks/" + taskId.toString() ).get().getAsString();
-
-        assertJson( "get_task_not_found_result.json", response );
+        taskResource.getTask( "123" );
     }
 
 }

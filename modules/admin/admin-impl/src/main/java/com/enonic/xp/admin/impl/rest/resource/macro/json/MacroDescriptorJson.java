@@ -7,6 +7,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.admin.impl.json.form.FormJson;
 import com.enonic.xp.admin.impl.rest.resource.macro.MacroIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
+import com.enonic.xp.admin.impl.rest.resource.schema.mixin.InlineMixinResolver;
 import com.enonic.xp.macro.MacroDescriptor;
 
 public class MacroDescriptorJson
@@ -29,20 +30,22 @@ public class MacroDescriptorJson
 
     private String descriptionI18nKey;
 
-    public MacroDescriptorJson( final MacroDescriptor macroDescriptor, final MacroIconUrlResolver macroIconUrlResolver,
-                                final LocaleMessageResolver localeMessageResolver )
+    public MacroDescriptorJson( final Builder builder )
     {
-        Preconditions.checkNotNull( localeMessageResolver );
-        this.localeMessageResolver = localeMessageResolver;
+        Preconditions.checkNotNull( builder.localeMessageResolver );
+        Preconditions.checkNotNull( builder.macroIconUrlResolver );
+        Preconditions.checkNotNull( builder.macroDescriptor );
 
-        this.key = macroDescriptor.getKey().toString();
-        this.name = macroDescriptor.getName();
-        this.displayName = macroDescriptor.getDisplayName();
-        this.displayNameI18nKey = macroDescriptor.getDisplayNameI18nKey();
-        this.descriptionI18nKey = macroDescriptor.getDescriptionI18nKey();
-        this.description = macroDescriptor.getDescription();
-        this.form = new FormJson( macroDescriptor.getForm(), localeMessageResolver );
-        this.iconUrl = macroIconUrlResolver.resolve( macroDescriptor );
+        this.localeMessageResolver = builder.localeMessageResolver;
+
+        this.key = builder.macroDescriptor.getKey().toString();
+        this.name = builder.macroDescriptor.getName();
+        this.displayName = builder.macroDescriptor.getDisplayName();
+        this.displayNameI18nKey = builder.macroDescriptor.getDisplayNameI18nKey();
+        this.descriptionI18nKey = builder.macroDescriptor.getDescriptionI18nKey();
+        this.description = builder.macroDescriptor.getDescription();
+        this.form = new FormJson( builder.macroDescriptor.getForm(), builder.localeMessageResolver, builder.inlineMixinResolver );
+        this.iconUrl = builder.macroIconUrlResolver.resolve( builder.macroDescriptor );
     }
 
     public String getKey()
@@ -87,5 +90,50 @@ public class MacroDescriptorJson
     public String getIconUrl()
     {
         return iconUrl;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public static class Builder
+    {
+        private MacroDescriptor macroDescriptor;
+
+        private MacroIconUrlResolver macroIconUrlResolver;
+
+        private LocaleMessageResolver localeMessageResolver;
+
+        private InlineMixinResolver inlineMixinResolver;
+
+        public Builder setMacroDescriptor( final MacroDescriptor macroDescriptor )
+        {
+            this.macroDescriptor = macroDescriptor;
+            return this;
+        }
+
+        public Builder setMacroIconUrlResolver( final MacroIconUrlResolver macroIconUrlResolver )
+        {
+            this.macroIconUrlResolver = macroIconUrlResolver;
+            return this;
+        }
+
+        public Builder setLocaleMessageResolver( final LocaleMessageResolver localeMessageResolver )
+        {
+            this.localeMessageResolver = localeMessageResolver;
+            return this;
+        }
+
+        public Builder setInlineMixinResolver( final InlineMixinResolver inlineMixinResolver )
+        {
+            this.inlineMixinResolver = inlineMixinResolver;
+            return this;
+        }
+
+        public MacroDescriptorJson build()
+        {
+            return new MacroDescriptorJson( this );
+        }
     }
 }

@@ -11,6 +11,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.admin.impl.json.ItemJson;
 import com.enonic.xp.admin.impl.json.form.FormJson;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
+import com.enonic.xp.admin.impl.rest.resource.schema.mixin.InlineMixinResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.mixin.MixinIconUrlResolver;
 import com.enonic.xp.schema.mixin.Mixin;
 
@@ -23,6 +24,8 @@ public class MixinJson
 
     private final LocaleMessageResolver localeMessageResolver;
 
+    private final InlineMixinResolver inlineMixinResolver;
+
     public MixinJson( final Builder builder )
     {
         Preconditions.checkNotNull( builder.localeMessageResolver );
@@ -30,6 +33,7 @@ public class MixinJson
         this.mixin = builder.mixin;
         this.iconUrl = builder.iconUrlResolver.resolve( mixin );
         this.localeMessageResolver = builder.localeMessageResolver;
+        this.inlineMixinResolver = builder.inlineMixinResolver;
     }
 
     public static Builder create()
@@ -83,7 +87,7 @@ public class MixinJson
 
     public FormJson getForm()
     {
-        return new FormJson( mixin.getForm(), this.localeMessageResolver );
+        return new FormJson( mixin.getForm(), this.localeMessageResolver, this.inlineMixinResolver );
     }
 
     public String getCreator()
@@ -121,6 +125,8 @@ public class MixinJson
 
         private LocaleMessageResolver localeMessageResolver;
 
+        private InlineMixinResolver inlineMixinResolver;
+
         private Builder()
         {
         }
@@ -143,9 +149,16 @@ public class MixinJson
             return this;
         }
 
+        public Builder setInlineMixinResolver( final InlineMixinResolver inlineMixinResolver )
+        {
+            this.inlineMixinResolver = inlineMixinResolver;
+            return this;
+        }
+
         private void validate()
         {
             Preconditions.checkNotNull( localeMessageResolver );
+            Preconditions.checkNotNull( inlineMixinResolver );
             Preconditions.checkNotNull( iconUrlResolver );
         }
 

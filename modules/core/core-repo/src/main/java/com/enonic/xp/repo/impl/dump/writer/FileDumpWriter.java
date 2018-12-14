@@ -22,7 +22,6 @@ import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.dump.AbstractFileProcessor;
 import com.enonic.xp.repo.impl.dump.DumpBlobStore;
 import com.enonic.xp.repo.impl.dump.DumpConstants;
@@ -57,12 +56,12 @@ public class FileDumpWriter
 
     private TarArchiveOutputStream tarOutputStream;
 
-    private FileDumpWriter( final Builder builder )
+    public FileDumpWriter( final Path basePath, final String dumpName, final BlobStore blobStore )
     {
-        this.dumpDirectory = getDumpDirectory( builder.basePath, builder.dumpName );
+        this.dumpDirectory = getDumpDirectory( basePath, dumpName );
         this.dumpBlobStore = new DumpBlobStore( this.dumpDirectory.toFile() );
         this.serializer = new JsonDumpSerializer();
-        this.blobStore = builder.blobStore;
+        this.blobStore = blobStore;
     }
 
     private Path getDumpDirectory( final Path basePath, final String name )
@@ -172,7 +171,7 @@ public class FileDumpWriter
         storeTarEntry( serializedEntry, entryName );
     }
 
-    private void storeTarEntry( final String serializedEntry, final String entryName )
+    public void storeTarEntry( final String serializedEntry, final String entryName )
     {
         try
         {
@@ -191,14 +190,14 @@ public class FileDumpWriter
 
 
     @Override
-    public void writeVersionBlob( final RepositoryId repositoryId, final NodeVersionId nodeVersionId )
+    public void writeVersionBlob( final RepositoryId repositoryId, final BlobKey blobKey )
     {
         final Segment dumpSegment = RepositorySegmentUtils.toSegment( repositoryId, DumpConstants.DUMP_NODE_SEGMENT_LEVEL );
-        final BlobRecord existingVersion = blobStore.getRecord( dumpSegment, BlobKey.from( nodeVersionId.toString() ) );
+        final BlobRecord existingVersion = blobStore.getRecord( dumpSegment, blobKey );
 
         if ( existingVersion == null )
         {
-            throw new RepoDumpException( "Cannot write node version with key [" + nodeVersionId + "], not found in blobStore" );
+            throw new RepoDumpException( "Cannot write node version with key [" + blobKey + "], not found in blobStore" );
         }
 
         final Segment segment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.NODE_SEGMENT_LEVEL );
@@ -243,47 +242,6 @@ public class FileDumpWriter
         catch ( IOException e )
         {
             LOG.warn( "Cannot close stream [" + stream.getClass().getName() + "]", e );
-        }
-    }
-
-    public static Builder create()
-    {
-        return new Builder();
-    }
-
-    public static final class Builder
-    {
-        private Path basePath;
-
-        private String dumpName;
-
-        private BlobStore blobStore;
-
-        private Builder()
-        {
-        }
-
-        public Builder basePath( final Path basePath )
-        {
-            this.basePath = basePath;
-            return this;
-        }
-
-        public Builder dumpName( final String dumpName )
-        {
-            this.dumpName = dumpName;
-            return this;
-        }
-
-        public Builder blobStore( final BlobStore val )
-        {
-            blobStore = val;
-            return this;
-        }
-
-        public FileDumpWriter build()
-        {
-            return new FileDumpWriter( this );
         }
     }
 }

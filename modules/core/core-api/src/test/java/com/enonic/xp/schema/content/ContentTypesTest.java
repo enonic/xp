@@ -59,10 +59,21 @@ public class ContentTypesTest
     public void contentTypes()
     {
         ContentType.Builder builder =
-            ContentType.create().name( ContentTypeName.media() ).form( PAGE_TEMPLATE ).setAbstract().setFinal().allowChildContent(
-                true ).setBuiltIn().contentDisplayNameScript( "contentDisplayNameScript" ).displayName(
-                "displayName" ).description( "description" ).modifiedTime( Instant.now() ).createdTime( Instant.now() ).creator(
-                PrincipalKey.ofAnonymous() ).modifier( PrincipalKey.ofAnonymous() );
+            ContentType.
+                create().
+                name( ContentTypeName.media() ).
+                form( PAGE_TEMPLATE ).
+                setAbstract().
+                setFinal().
+                allowChildContent( true ).
+                setBuiltIn().
+                displayNameExpression( "displayNameExpression" ).
+                displayName( "displayName" ).
+                description( "description" ).
+                modifiedTime( Instant.now() ).
+                createdTime( Instant.now() ).
+                creator( PrincipalKey.ofAnonymous() ).
+                modifier( PrincipalKey.ofAnonymous() );
         ContentType contentType = builder.build();
         ContentTypes contentTypes = ContentTypes.create().add( contentType ).build();
         assertTrue( contentTypes.getNames().contains( ContentTypeName.media() ) );

@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.junit.Before;
+import org.mockito.AdditionalAnswers;
 import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
@@ -258,7 +259,8 @@ public class AbstractContentServiceTest
         this.nodeService.initialize();
 
         this.mixinService = Mockito.mock( MixinService.class );
-        Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).thenReturn( Form.create().build() );
+        Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
+
 
         this.xDataService = Mockito.mock( XDataService.class );
 

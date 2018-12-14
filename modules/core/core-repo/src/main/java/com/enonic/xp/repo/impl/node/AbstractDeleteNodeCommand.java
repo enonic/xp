@@ -1,11 +1,17 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.List;
+
+import com.google.common.collect.Iterables;
+
 import com.enonic.xp.context.Context;
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.node.DeleteNodeListener;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeBranchEntries;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.node.RefreshMode;
@@ -18,6 +24,8 @@ abstract class AbstractDeleteNodeCommand
 {
     private final boolean allowDeleteRootNode;
 
+    private static final int BATCH_SIZE = 20;
+
     AbstractDeleteNodeCommand( final Builder builder )
     {
         super( builder );
@@ -25,6 +33,11 @@ abstract class AbstractDeleteNodeCommand
     }
 
     NodeBranchEntries deleteNodeWithChildren( final Node node, final Context context )
+    {
+        return deleteNodeWithChildren( node, context, null );
+    }
+
+    NodeBranchEntries deleteNodeWithChildren( final Node node, final Context context, final DeleteNodeListener deleteNodeListener )
     {
         if ( node.isRoot() && !allowDeleteRootNode )
         {
@@ -48,7 +61,15 @@ abstract class AbstractDeleteNodeCommand
             throw new NodeAccessException( context.getAuthInfo().getUser(), node.path(), Permission.DELETE );
         }
 
-        this.nodeStorageService.delete( nodeIds, InternalContext.from( context ) );
+        for ( final List<NodeId> keysBatch : Iterables.partition( nodeIds, BATCH_SIZE ) )
+        {
+            this.nodeStorageService.delete( NodeIds.from( keysBatch ), InternalContext.from( context ) );
+
+            if ( deleteNodeListener != null )
+            {
+                deleteNodeListener.nodesDeleted( keysBatch.size() );
+            }
+        }
 
         doRefresh();
 

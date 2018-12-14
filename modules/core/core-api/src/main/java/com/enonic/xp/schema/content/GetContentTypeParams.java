@@ -1,14 +1,13 @@
 package com.enonic.xp.schema.content;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 @Beta
 public class GetContentTypeParams
 {
     private ContentTypeName contentTypeName;
-
-    private boolean inlineMixinsToFormItems = false;
 
     public static GetContentTypeParams from( final ContentTypeName contentTypeName )
     {
@@ -32,17 +31,6 @@ public class GetContentTypeParams
         return this;
     }
 
-    public boolean isInlineMixinsToFormItems()
-    {
-        return inlineMixinsToFormItems;
-    }
-
-    public GetContentTypeParams inlineMixinsToFormItems( final boolean value )
-    {
-        inlineMixinsToFormItems = value;
-        return this;
-    }
-
     public void validate()
     {
         Preconditions.checkNotNull( this.contentTypeName, "contentTypeName cannot be null" );
@@ -62,10 +50,6 @@ public class GetContentTypeParams
 
         final GetContentTypeParams that = (GetContentTypeParams) o;
 
-        if ( inlineMixinsToFormItems != that.inlineMixinsToFormItems )
-        {
-            return false;
-        }
         if ( !contentTypeName.equals( that.contentTypeName ) )
         {
             return false;
@@ -77,8 +61,6 @@ public class GetContentTypeParams
     @Override
     public int hashCode()
     {
-        int result = contentTypeName.hashCode();
-        result = 31 * result + ( inlineMixinsToFormItems ? 1 : 0 );
-        return result;
+        return Objects.hashCode( contentTypeName );
     }
 }

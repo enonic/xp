@@ -25,6 +25,8 @@ final class ApplyContentPermissionsCommand
 
         final ApplyNodePermissionsParams applyNodePermissionsParams = ApplyNodePermissionsParams.create().
             nodeId( nodeId ).
+            permissions( params.getPermissions() ).
+            inheritPermissions( params.isInheritPermissions() ).
             overwriteChildPermissions( params.isOverwriteChildPermissions() ).
             applyPermissionsListener( params.getListener() ).
             build();

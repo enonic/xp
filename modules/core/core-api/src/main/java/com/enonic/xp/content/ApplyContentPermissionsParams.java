@@ -3,12 +3,18 @@ package com.enonic.xp.content;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Objects;
 
+import com.enonic.xp.security.acl.AccessControlList;
+
 import static java.util.Objects.requireNonNull;
 
 @Beta
 public final class ApplyContentPermissionsParams
 {
     private final ContentId contentId;
+
+    private final AccessControlList permissions;
+
+    private final boolean inheritPermissions;
 
     private final boolean overwriteChildPermissions;
 
@@ -18,6 +24,8 @@ public final class ApplyContentPermissionsParams
     {
         contentId = requireNonNull( builder.contentId );
         overwriteChildPermissions = builder.overwriteChildPermissions;
+        permissions = builder.permissions;
+        inheritPermissions = builder.inheritPermissions;
         listener = builder.listener;
     }
 
@@ -34,6 +42,16 @@ public final class ApplyContentPermissionsParams
     public boolean isOverwriteChildPermissions()
     {
         return overwriteChildPermissions;
+    }
+
+    public AccessControlList getPermissions()
+    {
+        return permissions;
+    }
+
+    public boolean isInheritPermissions()
+    {
+        return inheritPermissions;
     }
 
     public ApplyPermissionsListener getListener()
@@ -54,18 +72,23 @@ public final class ApplyContentPermissionsParams
         }
         final ApplyContentPermissionsParams that = (ApplyContentPermissionsParams) o;
         return Objects.equal( this.contentId, that.contentId ) &&
-            Objects.equal( this.overwriteChildPermissions, that.overwriteChildPermissions );
+            Objects.equal( this.overwriteChildPermissions, that.overwriteChildPermissions ) &&
+            Objects.equal( this.permissions, that.permissions ) && Objects.equal( this.inheritPermissions, that.inheritPermissions );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.contentId, this.overwriteChildPermissions );
+        return Objects.hashCode( this.contentId, this.permissions, this.overwriteChildPermissions, this.inheritPermissions );
     }
 
     public static final class Builder
     {
         private ContentId contentId;
+
+        private AccessControlList permissions;
+
+        private boolean inheritPermissions;
 
         private boolean overwriteChildPermissions;
 
@@ -90,6 +113,18 @@ public final class ApplyContentPermissionsParams
         public Builder applyContentPermissionsListener( final ApplyPermissionsListener listener )
         {
             this.listener = listener;
+            return this;
+        }
+
+        public Builder permissions( final AccessControlList permissions )
+        {
+            this.permissions = permissions;
+            return this;
+        }
+
+        public Builder inheritPermissions( final boolean inheritPermissions )
+        {
+            this.inheritPermissions = inheritPermissions;
             return this;
         }
 

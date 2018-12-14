@@ -3,12 +3,12 @@
         {
             "abstract": false,
             "allowChildContent": true,
-            "contentDisplayNameScript": null,
             "createdTime": "2013-01-01T12:00:00Z",
             "creator": null,
             "deletable": false,
             "description": null,
             "displayName": "my_cty",
+            "displayNameExpression": null,
             "editable": false,
             "final": true,
             "iconUrl": "/admin/rest/schema/content/icon/myapplication:my_cty?hash=f95b70fdc3088560732a5ac135644506",

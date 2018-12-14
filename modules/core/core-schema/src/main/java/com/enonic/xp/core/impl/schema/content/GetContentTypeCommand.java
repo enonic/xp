@@ -22,13 +22,6 @@ final class GetContentTypeCommand
             return null;
         }
 
-        if ( !this.params.isInlineMixinsToFormItems() )
-        {
-            return contentType;
-        }
-        else
-        {
-            return transformInlineMixins( contentType );
-        }
+        return transformInlineMixins( contentType );
     }
 }

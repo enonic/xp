@@ -15,6 +15,7 @@ import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.node.DeleteNodeListener;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
@@ -30,6 +31,7 @@ import com.enonic.xp.node.SetNodeStateParams;
 
 final class DeleteContentCommand
     extends AbstractContentCommand
+    implements DeleteNodeListener
 {
     private final DeleteContentParams params;
 
@@ -88,7 +90,7 @@ final class DeleteContentCommand
         if ( rootNodeStatus == CompareStatus.NEW )
         {
             // Root node is new, just delete all children
-            final NodeIds nodes = this.nodeService.deleteById( nodeToDelete );
+            final NodeIds nodes = this.nodeService.deleteById( nodeToDelete, this );
 
             result.addDeleted( ContentIds.from( nodes.getAsStrings() ) );
 
@@ -96,7 +98,6 @@ final class DeleteContentCommand
         else if ( this.params.isDeleteOnline() )
         {
             final NodeIds nodes = deleteNodeInDraftAndMaster( nodeToDelete );
-
             result.addDeleted( ContentIds.from( nodes.getAsStrings() ) );
         }
         else
@@ -107,6 +108,8 @@ final class DeleteContentCommand
                 build() );
 
             result.addPending( ContentId.from( nodeToDelete.toString() ) );
+            this.nodesDeleted( 1 );
+
 
             final NodeIds children = getAllChildren( nodeToDelete );
 
@@ -119,6 +122,24 @@ final class DeleteContentCommand
             }
         }
         return result.build();
+    }
+
+    @Override
+    public void nodesDeleted( final int count )
+    {
+        if ( params.getDeleteContentListener() != null )
+        {
+            params.getDeleteContentListener().contentDeleted( count );
+        }
+    }
+
+    @Override
+    public void totalToDelete( final int count )
+    {
+        if ( params.getDeleteContentListener() != null )
+        {
+            params.getDeleteContentListener().setTotal( count );
+        }
     }
 
     private NodeIds deleteNodeInDraftAndMaster( final NodeId nodeToDelete )
@@ -160,7 +181,7 @@ final class DeleteContentCommand
 
     private NodeIds deleteNodeInContext( final NodeId nodeToDelete, final Context context )
     {
-        return context.callWith( () -> this.nodeService.deleteById( nodeToDelete ) );
+        return context.callWith( () -> this.nodeService.deleteById( nodeToDelete, this ) );
     }
 
     public static class Builder

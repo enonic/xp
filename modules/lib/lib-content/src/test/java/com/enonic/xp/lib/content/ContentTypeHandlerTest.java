@@ -21,7 +21,6 @@ import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypes;
-import com.enonic.xp.schema.content.GetAllContentTypesParams;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 
 public class ContentTypeHandlerTest
@@ -35,8 +34,7 @@ public class ContentTypeHandlerTest
         Mockito.when( mixinService.inlineFormItems( Mockito.eq( form ) ) ).thenReturn( form );
 
         final ContentType contentType = exampleContentType();
-        final GetContentTypeParams params = new GetContentTypeParams().contentTypeName( contentType.getName() ).
-            inlineMixinsToFormItems( true );
+        final GetContentTypeParams params = new GetContentTypeParams().contentTypeName( contentType.getName() );
         Mockito.when( contentTypeService.getByName( params ) ).thenReturn( contentType );
 
         runScript( "/site/lib/xp/examples/content/getType.js" );
@@ -49,7 +47,7 @@ public class ContentTypeHandlerTest
         Mockito.when( mixinService.inlineFormItems( Mockito.eq( form ) ) ).thenReturn( form );
 
         final ContentTypes contentTypes = testContentTypes();
-        Mockito.when( contentTypeService.getAll( Mockito.isA( GetAllContentTypesParams.class ) ) ).thenReturn( contentTypes );
+        Mockito.when( contentTypeService.getAll() ).thenReturn( contentTypes );
 
         runScript( "/site/lib/xp/examples/content/getTypes.js" );
     }
@@ -62,8 +60,7 @@ public class ContentTypeHandlerTest
         Mockito.when( mixinService.inlineFormItems( Mockito.eq( form ) ) ).thenReturn( form );
 
         final ContentType contentType = testContentType();
-        final GetContentTypeParams params = new GetContentTypeParams().contentTypeName( contentType.getName() ).
-            inlineMixinsToFormItems( true );
+        final GetContentTypeParams params = new GetContentTypeParams().contentTypeName( contentType.getName() );
         Mockito.when( contentTypeService.getByName( params ) ).thenReturn( contentType );
 
         runFunction( "/site/test/ContentTypeHandlerTest.js", "testGet" );
@@ -91,7 +88,7 @@ public class ContentTypeHandlerTest
         Mockito.when( mixinService.inlineFormItems( Mockito.eq( form ) ) ).thenReturn( form );
 
         final ContentTypes contentTypes = testContentTypes();
-        Mockito.when( contentTypeService.getAll( Mockito.isA( GetAllContentTypesParams.class ) ) ).thenReturn( contentTypes );
+        Mockito.when( contentTypeService.getAll() ).thenReturn( contentTypes );
 
         runFunction( "/site/test/ContentTypeHandlerTest.js", "testList" );
     }
@@ -107,7 +104,7 @@ public class ContentTypeHandlerTest
             displayName( "Person" ).
             description( "Person content type" ).
             superType( ContentTypeName.structured() ).
-            contentDisplayNameScript( "$('name')" ).
+            displayNameExpression( "${name}" ).
             icon( schemaIcon ).
             form( getExampleForm() ).
             build();
@@ -124,7 +121,7 @@ public class ContentTypeHandlerTest
             displayName( "Article" ).
             description( "Article content type" ).
             superType( ContentTypeName.structured() ).
-            contentDisplayNameScript( "$('title') + ' ' + $('author')" ).
+            displayNameExpression( "${title} ${author}" ).
             icon( schemaIcon ).
             form( getForm() ).
             build();

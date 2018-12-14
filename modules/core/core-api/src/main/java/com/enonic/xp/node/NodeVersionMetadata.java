@@ -4,11 +4,15 @@ import java.time.Instant;
 
 import com.google.common.annotations.Beta;
 
+import com.enonic.xp.blob.BlobKey;
+
 @Beta
 public class NodeVersionMetadata
     implements Comparable<NodeVersionMetadata>
 {
     private final NodeVersionId nodeVersionId;
+
+    private final BlobKey blobKey;
 
     private final NodeId nodeId;
 
@@ -19,6 +23,7 @@ public class NodeVersionMetadata
     private NodeVersionMetadata( Builder builder )
     {
         nodeVersionId = builder.nodeVersionId;
+        blobKey = builder.blobKey;
         nodeId = builder.nodeId;
         nodePath = builder.nodePath;
         timestamp = builder.timestamp;
@@ -32,6 +37,11 @@ public class NodeVersionMetadata
     public NodeVersionId getNodeVersionId()
     {
         return nodeVersionId;
+    }
+
+    public BlobKey getBlobKey()
+    {
+        return blobKey;
     }
 
     public NodeId getNodeId()
@@ -70,6 +80,8 @@ public class NodeVersionMetadata
     {
         private NodeVersionId nodeVersionId;
 
+        private BlobKey blobKey;
+
         private NodeId nodeId;
 
         private NodePath nodePath;
@@ -83,6 +95,12 @@ public class NodeVersionMetadata
         public Builder nodeVersionId( NodeVersionId nodeVersionId )
         {
             this.nodeVersionId = nodeVersionId;
+            return this;
+        }
+
+        public Builder blobKey( BlobKey blobKey )
+        {
+            this.blobKey = blobKey;
             return this;
         }
 
@@ -128,6 +146,10 @@ public class NodeVersionMetadata
         {
             return false;
         }
+        if ( blobKey != null ? !blobKey.equals( that.blobKey ) : that.blobKey != null )
+        {
+            return false;
+        }
         if ( nodeId != null ? !nodeId.equals( that.nodeId ) : that.nodeId != null )
         {
             return false;
@@ -144,6 +166,7 @@ public class NodeVersionMetadata
     public int hashCode()
     {
         int result = nodeVersionId != null ? nodeVersionId.hashCode() : 0;
+        result = 31 * result + ( blobKey != null ? blobKey.hashCode() : 0 );
         result = 31 * result + ( nodeId != null ? nodeId.hashCode() : 0 );
         result = 31 * result + ( nodePath != null ? nodePath.hashCode() : 0 );
         result = 31 * result + ( timestamp != null ? timestamp.hashCode() : 0 );

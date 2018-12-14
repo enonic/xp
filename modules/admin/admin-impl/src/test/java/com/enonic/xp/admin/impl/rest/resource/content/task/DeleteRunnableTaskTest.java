@@ -14,8 +14,12 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentPaths;
+import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.DeleteContentsResult;
+import com.enonic.xp.content.FindContentByParentParams;
+import com.enonic.xp.content.FindContentIdsByParentResult;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
 
@@ -39,6 +43,9 @@ public class DeleteRunnableTaskTest
             build();
         this.contents.add( child );
         this.params = Mockito.mock( DeleteContentJson.class );
+
+        Mockito.when( this.contentService.findIdsByParent( Mockito.isA( FindContentByParentParams.class ) ) ).thenReturn(
+            FindContentIdsByParentResult.create().totalHits( 0 ).build() );
     }
 
     @Override
@@ -97,8 +104,7 @@ public class DeleteRunnableTaskTest
 
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
 
-        Assert.assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"Item \\\"content4\\\" is deleted.\"}",
-                             resultMessage );
+        Assert.assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"Item \\\"content4\\\" is deleted.\"}", resultMessage );
     }
 
     @Test
@@ -117,6 +123,29 @@ public class DeleteRunnableTaskTest
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
 
         Assert.assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"Item \\\"content4\\\" is marked for deletion.\"}", resultMessage );
+    }
+
+    @Test
+    public void create_message_single_online()
+        throws Exception
+    {
+        final ContentPaths contentPaths = ContentPaths.from(
+            contents.subList( 3, 4 ).stream().map( content -> content.getPath().toString() ).collect( Collectors.toSet() ) );
+
+        Mockito.when( params.getContentPaths() ).thenReturn(
+            contentPaths.stream().map( ContentPath::toString ).collect( Collectors.toSet() ) );
+        Mockito.when( contentService.deleteWithoutFetch( Mockito.isA( DeleteContentParams.class ) ) ).
+            thenReturn( DeleteContentsResult.create().addDeleted( contents.get( 3 ).getId() ).build() );
+        Mockito.when( params.isDeleteOnline() ).thenReturn( true );
+        Mockito.when( contentService.getByPaths( contentPaths ) ).thenReturn( Contents.from( contents.subList( 3, 4 ) ) );
+
+        createAndRunTask();
+
+        Mockito.verify( progressReporter, Mockito.times( 2 ) ).info( contentQueryArgumentCaptor.capture() );
+
+        final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
+
+        Assert.assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"Item \\\"content4\\\" is deleted.\"}", resultMessage );
     }
 
     @Test

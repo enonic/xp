@@ -90,9 +90,9 @@ public class ContentTypeSummaryJson
         return iconUrl;
     }
 
-    public String getContentDisplayNameScript()
+    public String getDisplayNameExpression()
     {
-        return contentType.getContentDisplayNameScript();
+        return contentType.getDisplayNameExpression();
     }
 
     public String getSuperType()

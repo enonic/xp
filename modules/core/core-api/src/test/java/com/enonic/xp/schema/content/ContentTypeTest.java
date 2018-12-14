@@ -117,10 +117,21 @@ public class ContentTypeTest
     public void contentTypeBuilder()
     {
         ContentType.Builder builder =
-            ContentType.create().name( ContentTypeName.media() ).form( MEDIA_DEFAULT ).setAbstract().setFinal().allowChildContent(
-                true ).setBuiltIn().contentDisplayNameScript( "contentDisplayNameScript" ).displayName(
-                "displayName" ).description( "description" ).modifiedTime( Instant.now() ).createdTime( Instant.now() ).creator(
-                PrincipalKey.ofAnonymous() ).modifier( PrincipalKey.ofAnonymous() );
+            ContentType.
+                create().
+                name( ContentTypeName.media() ).
+                form( MEDIA_DEFAULT ).
+                setAbstract().
+                setFinal().
+                allowChildContent( true ).
+                setBuiltIn().
+                displayNameExpression( "displayNameExpression" ).
+                displayName( "displayName" ).
+                description( "description" ).
+                modifiedTime( Instant.now() ).
+                createdTime( Instant.now() ).
+                creator( PrincipalKey.ofAnonymous() ).
+                modifier( PrincipalKey.ofAnonymous() );
         ContentType contentType1 = builder.build();
         ContentType contentType2 = ContentType.create( contentType1 ).build();
         assertEquals( contentType1.getName(), contentType2.getName() );
@@ -129,7 +140,7 @@ public class ContentTypeTest
         assertEquals( contentType1.isFinal(), contentType2.isFinal() );
         assertEquals( contentType1.allowChildContent(), contentType2.allowChildContent() );
         assertEquals( contentType1.isBuiltIn(), contentType2.isBuiltIn() );
-        assertEquals( contentType1.getContentDisplayNameScript(), contentType2.getContentDisplayNameScript() );
+        assertEquals( contentType1.getDisplayNameExpression(), contentType2.getDisplayNameExpression() );
         assertEquals( contentType1.getDisplayName(), contentType2.getDisplayName() );
         assertEquals( contentType1.getDescription(), contentType2.getDescription() );
         assertEquals( contentType1.getModifiedTime(), contentType2.getModifiedTime() );
@@ -159,14 +170,6 @@ public class ContentTypeTest
     }
 
     @Test
-    public void getAllContentTypesParams()
-    {
-        GetAllContentTypesParams params = new GetAllContentTypesParams();
-        params.inlineMixinsToFormItems( true );
-        assertTrue( params.isInlineMixinsToFormItems() );
-    }
-
-    @Test
     public void getChildContentTypesParams()
     {
         GetChildContentTypesParams params1 = new GetChildContentTypesParams();
@@ -186,17 +189,7 @@ public class ContentTypeTest
     {
         GetContentTypeParams params1 = GetContentTypeParams.from( ContentTypeName.archiveMedia() );
         GetContentTypeParams params2 = GetContentTypeParams.from( ContentTypeName.archiveMedia() );
-        GetContentTypeParams params3 = GetContentTypeParams.from( ContentTypeName.archiveMedia() );
-        params1.inlineMixinsToFormItems( true );
-        params1.validate();
-        assertFalse( params2.isInlineMixinsToFormItems() );
-        assertFalse( params2.equals( params1 ) );
-        assertFalse( params2.hashCode() == params1.hashCode() );
-        assertTrue( params2.getContentTypeName().equals( params1.getContentTypeName() ) );
-        assertEquals( params1, params1 );
-        params1.contentTypeName( "test" );
-        assertNotEquals( params1, params2 );
-        assertEquals( params2, params3 );
+        assertEquals( params1, params2 );
     }
 
     @Test
