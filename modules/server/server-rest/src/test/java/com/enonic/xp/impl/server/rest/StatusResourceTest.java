@@ -28,7 +28,7 @@ public class StatusResourceTest
         Mockito.when( serverReporter.getName() ).thenReturn( "server" );
 
         final StatusResource resource = new StatusResource();
-        resource.setStatusReporter( serverReporter );
+        resource.addStatusReporter( serverReporter );
 
         return resource;
     }

@@ -15,6 +15,7 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.enonic.xp.jaxrs.JaxRsComponent;
+import com.enonic.xp.jaxrs.JaxRsExceptions;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.status.StatusReporter;
 import com.enonic.xp.util.Exceptions;
@@ -37,7 +38,11 @@ public final class StatusResource
         final ByteArrayOutputStream response = new ByteArrayOutputStream();
         try
         {
-            this.serverReporter.report( response );
+            StatusReporter serverReporter = this.serverReporter;
+            if (serverReporter == null) {
+                throw JaxRsExceptions.notFound( "Server reporter not found" );
+            }
+            serverReporter.report( response );
         }
         catch ( IOException e )
         {
@@ -49,11 +54,20 @@ public final class StatusResource
 
     @SuppressWarnings("UnusedDeclaration")
     @Reference(policy = ReferencePolicy.DYNAMIC, cardinality = ReferenceCardinality.MULTIPLE)
-    public void setStatusReporter( final StatusReporter reporter )
+    public void addStatusReporter( final StatusReporter reporter )
     {
         if ( SERVER_REPORTER_NAME.equals( reporter.getName() ) )
         {
             this.serverReporter = reporter;
+        }
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    public void removeStatusReporter( final StatusReporter reporter )
+    {
+        if ( SERVER_REPORTER_NAME.equals( reporter.getName() ) )
+        {
+            this.serverReporter = null;
         }
     }
 }
