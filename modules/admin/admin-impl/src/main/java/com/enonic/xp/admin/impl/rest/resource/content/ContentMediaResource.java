@@ -1,14 +1,15 @@
 package com.enonic.xp.admin.impl.rest.resource.content;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.io.InputStream;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.osgi.service.component.annotations.Component;
@@ -22,27 +23,22 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
-import com.enonic.xp.image.ImageHelper;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.jaxrs.JaxRsExceptions;
-import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.util.Exceptions;
 
 import static com.enonic.xp.web.servlet.ServletRequestUrlHelper.contentDispositionAttachment;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 @SuppressWarnings("UnusedDeclaration")
 @Path(ResourceConstants.REST_ROOT + "content/media")
-@Produces("application/octet-stream")
+@Produces(MediaType.APPLICATION_OCTET_STREAM)
 @RolesAllowed({RoleKeys.ADMIN_LOGIN_ID, RoleKeys.ADMIN_ID})
 @Component(immediate = true, property = "group=admin")
 public final class ContentMediaResource
     implements JaxRsComponent
 {
     private ContentService contentService;
-
-    private ContentTypeService contentTypeService;
 
     @GET
     @Path("{contentId}")
@@ -58,14 +54,84 @@ public final class ContentMediaResource
     public Response media( @PathParam("contentId") final String contentIdAsString, @PathParam("identifier") final String identifier )
         throws IOException
     {
-
         final ContentId contentId = ContentId.from( contentIdAsString );
-
         return doServeMedia( contentId, identifier );
+    }
+
+    @GET
+    @Path("preview/{contentId}")
+    public Response previewMedia( @PathParam("contentId") final String contentIdAsString )
+        throws IOException
+    {
+        final ContentId contentId = ContentId.from( contentIdAsString );
+        return doServeMedia( contentId, null, true );
+    }
+
+    @GET
+    @Path("preview/{contentId}/{identifier}")
+    public Response previewMedia( @PathParam("contentId") final String contentIdAsString, @PathParam("identifier") final String identifier )
+        throws IOException
+    {
+        final ContentId contentId = ContentId.from( contentIdAsString );
+        return doServeMedia( contentId, identifier, true );
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("isAllowPreview")
+    public boolean isAllowPreview( @QueryParam("contentId") final String contentIdAsString,
+                                   @QueryParam("identifier") final String identifier )
+    {
+        final ContentId contentId = ContentId.from( contentIdAsString );
+        final Attachment attachment = resolveAttachment( identifier, contentId );
+
+        if ( attachment == null )
+        {
+            return false;
+        }
+
+        return attachmentAllowsPreview( attachment );
+    }
+
+    private Response doServeMedia( final ContentId contentId, final String identifier, final Boolean preview )
+        throws IOException
+    {
+        final Attachment attachment = resolveAttachment( identifier, contentId );
+        if ( attachment == null )
+        {
+            throw JaxRsExceptions.notFound( String.format( "Content [%s] has no attachments", contentId ) );
+        }
+        else if ( preview && !attachmentAllowsPreview( attachment ) )
+        {
+            throw new WebApplicationException( String.format( "Preview for attachment [%s] is not supported", attachment.getName() ) );
+        }
+
+        final ByteSource binary = contentService.getBinary( contentId, attachment.getBinaryReference() );
+        Response.ResponseBuilder response = Response.ok( binary.openStream(), attachment.getMimeType() );
+
+        if ( !preview )
+        {
+            final String fileName = attachment.getName();
+            if ( isNotEmpty( fileName ) )
+            {
+                response = response.header( "Content-Disposition", contentDispositionAttachment( fileName ) );
+            }
+        }
+        return response.build();
     }
 
     private Response doServeMedia( final ContentId contentId, final String identifier )
         throws IOException
+    {
+        return doServeMedia( contentId, identifier, false );
+    }
+
+    private Boolean attachmentAllowsPreview( final Attachment attachment )
+    {
+        return !attachment.getMimeType().startsWith( "application/msword" ) && !attachment.getMimeType().startsWith( "application/vnd." );
+    }
+
+    private Attachment resolveAttachment( final String identifier, final ContentId contentId )
     {
         final Content content = contentService.getById( contentId );
 
@@ -74,23 +140,7 @@ public final class ContentMediaResource
             throw JaxRsExceptions.notFound( String.format( "Content [%s] was not found", contentId ) );
         }
 
-        final Attachment attachment = resolveAttachment( identifier, content );
-        if ( attachment == null )
-        {
-            throw JaxRsExceptions.notFound( String.format( "Content [%s] has no attachments", contentId ) );
-        }
-        else
-        {
-            final ByteSource binary = contentService.getBinary( contentId, attachment.getBinaryReference() );
-            Response.ResponseBuilder response = Response.ok( binary.openStream(), attachment.getMimeType() );
-
-            final String fileName = attachment.getName();
-            if ( isNotEmpty( fileName ) )
-            {
-                response = response.header( "Content-Disposition", contentDispositionAttachment( fileName ) );
-            }
-            return response.build();
-        }
+        return resolveAttachment( identifier, content );
     }
 
     private Attachment resolveAttachment( final String identifier, final Content content )
@@ -111,44 +161,9 @@ public final class ContentMediaResource
         return attachment;
     }
 
-    private ResolvedImage resolveResponseFromContentImageAttachment( final Content content, final Attachment attachment )
-    {
-        if ( attachment != null )
-        {
-            final ByteSource binary = contentService.getBinary( content.getId(), attachment.getBinaryReference() );
-            if ( binary != null )
-            {
-                final BufferedImage contentImage;
-                try (final InputStream inputStream = binary.openStream())
-                {
-                    contentImage = ImageHelper.toBufferedImage( inputStream );
-                }
-                catch ( IOException e )
-                {
-                    throw Exceptions.unchecked( e );
-                }
-
-                return new ResolvedImage( contentImage, attachment.getMimeType() );
-            }
-        }
-        return ResolvedImage.unresolved();
-    }
-
-
-    private ContentIconUrlResolver newContentIconUrlResolver()
-    {
-        return new ContentIconUrlResolver( this.contentTypeService );
-    }
-
     @Reference
     public void setContentService( final ContentService contentService )
     {
         this.contentService = contentService;
-    }
-
-    @Reference
-    public void setContentTypeService( final ContentTypeService contentTypeService )
-    {
-        this.contentTypeService = contentTypeService;
     }
 }
