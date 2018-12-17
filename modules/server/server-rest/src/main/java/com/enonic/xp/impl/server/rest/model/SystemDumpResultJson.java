@@ -1,9 +1,8 @@
 package com.enonic.xp.impl.server.rest.model;
 
-import java.time.Duration;
 import java.util.List;
 
-import org.codehaus.jparsec.util.Lists;
+import com.google.common.collect.Lists;
 
 import com.enonic.xp.dump.RepoDumpResult;
 import com.enonic.xp.dump.SystemDumpResult;
@@ -42,7 +41,7 @@ public class SystemDumpResultJson
 
     public static final class Builder
     {
-        private final List<RepoDumpResultJson> repositories = Lists.arrayList();
+        private final List<RepoDumpResultJson> repositories = Lists.newArrayList();
 
         private Builder()
         {

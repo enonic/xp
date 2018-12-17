@@ -6,7 +6,7 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.codehaus.jparsec.util.Lists;
+import com.google.common.collect.Lists;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationWildcardResolver;
@@ -49,7 +49,7 @@ public class ContentTypeNameWildcardResolver
 
     public List<String> resolveWildcards( final List<String> namesToResolve, final ApplicationKey currentApplicationKey )
     {
-        List<String> resolvedNames = Lists.arrayList();
+        final List<String> resolvedNames = Lists.newArrayList();
 
         namesToResolve.forEach( name -> {
             if ( this.applicationWildcardResolver.hasAnyWildcard( name ) || this.applicationWildcardResolver.startWithAppWildcard( name ) )

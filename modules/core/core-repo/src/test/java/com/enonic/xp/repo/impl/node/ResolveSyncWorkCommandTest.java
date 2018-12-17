@@ -3,7 +3,7 @@ package com.enonic.xp.repo.impl.node;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.codehaus.jparsec.util.Strings;
+import org.jparsec.internal.util.Strings;
 import org.junit.Before;
 import org.junit.Test;
 

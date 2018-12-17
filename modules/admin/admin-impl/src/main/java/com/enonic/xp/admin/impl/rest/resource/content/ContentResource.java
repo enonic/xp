@@ -164,6 +164,7 @@ import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.jaxrs.JaxRsExceptions;
 import com.enonic.xp.query.parser.QueryParser;
+import com.enonic.xp.repository.IndexException;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
 import com.enonic.xp.security.Principal;
@@ -178,6 +179,7 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.task.TaskService;
+import com.enonic.xp.util.Exceptions;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
@@ -1083,7 +1085,15 @@ public final class ContentResource
     @Consumes(MediaType.APPLICATION_JSON)
     public AbstractContentQueryResultJson selectorQuery( final ContentSelectorQueryJson contentQueryJson )
     {
-        final FindContentIdsByQueryResult findResult = findContentsBySelectorQuery( contentQueryJson );
+        FindContentIdsByQueryResult findResult;
+        try
+        {
+            findResult = findContentsBySelectorQuery( contentQueryJson );
+        }
+        catch ( IndexException e )
+        {
+            throw Exceptions.newRuntime( "Failed to find contents" ).withCause( e );
+        }
 
         return FindContentByQuertResultJsonFactory.create().
             contents( this.contentService.getByIds( new GetContentByIdsParams( findResult.getContentIds() ) ) ).

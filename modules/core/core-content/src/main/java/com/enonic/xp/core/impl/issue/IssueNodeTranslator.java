@@ -2,7 +2,7 @@ package com.enonic.xp.core.impl.issue;
 
 import java.util.List;
 
-import org.codehaus.jparsec.util.Lists;
+import com.google.common.collect.Lists;
 
 import com.enonic.xp.core.impl.issue.serializer.IssueDataSerializer;
 import com.enonic.xp.issue.Issue;
@@ -22,7 +22,7 @@ public class IssueNodeTranslator
 
     public static List<Issue> fromNodes( final Nodes nodes )
     {
-        List<Issue> issues = Lists.arrayList();
+        final List<Issue> issues = Lists.newArrayList();
 
         for ( final Node node : nodes )
         {

@@ -2,7 +2,7 @@ package com.enonic.xp.query.parser;
 
 import java.util.List;
 
-import org.codehaus.jparsec.error.ParserException;
+import org.jparsec.error.ParserException;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Strings;

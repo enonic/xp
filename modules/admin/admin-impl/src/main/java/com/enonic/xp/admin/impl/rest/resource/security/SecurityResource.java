@@ -19,9 +19,10 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jparsec.util.Lists;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
+import com.google.common.collect.Lists;
 
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.security.json.CreateGroupJson;
@@ -294,7 +295,7 @@ public final class SecurityResource
     private FetchPrincipalsWithRolesResult fetchPrincipalsWithRoles( final PrincipalQuery.Builder principalQuery, final String roles,
                                                                      final int from, final int size )
     {
-        List<Principal> resultingPrincipals = Lists.arrayList();
+        final List<Principal> resultingPrincipals = Lists.newArrayList();
         int totalCount;
         int fromTemp = from;
         final AtomicInteger unfilteredCount = new AtomicInteger( 0 );
