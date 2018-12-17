@@ -95,6 +95,7 @@ public final class SystemResource
             description( "upgrade" ).
             taskService( taskService ).
             dumpService( dumpService ).
+            params( params ).
             build().
             createTaskResult();
     }

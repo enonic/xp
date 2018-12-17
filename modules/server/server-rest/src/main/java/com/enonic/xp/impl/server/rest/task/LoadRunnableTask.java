@@ -9,6 +9,7 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.dump.BranchLoadResult;
 import com.enonic.xp.dump.DumpService;
 import com.enonic.xp.dump.RepoLoadResult;
+import com.enonic.xp.dump.SystemLoadListener;
 import com.enonic.xp.dump.SystemLoadParams;
 import com.enonic.xp.dump.SystemLoadResult;
 import com.enonic.xp.export.ExportService;
@@ -18,9 +19,11 @@ import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.impl.server.rest.NodeImportResultTranslator;
 import com.enonic.xp.impl.server.rest.model.SystemLoadRequestJson;
 import com.enonic.xp.impl.server.rest.model.SystemLoadResultJson;
+import com.enonic.xp.impl.server.rest.task.listener.SystemLoadListenerImpl;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.NodeRepositoryService;
+import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
@@ -43,6 +46,8 @@ public class LoadRunnableTask
 
     private final ExportService exportService;
 
+    private SystemLoadListener loadDumpListener;
+
     private LoadRunnableTask( Builder builder )
     {
         super( builder );
@@ -62,6 +67,8 @@ public class LoadRunnableTask
     public void run( final TaskId id, final ProgressReporter progressReporter )
     {
         SystemLoadResultJson result;
+        loadDumpListener = new SystemLoadListenerImpl( progressReporter );
+
         if ( isExport( params ) )
         {
             result = doLoadFromExport( params );
@@ -87,11 +94,20 @@ public class LoadRunnableTask
     {
         final SystemLoadResult.Builder builder = SystemLoadResult.create();
 
+        final Repositories repositories = repositoryService.list();
+
+        final long branchesCount = repositories.
+            stream().
+            flatMap( repository -> repository.getBranches().stream() ).
+            count() + SystemConstants.SYSTEM_REPO.getBranches().getSize();
+
+        loadDumpListener.totalBranches( branchesCount );
+
         builder.add( importSystemRepo( request ) );
 
         this.repositoryService.invalidateAll();
 
-        for ( Repository repository : repositoryService.list() )
+        for ( Repository repository : repositories )
         {
             initializeRepo( repository );
             builder.add( importRepoBranches( request.getName(), repository ) );
@@ -141,6 +157,7 @@ public class LoadRunnableTask
             dumpName( request.getName() ).
             upgrade( request.isUpgrade() ).
             includeVersions( true ).
+            listener( loadDumpListener ).
             build() );
 
         return SystemLoadResultJson.from( systemLoadResult );

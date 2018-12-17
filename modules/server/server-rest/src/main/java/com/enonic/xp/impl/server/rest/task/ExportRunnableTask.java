@@ -12,6 +12,7 @@ import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.impl.server.rest.model.ExportNodesRequestJson;
 import com.enonic.xp.impl.server.rest.model.NodeExportResultJson;
 import com.enonic.xp.impl.server.rest.model.RepoPath;
+import com.enonic.xp.impl.server.rest.task.listener.ExportListenerImpl;
 import com.enonic.xp.task.AbstractRunnableTask;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskId;
@@ -45,6 +46,7 @@ public class ExportRunnableTask
                 dryRun( params.isDryRun() ).
                 includeNodeIds( params.isExportWithIds() ).
                 includeVersions( params.isIncludeVersions() ).
+                nodeExportListener( new ExportListenerImpl( progressReporter ) ).
                 build() ) );
 
         progressReporter.info( NodeExportResultJson.from( result ).toString() );

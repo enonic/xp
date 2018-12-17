@@ -124,7 +124,7 @@ public class LoadRunnableTaskTest
             VersionsLoadResult.create().error( LoadError.error( "version-load-error-message" ) ).successful(
                 1L ).build() ).build() ).build();
 
-        Mockito.when( this.dumpService.load( params ) ).thenReturn( systemLoadResult );
+        Mockito.when( this.dumpService.load( Mockito.isA( SystemLoadParams.class ) ) ).thenReturn( systemLoadResult );
 
         final LoadRunnableTask task = createAndRunTask( new SystemLoadRequestJson( params.getDumpName(), params.isUpgrade() ) );
 
@@ -151,7 +151,7 @@ public class LoadRunnableTaskTest
             VersionsLoadResult.create().error( LoadError.error( "version-load-error-message" ) ).successful(
                 1L ).build() ).build() ).build();
 
-        Mockito.when( this.dumpService.load( params ) ).thenReturn( systemLoadResult );
+        Mockito.when( this.dumpService.load( Mockito.isA( SystemLoadParams.class ) ) ).thenReturn( systemLoadResult );
 
         final LoadRunnableTask task = createAndRunTask( new SystemLoadRequestJson( params.getDumpName(), params.isUpgrade() ) );
 

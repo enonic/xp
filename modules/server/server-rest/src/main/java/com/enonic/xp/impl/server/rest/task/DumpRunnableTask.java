@@ -5,6 +5,7 @@ import com.enonic.xp.dump.SystemDumpParams;
 import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.impl.server.rest.model.SystemDumpRequestJson;
 import com.enonic.xp.impl.server.rest.model.SystemDumpResultJson;
+import com.enonic.xp.impl.server.rest.task.listener.SystemDumpListenerImpl;
 import com.enonic.xp.task.AbstractRunnableTask;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskId;
@@ -37,6 +38,7 @@ public class DumpRunnableTask
             includeVersions( params.isIncludeVersions() ).
             maxAge( params.getMaxAge() ).
             maxVersions( params.getMaxVersions() ).
+            listener( new SystemDumpListenerImpl( progressReporter ) ).
             build();
 
         final SystemDumpResult result = this.dumpService.dump( systemDumpParams );

@@ -40,7 +40,12 @@ public class VacuumServiceImpl
     {
         final VacuumResult.Builder taskResults = VacuumResult.create();
 
-        final VacuumTaskParams taskParams = VacuumTaskParams.create().listener( params.getListener() ).build();
+        final VacuumTaskParams taskParams = VacuumTaskParams.create().listener( params.getVacuumProgressListener() ).build();
+
+        if ( params.getVacuumTaskListener() != null )
+        {
+            params.getVacuumTaskListener().total( tasks.size() );
+        }
 
         for ( final VacuumTask task : this.tasks )
         {
@@ -49,6 +54,11 @@ public class VacuumServiceImpl
             LOG.info( task.name() + " : " + taskResult.toString() );
             taskResults.add( taskResult );
             LOG.info( "VacuumTask done: " + task.name() );
+
+            if ( params.getVacuumTaskListener() != null )
+            {
+                params.getVacuumTaskListener().taskExecuted();
+            }
         }
         return taskResults;
     }

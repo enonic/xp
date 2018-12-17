@@ -12,6 +12,7 @@ import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.impl.server.rest.model.ImportNodesRequestJson;
 import com.enonic.xp.impl.server.rest.model.NodeImportResultJson;
 import com.enonic.xp.impl.server.rest.model.RepoPath;
+import com.enonic.xp.impl.server.rest.task.listener.ImportListenerImpl;
 import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.NodeRepositoryService;
 import com.enonic.xp.repository.Repository;
@@ -64,6 +65,7 @@ public class ImportRunnableTask
                 includePermissions( params.isImportWithPermissions() ).
                 xslt( xsltFile ).
                 xsltParams( params.getXslParams() ).
+                nodeImportListener( new ImportListenerImpl( progressReporter ) ).
                 build() ) );
 
         if ( targetIsSystemRepo( targetRepoPath ) )

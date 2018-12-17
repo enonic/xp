@@ -15,15 +15,12 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Sets;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
 
 import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
@@ -76,6 +73,7 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.upgrade.UpgradeListener;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.Version;
 
@@ -662,13 +660,19 @@ public class DumpServiceImplTest
         createIncompatibleDump( dumpName );
 
         NodeHelper.runAsAdmin( () -> {
+            final UpgradeListener upgradeListener = Mockito.mock( UpgradeListener.class );
+
             final SystemDumpUpgradeParams params = SystemDumpUpgradeParams.create().
                 dumpName( dumpName ).
+                upgradeListener( upgradeListener ).
                 build();
 
             final SystemDumpUpgradeResult result = this.dumpService.upgrade( params );
             assertEquals( new Version( 0, 0, 0 ), result.getInitialVersion() );
             assertEquals( DumpConstants.MODEL_VERSION, result.getUpgradedVersion() );
+
+            Mockito.verify( upgradeListener, Mockito.times( 2 ) ).upgraded();
+            Mockito.verify( upgradeListener, Mockito.times( 1 ) ).total( 2 );
 
             FileDumpReader reader = new FileDumpReader( tempFolder.getRoot().toPath(), dumpName, null );
             final DumpMeta updatedMeta = reader.getDumpMeta();
@@ -832,35 +836,6 @@ public class DumpServiceImplTest
             id( node.id() ).
             editor( ( n ) -> n.data.setInstant( "timestamp", Instant.now() ) ).
             build() );
-    }
-
-    private class TestDumpListener
-        implements SystemDumpListener
-    {
-        private int nodesDumped = 0;
-
-        private long total = 0;
-
-        private final ListMultimap<RepositoryId, Branch> dumpedBranches = ArrayListMultimap.create();
-
-        @Override
-        public void dumpingBranch( final RepositoryId repositoryId, final Branch branch, final long total )
-        {
-            dumpedBranches.put( repositoryId, branch );
-            this.total = total;
-        }
-
-        @Override
-        public void nodeDumped()
-        {
-            this.nodesDumped++;
-        }
-
-        int getNodesDumped()
-        {
-            return nodesDumped;
-        }
-
     }
 
 }

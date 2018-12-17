@@ -12,6 +12,7 @@ import com.enonic.xp.dump.RepoDumpResult;
 import com.enonic.xp.dump.SystemDumpParams;
 import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.impl.server.rest.model.SystemDumpRequestJson;
+import com.enonic.xp.impl.server.rest.task.listener.SystemDumpListenerImpl;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.task.AbstractRunnableTaskTest;
 import com.enonic.xp.task.RunnableTask;
@@ -65,9 +66,10 @@ public class DumpRunnableTaskTest
             includeVersions( true ).
             maxAge( 10 ).
             maxVersions( 20 ).
+            listener( new SystemDumpListenerImpl( progressReporter ) ).
             build();
 
-        Mockito.when( this.dumpService.dump( params ) ).thenReturn( systemDumpResult );
+        Mockito.when( this.dumpService.dump( Mockito.isA( SystemDumpParams.class ) ) ).thenReturn( systemDumpResult );
 
         final DumpRunnableTask task = createAndRunTask(
             new SystemDumpRequestJson( params.getDumpName(), params.isIncludeVersions(), params.getMaxAge(), params.getMaxVersions() ) );

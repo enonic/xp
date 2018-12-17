@@ -5,9 +5,11 @@ import com.enonic.xp.dump.SystemDumpUpgradeParams;
 import com.enonic.xp.dump.SystemDumpUpgradeResult;
 import com.enonic.xp.impl.server.rest.model.SystemDumpUpgradeRequestJson;
 import com.enonic.xp.impl.server.rest.model.SystemDumpUpgradeResultJson;
+import com.enonic.xp.impl.server.rest.task.listener.UpgradeListenerImpl;
 import com.enonic.xp.task.AbstractRunnableTask;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskId;
+import com.enonic.xp.upgrade.UpgradeListener;
 
 public class UpgradeRunnableTask
     extends AbstractRunnableTask
@@ -31,11 +33,16 @@ public class UpgradeRunnableTask
     @Override
     public void run( final TaskId id, final ProgressReporter progressReporter )
     {
+        final UpgradeListener upgradeListener = new UpgradeListenerImpl( progressReporter );
+
         final SystemDumpUpgradeParams upgradeParams = SystemDumpUpgradeParams.create().
             dumpName( params.getName() ).
+            upgradeListener( upgradeListener ).
             build();
 
         final SystemDumpUpgradeResult result = this.dumpService.upgrade( upgradeParams );
+        upgradeListener.finished();
+
         progressReporter.info( SystemDumpUpgradeResultJson.from( result ).toString() );
 
     }
