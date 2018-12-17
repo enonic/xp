@@ -1,6 +1,7 @@
 package com.enonic.xp.status;
 
 import java.io.IOException;
+import java.io.OutputStream;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Charsets;
@@ -14,10 +15,11 @@ public abstract class JsonStatusReporter
         return MediaType.JSON_UTF_8;
     }
 
-    public final void report( final StatusContext context )
+    @Override
+    public final void report( final OutputStream outputStream )
         throws IOException
     {
-        context.getOutputStream().write( getReport().toString().getBytes( Charsets.UTF_8 ) );
+        outputStream.write( getReport().toString().getBytes( Charsets.UTF_8 ) );
     }
 
     public abstract JsonNode getReport();
