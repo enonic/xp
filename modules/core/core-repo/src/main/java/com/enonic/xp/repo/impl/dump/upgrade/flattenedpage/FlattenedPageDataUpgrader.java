@@ -51,7 +51,7 @@ public class FlattenedPageDataUpgrader
             addPageComponent( nodeData );
             addComponents( nodeData );
         }
-        nodeData.removeProperty( FlattenedPageSourceConstants.SRC_PAGE_KEY );
+        nodeData.removeProperties( FlattenedPageSourceConstants.SRC_PAGE_KEY );
 
         return true;
     }
