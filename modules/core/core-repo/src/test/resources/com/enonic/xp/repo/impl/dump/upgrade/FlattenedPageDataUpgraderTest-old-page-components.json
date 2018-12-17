@@ -1,0 +1,82 @@
+{
+  "page": {
+    "controller": "com.enonic.app.features:main",
+    "region": {
+      "name": "main",
+      "component": [
+        {
+          "type": "LayoutComponent",
+          "LayoutComponent": {
+            "name": "25/75",
+            "template": "com.enonic.app.features:layout-25-75",
+            "config": {
+            },
+            "region": [
+              {
+                "name": "left",
+                "component": {
+                  "type": "PartComponent",
+                  "PartComponent": {
+                    "name": "Cities Distance Facet",
+                    "template": "com.enonic.app.features:cities-distance-facet",
+                    "config": {
+                    }
+                  }
+                }
+              },
+              {
+                "name": "right",
+                "component": [
+                  {
+                    "type": "ImageComponent",
+                    "ImageComponent": {
+                      "name": "IMG_6289",
+                      "image": "19b48941-135a-48b8-adc7-cd9c911762d3",
+                      "config": {
+                      }
+                    }
+                  },
+                  {
+                    "type": "TextComponent",
+                    "TextComponent": {
+                      "name": "Text",
+                      "ho": ""
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "type": "ImageComponent",
+          "ImageComponent": {
+            "name": "_DSC0263",
+            "image": "8383331b-c0a5-4926-bc79-83a29c6da195",
+            "config": {
+            }
+          }
+        },
+        {
+          "type": "PartComponent",
+          "PartComponent": {
+            "name": "getComponent",
+            "template": "com.enonic.app.features:getComponent",
+            "config": {
+            }
+          }
+        },
+        {
+          "type": "TextComponent",
+          "TextComponent": {
+            "name": "Text",
+            "text": "Lorem ipsum"
+          }
+        }
+      ]
+    },
+    "config": {
+    },
+    "customized": true
+  }
+}
