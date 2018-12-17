@@ -84,7 +84,7 @@ public class EditableContent
             creator( creator ).
             createdTime( createdTime ).
             publishInfo( publishInfo ).
-            addProcessedReferences( processedReferences.build() ).
+            processedReferences( processedReferences.build() ).
             build();
     }
 }
