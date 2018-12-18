@@ -24,9 +24,6 @@ final class NodeVersionJson
     @JsonProperty("id")
     private String id;
 
-    @JsonProperty("timestamp")
-    private Instant timestamp;
-
     @JsonProperty("data")
     private List<PropertyArrayJson> data;
 
@@ -63,7 +60,6 @@ final class NodeVersionJson
             inheritPermissions( this.inheritPermissions ).
             nodeType( NodeType.from( this.nodeType ) ).
             attachedBinaries( fromNodeAttachedBinaryJsonList( attachedBinaries ) ).
-            timestamp( this.timestamp ).
             build();
     }
 
@@ -101,7 +97,6 @@ final class NodeVersionJson
         json.inheritPermissions = nodeVersion.isInheritPermissions();
         json.nodeType = nodeVersion.getNodeType().getName();
         json.attachedBinaries = toNodeAttachedBinaryJsonList( nodeVersion.getAttachedBinaries() );
-        json.timestamp = nodeVersion.getTimestamp();
         return json;
     }
 

@@ -187,7 +187,7 @@ class RepoDumper
     private void doStoreVersion( final VersionsDumpEntry.Builder builder, final NodeVersionMetadata metaData )
     {
         final NodeVersion nodeVersion = this.nodeService.getByBlobKey( metaData.getBlobKey() );
-        builder.addVersion( VersionMetaFactory.create( nodeVersion, metaData ) );
+        builder.addVersion( VersionMetaFactory.create( metaData ) );
 
         storeVersionBlob( metaData );
         storeVersionBinaries( metaData, nodeVersion );

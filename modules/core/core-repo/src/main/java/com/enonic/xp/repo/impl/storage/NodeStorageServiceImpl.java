@@ -75,7 +75,6 @@ public class NodeStorageServiceImpl
             permissions( node.getPermissions() ).
             inheritPermissions( node.inheritsPermissions() ).
             attachedBinaries( node.getAttachedBinaries() ).
-            timestamp( node.getTimestamp() ).
             build();
 
         final NodeVersionId nodeVersionId = node.getNodeVersionId();
