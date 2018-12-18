@@ -54,8 +54,7 @@ public class ContentMediaResourceTest
     {
         final Media content = mockAttachmentBinary();
 
-        MockRestResponse result = request().path( "content/media/" + content.getId().toString() ).
-            queryParam( "contentId", content.getId().toString() ).get();
+        MockRestResponse result = request().path( "content/media/" + content.getId().toString() ).get();
 
         assertTrue( result.getHeader( "Content-Disposition" ).startsWith( "attachment; filename=\"document.pdf\"" ) );
         Assert.assertArrayEquals( ATTACHMENT_DATA_1, result.getData() );
@@ -67,8 +66,7 @@ public class ContentMediaResourceTest
     {
         final Media content = mockAttachmentBinary();
 
-        MockRestResponse result = request().path( "content/media/" + content.getId().toString() + "/byName" ).
-            queryParam( "contentId", content.getId().toString() ).get();
+        MockRestResponse result = request().path( "content/media/" + content.getId().toString() + "/byName" ).get();
 
         assertTrue( result.getHeader( "Content-Disposition" ).startsWith( "attachment; filename=\"byName.pdf\"" ) );
         Assert.assertArrayEquals( ATTACHMENT_DATA_2, result.getData() );
@@ -80,8 +78,8 @@ public class ContentMediaResourceTest
     {
         final Media content = mockAttachmentBinary();
 
-        MockRestResponse result = request().path( "content/media/preview/" + content.getId().toString() ).
-            queryParam( "contentId", content.getId().toString() ).get();
+        MockRestResponse result = request().path( "content/media/" + content.getId().toString() ).
+            queryParam( "download", "false" ).get();
 
         assertNull( result.getHeader( "Content-Disposition" ) );
         Assert.assertArrayEquals( ATTACHMENT_DATA_1, result.getData() );
@@ -93,8 +91,8 @@ public class ContentMediaResourceTest
     {
         final Media content = mockAttachmentBinary();
 
-        MockRestResponse result = request().path( "content/media/preview/" + content.getId().toString() + "/byName" ).
-            queryParam( "contentId", content.getId().toString() ).get();
+        MockRestResponse result = request().path( "content/media/" + content.getId().toString() + "/byName" ).
+            queryParam( "download", content.getId().toString() ).get();
 
         assertNull( result.getHeader( "Content-Disposition" ) );
         Assert.assertArrayEquals( ATTACHMENT_DATA_2, result.getData() );
@@ -153,7 +151,7 @@ public class ContentMediaResourceTest
         ex.expect( WebApplicationException.class );
         ex.expectMessage( "Content [id] was not found" );
 
-        contentMediaResource.media( "id" );
+        contentMediaResource.media( "id", true );
     }
 
     @Test
@@ -165,7 +163,7 @@ public class ContentMediaResourceTest
         ex.expect( WebApplicationException.class );
         ex.expectMessage( "Content [" + media.getId().toString() + "] has no attachments" );
 
-        contentMediaResource.media( media.getId().toString() );
+        contentMediaResource.media( media.getId().toString(), true );
     }
 
     @Test
@@ -185,7 +183,7 @@ public class ContentMediaResourceTest
         ex.expect( WebApplicationException.class );
         ex.expectMessage( "Preview for attachment [word.doc] is not supported" );
 
-        contentMediaResource.previewMedia( media.getId().toString(), "word" );
+        contentMediaResource.media( media.getId().toString(), "word", false );
     }
 
     private Media mockAttachmentBinary()

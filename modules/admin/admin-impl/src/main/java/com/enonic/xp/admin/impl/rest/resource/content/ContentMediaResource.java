@@ -1,8 +1,12 @@
 package com.enonic.xp.admin.impl.rest.resource.content;
 
 import java.io.IOException;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.security.RolesAllowed;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -25,6 +29,9 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.jaxrs.JaxRsExceptions;
+import com.enonic.xp.schema.content.ContentTypeFromMimeTypeResolver;
+import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.security.RoleKeys;
 
 import static com.enonic.xp.web.servlet.ServletRequestUrlHelper.contentDispositionAttachment;
@@ -40,40 +47,30 @@ public final class ContentMediaResource
 {
     private ContentService contentService;
 
+    private static final Set<String> ALLOWED_PREVIEW_TYPES = Stream.concat( ContentTypeFromMimeTypeResolver.resolveMimeTypes(
+        ContentTypeNames.from( ContentTypeName.audioMedia(), ContentTypeName.videoMedia(), ContentTypeName.textMedia() ) ).stream(),
+                                                                            Set.of( "application/pdf",
+                                                                                    "application/postscript" ).stream() ).
+        collect( Collectors.toSet() );
+
     @GET
     @Path("{contentId}")
-    public Response media( @PathParam("contentId") final String contentIdAsString )
+    public Response media( @PathParam("contentId") final String contentIdAsString,
+                           @QueryParam("download") @DefaultValue("true") final boolean download )
         throws IOException
     {
         final ContentId contentId = ContentId.from( contentIdAsString );
-        return doServeMedia( contentId, null );
+        return doServeMedia( contentId, null, download );
     }
 
     @GET
     @Path("{contentId}/{identifier}")
-    public Response media( @PathParam("contentId") final String contentIdAsString, @PathParam("identifier") final String identifier )
+    public Response media( @PathParam("contentId") final String contentIdAsString, @PathParam("identifier") final String identifier,
+                           @QueryParam("download") @DefaultValue("true") final boolean download )
         throws IOException
     {
         final ContentId contentId = ContentId.from( contentIdAsString );
-        return doServeMedia( contentId, identifier );
-    }
-
-    @GET
-    @Path("preview/{contentId}")
-    public Response previewMedia( @PathParam("contentId") final String contentIdAsString )
-        throws IOException
-    {
-        final ContentId contentId = ContentId.from( contentIdAsString );
-        return doServeMedia( contentId, null, true );
-    }
-
-    @GET
-    @Path("preview/{contentId}/{identifier}")
-    public Response previewMedia( @PathParam("contentId") final String contentIdAsString, @PathParam("identifier") final String identifier )
-        throws IOException
-    {
-        final ContentId contentId = ContentId.from( contentIdAsString );
-        return doServeMedia( contentId, identifier, true );
+        return doServeMedia( contentId, identifier, download );
     }
 
     @GET
@@ -93,7 +90,7 @@ public final class ContentMediaResource
         return attachmentAllowsPreview( attachment );
     }
 
-    private Response doServeMedia( final ContentId contentId, final String identifier, final Boolean preview )
+    private Response doServeMedia( final ContentId contentId, final String identifier, final Boolean download )
         throws IOException
     {
         final Attachment attachment = resolveAttachment( identifier, contentId );
@@ -101,7 +98,7 @@ public final class ContentMediaResource
         {
             throw JaxRsExceptions.notFound( String.format( "Content [%s] has no attachments", contentId ) );
         }
-        else if ( preview && !attachmentAllowsPreview( attachment ) )
+        else if ( !download && !attachmentAllowsPreview( attachment ) )
         {
             throw new WebApplicationException( String.format( "Preview for attachment [%s] is not supported", attachment.getName() ) );
         }
@@ -109,7 +106,7 @@ public final class ContentMediaResource
         final ByteSource binary = contentService.getBinary( contentId, attachment.getBinaryReference() );
         Response.ResponseBuilder response = Response.ok( binary.openStream(), attachment.getMimeType() );
 
-        if ( !preview )
+        if ( download )
         {
             final String fileName = attachment.getName();
             if ( isNotEmpty( fileName ) )
@@ -128,7 +125,7 @@ public final class ContentMediaResource
 
     private Boolean attachmentAllowsPreview( final Attachment attachment )
     {
-        return !attachment.getMimeType().startsWith( "application/msword" ) && !attachment.getMimeType().startsWith( "application/vnd." );
+        return ALLOWED_PREVIEW_TYPES.contains( attachment.getMimeType() );
     }
 
     private Attachment resolveAttachment( final String identifier, final ContentId contentId )
