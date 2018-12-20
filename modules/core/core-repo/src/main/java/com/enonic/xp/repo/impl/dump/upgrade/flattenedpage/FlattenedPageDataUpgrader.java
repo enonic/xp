@@ -1,7 +1,15 @@
 package com.enonic.xp.repo.impl.dump.upgrade.flattenedpage;
 
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Iterables;
+
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.util.Reference;
 
 import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageSourceConstants.SRC_COMPONENT_KEY;
 import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageSourceConstants.SRC_CONFIG_KEY;
@@ -32,6 +40,14 @@ import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageTa
 
 public class FlattenedPageDataUpgrader
 {
+    private final Logger LOG = LoggerFactory.getLogger( FlattenedPageDataUpgrader.class );
+
+    private final Map<String, String> templateControllerMap;
+
+    private FlattenedPageDataUpgrader( final Builder builder )
+    {
+        templateControllerMap = builder.templateControllerMap;
+    }
 
     public boolean upgrade( final PropertyTree nodeData )
     {
@@ -74,15 +90,31 @@ public class FlattenedPageDataUpgrader
         final PropertySet pageComponentDataSet = pageComponentSet.addSet( TGT_TYPE_VALUE.PAGE );
 
         final PropertySet sourcePageSet = nodeData.getSet( SRC_PAGE_KEY );
-        pageComponentDataSet.setString( TGT_DESCRIPTOR_KEY, sourcePageSet.getString( SRC_CONTROLLER_KEY ) );
-        pageComponentDataSet.setReference( TGT_TEMPLATE_KEY, sourcePageSet.getReference( SRC_TEMPLATE_KEY ) );
+        String descriptorKey = sourcePageSet.getString( SRC_CONTROLLER_KEY );
+        pageComponentDataSet.setString( TGT_DESCRIPTOR_KEY, descriptorKey );
         pageComponentDataSet.setBoolean( TGT_CUSTOMIZED_KEY, sourcePageSet.getBoolean( SRC_CUSTOMIZED_KEY ) );
 
+        final Reference sourceTemplateKey = sourcePageSet.getReference( SRC_TEMPLATE_KEY );
+        if ( sourceTemplateKey != null )
+        {
+            if ( Iterables.isEmpty( sourcePageSet.getSets( SRC_REGION_KEY ) ) )
+            {
+                pageComponentDataSet.setReference( TGT_TEMPLATE_KEY, sourceTemplateKey );
+            }
+            else
+            {
+                descriptorKey = templateControllerMap.get( sourceTemplateKey.toString() );
+                LOG.info( "Page with both template reference and components. Replacing template reference [" + sourceTemplateKey +
+                              "] by descriptor key [" + descriptorKey + "]" );
+                pageComponentDataSet.setString( TGT_DESCRIPTOR_KEY, descriptorKey );
+            }
+        }
+
         final PropertySet sourceConfigSet = sourcePageSet.getSet( SRC_CONFIG_KEY );
-        final String sourceControllerKey = sourcePageSet.getString( SRC_CONTROLLER_KEY );
-        if (sourceConfigSet != null && sourceControllerKey != null) {
+        if ( sourceConfigSet != null && descriptorKey != null )
+        {
             final PropertySet configSet = pageComponentDataSet.addSet( TGT_CONFIG_KEY );
-            final String applicationPropertyKey = getApplicationPropertyKey( sourceControllerKey );
+            final String applicationPropertyKey = getApplicationPropertyKey( descriptorKey );
             configSet.setSet( applicationPropertyKey, sourceConfigSet );
         }
     }
@@ -187,9 +219,10 @@ public class FlattenedPageDataUpgrader
 
         final PropertySet sourceConfigSet = sourceComponentDataSet.getSet( SRC_CONFIG_KEY );
         final String sourceTemplateKey = sourceComponentDataSet.getString( SRC_TEMPLATE_KEY );
-        if (sourceConfigSet != null && sourceTemplateKey != null) {
+        if ( sourceConfigSet != null && sourceTemplateKey != null )
+        {
             final PropertySet targetConfigSet = targetComponentDataSet.addSet( TGT_CONFIG_KEY );
-            final String applicationPropertyKey = getApplicationPropertyKey( sourceTemplateKey);
+            final String applicationPropertyKey = getApplicationPropertyKey( sourceTemplateKey );
             targetConfigSet.setSet( applicationPropertyKey, sourceConfigSet );
         }
     }
@@ -210,5 +243,31 @@ public class FlattenedPageDataUpgrader
                 return TGT_TYPE_VALUE.FRAGMENT;
         }
         return null;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public static final class Builder
+    {
+
+        private Map<String, String> templateControllerMap;
+
+        private Builder()
+        {
+        }
+
+        public Builder templateControllerMap( final Map<String, String> templateControllerMap )
+        {
+            this.templateControllerMap = templateControllerMap;
+            return this;
+        }
+
+        public FlattenedPageDataUpgrader build()
+        {
+            return new FlattenedPageDataUpgrader( this );
+        }
     }
 }
