@@ -91,8 +91,6 @@ public class FlattenedPageDataUpgrader
 
         final PropertySet sourcePageSet = nodeData.getSet( SRC_PAGE_KEY );
         String descriptorKey = sourcePageSet.getString( SRC_CONTROLLER_KEY );
-        pageComponentDataSet.setString( TGT_DESCRIPTOR_KEY, descriptorKey );
-        pageComponentDataSet.setBoolean( TGT_CUSTOMIZED_KEY, sourcePageSet.getBoolean( SRC_CUSTOMIZED_KEY ) );
 
         final Reference sourceTemplateKey = sourcePageSet.getReference( SRC_TEMPLATE_KEY );
         if ( sourceTemplateKey != null )
@@ -106,16 +104,22 @@ public class FlattenedPageDataUpgrader
                 descriptorKey = templateControllerMap.get( sourceTemplateKey.toString() );
                 LOG.info( "Page with both template reference and components. Replacing template reference [" + sourceTemplateKey +
                               "] by descriptor key [" + descriptorKey + "]" );
-                pageComponentDataSet.setString( TGT_DESCRIPTOR_KEY, descriptorKey );
             }
         }
 
-        final PropertySet sourceConfigSet = sourcePageSet.getSet( SRC_CONFIG_KEY );
-        if ( sourceConfigSet != null && descriptorKey != null )
-        {
-            final PropertySet configSet = pageComponentDataSet.addSet( TGT_CONFIG_KEY );
-            final String applicationPropertyKey = getApplicationPropertyKey( descriptorKey );
-            configSet.setSet( applicationPropertyKey, sourceConfigSet );
+        if (descriptorKey != null) {
+            pageComponentDataSet.setString( TGT_DESCRIPTOR_KEY, descriptorKey );
+            pageComponentDataSet.setBoolean( TGT_CUSTOMIZED_KEY, true );
+
+            final PropertySet sourceConfigSet = sourcePageSet.getSet( SRC_CONFIG_KEY );
+            if ( sourceConfigSet != null)
+            {
+                final PropertySet configSet = pageComponentDataSet.addSet( TGT_CONFIG_KEY );
+                final String applicationPropertyKey = getApplicationPropertyKey( descriptorKey );
+                configSet.setSet( applicationPropertyKey, sourceConfigSet );
+            }
+        } else {
+            pageComponentDataSet.setBoolean( TGT_CUSTOMIZED_KEY, false );
         }
     }
 
