@@ -93,7 +93,7 @@ public class FlattenedPageDataUpgrader
         String descriptorKey = sourcePageSet.getString( SRC_CONTROLLER_KEY );
 
         final Reference sourceTemplateKey = sourcePageSet.getReference( SRC_TEMPLATE_KEY );
-        if ( sourceTemplateKey != null )
+        if ( sourceTemplateKey != null && descriptorKey == null )
         {
             if ( Iterables.isEmpty( sourcePageSet.getSets( SRC_REGION_KEY ) ) )
             {
