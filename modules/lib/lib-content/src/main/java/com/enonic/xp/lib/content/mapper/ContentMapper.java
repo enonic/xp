@@ -16,6 +16,8 @@ import com.enonic.xp.page.Page;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 
+import static com.enonic.xp.lib.content.mapper.PageMapper.PAGE;
+
 public final class ContentMapper
     implements MapSerializable
 {
@@ -103,12 +105,15 @@ public final class ContentMapper
 
     private static void serializePage( final MapGenerator gen, final Page value )
     {
-        gen.map( "page" );
         if ( value != null )
         {
             new PageMapper( value ).serialize( gen );
         }
-        gen.end();
+        else
+        {
+            gen.map( PAGE );
+            gen.end();
+        }
     }
 
     private static void serializeAttachments( final MapGenerator gen, final Attachments value )

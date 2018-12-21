@@ -27,9 +27,14 @@ public abstract class DescriptorBasedComponent
         return descriptor;
     }
 
+    public boolean hasDescriptor()
+    {
+        return descriptor != null;
+    }
+
     public boolean hasConfig()
     {
-        return config != null;
+        return config != null && config.getTotalSize() > 0;
     }
 
     public PropertyTree getConfig()

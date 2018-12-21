@@ -7,9 +7,8 @@ import org.apache.commons.lang.StringUtils;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
-import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.core.impl.content.serializer.PageDataSerializer;
+import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -17,13 +16,14 @@ import com.enonic.xp.data.ValueTypes;
 
 public class ContentOutboundDependenciesIdsResolver
 {
-    private static final PageDataSerializer PAGE_SERIALIZER = new PageDataSerializer( ContentPropertyNames.PAGE );
-
     private final ContentService contentService;
 
-    public ContentOutboundDependenciesIdsResolver( final ContentService contentService )
+    private final ContentDataSerializer contentDataSerializer;
+
+    public ContentOutboundDependenciesIdsResolver( final ContentService contentService, final ContentDataSerializer contentDataSerializer )
     {
         this.contentService = contentService;
+        this.contentDataSerializer = contentDataSerializer;
     }
 
     public ContentIds resolve( final ContentId contentId )
@@ -40,7 +40,7 @@ public class ContentOutboundDependenciesIdsResolver
         final PropertySet contentPageData = new PropertyTree().getRoot();
         if ( content.getPage() != null )
         {
-            PAGE_SERIALIZER.toData( content.getPage(), contentPageData );
+            contentDataSerializer.toPageData( content.getPage(), contentPageData );
         }
 
         final Stream<Property> extraDataDependencies = content.hasExtraData() ? content.getAllExtraData().

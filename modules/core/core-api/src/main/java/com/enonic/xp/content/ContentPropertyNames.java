@@ -2,22 +2,10 @@ package com.enonic.xp.content;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.data.PropertyPath;
-
 @Beta
 public class ContentPropertyNames
 {
     public static final String PAGE = "page";
-    
-    public static final String PAGE_CONTROLLER = PAGE + PropertyPath.ELEMENT_DIVIDER + "controller";
-    
-    public static final String PAGE_TEMPLATE = PAGE + PropertyPath.ELEMENT_DIVIDER + "template";
-
-    public static final String PAGE_CONFIG = PAGE + PropertyPath.ELEMENT_DIVIDER + "config";
-    
-    public static final String PAGE_REGIONS = PAGE + PropertyPath.ELEMENT_DIVIDER + "regions";
-
-    public static final String PAGE_TEXT_COMPONENT_PROPERTY_PATH_PATTERN = "page.region.**.TextComponent.text";
 
     public static final String SITECONFIG = "siteConfig";
 
@@ -36,8 +24,6 @@ public class ContentPropertyNames
     public static final String DISPLAY_NAME = "displayName";
 
     public static final String VALID = "valid";
-
-    public static final String METADATA = "metadata";
 
     public static final String EXTRA_DATA = "x";
 
@@ -100,7 +86,4 @@ public class ContentPropertyNames
     public static final String MODIFIED_TIME = "modifiedTime";
 
     public static final String PROCESSED_REFERENCES = "processedReferences";
-
-    public static final String HTMLAREA_TEXT = DATA + PropertyPath.ELEMENT_DIVIDER + "htmlarea_text";
-
 }

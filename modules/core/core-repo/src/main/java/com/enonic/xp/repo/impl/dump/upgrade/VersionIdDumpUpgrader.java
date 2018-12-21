@@ -81,13 +81,9 @@ public class VersionIdDumpUpgrader
         if ( versionsFile != null )
         {
             upgradeVersionEntries( repositoryId, versionsFile );
-            dumpReader.getBranches( repositoryId ).
-                forEach( branch -> upgradeBranch( repositoryId, branch ) );
         }
-        else
-        {
-            throw new DumpUpgradeException( "Versions file missing for repository [" + repositoryId + "]" );
-        }
+        dumpReader.getBranches( repositoryId ).
+            forEach( branch -> upgradeBranch( repositoryId, branch ) );
     }
 
     private void upgradeBranch( final RepositoryId repositoryId, final Branch branch )
@@ -99,7 +95,7 @@ public class VersionIdDumpUpgrader
         }
         else
         {
-            throw new DumpUpgradeException( "Versions file missing for repository [" + repositoryId + "] and branch [" + branch + "]" );
+            throw new DumpUpgradeException( "Branch entries file missing for repository [" + repositoryId + "] and branch [" + branch + "]" );
         }
     }
 

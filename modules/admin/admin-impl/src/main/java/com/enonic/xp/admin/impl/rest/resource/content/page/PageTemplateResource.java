@@ -154,7 +154,7 @@ public final class PageTemplateResource
                 }
 
                 final Page page = content.getPage();
-                if ( page != null && page.hasController() )
+                if ( page != null && page.hasDescriptor() )
                 {
                     return true;
                 }

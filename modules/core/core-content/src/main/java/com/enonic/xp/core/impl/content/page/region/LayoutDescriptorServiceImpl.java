@@ -14,10 +14,12 @@ import com.google.common.collect.Lists;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.descriptor.DescriptorKeyLocator;
+import com.enonic.xp.form.Form;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.LayoutDescriptors;
+import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
@@ -42,9 +44,10 @@ public final class LayoutDescriptorServiceImpl
     {
         final ResourceProcessor<DescriptorKey, LayoutDescriptor> processor = newProcessor( key );
         final LayoutDescriptor descriptor = this.resourceService.processResource( processor );
+
         if ( descriptor == null )
         {
-            return null;
+            return createDefaultDescriptor( key );
         }
 
         return LayoutDescriptor.copyOf( descriptor ).
@@ -59,6 +62,16 @@ public final class LayoutDescriptorServiceImpl
             segment( "layoutDescriptor" ).
             keyTranslator( LayoutDescriptor::toResourceKey ).
             processor( resource -> loadDescriptor( key, resource ) ).
+            build();
+    }
+
+    private LayoutDescriptor createDefaultDescriptor( final DescriptorKey key )
+    {
+        return LayoutDescriptor.create().
+            key( key ).
+            displayName( key.getName() ).
+            config( Form.create().build() ).
+            regions( RegionDescriptors.create().build() ).
             build();
     }
 

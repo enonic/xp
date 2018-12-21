@@ -160,7 +160,7 @@ public class ComponentHandlerTest
         catch ( final WebException e )
         {
             assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
-            assertEquals( "Page component for [main-region/666] not found", e.getMessage() );
+            assertEquals( "Page component for [/main-region/666] not found", e.getMessage() );
         }
     }
 

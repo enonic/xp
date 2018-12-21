@@ -5,7 +5,6 @@ import java.util.Objects;
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.data.PropertyTree;
 
 @Beta
 public class FragmentComponent
@@ -13,13 +12,10 @@ public class FragmentComponent
 {
     private ContentId fragment;
 
-    private PropertyTree config;
-
     public FragmentComponent( final Builder builder )
     {
         super( builder );
         this.fragment = builder.fragment;
-        this.config = builder.config != null ? builder.config : new PropertyTree();
     }
 
     public static Builder create()
@@ -49,16 +45,6 @@ public class FragmentComponent
         return fragment;
     }
 
-    public boolean hasConfig()
-    {
-        return config != null;
-    }
-
-    public PropertyTree getConfig()
-    {
-        return this.config;
-    }
-
     @Override
     public boolean equals( final Object o )
     {
@@ -75,21 +61,19 @@ public class FragmentComponent
             return false;
         }
         final FragmentComponent that = (FragmentComponent) o;
-        return Objects.equals( fragment, that.fragment ) && Objects.equals( config, that.config );
+        return Objects.equals( fragment, that.fragment );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( super.hashCode(), fragment, config );
+        return Objects.hash( super.hashCode(), fragment );
     }
 
     public static class Builder
         extends Component.Builder
     {
         private ContentId fragment;
-
-        private PropertyTree config;
 
         private Builder()
         {
@@ -100,7 +84,6 @@ public class FragmentComponent
         {
             super( source );
             fragment = source.fragment;
-            config = source.config != null ? source.config.copy() : null;
         }
 
         public Builder fragment( final ContentId value )
@@ -119,12 +102,6 @@ public class FragmentComponent
         public Builder name( String value )
         {
             this.name = value != null ? new ComponentName( value ) : null;
-            return this;
-        }
-
-        public Builder config( final PropertyTree config )
-        {
-            this.config = config;
             return this;
         }
 

@@ -22,11 +22,13 @@ import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
-import com.enonic.xp.region.Component;
+import com.enonic.xp.region.FragmentComponent;
+import com.enonic.xp.region.ImageComponent;
 import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.LayoutRegions;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
+import com.enonic.xp.region.TextComponent;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.PrincipalKey;
@@ -59,6 +61,14 @@ public final class TestDataFixtures
 
         return builder.build();
     }
+
+    public static Content newContentWithPageAsFragment()
+    {
+        return newExampleContentBuilder().page( Page.create().
+            fragment( createLayoutComponent() ).
+            build() ).build();
+    }
+
 
     public static Content newExampleContent()
     {
@@ -188,59 +198,50 @@ public final class TestDataFixtures
         return tree;
     }
 
+    public static PropertyTree newImageComponentPropertyTree()
+    {
+        final PropertyTree tree = new PropertyTree();
+        tree.setString( "caption", "Caption" );
+        return tree;
+    }
+
     public static Page newPage()
     {
         final Page.Builder builder = Page.create();
+
         builder.config( newTinyPropertyTree() );
-        builder.controller( DescriptorKey.from( "myapplication:mycontroller" ) );
+        builder.descriptor( DescriptorKey.from( "my-app-key:mycontroller" ) );
         builder.regions( newPageRegions() );
+
         return builder.build();
     }
 
     public static PageRegions newPageRegions()
     {
-        final PageRegions.Builder builder = PageRegions.create();
-        builder.add( newTopRegion() );
-        return builder.build();
+        return PageRegions.create().
+            add( newTopRegion() ).
+            add( newBottomRegion() ).
+            build();
     }
 
     public static Region newTopRegion()
     {
-        final Region.Builder builder = Region.create();
-        builder.name( "top" );
-        builder.add( newPartComponent() );
-        builder.add( newLayoutComponent() );
-        return builder.build();
+        return Region.create().
+            name( "top" ).
+            add( createPartComponent( "MyPart1", "app-descriptor-x:name-x", newTinyPropertyTree() ) ).
+            add( createLayoutComponent() ).
+            add( LayoutComponent.create().name( "Layout" ).build() ).
+            build();
     }
 
     public static Region newBottomRegion()
     {
-        final Region.Builder builder = Region.create();
-        builder.name( "bottom" );
-        builder.add( newPartComponent() );
-        return builder.build();
-    }
-
-    public static Component newPartComponent()
-    {
-        final PartComponent.Builder builder = PartComponent.create();
-        builder.name( "mypart" );
-        builder.config( newTinyPropertyTree() );
-        builder.descriptor( DescriptorKey.from( "myapplication:mypart" ) );
-        return builder.build();
-    }
-
-    public static LayoutComponent newLayoutComponent()
-    {
-        final LayoutComponent.Builder builder = LayoutComponent.create();
-        builder.name( "mylayout" );
-        builder.config( newTinyPropertyTree() );
-        builder.descriptor( DescriptorKey.from( "myapplication:mylayout" ) );
-        builder.regions( newLayoutRegions() );
-        final LayoutComponent layout = builder.build();
-
-        Region.create().name( "main" ).add( layout ).build();
-        return layout;
+        return Region.create().
+            name( "bottom" ).
+            add( createPartComponent( "MyPart2", "app-descriptor-y:name-y", newTinyPropertyTree() ) ).
+            add( createImageComponent( "img-id-x", "Image Component", newImageComponentPropertyTree() ) ).
+            add( ImageComponent.create().name( "Image" ).build() ).
+            build();
     }
 
     public static LayoutRegions newLayoutRegions()
@@ -264,5 +265,75 @@ public final class TestDataFixtures
             size( 12345 ).
             build();
         return Attachments.from( a1, a2 );
+    }
+
+    private static ImageComponent createImageComponent( final String imageId, final String imageDisplayName,
+                                                        final PropertyTree imageConfig )
+    {
+        final ContentId id = ContentId.from( imageId );
+        final Content imageContent = Content.create().
+            name( "someimage" ).
+            displayName( imageDisplayName ).
+            parentPath( ContentPath.ROOT ).
+            build();
+
+        return ImageComponent.create().
+            name( imageDisplayName ).
+            image( id ).
+            config( imageConfig ).
+            build();
+    }
+
+    private static FragmentComponent createFragmentComponent( final String fragmentId, final String fragmentDisplayName )
+    {
+        final ContentId id = ContentId.from( fragmentId );
+        final Content fragmentContent = Content.create().
+            name( "somefragment" ).
+            displayName( fragmentDisplayName ).
+            parentPath( ContentPath.ROOT ).
+            build();
+
+        return FragmentComponent.create().
+            name( fragmentDisplayName ).
+            fragment( id ).
+            build();
+    }
+
+    private static PartComponent createPartComponent( final String partName, final String descriptorKey, final PropertyTree partConfig )
+    {
+        final DescriptorKey descriptor = DescriptorKey.from( descriptorKey );
+
+        return PartComponent.create().
+            name( partName ).
+            descriptor( descriptor ).
+            config( partConfig ).
+            build();
+    }
+
+    private static LayoutComponent createLayoutComponent()
+    {
+        final Region region1 = Region.create().
+            name( "left" ).
+            add( PartComponent.create().
+                name( "Part" ).
+                build() ).
+            add( TextComponent.create().
+                name( "Text" ).
+                text( "text text text" ).
+                build() ).
+            add( TextComponent.create().
+                name( "Text" ).
+                build() ).
+            build();
+
+        final Region region2 = Region.create().
+            name( "right" ).
+            add( createImageComponent( "image-id", "Some Image", null ) ).
+            add( createFragmentComponent( "213sda-ss222", "My Fragment" ) ).
+            build();
+
+        final LayoutRegions layoutRegions = LayoutRegions.create().add( region1 ).add( region2 ).build();
+
+        return LayoutComponent.create().name( "MyLayout" ).descriptor( "layoutDescriptor:name" ).regions( layoutRegions ).build();
     }
 }
