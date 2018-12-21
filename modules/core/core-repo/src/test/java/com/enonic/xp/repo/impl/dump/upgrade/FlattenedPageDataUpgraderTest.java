@@ -1,11 +1,13 @@
 package com.enonic.xp.repo.impl.dump.upgrade;
 
 import java.net.URL;
+import java.util.HashMap;
 
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Maps;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.json.JsonToPropertyTreeTranslator;
@@ -21,32 +23,41 @@ public class FlattenedPageDataUpgraderTest
     public void testPageFlattened()
         throws Exception
     {
-        final JsonNode oldPageComponents = loadJson( "old-page-components" );
-        final JsonNode newPageComponents = loadJson( "new-page-components" );
-
-        final PropertyTree oldData = new JsonToPropertyTreeTranslator().translate( oldPageComponents );
-        final PropertyTree newData = new JsonToPropertyTreeTranslator().translate( newPageComponents );
-
-        new FlattenedPageDataUpgrader().upgrade( oldData );
-
-        // using string comparison because PropertyTree entries are same but might have different value type
-        assertEquals( oldData.toString(), newData.toString() );
+        test( "old-page-components", "new-page-components" );
     }
 
     @Test
     public void testFragmentFlattened()
         throws Exception
     {
-        final JsonNode oldPageComponents = loadJson( "old-fragment-components" );
-        final JsonNode newPageComponents = loadJson( "new-fragment-components" );
+        test( "old-fragment-components", "new-fragment-components" );
+    }
+
+    @Test
+    public void testTemplateReferenceWithComponents()
+        throws Exception
+    {
+        test( "old-templateref-with-components", "new-templateref-with-components" );
+    }
+
+    private void test( final String oldJsonFile, final String newJsonFile )
+        throws Exception
+    {
+        final JsonNode oldPageComponents = loadJson( oldJsonFile );
+        final JsonNode newPageComponents = loadJson( newJsonFile );
 
         final PropertyTree oldData = new JsonToPropertyTreeTranslator().translate( oldPageComponents );
         final PropertyTree newData = new JsonToPropertyTreeTranslator().translate( newPageComponents );
 
-        new FlattenedPageDataUpgrader().upgrade( oldData );
+        final HashMap<String, String> templateControllerMap = Maps.newHashMap();
+        templateControllerMap.put( "templateId", "com.enonic.app.features:main" );
+        FlattenedPageDataUpgrader.create().
+            templateControllerMap( templateControllerMap ).
+            build().
+            upgrade( oldData );
 
         // using string comparison because PropertyTree entries are same but might have different value type
-        assertEquals( oldData.toString(), newData.toString() );
+        assertEquals( newData.toString(), oldData.toString() );
     }
 
     private JsonNode loadJson( final String name )
