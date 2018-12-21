@@ -34,6 +34,13 @@ public class FlattenedPageDataUpgraderTest
     }
 
     @Test
+    public void testTemplateReference()
+        throws Exception
+    {
+        test( "old-templateref", "new-templateref" );
+    }
+
+    @Test
     public void testTemplateReferenceWithComponents()
         throws Exception
     {
