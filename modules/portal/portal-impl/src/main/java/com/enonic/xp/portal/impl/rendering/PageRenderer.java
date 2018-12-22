@@ -45,7 +45,7 @@ public final class PageRenderer
         PortalResponse portalResponse;
         if ( pageDescriptor != null )
         {
-            final ControllerScript controllerScript = this.controllerScriptFactory.fromDir( pageDescriptor.getResourceKey() );
+            final ControllerScript controllerScript = this.controllerScriptFactory.fromDir( pageDescriptor.getComponentPath() );
             portalResponse = controllerScript.execute( portalRequest );
         }
         else if ( portalRequest.getControllerScript() != null )

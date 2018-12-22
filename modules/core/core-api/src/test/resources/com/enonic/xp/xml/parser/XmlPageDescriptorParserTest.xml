@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <page xmlns="urn:enonic:xp:model:1.0">
   <display-name i18n="key.display-name">Landing page</display-name>
+  <description i18n="key.description">My Page Description</description>
   <form>
     <input type="Double" name="pause">
       <label i18n="key1.label">Pause parameter</label>
