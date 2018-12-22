@@ -20,11 +20,18 @@ public abstract class DescriptorJson
 
     private final LocaleMessageResolver localeMessageResolver;
 
+    private final boolean editable;
+
+    private final boolean deletable;
+
     public DescriptorJson( final ComponentDescriptor descriptor, final LocaleMessageResolver localeMessageResolver,
                            final InlineMixinResolver inlineMixinResolver )
     {
         Preconditions.checkNotNull( descriptor );
         Preconditions.checkNotNull( localeMessageResolver );
+
+        this.editable = false;
+        this.deletable = false;
 
         this.localeMessageResolver = localeMessageResolver;
         this.descriptor = descriptor;
@@ -54,9 +61,32 @@ public abstract class DescriptorJson
         }
     }
 
+    public String getDescription()
+    {
+        if ( StringUtils.isNotBlank( descriptor.getDescriptionI18nKey() ) )
+        {
+            return localeMessageResolver.localizeMessage( descriptor.getDescriptionI18nKey(), descriptor.getDescription() );
+        }
+        else
+        {
+            return descriptor.getDescription();
+        }
+    }
+
     public FormJson getConfig()
     {
         return configJson;
     }
 
+    @Override
+    public boolean getEditable()
+    {
+        return editable;
+    }
+
+    @Override
+    public boolean getDeletable()
+    {
+        return deletable;
+    }
 }
