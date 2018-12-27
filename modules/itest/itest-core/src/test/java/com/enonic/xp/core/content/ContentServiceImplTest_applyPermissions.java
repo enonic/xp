@@ -65,8 +65,8 @@ public class ContentServiceImplTest_applyPermissions
 
         assertEquals( result.getSkippedContents().getSize(), 0 );
         assertEquals( result.getSucceedContents().getSize(), 2 );
-        assertTrue( result.getSucceedContents().contains( child.getId() ) );
-        assertTrue( result.getSucceedContents().contains( content.getId() ) );
+        assertTrue( result.getSucceedContents().contains( child.getPath() ) );
+        assertTrue( result.getSucceedContents().contains( content.getPath() ) );
     }
 
 }
