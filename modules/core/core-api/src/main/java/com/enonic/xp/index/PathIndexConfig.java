@@ -12,7 +12,8 @@ public class PathIndexConfig
 {
     public static final Comparator<PathIndexConfig> COMPARATOR =
         Comparator.comparing( ( PathIndexConfig pathIndexConfig ) -> pathIndexConfig.path.toString() ).
-            thenComparing( ( PathIndexConfig pathIndexConfig ) -> pathIndexConfig.indexConfig );
+            thenComparing( ( PathIndexConfig pathIndexConfig ) -> pathIndexConfig.indexConfig ).
+            reversed();
 
     private final PropertyPath path;
 
