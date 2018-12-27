@@ -1,6 +1,7 @@
 package com.enonic.xp.index;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import com.google.common.annotations.Beta;
@@ -8,6 +9,7 @@ import com.google.common.collect.ImmutableList;
 
 @Beta
 public class IndexConfig
+    implements Comparable<IndexConfig>
 {
     public final static IndexConfig NONE = IndexConfig.create().
         enabled( false ).
@@ -53,6 +55,14 @@ public class IndexConfig
         includeInAllText( false ).
         path( false ).
         build();
+
+    public static final Comparator<IndexConfig> COMPARATOR =
+        Comparator.comparingInt( ( IndexConfig indexConfig ) -> indexConfig.decideByType ? 1 : 0 ).
+            thenComparingInt( indexConfig -> indexConfig.enabled ? 1 : 0 ).
+            thenComparingInt( indexConfig -> indexConfig.nGram ? 1 : 0 ).
+            thenComparingInt( indexConfig -> indexConfig.fulltext ? 1 : 0 ).
+            thenComparingInt( indexConfig -> indexConfig.includeInAllText ? 1 : 0 ).
+            thenComparingInt( indexConfig -> indexConfig.path ? 1 : 0 );
 
     private final boolean decideByType;
 
@@ -176,6 +186,13 @@ public class IndexConfig
         result = 31 * result + ( includeInAllText ? 1 : 0 );
         result = 31 * result + ( path ? 1 : 0 );
         return result;
+    }
+
+    @Override
+    public int compareTo( final IndexConfig o )
+    {
+        return COMPARATOR.
+            compare( this, o );
     }
 
     public static final class Builder
