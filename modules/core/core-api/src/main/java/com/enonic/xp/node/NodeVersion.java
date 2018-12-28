@@ -17,8 +17,6 @@ public class NodeVersion
 
     private final NodeType nodeType;
 
-    private final Instant timestamp;
-
     private final PropertyTree data;
 
     private final IndexConfigDocument indexConfigDocument;
@@ -37,7 +35,6 @@ public class NodeVersion
     {
         id = builder.id;
         nodeType = builder.nodeType;
-        timestamp = builder.timestamp;
         data = builder.data;
         indexConfigDocument = builder.indexConfigDocument;
         childOrder = builder.childOrder;
@@ -59,7 +56,6 @@ public class NodeVersion
             permissions( node.getPermissions() ).
             inheritPermissions( node.inheritsPermissions() ).
             attachedBinaries( node.getAttachedBinaries() ).
-            timestamp( node.getTimestamp() != null ? node.getTimestamp() : Instant.now() ).
             build();
     }
 
@@ -71,11 +67,6 @@ public class NodeVersion
     public NodeType getNodeType()
     {
         return nodeType;
-    }
-
-    public Instant getTimestamp()
-    {
-        return timestamp;
     }
 
     public PropertyTree getData()
@@ -130,8 +121,6 @@ public class NodeVersion
 
         private NodeType nodeType = NodeType.DEFAULT_NODE_COLLECTION;
 
-        private Instant timestamp = Instant.now();
-
         private PropertyTree data = new PropertyTree();
 
         private IndexConfigDocument indexConfigDocument;
@@ -154,7 +143,6 @@ public class NodeVersion
         {
             this.id = nodeVersion.id;
             this.nodeType = nodeVersion.nodeType;
-            this.timestamp = nodeVersion.timestamp;
             this.data = nodeVersion.data;
             this.indexConfigDocument = nodeVersion.indexConfigDocument;
             this.childOrder = nodeVersion.childOrder;
@@ -173,12 +161,6 @@ public class NodeVersion
         public Builder nodeType( NodeType nodeType )
         {
             this.nodeType = nodeType;
-            return this;
-        }
-
-        public Builder timestamp( Instant timestamp )
-        {
-            this.timestamp = timestamp;
             return this;
         }
 
@@ -257,10 +239,6 @@ public class NodeVersion
         {
             return false;
         }
-        if ( timestamp != null ? !timestamp.equals( that.timestamp ) : that.timestamp != null )
-        {
-            return false;
-        }
         if ( data != null ? !data.equals( that.data ) : that.data != null )
         {
             return false;
@@ -290,7 +268,6 @@ public class NodeVersion
     {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + ( nodeType != null ? nodeType.hashCode() : 0 );
-        result = 31 * result + ( timestamp != null ? timestamp.hashCode() : 0 );
         result = 31 * result + ( data != null ? data.hashCode() : 0 );
         result = 31 * result + ( indexConfigDocument != null ? indexConfigDocument.hashCode() : 0 );
         result = 31 * result + ( childOrder != null ? childOrder.hashCode() : 0 );
@@ -307,7 +284,6 @@ public class NodeVersion
         return "NodeVersion{" +
             "id=" + id +
             ", nodeType=" + nodeType +
-            ", timestamp=" + timestamp +
             ", data=" + data +
             ", indexConfigDocument=" + indexConfigDocument +
             ", childOrder=" + childOrder +

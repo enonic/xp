@@ -127,6 +127,5 @@
       "deny": ["PUBLISH"],
       "principal": "user:system:user1"
     }
-  ],
-  "timestamp": "2015-10-19T08:04:51.830Z"
+  ]
 }
