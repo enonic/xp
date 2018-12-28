@@ -11,6 +11,90 @@
   },
   "configs": [
     {
+      "path": "property1.*.property3",
+      "config": {
+        "decideByType": true,
+        "enabled": true,
+        "nGram": false,
+        "fulltext": false,
+        "includeInAllText": false,
+        "path": false,
+        "indexValueProcessors": []
+      }
+    },
+    {
+      "path": "property1.x",
+      "config": {
+        "decideByType": true,
+        "enabled": true,
+        "nGram": false,
+        "fulltext": false,
+        "includeInAllText": false,
+        "path": false,
+        "indexValueProcessors": []
+      }
+    },
+    {
+      "path": "property1.property2",
+      "config": {
+        "decideByType": true,
+        "enabled": true,
+        "nGram": false,
+        "fulltext": false,
+        "includeInAllText": false,
+        "path": false,
+        "indexValueProcessors": []
+      }
+    },
+    {
+      "path": "property1.*",
+      "config": {
+        "decideByType": true,
+        "enabled": true,
+        "nGram": false,
+        "fulltext": false,
+        "includeInAllText": false,
+        "path": false,
+        "indexValueProcessors": []
+      }
+    },
+    {
+      "path": "property1",
+      "config": {
+        "decideByType": true,
+        "enabled": true,
+        "nGram": false,
+        "fulltext": false,
+        "includeInAllText": false,
+        "path": false,
+        "indexValueProcessors": []
+      }
+    },
+    {
+      "path": "path",
+      "config": {
+        "decideByType": false,
+        "enabled": true,
+        "nGram": false,
+        "fulltext": false,
+        "includeInAllText": false,
+        "path": true,
+        "indexValueProcessors": []
+      }
+    },
+    {
+      "path": "none",
+      "config": {
+        "decideByType": false,
+        "enabled": false,
+        "nGram": false,
+        "fulltext": false,
+        "includeInAllText": false,
+        "path": false,
+        "indexValueProcessors": []
+      }
+    },
+    {
       "path": "minimal",
       "config": {
         "decideByType": false,
@@ -31,30 +115,6 @@
         "fulltext": true,
         "includeInAllText": true,
         "path": false,
-        "indexValueProcessors": []
-      }
-    },
-    {
-      "path": "none",
-      "config": {
-        "decideByType": false,
-        "enabled": false,
-        "nGram": false,
-        "fulltext": false,
-        "includeInAllText": false,
-        "path": false,
-        "indexValueProcessors": []
-      }
-    },
-    {
-      "path": "path",
-      "config": {
-        "decideByType": false,
-        "enabled": true,
-        "nGram": false,
-        "fulltext": false,
-        "includeInAllText": false,
-        "path": true,
         "indexValueProcessors": []
       }
     },
