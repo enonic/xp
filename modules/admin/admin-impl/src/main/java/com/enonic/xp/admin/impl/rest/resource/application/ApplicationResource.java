@@ -263,6 +263,7 @@ public final class ApplicationResource
 
     @POST
     @Path("start")
+    @RolesAllowed(RoleKeys.ADMIN_ID)
     @Consumes(MediaType.APPLICATION_JSON)
     public ApplicationSuccessJson start( final ApplicationListParams params )
         throws Exception
@@ -273,6 +274,7 @@ public final class ApplicationResource
 
     @POST
     @Path("stop")
+    @RolesAllowed(RoleKeys.ADMIN_ID)
     @Consumes(MediaType.APPLICATION_JSON)
     public ApplicationSuccessJson stop( final ApplicationListParams params )
         throws Exception
@@ -283,6 +285,7 @@ public final class ApplicationResource
 
     @POST
     @Path("install")
+    @RolesAllowed(RoleKeys.ADMIN_ID)
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public ApplicationInstallResultJson install( final MultipartForm form )
         throws Exception
@@ -301,6 +304,7 @@ public final class ApplicationResource
 
     @POST
     @Path("uninstall")
+    @RolesAllowed(RoleKeys.ADMIN_ID)
     @Consumes(MediaType.APPLICATION_JSON)
     public ApplicationSuccessJson uninstall( final ApplicationListParams params )
         throws Exception
@@ -311,6 +315,7 @@ public final class ApplicationResource
 
     @POST
     @Path("installUrl")
+    @RolesAllowed(RoleKeys.ADMIN_ID)
     @Consumes(MediaType.APPLICATION_JSON)
     public ApplicationInstallResultJson installUrl( final ApplicationInstallParams params )
         throws Exception
