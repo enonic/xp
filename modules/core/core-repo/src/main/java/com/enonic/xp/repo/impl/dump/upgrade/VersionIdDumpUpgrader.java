@@ -7,20 +7,23 @@ import java.nio.file.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.io.Files;
 
-import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
-import com.enonic.xp.repo.impl.dump.model.VersionMeta;
-import com.enonic.xp.repo.impl.dump.model.VersionsDumpEntry;
+import com.enonic.xp.repo.impl.dump.RepoDumpException;
 import com.enonic.xp.repo.impl.dump.reader.FileDumpReader;
-import com.enonic.xp.repo.impl.dump.serializer.json.JsonDumpSerializer;
+import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre2.Pre2BranchDumpEntryJson;
+import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre2.Pre2VersionDumpEntryJson;
+import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre2.Pre2VersionsDumpEntryJson;
+import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre4.Pre4BranchDumpEntryJson;
+import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre4.Pre4VersionDumpEntryJson;
+import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre4.Pre4VersionsDumpEntryJson;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.util.Version;
 
 public class VersionIdDumpUpgrader
-    implements DumpUpgrader
+    extends AbstractDumpUpgrader
 {
     private final Logger LOG = LoggerFactory.getLogger( VersionIdDumpUpgrader.class );
 
@@ -31,8 +34,6 @@ public class VersionIdDumpUpgrader
     private BufferFileDumpReader tmpDumpReader;
 
     private BufferFileDumpWriter tmpDumpWriter;
-
-    private JsonDumpSerializer serializer;
 
     public VersionIdDumpUpgrader( final Path basePath )
     {
@@ -53,7 +54,6 @@ public class VersionIdDumpUpgrader
         final String timeMillis = Long.toString( System.currentTimeMillis() );
         this.tmpDumpReader = new BufferFileDumpReader( basePath, dumpName, null, timeMillis );
         this.tmpDumpWriter = new BufferFileDumpWriter( basePath, dumpName, null, timeMillis );
-        this.serializer = new JsonDumpSerializer();
 
         try
         {
@@ -95,7 +95,8 @@ public class VersionIdDumpUpgrader
         }
         else
         {
-            throw new DumpUpgradeException( "Branch entries file missing for repository [" + repositoryId + "] and branch [" + branch + "]" );
+            throw new DumpUpgradeException(
+                "Branch entries file missing for repository [" + repositoryId + "] and branch [" + branch + "]" );
         }
     }
 
@@ -106,16 +107,16 @@ public class VersionIdDumpUpgrader
             tmpDumpWriter.openVersionsMeta( repositoryId );
 
             dumpReader.processEntries( ( entryContent, entryName ) -> {
-                final VersionsDumpEntry sourceEntry = serializer.toNodeVersionsEntry( entryContent );
-
-                final VersionsDumpEntry.Builder upgradedEntry = VersionsDumpEntry.create( sourceEntry.getNodeId() );
+                final Pre2VersionsDumpEntryJson sourceEntry = deserializeValue( entryContent, Pre2VersionsDumpEntryJson.class );
+                final Pre4VersionsDumpEntryJson.Builder upgradedEntry = Pre4VersionsDumpEntryJson.create().
+                    nodeId( sourceEntry.getNodeId() );
 
                 sourceEntry.getVersions().
                     stream().
-                    map( this::upgradeVersionMeta ).
-                    forEach( upgradedEntry::addVersion );
+                    map( this::upgradeVersion ).
+                    forEach( upgradedEntry::version );
 
-                final String upgradedEntryContent = serializer.serialize( upgradedEntry.build() );
+                final String upgradedEntryContent = serialize( upgradedEntry.build() );
                 tmpDumpWriter.storeTarEntry( upgradedEntryContent, entryName );
             }, entriesFile );
         }
@@ -132,14 +133,15 @@ public class VersionIdDumpUpgrader
             tmpDumpWriter.openBranchMeta( repositoryId, branch );
 
             dumpReader.processEntries( ( entryContent, entryName ) -> {
-                final BranchDumpEntry sourceEntry = serializer.toBranchMetaEntry( entryContent );
+                final Pre2BranchDumpEntryJson sourceEntry = deserializeValue( entryContent, Pre2BranchDumpEntryJson.class );
 
-                final BranchDumpEntry upgradedEntry = BranchDumpEntry.create().nodeId( sourceEntry.getNodeId() ).
-                    meta( upgradeVersionMeta( sourceEntry.getMeta() ) ).
-                    setBinaryReferences( sourceEntry.getBinaryReferences() ).
+                final Pre4BranchDumpEntryJson upgradedEntry = Pre4BranchDumpEntryJson.create().
+                    nodeId( sourceEntry.getNodeId() ).
+                    meta( upgradeVersion( sourceEntry.getMeta() ) ).
+                    binaries( sourceEntry.getBinaries() ).
                     build();
 
-                final String upgradedEntryContent = serializer.serialize( upgradedEntry );
+                final String upgradedEntryContent = serialize( upgradedEntry );
                 tmpDumpWriter.storeTarEntry( upgradedEntryContent, entryName );
             }, entriesFile );
         }
@@ -164,14 +166,14 @@ public class VersionIdDumpUpgrader
         }
     }
 
-    private VersionMeta upgradeVersionMeta( final VersionMeta versionMeta )
+    private Pre4VersionDumpEntryJson upgradeVersion( final Pre2VersionDumpEntryJson version )
     {
-        return VersionMeta.create().
-            version( versionMeta.getVersion() ).
-            blobKey( BlobKey.from( versionMeta.getVersion().toString() ) ).
-            nodePath( versionMeta.getNodePath() ).
-            nodeState( versionMeta.getNodeState() ).
-            timestamp( versionMeta.getTimestamp() ).
+        return Pre4VersionDumpEntryJson.create().
+            version( version.getVersion() ).
+            blobKey( version.getVersion() ).
+            nodePath( version.getNodePath() ).
+            nodeState( version.getNodeState() ).
+            timestamp( version.getTimestamp() ).
             build();
     }
 
@@ -194,6 +196,30 @@ public class VersionIdDumpUpgrader
                     bufferFile.delete();
                 }
             }
+        }
+    }
+
+    public String serialize( final Pre4VersionsDumpEntryJson versionsDumpEntry )
+    {
+        try
+        {
+            return mapper.writeValueAsString( versionsDumpEntry );
+        }
+        catch ( JsonProcessingException e )
+        {
+            throw new RepoDumpException( "Cannot serialize dumpEntry", e );
+        }
+    }
+
+    public String serialize( final Pre4BranchDumpEntryJson branchDumpEntry )
+    {
+        try
+        {
+            return mapper.writeValueAsString( branchDumpEntry );
+        }
+        catch ( JsonProcessingException e )
+        {
+            throw new RepoDumpException( "Cannot serialize dumpEntry", e );
         }
     }
 }

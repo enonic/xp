@@ -9,6 +9,7 @@ import org.osgi.service.component.annotations.Reference;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -651,13 +652,13 @@ public class NodeServiceImpl
     }
 
     @Override
-    public NodeVersion getByBlobKey( final BlobKey blobKey )
+    public NodeVersion getByNodeVersionKey( final NodeVersionKey nodeVersionKey )
     {
         verifyContext();
 
 
         final Context currentContext = ContextAccessor.current();
-        return this.nodeStorageService.getNodeVersion( blobKey, InternalContext.from( currentContext ) );
+        return this.nodeStorageService.getNodeVersion( nodeVersionKey, InternalContext.from( currentContext ) );
     }
 
     @Override

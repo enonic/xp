@@ -23,7 +23,7 @@ import com.google.common.io.LineProcessor;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
-import com.enonic.xp.blob.BlobStore;
+import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
@@ -333,17 +333,23 @@ public class FileDumpReader
     }
 
     @Override
-    public NodeVersion get( final RepositoryId repositoryId, final BlobKey blobKey )
+    public NodeVersion get( final RepositoryId repositoryId, final NodeVersionKey nodeVersionKey )
     {
-        final Segment segment = RepositorySegmentUtils.toSegment( repositoryId, DumpConstants.DUMP_NODE_SEGMENT_LEVEL );
-        final BlobRecord record = this.dumpBlobStore.getRecord( segment, blobKey );
-
-        if ( record == null )
+        final Segment nodeSegment = RepositorySegmentUtils.toSegment( repositoryId, DumpConstants.DUMP_NODE_SEGMENT_LEVEL );
+        final BlobRecord dataRecord = this.dumpBlobStore.getRecord( nodeSegment, nodeVersionKey.getNodeBlobKey() );
+        if ( dataRecord == null )
         {
-            throw new RepoLoadException( "Cannot find referred node version " + blobKey + " in dump" );
+            throw new RepoLoadException( "Cannot find referred node blob " + nodeVersionKey.getNodeBlobKey() + " in dump" );
         }
 
-        return this.factory.create( record.getBytes() );
+        final Segment indexConfigSegment = RepositorySegmentUtils.toSegment( repositoryId, DumpConstants.DUMP_INDEX_CONFIG_SEGMENT_LEVEL );
+        final BlobRecord indexConfigRecord = this.dumpBlobStore.getRecord( indexConfigSegment, nodeVersionKey.getIndexConfigBlobKey() );
+        if ( indexConfigRecord == null )
+        {
+            throw new RepoLoadException( "Cannot find referred index config blob " + nodeVersionKey.getIndexConfigBlobKey() + " in dump" );
+        }
+
+        return this.factory.create( dataRecord.getBytes(), indexConfigRecord.getBytes() );
     }
 
     @Override

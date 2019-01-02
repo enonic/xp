@@ -17,7 +17,8 @@ public class VersionStorageDocFactory
     {
         final StorageData data = StorageData.create().
             add( VersionIndexPath.VERSION_ID.getPath(), nodeVersion.getNodeVersionId().toString() ).
-            add( VersionIndexPath.BLOB_KEY.getPath(), nodeVersion.getBlobKey().toString() ).
+            add( VersionIndexPath.NODE_BLOB_KEY.getPath(), nodeVersion.getNodeVersionKey().getNodeBlobKey().toString() ).
+            add( VersionIndexPath.INDEX_CONFIG_BLOB_KEY.getPath(), nodeVersion.getNodeVersionKey().getIndexConfigBlobKey().toString() ).
             add( VersionIndexPath.NODE_ID.getPath(), nodeVersion.getNodeId().toString() ).
             add( VersionIndexPath.TIMESTAMP.getPath(), nodeVersion.getTimestamp() != null ? nodeVersion.getTimestamp() : Instant.now() ).
             add( VersionIndexPath.NODE_PATH.getPath(), nodeVersion.getNodePath().toString() ).

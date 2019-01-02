@@ -5,6 +5,7 @@ import java.time.Instant;
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.blob.NodeVersionKey;
 
 @Beta
 public class NodeVersionMetadata
@@ -12,7 +13,7 @@ public class NodeVersionMetadata
 {
     private final NodeVersionId nodeVersionId;
 
-    private final BlobKey blobKey;
+    private final NodeVersionKey nodeVersionKey;
 
     private final NodeId nodeId;
 
@@ -23,7 +24,7 @@ public class NodeVersionMetadata
     private NodeVersionMetadata( Builder builder )
     {
         nodeVersionId = builder.nodeVersionId;
-        blobKey = builder.blobKey;
+        nodeVersionKey = builder.nodeVersionKey;
         nodeId = builder.nodeId;
         nodePath = builder.nodePath;
         timestamp = builder.timestamp;
@@ -39,9 +40,9 @@ public class NodeVersionMetadata
         return nodeVersionId;
     }
 
-    public BlobKey getBlobKey()
+    public NodeVersionKey getNodeVersionKey()
     {
-        return blobKey;
+        return nodeVersionKey;
     }
 
     public NodeId getNodeId()
@@ -80,7 +81,7 @@ public class NodeVersionMetadata
     {
         private NodeVersionId nodeVersionId;
 
-        private BlobKey blobKey;
+        private NodeVersionKey nodeVersionKey;
 
         private NodeId nodeId;
 
@@ -98,9 +99,9 @@ public class NodeVersionMetadata
             return this;
         }
 
-        public Builder blobKey( BlobKey blobKey )
+        public Builder nodeVersionKey( NodeVersionKey nodeVersionKey )
         {
-            this.blobKey = blobKey;
+            this.nodeVersionKey = nodeVersionKey;
             return this;
         }
 
@@ -146,7 +147,7 @@ public class NodeVersionMetadata
         {
             return false;
         }
-        if ( blobKey != null ? !blobKey.equals( that.blobKey ) : that.blobKey != null )
+        if ( nodeVersionKey != null ? !nodeVersionKey.equals( that.nodeVersionKey ) : that.nodeVersionKey != null )
         {
             return false;
         }
@@ -166,7 +167,7 @@ public class NodeVersionMetadata
     public int hashCode()
     {
         int result = nodeVersionId != null ? nodeVersionId.hashCode() : 0;
-        result = 31 * result + ( blobKey != null ? blobKey.hashCode() : 0 );
+        result = 31 * result + ( nodeVersionKey != null ? nodeVersionKey.hashCode() : 0 );
         result = 31 * result + ( nodeId != null ? nodeId.hashCode() : 0 );
         result = 31 * result + ( nodePath != null ? nodePath.hashCode() : 0 );
         result = 31 * result + ( timestamp != null ? timestamp.hashCode() : 0 );

@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.dump.writer;
 
 import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
@@ -22,7 +23,7 @@ public interface DumpWriter
 
     void writeVersionsEntry( final VersionsDumpEntry versionsDumpEntry );
 
-    void writeVersionBlob( final RepositoryId repositoryId, final BlobKey blobKey );
+    void writeNodeVersionBlobs( final RepositoryId repositoryId, final NodeVersionKey nodeVersionKey );
 
     void writeBinaryBlob( final RepositoryId repositoryId, final String key );
 

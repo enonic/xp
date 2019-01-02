@@ -101,7 +101,7 @@ public class ReindexExecutor
                     branch( branch ).
                     build();
 
-                final NodeVersion nodeVersion = this.nodeVersionService.get( nodeBranchEntry.getBlobKey(), context );
+                final NodeVersion nodeVersion = this.nodeVersionService.get( nodeBranchEntry.getNodeVersionKey(), context );
 
                 final Node node = NodeFactory.create( nodeVersion, nodeBranchEntry );
 

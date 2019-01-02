@@ -20,6 +20,7 @@ import com.google.common.io.Files;
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
+import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repo.impl.dump.AbstractFileProcessor;
@@ -188,20 +189,32 @@ public class FileDumpWriter
         }
     }
 
-
     @Override
-    public void writeVersionBlob( final RepositoryId repositoryId, final BlobKey blobKey )
+    public void writeNodeVersionBlobs( final RepositoryId repositoryId, final NodeVersionKey nodeVersionKey )
     {
-        final Segment dumpSegment = RepositorySegmentUtils.toSegment( repositoryId, DumpConstants.DUMP_NODE_SEGMENT_LEVEL );
-        final BlobRecord existingVersion = blobStore.getRecord( dumpSegment, blobKey );
-
-        if ( existingVersion == null )
+        final Segment nodeDumpSegment = RepositorySegmentUtils.toSegment( repositoryId, DumpConstants.DUMP_NODE_SEGMENT_LEVEL );
+        final BlobRecord existingNodeBlobRecord = blobStore.getRecord( nodeDumpSegment, nodeVersionKey.getNodeBlobKey() );
+        if ( existingNodeBlobRecord == null )
         {
-            throw new RepoDumpException( "Cannot write node version with key [" + blobKey + "], not found in blobStore" );
+            throw new RepoDumpException(
+                "Cannot write node blob with key [" + nodeVersionKey.getNodeBlobKey() + "], not found in blobStore" );
         }
 
-        final Segment segment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.NODE_SEGMENT_LEVEL );
-        this.dumpBlobStore.addRecord( segment, existingVersion.getBytes() );
+        final Segment indexConfigDumpSegment =
+            RepositorySegmentUtils.toSegment( repositoryId, DumpConstants.DUMP_INDEX_CONFIG_SEGMENT_LEVEL );
+        final BlobRecord existingIndexConfigBlobRecord =
+            blobStore.getRecord( indexConfigDumpSegment, nodeVersionKey.getIndexConfigBlobKey() );
+        if ( existingIndexConfigBlobRecord == null )
+        {
+            throw new RepoDumpException(
+                "Cannot write index config blob with key [" + nodeVersionKey.getIndexConfigBlobKey() + "], not found in blobStore" );
+        }
+
+        final Segment nodeSegment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.NODE_SEGMENT_LEVEL );
+        this.dumpBlobStore.addRecord( nodeSegment, existingNodeBlobRecord.getBytes() );
+
+        final Segment indexConfigSegment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.INDEX_CONFIG_SEGMENT_LEVEL );
+        this.dumpBlobStore.addRecord( indexConfigSegment, existingIndexConfigBlobRecord.getBytes() );
     }
 
     @Override

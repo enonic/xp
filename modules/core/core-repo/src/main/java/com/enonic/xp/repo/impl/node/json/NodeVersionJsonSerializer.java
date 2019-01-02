@@ -6,6 +6,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import com.enonic.xp.index.IndexConfigDocument;
+import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.json.ObjectMapperHelper;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.util.Exceptions;
@@ -19,11 +21,11 @@ public final class NodeVersionJsonSerializer
         this.mapper = mapper;
     }
 
-    public String toString( final NodeVersion nodeVersion )
+    public String toNodeString( final NodeVersion nodeVersion )
     {
         try
         {
-            return this.mapper.writeValueAsString( NodeVersionJson.toJson( nodeVersion ) );
+            return this.mapper.writeValueAsString( NodeVersionDataJson.toJson( nodeVersion ) );
 
         }
         catch ( final JsonProcessingException e )
@@ -32,18 +34,45 @@ public final class NodeVersionJsonSerializer
         }
     }
 
-    public NodeVersion toNodeVersion( final String serialized )
+    public String toIndexConfigDocumentString( final NodeVersion nodeVersion )
     {
         try
         {
-            final NodeVersionJson nodeVersionJson = this.mapper.readValue( serialized, NodeVersionJson.class );
+            final IndexConfigDocumentJson entityIndexConfig = createEntityIndexConfig( nodeVersion.getIndexConfigDocument() );
+            return this.mapper.writeValueAsString( entityIndexConfig );
 
-            return nodeVersionJson.fromJson();
+        }
+        catch ( final JsonProcessingException e )
+        {
+            throw Exceptions.unchecked( e );
+        }
+    }
+
+    public NodeVersion toNodeVersion( final String data, final String indexConfigDocument )
+    {
+        try
+        {
+            final NodeVersionDataJson nodeVersionJson = this.mapper.readValue( data, NodeVersionDataJson.class );
+            final IndexConfigDocumentJson indexConfigDocumentJson =
+                this.mapper.readValue( indexConfigDocument, IndexConfigDocumentJson.class );
+
+            return nodeVersionJson.fromJson().
+                indexConfigDocument( indexConfigDocumentJson.fromJson() ).
+                build();
         }
         catch ( final IOException e )
         {
             throw Exceptions.unchecked( e );
         }
+    }
+
+    private static IndexConfigDocumentJson createEntityIndexConfig( final IndexConfigDocument indexConfig )
+    {
+        if ( indexConfig instanceof PatternIndexConfigDocument )
+        {
+            return IndexConfigDocumentJson.toJson( (PatternIndexConfigDocument) indexConfig );
+        }
+        return null;
     }
 
     public static NodeVersionJsonSerializer create( final boolean indent )

@@ -5,41 +5,36 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
 
+import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.repo.impl.dump.DumpBlobRecord;
-import com.enonic.xp.repo.impl.dump.DumpBlobStore;
-import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
-import com.enonic.xp.repo.impl.dump.model.VersionMeta;
-import com.enonic.xp.repo.impl.dump.model.VersionsDumpEntry;
+import com.enonic.xp.repo.impl.dump.RepoDumpException;
 import com.enonic.xp.repo.impl.dump.reader.FileDumpReader;
-import com.enonic.xp.repo.impl.dump.serializer.json.JsonDumpSerializer;
+import com.enonic.xp.repo.impl.dump.upgrade.AbstractDumpUpgrader;
 import com.enonic.xp.repo.impl.dump.upgrade.DumpUpgradeException;
-import com.enonic.xp.repo.impl.dump.upgrade.DumpUpgrader;
+import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre4.Pre4BranchDumpEntryJson;
+import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre4.Pre4NodeVersionJson;
+import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre4.Pre4VersionDumpEntryJson;
+import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre4.Pre4VersionsDumpEntryJson;
 import com.enonic.xp.repo.impl.node.NodeConstants;
-import com.enonic.xp.repo.impl.node.json.NodeVersionJsonSerializer;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositorySegmentUtils;
 import com.enonic.xp.util.Version;
 
 public class FlattenedPageDumpUpgrader
-    implements DumpUpgrader
+    extends AbstractDumpUpgrader
 {
     private final Path basePath;
 
     private FileDumpReader dumpReader;
-
-    private DumpBlobStore dumpBlobStore;
-
-    private JsonDumpSerializer jsonDumpSerializer;
-
-    private final NodeVersionJsonSerializer serializer = NodeVersionJsonSerializer.create( false );
 
     private static final RepositoryId REPOSITORY_ID = ContentConstants.CONTENT_REPO_ID;
 
@@ -61,8 +56,6 @@ public class FlattenedPageDumpUpgrader
     public void upgrade( final String dumpName )
     {
         this.dumpReader = new FileDumpReader( basePath, dumpName, null );
-        this.dumpBlobStore = dumpReader.getDumpBlobStore();
-        this.jsonDumpSerializer = new JsonDumpSerializer();
 
         final File versionsFile = this.dumpReader.getVersionsFile( REPOSITORY_ID );
         if ( versionsFile != null )
@@ -70,12 +63,13 @@ public class FlattenedPageDumpUpgrader
             //Gathers the template -> controller mappings
             final TemplateControllerMappings templateControllerMappings = new TemplateControllerMappings();
             dumpReader.processEntries( ( entryContent, entryName ) -> {
-                final VersionsDumpEntry sourceEntry = jsonDumpSerializer.toNodeVersionsEntry( entryContent );
-                final VersionMeta versionMeta = sourceEntry.getVersions().
+
+                final Pre4VersionsDumpEntryJson sourceEntry = deserializeValue( entryContent, Pre4VersionsDumpEntryJson.class );
+                final Pre4VersionDumpEntryJson sourceVersion = sourceEntry.getVersions().
                     stream().
                     findFirst().
                     get();
-                addTemplateControllerMapping( versionMeta, templateControllerMappings );
+                addTemplateControllerMapping( sourceVersion, templateControllerMappings );
             }, versionsFile );
             final Map<String, String> templateControllerMap = templateControllerMappings.getMappings();
 
@@ -84,7 +78,7 @@ public class FlattenedPageDumpUpgrader
                 templateControllerMap( templateControllerMap ).
                 build();
             dumpReader.processEntries( ( entryContent, entryName ) -> {
-                final VersionsDumpEntry sourceEntry = jsonDumpSerializer.toNodeVersionsEntry( entryContent );
+                final Pre4VersionsDumpEntryJson sourceEntry = deserializeValue( entryContent, Pre4VersionsDumpEntryJson.class );
                 sourceEntry.getVersions().
                     forEach( version -> upgradeVersionMeta( version, dataUpgrader ) );
             }, versionsFile );
@@ -96,10 +90,24 @@ public class FlattenedPageDumpUpgrader
         }
     }
 
-    private void addTemplateControllerMapping( final VersionMeta versionMeta, final TemplateControllerMappings templateControllerMapping )
+    private String serializeValue( final NodeVersion nodeVersion )
+    {
+        try
+        {
+            return this.mapper.writeValueAsString( Pre4NodeVersionJson.toJson( nodeVersion ) );
+
+        }
+        catch ( final JsonProcessingException e )
+        {
+            throw new RepoDumpException( "Cannot serialize node version [" + nodeVersion.toString() + "]", e );
+        }
+    }
+
+    private void addTemplateControllerMapping( final Pre4VersionDumpEntryJson version,
+                                               final TemplateControllerMappings templateControllerMapping )
     {
         final DumpBlobRecord dumpBlobRecord = (DumpBlobRecord) dumpReader.getDumpBlobStore().
-            getRecord( SEGMENT, versionMeta.getBlobKey() );
+            getRecord( SEGMENT, BlobKey.from( version.getBlobKey() ) );
         final NodeVersion nodeVersion = getNodeVersion( dumpBlobRecord );
         templateControllerMapping.handle( nodeVersion.getId(), nodeVersion.getData() );
     }
@@ -112,9 +120,9 @@ public class FlattenedPageDumpUpgrader
             //Gathers the template -> controller mappings
             final TemplateControllerMappings templateControllerMappings = new TemplateControllerMappings();
             dumpReader.processEntries( ( entryContent, entryName ) -> {
-                final BranchDumpEntry sourceEntry = jsonDumpSerializer.toBranchMetaEntry( entryContent );
-                final VersionMeta versionMeta = sourceEntry.getMeta();
-                addTemplateControllerMapping( versionMeta, templateControllerMappings );
+
+                final Pre4BranchDumpEntryJson sourceEntry = deserializeValue( entryContent, Pre4BranchDumpEntryJson.class );
+                addTemplateControllerMapping( sourceEntry.getMeta(), templateControllerMappings );
             }, branchEntriesFile );
             final Map<String, String> templateControllerMap = templateControllerMappings.getMappings();
 
@@ -123,7 +131,7 @@ public class FlattenedPageDumpUpgrader
                 templateControllerMap( templateControllerMap ).
                 build();
             dumpReader.processEntries( ( entryContent, entryName ) -> {
-                final BranchDumpEntry sourceEntry = jsonDumpSerializer.toBranchMetaEntry( entryContent );
+                final Pre4BranchDumpEntryJson sourceEntry = deserializeValue( entryContent, Pre4BranchDumpEntryJson.class );
                 upgradeVersionMeta( sourceEntry.getMeta(), dataUpgrader );
             }, branchEntriesFile );
         }
@@ -134,10 +142,10 @@ public class FlattenedPageDumpUpgrader
         }
     }
 
-    private void upgradeVersionMeta( final VersionMeta versionMeta, final FlattenedPageDataUpgrader dataUpgrader )
+    private void upgradeVersionMeta( final Pre4VersionDumpEntryJson version, final FlattenedPageDataUpgrader dataUpgrader )
     {
         final DumpBlobRecord dumpBlobRecord = (DumpBlobRecord) dumpReader.getDumpBlobStore().
-            getRecord( SEGMENT, versionMeta.getBlobKey() );
+            getRecord( SEGMENT, BlobKey.from( version.getBlobKey() ) );
         upgradeBlobRecord( dumpBlobRecord, dataUpgrader );
 
     }
@@ -157,7 +165,8 @@ public class FlattenedPageDumpUpgrader
         final CharSource charSource = dumpBlobRecord.getBytes().asCharSource( Charsets.UTF_8 );
         try
         {
-            return serializer.toNodeVersion( charSource.read() );
+            final Pre4NodeVersionJson nodeVersionJson = deserializeValue( charSource.read(), Pre4NodeVersionJson.class );
+            return nodeVersionJson.fromJson();
         }
         catch ( IOException e )
         {
@@ -167,7 +176,7 @@ public class FlattenedPageDumpUpgrader
 
     private void writeNodeVersion( final NodeVersion nodeVersion, final DumpBlobRecord dumpBlobRecord )
     {
-        final String serializedUpgradedNodeVersion = serializer.toString( nodeVersion );
+        final String serializedUpgradedNodeVersion = serializeValue( nodeVersion );
         final ByteSource byteSource = ByteSource.wrap( serializedUpgradedNodeVersion.getBytes( Charsets.UTF_8 ) );
         try
         {
@@ -176,7 +185,7 @@ public class FlattenedPageDumpUpgrader
         }
         catch ( IOException e )
         {
-            throw new DumpUpgradeException( "Cannot read node version [" + dumpBlobRecord.getKey() + "]", e );
+            throw new DumpUpgradeException( "Cannot copy node version [" + dumpBlobRecord.getKey() + "]", e );
         }
     }
 

@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.index.PatternIndexConfigDocument;
 
-final class IndexConfigDocumentJson
+public final class IndexConfigDocumentJson
 {
     @JsonProperty("analyzer")
     private String analyzer;

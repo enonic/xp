@@ -1,7 +1,7 @@
 package com.enonic.xp.repo.impl.storage;
 
 
-import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
@@ -48,7 +48,7 @@ public interface NodeStorageService
 
     Node get( final NodeId nodeId, final NodeVersionId nodeVersionId, final InternalContext context );
 
-    NodeVersion getNodeVersion( final BlobKey blobKey, final InternalContext context );
+    NodeVersion getNodeVersion( final NodeVersionKey nodeVersionKey, final InternalContext context );
 
     NodeBranchEntry getBranchNodeVersion( final NodeId nodeId, final InternalContext context );
 

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.util.BinaryReference;
 
-final class AttachedBinaryJson
+public final class AttachedBinaryJson
 {
     @JsonProperty("binaryReference")
     private String binaryReference;
