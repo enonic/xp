@@ -66,6 +66,7 @@ public class VersionDumpEntryJson
             timestamp( meta.getTimestamp() != null ? meta.getTimestamp().toString() : null ).
             version( meta.getVersion() != null ? meta.getVersion().toString() : null ).
             nodeBlobKey( meta.getNodeVersionKey().getNodeBlobKey().toString() ).
+            indexConfigBlobKey( meta.getNodeVersionKey().getIndexConfigBlobKey().toString() ).
             build();
     }
 

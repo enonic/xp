@@ -55,6 +55,11 @@ public class NodeVersionKey
             build();
     }
 
+    public static NodeVersionKey from( final String nodeBlobKey, final String indexConfigBlobKey )
+    {
+        return from( BlobKey.from( nodeBlobKey ), BlobKey.from( indexConfigBlobKey ) );
+    }
+
     public static Builder create()
     {
         return new Builder();

@@ -2,7 +2,6 @@ package com.enonic.xp.repo.impl.version;
 
 import java.time.Instant;
 
-import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
@@ -24,7 +23,7 @@ class NodeVersionFactory
         final String id = values.getSingleValue( VersionIndexPath.NODE_ID.getPath() ).toString();
         final String path = values.getSingleValue( VersionIndexPath.NODE_PATH.getPath() ).toString();
 
-        final NodeVersionKey nodeVersionKey = NodeVersionKey.from( BlobKey.from( nodeBlobKey ), BlobKey.from( indexConfigBlobKey ) );
+        final NodeVersionKey nodeVersionKey = NodeVersionKey.from( nodeBlobKey, indexConfigBlobKey );
 
         return NodeVersionMetadata.create().
             nodeId( NodeId.from( id ) ).

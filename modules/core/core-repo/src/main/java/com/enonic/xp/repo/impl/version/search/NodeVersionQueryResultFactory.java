@@ -63,7 +63,7 @@ public class NodeVersionQueryResultFactory
 
         final String nodeId = getStringValue( hit, VersionIndexPath.NODE_ID, true );
 
-        final NodeVersionKey nodeVersionKey = NodeVersionKey.from( BlobKey.from( nodeBlobKey ), BlobKey.from( indexConfigBlobKey ) );
+        final NodeVersionKey nodeVersionKey = NodeVersionKey.from( nodeBlobKey, indexConfigBlobKey );
 
         return NodeVersionMetadata.create().
             nodeVersionId( NodeVersionId.from( versionId ) ).

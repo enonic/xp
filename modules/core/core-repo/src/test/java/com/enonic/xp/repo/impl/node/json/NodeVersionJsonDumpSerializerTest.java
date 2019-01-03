@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.node.json;
 
 import java.net.URL;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -110,15 +109,14 @@ public class NodeVersionJsonDumpSerializerTest
                 build() ).
             build();
 
-        final String expectedStr = readJson( "serialized-node.json" );
-
-        final String serializedNode = this.serializer.toString( nodeVersion );
-        System.out.println( expectedStr );
-        assertEquals( expectedStr, serializedNode );
-
-        final NodeVersion deSerialized = this.serializer.toNodeVersion( expectedStr );
-
-        assertEquals( nodeVersion, deSerialized );
+        final String expectedNodeStr = readJson( "serialized-node.json" );
+        final String expectedIndexConfigStr = readJson( "serialized-index.json" );
+        final String serializedNode = this.serializer.toNodeString( nodeVersion );
+        final String serializedIndexConfig = this.serializer.toIndexConfigDocumentString( nodeVersion );
+        assertEquals( expectedNodeStr, serializedNode );
+        assertEquals( expectedIndexConfigStr, serializedIndexConfig );
+        final NodeVersion deSerializedNode = this.serializer.toNodeVersion( expectedNodeStr, expectedIndexConfigStr );
+        assertEquals( nodeVersion, deSerializedNode );
     }
 
     private String readJson( final String name )

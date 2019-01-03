@@ -2,7 +2,6 @@ package com.enonic.xp.repo.impl.branch.storage;
 
 import java.time.Instant;
 
-import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
@@ -23,8 +22,7 @@ public class NodeBranchVersionFactory
         final Object timestamp = returnValues.getSingleValue( BranchIndexPath.TIMESTAMP.getPath() );
         final Object nodeId = returnValues.getSingleValue( BranchIndexPath.NODE_ID.getPath() );
 
-        final NodeVersionKey nodeVersionKey =
-            NodeVersionKey.from( BlobKey.from( nodeBlobKey.toString() ), BlobKey.from( indexConfigBlobKey.toString() ) );
+        final NodeVersionKey nodeVersionKey = NodeVersionKey.from( nodeBlobKey.toString(), indexConfigBlobKey.toString() );
 
         return NodeBranchEntry.create().
             nodePath( path != null ? NodePath.create( path.toString() ).build() : NodePath.ROOT ).
