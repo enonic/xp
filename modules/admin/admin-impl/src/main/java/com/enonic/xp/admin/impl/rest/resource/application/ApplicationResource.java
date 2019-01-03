@@ -480,8 +480,8 @@ public final class ApplicationResource
     }
 
     @GET
-    @Path("getIdProvider")
-    public ApplicationJson getIdProvider( @QueryParam("applicationKey") String key )
+    @Path("getIdProviderApplication")
+    public ApplicationJson getIdProviderApplication( @QueryParam("applicationKey") String key )
     {
         final ApplicationKey applicationKey = ApplicationKey.from( key );
 

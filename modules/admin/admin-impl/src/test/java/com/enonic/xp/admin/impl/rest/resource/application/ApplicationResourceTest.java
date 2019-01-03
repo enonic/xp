@@ -323,7 +323,7 @@ public class ApplicationResourceTest
         throws Exception
     {
         String response = request().
-            path( "application/getIdProvider" ).
+            path( "application/getIdProviderApplication" ).
             queryParam( "applicationKey", "nonexistentAppKey" ).
             get().getAsString();
         assertEquals( "", response );
@@ -345,7 +345,7 @@ public class ApplicationResourceTest
         Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
 
         String response = request().
-            path( "application/getIdProvider" ).
+            path( "application/getIdProviderApplication" ).
             queryParam( "applicationKey", "testapplication" ).
             get().getAsString();
         assertJson( "get_id_provider.json", response );

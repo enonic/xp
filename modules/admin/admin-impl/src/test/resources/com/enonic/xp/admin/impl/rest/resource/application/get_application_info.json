@@ -6,7 +6,7 @@
   "deployment": {
     "url": "http://localhost:80/app/testapplication"
   },
-  "idProvider": {
+  "idProviderApplication": {
     "mode": null,
     "userStores": null
   },

@@ -6,13 +6,13 @@ import com.enonic.xp.auth.AuthDescriptor;
 import com.enonic.xp.security.UserStore;
 import com.enonic.xp.security.UserStores;
 
-public class ApplicationIdProviderJson
+public class IdProviderApplicationJson
 {
     private String mode;
 
     private ImmutableList<ApplicationUserStoreJson> userStores;
 
-    public ApplicationIdProviderJson( final AuthDescriptor authDescriptor, final UserStores userStores )
+    public IdProviderApplicationJson( final AuthDescriptor authDescriptor, final UserStores userStores )
     {
         if(authDescriptor != null)
         {

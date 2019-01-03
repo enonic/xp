@@ -193,9 +193,9 @@ public class ApplicationInfoServiceImplTest
     }
 
     @Test
-    public void testIdProvider()
+    public void testIdProviderApplication()
     {
-        mockIdProvider( this.applicationKey );
+        mockIdProviderApplication( this.applicationKey );
         final AuthDescriptor authDescriptor = this.service.getAuthDescriptor( this.applicationKey );
 
         assertNotNull( authDescriptor );
@@ -391,7 +391,7 @@ public class ApplicationInfoServiceImplTest
         Mockito.when( this.taskDescriptorService.getTasks( applicationKey ) ).thenReturn( descriptors );
     }
 
-    private void mockIdProvider( final ApplicationKey applicationKey )
+    private void mockIdProviderApplication( final ApplicationKey applicationKey )
     {
         final AuthDescriptor authDescriptor = AuthDescriptor.create().
             config( Form.create().build() ).
@@ -434,7 +434,7 @@ public class ApplicationInfoServiceImplTest
         mockMacros( applicationKey );
         mockReferences( applicationKey );
         mockTasks( applicationKey );
-        mockIdProvider( applicationKey );
+        mockIdProviderApplication( applicationKey );
     }
 
 }

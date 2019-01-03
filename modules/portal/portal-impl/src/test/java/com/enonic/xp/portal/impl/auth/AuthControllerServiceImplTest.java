@@ -132,7 +132,7 @@ public class AuthControllerServiceImplTest
     }
 
     @Test
-    public void executeUserStoreWithoutIdProvider()
+    public void executeUserStoreWithoutApplication()
         throws IOException
     {
         final AuthControllerExecutionParams executionParams = AuthControllerExecutionParams.create().
