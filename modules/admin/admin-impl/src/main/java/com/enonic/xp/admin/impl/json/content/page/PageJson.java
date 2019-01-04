@@ -29,7 +29,7 @@ public final class PageJson
 
     public String getController()
     {
-        return page.hasController() ? page.getController().toString() : null;
+        return page.hasDescriptor() ? page.getDescriptor().toString() : null;
     }
 
     public String getTemplate()

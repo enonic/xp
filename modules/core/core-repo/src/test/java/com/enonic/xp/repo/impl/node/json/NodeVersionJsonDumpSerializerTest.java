@@ -108,7 +108,6 @@ public class NodeVersionJsonDumpSerializerTest
                 add( new AttachedBinary( BinaryReference.from( "myImage1" ), "a" ) ).
                 add( new AttachedBinary( BinaryReference.from( "myImage2" ), "b" ) ).
                 build() ).
-            timestamp( Instant.parse( "2015-10-19T08:04:51.830Z" ) ).
             build();
 
         final String expectedStr = readJson( "serialized-node.json" );

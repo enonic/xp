@@ -251,7 +251,7 @@ public class PageTemplateResourceTest
         data.addString( "supports", canRender );
 
         final Page page = Page.create().
-            controller( controller ).
+            descriptor( controller ).
             config( new PropertyTree() ).
             regions( PageRegions.create().build() ).
             build();
@@ -312,7 +312,7 @@ public class PageTemplateResourceTest
     {
         final Content content = this.createContent( id, ContentPath.ROOT, name, contentTypeName );
         final Page page = Page.create().
-            controller( DescriptorKey.from( "my-descriptor" ) ).
+            descriptor( DescriptorKey.from( "my-descriptor" ) ).
             config( new PropertyTree() ).
             regions( PageRegions.create().build() ).
             build();

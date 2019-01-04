@@ -8,25 +8,9 @@ import com.enonic.xp.schema.xdata.XDataName;
 
 import static com.enonic.xp.content.ContentPropertyNames.EXTRA_DATA;
 
-public final class ExtraDataSerializer
-    extends AbstractDataSetSerializer<ExtraDatas, ExtraDatas>
+final class ExtraDataSerializer
+    extends AbstractDataSetSerializer<ExtraDatas>
 {
-    private static final String CONTROLLER = "controller";
-
-    private static final String TEMPLATE = "template";
-
-    private static final String CONFIG = "config";
-
-    private static final String REGION = "region";
-
-    private static final String CUSTOMIZED = "customized";
-
-    private static final String FRAGMENT = "fragment";
-
-    private final RegionDataSerializer regionDataSerializer = new RegionDataSerializer();
-
-    private final ComponentDataSerializerProvider componentDataSerializerProvider = new ComponentDataSerializerProvider();
-
     @Override
     public void toData( final ExtraDatas extraDatas, final PropertySet parent )
     {

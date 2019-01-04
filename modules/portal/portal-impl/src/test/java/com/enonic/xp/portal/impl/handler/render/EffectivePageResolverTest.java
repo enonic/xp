@@ -57,7 +57,7 @@ public class EffectivePageResolverTest
             parentPath( ContentPath.ROOT ).
             name( "my-template" ).
             page( Page.create().
-                controller( DescriptorKey.from( "my-descriptor" ) ).
+                descriptor( DescriptorKey.from( "my-descriptor" ) ).
                 config( configA ).
                 regions( regionsA ).
                 build() ).
@@ -74,7 +74,7 @@ public class EffectivePageResolverTest
         // verify
         assertEquals( configA, effectivePage.getConfig() );
         assertEquals( regionsA, effectivePage.getRegions() );
-        assertEquals( null, effectivePage.getController() );
+        assertEquals( null, effectivePage.getDescriptor() );
         assertEquals( template.getKey(), effectivePage.getTemplate() );
     }
 
@@ -87,7 +87,7 @@ public class EffectivePageResolverTest
             parentPath( ContentPath.ROOT ).
             name( "my-template" ).
             page( Page.create().
-                controller( DescriptorKey.from( "my-descriptor" ) ).
+                descriptor( DescriptorKey.from( "my-descriptor" ) ).
                 config( configA ).
                 regions( regionsA ).
                 build() ).
@@ -109,7 +109,7 @@ public class EffectivePageResolverTest
         assertEquals( regionsA, effectivePage.getRegions() );
         assertEquals( configB, effectivePage.getConfig() );
         assertEquals( template.getKey(), effectivePage.getTemplate() );
-        assertEquals( null, effectivePage.getController() );
+        assertEquals( null, effectivePage.getDescriptor() );
     }
 
     @Test
@@ -121,7 +121,7 @@ public class EffectivePageResolverTest
             parentPath( ContentPath.ROOT ).
             name( "my-template" ).
             page( Page.create().
-                controller( DescriptorKey.from( "my-descriptor" ) ).
+                descriptor( DescriptorKey.from( "my-descriptor" ) ).
                 config( configA ).
                 regions( regionsA ).
                 build() ).
@@ -143,7 +143,7 @@ public class EffectivePageResolverTest
         assertEquals( configA, effectivePage.getConfig() );
         assertEquals( regionsB, effectivePage.getRegions() );
         assertEquals( template.getKey(), effectivePage.getTemplate() );
-        assertEquals( null, effectivePage.getController() );
+        assertEquals( null, effectivePage.getDescriptor() );
     }
 
     //

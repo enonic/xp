@@ -52,7 +52,7 @@ public class FileDumpReader
 {
     private final Path dumpDirectory;
 
-    private final BlobStore dumpBlobStore;
+    private final DumpBlobStore dumpBlobStore;
 
     private final NodeVersionFactory factory;
 
@@ -73,6 +73,11 @@ public class FileDumpReader
         this.dumpBlobStore = new DumpBlobStore( this.dumpDirectory.toFile() );
         this.factory = new NodeVersionFactory();
         this.dumpMeta = readDumpMetaData();
+    }
+
+    public DumpBlobStore getDumpBlobStore()
+    {
+        return dumpBlobStore;
     }
 
     private java.nio.file.Path getDumpDirectory( final Path basePath, final String name )

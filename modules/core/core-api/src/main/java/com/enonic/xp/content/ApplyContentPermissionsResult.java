@@ -5,9 +5,9 @@ import com.google.common.annotations.Beta;
 @Beta
 public class ApplyContentPermissionsResult
 {
-    private final ContentIds succeedContents;
+    private final ContentPaths succeedContents;
 
-    private final ContentIds skippedContents;
+    private final ContentPaths skippedContents;
 
     private ApplyContentPermissionsResult( Builder builder )
     {
@@ -20,33 +20,33 @@ public class ApplyContentPermissionsResult
         return new Builder();
     }
 
-    public ContentIds getSucceedContents()
+    public ContentPaths getSucceedContents()
     {
         return succeedContents;
     }
 
-    public ContentIds getSkippedContents()
+    public ContentPaths getSkippedContents()
     {
         return skippedContents;
     }
 
     public static final class Builder
     {
-        private ContentIds succeedContents = ContentIds.empty();
+        private ContentPaths succeedContents = ContentPaths.empty();
 
-        private ContentIds skippedContents = ContentIds.empty();
+        private ContentPaths skippedContents = ContentPaths.empty();
 
         private Builder()
         {
         }
 
-        public Builder setSucceedContents( final ContentIds succeedContents )
+        public Builder setSucceedContents( final ContentPaths succeedContents )
         {
             this.succeedContents = succeedContents;
             return this;
         }
 
-        public Builder setSkippedContents( final ContentIds skippedContents )
+        public Builder setSkippedContents( final ContentPaths skippedContents )
         {
             this.skippedContents = skippedContents;
             return this;

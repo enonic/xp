@@ -42,7 +42,7 @@ final class CreatePageCommand
         this.params.validate();
 
         final Page page = Page.create().
-            controller( this.params.getController() ).
+            descriptor( this.params.getController() ).
             template( this.params.getPageTemplate() ).
             config( this.params.getConfig() ).
             regions( this.params.getRegions() ).

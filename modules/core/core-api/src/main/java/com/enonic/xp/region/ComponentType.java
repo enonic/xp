@@ -7,22 +7,14 @@ public abstract class ComponentType
 {
     private final String shortName;
 
-    private final Class componentClass;
-
-    public ComponentType( final String shortName, final Class componentClass )
+    public ComponentType( final String shortName )
     {
         this.shortName = shortName;
-        this.componentClass = componentClass;
     }
 
     @Override
     public String toString()
     {
         return shortName;
-    }
-
-    public Class getComponentClass()
-    {
-        return componentClass;
     }
 }

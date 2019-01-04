@@ -5,25 +5,30 @@ import com.google.common.annotations.Beta;
 
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.region.Component;
-import com.enonic.xp.region.ComponentName;
 
 @Beta
-public abstract class ComponentDataSerializer<TO_DATA_INPUT extends Component, FROM_DATA_OUTPUT extends Component>
-    extends AbstractDataSetSerializer<TO_DATA_INPUT, FROM_DATA_OUTPUT>
+abstract class ComponentDataSerializer<DATA extends Component>
+    extends AbstractDataSetSerializer<DATA>
 {
-    @Override
-    public abstract void toData( final TO_DATA_INPUT component, final PropertySet parent );
+    public static final String COMPONENTS = "components";
+
+    public static final String TYPE = "type";
+
+    public static final String PATH = "path";
 
     @Override
-    public abstract FROM_DATA_OUTPUT fromData( final PropertySet asData );
-
-    protected void applyComponentToData( final Component component, final PropertySet asData )
+    public void toData( final DATA component, final PropertySet parent )
     {
-        asData.setString( "name", component.getName() != null ? component.getName().toString() : null );
+        final PropertySet asData = parent.addSet( COMPONENTS );
+
+        asData.setString( TYPE, component.getType().toString() );
+        asData.setString( PATH, component.getPath() != null ? component.getPath().toString() : "/" );
+
+        applyComponentToData( component, asData );
     }
 
-    protected void applyComponentFromData( final Component.Builder component, final PropertySet asData )
-    {
-        component.name( asData.isNotNull( "name" ) ? new ComponentName( asData.getString( "name" ) ) : null );
-    }
+    @Override
+    public abstract DATA fromData( final PropertySet asData );
+
+    protected abstract void applyComponentToData( final DATA component, final PropertySet asData );
 }

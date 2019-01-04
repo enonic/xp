@@ -13,6 +13,20 @@ import com.enonic.xp.script.serializer.MapSerializable;
 public final class ComponentMapper
     implements MapSerializable
 {
+    static final String TYPE = "type";
+
+    static final String PATH = "path";
+
+    static final String DESCRIPTOR = "descriptor";
+
+    static final String CONFIG = "config";
+
+    static final String TEXT = "text";
+
+    static final String REGIONS = "regions";
+
+    static final String FRAGMENT = "fragment";
+
     private final Component value;
 
     public ComponentMapper( final Component value )
@@ -28,9 +42,8 @@ public final class ComponentMapper
 
     private void serialize( final MapGenerator gen, final Component value )
     {
-        gen.value( "name", value.getName() );
-        gen.value( "path", value.getPath() );
-        gen.value( "type", value.getType() );
+        gen.value( PATH, value.getPath() );
+        gen.value( TYPE, value.getType() );
 
         if ( value instanceof DescriptorBasedComponent )
         {
@@ -53,10 +66,11 @@ public final class ComponentMapper
 
     private void serialize( final MapGenerator gen, final DescriptorBasedComponent comp )
     {
-        gen.value( "descriptor", comp.getDescriptor() );
+        gen.value( DESCRIPTOR, comp.getDescriptor() );
+
         if ( comp.getConfig() != null )
         {
-            gen.map( "config" );
+            gen.map( CONFIG );
             new PropertyTreeMapper( comp.getConfig() ).serialize( gen );
             gen.end();
         }
@@ -64,27 +78,23 @@ public final class ComponentMapper
 
     private void serialize( final MapGenerator gen, final LayoutComponent comp )
     {
-        gen.map( "regions" );
+        gen.map( REGIONS );
+
         for ( final Region region : comp.getRegions() )
         {
             new RegionMapper( region ).serialize( gen );
         }
+
         gen.end();
     }
 
     private void serialize( final MapGenerator gen, final FragmentComponent comp )
     {
-        gen.value( "fragment", comp.getFragment() );
-        if ( comp.getConfig() != null )
-        {
-            gen.map( "config" );
-            new PropertyTreeMapper( comp.getConfig() ).serialize( gen );
-            gen.end();
-        }
+        gen.value( FRAGMENT, comp.getFragment() );
     }
 
     private void serialize( final MapGenerator gen, final TextComponent comp )
     {
-        gen.value( "text", comp.getText() );
+        gen.value( TEXT, comp.getText() );
     }
 }

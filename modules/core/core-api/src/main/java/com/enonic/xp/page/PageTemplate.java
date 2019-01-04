@@ -41,7 +41,7 @@ public final class PageTemplate
         {
             return null;
         }
-        return this.getPage().getController();
+        return this.getPage().getDescriptor();
     }
 
     public ContentTypeNames getCanRender()
@@ -112,13 +112,13 @@ public final class PageTemplate
             if ( this.page == null )
             {
                 this.page = Page.create().
-                    controller( descriptorKey ).
+                    descriptor( descriptorKey ).
                     build();
             }
             else
             {
                 this.page = Page.create( this.page ).
-                    controller( descriptorKey ).
+                    descriptor( descriptorKey ).
                     build();
             }
             return this;
