@@ -10,9 +10,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
-
-import static org.junit.Assert.*;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -25,7 +22,7 @@ import com.google.common.collect.Iterables;
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.admin.impl.rest.resource.security.json.CreateUserJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UpdatePasswordJson;
-import com.enonic.xp.auth.AuthDescriptorService;
+import com.enonic.xp.auth.IdProviderDescriptorService;
 import com.enonic.xp.jaxrs.impl.MockRestResponse;
 import com.enonic.xp.portal.auth.AuthControllerExecutionParams;
 import com.enonic.xp.portal.auth.AuthControllerService;
@@ -62,6 +59,7 @@ import com.enonic.xp.web.HttpStatus;
 import static com.enonic.xp.security.PrincipalRelationship.from;
 import static com.enonic.xp.security.acl.UserStoreAccess.ADMINISTRATOR;
 import static com.enonic.xp.security.acl.UserStoreAccess.READ;
+import static org.junit.Assert.*;
 
 public class SecurityResourceTest
     extends AdminResourceTestSupport
@@ -78,7 +76,7 @@ public class SecurityResourceTest
 
     private AuthControllerService authControllerService;
 
-    private AuthDescriptorService authDescriptorService;
+    private IdProviderDescriptorService idProviderDescriptorService;
 
     @Rule
     public ExpectedException expectedEx = ExpectedException.none();
@@ -88,13 +86,13 @@ public class SecurityResourceTest
     {
         securityService = Mockito.mock( SecurityService.class );
         authControllerService = Mockito.mock( AuthControllerService.class );
-        authDescriptorService = Mockito.mock( AuthDescriptorService.class );
+        idProviderDescriptorService = Mockito.mock( IdProviderDescriptorService.class );
 
         final SecurityResource resource = new SecurityResource();
 
         resource.setSecurityService( securityService );
         resource.setAuthControllerService( authControllerService );
-        resource.setAuthDescriptorService( authDescriptorService );
+        resource.setIdProviderDescriptorService( idProviderDescriptorService );
 
         return resource;
     }

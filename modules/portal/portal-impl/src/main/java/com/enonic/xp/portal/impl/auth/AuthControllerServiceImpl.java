@@ -9,8 +9,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.auth.AuthDescriptor;
-import com.enonic.xp.auth.AuthDescriptorService;
+import com.enonic.xp.auth.IdProviderDescriptor;
+import com.enonic.xp.auth.IdProviderDescriptorService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -35,7 +35,7 @@ public class AuthControllerServiceImpl
 {
     private AuthControllerScriptFactory authControllerScriptFactory;
 
-    private AuthDescriptorService authDescriptorService;
+    private IdProviderDescriptorService idProviderDescriptorService;
 
     private SecurityService securityService;
 
@@ -47,11 +47,12 @@ public class AuthControllerServiceImpl
     {
         final UserStoreKey userStoreKey = retrieveUserStoreKey( params );
         final UserStore userStore = retrieveUserStore( userStoreKey );
-        final AuthDescriptor authDescriptor = retrieveAuthDescriptor( userStore );
+        final IdProviderDescriptor idProviderDescriptor = retrieveIdProviderDescriptor( userStore );
 
-        if ( authDescriptor != null )
+        if ( idProviderDescriptor != null )
         {
-            final AuthControllerScript authControllerScript = authControllerScriptFactory.fromScript( authDescriptor.getResourceKey() );
+            final AuthControllerScript authControllerScript =
+                authControllerScriptFactory.fromScript( idProviderDescriptor.getResourceKey() );
             final String functionName = params.getFunctionName();
             if ( authControllerScript.hasMethod( functionName ) )
             {
@@ -61,7 +62,7 @@ public class AuthControllerServiceImpl
                     portalRequest = new PortalRequestAdapter().
                         adapt( params.getServletRequest() );
                 }
-                portalRequest.setApplicationKey( authDescriptor.getKey() );
+                portalRequest.setApplicationKey( idProviderDescriptor.getKey() );
                 portalRequest.setUserStore( userStore );
 
                 final PortalResponse portalResponse = authControllerScript.execute( functionName, portalRequest );
@@ -104,14 +105,14 @@ public class AuthControllerServiceImpl
         return null;
     }
 
-    private AuthDescriptor retrieveAuthDescriptor( final UserStore userStore )
+    private IdProviderDescriptor retrieveIdProviderDescriptor( final UserStore userStore )
     {
         if ( userStore != null )
         {
             final AuthConfig authConfig = userStore.getAuthConfig();
             if ( authConfig != null )
             {
-                return authDescriptorService.getDescriptor( authConfig.getApplicationKey() );
+                return idProviderDescriptorService.getDescriptor( authConfig.getApplicationKey() );
             }
         }
 
@@ -137,9 +138,9 @@ public class AuthControllerServiceImpl
     }
 
     @Reference
-    public void setAuthDescriptorService( final AuthDescriptorService authDescriptorService )
+    public void setIdProviderDescriptorService( final IdProviderDescriptorService idProviderDescriptorService )
     {
-        this.authDescriptorService = authDescriptorService;
+        this.idProviderDescriptorService = idProviderDescriptorService;
     }
 
     @Reference

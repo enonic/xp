@@ -13,7 +13,7 @@ import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolv
 import com.enonic.xp.admin.impl.rest.resource.schema.mixin.InlineMixinResolver;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationDescriptor;
-import com.enonic.xp.auth.AuthDescriptor;
+import com.enonic.xp.auth.IdProviderDescriptor;
 import com.enonic.xp.site.SiteDescriptor;
 
 public class ApplicationJson
@@ -45,10 +45,8 @@ public class ApplicationJson
                                                                                                        builder.inlineMixinResolver )
                 : null;
 
-        this.authConfig =
-            builder.authDescriptor != null && builder.authDescriptor.getConfig() != null ? new FormJson( builder.authDescriptor.getConfig(),
-                                                                                                         builder.localeMessageResolver,
-                                                                                                         builder.inlineMixinResolver )
+        this.authConfig = builder.idProviderDescriptor != null && builder.idProviderDescriptor.getConfig() != null ? new FormJson(
+            builder.idProviderDescriptor.getConfig(), builder.localeMessageResolver, builder.inlineMixinResolver )
                 : null;
 
         if ( builder.siteDescriptor != null && builder.siteDescriptor.getXDataMappings() != null )
@@ -171,7 +169,7 @@ public class ApplicationJson
 
         private SiteDescriptor siteDescriptor;
 
-        private AuthDescriptor authDescriptor;
+        private IdProviderDescriptor idProviderDescriptor;
 
         private ApplicationIconUrlResolver iconUrlResolver;
 
@@ -204,9 +202,9 @@ public class ApplicationJson
             return this;
         }
 
-        public Builder setAuthDescriptor( final AuthDescriptor authDescriptor )
+        public Builder setIdProviderDescriptor( final IdProviderDescriptor idProviderDescriptor )
         {
-            this.authDescriptor = authDescriptor;
+            this.idProviderDescriptor = idProviderDescriptor;
             return this;
         }
 

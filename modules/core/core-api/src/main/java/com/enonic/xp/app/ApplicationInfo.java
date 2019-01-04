@@ -1,6 +1,6 @@
 package com.enonic.xp.app;
 
-import com.enonic.xp.auth.AuthDescriptor;
+import com.enonic.xp.auth.IdProviderDescriptor;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.descriptor.Descriptors;
 import com.enonic.xp.macro.MacroDescriptors;
@@ -33,7 +33,7 @@ public final class ApplicationInfo
 
     private UserStores userStoreReferences;
 
-    private AuthDescriptor authDescriptor;
+    private IdProviderDescriptor idProviderDescriptor;
 
     private ApplicationInfo( final Builder builder )
     {
@@ -47,7 +47,7 @@ public final class ApplicationInfo
         this.tasks = builder.tasks;
         this.contentReferences = builder.contentReferences;
         this.userStoreReferences = builder.userStoreReferences;
-        this.authDescriptor = builder.authDescriptor;
+        this.idProviderDescriptor = builder.idProviderDescriptor;
     }
 
     public ContentTypes getContentTypes()
@@ -95,9 +95,9 @@ public final class ApplicationInfo
         return userStoreReferences;
     }
 
-    public AuthDescriptor getAuthDescriptor()
+    public IdProviderDescriptor getIdProviderDescriptor()
     {
-        return authDescriptor;
+        return idProviderDescriptor;
     }
 
     public static Builder create()
@@ -126,7 +126,7 @@ public final class ApplicationInfo
 
         private UserStores userStoreReferences;
 
-        private AuthDescriptor authDescriptor;
+        private IdProviderDescriptor idProviderDescriptor;
 
         private Builder()
         {
@@ -186,9 +186,9 @@ public final class ApplicationInfo
             return this;
         }
 
-        public Builder setAuthDescriptor( final AuthDescriptor authDescriptor )
+        public Builder setIdProviderDescriptor( final IdProviderDescriptor idProviderDescriptor )
         {
-            this.authDescriptor = authDescriptor;
+            this.idProviderDescriptor = idProviderDescriptor;
             return this;
         }
 

@@ -2,7 +2,7 @@ package com.enonic.xp.app;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.auth.AuthDescriptor;
+import com.enonic.xp.auth.IdProviderDescriptor;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.descriptor.Descriptors;
 import com.enonic.xp.macro.MacroDescriptors;
@@ -35,7 +35,7 @@ public interface ApplicationInfoService
 
     UserStores getUserStoreReferences( final ApplicationKey applicationKey );
 
-    AuthDescriptor getAuthDescriptor( final ApplicationKey applicationKey );
+    IdProviderDescriptor getIdProviderDescriptor( final ApplicationKey applicationKey );
 
     ApplicationInfo getApplicationInfo( final ApplicationKey applicationKey );
 }

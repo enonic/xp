@@ -3,7 +3,7 @@ package com.enonic.xp.admin.impl.rest.resource.security.json;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.enonic.xp.auth.AuthDescriptorMode;
+import com.enonic.xp.auth.IdProviderDescriptorMode;
 import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.Principals;
 import com.enonic.xp.security.UserStore;
@@ -14,11 +14,11 @@ import com.enonic.xp.security.acl.UserStoreAccessControlList;
 public final class UserStoreJson
     extends UserStoreSummaryJson
 {
-    private final AuthDescriptorMode idProviderMode;
+    private final IdProviderDescriptorMode idProviderMode;
 
     private final List<UserStoreAccessControlEntryJson> permissions;
 
-    public UserStoreJson( final UserStore userStore, final AuthDescriptorMode idProviderMode,
+    public UserStoreJson( final UserStore userStore, final IdProviderDescriptorMode idProviderMode,
                           final UserStoreAccessControlList userStoreAccessControlList, final Principals principals )
     {
         super( userStore );

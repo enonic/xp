@@ -71,8 +71,8 @@ public class ApplicationInfoJson
         this.tasks = new ApplicationTaskDescriptorsJson( builder.applicationInfo.getTasks() );
         this.widgets = new WidgetDescriptorsJson( builder.widgetDescriptors );
         this.tools = builder.adminToolDescriptors;
-        this.idProviderApplication =
-            new IdProviderApplicationJson( builder.applicationInfo.getAuthDescriptor(), builder.applicationInfo.getUserStoreReferences() );
+        this.idProviderApplication = new IdProviderApplicationJson( builder.applicationInfo.getIdProviderDescriptor(),
+                                                                    builder.applicationInfo.getUserStoreReferences() );
         this.deployment = new ApplicationDeploymentJson( builder.deploymentUrl );
     }
 

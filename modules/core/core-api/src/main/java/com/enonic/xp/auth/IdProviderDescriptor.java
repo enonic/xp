@@ -4,15 +4,15 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.resource.ResourceKey;
 
-public class AuthDescriptor
+public class IdProviderDescriptor
 {
     private final ApplicationKey key;
 
-    private final AuthDescriptorMode mode;
+    private final IdProviderDescriptorMode mode;
 
     private final Form config;
 
-    private AuthDescriptor( final Builder builder )
+    private IdProviderDescriptor( final Builder builder )
     {
         key = builder.key;
         mode = builder.mode;
@@ -24,7 +24,7 @@ public class AuthDescriptor
         return key;
     }
 
-    public AuthDescriptorMode getMode()
+    public IdProviderDescriptorMode getMode()
     {
         return mode;
     }
@@ -53,7 +53,7 @@ public class AuthDescriptor
     {
         private ApplicationKey key;
 
-        private AuthDescriptorMode mode;
+        private IdProviderDescriptorMode mode;
 
         private Form config;
 
@@ -67,7 +67,7 @@ public class AuthDescriptor
             return this;
         }
 
-        public Builder mode( final AuthDescriptorMode mode )
+        public Builder mode( final IdProviderDescriptorMode mode )
         {
             this.mode = mode;
             return this;
@@ -79,9 +79,9 @@ public class AuthDescriptor
             return this;
         }
 
-        public AuthDescriptor build()
+        public IdProviderDescriptor build()
         {
-            return new AuthDescriptor( this );
+            return new IdProviderDescriptor( this );
         }
     }
 }

@@ -5,7 +5,7 @@ import com.google.common.annotations.Beta;
 import com.enonic.xp.app.ApplicationKey;
 
 @Beta
-public interface AuthDescriptorService
+public interface IdProviderDescriptorService
 {
-    AuthDescriptor getDescriptor( final ApplicationKey key );
+    IdProviderDescriptor getDescriptor( final ApplicationKey key );
 }

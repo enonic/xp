@@ -54,9 +54,9 @@ import com.enonic.xp.admin.impl.rest.resource.security.json.UserJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UserStoreJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UserStoresJson;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.auth.AuthDescriptor;
-import com.enonic.xp.auth.AuthDescriptorMode;
-import com.enonic.xp.auth.AuthDescriptorService;
+import com.enonic.xp.auth.IdProviderDescriptor;
+import com.enonic.xp.auth.IdProviderDescriptorMode;
+import com.enonic.xp.auth.IdProviderDescriptorService;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.jaxrs.JaxRsExceptions;
 import com.enonic.xp.portal.auth.AuthControllerExecutionParams;
@@ -95,7 +95,7 @@ public final class SecurityResource
 {
     private SecurityService securityService;
 
-    private AuthDescriptorService authDescriptorService;
+    private IdProviderDescriptorService idProviderDescriptorService;
 
     private AuthControllerService authControllerService;
 
@@ -123,7 +123,7 @@ public final class SecurityResource
             throw JaxRsExceptions.notFound( String.format( "User Store [%s] not found", keyParam ) );
         }
 
-        final AuthDescriptorMode idProviderMode = retrieveIdProviderMode( userStore );
+        final IdProviderDescriptorMode idProviderMode = retrieveIdProviderMode( userStore );
         final UserStoreAccessControlList userStorePermissions = securityService.getUserStorePermissions( userStoreKey );
 
         final Principals principals = securityService.getPrincipals( userStorePermissions.getAllPrincipals() );
@@ -138,7 +138,7 @@ public final class SecurityResource
 
         final UserStoreAccessControlList userStorePermissions = securityService.getDefaultUserStorePermissions();
 
-        final AuthDescriptorMode idProviderMode = retrieveIdProviderMode( userStore );
+        final IdProviderDescriptorMode idProviderMode = retrieveIdProviderMode( userStore );
         final Principals principals = securityService.getPrincipals( userStorePermissions.getAllPrincipals() );
         return new UserStoreJson( userStore, idProviderMode, userStorePermissions, principals );
     }
@@ -150,7 +150,7 @@ public final class SecurityResource
         final UserStore userStore = securityService.createUserStore( params.getCreateUserStoreParams() );
         final UserStoreAccessControlList permissions = securityService.getUserStorePermissions( userStore.getKey() );
 
-        final AuthDescriptorMode idProviderMode = retrieveIdProviderMode( userStore );
+        final IdProviderDescriptorMode idProviderMode = retrieveIdProviderMode( userStore );
         final Principals principals = securityService.getPrincipals( permissions.getAllPrincipals() );
         return new UserStoreJson( userStore, idProviderMode, permissions, principals );
     }
@@ -162,7 +162,7 @@ public final class SecurityResource
         final UserStore userStore = securityService.updateUserStore( params.getUpdateUserStoreParams() );
         final UserStoreAccessControlList permissions = securityService.getUserStorePermissions( userStore.getKey() );
 
-        final AuthDescriptorMode idProviderMode = retrieveIdProviderMode( userStore );
+        final IdProviderDescriptorMode idProviderMode = retrieveIdProviderMode( userStore );
         final Principals principals = securityService.getPrincipals( permissions.getAllPrincipals() );
         return new UserStoreJson( userStore, idProviderMode, permissions, principals );
     }
@@ -613,11 +613,11 @@ public final class SecurityResource
         return PrincipalKeys.from( members );
     }
 
-    private AuthDescriptorMode retrieveIdProviderMode( UserStore userStore )
+    private IdProviderDescriptorMode retrieveIdProviderMode( UserStore userStore )
     {
         final AuthConfig authConfig = userStore.getAuthConfig();
         final ApplicationKey idProviderKey = authConfig == null ? null : authConfig.getApplicationKey();
-        final AuthDescriptor idProvider = idProviderKey == null ? null : authDescriptorService.getDescriptor( idProviderKey );
+        final IdProviderDescriptor idProvider = idProviderKey == null ? null : idProviderDescriptorService.getDescriptor( idProviderKey );
         return idProvider == null ? null : idProvider.getMode();
     }
 
@@ -629,9 +629,9 @@ public final class SecurityResource
     }
 
     @Reference
-    public void setAuthDescriptorService( final AuthDescriptorService authDescriptorService )
+    public void setIdProviderDescriptorService( final IdProviderDescriptorService idProviderDescriptorService )
     {
-        this.authDescriptorService = authDescriptorService;
+        this.idProviderDescriptorService = idProviderDescriptorService;
     }
 
     @Reference

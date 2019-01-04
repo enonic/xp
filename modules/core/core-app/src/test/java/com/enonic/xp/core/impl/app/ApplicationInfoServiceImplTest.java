@@ -9,9 +9,9 @@ import org.mockito.Mockito;
 import com.enonic.xp.app.ApplicationInfo;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
-import com.enonic.xp.auth.AuthDescriptor;
-import com.enonic.xp.auth.AuthDescriptorMode;
-import com.enonic.xp.auth.AuthDescriptorService;
+import com.enonic.xp.auth.IdProviderDescriptor;
+import com.enonic.xp.auth.IdProviderDescriptorMode;
+import com.enonic.xp.auth.IdProviderDescriptorService;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
@@ -77,7 +77,7 @@ public class ApplicationInfoServiceImplTest
 
     private SecurityService securityService;
 
-    private AuthDescriptorService authDescriptorService;
+    private IdProviderDescriptorService idProviderDescriptorService;
 
     private ApplicationInfoServiceImpl service;
 
@@ -98,7 +98,7 @@ public class ApplicationInfoServiceImplTest
         this.resourceService = Mockito.mock( ResourceService.class );
         this.taskDescriptorService = Mockito.mock( TaskDescriptorService.class );
         this.securityService = Mockito.mock( SecurityService.class );
-        this.authDescriptorService = Mockito.mock( AuthDescriptorService.class );
+        this.idProviderDescriptorService = Mockito.mock( IdProviderDescriptorService.class );
 
         this.service.setContentTypeService( this.contentTypeService );
         this.service.setPageDescriptorService( this.pageDescriptorService );
@@ -110,7 +110,7 @@ public class ApplicationInfoServiceImplTest
         this.service.setResourceService( this.resourceService );
         this.service.setTaskDescriptorService( this.taskDescriptorService );
         this.service.setSecurityService( this.securityService );
-        this.service.setAuthDescriptorService( this.authDescriptorService );
+        this.service.setIdProviderDescriptorService( this.idProviderDescriptorService );
 
     }
 
@@ -196,9 +196,9 @@ public class ApplicationInfoServiceImplTest
     public void testIdProviderApplication()
     {
         mockIdProviderApplication( this.applicationKey );
-        final AuthDescriptor authDescriptor = this.service.getAuthDescriptor( this.applicationKey );
+        final IdProviderDescriptor idProviderDescriptor = this.service.getIdProviderDescriptor( this.applicationKey );
 
-        assertNotNull( authDescriptor );
+        assertNotNull( idProviderDescriptor );
 
         final UserStores userStores = this.service.getUserStoreReferences( this.applicationKey );
 
@@ -393,10 +393,10 @@ public class ApplicationInfoServiceImplTest
 
     private void mockIdProviderApplication( final ApplicationKey applicationKey )
     {
-        final AuthDescriptor authDescriptor = AuthDescriptor.create().
+        final IdProviderDescriptor idProviderDescriptor = IdProviderDescriptor.create().
             config( Form.create().build() ).
             key( applicationKey ).
-            mode( AuthDescriptorMode.EXTERNAL ).
+            mode( IdProviderDescriptorMode.EXTERNAL ).
             build();
 
         final UserStore userStore1 = UserStore.create().
@@ -419,7 +419,7 @@ public class ApplicationInfoServiceImplTest
                 build() ).
             build();
 
-        Mockito.when( this.authDescriptorService.getDescriptor( applicationKey ) ).thenReturn( authDescriptor );
+        Mockito.when( this.idProviderDescriptorService.getDescriptor( applicationKey ) ).thenReturn( idProviderDescriptor );
         Mockito.when( this.securityService.getUserStores() ).thenReturn( UserStores.from( userStore1, userStore2 ) );
 
     }

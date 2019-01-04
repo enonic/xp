@@ -4,25 +4,25 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.auth.AuthDescriptor;
-import com.enonic.xp.auth.AuthDescriptorMode;
+import com.enonic.xp.auth.IdProviderDescriptor;
+import com.enonic.xp.auth.IdProviderDescriptorMode;
 import com.enonic.xp.core.impl.app.ApplicationTestSupport;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
 
-public class AuthDescriptorServiceTest
+public class IdProviderDescriptorServiceTest
     extends ApplicationTestSupport
 {
 
-    protected AuthDescriptorServiceImpl service;
+    protected IdProviderDescriptorServiceImpl service;
 
     @Override
     protected void initialize()
         throws Exception
     {
         addApplication( "myapp1", "/apps/myapp1" );
-        this.service = new AuthDescriptorServiceImpl();
+        this.service = new IdProviderDescriptorServiceImpl();
         this.service.setResourceService( this.resourceService );
     }
 
@@ -30,17 +30,17 @@ public class AuthDescriptorServiceTest
     public void testGetDescriptor()
         throws Exception
     {
-        final AuthDescriptor authDescriptor = this.service.getDescriptor( ApplicationKey.from( "myapp1" ) );
+        final IdProviderDescriptor idProviderDescriptor = this.service.getDescriptor( ApplicationKey.from( "myapp1" ) );
 
-        Assert.assertNotNull( authDescriptor );
-        Assert.assertEquals( ApplicationKey.from( "myapp1" ), authDescriptor.getKey() );
-        Assert.assertEquals( AuthDescriptorMode.MIXED, authDescriptor.getMode() );
+        Assert.assertNotNull( idProviderDescriptor );
+        Assert.assertEquals( ApplicationKey.from( "myapp1" ), idProviderDescriptor.getKey() );
+        Assert.assertEquals( IdProviderDescriptorMode.MIXED, idProviderDescriptor.getMode() );
 
         final Input titleInput = Input.create().
             name( "title" ).
             label( "Title" ).
             inputType( InputTypeName.TEXT_LINE ).
             build();
-        Assert.assertEquals( Form.create().addFormItem( titleInput ).build(), authDescriptor.getConfig() );
+        Assert.assertEquals( Form.create().addFormItem( titleInput ).build(), idProviderDescriptor.getConfig() );
     }
 }

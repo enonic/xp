@@ -16,8 +16,8 @@ import org.osgi.framework.BundleContext;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.auth.AuthDescriptor;
-import com.enonic.xp.auth.AuthDescriptorService;
+import com.enonic.xp.auth.IdProviderDescriptor;
+import com.enonic.xp.auth.IdProviderDescriptorService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.auth.AuthControllerExecutionParams;
@@ -44,10 +44,10 @@ public class AuthControllerServiceImplTest
     public void setup()
         throws Exception
     {
-        //Mocks the AuthDescriptorService
-        final AuthDescriptorService authDescriptorService = Mockito.mock( AuthDescriptorService.class );
-        Mockito.when( authDescriptorService.getDescriptor( ApplicationKey.from( "myapplication" ) ) ).thenReturn(
-            AuthDescriptor.create().key( ApplicationKey.from( "myapplication" ) ).build() );
+        //Mocks the IdProviderDescriptorService
+        final IdProviderDescriptorService idProviderDescriptorService = Mockito.mock( IdProviderDescriptorService.class );
+        Mockito.when( idProviderDescriptorService.getDescriptor( ApplicationKey.from( "myapplication" ) ) ).thenReturn(
+            IdProviderDescriptor.create().key( ApplicationKey.from( "myapplication" ) ).build() );
 
         //Mocks the SecurityService
         final SecurityService securityService = Mockito.mock( SecurityService.class );
@@ -67,7 +67,7 @@ public class AuthControllerServiceImplTest
         //Creates AuthControllerServiceImpl
         authControllerService = new AuthControllerServiceImpl();
         authControllerService.setAuthControllerScriptFactory( authControllerScriptFactory );
-        authControllerService.setAuthDescriptorService( authDescriptorService );
+        authControllerService.setIdProviderDescriptorService( idProviderDescriptorService );
         authControllerService.setSecurityService( securityService );
     }
 

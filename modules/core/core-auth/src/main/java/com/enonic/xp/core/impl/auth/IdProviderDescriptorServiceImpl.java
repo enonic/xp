@@ -4,51 +4,51 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.auth.AuthDescriptor;
-import com.enonic.xp.auth.AuthDescriptorService;
+import com.enonic.xp.auth.IdProviderDescriptor;
+import com.enonic.xp.auth.IdProviderDescriptorService;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.xml.XmlException;
-import com.enonic.xp.xml.parser.XmlAuthDescriptorParser;
+import com.enonic.xp.xml.parser.XmlIdProviderDescriptorParser;
 
 @Component(immediate = true)
-public final class AuthDescriptorServiceImpl
-    implements AuthDescriptorService
+public final class IdProviderDescriptorServiceImpl
+    implements IdProviderDescriptorService
 {
     private ResourceService resourceService;
 
     @Override
-    public AuthDescriptor getDescriptor( final ApplicationKey key )
+    public IdProviderDescriptor getDescriptor( final ApplicationKey key )
     {
-        final ResourceProcessor<ApplicationKey, AuthDescriptor> processor = newProcessor( key );
+        final ResourceProcessor<ApplicationKey, IdProviderDescriptor> processor = newProcessor( key );
         return this.resourceService.processResource( processor );
     }
 
-    private ResourceProcessor<ApplicationKey, AuthDescriptor> newProcessor( final ApplicationKey key )
+    private ResourceProcessor<ApplicationKey, IdProviderDescriptor> newProcessor( final ApplicationKey key )
     {
-        return new ResourceProcessor.Builder<ApplicationKey, AuthDescriptor>().
+        return new ResourceProcessor.Builder<ApplicationKey, IdProviderDescriptor>().
             key( key ).
             segment( "authDescriptor" ).
-            keyTranslator( AuthDescriptor::toResourceKey ).
+            keyTranslator( IdProviderDescriptor::toResourceKey ).
             processor( resource -> loadDescriptor( key, resource ) ).
             build();
     }
 
-    private AuthDescriptor loadDescriptor( final ApplicationKey key, final Resource resource )
+    private IdProviderDescriptor loadDescriptor( final ApplicationKey key, final Resource resource )
     {
-        final AuthDescriptor.Builder builder = AuthDescriptor.create();
+        final IdProviderDescriptor.Builder builder = IdProviderDescriptor.create();
         parseXml( resource, builder );
         builder.key( key );
 
         return builder.build();
     }
 
-    private void parseXml( final Resource resource, final AuthDescriptor.Builder builder )
+    private void parseXml( final Resource resource, final IdProviderDescriptor.Builder builder )
     {
         try
         {
-            final XmlAuthDescriptorParser parser = new XmlAuthDescriptorParser();
+            final XmlIdProviderDescriptorParser parser = new XmlIdProviderDescriptorParser();
             parser.builder( builder );
             parser.currentApplication( resource.getKey().getApplicationKey() );
             parser.source( resource.readString() );

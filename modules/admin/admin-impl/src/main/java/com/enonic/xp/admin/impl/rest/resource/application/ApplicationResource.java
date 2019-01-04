@@ -66,8 +66,8 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
-import com.enonic.xp.auth.AuthDescriptor;
-import com.enonic.xp.auth.AuthDescriptorService;
+import com.enonic.xp.auth.IdProviderDescriptor;
+import com.enonic.xp.auth.IdProviderDescriptorService;
 import com.enonic.xp.descriptor.Descriptors;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.icon.Icon;
@@ -110,7 +110,7 @@ public final class ApplicationResource
 
     private MarketService marketService;
 
-    private AuthDescriptorService authDescriptorService;
+    private IdProviderDescriptorService idProviderDescriptorService;
 
     private ApplicationInfoService applicationInfoService;
 
@@ -158,7 +158,7 @@ public final class ApplicationResource
             if ( !application.isSystem() )
             {
                 final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( applicationKey );
-                final AuthDescriptor authDescriptor = this.authDescriptorService.getDescriptor( applicationKey );
+                final IdProviderDescriptor idProviderDescriptor = this.idProviderDescriptorService.getDescriptor( applicationKey );
                 final boolean localApplication = this.applicationService.isLocalApplication( applicationKey );
                 final ApplicationDescriptor appDescriptor = this.applicationDescriptorService.get( applicationKey );
 
@@ -167,7 +167,7 @@ public final class ApplicationResource
                     setLocal( localApplication ).
                     setApplicationDescriptor( appDescriptor ).
                     setSiteDescriptor( siteDescriptor ).
-                    setAuthDescriptor( authDescriptor ).
+                    setIdProviderDescriptor( idProviderDescriptor ).
                     setIconUrlResolver( this.iconUrlResolver ).
                     setLocaleMessageResolver( new LocaleMessageResolver( this.localeService, applicationKey ) ).
                     setInlineMixinResolver( new InlineMixinResolver( this.mixinService ) ).
@@ -253,7 +253,7 @@ public final class ApplicationResource
 
         final boolean local = this.applicationService.isLocalApplication( appKey );
         final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( appKey );
-        final AuthDescriptor authDescriptor = this.authDescriptorService.getDescriptor( appKey );
+        final IdProviderDescriptor idProviderDescriptor = this.idProviderDescriptorService.getDescriptor( appKey );
         final ApplicationDescriptor appDescriptor = applicationDescriptorService.get( appKey );
 
         return ApplicationJson.create().
@@ -261,7 +261,7 @@ public final class ApplicationResource
             setLocal( local ).
             setApplicationDescriptor( appDescriptor ).
             setSiteDescriptor( siteDescriptor ).
-            setAuthDescriptor( authDescriptor ).
+            setIdProviderDescriptor( idProviderDescriptor ).
             setIconUrlResolver( this.iconUrlResolver ).
             setLocaleMessageResolver( new LocaleMessageResolver( this.localeService, appKey ) ).
             setInlineMixinResolver( new InlineMixinResolver( this.mixinService ) ).
@@ -460,7 +460,7 @@ public final class ApplicationResource
 
             if ( siteDescriptor != null )
             {
-                final AuthDescriptor authDescriptor = this.authDescriptorService.getDescriptor( applicationKey );
+                final IdProviderDescriptor idProviderDescriptor = this.idProviderDescriptorService.getDescriptor( applicationKey );
                 final boolean localApplication = this.applicationService.isLocalApplication( applicationKey );
                 final ApplicationDescriptor appDescriptor = this.applicationDescriptorService.get( applicationKey );
 
@@ -469,7 +469,7 @@ public final class ApplicationResource
                     setLocal( localApplication ).
                     setApplicationDescriptor( appDescriptor ).
                     setSiteDescriptor( siteDescriptor ).
-                    setAuthDescriptor( authDescriptor ).
+                    setIdProviderDescriptor( idProviderDescriptor ).
                     setIconUrlResolver( this.iconUrlResolver ).
                     setLocaleMessageResolver( new LocaleMessageResolver( this.localeService, applicationKey ) ).
                     setInlineMixinResolver( new InlineMixinResolver( this.mixinService ) ).
@@ -485,9 +485,9 @@ public final class ApplicationResource
     {
         final ApplicationKey applicationKey = ApplicationKey.from( key );
 
-        final AuthDescriptor authDescriptor = this.authDescriptorService.getDescriptor( applicationKey );
+        final IdProviderDescriptor idProviderDescriptor = this.idProviderDescriptorService.getDescriptor( applicationKey );
 
-        if ( authDescriptor != null )
+        if ( idProviderDescriptor != null )
         {
             final Application application = this.applicationService.getInstalledApplication( applicationKey );
             final boolean localApplication = this.applicationService.isLocalApplication( applicationKey );
@@ -500,7 +500,7 @@ public final class ApplicationResource
                 setLocal( localApplication ).
                 setApplicationDescriptor( appDescriptor ).
                 setSiteDescriptor( siteDescriptor ).
-                setAuthDescriptor( authDescriptor ).
+                setIdProviderDescriptor( idProviderDescriptor ).
                 setIconUrlResolver( this.iconUrlResolver ).
                 setLocaleMessageResolver( new LocaleMessageResolver( this.localeService, applicationKey ) ).
                 setInlineMixinResolver( new InlineMixinResolver( this.mixinService ) ).
@@ -519,9 +519,9 @@ public final class ApplicationResource
         for ( final Application application : applications )
         {
             final ApplicationKey applicationKey = application.getKey();
-            final AuthDescriptor authDescriptor = this.authDescriptorService.getDescriptor( applicationKey );
+            final IdProviderDescriptor idProviderDescriptor = this.idProviderDescriptorService.getDescriptor( applicationKey );
 
-            if ( authDescriptor != null )
+            if ( idProviderDescriptor != null )
             {
                 final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( applicationKey );
                 final boolean localApplication = this.applicationService.isLocalApplication( applicationKey );
@@ -532,7 +532,7 @@ public final class ApplicationResource
                     setLocal( localApplication ).
                     setApplicationDescriptor( appDescriptor ).
                     setSiteDescriptor( siteDescriptor ).
-                    setAuthDescriptor( authDescriptor ).
+                    setIdProviderDescriptor( idProviderDescriptor ).
                     setIconUrlResolver( this.iconUrlResolver ).
                     setLocaleMessageResolver( new LocaleMessageResolver( this.localeService, applicationKey ) ).
                     setInlineMixinResolver( new InlineMixinResolver( this.mixinService ) ).
@@ -608,9 +608,9 @@ public final class ApplicationResource
     }
 
     @Reference
-    public void setAuthDescriptorService( final AuthDescriptorService authDescriptorService )
+    public void setIdProviderDescriptorService( final IdProviderDescriptorService idProviderDescriptorService )
     {
-        this.authDescriptorService = authDescriptorService;
+        this.idProviderDescriptorService = idProviderDescriptorService;
     }
 
     @Reference

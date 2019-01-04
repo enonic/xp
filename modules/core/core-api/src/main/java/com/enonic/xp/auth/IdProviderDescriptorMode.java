@@ -1,6 +1,6 @@
 package com.enonic.xp.auth;
 
-public enum AuthDescriptorMode
+public enum IdProviderDescriptorMode
 {
     LOCAL, EXTERNAL, MIXED
 }

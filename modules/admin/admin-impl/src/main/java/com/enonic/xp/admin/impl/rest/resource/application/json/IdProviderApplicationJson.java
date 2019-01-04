@@ -2,7 +2,7 @@ package com.enonic.xp.admin.impl.rest.resource.application.json;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.auth.AuthDescriptor;
+import com.enonic.xp.auth.IdProviderDescriptor;
 import com.enonic.xp.security.UserStore;
 import com.enonic.xp.security.UserStores;
 
@@ -12,11 +12,11 @@ public class IdProviderApplicationJson
 
     private ImmutableList<ApplicationUserStoreJson> userStores;
 
-    public IdProviderApplicationJson( final AuthDescriptor authDescriptor, final UserStores userStores )
+    public IdProviderApplicationJson( final IdProviderDescriptor idProviderDescriptor, final UserStores userStores )
     {
-        if(authDescriptor != null)
+        if ( idProviderDescriptor != null )
         {
-            this.mode = authDescriptor.getMode().toString();
+            this.mode = idProviderDescriptor.getMode().toString();
         }
 
         if(userStores != null)

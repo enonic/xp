@@ -39,8 +39,8 @@ import com.enonic.xp.app.ApplicationInfoService;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
-import com.enonic.xp.auth.AuthDescriptor;
-import com.enonic.xp.auth.AuthDescriptorService;
+import com.enonic.xp.auth.IdProviderDescriptor;
+import com.enonic.xp.auth.IdProviderDescriptorService;
 import com.enonic.xp.core.impl.app.ApplicationInstallException;
 import com.enonic.xp.descriptor.Descriptors;
 import com.enonic.xp.form.Form;
@@ -77,7 +77,7 @@ public class ApplicationResourceTest
 
     private MarketService marketService;
 
-    private AuthDescriptorService authDescriptorService;
+    private IdProviderDescriptorService idProviderDescriptorService;
 
     private RelationshipTypeService relationshipTypeService;
 
@@ -106,8 +106,9 @@ public class ApplicationResourceTest
         Mockito.when( this.applicationService.getInstalledApplications() ).thenReturn( applications );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
-        final AuthDescriptor authDescriptor = createAuthDescriptor();
-        Mockito.when( this.authDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( authDescriptor );
+        final IdProviderDescriptor idProviderDescriptor = createIdProviderDescriptor();
+        Mockito.when( this.idProviderDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn(
+            idProviderDescriptor );
         final ApplicationDescriptor appDescriptor = createApplicationDescriptor();
         Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
         Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
@@ -167,8 +168,9 @@ public class ApplicationResourceTest
         Mockito.when( this.applicationService.getInstalledApplications() ).thenReturn( applications );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
-        final AuthDescriptor authDescriptor = createAuthDescriptor();
-        Mockito.when( this.authDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( authDescriptor );
+        final IdProviderDescriptor idProviderDescriptor = createIdProviderDescriptor();
+        Mockito.when( this.idProviderDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn(
+            idProviderDescriptor );
         final ApplicationDescriptor appDescriptor = createApplicationDescriptor();
         Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
         Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
@@ -189,8 +191,9 @@ public class ApplicationResourceTest
         Mockito.when( this.applicationService.getInstalledApplications() ).thenReturn( applications );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
-        final AuthDescriptor authDescriptor = createAuthDescriptor();
-        Mockito.when( this.authDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( authDescriptor );
+        final IdProviderDescriptor idProviderDescriptor = createIdProviderDescriptor();
+        Mockito.when( this.idProviderDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn(
+            idProviderDescriptor );
         final ApplicationDescriptor appDescriptor = createApplicationDescriptor();
         Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
 
@@ -210,8 +213,9 @@ public class ApplicationResourceTest
         Mockito.when( this.applicationService.getInstalledApplications() ).thenReturn( applications );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
-        final AuthDescriptor authDescriptor = createAuthDescriptor();
-        Mockito.when( this.authDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( authDescriptor );
+        final IdProviderDescriptor idProviderDescriptor = createIdProviderDescriptor();
+        Mockito.when( this.idProviderDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn(
+            idProviderDescriptor );
         final ApplicationDescriptor appDescriptor = createApplicationDescriptor();
         Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
 
@@ -229,8 +233,9 @@ public class ApplicationResourceTest
         Mockito.when( this.applicationService.getInstalledApplication( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( application );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
-        final AuthDescriptor authDescriptor = createAuthDescriptor();
-        Mockito.when( this.authDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( authDescriptor );
+        final IdProviderDescriptor idProviderDescriptor = createIdProviderDescriptor();
+        Mockito.when( this.idProviderDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn(
+            idProviderDescriptor );
         final ApplicationDescriptor appDescriptor = createApplicationDescriptor();
         Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
 
@@ -251,8 +256,9 @@ public class ApplicationResourceTest
         Mockito.when( this.applicationService.getInstalledApplication( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( application );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
-        final AuthDescriptor authDescriptor = createAuthDescriptor();
-        Mockito.when( this.authDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( authDescriptor );
+        final IdProviderDescriptor idProviderDescriptor = createIdProviderDescriptor();
+        Mockito.when( this.idProviderDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn(
+            idProviderDescriptor );
         final ApplicationDescriptor appDescriptor = createApplicationDescriptor();
         Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
 
@@ -305,8 +311,9 @@ public class ApplicationResourceTest
         final Application application = createApplication();
         final Applications applications = Applications.from( application );
         Mockito.when( this.applicationService.getInstalledApplications() ).thenReturn( applications );
-        final AuthDescriptor authDescriptor = createAuthDescriptor();
-        Mockito.when( this.authDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( authDescriptor );
+        final IdProviderDescriptor idProviderDescriptor = createIdProviderDescriptor();
+        Mockito.when( this.idProviderDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn(
+            idProviderDescriptor );
         final ApplicationDescriptor appDescriptor = createApplicationDescriptor();
         Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
 
@@ -336,8 +343,9 @@ public class ApplicationResourceTest
         final Application application = createApplication();
         Mockito.when( this.applicationService.getInstalledApplication( application.getKey() ) ).thenReturn( application );
 
-        final AuthDescriptor authDescriptor = createAuthDescriptor();
-        Mockito.when( this.authDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( authDescriptor );
+        final IdProviderDescriptor idProviderDescriptor = createIdProviderDescriptor();
+        Mockito.when( this.idProviderDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn(
+            idProviderDescriptor );
 
         final ApplicationDescriptor appDescriptor = createApplicationDescriptor();
         Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
@@ -632,13 +640,13 @@ public class ApplicationResourceTest
         return SiteDescriptor.create().form( config ).build();
     }
 
-    private AuthDescriptor createAuthDescriptor()
+    private IdProviderDescriptor createIdProviderDescriptor()
     {
         final Form config = Form.create().
             addFormItem( Input.create().name( "some-name" ).label( "some-label" ).labelI18nKey( "key.label" ).helpTextI18nKey(
                 "key.help-text" ).inputType( InputTypeName.TEXT_LINE ).build() ).
             build();
-        return AuthDescriptor.create().
+        return IdProviderDescriptor.create().
             config( config ).
             build();
     }
@@ -691,7 +699,7 @@ public class ApplicationResourceTest
         this.applicationInfoService = Mockito.mock( ApplicationInfoService.class );
         this.siteService = Mockito.mock( SiteService.class );
         this.marketService = Mockito.mock( MarketService.class );
-        this.authDescriptorService = Mockito.mock( AuthDescriptorService.class );
+        this.idProviderDescriptorService = Mockito.mock( IdProviderDescriptorService.class );
         this.resourceService = Mockito.mock( ResourceService.class );
         this.portalScriptService = Mockito.mock( PortalScriptService.class );
         this.relationshipTypeService = Mockito.mock( RelationshipTypeService.class );
@@ -706,7 +714,7 @@ public class ApplicationResourceTest
         resource.setApplicationService( this.applicationService );
         resource.setSiteService( this.siteService );
         resource.setMarketService( this.marketService );
-        resource.setAuthDescriptorService( this.authDescriptorService );
+        resource.setIdProviderDescriptorService( this.idProviderDescriptorService );
         resource.setApplicationDescriptorService( this.applicationDescriptorService );
         resource.setApplicationInfoService( this.applicationInfoService );
         resource.setContentTypeService( this.contentTypeService );

@@ -9,8 +9,8 @@ import com.enonic.xp.app.ApplicationInfo;
 import com.enonic.xp.app.ApplicationInfoService;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
-import com.enonic.xp.auth.AuthDescriptor;
-import com.enonic.xp.auth.AuthDescriptorService;
+import com.enonic.xp.auth.IdProviderDescriptor;
+import com.enonic.xp.auth.IdProviderDescriptorService;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.descriptor.Descriptors;
@@ -56,7 +56,7 @@ public final class ApplicationInfoServiceImpl
 
     private SecurityService securityService;
 
-    private AuthDescriptorService authDescriptorService;
+    private IdProviderDescriptorService idProviderDescriptorService;
 
     public ContentTypes getContentTypes( final ApplicationKey applicationKey )
     {
@@ -107,9 +107,9 @@ public final class ApplicationInfoServiceImpl
 
     }
 
-    public AuthDescriptor getAuthDescriptor( final ApplicationKey applicationKey )
+    public IdProviderDescriptor getIdProviderDescriptor( final ApplicationKey applicationKey )
     {
-        return this.authDescriptorService.getDescriptor( applicationKey );
+        return this.idProviderDescriptorService.getDescriptor( applicationKey );
     }
 
     public ApplicationInfo getApplicationInfo( final ApplicationKey applicationKey )
@@ -124,7 +124,7 @@ public final class ApplicationInfoServiceImpl
             setUserStoreReferences( this.getUserStoreReferences( applicationKey ) ).
             setMacros( this.getMacroDescriptors( applicationKey ) ).
             setTasks( this.getTaskDescriptors( applicationKey ) ).
-            setAuthDescriptor( this.getAuthDescriptor( applicationKey ) ).
+            setIdProviderDescriptor( this.getIdProviderDescriptor( applicationKey ) ).
             build();
     }
 
@@ -189,9 +189,9 @@ public final class ApplicationInfoServiceImpl
     }
 
     @Reference
-    public void setAuthDescriptorService( final AuthDescriptorService authDescriptorService )
+    public void setIdProviderDescriptorService( final IdProviderDescriptorService idProviderDescriptorService )
     {
-        this.authDescriptorService = authDescriptorService;
+        this.idProviderDescriptorService = idProviderDescriptorService;
     }
 
 }
