@@ -13,7 +13,7 @@ public final class EditableUserStore
 
     public String description;
 
-    public AuthConfig authConfig;
+    public IdProviderConfig idProviderConfig;
 
     public EditableUserStore( final UserStore source )
     {
@@ -21,7 +21,7 @@ public final class EditableUserStore
         this.key = source.getKey();
         this.displayName = source.getDisplayName();
         this.description = source.getDescription();
-        this.authConfig = source.getAuthConfig();
+        this.idProviderConfig = source.getIdProviderConfig();
     }
 
     public UserStore build()
@@ -30,7 +30,7 @@ public final class EditableUserStore
             key( key ).
             displayName( displayName ).
             description( description ).
-            authConfig( authConfig ).
+            idProviderConfig( idProviderConfig ).
             build();
     }
 }

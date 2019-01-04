@@ -16,7 +16,7 @@ public final class CreateUserStoreParams
 
     private final String description;
 
-    private final AuthConfig authConfig;
+    private final IdProviderConfig idProviderConfig;
 
     private final UserStoreAccessControlList userStorePermissions;
 
@@ -25,7 +25,7 @@ public final class CreateUserStoreParams
         this.userStoreKey = checkNotNull( builder.userStoreKey, "userStoreKey is required" );
         this.displayName = checkNotNull( builder.displayName, "displayName is required" );
         this.description = builder.description;
-        this.authConfig = builder.authConfig;
+        this.idProviderConfig = builder.idProviderConfig;
         this.userStorePermissions =
             builder.userStorePermissions == null ? UserStoreAccessControlList.empty() : builder.userStorePermissions;
     }
@@ -45,9 +45,9 @@ public final class CreateUserStoreParams
         return description;
     }
 
-    public AuthConfig getAuthConfig()
+    public IdProviderConfig getIdProviderConfig()
     {
-        return authConfig;
+        return idProviderConfig;
     }
 
     public UserStoreAccessControlList getUserStorePermissions()
@@ -68,7 +68,7 @@ public final class CreateUserStoreParams
 
         private String description;
 
-        private AuthConfig authConfig;
+        private IdProviderConfig idProviderConfig;
 
         private UserStoreAccessControlList userStorePermissions;
 
@@ -94,9 +94,9 @@ public final class CreateUserStoreParams
             return this;
         }
 
-        public Builder authConfig( final AuthConfig value )
+        public Builder idProviderConfig( final IdProviderConfig value )
         {
-            this.authConfig = value;
+            this.idProviderConfig = value;
             return this;
         }
 

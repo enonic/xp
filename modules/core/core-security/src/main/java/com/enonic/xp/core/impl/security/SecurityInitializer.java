@@ -17,10 +17,10 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
-import com.enonic.xp.security.AuthConfig;
 import com.enonic.xp.security.CreateRoleParams;
 import com.enonic.xp.security.CreateUserParams;
 import com.enonic.xp.security.CreateUserStoreParams;
+import com.enonic.xp.security.IdProviderConfig;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalRelationship;
 import com.enonic.xp.security.RoleKeys;
@@ -153,20 +153,20 @@ final class SecurityInitializer
     {
         LOG.info( "Initializing user store [" + UserStoreKey.system() + "]" );
 
-        final PropertyTree idProviderConfig = new PropertyTree();
+        final PropertyTree idProviderConfigTree = new PropertyTree();
         if ( !"false".equalsIgnoreCase( System.getProperty( ADMIN_USER_CREATION_PROPERTY_KEY ) ) )
         {
-            idProviderConfig.setBoolean( "adminUserCreationEnabled", true );
+            idProviderConfigTree.setBoolean( "adminUserCreationEnabled", true );
         }
-        final AuthConfig authConfig = AuthConfig.create().
+        final IdProviderConfig idProviderConfig = IdProviderConfig.create().
             applicationKey( SYSTEM_ID_PROVIDER_KEY ).
-            config( idProviderConfig ).
+            config( idProviderConfigTree ).
             build();
 
         final CreateUserStoreParams createParams = CreateUserStoreParams.create().
             key( UserStoreKey.system() ).
             displayName( SYSTEM_USER_STORE_DISPLAY_NAME ).
-            authConfig( authConfig ).
+            idProviderConfig( idProviderConfig ).
             permissions( DEFAULT_USER_STORE_ACL ).
             build();
 

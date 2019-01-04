@@ -44,7 +44,7 @@ import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.relationship.RelationshipType;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
 import com.enonic.xp.schema.relationship.RelationshipTypes;
-import com.enonic.xp.security.AuthConfig;
+import com.enonic.xp.security.IdProviderConfig;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.UserStore;
@@ -402,7 +402,7 @@ public class ApplicationInfoServiceImplTest
         final UserStore userStore1 = UserStore.create().
             displayName( "userStore1" ).
             key( UserStoreKey.from( "userStore1" ) ).
-            authConfig( AuthConfig.
+            idProviderConfig( IdProviderConfig.
                 create().
                 applicationKey( applicationKey ).
                 config( new PropertyTree() ).
@@ -412,7 +412,7 @@ public class ApplicationInfoServiceImplTest
         final UserStore userStore2 = UserStore.create().
             displayName( "userStore2" ).
             key( UserStoreKey.from( "userStore2" + "" ) ).
-            authConfig( AuthConfig.
+            idProviderConfig( IdProviderConfig.
                 create().
                 applicationKey( applicationKey ).
                 config( new PropertyTree() ).

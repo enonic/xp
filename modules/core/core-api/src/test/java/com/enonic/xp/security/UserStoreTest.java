@@ -27,16 +27,17 @@ public class UserStoreTest
         final UserStoreKey key = UserStoreKey.from( "myUserStore" );
         final String displayName = "My user store";
         final String description = "Description";
-        final AuthConfig authConfig = AuthConfig.create().applicationKey( ApplicationKey.SYSTEM ).config( new PropertyTree() ).build();
+        final IdProviderConfig idProviderConfig =
+            IdProviderConfig.create().applicationKey( ApplicationKey.SYSTEM ).config( new PropertyTree() ).build();
 
-        final UserStore source =
-            UserStore.create().key( key ).displayName( displayName ).description( description ).authConfig( authConfig ).build();
+        final UserStore source = UserStore.create().key( key ).displayName( displayName ).description( description ).idProviderConfig(
+            idProviderConfig ).build();
         final UserStore userStore = UserStore.create( source ).build();
 
         assertTrue( userStore.getKey().equals( key ) );
         assertEquals( displayName, userStore.getDisplayName() );
         assertEquals( description, userStore.getDescription() );
-        assertTrue( userStore.getAuthConfig().equals( authConfig ) );
+        assertTrue( userStore.getIdProviderConfig().equals( idProviderConfig ) );
     }
 
     @Test

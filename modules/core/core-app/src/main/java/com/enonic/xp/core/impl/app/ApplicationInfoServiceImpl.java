@@ -102,8 +102,8 @@ public final class ApplicationInfoServiceImpl
     {
         return UserStores.from( securityService.getUserStores().
             stream().
-            filter( userStore -> userStore.getAuthConfig() != null &&
-                userStore.getAuthConfig().getApplicationKey().equals( applicationKey ) ).collect( Collectors.toList() ) );
+            filter( userStore -> userStore.getIdProviderConfig() != null &&
+                userStore.getIdProviderConfig().getApplicationKey().equals( applicationKey ) ).collect( Collectors.toList() ) );
 
     }
 

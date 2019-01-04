@@ -16,7 +16,7 @@ public final class UpdateUserStoreParams
 
     private final String description;
 
-    private final AuthConfig authConfig;
+    private final IdProviderConfig idProviderConfig;
 
     private final UserStoreEditor editor;
 
@@ -27,7 +27,7 @@ public final class UpdateUserStoreParams
         this.userStoreKey = checkNotNull( builder.userStoreKey, "userStoreKey is required" );
         this.displayName = builder.displayName;
         this.description = builder.description;
-        this.authConfig = builder.authConfig;
+        this.idProviderConfig = builder.idProviderConfig;
         this.editor = builder.editor;
         this.userStorePermissions = builder.userStorePermissions;
     }
@@ -47,9 +47,9 @@ public final class UpdateUserStoreParams
         return description;
     }
 
-    public AuthConfig getAuthConfig()
+    public IdProviderConfig getIdProviderConfig()
     {
-        return authConfig;
+        return idProviderConfig;
     }
 
     public UserStoreEditor getEditor()
@@ -82,9 +82,9 @@ public final class UpdateUserStoreParams
             result.description( this.getDescription() );
         }
 
-        if ( this.authConfig != null )
+        if ( this.idProviderConfig != null )
         {
-            result.authConfig( this.getAuthConfig() );
+            result.idProviderConfig( this.getIdProviderConfig() );
         }
 
         return result.build();
@@ -108,7 +108,7 @@ public final class UpdateUserStoreParams
 
         private String description;
 
-        private AuthConfig authConfig;
+        private IdProviderConfig idProviderConfig;
 
         private UserStoreEditor editor;
 
@@ -123,7 +123,7 @@ public final class UpdateUserStoreParams
             this.userStoreKey = userStore.getKey();
             this.displayName = userStore.getDisplayName();
             this.description = userStore.getDescription();
-            this.authConfig = userStore.getAuthConfig();
+            this.idProviderConfig = userStore.getIdProviderConfig();
         }
 
         public Builder key( final UserStoreKey value )
@@ -144,9 +144,9 @@ public final class UpdateUserStoreParams
             return this;
         }
 
-        public Builder authConfig( final AuthConfig value )
+        public Builder idProviderConfig( final IdProviderConfig value )
         {
-            this.authConfig = value;
+            this.idProviderConfig = value;
             return this;
         }
 

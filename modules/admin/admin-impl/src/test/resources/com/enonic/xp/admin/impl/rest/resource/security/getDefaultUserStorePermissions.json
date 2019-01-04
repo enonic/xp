@@ -1,7 +1,7 @@
 {
-  "authConfig": null,
   "description": null,
   "displayName": "",
+  "idProviderConfig": null,
   "idProviderMode": null,
   "key": "default",
   "permissions": [

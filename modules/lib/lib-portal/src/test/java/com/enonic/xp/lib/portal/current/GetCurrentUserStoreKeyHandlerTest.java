@@ -22,7 +22,7 @@ public class GetCurrentUserStoreKeyHandlerTest
     }
 
     @Test
-    public void noAuthConfig()
+    public void noIdProviderConfig()
     {
         this.portalRequest.setRawRequest( Mockito.mock( HttpServletRequest.class ) );
         this.portalRequest.setUserStore( null );

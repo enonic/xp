@@ -1,15 +1,15 @@
 {
   "userStores": [
     {
-      "authConfig": null,
       "description": "local ldap",
       "displayName": "Local LDAP",
+      "idProviderConfig": null,
       "key": "local"
     },
     {
-      "authConfig": null,
       "description": "file based ustore description",
       "displayName": "File based user store",
+      "idProviderConfig": null,
       "key": "file-store"
     }
   ]

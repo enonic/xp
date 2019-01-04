@@ -1,13 +1,13 @@
 {
   "applicationInstalledJson": {
     "application": {
-      "authConfig": null,
       "config": null,
       "deletable": false,
       "description": "",
       "displayName": "application display name",
       "editable": false,
       "iconUrl": "/admin/rest/application/icon/testapplication",
+      "idProviderConfig": null,
       "key": "testapplication",
       "local": false,
       "maxSystemVersion": "5.1",

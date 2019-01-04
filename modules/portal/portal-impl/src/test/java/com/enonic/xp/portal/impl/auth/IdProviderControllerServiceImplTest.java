@@ -28,7 +28,7 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.script.impl.standard.ScriptRuntimeFactoryImpl;
-import com.enonic.xp.security.AuthConfig;
+import com.enonic.xp.security.IdProviderConfig;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.UserStore;
 import com.enonic.xp.security.UserStoreKey;
@@ -52,8 +52,9 @@ public class IdProviderControllerServiceImplTest
         //Mocks the SecurityService
         final SecurityService securityService = Mockito.mock( SecurityService.class );
         final UserStore emptyUserStore = UserStore.create().build();
-        final AuthConfig authConfig = AuthConfig.create().applicationKey( ApplicationKey.from( "myapplication" ) ).build();
-        final UserStore userStore = UserStore.create().authConfig( authConfig ).build();
+        final IdProviderConfig idProviderConfig =
+            IdProviderConfig.create().applicationKey( ApplicationKey.from( "myapplication" ) ).build();
+        final UserStore userStore = UserStore.create().idProviderConfig( idProviderConfig ).build();
         Mockito.when( securityService.getUserStore( UserStoreKey.from( "myemptyuserstore" ) ) ).thenReturn( emptyUserStore );
         Mockito.when( securityService.getUserStore( UserStoreKey.from( "myuserstore" ) ) ).thenReturn( userStore );
 

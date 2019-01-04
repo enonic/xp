@@ -1,28 +1,6 @@
 {
   "applications": [
     {
-      "authConfig": {
-        "formItems": [
-          {
-            "Input": {
-              "config": {},
-              "customText": null,
-              "helpText": null,
-              "immutable": false,
-              "indexed": false,
-              "inputType": "TextLine",
-              "label": "some-label",
-              "maximizeUIInputWidth": true,
-              "name": "some-name",
-              "occurrences": {
-                "maximum": 1,
-                "minimum": 0
-              },
-              "validationRegexp": null
-            }
-          }
-        ]
-      },
       "config": {
         "formItems": [
           {
@@ -50,6 +28,28 @@
       "displayName": "application display name",
       "editable": false,
       "iconUrl": "/admin/rest/application/icon/testapplication",
+      "idProviderConfig": {
+        "formItems": [
+          {
+            "Input": {
+              "config": {},
+              "customText": null,
+              "helpText": null,
+              "immutable": false,
+              "indexed": false,
+              "inputType": "TextLine",
+              "label": "some-label",
+              "maximizeUIInputWidth": true,
+              "name": "some-name",
+              "occurrences": {
+                "maximum": 1,
+                "minimum": 0
+              },
+              "validationRegexp": null
+            }
+          }
+        ]
+      },
       "key": "testapplication",
       "local": false,
       "maxSystemVersion": "5.1",

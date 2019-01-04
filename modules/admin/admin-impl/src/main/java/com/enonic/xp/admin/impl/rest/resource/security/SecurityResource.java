@@ -61,8 +61,8 @@ import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.jaxrs.JaxRsExceptions;
 import com.enonic.xp.portal.auth.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.auth.IdProviderControllerService;
-import com.enonic.xp.security.AuthConfig;
 import com.enonic.xp.security.Group;
+import com.enonic.xp.security.IdProviderConfig;
 import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
@@ -615,8 +615,8 @@ public final class SecurityResource
 
     private IdProviderDescriptorMode retrieveIdProviderMode( UserStore userStore )
     {
-        final AuthConfig authConfig = userStore.getAuthConfig();
-        final ApplicationKey idProviderKey = authConfig == null ? null : authConfig.getApplicationKey();
+        final IdProviderConfig idProviderConfig = userStore.getIdProviderConfig();
+        final ApplicationKey idProviderKey = idProviderConfig == null ? null : idProviderConfig.getApplicationKey();
         final IdProviderDescriptor idProvider = idProviderKey == null ? null : idProviderDescriptorService.getDescriptor( idProviderKey );
         return idProvider == null ? null : idProvider.getMode();
     }

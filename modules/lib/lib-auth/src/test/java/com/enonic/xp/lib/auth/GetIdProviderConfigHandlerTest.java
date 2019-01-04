@@ -19,7 +19,7 @@ public class GetIdProviderConfigHandlerTest
 
 
     @Test
-    public void noAuthConfig()
+    public void noIdProviderConfig()
     {
         this.portalRequest.setUserStore( null );
         runFunction( "/site/test/getIdProviderConfig-test.js", "noUserStore" );

@@ -19,7 +19,7 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.auth.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.auth.IdProviderControllerService;
 import com.enonic.xp.portal.impl.PortalRequestAdapter;
-import com.enonic.xp.security.AuthConfig;
+import com.enonic.xp.security.IdProviderConfig;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.UserStore;
@@ -109,10 +109,10 @@ public class IdProviderControllerServiceImpl
     {
         if ( userStore != null )
         {
-            final AuthConfig authConfig = userStore.getAuthConfig();
-            if ( authConfig != null )
+            final IdProviderConfig idProviderConfig = userStore.getIdProviderConfig();
+            if ( idProviderConfig != null )
             {
-                return idProviderDescriptorService.getDescriptor( authConfig.getApplicationKey() );
+                return idProviderDescriptorService.getDescriptor( idProviderConfig.getApplicationKey() );
             }
         }
 

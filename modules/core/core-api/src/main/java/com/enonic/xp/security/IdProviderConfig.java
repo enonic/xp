@@ -10,13 +10,13 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertyTree;
 
 @Beta
-public final class AuthConfig
+public final class IdProviderConfig
 {
     private final ApplicationKey applicationKey;
 
     private final PropertyTree config;
 
-    private AuthConfig( final Builder builder )
+    private IdProviderConfig( final Builder builder )
     {
         Preconditions.checkNotNull( builder.applicationKey, "applicationKey cannot be null" );
         this.applicationKey = builder.applicationKey;
@@ -45,7 +45,7 @@ public final class AuthConfig
             return false;
         }
 
-        final AuthConfig that = (AuthConfig) o;
+        final IdProviderConfig that = (IdProviderConfig) o;
 
         return Objects.equals( this.applicationKey, that.applicationKey ) && Objects.equals( this.config, that.config );
     }
@@ -79,9 +79,9 @@ public final class AuthConfig
             return this;
         }
 
-        public AuthConfig build()
+        public IdProviderConfig build()
         {
-            return new AuthConfig( this );
+            return new IdProviderConfig( this );
         }
     }
 }

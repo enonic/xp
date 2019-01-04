@@ -1,6 +1,6 @@
 package com.enonic.xp.admin.impl.rest.resource.security.json;
 
-import com.enonic.xp.security.AuthConfig;
+import com.enonic.xp.security.IdProviderConfig;
 import com.enonic.xp.security.UserStore;
 
 @SuppressWarnings("UnusedDeclaration")
@@ -29,10 +29,10 @@ public class UserStoreSummaryJson
         return userStore.getDescription();
     }
 
-    public AuthConfigJson getAuthConfig()
+    public IdProviderConfigJson getIdProviderConfig()
     {
-        final AuthConfig authConfig = userStore.getAuthConfig();
-        return AuthConfigJson.toJson( authConfig );
+        final IdProviderConfig idProviderConfig = userStore.getIdProviderConfig();
+        return IdProviderConfigJson.toJson( idProviderConfig );
     }
 
 }

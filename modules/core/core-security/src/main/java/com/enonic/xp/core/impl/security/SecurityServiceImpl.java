@@ -58,12 +58,12 @@ import com.enonic.xp.query.expr.LogicalExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.query.filter.ValueFilter;
-import com.enonic.xp.security.AuthConfig;
 import com.enonic.xp.security.CreateGroupParams;
 import com.enonic.xp.security.CreateRoleParams;
 import com.enonic.xp.security.CreateUserParams;
 import com.enonic.xp.security.CreateUserStoreParams;
 import com.enonic.xp.security.Group;
+import com.enonic.xp.security.IdProviderConfig;
 import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.PrincipalAlreadyExistsException;
 import com.enonic.xp.security.PrincipalKey;
@@ -1031,11 +1031,11 @@ public final class SecurityServiceImpl
         final PropertyTree data = new PropertyTree();
         data.setString( UserStorePropertyNames.DISPLAY_NAME_KEY, createUserStoreParams.getDisplayName() );
         data.setString( UserStorePropertyNames.DESCRIPTION_KEY, createUserStoreParams.getDescription() );
-        final AuthConfig authConfig = createUserStoreParams.getAuthConfig();
-        if ( authConfig != null )
+        final IdProviderConfig idProviderConfig = createUserStoreParams.getIdProviderConfig();
+        if ( idProviderConfig != null )
         {
-            data.setString( UserStorePropertyNames.ID_PROVIDER_APPLICATION_KEY, authConfig.getApplicationKey().toString() );
-            data.setSet( UserStorePropertyNames.ID_PROVIDER_CONFIG_FORM_KEY, authConfig.getConfig().getRoot() );
+            data.setString( UserStorePropertyNames.ID_PROVIDER_APPLICATION_KEY, idProviderConfig.getApplicationKey().toString() );
+            data.setSet( UserStorePropertyNames.ID_PROVIDER_CONFIG_FORM_KEY, idProviderConfig.getConfig().getRoot() );
         }
 
         try

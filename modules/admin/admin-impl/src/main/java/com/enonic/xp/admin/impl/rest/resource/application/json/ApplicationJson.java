@@ -27,7 +27,7 @@ public class ApplicationJson
 
     private final FormJson config;
 
-    private final FormJson authConfig;
+    private final FormJson idProviderConfig;
 
     private final ImmutableList<String> metaStepMixinNames;
 
@@ -45,7 +45,7 @@ public class ApplicationJson
                                                                                                        builder.inlineMixinResolver )
                 : null;
 
-        this.authConfig = builder.idProviderDescriptor != null && builder.idProviderDescriptor.getConfig() != null ? new FormJson(
+        this.idProviderConfig = builder.idProviderDescriptor != null && builder.idProviderDescriptor.getConfig() != null ? new FormJson(
             builder.idProviderDescriptor.getConfig(), builder.localeMessageResolver, builder.inlineMixinResolver )
                 : null;
 
@@ -124,9 +124,9 @@ public class ApplicationJson
         return config;
     }
 
-    public FormJson getAuthConfig()
+    public FormJson getIdProviderConfig()
     {
-        return authConfig;
+        return idProviderConfig;
     }
 
     public List<String> getMetaSteps()

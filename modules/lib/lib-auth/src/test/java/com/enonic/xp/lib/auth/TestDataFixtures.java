@@ -8,8 +8,8 @@ import java.time.ZoneId;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.security.AuthConfig;
 import com.enonic.xp.security.Group;
+import com.enonic.xp.security.IdProviderConfig;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.Role;
 import com.enonic.xp.security.RoleKeys;
@@ -128,11 +128,11 @@ public class TestDataFixtures
             key( UserStoreKey.from( "userStoreTestKey" ) ).
             description( "User store used for testing" ).
             displayName( "User store test" ).
-            authConfig( getTestAuthConfig() ).
+            idProviderConfig( getTestIdProviderConfig() ).
             build();
     }
 
-    private static AuthConfig getTestAuthConfig()
+    private static IdProviderConfig getTestIdProviderConfig()
     {
         final PropertySet backgroundPropertySet = new PropertySet();
         backgroundPropertySet.setString( "subString", "subStringValue" );
@@ -142,7 +142,7 @@ public class TestDataFixtures
         config.setSet( "set", backgroundPropertySet );
         config.setString( "string", "stringValue" );
 
-        return AuthConfig.create().
+        return IdProviderConfig.create().
             applicationKey( ApplicationKey.from( "com.enonic.app.test" ) ).
             config( config ).
             build();

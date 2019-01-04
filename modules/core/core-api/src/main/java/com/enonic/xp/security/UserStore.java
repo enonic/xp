@@ -11,14 +11,14 @@ public final class UserStore
 
     private final String description;
 
-    private final AuthConfig authConfig;
+    private final IdProviderConfig idProviderConfig;
 
     public UserStore( final Builder builder )
     {
         this.key = builder.key;
         this.displayName = builder.displayName;
         this.description = builder.description;
-        this.authConfig = builder.authConfig;
+        this.idProviderConfig = builder.idProviderConfig;
     }
 
     public UserStoreKey getKey()
@@ -36,9 +36,9 @@ public final class UserStore
         return description;
     }
 
-    public AuthConfig getAuthConfig()
+    public IdProviderConfig getIdProviderConfig()
     {
-        return authConfig;
+        return idProviderConfig;
     }
 
     public static Builder create()
@@ -59,7 +59,7 @@ public final class UserStore
 
         private String description;
 
-        private AuthConfig authConfig;
+        private IdProviderConfig idProviderConfig;
 
         private Builder()
         {
@@ -70,7 +70,7 @@ public final class UserStore
             key = userStore.key;
             displayName = userStore.displayName;
             description = userStore.description;
-            authConfig = userStore.authConfig;
+            idProviderConfig = userStore.idProviderConfig;
         }
 
         public Builder displayName( final String value )
@@ -92,9 +92,9 @@ public final class UserStore
             return this;
         }
 
-        public Builder authConfig( final AuthConfig value )
+        public Builder idProviderConfig( final IdProviderConfig value )
         {
-            this.authConfig = value;
+            this.idProviderConfig = value;
             return this;
         }
 
