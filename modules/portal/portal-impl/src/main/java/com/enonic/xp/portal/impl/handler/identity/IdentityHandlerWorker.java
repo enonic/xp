@@ -3,9 +3,9 @@ package com.enonic.xp.portal.impl.handler.identity;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.auth.IdProviderControllerExecutionParams;
-import com.enonic.xp.portal.auth.IdProviderControllerService;
 import com.enonic.xp.portal.handler.ControllerHandlerWorker;
+import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
+import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.site.Site;
 

@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.auth;
+package com.enonic.xp.portal.impl.idprovider;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -11,8 +11,8 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.annotation.Order;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.portal.auth.IdProviderControllerExecutionParams;
-import com.enonic.xp.portal.auth.IdProviderControllerService;
+import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
+import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.web.filter.OncePerRequestFilter;
 

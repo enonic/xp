@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.auth;
+package com.enonic.xp.portal.impl.idprovider;
 
 import java.io.IOException;
 import java.net.URL;
@@ -16,11 +16,11 @@ import org.osgi.framework.BundleContext;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.auth.IdProviderDescriptor;
-import com.enonic.xp.auth.IdProviderDescriptorService;
+import com.enonic.xp.idprovider.IdProviderDescriptor;
+import com.enonic.xp.idprovider.IdProviderDescriptorService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.auth.IdProviderControllerExecutionParams;
+import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.impl.controller.AbstractControllerTest;
 import com.enonic.xp.portal.impl.script.PortalScriptServiceImpl;
 import com.enonic.xp.portal.script.PortalScriptService;

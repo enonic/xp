@@ -13,7 +13,7 @@ import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolv
 import com.enonic.xp.admin.impl.rest.resource.schema.mixin.InlineMixinResolver;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationDescriptor;
-import com.enonic.xp.auth.IdProviderDescriptor;
+import com.enonic.xp.idprovider.IdProviderDescriptor;
 import com.enonic.xp.site.SiteDescriptor;
 
 public class ApplicationJson

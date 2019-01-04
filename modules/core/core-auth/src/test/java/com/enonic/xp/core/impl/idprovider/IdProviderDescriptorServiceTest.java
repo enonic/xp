@@ -1,14 +1,14 @@
-package com.enonic.xp.core.impl.auth;
+package com.enonic.xp.core.impl.idprovider;
 
 import org.junit.Assert;
 import org.junit.Test;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.auth.IdProviderDescriptor;
-import com.enonic.xp.auth.IdProviderDescriptorMode;
 import com.enonic.xp.core.impl.app.ApplicationTestSupport;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
+import com.enonic.xp.idprovider.IdProviderDescriptor;
+import com.enonic.xp.idprovider.IdProviderDescriptorMode;
 import com.enonic.xp.inputtype.InputTypeName;
 
 public class IdProviderDescriptorServiceTest

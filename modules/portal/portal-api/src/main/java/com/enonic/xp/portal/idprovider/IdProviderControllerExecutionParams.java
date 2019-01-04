@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.auth;
+package com.enonic.xp.portal.idprovider;
 
 import java.util.Objects;
 

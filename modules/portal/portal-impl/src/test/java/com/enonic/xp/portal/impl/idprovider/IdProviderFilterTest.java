@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.auth;
+package com.enonic.xp.portal.impl.idprovider;
 
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
@@ -9,7 +9,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.portal.auth.IdProviderControllerService;
+import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;

@@ -2,7 +2,7 @@ package com.enonic.xp.admin.impl.rest.resource.application.json;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.auth.IdProviderDescriptor;
+import com.enonic.xp.idprovider.IdProviderDescriptor;
 import com.enonic.xp.security.UserStore;
 import com.enonic.xp.security.UserStores;
 

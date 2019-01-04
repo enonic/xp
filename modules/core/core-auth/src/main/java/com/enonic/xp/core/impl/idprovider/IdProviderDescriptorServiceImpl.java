@@ -1,11 +1,11 @@
-package com.enonic.xp.core.impl.auth;
+package com.enonic.xp.core.impl.idprovider;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.auth.IdProviderDescriptor;
-import com.enonic.xp.auth.IdProviderDescriptorService;
+import com.enonic.xp.idprovider.IdProviderDescriptor;
+import com.enonic.xp.idprovider.IdProviderDescriptorService;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;

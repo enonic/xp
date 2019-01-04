@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.auth;
+package com.enonic.xp.portal.impl.idprovider;
 
 import java.io.IOException;
 
@@ -12,7 +12,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.auth.IdProviderControllerService;
+import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 
 public class IdProviderResponseWrapperTest
 {

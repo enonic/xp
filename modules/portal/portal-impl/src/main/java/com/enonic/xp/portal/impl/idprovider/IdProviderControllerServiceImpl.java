@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.auth;
+package com.enonic.xp.portal.impl.idprovider;
 
 
 import java.io.IOException;
@@ -9,15 +9,15 @@ import javax.servlet.http.HttpServletResponse;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.auth.IdProviderDescriptor;
-import com.enonic.xp.auth.IdProviderDescriptorService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.idprovider.IdProviderDescriptor;
+import com.enonic.xp.idprovider.IdProviderDescriptorService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.auth.IdProviderControllerExecutionParams;
-import com.enonic.xp.portal.auth.IdProviderControllerService;
+import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
+import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 import com.enonic.xp.portal.impl.PortalRequestAdapter;
 import com.enonic.xp.security.IdProviderConfig;
 import com.enonic.xp.security.RoleKeys;

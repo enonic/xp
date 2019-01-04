@@ -1,4 +1,4 @@
-package com.enonic.xp.auth;
+package com.enonic.xp.idprovider;
 
 public enum IdProviderDescriptorMode
 {

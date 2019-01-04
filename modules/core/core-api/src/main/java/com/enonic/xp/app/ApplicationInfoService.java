@@ -2,9 +2,9 @@ package com.enonic.xp.app;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.auth.IdProviderDescriptor;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.descriptor.Descriptors;
+import com.enonic.xp.idprovider.IdProviderDescriptor;
 import com.enonic.xp.macro.MacroDescriptors;
 import com.enonic.xp.page.PageDescriptors;
 import com.enonic.xp.region.LayoutDescriptors;

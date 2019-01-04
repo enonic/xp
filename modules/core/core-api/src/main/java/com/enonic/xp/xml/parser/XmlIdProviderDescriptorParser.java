@@ -2,8 +2,8 @@ package com.enonic.xp.xml.parser;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.auth.IdProviderDescriptor;
-import com.enonic.xp.auth.IdProviderDescriptorMode;
+import com.enonic.xp.idprovider.IdProviderDescriptor;
+import com.enonic.xp.idprovider.IdProviderDescriptorMode;
 import com.enonic.xp.xml.DomElement;
 
 @Beta

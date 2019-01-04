@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.auth;
+package com.enonic.xp.portal.impl.idprovider;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -11,8 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.portal.auth.IdProviderControllerExecutionParams;
-import com.enonic.xp.portal.auth.IdProviderControllerService;
+import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
+import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.Exceptions;
 

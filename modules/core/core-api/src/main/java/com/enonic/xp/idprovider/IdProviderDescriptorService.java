@@ -1,4 +1,4 @@
-package com.enonic.xp.auth;
+package com.enonic.xp.idprovider;
 
 import com.google.common.annotations.Beta;
 

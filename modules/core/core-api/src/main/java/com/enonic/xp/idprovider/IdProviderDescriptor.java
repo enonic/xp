@@ -1,4 +1,4 @@
-package com.enonic.xp.auth;
+package com.enonic.xp.idprovider;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
