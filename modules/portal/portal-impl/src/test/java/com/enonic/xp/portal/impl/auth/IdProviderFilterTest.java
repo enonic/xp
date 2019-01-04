@@ -16,9 +16,9 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
-public class AuthFilterTest
+public class IdProviderFilterTest
 {
-    private AuthFilter authFilter;
+    private IdProviderFilter idProviderFilter;
 
     private IdProviderControllerService idProviderControllerService;
 
@@ -26,8 +26,8 @@ public class AuthFilterTest
     public void setup()
     {
         idProviderControllerService = Mockito.mock( IdProviderControllerService.class );
-        authFilter = new AuthFilter();
-        authFilter.setIdProviderControllerService( idProviderControllerService );
+        idProviderFilter = new IdProviderFilter();
+        idProviderFilter.setIdProviderControllerService( idProviderControllerService );
     }
 
     @Test
@@ -38,7 +38,7 @@ public class AuthFilterTest
         final HttpServletResponse httpServletResponse = Mockito.mock( HttpServletResponse.class );
         final FilterChain filterChain = Mockito.mock( FilterChain.class );
 
-        authFilter.doHandle( httpServletRequest, httpServletResponse, filterChain );
+        idProviderFilter.doHandle( httpServletRequest, httpServletResponse, filterChain );
         Mockito.verify( idProviderControllerService ).execute( Mockito.any() );
     }
 
@@ -64,7 +64,7 @@ public class AuthFilterTest
                 final HttpServletResponse httpServletResponse = Mockito.mock( HttpServletResponse.class );
                 final FilterChain filterChain = Mockito.mock( FilterChain.class );
 
-                authFilter.doHandle( httpServletRequest, httpServletResponse, filterChain );
+                idProviderFilter.doHandle( httpServletRequest, httpServletResponse, filterChain );
                 Mockito.verify( idProviderControllerService, Mockito.times( 0 ) ).execute( Mockito.any() );
                 return null;
             } );

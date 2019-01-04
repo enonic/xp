@@ -14,12 +14,12 @@ import org.mockito.Mockito;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.auth.IdProviderControllerService;
 
-public class AuthResponseWrapperTest
+public class IdProviderResponseWrapperTest
 {
 
     private IdProviderControllerService idProviderControllerService;
 
-    private AuthResponseWrapper authResponseWrapper;
+    private IdProviderResponseWrapper idProviderResponseWrapper;
 
     @Before
     public void setup()
@@ -30,18 +30,19 @@ public class AuthResponseWrapperTest
         final HttpServletRequest httpServletRequest = Mockito.mock( HttpServletRequest.class );
         final HttpServletResponse httpServletResponse = Mockito.mock( HttpServletResponse.class );
 
-        this.authResponseWrapper = new AuthResponseWrapper( idProviderControllerService, httpServletRequest, httpServletResponse );
+        this.idProviderResponseWrapper =
+            new IdProviderResponseWrapper( idProviderControllerService, httpServletRequest, httpServletResponse );
     }
 
     @Test
     public void testSetStatus()
         throws IOException
     {
-        authResponseWrapper.setStatus( 404 );
+        idProviderResponseWrapper.setStatus( 404 );
         Mockito.verify( idProviderControllerService, Mockito.times( 0 ) ).execute( Mockito.any() );
-        authResponseWrapper.setStatus( 403 );
+        idProviderResponseWrapper.setStatus( 403 );
         Mockito.verify( idProviderControllerService ).execute( Mockito.any() );
-        authResponseWrapper.setStatus( 403 );
+        idProviderResponseWrapper.setStatus( 403 );
         Mockito.verify( idProviderControllerService ).execute( Mockito.any() );
     }
 
@@ -49,11 +50,11 @@ public class AuthResponseWrapperTest
     public void testSendError()
         throws IOException
     {
-        authResponseWrapper.sendError( 404 );
+        idProviderResponseWrapper.sendError( 404 );
         Mockito.verify( idProviderControllerService, Mockito.times( 0 ) ).execute( Mockito.any() );
-        authResponseWrapper.sendError( 403 );
+        idProviderResponseWrapper.sendError( 403 );
         Mockito.verify( idProviderControllerService ).execute( Mockito.any() );
-        authResponseWrapper.sendError( 403 );
+        idProviderResponseWrapper.sendError( 403 );
         Mockito.verify( idProviderControllerService ).execute( Mockito.any() );
     }
 
@@ -61,11 +62,11 @@ public class AuthResponseWrapperTest
     public void testSendErrorWithMessage()
         throws IOException
     {
-        authResponseWrapper.sendError( 404, "message" );
+        idProviderResponseWrapper.sendError( 404, "message" );
         Mockito.verify( idProviderControllerService, Mockito.times( 0 ) ).execute( Mockito.any() );
-        authResponseWrapper.sendError( 403, "message" );
+        idProviderResponseWrapper.sendError( 403, "message" );
         Mockito.verify( idProviderControllerService ).execute( Mockito.any() );
-        authResponseWrapper.sendError( 403, "message" );
+        idProviderResponseWrapper.sendError( 403, "message" );
         Mockito.verify( idProviderControllerService ).execute( Mockito.any() );
     }
 
@@ -73,21 +74,21 @@ public class AuthResponseWrapperTest
     public void testGetWriter()
         throws IOException
     {
-        Assert.assertNull( authResponseWrapper.getWriter() );
-        authResponseWrapper.setStatus( 403 );
-        Assert.assertNotNull( authResponseWrapper.getWriter() );
+        Assert.assertNull( idProviderResponseWrapper.getWriter() );
+        idProviderResponseWrapper.setStatus( 403 );
+        Assert.assertNotNull( idProviderResponseWrapper.getWriter() );
     }
 
     @Test
     public void testGetOutputStream()
         throws IOException
     {
-        ServletOutputStream outputStream = authResponseWrapper.getOutputStream();
+        ServletOutputStream outputStream = idProviderResponseWrapper.getOutputStream();
         Assert.assertNull( outputStream );
 
-        authResponseWrapper.setStatus( 403 );
+        idProviderResponseWrapper.setStatus( 403 );
 
-        outputStream = authResponseWrapper.getOutputStream();
+        outputStream = idProviderResponseWrapper.getOutputStream();
         Assert.assertNotNull( outputStream );
         Assert.assertTrue( outputStream.isReady() );
         outputStream.setWriteListener( null );

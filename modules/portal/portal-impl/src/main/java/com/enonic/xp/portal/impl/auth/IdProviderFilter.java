@@ -19,7 +19,7 @@ import com.enonic.xp.web.filter.OncePerRequestFilter;
 @Component(immediate = true, service = Filter.class)
 @Order(-30)
 @WebFilter("/*")
-public final class AuthFilter
+public final class IdProviderFilter
     extends OncePerRequestFilter
 {
     private IdProviderControllerService idProviderControllerService;
@@ -41,7 +41,7 @@ public final class AuthFilter
         }
 
         //Wraps the response to handle 403 errors
-        final AuthResponseWrapper responseWrapper = new AuthResponseWrapper( idProviderControllerService, req, res );
+        final IdProviderResponseWrapper responseWrapper = new IdProviderResponseWrapper( idProviderControllerService, req, res );
         chain.doFilter( req, responseWrapper );
 
     }

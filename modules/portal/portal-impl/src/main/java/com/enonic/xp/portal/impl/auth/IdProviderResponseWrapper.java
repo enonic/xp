@@ -17,7 +17,7 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.Exceptions;
 
 
-public class AuthResponseWrapper
+public class IdProviderResponseWrapper
     extends HttpServletResponseWrapper
 {
     private final IdProviderControllerService idProviderControllerService;
@@ -28,8 +28,8 @@ public class AuthResponseWrapper
 
     private boolean errorHandled;
 
-    public AuthResponseWrapper( final IdProviderControllerService idProviderControllerService, final HttpServletRequest request,
-                                final HttpServletResponse response )
+    public IdProviderResponseWrapper( final IdProviderControllerService idProviderControllerService, final HttpServletRequest request,
+                                      final HttpServletResponse response )
     {
         super( response );
         this.idProviderControllerService = idProviderControllerService;
