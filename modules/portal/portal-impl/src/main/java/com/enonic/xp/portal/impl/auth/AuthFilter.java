@@ -11,8 +11,8 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.annotation.Order;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.portal.auth.AuthControllerExecutionParams;
-import com.enonic.xp.portal.auth.AuthControllerService;
+import com.enonic.xp.portal.auth.IdProviderControllerExecutionParams;
+import com.enonic.xp.portal.auth.IdProviderControllerService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.web.filter.OncePerRequestFilter;
 
@@ -22,7 +22,7 @@ import com.enonic.xp.web.filter.OncePerRequestFilter;
 public final class AuthFilter
     extends OncePerRequestFilter
 {
-    private AuthControllerService authControllerService;
+    private IdProviderControllerService idProviderControllerService;
 
     @Override
     protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain )
@@ -33,22 +33,22 @@ public final class AuthFilter
         if ( !authInfo.isAuthenticated() )
         {
             //Executes the function autoLogin of the IdProvider
-            AuthControllerExecutionParams executionParams = AuthControllerExecutionParams.create().
+            IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create().
                 functionName( "autoLogin" ).
                 servletRequest( req ).
                 build();
-            authControllerService.execute( executionParams );
+            idProviderControllerService.execute( executionParams );
         }
 
         //Wraps the response to handle 403 errors
-        final AuthResponseWrapper responseWrapper = new AuthResponseWrapper( authControllerService, req, res );
+        final AuthResponseWrapper responseWrapper = new AuthResponseWrapper( idProviderControllerService, req, res );
         chain.doFilter( req, responseWrapper );
 
     }
 
     @Reference
-    public void setAuthControllerService( final AuthControllerService authControllerService )
+    public void setIdProviderControllerService( final IdProviderControllerService idProviderControllerService )
     {
-        this.authControllerService = authControllerService;
+        this.idProviderControllerService = idProviderControllerService;
     }
 }

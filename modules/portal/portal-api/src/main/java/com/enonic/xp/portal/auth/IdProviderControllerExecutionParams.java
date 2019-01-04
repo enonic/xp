@@ -10,7 +10,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.security.UserStoreKey;
 
-public class AuthControllerExecutionParams
+public class IdProviderControllerExecutionParams
 {
     private final UserStoreKey userStoreKey;
 
@@ -22,7 +22,7 @@ public class AuthControllerExecutionParams
 
     private final HttpServletResponse response;
 
-    private AuthControllerExecutionParams( final Builder builder )
+    private IdProviderControllerExecutionParams( final Builder builder )
     {
         userStoreKey = builder.userStoreKey;
         functionName = builder.functionName;
@@ -72,7 +72,7 @@ public class AuthControllerExecutionParams
         {
             return false;
         }
-        final AuthControllerExecutionParams that = (AuthControllerExecutionParams) o;
+        final IdProviderControllerExecutionParams that = (IdProviderControllerExecutionParams) o;
         return Objects.equals( userStoreKey, that.userStoreKey ) && Objects.equals( functionName, that.functionName ) &&
             Objects.equals( servletRequest, that.servletRequest ) && Objects.equals( portalRequest, that.portalRequest ) &&
             Objects.equals( response, that.response );
@@ -140,10 +140,10 @@ public class AuthControllerExecutionParams
             }
         }
 
-        public AuthControllerExecutionParams build()
+        public IdProviderControllerExecutionParams build()
         {
             validate();
-            return new AuthControllerExecutionParams( this );
+            return new IdProviderControllerExecutionParams( this );
         }
     }
 }

@@ -9,7 +9,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.portal.auth.AuthControllerService;
+import com.enonic.xp.portal.auth.IdProviderControllerService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
@@ -20,14 +20,14 @@ public class AuthFilterTest
 {
     private AuthFilter authFilter;
 
-    private AuthControllerService authControllerService;
+    private IdProviderControllerService idProviderControllerService;
 
     @Before
     public void setup()
     {
-        authControllerService = Mockito.mock( AuthControllerService.class );
+        idProviderControllerService = Mockito.mock( IdProviderControllerService.class );
         authFilter = new AuthFilter();
-        authFilter.setAuthControllerService( authControllerService );
+        authFilter.setIdProviderControllerService( idProviderControllerService );
     }
 
     @Test
@@ -39,7 +39,7 @@ public class AuthFilterTest
         final FilterChain filterChain = Mockito.mock( FilterChain.class );
 
         authFilter.doHandle( httpServletRequest, httpServletResponse, filterChain );
-        Mockito.verify( authControllerService ).execute( Mockito.any() );
+        Mockito.verify( idProviderControllerService ).execute( Mockito.any() );
     }
 
     @Test
@@ -65,7 +65,7 @@ public class AuthFilterTest
                 final FilterChain filterChain = Mockito.mock( FilterChain.class );
 
                 authFilter.doHandle( httpServletRequest, httpServletResponse, filterChain );
-                Mockito.verify( authControllerService, Mockito.times( 0 ) ).execute( Mockito.any() );
+                Mockito.verify( idProviderControllerService, Mockito.times( 0 ) ).execute( Mockito.any() );
                 return null;
             } );
 

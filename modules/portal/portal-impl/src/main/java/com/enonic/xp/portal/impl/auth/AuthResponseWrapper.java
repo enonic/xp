@@ -11,8 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.portal.auth.AuthControllerExecutionParams;
-import com.enonic.xp.portal.auth.AuthControllerService;
+import com.enonic.xp.portal.auth.IdProviderControllerExecutionParams;
+import com.enonic.xp.portal.auth.IdProviderControllerService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.Exceptions;
 
@@ -20,7 +20,7 @@ import com.enonic.xp.util.Exceptions;
 public class AuthResponseWrapper
     extends HttpServletResponseWrapper
 {
-    private final AuthControllerService authControllerService;
+    private final IdProviderControllerService idProviderControllerService;
 
     private final HttpServletRequest request;
 
@@ -28,11 +28,11 @@ public class AuthResponseWrapper
 
     private boolean errorHandled;
 
-    public AuthResponseWrapper( final AuthControllerService authControllerService, final HttpServletRequest request,
+    public AuthResponseWrapper( final IdProviderControllerService idProviderControllerService, final HttpServletRequest request,
                                 final HttpServletResponse response )
     {
         super( response );
-        this.authControllerService = authControllerService;
+        this.idProviderControllerService = idProviderControllerService;
         this.request = request;
         this.response = response;
     }
@@ -129,12 +129,12 @@ public class AuthResponseWrapper
         {
             try
             {
-                final AuthControllerExecutionParams executionParams = AuthControllerExecutionParams.create().
+                final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create().
                     functionName( "handle401" ).
                     servletRequest( request ).
                     response( response ).
                     build();
-                final boolean responseSerialized = authControllerService.execute( executionParams ) != null;
+                final boolean responseSerialized = idProviderControllerService.execute( executionParams ) != null;
                 if ( responseSerialized )
                 {
                     errorHandled = true;

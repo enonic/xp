@@ -14,7 +14,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.auth.AuthControllerService;
+import com.enonic.xp.portal.auth.IdProviderControllerService;
 import com.enonic.xp.portal.handler.EndpointHandler;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.trace.Trace;
@@ -34,7 +34,7 @@ public class IdentityHandler
 
     private ContentService contentService;
 
-    protected AuthControllerService authControllerService;
+    protected IdProviderControllerService idProviderControllerService;
 
     public IdentityHandler()
     {
@@ -76,7 +76,7 @@ public class IdentityHandler
         worker.userStoreKey = userStoreKey;
         worker.idProviderFunction = idProviderFunction;
         worker.setContentService( this.contentService );
-        worker.authControllerService = this.authControllerService;
+        worker.idProviderControllerService = this.idProviderControllerService;
         final Trace trace = Tracer.newTrace( "portalRequest" );
         if ( trace == null )
         {
@@ -157,8 +157,8 @@ public class IdentityHandler
     }
 
     @Reference
-    public void setAuthControllerService( final AuthControllerService authControllerService )
+    public void setIdProviderControllerService( final IdProviderControllerService idProviderControllerService )
     {
-        this.authControllerService = authControllerService;
+        this.idProviderControllerService = idProviderControllerService;
     }
 }

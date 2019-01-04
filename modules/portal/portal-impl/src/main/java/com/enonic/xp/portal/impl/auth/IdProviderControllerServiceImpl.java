@@ -16,8 +16,8 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.auth.AuthControllerExecutionParams;
-import com.enonic.xp.portal.auth.AuthControllerService;
+import com.enonic.xp.portal.auth.IdProviderControllerExecutionParams;
+import com.enonic.xp.portal.auth.IdProviderControllerService;
 import com.enonic.xp.portal.impl.PortalRequestAdapter;
 import com.enonic.xp.security.AuthConfig;
 import com.enonic.xp.security.RoleKeys;
@@ -30,10 +30,10 @@ import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 @Component
-public class AuthControllerServiceImpl
-    implements AuthControllerService
+public class IdProviderControllerServiceImpl
+    implements IdProviderControllerService
 {
-    private AuthControllerScriptFactory authControllerScriptFactory;
+    private IdProviderControllerScriptFactory idProviderControllerScriptFactory;
 
     private IdProviderDescriptorService idProviderDescriptorService;
 
@@ -42,7 +42,7 @@ public class AuthControllerServiceImpl
     private ResponseSerializationService responseSerializationService;
 
     @Override
-    public PortalResponse execute( final AuthControllerExecutionParams params )
+    public PortalResponse execute( final IdProviderControllerExecutionParams params )
         throws IOException
     {
         final UserStoreKey userStoreKey = retrieveUserStoreKey( params );
@@ -51,10 +51,10 @@ public class AuthControllerServiceImpl
 
         if ( idProviderDescriptor != null )
         {
-            final AuthControllerScript authControllerScript =
-                authControllerScriptFactory.fromScript( idProviderDescriptor.getResourceKey() );
+            final IdProviderControllerScript idProviderControllerScript =
+                idProviderControllerScriptFactory.fromScript( idProviderDescriptor.getResourceKey() );
             final String functionName = params.getFunctionName();
-            if ( authControllerScript.hasMethod( functionName ) )
+            if ( idProviderControllerScript.hasMethod( functionName ) )
             {
                 PortalRequest portalRequest = params.getPortalRequest();
                 if ( portalRequest == null )
@@ -65,7 +65,7 @@ public class AuthControllerServiceImpl
                 portalRequest.setApplicationKey( idProviderDescriptor.getKey() );
                 portalRequest.setUserStore( userStore );
 
-                final PortalResponse portalResponse = authControllerScript.execute( functionName, portalRequest );
+                final PortalResponse portalResponse = idProviderControllerScript.execute( functionName, portalRequest );
 
                 if ( portalResponse != null )
                 {
@@ -82,7 +82,7 @@ public class AuthControllerServiceImpl
         return null;
     }
 
-    private UserStoreKey retrieveUserStoreKey( AuthControllerExecutionParams params )
+    private UserStoreKey retrieveUserStoreKey( IdProviderControllerExecutionParams params )
     {
         UserStoreKey userStoreKey = params.getUserStoreKey();
         if ( userStoreKey == null )
@@ -132,9 +132,9 @@ public class AuthControllerServiceImpl
     }
 
     @Reference
-    public void setAuthControllerScriptFactory( final AuthControllerScriptFactory authControllerScriptFactory )
+    public void setIdProviderControllerScriptFactory( final IdProviderControllerScriptFactory idProviderControllerScriptFactory )
     {
-        this.authControllerScriptFactory = authControllerScriptFactory;
+        this.idProviderControllerScriptFactory = idProviderControllerScriptFactory;
     }
 
     @Reference

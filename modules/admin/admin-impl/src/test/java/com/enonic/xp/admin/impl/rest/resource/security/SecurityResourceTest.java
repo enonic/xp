@@ -24,8 +24,8 @@ import com.enonic.xp.admin.impl.rest.resource.security.json.CreateUserJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UpdatePasswordJson;
 import com.enonic.xp.auth.IdProviderDescriptorService;
 import com.enonic.xp.jaxrs.impl.MockRestResponse;
-import com.enonic.xp.portal.auth.AuthControllerExecutionParams;
-import com.enonic.xp.portal.auth.AuthControllerService;
+import com.enonic.xp.portal.auth.IdProviderControllerExecutionParams;
+import com.enonic.xp.portal.auth.IdProviderControllerService;
 import com.enonic.xp.security.CreateGroupParams;
 import com.enonic.xp.security.CreateRoleParams;
 import com.enonic.xp.security.CreateUserParams;
@@ -74,7 +74,7 @@ public class SecurityResourceTest
 
     private SecurityService securityService;
 
-    private AuthControllerService authControllerService;
+    private IdProviderControllerService idProviderControllerService;
 
     private IdProviderDescriptorService idProviderDescriptorService;
 
@@ -85,13 +85,13 @@ public class SecurityResourceTest
     protected SecurityResource getResourceInstance()
     {
         securityService = Mockito.mock( SecurityService.class );
-        authControllerService = Mockito.mock( AuthControllerService.class );
+        idProviderControllerService = Mockito.mock( IdProviderControllerService.class );
         idProviderDescriptorService = Mockito.mock( IdProviderDescriptorService.class );
 
         final SecurityResource resource = new SecurityResource();
 
         resource.setSecurityService( securityService );
-        resource.setAuthControllerService( authControllerService );
+        resource.setIdProviderControllerService( idProviderControllerService );
         resource.setIdProviderDescriptorService( idProviderDescriptorService );
 
         return resource;
@@ -285,16 +285,17 @@ public class SecurityResourceTest
         throws Exception
     {
         final UserStoreKey userStoreKey = UserStoreKey.from( "enonic" );
-        final ArgumentCaptor<AuthControllerExecutionParams> paramsCaptor = ArgumentCaptor.forClass( AuthControllerExecutionParams.class );
+        final ArgumentCaptor<IdProviderControllerExecutionParams> paramsCaptor =
+            ArgumentCaptor.forClass( IdProviderControllerExecutionParams.class );
 
-        Mockito.doThrow( new RuntimeException( "errorMessage" ) ).when( this.authControllerService ).execute(
-            Mockito.isA( AuthControllerExecutionParams.class ) );
+        Mockito.doThrow( new RuntimeException( "errorMessage" ) ).when( this.idProviderControllerService ).execute(
+            Mockito.isA( IdProviderControllerExecutionParams.class ) );
 
         String result = request().
             entity( "{\"keys\":[\"" + userStoreKey.toString() + "\"]}", MediaType.APPLICATION_JSON_TYPE ).
             path( "security/userstore/sync" ).post().getAsString();
 
-        Mockito.verify( authControllerService, Mockito.times( 1 ) ).execute( paramsCaptor.capture() );
+        Mockito.verify( idProviderControllerService, Mockito.times( 1 ) ).execute( paramsCaptor.capture() );
 
         assertEquals( "sync", paramsCaptor.getValue().getFunctionName() );
         assertEquals( userStoreKey, paramsCaptor.getValue().getUserStoreKey() );

@@ -59,8 +59,8 @@ import com.enonic.xp.auth.IdProviderDescriptorMode;
 import com.enonic.xp.auth.IdProviderDescriptorService;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.jaxrs.JaxRsExceptions;
-import com.enonic.xp.portal.auth.AuthControllerExecutionParams;
-import com.enonic.xp.portal.auth.AuthControllerService;
+import com.enonic.xp.portal.auth.IdProviderControllerExecutionParams;
+import com.enonic.xp.portal.auth.IdProviderControllerService;
 import com.enonic.xp.security.AuthConfig;
 import com.enonic.xp.security.Group;
 import com.enonic.xp.security.Principal;
@@ -97,7 +97,7 @@ public final class SecurityResource
 
     private IdProviderDescriptorService idProviderDescriptorService;
 
-    private AuthControllerService authControllerService;
+    private IdProviderControllerService idProviderControllerService;
 
     @GET
     @Path("userstore/list")
@@ -194,12 +194,12 @@ public final class SecurityResource
         params.getKeys().stream().map( UserStoreKey::from ).forEach( ( userStoreKey ) -> {
             try
             {
-                final AuthControllerExecutionParams syncParams = AuthControllerExecutionParams.create().
+                final IdProviderControllerExecutionParams syncParams = IdProviderControllerExecutionParams.create().
                     userStoreKey( userStoreKey ).
                     functionName( "sync" ).
                     servletRequest( httpRequest ).
                     build();
-                authControllerService.execute( syncParams );
+                idProviderControllerService.execute( syncParams );
                 resultsJson.add( SyncUserStoreResultJson.success( userStoreKey ) );
             }
             catch ( Exception e )
@@ -635,9 +635,9 @@ public final class SecurityResource
     }
 
     @Reference
-    public void setAuthControllerService( final AuthControllerService authControllerService )
+    public void setIdProviderControllerService( final IdProviderControllerService idProviderControllerService )
     {
-        this.authControllerService = authControllerService;
+        this.idProviderControllerService = idProviderControllerService;
     }
 
     private class FetchPrincipalsWithRolesResult

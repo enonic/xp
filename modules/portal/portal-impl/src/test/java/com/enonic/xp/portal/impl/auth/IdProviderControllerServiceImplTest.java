@@ -20,7 +20,7 @@ import com.enonic.xp.auth.IdProviderDescriptor;
 import com.enonic.xp.auth.IdProviderDescriptorService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.auth.AuthControllerExecutionParams;
+import com.enonic.xp.portal.auth.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.impl.controller.AbstractControllerTest;
 import com.enonic.xp.portal.impl.script.PortalScriptServiceImpl;
 import com.enonic.xp.portal.script.PortalScriptService;
@@ -36,9 +36,9 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
-public class AuthControllerServiceImplTest
+public class IdProviderControllerServiceImplTest
 {
-    private AuthControllerServiceImpl authControllerService;
+    private IdProviderControllerServiceImpl idProviderControllerService;
 
     @Before
     public void setup()
@@ -60,15 +60,15 @@ public class AuthControllerServiceImplTest
         //Mocks the PortalScriptService
         final PortalScriptService portalScriptService = setupPortalScriptService();
 
-        //Creates AuthControllerScriptFactoryImpl
-        final AuthControllerScriptFactoryImpl authControllerScriptFactory = new AuthControllerScriptFactoryImpl();
-        authControllerScriptFactory.setScriptService( portalScriptService );
+        //Creates IdProviderControllerScriptFactoryImpl
+        final IdProviderControllerScriptFactoryImpl idProviderControllerScriptFactory = new IdProviderControllerScriptFactoryImpl();
+        idProviderControllerScriptFactory.setScriptService( portalScriptService );
 
-        //Creates AuthControllerServiceImpl
-        authControllerService = new AuthControllerServiceImpl();
-        authControllerService.setAuthControllerScriptFactory( authControllerScriptFactory );
-        authControllerService.setIdProviderDescriptorService( idProviderDescriptorService );
-        authControllerService.setSecurityService( securityService );
+        //Creates IdProviderControllerServiceImpl
+        idProviderControllerService = new IdProviderControllerServiceImpl();
+        idProviderControllerService.setIdProviderControllerScriptFactory( idProviderControllerScriptFactory );
+        idProviderControllerService.setIdProviderDescriptorService( idProviderDescriptorService );
+        idProviderControllerService.setSecurityService( securityService );
     }
 
     private PortalScriptService setupPortalScriptService()
@@ -109,12 +109,12 @@ public class AuthControllerServiceImplTest
     public void executeMissingUserStore()
         throws IOException
     {
-        final AuthControllerExecutionParams executionParams = AuthControllerExecutionParams.create().
+        final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create().
             portalRequest( new PortalRequest() ).
             userStoreKey( UserStoreKey.from( "missinguserstore" ) ).
             functionName( "missingfunction" ).
             build();
-        final PortalResponse portalResponse = authControllerService.execute( executionParams );
+        final PortalResponse portalResponse = idProviderControllerService.execute( executionParams );
         Assert.assertNull( portalResponse );
     }
 
@@ -122,12 +122,12 @@ public class AuthControllerServiceImplTest
     public void executeMissingFunction()
         throws IOException
     {
-        final AuthControllerExecutionParams executionParams = AuthControllerExecutionParams.create().
+        final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create().
             portalRequest( new PortalRequest() ).
             userStoreKey( UserStoreKey.from( "myemptyuserstore" ) ).
             functionName( "missingfunction" ).
             build();
-        final PortalResponse portalResponse = authControllerService.execute( executionParams );
+        final PortalResponse portalResponse = idProviderControllerService.execute( executionParams );
         Assert.assertNull( portalResponse );
     }
 
@@ -135,12 +135,12 @@ public class AuthControllerServiceImplTest
     public void executeUserStoreWithoutApplication()
         throws IOException
     {
-        final AuthControllerExecutionParams executionParams = AuthControllerExecutionParams.create().
+        final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create().
             portalRequest( new PortalRequest() ).
             userStoreKey( UserStoreKey.from( "myemptyuserstore" ) ).
             functionName( "myfunction" ).
             build();
-        final PortalResponse portalResponse = authControllerService.execute( executionParams );
+        final PortalResponse portalResponse = idProviderControllerService.execute( executionParams );
         Assert.assertNull( portalResponse );
     }
 
@@ -148,12 +148,12 @@ public class AuthControllerServiceImplTest
     public void execute()
         throws IOException
     {
-        final AuthControllerExecutionParams executionParams = AuthControllerExecutionParams.create().
+        final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create().
             portalRequest( new PortalRequest() ).
             userStoreKey( UserStoreKey.from( "myuserstore" ) ).
             functionName( "myfunction" ).
             build();
-        final PortalResponse portalResponse = authControllerService.execute( executionParams );
+        final PortalResponse portalResponse = idProviderControllerService.execute( executionParams );
         Assert.assertNotNull( portalResponse );
         Assert.assertEquals( HttpStatus.OK, portalResponse.getStatus() );
         Assert.assertEquals( "myapplication/myfunction", portalResponse.getBody() );
@@ -165,11 +165,11 @@ public class AuthControllerServiceImplTest
         throws IOException
     {
         final HttpServletRequest httpServletRequest = createHttpServletRequest();
-        final AuthControllerExecutionParams executionParams = AuthControllerExecutionParams.create().
+        final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create().
             servletRequest( httpServletRequest ).
             functionName( "myfunction" ).
             build();
-        final PortalResponse portalResponse = authControllerService.execute( executionParams );
+        final PortalResponse portalResponse = idProviderControllerService.execute( executionParams );
         Assert.assertNull( portalResponse );
     }
 
@@ -186,11 +186,11 @@ public class AuthControllerServiceImplTest
 
         VirtualHostHelper.setVirtualHost( httpServletRequest, virtualHost );
 
-        final AuthControllerExecutionParams executionParams = AuthControllerExecutionParams.create().
+        final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create().
             servletRequest( httpServletRequest ).
             functionName( "myfunction" ).
             build();
-        final PortalResponse portalResponse = authControllerService.execute( executionParams );
+        final PortalResponse portalResponse = idProviderControllerService.execute( executionParams );
         Assert.assertNotNull( portalResponse );
         Assert.assertEquals( HttpStatus.OK, portalResponse.getStatus() );
         Assert.assertEquals( "myapplication/myfunction", portalResponse.getBody() );

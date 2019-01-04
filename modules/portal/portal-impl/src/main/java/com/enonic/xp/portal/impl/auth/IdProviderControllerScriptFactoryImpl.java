@@ -8,16 +8,16 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.script.ScriptExports;
 
 @Component
-public final class AuthControllerScriptFactoryImpl
-    implements AuthControllerScriptFactory
+public final class IdProviderControllerScriptFactoryImpl
+    implements IdProviderControllerScriptFactory
 {
     private PortalScriptService scriptService;
 
     @Override
-    public AuthControllerScript fromScript( final ResourceKey script )
+    public IdProviderControllerScript fromScript( final ResourceKey script )
     {
         final ScriptExports exports = this.scriptService.execute( script );
-        return new AuthControllerScriptImpl( exports );
+        return new IdProviderControllerScriptImpl( exports );
     }
 
     @Reference

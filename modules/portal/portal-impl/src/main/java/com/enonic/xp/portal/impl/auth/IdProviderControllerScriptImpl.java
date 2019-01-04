@@ -9,12 +9,12 @@ import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.web.HttpStatus;
 
-final class AuthControllerScriptImpl
-    implements AuthControllerScript
+final class IdProviderControllerScriptImpl
+    implements IdProviderControllerScript
 {
     private final ScriptExports scriptExports;
 
-    public AuthControllerScriptImpl( final ScriptExports scriptExports )
+    public IdProviderControllerScriptImpl( final ScriptExports scriptExports )
     {
         this.scriptExports = scriptExports;
     }

@@ -12,12 +12,12 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.auth.AuthControllerService;
+import com.enonic.xp.portal.auth.IdProviderControllerService;
 
 public class AuthResponseWrapperTest
 {
 
-    private AuthControllerService authControllerService;
+    private IdProviderControllerService idProviderControllerService;
 
     private AuthResponseWrapper authResponseWrapper;
 
@@ -25,12 +25,12 @@ public class AuthResponseWrapperTest
     public void setup()
         throws IOException
     {
-        this.authControllerService = Mockito.mock( AuthControllerService.class );
-        Mockito.when( authControllerService.execute( Mockito.any() ) ).thenReturn( PortalResponse.create().build() );
+        this.idProviderControllerService = Mockito.mock( IdProviderControllerService.class );
+        Mockito.when( idProviderControllerService.execute( Mockito.any() ) ).thenReturn( PortalResponse.create().build() );
         final HttpServletRequest httpServletRequest = Mockito.mock( HttpServletRequest.class );
         final HttpServletResponse httpServletResponse = Mockito.mock( HttpServletResponse.class );
 
-        this.authResponseWrapper = new AuthResponseWrapper( authControllerService, httpServletRequest, httpServletResponse );
+        this.authResponseWrapper = new AuthResponseWrapper( idProviderControllerService, httpServletRequest, httpServletResponse );
     }
 
     @Test
@@ -38,11 +38,11 @@ public class AuthResponseWrapperTest
         throws IOException
     {
         authResponseWrapper.setStatus( 404 );
-        Mockito.verify( authControllerService, Mockito.times( 0 ) ).execute( Mockito.any() );
+        Mockito.verify( idProviderControllerService, Mockito.times( 0 ) ).execute( Mockito.any() );
         authResponseWrapper.setStatus( 403 );
-        Mockito.verify( authControllerService ).execute( Mockito.any() );
+        Mockito.verify( idProviderControllerService ).execute( Mockito.any() );
         authResponseWrapper.setStatus( 403 );
-        Mockito.verify( authControllerService ).execute( Mockito.any() );
+        Mockito.verify( idProviderControllerService ).execute( Mockito.any() );
     }
 
     @Test
@@ -50,11 +50,11 @@ public class AuthResponseWrapperTest
         throws IOException
     {
         authResponseWrapper.sendError( 404 );
-        Mockito.verify( authControllerService, Mockito.times( 0 ) ).execute( Mockito.any() );
+        Mockito.verify( idProviderControllerService, Mockito.times( 0 ) ).execute( Mockito.any() );
         authResponseWrapper.sendError( 403 );
-        Mockito.verify( authControllerService ).execute( Mockito.any() );
+        Mockito.verify( idProviderControllerService ).execute( Mockito.any() );
         authResponseWrapper.sendError( 403 );
-        Mockito.verify( authControllerService ).execute( Mockito.any() );
+        Mockito.verify( idProviderControllerService ).execute( Mockito.any() );
     }
 
     @Test
@@ -62,11 +62,11 @@ public class AuthResponseWrapperTest
         throws IOException
     {
         authResponseWrapper.sendError( 404, "message" );
-        Mockito.verify( authControllerService, Mockito.times( 0 ) ).execute( Mockito.any() );
+        Mockito.verify( idProviderControllerService, Mockito.times( 0 ) ).execute( Mockito.any() );
         authResponseWrapper.sendError( 403, "message" );
-        Mockito.verify( authControllerService ).execute( Mockito.any() );
+        Mockito.verify( idProviderControllerService ).execute( Mockito.any() );
         authResponseWrapper.sendError( 403, "message" );
-        Mockito.verify( authControllerService ).execute( Mockito.any() );
+        Mockito.verify( idProviderControllerService ).execute( Mockito.any() );
     }
 
     @Test

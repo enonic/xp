@@ -4,8 +4,8 @@ import java.io.IOException;
 
 import com.enonic.xp.portal.PortalResponse;
 
-public interface AuthControllerService
+public interface IdProviderControllerService
 {
-    PortalResponse execute( AuthControllerExecutionParams params )
+    PortalResponse execute( IdProviderControllerExecutionParams params )
         throws IOException;
 }
