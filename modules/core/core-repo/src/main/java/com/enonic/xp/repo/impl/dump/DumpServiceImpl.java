@@ -40,6 +40,7 @@ import com.enonic.xp.repo.impl.dump.reader.FileDumpReader;
 import com.enonic.xp.repo.impl.dump.upgrade.DumpUpgrader;
 import com.enonic.xp.repo.impl.dump.upgrade.MissingModelVersionDumpUpgrader;
 import com.enonic.xp.repo.impl.dump.upgrade.VersionIdDumpUpgrader;
+import com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageDumpUpgrader;
 import com.enonic.xp.repo.impl.dump.writer.FileDumpWriter;
 import com.enonic.xp.repo.impl.node.NodeHelper;
 import com.enonic.xp.repo.impl.node.executor.BatchedGetChildrenExecutor;
@@ -142,7 +143,7 @@ public class DumpServiceImpl
 
     private List<DumpUpgrader> createDumpUpgraders()
     {
-        return Lists.newArrayList( new MissingModelVersionDumpUpgrader(), new VersionIdDumpUpgrader( this.basePath ) );
+        return Lists.newArrayList( new MissingModelVersionDumpUpgrader(), new VersionIdDumpUpgrader( this.basePath ), new FlattenedPageDumpUpgrader( this.basePath ) );
     }
 
     private Version getDumpModelVersion( final String dumpName )
@@ -271,6 +272,8 @@ public class DumpServiceImpl
             params.getListener().totalBranches( branchesCount );
         }
 
+        doDeleteRepositories();
+
         initializeSystemRepo( params, dumpReader, results );
 
         final List<Repository> repositoriesToLoad = repositoryService.list().stream().
@@ -329,14 +332,21 @@ public class DumpServiceImpl
         } );
     }
 
+    private void doDeleteRepositories()
+    {
+        repositoryService.list().stream().
+            filter( ( repo ) -> !repo.getId().equals( SystemConstants.SYSTEM_REPO.getId() ) ).
+            forEach( ( repo ) -> doDeleteRepository( repo.getId() ) );
+    }
+
+    private void doDeleteRepository( final RepositoryId repositoryId )
+    {
+        LOG.info( "Deleting repository [" + repositoryId + "]" );
+        this.repositoryService.deleteRepository( DeleteRepositoryParams.from( repositoryId ) );
+    }
+
     private void initializeRepo( final Repository repository )
     {
-        if ( this.repositoryService.isInitialized( repository.getId() ) )
-        {
-            LOG.info( "Deleting repository [" + repository.getId() + "] before loading" );
-            this.repositoryService.deleteRepository( DeleteRepositoryParams.from( repository.getId() ) );
-        }
-
         final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create().
             repositoryId( repository.getId() ).
             repositorySettings( repository.getSettings() ).

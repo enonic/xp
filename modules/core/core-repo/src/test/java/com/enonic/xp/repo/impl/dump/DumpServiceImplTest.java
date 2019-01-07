@@ -1,9 +1,7 @@
 package com.enonic.xp.repo.impl.dump;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
-import java.nio.charset.Charset;
 import java.time.Instant;
 import java.util.Iterator;
 import java.util.TreeSet;
@@ -16,9 +14,9 @@ import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.common.io.ByteSource;
-import com.google.common.io.Files;
 
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.branch.Branch;
@@ -26,6 +24,7 @@ import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.dump.BranchDumpResult;
 import com.enonic.xp.dump.RepoLoadResult;
@@ -129,8 +128,50 @@ public class DumpServiceImplTest
 
         NodeHelper.runAsAdmin( this::doLoad );
 
-        assertNotNull( getNode( node.id() ) );
+        // assertNotNull( getNode( node.id() ) );
         assertNull( getNode( toBeDeleted.id() ) );
+    }
+
+
+    @Test
+    public void obsolete_repository_deleted()
+        throws Exception
+    {
+        final AccessControlList newRepoACL = AccessControlList.create().
+            add( AccessControlEntry.create().
+                principal( RoleKeys.EVERYONE ).
+                allowAll().
+                build() ).
+            build();
+
+        final Repository newRepoInsideDump =
+            NodeHelper.runAsAdmin( () -> this.repositoryService.createRepository( CreateRepositoryParams.create().
+                repositoryId( RepositoryId.from( "new-repo-inside-dump" ) ).
+                rootChildOrder( ChildOrder.manualOrder() ).
+                rootPermissions( newRepoACL ).
+                build() ) );
+
+        NodeHelper.runAsAdmin( () -> doDump( SystemDumpParams.create().dumpName( "myTestDump" ).
+            build() ) );
+
+        final Repository newRepoOutsideDump =
+            NodeHelper.runAsAdmin( () -> this.repositoryService.createRepository( CreateRepositoryParams.create().
+                repositoryId( RepositoryId.from( "new-repo-outside-dump" ) ).
+                rootChildOrder( ChildOrder.manualOrder() ).
+                rootPermissions( newRepoACL ).
+                build() ) );
+
+        final Repositories oldRepos = NodeHelper.runAsAdmin( () -> this.repositoryService.list() );
+
+        NodeHelper.runAsAdmin( this::doLoad );
+
+        final Repositories newRepos = NodeHelper.runAsAdmin( () -> this.repositoryService.list() );
+
+        assertEquals( 4, oldRepos.getIds().getSize() );
+        assertEquals( 3, newRepos.getIds().getSize() );
+
+        assertNotNull( newRepos.getRepositoryById( newRepoInsideDump.getId() ) );
+        assertNull( newRepos.getRepositoryById( newRepoOutsideDump.getId() ) );
     }
 
     @Test
@@ -698,15 +739,16 @@ public class DumpServiceImplTest
             assertEquals( DumpConstants.MODEL_VERSION, updatedMeta.getModelVersion() );
 
             final NodeId nodeId = NodeId.from( "f0fb822c-092d-41f9-a961-f3811d81e55a" );
+            final NodeId fragmentNodeId = NodeId.from( "7ee16649-85c6-4a76-8788-74be03be6c7a" );
             final NodePath nodePath = NodePath.create( "/content/mysite" ).build();
-            final NodeVersionId draftNodeVersionId = NodeVersionId.from( "4085875dceda069f673bc76370be584fe4fa6312" );
-            final NodeVersionId masterNodeVersionId = NodeVersionId.from( "431056fc90e3f25175dba9a2294d42ed9a9da1ee" );
+            final NodeVersionId draftNodeVersionId = NodeVersionId.from( "8d617bde8625caaba47924a1bb35b6b101f963ac" );
+            final NodeVersionId masterNodeVersionId = NodeVersionId.from( "ac555e940583f1a4d0f25aaff8bc97649ac2de68" );
 
             final Node draftNode = nodeService.getById( nodeId );
             assertNotNull( draftNode );
             assertEquals( draftNodeVersionId, draftNode.getNodeVersionId() );
             assertEquals( nodePath, draftNode.path() );
-            assertEquals( "2018-11-23T11:14:34.659Z", draftNode.getTimestamp().toString() );
+            assertEquals( "2018-12-13T14:50:24.495Z", draftNode.getTimestamp().toString() );
 
             final Node masterNode = ContextBuilder.
                 from( ContextAccessor.current() ).
@@ -718,8 +760,82 @@ public class DumpServiceImplTest
             assertEquals( nodePath, masterNode.path() );
             assertEquals( "2018-11-23T11:14:21.662Z", masterNode.getTimestamp().toString() );
 
+            checkPageFlatteningUpgradePage( draftNode );
 
+            final Node fragmentNode = nodeService.getById( fragmentNodeId );
+            checkPageFlatteningUpgradeFragment( fragmentNode );
         } );
+    }
+
+    private void checkPageFlatteningUpgradePage( final Node node )
+    {
+        final PropertyTree nodeData = node.data();
+        assertTrue( nodeData.hasProperty( "components" ) );
+        assertFalse( nodeData.hasProperty( "page" ) );
+
+        //Check page component
+        final Iterable<PropertySet> components = nodeData.getSets( "components" );
+        final PropertySet pageComponent = components.iterator().next();
+        assertEquals( "page", pageComponent.getString( "type" ) );
+        assertEquals( "/", pageComponent.getString( "path" ) );
+        final PropertySet pageComponentData = pageComponent.getSet( "page" );
+        assertEquals( "com.enonic.app.superhero:default", pageComponentData.getString( "descriptor" ) );
+        assertEquals( Boolean.TRUE, pageComponentData.getBoolean( "customized" ) );
+        final PropertySet pageConfig = pageComponentData.getSet( "config" );
+        assertNotNull( pageConfig.getSet( "com-enonic-app-superhero" ) );
+
+        //Checks layout component
+        final PropertySet layoutComponent =
+            Iterables.filter( components, component -> "/main/0".equals( component.getString( "path" ) ) ).iterator().next();
+        assertEquals( "layout", layoutComponent.getString( "type" ) );
+        final PropertySet layoutComponentData = layoutComponent.getSet( "layout" );
+        assertEquals( "com.enonic.app.superhero:two-column", layoutComponentData.getString( "descriptor" ) );
+        assertNotNull( layoutComponentData.getSet( "config" ).getSet( "com-enonic-app-superhero" ) );
+
+        //Checks image component
+        final PropertySet imageComponent =
+            Iterables.filter( components, component -> "/main/0/left/0".equals( component.getString( "path" ) ) ).iterator().next();
+        assertEquals( "image", imageComponent.getString( "type" ) );
+        final PropertySet imageComponentData = imageComponent.getSet( "image" );
+        assertEquals( "cf09fe7a-1be9-46bb-ad84-87ba69630cb7", imageComponentData.getString( "id" ) );
+        assertEquals( "A caption", imageComponentData.getString( "caption" ) );
+
+        //Checks part component
+        final PropertySet partComponent =
+            Iterables.filter( components, component -> "/main/0/right/0".equals( component.getString( "path" ) ) ).iterator().next();
+        assertEquals( "part", partComponent.getString( "type" ) );
+        final PropertySet partComponentData = partComponent.getSet( "part" );
+        assertEquals( "com.enonic.app.superhero:tag-cloud", partComponentData.getString( "descriptor" ) );
+        assertNotNull( partComponentData.getSet( "config" ).getSet( "com-enonic-app-superhero" ) );
+
+        //Checks fragment component
+        final PropertySet fragmentComponent =
+            Iterables.filter( components, component -> "/main/0/right/1".equals( component.getString( "path" ) ) ).iterator().next();
+        assertEquals( "fragment", fragmentComponent.getString( "type" ) );
+        final PropertySet fragmentComponentData = fragmentComponent.getSet( "fragment" );
+        assertEquals( "7ee16649-85c6-4a76-8788-74be03be6c7a", fragmentComponentData.getString( "id" ) );
+
+        //Checks text component
+        final PropertySet textComponent =
+            Iterables.filter( components, component -> "/main/1".equals( component.getString( "path" ) ) ).iterator().next();
+        assertEquals( "text", textComponent.getString( "type" ) );
+        final PropertySet textComponentData = textComponent.getSet( "text" );
+        assertEquals( "<p>text1</p>\n" + "\n" + "<p>&nbsp;</p>\n", textComponentData.getString( "value" ) );
+    }
+
+    private void checkPageFlatteningUpgradeFragment( final Node node )
+    {
+        final PropertyTree nodeData = node.data();
+        assertTrue( nodeData.hasProperty( "components" ) );
+        assertFalse( nodeData.hasProperty( "fragment" ) );
+
+        final Iterable<PropertySet> components = nodeData.getSets( "components" );
+        final PropertySet partComponent = components.iterator().next();
+        assertEquals( "part", partComponent.getString( "type" ) );
+        assertEquals( "/", partComponent.getString( "path" ) );
+        final PropertySet partComponentData = partComponent.getSet( "part" );
+        assertEquals( "com.enonic.app.superhero:meta", partComponentData.getString( "descriptor" ) );
+        assertNotNull( partComponentData.getSet( "config" ).getSet( "com-enonic-app-superhero" ) );
     }
 
     private File createIncompatibleDump( final String dumpName )
@@ -732,15 +848,6 @@ public class DumpServiceImplTest
         final File tmpDumpFile = tempFolder.newFolder( dumpName );
         FileUtils.copyDirectory( oldDumpFile, tmpDumpFile );
         return tmpDumpFile;
-    }
-
-    private void createDumpUnvalidVersion( final File dumpFolder )
-        throws IOException
-    {
-        final String content =
-            "{\"xpVersion\":\"X.Y.Z.SNAPSHOT\",\"timestamp\":\"1970-01-01T00:00:00.000Z\",\"modelVersion\":\"0.1.0\",\"result\": {\"system-repo\":{\"versions\":\"37\",\"branchResults\": {\"master\":{\"successful\": \"23\",\"errors\":[]}}}}}";
-        Files.write( content, new File( dumpFolder, "dump.json" ), Charset.defaultCharset() );
-
     }
 
     private void verifyBinaries( final Node node, final Node updatedNode, final NodeVersionQueryResult versions )

@@ -12,6 +12,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentIdsByParentResult;
 import com.enonic.xp.content.UpdateContentParams;
@@ -96,7 +97,7 @@ public class ApplyPermissionsRunnableTaskTest
 
         Mockito.when( this.contentService.applyPermissions( Mockito.isA( ApplyContentPermissionsParams.class ) ) ).thenReturn(
             ApplyContentPermissionsResult.create().setSucceedContents(
-                ContentIds.from( ContentId.from( "content-id1" ), ContentId.from( "content-id2" ) ) ).build() );
+                ContentPaths.from( ContentPath.from( "a/b/content-id1" ), ContentPath.from( "a/b/content-id2" ) ) ).build() );
 
         final ApplyPermissionsRunnableTask task = createAndRunTask();
         task.createTaskResult();
@@ -111,12 +112,13 @@ public class ApplyPermissionsRunnableTaskTest
     }
 
     @Test
-    public void create_message_single_failed()
+    public void single_success()
         throws Exception
     {
 
         Mockito.when( this.contentService.applyPermissions( Mockito.isA( ApplyContentPermissionsParams.class ) ) ).thenReturn(
-            ApplyContentPermissionsResult.create().setSkippedContents( ContentIds.from( this.contents.get( 0 ).getId() ) ).build() );
+            ApplyContentPermissionsResult.create().setSucceedContents(
+                ContentPaths.from( ContentPath.from( "a/b/content-id1" ) ) ).build() );
 
         final ApplyPermissionsRunnableTask task = createAndRunTask();
         task.createTaskResult();
@@ -127,19 +129,40 @@ public class ApplyPermissionsRunnableTaskTest
 
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 0 );
 
-        Assert.assertEquals( "{\"state\":\"ERROR\",\"message\":\"Permissions \\\"id1\\\" could not be applied.\"}", resultMessage );
+        Assert.assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"Permissions for \\\"content-id1\\\" are applied.\"}", resultMessage );
     }
 
     @Test
-    public void create_message_multiple_failed()
+    public void create_message_single_failed()
+        throws Exception
+    {
+
+        Mockito.when( this.contentService.applyPermissions( Mockito.isA( ApplyContentPermissionsParams.class ) ) ).thenReturn(
+            ApplyContentPermissionsResult.create().setSkippedContents( ContentPaths.from( this.contents.get( 0 ).getPath() ) ).build() );
+
+        final ApplyPermissionsRunnableTask task = createAndRunTask();
+        task.createTaskResult();
+
+        Mockito.verify( progressReporter, Mockito.times( 1 ) ).info( contentQueryArgumentCaptor.capture() );
+        Mockito.verify( taskService, Mockito.times( 1 ) ).submitTask( Mockito.isA( RunnableTask.class ),
+                                                                      Mockito.eq( "Apply permissions" ) );
+
+        final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 0 );
+
+        Assert.assertEquals( "{\"state\":\"ERROR\",\"message\":\"Permissions for \\\"content1\\\" could not be applied.\"}",
+                             resultMessage );
+    }
+
+    @Test
+    public void create_message_multiple_failed_and_one_succeed()
         throws Exception
     {
 
         Mockito.when( this.contentService.applyPermissions( Mockito.isA( ApplyContentPermissionsParams.class ) ) ).
             thenReturn( ApplyContentPermissionsResult.
                 create().
-                setSkippedContents( ContentIds.from( this.contents.get( 0 ).getId(), ContentId.from( "id2" ) ) ).
-                setSucceedContents( ContentIds.create().add( ContentId.from( "content1" ) ).build() ).
+                setSkippedContents( ContentPaths.from( this.contents.get( 0 ).getPath(), ContentPath.from( "id2" ) ) ).
+                setSucceedContents( ContentPaths.create().add( ContentPath.from( "a/b/content1" ) ).build() ).
                 build() );
 
         final ApplyPermissionsRunnableTask task = createAndRunTask();

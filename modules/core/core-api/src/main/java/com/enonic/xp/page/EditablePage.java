@@ -23,7 +23,7 @@ public final class EditablePage
 
     public EditablePage( final Page source )
     {
-        this.controller = source.getController();
+        this.controller = source.getDescriptor();
         this.template = source.getTemplate();
         this.regions = source.hasRegions() ? source.getRegions().copy() : null;
         this.config = source.hasConfig() ? source.getConfig().copy() : null;
@@ -34,7 +34,7 @@ public final class EditablePage
     public Page build()
     {
         final Page.Builder builder = Page.create();
-        builder.controller( controller );
+        builder.descriptor( controller );
         builder.template( template );
         builder.regions( regions );
         builder.config( config );

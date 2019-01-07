@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
@@ -20,6 +19,7 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.region.FragmentComponent;
+import com.enonic.xp.region.FragmentComponentType;
 import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.LayoutComponentType;
 import com.enonic.xp.region.LayoutDescriptor;
@@ -32,9 +32,13 @@ import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.region.RegionDescriptor;
 import com.enonic.xp.region.RegionDescriptors;
+import com.enonic.xp.region.TextComponentType;
 
-import static com.enonic.xp.core.impl.content.index.processor.PageRegionsConfigProcessor.PAGE_TEXT_COMPONENT_PROPERTY_PATH_PATTERN;
+import static com.enonic.xp.core.impl.content.index.processor.PageConfigProcessor.COMPONENTS;
+import static com.enonic.xp.core.impl.content.index.processor.PageConfigProcessor.CONFIG;
+import static com.enonic.xp.core.impl.content.index.processor.PageRegionsConfigProcessor.ID;
 import static com.enonic.xp.core.impl.content.index.processor.PageRegionsConfigProcessor.TEXT_COMPONENT_INDEX_CONFIG;
+import static com.enonic.xp.core.impl.content.index.processor.PageRegionsConfigProcessor.VALUE;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.*;
 
@@ -69,7 +73,7 @@ public class PageRegionsConfigProcessorTest
         throws Exception
     {
         final PatternIndexConfigDocument result = processPage( Page.create().regions( PageRegions.create().build() ).build(), null, null );
-        assertEquals( 7, result.getPathIndexConfigs().size() );
+        assertEquals( 5, result.getPathIndexConfigs().size() );
     }
 
     @Test
@@ -78,19 +82,20 @@ public class PageRegionsConfigProcessorTest
     {
         final PatternIndexConfigDocument result = processPage( Page.create().regions( PageRegions.create().build() ).build(), null, null );
 
-        assertTrue( result.getPathIndexConfigs().contains(
-            PathIndexConfig.create().path( PropertyPath.from( PAGE_TEXT_COMPONENT_PROPERTY_PATH_PATTERN ) ).indexConfig(
-                TEXT_COMPONENT_INDEX_CONFIG ).build() ) );
+        assertEquals( TEXT_COMPONENT_INDEX_CONFIG,
+                      result.getConfigForPath( PropertyPath.from( COMPONENTS, TextComponentType.INSTANCE.toString(), VALUE ) ) );
 
         assertEquals( "htmlStripper", result.getConfigForPath(
-            PropertyPath.from( ContentPropertyNames.PAGE, "region", "component", "TextComponent", "text" ) ).getIndexValueProcessors().get(
-            0 ).getName() );
+            PropertyPath.from( COMPONENTS, TextComponentType.INSTANCE.toString(), VALUE ) ).getIndexValueProcessors().get( 0 ).getName() );
     }
 
     @Test
     public void test_part_component()
         throws Exception
     {
+        final DescriptorKey partDescriptorKey = DescriptorKey.from( "part1AppKey:name" );
+        final String htmlarea = "htmlarea";
+
         final Page page = Page.
             create().
             regions( PageRegions.create().
@@ -98,7 +103,7 @@ public class PageRegionsConfigProcessorTest
                     name( "region1" ).
                     add( PartComponent.create().
                         name( "part1" ).
-                        descriptor( DescriptorKey.from( "part1" ) ).
+                        descriptor( partDescriptorKey ).
                         build() ).
                     build() ).
                 build() ).
@@ -106,13 +111,17 @@ public class PageRegionsConfigProcessorTest
 
         final PatternIndexConfigDocument result = processPage( page, Arrays.asList( configFormWithHtmlArea ).listIterator(), null );
         assertEquals( "htmlStripper", result.getConfigForPath(
-            PropertyPath.from( "page.region.component.partcomponent.config.htmlarea" ) ).getIndexValueProcessors().get( 0 ).getName() );
+            PropertyPath.from( COMPONENTS, PartComponentType.INSTANCE.toString(), CONFIG, partDescriptorKey.getApplicationKey().toString(),
+                               htmlarea ) ).getIndexValueProcessors().get( 0 ).getName() );
     }
 
     @Test
     public void test_layout_component()
         throws Exception
     {
+        final DescriptorKey layoutDescriptorKey = DescriptorKey.from( "layoutAppKey:name" );
+        final String htmlarea = "htmlarea";
+
         final Page page = Page.
             create().
             regions( PageRegions.create().
@@ -120,7 +129,7 @@ public class PageRegionsConfigProcessorTest
                     name( "region1" ).
                     add( LayoutComponent.create().
                         name( "layout1" ).
-                        descriptor( DescriptorKey.from( "layout1" ) ).
+                        descriptor( layoutDescriptorKey ).
                         regions( LayoutRegions.create().build() ).
                         build() ).
                     build() ).
@@ -129,13 +138,19 @@ public class PageRegionsConfigProcessorTest
 
         final PatternIndexConfigDocument result = processPage( page, null, Arrays.asList( configFormWithHtmlArea ).listIterator() );
         assertEquals( "htmlStripper", result.getConfigForPath(
-            PropertyPath.from( "page.region.component.layoutcomponent.config.htmlarea" ) ).getIndexValueProcessors().get( 0 ).getName() );
+            PropertyPath.from( COMPONENTS, LayoutComponentType.INSTANCE.toString(), CONFIG,
+                               layoutDescriptorKey.getApplicationKey().toString(), htmlarea ) ).getIndexValueProcessors().get(
+            0 ).getName() );
     }
 
     @Test
     public void test_part_inside_layout_component()
         throws Exception
     {
+        final String appKeyLayout = "layoutAppKey";
+        final String appKeyPart = "partAppKey";
+        final String htmlarea = "htmlarea";
+
         final Page page = Page.
             create().
             regions( PageRegions.create().
@@ -143,13 +158,13 @@ public class PageRegionsConfigProcessorTest
                     name( "region1" ).
                     add( LayoutComponent.create().
                         name( "layout1" ).
-                        descriptor( DescriptorKey.from( "layout1" ) ).
+                        descriptor( DescriptorKey.from( appKeyLayout ) ).
                         regions( LayoutRegions.create().
                             add( Region.create().
                                 name( "layoutRegion1" ).
                                 add( PartComponent.create().
                                     name( "part1" ).
-                                    descriptor( DescriptorKey.from( "part1" ) ).
+                                    descriptor( DescriptorKey.from( appKeyPart ) ).
                                     build() ).
                                 build() ).
                             build() ).
@@ -161,10 +176,11 @@ public class PageRegionsConfigProcessorTest
         final PatternIndexConfigDocument result = processPage( page, Arrays.asList( configFormWithHtmlArea ).listIterator(),
                                                                Arrays.asList( configFormWithHtmlArea ).listIterator() );
         assertEquals( "htmlStripper", result.getConfigForPath(
-            PropertyPath.from( "page.region.component.layoutcomponent.config.htmlarea" ) ).getIndexValueProcessors().get( 0 ).getName() );
-        assertEquals( "htmlStripper", result.getConfigForPath( PropertyPath.from(
-            "page.region.component.layoutcomponent.region.component.partcomponent.config.htmlarea" ) ).getIndexValueProcessors().get(
-            0 ).getName() );
+            PropertyPath.from( COMPONENTS, LayoutComponentType.INSTANCE.toString(), CONFIG, appKeyLayout,
+                               htmlarea ) ).getIndexValueProcessors().get( 0 ).getName() );
+        assertEquals( "htmlStripper", result.getConfigForPath(
+            PropertyPath.from( COMPONENTS, PartComponentType.INSTANCE.toString(), CONFIG, appKeyPart,
+                               htmlarea ) ).getIndexValueProcessors().get( 0 ).getName() );
     }
 
     @Test
@@ -187,7 +203,7 @@ public class PageRegionsConfigProcessorTest
         final PatternIndexConfigDocument result = processPage( page, singletonList( configFormWithHtmlArea ).listIterator(), null );
 
         assertTrue( result.getPathIndexConfigs().contains(
-            PathIndexConfig.create().path( PropertyPath.from( "page.region.**.FragmentComponent.*" ) ).indexConfig(
+            PathIndexConfig.create().path( PropertyPath.from( COMPONENTS, FragmentComponentType.INSTANCE.toString(), ID ) ).indexConfig(
                 IndexConfig.MINIMAL ).build() ) );
 
     }

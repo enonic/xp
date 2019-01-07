@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.content.serializer;
 
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
 
@@ -10,6 +11,7 @@ import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
+import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.CreateContentTranslatorParams;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
@@ -17,6 +19,9 @@ import com.enonic.xp.content.UpdateContentTranslatorParams;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.region.LayoutDescriptorService;
+import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.PrincipalKey;
@@ -29,7 +34,7 @@ public class ContentDataSerializerTest
     public void create_propertyTree_populated_with_attachment_properties()
         throws Exception
     {
-        final ContentDataSerializer contentDataSerializer = new ContentDataSerializer();
+        final ContentDataSerializer contentDataSerializer = createContentDataSerializer();
 
         final String binaryName = "myName";
         final String binaryLabel = "myLabel";
@@ -67,7 +72,7 @@ public class ContentDataSerializerTest
     public void update_propertyTree_populated_with_new_attachment_properties()
         throws Exception
     {
-        final ContentDataSerializer contentDataSerializer = new ContentDataSerializer();
+        final ContentDataSerializer contentDataSerializer = createContentDataSerializer();
 
         final String binaryName = "myName";
         final String binaryLabel = "myLabel";
@@ -105,7 +110,7 @@ public class ContentDataSerializerTest
     public void create_propertyTree_populated_with_extraData()
         throws Exception
     {
-        final ContentDataSerializer contentDataSerializer = new ContentDataSerializer();
+        final ContentDataSerializer contentDataSerializer = createContentDataSerializer();
 
         PropertyTree mixinData = new PropertyTree();
         mixinData.setString( "myKey1", "myValue1" );
@@ -139,7 +144,7 @@ public class ContentDataSerializerTest
     public void update_propertyTree_populated_with_extraData()
         throws Exception
     {
-        final ContentDataSerializer contentDataSerializer = new ContentDataSerializer();
+        final ContentDataSerializer contentDataSerializer = createContentDataSerializer();
 
         PropertyTree mixinData = new PropertyTree();
         mixinData.setString( "myKey1", "myValue1" );
@@ -172,7 +177,7 @@ public class ContentDataSerializerTest
     public void create_add_content_data()
         throws Exception
     {
-        final ContentDataSerializer contentDataSerializer = new ContentDataSerializer();
+        final ContentDataSerializer contentDataSerializer = createContentDataSerializer();
 
         final PropertyTree propertyTree = new PropertyTree();
         propertyTree.setString( "myData", "myValue" );
@@ -198,7 +203,7 @@ public class ContentDataSerializerTest
     public void update_add_content_data()
         throws Exception
     {
-        final ContentDataSerializer contentDataSerializer = new ContentDataSerializer();
+        final ContentDataSerializer contentDataSerializer = createContentDataSerializer();
 
         final PropertyTree propertyTree = new PropertyTree();
         propertyTree.setString( "myData", "myValue" );
@@ -217,6 +222,23 @@ public class ContentDataSerializerTest
         assertNotNull( contentData );
         assertNotNull( contentData.getString( "myData" ) );
         assertEquals( "myValue", contentData.getString( "myData" ) );
+    }
+
+    private ContentDataSerializer createContentDataSerializer()
+    {
+        final ContentService contentService = Mockito.mock( ContentService.class );
+        final PageDescriptorService pageDescriptorService = Mockito.mock( PageDescriptorService.class );
+        final PartDescriptorService partDescriptorService = Mockito.mock( PartDescriptorService.class );
+        final LayoutDescriptorService layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
+
+        final ContentDataSerializer contentDataSerializer = ContentDataSerializer.create().
+            partDescriptorService( partDescriptorService ).
+            pageDescriptorService( pageDescriptorService ).
+            layoutDescriptorService( layoutDescriptorService ).
+            contentService( contentService ).
+            build();
+
+        return contentDataSerializer;
     }
 
 }

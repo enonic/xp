@@ -43,6 +43,7 @@ public final class PartDescriptorServiceImpl
     {
         final ResourceProcessor<DescriptorKey, PartDescriptor> processor = newProcessor( key );
         final PartDescriptor descriptor = this.resourceService.processResource( processor );
+
         if ( descriptor == null )
         {
             return createDefaultDescriptor( key );

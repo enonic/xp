@@ -19,10 +19,10 @@ class VersionMetaFactory
             build();
     }
 
-    public static VersionMeta create( final NodeVersion nodeVersion, final NodeVersionMetadata metaData )
+    public static VersionMeta create( final NodeVersionMetadata metaData )
     {
         return VersionMeta.create().
-            timestamp( nodeVersion.getTimestamp() ).
+            timestamp( metaData.getTimestamp() ).
             nodePath( metaData.getNodePath() ).
             version( metaData.getNodeVersionId() ).
             blobKey( metaData.getBlobKey() ).

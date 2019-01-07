@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.content;
 
 import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.ApplyContentPermissionsResult;
-import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.ApplyNodePermissionsResult;
 import com.enonic.xp.node.NodeId;
@@ -34,8 +33,8 @@ final class ApplyContentPermissionsCommand
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( applyNodePermissionsParams );
 
         return ApplyContentPermissionsResult.create().
-            setSucceedContents( ContentIds.from( result.getSucceedNodes().getIds().getAsStrings() ) ).
-            setSkippedContents( ContentIds.from( result.getSkippedNodes().getIds().getAsStrings() ) ).
+            setSucceedContents( ContentNodeHelper.translateNodePathsToContentPaths( result.getSucceedNodes().getPaths() ) ).
+            setSkippedContents( ContentNodeHelper.translateNodePathsToContentPaths( result.getSkippedNodes().getPaths() ) ).
             build();
     }
 

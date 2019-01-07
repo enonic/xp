@@ -58,7 +58,7 @@ public class BranchEntryProcessor
         final Node node = NodeFactory.create( nodeVersion, NodeBranchEntry.create().
             nodeId( branchDumpEntry.getNodeId() ).
             nodePath( meta.getNodePath() ).
-            timestamp( nodeVersion.getTimestamp() ).
+            timestamp( meta.getTimestamp() ).
             nodeState( meta.getNodeState() ).
             nodeVersionId( meta.getVersion() ).
             build() );

@@ -2,13 +2,14 @@ package com.enonic.xp.repo.impl.dump;
 
 import java.io.File;
 
+import com.google.common.io.ByteSink;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 
-class DumpBlobRecord
+public class DumpBlobRecord
     implements BlobRecord
 {
     private final BlobKey key;
@@ -40,6 +41,11 @@ class DumpBlobRecord
     public ByteSource getBytes()
     {
         return Files.asByteSource( this.file );
+    }
+
+    public ByteSink getByteSink()
+    {
+        return Files.asByteSink( this.file );
     }
 
     @Override

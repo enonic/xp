@@ -1,5 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.content.task;
 
+import com.enonic.xp.content.ContentPaths;
+
 public class ApplyPermissionsRunnableTaskResult
     extends RunnableTaskResult
 {
@@ -22,6 +24,18 @@ public class ApplyPermissionsRunnableTaskResult
     public static class Builder
         extends RunnableTaskResult.Builder<Builder>
     {
+        public Builder succeeded( ContentPaths items )
+        {
+            this.succeeded.addAll( items.getSet() );
+            return this;
+        }
+
+        public Builder failed( ContentPaths items )
+        {
+            this.failed.addAll( items.getSet() );
+            return this;
+        }
+
         public ApplyPermissionsRunnableTaskResult build()
         {
             return new ApplyPermissionsRunnableTaskResult( this );

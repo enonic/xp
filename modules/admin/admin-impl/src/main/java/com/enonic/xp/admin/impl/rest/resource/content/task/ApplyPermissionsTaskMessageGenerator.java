@@ -11,7 +11,7 @@ class ApplyPermissionsTaskMessageGenerator
 
     void appendMessageForSingleFailure( final StringBuilder builder, final RunnableTaskResult result )
     {
-        builder.append( String.format( "Permissions \"%s\" could not be applied.", result.getFailed().get( 0 ).getName() ) );
+        builder.append( String.format( "Permissions for \"%s\" could not be applied.", result.getFailed().get( 0 ).getName() ) );
     }
 
     void appendMessageForMultipleFailure( final StringBuilder builder, final RunnableTaskResult result )

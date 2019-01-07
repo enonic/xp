@@ -49,7 +49,7 @@ public final class ImageRenderer
         final StringBuilder html = new StringBuilder();
 
         final String type = component.getType().toString();
-        if ( component.getImage() != null )
+        if ( component.hasImage() )
         {
             if ( contentService.contentExists( component.getImage() ) )
             {
