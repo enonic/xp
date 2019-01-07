@@ -87,19 +87,6 @@
     }
   ],
   "id": "myId",
-  "inheritPermissions": false,
   "manualOrderValue": null,
-  "nodeType": "myNodeType",
-  "permissions": [
-    {
-      "allow": ["READ"],
-      "deny": ["DELETE"],
-      "principal": "user:system:anonymous"
-    },
-    {
-      "allow": ["MODIFY"],
-      "deny": ["PUBLISH"],
-      "principal": "user:system:user1"
-    }
-  ]
+  "nodeType": "myNodeType"
 }

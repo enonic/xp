@@ -27,7 +27,7 @@ public class BranchStorageRequestFactoryTest
             nodePath( NodePath.create( "nodePath" ).build() ).
             nodeState( NodeState.DEFAULT ).
             nodeVersionId( NodeVersionId.from( "nodeVersionId" ) ).
-            nodeVersionKey( NodeVersionKey.from( "nodeBlobKey", "indexConfigBlobKey" ) ).
+            nodeVersionKey( NodeVersionKey.from( "nodeBlobKey", "indexConfigBlobKey", "accessControlBlobKey" ) ).
             build(), InternalContext.create().
             branch( Branch.from( "myBranch" ) ).
             repositoryId( RepositoryId.from( "my-repo-id" ) ).

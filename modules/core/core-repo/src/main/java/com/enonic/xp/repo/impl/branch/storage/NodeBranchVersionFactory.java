@@ -19,10 +19,12 @@ public class NodeBranchVersionFactory
         final Object versionId = returnValues.getSingleValue( BranchIndexPath.VERSION_ID.getPath() );
         final Object nodeBlobKey = returnValues.getSingleValue( BranchIndexPath.NODE_BLOB_KEY.getPath() );
         final Object indexConfigBlobKey = returnValues.getSingleValue( BranchIndexPath.INDEX_CONFIG_BLOB_KEY.getPath() );
+        final Object accessControlBlobKey = returnValues.getSingleValue( BranchIndexPath.ACCESS_CONTROL_BLOB_KEY.getPath() );
         final Object timestamp = returnValues.getSingleValue( BranchIndexPath.TIMESTAMP.getPath() );
         final Object nodeId = returnValues.getSingleValue( BranchIndexPath.NODE_ID.getPath() );
 
-        final NodeVersionKey nodeVersionKey = NodeVersionKey.from( nodeBlobKey.toString(), indexConfigBlobKey.toString() );
+        final NodeVersionKey nodeVersionKey =
+            NodeVersionKey.from( nodeBlobKey.toString(), indexConfigBlobKey.toString(), accessControlBlobKey.toString() );
 
         return NodeBranchEntry.create().
             nodePath( path != null ? NodePath.create( path.toString() ).build() : NodePath.ROOT ).

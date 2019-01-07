@@ -78,7 +78,7 @@ public class BranchServiceImplTest
             nodePath( path ).
             nodeState( NodeState.DEFAULT ).
             nodeVersionId( NodeVersionId.from( "nodeVersionId" ) ).
-            nodeVersionKey( NodeVersionKey.from( "nodeBlobKey", "indexConfigBlobKey" ) ).
+            nodeVersionKey( NodeVersionKey.from( "nodeBlobKey", "indexConfigBlobKey", "accessControlBlobKey" ) ).
             timestamp( Instant.now() ).
             build(), context );
 
@@ -91,6 +91,7 @@ public class BranchServiceImplTest
                     add( BranchIndexPath.VERSION_ID.getPath(), "nodeVersionId" ).
                     add( BranchIndexPath.NODE_BLOB_KEY.getPath(), "nodeBlobKey" ).
                     add( BranchIndexPath.INDEX_CONFIG_BLOB_KEY.getPath(), "indexConfigBlobKey" ).
+                    add( BranchIndexPath.ACCESS_CONTROL_BLOB_KEY.getPath(), "accessControlBlobKey" ).
                     add( BranchIndexPath.NODE_ID.getPath(), "123" ).
                     add( BranchIndexPath.TIMESTAMP.getPath(), Instant.now().toString() ).
                     build() ).
