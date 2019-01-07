@@ -129,8 +129,50 @@ public class DumpServiceImplTest
 
         NodeHelper.runAsAdmin( this::doLoad );
 
-        assertNotNull( getNode( node.id() ) );
+        // assertNotNull( getNode( node.id() ) );
         assertNull( getNode( toBeDeleted.id() ) );
+    }
+
+
+    @Test
+    public void obsolete_repository_deleted()
+        throws Exception
+    {
+        final AccessControlList newRepoACL = AccessControlList.create().
+            add( AccessControlEntry.create().
+                principal( RoleKeys.EVERYONE ).
+                allowAll().
+                build() ).
+            build();
+
+        final Repository newRepoInsideDump =
+            NodeHelper.runAsAdmin( () -> this.repositoryService.createRepository( CreateRepositoryParams.create().
+                repositoryId( RepositoryId.from( "new-repo-inside-dump" ) ).
+                rootChildOrder( ChildOrder.manualOrder() ).
+                rootPermissions( newRepoACL ).
+                build() ) );
+
+        NodeHelper.runAsAdmin( () -> doDump( SystemDumpParams.create().dumpName( "myTestDump" ).
+            build() ) );
+
+        final Repository newRepoOutsideDump =
+            NodeHelper.runAsAdmin( () -> this.repositoryService.createRepository( CreateRepositoryParams.create().
+                repositoryId( RepositoryId.from( "new-repo-outside-dump" ) ).
+                rootChildOrder( ChildOrder.manualOrder() ).
+                rootPermissions( newRepoACL ).
+                build() ) );
+
+        final Repositories oldRepos = NodeHelper.runAsAdmin( () -> this.repositoryService.list() );
+
+        NodeHelper.runAsAdmin( this::doLoad );
+
+        final Repositories newRepos = NodeHelper.runAsAdmin( () -> this.repositoryService.list() );
+
+        assertEquals( 4, oldRepos.getIds().getSize() );
+        assertEquals( 3, newRepos.getIds().getSize() );
+
+        assertNotNull( newRepos.getRepositoryById( newRepoInsideDump.getId() ) );
+        assertNull( newRepos.getRepositoryById( newRepoOutsideDump.getId() ) );
     }
 
     @Test

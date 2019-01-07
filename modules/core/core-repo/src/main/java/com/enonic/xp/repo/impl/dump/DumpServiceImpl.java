@@ -233,6 +233,8 @@ public class DumpServiceImpl
             throw new SystemDumpException( "Cannot load system-dump; dump does not contain system repository" );
         }
 
+        doDeleteRepositories();
+
         initializeSystemRepo( params, dumpReader, results );
 
         final List<Repository> repositoriesToLoad = repositoryService.list().stream().
@@ -291,14 +293,21 @@ public class DumpServiceImpl
         } );
     }
 
+    private void doDeleteRepositories()
+    {
+        repositoryService.list().stream().
+            filter( ( repo ) -> !repo.getId().equals( SystemConstants.SYSTEM_REPO.getId() ) ).
+            forEach( ( repo ) -> doDeleteRepository( repo.getId() ) );
+    }
+
+    private void doDeleteRepository( final RepositoryId repositoryId )
+    {
+        LOG.info( "Deleting repository [" + repositoryId + "]" );
+        this.repositoryService.deleteRepository( DeleteRepositoryParams.from( repositoryId ) );
+    }
+
     private void initializeRepo( final Repository repository )
     {
-        if ( this.repositoryService.isInitialized( repository.getId() ) )
-        {
-            LOG.info( "Deleting repository [" + repository.getId() + "] before loading" );
-            this.repositoryService.deleteRepository( DeleteRepositoryParams.from( repository.getId() ) );
-        }
-
         final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create().
             repositoryId( repository.getId() ).
             repositorySettings( repository.getSettings() ).
