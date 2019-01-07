@@ -61,6 +61,7 @@ public class LayoutDescriptorResourceTest
 
         final LayoutDescriptor layoutDescriptor = LayoutDescriptor.create().
             displayName( "Fancy layout" ).
+            description( "description" ).
             config( layoutForm ).
             regions( RegionDescriptors.create().
                 add( RegionDescriptor.create().name( "left" ).build() ).
@@ -98,6 +99,8 @@ public class LayoutDescriptorResourceTest
         final LayoutDescriptor layoutDescriptor = LayoutDescriptor.create().
             displayName( "Fancy layout" ).
             displayNameI18nKey( "key.display-name" ).
+            description( "description" ).
+            descriptionI18nKey( "key.description" ).
             config( layoutForm ).
             regions( RegionDescriptors.create().
                 add( RegionDescriptor.create().name( "left" ).build() ).
@@ -112,6 +115,7 @@ public class LayoutDescriptorResourceTest
         Mockito.when( messageBundle.localize( "key.label" ) ).thenReturn( "translated.label" );
         Mockito.when( messageBundle.localize( "key.help-text" ) ).thenReturn( "translated.helpText" );
         Mockito.when( messageBundle.localize( "key.display-name" ) ).thenReturn( "translated.displayName" );
+        Mockito.when( messageBundle.localize( "key.description" ) ).thenReturn( "translated.description" );
 
         Mockito.when( this.localeService.getBundle( Mockito.any(), Mockito.any() ) ).thenReturn( messageBundle );
         Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
@@ -132,6 +136,7 @@ public class LayoutDescriptorResourceTest
 
         final LayoutDescriptor layoutDescriptor1 = LayoutDescriptor.create().
             displayName( "Fancy layout" ).
+            description( "description 1" ).
             config( layoutForm ).
             regions( RegionDescriptors.create().
                 add( RegionDescriptor.create().name( "left" ).build() ).
@@ -142,6 +147,7 @@ public class LayoutDescriptorResourceTest
 
         final LayoutDescriptor layoutDescriptor2 = LayoutDescriptor.create().
             displayName( "Putty layout" ).
+            description( "description 2" ).
             config( layoutForm ).
             regions( RegionDescriptors.create().
                 add( RegionDescriptor.create().name( "top" ).build() ).

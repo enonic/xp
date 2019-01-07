@@ -213,6 +213,7 @@
   <xs:complexType name="layoutDescriptor">
     <xs:sequence>
       <xs:element minOccurs="0" name="display-name" type="i18n"/>
+      <xs:element minOccurs="0" name="description" type="i18n"/>
       <xs:element minOccurs="0" name="form" type="form"/>
       <xs:element minOccurs="0" name="regions" type="regions"/>
     </xs:sequence>
@@ -226,6 +227,7 @@
   <xs:complexType name="pageDescriptor">
     <xs:sequence>
       <xs:element minOccurs="0" name="display-name" type="i18n"/>
+      <xs:element minOccurs="0" name="description" type="i18n"/>
       <xs:element minOccurs="0" name="form" type="form"/>
       <xs:element minOccurs="0" name="regions" type="regions"/>
     </xs:sequence>
@@ -240,6 +242,7 @@
   <xs:complexType name="partDescriptor">
     <xs:sequence>
       <xs:element minOccurs="0" name="display-name" type="i18n"/>
+      <xs:element minOccurs="0" name="description" type="i18n"/>
       <xs:element minOccurs="0" name="form" type="form"/>
     </xs:sequence>
   </xs:complexType>

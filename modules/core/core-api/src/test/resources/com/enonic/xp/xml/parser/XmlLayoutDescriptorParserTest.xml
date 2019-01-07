@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <layout xmlns="urn:enonic:xp:model:1.0">
   <display-name i18n="key.display-name">My Layout</display-name>
+  <description i18n="key.description">My Layout Description</description>
   <form>
     <input type="Double" name="pause">
       <label i18n="key1.label">Pause parameter</label>
