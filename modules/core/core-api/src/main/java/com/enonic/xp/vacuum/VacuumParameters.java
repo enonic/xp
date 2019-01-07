@@ -2,11 +2,14 @@ package com.enonic.xp.vacuum;
 
 public final class VacuumParameters
 {
-    private final VacuumListener listener;
+    private final VacuumListener vacuumProgressListener;
+
+    private final VacuumTaskListener vacuumTaskListener;
 
     private VacuumParameters( final Builder builder )
     {
-        this.listener = builder.listener;
+        this.vacuumProgressListener = builder.vacuumProgressListener;
+        this.vacuumTaskListener = builder.vacuumTaskListener;
     }
 
     public static Builder create()
@@ -14,22 +17,35 @@ public final class VacuumParameters
         return new Builder();
     }
 
-    public VacuumListener getListener()
+    public VacuumListener getVacuumProgressListener()
     {
-        return listener;
+        return vacuumProgressListener;
+    }
+
+    public VacuumTaskListener getVacuumTaskListener()
+    {
+        return vacuumTaskListener;
     }
 
     public static final class Builder
     {
-        private VacuumListener listener;
+        private VacuumListener vacuumProgressListener;
+
+        private VacuumTaskListener vacuumTaskListener;
 
         private Builder()
         {
         }
 
-        public Builder listener( final VacuumListener listener )
+        public Builder vacuumProgressListener( final VacuumListener vacuumProgressListener )
         {
-            this.listener = listener;
+            this.vacuumProgressListener = vacuumProgressListener;
+            return this;
+        }
+
+        public Builder vacuumTaskListener( final VacuumTaskListener vacuumTaskListener )
+        {
+            this.vacuumTaskListener = vacuumTaskListener;
             return this;
         }
 

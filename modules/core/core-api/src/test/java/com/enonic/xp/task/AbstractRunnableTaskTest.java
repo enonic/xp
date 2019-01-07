@@ -1,4 +1,4 @@
-package com.enonic.xp.admin.impl.rest.resource.content.task;
+package com.enonic.xp.task;
 
 import java.util.List;
 
@@ -13,8 +13,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.task.ProgressReporter;
-import com.enonic.xp.task.TaskService;
+import com.enonic.xp.support.JsonTestHelper;
 
 public abstract class AbstractRunnableTaskTest
 {
@@ -29,6 +28,8 @@ public abstract class AbstractRunnableTaskTest
     protected ProgressReporter progressReporter;
 
     protected ArgumentCaptor<String> contentQueryArgumentCaptor;
+
+    protected JsonTestHelper jsonTestHelper;
 
     @Before
     public void setUp()
@@ -46,6 +47,8 @@ public abstract class AbstractRunnableTaskTest
         this.taskService = Mockito.mock( TaskService.class );
         this.progressReporter = Mockito.mock( ProgressReporter.class );
         this.contentQueryArgumentCaptor = ArgumentCaptor.forClass( String.class );
+
+        jsonTestHelper = new JsonTestHelper( this );
     }
 
     protected abstract AbstractRunnableTask createAndRunTask();

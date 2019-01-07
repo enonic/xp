@@ -22,6 +22,7 @@ import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.DuplicateContentsResult;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.GetContentByIdsParams;
+import com.enonic.xp.task.AbstractRunnableTaskTest;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
 

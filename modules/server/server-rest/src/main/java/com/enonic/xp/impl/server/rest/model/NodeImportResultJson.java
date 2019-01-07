@@ -2,6 +2,8 @@ package com.enonic.xp.impl.server.rest.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.export.NodeImportResult;
@@ -73,5 +75,19 @@ public class NodeImportResultJson
     public List<String> getImportedBinaries()
     {
         return importedBinaries;
+    }
+
+    @Override
+    public String toString()
+    {
+        final ObjectMapper mapper = new ObjectMapper();
+        try
+        {
+            return mapper.writeValueAsString( this );
+        }
+        catch ( JsonProcessingException e )
+        {
+            throw new RuntimeException( e );
+        }
     }
 }

@@ -72,6 +72,7 @@ final class TaskWrapper
         }
         catch ( Throwable t )
         {
+            taskManager.updateProgress( taskId, t.getMessage() );
             taskManager.updateState( taskId, TaskState.FAILED );
         }
     }

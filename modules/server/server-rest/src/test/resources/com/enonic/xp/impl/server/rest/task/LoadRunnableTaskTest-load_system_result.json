@@ -4,23 +4,23 @@
       "branches": [
         {
           "branch": "branch-value",
+          "successful": 2,
           "errors": [
             {
               "message": "error-message"
             }
-          ],
-          "successful": 2
+          ]
         }
       ],
-      "repository": "my-repo",
       "versions": {
+        "successful": 1,
         "errors": [
           {
             "message": "version-load-error-message"
           }
-        ],
-        "successful": 1
-      }
+        ]
+      },
+      "repository": "my-repo"
     }
   ]
 }

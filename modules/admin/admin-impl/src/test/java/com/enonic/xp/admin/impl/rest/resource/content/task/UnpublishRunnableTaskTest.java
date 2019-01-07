@@ -23,6 +23,7 @@ import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
+import com.enonic.xp.task.AbstractRunnableTaskTest;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
 

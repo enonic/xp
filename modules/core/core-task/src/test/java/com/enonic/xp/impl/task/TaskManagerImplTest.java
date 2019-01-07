@@ -99,8 +99,8 @@ public class TaskManagerImplTest
         assertEquals( 1, taskMan.getAllTasks().size() );
         assertEquals( 0, taskMan.getRunningTasks().size() );
         assertEquals( TaskState.FAILED, taskMan.getTaskInfo( taskId ).getState() );
-        assertEquals( 3, eventsPublished.size() );
-        assertEquals( "task.submitted , task.updated , task.failed", eventTypes() );
+        assertEquals( 4, eventsPublished.size() );
+        assertEquals( "task.submitted , task.updated , task.updated , task.failed", eventTypes() );
     }
 
     @Test
