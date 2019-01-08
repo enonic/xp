@@ -24,6 +24,7 @@
         ]
       },
       "deletable": false,
+      "description": "description 1",
       "displayName": "Fancy layout",
       "editable": false,
       "key": "application:fancy-layout",
@@ -61,6 +62,7 @@
         ]
       },
       "deletable": false,
+      "description": "description 2",
       "displayName": "Putty layout",
       "editable": false,
       "key": "application:putty-layout",

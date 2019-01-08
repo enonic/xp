@@ -1,244 +1,97 @@
 package com.enonic.xp.impl.server.rest;
 
-import java.io.File;
-
-import javax.ws.rs.core.MediaType;
-
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
+import com.enonic.xp.impl.server.rest.model.SystemDumpRequestJson;
+import com.enonic.xp.impl.server.rest.model.SystemDumpUpgradeRequestJson;
+import com.enonic.xp.impl.server.rest.model.SystemLoadRequestJson;
+import com.enonic.xp.impl.server.rest.task.DumpRunnableTask;
+import com.enonic.xp.impl.server.rest.task.LoadRunnableTask;
+import com.enonic.xp.impl.server.rest.task.UpgradeRunnableTask;
+import com.enonic.xp.impl.server.rest.task.VacuumRunnableTask;
+import com.enonic.xp.task.TaskId;
+import com.enonic.xp.task.TaskResultJson;
+import com.enonic.xp.task.TaskService;
 
-import com.enonic.xp.branch.Branch;
-import com.enonic.xp.dump.BranchDumpResult;
-import com.enonic.xp.dump.BranchLoadResult;
-import com.enonic.xp.dump.DumpError;
-import com.enonic.xp.dump.DumpService;
-import com.enonic.xp.dump.LoadError;
-import com.enonic.xp.dump.RepoDumpResult;
-import com.enonic.xp.dump.RepoLoadResult;
-import com.enonic.xp.dump.SystemDumpParams;
-import com.enonic.xp.dump.SystemDumpResult;
-import com.enonic.xp.dump.SystemDumpUpgradeParams;
-import com.enonic.xp.dump.SystemDumpUpgradeResult;
-import com.enonic.xp.dump.SystemLoadParams;
-import com.enonic.xp.dump.SystemLoadResult;
-import com.enonic.xp.dump.VersionsLoadResult;
-import com.enonic.xp.export.ExportService;
-import com.enonic.xp.export.ImportNodesParams;
-import com.enonic.xp.export.NodeImportResult;
-import com.enonic.xp.node.NodePath;
-import com.enonic.xp.repository.NodeRepositoryService;
-import com.enonic.xp.repository.Repositories;
-import com.enonic.xp.repository.Repository;
-import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.repository.RepositoryService;
-import com.enonic.xp.util.Version;
-import com.enonic.xp.vacuum.VacuumParameters;
-import com.enonic.xp.vacuum.VacuumResult;
-import com.enonic.xp.vacuum.VacuumService;
-import com.enonic.xp.vacuum.VacuumTaskResult;
-
-import static org.mockito.Matchers.isA;
+import static org.mockito.Matchers.eq;
 
 public class SystemResourceTest
     extends ServerRestTestSupport
 {
-    private ExportService exportService;
+    private TaskService taskService;
 
-    private RepositoryService repositoryService;
-
-    private NodeRepositoryService nodeRepositoryService;
-
-    private DumpService dumpService;
-
-    private VacuumService vacuumService;
-
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    private SystemResource resource;
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
-
-
-    private File nameDir, dumpDir, dataDir;
 
     @Before
     public void setup()
         throws Exception
     {
-        final File homeDir = this.temporaryFolder.newFolder( "home" );
-        System.setProperty( "xp.home", homeDir.getAbsolutePath() );
-
-        this.dataDir = createDir( homeDir, "data" );
-        this.dumpDir = createDir( dataDir, "dump" );
-
-
-    }
-
-    private File createDir( final File dir, final String name )
-    {
-        final File file = new File( dir, name );
-        Assert.assertTrue( "Failed to create directory " + name + " under " + dir.getAbsolutePath(), file.mkdirs() );
-        return file;
     }
 
     @Test
-    public void dump()
+    public void dumpTask()
         throws Exception
     {
-        final SystemDumpResult systemDumpResult = SystemDumpResult.create().
-            add( RepoDumpResult.create( RepositoryId.from( "my-repo" ) ).versions( 3L ).
-                add( BranchDumpResult.create( Branch.create().value( "branch-value" ).build() ).addedNodes( 3 ).error(
-                    DumpError.error( "error-message" ) ).build() ).build() ).
-            build();
+        Mockito.when( taskService.submitTask( Mockito.isA( DumpRunnableTask.class ), eq( "dump" ) ) ).thenReturn(
+            TaskId.from( "task-id" ) );
 
-        final SystemDumpParams params = SystemDumpParams.create().
-            dumpName( "dump" ).
-            includeBinaries( true ).
-            includeVersions( true ).
-            maxAge( 10 ).
-            maxVersions( 20 ).
-            build();
+        final SystemDumpRequestJson json = Mockito.mock( SystemDumpRequestJson.class );
 
-        Mockito.when( this.dumpService.dump( params ) ).thenReturn( systemDumpResult );
-
-        final String result = request().path( "system/dump" ).
-            entity( readFromFile( "dump_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post().getAsString();
-
-        assertJson( "dump.json", result );
+        final TaskResultJson result = resource.systemDump( json );
+        assertEquals( "task-id", result.getTaskId() );
     }
 
     @Test
     public void load()
         throws Exception
     {
-        this.nameDir = createDir( dumpDir, "name" );
+        Mockito.when( taskService.submitTask( Mockito.isA( LoadRunnableTask.class ), eq( "load" ) ) ).thenReturn(
+            TaskId.from( "task-id" ) );
 
-        final NodeImportResult importResult = NodeImportResult.create().
-            added( NodePath.create( "/path/to/node1" ).build() ).
-            updated( NodePath.create( "/path/to/node2" ).build() ).
-            dryRun( true ).
-            build();
+        final SystemLoadRequestJson json = Mockito.mock( SystemLoadRequestJson.class );
 
-        Mockito.when( this.exportService.importNodes( isA( ImportNodesParams.class ) ) ).thenReturn( importResult );
-
-        Mockito.when( this.repositoryService.list() ).thenReturn( Repositories.from( Repository.create().
-            branches( Branch.from( "master" ) ).
-            id( RepositoryId.from( "my-repo" ) ).
-            build() ) );
-
-        final File file = new File( this.nameDir, "export.properties" );
-        Files.write( "a=b", file, Charsets.UTF_8 );
-
-        SystemLoadParams params = SystemLoadParams.create().dumpName( "name" ).includeVersions( true ).build();
-
-        SystemLoadResult systemLoadResult = SystemLoadResult.create().add( RepoLoadResult.create( RepositoryId.from( "my-repo" ) ).add(
-            BranchLoadResult.create( Branch.create().value( "branch-value" ).build() ).error(
-                LoadError.error( "error-message" ) ).successful( 2L ).build() ).versions(
-            VersionsLoadResult.create().error( LoadError.error( "version-load-error-message" ) ).successful(
-                1L ).build() ).build() ).build();
-
-        Mockito.when( this.dumpService.load( params ) ).thenReturn( systemLoadResult );
-
-        final String result = request().path( "system/load" ).
-            entity( readFromFile( "load_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post().getAsString();
-
-        assertJson( "load.json", result );
-    }
-
-    @Test
-    public void load_system()
-        throws Exception
-    {
-        this.nameDir = createDir( dumpDir, "name" );
-
-        SystemLoadParams params = SystemLoadParams.create().dumpName( "name" ).includeVersions( true ).build();
-
-        SystemLoadResult systemLoadResult = SystemLoadResult.create().add( RepoLoadResult.create( RepositoryId.from( "my-repo" ) ).add(
-            BranchLoadResult.create( Branch.create().value( "branch-value" ).build() ).error(
-                LoadError.error( "error-message" ) ).successful( 2L ).build() ).versions(
-            VersionsLoadResult.create().error( LoadError.error( "version-load-error-message" ) ).successful(
-                1L ).build() ).build() ).build();
-
-        Mockito.when( this.dumpService.load( params ) ).thenReturn( systemLoadResult );
-
-        final String result = request().path( "system/load" ).
-            entity( readFromFile( "load_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post().getAsString();
-
-        assertJson( "load_system.json", result );
-    }
-
-    @Test
-    public void load_no_dump()
-        throws Exception
-    {
-        expectedException.expect( IllegalArgumentException.class );
-        expectedException.expectMessage( "No dump with name 'name' found in " + dataDir.getPath() );
-
-        request().path( "system/load" ).
-            entity( readFromFile( "load_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post().getAsString();
+        final TaskResultJson result = resource.load( json );
+        assertEquals( "task-id", result.getTaskId() );
     }
 
     @Test
     public void vacuum()
         throws Exception
     {
-        VacuumResult vacuumResult = VacuumResult.create().add( VacuumTaskResult.create().
-            deleted().deleted().failed().inUse().processed().
-            taskName( "vacuum-task-name" ).build() ).build();
+        Mockito.when( taskService.submitTask( Mockito.isA( VacuumRunnableTask.class ), eq( "vacuum" ) ) ).thenReturn(
+            TaskId.from( "task-id" ) );
 
-        Mockito.when( this.vacuumService.vacuum( Mockito.isA( VacuumParameters.class ) ) ).thenReturn( vacuumResult );
-
-        final String result = request().path( "system/vacuum" ).
-            entity( "{}", MediaType.APPLICATION_JSON_TYPE ).
-            post().getAsString();
-
-        assertJson( "vacuum.json", result );
+        final TaskResultJson result = resource.vacuum();
+        assertEquals( "task-id", result.getTaskId() );
     }
 
     @Test
     public void upgrade()
         throws Exception
     {
-        final SystemDumpUpgradeResult upgradeResult = SystemDumpUpgradeResult.create().
-            initialVersion( Version.emptyVersion ).
-            upgradedVersion( new Version( 1, 0, 0 ) ).
-            build();
-        Mockito.when( this.dumpService.upgrade( Mockito.isA( SystemDumpUpgradeParams.class ) ) ).thenReturn( upgradeResult );
+        Mockito.when( taskService.submitTask( Mockito.isA( UpgradeRunnableTask.class ), eq( "upgrade" ) ) ).thenReturn(
+            TaskId.from( "task-id" ) );
 
-        final String result = request().path( "system/upgrade" ).
-            entity( "{\"name\":\"dumpName\"}", MediaType.APPLICATION_JSON_TYPE ).
-            post().getAsString();
+        final SystemDumpUpgradeRequestJson json = Mockito.mock( SystemDumpUpgradeRequestJson.class );
 
-        assertJson( "upgrade.json", result );
+        final TaskResultJson result = resource.upgrade( json );
+        assertEquals( "task-id", result.getTaskId() );
     }
 
     @Override
     protected Object getResourceInstance()
     {
-        this.exportService = Mockito.mock( ExportService.class );
-        this.repositoryService = Mockito.mock( RepositoryService.class );
-        this.nodeRepositoryService = Mockito.mock( NodeRepositoryService.class );
-        this.dumpService = Mockito.mock( DumpService.class );
-        this.vacuumService = Mockito.mock( VacuumService.class );
+        this.taskService = Mockito.mock( TaskService.class );
 
-        final SystemResource resource = new SystemResource();
-        resource.setExportService( exportService );
-        resource.setRepositoryService( repositoryService );
-        resource.setNodeRepositoryService( nodeRepositoryService );
-        resource.setDumpService( dumpService );
-        resource.setVacuumService( vacuumService );
+        resource = new SystemResource();
+        resource.setTaskService( taskService );
         return resource;
     }
 }

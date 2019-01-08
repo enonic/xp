@@ -14,6 +14,8 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
+
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.context.Context;
@@ -107,7 +109,19 @@ public class DumpServiceImpl
         result.initialVersion( modelVersion );
         if ( modelVersion.lessThan( DumpConstants.MODEL_VERSION ) )
         {
-            for ( DumpUpgrader dumpUpgrader : createDumpUpgraders() )
+            final List<DumpUpgrader> dumpUpgraders = createDumpUpgraders();
+
+            if ( params.getUpgradeListener() != null )
+            {
+                final long total = dumpUpgraders.stream().
+                    map( DumpUpgrader::getModelVersion ).
+                    filter( modelVersion::lessThan ).
+                    count();
+
+                params.getUpgradeListener().total( total );
+            }
+
+            for ( DumpUpgrader dumpUpgrader : dumpUpgraders )
             {
                 final Version targetModelVersion = dumpUpgrader.getModelVersion();
                 if ( modelVersion.lessThan( targetModelVersion ) )
@@ -115,6 +129,11 @@ public class DumpServiceImpl
                     dumpUpgrader.upgrade( dumpName );
                     modelVersion = targetModelVersion;
                     updateDumpModelVersion( dumpName, modelVersion );
+
+                    if ( params.getUpgradeListener() != null )
+                    {
+                        params.getUpgradeListener().upgraded();
+                    }
                 }
             }
         }
@@ -122,9 +141,9 @@ public class DumpServiceImpl
         return result.build();
     }
 
-    private DumpUpgrader[] createDumpUpgraders()
+    private List<DumpUpgrader> createDumpUpgraders()
     {
-        return new DumpUpgrader[]{new MissingModelVersionDumpUpgrader(), new VersionIdDumpUpgrader( this.basePath ), new FlattenedPageDumpUpgrader( this.basePath )};
+        return Lists.newArrayList( new MissingModelVersionDumpUpgrader(), new VersionIdDumpUpgrader( this.basePath ), new FlattenedPageDumpUpgrader( this.basePath ) );
     }
 
     private Version getDumpModelVersion( final String dumpName )
@@ -166,6 +185,16 @@ public class DumpServiceImpl
         final FileDumpWriter writer = new FileDumpWriter( basePath, params.getDumpName(), blobStore );
 
         final Repositories repositories = this.repositoryService.list();
+
+        if ( params.getListener() != null )
+        {
+            final long branchesCount = repositories.
+                stream().
+                flatMap( repository -> repository.getBranches().stream() ).
+                count();
+
+            params.getListener().totalBranches( branchesCount );
+        }
 
         final SystemDumpResult.Builder dumpResults = SystemDumpResult.create();
 
@@ -233,6 +262,18 @@ public class DumpServiceImpl
             throw new SystemDumpException( "Cannot load system-dump; dump does not contain system repository" );
         }
 
+        if ( params.getListener() != null )
+        {
+            final long branchesCount = dumpReader.getRepositories().
+                stream().
+                flatMap( repositoryId -> dumpReader.getBranches( repositoryId ).stream() ).
+                count();
+
+            params.getListener().totalBranches( branchesCount );
+        }
+
+        doDeleteRepositories();
+
         initializeSystemRepo( params, dumpReader, results );
 
         final List<Repository> repositoriesToLoad = repositoryService.list().stream().
@@ -291,14 +332,21 @@ public class DumpServiceImpl
         } );
     }
 
+    private void doDeleteRepositories()
+    {
+        repositoryService.list().stream().
+            filter( ( repo ) -> !repo.getId().equals( SystemConstants.SYSTEM_REPO.getId() ) ).
+            forEach( ( repo ) -> doDeleteRepository( repo.getId() ) );
+    }
+
+    private void doDeleteRepository( final RepositoryId repositoryId )
+    {
+        LOG.info( "Deleting repository [" + repositoryId + "]" );
+        this.repositoryService.deleteRepository( DeleteRepositoryParams.from( repositoryId ) );
+    }
+
     private void initializeRepo( final Repository repository )
     {
-        if ( this.repositoryService.isInitialized( repository.getId() ) )
-        {
-            LOG.info( "Deleting repository [" + repository.getId() + "] before loading" );
-            this.repositoryService.deleteRepository( DeleteRepositoryParams.from( repository.getId() ) );
-        }
-
         final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create().
             repositoryId( repository.getId() ).
             repositorySettings( repository.getSettings() ).

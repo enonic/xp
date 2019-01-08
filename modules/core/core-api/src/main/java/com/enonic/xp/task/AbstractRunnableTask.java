@@ -1,21 +1,17 @@
-package com.enonic.xp.admin.impl.rest.resource.content.task;
+package com.enonic.xp.task;
 
-import com.enonic.xp.admin.impl.rest.resource.content.json.TaskResultJson;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.task.RunnableTask;
-import com.enonic.xp.task.TaskId;
-import com.enonic.xp.task.TaskService;
 
 public abstract class AbstractRunnableTask
     implements RunnableTask
 {
-    private final String description;
+    protected final String description;
 
-    private final TaskService taskService;
+    protected final TaskService taskService;
 
-    final ContentService contentService;
+    protected ContentService contentService;
 
-    AbstractRunnableTask( Builder builder )
+    protected AbstractRunnableTask( Builder builder )
     {
         this.description = builder.description;
         this.taskService = builder.taskService;
@@ -28,7 +24,7 @@ public abstract class AbstractRunnableTask
         return new TaskResultJson( taskId );
     }
 
-    public static abstract class Builder
+    public static abstract class Builder<T extends Builder>
     {
 
         private String description;
@@ -37,26 +33,22 @@ public abstract class AbstractRunnableTask
 
         private ContentService contentService;
 
-        Builder()
-        {
-        }
-
-        public Builder description( String description )
+        public T description( final String description )
         {
             this.description = description;
-            return this;
+            return (T) this;
         }
 
-        public Builder taskService( TaskService taskService )
+        public T taskService( final TaskService taskService )
         {
             this.taskService = taskService;
-            return this;
+            return (T) this;
         }
 
-        public Builder contentService( ContentService contentService )
+        public T contentService( final ContentService contentService )
         {
             this.contentService = contentService;
-            return this;
+            return (T) this;
         }
 
         public abstract AbstractRunnableTask build();
