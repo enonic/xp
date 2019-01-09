@@ -238,7 +238,7 @@ public final class ExceptionRendererImpl
             }
             catch ( IOException e )
             {
-                LOG.error( "Exception while executing ID provider login function", e );
+                LOG.error( "Exception while executing application login function", e );
             }
         }
         return null;

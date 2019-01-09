@@ -617,8 +617,9 @@ public final class SecurityResource
     {
         final IdProviderConfig idProviderConfig = userStore.getIdProviderConfig();
         final ApplicationKey idProviderKey = idProviderConfig == null ? null : idProviderConfig.getApplicationKey();
-        final IdProviderDescriptor idProvider = idProviderKey == null ? null : idProviderDescriptorService.getDescriptor( idProviderKey );
-        return idProvider == null ? null : idProvider.getMode();
+        final IdProviderDescriptor idProviderDescriptor =
+            idProviderKey == null ? null : idProviderDescriptorService.getDescriptor( idProviderKey );
+        return idProviderDescriptor == null ? null : idProviderDescriptor.getMode();
     }
 
 

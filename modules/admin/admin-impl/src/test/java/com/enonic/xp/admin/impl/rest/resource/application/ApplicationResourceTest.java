@@ -326,7 +326,7 @@ public class ApplicationResourceTest
     }
 
     @Test
-    public void get_id_provider_empty()
+    public void get_id_provider_application_empty()
         throws Exception
     {
         String response = request().
@@ -337,7 +337,7 @@ public class ApplicationResourceTest
     }
 
     @Test
-    public void get_id_provider()
+    public void get_id_provider_applcation()
         throws Exception
     {
         final Application application = createApplication();
@@ -356,7 +356,7 @@ public class ApplicationResourceTest
             path( "application/getIdProviderApplication" ).
             queryParam( "applicationKey", "testapplication" ).
             get().getAsString();
-        assertJson( "get_id_provider.json", response );
+        assertJson( "get_id_provider_application.json", response );
     }
 
     @Test

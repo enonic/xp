@@ -236,9 +236,9 @@ abstract class UserStoreNodeTranslator
                 final IdProviderConfig idProviderConfig = userStore.getIdProviderConfig();
                 if ( idProviderConfig == null )
                 {
-                    if ( nodeData.hasProperty( UserStorePropertyNames.ID_PROVIDER_KEY ) )
+                    if ( nodeData.hasProperty( UserStorePropertyNames.APPLICATION ) )
                     {
-                        nodeData.removeProperty( UserStorePropertyNames.ID_PROVIDER_KEY );
+                        nodeData.removeProperty( UserStorePropertyNames.APPLICATION );
                     }
                 }
                 else
@@ -279,7 +279,7 @@ abstract class UserStoreNodeTranslator
             key( userStoreKey ).
             description( nodeAsSet.getString( UserStorePropertyNames.DESCRIPTION_KEY ) );
 
-        if ( nodeAsSet.hasProperty( UserStorePropertyNames.ID_PROVIDER_KEY ) )
+        if ( nodeAsSet.hasProperty( UserStorePropertyNames.APPLICATION ) )
         {
             final String applicationKey = nodeAsSet.getString( UserStorePropertyNames.ID_PROVIDER_APPLICATION_KEY );
             final PropertySet config = nodeAsSet.getSet( UserStorePropertyNames.ID_PROVIDER_CONFIG_FORM_KEY );

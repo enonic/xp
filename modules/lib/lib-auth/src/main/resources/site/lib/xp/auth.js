@@ -342,12 +342,12 @@ exports.deletePrincipal = function (principalKey) {
 };
 
 /**
- * This function returns the ID provider configuration for the current user store.
+ * This function returns the ID provider configuration.
  * It is meant to be called from an ID provider controller.
  *
  * @example-ref examples/auth/getIdProviderConfig.js
  *
- * @returns {object} The ID provider configuration for current user store as JSON.
+ * @returns {object} The ID provider configuration as JSON.
  */
 exports.getIdProviderConfig = function () {
     var bean = __.newBean('com.enonic.xp.lib.auth.GetIdProviderConfigHandler');
