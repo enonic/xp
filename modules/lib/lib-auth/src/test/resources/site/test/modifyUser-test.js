@@ -11,7 +11,7 @@ function editor(c) {
 exports.modifyUser = function () {
 
     var result = auth.modifyUser({
-        key: 'user:myUserStore:userId',
+        key: 'user:myIdProvider:userId',
         editor: editor
     });
 
@@ -23,7 +23,7 @@ exports.modifyUser = function () {
         "disabled": false,
         "email": "modified_email@enonic.com",
         "login": "user1",
-        "userStore": "enonic"
+        "idProvider": "enonic"
     };
 
     t.assertJsonEquals(expectedJson, result);

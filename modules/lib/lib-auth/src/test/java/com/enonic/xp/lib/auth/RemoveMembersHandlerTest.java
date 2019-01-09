@@ -14,7 +14,7 @@ import static org.mockito.Matchers.eq;
 public class RemoveMembersHandlerTest
     extends ScriptTestSupport
 {
-    private final PrincipalKey USER = PrincipalKey.from( "user:myUserStore:userId" );
+    private final PrincipalKey USER = PrincipalKey.from( "user:myIdProvider:userId" );
 
     private final PrincipalKey GROUP = PrincipalKey.from( "group:myGroupStore:groupId" );
 

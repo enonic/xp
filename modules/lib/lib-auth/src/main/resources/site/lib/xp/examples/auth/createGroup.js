@@ -4,7 +4,7 @@ var t = require('/lib/xp/testing');
 // BEGIN
 // Creates a group.
 var group = authLib.createGroup({
-    userStore: 'myUserStore',
+    idProvider: 'myIdProvider',
     name: 'groupName',
     displayName: 'Group display name',
     description: "description"

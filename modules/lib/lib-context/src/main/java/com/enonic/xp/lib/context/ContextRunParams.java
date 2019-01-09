@@ -37,9 +37,9 @@ public final class ContextRunParams
         this.username = username;
     }
 
-    public void setUserStore( final String userStore )
+    public void setIdProvider( final String idProvider )
     {
-        this.idProvider = userStore;
+        this.idProvider = idProvider;
     }
 
     public void setPrincipals( final String[] principals )

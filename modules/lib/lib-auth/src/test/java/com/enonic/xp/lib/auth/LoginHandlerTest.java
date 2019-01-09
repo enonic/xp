@@ -117,9 +117,12 @@ public class LoginHandlerTest
     @Test
     public void testLoginMultipleIdProvidersInOrder()
     {
-        final IdProvider idProvider1 = IdProvider.create().displayName( "User Store 1" ).key( IdProviderKey.from( "userstore1" ) ).build();
-        final IdProvider idProvider3 = IdProvider.create().displayName( "User Store 3" ).key( IdProviderKey.from( "userstore3" ) ).build();
-        final IdProvider idProvider2 = IdProvider.create().displayName( "User Store 2" ).key( IdProviderKey.from( "userstore2" ) ).build();
+        final IdProvider idProvider1 =
+            IdProvider.create().displayName( "Id Provider 1" ).key( IdProviderKey.from( "idprovider1" ) ).build();
+        final IdProvider idProvider3 =
+            IdProvider.create().displayName( "Id Provider 3" ).key( IdProviderKey.from( "idprovider3" ) ).build();
+        final IdProvider idProvider2 =
+            IdProvider.create().displayName( "Id Provider 2" ).key( IdProviderKey.from( "idprovider2" ) ).build();
         final IdProviders idProviders = IdProviders.from( idProvider1, idProvider3, idProvider2 );
 
         final AuthenticationInfo authInfo = TestDataFixtures.createAuthenticationInfo();
@@ -139,9 +142,9 @@ public class LoginHandlerTest
         final AuthenticationInfo sessionAuthInfo = session.getAttribute( AuthenticationInfo.class );
         Assert.assertEquals( authInfo, sessionAuthInfo );
         Assert.assertEquals( 3, matcher.loginIdProviderAttempts.size() );
-        Assert.assertEquals( "userstore1", matcher.loginIdProviderAttempts.get( 0 ).toString() );
-        Assert.assertEquals( "userstore2", matcher.loginIdProviderAttempts.get( 1 ).toString() );
-        Assert.assertEquals( "userstore3", matcher.loginIdProviderAttempts.get( 2 ).toString() );
+        Assert.assertEquals( "idprovider1", matcher.loginIdProviderAttempts.get( 0 ).toString() );
+        Assert.assertEquals( "idprovider2", matcher.loginIdProviderAttempts.get( 1 ).toString() );
+        Assert.assertEquals( "idprovider3", matcher.loginIdProviderAttempts.get( 2 ).toString() );
     }
 
     private class AuthTokenMatcher

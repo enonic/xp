@@ -50,7 +50,7 @@ public class ChangePasswordHandlerTest
     {
         runFunction( "/site/test/changePassword-test.js", "changePassword" );
 
-        Mockito.verify( this.securityService ).setPassword( eq( PrincipalKey.from( "user:myUserStore:userId" ) ),
+        Mockito.verify( this.securityService ).setPassword( eq( PrincipalKey.from( "user:myIdProvider:userId" ) ),
                                                             eq( "test-password-without-spaces" ) );
     }
 }

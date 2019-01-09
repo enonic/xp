@@ -29,7 +29,7 @@ public final class SyncIdProviderResultJson
         return new SyncIdProviderResultJson( idProviderKey, false, failureReason );
     }
 
-    public String getUserStoreKey()
+    public String getIdProviderKey()
     {
         return idProviderKey.toString();
     }

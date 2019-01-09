@@ -16,7 +16,7 @@ public final class CreateUserHandler
 {
     private Supplier<SecurityService> securityService;
 
-    private IdProviderKey userStore;
+    private IdProviderKey idProviderKey;
 
     private String name;
 
@@ -24,9 +24,9 @@ public final class CreateUserHandler
 
     private String email;
 
-    public void setUserStore( final String idProvider )
+    public void setIdProvider( final String idProvider )
     {
-        this.userStore = IdProviderKey.from( idProvider );
+        this.idProviderKey = IdProviderKey.from( idProvider );
     }
 
     public void setName( final String name )
@@ -48,7 +48,7 @@ public final class CreateUserHandler
     {
         final User user = this.securityService.get().createUser(
             CreateUserParams.create().displayName( this.displayName ).email( this.email ).login( this.name ).userKey(
-                PrincipalKey.ofUser( this.userStore, this.name ) ).build() );
+                PrincipalKey.ofUser( this.idProviderKey, this.name ) ).build() );
         return user != null ? new PrincipalMapper( user ) : null;
     }
 

@@ -10,7 +10,7 @@ import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
-public final class GetCurrentUserStoreKeyHandler
+public final class GetCurrentIdProviderKeyHandler
     implements ScriptBean
 {
     private PortalRequest request;

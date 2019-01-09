@@ -125,7 +125,7 @@ public class TestDataFixtures
     public static IdProvider getTestIdProvider()
     {
         return IdProvider.create().
-            key( IdProviderKey.from( "userStoreTestKey" ) ).
+            key( IdProviderKey.from( "idProviderTestKey" ) ).
             description( "User store used for testing" ).
             displayName( "User store test" ).
             idProviderConfig( getTestIdProviderConfig() ).

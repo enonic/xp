@@ -62,7 +62,7 @@ public final class LoginHandler
         this.skipAuth = skipAuth;
     }
 
-    public void setUserStore( final String[] idProvider )
+    public void setIdProvider( final String[] idProvider )
     {
         this.idProvider = idProvider;
     }

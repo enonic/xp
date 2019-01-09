@@ -117,7 +117,7 @@ public class BasicAuthFilterTest
     }
 
     @Test
-    public void header_defaultUserStore_noAccess()
+    public void header_defaultIdProvider_noAccess()
         throws Exception
     {
         wrongAuthentication();
@@ -127,7 +127,7 @@ public class BasicAuthFilterTest
     }
 
     @Test
-    public void header_defaultUserStore_authenticated()
+    public void header_defaultIdProvider_authenticated()
         throws Exception
     {
         rightAuthentication();

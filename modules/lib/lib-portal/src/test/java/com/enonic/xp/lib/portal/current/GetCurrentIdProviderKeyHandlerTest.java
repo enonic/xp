@@ -9,7 +9,7 @@ import com.enonic.xp.lib.portal.TestDataFixtures;
 import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-public class GetCurrentUserStoreKeyHandlerTest
+public class GetCurrentIdProviderKeyHandlerTest
     extends ScriptTestSupport
 {
     @Test
@@ -18,7 +18,7 @@ public class GetCurrentUserStoreKeyHandlerTest
         final IdProvider idProvider = TestDataFixtures.newIdProvider();
         this.portalRequest.setIdProvider( idProvider );
 
-        runScript( "/site/lib/xp/examples/portal/getUserStoreKey.js" );
+        runScript( "/site/lib/xp/examples/portal/getIdProviderKey.js" );
     }
 
     @Test
@@ -26,6 +26,6 @@ public class GetCurrentUserStoreKeyHandlerTest
     {
         this.portalRequest.setRawRequest( Mockito.mock( HttpServletRequest.class ) );
         this.portalRequest.setIdProvider( null );
-        runFunction( "/site/test/getUserStoreKey-test.js", "noUserStore" );
+        runFunction( "/site/test/getIdProviderKey-test.js", "noIdProvider" );
     }
 }

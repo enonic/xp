@@ -106,7 +106,7 @@ public class SecurityResourceTest
         Mockito.when( securityService.getIdProviders() ).
             thenReturn( idProviders );
 
-        String jsonString = request().path( "security/userstore/list" ).get().getAsString();
+        String jsonString = request().path( "security/idprovider/list" ).get().getAsString();
 
         assertJson( "getIdProviders.json", jsonString );
     }
@@ -143,7 +143,7 @@ public class SecurityResourceTest
             build();
         Mockito.when( securityService.getIdProviderPermissions( USER_STORE_1 ) ).thenReturn( idProviderPermissions );
 
-        String jsonString = request().path( "security/userstore" ).queryParam( "key", "local" ).get().getAsString();
+        String jsonString = request().path( "security/idprovider" ).queryParam( "key", "local" ).get().getAsString();
 
         assertJson( "getIdProviderByKey.json", jsonString );
     }
@@ -152,7 +152,7 @@ public class SecurityResourceTest
     public void getIdProvider_not_found()
         throws Exception
     {
-        MockRestResponse result = request().path( "security/userstore" ).queryParam( "key", "local" ).get();
+        MockRestResponse result = request().path( "security/idprovider" ).queryParam( "key", "local" ).get();
         assertEquals( HttpStatus.NOT_FOUND.value(), result.getStatus() );
     }
 
@@ -160,7 +160,7 @@ public class SecurityResourceTest
     public void getIdProvider_null_param()
         throws Exception
     {
-        MockRestResponse result = request().path( "security/userstore" ).get();
+        MockRestResponse result = request().path( "security/idprovider" ).get();
 
         assertTrue( StringUtils.isBlank( result.getAsString() ) );
         assertEquals( HttpStatus.NO_CONTENT.value(), result.getStatus() );
@@ -183,7 +183,7 @@ public class SecurityResourceTest
         Mockito.when( securityService.getDefaultIdProviderPermissions() ).thenReturn( idProviderAccessControlList );
         Mockito.when( securityService.getPrincipals( Mockito.isA( PrincipalKeys.class ) ) ).thenReturn( principals );
 
-        String jsonString = request().path( "security/userstore/default" ).get().getAsString();
+        String jsonString = request().path( "security/idprovider/default" ).get().getAsString();
 
         assertJson( "getDefaultIdProviderPermissions.json", jsonString );
     }
@@ -213,7 +213,7 @@ public class SecurityResourceTest
 
         Mockito.when( securityService.getIdProviderPermissions( idProviderKey ) ).thenReturn( permissions );
 
-        String jsonString = request().path( "security/userstore/create" ).
+        String jsonString = request().path( "security/idprovider/create" ).
             entity( readFromFile( "createIdProviderParams.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
 
@@ -245,7 +245,7 @@ public class SecurityResourceTest
 
         Mockito.when( securityService.getIdProviderPermissions( idProviderKey ) ).thenReturn( permissions );
 
-        String jsonString = request().path( "security/userstore/update" ).
+        String jsonString = request().path( "security/idprovider/update" ).
             entity( readFromFile( "updateIdProviderParams.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
 
@@ -260,7 +260,7 @@ public class SecurityResourceTest
 
         String result = request().
             entity( "{\"keys\":[\"" + idProviderKey.toString() + "\"]}", MediaType.APPLICATION_JSON_TYPE ).
-            path( "security/userstore/delete" ).post().getAsString();
+            path( "security/idprovider/delete" ).post().getAsString();
 
         assertJson( "deleteIdProviderResult.json", result );
     }
@@ -275,7 +275,7 @@ public class SecurityResourceTest
 
         String result = request().
             entity( "{\"keys\":[\"" + idProviderKey.toString() + "\"]}", MediaType.APPLICATION_JSON_TYPE ).
-            path( "security/userstore/delete" ).post().getAsString();
+            path( "security/idprovider/delete" ).post().getAsString();
 
         assertJson( "deleteIdProviderResult_error.json", result );
     }
@@ -293,7 +293,7 @@ public class SecurityResourceTest
 
         String result = request().
             entity( "{\"keys\":[\"" + idProviderKey.toString() + "\"]}", MediaType.APPLICATION_JSON_TYPE ).
-            path( "security/userstore/sync" ).post().getAsString();
+            path( "security/idprovider/sync" ).post().getAsString();
 
         Mockito.verify( idProviderControllerService, Mockito.times( 1 ) ).execute( paramsCaptor.capture() );
 
@@ -312,7 +312,7 @@ public class SecurityResourceTest
 
         String result = request().
             entity( "{\"keys\":[\"" + idProviderKey.toString() + "\"]}", MediaType.APPLICATION_JSON_TYPE ).
-            path( "security/userstore/sync" ).post().getAsString();
+            path( "security/idprovider/sync" ).post().getAsString();
 
         assertJson( "syncIdProviderResult.json", result );
     }

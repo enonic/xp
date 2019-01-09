@@ -4,7 +4,7 @@ var auth = require('/lib/xp/auth.js');
 exports.createUser = function () {
 
     var result = auth.createUser({
-        userStore: 'myUserStore',
+        idProvider: 'myIdProvider',
         name: 'userId',
         displayName: 'user display name',
         email: 'user1@enonic.com'
@@ -18,7 +18,7 @@ exports.createUser = function () {
         "disabled": false,
         "email": "user1@enonic.com",
         "login": "user1",
-        "userStore": "enonic"
+        "idProvider": "enonic"
     };
 
     t.assertJsonEquals(expectedJson, result, 'createUser result not equals');
@@ -28,7 +28,7 @@ exports.createUser = function () {
 exports.createUserNoEmail = function () {
 
     var result = auth.createUser({
-        userStore: 'myUserStore',
+        idProvider: 'myIdProvider',
         name: 'userId',
         displayName: 'user display name'
     });
@@ -40,7 +40,7 @@ exports.createUserNoEmail = function () {
         "modifiedTime": "1970-01-01T00:00:00Z",
         "disabled": false,
         "login": "user1",
-        "userStore": "enonic"
+        "idProvider": "enonic"
     };
 
     t.assertJsonEquals(expectedJson, result, 'createUser result not equals');
@@ -50,7 +50,7 @@ exports.createUserNoEmail = function () {
 exports.createUserWithMissingArg = function () {
 
     auth.createUser({
-        userStore: 'myUserStore',
+        idProvider: 'myIdProvider',
         name: 'userId'
     });
 };

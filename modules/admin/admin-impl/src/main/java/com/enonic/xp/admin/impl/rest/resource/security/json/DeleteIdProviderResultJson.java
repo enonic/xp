@@ -29,7 +29,7 @@ public final class DeleteIdProviderResultJson
         return new DeleteIdProviderResultJson( idProviderKey, false, failureReason );
     }
 
-    public String getUserStoreKey()
+    public String getIdProviderKey()
     {
         return idProviderKey.toString();
     }

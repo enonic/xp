@@ -1,5 +1,5 @@
 {
-  "userStores": [
+  "idProviders": [
     {
       "description": "local ldap",
       "displayName": "Local LDAP",

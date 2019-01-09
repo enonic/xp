@@ -2,12 +2,12 @@ var t = require('/lib/xp/testing.js');
 var auth = require('/lib/xp/auth.js');
 
 exports.deleteUser = function () {
-    var result = auth.deletePrincipal('user:myUserStore:userId');
+    var result = auth.deletePrincipal('user:myIdProvider:userId');
     t.assertJsonEquals(true, result);
 };
 
 exports.deleteNonExistingUser = function () {
-    var result = auth.deletePrincipal('user:myUserStore:XXX');
+    var result = auth.deletePrincipal('user:myIdProvider:XXX');
     t.assertEquals(false, result);
 };
 

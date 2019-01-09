@@ -20,7 +20,7 @@ var expected = {
     "disabled": false,
     "email": "user1@enonic.com",
     "login": "user1",
-    "userStore": "enonic"
+    "idProvider": "enonic"
 };
 // END
 

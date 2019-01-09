@@ -32,7 +32,7 @@ public class GetMembershipsHandlerTest
         final Group group = TestDataFixtures.getTestGroup();
         final PrincipalKeys principalKeys = PrincipalKeys.from( role.getKey(), group.getKey() );
 
-        Mockito.when( securityService.getMemberships( PrincipalKey.from( "user:myUserStore:userId" ) ) ).thenReturn( principalKeys );
+        Mockito.when( securityService.getMemberships( PrincipalKey.from( "user:myIdProvider:userId" ) ) ).thenReturn( principalKeys );
 
         Mockito.when( securityService.getPrincipals( principalKeys ) ).thenReturn( Principals.from( role, group ) );
         runScript( "/site/lib/xp/examples/auth/getMemberships.js" );
@@ -43,7 +43,7 @@ public class GetMembershipsHandlerTest
     {
         final Group group = TestDataFixtures.getTestGroup();
         final PrincipalKeys principalKeys = PrincipalKeys.from( group.getKey() );
-        final PrincipalKey pKey = PrincipalKey.from( "user:myUserStore:userId" );
+        final PrincipalKey pKey = PrincipalKey.from( "user:myIdProvider:userId" );
 
         Mockito.when( securityService.getMemberships( pKey ) ).thenReturn( principalKeys );
         Mockito.verify( securityService, Mockito.never() ).getAllMemberships( pKey );
@@ -58,7 +58,7 @@ public class GetMembershipsHandlerTest
     {
         final Group group = TestDataFixtures.getTestGroup();
         final PrincipalKeys principalKeys = PrincipalKeys.from( group.getKey() );
-        final PrincipalKey pKey = PrincipalKey.from( "user:myUserStore:userId" );
+        final PrincipalKey pKey = PrincipalKey.from( "user:myIdProvider:userId" );
 
         Mockito.when( securityService.getAllMemberships( pKey ) ).thenReturn( principalKeys );
         Mockito.verify( securityService, Mockito.never() ).getMemberships( pKey );
@@ -75,7 +75,7 @@ public class GetMembershipsHandlerTest
         final Group group = TestDataFixtures.getTestGroup();
         final PrincipalKeys principalKeys = PrincipalKeys.from( role.getKey(), group.getKey() );
 
-        Mockito.when( securityService.getMemberships( PrincipalKey.from( "user:myUserStore:userId" ) ) ).thenReturn( principalKeys );
+        Mockito.when( securityService.getMemberships( PrincipalKey.from( "user:myIdProvider:userId" ) ) ).thenReturn( principalKeys );
 
         Mockito.when( securityService.getPrincipals( principalKeys ) ).thenReturn( Principals.from( role, group ) );
 

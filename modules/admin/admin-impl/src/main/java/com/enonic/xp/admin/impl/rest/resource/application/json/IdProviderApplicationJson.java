@@ -38,7 +38,7 @@ public class IdProviderApplicationJson
         return mode;
     }
 
-    public ImmutableList<IdProviderJson> getUserStores()
+    public ImmutableList<IdProviderJson> getIdProviders()
     {
         return idProviders;
     }

@@ -16,7 +16,7 @@ public final class CreateGroupHandler
 {
     private Supplier<SecurityService> securityService;
 
-    private IdProviderKey userStore;
+    private IdProviderKey idProvider;
 
     private String name;
 
@@ -24,9 +24,9 @@ public final class CreateGroupHandler
 
     private String description;
 
-    public void setUserStore( final String idProvider )
+    public void setIdProvider( final String idProvider )
     {
-        this.userStore = IdProviderKey.from( idProvider );
+        this.idProvider = IdProviderKey.from( idProvider );
     }
 
     public void setName( final String name )
@@ -48,7 +48,7 @@ public final class CreateGroupHandler
     {
         final Group group = this.securityService.get().createGroup( CreateGroupParams.create().
             displayName( this.displayName != null ? this.displayName : this.name ).
-            groupKey( PrincipalKey.ofGroup( this.userStore, this.name ) ).
+            groupKey( PrincipalKey.ofGroup( this.idProvider, this.name ) ).
             description( this.description ).
             build() );
         return group != null ? new PrincipalMapper( group ) : null;

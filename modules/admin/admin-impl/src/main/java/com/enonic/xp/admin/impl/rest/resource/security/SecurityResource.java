@@ -100,16 +100,16 @@ public final class SecurityResource
     private IdProviderControllerService idProviderControllerService;
 
     @GET
-    @Path("userstore/list")
-    public IdProvidersJson getUserStores()
+    @Path("idprovider/list")
+    public IdProvidersJson getIdProviders()
     {
         final IdProviders idProviders = securityService.getIdProviders();
         return new IdProvidersJson( idProviders );
     }
 
     @GET
-    @Path("userstore")
-    public IdProviderJson getUserStore( @QueryParam("key") final String keyParam )
+    @Path("idprovider")
+    public IdProviderJson getIdProvider( @QueryParam("key") final String keyParam )
     {
         if ( keyParam == null )
         {
@@ -131,8 +131,8 @@ public final class SecurityResource
     }
 
     @GET
-    @Path("userstore/default")
-    public IdProviderJson getDefaultUserStore()
+    @Path("idprovider/default")
+    public IdProviderJson getDefaultIdProvider()
     {
         final IdProvider idProvider = IdProvider.create().displayName( "" ).key( IdProviderKey.createDefault() ).build();
 
@@ -144,8 +144,8 @@ public final class SecurityResource
     }
 
     @POST
-    @Path("userstore/create")
-    public IdProviderJson createUserStore( final CreateIdProviderJson params )
+    @Path("idprovider/create")
+    public IdProviderJson createIdProvider( final CreateIdProviderJson params )
     {
         final IdProvider idProvider = securityService.createIdProvider( params.getCreateIdProviderParams() );
         final IdProviderAccessControlList permissions = securityService.getIdProviderPermissions( idProvider.getKey() );
@@ -156,8 +156,8 @@ public final class SecurityResource
     }
 
     @POST
-    @Path("userstore/update")
-    public IdProviderJson updateUserStore( final UpdateIdProviderJson params )
+    @Path("idprovider/update")
+    public IdProviderJson updateIdProvider( final UpdateIdProviderJson params )
     {
         final IdProvider idProvider = securityService.updateIdProvider( params.getUpdateIdProviderParams() );
         final IdProviderAccessControlList permissions = securityService.getIdProviderPermissions( idProvider.getKey() );
@@ -168,8 +168,8 @@ public final class SecurityResource
     }
 
     @POST
-    @Path("userstore/delete")
-    public DeleteIdProvidersResultJson deleteUserStore( final DeleteIdProviderJson params )
+    @Path("idprovider/delete")
+    public DeleteIdProvidersResultJson deleteIdProvider( final DeleteIdProviderJson params )
     {
         final DeleteIdProvidersResultJson resultsJson = new DeleteIdProvidersResultJson();
         params.getKeys().stream().map( IdProviderKey::from ).forEach( ( idProviderKey ) -> {
@@ -187,8 +187,8 @@ public final class SecurityResource
     }
 
     @POST
-    @Path("userstore/sync")
-    public SyncIdProvidersResultJson synchUserStore( final SyncIdProviderJson params, @Context HttpServletRequest httpRequest )
+    @Path("idprovider/sync")
+    public SyncIdProvidersResultJson synchIdProvider( final SyncIdProviderJson params, @Context HttpServletRequest httpRequest )
     {
         final SyncIdProvidersResultJson resultsJson = new SyncIdProvidersResultJson();
         params.getKeys().stream().map( IdProviderKey::from ).forEach( ( idProviderKey ) -> {

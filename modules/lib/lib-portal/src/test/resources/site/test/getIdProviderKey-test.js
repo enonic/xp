@@ -1,7 +1,7 @@
 var assert = require('/lib/xp/testing.js');
 var portal = require('/lib/xp/portal.js');
 
-exports.noUserStore = function () {
-    var result = portal.getUserStoreKey();
+exports.noIdProvider = function () {
+    var result = portal.getIdProviderKey();
     assert.assertEquals(null, result);
 };

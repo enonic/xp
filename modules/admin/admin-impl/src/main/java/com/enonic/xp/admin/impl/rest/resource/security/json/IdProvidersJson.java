@@ -23,7 +23,7 @@ public final class IdProvidersJson
         }
     }
 
-    public List<IdProviderSummaryJson> getUserStores()
+    public List<IdProviderSummaryJson> getIdProviders()
     {
         return idProvidersJson;
     }

@@ -2,8 +2,8 @@
   "results": [
     {
       "deleted": false,
-      "reason": "errorMessage",
-      "userStoreKey": "enonic"
+      "idProviderKey": "enonic",
+      "reason": "errorMessage"
     }
   ]
 }

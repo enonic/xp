@@ -17,7 +17,7 @@ public final class FindPrincipalsHandler
 
     private PrincipalType type;
 
-    private IdProviderKey userStore;
+    private IdProviderKey idProvider;
 
     private int start = 0;
 
@@ -55,14 +55,14 @@ public final class FindPrincipalsHandler
         }
     }
 
-    public void setUserStore( final String idProvider )
+    public void setIdProvider( final String idProvider )
     {
         if ( idProvider == null || idProvider.trim().isEmpty() )
         {
-            this.userStore = null;
+            this.idProvider = null;
             return;
         }
-        this.userStore = IdProviderKey.from( idProvider );
+        this.idProvider = IdProviderKey.from( idProvider );
     }
 
     public void setStart( final Integer start )
@@ -93,9 +93,9 @@ public final class FindPrincipalsHandler
         {
             query.includeTypes( this.type );
         }
-        if ( this.userStore != null )
+        if ( this.idProvider != null )
         {
-            query.idProvider( this.userStore );
+            query.idProvider( this.idProvider );
         }
         query.name( this.name );
         query.from( this.start );

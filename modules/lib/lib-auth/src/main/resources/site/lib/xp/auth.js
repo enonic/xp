@@ -25,13 +25,13 @@ function nullOrValue(value) {
 }
 
 /**
- * Login a user with the specified userStore, userName and password.
+ * Login a user with the specified idProvider, userName and password.
  *
  * @example-ref examples/auth/login.js
  *
  * @param {object} params JSON parameters.
  * @param {string} params.user Name of user to log in.
- * @param {string} [params.userStore] Name of user-store where the user is stored. If not specified it will try all available user-stores, in alphabetical order.
+ * @param {string} [params.idProvider] Name of id provider where the user is stored. If not specified it will try all available id providers, in alphabetical order.
  * @param {string} [params.password] Password for the user. Ignored if skipAuth is set to true, mandatory otherwise.
  * @param {boolean} [params.skipAuth=false] Skip authentication.
  * @param {number} [params.sessionTimeout] Session timeout (in seconds). By default, the value of session.timeout from com.enonic.xp.web.jetty.cfg
@@ -48,8 +48,8 @@ exports.login = function (params) {
         bean.password = required(params, 'password');
     }
 
-    if (params['userStore']) {
-        bean.userStore = [].concat(params['userStore']);
+    if (params['idProvider']) {
+        bean.idProvider = [].concat(params['idProvider']);
     }
     
     bean.sessionTimeout = nullOrValue(params['sessionTimeout']);
@@ -190,7 +190,7 @@ exports.getMembers = function (principalKey) {
  * @example-ref examples/auth/createUser.js
  *
  * @param {object} params JSON parameters.
- * @param {string} params.userStore Key for user store where user has to be created.
+ * @param {string} params.idProvider Key for id provider where user has to be created.
  * @param {string} params.name User login name to set.
  * @param {string} params.displayName User display name.
  * @param {string} [params.email] User email.
@@ -198,7 +198,7 @@ exports.getMembers = function (principalKey) {
 exports.createUser = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.auth.CreateUserHandler');
 
-    bean.userStore = required(params, 'userStore');
+    bean.idProvider = required(params, 'idProvider');
     bean.name = required(params, 'name');
     bean.displayName = nullOrValue(params.displayName);
     bean.email = nullOrValue(params.email);
@@ -231,7 +231,7 @@ exports.modifyUser = function (params) {
  * @example-ref examples/auth/createGroup.js
  *
  * @param {object} params JSON parameters.
- * @param {string} params.userStore Key for user store where group has to be created.
+ * @param {string} params.idProvider Key for id provider where group has to be created.
  * @param {string} params.name Group name.
  * @param {string} params.displayName Group display name.
  * @param {string} params.description as principal description .
@@ -239,7 +239,7 @@ exports.modifyUser = function (params) {
 exports.createGroup = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.auth.CreateGroupHandler');
 
-    bean.userStore = required(params, 'userStore');
+    bean.idProvider = required(params, 'idProvider');
     bean.name = required(params, 'name');
     bean.displayName = nullOrValue(params.displayName);
     bean.description = nullOrValue(params.description);
@@ -307,7 +307,7 @@ exports.removeMembers = function (principalKey, members) {
  *
  * @param {object} params JSON parameters.
  * @param {string} [params.type] Principal type to look for, one of: 'user', 'group' or 'role'. If not specified all principal types will be included.
- * @param {string} [params.userStore] Key of the user store to look for. If not specified all user stores will be included.
+ * @param {string} [params.idProvider] Key of the id provider to look for. If not specified all id providers will be included.
  * @param {string} [params.start] First principal to return from the search results. It can be used for pagination.
  * @param {string} [params.count] A limit on the number of principals to be returned.
  * @param {string} [params.name] Name of the principal to look for.
@@ -318,7 +318,7 @@ exports.findPrincipals = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.auth.FindPrincipalsHandler');
 
     bean.type = __.nullOrValue(params.type);
-    bean.userStore = __.nullOrValue(params.userStore);
+    bean.idProvider = __.nullOrValue(params.idProvider);
     bean.start = __.nullOrValue(params.start);
     bean.count = __.nullOrValue(params.count);
     bean.name = __.nullOrValue(params.name);

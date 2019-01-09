@@ -28,7 +28,7 @@ public class GetPrincipalHandlerTest
     public void testExamples()
     {
         Mockito.<Optional<? extends Principal>>when(
-            securityService.getPrincipal( PrincipalKey.from( "user:myUserStore:userId" ) ) ).thenReturn(
+            securityService.getPrincipal( PrincipalKey.from( "user:myIdProvider:userId" ) ) ).thenReturn(
             Optional.of( TestDataFixtures.getTestUser() ) );
         runScript( "/site/lib/xp/examples/auth/getPrincipal.js" );
     }
@@ -37,7 +37,7 @@ public class GetPrincipalHandlerTest
     public void testGetUserPrincipal()
     {
         Mockito.<Optional<? extends Principal>>when(
-            securityService.getPrincipal( PrincipalKey.from( "user:myUserStore:userId" ) ) ).thenReturn(
+            securityService.getPrincipal( PrincipalKey.from( "user:myIdProvider:userId" ) ) ).thenReturn(
             Optional.of( TestDataFixtures.getTestUser() ) );
 
         runFunction( "/site/test/getPrincipal-test.js", "getUserPrincipal" );
@@ -66,7 +66,7 @@ public class GetPrincipalHandlerTest
     public void testGetNonExistingPrincipal()
     {
         Mockito.<Optional<? extends Principal>>when(
-            securityService.getPrincipal( PrincipalKey.from( "user:myUserStore:XXX" ) ) ).thenReturn( Optional.ofNullable( null ) );
+            securityService.getPrincipal( PrincipalKey.from( "user:myIdProvider:XXX" ) ) ).thenReturn( Optional.ofNullable( null ) );
 
         runFunction( "/site/test/getPrincipal-test.js", "getNonExistingPrincipal" );
     }

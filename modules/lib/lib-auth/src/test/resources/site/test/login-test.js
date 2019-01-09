@@ -6,7 +6,7 @@ exports.loginSuccess = function () {
     var result = auth.login({
         user: 'user1@enonic.com',
         password: 'pwd123',
-        userStore: 'enonic'
+        idProvider: 'enonic'
     });
 
     var expectedJson = {
@@ -19,7 +19,7 @@ exports.loginSuccess = function () {
             "disabled": false,
             "email": "user1@enonic.com",
             "login": "user1",
-            "userStore": "enonic"
+            "idProvider": "enonic"
         }
     };
 
@@ -32,7 +32,7 @@ exports.invalidLogin = function () {
     var result = auth.login({
         user: 'user1@enonic.com',
         password: 'pwd123',
-        userStore: 'enonic'
+        idProvider: 'enonic'
     });
 
     var expectedJson = {
@@ -61,7 +61,7 @@ exports.loginNoIdProvider = function () {
             "disabled": false,
             "email": "user1@enonic.com",
             "login": "user1",
-            "userStore": "enonic"
+            "idProvider": "enonic"
         }
     };
 
@@ -74,7 +74,7 @@ exports.loginMultipleIdProvider = function () {
     var result = auth.login({
         user: 'user1@enonic.com',
         password: 'pwd123',
-        userStore: ['enonic', 'system']
+        idProvider: ['enonic', 'system']
     });
 
     var expectedJson = {
@@ -87,7 +87,7 @@ exports.loginMultipleIdProvider = function () {
             "disabled": false,
             "email": "user1@enonic.com",
             "login": "user1",
-            "userStore": "enonic"
+            "idProvider": "enonic"
         }
     };
 
@@ -112,7 +112,7 @@ exports.loginMultipleIdProvidersInOrder = function () {
             "disabled": false,
             "email": "user1@enonic.com",
             "login": "user1",
-            "userStore": "enonic"
+            "idProvider": "enonic"
         }
     };
 
