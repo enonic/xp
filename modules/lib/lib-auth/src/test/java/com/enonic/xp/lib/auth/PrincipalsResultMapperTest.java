@@ -7,12 +7,12 @@ import java.time.ZoneId;
 import org.junit.Test;
 
 import com.enonic.xp.security.Group;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.Principals;
 import com.enonic.xp.security.Role;
 import com.enonic.xp.security.User;
-import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.testing.helper.JsonAssert;
 
 public class PrincipalsResultMapperTest
@@ -35,14 +35,14 @@ public class PrincipalsResultMapperTest
     {
 
         final Principal group1 = Group.create().
-            key( PrincipalKey.ofGroup( UserStoreKey.system(), "group1" ) ).
+            key( PrincipalKey.ofGroup( IdProviderKey.system(), "group1" ) ).
             displayName( "Group1" ).
             modifiedTime( Instant.now( clock ) ).
             description( "description1" ).
             build();
 
         final Principal group2 = Group.create().
-            key( PrincipalKey.ofGroup( UserStoreKey.system(), "group2" ) ).
+            key( PrincipalKey.ofGroup( IdProviderKey.system(), "group2" ) ).
             displayName( "Group2" ).
             modifiedTime( Instant.now( clock ) ).
             description( "description2" ).
@@ -78,7 +78,7 @@ public class PrincipalsResultMapperTest
     private Principals createUserPrincipals()
     {
         final Principal user1 = User.create().
-            key( PrincipalKey.ofUser( UserStoreKey.from( "enonic" ), "user1" ) ).
+            key( PrincipalKey.ofUser( IdProviderKey.from( "enonic" ), "user1" ) ).
             displayName( "User 1" ).
             modifiedTime( Instant.now( clock ) ).
             email( "user1@enonic.com" ).
@@ -86,7 +86,7 @@ public class PrincipalsResultMapperTest
             build();
 
         final Principal user2 = User.create().
-            key( PrincipalKey.ofUser( UserStoreKey.from( "enonic" ), "user2" ) ).
+            key( PrincipalKey.ofUser( IdProviderKey.from( "enonic" ), "user2" ) ).
             displayName( "User 2" ).
             modifiedTime( Instant.now( clock ) ).
             email( "user2@enonic.com" ).

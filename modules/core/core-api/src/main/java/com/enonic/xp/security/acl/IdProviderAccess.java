@@ -3,7 +3,7 @@ package com.enonic.xp.security.acl;
 import com.google.common.annotations.Beta;
 
 @Beta
-public enum UserStoreAccess
+public enum IdProviderAccess
 {
     READ,
     CREATE_USERS,

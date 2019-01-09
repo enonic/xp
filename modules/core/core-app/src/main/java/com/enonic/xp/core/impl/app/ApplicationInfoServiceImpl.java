@@ -27,8 +27,8 @@ import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
 import com.enonic.xp.schema.relationship.RelationshipTypes;
+import com.enonic.xp.security.IdProviders;
 import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.security.UserStores;
 import com.enonic.xp.task.TaskDescriptor;
 import com.enonic.xp.task.TaskDescriptorService;
 
@@ -98,12 +98,12 @@ public final class ApplicationInfoServiceImpl
         return this.contentService.findByApplicationKey( applicationKey );
     }
 
-    public UserStores getUserStoreReferences( final ApplicationKey applicationKey )
+    public IdProviders getIdProviderReferences( final ApplicationKey applicationKey )
     {
-        return UserStores.from( securityService.getUserStores().
+        return IdProviders.from( securityService.getIdProviders().
             stream().
-            filter( userStore -> userStore.getIdProviderConfig() != null &&
-                userStore.getIdProviderConfig().getApplicationKey().equals( applicationKey ) ).collect( Collectors.toList() ) );
+            filter( idProvider -> idProvider.getIdProviderConfig() != null &&
+                idProvider.getIdProviderConfig().getApplicationKey().equals( applicationKey ) ).collect( Collectors.toList() ) );
 
     }
 
@@ -121,7 +121,7 @@ public final class ApplicationInfoServiceImpl
             setLayouts( this.getLayoutDescriptors( applicationKey ) ).
             setRelations( this.getRelationshipTypes( applicationKey ) ).
             setContentReferences( this.getContentReferences( applicationKey ) ).
-            setUserStoreReferences( this.getUserStoreReferences( applicationKey ) ).
+            setIdProviderReferences( this.getIdProviderReferences( applicationKey ) ).
             setMacros( this.getMacroDescriptors( applicationKey ) ).
             setTasks( this.getTaskDescriptors( applicationKey ) ).
             setIdProviderDescriptor( this.getIdProviderDescriptor( applicationKey ) ).

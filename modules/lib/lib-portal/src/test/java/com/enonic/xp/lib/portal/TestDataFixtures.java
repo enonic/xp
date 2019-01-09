@@ -21,9 +21,9 @@ import com.enonic.xp.region.LayoutRegions;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.security.IdProvider;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.UserStore;
-import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
@@ -186,10 +186,10 @@ public final class TestDataFixtures
         return site.build();
     }
 
-    public static UserStore newUserStore()
+    public static IdProvider newIdProvider()
     {
-        return UserStore.create().
-            key( UserStoreKey.from( "myuserstore" ) ).
+        return IdProvider.create().
+            key( IdProviderKey.from( "myuserstore" ) ).
             displayName( "My user store" ).
             build();
     }

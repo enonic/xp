@@ -28,10 +28,10 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.script.impl.standard.ScriptRuntimeFactoryImpl;
+import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.security.IdProviderConfig;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.security.UserStore;
-import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
@@ -51,12 +51,12 @@ public class IdProviderControllerServiceImplTest
 
         //Mocks the SecurityService
         final SecurityService securityService = Mockito.mock( SecurityService.class );
-        final UserStore emptyUserStore = UserStore.create().build();
+        final IdProvider emptyIdProvider = IdProvider.create().build();
         final IdProviderConfig idProviderConfig =
             IdProviderConfig.create().applicationKey( ApplicationKey.from( "myapplication" ) ).build();
-        final UserStore userStore = UserStore.create().idProviderConfig( idProviderConfig ).build();
-        Mockito.when( securityService.getUserStore( UserStoreKey.from( "myemptyuserstore" ) ) ).thenReturn( emptyUserStore );
-        Mockito.when( securityService.getUserStore( UserStoreKey.from( "myuserstore" ) ) ).thenReturn( userStore );
+        final IdProvider idProvider = IdProvider.create().idProviderConfig( idProviderConfig ).build();
+        Mockito.when( securityService.getIdProvider( IdProviderKey.from( "myemptyuserstore" ) ) ).thenReturn( emptyIdProvider );
+        Mockito.when( securityService.getIdProvider( IdProviderKey.from( "myuserstore" ) ) ).thenReturn( idProvider );
 
         //Mocks the PortalScriptService
         final PortalScriptService portalScriptService = setupPortalScriptService();
@@ -107,12 +107,12 @@ public class IdProviderControllerServiceImplTest
     }
 
     @Test
-    public void executeMissingUserStore()
+    public void executeMissingIdProvider()
         throws IOException
     {
         final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create().
             portalRequest( new PortalRequest() ).
-            userStoreKey( UserStoreKey.from( "missinguserstore" ) ).
+            idProviderKey( IdProviderKey.from( "missinguserstore" ) ).
             functionName( "missingfunction" ).
             build();
         final PortalResponse portalResponse = idProviderControllerService.execute( executionParams );
@@ -125,7 +125,7 @@ public class IdProviderControllerServiceImplTest
     {
         final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create().
             portalRequest( new PortalRequest() ).
-            userStoreKey( UserStoreKey.from( "myemptyuserstore" ) ).
+            idProviderKey( IdProviderKey.from( "myemptyuserstore" ) ).
             functionName( "missingfunction" ).
             build();
         final PortalResponse portalResponse = idProviderControllerService.execute( executionParams );
@@ -133,12 +133,12 @@ public class IdProviderControllerServiceImplTest
     }
 
     @Test
-    public void executeUserStoreWithoutApplication()
+    public void executeIdProviderWithoutApplication()
         throws IOException
     {
         final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create().
             portalRequest( new PortalRequest() ).
-            userStoreKey( UserStoreKey.from( "myemptyuserstore" ) ).
+            idProviderKey( IdProviderKey.from( "myemptyuserstore" ) ).
             functionName( "myfunction" ).
             build();
         final PortalResponse portalResponse = idProviderControllerService.execute( executionParams );
@@ -151,7 +151,7 @@ public class IdProviderControllerServiceImplTest
     {
         final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create().
             portalRequest( new PortalRequest() ).
-            userStoreKey( UserStoreKey.from( "myuserstore" ) ).
+            idProviderKey( IdProviderKey.from( "myuserstore" ) ).
             functionName( "myfunction" ).
             build();
         final PortalResponse portalResponse = idProviderControllerService.execute( executionParams );
@@ -182,7 +182,7 @@ public class IdProviderControllerServiceImplTest
         final HttpServletRequest httpServletRequest = createHttpServletRequest();
 
         final VirtualHost virtualHost = Mockito.mock( VirtualHost.class );
-        Mockito.when( virtualHost.getUserStoreKey() ).thenReturn( UserStoreKey.from( "myuserstore" ) );
+        Mockito.when( virtualHost.getUserStoreKey() ).thenReturn( IdProviderKey.from( "myuserstore" ) );
         Mockito.when( httpServletRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
 
         VirtualHostHelper.setVirtualHost( httpServletRequest, virtualHost );

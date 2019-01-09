@@ -44,7 +44,7 @@ exports.invalidLogin = function () {
 
 };
 
-exports.loginNoUserStore = function () {
+exports.loginNoIdProvider = function () {
 
     var result = auth.login({
         user: 'user1@enonic.com',
@@ -69,7 +69,7 @@ exports.loginNoUserStore = function () {
 
 };
 
-exports.loginMultipleUserStore = function () {
+exports.loginMultipleIdProvider = function () {
 
     var result = auth.login({
         user: 'user1@enonic.com',
@@ -95,7 +95,7 @@ exports.loginMultipleUserStore = function () {
 
 };
 
-exports.loginMultipleUserStoresInOrder = function () {
+exports.loginMultipleIdProvidersInOrder = function () {
 
     var result = auth.login({
         user: 'user1@enonic.com',

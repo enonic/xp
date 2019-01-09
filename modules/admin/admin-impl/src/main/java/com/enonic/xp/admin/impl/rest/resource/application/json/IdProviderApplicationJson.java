@@ -3,33 +3,33 @@ package com.enonic.xp.admin.impl.rest.resource.application.json;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.idprovider.IdProviderDescriptor;
-import com.enonic.xp.security.UserStore;
-import com.enonic.xp.security.UserStores;
+import com.enonic.xp.security.IdProvider;
+import com.enonic.xp.security.IdProviders;
 
 public class IdProviderApplicationJson
 {
     private String mode;
 
-    private ImmutableList<ApplicationUserStoreJson> userStores;
+    private ImmutableList<IdProviderJson> idProviders;
 
-    public IdProviderApplicationJson( final IdProviderDescriptor idProviderDescriptor, final UserStores userStores )
+    public IdProviderApplicationJson( final IdProviderDescriptor idProviderDescriptor, final IdProviders idProviders )
     {
         if ( idProviderDescriptor != null )
         {
             this.mode = idProviderDescriptor.getMode().toString();
         }
 
-        if(userStores != null)
+        if ( idProviders != null )
         {
-            final ImmutableList.Builder<ApplicationUserStoreJson> builder = ImmutableList.builder();
-            if ( userStores != null )
+            final ImmutableList.Builder<IdProviderJson> builder = ImmutableList.builder();
+            if ( idProviders != null )
             {
-                for ( final UserStore userStore : userStores )
+                for ( final IdProvider idProvider : idProviders )
                 {
-                    builder.add( new ApplicationUserStoreJson( userStore ) );
+                    builder.add( new IdProviderJson( idProvider ) );
                 }
             }
-            this.userStores = builder.build();
+            this.idProviders = builder.build();
         }
     }
 
@@ -38,21 +38,21 @@ public class IdProviderApplicationJson
         return mode;
     }
 
-    public ImmutableList<ApplicationUserStoreJson> getUserStores()
+    public ImmutableList<IdProviderJson> getUserStores()
     {
-        return userStores;
+        return idProviders;
     }
 
-    public class ApplicationUserStoreJson
+    public class IdProviderJson
     {
         private String displayName;
 
         private String path;
 
-        public ApplicationUserStoreJson( final UserStore userStore )
+        public IdProviderJson( final IdProvider idProvider )
         {
-            this.displayName = userStore.getDisplayName();
-            this.path = "/" + userStore.getKey().toString();
+            this.displayName = idProvider.getDisplayName();
+            this.path = "/" + idProvider.getKey().toString();
         }
 
         public String getDisplayName()

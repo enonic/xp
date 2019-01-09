@@ -72,7 +72,7 @@ public class ApplicationInfoJson
         this.widgets = new WidgetDescriptorsJson( builder.widgetDescriptors );
         this.tools = builder.adminToolDescriptors;
         this.idProviderApplication = new IdProviderApplicationJson( builder.applicationInfo.getIdProviderDescriptor(),
-                                                                    builder.applicationInfo.getUserStoreReferences() );
+                                                                    builder.applicationInfo.getIdProviderReferences() );
         this.deployment = new ApplicationDeploymentJson( builder.deploymentUrl );
     }
 

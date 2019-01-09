@@ -6,29 +6,29 @@ import com.enonic.xp.security.PrincipalKey;
 
 import static org.junit.Assert.*;
 
-public class UserStoreAccessControlEntryTest
+public class IdProviderAccessControlEntryTest
 {
 
     @Test
     public void testEquals()
     {
-        final  UserStoreAccessControlEntry usace =  UserStoreAccessControlEntry.create().
+        final IdProviderAccessControlEntry usace = IdProviderAccessControlEntry.create().
             principal( PrincipalKey.ofAnonymous() ).
-            access( UserStoreAccess.ADMINISTRATOR ).
+            access( IdProviderAccess.ADMINISTRATOR ).
             build();
 
         assertEquals( usace, usace );
         assertEquals( usace.hashCode(), usace.hashCode() );
 
-        final  UserStoreAccessControlEntry usace2 =  UserStoreAccessControlEntry.create().
+        final IdProviderAccessControlEntry usace2 = IdProviderAccessControlEntry.create().
             principal( PrincipalKey.ofAnonymous() ).
-            access( UserStoreAccess.ADMINISTRATOR ).
+            access( IdProviderAccess.ADMINISTRATOR ).
             build();
 
         assertEquals( usace, usace2 );
         assertEquals( usace.hashCode(), usace2.hashCode() );
 
-        final  UserStoreAccessControlEntry usace3 = UserStoreAccessControlEntry.create(usace).build();
+        final IdProviderAccessControlEntry usace3 = IdProviderAccessControlEntry.create( usace ).build();
 
         assertEquals( usace, usace3 );
         assertEquals( usace.hashCode(), usace3.hashCode() );
@@ -38,14 +38,14 @@ public class UserStoreAccessControlEntryTest
     @Test
     public void testNotEquals() {
 
-        final  UserStoreAccessControlEntry usace =  UserStoreAccessControlEntry.create().
+        final IdProviderAccessControlEntry usace = IdProviderAccessControlEntry.create().
             principal( PrincipalKey.ofAnonymous() ).
-            access( UserStoreAccess.ADMINISTRATOR ).
+            access( IdProviderAccess.ADMINISTRATOR ).
             build();
 
-        final  UserStoreAccessControlEntry usace2 =  UserStoreAccessControlEntry.create().
+        final IdProviderAccessControlEntry usace2 = IdProviderAccessControlEntry.create().
             principal( PrincipalKey.ofAnonymous() ).
-            access( UserStoreAccess.READ ).
+            access( IdProviderAccess.READ ).
             build();
 
         assertNotEquals( usace, usace2 );

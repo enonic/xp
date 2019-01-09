@@ -4,21 +4,21 @@ package com.enonic.xp.admin.impl.rest.resource.security.json;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class SyncUserStoresResultJson
+public final class SyncIdProvidersResultJson
 {
-    private final List<SyncUserStoreResultJson> results;
+    private final List<SyncIdProviderResultJson> results;
 
-    public SyncUserStoresResultJson()
+    public SyncIdProvidersResultJson()
     {
         this.results = new ArrayList<>();
     }
 
-    public void add( final SyncUserStoreResultJson synchResult )
+    public void add( final SyncIdProviderResultJson synchResult )
     {
         this.results.add( synchResult );
     }
 
-    public List<SyncUserStoreResultJson> getResults()
+    public List<SyncIdProviderResultJson> getResults()
     {
         return results;
     }

@@ -20,7 +20,7 @@ public class PrincipalTest
         final User user = User.create().
             login( "userlogin" ).
             displayName( "my user" ).
-            key( PrincipalKey.ofUser( UserStoreKey.from( "myuserstore" ), "userid" ) ).
+            key( PrincipalKey.ofUser( IdProviderKey.from( "myuserstore" ), "userid" ) ).
             email( "user@email" ).
             modifiedTime( Instant.now( clock ) ).
             build();
@@ -43,7 +43,7 @@ public class PrincipalTest
     {
         final Group group = Group.create().
             displayName( "my group" ).
-            key( PrincipalKey.ofGroup( UserStoreKey.from( "myuserstore" ), "groupid" ) ).
+            key( PrincipalKey.ofGroup( IdProviderKey.from( "myuserstore" ), "groupid" ) ).
             modifiedTime( Instant.now( clock ) ).
             build();
 

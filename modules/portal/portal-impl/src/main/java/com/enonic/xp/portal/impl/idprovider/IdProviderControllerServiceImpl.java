@@ -19,11 +19,11 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 import com.enonic.xp.portal.impl.PortalRequestAdapter;
+import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.security.IdProviderConfig;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.security.UserStore;
-import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.web.serializer.ResponseSerializationService;
 import com.enonic.xp.web.vhost.VirtualHost;
@@ -45,9 +45,9 @@ public class IdProviderControllerServiceImpl
     public PortalResponse execute( final IdProviderControllerExecutionParams params )
         throws IOException
     {
-        final UserStoreKey userStoreKey = retrieveUserStoreKey( params );
-        final UserStore userStore = retrieveUserStore( userStoreKey );
-        final IdProviderDescriptor idProviderDescriptor = retrieveIdProviderDescriptor( userStore );
+        final IdProviderKey idProviderKey = retrieveIdProviderKey( params );
+        final IdProvider idProvider = retrieveIdProvider( idProviderKey );
+        final IdProviderDescriptor idProviderDescriptor = retrieveIdProviderDescriptor( idProvider );
 
         if ( idProviderDescriptor != null )
         {
@@ -63,7 +63,7 @@ public class IdProviderControllerServiceImpl
                         adapt( params.getServletRequest() );
                 }
                 portalRequest.setApplicationKey( idProviderDescriptor.getKey() );
-                portalRequest.setUserStore( userStore );
+                portalRequest.setIdProvider( idProvider );
 
                 final PortalResponse portalResponse = idProviderControllerScript.execute( functionName, portalRequest );
 
@@ -82,34 +82,34 @@ public class IdProviderControllerServiceImpl
         return null;
     }
 
-    private UserStoreKey retrieveUserStoreKey( IdProviderControllerExecutionParams params )
+    private IdProviderKey retrieveIdProviderKey( IdProviderControllerExecutionParams params )
     {
-        UserStoreKey userStoreKey = params.getUserStoreKey();
-        if ( userStoreKey == null )
+        IdProviderKey idProviderKey = params.getIdProviderKey();
+        if ( idProviderKey == null )
         {
             final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( params.getServletRequest() );
             if ( virtualHost != null )
             {
-                userStoreKey = virtualHost.getUserStoreKey();
+                idProviderKey = virtualHost.getUserStoreKey();
             }
         }
-        return userStoreKey;
+        return idProviderKey;
     }
 
-    private UserStore retrieveUserStore( final UserStoreKey userStoreKey )
+    private IdProvider retrieveIdProvider( final IdProviderKey idProviderKey )
     {
-        if ( userStoreKey != null )
+        if ( idProviderKey != null )
         {
-            return runWithAdminRole( () -> securityService.getUserStore( userStoreKey ) );
+            return runWithAdminRole( () -> securityService.getIdProvider( idProviderKey ) );
         }
         return null;
     }
 
-    private IdProviderDescriptor retrieveIdProviderDescriptor( final UserStore userStore )
+    private IdProviderDescriptor retrieveIdProviderDescriptor( final IdProvider idProvider )
     {
-        if ( userStore != null )
+        if ( idProvider != null )
         {
-            final IdProviderConfig idProviderConfig = userStore.getIdProviderConfig();
+            final IdProviderConfig idProviderConfig = idProvider.getIdProviderConfig();
             if ( idProviderConfig != null )
             {
                 return idProviderDescriptorService.getDescriptor( idProviderConfig.getApplicationKey() );

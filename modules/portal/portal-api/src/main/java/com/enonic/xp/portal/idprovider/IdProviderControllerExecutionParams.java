@@ -8,11 +8,11 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.security.UserStoreKey;
+import com.enonic.xp.security.IdProviderKey;
 
 public class IdProviderControllerExecutionParams
 {
-    private final UserStoreKey userStoreKey;
+    private final IdProviderKey idProviderKey;
 
     private final String functionName;
 
@@ -24,16 +24,16 @@ public class IdProviderControllerExecutionParams
 
     private IdProviderControllerExecutionParams( final Builder builder )
     {
-        userStoreKey = builder.userStoreKey;
+        idProviderKey = builder.idProviderKey;
         functionName = builder.functionName;
         servletRequest = builder.servletRequest;
         portalRequest = builder.portalRequest;
         response = builder.response;
     }
 
-    public UserStoreKey getUserStoreKey()
+    public IdProviderKey getIdProviderKey()
     {
-        return userStoreKey;
+        return idProviderKey;
     }
 
     public String getFunctionName()
@@ -73,7 +73,7 @@ public class IdProviderControllerExecutionParams
             return false;
         }
         final IdProviderControllerExecutionParams that = (IdProviderControllerExecutionParams) o;
-        return Objects.equals( userStoreKey, that.userStoreKey ) && Objects.equals( functionName, that.functionName ) &&
+        return Objects.equals( idProviderKey, that.idProviderKey ) && Objects.equals( functionName, that.functionName ) &&
             Objects.equals( servletRequest, that.servletRequest ) && Objects.equals( portalRequest, that.portalRequest ) &&
             Objects.equals( response, that.response );
     }
@@ -82,12 +82,12 @@ public class IdProviderControllerExecutionParams
     public int hashCode()
     {
 
-        return Objects.hash( userStoreKey, functionName, servletRequest, portalRequest, response );
+        return Objects.hash( idProviderKey, functionName, servletRequest, portalRequest, response );
     }
 
     public static final class Builder
     {
-        private UserStoreKey userStoreKey;
+        private IdProviderKey idProviderKey;
 
         private String functionName;
 
@@ -101,9 +101,9 @@ public class IdProviderControllerExecutionParams
         {
         }
 
-        public Builder userStoreKey( final UserStoreKey userStoreKey )
+        public Builder idProviderKey( final IdProviderKey idProviderKey )
         {
-            this.userStoreKey = userStoreKey;
+            this.idProviderKey = idProviderKey;
             return this;
         }
 

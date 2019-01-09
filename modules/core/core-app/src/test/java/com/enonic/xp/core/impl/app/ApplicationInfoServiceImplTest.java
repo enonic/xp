@@ -44,12 +44,12 @@ import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.relationship.RelationshipType;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
 import com.enonic.xp.schema.relationship.RelationshipTypes;
+import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.security.IdProviderConfig;
+import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.security.IdProviders;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.security.UserStore;
-import com.enonic.xp.security.UserStoreKey;
-import com.enonic.xp.security.UserStores;
 import com.enonic.xp.task.TaskDescriptor;
 import com.enonic.xp.task.TaskDescriptorService;
 
@@ -200,9 +200,9 @@ public class ApplicationInfoServiceImplTest
 
         assertNotNull( idProviderDescriptor );
 
-        final UserStores userStores = this.service.getUserStoreReferences( this.applicationKey );
+        final IdProviders idProviders = this.service.getIdProviderReferences( this.applicationKey );
 
-        assertEquals( userStores.getSize(), 2 );
+        assertEquals( idProviders.getSize(), 2 );
     }
 
     @Test
@@ -219,7 +219,7 @@ public class ApplicationInfoServiceImplTest
         assertEquals( applicationInfo.getContentReferences().getSize(), 2 );
         assertEquals( applicationInfo.getTasks().getSize(), 2 );
         assertEquals( applicationInfo.getMacros().getSize(), 2 );
-        assertEquals( applicationInfo.getUserStoreReferences().getSize(), 2 );
+        assertEquals( applicationInfo.getIdProviderReferences().getSize(), 2 );
     }
 
     private void mockContentTypes( final ApplicationKey applicationKey )
@@ -399,9 +399,9 @@ public class ApplicationInfoServiceImplTest
             mode( IdProviderDescriptorMode.EXTERNAL ).
             build();
 
-        final UserStore userStore1 = UserStore.create().
-            displayName( "userStore1" ).
-            key( UserStoreKey.from( "userStore1" ) ).
+        final IdProvider idProvider1 = IdProvider.create().
+            displayName( "idProvider1" ).
+            key( IdProviderKey.from( "idProvider1" ) ).
             idProviderConfig( IdProviderConfig.
                 create().
                 applicationKey( applicationKey ).
@@ -409,9 +409,9 @@ public class ApplicationInfoServiceImplTest
                 build() ).
             build();
 
-        final UserStore userStore2 = UserStore.create().
-            displayName( "userStore2" ).
-            key( UserStoreKey.from( "userStore2" + "" ) ).
+        final IdProvider idProvider2 = IdProvider.create().
+            displayName( "idProvider2" ).
+            key( IdProviderKey.from( "idProvider2" + "" ) ).
             idProviderConfig( IdProviderConfig.
                 create().
                 applicationKey( applicationKey ).
@@ -420,7 +420,7 @@ public class ApplicationInfoServiceImplTest
             build();
 
         Mockito.when( this.idProviderDescriptorService.getDescriptor( applicationKey ) ).thenReturn( idProviderDescriptor );
-        Mockito.when( this.securityService.getUserStores() ).thenReturn( UserStores.from( userStore1, userStore2 ) );
+        Mockito.when( this.securityService.getIdProviders() ).thenReturn( IdProviders.from( idProvider1, idProvider2 ) );
 
     }
 

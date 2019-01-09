@@ -16,7 +16,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.EndpointHandler;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
-import com.enonic.xp.security.UserStoreKey;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.WebRequest;
@@ -53,7 +53,7 @@ public class IdentityHandler
             throw notFound( "Not a valid idprovider url pattern" );
         }
 
-        final UserStoreKey userStoreKey = UserStoreKey.from( matcher.group( USERSTORE_GROUP_INDEX ) );
+        final IdProviderKey idProviderKey = IdProviderKey.from( matcher.group( USERSTORE_GROUP_INDEX ) );
         String idProviderFunction = matcher.group( 2 );
 
         final PortalRequest portalRequest =
@@ -73,7 +73,7 @@ public class IdentityHandler
         }
 
         final IdentityHandlerWorker worker = new IdentityHandlerWorker( portalRequest );
-        worker.userStoreKey = userStoreKey;
+        worker.idProviderKey = idProviderKey;
         worker.idProviderFunction = idProviderFunction;
         worker.setContentService( this.contentService );
         worker.idProviderControllerService = this.idProviderControllerService;

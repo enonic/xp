@@ -18,11 +18,11 @@ import com.enonic.xp.repository.DeleteBranchParams;
 import com.enonic.xp.repository.DeleteRepositoryParams;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.User;
-import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -52,7 +52,7 @@ public class RepositoryServiceImplTest
     }
 
     public static final User REPO_TEST_DEFAULT_USER =
-        User.create().key( PrincipalKey.ofUser( UserStoreKey.system(), "repo-test-user" ) ).login( "repo-test-user" ).build();
+        User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "repo-test-user" ) ).login( "repo-test-user" ).build();
 
     public static final AuthenticationInfo REPO_TEST_DEFAULT_USER_AUTHINFO = AuthenticationInfo.create().
         principals( RoleKeys.AUTHENTICATED ).

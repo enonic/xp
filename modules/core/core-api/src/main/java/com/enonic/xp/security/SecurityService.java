@@ -5,26 +5,26 @@ import java.util.Optional;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.security.acl.UserStoreAccessControlList;
+import com.enonic.xp.security.acl.IdProviderAccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.AuthenticationToken;
 
 @Beta
 public interface SecurityService
 {
-    UserStores getUserStores();
+    IdProviders getIdProviders();
 
-    UserStore getUserStore( UserStoreKey userStore );
+    IdProvider getIdProvider( IdProviderKey idProviderKey );
 
-    UserStoreAccessControlList getUserStorePermissions( UserStoreKey userStore );
+    IdProviderAccessControlList getIdProviderPermissions( IdProviderKey idProviderKey );
 
-    UserStoreAccessControlList getDefaultUserStorePermissions();
+    IdProviderAccessControlList getDefaultIdProviderPermissions();
 
-    UserStore createUserStore( CreateUserStoreParams createUserStoreParams );
+    IdProvider createIdProvider( CreateIdProviderParams createIdProviderParams );
 
-    UserStore updateUserStore( UpdateUserStoreParams updateUserStoreParams );
+    IdProvider updateIdProvider( UpdateIdProviderParams updateIdProviderParams );
 
-    Principals findPrincipals( UserStoreKey useStore, List<PrincipalType> types, String query );
+    Principals findPrincipals( IdProviderKey useStore, List<PrincipalType> types, String query );
 
     AuthenticationInfo authenticate( AuthenticationToken token );
 
@@ -152,12 +152,12 @@ public interface SecurityService
     void deletePrincipal( PrincipalKey principalKey );
 
     /**
-     * Deletes an existing userStore.
+     * Deletes an existing idProvider.
      *
-     * @param userStoreKey key of the userStore to be deleted
-     * @throws UserStoreNotFoundException if the specified userStore does not exist
+     * @param idProviderKey key of the idProvider to be deleted
+     * @throws IdProviderNotFoundException if the specified idProvider does not exist
      */
-    void deleteUserStore( UserStoreKey userStoreKey );
+    void deleteIdProvider( IdProviderKey idProviderKey );
 
     PrincipalQueryResult query( PrincipalQuery query );
 

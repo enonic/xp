@@ -59,11 +59,16 @@ import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.security.CreateGroupParams;
+import com.enonic.xp.security.CreateIdProviderParams;
 import com.enonic.xp.security.CreateRoleParams;
 import com.enonic.xp.security.CreateUserParams;
-import com.enonic.xp.security.CreateUserStoreParams;
 import com.enonic.xp.security.Group;
+import com.enonic.xp.security.IdProvider;
+import com.enonic.xp.security.IdProviderAlreadyExistsException;
 import com.enonic.xp.security.IdProviderConfig;
+import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.security.IdProviderNotFoundException;
+import com.enonic.xp.security.IdProviders;
 import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.PrincipalAlreadyExistsException;
 import com.enonic.xp.security.PrincipalKey;
@@ -80,19 +85,14 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityConstants;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.UpdateGroupParams;
+import com.enonic.xp.security.UpdateIdProviderParams;
 import com.enonic.xp.security.UpdateRoleParams;
 import com.enonic.xp.security.UpdateUserParams;
-import com.enonic.xp.security.UpdateUserStoreParams;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserQuery;
 import com.enonic.xp.security.UserQueryResult;
-import com.enonic.xp.security.UserStore;
-import com.enonic.xp.security.UserStoreAlreadyExistsException;
-import com.enonic.xp.security.UserStoreKey;
-import com.enonic.xp.security.UserStoreNotFoundException;
-import com.enonic.xp.security.UserStores;
 import com.enonic.xp.security.acl.AccessControlList;
-import com.enonic.xp.security.acl.UserStoreAccessControlList;
+import com.enonic.xp.security.acl.IdProviderAccessControlList;
 import com.enonic.xp.security.auth.AuthenticationException;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.AuthenticationToken;
@@ -170,42 +170,42 @@ public final class SecurityServiceImpl
     }
 
     @Override
-    public UserStores getUserStores()
+    public IdProviders getIdProviders()
     {
         final FindNodesByParentParams findByParent = FindNodesByParentParams.create().
-            parentPath( UserStoreNodeTranslator.getUserStoresParentPath() ).build();
+            parentPath( IdProviderNodeTranslator.getIdProvidersParentPath() ).build();
         final Nodes nodes = callWithContext( () -> {
             final FindNodesByParentResult result = this.nodeService.findByParent( findByParent );
             return this.nodeService.getByIds( result.getNodeIds() );
         } );
 
-        return UserStoreNodeTranslator.fromNodes( nodes );
+        return IdProviderNodeTranslator.fromNodes( nodes );
     }
 
     @Override
-    public UserStore getUserStore( final UserStoreKey userStore )
+    public IdProvider getIdProvider( final IdProviderKey idProviderKey )
     {
-        final NodePath userStoreNodePath = UserStoreNodeTranslator.toUserStoreNodePath( userStore );
-        final Node node = callWithContext( () -> this.nodeService.getByPath( userStoreNodePath ) );
-        return node == null ? null : UserStoreNodeTranslator.fromNode( node );
+        final NodePath idProviderNodePath = IdProviderNodeTranslator.toIdProviderNodePath( idProviderKey );
+        final Node node = callWithContext( () -> this.nodeService.getByPath( idProviderNodePath ) );
+        return node == null ? null : IdProviderNodeTranslator.fromNode( node );
     }
 
     @Override
-    public UserStoreAccessControlList getUserStorePermissions( final UserStoreKey userStore )
+    public IdProviderAccessControlList getIdProviderPermissions( final IdProviderKey idProviderKey )
     {
-        final NodePath userStoreNodePath = UserStoreNodeTranslator.toUserStoreNodePath( userStore );
-        final NodePath usersNodePath = UserStoreNodeTranslator.toUserStoreUsersNodePath( userStore );
-        final NodePath groupsNodePath = UserStoreNodeTranslator.toUserStoreGroupsNodePath( userStore );
+        final NodePath idProviderNodePath = IdProviderNodeTranslator.toIdProviderNodePath( idProviderKey );
+        final NodePath usersNodePath = IdProviderNodeTranslator.toIdProviderUsersNodePath( idProviderKey );
+        final NodePath groupsNodePath = IdProviderNodeTranslator.toIdProviderGroupsNodePath( idProviderKey );
 
-        final Node userStoreNode = callWithContext( () -> this.nodeService.getByPath( userStoreNodePath ) );
+        final Node idProviderNode = callWithContext( () -> this.nodeService.getByPath( idProviderNodePath ) );
         final Node usersNode = callWithContext( () -> this.nodeService.getByPath( usersNodePath ) );
         final Node groupsNode = callWithContext( () -> this.nodeService.getByPath( groupsNodePath ) );
 
-        return UserStoreNodeTranslator.userStorePermissionsFromNode( userStoreNode, usersNode, groupsNode );
+        return IdProviderNodeTranslator.idProviderPermissionsFromNode( idProviderNode, usersNode, groupsNode );
     }
 
     @Override
-    public UserStoreAccessControlList getDefaultUserStorePermissions()
+    public IdProviderAccessControlList getDefaultIdProviderPermissions()
     {
         return DEFAULT_USER_STORE_ACL;
     }
@@ -280,12 +280,12 @@ public final class SecurityServiceImpl
         }
     }
 
-    private void removeRelationships( final UserStoreKey from )
+    private void removeRelationships( final IdProviderKey from )
     {
         callWithContext( () -> {
-            final NodePath userStoreNodePath = UserStoreNodeTranslator.toUserStoreNodePath( from );
-            final Node node = this.nodeService.getByPath( userStoreNodePath );
-            final UpdateNodeParams updateNodeParams = UserStoreNodeTranslator.removeAllRelationshipsToUpdateNodeParams( node );
+            final NodePath idProviderNodePath = IdProviderNodeTranslator.toIdProviderNodePath( from );
+            final Node node = this.nodeService.getByPath( idProviderNodePath );
+            final UpdateNodeParams updateNodeParams = IdProviderNodeTranslator.removeAllRelationshipsToUpdateNodeParams( node );
             nodeService.update( updateNodeParams );
 
             this.nodeService.refresh( RefreshMode.SEARCH );
@@ -341,15 +341,15 @@ public final class SecurityServiceImpl
 
     @Override
     @Deprecated
-    public Principals findPrincipals( final UserStoreKey userStore, final List<PrincipalType> types, final String query )
+    public Principals findPrincipals( final IdProviderKey idProvider, final List<PrincipalType> types, final String query )
     {
         final PrincipalQuery.Builder principalQuery = PrincipalQuery.create().
             getAll().
             includeTypes( types ).
             searchText( query );
-        if ( userStore != null )
+        if ( idProvider != null )
         {
-            principalQuery.userStore( userStore );
+            principalQuery.idProvider( idProvider );
         }
 
         final PrincipalQueryResult result = query( principalQuery.build() );
@@ -381,16 +381,16 @@ public final class SecurityServiceImpl
             return authenticateSu( (UsernamePasswordAuthToken) token );
         }
 
-        if ( token.getUserStore() != null )
+        if ( token.getIdProvider() != null )
         {
             return doAuthenticate( token );
         }
         else
         {
-            final UserStores userStores = callAsAuthenticated( this::getUserStores );
-            for ( UserStore userStore : userStores )
+            final IdProviders idProviders = callAsAuthenticated( this::getIdProviders );
+            for ( IdProvider idProvider : idProviders )
             {
-                token.setUserStore( userStore.getKey() );
+                token.setIdProvider( idProvider.getKey() );
                 final AuthenticationInfo authInfo = doAuthenticate( token );
                 if ( authInfo.isAuthenticated() )
                 {
@@ -406,8 +406,8 @@ public final class SecurityServiceImpl
         if ( this.suPasswordValue != null && token instanceof UsernamePasswordAuthToken )
         {
             UsernamePasswordAuthToken usernamePasswordAuthToken = (UsernamePasswordAuthToken) token;
-            if ( ( usernamePasswordAuthToken.getUserStore() == null ||
-                UserStoreKey.system().equals( usernamePasswordAuthToken.getUserStore() ) ) &&
+            if ( ( usernamePasswordAuthToken.getIdProvider() == null ||
+                IdProviderKey.system().equals( usernamePasswordAuthToken.getIdProvider() ) ) &&
                 SecurityInitializer.SUPER_USER.getId().equals( usernamePasswordAuthToken.getUsername() ) )
             {
                 return true;
@@ -509,7 +509,7 @@ public final class SecurityServiceImpl
 
     private AuthenticationInfo authenticateEmailPassword( final EmailPasswordAuthToken token )
     {
-        final User user = findByEmail( token.getUserStore(), token.getEmail() );
+        final User user = findByEmail( token.getIdProvider(), token.getEmail() );
         if ( user != null && !user.isDisabled() && passwordMatch( user, token.getPassword() ) )
         {
             return createAuthInfo( user );
@@ -522,7 +522,7 @@ public final class SecurityServiceImpl
 
     private AuthenticationInfo authenticateUsernamePassword( final UsernamePasswordAuthToken token )
     {
-        final User user = findByUsername( token.getUserStore(), token.getUsername() );
+        final User user = findByUsername( token.getIdProvider(), token.getUsername() );
         if ( user != null && !user.isDisabled() && passwordMatch( user, token.getPassword() ) )
         {
             return createAuthInfo( user );
@@ -535,7 +535,7 @@ public final class SecurityServiceImpl
 
     private AuthenticationInfo authenticateVerifiedEmail( final VerifiedEmailAuthToken token )
     {
-        final User user = findByEmail( token.getUserStore(), token.getEmail() );
+        final User user = findByEmail( token.getIdProvider(), token.getEmail() );
         if ( user != null && !user.isDisabled() )
         {
             return createAuthInfo( user );
@@ -548,7 +548,7 @@ public final class SecurityServiceImpl
 
     private AuthenticationInfo authenticateVerifiedUsername( final VerifiedUsernameAuthToken token )
     {
-        final User user = findByUsername( token.getUserStore(), token.getUsername() );
+        final User user = findByUsername( token.getIdProvider(), token.getUsername() );
         if ( user != null && !user.isDisabled() )
         {
             return createAuthInfo( user );
@@ -577,13 +577,13 @@ public final class SecurityServiceImpl
         return this.passwordEncoder.validate( password, user.getAuthenticationHash() );
     }
 
-    private User findByUsername( final UserStoreKey userStore, final String username )
+    private User findByUsername( final IdProviderKey idProvider, final String username )
     {
-        final CompareExpr userStoreExpr = CompareExpr.create( FieldExpr.from( PrincipalIndexPath.USER_STORE_KEY ), CompareExpr.Operator.EQ,
-                                                              ValueExpr.string( userStore.toString() ) );
+        final CompareExpr idProviderExpr = CompareExpr.create( FieldExpr.from( PrincipalIndexPath.USER_STORE_KEY ), CompareExpr.Operator.EQ,
+                                                               ValueExpr.string( idProvider.toString() ) );
         final CompareExpr userNameExpr =
             CompareExpr.create( FieldExpr.from( PrincipalIndexPath.LOGIN_KEY ), CompareExpr.Operator.EQ, ValueExpr.string( username ) );
-        final QueryExpr query = QueryExpr.from( LogicalExpr.and( userStoreExpr, userNameExpr ) );
+        final QueryExpr query = QueryExpr.from( LogicalExpr.and( idProviderExpr, userNameExpr ) );
         final Nodes nodes = callWithContext( () -> {
             final FindNodesByQueryResult result = nodeService.findByQuery( NodeQuery.create().query( query ).build() );
             return this.nodeService.getByIds( result.getNodeIds() );
@@ -591,19 +591,19 @@ public final class SecurityServiceImpl
 
         if ( nodes.getSize() > 1 )
         {
-            throw new IllegalArgumentException( "Expected at most 1 user with username " + username + " in userstore " + userStore );
+            throw new IllegalArgumentException( "Expected at most 1 user with username " + username + " in userstore " + idProvider );
         }
 
         return nodes.isEmpty() ? null : PrincipalNodeTranslator.userFromNode( nodes.first() );
     }
 
-    private User findByEmail( final UserStoreKey userStore, final String email )
+    private User findByEmail( final IdProviderKey idProvider, final String email )
     {
-        final CompareExpr userStoreExpr = CompareExpr.create( FieldExpr.from( PrincipalIndexPath.USER_STORE_KEY ), CompareExpr.Operator.EQ,
-                                                              ValueExpr.string( userStore.toString() ) );
+        final CompareExpr idProviderExpr = CompareExpr.create( FieldExpr.from( PrincipalIndexPath.USER_STORE_KEY ), CompareExpr.Operator.EQ,
+                                                               ValueExpr.string( idProvider.toString() ) );
         final CompareExpr userNameExpr =
             CompareExpr.create( FieldExpr.from( PrincipalIndexPath.EMAIL_KEY ), CompareExpr.Operator.EQ, ValueExpr.string( email ) );
-        final QueryExpr query = QueryExpr.from( LogicalExpr.and( userStoreExpr, userNameExpr ) );
+        final QueryExpr query = QueryExpr.from( LogicalExpr.and( idProviderExpr, userNameExpr ) );
         final Nodes nodes = callWithContext( () -> {
             final FindNodesByQueryResult result = nodeService.findByQuery( NodeQuery.create().query( query ).build() );
             return this.nodeService.getByIds( result.getNodeIds() );
@@ -611,7 +611,7 @@ public final class SecurityServiceImpl
 
         if ( nodes.getSize() > 1 )
         {
-            throw new IllegalArgumentException( "Expected at most 1 user with email " + email + " in userstore " + userStore );
+            throw new IllegalArgumentException( "Expected at most 1 user with email " + email + " in userstore " + idProvider );
         }
 
         return nodes.isEmpty() ? null : PrincipalNodeTranslator.userFromNode( nodes.first() );
@@ -683,15 +683,15 @@ public final class SecurityServiceImpl
         }
     }
 
-    private String userStoreEmailKey( final PrincipalKey principalKey, final String email )
+    private String idProviderEmailKey( final PrincipalKey principalKey, final String email )
     {
-        return principalKey.getUserStore().toString() + '|' + email;
+        return principalKey.getIdProviderKey().toString() + '|' + email;
     }
 
     @Override
     public User createUser( final CreateUserParams createUser )
     {
-        final Lock lock = userEmailLocks.get( userStoreEmailKey( createUser.getKey(), createUser.getEmail() ) );
+        final Lock lock = userEmailLocks.get( idProviderEmailKey( createUser.getKey(), createUser.getEmail() ) );
         lock.lock();
         try
         {
@@ -733,7 +733,7 @@ public final class SecurityServiceImpl
     @Override
     public User updateUser( final UpdateUserParams updateUserParams )
     {
-        final String key = userStoreEmailKey( updateUserParams.getKey(), updateUserParams.getEmail() );
+        final String key = idProviderEmailKey( updateUserParams.getKey(), updateUserParams.getEmail() );
         final Lock lock = userEmailLocks.get( key );
         lock.lock();
         try
@@ -753,11 +753,11 @@ public final class SecurityServiceImpl
             return;
         }
 
-        final CompareExpr userStoreExpr = CompareExpr.create( FieldExpr.from( PrincipalIndexPath.USER_STORE_KEY ), CompareExpr.Operator.EQ,
-                                                              ValueExpr.string( key.getUserStore().toString() ) );
+        final CompareExpr idProviderExpr = CompareExpr.create( FieldExpr.from( PrincipalIndexPath.USER_STORE_KEY ), CompareExpr.Operator.EQ,
+                                                               ValueExpr.string( key.getIdProviderKey().toString() ) );
         final CompareExpr emailExpr =
             CompareExpr.create( FieldExpr.from( PrincipalIndexPath.EMAIL_KEY ), CompareExpr.Operator.EQ, ValueExpr.string( email ) );
-        final QueryExpr query = QueryExpr.from( LogicalExpr.and( userStoreExpr, emailExpr ) );
+        final QueryExpr query = QueryExpr.from( LogicalExpr.and( idProviderExpr, emailExpr ) );
         final Nodes nodes = callWithContext( () -> {
             final FindNodesByQueryResult result = nodeService.findByQuery( NodeQuery.create().query( query ).build() );
             return this.nodeService.getByIds( result.getNodeIds() );
@@ -768,7 +768,7 @@ public final class SecurityServiceImpl
         if ( nodes.getSize() > 1 || ( user != null && !user.getKey().equals( key ) ) )
         {
             throw new IllegalArgumentException(
-                "A user with email '" + email + "' already exists in user store '" + key.getUserStore().toString() + "'" );
+                "A user with email '" + email + "' already exists in user store '" + key.getIdProviderKey().toString() + "'" );
         }
     }
 
@@ -948,12 +948,12 @@ public final class SecurityServiceImpl
     }
 
     @Override
-    public void deleteUserStore( final UserStoreKey userStoreKey )
+    public void deleteIdProvider( final IdProviderKey idProviderKey )
     {
-        removeRelationships( userStoreKey );
+        removeRelationships( idProviderKey );
         final NodeIds deletedNodes = callWithContext( () -> {
-            final NodePath userStoreNodePath = UserStoreNodeTranslator.toUserStoreNodePath( userStoreKey );
-            final Node node = this.nodeService.getByPath( userStoreNodePath );
+            final NodePath idProviderNodePath = IdProviderNodeTranslator.toIdProviderNodePath( idProviderKey );
+            final Node node = this.nodeService.getByPath( idProviderNodePath );
             if ( node == null )
             {
                 return null;
@@ -962,7 +962,7 @@ public final class SecurityServiceImpl
         } );
         if ( deletedNodes == null )
         {
-            throw new UserStoreNotFoundException( userStoreKey );
+            throw new IdProviderNotFoundException( idProviderKey );
         }
     }
 
@@ -1026,49 +1026,50 @@ public final class SecurityServiceImpl
     }
 
     @Override
-    public UserStore createUserStore( final CreateUserStoreParams createUserStoreParams )
+    public IdProvider createIdProvider( final CreateIdProviderParams createIdProviderParams )
     {
         final PropertyTree data = new PropertyTree();
-        data.setString( UserStorePropertyNames.DISPLAY_NAME_KEY, createUserStoreParams.getDisplayName() );
-        data.setString( UserStorePropertyNames.DESCRIPTION_KEY, createUserStoreParams.getDescription() );
-        final IdProviderConfig idProviderConfig = createUserStoreParams.getIdProviderConfig();
+        data.setString( IdProviderPropertyNames.DISPLAY_NAME_KEY, createIdProviderParams.getDisplayName() );
+        data.setString( IdProviderPropertyNames.DESCRIPTION_KEY, createIdProviderParams.getDescription() );
+        final IdProviderConfig idProviderConfig = createIdProviderParams.getIdProviderConfig();
         if ( idProviderConfig != null )
         {
-            data.setString( UserStorePropertyNames.ID_PROVIDER_APPLICATION_KEY, idProviderConfig.getApplicationKey().toString() );
-            data.setSet( UserStorePropertyNames.ID_PROVIDER_CONFIG_FORM_KEY, idProviderConfig.getConfig().getRoot() );
+            data.setString( IdProviderPropertyNames.ID_PROVIDER_APPLICATION_KEY, idProviderConfig.getApplicationKey().toString() );
+            data.setSet( IdProviderPropertyNames.ID_PROVIDER_CONFIG_FORM_KEY, idProviderConfig.getConfig().getRoot() );
         }
 
         try
         {
             final Node node = callWithContext( () -> {
 
-                final UserStoreAccessControlList permissions = createUserStoreParams.getUserStorePermissions();
-                AccessControlList userStoreNodePermissions =
-                    UserStoreNodeTranslator.userStorePermissionsToUserStoreNodePermissions( permissions );
-                AccessControlList usersNodePermissions = UserStoreNodeTranslator.userStorePermissionsToUsersNodePermissions( permissions );
+                final IdProviderAccessControlList permissions = createIdProviderParams.getIdProviderPermissions();
+                AccessControlList idProviderNodePermissions =
+                    IdProviderNodeTranslator.idProviderPermissionsToIdProviderNodePermissions( permissions );
+                AccessControlList usersNodePermissions =
+                    IdProviderNodeTranslator.idProviderPermissionsToUsersNodePermissions( permissions );
                 AccessControlList groupsNodePermissions =
-                    UserStoreNodeTranslator.userStorePermissionsToGroupsNodePermissions( permissions );
+                    IdProviderNodeTranslator.idProviderPermissionsToGroupsNodePermissions( permissions );
 
                 final Node rootNode = nodeService.getRoot();
-                userStoreNodePermissions = mergeWithRootPermissions( userStoreNodePermissions, rootNode.getPermissions() );
+                idProviderNodePermissions = mergeWithRootPermissions( idProviderNodePermissions, rootNode.getPermissions() );
                 usersNodePermissions = mergeWithRootPermissions( usersNodePermissions, rootNode.getPermissions() );
                 groupsNodePermissions = mergeWithRootPermissions( groupsNodePermissions, rootNode.getPermissions() );
 
-                final Node userStoreNode = nodeService.create( CreateNodeParams.create().
-                    parent( UserStoreNodeTranslator.getUserStoresParentPath() ).
-                    name( createUserStoreParams.getKey().toString() ).
+                final Node idProviderNode = nodeService.create( CreateNodeParams.create().
+                    parent( IdProviderNodeTranslator.getIdProvidersParentPath() ).
+                    name( createIdProviderParams.getKey().toString() ).
                     data( data ).
-                    permissions( userStoreNodePermissions ).
+                    permissions( idProviderNodePermissions ).
                     build() );
 
                 nodeService.create( CreateNodeParams.create().
-                    parent( userStoreNode.path() ).
-                    name( UserStoreNodeTranslator.USER_FOLDER_NODE_NAME ).
+                    parent( idProviderNode.path() ).
+                    name( IdProviderNodeTranslator.USER_FOLDER_NODE_NAME ).
                     permissions( usersNodePermissions ).
                     build() );
                 nodeService.create( CreateNodeParams.create().
-                    parent( userStoreNode.path() ).
-                    name( UserStoreNodeTranslator.GROUP_FOLDER_NODE_NAME ).
+                    parent( idProviderNode.path() ).
+                    name( IdProviderNodeTranslator.GROUP_FOLDER_NODE_NAME ).
                     permissions( groupsNodePermissions ).
                     build() );
 
@@ -1080,14 +1081,14 @@ public final class SecurityServiceImpl
 
                 this.nodeService.refresh( RefreshMode.SEARCH );
 
-                return userStoreNode;
+                return idProviderNode;
             } );
 
-            return UserStoreNodeTranslator.fromNode( node );
+            return IdProviderNodeTranslator.fromNode( node );
         }
         catch ( NodeIdExistsException | NodeAlreadyExistAtPathException e )
         {
-            throw new UserStoreAlreadyExistsException( createUserStoreParams.getKey() );
+            throw new IdProviderAlreadyExistsException( createIdProviderParams.getKey() );
         }
     }
 
@@ -1105,49 +1106,50 @@ public final class SecurityServiceImpl
     }
 
     @Override
-    public UserStore updateUserStore( final UpdateUserStoreParams updateUserStoreParams )
+    public IdProvider updateIdProvider( final UpdateIdProviderParams updateIdProviderParams )
     {
         return callWithContext( () -> {
 
-            final NodePath userStoreNodePath = UserStoreNodeTranslator.toUserStoreNodePath( updateUserStoreParams.getKey() );
-            final Node node = this.nodeService.getByPath( userStoreNodePath );
+            final NodePath idProviderNodePath = IdProviderNodeTranslator.toIdProviderNodePath( updateIdProviderParams.getKey() );
+            final Node node = this.nodeService.getByPath( idProviderNodePath );
             if ( node == null )
             {
                 return null;
             }
 
-            final UserStore existingUserStore = UserStoreNodeTranslator.fromNode( node );
+            final IdProvider existingIdProvider = IdProviderNodeTranslator.fromNode( node );
 
-            final UserStore userStoreToUpdate = updateUserStoreParams.update( existingUserStore );
+            final IdProvider idProviderToUpdate = updateIdProviderParams.update( existingIdProvider );
 
-            final UpdateNodeParams updateNodeParams = UserStoreNodeTranslator.toUpdateNodeParams( userStoreToUpdate, node.id() );
-            final Node userStoreNode = nodeService.update( updateNodeParams );
+            final UpdateNodeParams updateNodeParams = IdProviderNodeTranslator.toUpdateNodeParams( idProviderToUpdate, node.id() );
+            final Node idProviderNode = nodeService.update( updateNodeParams );
 
-            if ( updateUserStoreParams.getUserStorePermissions() != null )
+            if ( updateIdProviderParams.getIdProviderPermissions() != null )
             {
                 final Node usersNode =
-                    nodeService.getByPath( UserStoreNodeTranslator.toUserStoreUsersNodePath( updateUserStoreParams.getKey() ) );
+                    nodeService.getByPath( IdProviderNodeTranslator.toIdProviderUsersNodePath( updateIdProviderParams.getKey() ) );
                 final Node groupsNode =
-                    nodeService.getByPath( UserStoreNodeTranslator.toUserStoreGroupsNodePath( updateUserStoreParams.getKey() ) );
+                    nodeService.getByPath( IdProviderNodeTranslator.toIdProviderGroupsNodePath( updateIdProviderParams.getKey() ) );
 
-                final UserStoreAccessControlList permissions = updateUserStoreParams.getUserStorePermissions();
-                AccessControlList userStoreNodePermissions =
-                    UserStoreNodeTranslator.userStorePermissionsToUserStoreNodePermissions( permissions );
-                AccessControlList usersNodePermissions = UserStoreNodeTranslator.userStorePermissionsToUsersNodePermissions( permissions );
+                final IdProviderAccessControlList permissions = updateIdProviderParams.getIdProviderPermissions();
+                AccessControlList idProviderNodePermissions =
+                    IdProviderNodeTranslator.idProviderPermissionsToIdProviderNodePermissions( permissions );
+                AccessControlList usersNodePermissions =
+                    IdProviderNodeTranslator.idProviderPermissionsToUsersNodePermissions( permissions );
                 AccessControlList groupsNodePermissions =
-                    UserStoreNodeTranslator.userStorePermissionsToGroupsNodePermissions( permissions );
+                    IdProviderNodeTranslator.idProviderPermissionsToGroupsNodePermissions( permissions );
 
                 final Node rootNode = nodeService.getRoot();
-                userStoreNodePermissions = mergeWithRootPermissions( userStoreNodePermissions, rootNode.getPermissions() );
+                idProviderNodePermissions = mergeWithRootPermissions( idProviderNodePermissions, rootNode.getPermissions() );
                 usersNodePermissions = mergeWithRootPermissions( usersNodePermissions, rootNode.getPermissions() );
                 groupsNodePermissions = mergeWithRootPermissions( groupsNodePermissions, rootNode.getPermissions() );
 
-                setNodePermissions( userStoreNode.id(), userStoreNodePermissions );
+                setNodePermissions( idProviderNode.id(), idProviderNodePermissions );
                 setNodePermissions( usersNode.id(), usersNodePermissions );
                 setNodePermissions( groupsNode.id(), groupsNodePermissions );
 
                 final ApplyNodePermissionsParams applyPermissions = ApplyNodePermissionsParams.create().
-                    nodeId( userStoreNode.id() ).
+                    nodeId( idProviderNode.id() ).
                     overwriteChildPermissions( false ).
                     build();
                 nodeService.applyPermissions( applyPermissions );
@@ -1155,7 +1157,7 @@ public final class SecurityServiceImpl
 
             this.nodeService.refresh( RefreshMode.SEARCH );
 
-            return UserStoreNodeTranslator.fromNode( userStoreNode );
+            return IdProviderNodeTranslator.fromNode( idProviderNode );
         } );
     }
 

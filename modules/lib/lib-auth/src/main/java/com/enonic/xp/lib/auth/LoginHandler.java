@@ -14,13 +14,13 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
+import com.enonic.xp.security.IdProvider;
+import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.security.IdProviders;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityConstants;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
-import com.enonic.xp.security.UserStore;
-import com.enonic.xp.security.UserStoreKey;
-import com.enonic.xp.security.UserStores;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.EmailPasswordAuthToken;
 import com.enonic.xp.security.auth.UsernamePasswordAuthToken;
@@ -37,7 +37,7 @@ public final class LoginHandler
 
     private boolean skipAuth;
 
-    private String[] userStore;
+    private String[] idProvider;
 
     private Integer sessionTimeout;
 
@@ -62,9 +62,9 @@ public final class LoginHandler
         this.skipAuth = skipAuth;
     }
 
-    public void setUserStore( final String[] userStore )
+    public void setUserStore( final String[] idProvider )
     {
-        this.userStore = userStore;
+        this.idProvider = idProvider;
     }
 
     public void setSessionTimeout( final Integer sessionTimeout )
@@ -74,7 +74,7 @@ public final class LoginHandler
 
     public LoginResultMapper login()
     {
-        AuthenticationInfo authInfo = noUserStoreSpecified() ? attemptLoginWithAllExistingUserStores() : attemptLogin();
+        AuthenticationInfo authInfo = noIdProviderSpecified() ? attemptLoginWithAllExistingIdProviders() : attemptLogin();
 
         if ( authInfo.isAuthenticated() )
         {
@@ -97,18 +97,18 @@ public final class LoginHandler
         }
     }
 
-    private boolean noUserStoreSpecified()
+    private boolean noIdProviderSpecified()
     {
-        return this.userStore == null || this.userStore.length == 0;
+        return this.idProvider == null || this.idProvider.length == 0;
     }
 
-    private AuthenticationInfo attemptLoginWithAllExistingUserStores()
+    private AuthenticationInfo attemptLoginWithAllExistingIdProviders()
     {
-        final UserStores userStores = runAsAuthenticated( this::getSortedUserStores );
+        final IdProviders idProviders = runAsAuthenticated( this::getSortedIdProviders );
 
-        for ( UserStore userStore : userStores )
+        for ( IdProvider idProvider : idProviders )
         {
-            final AuthenticationInfo authInfo = authenticate( userStore.getKey() );
+            final AuthenticationInfo authInfo = authenticate( idProvider.getKey() );
             if ( ( authInfo != null ) && ( authInfo.isAuthenticated() ) )
             {
                 return authInfo;
@@ -118,10 +118,10 @@ public final class LoginHandler
         return AuthenticationInfo.unAuthenticated();
     }
 
-    private UserStores getSortedUserStores()
+    private IdProviders getSortedIdProviders()
     {
-        UserStores userStores = securityService.get().getUserStores();
-        return UserStores.from( userStores.stream().
+        IdProviders idProviders = securityService.get().getIdProviders();
+        return IdProviders.from( idProviders.stream().
             sorted( Comparator.comparing( u -> u.getKey().toString() ) ).
             collect( Collectors.toList() ) );
     }
@@ -129,9 +129,9 @@ public final class LoginHandler
     private AuthenticationInfo attemptLogin()
     {
 
-        for ( String uStore : userStore )
+        for ( String uStore : idProvider )
         {
-            final AuthenticationInfo authInfo = authenticate( UserStoreKey.from( uStore ) );
+            final AuthenticationInfo authInfo = authenticate( IdProviderKey.from( uStore ) );
             if ( ( authInfo != null ) && ( authInfo.isAuthenticated() ) )
             {
                 return authInfo;
@@ -141,7 +141,7 @@ public final class LoginHandler
         return AuthenticationInfo.unAuthenticated();
     }
 
-    private AuthenticationInfo authenticate( UserStoreKey userStore )
+    private AuthenticationInfo authenticate( IdProviderKey idProvider )
     {
         AuthenticationInfo authInfo = null;
 
@@ -151,7 +151,7 @@ public final class LoginHandler
             {
                 final VerifiedEmailAuthToken verifiedEmailAuthToken = new VerifiedEmailAuthToken();
                 verifiedEmailAuthToken.setEmail( this.user );
-                verifiedEmailAuthToken.setUserStore( userStore );
+                verifiedEmailAuthToken.setIdProvider( idProvider );
 
                 authInfo = runAsAuthenticated( () -> this.securityService.get().authenticate( verifiedEmailAuthToken ) );
             }
@@ -160,7 +160,7 @@ public final class LoginHandler
                 final EmailPasswordAuthToken emailAuthToken = new EmailPasswordAuthToken();
                 emailAuthToken.setEmail( this.user );
                 emailAuthToken.setPassword( this.password );
-                emailAuthToken.setUserStore( userStore );
+                emailAuthToken.setIdProvider( idProvider );
 
                 authInfo = runAsAuthenticated( () -> this.securityService.get().authenticate( emailAuthToken ) );
             }
@@ -172,7 +172,7 @@ public final class LoginHandler
             {
                 final VerifiedUsernameAuthToken usernameAuthToken = new VerifiedUsernameAuthToken();
                 usernameAuthToken.setUsername( this.user );
-                usernameAuthToken.setUserStore( userStore );
+                usernameAuthToken.setIdProvider( idProvider );
 
                 authInfo = runAsAuthenticated( () -> this.securityService.get().authenticate( usernameAuthToken ) );
             }
@@ -181,7 +181,7 @@ public final class LoginHandler
                 final UsernamePasswordAuthToken usernameAuthToken = new UsernamePasswordAuthToken();
                 usernameAuthToken.setUsername( this.user );
                 usernameAuthToken.setPassword( this.password );
-                usernameAuthToken.setUserStore( userStore );
+                usernameAuthToken.setIdProvider( idProvider );
 
                 authInfo = runAsAuthenticated( () -> this.securityService.get().authenticate( usernameAuthToken ) );
             }

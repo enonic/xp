@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.lib.portal.TestDataFixtures;
-import com.enonic.xp.security.UserStore;
+import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.testing.ScriptTestSupport;
 
 public class GetCurrentUserStoreKeyHandlerTest
@@ -15,8 +15,8 @@ public class GetCurrentUserStoreKeyHandlerTest
     @Test
     public void testExample()
     {
-        final UserStore userStore = TestDataFixtures.newUserStore();
-        this.portalRequest.setUserStore( userStore );
+        final IdProvider idProvider = TestDataFixtures.newIdProvider();
+        this.portalRequest.setIdProvider( idProvider );
 
         runScript( "/site/lib/xp/examples/portal/getUserStoreKey.js" );
     }
@@ -25,7 +25,7 @@ public class GetCurrentUserStoreKeyHandlerTest
     public void noIdProviderConfig()
     {
         this.portalRequest.setRawRequest( Mockito.mock( HttpServletRequest.class ) );
-        this.portalRequest.setUserStore( null );
+        this.portalRequest.setIdProvider( null );
         runFunction( "/site/test/getUserStoreKey-test.js", "noUserStore" );
     }
 }

@@ -2,7 +2,7 @@ package com.enonic.xp.admin.impl.rest.resource.security.json;
 
 import java.util.List;
 
-public final class DeleteUserStoreJson
+public final class DeleteIdProviderJson
 {
     private List<String> keys;
 

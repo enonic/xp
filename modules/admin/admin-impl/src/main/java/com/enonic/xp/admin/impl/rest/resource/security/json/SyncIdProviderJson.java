@@ -2,7 +2,7 @@ package com.enonic.xp.admin.impl.rest.resource.security.json;
 
 import java.util.List;
 
-public final class SyncUserStoreJson
+public final class SyncIdProviderJson
 {
     private List<String> keys;
 

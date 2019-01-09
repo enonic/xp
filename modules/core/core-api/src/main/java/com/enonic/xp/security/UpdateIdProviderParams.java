@@ -2,15 +2,15 @@ package com.enonic.xp.security;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.security.acl.UserStoreAccessControlList;
+import com.enonic.xp.security.acl.IdProviderAccessControlList;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @Beta
-public final class UpdateUserStoreParams
+public final class UpdateIdProviderParams
 {
 
-    private final UserStoreKey userStoreKey;
+    private final IdProviderKey idProviderKey;
 
     private final String displayName;
 
@@ -18,23 +18,23 @@ public final class UpdateUserStoreParams
 
     private final IdProviderConfig idProviderConfig;
 
-    private final UserStoreEditor editor;
+    private final IdProviderEditor editor;
 
-    private final UserStoreAccessControlList userStorePermissions;
+    private final IdProviderAccessControlList idProviderPermissions;
 
-    private UpdateUserStoreParams( final Builder builder )
+    private UpdateIdProviderParams( final Builder builder )
     {
-        this.userStoreKey = checkNotNull( builder.userStoreKey, "userStoreKey is required" );
+        this.idProviderKey = checkNotNull( builder.idProviderKey, "idProviderKey is required" );
         this.displayName = builder.displayName;
         this.description = builder.description;
         this.idProviderConfig = builder.idProviderConfig;
         this.editor = builder.editor;
-        this.userStorePermissions = builder.userStorePermissions;
+        this.idProviderPermissions = builder.idProviderPermissions;
     }
 
-    public UserStoreKey getKey()
+    public static Builder create( final IdProvider idProvider )
     {
-        return userStoreKey;
+        return new Builder( idProvider );
     }
 
     public String getDisplayName()
@@ -52,26 +52,36 @@ public final class UpdateUserStoreParams
         return idProviderConfig;
     }
 
-    public UserStoreEditor getEditor()
+    public IdProviderKey getKey()
+    {
+        return idProviderKey;
+    }
+
+    public IdProviderEditor getEditor()
     {
         return editor;
     }
 
-    public UserStoreAccessControlList getUserStorePermissions()
+    public IdProviderAccessControlList getIdProviderPermissions()
     {
-        return userStorePermissions;
+        return idProviderPermissions;
     }
 
-    public UserStore update( final UserStore source )
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public IdProvider update( final IdProvider source )
     {
         if ( this.editor != null )
         {
-            final EditableUserStore editableUserStore = new EditableUserStore( source );
-            editor.edit( editableUserStore );
-            return editableUserStore.build();
+            final EditableIdProvider editableIdProvider = new EditableIdProvider( source );
+            editor.edit( editableIdProvider );
+            return editableIdProvider.build();
         }
 
-        UserStore.Builder result = UserStore.create( source );
+        IdProvider.Builder result = IdProvider.create( source );
         if ( this.displayName != null )
         {
             result.displayName( this.getDisplayName() );
@@ -90,19 +100,9 @@ public final class UpdateUserStoreParams
         return result.build();
     }
 
-    public static Builder create()
-    {
-        return new Builder();
-    }
-
-    public static Builder create( final UserStore userStore )
-    {
-        return new Builder( userStore );
-    }
-
     public static class Builder
     {
-        private UserStoreKey userStoreKey;
+        private IdProviderKey idProviderKey;
 
         private String displayName;
 
@@ -110,25 +110,25 @@ public final class UpdateUserStoreParams
 
         private IdProviderConfig idProviderConfig;
 
-        private UserStoreEditor editor;
+        private IdProviderEditor editor;
 
-        private UserStoreAccessControlList userStorePermissions;
+        private IdProviderAccessControlList idProviderPermissions;
 
         private Builder()
         {
         }
 
-        private Builder( final UserStore userStore )
+        private Builder( final IdProvider idProvider )
         {
-            this.userStoreKey = userStore.getKey();
-            this.displayName = userStore.getDisplayName();
-            this.description = userStore.getDescription();
-            this.idProviderConfig = userStore.getIdProviderConfig();
+            this.idProviderKey = idProvider.getKey();
+            this.displayName = idProvider.getDisplayName();
+            this.description = idProvider.getDescription();
+            this.idProviderConfig = idProvider.getIdProviderConfig();
         }
 
-        public Builder key( final UserStoreKey value )
+        public Builder key( final IdProviderKey value )
         {
-            this.userStoreKey = value;
+            this.idProviderKey = value;
             return this;
         }
 
@@ -150,21 +150,21 @@ public final class UpdateUserStoreParams
             return this;
         }
 
-        public Builder editor( final UserStoreEditor value )
+        public Builder editor( final IdProviderEditor value )
         {
             this.editor = value;
             return this;
         }
 
-        public Builder permissions( final UserStoreAccessControlList permissions )
+        public Builder permissions( final IdProviderAccessControlList permissions )
         {
-            this.userStorePermissions = permissions;
+            this.idProviderPermissions = permissions;
             return this;
         }
 
-        public UpdateUserStoreParams build()
+        public UpdateIdProviderParams build()
         {
-            return new UpdateUserStoreParams( this );
+            return new UpdateIdProviderParams( this );
         }
     }
 }

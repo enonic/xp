@@ -11,12 +11,12 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import com.google.common.io.BaseEncoding;
 import com.google.common.net.HttpHeaders;
 
+import com.enonic.xp.security.IdProvider;
+import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.security.IdProviders;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
-import com.enonic.xp.security.UserStore;
-import com.enonic.xp.security.UserStoreKey;
-import com.enonic.xp.security.UserStores;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public class BasicAuthFilterTest
@@ -42,15 +42,15 @@ public class BasicAuthFilterTest
         this.filter = new BasicAuthFilter();
         this.filter.setSecurityService( this.securityService );
 
-        final UserStoreKey userStoreKey = UserStoreKey.from( "store" );
-        final UserStore userStore = UserStore.create().key( userStoreKey ).build();
-        final UserStores userStores = UserStores.from( userStore );
-        Mockito.when( this.securityService.getUserStores() ).thenReturn( userStores );
+        final IdProviderKey idProviderKey = IdProviderKey.from( "store" );
+        final IdProvider idProvider = IdProvider.create().key( idProviderKey ).build();
+        final IdProviders idProviders = IdProviders.from( idProvider );
+        Mockito.when( this.securityService.getIdProviders() ).thenReturn( idProviders );
     }
 
     private void rightAuthentication()
     {
-        final User user = User.create().login( "user" ).key( PrincipalKey.ofUser( UserStoreKey.from( "store" ), "user" ) ).build();
+        final User user = User.create().login( "user" ).key( PrincipalKey.ofUser( IdProviderKey.from( "store" ), "user" ) ).build();
         Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( AuthenticationInfo.create().user( user ).build() );
     }
 

@@ -21,11 +21,11 @@ final class IdentityUrlBuilder
     {
         super.buildUrl( url, params );
 
-        if ( this.params.getUserStoreKey() == null )
+        if ( this.params.getIdProviderKey() == null )
         {
             throw new IllegalArgumentException( "Could not find user store" );
         }
-        appendPart( url, this.params.getUserStoreKey().toString() );
+        appendPart( url, this.params.getIdProviderKey().toString() );
 
         final String idProviderFunction = this.params.getIdProviderFunction();
         if ( idProviderFunction != null )

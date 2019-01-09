@@ -158,6 +158,7 @@ import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
 import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalQuery;
@@ -167,7 +168,6 @@ import com.enonic.xp.security.PrincipalRelationships;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
-import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
@@ -199,7 +199,7 @@ public class ContentResourceTest
     extends AdminResourceTestSupport
 {
 
-    private static final UserStoreKey SYSTEM = UserStoreKey.system();
+    private static final IdProviderKey SYSTEM = IdProviderKey.system();
 
     private final LocalDate currentDate = LocalDate.of( 2013, 8, 23 );
 
@@ -1172,7 +1172,7 @@ public class ContentResourceTest
         throws Exception
     {
         final User user = User.create().
-            key( PrincipalKey.ofUser( UserStoreKey.system(), "user1" ) ).
+            key( PrincipalKey.ofUser( IdProviderKey.system(), "user1" ) ).
             displayName( "User 1" ).
             email( "user1@enonic.com" ).
             login( "user1" ).
@@ -1207,7 +1207,7 @@ public class ContentResourceTest
         throws Exception
     {
         final User user = User.create().
-            key( PrincipalKey.ofUser( UserStoreKey.system(), "user1" ) ).
+            key( PrincipalKey.ofUser( IdProviderKey.system(), "user1" ) ).
             displayName( "User 1" ).
             email( "user1@enonic.com" ).
             login( "user1" ).
@@ -1258,7 +1258,7 @@ public class ContentResourceTest
         throws Exception
     {
         final User user = User.create().
-            key( PrincipalKey.ofUser( UserStoreKey.system(), "user1" ) ).
+            key( PrincipalKey.ofUser( IdProviderKey.system(), "user1" ) ).
             displayName( "User 1" ).
             email( "user1@enonic.com" ).
             login( "user1" ).

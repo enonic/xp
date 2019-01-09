@@ -10,10 +10,10 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
-import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public class IdProviderFilterTest
@@ -47,7 +47,7 @@ public class IdProviderFilterTest
         throws Exception
     {
         final User user = User.create().
-            key( PrincipalKey.ofUser( UserStoreKey.system(), "user1" ) ).
+            key( PrincipalKey.ofUser( IdProviderKey.system(), "user1" ) ).
             displayName( "User 1" ).
             email( "user1@enonic.com" ).
             login( "user1" ).

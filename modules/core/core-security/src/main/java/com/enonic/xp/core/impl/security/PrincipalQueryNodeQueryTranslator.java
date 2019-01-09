@@ -13,10 +13,10 @@ import com.enonic.xp.query.expr.LogicalExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.query.filter.ValueFilter;
+import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.security.IdProviderKeys;
 import com.enonic.xp.security.PrincipalQuery;
 import com.enonic.xp.security.PrincipalType;
-import com.enonic.xp.security.UserStoreKey;
-import com.enonic.xp.security.UserStoreKeys;
 
 import static com.enonic.xp.core.impl.security.PrincipalPropertyNames.DISPLAY_NAME_KEY;
 import static com.enonic.xp.core.impl.security.PrincipalPropertyNames.EMAIL_KEY;
@@ -35,12 +35,12 @@ final class PrincipalQueryNodeQueryTranslator
             from( principalQuery.getFrom() ).
             size( principalQuery.getSize() );
 
-        final UserStoreKeys userStores = principalQuery.getUserStores();
-        if ( userStores.isNotEmpty() )
+        final IdProviderKeys idProviders = principalQuery.getIdProviders();
+        if ( idProviders.isNotEmpty() )
         {
             nodeQueryBuilder.addQueryFilter( ValueFilter.create().
                 fieldName( USER_STORE_KEY ).
-                addValues( userStores.stream().map( UserStoreKey::toString ).collect( toList() ) ).
+                addValues( idProviders.stream().map( IdProviderKey::toString ).collect( toList() ) ).
                 build() );
         }
         final Set<PrincipalType> types = principalQuery.getPrincipalTypes();

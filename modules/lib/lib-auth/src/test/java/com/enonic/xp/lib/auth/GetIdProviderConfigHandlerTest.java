@@ -2,7 +2,7 @@ package com.enonic.xp.lib.auth;
 
 import org.junit.Test;
 
-import com.enonic.xp.security.UserStore;
+import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.testing.ScriptTestSupport;
 
 public class GetIdProviderConfigHandlerTest
@@ -11,8 +11,8 @@ public class GetIdProviderConfigHandlerTest
     @Test
     public void testExample()
     {
-        final UserStore userStore = TestDataFixtures.getTestUserStore();
-        this.portalRequest.setUserStore( userStore );
+        final IdProvider idProvider = TestDataFixtures.getTestIdProvider();
+        this.portalRequest.setIdProvider( idProvider );
 
         runScript( "/site/lib/xp/examples/auth/getIdProviderConfig.js" );
     }
@@ -21,7 +21,7 @@ public class GetIdProviderConfigHandlerTest
     @Test
     public void noIdProviderConfig()
     {
-        this.portalRequest.setUserStore( null );
-        runFunction( "/site/test/getIdProviderConfig-test.js", "noUserStore" );
+        this.portalRequest.setIdProvider( null );
+        runFunction( "/site/test/getIdProviderConfig-test.js", "noIdProvider" );
     }
 }

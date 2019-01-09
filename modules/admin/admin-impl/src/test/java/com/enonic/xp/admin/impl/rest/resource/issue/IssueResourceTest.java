@@ -60,6 +60,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.PrincipalNotFoundException;
@@ -68,7 +69,6 @@ import com.enonic.xp.security.Role;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
-import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.session.SessionKey;
 import com.enonic.xp.session.SimpleSession;
@@ -577,7 +577,7 @@ public class IssueResourceTest
     private void createLocalSession()
     {
         final User user = User.create().
-            key( PrincipalKey.ofUser( UserStoreKey.system(), "user1" ) ).
+            key( PrincipalKey.ofUser( IdProviderKey.system(), "user1" ) ).
             displayName( "User 1" ).
             email( "user1@enonic.com" ).
             login( "user1" ).

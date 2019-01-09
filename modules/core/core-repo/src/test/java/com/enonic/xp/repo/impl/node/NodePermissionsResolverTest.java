@@ -2,10 +2,10 @@ package com.enonic.xp.repo.impl.node;
 
 import org.junit.Test;
 
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
-import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -19,7 +19,7 @@ import static org.junit.Assert.*;
 public class NodePermissionsResolverTest
 {
 
-    private static final UserStoreKey USER_STORE_KEY = UserStoreKey.from( "us" );
+    private static final IdProviderKey USER_STORE_KEY = IdProviderKey.from( "us" );
 
     private static final PrincipalKey USER_A = PrincipalKey.ofGroup( USER_STORE_KEY, "userA" );
 

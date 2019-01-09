@@ -37,7 +37,7 @@ public final class PrincipalMapper
             gen.value( "disabled", user.isDisabled() );
             gen.value( "email", user.getEmail() );
             gen.value( "login", user.getLogin() );
-            gen.value( "userStore", value.getKey() != null ? value.getKey().getUserStore() : null );
+            gen.value( "userStore", value.getKey() != null ? value.getKey().getIdProviderKey() : null );
             serializeProfile( gen, user.getProfile() );
         }
         else

@@ -27,10 +27,13 @@ import com.enonic.xp.jaxrs.impl.MockRestResponse;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 import com.enonic.xp.security.CreateGroupParams;
+import com.enonic.xp.security.CreateIdProviderParams;
 import com.enonic.xp.security.CreateRoleParams;
 import com.enonic.xp.security.CreateUserParams;
-import com.enonic.xp.security.CreateUserStoreParams;
 import com.enonic.xp.security.Group;
+import com.enonic.xp.security.IdProvider;
+import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.security.IdProviders;
 import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
@@ -44,21 +47,18 @@ import com.enonic.xp.security.Role;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.UpdateGroupParams;
+import com.enonic.xp.security.UpdateIdProviderParams;
 import com.enonic.xp.security.UpdateRoleParams;
 import com.enonic.xp.security.UpdateUserParams;
-import com.enonic.xp.security.UpdateUserStoreParams;
 import com.enonic.xp.security.User;
-import com.enonic.xp.security.UserStore;
-import com.enonic.xp.security.UserStoreKey;
-import com.enonic.xp.security.UserStores;
-import com.enonic.xp.security.acl.UserStoreAccess;
-import com.enonic.xp.security.acl.UserStoreAccessControlEntry;
-import com.enonic.xp.security.acl.UserStoreAccessControlList;
+import com.enonic.xp.security.acl.IdProviderAccess;
+import com.enonic.xp.security.acl.IdProviderAccessControlEntry;
+import com.enonic.xp.security.acl.IdProviderAccessControlList;
 import com.enonic.xp.web.HttpStatus;
 
 import static com.enonic.xp.security.PrincipalRelationship.from;
-import static com.enonic.xp.security.acl.UserStoreAccess.ADMINISTRATOR;
-import static com.enonic.xp.security.acl.UserStoreAccess.READ;
+import static com.enonic.xp.security.acl.IdProviderAccess.ADMINISTRATOR;
+import static com.enonic.xp.security.acl.IdProviderAccess.READ;
 import static org.junit.Assert.*;
 
 public class SecurityResourceTest
@@ -68,9 +68,9 @@ public class SecurityResourceTest
 
     private static Clock clock = Clock.fixed( NOW, ZoneId.of( "UTC" ) );
 
-    private static final UserStoreKey USER_STORE_1 = UserStoreKey.from( "local" );
+    private static final IdProviderKey USER_STORE_1 = IdProviderKey.from( "local" );
 
-    private static final UserStoreKey USER_STORE_2 = UserStoreKey.from( "file-store" );
+    private static final IdProviderKey USER_STORE_2 = IdProviderKey.from( "file-store" );
 
     private SecurityService securityService;
 
@@ -98,26 +98,26 @@ public class SecurityResourceTest
     }
 
     @Test
-    public void getUserStores()
+    public void getIdProviders()
         throws Exception
     {
-        final UserStores userStores = createUserStores();
+        final IdProviders idProviders = createIdProviders();
 
-        Mockito.when( securityService.getUserStores() ).
-            thenReturn( userStores );
+        Mockito.when( securityService.getIdProviders() ).
+            thenReturn( idProviders );
 
         String jsonString = request().path( "security/userstore/list" ).get().getAsString();
 
-        assertJson( "getUserstores.json", jsonString );
+        assertJson( "getIdProviders.json", jsonString );
     }
 
     @Test
-    public void getUserStoreByKey()
+    public void getIdProviderByKey()
         throws Exception
     {
-        final UserStore userStore = createUserStores().getUserStore( USER_STORE_1 );
+        final IdProvider idProvider = createIdProviders().getIdProvider( USER_STORE_1 );
 
-        Mockito.when( securityService.getUserStore( USER_STORE_1 ) ).thenReturn( userStore );
+        Mockito.when( securityService.getIdProvider( USER_STORE_1 ) ).thenReturn( idProvider );
 
         final User user1 = User.create().
             key( PrincipalKey.from( "user:local:user1" ) ).
@@ -135,21 +135,21 @@ public class SecurityResourceTest
         final Principals principals = Principals.from( user1, group1 );
         Mockito.when( securityService.getPrincipals( Mockito.isA( PrincipalKeys.class ) ) ).thenReturn( principals );
 
-        final UserStoreAccessControlList userStorePermissions = UserStoreAccessControlList.create().
-            add( UserStoreAccessControlEntry.create().principal( PrincipalKey.from( "user:local:user1" ) ).access(
-                UserStoreAccess.CREATE_USERS ).build() ).
-            add( UserStoreAccessControlEntry.create().principal( PrincipalKey.from( "group:local:mygroup" ) ).access(
-                UserStoreAccess.USER_STORE_MANAGER ).build() ).
+        final IdProviderAccessControlList idProviderPermissions = IdProviderAccessControlList.create().
+            add( IdProviderAccessControlEntry.create().principal( PrincipalKey.from( "user:local:user1" ) ).access(
+                IdProviderAccess.CREATE_USERS ).build() ).
+            add( IdProviderAccessControlEntry.create().principal( PrincipalKey.from( "group:local:mygroup" ) ).access(
+                IdProviderAccess.USER_STORE_MANAGER ).build() ).
             build();
-        Mockito.when( securityService.getUserStorePermissions( USER_STORE_1 ) ).thenReturn( userStorePermissions );
+        Mockito.when( securityService.getIdProviderPermissions( USER_STORE_1 ) ).thenReturn( idProviderPermissions );
 
         String jsonString = request().path( "security/userstore" ).queryParam( "key", "local" ).get().getAsString();
 
-        assertJson( "getUserstoreByKey.json", jsonString );
+        assertJson( "getIdProviderByKey.json", jsonString );
     }
 
     @Test
-    public void getUserStore_not_found()
+    public void getIdProvider_not_found()
         throws Exception
     {
         MockRestResponse result = request().path( "security/userstore" ).queryParam( "key", "local" ).get();
@@ -157,7 +157,7 @@ public class SecurityResourceTest
     }
 
     @Test
-    public void getUserStore_null_param()
+    public void getIdProvider_null_param()
         throws Exception
     {
         MockRestResponse result = request().path( "security/userstore" ).get();
@@ -168,28 +168,28 @@ public class SecurityResourceTest
 
 
     @Test
-    public void getDefaultUserStorePermissions()
+    public void getDefaultIdProviderPermissions()
         throws Exception
     {
-        final UserStoreAccessControlList userStoreAccessControlList = UserStoreAccessControlList.of(
-            UserStoreAccessControlEntry.create().principal( PrincipalKey.from( "role:system.authenticated" ) ).access( READ ).build(),
-            UserStoreAccessControlEntry.create().principal( PrincipalKey.from( "role:system.admin" ) ).access( ADMINISTRATOR ).build() );
+        final IdProviderAccessControlList idProviderAccessControlList = IdProviderAccessControlList.of(
+            IdProviderAccessControlEntry.create().principal( PrincipalKey.from( "role:system.authenticated" ) ).access( READ ).build(),
+            IdProviderAccessControlEntry.create().principal( PrincipalKey.from( "role:system.admin" ) ).access( ADMINISTRATOR ).build() );
 
         final Principals principals = Principals.from(
             Role.create().displayName( "Authenticated" ).key( PrincipalKey.from( "role:system.authenticated" ) ).description(
                 "authenticated" ).build(),
             Role.create().displayName( "Administrator" ).key( PrincipalKey.from( "role:system.admin" ) ).description( "admin" ).build() );
 
-        Mockito.when( securityService.getDefaultUserStorePermissions() ).thenReturn( userStoreAccessControlList );
+        Mockito.when( securityService.getDefaultIdProviderPermissions() ).thenReturn( idProviderAccessControlList );
         Mockito.when( securityService.getPrincipals( Mockito.isA( PrincipalKeys.class ) ) ).thenReturn( principals );
 
         String jsonString = request().path( "security/userstore/default" ).get().getAsString();
 
-        assertJson( "getDefaultUserStorePermissions.json", jsonString );
+        assertJson( "getDefaultIdProviderPermissions.json", jsonString );
     }
 
     @Test
-    public void createUserStore()
+    public void createIdProvider()
         throws Exception
     {
         final User user1 = User.create().
@@ -201,27 +201,27 @@ public class SecurityResourceTest
         final Principals principals = Principals.from( user1 );
         Mockito.when( securityService.getPrincipals( Mockito.isA( PrincipalKeys.class ) ) ).thenReturn( principals );
 
-        final UserStoreKey userStoreKey = UserStoreKey.from( "enonic" );
-        final UserStoreAccessControlList permissions = UserStoreAccessControlList.of(
-            UserStoreAccessControlEntry.create().principal( PrincipalKey.from( "user:system:user1" ) ).access( ADMINISTRATOR ).build() );
-        final UserStore userStore = UserStore.create().
-            key( UserStoreKey.from( "enonic" ) ).
+        final IdProviderKey idProviderKey = IdProviderKey.from( "enonic" );
+        final IdProviderAccessControlList permissions = IdProviderAccessControlList.of(
+            IdProviderAccessControlEntry.create().principal( PrincipalKey.from( "user:system:user1" ) ).access( ADMINISTRATOR ).build() );
+        final IdProvider idProvider = IdProvider.create().
+            key( IdProviderKey.from( "enonic" ) ).
             displayName( "Enonic User Store" ).
             description( "user store description" ).
             build();
-        Mockito.when( securityService.createUserStore( Mockito.isA( CreateUserStoreParams.class ) ) ).thenReturn( userStore );
+        Mockito.when( securityService.createIdProvider( Mockito.isA( CreateIdProviderParams.class ) ) ).thenReturn( idProvider );
 
-        Mockito.when( securityService.getUserStorePermissions( userStoreKey ) ).thenReturn( permissions );
+        Mockito.when( securityService.getIdProviderPermissions( idProviderKey ) ).thenReturn( permissions );
 
         String jsonString = request().path( "security/userstore/create" ).
-            entity( readFromFile( "createUserStoreParams.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            entity( readFromFile( "createIdProviderParams.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
 
-        assertJson( "createUserStoreSuccess.json", jsonString );
+        assertJson( "createIdProviderSuccess.json", jsonString );
     }
 
     @Test
-    public void updateUserStore()
+    public void updateIdProvider()
         throws Exception
     {
         final User user1 = User.create().
@@ -233,58 +233,58 @@ public class SecurityResourceTest
         final Principals principals = Principals.from( user1 );
         Mockito.when( securityService.getPrincipals( Mockito.isA( PrincipalKeys.class ) ) ).thenReturn( principals );
 
-        final UserStoreKey userStoreKey = UserStoreKey.from( "enonic" );
-        final UserStoreAccessControlList permissions = UserStoreAccessControlList.of(
-            UserStoreAccessControlEntry.create().principal( PrincipalKey.from( "user:system:user1" ) ).access( ADMINISTRATOR ).build() );
-        final UserStore userStore = UserStore.create().
-            key( UserStoreKey.from( "enonic" ) ).
+        final IdProviderKey idProviderKey = IdProviderKey.from( "enonic" );
+        final IdProviderAccessControlList permissions = IdProviderAccessControlList.of(
+            IdProviderAccessControlEntry.create().principal( PrincipalKey.from( "user:system:user1" ) ).access( ADMINISTRATOR ).build() );
+        final IdProvider idProvider = IdProvider.create().
+            key( IdProviderKey.from( "enonic" ) ).
             displayName( "Enonic User Store" ).
             description( "user store description" ).
             build();
-        Mockito.when( securityService.updateUserStore( Mockito.isA( UpdateUserStoreParams.class ) ) ).thenReturn( userStore );
+        Mockito.when( securityService.updateIdProvider( Mockito.isA( UpdateIdProviderParams.class ) ) ).thenReturn( idProvider );
 
-        Mockito.when( securityService.getUserStorePermissions( userStoreKey ) ).thenReturn( permissions );
+        Mockito.when( securityService.getIdProviderPermissions( idProviderKey ) ).thenReturn( permissions );
 
         String jsonString = request().path( "security/userstore/update" ).
-            entity( readFromFile( "updateUserStoreParams.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            entity( readFromFile( "updateIdProviderParams.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
 
-        assertJson( "updateUserStoreSuccess.json", jsonString );
+        assertJson( "updateIdProviderSuccess.json", jsonString );
     }
 
     @Test
-    public void deleteUserStore()
+    public void deleteIdProvider()
         throws Exception
     {
-        final UserStoreKey userStoreKey = UserStoreKey.from( "enonic" );
+        final IdProviderKey idProviderKey = IdProviderKey.from( "enonic" );
 
         String result = request().
-            entity( "{\"keys\":[\"" + userStoreKey.toString() + "\"]}", MediaType.APPLICATION_JSON_TYPE ).
+            entity( "{\"keys\":[\"" + idProviderKey.toString() + "\"]}", MediaType.APPLICATION_JSON_TYPE ).
             path( "security/userstore/delete" ).post().getAsString();
 
-        assertJson( "deleteUserStoreResult.json", result );
+        assertJson( "deleteIdProviderResult.json", result );
     }
 
     @Test
-    public void deleteUserStore_error()
+    public void deleteIdProvider_error()
         throws Exception
     {
-        final UserStoreKey userStoreKey = UserStoreKey.from( "enonic" );
+        final IdProviderKey idProviderKey = IdProviderKey.from( "enonic" );
 
-        Mockito.doThrow( new RuntimeException( "errorMessage" ) ).when( this.securityService ).deleteUserStore( userStoreKey );
+        Mockito.doThrow( new RuntimeException( "errorMessage" ) ).when( this.securityService ).deleteIdProvider( idProviderKey );
 
         String result = request().
-            entity( "{\"keys\":[\"" + userStoreKey.toString() + "\"]}", MediaType.APPLICATION_JSON_TYPE ).
+            entity( "{\"keys\":[\"" + idProviderKey.toString() + "\"]}", MediaType.APPLICATION_JSON_TYPE ).
             path( "security/userstore/delete" ).post().getAsString();
 
-        assertJson( "deleteUserStoreResult_error.json", result );
+        assertJson( "deleteIdProviderResult_error.json", result );
     }
 
     @Test
-    public void syncUserStore_error()
+    public void syncIdProvider_error()
         throws Exception
     {
-        final UserStoreKey userStoreKey = UserStoreKey.from( "enonic" );
+        final IdProviderKey idProviderKey = IdProviderKey.from( "enonic" );
         final ArgumentCaptor<IdProviderControllerExecutionParams> paramsCaptor =
             ArgumentCaptor.forClass( IdProviderControllerExecutionParams.class );
 
@@ -292,29 +292,29 @@ public class SecurityResourceTest
             Mockito.isA( IdProviderControllerExecutionParams.class ) );
 
         String result = request().
-            entity( "{\"keys\":[\"" + userStoreKey.toString() + "\"]}", MediaType.APPLICATION_JSON_TYPE ).
+            entity( "{\"keys\":[\"" + idProviderKey.toString() + "\"]}", MediaType.APPLICATION_JSON_TYPE ).
             path( "security/userstore/sync" ).post().getAsString();
 
         Mockito.verify( idProviderControllerService, Mockito.times( 1 ) ).execute( paramsCaptor.capture() );
 
         assertEquals( "sync", paramsCaptor.getValue().getFunctionName() );
-        assertEquals( userStoreKey, paramsCaptor.getValue().getUserStoreKey() );
+        assertEquals( idProviderKey, paramsCaptor.getValue().getIdProviderKey() );
 
-        assertJson( "syncUserStoreResult_error.json", result );
+        assertJson( "syncIdProviderResult_error.json", result );
 
     }
 
     @Test
-    public void syncUserStore()
+    public void syncIdProvider()
         throws Exception
     {
-        final UserStoreKey userStoreKey = UserStoreKey.from( "enonic" );
+        final IdProviderKey idProviderKey = IdProviderKey.from( "enonic" );
 
         String result = request().
-            entity( "{\"keys\":[\"" + userStoreKey.toString() + "\"]}", MediaType.APPLICATION_JSON_TYPE ).
+            entity( "{\"keys\":[\"" + idProviderKey.toString() + "\"]}", MediaType.APPLICATION_JSON_TYPE ).
             path( "security/userstore/sync" ).post().getAsString();
 
-        assertJson( "syncUserStoreResult.json", result );
+        assertJson( "syncIdProviderResult.json", result );
     }
 
     @Test
@@ -334,7 +334,7 @@ public class SecurityResourceTest
             path( "security/principals" ).
             queryParam( "types", "user,role" ).
             queryParam( "query", "query" ).
-            queryParam( "userStoreKey", "enonic" ).
+            queryParam( "idProviderKey", "enonic" ).
             queryParam( "from", "0" ).
             queryParam( "size", "10" ).
             get().getAsString();
@@ -420,13 +420,13 @@ public class SecurityResourceTest
             login( "alice" ).
             build();
         final Group group1 = Group.create().
-            key( PrincipalKey.ofGroup( UserStoreKey.system(), "group-a" ) ).
+            key( PrincipalKey.ofGroup( IdProviderKey.system(), "group-a" ) ).
             displayName( "Group A" ).
             modifiedTime( Instant.now( clock ) ).
             description( "group a" ).
             build();
         final Group group2 = Group.create().
-            key( PrincipalKey.ofGroup( UserStoreKey.system(), "group-b" ) ).
+            key( PrincipalKey.ofGroup( IdProviderKey.system(), "group-b" ) ).
             displayName( "Group B" ).
             description( "group b" ).
             modifiedTime( Instant.now( clock ) ).
@@ -453,7 +453,7 @@ public class SecurityResourceTest
         throws Exception
     {
         final Group group = Group.create().
-            key( PrincipalKey.ofGroup( UserStoreKey.system(), "group-a" ) ).
+            key( PrincipalKey.ofGroup( IdProviderKey.system(), "group-a" ) ).
             displayName( "Group A" ).
             description( "group a" ).
             modifiedTime( Instant.now( clock ) ).
@@ -480,7 +480,7 @@ public class SecurityResourceTest
         throws Exception
     {
         final Group group = Group.create().
-            key( PrincipalKey.ofGroup( UserStoreKey.system(), "group-a" ) ).
+            key( PrincipalKey.ofGroup( IdProviderKey.system(), "group-a" ) ).
             displayName( "Group A" ).
             description( "group a" ).
             modifiedTime( Instant.now( clock ) ).
@@ -577,7 +577,7 @@ public class SecurityResourceTest
             build();
 
         final Group group = Group.create().
-            key( PrincipalKey.ofGroup( UserStoreKey.system(), "group-a" ) ).
+            key( PrincipalKey.ofGroup( IdProviderKey.system(), "group-a" ) ).
             displayName( "Group A" ).
             description( "group a" ).
             modifiedTime( Instant.now( clock ) ).
@@ -617,7 +617,7 @@ public class SecurityResourceTest
         String jsonString = request().
             path( "security/principals/emailAvailable" ).
             queryParam( "email", "true" ).
-            queryParam( "userStoreKey", "true" ).
+            queryParam( "idProviderKey", "true" ).
             get().getAsString();
 
         assertJson( "emailNotAvailableSuccess.json", jsonString );
@@ -633,7 +633,7 @@ public class SecurityResourceTest
         String jsonString = request().
             path( "security/principals/emailAvailable" ).
             queryParam( "email", "true" ).
-            queryParam( "userStoreKey", "true" ).
+            queryParam( "idProviderKey", "true" ).
             get().getAsString();
 
         assertJson( "emailAvailableSuccess.json", jsonString );
@@ -647,7 +647,7 @@ public class SecurityResourceTest
         expectedEx.expect( WebApplicationException.class );
         expectedEx.expectMessage( "Expected email parameter" );
 
-        resource.isEmailAvailable( "userStoreKey", "" );
+        resource.isEmailAvailable( "idProviderKey", "" );
 
     }
 
@@ -678,7 +678,7 @@ public class SecurityResourceTest
         throws Exception
     {
         final Group group = Group.create().
-            key( PrincipalKey.ofGroup( UserStoreKey.system(), "group-a" ) ).
+            key( PrincipalKey.ofGroup( IdProviderKey.system(), "group-a" ) ).
             displayName( "Group A" ).
             description( "group a" ).
             modifiedTime( Instant.now( clock ) ).
@@ -742,7 +742,7 @@ public class SecurityResourceTest
         throws Exception
     {
         final Group group = Group.create().
-            key( PrincipalKey.ofGroup( UserStoreKey.system(), "group-a" ) ).
+            key( PrincipalKey.ofGroup( IdProviderKey.system(), "group-a" ) ).
             displayName( "Group A" ).
             description( "group a" ).
             modifiedTime( Instant.now( clock ) ).
@@ -884,21 +884,21 @@ public class SecurityResourceTest
         resource.createUser( params );
     }
 
-    private UserStores createUserStores()
+    private IdProviders createIdProviders()
     {
-        final UserStore userStore1 = UserStore.create().
+        final IdProvider idProvider1 = IdProvider.create().
             key( USER_STORE_1 ).
             displayName( "Local LDAP" ).
             description( "local ldap" ).
             build();
 
-        final UserStore userStore2 = UserStore.create().
+        final IdProvider idProvider2 = IdProvider.create().
             key( USER_STORE_2 ).
             displayName( "File based user store" ).
             description( "file based ustore description" ).
             build();
 
-        return UserStores.from( userStore1, userStore2 );
+        return IdProviders.from( idProvider1, idProvider2 );
     }
 
     private Principals createPrincipalsFromUsers()

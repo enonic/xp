@@ -7,16 +7,16 @@ import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.security.CreateGroupParams;
 import com.enonic.xp.security.Group;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.security.UserStoreKey;
 
 public final class CreateGroupHandler
     implements ScriptBean
 {
     private Supplier<SecurityService> securityService;
 
-    private UserStoreKey userStore;
+    private IdProviderKey userStore;
 
     private String name;
 
@@ -24,9 +24,9 @@ public final class CreateGroupHandler
 
     private String description;
 
-    public void setUserStore( final String userStore )
+    public void setUserStore( final String idProvider )
     {
-        this.userStore = UserStoreKey.from( userStore );
+        this.userStore = IdProviderKey.from( idProvider );
     }
 
     public void setName( final String name )

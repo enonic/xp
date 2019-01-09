@@ -11,7 +11,7 @@ import com.enonic.xp.region.LayoutDescriptors;
 import com.enonic.xp.region.PartDescriptors;
 import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.relationship.RelationshipTypes;
-import com.enonic.xp.security.UserStores;
+import com.enonic.xp.security.IdProviders;
 import com.enonic.xp.task.TaskDescriptor;
 
 @Beta
@@ -33,7 +33,7 @@ public interface ApplicationInfoService
 
     Contents getContentReferences( final ApplicationKey applicationKey );
 
-    UserStores getUserStoreReferences( final ApplicationKey applicationKey );
+    IdProviders getIdProviderReferences( final ApplicationKey applicationKey );
 
     IdProviderDescriptor getIdProviderDescriptor( final ApplicationKey applicationKey );
 

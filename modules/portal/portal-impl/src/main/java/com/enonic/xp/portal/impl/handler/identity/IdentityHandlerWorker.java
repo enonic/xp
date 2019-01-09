@@ -6,13 +6,13 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.ControllerHandlerWorker;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
-import com.enonic.xp.security.UserStoreKey;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.site.Site;
 
 final class IdentityHandlerWorker
     extends ControllerHandlerWorker
 {
-    protected UserStoreKey userStoreKey;
+    protected IdProviderKey idProviderKey;
 
     protected IdProviderControllerService idProviderControllerService;
 
@@ -34,7 +34,7 @@ final class IdentityHandlerWorker
         this.request.setSite( site );
 
         final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create().
-            userStoreKey( userStoreKey ).
+            idProviderKey( idProviderKey ).
             functionName( idProviderFunction ).
             portalRequest( this.request ).
             build();
@@ -43,7 +43,7 @@ final class IdentityHandlerWorker
 
         if ( portalResponse == null )
         {
-            throw notFound( "ID Provider function [%s] not found for user store [%s]", idProviderFunction, userStoreKey );
+            throw notFound( "ID Provider function [%s] not found for user store [%s]", idProviderFunction, idProviderKey );
         }
         else
         {

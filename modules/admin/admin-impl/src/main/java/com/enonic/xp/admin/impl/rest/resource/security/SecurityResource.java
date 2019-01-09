@@ -26,33 +26,33 @@ import com.google.common.collect.Lists;
 
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.security.json.CreateGroupJson;
+import com.enonic.xp.admin.impl.rest.resource.security.json.CreateIdProviderJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.CreateRoleJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.CreateUserJson;
-import com.enonic.xp.admin.impl.rest.resource.security.json.CreateUserStoreJson;
+import com.enonic.xp.admin.impl.rest.resource.security.json.DeleteIdProviderJson;
+import com.enonic.xp.admin.impl.rest.resource.security.json.DeleteIdProviderResultJson;
+import com.enonic.xp.admin.impl.rest.resource.security.json.DeleteIdProvidersResultJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.DeletePrincipalJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.DeletePrincipalResultJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.DeletePrincipalsResultJson;
-import com.enonic.xp.admin.impl.rest.resource.security.json.DeleteUserStoreJson;
-import com.enonic.xp.admin.impl.rest.resource.security.json.DeleteUserStoreResultJson;
-import com.enonic.xp.admin.impl.rest.resource.security.json.DeleteUserStoresResultJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.EmailAvailabilityJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.FetchPrincipalsByKeysJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.FindPrincipalsResultJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.FindPrincipalsWithRolesResultJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.GroupJson;
+import com.enonic.xp.admin.impl.rest.resource.security.json.IdProviderJson;
+import com.enonic.xp.admin.impl.rest.resource.security.json.IdProvidersJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.PrincipalJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.RoleJson;
-import com.enonic.xp.admin.impl.rest.resource.security.json.SyncUserStoreJson;
-import com.enonic.xp.admin.impl.rest.resource.security.json.SyncUserStoreResultJson;
-import com.enonic.xp.admin.impl.rest.resource.security.json.SyncUserStoresResultJson;
+import com.enonic.xp.admin.impl.rest.resource.security.json.SyncIdProviderJson;
+import com.enonic.xp.admin.impl.rest.resource.security.json.SyncIdProviderResultJson;
+import com.enonic.xp.admin.impl.rest.resource.security.json.SyncIdProvidersResultJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UpdateGroupJson;
+import com.enonic.xp.admin.impl.rest.resource.security.json.UpdateIdProviderJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UpdatePasswordJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UpdateRoleJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UpdateUserJson;
-import com.enonic.xp.admin.impl.rest.resource.security.json.UpdateUserStoreJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UserJson;
-import com.enonic.xp.admin.impl.rest.resource.security.json.UserStoreJson;
-import com.enonic.xp.admin.impl.rest.resource.security.json.UserStoresJson;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.idprovider.IdProviderDescriptor;
 import com.enonic.xp.idprovider.IdProviderDescriptorMode;
@@ -62,7 +62,10 @@ import com.enonic.xp.jaxrs.JaxRsExceptions;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 import com.enonic.xp.security.Group;
+import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.security.IdProviderConfig;
+import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.security.IdProviders;
 import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
@@ -76,10 +79,7 @@ import com.enonic.xp.security.Role;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
-import com.enonic.xp.security.UserStore;
-import com.enonic.xp.security.UserStoreKey;
-import com.enonic.xp.security.UserStores;
-import com.enonic.xp.security.acl.UserStoreAccessControlList;
+import com.enonic.xp.security.acl.IdProviderAccessControlList;
 
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang.StringUtils.isBlank;
@@ -101,86 +101,86 @@ public final class SecurityResource
 
     @GET
     @Path("userstore/list")
-    public UserStoresJson getUserStores()
+    public IdProvidersJson getUserStores()
     {
-        final UserStores userStores = securityService.getUserStores();
-        return new UserStoresJson( userStores );
+        final IdProviders idProviders = securityService.getIdProviders();
+        return new IdProvidersJson( idProviders );
     }
 
     @GET
     @Path("userstore")
-    public UserStoreJson getUserStore( @QueryParam("key") final String keyParam )
+    public IdProviderJson getUserStore( @QueryParam("key") final String keyParam )
     {
         if ( keyParam == null )
         {
             return null;
         }
 
-        final UserStoreKey userStoreKey = UserStoreKey.from( keyParam );
-        final UserStore userStore = securityService.getUserStore( userStoreKey );
-        if ( userStore == null )
+        final IdProviderKey idProviderKey = IdProviderKey.from( keyParam );
+        final IdProvider idProvider = securityService.getIdProvider( idProviderKey );
+        if ( idProvider == null )
         {
             throw JaxRsExceptions.notFound( String.format( "User Store [%s] not found", keyParam ) );
         }
 
-        final IdProviderDescriptorMode idProviderMode = retrieveIdProviderMode( userStore );
-        final UserStoreAccessControlList userStorePermissions = securityService.getUserStorePermissions( userStoreKey );
+        final IdProviderDescriptorMode idProviderMode = retrieveIdProviderMode( idProvider );
+        final IdProviderAccessControlList idProviderPermissions = securityService.getIdProviderPermissions( idProviderKey );
 
-        final Principals principals = securityService.getPrincipals( userStorePermissions.getAllPrincipals() );
-        return new UserStoreJson( userStore, idProviderMode, userStorePermissions, principals );
+        final Principals principals = securityService.getPrincipals( idProviderPermissions.getAllPrincipals() );
+        return new IdProviderJson( idProvider, idProviderMode, idProviderPermissions, principals );
     }
 
     @GET
     @Path("userstore/default")
-    public UserStoreJson getDefaultUserStore()
+    public IdProviderJson getDefaultUserStore()
     {
-        final UserStore userStore = UserStore.create().displayName( "" ).key( UserStoreKey.createDefault() ).build();
+        final IdProvider idProvider = IdProvider.create().displayName( "" ).key( IdProviderKey.createDefault() ).build();
 
-        final UserStoreAccessControlList userStorePermissions = securityService.getDefaultUserStorePermissions();
+        final IdProviderAccessControlList idProviderPermissions = securityService.getDefaultIdProviderPermissions();
 
-        final IdProviderDescriptorMode idProviderMode = retrieveIdProviderMode( userStore );
-        final Principals principals = securityService.getPrincipals( userStorePermissions.getAllPrincipals() );
-        return new UserStoreJson( userStore, idProviderMode, userStorePermissions, principals );
+        final IdProviderDescriptorMode idProviderMode = retrieveIdProviderMode( idProvider );
+        final Principals principals = securityService.getPrincipals( idProviderPermissions.getAllPrincipals() );
+        return new IdProviderJson( idProvider, idProviderMode, idProviderPermissions, principals );
     }
 
     @POST
     @Path("userstore/create")
-    public UserStoreJson createUserStore( final CreateUserStoreJson params )
+    public IdProviderJson createUserStore( final CreateIdProviderJson params )
     {
-        final UserStore userStore = securityService.createUserStore( params.getCreateUserStoreParams() );
-        final UserStoreAccessControlList permissions = securityService.getUserStorePermissions( userStore.getKey() );
+        final IdProvider idProvider = securityService.createIdProvider( params.getCreateIdProviderParams() );
+        final IdProviderAccessControlList permissions = securityService.getIdProviderPermissions( idProvider.getKey() );
 
-        final IdProviderDescriptorMode idProviderMode = retrieveIdProviderMode( userStore );
+        final IdProviderDescriptorMode idProviderMode = retrieveIdProviderMode( idProvider );
         final Principals principals = securityService.getPrincipals( permissions.getAllPrincipals() );
-        return new UserStoreJson( userStore, idProviderMode, permissions, principals );
+        return new IdProviderJson( idProvider, idProviderMode, permissions, principals );
     }
 
     @POST
     @Path("userstore/update")
-    public UserStoreJson updateUserStore( final UpdateUserStoreJson params )
+    public IdProviderJson updateUserStore( final UpdateIdProviderJson params )
     {
-        final UserStore userStore = securityService.updateUserStore( params.getUpdateUserStoreParams() );
-        final UserStoreAccessControlList permissions = securityService.getUserStorePermissions( userStore.getKey() );
+        final IdProvider idProvider = securityService.updateIdProvider( params.getUpdateIdProviderParams() );
+        final IdProviderAccessControlList permissions = securityService.getIdProviderPermissions( idProvider.getKey() );
 
-        final IdProviderDescriptorMode idProviderMode = retrieveIdProviderMode( userStore );
+        final IdProviderDescriptorMode idProviderMode = retrieveIdProviderMode( idProvider );
         final Principals principals = securityService.getPrincipals( permissions.getAllPrincipals() );
-        return new UserStoreJson( userStore, idProviderMode, permissions, principals );
+        return new IdProviderJson( idProvider, idProviderMode, permissions, principals );
     }
 
     @POST
     @Path("userstore/delete")
-    public DeleteUserStoresResultJson deleteUserStore( final DeleteUserStoreJson params )
+    public DeleteIdProvidersResultJson deleteUserStore( final DeleteIdProviderJson params )
     {
-        final DeleteUserStoresResultJson resultsJson = new DeleteUserStoresResultJson();
-        params.getKeys().stream().map( UserStoreKey::from ).forEach( ( userStoreKey ) -> {
+        final DeleteIdProvidersResultJson resultsJson = new DeleteIdProvidersResultJson();
+        params.getKeys().stream().map( IdProviderKey::from ).forEach( ( idProviderKey ) -> {
             try
             {
-                securityService.deleteUserStore( userStoreKey );
-                resultsJson.add( DeleteUserStoreResultJson.success( userStoreKey ) );
+                securityService.deleteIdProvider( idProviderKey );
+                resultsJson.add( DeleteIdProviderResultJson.success( idProviderKey ) );
             }
             catch ( Exception e )
             {
-                resultsJson.add( DeleteUserStoreResultJson.failure( userStoreKey, e.getMessage() ) );
+                resultsJson.add( DeleteIdProviderResultJson.failure( idProviderKey, e.getMessage() ) );
             }
         } );
         return resultsJson;
@@ -188,23 +188,23 @@ public final class SecurityResource
 
     @POST
     @Path("userstore/sync")
-    public SyncUserStoresResultJson synchUserStore( final SyncUserStoreJson params, @Context HttpServletRequest httpRequest )
+    public SyncIdProvidersResultJson synchUserStore( final SyncIdProviderJson params, @Context HttpServletRequest httpRequest )
     {
-        final SyncUserStoresResultJson resultsJson = new SyncUserStoresResultJson();
-        params.getKeys().stream().map( UserStoreKey::from ).forEach( ( userStoreKey ) -> {
+        final SyncIdProvidersResultJson resultsJson = new SyncIdProvidersResultJson();
+        params.getKeys().stream().map( IdProviderKey::from ).forEach( ( idProviderKey ) -> {
             try
             {
                 final IdProviderControllerExecutionParams syncParams = IdProviderControllerExecutionParams.create().
-                    userStoreKey( userStoreKey ).
+                    idProviderKey( idProviderKey ).
                     functionName( "sync" ).
                     servletRequest( httpRequest ).
                     build();
                 idProviderControllerService.execute( syncParams );
-                resultsJson.add( SyncUserStoreResultJson.success( userStoreKey ) );
+                resultsJson.add( SyncIdProviderResultJson.success( idProviderKey ) );
             }
             catch ( Exception e )
             {
-                resultsJson.add( SyncUserStoreResultJson.failure( userStoreKey, e.getMessage() ) );
+                resultsJson.add( SyncIdProviderResultJson.failure( idProviderKey, e.getMessage() ) );
             }
         } );
         return resultsJson;
@@ -234,7 +234,7 @@ public final class SecurityResource
     @GET
     @Path("principals")
     public FindPrincipalsResultJson findPrincipals( @QueryParam("types") final String types, @QueryParam("query") final String query,
-                                                    @QueryParam("userStoreKey") final String storeKey,
+                                                    @QueryParam("idProviderKey") final String storeKey,
                                                     @QueryParam("from") final Integer from, @QueryParam("size") final Integer size )
     {
 
@@ -247,7 +247,7 @@ public final class SecurityResource
 
         if ( StringUtils.isNotEmpty( storeKey ) )
         {
-            principalQuery.userStore( UserStoreKey.from( storeKey ) );
+            principalQuery.idProvider( IdProviderKey.from( storeKey ) );
         }
 
         if ( from != null )
@@ -269,7 +269,7 @@ public final class SecurityResource
     public FindPrincipalsWithRolesResultJson findPrincipals( @QueryParam("types") final String types,
                                                              @QueryParam("roles") final String roles,
                                                              @QueryParam("query") final String query,
-                                                             @QueryParam("userStoreKey") final String storeKey,
+                                                             @QueryParam("idProviderKey") final String storeKey,
                                                              @QueryParam("from") final Integer from,
                                                              @QueryParam("size") final Integer size )
     {
@@ -282,7 +282,7 @@ public final class SecurityResource
 
         if ( StringUtils.isNotEmpty( storeKey ) )
         {
-            principalQuery.userStore( UserStoreKey.from( storeKey ) );
+            principalQuery.idProvider( IdProviderKey.from( storeKey ) );
         }
 
         FetchPrincipalsWithRolesResult fwResult =
@@ -419,15 +419,16 @@ public final class SecurityResource
 
     @GET
     @Path("principals/emailAvailable")
-    public EmailAvailabilityJson isEmailAvailable( @QueryParam("userStoreKey") final String userStoreKeyParam,
+    public EmailAvailabilityJson isEmailAvailable( @QueryParam("idProviderKey") final String idProviderKeyParam,
                                                    @QueryParam("email") final String email )
     {
         if ( isBlank( email ) )
         {
             throw new WebApplicationException( "Expected email parameter" );
         }
-        final UserStoreKey userStoreKey = isBlank( userStoreKeyParam ) ? UserStoreKey.system() : UserStoreKey.from( userStoreKeyParam );
-        final PrincipalQuery query = PrincipalQuery.create().email( email ).userStore( userStoreKey ).build();
+        final IdProviderKey idProviderKey =
+            isBlank( idProviderKeyParam ) ? IdProviderKey.system() : IdProviderKey.from( idProviderKeyParam );
+        final PrincipalQuery query = PrincipalQuery.create().email( email ).idProvider( idProviderKey ).build();
         final PrincipalQueryResult queryResult = securityService.query( query );
         return new EmailAvailabilityJson( queryResult.isEmpty() );
     }
@@ -613,9 +614,9 @@ public final class SecurityResource
         return PrincipalKeys.from( members );
     }
 
-    private IdProviderDescriptorMode retrieveIdProviderMode( UserStore userStore )
+    private IdProviderDescriptorMode retrieveIdProviderMode( IdProvider idProvider )
     {
-        final IdProviderConfig idProviderConfig = userStore.getIdProviderConfig();
+        final IdProviderConfig idProviderConfig = idProvider.getIdProviderConfig();
         final ApplicationKey idProviderKey = idProviderConfig == null ? null : idProviderConfig.getApplicationKey();
         final IdProviderDescriptor idProviderDescriptor =
             idProviderKey == null ? null : idProviderDescriptorService.getDescriptor( idProviderKey );

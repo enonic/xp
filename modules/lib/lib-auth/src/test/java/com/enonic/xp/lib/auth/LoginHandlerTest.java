@@ -9,11 +9,11 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.security.IdProvider;
+import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.security.IdProviders;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.security.UserStore;
-import com.enonic.xp.security.UserStoreKey;
-import com.enonic.xp.security.UserStores;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.AuthenticationToken;
 import com.enonic.xp.security.auth.EmailPasswordAuthToken;
@@ -44,11 +44,11 @@ public class LoginHandlerTest
     {
         final AuthenticationInfo authInfo = TestDataFixtures.createAuthenticationInfo();
 
-        final UserStores userStores =
-            UserStores.from( UserStore.create().displayName( "system" ).key( UserStoreKey.from( "system" ) ).build() );
+        final IdProviders idProviders =
+            IdProviders.from( IdProvider.create().displayName( "system" ).key( IdProviderKey.from( "system" ) ).build() );
 
         Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
-        Mockito.when( this.securityService.getUserStores() ).thenReturn( userStores );
+        Mockito.when( this.securityService.getIdProviders() ).thenReturn( idProviders );
 
         runScript( "/site/lib/xp/examples/auth/login.js" );
     }
@@ -69,17 +69,17 @@ public class LoginHandlerTest
     }
 
     @Test
-    public void testLoginNoUserStore()
+    public void testLoginNoIdProviders()
     {
-        final UserStores userStores =
-            UserStores.from( UserStore.create().displayName( "system" ).key( UserStoreKey.from( "system" ) ).build() );
+        final IdProviders idProviders =
+            IdProviders.from( IdProvider.create().displayName( "system" ).key( IdProviderKey.from( "system" ) ).build() );
 
         final AuthenticationInfo authInfo = TestDataFixtures.createAuthenticationInfo();
 
         Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
-        Mockito.when( this.securityService.getUserStores() ).thenReturn( userStores );
+        Mockito.when( this.securityService.getIdProviders() ).thenReturn( idProviders );
 
-        runFunction( "/site/test/login-test.js", "loginNoUserStore" );
+        runFunction( "/site/test/login-test.js", "loginNoIdProvider" );
 
         final Session session = ContextAccessor.current().getLocalScope().getSession();
         final AuthenticationInfo sessionAuthInfo = session.getAttribute( AuthenticationInfo.class );
@@ -87,13 +87,13 @@ public class LoginHandlerTest
     }
 
     @Test
-    public void testLoginMultipleUserStore()
+    public void testLoginMultipleIdProvider()
     {
         final AuthenticationInfo authInfo = TestDataFixtures.createAuthenticationInfo();
 
         Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
 
-        runFunction( "/site/test/login-test.js", "loginMultipleUserStore" );
+        runFunction( "/site/test/login-test.js", "loginMultipleIdProvider" );
 
         final Session session = ContextAccessor.current().getLocalScope().getSession();
         final AuthenticationInfo sessionAuthInfo = session.getAttribute( AuthenticationInfo.class );
@@ -115,33 +115,33 @@ public class LoginHandlerTest
     }
 
     @Test
-    public void testLoginMultipleUserStoresInOrder()
+    public void testLoginMultipleIdProvidersInOrder()
     {
-        final UserStore userStore1 = UserStore.create().displayName( "User Store 1" ).key( UserStoreKey.from( "userstore1" ) ).build();
-        final UserStore userStore3 = UserStore.create().displayName( "User Store 3" ).key( UserStoreKey.from( "userstore3" ) ).build();
-        final UserStore userStore2 = UserStore.create().displayName( "User Store 2" ).key( UserStoreKey.from( "userstore2" ) ).build();
-        final UserStores userStores = UserStores.from( userStore1, userStore3, userStore2 );
+        final IdProvider idProvider1 = IdProvider.create().displayName( "User Store 1" ).key( IdProviderKey.from( "userstore1" ) ).build();
+        final IdProvider idProvider3 = IdProvider.create().displayName( "User Store 3" ).key( IdProviderKey.from( "userstore3" ) ).build();
+        final IdProvider idProvider2 = IdProvider.create().displayName( "User Store 2" ).key( IdProviderKey.from( "userstore2" ) ).build();
+        final IdProviders idProviders = IdProviders.from( idProvider1, idProvider3, idProvider2 );
 
         final AuthenticationInfo authInfo = TestDataFixtures.createAuthenticationInfo();
 
         final EmailPasswordAuthToken expectedAuthToken = new EmailPasswordAuthToken();
         expectedAuthToken.setEmail( "user1@enonic.com" );
         expectedAuthToken.setPassword( "pwd123" );
-        expectedAuthToken.setUserStore( userStore3.getKey() );
+        expectedAuthToken.setIdProvider( idProvider3.getKey() );
 
         final AuthTokenMatcher matcher = new AuthTokenMatcher( expectedAuthToken );
         Mockito.when( this.securityService.authenticate( Mockito.argThat( matcher ) ) ).thenReturn( authInfo );
-        Mockito.when( this.securityService.getUserStores() ).thenReturn( userStores );
+        Mockito.when( this.securityService.getIdProviders() ).thenReturn( idProviders );
 
-        runFunction( "/site/test/login-test.js", "loginMultipleUserStoresInOrder" );
+        runFunction( "/site/test/login-test.js", "loginMultipleIdProvidersInOrder" );
 
         final Session session = ContextAccessor.current().getLocalScope().getSession();
         final AuthenticationInfo sessionAuthInfo = session.getAttribute( AuthenticationInfo.class );
         Assert.assertEquals( authInfo, sessionAuthInfo );
-        Assert.assertEquals( 3, matcher.loginUserStoreAttempts.size());
-        Assert.assertEquals( "userstore1", matcher.loginUserStoreAttempts.get( 0 ).toString() );
-        Assert.assertEquals( "userstore2", matcher.loginUserStoreAttempts.get( 1 ).toString() );
-        Assert.assertEquals( "userstore3", matcher.loginUserStoreAttempts.get( 2 ).toString() );
+        Assert.assertEquals( 3, matcher.loginIdProviderAttempts.size() );
+        Assert.assertEquals( "userstore1", matcher.loginIdProviderAttempts.get( 0 ).toString() );
+        Assert.assertEquals( "userstore2", matcher.loginIdProviderAttempts.get( 1 ).toString() );
+        Assert.assertEquals( "userstore3", matcher.loginIdProviderAttempts.get( 2 ).toString() );
     }
 
     private class AuthTokenMatcher
@@ -154,7 +154,7 @@ public class LoginHandlerTest
             this.thisObject = thisObject;
         }
 
-        List<UserStoreKey> loginUserStoreAttempts = new ArrayList<>();
+        List<IdProviderKey> loginIdProviderAttempts = new ArrayList<>();
 
         @Override
         public boolean matches( Object argument )
@@ -165,10 +165,10 @@ public class LoginHandlerTest
             }
 
             final EmailPasswordAuthToken authToken = (EmailPasswordAuthToken) argument;
-            loginUserStoreAttempts.add( authToken.getUserStore() );
+            loginIdProviderAttempts.add( authToken.getIdProvider() );
 
             return thisObject.getClass().equals( authToken.getClass() ) &&
-                this.thisObject.getUserStore().equals( authToken.getUserStore() ) &&
+                this.thisObject.getIdProvider().equals( authToken.getIdProvider() ) &&
                 this.thisObject.getEmail().equals( authToken.getEmail() ) &&
                 this.thisObject.getPassword().equals( authToken.getPassword() );
         }

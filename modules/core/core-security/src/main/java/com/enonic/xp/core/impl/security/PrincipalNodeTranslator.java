@@ -101,7 +101,7 @@ abstract class PrincipalNodeTranslator
         data.setString( PrincipalPropertyNames.PRINCIPAL_TYPE_KEY, principal.getKey().getType().toString() );
         if ( !principal.getKey().isRole() )
         {
-            data.setString( PrincipalPropertyNames.USER_STORE_KEY, principal.getKey().getUserStore().toString() );
+            data.setString( PrincipalPropertyNames.USER_STORE_KEY, principal.getKey().getIdProviderKey().toString() );
         }
 
         switch ( principal.getKey().getType() )

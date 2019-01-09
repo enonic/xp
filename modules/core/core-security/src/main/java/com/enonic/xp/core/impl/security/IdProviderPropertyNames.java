@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.security;
 
-final class UserStorePropertyNames
+final class IdProviderPropertyNames
 {
     public static final String DISPLAY_NAME_KEY = "displayName";
 

@@ -9,13 +9,13 @@ import com.enonic.xp.security.PrincipalKey;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @Beta
-public final class UserStoreAccessControlEntry
+public final class IdProviderAccessControlEntry
 {
     private final PrincipalKey principal;
 
-    private final UserStoreAccess access;
+    private final IdProviderAccess access;
 
-    private UserStoreAccessControlEntry( final Builder builder )
+    private IdProviderAccessControlEntry( final Builder builder )
     {
         this.principal = checkNotNull( builder.principal, "principal cannot be null" );
         this.access = checkNotNull( builder.access, "access cannot be null" );
@@ -26,9 +26,9 @@ public final class UserStoreAccessControlEntry
         return principal;
     }
 
-    public UserStoreAccess getAccess()
+    public static Builder create( final IdProviderAccessControlEntry ace )
     {
-        return access;
+        return new Builder( ace );
     }
 
     @Override
@@ -37,19 +37,9 @@ public final class UserStoreAccessControlEntry
         return principal.toString() + "[" + access.toString().toLowerCase() + "]";
     }
 
-    @Override
-    public boolean equals( final Object o )
+    public IdProviderAccess getAccess()
     {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( !( o instanceof UserStoreAccessControlEntry ) )
-        {
-            return false;
-        }
-        final UserStoreAccessControlEntry that = (UserStoreAccessControlEntry) o;
-        return this.principal.equals( that.principal ) && this.access == that.access;
+        return access;
     }
 
     @Override
@@ -63,22 +53,32 @@ public final class UserStoreAccessControlEntry
         return new Builder();
     }
 
-    public static Builder create( final UserStoreAccessControlEntry ace )
+    @Override
+    public boolean equals( final Object o )
     {
-        return new Builder( ace );
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( !( o instanceof IdProviderAccessControlEntry ) )
+        {
+            return false;
+        }
+        final IdProviderAccessControlEntry that = (IdProviderAccessControlEntry) o;
+        return this.principal.equals( that.principal ) && this.access == that.access;
     }
 
     public static class Builder
     {
         private PrincipalKey principal;
 
-        private UserStoreAccess access;
+        private IdProviderAccess access;
 
         private Builder()
         {
         }
 
-        private Builder( final UserStoreAccessControlEntry ace )
+        private Builder( final IdProviderAccessControlEntry ace )
         {
             this.principal = ace.principal;
             this.access = ace.access;
@@ -90,15 +90,15 @@ public final class UserStoreAccessControlEntry
             return this;
         }
 
-        public Builder access( final UserStoreAccess access )
+        public Builder access( final IdProviderAccess access )
         {
             this.access = access;
             return this;
         }
 
-        public UserStoreAccessControlEntry build()
+        public IdProviderAccessControlEntry build()
         {
-            return new UserStoreAccessControlEntry( this );
+            return new IdProviderAccessControlEntry( this );
         }
     }
 

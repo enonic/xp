@@ -15,18 +15,22 @@ import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.security.IdProviderConfig;
+import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.security.IdProviders;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
-import com.enonic.xp.security.UserStore;
-import com.enonic.xp.security.UserStoreKey;
-import com.enonic.xp.security.UserStores;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
-import com.enonic.xp.security.acl.UserStoreAccess;
-import com.enonic.xp.security.acl.UserStoreAccessControlEntry;
-import com.enonic.xp.security.acl.UserStoreAccessControlList;
+import com.enonic.xp.security.acl.IdProviderAccess;
+import com.enonic.xp.security.acl.IdProviderAccessControlEntry;
+import com.enonic.xp.security.acl.IdProviderAccessControlList;
 
+import static com.enonic.xp.security.acl.IdProviderAccess.ADMINISTRATOR;
+import static com.enonic.xp.security.acl.IdProviderAccess.CREATE_USERS;
+import static com.enonic.xp.security.acl.IdProviderAccess.USER_STORE_MANAGER;
+import static com.enonic.xp.security.acl.IdProviderAccess.WRITE_USERS;
 import static com.enonic.xp.security.acl.Permission.CREATE;
 import static com.enonic.xp.security.acl.Permission.DELETE;
 import static com.enonic.xp.security.acl.Permission.MODIFY;
@@ -34,12 +38,8 @@ import static com.enonic.xp.security.acl.Permission.PUBLISH;
 import static com.enonic.xp.security.acl.Permission.READ;
 import static com.enonic.xp.security.acl.Permission.READ_PERMISSIONS;
 import static com.enonic.xp.security.acl.Permission.WRITE_PERMISSIONS;
-import static com.enonic.xp.security.acl.UserStoreAccess.ADMINISTRATOR;
-import static com.enonic.xp.security.acl.UserStoreAccess.CREATE_USERS;
-import static com.enonic.xp.security.acl.UserStoreAccess.USER_STORE_MANAGER;
-import static com.enonic.xp.security.acl.UserStoreAccess.WRITE_USERS;
 
-abstract class UserStoreNodeTranslator
+abstract class IdProviderNodeTranslator
 {
     final static String USER_FOLDER_NODE_NAME = "users";
 
@@ -53,94 +53,95 @@ abstract class UserStoreNodeTranslator
 
     static NodePath getRolesNodePath()
     {
-        return NodePath.create( getUserStoresParentPath(), PrincipalKey.ROLES_NODE_NAME ).build();
+        return NodePath.create( getIdProvidersParentPath(), PrincipalKey.ROLES_NODE_NAME ).build();
     }
 
-    static NodePath getUserStoresParentPath()
+    static NodePath getIdProvidersParentPath()
     {
         return USER_STORE_PARENT_PATH;
     }
 
-    static UserStoreKey toKey( final Node node )
+    static IdProviderKey toKey( final Node node )
     {
-        final String userStoreId = node.name().toString();
-        return UserStoreKey.from( userStoreId );
+        final String idProviderId = node.name().toString();
+        return IdProviderKey.from( idProviderId );
     }
 
-    static NodePath toUserStoreNodePath( final UserStoreKey userStoreKey )
+    static NodePath toIdProviderNodePath( final IdProviderKey idProviderKey )
     {
-        final NodePath userStoreParentPath = UserStoreNodeTranslator.getUserStoresParentPath();
-        return new NodePath( userStoreParentPath, NodeName.from( userStoreKey.toString() ) );
+        final NodePath idProviderParentPath = IdProviderNodeTranslator.getIdProvidersParentPath();
+        return new NodePath( idProviderParentPath, NodeName.from( idProviderKey.toString() ) );
     }
 
-    static NodePath toUserStoreUsersNodePath( final UserStoreKey userStoreKey )
+    static NodePath toIdProviderUsersNodePath( final IdProviderKey idProviderKey )
     {
-        return new NodePath( toUserStoreNodePath( userStoreKey ), NodeName.from( USER_FOLDER_NODE_NAME ) );
+        return new NodePath( toIdProviderNodePath( idProviderKey ), NodeName.from( USER_FOLDER_NODE_NAME ) );
     }
 
-    static NodePath toUserStoreGroupsNodePath( final UserStoreKey userStoreKey )
+    static NodePath toIdProviderGroupsNodePath( final IdProviderKey idProviderKey )
     {
-        return new NodePath( toUserStoreNodePath( userStoreKey ), NodeName.from( GROUP_FOLDER_NODE_NAME ) );
+        return new NodePath( toIdProviderNodePath( idProviderKey ), NodeName.from( GROUP_FOLDER_NODE_NAME ) );
     }
 
-    static UserStores fromNodes( final Nodes nodes )
+    static IdProviders fromNodes( final Nodes nodes )
     {
-        final UserStore[] userStores = nodes.stream().
-            map( UserStoreNodeTranslator::createUserStoreFromNode ).
+        final IdProvider[] idProviders = nodes.stream().
+            map( IdProviderNodeTranslator::createIdProviderFromNode ).
             filter( Objects::nonNull ).
-            toArray( UserStore[]::new );
-        return UserStores.from( userStores );
+            toArray( IdProvider[]::new );
+        return IdProviders.from( idProviders );
     }
 
-    static UserStore fromNode( final Node node )
+    static IdProvider fromNode( final Node node )
     {
-        return createUserStoreFromNode( node );
+        return createIdProviderFromNode( node );
     }
 
-    static UserStoreAccessControlList userStorePermissionsFromNode( final Node userStoreNode, final Node usersNode, final Node groupsNode )
+    static IdProviderAccessControlList idProviderPermissionsFromNode( final Node idProviderNode, final Node usersNode,
+                                                                      final Node groupsNode )
     {
-        final UserStoreAccessControlList.Builder acl = UserStoreAccessControlList.create();
+        final IdProviderAccessControlList.Builder acl = IdProviderAccessControlList.create();
 
-        final AccessControlList userStorePermissions = userStoreNode.getPermissions();
+        final AccessControlList idProviderPermissions = idProviderNode.getPermissions();
         final AccessControlList usersPermissions = usersNode.getPermissions();
         final AccessControlList groupsPermissions = groupsNode.getPermissions();
 
-        final PrincipalKeys principals = PrincipalKeys.from( userStorePermissions.getAllPrincipals(), usersPermissions.getAllPrincipals(),
+        final PrincipalKeys principals = PrincipalKeys.from( idProviderPermissions.getAllPrincipals(), usersPermissions.getAllPrincipals(),
                                                              groupsPermissions.getAllPrincipals() );
         for ( PrincipalKey principal : principals )
         {
-            if ( userStorePermissions.isAllowedFor( principal, READ, CREATE, MODIFY, DELETE, PUBLISH, READ_PERMISSIONS,
-                                                    WRITE_PERMISSIONS ) &&
+            if ( idProviderPermissions.isAllowedFor( principal, READ, CREATE, MODIFY, DELETE, PUBLISH, READ_PERMISSIONS,
+                                                     WRITE_PERMISSIONS ) &&
                 usersPermissions.isAllowedFor( principal, READ, CREATE, MODIFY, DELETE, PUBLISH, READ_PERMISSIONS, WRITE_PERMISSIONS ) &&
                 groupsPermissions.isAllowedFor( principal, READ, CREATE, MODIFY, DELETE, PUBLISH, READ_PERMISSIONS, WRITE_PERMISSIONS ) )
             {
-                final UserStoreAccessControlEntry access = UserStoreAccessControlEntry.create().
+                final IdProviderAccessControlEntry access = IdProviderAccessControlEntry.create().
                     principal( principal ).access( ADMINISTRATOR ).build();
                 acl.add( access );
             }
             else if ( usersPermissions.isAllowedFor( principal, READ, CREATE, MODIFY, DELETE ) &&
                 groupsPermissions.isAllowedFor( principal, READ, CREATE, MODIFY, DELETE ) )
             {
-                final UserStoreAccessControlEntry access = UserStoreAccessControlEntry.create().
+                final IdProviderAccessControlEntry access = IdProviderAccessControlEntry.create().
                     principal( principal ).access( USER_STORE_MANAGER ).build();
                 acl.add( access );
             }
             else if ( usersPermissions.isAllowedFor( principal, READ, CREATE, MODIFY, DELETE ) )
             {
-                final UserStoreAccessControlEntry access = UserStoreAccessControlEntry.create().
+                final IdProviderAccessControlEntry access = IdProviderAccessControlEntry.create().
                     principal( principal ).access( WRITE_USERS ).build();
                 acl.add( access );
             }
             else if ( usersPermissions.isAllowedFor( principal, CREATE ) )
             {
-                final UserStoreAccessControlEntry access = UserStoreAccessControlEntry.create().
+                final IdProviderAccessControlEntry access = IdProviderAccessControlEntry.create().
                     principal( principal ).access( CREATE_USERS ).build();
                 acl.add( access );
             }
             else if ( usersPermissions.isAllowedFor( principal, READ ) )
             {
-                final UserStoreAccessControlEntry access = UserStoreAccessControlEntry.create().
-                    principal( principal ).access( UserStoreAccess.READ ).build();
+                final IdProviderAccessControlEntry access = IdProviderAccessControlEntry.create().
+                    principal( principal ).access( IdProviderAccess.READ ).build();
                 acl.add( access );
             }
         }
@@ -148,10 +149,10 @@ abstract class UserStoreNodeTranslator
         return acl.build();
     }
 
-    static AccessControlList userStorePermissionsToUserStoreNodePermissions( final UserStoreAccessControlList userStorePermissions )
+    static AccessControlList idProviderPermissionsToIdProviderNodePermissions( final IdProviderAccessControlList idProviderPermissions )
     {
         final List<AccessControlEntry> entries = new ArrayList<>();
-        for ( UserStoreAccessControlEntry entry : userStorePermissions )
+        for ( IdProviderAccessControlEntry entry : idProviderPermissions )
         {
             if ( entry.getAccess() == ADMINISTRATOR )
             {
@@ -163,10 +164,10 @@ abstract class UserStoreNodeTranslator
         return AccessControlList.create().addAll( entries ).build();
     }
 
-    static AccessControlList userStorePermissionsToUsersNodePermissions( final UserStoreAccessControlList userStorePermissions )
+    static AccessControlList idProviderPermissionsToUsersNodePermissions( final IdProviderAccessControlList idProviderPermissions )
     {
         final List<AccessControlEntry> entries = new ArrayList<>();
-        for ( UserStoreAccessControlEntry entry : userStorePermissions )
+        for ( IdProviderAccessControlEntry entry : idProviderPermissions )
         {
             final AccessControlEntry ace;
             switch ( entry.getAccess() )
@@ -201,10 +202,10 @@ abstract class UserStoreNodeTranslator
         return AccessControlList.create().addAll( entries ).build();
     }
 
-    static AccessControlList userStorePermissionsToGroupsNodePermissions( final UserStoreAccessControlList userStorePermissions )
+    static AccessControlList idProviderPermissionsToGroupsNodePermissions( final IdProviderAccessControlList idProviderPermissions )
     {
         final List<AccessControlEntry> entries = new ArrayList<>();
-        for ( UserStoreAccessControlEntry entry : userStorePermissions )
+        for ( IdProviderAccessControlEntry entry : idProviderPermissions )
         {
             final AccessControlEntry ace;
             switch ( entry.getAccess() )
@@ -224,39 +225,39 @@ abstract class UserStoreNodeTranslator
         return AccessControlList.create().addAll( entries ).build();
     }
 
-    static UpdateNodeParams toUpdateNodeParams( final UserStore userStore, final NodeId nodeId )
+    static UpdateNodeParams toUpdateNodeParams( final IdProvider idProvider, final NodeId nodeId )
     {
         return UpdateNodeParams.create().
             id( nodeId ).
             editor( editableNode -> {
                 final PropertyTree nodeData = editableNode.data;
-                nodeData.setString( UserStorePropertyNames.DISPLAY_NAME_KEY, userStore.getDisplayName() );
-                nodeData.setString( UserStorePropertyNames.DESCRIPTION_KEY, userStore.getDescription() );
+                nodeData.setString( IdProviderPropertyNames.DISPLAY_NAME_KEY, idProvider.getDisplayName() );
+                nodeData.setString( IdProviderPropertyNames.DESCRIPTION_KEY, idProvider.getDescription() );
 
-                final IdProviderConfig idProviderConfig = userStore.getIdProviderConfig();
+                final IdProviderConfig idProviderConfig = idProvider.getIdProviderConfig();
                 if ( idProviderConfig == null )
                 {
-                    if ( nodeData.hasProperty( UserStorePropertyNames.APPLICATION ) )
+                    if ( nodeData.hasProperty( IdProviderPropertyNames.APPLICATION ) )
                     {
-                        nodeData.removeProperty( UserStorePropertyNames.APPLICATION );
+                        nodeData.removeProperty( IdProviderPropertyNames.APPLICATION );
                     }
                 }
                 else
                 {
-                    nodeData.setString( UserStorePropertyNames.ID_PROVIDER_APPLICATION_KEY,
+                    nodeData.setString( IdProviderPropertyNames.ID_PROVIDER_APPLICATION_KEY,
                                         idProviderConfig.getApplicationKey().toString() );
-                    nodeData.setSet( UserStorePropertyNames.ID_PROVIDER_CONFIG_FORM_KEY, idProviderConfig.getConfig().getRoot() );
+                    nodeData.setSet( IdProviderPropertyNames.ID_PROVIDER_CONFIG_FORM_KEY, idProviderConfig.getConfig().getRoot() );
                 }
             } ).
             build();
     }
 
-    static UpdateNodeParams removeAllRelationshipsToUpdateNodeParams( final Node userStoreNode )
+    static UpdateNodeParams removeAllRelationshipsToUpdateNodeParams( final Node idProviderNode )
     {
-        Preconditions.checkNotNull( userStoreNode );
+        Preconditions.checkNotNull( idProviderNode );
 
         return UpdateNodeParams.create().
-            id( userStoreNode.id() ).
+            id( idProviderNode.id() ).
             editor( editableNode -> {
                 final PropertyTree data = editableNode.data;
                 data.removeProperties( PrincipalPropertyNames.MEMBER_KEY );
@@ -264,7 +265,7 @@ abstract class UserStoreNodeTranslator
             build();
     }
 
-    private static UserStore createUserStoreFromNode( final Node node )
+    private static IdProvider createIdProviderFromNode( final Node node )
     {
         if ( node.name().toString().equalsIgnoreCase( PrincipalKey.ROLES_NODE_NAME ) )
         {
@@ -272,33 +273,33 @@ abstract class UserStoreNodeTranslator
         }
         final PropertySet nodeAsSet = node.data().getRoot();
 
-        final UserStoreKey userStoreKey = UserStoreNodeTranslator.toKey( node );
+        final IdProviderKey idProviderKey = IdProviderNodeTranslator.toKey( node );
 
-        final UserStore.Builder userStore = UserStore.create().
-            displayName( nodeAsSet.getString( UserStorePropertyNames.DISPLAY_NAME_KEY ) ).
-            key( userStoreKey ).
-            description( nodeAsSet.getString( UserStorePropertyNames.DESCRIPTION_KEY ) );
+        final IdProvider.Builder idProvider = IdProvider.create().
+            displayName( nodeAsSet.getString( IdProviderPropertyNames.DISPLAY_NAME_KEY ) ).
+            key( idProviderKey ).
+            description( nodeAsSet.getString( IdProviderPropertyNames.DESCRIPTION_KEY ) );
 
-        if ( nodeAsSet.hasProperty( UserStorePropertyNames.APPLICATION ) )
+        if ( nodeAsSet.hasProperty( IdProviderPropertyNames.APPLICATION ) )
         {
-            final String applicationKey = nodeAsSet.getString( UserStorePropertyNames.ID_PROVIDER_APPLICATION_KEY );
-            final PropertySet config = nodeAsSet.getSet( UserStorePropertyNames.ID_PROVIDER_CONFIG_FORM_KEY );
+            final String applicationKey = nodeAsSet.getString( IdProviderPropertyNames.ID_PROVIDER_APPLICATION_KEY );
+            final PropertySet config = nodeAsSet.getSet( IdProviderPropertyNames.ID_PROVIDER_CONFIG_FORM_KEY );
             final IdProviderConfig idProviderConfig = IdProviderConfig.create().
                 applicationKey( ApplicationKey.from( applicationKey ) ).
                 config( config.toTree() ).
                 build();
-            userStore.idProviderConfig( idProviderConfig );
+            idProvider.idProviderConfig( idProviderConfig );
         }
-        else if ( UserStoreKey.system().equals( userStoreKey ) )
+        else if ( IdProviderKey.system().equals( idProviderKey ) )
         {
             //TODO Remove after next dump upgrade
             final IdProviderConfig idProviderConfig = IdProviderConfig.create().
                 applicationKey( SYSTEM_ID_PROVIDER_KEY ).
                 build();
-            userStore.idProviderConfig( idProviderConfig );
+            idProvider.idProviderConfig( idProviderConfig );
         }
 
-        return userStore.build();
+        return idProvider.build();
     }
 
 }

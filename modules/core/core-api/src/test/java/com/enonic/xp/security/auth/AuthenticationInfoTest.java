@@ -9,10 +9,10 @@ import org.junit.Test;
 
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.User;
-import com.enonic.xp.security.UserStoreKey;
 
 import static org.junit.Assert.*;
 
@@ -29,7 +29,7 @@ public class AuthenticationInfoTest
         final User user = User.create().
             login( "userlogin" ).
             displayName( "my user" ).
-            key( PrincipalKey.ofUser( UserStoreKey.from( "myuserstore" ), "userid" ) ).
+            key( PrincipalKey.ofUser( IdProviderKey.from( "myuserstore" ), "userid" ) ).
             email( "user@email" ).
             modifiedTime( Instant.now( clock ) ).
             build();
@@ -50,13 +50,13 @@ public class AuthenticationInfoTest
         final User user = User.create().
             login( "userlogin" ).
             displayName( "my user" ).
-            key( PrincipalKey.ofUser( UserStoreKey.from( "myuserstore" ), "userid" ) ).
+            key( PrincipalKey.ofUser( IdProviderKey.from( "myuserstore" ), "userid" ) ).
             email( "user@email" ).
             modifiedTime( Instant.now( clock ) ).
             build();
 
-        final UserStoreKey userStore = UserStoreKey.from( "myStore" );
-        final PrincipalKey group1 = PrincipalKey.ofGroup( userStore, "group1" );
+        final IdProviderKey idProvider = IdProviderKey.from( "myStore" );
+        final PrincipalKey group1 = PrincipalKey.ofGroup( idProvider, "group1" );
         final PrincipalKey group2 = PrincipalKey.from( "group:myStore:group2" );
         final PrincipalKey role1 = PrincipalKey.from( "role:administrators" );
         final AuthenticationInfo info = AuthenticationInfo.create().
@@ -85,13 +85,13 @@ public class AuthenticationInfoTest
         final User user = User.create().
             login( "userlogin" ).
             displayName( "my user" ).
-            key( PrincipalKey.ofUser( UserStoreKey.from( "myuserstore" ), "userid" ) ).
+            key( PrincipalKey.ofUser( IdProviderKey.from( "myuserstore" ), "userid" ) ).
             email( "user@email" ).
             modifiedTime( Instant.now( clock ) ).
             build();
 
-        final UserStoreKey userStore = UserStoreKey.from( "myStore" );
-        final PrincipalKey group1 = PrincipalKey.ofGroup( userStore, "group1" );
+        final IdProviderKey idProvider = IdProviderKey.from( "myStore" );
+        final PrincipalKey group1 = PrincipalKey.ofGroup( idProvider, "group1" );
         final PrincipalKey group2 = PrincipalKey.from( "group:myStore:group2" );
         final PrincipalKey role1 = PrincipalKey.from( "role:administrators" );
         final AuthenticationInfo info = AuthenticationInfo.create().
@@ -111,14 +111,14 @@ public class AuthenticationInfoTest
         final User user = User.create().
             login( "userlogin" ).
             displayName( "my user" ).
-            key( PrincipalKey.ofUser( UserStoreKey.from( "myuserstore" ), "userid" ) ).
+            key( PrincipalKey.ofUser( IdProviderKey.from( "myuserstore" ), "userid" ) ).
             email( "user@email" ).
             description( "description" ).
             modifiedTime( Instant.now( clock ) ).
             build();
 
-        final UserStoreKey userStore = UserStoreKey.from( "myStore" );
-        final PrincipalKey group1 = PrincipalKey.ofGroup( userStore, "group1" );
+        final IdProviderKey idProvider = IdProviderKey.from( "myStore" );
+        final PrincipalKey group1 = PrincipalKey.ofGroup( idProvider, "group1" );
         final PrincipalKey group2 = PrincipalKey.from( "group:myStore:group2" );
         final PrincipalKey role1 = PrincipalKey.from( "role:administrators" );
         final AuthenticationInfo info = AuthenticationInfo.create().
@@ -146,14 +146,14 @@ public class AuthenticationInfoTest
         final User user = User.create().
             login( "userlogin" ).
             displayName( "my user" ).
-            key( PrincipalKey.ofUser( UserStoreKey.from( "myuserstore" ), "userid" ) ).
+            key( PrincipalKey.ofUser( IdProviderKey.from( "myuserstore" ), "userid" ) ).
             email( "user@email" ).
             modifiedTime( Instant.now( clock ) ).
             profile( userProfile ).
             build();
 
-        final UserStoreKey userStore = UserStoreKey.from( "myStore" );
-        final PrincipalKey group1 = PrincipalKey.ofGroup( userStore, "group1" );
+        final IdProviderKey idProvider = IdProviderKey.from( "myStore" );
+        final PrincipalKey group1 = PrincipalKey.ofGroup( idProvider, "group1" );
         final PrincipalKey group2 = PrincipalKey.from( "group:myStore:group2" );
         final PrincipalKey role1 = PrincipalKey.from( "role:administrators" );
         final AuthenticationInfo info = AuthenticationInfo.create().
@@ -173,7 +173,7 @@ public class AuthenticationInfoTest
     {
         final User user = User.create().
             login( "userlogin" ).
-            key( PrincipalKey.ofUser( UserStoreKey.from( "myuserstore" ), "userid" ) ).
+            key( PrincipalKey.ofUser( IdProviderKey.from( "myuserstore" ), "userid" ) ).
             build();
 
         final AuthenticationInfo info = AuthenticationInfo.create().

@@ -8,29 +8,29 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.acl.UserStoreAccess;
-import com.enonic.xp.security.acl.UserStoreAccessControlEntry;
+import com.enonic.xp.security.acl.IdProviderAccess;
+import com.enonic.xp.security.acl.IdProviderAccessControlEntry;
 
 @SuppressWarnings("UnusedDeclaration")
-public final class UserStoreAccessControlEntryJson
+public final class IdProviderAccessControlEntryJson
 {
-    private final UserStoreAccessControlEntry entry;
+    private final IdProviderAccessControlEntry entry;
 
     private final PrincipalJson principalJson;
 
-    public UserStoreAccessControlEntryJson( final UserStoreAccessControlEntry entry, final Principal principal )
+    public IdProviderAccessControlEntryJson( final IdProviderAccessControlEntry entry, final Principal principal )
     {
         this.entry = entry;
         this.principalJson = new PrincipalJson( principal );
     }
 
     @JsonCreator
-    public UserStoreAccessControlEntryJson( @JsonProperty("principal") final PrincipalJson principal,
-                                            @JsonProperty("access") final String access )
+    public IdProviderAccessControlEntryJson( @JsonProperty("principal") final PrincipalJson principal,
+                                             @JsonProperty("access") final String access )
     {
         Objects.requireNonNull( principal, "Missing principal parameter" );
-        this.entry = UserStoreAccessControlEntry.create().principal( PrincipalKey.from( principal.getKey() ) ).access(
-            UserStoreAccess.valueOf( access.toUpperCase() ) ).build();
+        this.entry = IdProviderAccessControlEntry.create().principal( PrincipalKey.from( principal.getKey() ) ).access(
+            IdProviderAccess.valueOf( access.toUpperCase() ) ).build();
         this.principalJson = null;
     }
 
@@ -45,7 +45,7 @@ public final class UserStoreAccessControlEntryJson
     }
 
     @JsonIgnore
-    public UserStoreAccessControlEntry getEntry()
+    public IdProviderAccessControlEntry getEntry()
     {
         return entry;
     }

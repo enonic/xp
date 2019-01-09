@@ -7,7 +7,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import com.enonic.xp.portal.url.ContextPathType;
 import com.enonic.xp.portal.url.IdentityUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
-import com.enonic.xp.security.UserStoreKey;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
@@ -22,7 +22,7 @@ public class PortalUrlServiceImpl_identityUrlTest
     {
         final IdentityUrlParams params = new IdentityUrlParams().
             portalRequest( this.portalRequest ).
-            userStoreKey( UserStoreKey.system() ).
+            idProviderKey( IdProviderKey.system() ).
             idProviderFunction( "login" );
 
         final String url = this.service.identityUrl( params );
@@ -35,7 +35,7 @@ public class PortalUrlServiceImpl_identityUrlTest
         final IdentityUrlParams params = new IdentityUrlParams().
             portalRequest( this.portalRequest ).
             contextPathType( ContextPathType.RELATIVE.getValue() ).
-            userStoreKey( UserStoreKey.system() ).
+            idProviderKey( IdProviderKey.system() ).
             idProviderFunction( "login" );
 
         final String url = this.service.identityUrl( params );
@@ -47,7 +47,7 @@ public class PortalUrlServiceImpl_identityUrlTest
     {
         final IdentityUrlParams params = new IdentityUrlParams().
             portalRequest( this.portalRequest ).
-            userStoreKey( UserStoreKey.system() );
+            idProviderKey( IdProviderKey.system() );
 
         final String url = this.service.identityUrl( params );
         assertEquals( "/portal/draft/_/idprovider/system", url );
@@ -58,7 +58,7 @@ public class PortalUrlServiceImpl_identityUrlTest
     {
         final IdentityUrlParams params = new IdentityUrlParams().
             portalRequest( this.portalRequest ).
-            userStoreKey( UserStoreKey.system() ).
+            idProviderKey( IdProviderKey.system() ).
             idProviderFunction( "login" );
 
         //Mocks a virtual host and the HTTP request
@@ -114,7 +114,7 @@ public class PortalUrlServiceImpl_identityUrlTest
         final IdentityUrlParams params = new IdentityUrlParams().
             portalRequest( this.portalRequest ).
             type( UrlTypeConstants.ABSOLUTE ).
-            userStoreKey( UserStoreKey.system() ).
+            idProviderKey( IdProviderKey.system() ).
             idProviderFunction( "login" );
 
         MockHttpServletRequest req = new MockHttpServletRequest();

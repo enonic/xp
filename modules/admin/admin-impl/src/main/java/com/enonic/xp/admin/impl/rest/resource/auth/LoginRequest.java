@@ -1,6 +1,6 @@
 package com.enonic.xp.admin.impl.rest.resource.auth;
 
-import com.enonic.xp.security.UserStoreKey;
+import com.enonic.xp.security.IdProviderKey;
 
 public final class LoginRequest
 {
@@ -10,16 +10,16 @@ public final class LoginRequest
 
     protected String password;
 
-    protected String userStore;
+    protected String idProvider;
 
     public String getUser()
     {
         return user;
     }
 
-    public UserStoreKey getUserStore()
+    public IdProviderKey getIdProvider()
     {
-        return userStore == null ? null : UserStoreKey.from( userStore );
+        return idProvider == null ? null : IdProviderKey.from( idProvider );
     }
 
     public String getPassword()

@@ -2,15 +2,15 @@ package com.enonic.xp.security;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.security.acl.UserStoreAccessControlList;
+import com.enonic.xp.security.acl.IdProviderAccessControlList;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @Beta
-public final class CreateUserStoreParams
+public final class CreateIdProviderParams
 {
 
-    private final UserStoreKey userStoreKey;
+    private final IdProviderKey idProviderKey;
 
     private final String displayName;
 
@@ -18,21 +18,21 @@ public final class CreateUserStoreParams
 
     private final IdProviderConfig idProviderConfig;
 
-    private final UserStoreAccessControlList userStorePermissions;
+    private final IdProviderAccessControlList idProviderPermissions;
 
-    private CreateUserStoreParams( final Builder builder )
+    private CreateIdProviderParams( final Builder builder )
     {
-        this.userStoreKey = checkNotNull( builder.userStoreKey, "userStoreKey is required" );
+        this.idProviderKey = checkNotNull( builder.idProviderKey, "idProviderKey is required" );
         this.displayName = checkNotNull( builder.displayName, "displayName is required" );
         this.description = builder.description;
         this.idProviderConfig = builder.idProviderConfig;
-        this.userStorePermissions =
-            builder.userStorePermissions == null ? UserStoreAccessControlList.empty() : builder.userStorePermissions;
+        this.idProviderPermissions =
+            builder.idProviderPermissions == null ? IdProviderAccessControlList.empty() : builder.idProviderPermissions;
     }
 
-    public UserStoreKey getKey()
+    public IdProviderKey getKey()
     {
-        return userStoreKey;
+        return idProviderKey;
     }
 
     public String getDisplayName()
@@ -50,9 +50,9 @@ public final class CreateUserStoreParams
         return idProviderConfig;
     }
 
-    public UserStoreAccessControlList getUserStorePermissions()
+    public IdProviderAccessControlList getIdProviderPermissions()
     {
-        return userStorePermissions;
+        return idProviderPermissions;
     }
 
     public static Builder create()
@@ -62,7 +62,7 @@ public final class CreateUserStoreParams
 
     public static class Builder
     {
-        private UserStoreKey userStoreKey;
+        private IdProviderKey idProviderKey;
 
         private String displayName;
 
@@ -70,15 +70,15 @@ public final class CreateUserStoreParams
 
         private IdProviderConfig idProviderConfig;
 
-        private UserStoreAccessControlList userStorePermissions;
+        private IdProviderAccessControlList idProviderPermissions;
 
         private Builder()
         {
         }
 
-        public Builder key( final UserStoreKey value )
+        public Builder key( final IdProviderKey value )
         {
-            this.userStoreKey = value;
+            this.idProviderKey = value;
             return this;
         }
 
@@ -100,15 +100,15 @@ public final class CreateUserStoreParams
             return this;
         }
 
-        public Builder permissions( final UserStoreAccessControlList permissions )
+        public Builder permissions( final IdProviderAccessControlList permissions )
         {
-            this.userStorePermissions = permissions;
+            this.idProviderPermissions = permissions;
             return this;
         }
 
-        public CreateUserStoreParams build()
+        public CreateIdProviderParams build()
         {
-            return new CreateUserStoreParams( this );
+            return new CreateIdProviderParams( this );
         }
     }
 }

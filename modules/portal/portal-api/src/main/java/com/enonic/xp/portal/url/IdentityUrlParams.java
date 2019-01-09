@@ -5,21 +5,21 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Multimap;
 
-import com.enonic.xp.security.UserStoreKey;
+import com.enonic.xp.security.IdProviderKey;
 
 @Beta
 public final class IdentityUrlParams
     extends AbstractUrlParams<IdentityUrlParams>
 {
-    private UserStoreKey userStoreKey;
+    private IdProviderKey idProviderKey;
 
     private String idProviderFunction;
 
     private String redirectionUrl;
 
-    public UserStoreKey getUserStoreKey()
+    public IdProviderKey getIdProviderKey()
     {
-        return userStoreKey;
+        return idProviderKey;
     }
 
     public String getIdProviderFunction()
@@ -32,9 +32,9 @@ public final class IdentityUrlParams
         return redirectionUrl;
     }
 
-    public IdentityUrlParams userStoreKey( final UserStoreKey value )
+    public IdentityUrlParams idProviderKey( final IdProviderKey value )
     {
-        this.userStoreKey = value;
+        this.idProviderKey = value;
         return this;
     }
 
@@ -62,10 +62,10 @@ public final class IdentityUrlParams
         super.setAsMap( map );
 
         redirectionUrl( singleValue( map, "_redirect" ) );
-        final String userStoreKey = singleValue( map, "_userStore" );
-        if ( userStoreKey != null )
+        final String idProviderKey = singleValue( map, "_userStore" );
+        if ( idProviderKey != null )
         {
-            userStoreKey( UserStoreKey.from( userStoreKey ) );
+            idProviderKey( IdProviderKey.from( idProviderKey ) );
         }
         getParams().putAll( map );
         return this;
@@ -75,7 +75,7 @@ public final class IdentityUrlParams
     protected void buildToString( final MoreObjects.ToStringHelper helper )
     {
         super.buildToString( helper );
-        helper.add( "userStoreKey", this.userStoreKey );
+        helper.add( "idProviderKey", this.idProviderKey );
         helper.add( "idProviderFunction", this.idProviderFunction );
         helper.add( "redirect", this.redirectionUrl );
     }

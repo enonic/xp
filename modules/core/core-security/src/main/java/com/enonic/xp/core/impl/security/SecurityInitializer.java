@@ -17,10 +17,11 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
+import com.enonic.xp.security.CreateIdProviderParams;
 import com.enonic.xp.security.CreateRoleParams;
 import com.enonic.xp.security.CreateUserParams;
-import com.enonic.xp.security.CreateUserStoreParams;
 import com.enonic.xp.security.IdProviderConfig;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalRelationship;
 import com.enonic.xp.security.RoleKeys;
@@ -28,15 +29,14 @@ import com.enonic.xp.security.SecurityConstants;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.User;
-import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
-import com.enonic.xp.security.acl.UserStoreAccessControlEntry;
-import com.enonic.xp.security.acl.UserStoreAccessControlList;
+import com.enonic.xp.security.acl.IdProviderAccessControlEntry;
+import com.enonic.xp.security.acl.IdProviderAccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
-import static com.enonic.xp.security.acl.UserStoreAccess.ADMINISTRATOR;
-import static com.enonic.xp.security.acl.UserStoreAccess.READ;
+import static com.enonic.xp.security.acl.IdProviderAccess.ADMINISTRATOR;
+import static com.enonic.xp.security.acl.IdProviderAccess.READ;
 
 final class SecurityInitializer
     extends ExternalInitializer
@@ -51,11 +51,11 @@ final class SecurityInitializer
 
     private static final ApplicationKey SYSTEM_ID_PROVIDER_KEY = ApplicationKey.from( "com.enonic.xp.app.standardidprovider" );
 
-    static final UserStoreAccessControlList DEFAULT_USER_STORE_ACL =
-        UserStoreAccessControlList.of( UserStoreAccessControlEntry.create().principal( RoleKeys.ADMIN ).access( ADMINISTRATOR ).build(),
-                                       UserStoreAccessControlEntry.create().principal( RoleKeys.USER_MANAGER_ADMIN ).access(
+    static final IdProviderAccessControlList DEFAULT_USER_STORE_ACL =
+        IdProviderAccessControlList.of( IdProviderAccessControlEntry.create().principal( RoleKeys.ADMIN ).access( ADMINISTRATOR ).build(),
+                                        IdProviderAccessControlEntry.create().principal( RoleKeys.USER_MANAGER_ADMIN ).access(
                                            ADMINISTRATOR ).build(),
-                                       UserStoreAccessControlEntry.create().principal( RoleKeys.AUTHENTICATED ).access( READ ).build() );
+                                        IdProviderAccessControlEntry.create().principal( RoleKeys.AUTHENTICATED ).access( READ ).build() );
 
     private final SecurityService securityService;
 
@@ -73,9 +73,9 @@ final class SecurityInitializer
     {
         createAdminContext().runWith( () -> {
 
-            initializeUserStoreParentFolder();
+            initializeIdProviderParentFolder();
             initializeRoleFolder();
-            initializeSystemUserStore();
+            initializeSystemIdProvider();
 
             createRoles();
             createUsers();
@@ -110,10 +110,10 @@ final class SecurityInitializer
             build();
     }
 
-    private void initializeUserStoreParentFolder()
+    private void initializeIdProviderParentFolder()
     {
-        final NodePath userStoreParentNodePath = UserStoreNodeTranslator.getUserStoresParentPath();
-        LOG.info( "Initializing [" + userStoreParentNodePath.toString() + "] folder" );
+        final NodePath idProviderParentNodePath = IdProviderNodeTranslator.getIdProvidersParentPath();
+        LOG.info( "Initializing [" + idProviderParentNodePath.toString() + "] folder" );
 
         final AccessControlEntry userManagerFullAccess = AccessControlEntry.create().
             allowAll().
@@ -125,8 +125,8 @@ final class SecurityInitializer
             build();
 
         nodeService.create( CreateNodeParams.create().
-            parent( userStoreParentNodePath.getParentPath() ).
-            name( userStoreParentNodePath.getLastElement().toString() ).
+            parent( idProviderParentNodePath.getParentPath() ).
+            name( idProviderParentNodePath.getLastElement().toString() ).
             permissions( AccessControlList.create().
                 addAll( SystemConstants.SYSTEM_REPO_DEFAULT_ACL.getEntries() ).
                 add( userManagerFullAccess ).
@@ -139,7 +139,7 @@ final class SecurityInitializer
 
     private void initializeRoleFolder()
     {
-        final NodePath rolesNodePath = UserStoreNodeTranslator.getRolesNodePath();
+        final NodePath rolesNodePath = IdProviderNodeTranslator.getRolesNodePath();
         LOG.info( "Initializing [" + rolesNodePath.toString() + "] folder" );
 
         nodeService.create( CreateNodeParams.create().
@@ -149,9 +149,9 @@ final class SecurityInitializer
             build() );
     }
 
-    private void initializeSystemUserStore()
+    private void initializeSystemIdProvider()
     {
-        LOG.info( "Initializing user store [" + UserStoreKey.system() + "]" );
+        LOG.info( "Initializing user store [" + IdProviderKey.system() + "]" );
 
         final PropertyTree idProviderConfigTree = new PropertyTree();
         if ( !"false".equalsIgnoreCase( System.getProperty( ADMIN_USER_CREATION_PROPERTY_KEY ) ) )
@@ -163,14 +163,14 @@ final class SecurityInitializer
             config( idProviderConfigTree ).
             build();
 
-        final CreateUserStoreParams createParams = CreateUserStoreParams.create().
-            key( UserStoreKey.system() ).
+        final CreateIdProviderParams createParams = CreateIdProviderParams.create().
+            key( IdProviderKey.system() ).
             displayName( SYSTEM_USER_STORE_DISPLAY_NAME ).
             idProviderConfig( idProviderConfig ).
             permissions( DEFAULT_USER_STORE_ACL ).
             build();
 
-        this.securityService.createUserStore( createParams );
+        this.securityService.createIdProvider( createParams );
     }
 
     private void createRoles()

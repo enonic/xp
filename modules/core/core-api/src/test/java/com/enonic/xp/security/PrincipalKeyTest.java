@@ -14,11 +14,11 @@ public class PrincipalKeyTest
     public void testPrincipalUser()
         throws Exception
     {
-        final UserStoreKey userStore = UserStoreKey.from( "myUserStore" );
-        final PrincipalKey user = PrincipalKey.ofUser( userStore, "userId" );
+        final IdProviderKey idProvider = IdProviderKey.from( "myUserStore" );
+        final PrincipalKey user = PrincipalKey.ofUser( idProvider, "userId" );
 
         assertEquals( "user:myUserStore:userId", user.toString() );
-        assertEquals( "myUserStore", user.getUserStore().toString() );
+        assertEquals( "myUserStore", user.getIdProviderKey().toString() );
         assertEquals( "userId", user.getId() );
         assertEquals( PrincipalType.USER, user.getType() );
         assertTrue( user.isUser() );
@@ -31,11 +31,11 @@ public class PrincipalKeyTest
     public void testPrincipalGroup()
         throws Exception
     {
-        final UserStoreKey userStore = UserStoreKey.from( "myUserStore" );
-        final PrincipalKey group = PrincipalKey.ofGroup( userStore, "groupid" );
+        final IdProviderKey idProvider = IdProviderKey.from( "myUserStore" );
+        final PrincipalKey group = PrincipalKey.ofGroup( idProvider, "groupid" );
 
         assertEquals( "group:myUserStore:groupid", group.toString() );
-        assertEquals( "myUserStore", group.getUserStore().toString() );
+        assertEquals( "myUserStore", group.getIdProviderKey().toString() );
         assertEquals( "groupid", group.getId() );
         assertEquals( PrincipalType.GROUP, group.getType() );
         assertTrue( group.isGroup() );
@@ -51,7 +51,7 @@ public class PrincipalKeyTest
         final PrincipalKey role = PrincipalKey.ofRole( "roleid" );
 
         assertEquals( "role:roleid", role.toString() );
-        assertNull( role.getUserStore() );
+        assertNull( role.getIdProviderKey() );
         assertEquals( "roleid", role.getId() );
         assertEquals( PrincipalType.ROLE, role.getType() );
         assertTrue( role.isRole() );
@@ -67,8 +67,8 @@ public class PrincipalKeyTest
         final PrincipalKey anonymous = PrincipalKey.ofAnonymous();
 
         assertEquals( "user:system:anonymous", anonymous.toString() );
-        assertNotNull( anonymous.getUserStore() );
-        assertEquals( "system", anonymous.getUserStore().toString() );
+        assertNotNull( anonymous.getIdProviderKey() );
+        assertEquals( "system", anonymous.getIdProviderKey().toString() );
         assertEquals( "anonymous", anonymous.getId() );
         assertEquals( PrincipalType.USER, anonymous.getType() );
         assertTrue( anonymous.isAnonymous() );

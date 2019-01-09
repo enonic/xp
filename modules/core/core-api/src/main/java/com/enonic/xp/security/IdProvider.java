@@ -3,9 +3,9 @@ package com.enonic.xp.security;
 import com.google.common.annotations.Beta;
 
 @Beta
-public final class UserStore
+public final class IdProvider
 {
-    private final UserStoreKey key;
+    private final IdProviderKey key;
 
     private final String displayName;
 
@@ -13,7 +13,7 @@ public final class UserStore
 
     private final IdProviderConfig idProviderConfig;
 
-    public UserStore( final Builder builder )
+    public IdProvider( final Builder builder )
     {
         this.key = builder.key;
         this.displayName = builder.displayName;
@@ -21,9 +21,9 @@ public final class UserStore
         this.idProviderConfig = builder.idProviderConfig;
     }
 
-    public UserStoreKey getKey()
+    public static Builder create( IdProvider idProvider )
     {
-        return key;
+        return new Builder( idProvider );
     }
 
     public String getDisplayName()
@@ -46,14 +46,14 @@ public final class UserStore
         return new Builder();
     }
 
-    public static Builder create( UserStore userStore )
+    public IdProviderKey getKey()
     {
-        return new Builder( userStore );
+        return key;
     }
 
     public static class Builder
     {
-        private UserStoreKey key;
+        private IdProviderKey key;
 
         private String displayName;
 
@@ -65,12 +65,12 @@ public final class UserStore
         {
         }
 
-        private Builder( UserStore userStore )
+        private Builder( IdProvider idProvider )
         {
-            key = userStore.key;
-            displayName = userStore.displayName;
-            description = userStore.description;
-            idProviderConfig = userStore.idProviderConfig;
+            key = idProvider.key;
+            displayName = idProvider.displayName;
+            description = idProvider.description;
+            idProviderConfig = idProvider.idProviderConfig;
         }
 
         public Builder displayName( final String value )
@@ -79,7 +79,7 @@ public final class UserStore
             return this;
         }
 
-        public Builder key( final UserStoreKey value )
+        public Builder key( final IdProviderKey value )
         {
             this.key = value;
             return this;
@@ -98,9 +98,9 @@ public final class UserStore
             return this;
         }
 
-        public UserStore build()
+        public IdProvider build()
         {
-            return new UserStore( this );
+            return new IdProvider( this );
         }
     }
 }

@@ -11,9 +11,9 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.security.Group;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalType;
-import com.enonic.xp.security.UserStoreKey;
 
 import static org.junit.Assert.*;
 
@@ -29,7 +29,7 @@ public class GroupNodeTranslatorTest
     {
         final Group group = Group.create().
             displayName( "My Group" ).
-            key( PrincipalKey.ofGroup( UserStoreKey.system(), "group-a" ) ).
+            key( PrincipalKey.ofGroup( IdProviderKey.system(), "group-a" ) ).
             modifiedTime( Instant.now( clock ) ).
             description( "my group a" ).
             build();
@@ -41,7 +41,7 @@ public class GroupNodeTranslatorTest
         final PropertyTree rootDataSet = createNodeParams.getData();
         assertNotNull( rootDataSet );
         assertEquals( 4, rootDataSet.getTotalSize() );
-        assertEquals( UserStoreKey.system().toString(), rootDataSet.getString( PrincipalPropertyNames.USER_STORE_KEY ) );
+        assertEquals( IdProviderKey.system().toString(), rootDataSet.getString( PrincipalPropertyNames.USER_STORE_KEY ) );
         assertEquals( PrincipalType.GROUP.toString(), rootDataSet.getString( PrincipalPropertyNames.PRINCIPAL_TYPE_KEY ) );
         assertEquals( "My Group", rootDataSet.getString( PrincipalPropertyNames.DISPLAY_NAME_KEY ) );
         assertEquals( "my group a", rootDataSet.getString( PrincipalPropertyNames.DESCRIPTION_KEY ) );
@@ -52,12 +52,12 @@ public class GroupNodeTranslatorTest
     public void toGroup()
         throws Exception
     {
-        final PrincipalKey groupKey = PrincipalKey.ofGroup( UserStoreKey.system(), "group-a" );
+        final PrincipalKey groupKey = PrincipalKey.ofGroup( IdProviderKey.system(), "group-a" );
 
         final PropertyTree rootDataSet = new PropertyTree();
         rootDataSet.setString( PrincipalPropertyNames.DISPLAY_NAME_KEY, "Group A" );
         rootDataSet.setString( PrincipalPropertyNames.PRINCIPAL_TYPE_KEY, groupKey.getType().toString() );
-        rootDataSet.setString( PrincipalPropertyNames.USER_STORE_KEY, groupKey.getUserStore().toString() );
+        rootDataSet.setString( PrincipalPropertyNames.USER_STORE_KEY, groupKey.getIdProviderKey().toString() );
 
         final Node node = Node.create().
             id( NodeId.from( "id" ) ).

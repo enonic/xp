@@ -9,7 +9,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
-import com.enonic.xp.security.UserStoreKey;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
@@ -36,7 +36,7 @@ public class IdentityHandlerTest
         Mockito.when( idProviderControllerService.execute( Mockito.any() ) ).thenAnswer( invocation -> {
             Object[] args = invocation.getArguments();
             final IdProviderControllerExecutionParams arg = (IdProviderControllerExecutionParams) args[0];
-            if ( UserStoreKey.from( "myuserstore" ).equals( arg.getUserStoreKey() ) && "get".equals( arg.getFunctionName() ) )
+            if ( IdProviderKey.from( "myuserstore" ).equals( arg.getIdProviderKey() ) && "get".equals( arg.getFunctionName() ) )
             {
                 return PortalResponse.create().build();
             }

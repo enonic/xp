@@ -22,7 +22,7 @@ public final class PrincipalKey
 
     private static final PrincipalKey ANONYMOUS_PRINCIPAL = new PrincipalKey();
 
-    private static final PrincipalKey SUPER_USER_PRINCIPAL = new PrincipalKey( UserStoreKey.system(), PrincipalType.USER, "su" );
+    private static final PrincipalKey SUPER_USER_PRINCIPAL = new PrincipalKey( IdProviderKey.system(), PrincipalType.USER, "su" );
 
     public final static String IDENTITY_NODE_NAME = "identity";
 
@@ -32,7 +32,7 @@ public final class PrincipalKey
 
     public final static String USERS_NODE_NAME = "users";
 
-    private final UserStoreKey userStore;
+    private final IdProviderKey idProviderKey;
 
     private final PrincipalType type;
 
@@ -40,10 +40,10 @@ public final class PrincipalKey
 
     private final String refString;
 
-    private PrincipalKey( final UserStoreKey userStore, final PrincipalType type, final String principalId )
+    private PrincipalKey( final IdProviderKey idProviderKey, final PrincipalType type, final String principalId )
     {
-        checkArgument( ( type == PrincipalType.ROLE ) || ( userStore != null ), "Principal user store cannot be null" );
-        this.userStore = userStore;
+        checkArgument( ( type == PrincipalType.ROLE ) || ( idProviderKey != null ), "Principal user store cannot be null" );
+        this.idProviderKey = idProviderKey;
         this.type = checkNotNull( type, "Principal type cannot be null" );
         checkArgument( !Strings.isNullOrEmpty( principalId ), "Principal id cannot be null or empty" );
         this.principalId = CharacterChecker.check( principalId, "Not a valid principal key [" + principalId + "]" );
@@ -53,21 +53,51 @@ public final class PrincipalKey
         }
         else
         {
-            this.refString = Joiner.on( SEPARATOR ).join( type.toString().toLowerCase(), userStore.toString(), principalId );
+            this.refString = Joiner.on( SEPARATOR ).join( type.toString().toLowerCase(), idProviderKey.toString(), principalId );
         }
     }
 
     private PrincipalKey()
     {
-        this.userStore = UserStoreKey.system();
+        this.idProviderKey = IdProviderKey.system();
         this.type = PrincipalType.USER;
         this.principalId = "anonymous";
-        this.refString = Joiner.on( SEPARATOR ).join( type.toString().toLowerCase(), userStore.toString(), principalId );
+        this.refString = Joiner.on( SEPARATOR ).join( type.toString().toLowerCase(), idProviderKey.toString(), principalId );
     }
 
-    public UserStoreKey getUserStore()
+    public static PrincipalKey from( final String principalKey )
     {
-        return userStore;
+        checkArgument( !Strings.isNullOrEmpty( principalKey ), "Principal key cannot be null or empty" );
+        if ( ANONYMOUS_PRINCIPAL.toString().equals( principalKey ) )
+        {
+            return ANONYMOUS_PRINCIPAL;
+        }
+
+        final Matcher matcher = REF_PATTERN.matcher( principalKey );
+        if ( !matcher.find() )
+        {
+            throw new IllegalArgumentException( "Not a valid principal key [" + principalKey + "]" );
+        }
+
+        final String typeStr;
+        final IdProviderKey idProviderKey;
+        final String id;
+        if ( matcher.group( 1 ) != null )
+        {
+            typeStr = matcher.group( 1 );
+            idProviderKey = null;
+            id = matcher.group( 2 );
+        }
+        else
+        {
+            typeStr = matcher.group( 3 );
+            final String idProvider = matcher.group( 4 );
+            idProviderKey = IdProviderKey.from( idProvider );
+            id = matcher.group( 5 );
+        }
+        final PrincipalType type = PrincipalType.valueOf( typeStr.toUpperCase() );
+
+        return from( idProviderKey, type, id );
     }
 
     public PrincipalType getType()
@@ -100,25 +130,19 @@ public final class PrincipalKey
         return this.equals( ANONYMOUS_PRINCIPAL );
     }
 
-    public NodePath toPath()
+    private static PrincipalKey from( final IdProviderKey idProviderKey, final PrincipalType type, final String id )
     {
-        if ( this.isRole() )
+        switch ( type )
         {
-            return NodePath.create( NodePath.ROOT ).
-                addElement( IDENTITY_NODE_NAME ).
-                addElement( ROLES_NODE_NAME ).
-                addElement( getId() ).
-                build();
-        }
-        else
-        {
-            final String folderName = this.isGroup() ? GROUPS_NODE_NAME : USERS_NODE_NAME;
-            return NodePath.create( NodePath.ROOT ).
-                addElement( IDENTITY_NODE_NAME ).
-                addElement( getUserStore().toString() ).
-                addElement( folderName ).
-                addElement( getId() ).
-                build();
+            case USER:
+                return PrincipalKey.ofUser( idProviderKey, id );
+            case GROUP:
+                return PrincipalKey.ofGroup( idProviderKey, id );
+            case ROLE:
+                return PrincipalKey.ofRole( id );
+
+            default:
+                throw new IllegalArgumentException( "Not a valid principal type [" + type + "]" );
         }
     }
 
@@ -140,55 +164,14 @@ public final class PrincipalKey
         return this.refString.hashCode();
     }
 
-    public static PrincipalKey from( final String principalKey )
+    public static PrincipalKey ofUser( final IdProviderKey idProvider, final String userId )
     {
-        checkArgument( !Strings.isNullOrEmpty( principalKey ), "Principal key cannot be null or empty" );
-        if ( ANONYMOUS_PRINCIPAL.toString().equals( principalKey ) )
-        {
-            return ANONYMOUS_PRINCIPAL;
-        }
-
-        final Matcher matcher = REF_PATTERN.matcher( principalKey );
-        if ( !matcher.find() )
-        {
-            throw new IllegalArgumentException( "Not a valid principal key [" + principalKey + "]" );
-        }
-
-        final String typeStr;
-        final UserStoreKey userStoreKey;
-        final String id;
-        if ( matcher.group( 1 ) != null )
-        {
-            typeStr = matcher.group( 1 );
-            userStoreKey = null;
-            id = matcher.group( 2 );
-        }
-        else
-        {
-            typeStr = matcher.group( 3 );
-            final String userStore = matcher.group( 4 );
-            userStoreKey = UserStoreKey.from( userStore );
-            id = matcher.group( 5 );
-        }
-        final PrincipalType type = PrincipalType.valueOf( typeStr.toUpperCase() );
-
-        return from( userStoreKey, type, id );
+        return new PrincipalKey( idProvider, PrincipalType.USER, userId );
     }
 
-    private static PrincipalKey from( final UserStoreKey userStoreKey, final PrincipalType type, final String id )
+    public static PrincipalKey ofGroup( final IdProviderKey idProvider, final String groupId )
     {
-        switch ( type )
-        {
-            case USER:
-                return PrincipalKey.ofUser( userStoreKey, id );
-            case GROUP:
-                return PrincipalKey.ofGroup( userStoreKey, id );
-            case ROLE:
-                return PrincipalKey.ofRole( id );
-
-            default:
-                throw new IllegalArgumentException( "Not a valid principal type [" + type + "]" );
-        }
+        return new PrincipalKey( idProvider, PrincipalType.GROUP, groupId );
     }
 
     public static PrincipalKey ofAnonymous()
@@ -201,14 +184,31 @@ public final class PrincipalKey
         return SUPER_USER_PRINCIPAL;
     }
 
-    public static PrincipalKey ofUser( final UserStoreKey userStore, final String userId )
+    public IdProviderKey getIdProviderKey()
     {
-        return new PrincipalKey( userStore, PrincipalType.USER, userId );
+        return idProviderKey;
     }
 
-    public static PrincipalKey ofGroup( final UserStoreKey userStore, final String groupId )
+    public NodePath toPath()
     {
-        return new PrincipalKey( userStore, PrincipalType.GROUP, groupId );
+        if ( this.isRole() )
+        {
+            return NodePath.create( NodePath.ROOT ).
+                addElement( IDENTITY_NODE_NAME ).
+                addElement( ROLES_NODE_NAME ).
+                addElement( getId() ).
+                build();
+        }
+        else
+        {
+            final String folderName = this.isGroup() ? GROUPS_NODE_NAME : USERS_NODE_NAME;
+            return NodePath.create( NodePath.ROOT ).
+                addElement( IDENTITY_NODE_NAME ).
+                addElement( getIdProviderKey().toString() ).
+                addElement( folderName ).
+                addElement( getId() ).
+                build();
+        }
     }
 
     public static PrincipalKey ofRole( final String roleId )

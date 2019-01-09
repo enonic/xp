@@ -3,7 +3,7 @@ package com.enonic.xp.security;
 import com.google.common.annotations.Beta;
 
 @Beta
-public interface UserStoreEditor
+public interface IdProviderEditor
 {
-    void edit( final EditableUserStore edit );
+    void edit( final EditableIdProvider edit );
 }

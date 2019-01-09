@@ -27,10 +27,13 @@ import com.enonic.xp.repo.impl.storage.IndexDataServiceImpl;
 import com.enonic.xp.repo.impl.storage.NodeStorageServiceImpl;
 import com.enonic.xp.repo.impl.version.VersionServiceImpl;
 import com.enonic.xp.security.CreateGroupParams;
+import com.enonic.xp.security.CreateIdProviderParams;
 import com.enonic.xp.security.CreateRoleParams;
 import com.enonic.xp.security.CreateUserParams;
-import com.enonic.xp.security.CreateUserStoreParams;
 import com.enonic.xp.security.Group;
+import com.enonic.xp.security.IdProvider;
+import com.enonic.xp.security.IdProviderAlreadyExistsException;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalAlreadyExistsException;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
@@ -42,15 +45,12 @@ import com.enonic.xp.security.Role;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityConstants;
 import com.enonic.xp.security.UpdateGroupParams;
+import com.enonic.xp.security.UpdateIdProviderParams;
 import com.enonic.xp.security.UpdateRoleParams;
 import com.enonic.xp.security.UpdateUserParams;
-import com.enonic.xp.security.UpdateUserStoreParams;
 import com.enonic.xp.security.User;
-import com.enonic.xp.security.UserStore;
-import com.enonic.xp.security.UserStoreAlreadyExistsException;
-import com.enonic.xp.security.UserStoreKey;
-import com.enonic.xp.security.acl.UserStoreAccessControlEntry;
-import com.enonic.xp.security.acl.UserStoreAccessControlList;
+import com.enonic.xp.security.acl.IdProviderAccessControlEntry;
+import com.enonic.xp.security.acl.IdProviderAccessControlList;
 import com.enonic.xp.security.auth.AuthenticationException;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.AuthenticationToken;
@@ -59,15 +59,15 @@ import com.enonic.xp.security.auth.UsernamePasswordAuthToken;
 import com.enonic.xp.security.auth.VerifiedEmailAuthToken;
 import com.enonic.xp.security.auth.VerifiedUsernameAuthToken;
 
-import static com.enonic.xp.security.acl.UserStoreAccess.ADMINISTRATOR;
-import static com.enonic.xp.security.acl.UserStoreAccess.CREATE_USERS;
-import static com.enonic.xp.security.acl.UserStoreAccess.WRITE_USERS;
+import static com.enonic.xp.security.acl.IdProviderAccess.ADMINISTRATOR;
+import static com.enonic.xp.security.acl.IdProviderAccess.CREATE_USERS;
+import static com.enonic.xp.security.acl.IdProviderAccess.WRITE_USERS;
 import static org.junit.Assert.*;
 
 public class SecurityServiceImplTest
     extends AbstractElasticsearchIntegrationTest
 {
-    private static final UserStoreKey SYSTEM = UserStoreKey.system();
+    private static final IdProviderKey SYSTEM = IdProviderKey.system();
 
     protected EventPublisher eventPublisher;
 
@@ -702,7 +702,7 @@ public class SecurityServiceImplTest
             final EmailPasswordAuthToken authToken = new EmailPasswordAuthToken();
             authToken.setEmail( "user1@enonic.com" );
             authToken.setPassword( "password" );
-            authToken.setUserStore( SYSTEM );
+            authToken.setIdProvider( SYSTEM );
 
             final AuthenticationInfo authInfo = securityService.authenticate( authToken );
             assertTrue( authInfo.isAuthenticated() );
@@ -729,7 +729,7 @@ public class SecurityServiceImplTest
             final EmailPasswordAuthToken authToken = new EmailPasswordAuthToken();
             authToken.setEmail( "user1@enonic.com" );
             authToken.setPassword( "password" );
-            authToken.setUserStore( SYSTEM );
+            authToken.setIdProvider( SYSTEM );
 
             final AuthenticationInfo authInfo = securityService.authenticate( authToken );
             assertFalse( authInfo.isAuthenticated() );
@@ -755,7 +755,7 @@ public class SecurityServiceImplTest
             final UsernamePasswordAuthToken authToken = new UsernamePasswordAuthToken();
             authToken.setUsername( "User1" );
             authToken.setPassword( "runar" );
-            authToken.setUserStore( SYSTEM );
+            authToken.setIdProvider( SYSTEM );
 
             final AuthenticationInfo authInfo = securityService.authenticate( authToken );
             assertTrue( authInfo.isAuthenticated() );
@@ -781,7 +781,7 @@ public class SecurityServiceImplTest
 
             final VerifiedEmailAuthToken authToken = new VerifiedEmailAuthToken();
             authToken.setEmail( "user1@enonic.com" );
-            authToken.setUserStore( SYSTEM );
+            authToken.setIdProvider( SYSTEM );
 
             final AuthenticationInfo authInfo = securityService.authenticate( authToken );
             assertTrue( authInfo.isAuthenticated() );
@@ -807,7 +807,7 @@ public class SecurityServiceImplTest
 
             final VerifiedUsernameAuthToken authToken = new VerifiedUsernameAuthToken();
             authToken.setUsername( "user1" );
-            authToken.setUserStore( SYSTEM );
+            authToken.setIdProvider( SYSTEM );
 
             final AuthenticationInfo authInfo = securityService.authenticate( authToken );
             assertTrue( authInfo.isAuthenticated() );
@@ -831,7 +831,7 @@ public class SecurityServiceImplTest
             refresh();
 
             final CustomAuthenticationToken authToken = new CustomAuthenticationToken();
-            authToken.setUserStore( SYSTEM );
+            authToken.setIdProvider( SYSTEM );
 
             final AuthenticationInfo authInfo = securityService.authenticate( authToken );
             assertEquals( user.getKey(), authInfo.getUser().getKey() );
@@ -933,7 +933,7 @@ public class SecurityServiceImplTest
     }
 
     @Test
-    public void testCreateUserStore()
+    public void testCreateIdProvider()
         throws Exception
     {
         runAsAdmin( () -> {
@@ -941,56 +941,59 @@ public class SecurityServiceImplTest
             final PrincipalKey groupKey1 = PrincipalKey.ofGroup( SYSTEM, "group-a" );
             final PrincipalKey groupKey2 = PrincipalKey.ofGroup( SYSTEM, "group-b" );
 
-            final UserStoreAccessControlList permissions =
-                UserStoreAccessControlList.of( UserStoreAccessControlEntry.create().principal( userKey ).access( CREATE_USERS ).build(),
-                                               UserStoreAccessControlEntry.create().principal( groupKey1 ).access( ADMINISTRATOR ).build(),
-                                               UserStoreAccessControlEntry.create().principal( groupKey2 ).access( WRITE_USERS ).build() );
-            final CreateUserStoreParams createUserStore = CreateUserStoreParams.create().
-                key( UserStoreKey.from( "enonic" ) ).
+            final IdProviderAccessControlList permissions =
+                IdProviderAccessControlList.of( IdProviderAccessControlEntry.create().principal( userKey ).access( CREATE_USERS ).build(),
+                                                IdProviderAccessControlEntry.create().principal( groupKey1 ).access(
+                                                    ADMINISTRATOR ).build(),
+                                                IdProviderAccessControlEntry.create().principal( groupKey2 ).access(
+                                                    WRITE_USERS ).build() );
+            final CreateIdProviderParams createIdProvider = CreateIdProviderParams.create().
+                key( IdProviderKey.from( "enonic" ) ).
                 displayName( "Enonic User Store" ).
                 permissions( permissions ).
                 description( "user store description" ).
                 build();
 
-            final UserStore userStoreCreated = securityService.createUserStore( createUserStore );
-            assertNotNull( userStoreCreated );
-            assertEquals( "enonic", userStoreCreated.getKey().toString() );
-            assertEquals( "Enonic User Store", userStoreCreated.getDisplayName() );
-            assertEquals( "user store description", userStoreCreated.getDescription() );
+            final IdProvider idProviderCreated = securityService.createIdProvider( createIdProvider );
+            assertNotNull( idProviderCreated );
+            assertEquals( "enonic", idProviderCreated.getKey().toString() );
+            assertEquals( "Enonic User Store", idProviderCreated.getDisplayName() );
+            assertEquals( "user store description", idProviderCreated.getDescription() );
 
-            final UserStoreAccessControlList createdPermissions = securityService.getUserStorePermissions( UserStoreKey.from( "enonic" ) );
-            assertNotNull( userStoreCreated );
+            final IdProviderAccessControlList createdPermissions =
+                securityService.getIdProviderPermissions( IdProviderKey.from( "enonic" ) );
+            assertNotNull( idProviderCreated );
             assertEquals( CREATE_USERS, createdPermissions.getEntry( userKey ).getAccess() );
             assertEquals( ADMINISTRATOR, createdPermissions.getEntry( groupKey1 ).getAccess() );
             assertEquals( WRITE_USERS, createdPermissions.getEntry( groupKey2 ).getAccess() );
         } );
     }
 
-    @Test(expected = UserStoreAlreadyExistsException.class)
-    public void testCreateUserStoreThrowsExceptionWhenNameIsOccupied()
+    @Test(expected = IdProviderAlreadyExistsException.class)
+    public void testCreateIdProviderThrowsExceptionWhenNameIsOccupied()
         throws Exception
     {
         runAsAdmin( () -> {
             final PrincipalKey userKey = PrincipalKey.ofUser( SYSTEM, "User1" );
 
-            final UserStoreAccessControlList permissions =
-                UserStoreAccessControlList.of( UserStoreAccessControlEntry.create().principal( userKey ).access( CREATE_USERS ).build() );
+            final IdProviderAccessControlList permissions =
+                IdProviderAccessControlList.of( IdProviderAccessControlEntry.create().principal( userKey ).access( CREATE_USERS ).build() );
 
-            final CreateUserStoreParams createUserStore = CreateUserStoreParams.create().
-                key( UserStoreKey.from( "enonic" ) ).
+            final CreateIdProviderParams createIdProvider = CreateIdProviderParams.create().
+                key( IdProviderKey.from( "enonic" ) ).
                 displayName( "Enonic User Store" ).
                 permissions( permissions ).
                 description( "user store description" ).
                 build();
 
-            securityService.createUserStore( createUserStore );
-            securityService.createUserStore( createUserStore );
+            securityService.createIdProvider( createIdProvider );
+            securityService.createIdProvider( createIdProvider );
 
         } );
     }
 
     @Test
-    public void testUpdateUserStore()
+    public void testUpdateIdProvider()
         throws Exception
     {
         runAsAdmin( () -> {
@@ -999,39 +1002,42 @@ public class SecurityServiceImplTest
             final PrincipalKey groupKey1 = PrincipalKey.ofGroup( SYSTEM, "Group-a" );
             final PrincipalKey groupKey2 = PrincipalKey.ofGroup( SYSTEM, "group-b" );
 
-            final UserStoreAccessControlList permissions =
-                UserStoreAccessControlList.of( UserStoreAccessControlEntry.create().principal( userKey ).access( CREATE_USERS ).build(),
-                                               UserStoreAccessControlEntry.create().principal( groupKey1 ).access( ADMINISTRATOR ).build(),
-                                               UserStoreAccessControlEntry.create().principal( groupKey2 ).access( WRITE_USERS ).build() );
-            final CreateUserStoreParams createUserStore = CreateUserStoreParams.create().
-                key( UserStoreKey.from( "enonic" ) ).
+            final IdProviderAccessControlList permissions =
+                IdProviderAccessControlList.of( IdProviderAccessControlEntry.create().principal( userKey ).access( CREATE_USERS ).build(),
+                                                IdProviderAccessControlEntry.create().principal( groupKey1 ).access(
+                                                    ADMINISTRATOR ).build(),
+                                                IdProviderAccessControlEntry.create().principal( groupKey2 ).access(
+                                                    WRITE_USERS ).build() );
+            final CreateIdProviderParams createIdProvider = CreateIdProviderParams.create().
+                key( IdProviderKey.from( "enonic" ) ).
                 displayName( "Enonic User Store" ).
                 permissions( permissions ).
                 description( "old user store description" ).
                 build();
-            final UserStore userStoreCreated = securityService.createUserStore( createUserStore );
+            final IdProvider idProviderCreated = securityService.createIdProvider( createIdProvider );
 
             // exercise
-            final UserStoreAccessControlList updatePermissions =
-                UserStoreAccessControlList.of( UserStoreAccessControlEntry.create().principal( userKey ).access( CREATE_USERS ).build(),
-                                               UserStoreAccessControlEntry.create().principal( groupKey1 ).access(
+            final IdProviderAccessControlList updatePermissions =
+                IdProviderAccessControlList.of( IdProviderAccessControlEntry.create().principal( userKey ).access( CREATE_USERS ).build(),
+                                                IdProviderAccessControlEntry.create().principal( groupKey1 ).access(
                                                    ADMINISTRATOR ).build() );
-            final UpdateUserStoreParams updateUserStore = UpdateUserStoreParams.create().
-                key( UserStoreKey.from( "enonic" ) ).
+            final UpdateIdProviderParams updateIdProvider = UpdateIdProviderParams.create().
+                key( IdProviderKey.from( "enonic" ) ).
                 displayName( "Enonic User Store updated" ).
                 permissions( updatePermissions ).
                 description( "new user store description" ).
                 build();
-            final UserStore userStoreUpdated = securityService.updateUserStore( updateUserStore );
+            final IdProvider idProviderUpdated = securityService.updateIdProvider( updateIdProvider );
 
             // verify
-            assertNotNull( userStoreUpdated );
-            assertEquals( "enonic", userStoreUpdated.getKey().toString() );
-            assertEquals( "Enonic User Store updated", userStoreUpdated.getDisplayName() );
-            assertEquals( "new user store description", userStoreUpdated.getDescription() );
+            assertNotNull( idProviderUpdated );
+            assertEquals( "enonic", idProviderUpdated.getKey().toString() );
+            assertEquals( "Enonic User Store updated", idProviderUpdated.getDisplayName() );
+            assertEquals( "new user store description", idProviderUpdated.getDescription() );
 
-            final UserStoreAccessControlList updatedPermissions = securityService.getUserStorePermissions( UserStoreKey.from( "enonic" ) );
-            assertNotNull( userStoreCreated );
+            final IdProviderAccessControlList updatedPermissions =
+                securityService.getIdProviderPermissions( IdProviderKey.from( "enonic" ) );
+            assertNotNull( idProviderCreated );
             assertEquals( CREATE_USERS, updatedPermissions.getEntry( userKey ).getAccess() );
             assertEquals( ADMINISTRATOR, updatedPermissions.getEntry( groupKey1 ).getAccess() );
             assertNull( updatedPermissions.getEntry( groupKey2 ) );
@@ -1039,35 +1045,35 @@ public class SecurityServiceImplTest
     }
 
     @Test
-    public void testUpdateUserStoreWithEditor()
+    public void testUpdateIdProviderWithEditor()
         throws Exception
     {
         runAsAdmin( () -> {
             // setup
-            final CreateUserStoreParams createUserStore = CreateUserStoreParams.create().
-                key( UserStoreKey.from( "enonic" ) ).
+            final CreateIdProviderParams createIdProvider = CreateIdProviderParams.create().
+                key( IdProviderKey.from( "enonic" ) ).
                 displayName( "Enonic User Store" ).
                 description( "old user store description" ).
                 build();
-            final UserStore userStoreCreated = securityService.createUserStore( createUserStore );
+            final IdProvider idProviderCreated = securityService.createIdProvider( createIdProvider );
 
             // exercise
-            final UpdateUserStoreParams updateUserStore = UpdateUserStoreParams.create( userStoreCreated ).
+            final UpdateIdProviderParams updateIdProvider = UpdateIdProviderParams.create( idProviderCreated ).
                 editor( edit -> {
-                    edit.key = UserStoreKey.from( "newEnonic" );
+                    edit.key = IdProviderKey.from( "newEnonic" );
                     edit.displayName = "Enonic User Store updated";
                     edit.description = "new user store description";
                 } ).
                 displayName( "Display name from parameters" ).
                 description( "Description from parameters" ).
                 build();
-            final UserStore userStoreUpdated = securityService.updateUserStore( updateUserStore );
+            final IdProvider idProviderUpdated = securityService.updateIdProvider( updateIdProvider );
 
             // verify
-            assertNotNull( userStoreUpdated );
-            assertEquals( "enonic", userStoreUpdated.getKey().toString() );
-            assertEquals( "Enonic User Store updated", userStoreUpdated.getDisplayName() );
-            assertEquals( "new user store description", userStoreUpdated.getDescription() );
+            assertNotNull( idProviderUpdated );
+            assertEquals( "enonic", idProviderUpdated.getKey().toString() );
+            assertEquals( "Enonic User Store updated", idProviderUpdated.getDisplayName() );
+            assertEquals( "new user store description", idProviderUpdated.getDescription() );
         } );
     }
 
@@ -1091,7 +1097,7 @@ public class SecurityServiceImplTest
             final UsernamePasswordAuthToken authToken = new UsernamePasswordAuthToken();
             authToken.setUsername( "user1" );
             authToken.setPassword( "runar" );
-            authToken.setUserStore( SYSTEM );
+            authToken.setIdProvider( SYSTEM );
 
             AuthenticationInfo authInfo = securityService.authenticate( authToken );
             assertFalse( authInfo.isAuthenticated() );
@@ -1121,7 +1127,7 @@ public class SecurityServiceImplTest
 
             refresh();
 
-            final PrincipalQuery query = PrincipalQuery.create().userStore( UserStoreKey.system() ).build();
+            final PrincipalQuery query = PrincipalQuery.create().idProvider( IdProviderKey.system() ).build();
             PrincipalQueryResult queryResult = securityService.query( query );
 
             queryResult = securityService.query( query );

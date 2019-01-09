@@ -9,7 +9,7 @@ import com.enonic.xp.region.LayoutDescriptors;
 import com.enonic.xp.region.PartDescriptors;
 import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.relationship.RelationshipTypes;
-import com.enonic.xp.security.UserStores;
+import com.enonic.xp.security.IdProviders;
 import com.enonic.xp.task.TaskDescriptor;
 
 
@@ -31,7 +31,7 @@ public final class ApplicationInfo
 
     private Contents contentReferences;
 
-    private UserStores userStoreReferences;
+    private IdProviders idProviderReferences;
 
     private IdProviderDescriptor idProviderDescriptor;
 
@@ -46,7 +46,7 @@ public final class ApplicationInfo
         this.macros = builder.macros;
         this.tasks = builder.tasks;
         this.contentReferences = builder.contentReferences;
-        this.userStoreReferences = builder.userStoreReferences;
+        this.idProviderReferences = builder.idProviderReferences;
         this.idProviderDescriptor = builder.idProviderDescriptor;
     }
 
@@ -90,9 +90,9 @@ public final class ApplicationInfo
         return contentReferences;
     }
 
-    public UserStores getUserStoreReferences()
+    public IdProviders getIdProviderReferences()
     {
-        return userStoreReferences;
+        return idProviderReferences;
     }
 
     public IdProviderDescriptor getIdProviderDescriptor()
@@ -124,7 +124,7 @@ public final class ApplicationInfo
 
         private Contents contentReferences;
 
-        private UserStores userStoreReferences;
+        private IdProviders idProviderReferences;
 
         private IdProviderDescriptor idProviderDescriptor;
 
@@ -180,9 +180,9 @@ public final class ApplicationInfo
             return this;
         }
 
-        public Builder setUserStoreReferences( final UserStores userStoreReferences )
+        public Builder setIdProviderReferences( final IdProviders idProviderReferences )
         {
-            this.userStoreReferences = userStoreReferences;
+            this.idProviderReferences = idProviderReferences;
             return this;
         }
 

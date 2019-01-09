@@ -3,11 +3,11 @@ package com.enonic.xp.security;
 import com.google.common.annotations.Beta;
 
 @Beta
-public final class EditableUserStore
+public final class EditableIdProvider
 {
-    public final UserStore source;
+    public final IdProvider source;
 
-    public UserStoreKey key;
+    public IdProviderKey key;
 
     public String displayName;
 
@@ -15,7 +15,7 @@ public final class EditableUserStore
 
     public IdProviderConfig idProviderConfig;
 
-    public EditableUserStore( final UserStore source )
+    public EditableIdProvider( final IdProvider source )
     {
         this.source = source;
         this.key = source.getKey();
@@ -24,9 +24,9 @@ public final class EditableUserStore
         this.idProviderConfig = source.getIdProviderConfig();
     }
 
-    public UserStore build()
+    public IdProvider build()
     {
-        return UserStore.create( this.source ).
+        return IdProvider.create( this.source ).
             key( key ).
             displayName( displayName ).
             description( description ).
