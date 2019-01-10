@@ -41,7 +41,7 @@ public class GroupNodeTranslatorTest
         final PropertyTree rootDataSet = createNodeParams.getData();
         assertNotNull( rootDataSet );
         assertEquals( 4, rootDataSet.getTotalSize() );
-        assertEquals( IdProviderKey.system().toString(), rootDataSet.getString( PrincipalPropertyNames.USER_STORE_KEY ) );
+        assertEquals( IdProviderKey.system().toString(), rootDataSet.getString( PrincipalPropertyNames.ID_PROVIDER_KEY ) );
         assertEquals( PrincipalType.GROUP.toString(), rootDataSet.getString( PrincipalPropertyNames.PRINCIPAL_TYPE_KEY ) );
         assertEquals( "My Group", rootDataSet.getString( PrincipalPropertyNames.DISPLAY_NAME_KEY ) );
         assertEquals( "my group a", rootDataSet.getString( PrincipalPropertyNames.DESCRIPTION_KEY ) );
@@ -57,7 +57,7 @@ public class GroupNodeTranslatorTest
         final PropertyTree rootDataSet = new PropertyTree();
         rootDataSet.setString( PrincipalPropertyNames.DISPLAY_NAME_KEY, "Group A" );
         rootDataSet.setString( PrincipalPropertyNames.PRINCIPAL_TYPE_KEY, groupKey.getType().toString() );
-        rootDataSet.setString( PrincipalPropertyNames.USER_STORE_KEY, groupKey.getIdProviderKey().toString() );
+        rootDataSet.setString( PrincipalPropertyNames.ID_PROVIDER_KEY, groupKey.getIdProviderKey().toString() );
 
         final Node node = Node.create().
             id( NodeId.from( "id" ) ).

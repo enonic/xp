@@ -29,7 +29,7 @@ import com.enonic.xp.security.acl.IdProviderAccessControlList;
 
 import static com.enonic.xp.security.acl.IdProviderAccess.ADMINISTRATOR;
 import static com.enonic.xp.security.acl.IdProviderAccess.CREATE_USERS;
-import static com.enonic.xp.security.acl.IdProviderAccess.USER_STORE_MANAGER;
+import static com.enonic.xp.security.acl.IdProviderAccess.ID_PROVIDER_MANAGER;
 import static com.enonic.xp.security.acl.IdProviderAccess.WRITE_USERS;
 import static com.enonic.xp.security.acl.Permission.CREATE;
 import static com.enonic.xp.security.acl.Permission.DELETE;
@@ -47,7 +47,7 @@ abstract class IdProviderNodeTranslator
 
     private static final ApplicationKey SYSTEM_ID_PROVIDER_KEY = ApplicationKey.from( "com.enonic.xp.app.standardidprovider" );
 
-    protected final static NodePath USER_STORE_PARENT_PATH = NodePath.create( NodePath.ROOT ).
+    protected final static NodePath ID_PROVIDER_PARENT_PATH = NodePath.create( NodePath.ROOT ).
         addElement( PrincipalKey.IDENTITY_NODE_NAME ).
         build();
 
@@ -58,7 +58,7 @@ abstract class IdProviderNodeTranslator
 
     static NodePath getIdProvidersParentPath()
     {
-        return USER_STORE_PARENT_PATH;
+        return ID_PROVIDER_PARENT_PATH;
     }
 
     static IdProviderKey toKey( final Node node )
@@ -123,7 +123,7 @@ abstract class IdProviderNodeTranslator
                 groupsPermissions.isAllowedFor( principal, READ, CREATE, MODIFY, DELETE ) )
             {
                 final IdProviderAccessControlEntry access = IdProviderAccessControlEntry.create().
-                    principal( principal ).access( USER_STORE_MANAGER ).build();
+                    principal( principal ).access( ID_PROVIDER_MANAGER ).build();
                 acl.add( access );
             }
             else if ( usersPermissions.isAllowedFor( principal, READ, CREATE, MODIFY, DELETE ) )
@@ -182,7 +182,7 @@ abstract class IdProviderNodeTranslator
                         allow( READ, CREATE, MODIFY, DELETE ).build();
                     entries.add( ace );
                     break;
-                case USER_STORE_MANAGER:
+                case ID_PROVIDER_MANAGER:
                     ace = AccessControlEntry.create().principal( entry.getPrincipal() ).
                         allow( READ, CREATE, MODIFY, DELETE ).build();
                     entries.add( ace );
@@ -210,7 +210,7 @@ abstract class IdProviderNodeTranslator
             final AccessControlEntry ace;
             switch ( entry.getAccess() )
             {
-                case USER_STORE_MANAGER:
+                case ID_PROVIDER_MANAGER:
                     ace = AccessControlEntry.create().principal( entry.getPrincipal() ).
                         allow( READ, CREATE, MODIFY, DELETE ).build();
                     entries.add( ace );

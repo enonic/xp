@@ -14,14 +14,15 @@ public final class IdProviderKey
 
     private final static IdProviderKey DEFAULT = IdProviderKey.from( "default" );
 
-    private final static String RESERVED_USER_STORE_ID = PrincipalKey.ROLES_NODE_NAME;
+    private final static String RESERVED_ID_PROVIDER_KEY = PrincipalKey.ROLES_NODE_NAME;
 
     private final String id;
 
     public IdProviderKey( final String id )
     {
         Preconditions.checkArgument( !StringUtils.isBlank( id ), "IdProviderKey cannot be blank: %s", id );
-        Preconditions.checkArgument( !RESERVED_USER_STORE_ID.equalsIgnoreCase( id ), "IdProviderKey id is reserved and cannot be used: %s",
+        Preconditions.checkArgument( !RESERVED_ID_PROVIDER_KEY.equalsIgnoreCase( id ),
+                                     "IdProviderKey id is reserved and cannot be used: %s",
                                      id );
         this.id = CharacterChecker.check( id, "Invalid IdProviderKey [" + id + "]" );
     }

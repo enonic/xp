@@ -6,7 +6,7 @@
   "key": "local",
   "permissions": [
     {
-      "access": "USER_STORE_MANAGER",
+      "access": "ID_PROVIDER_MANAGER",
       "principal": {
         "description": "my group",
         "displayName": "My Group",

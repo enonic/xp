@@ -139,7 +139,7 @@ public class SecurityResourceTest
             add( IdProviderAccessControlEntry.create().principal( PrincipalKey.from( "user:local:user1" ) ).access(
                 IdProviderAccess.CREATE_USERS ).build() ).
             add( IdProviderAccessControlEntry.create().principal( PrincipalKey.from( "group:local:mygroup" ) ).access(
-                IdProviderAccess.USER_STORE_MANAGER ).build() ).
+                IdProviderAccess.ID_PROVIDER_MANAGER ).build() ).
             build();
         Mockito.when( securityService.getIdProviderPermissions( ID_PROVIDER_1 ) ).thenReturn( idProviderPermissions );
 

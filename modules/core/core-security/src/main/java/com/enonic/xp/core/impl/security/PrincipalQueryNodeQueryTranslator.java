@@ -20,9 +20,9 @@ import com.enonic.xp.security.PrincipalType;
 
 import static com.enonic.xp.core.impl.security.PrincipalPropertyNames.DISPLAY_NAME_KEY;
 import static com.enonic.xp.core.impl.security.PrincipalPropertyNames.EMAIL_KEY;
+import static com.enonic.xp.core.impl.security.PrincipalPropertyNames.ID_PROVIDER_KEY;
 import static com.enonic.xp.core.impl.security.PrincipalPropertyNames.NAME_KEY;
 import static com.enonic.xp.core.impl.security.PrincipalPropertyNames.PRINCIPAL_TYPE_KEY;
-import static com.enonic.xp.core.impl.security.PrincipalPropertyNames.USER_STORE_KEY;
 import static java.util.stream.Collectors.toList;
 
 final class PrincipalQueryNodeQueryTranslator
@@ -39,7 +39,7 @@ final class PrincipalQueryNodeQueryTranslator
         if ( idProviders.isNotEmpty() )
         {
             nodeQueryBuilder.addQueryFilter( ValueFilter.create().
-                fieldName( USER_STORE_KEY ).
+                fieldName( ID_PROVIDER_KEY ).
                 addValues( idProviders.stream().map( IdProviderKey::toString ).collect( toList() ) ).
                 build() );
         }

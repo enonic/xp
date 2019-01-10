@@ -43,7 +43,11 @@ final class SecurityInitializer
 {
     public static final PrincipalKey SUPER_USER = PrincipalKey.ofSuperUser();
 
-    private static final String SYSTEM_USER_STORE_DISPLAY_NAME = "System User Store";
+    static final IdProviderAccessControlList DEFAULT_ID_PROVIDER_ACL =
+        IdProviderAccessControlList.of( IdProviderAccessControlEntry.create().principal( RoleKeys.ADMIN ).access( ADMINISTRATOR ).build(),
+                                        IdProviderAccessControlEntry.create().principal( RoleKeys.USER_MANAGER_ADMIN ).access(
+                                           ADMINISTRATOR ).build(),
+                                        IdProviderAccessControlEntry.create().principal( RoleKeys.AUTHENTICATED ).access( READ ).build() );
 
     private static final String ADMIN_USER_CREATION_PROPERTY_KEY = "xp.init.adminUserCreation";
 
@@ -51,11 +55,7 @@ final class SecurityInitializer
 
     private static final ApplicationKey SYSTEM_ID_PROVIDER_KEY = ApplicationKey.from( "com.enonic.xp.app.standardidprovider" );
 
-    static final IdProviderAccessControlList DEFAULT_USER_STORE_ACL =
-        IdProviderAccessControlList.of( IdProviderAccessControlEntry.create().principal( RoleKeys.ADMIN ).access( ADMINISTRATOR ).build(),
-                                        IdProviderAccessControlEntry.create().principal( RoleKeys.USER_MANAGER_ADMIN ).access(
-                                           ADMINISTRATOR ).build(),
-                                        IdProviderAccessControlEntry.create().principal( RoleKeys.AUTHENTICATED ).access( READ ).build() );
+    private static final String SYSTEM_ID_PROVIDER_DISPLAY_NAME = "System Id Provider";
 
     private final SecurityService securityService;
 
@@ -165,9 +165,9 @@ final class SecurityInitializer
 
         final CreateIdProviderParams createParams = CreateIdProviderParams.create().
             key( IdProviderKey.system() ).
-            displayName( SYSTEM_USER_STORE_DISPLAY_NAME ).
+            displayName( SYSTEM_ID_PROVIDER_DISPLAY_NAME ).
             idProviderConfig( idProviderConfig ).
-            permissions( DEFAULT_USER_STORE_ACL ).
+            permissions( DEFAULT_ID_PROVIDER_ACL ).
             build();
 
         this.securityService.createIdProvider( createParams );

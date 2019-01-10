@@ -101,7 +101,7 @@ import com.enonic.xp.security.auth.UsernamePasswordAuthToken;
 import com.enonic.xp.security.auth.VerifiedEmailAuthToken;
 import com.enonic.xp.security.auth.VerifiedUsernameAuthToken;
 
-import static com.enonic.xp.core.impl.security.SecurityInitializer.DEFAULT_USER_STORE_ACL;
+import static com.enonic.xp.core.impl.security.SecurityInitializer.DEFAULT_ID_PROVIDER_ACL;
 
 @Component(immediate = true)
 public final class SecurityServiceImpl
@@ -207,7 +207,7 @@ public final class SecurityServiceImpl
     @Override
     public IdProviderAccessControlList getDefaultIdProviderPermissions()
     {
-        return DEFAULT_USER_STORE_ACL;
+        return DEFAULT_ID_PROVIDER_ACL;
     }
 
     @Override
@@ -579,8 +579,9 @@ public final class SecurityServiceImpl
 
     private User findByUsername( final IdProviderKey idProvider, final String username )
     {
-        final CompareExpr idProviderExpr = CompareExpr.create( FieldExpr.from( PrincipalIndexPath.USER_STORE_KEY ), CompareExpr.Operator.EQ,
-                                                               ValueExpr.string( idProvider.toString() ) );
+        final CompareExpr idProviderExpr =
+            CompareExpr.create( FieldExpr.from( PrincipalIndexPath.ID_PROVIDER_KEY ), CompareExpr.Operator.EQ,
+                                ValueExpr.string( idProvider.toString() ) );
         final CompareExpr userNameExpr =
             CompareExpr.create( FieldExpr.from( PrincipalIndexPath.LOGIN_KEY ), CompareExpr.Operator.EQ, ValueExpr.string( username ) );
         final QueryExpr query = QueryExpr.from( LogicalExpr.and( idProviderExpr, userNameExpr ) );
@@ -591,7 +592,7 @@ public final class SecurityServiceImpl
 
         if ( nodes.getSize() > 1 )
         {
-            throw new IllegalArgumentException( "Expected at most 1 user with username " + username + " in userstore " + idProvider );
+            throw new IllegalArgumentException( "Expected at most 1 user with username " + username + " in id provider " + idProvider );
         }
 
         return nodes.isEmpty() ? null : PrincipalNodeTranslator.userFromNode( nodes.first() );
@@ -599,8 +600,9 @@ public final class SecurityServiceImpl
 
     private User findByEmail( final IdProviderKey idProvider, final String email )
     {
-        final CompareExpr idProviderExpr = CompareExpr.create( FieldExpr.from( PrincipalIndexPath.USER_STORE_KEY ), CompareExpr.Operator.EQ,
-                                                               ValueExpr.string( idProvider.toString() ) );
+        final CompareExpr idProviderExpr =
+            CompareExpr.create( FieldExpr.from( PrincipalIndexPath.ID_PROVIDER_KEY ), CompareExpr.Operator.EQ,
+                                ValueExpr.string( idProvider.toString() ) );
         final CompareExpr userNameExpr =
             CompareExpr.create( FieldExpr.from( PrincipalIndexPath.EMAIL_KEY ), CompareExpr.Operator.EQ, ValueExpr.string( email ) );
         final QueryExpr query = QueryExpr.from( LogicalExpr.and( idProviderExpr, userNameExpr ) );
@@ -611,7 +613,7 @@ public final class SecurityServiceImpl
 
         if ( nodes.getSize() > 1 )
         {
-            throw new IllegalArgumentException( "Expected at most 1 user with email " + email + " in userstore " + idProvider );
+            throw new IllegalArgumentException( "Expected at most 1 user with email " + email + " in id provider " + idProvider );
         }
 
         return nodes.isEmpty() ? null : PrincipalNodeTranslator.userFromNode( nodes.first() );
@@ -753,8 +755,9 @@ public final class SecurityServiceImpl
             return;
         }
 
-        final CompareExpr idProviderExpr = CompareExpr.create( FieldExpr.from( PrincipalIndexPath.USER_STORE_KEY ), CompareExpr.Operator.EQ,
-                                                               ValueExpr.string( key.getIdProviderKey().toString() ) );
+        final CompareExpr idProviderExpr =
+            CompareExpr.create( FieldExpr.from( PrincipalIndexPath.ID_PROVIDER_KEY ), CompareExpr.Operator.EQ,
+                                ValueExpr.string( key.getIdProviderKey().toString() ) );
         final CompareExpr emailExpr =
             CompareExpr.create( FieldExpr.from( PrincipalIndexPath.EMAIL_KEY ), CompareExpr.Operator.EQ, ValueExpr.string( email ) );
         final QueryExpr query = QueryExpr.from( LogicalExpr.and( idProviderExpr, emailExpr ) );

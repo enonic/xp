@@ -7,7 +7,6 @@ public enum IdProviderAccess
 {
     READ,
     CREATE_USERS,
-    WRITE_USERS,
-    USER_STORE_MANAGER,
+    WRITE_USERS, ID_PROVIDER_MANAGER,
     ADMINISTRATOR
 }
