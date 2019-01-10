@@ -210,11 +210,24 @@ public class FileDumpWriter
                 "Cannot write index config blob with key [" + nodeVersionKey.getIndexConfigBlobKey() + "], not found in blobStore" );
         }
 
+        final Segment accessControlDumpSegment =
+            RepositorySegmentUtils.toSegment( repositoryId, DumpConstants.DUMP_ACCESS_CONTROL_SEGMENT_LEVEL );
+        final BlobRecord existingAccessControlBlobRecord =
+            blobStore.getRecord( accessControlDumpSegment, nodeVersionKey.getAccessControlBlobKey() );
+        if ( existingAccessControlBlobRecord == null )
+        {
+            throw new RepoDumpException(
+                "Cannot write access control blob with key [" + nodeVersionKey.getAccessControlBlobKey() + "], not found in blobStore" );
+        }
+
         final Segment nodeSegment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.NODE_SEGMENT_LEVEL );
         this.dumpBlobStore.addRecord( nodeSegment, existingNodeBlobRecord.getBytes() );
 
         final Segment indexConfigSegment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.INDEX_CONFIG_SEGMENT_LEVEL );
         this.dumpBlobStore.addRecord( indexConfigSegment, existingIndexConfigBlobRecord.getBytes() );
+
+        final Segment accessControlSegment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.ACCESS_CONTROL_SEGMENT_LEVEL );
+        this.dumpBlobStore.addRecord( accessControlSegment, existingAccessControlBlobRecord.getBytes() );
     }
 
     @Override
