@@ -349,7 +349,17 @@ public class FileDumpReader
             throw new RepoLoadException( "Cannot find referred index config blob " + nodeVersionKey.getIndexConfigBlobKey() + " in dump" );
         }
 
-        return this.factory.create( dataRecord.getBytes(), indexConfigRecord.getBytes() );
+        final Segment accessControlSegment =
+            RepositorySegmentUtils.toSegment( repositoryId, DumpConstants.DUMP_ACCESS_CONTROL_SEGMENT_LEVEL );
+        final BlobRecord accessControlRecord =
+            this.dumpBlobStore.getRecord( accessControlSegment, nodeVersionKey.getAccessControlBlobKey() );
+        if ( accessControlRecord == null )
+        {
+            throw new RepoLoadException(
+                "Cannot find referred access control blob " + nodeVersionKey.getAccessControlBlobKey() + " in dump" );
+        }
+
+        return this.factory.create( dataRecord.getBytes(), indexConfigRecord.getBytes(), accessControlRecord.getBytes() );
     }
 
     @Override

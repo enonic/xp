@@ -14,14 +14,15 @@ class NodeVersionFactory
 {
     private final NodeVersionJsonSerializer serializer = NodeVersionJsonSerializer.create( false );
 
-    NodeVersion create( final ByteSource dataByteSource, final ByteSource indexConfigByteSource )
+    NodeVersion create( final ByteSource dataByteSource, final ByteSource indexConfigByteSource, final ByteSource accessControlByteSource )
     {
         final CharSource dataCharSource = dataByteSource.asCharSource( Charsets.UTF_8 );
         final CharSource indexConfigCharSource = indexConfigByteSource.asCharSource( Charsets.UTF_8 );
+        final CharSource accessControlCharSource = accessControlByteSource.asCharSource( Charsets.UTF_8 );
 
         try
         {
-            return serializer.toNodeVersion( dataCharSource.read(), indexConfigCharSource.read() );
+            return serializer.toNodeVersion( dataCharSource.read(), indexConfigCharSource.read(), accessControlCharSource.read() );
         }
         catch ( IOException e )
         {

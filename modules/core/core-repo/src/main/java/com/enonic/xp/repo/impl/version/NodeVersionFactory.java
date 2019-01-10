@@ -19,11 +19,12 @@ class NodeVersionFactory
         final String versionId = values.getSingleValue( VersionIndexPath.VERSION_ID.getPath() ).toString();
         final String nodeBlobKey = values.getSingleValue( VersionIndexPath.NODE_BLOB_KEY.getPath() ).toString();
         final String indexConfigBlobKey = values.getSingleValue( VersionIndexPath.INDEX_CONFIG_BLOB_KEY.getPath() ).toString();
+        final String accessControlBlobKey = values.getSingleValue( VersionIndexPath.ACCESS_CONTROL_BLOB_KEY.getPath() ).toString();
         final Instant timestamp = Instant.parse( values.getSingleValue( VersionIndexPath.TIMESTAMP.getPath() ).toString() );
         final String id = values.getSingleValue( VersionIndexPath.NODE_ID.getPath() ).toString();
         final String path = values.getSingleValue( VersionIndexPath.NODE_PATH.getPath() ).toString();
 
-        final NodeVersionKey nodeVersionKey = NodeVersionKey.from( nodeBlobKey, indexConfigBlobKey );
+        final NodeVersionKey nodeVersionKey = NodeVersionKey.from( nodeBlobKey, indexConfigBlobKey, accessControlBlobKey );
 
         return NodeVersionMetadata.create().
             nodeId( NodeId.from( id ) ).

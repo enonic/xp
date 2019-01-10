@@ -48,16 +48,33 @@ public final class NodeVersionJsonSerializer
         }
     }
 
-    public NodeVersion toNodeVersion( final String data, final String indexConfigDocument )
+    public String toAccessControlString( final NodeVersion nodeVersion )
+    {
+        try
+        {
+            final AccessControlJson accessControlJson = AccessControlJson.toJson( nodeVersion );
+            return this.mapper.writeValueAsString( accessControlJson );
+
+        }
+        catch ( final JsonProcessingException e )
+        {
+            throw Exceptions.unchecked( e );
+        }
+    }
+
+    public NodeVersion toNodeVersion( final String data, final String indexConfigDocument, final String accessControl )
     {
         try
         {
             final NodeVersionDataJson nodeVersionJson = this.mapper.readValue( data, NodeVersionDataJson.class );
             final IndexConfigDocumentJson indexConfigDocumentJson =
                 this.mapper.readValue( indexConfigDocument, IndexConfigDocumentJson.class );
+            final AccessControlJson accessControlJson = this.mapper.readValue( accessControl, AccessControlJson.class );
 
             return nodeVersionJson.fromJson().
                 indexConfigDocument( indexConfigDocumentJson.fromJson() ).
+                inheritPermissions( accessControlJson.isInheritPermissions() ).
+                permissions( accessControlJson.getAccessControlList() ).
                 build();
         }
         catch ( final IOException e )

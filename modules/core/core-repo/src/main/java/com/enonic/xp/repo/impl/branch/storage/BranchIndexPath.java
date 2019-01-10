@@ -12,6 +12,8 @@ public class BranchIndexPath
 
     public static final IndexPath INDEX_CONFIG_BLOB_KEY = IndexPath.from( "indexConfigBlobKey" );
 
+    public static final IndexPath ACCESS_CONTROL_BLOB_KEY = IndexPath.from( "accessControlBlobKey" );
+
     public static final IndexPath BRANCH_NAME = IndexPath.from( "branch" );
 
     public static final IndexPath NODE_ID = IndexPath.from( "nodeId" );

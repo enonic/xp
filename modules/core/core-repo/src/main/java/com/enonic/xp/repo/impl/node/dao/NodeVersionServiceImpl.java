@@ -35,16 +35,25 @@ public class NodeVersionServiceImpl
     {
         final Segment nodeSegment = RepositorySegmentUtils.toSegment( context.getRepositoryId(), NodeConstants.NODE_SEGMENT_LEVEL );
         final String nodeJsonString = this.nodeVersionJsonSerializer.toNodeString( nodeVersion );
-        final ByteSource nodeByteSource = ByteSource.wrap( nodeJsonString.getBytes( StandardCharsets.UTF_8 ) );
-        final BlobRecord nodeBlobRecord = blobStore.addRecord( nodeSegment, nodeByteSource );
+        final BlobRecord nodeBlobRecord = getBlobRecord( nodeSegment, nodeJsonString );
 
         final Segment indexConfigSegment =
             RepositorySegmentUtils.toSegment( context.getRepositoryId(), NodeConstants.INDEX_CONFIG_SEGMENT_LEVEL );
         final String indexConfigDocumentString = this.nodeVersionJsonSerializer.toIndexConfigDocumentString( nodeVersion );
-        final ByteSource indexConfigByteSource = ByteSource.wrap( indexConfigDocumentString.getBytes( StandardCharsets.UTF_8 ) );
-        final BlobRecord indexConfigBlobRecord = blobStore.addRecord( indexConfigSegment, indexConfigByteSource );
+        final BlobRecord indexConfigBlobRecord = getBlobRecord( indexConfigSegment, indexConfigDocumentString );
 
-        return NodeVersionKey.from( nodeBlobRecord.getKey(), indexConfigBlobRecord.getKey() );
+        final Segment accessControlSegment =
+            RepositorySegmentUtils.toSegment( context.getRepositoryId(), NodeConstants.ACCESS_CONTROL_SEGMENT_LEVEL );
+        final String accessControlString = this.nodeVersionJsonSerializer.toAccessControlString( nodeVersion );
+        final BlobRecord accessControlBlobRecord = getBlobRecord( accessControlSegment, accessControlString );
+
+        return NodeVersionKey.from( nodeBlobRecord.getKey(), indexConfigBlobRecord.getKey(), accessControlBlobRecord.getKey() );
+    }
+
+    private BlobRecord getBlobRecord( final Segment segment, final String nodeJsonString )
+    {
+        final ByteSource nodeByteSource = ByteSource.wrap( nodeJsonString.getBytes( StandardCharsets.UTF_8 ) );
+        return blobStore.addRecord( segment, nodeByteSource );
     }
 
     @Override
@@ -95,11 +104,21 @@ public class NodeVersionServiceImpl
                 "Cannot get index config blob with blobKey: " + nodeVersionKey.getIndexConfigBlobKey() + ": blob is null" );
         }
 
+        final Segment accessControlSegment =
+            RepositorySegmentUtils.toSegment( context.getRepositoryId(), NodeConstants.ACCESS_CONTROL_SEGMENT_LEVEL );
+        final BlobRecord accessControlBlobRecord = blobStore.getRecord( accessControlSegment, nodeVersionKey.getAccessControlBlobKey() );
+        if ( accessControlBlobRecord == null )
+        {
+            throw new IllegalArgumentException(
+                "Cannot get access control blob with blobKey: " + nodeVersionKey.getAccessControlBlobKey() + ": blob is null" );
+        }
+
         try
         {
             final String nodeString = nodeBlobRecord.getBytes().asCharSource( Charsets.UTF_8 ).read();
             final String indexConfigString = indexConfigBlobRecord.getBytes().asCharSource( Charsets.UTF_8 ).read();
-            return this.nodeVersionJsonSerializer.toNodeVersion( nodeString, indexConfigString );
+            final String accessControlString = accessControlBlobRecord.getBytes().asCharSource( Charsets.UTF_8 ).read();
+            return this.nodeVersionJsonSerializer.toNodeVersion( nodeString, indexConfigString, accessControlString );
         }
         catch ( IOException e )
         {
@@ -107,9 +126,11 @@ public class NodeVersionServiceImpl
             {
                 ( (CachingBlobStore) blobStore ).invalidate( indexConfigSegment, nodeBlobRecord.getKey() );
                 ( (CachingBlobStore) blobStore ).invalidate( indexConfigSegment, indexConfigBlobRecord.getKey() );
+                ( (CachingBlobStore) blobStore ).invalidate( indexConfigSegment, accessControlBlobRecord.getKey() );
             }
             throw new RuntimeException(
-                "Failed to load blobs with keys: " + nodeBlobRecord.getKey() + ", " + indexConfigBlobRecord.getKey(), e );
+                "Failed to load blobs with keys: " + nodeBlobRecord.getKey() + ", " + indexConfigBlobRecord.getKey() + ", " +
+                    accessControlBlobRecord.getKey(), e );
         }
     }
 

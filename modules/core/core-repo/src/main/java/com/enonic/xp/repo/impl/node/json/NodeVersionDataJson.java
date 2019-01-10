@@ -34,12 +34,6 @@ final class NodeVersionDataJson
     @JsonProperty("manualOrderValue")
     private Long manualOrderValue;
 
-    @JsonProperty("permissions")
-    private List<AccessControlEntryJson> permissions;
-
-    @JsonProperty("inheritPermissions")
-    private boolean inheritPermissions;
-
     @JsonProperty("nodeType")
     private String nodeType;
 
@@ -53,21 +47,8 @@ final class NodeVersionDataJson
             data( PropertyTreeJson.fromJson( this.data ) ).
             childOrder( ChildOrder.from( this.childOrder ) ).
             manualOrderValue( this.manualOrderValue ).
-            permissions( fromJson( this.permissions ) ).
-            inheritPermissions( this.inheritPermissions ).
             nodeType( NodeType.from( this.nodeType ) ).
             attachedBinaries( fromNodeAttachedBinaryJsonList( attachedBinaries ) );
-    }
-
-    private AccessControlList fromJson( final List<AccessControlEntryJson> list )
-    {
-        final AccessControlList.Builder builder = AccessControlList.create();
-        for ( final AccessControlEntryJson entryJson : list )
-        {
-            builder.add( entryJson.fromJson() );
-        }
-
-        return builder.build();
     }
 
     private AttachedBinaries fromNodeAttachedBinaryJsonList( final List<AttachedBinaryJson> list )
@@ -88,26 +69,9 @@ final class NodeVersionDataJson
         json.data = PropertyTreeJson.toJson( nodeVersion.getData() );
         json.childOrder = nodeVersion.getChildOrder().toString();
         json.manualOrderValue = nodeVersion.getManualOrderValue();
-        json.permissions = toJson( nodeVersion.getPermissions() );
-        json.inheritPermissions = nodeVersion.isInheritPermissions();
         json.nodeType = nodeVersion.getNodeType().getName();
         json.attachedBinaries = toNodeAttachedBinaryJsonList( nodeVersion.getAttachedBinaries() );
         return json;
-    }
-
-    private static List<AccessControlEntryJson> toJson( final AccessControlList acl )
-    {
-        if ( acl == null )
-        {
-            return null;
-        }
-
-        final List<AccessControlEntryJson> entryJsonList = Lists.newArrayList();
-        for ( final AccessControlEntry entry : acl )
-        {
-            entryJsonList.add( AccessControlEntryJson.toJson( entry ) );
-        }
-        return entryJsonList;
     }
 
     private static List<AttachedBinaryJson> toNodeAttachedBinaryJsonList( final AttachedBinaries attachedBinaries )

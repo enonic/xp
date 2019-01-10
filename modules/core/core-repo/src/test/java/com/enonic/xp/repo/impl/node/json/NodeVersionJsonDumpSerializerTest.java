@@ -111,11 +111,15 @@ public class NodeVersionJsonDumpSerializerTest
 
         final String expectedNodeStr = readJson( "serialized-node.json" );
         final String expectedIndexConfigStr = readJson( "serialized-index.json" );
+        final String expectedAccessControlStr = readJson( "serialized-access.json" );
         final String serializedNode = this.serializer.toNodeString( nodeVersion );
         final String serializedIndexConfig = this.serializer.toIndexConfigDocumentString( nodeVersion );
+        final String serializedAccessControl = this.serializer.toAccessControlString( nodeVersion );
         assertEquals( expectedNodeStr, serializedNode );
         assertEquals( expectedIndexConfigStr, serializedIndexConfig );
-        final NodeVersion deSerializedNode = this.serializer.toNodeVersion( expectedNodeStr, expectedIndexConfigStr );
+        assertEquals( expectedAccessControlStr, serializedAccessControl );
+        final NodeVersion deSerializedNode =
+            this.serializer.toNodeVersion( expectedNodeStr, expectedIndexConfigStr, expectedAccessControlStr );
         assertEquals( nodeVersion, deSerializedNode );
     }
 

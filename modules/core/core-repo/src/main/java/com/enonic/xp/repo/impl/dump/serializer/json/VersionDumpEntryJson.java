@@ -5,7 +5,6 @@ import java.time.Instant;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;
@@ -29,6 +28,9 @@ public class VersionDumpEntryJson
     @JsonProperty("indexConfigBlobKey")
     private String indexConfigBlobKey;
 
+    @JsonProperty("accessControlBlobKey")
+    private String accessControlBlobKey;
+
     @JsonProperty("nodeState")
     private String nodeState;
 
@@ -43,13 +45,14 @@ public class VersionDumpEntryJson
         version = builder.version;
         nodeBlobKey = builder.nodeBlobKey;
         indexConfigBlobKey = builder.indexConfigBlobKey;
+        accessControlBlobKey = builder.accessControlBlobKey;
         nodeState = builder.nodeState;
     }
 
     public static VersionMeta fromJson( final VersionDumpEntryJson json )
     {
         final NodeVersionKey nodeVersionKey =
-            NodeVersionKey.from( BlobKey.from( json.getNodeBlobKey() ), BlobKey.from( json.getIndexConfigBlobKey() ) );
+            NodeVersionKey.from( json.getNodeBlobKey(), json.getIndexConfigBlobKey(), json.getAccessControlBlobKey() );
         return VersionMeta.create().
             nodePath( NodePath.create( json.nodePath ).build() ).
             timestamp( json.getTimestamp() != null ? Instant.parse( json.getTimestamp() ) : null ).
@@ -67,6 +70,7 @@ public class VersionDumpEntryJson
             version( meta.getVersion() != null ? meta.getVersion().toString() : null ).
             nodeBlobKey( meta.getNodeVersionKey().getNodeBlobKey().toString() ).
             indexConfigBlobKey( meta.getNodeVersionKey().getIndexConfigBlobKey().toString() ).
+            accessControlBlobKey( meta.getNodeVersionKey().getAccessControlBlobKey().toString() ).
             build();
     }
 
@@ -100,6 +104,11 @@ public class VersionDumpEntryJson
         return indexConfigBlobKey;
     }
 
+    public String getAccessControlBlobKey()
+    {
+        return accessControlBlobKey;
+    }
+
     private String getNodeState()
     {
         return nodeState;
@@ -116,6 +125,8 @@ public class VersionDumpEntryJson
         private String nodeBlobKey;
 
         private String indexConfigBlobKey;
+
+        private String accessControlBlobKey;
 
         private String nodeState;
 
@@ -150,6 +161,12 @@ public class VersionDumpEntryJson
         public Builder indexConfigBlobKey( final String val )
         {
             indexConfigBlobKey = val;
+            return this;
+        }
+
+        public Builder accessControlBlobKey( final String val )
+        {
+            accessControlBlobKey = val;
             return this;
         }
 
