@@ -234,7 +234,7 @@ public final class SecurityResource
     @GET
     @Path("principals")
     public FindPrincipalsResultJson findPrincipals( @QueryParam("types") final String types, @QueryParam("query") final String query,
-                                                    @QueryParam("idProviderKey") final String storeKey,
+                                                    @QueryParam("idProviderKey") final String idProviderKey,
                                                     @QueryParam("from") final Integer from, @QueryParam("size") final Integer size )
     {
 
@@ -245,9 +245,9 @@ public final class SecurityResource
             includeTypes( principalTypes ).
             searchText( query );
 
-        if ( StringUtils.isNotEmpty( storeKey ) )
+        if ( StringUtils.isNotEmpty( idProviderKey ) )
         {
-            principalQuery.idProvider( IdProviderKey.from( storeKey ) );
+            principalQuery.idProvider( IdProviderKey.from( idProviderKey ) );
         }
 
         if ( from != null )
@@ -269,7 +269,7 @@ public final class SecurityResource
     public FindPrincipalsWithRolesResultJson findPrincipals( @QueryParam("types") final String types,
                                                              @QueryParam("roles") final String roles,
                                                              @QueryParam("query") final String query,
-                                                             @QueryParam("idProviderKey") final String storeKey,
+                                                             @QueryParam("idProviderKey") final String idProviderKey,
                                                              @QueryParam("from") final Integer from,
                                                              @QueryParam("size") final Integer size )
     {
@@ -280,9 +280,9 @@ public final class SecurityResource
             includeTypes( principalTypes ).
             searchText( query );
 
-        if ( StringUtils.isNotEmpty( storeKey ) )
+        if ( StringUtils.isNotEmpty( idProviderKey ) )
         {
-            principalQuery.idProvider( IdProviderKey.from( storeKey ) );
+            principalQuery.idProvider( IdProviderKey.from( idProviderKey ) );
         }
 
         FetchPrincipalsWithRolesResult fwResult =
