@@ -26,7 +26,7 @@ public class PrincipalKeyNodeTranslatorTest
     public void toNodeName()
         throws Exception
     {
-        PrincipalKey principalKey = PrincipalKey.ofUser( IdProviderKey.from( "myuserstore" ), "rmy" );
+        PrincipalKey principalKey = PrincipalKey.ofUser( IdProviderKey.from( "myidprovider" ), "rmy" );
 
         User user = User.create().
             key( principalKey ).

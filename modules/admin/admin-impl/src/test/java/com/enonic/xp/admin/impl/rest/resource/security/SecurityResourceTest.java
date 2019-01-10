@@ -68,9 +68,9 @@ public class SecurityResourceTest
 
     private static Clock clock = Clock.fixed( NOW, ZoneId.of( "UTC" ) );
 
-    private static final IdProviderKey USER_STORE_1 = IdProviderKey.from( "local" );
+    private static final IdProviderKey ID_PROVIDER_1 = IdProviderKey.from( "local" );
 
-    private static final IdProviderKey USER_STORE_2 = IdProviderKey.from( "file-store" );
+    private static final IdProviderKey ID_PROVIDER_2 = IdProviderKey.from( "file-store" );
 
     private SecurityService securityService;
 
@@ -115,9 +115,9 @@ public class SecurityResourceTest
     public void getIdProviderByKey()
         throws Exception
     {
-        final IdProvider idProvider = createIdProviders().getIdProvider( USER_STORE_1 );
+        final IdProvider idProvider = createIdProviders().getIdProvider( ID_PROVIDER_1 );
 
-        Mockito.when( securityService.getIdProvider( USER_STORE_1 ) ).thenReturn( idProvider );
+        Mockito.when( securityService.getIdProvider( ID_PROVIDER_1 ) ).thenReturn( idProvider );
 
         final User user1 = User.create().
             key( PrincipalKey.from( "user:local:user1" ) ).
@@ -141,7 +141,7 @@ public class SecurityResourceTest
             add( IdProviderAccessControlEntry.create().principal( PrincipalKey.from( "group:local:mygroup" ) ).access(
                 IdProviderAccess.USER_STORE_MANAGER ).build() ).
             build();
-        Mockito.when( securityService.getIdProviderPermissions( USER_STORE_1 ) ).thenReturn( idProviderPermissions );
+        Mockito.when( securityService.getIdProviderPermissions( ID_PROVIDER_1 ) ).thenReturn( idProviderPermissions );
 
         String jsonString = request().path( "security/idprovider" ).queryParam( "key", "local" ).get().getAsString();
 
@@ -206,8 +206,8 @@ public class SecurityResourceTest
             IdProviderAccessControlEntry.create().principal( PrincipalKey.from( "user:system:user1" ) ).access( ADMINISTRATOR ).build() );
         final IdProvider idProvider = IdProvider.create().
             key( IdProviderKey.from( "enonic" ) ).
-            displayName( "Enonic User Store" ).
-            description( "user store description" ).
+            displayName( "Enonic Id Provider" ).
+            description( "id provider description" ).
             build();
         Mockito.when( securityService.createIdProvider( Mockito.isA( CreateIdProviderParams.class ) ) ).thenReturn( idProvider );
 
@@ -238,8 +238,8 @@ public class SecurityResourceTest
             IdProviderAccessControlEntry.create().principal( PrincipalKey.from( "user:system:user1" ) ).access( ADMINISTRATOR ).build() );
         final IdProvider idProvider = IdProvider.create().
             key( IdProviderKey.from( "enonic" ) ).
-            displayName( "Enonic User Store" ).
-            description( "user store description" ).
+            displayName( "Enonic Id Provider" ).
+            description( "id provider description" ).
             build();
         Mockito.when( securityService.updateIdProvider( Mockito.isA( UpdateIdProviderParams.class ) ) ).thenReturn( idProvider );
 
@@ -390,7 +390,7 @@ public class SecurityResourceTest
         throws Exception
     {
         final User user1 = User.create().
-            key( PrincipalKey.ofUser( USER_STORE_1, "a" ) ).
+            key( PrincipalKey.ofUser( ID_PROVIDER_1, "a" ) ).
             displayName( "Alice" ).
             modifiedTime( Instant.now( clock ) ).
             email( "alice@a.org" ).
@@ -413,7 +413,7 @@ public class SecurityResourceTest
         throws Exception
     {
         final User user1 = User.create().
-            key( PrincipalKey.ofUser( USER_STORE_1, "a" ) ).
+            key( PrincipalKey.ofUser( ID_PROVIDER_1, "a" ) ).
             displayName( "Alice" ).
             modifiedTime( Instant.now( clock ) ).
             email( "alice@a.org" ).
@@ -569,7 +569,7 @@ public class SecurityResourceTest
             build();
 
         final User user = User.create().
-            key( PrincipalKey.ofUser( USER_STORE_1, "a" ) ).
+            key( PrincipalKey.ofUser( ID_PROVIDER_1, "a" ) ).
             displayName( "Alice" ).
             modifiedTime( Instant.now( clock ) ).
             email( "alice@a.org" ).
@@ -604,7 +604,7 @@ public class SecurityResourceTest
         throws Exception
     {
         final User user = User.create().
-            key( PrincipalKey.ofUser( USER_STORE_1, "a" ) ).
+            key( PrincipalKey.ofUser( ID_PROVIDER_1, "a" ) ).
             displayName( "Alice" ).
             modifiedTime( Instant.now( clock ) ).
             email( "alice@enonic.com" ).
@@ -656,7 +656,7 @@ public class SecurityResourceTest
         throws Exception
     {
         final User user = User.create().
-            key( PrincipalKey.ofUser( USER_STORE_1, "user1" ) ).
+            key( PrincipalKey.ofUser( ID_PROVIDER_1, "user1" ) ).
             displayName( "User 1" ).
             modifiedTime( Instant.now( clock ) ).
             email( "user1@enonic.com" ).
@@ -720,7 +720,7 @@ public class SecurityResourceTest
         throws Exception
     {
         final User user = User.create().
-            key( PrincipalKey.ofUser( USER_STORE_1, "user1" ) ).
+            key( PrincipalKey.ofUser( ID_PROVIDER_1, "user1" ) ).
             displayName( "User 1" ).
             modifiedTime( Instant.now( clock ) ).
             email( "user1@enonic.com" ).
@@ -835,7 +835,7 @@ public class SecurityResourceTest
         throws Exception
     {
         final User user = User.create().
-            key( PrincipalKey.ofUser( USER_STORE_1, "user1" ) ).
+            key( PrincipalKey.ofUser( ID_PROVIDER_1, "user1" ) ).
             displayName( "User 1" ).
             modifiedTime( Instant.now( clock ) ).
             email( "user1@enonic.com" ).
@@ -887,14 +887,14 @@ public class SecurityResourceTest
     private IdProviders createIdProviders()
     {
         final IdProvider idProvider1 = IdProvider.create().
-            key( USER_STORE_1 ).
+            key( ID_PROVIDER_1 ).
             displayName( "Local LDAP" ).
             description( "local ldap" ).
             build();
 
         final IdProvider idProvider2 = IdProvider.create().
-            key( USER_STORE_2 ).
-            displayName( "File based user store" ).
+            key( ID_PROVIDER_2 ).
+            displayName( "File based id provider" ).
             description( "file based ustore description" ).
             build();
 
@@ -904,7 +904,7 @@ public class SecurityResourceTest
     private Principals createPrincipalsFromUsers()
     {
         final User user1 = User.create().
-            key( PrincipalKey.ofUser( USER_STORE_1, "a" ) ).
+            key( PrincipalKey.ofUser( ID_PROVIDER_1, "a" ) ).
             displayName( "Alice" ).
             modifiedTime( Instant.now( clock ) ).
             email( "alice@a.org" ).
@@ -912,7 +912,7 @@ public class SecurityResourceTest
             build();
 
         final User user2 = User.create().
-            key( PrincipalKey.ofUser( USER_STORE_2, "b" ) ).
+            key( PrincipalKey.ofUser( ID_PROVIDER_2, "b" ) ).
             displayName( "Bobby" ).
             modifiedTime( Instant.now( clock ) ).
             email( "bobby@b.org" ).
@@ -940,13 +940,13 @@ public class SecurityResourceTest
     private Principals createPrincipalsFromGroups()
     {
         final Group group1 = Group.create().
-            key( PrincipalKey.ofGroup( USER_STORE_1, "a" ) ).
+            key( PrincipalKey.ofGroup( ID_PROVIDER_1, "a" ) ).
             displayName( "Destructors" ).
             modifiedTime( Instant.now( clock ) ).
             build();
 
         final Group group2 = Group.create().
-            key( PrincipalKey.ofGroup( USER_STORE_2, "b" ) ).
+            key( PrincipalKey.ofGroup( ID_PROVIDER_2, "b" ) ).
             displayName( "Overlords" ).
             modifiedTime( Instant.now( clock ) ).
             build();

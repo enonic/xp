@@ -36,7 +36,7 @@ public class IdentityHandlerTest
         Mockito.when( idProviderControllerService.execute( Mockito.any() ) ).thenAnswer( invocation -> {
             Object[] args = invocation.getArguments();
             final IdProviderControllerExecutionParams arg = (IdProviderControllerExecutionParams) args[0];
-            if ( IdProviderKey.from( "myuserstore" ).equals( arg.getIdProviderKey() ) && "get".equals( arg.getFunctionName() ) )
+            if ( IdProviderKey.from( "myidprovider" ).equals( arg.getIdProviderKey() ) && "get".equals( arg.getFunctionName() ) )
             {
                 return PortalResponse.create().build();
             }
@@ -48,8 +48,8 @@ public class IdentityHandlerTest
         this.handler.setIdProviderControllerService( idProviderControllerService );
 
         this.request.setMethod( HttpMethod.GET );
-        this.request.setEndpointPath( "/_/idprovider/myuserstore?param1=value1" );
-        this.request.setRawPath( "/portal/draft/_/idprovider/myuserstore?param1=value1" );
+        this.request.setEndpointPath( "/_/idprovider/myidprovider?param1=value1" );
+        this.request.setRawPath( "/portal/draft/_/idprovider/myidprovider?param1=value1" );
     }
 
     @Test
@@ -117,6 +117,6 @@ public class IdentityHandlerTest
 
         assertEquals( HttpStatus.OK, portalResponse.getStatus() );
         assertEquals( HttpStatus.OK, portalResponse.getStatus() );
-        assertEquals( "/portal/draft/_/idprovider/myuserstore", this.request.getContextPath() );
+        assertEquals( "/portal/draft/_/idprovider/myidprovider", this.request.getContextPath() );
     }
 }

@@ -949,16 +949,16 @@ public class SecurityServiceImplTest
                                                     WRITE_USERS ).build() );
             final CreateIdProviderParams createIdProvider = CreateIdProviderParams.create().
                 key( IdProviderKey.from( "enonic" ) ).
-                displayName( "Enonic User Store" ).
+                displayName( "Enonic Id Provider" ).
                 permissions( permissions ).
-                description( "user store description" ).
+                description( "id provider description" ).
                 build();
 
             final IdProvider idProviderCreated = securityService.createIdProvider( createIdProvider );
             assertNotNull( idProviderCreated );
             assertEquals( "enonic", idProviderCreated.getKey().toString() );
-            assertEquals( "Enonic User Store", idProviderCreated.getDisplayName() );
-            assertEquals( "user store description", idProviderCreated.getDescription() );
+            assertEquals( "Enonic Id Provider", idProviderCreated.getDisplayName() );
+            assertEquals( "id provider description", idProviderCreated.getDescription() );
 
             final IdProviderAccessControlList createdPermissions =
                 securityService.getIdProviderPermissions( IdProviderKey.from( "enonic" ) );
@@ -981,9 +981,9 @@ public class SecurityServiceImplTest
 
             final CreateIdProviderParams createIdProvider = CreateIdProviderParams.create().
                 key( IdProviderKey.from( "enonic" ) ).
-                displayName( "Enonic User Store" ).
+                displayName( "Enonic Id Provider" ).
                 permissions( permissions ).
-                description( "user store description" ).
+                description( "id provider description" ).
                 build();
 
             securityService.createIdProvider( createIdProvider );
@@ -1010,9 +1010,9 @@ public class SecurityServiceImplTest
                                                     WRITE_USERS ).build() );
             final CreateIdProviderParams createIdProvider = CreateIdProviderParams.create().
                 key( IdProviderKey.from( "enonic" ) ).
-                displayName( "Enonic User Store" ).
+                displayName( "Enonic Id Provider" ).
                 permissions( permissions ).
-                description( "old user store description" ).
+                description( "old id provider description" ).
                 build();
             final IdProvider idProviderCreated = securityService.createIdProvider( createIdProvider );
 
@@ -1023,17 +1023,17 @@ public class SecurityServiceImplTest
                                                    ADMINISTRATOR ).build() );
             final UpdateIdProviderParams updateIdProvider = UpdateIdProviderParams.create().
                 key( IdProviderKey.from( "enonic" ) ).
-                displayName( "Enonic User Store updated" ).
+                displayName( "Enonic Id Provider updated" ).
                 permissions( updatePermissions ).
-                description( "new user store description" ).
+                description( "new id provider description" ).
                 build();
             final IdProvider idProviderUpdated = securityService.updateIdProvider( updateIdProvider );
 
             // verify
             assertNotNull( idProviderUpdated );
             assertEquals( "enonic", idProviderUpdated.getKey().toString() );
-            assertEquals( "Enonic User Store updated", idProviderUpdated.getDisplayName() );
-            assertEquals( "new user store description", idProviderUpdated.getDescription() );
+            assertEquals( "Enonic Id Provider updated", idProviderUpdated.getDisplayName() );
+            assertEquals( "new id provider description", idProviderUpdated.getDescription() );
 
             final IdProviderAccessControlList updatedPermissions =
                 securityService.getIdProviderPermissions( IdProviderKey.from( "enonic" ) );
@@ -1052,8 +1052,8 @@ public class SecurityServiceImplTest
             // setup
             final CreateIdProviderParams createIdProvider = CreateIdProviderParams.create().
                 key( IdProviderKey.from( "enonic" ) ).
-                displayName( "Enonic User Store" ).
-                description( "old user store description" ).
+                displayName( "Enonic Id Provider" ).
+                description( "old id provider description" ).
                 build();
             final IdProvider idProviderCreated = securityService.createIdProvider( createIdProvider );
 
@@ -1061,8 +1061,8 @@ public class SecurityServiceImplTest
             final UpdateIdProviderParams updateIdProvider = UpdateIdProviderParams.create( idProviderCreated ).
                 editor( edit -> {
                     edit.key = IdProviderKey.from( "newEnonic" );
-                    edit.displayName = "Enonic User Store updated";
-                    edit.description = "new user store description";
+                    edit.displayName = "Enonic Id Provider updated";
+                    edit.description = "new id provider description";
                 } ).
                 displayName( "Display name from parameters" ).
                 description( "Description from parameters" ).
@@ -1072,8 +1072,8 @@ public class SecurityServiceImplTest
             // verify
             assertNotNull( idProviderUpdated );
             assertEquals( "enonic", idProviderUpdated.getKey().toString() );
-            assertEquals( "Enonic User Store updated", idProviderUpdated.getDisplayName() );
-            assertEquals( "new user store description", idProviderUpdated.getDescription() );
+            assertEquals( "Enonic Id Provider updated", idProviderUpdated.getDisplayName() );
+            assertEquals( "new id provider description", idProviderUpdated.getDescription() );
         } );
     }
 

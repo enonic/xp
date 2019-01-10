@@ -13,19 +13,19 @@ public class IdProviderTest
     public void testCreateIdProvider()
         throws Exception
     {
-        final IdProviderKey idProviderKey = IdProviderKey.from( "myUserStore" );
-        final IdProvider idProvider = IdProvider.create().displayName( "my user store" ).key( idProviderKey ).build();
+        final IdProviderKey idProviderKey = IdProviderKey.from( "myIdProvider" );
+        final IdProvider idProvider = IdProvider.create().displayName( "my id provider" ).key( idProviderKey ).build();
 
-        assertEquals( "myUserStore", idProvider.getKey().toString() );
-        assertEquals( "my user store", idProvider.getDisplayName() );
+        assertEquals( "myIdProvider", idProvider.getKey().toString() );
+        assertEquals( "my id provider", idProvider.getDisplayName() );
     }
 
     @Test
     public void testCreateIdProviderFromSource()
         throws Exception
     {
-        final IdProviderKey key = IdProviderKey.from( "myUserStore" );
-        final String displayName = "My user store";
+        final IdProviderKey key = IdProviderKey.from( "myIdProvider" );
+        final String displayName = "My id provider";
         final String description = "Description";
         final IdProviderConfig idProviderConfig =
             IdProviderConfig.create().applicationKey( ApplicationKey.SYSTEM ).config( new PropertyTree() ).build();
@@ -44,11 +44,11 @@ public class IdProviderTest
     public void testIdProviderKey()
         throws Exception
     {
-        final IdProviderKey idProviderKey = IdProviderKey.from( "myUserStore" );
-        final IdProviderKey idProviderKey2 = IdProviderKey.from( "myUserStore" );
+        final IdProviderKey idProviderKey = IdProviderKey.from( "myIdProvider" );
+        final IdProviderKey idProviderKey2 = IdProviderKey.from( "myIdProvider" );
 
         assertEquals( idProviderKey, idProviderKey2 );
-        assertEquals( "myUserStore", idProviderKey.toString() );
+        assertEquals( "myIdProvider", idProviderKey.toString() );
     }
 
     @Test(expected = IllegalArgumentException.class)

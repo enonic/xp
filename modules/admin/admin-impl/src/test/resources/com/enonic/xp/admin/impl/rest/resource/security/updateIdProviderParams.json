@@ -1,5 +1,5 @@
 {
-  "displayName": "Enonic User Store",
+  "displayName": "Enonic Id Provider",
   "key": "enonic",
   "permissions": [
     {

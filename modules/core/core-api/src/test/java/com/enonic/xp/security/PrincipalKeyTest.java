@@ -14,11 +14,11 @@ public class PrincipalKeyTest
     public void testPrincipalUser()
         throws Exception
     {
-        final IdProviderKey idProvider = IdProviderKey.from( "myUserStore" );
+        final IdProviderKey idProvider = IdProviderKey.from( "myIdProvider" );
         final PrincipalKey user = PrincipalKey.ofUser( idProvider, "userId" );
 
-        assertEquals( "user:myUserStore:userId", user.toString() );
-        assertEquals( "myUserStore", user.getIdProviderKey().toString() );
+        assertEquals( "user:myIdProvider:userId", user.toString() );
+        assertEquals( "myIdProvider", user.getIdProviderKey().toString() );
         assertEquals( "userId", user.getId() );
         assertEquals( PrincipalType.USER, user.getType() );
         assertTrue( user.isUser() );
@@ -31,11 +31,11 @@ public class PrincipalKeyTest
     public void testPrincipalGroup()
         throws Exception
     {
-        final IdProviderKey idProvider = IdProviderKey.from( "myUserStore" );
+        final IdProviderKey idProvider = IdProviderKey.from( "myIdProvider" );
         final PrincipalKey group = PrincipalKey.ofGroup( idProvider, "groupid" );
 
-        assertEquals( "group:myUserStore:groupid", group.toString() );
-        assertEquals( "myUserStore", group.getIdProviderKey().toString() );
+        assertEquals( "group:myIdProvider:groupid", group.toString() );
+        assertEquals( "myIdProvider", group.getIdProviderKey().toString() );
         assertEquals( "groupid", group.getId() );
         assertEquals( PrincipalType.GROUP, group.getType() );
         assertTrue( group.isGroup() );
@@ -82,15 +82,15 @@ public class PrincipalKeyTest
         throws Exception
     {
         final PrincipalKey anonymous = PrincipalKey.from( "user:system:anonymous" );
-        final PrincipalKey user = PrincipalKey.from( "user:myUserStore:myUser" );
-        final PrincipalKey group = PrincipalKey.from( "group:myUserStore:mygroup" );
+        final PrincipalKey user = PrincipalKey.from( "user:myIdProvider:myUser" );
+        final PrincipalKey group = PrincipalKey.from( "group:myIdProvider:mygroup" );
         final PrincipalKey role = PrincipalKey.from( "role:myrole" );
 
         assertEquals( "user:system:anonymous", anonymous.toString() );
         assertEquals( PrincipalKey.ofAnonymous(), anonymous );
         assertEquals( "role:myrole", role.toString() );
-        assertEquals( "group:myUserStore:mygroup", group.toString() );
-        assertEquals( "user:myUserStore:myUser", user.toString() );
+        assertEquals( "group:myIdProvider:mygroup", group.toString() );
+        assertEquals( "user:myIdProvider:myUser", user.toString() );
     }
 
     @Test
@@ -98,14 +98,14 @@ public class PrincipalKeyTest
         throws Exception
     {
         final PrincipalKey anonymous = PrincipalKey.from( "user:system:anonymous" );
-        final PrincipalKey user = PrincipalKey.from( "user:myUserStore:myUser" );
-        final PrincipalKey group = PrincipalKey.from( "group:myUserStore:mygroup" );
+        final PrincipalKey user = PrincipalKey.from( "user:myIdProvider:myUser" );
+        final PrincipalKey group = PrincipalKey.from( "group:myIdProvider:mygroup" );
         final PrincipalKey role = PrincipalKey.from( "role:myrole" );
 
         assertEquals( new NodePath( "/identity/system/users/anonymous" ), anonymous.toPath() );
         assertEquals( new NodePath( "/identity/roles/myrole" ), role.toPath() );
-        assertEquals( new NodePath( "/identity/myUserStore/groups/mygroup" ), group.toPath() );
-        assertEquals( new NodePath( "/identity/myUserStore/users/myUser" ), user.toPath() );
+        assertEquals( new NodePath( "/identity/myIdProvider/groups/mygroup" ), group.toPath() );
+        assertEquals( new NodePath( "/identity/myIdProvider/users/myUser" ), user.toPath() );
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -119,7 +119,7 @@ public class PrincipalKeyTest
     public void testInvalidIdentityType()
         throws Exception
     {
-        PrincipalKey.from( "anonymous:myUserStore:anonymous" );
+        PrincipalKey.from( "anonymous:myIdProvider:anonymous" );
     }
 
     @Test(expected = IllegalArgumentException.class)

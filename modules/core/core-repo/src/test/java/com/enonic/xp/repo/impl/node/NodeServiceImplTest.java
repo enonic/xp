@@ -168,7 +168,7 @@ public class NodeServiceImplTest
 
         final AccessControlList aclList = AccessControlList.create().
             add( AccessControlEntry.create().
-                principal( PrincipalKey.from( "user:myuserstore:rmy" ) ).
+                principal( PrincipalKey.from( "user:myidprovider:rmy" ) ).
                 allow( Permission.READ ).
                 build() ).
             build();

@@ -55,6 +55,10 @@ public class IdProviderControllerServiceImplTest
         final IdProviderConfig idProviderConfig =
             IdProviderConfig.create().applicationKey( ApplicationKey.from( "myapplication" ) ).build();
         final IdProvider idProvider = IdProvider.create().idProviderConfig( idProviderConfig ).build();
+
+        Mockito.when( securityService.getIdProvider( IdProviderKey.from( "myemptyidprovider" ) ) ).thenReturn( emptyIdProvider );
+        Mockito.when( securityService.getIdProvider( IdProviderKey.from( "myidprovider" ) ) ).thenReturn( idProvider );
+
         Mockito.when( securityService.getIdProvider( IdProviderKey.from( "myemptyuserstore" ) ) ).thenReturn( emptyIdProvider );
         Mockito.when( securityService.getIdProvider( IdProviderKey.from( "myuserstore" ) ) ).thenReturn( idProvider );
 
@@ -112,7 +116,7 @@ public class IdProviderControllerServiceImplTest
     {
         final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create().
             portalRequest( new PortalRequest() ).
-            idProviderKey( IdProviderKey.from( "missinguserstore" ) ).
+            idProviderKey( IdProviderKey.from( "missingidprovider" ) ).
             functionName( "missingfunction" ).
             build();
         final PortalResponse portalResponse = idProviderControllerService.execute( executionParams );
@@ -125,7 +129,7 @@ public class IdProviderControllerServiceImplTest
     {
         final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create().
             portalRequest( new PortalRequest() ).
-            idProviderKey( IdProviderKey.from( "myemptyuserstore" ) ).
+            idProviderKey( IdProviderKey.from( "myemptyidprovider" ) ).
             functionName( "missingfunction" ).
             build();
         final PortalResponse portalResponse = idProviderControllerService.execute( executionParams );
@@ -138,7 +142,7 @@ public class IdProviderControllerServiceImplTest
     {
         final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create().
             portalRequest( new PortalRequest() ).
-            idProviderKey( IdProviderKey.from( "myemptyuserstore" ) ).
+            idProviderKey( IdProviderKey.from( "myemptyidprovider" ) ).
             functionName( "myfunction" ).
             build();
         final PortalResponse portalResponse = idProviderControllerService.execute( executionParams );
@@ -151,7 +155,7 @@ public class IdProviderControllerServiceImplTest
     {
         final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create().
             portalRequest( new PortalRequest() ).
-            idProviderKey( IdProviderKey.from( "myuserstore" ) ).
+            idProviderKey( IdProviderKey.from( "myidprovider" ) ).
             functionName( "myfunction" ).
             build();
         final PortalResponse portalResponse = idProviderControllerService.execute( executionParams );

@@ -19,7 +19,7 @@ public class LoginUrlFunctionTest
     @Test
     public void testExecute()
     {
-        final Object result = execute( "loginUrl", "_userStore=system", "_redirect=/redirection/url" );
+        final Object result = execute( "loginUrl", "_idProvider=system", "_redirect=/redirection/url" );
         assertEquals(
             "IdentityUrlParams{type=server, params={}, idProviderKey=system, idProviderFunction=login, redirect=/redirection/url}",
             result );

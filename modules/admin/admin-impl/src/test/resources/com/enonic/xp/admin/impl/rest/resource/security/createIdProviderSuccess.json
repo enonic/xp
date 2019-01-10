@@ -1,6 +1,6 @@
 {
-  "description": "user store description",
-  "displayName": "Enonic User Store",
+  "description": "id provider description",
+  "displayName": "Enonic Id Provider",
   "idProviderConfig": null,
   "idProviderMode": null,
   "key": "enonic",

@@ -22,7 +22,7 @@ public class AccessControlListIndexDocumentFactoryTest
         final AccessControlList acl = AccessControlList.create().
             add( AccessControlEntry.create().
                 allow( Permission.READ ).
-                principal( PrincipalKey.from( "user:myuserstore:rmy" ) ).
+                principal( PrincipalKey.from( "user:myidprovider:rmy" ) ).
                 build() ).
             build();
 
@@ -38,20 +38,20 @@ public class AccessControlListIndexDocumentFactoryTest
         final AccessControlList acl = AccessControlList.create().
             add( AccessControlEntry.create().
                 allow( Permission.READ ).
-                principal( PrincipalKey.from( "user:myuserstore:rmy" ) ).
+                principal( PrincipalKey.from( "user:myidprovider:rmy" ) ).
                 build() ).
             add( AccessControlEntry.create().
                 allow( Permission.READ ).
-                principal( PrincipalKey.from( "user:myuserstore:tsi" ) ).
+                principal( PrincipalKey.from( "user:myidprovider:tsi" ) ).
                 build() ).
             add( AccessControlEntry.create().
                 allow( Permission.READ ).
                 allow( Permission.DELETE ).
-                principal( PrincipalKey.from( "user:myuserstore:aro" ) ).
+                principal( PrincipalKey.from( "user:myidprovider:aro" ) ).
                 build() ).
             add( AccessControlEntry.create().
                 allow( Permission.DELETE ).
-                principal( PrincipalKey.from( "user:myuserstore:srs" ) ).
+                principal( PrincipalKey.from( "user:myidprovider:srs" ) ).
                 build() ).
             build();
 
@@ -73,7 +73,7 @@ public class AccessControlListIndexDocumentFactoryTest
                 allow( Permission.MODIFY ).
                 allow( Permission.CREATE ).
                 allow( Permission.DELETE ).
-                principal( PrincipalKey.from( "user:myuserstore:rmy" ) ).
+                principal( PrincipalKey.from( "user:myidprovider:rmy" ) ).
                 build() ).
             build();
 

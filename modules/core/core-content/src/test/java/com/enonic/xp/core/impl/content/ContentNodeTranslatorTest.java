@@ -132,7 +132,7 @@ public class ContentNodeTranslatorTest
         final PropertyTree rootDataSet = new PropertyTree();
         rootDataSet.setString( ContentPropertyNames.TYPE, ContentTypeName.unstructured().toString() );
         rootDataSet.setSet( ContentPropertyNames.DATA, new PropertySet() );
-        rootDataSet.setString( ContentPropertyNames.CREATOR, "user:myuserstore:user1" );
+        rootDataSet.setString( ContentPropertyNames.CREATOR, "user:myidprovider:user1" );
 
         return Node.create().
             id( ID_1 ).
@@ -148,7 +148,7 @@ public class ContentNodeTranslatorTest
         final PropertyTree rootDataSet = new PropertyTree();
         rootDataSet.setString( ContentPropertyNames.TYPE, ContentTypeName.unstructured().toString() );
         rootDataSet.setSet( ContentPropertyNames.DATA, new PropertySet() );
-        rootDataSet.setString( ContentPropertyNames.CREATOR, "user:myuserstore:user1" );
+        rootDataSet.setString( ContentPropertyNames.CREATOR, "user:myidprovider:user1" );
 
         final Node node1 = Node.create().
             id( ID_1 ).

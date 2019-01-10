@@ -20,21 +20,21 @@ public class PrincipalTest
         final User user = User.create().
             login( "userlogin" ).
             displayName( "my user" ).
-            key( PrincipalKey.ofUser( IdProviderKey.from( "myuserstore" ), "userid" ) ).
+            key( PrincipalKey.ofUser( IdProviderKey.from( "myidprovider" ), "userid" ) ).
             email( "user@email" ).
             modifiedTime( Instant.now( clock ) ).
             build();
 
         assertEquals( "userlogin", user.getLogin() );
         assertEquals( "my user", user.getDisplayName() );
-        assertEquals( PrincipalKey.from( "user:myuserstore:userid" ), user.getKey() );
+        assertEquals( PrincipalKey.from( "user:myidprovider:userid" ), user.getKey() );
         assertEquals( "user@email", user.getEmail() );
 
         final User userCopy = User.create( user ).build();
         assertEquals( "userlogin", userCopy.getLogin() );
         assertEquals( "my user", userCopy.getDisplayName() );
         assertEquals( false, userCopy.isDisabled() );
-        assertEquals( PrincipalKey.from( "user:myuserstore:userid" ), userCopy.getKey() );
+        assertEquals( PrincipalKey.from( "user:myidprovider:userid" ), userCopy.getKey() );
         assertEquals( "user@email", userCopy.getEmail() );
     }
 
@@ -43,16 +43,16 @@ public class PrincipalTest
     {
         final Group group = Group.create().
             displayName( "my group" ).
-            key( PrincipalKey.ofGroup( IdProviderKey.from( "myuserstore" ), "groupid" ) ).
+            key( PrincipalKey.ofGroup( IdProviderKey.from( "myidprovider" ), "groupid" ) ).
             modifiedTime( Instant.now( clock ) ).
             build();
 
         assertEquals( "my group", group.getDisplayName() );
-        assertEquals( PrincipalKey.from( "group:myuserstore:groupid" ), group.getKey() );
+        assertEquals( PrincipalKey.from( "group:myidprovider:groupid" ), group.getKey() );
 
         final Group groupCopy = Group.create( group ).build();
         assertEquals( "my group", groupCopy.getDisplayName() );
-        assertEquals( PrincipalKey.from( "group:myuserstore:groupid" ), groupCopy.getKey() );
+        assertEquals( PrincipalKey.from( "group:myidprovider:groupid" ), groupCopy.getKey() );
     }
 
     @Test

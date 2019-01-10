@@ -8,7 +8,7 @@
     },
     {
       "description": "file based ustore description",
-      "displayName": "File based user store",
+      "displayName": "File based id provider",
       "idProviderConfig": null,
       "key": "file-store"
     }

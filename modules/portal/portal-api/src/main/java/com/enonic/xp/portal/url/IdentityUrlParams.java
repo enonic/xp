@@ -62,7 +62,7 @@ public final class IdentityUrlParams
         super.setAsMap( map );
 
         redirectionUrl( singleValue( map, "_redirect" ) );
-        final String idProviderKey = singleValue( map, "_userStore" );
+        final String idProviderKey = singleValue( map, "_idProvider" );
         if ( idProviderKey != null )
         {
             idProviderKey( IdProviderKey.from( idProviderKey ) );

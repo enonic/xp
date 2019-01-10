@@ -29,7 +29,7 @@ public class AuthenticationInfoTest
         final User user = User.create().
             login( "userlogin" ).
             displayName( "my user" ).
-            key( PrincipalKey.ofUser( IdProviderKey.from( "myuserstore" ), "userid" ) ).
+            key( PrincipalKey.ofUser( IdProviderKey.from( "myidprovider" ), "userid" ) ).
             email( "user@email" ).
             modifiedTime( Instant.now( clock ) ).
             build();
@@ -38,7 +38,7 @@ public class AuthenticationInfoTest
 
         assertEquals( "userlogin", info.getUser().getLogin() );
         assertEquals( "my user", info.getUser().getDisplayName() );
-        assertEquals( PrincipalKey.from( "user:myuserstore:userid" ), info.getUser().getKey() );
+        assertEquals( PrincipalKey.from( "user:myidprovider:userid" ), info.getUser().getKey() );
         assertEquals( 1, info.getPrincipals().getSize() );
         assertEquals( user.getKey(), info.getPrincipals().first() );
         assertFalse( info.hasRole( "userid" ) );
@@ -50,7 +50,7 @@ public class AuthenticationInfoTest
         final User user = User.create().
             login( "userlogin" ).
             displayName( "my user" ).
-            key( PrincipalKey.ofUser( IdProviderKey.from( "myuserstore" ), "userid" ) ).
+            key( PrincipalKey.ofUser( IdProviderKey.from( "myidprovider" ), "userid" ) ).
             email( "user@email" ).
             modifiedTime( Instant.now( clock ) ).
             build();
@@ -67,9 +67,9 @@ public class AuthenticationInfoTest
 
         assertEquals( "userlogin", info.getUser().getLogin() );
         assertEquals( "my user", info.getUser().getDisplayName() );
-        assertEquals( PrincipalKey.from( "user:myuserstore:userid" ), info.getUser().getKey() );
+        assertEquals( PrincipalKey.from( "user:myidprovider:userid" ), info.getUser().getKey() );
         assertEquals( 4, info.getPrincipals().getSize() );
-        assertTrue( info.getPrincipals().contains( PrincipalKey.from( "user:myuserstore:userid" ) ) );
+        assertTrue( info.getPrincipals().contains( PrincipalKey.from( "user:myidprovider:userid" ) ) );
         assertTrue( info.getPrincipals().contains( group1 ) );
         assertTrue( info.getPrincipals().contains( group2 ) );
         assertTrue( info.getPrincipals().contains( role1 ) );
@@ -85,7 +85,7 @@ public class AuthenticationInfoTest
         final User user = User.create().
             login( "userlogin" ).
             displayName( "my user" ).
-            key( PrincipalKey.ofUser( IdProviderKey.from( "myuserstore" ), "userid" ) ).
+            key( PrincipalKey.ofUser( IdProviderKey.from( "myidprovider" ), "userid" ) ).
             email( "user@email" ).
             modifiedTime( Instant.now( clock ) ).
             build();
@@ -111,7 +111,7 @@ public class AuthenticationInfoTest
         final User user = User.create().
             login( "userlogin" ).
             displayName( "my user" ).
-            key( PrincipalKey.ofUser( IdProviderKey.from( "myuserstore" ), "userid" ) ).
+            key( PrincipalKey.ofUser( IdProviderKey.from( "myidprovider" ), "userid" ) ).
             email( "user@email" ).
             description( "description" ).
             modifiedTime( Instant.now( clock ) ).
@@ -146,7 +146,7 @@ public class AuthenticationInfoTest
         final User user = User.create().
             login( "userlogin" ).
             displayName( "my user" ).
-            key( PrincipalKey.ofUser( IdProviderKey.from( "myuserstore" ), "userid" ) ).
+            key( PrincipalKey.ofUser( IdProviderKey.from( "myidprovider" ), "userid" ) ).
             email( "user@email" ).
             modifiedTime( Instant.now( clock ) ).
             profile( userProfile ).
@@ -173,7 +173,7 @@ public class AuthenticationInfoTest
     {
         final User user = User.create().
             login( "userlogin" ).
-            key( PrincipalKey.ofUser( IdProviderKey.from( "myuserstore" ), "userid" ) ).
+            key( PrincipalKey.ofUser( IdProviderKey.from( "myidprovider" ), "userid" ) ).
             build();
 
         final AuthenticationInfo info = AuthenticationInfo.create().
