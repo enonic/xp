@@ -12,7 +12,7 @@ if (idProviderKey) {
 
 // BEGIN
 // Id provider key returned.
-var expected = "myuserstore" +
+var expected = "myidprovider" +
                "";
 // END
 

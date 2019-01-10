@@ -189,7 +189,7 @@ public final class TestDataFixtures
     public static IdProvider newIdProvider()
     {
         return IdProvider.create().
-            key( IdProviderKey.from( "myuserstore" ) ).
+            key( IdProviderKey.from( "myidprovider" ) ).
             displayName( "My id provider" ).
             build();
     }
