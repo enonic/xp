@@ -120,7 +120,7 @@ public final class SecurityResource
         final IdProvider idProvider = securityService.getIdProvider( idProviderKey );
         if ( idProvider == null )
         {
-            throw JaxRsExceptions.notFound( String.format( "User Store [%s] not found", keyParam ) );
+            throw JaxRsExceptions.notFound( String.format( "Id Provider [%s] not found", keyParam ) );
         }
 
         final IdProviderDescriptorMode idProviderMode = retrieveIdProviderMode( idProvider );

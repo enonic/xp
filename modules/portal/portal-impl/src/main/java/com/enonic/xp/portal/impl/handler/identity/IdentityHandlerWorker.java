@@ -43,7 +43,7 @@ final class IdentityHandlerWorker
 
         if ( portalResponse == null )
         {
-            throw notFound( "ID Provider function [%s] not found for user store [%s]", idProviderFunction, idProviderKey );
+            throw notFound( "ID Provider function [%s] not found for id provider [%s]", idProviderFunction, idProviderKey );
         }
         else
         {

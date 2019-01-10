@@ -417,7 +417,7 @@ RepoConnection.prototype.setRootPermissions = function (params) {
  * @param {object} params.branch branch id
  * @param {object} [params.user] User to execute the callback with. Default is the current user.
  * @param {string} params.user.login Login of the user.
- * @param {string} [params.user.userStore] User store containing the user. By default, all the user stores will be used.
+ * @param {string} [params.user.userStore] Id provider containing the user. By default, all the id providers will be used.
  * @param {string[]} [params.principals] Additional principals to execute the callback with.
  * @returns {RepoConnection} Returns a new repo-connection.
  */
@@ -454,7 +454,7 @@ exports.connect = function (params) {
  * @param {object} params.sources.branch branch id
  * @param {object} [params.sources.user] User to execute the callback with. Default is the current user.
  * @param {string} params.sources.user.login Login of the user.
- * @param {string} [params.sources.user.userStore] User store containing the user. By default, all the user stores will be used.
+ * @param {string} [params.sources.user.userStore] Id provider containing the user. By default, all the id providers will be used.
  * @param {string[]} [params.sources.principals] Additional principals to execute the callback with.
  *
  * @returns {MultiRepoConnection} Returns a new multirepo-connection.

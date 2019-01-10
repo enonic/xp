@@ -151,7 +151,7 @@ final class SecurityInitializer
 
     private void initializeSystemIdProvider()
     {
-        LOG.info( "Initializing user store [" + IdProviderKey.system() + "]" );
+        LOG.info( "Initializing id provider [" + IdProviderKey.system() + "]" );
 
         final PropertyTree idProviderConfigTree = new PropertyTree();
         if ( !"false".equalsIgnoreCase( System.getProperty( ADMIN_USER_CREATION_PROPERTY_KEY ) ) )

@@ -768,7 +768,7 @@ public final class SecurityServiceImpl
         if ( nodes.getSize() > 1 || ( user != null && !user.getKey().equals( key ) ) )
         {
             throw new IllegalArgumentException(
-                "A user with email '" + email + "' already exists in user store '" + key.getIdProviderKey().toString() + "'" );
+                "A user with email '" + email + "' already exists in id provider '" + key.getIdProviderKey().toString() + "'" );
         }
     }
 

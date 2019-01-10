@@ -126,8 +126,8 @@ public class TestDataFixtures
     {
         return IdProvider.create().
             key( IdProviderKey.from( "idProviderTestKey" ) ).
-            description( "User store used for testing" ).
-            displayName( "User store test" ).
+            description( "Id Provider used for testing" ).
+            displayName( "Id Provider test" ).
             idProviderConfig( getTestIdProviderConfig() ).
             build();
     }

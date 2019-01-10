@@ -23,7 +23,7 @@ final class IdentityUrlBuilder
 
         if ( this.params.getIdProviderKey() == null )
         {
-            throw new IllegalArgumentException( "Could not find user store" );
+            throw new IllegalArgumentException( "Could not find id provider" );
         }
         appendPart( url, this.params.getIdProviderKey().toString() );
 

@@ -190,7 +190,7 @@ public final class TestDataFixtures
     {
         return IdProvider.create().
             key( IdProviderKey.from( "myuserstore" ) ).
-            displayName( "My user store" ).
+            displayName( "My id provider" ).
             build();
     }
 }

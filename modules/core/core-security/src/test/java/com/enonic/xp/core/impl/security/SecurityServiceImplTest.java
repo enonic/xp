@@ -256,7 +256,7 @@ public class SecurityServiceImplTest
         }
         catch ( IllegalArgumentException e )
         {
-            assertEquals( "A user with email 'same_email@enonic.com' already exists in user store 'system'", e.getMessage() );
+            assertEquals( "A user with email 'same_email@enonic.com' already exists in id provider 'system'", e.getMessage() );
         }
     }
 
@@ -329,7 +329,7 @@ public class SecurityServiceImplTest
         }
         catch ( IllegalArgumentException e )
         {
-            assertEquals( "A user with email 'same_email@enonic.com' already exists in user store 'system'", e.getMessage() );
+            assertEquals( "A user with email 'same_email@enonic.com' already exists in id provider 'system'", e.getMessage() );
         }
     }
 
@@ -370,7 +370,7 @@ public class SecurityServiceImplTest
         }
         catch ( IllegalArgumentException e )
         {
-            assertEquals( "A user with email 'same_email@enonic.com' already exists in user store 'system'", e.getMessage() );
+            assertEquals( "A user with email 'same_email@enonic.com' already exists in id provider 'system'", e.getMessage() );
         }
     }
 

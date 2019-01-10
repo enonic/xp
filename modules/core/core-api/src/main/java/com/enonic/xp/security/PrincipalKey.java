@@ -42,7 +42,7 @@ public final class PrincipalKey
 
     private PrincipalKey( final IdProviderKey idProviderKey, final PrincipalType type, final String principalId )
     {
-        checkArgument( ( type == PrincipalType.ROLE ) || ( idProviderKey != null ), "Principal user store cannot be null" );
+        checkArgument( ( type == PrincipalType.ROLE ) || ( idProviderKey != null ), "Principal id provider cannot be null" );
         this.idProviderKey = idProviderKey;
         this.type = checkNotNull( type, "Principal type cannot be null" );
         checkArgument( !Strings.isNullOrEmpty( principalId ), "Principal id cannot be null or empty" );

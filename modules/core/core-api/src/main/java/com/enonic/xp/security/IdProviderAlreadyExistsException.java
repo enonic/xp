@@ -12,7 +12,7 @@ public class IdProviderAlreadyExistsException
 
     public IdProviderAlreadyExistsException( final IdProviderKey idProviderKey )
     {
-        super( "User Store [{0}] could not be created. A User Store with that name already exists", idProviderKey );
+        super( "Id Provider [{0}] could not be created. A Id Provider with that name already exists", idProviderKey );
         this.idProviderKey = idProviderKey;
     }
 

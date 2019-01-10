@@ -31,7 +31,7 @@ public interface SecurityService
     User setPassword( PrincipalKey key, String password );
 
     /**
-     * Creates a user on the specified user store.
+     * Creates a user on the specified id provider.
      *
      * @param createUserParams details of the user to be created
      * @return the user created
@@ -75,7 +75,7 @@ public interface SecurityService
     PrincipalKeys getAllMemberships( PrincipalKey principalKey );
 
     /**
-     * Creates a group on the specified user store.
+     * Creates a group on the specified id provider.
      *
      * @param createGroupParams details of the group to be created
      * @return the group created
@@ -101,7 +101,7 @@ public interface SecurityService
     Optional<Group> getGroup( PrincipalKey groupKey );
 
     /**
-     * Creates a role on the specified user store.
+     * Creates a role on the specified id provider.
      *
      * @param createRoleParams details of the role to be created
      * @return the role created
