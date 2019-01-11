@@ -1,0 +1,32 @@
+{
+  "repositories": [
+    {
+      "branches": [
+        {
+          "branch": "master",
+          "successful": 1,
+          "errors": []
+        }
+      ],
+      "versions": {
+        "successful": 0,
+        "errors": []
+      },
+      "repository": "system-repo"
+    },
+    {
+      "branches": [
+        {
+          "branch": "master",
+          "successful": 1,
+          "errors": []
+        }
+      ],
+      "versions": {
+        "successful": 0,
+        "errors": []
+      },
+      "repository": "my-repo"
+    }
+  ]
+}

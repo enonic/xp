@@ -13,6 +13,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.MoveContentException;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
+import com.enonic.xp.task.AbstractRunnableTask;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
