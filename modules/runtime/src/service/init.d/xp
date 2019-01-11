@@ -18,6 +18,10 @@ else
     exit 1
 fi
 
+DESC="Enonic XP"
+NAME="xp"
+SCRIPT="service.sh"
+
 # Set according to environment
 ###############################
 
@@ -34,9 +38,7 @@ PIDFILE="$PIDFILE_DIR/$NAME.pid"
 XP_CONFIG="/etc/xp.conf"
 SCRIPTNAME="/etc/init.d/$NAME"
 
-DESC="Enonic XP"
-NAME="xp"
-SCRIPT="service.sh"
+
 
 
 do_start()
@@ -90,7 +92,7 @@ status() {
 	    echo "Installations is running with PID: $(cat ${PIDFILE})"
 	    exit 0
 	else
-	    echo "Hmmm... not shure, got this output: $STATUS"
+	    echo "Hmmm... not sure, got this output: $STATUS"
 	    exit 255
 	fi
 }
