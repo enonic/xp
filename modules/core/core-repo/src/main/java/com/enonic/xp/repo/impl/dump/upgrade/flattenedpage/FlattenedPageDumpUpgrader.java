@@ -17,7 +17,6 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.repo.impl.dump.DumpBlobRecord;
 import com.enonic.xp.repo.impl.dump.RepoDumpException;
-import com.enonic.xp.repo.impl.dump.reader.FileDumpReader;
 import com.enonic.xp.repo.impl.dump.upgrade.AbstractDumpUpgrader;
 import com.enonic.xp.repo.impl.dump.upgrade.DumpUpgradeException;
 import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre4.Pre4BranchDumpEntryJson;
@@ -32,10 +31,6 @@ import com.enonic.xp.util.Version;
 public class FlattenedPageDumpUpgrader
     extends AbstractDumpUpgrader
 {
-    private final Path basePath;
-
-    private FileDumpReader dumpReader;
-
     private static final RepositoryId REPOSITORY_ID = ContentConstants.CONTENT_REPO_ID;
 
     private static final Segment SEGMENT =
@@ -43,7 +38,7 @@ public class FlattenedPageDumpUpgrader
 
     public FlattenedPageDumpUpgrader( final Path basePath )
     {
-        this.basePath = basePath;
+        super( basePath );
     }
 
     @Override
@@ -55,9 +50,9 @@ public class FlattenedPageDumpUpgrader
     @Override
     public void upgrade( final String dumpName )
     {
-        this.dumpReader = new FileDumpReader( basePath, dumpName, null );
+        super.upgrade( dumpName );
 
-        final File versionsFile = this.dumpReader.getVersionsFile( REPOSITORY_ID );
+        final File versionsFile = dumpReader.getVersionsFile( REPOSITORY_ID );
         if ( versionsFile != null )
         {
             //Gathers the template -> controller mappings
@@ -188,6 +183,4 @@ public class FlattenedPageDumpUpgrader
             throw new DumpUpgradeException( "Cannot copy node version [" + dumpBlobRecord.getKey() + "]", e );
         }
     }
-
-
 }

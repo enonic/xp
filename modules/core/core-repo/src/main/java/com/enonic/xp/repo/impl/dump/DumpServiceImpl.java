@@ -39,6 +39,7 @@ import com.enonic.xp.repo.impl.dump.upgrade.DumpUpgrader;
 import com.enonic.xp.repo.impl.dump.upgrade.MissingModelVersionDumpUpgrader;
 import com.enonic.xp.repo.impl.dump.upgrade.VersionIdDumpUpgrader;
 import com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageDumpUpgrader;
+import com.enonic.xp.repo.impl.dump.upgrade.indexaccesssegments.IndexAccessSegmentsDumpUpgrader;
 import com.enonic.xp.repo.impl.dump.writer.FileDumpWriter;
 import com.enonic.xp.repo.impl.node.NodeHelper;
 import com.enonic.xp.repo.impl.node.executor.BatchedGetChildrenExecutor;
@@ -124,7 +125,8 @@ public class DumpServiceImpl
 
     private DumpUpgrader[] createDumpUpgraders()
     {
-        return new DumpUpgrader[]{new MissingModelVersionDumpUpgrader(), new VersionIdDumpUpgrader( this.basePath ), new FlattenedPageDumpUpgrader( this.basePath )};
+        return new DumpUpgrader[]{new MissingModelVersionDumpUpgrader(), new VersionIdDumpUpgrader( this.basePath ),
+            new FlattenedPageDumpUpgrader( this.basePath ), new IndexAccessSegmentsDumpUpgrader( this.basePath )};
     }
 
     private Version getDumpModelVersion( final String dumpName )

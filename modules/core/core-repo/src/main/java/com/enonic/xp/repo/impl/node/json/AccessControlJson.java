@@ -12,7 +12,7 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-final class AccessControlJson
+public final class AccessControlJson
 {
     @JsonProperty("permissions")
     private List<AccessControlEntryJson> permissions;
@@ -20,12 +20,22 @@ final class AccessControlJson
     @JsonProperty("inheritPermissions")
     private boolean inheritPermissions;
 
+    private AccessControlJson()
+    {
+    }
+
+    private AccessControlJson( final Builder builder )
+    {
+        permissions = builder.permissions;
+        inheritPermissions = builder.inheritPermissions;
+    }
+
     public static AccessControlJson toJson( final NodeVersion nodeVersion )
     {
-        final AccessControlJson json = new AccessControlJson();
-        json.permissions = toJson( nodeVersion.getPermissions() );
-        json.inheritPermissions = nodeVersion.isInheritPermissions();
-        return json;
+        return create().
+            inheritPermissions( nodeVersion.isInheritPermissions() ).
+            permissions( toJson( nodeVersion.getPermissions() ) ).
+            build();
     }
 
     private static List<AccessControlEntryJson> toJson( final AccessControlList acl )
@@ -58,5 +68,39 @@ final class AccessControlJson
     public boolean isInheritPermissions()
     {
         return inheritPermissions;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+
+    public static final class Builder
+    {
+        private List<AccessControlEntryJson> permissions;
+
+        private boolean inheritPermissions;
+
+        private Builder()
+        {
+        }
+
+        public Builder permissions( final List<AccessControlEntryJson> permissions )
+        {
+            this.permissions = permissions;
+            return this;
+        }
+
+        public Builder inheritPermissions( final boolean inheritPermissions )
+        {
+            this.inheritPermissions = inheritPermissions;
+            return this;
+        }
+
+        public AccessControlJson build()
+        {
+            return new AccessControlJson( this );
+        }
     }
 }

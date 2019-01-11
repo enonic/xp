@@ -74,7 +74,7 @@ public class VersionDumpEntryJson
             build();
     }
 
-    private static Builder create()
+    public static Builder create()
     {
         return new Builder();
     }
