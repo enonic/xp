@@ -43,12 +43,12 @@ public class Pre4VersionDumpEntryJson
         return nodePath;
     }
 
-    private String getTimestamp()
+    public String getTimestamp()
     {
         return timestamp;
     }
 
-    private String getVersion()
+    public String getVersion()
     {
         return version;
     }
@@ -58,7 +58,7 @@ public class Pre4VersionDumpEntryJson
         return blobKey;
     }
 
-    private String getNodeState()
+    public String getNodeState()
     {
         return nodeState;
     }

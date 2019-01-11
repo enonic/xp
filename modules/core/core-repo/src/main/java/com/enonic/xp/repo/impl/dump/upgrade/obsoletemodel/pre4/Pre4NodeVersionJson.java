@@ -52,6 +52,21 @@ public final class Pre4NodeVersionJson
     @JsonProperty("attachedBinaries")
     private List<AttachedBinaryJson> attachedBinaries;
 
+    public IndexConfigDocumentJson getIndexConfigDocument()
+    {
+        return indexConfigDocument;
+    }
+
+    public boolean isInheritPermissions()
+    {
+        return inheritPermissions;
+    }
+
+    public List<AccessControlEntryJson> getPermissions()
+    {
+        return permissions;
+    }
+
     public NodeVersion fromJson()
     {
         return NodeVersion.create().

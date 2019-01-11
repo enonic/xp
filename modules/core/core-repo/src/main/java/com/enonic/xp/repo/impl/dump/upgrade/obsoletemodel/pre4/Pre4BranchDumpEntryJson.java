@@ -27,12 +27,12 @@ public class Pre4BranchDumpEntryJson
         binaries = builder.binaries;
     }
 
-    private String getNodeId()
+    public String getNodeId()
     {
         return nodeId;
     }
 
-    private Collection<String> getBinaries()
+    public Collection<String> getBinaries()
     {
         return binaries;
     }
