@@ -19,9 +19,9 @@ public class LogoutUrlFunctionTest
     @Test
     public void testExecute()
     {
-        final Object result = execute( "logoutUrl", "_userStore=system", "_redirect=/redirection/url" );
+        final Object result = execute( "logoutUrl", "_idProvider=system", "_redirect=/redirection/url" );
         assertEquals(
-            "IdentityUrlParams{type=server, params={}, userStoreKey=system, idProviderFunction=logout, redirect=/redirection/url}",
+            "IdentityUrlParams{type=server, params={}, idProviderKey=system, idProviderFunction=logout, redirect=/redirection/url}",
             result );
     }
 }

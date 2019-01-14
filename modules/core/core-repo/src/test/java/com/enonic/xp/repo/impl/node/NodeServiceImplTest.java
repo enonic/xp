@@ -31,10 +31,10 @@ import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.repository.BranchNotFoundException;
 import com.enonic.xp.repository.RepositoryNotFoundException;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
-import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
@@ -110,7 +110,7 @@ public class NodeServiceImplTest
     public void createRootNode()
     {
         final User user = User.create().
-            key( PrincipalKey.ofUser( UserStoreKey.system(), "user1" ) ).
+            key( PrincipalKey.ofUser( IdProviderKey.system(), "user1" ) ).
             displayName( "User 1" ).
             modifiedTime( Instant.now() ).
             email( "user1@enonic.com" ).
@@ -168,7 +168,7 @@ public class NodeServiceImplTest
 
         final AccessControlList aclList = AccessControlList.create().
             add( AccessControlEntry.create().
-                principal( PrincipalKey.from( "user:myuserstore:rmy" ) ).
+                principal( PrincipalKey.from( "user:myidprovider:rmy" ) ).
                 allow( Permission.READ ).
                 build() ).
             build();

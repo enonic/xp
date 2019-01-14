@@ -2,11 +2,11 @@ var authLib = require('/lib/xp/auth');
 var t = require('/lib/xp/testing');
 
 // BEGIN 
-// Login with a explicit user store.
+// Login with a explicit id provider.
 var result1 = authLib.login({
     user: 'user1@enonic.com',
     password: 'secret',
-    userStore: 'enonic'
+    idProvider: 'enonic'
 });
 
 if (result1.authenticated) {
@@ -15,16 +15,16 @@ if (result1.authenticated) {
 // END
 
 // BEGIN
-// Login to any of the user stores, in sequence.
+// Login to any of the id providers, in sequence.
 var result2 = authLib.login({
     user: 'user1@enonic.com',
     password: 'secret',
-    userStore: ['enonic', 'vip']
+    idProvider: ['enonic', 'vip']
 });
 // END
 
 // BEGIN
-// Login to any of the existing user stores.
+// Login to any of the existing id providers.
 var result3 = authLib.login({
     user: 'user1@enonic.com',
     password: 'secret'
@@ -32,10 +32,10 @@ var result3 = authLib.login({
 // END
 
 // BEGIN
-// Login with a explicit user store without authentication.
+// Login with a explicit id provider without authentication.
 var result4 = authLib.login({
     user: 'user1@enonic.com',
-    userStore: 'enonic',
+    idProvider: 'enonic',
     skipAuth: true
 });
 // END
@@ -52,7 +52,7 @@ var expected = {
         "disabled": false,
         "email": "user1@enonic.com",
         "login": "user1",
-        "userStore": "enonic"
+        "idProvider": "enonic"
     }
 };
 // END

@@ -13,7 +13,7 @@ exports.getUserAuthenticated = function () {
         "disabled": false,
         "email": "user1@enonic.com",
         "login": "user1",
-        "userStore": "enonic"
+        "idProvider": "enonic"
     };
 
     t.assertJsonEquals(expectedJson, result);

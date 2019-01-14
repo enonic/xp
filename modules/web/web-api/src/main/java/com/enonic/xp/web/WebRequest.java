@@ -10,7 +10,7 @@ import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
-import com.enonic.xp.security.UserStore;
+import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.web.websocket.WebSocketContext;
 
 @Beta
@@ -48,7 +48,7 @@ public class WebRequest
 
     private WebSocketContext webSocketContext;
 
-    private UserStore userStore;
+    private IdProvider idProvider;
 
     public WebRequest()
     {
@@ -75,7 +75,7 @@ public class WebRequest
         this.body = webRequest.body;
         this.rawRequest = webRequest.rawRequest;
         this.webSocketContext = webRequest.webSocketContext;
-        this.userStore = webRequest.userStore;
+        this.idProvider = webRequest.idProvider;
     }
 
     public HttpMethod getMethod()
@@ -168,14 +168,14 @@ public class WebRequest
         return this.headers;
     }
 
-    public UserStore getUserStore()
+    public IdProvider getIdProvider()
     {
-        return userStore;
+        return idProvider;
     }
 
-    public void setUserStore( final UserStore userStore )
+    public void setIdProvider( final IdProvider idProvider )
     {
-        this.userStore = userStore;
+        this.idProvider = idProvider;
     }
 
     public Map<String, String> getCookies()

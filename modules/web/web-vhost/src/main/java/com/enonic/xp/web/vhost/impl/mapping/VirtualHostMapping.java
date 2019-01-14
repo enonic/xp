@@ -6,7 +6,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 
-import com.enonic.xp.security.UserStoreKey;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.web.vhost.VirtualHost;
 
 public final class VirtualHostMapping
@@ -22,7 +22,7 @@ public final class VirtualHostMapping
 
     private String target;
 
-    private UserStoreKey userStoreKey;
+    private IdProviderKey userStoreKey;
 
     public VirtualHostMapping( final String name )
     {
@@ -57,7 +57,7 @@ public final class VirtualHostMapping
     }
 
     @Override
-    public UserStoreKey getUserStoreKey()
+    public IdProviderKey getUserStoreKey()
     {
         return userStoreKey;
     }
@@ -77,9 +77,9 @@ public final class VirtualHostMapping
         this.target = normalizePath( value );
     }
 
-    public void setUserStoreKey( final UserStoreKey userStoreKey )
+    public void setIdProviderKey( final IdProviderKey idProviderKey )
     {
-        this.userStoreKey = userStoreKey;
+        this.userStoreKey = idProviderKey;
     }
 
     public boolean matches( final HttpServletRequest req )

@@ -2,8 +2,8 @@ package com.enonic.xp.security.acl;
 
 import org.junit.Test;
 
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.UserStoreKey;
 
 import static org.junit.Assert.*;
 
@@ -18,7 +18,7 @@ public class AccessControlListTest
             allow( Permission.READ ).
             build();
         final AccessControlEntry entry2 = AccessControlEntry.create().
-            principal( PrincipalKey.ofUser( UserStoreKey.system(), "user1" ) ).
+            principal( PrincipalKey.ofUser( IdProviderKey.system(), "user1" ) ).
             allow( Permission.MODIFY ).
             build();
 

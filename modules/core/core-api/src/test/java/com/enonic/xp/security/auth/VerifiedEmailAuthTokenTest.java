@@ -12,7 +12,7 @@ public class VerifiedEmailAuthTokenTest
         final VerifiedEmailAuthToken token = new VerifiedEmailAuthToken();
         token.setEmail( "user@domain.com" );
 
-        assertNull( token.getUserStore() );
+        assertNull( token.getIdProvider() );
         assertEquals( "user@domain.com", token.getEmail() );
     }
 }

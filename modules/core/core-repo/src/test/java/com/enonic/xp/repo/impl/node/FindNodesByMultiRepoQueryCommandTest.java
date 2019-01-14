@@ -23,10 +23,10 @@ import com.enonic.xp.repository.CreateBranchParams;
 import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.User;
-import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -38,13 +38,13 @@ public class FindNodesByMultiRepoQueryCommandTest
     extends AbstractNodeTest
 {
     private static final User REPO_USER_1 =
-        User.create().key( PrincipalKey.ofUser( UserStoreKey.system(), "repo-user-1" ) ).login( "repo-user-1" ).build();
+        User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "repo-user-1" ) ).login( "repo-user-1" ).build();
 
     private static final User REPO_USER_2 =
-        User.create().key( PrincipalKey.ofUser( UserStoreKey.system(), "repo-user-2" ) ).login( "repo-user-2" ).build();
+        User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "repo-user-2" ) ).login( "repo-user-2" ).build();
 
     private static final User REPO_USER_3 =
-        User.create().key( PrincipalKey.ofUser( UserStoreKey.system(), "repo-user-3" ) ).login( "repo-user-3" ).build();
+        User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "repo-user-3" ) ).login( "repo-user-3" ).build();
 
     @Override
     @Before

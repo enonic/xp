@@ -1,0 +1,16 @@
+{
+  "idProviders": [
+    {
+      "description": "local ldap",
+      "displayName": "Local LDAP",
+      "idProviderConfig": null,
+      "key": "local"
+    },
+    {
+      "description": "file based ustore description",
+      "displayName": "File based id provider",
+      "idProviderConfig": null,
+      "key": "file-store"
+    }
+  ]
+}

@@ -5,7 +5,7 @@ var t = require('/lib/xp/testing');
 // Find principals with the specified name.
 var result = authLib.findPrincipals({
     type: 'user',
-    userStore: 'user-store',
+    idProvider: 'user-store',
     start: 0,
     count: 10,
     name: 'user1'
@@ -40,7 +40,7 @@ var expected = {
             "disabled": false,
             "email": "user1@enonic.com",
             "login": "user1",
-            "userStore": "enonic"
+            "idProvider": "enonic"
         }
     ]
 };

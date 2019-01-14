@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.annotation.Order;
-import com.enonic.xp.security.UserStoreKey;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.web.filter.OncePerRequestFilter;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 import com.enonic.xp.web.vhost.impl.config.VirtualHostConfig;
@@ -66,7 +66,7 @@ public final class VirtualHostFilter
         virtualHostMapping.setHost( serverName );
         virtualHostMapping.setSource( "/" );
         virtualHostMapping.setTarget( "/" );
-        virtualHostMapping.setUserStoreKey( UserStoreKey.system() );
+        virtualHostMapping.setIdProviderKey( IdProviderKey.system() );
 
         return virtualHostMapping;
     }

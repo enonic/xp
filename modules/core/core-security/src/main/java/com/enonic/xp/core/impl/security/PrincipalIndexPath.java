@@ -4,7 +4,7 @@ import com.enonic.xp.index.IndexPath;
 
 final class PrincipalIndexPath
 {
-    public static final IndexPath USER_STORE_KEY = IndexPath.from( "userStoreKey" );
+    public static final IndexPath ID_PROVIDER_KEY = IndexPath.from( "userStoreKey" );
 
     public static final IndexPath PRINCIPAL_KEY = IndexPath.from( "principalKey" );
 

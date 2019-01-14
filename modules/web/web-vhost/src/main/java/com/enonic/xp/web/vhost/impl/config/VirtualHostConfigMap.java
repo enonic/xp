@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.security.UserStoreKey;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMappings;
 
@@ -50,7 +50,7 @@ final class VirtualHostConfigMap
         final String userStoreKeyString = getString( prefix + "userStore" );
         if ( userStoreKeyString != null )
         {
-            mapping.setUserStoreKey( UserStoreKey.from( userStoreKeyString ) );
+            mapping.setIdProviderKey( IdProviderKey.from( userStoreKeyString ) );
         }
         return mapping;
     }

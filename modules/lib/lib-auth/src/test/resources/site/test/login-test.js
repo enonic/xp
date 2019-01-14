@@ -6,7 +6,7 @@ exports.loginSuccess = function () {
     var result = auth.login({
         user: 'user1@enonic.com',
         password: 'pwd123',
-        userStore: 'enonic'
+        idProvider: 'enonic'
     });
 
     var expectedJson = {
@@ -19,7 +19,7 @@ exports.loginSuccess = function () {
             "disabled": false,
             "email": "user1@enonic.com",
             "login": "user1",
-            "userStore": "enonic"
+            "idProvider": "enonic"
         }
     };
 
@@ -32,7 +32,7 @@ exports.invalidLogin = function () {
     var result = auth.login({
         user: 'user1@enonic.com',
         password: 'pwd123',
-        userStore: 'enonic'
+        idProvider: 'enonic'
     });
 
     var expectedJson = {
@@ -44,7 +44,7 @@ exports.invalidLogin = function () {
 
 };
 
-exports.loginNoUserStore = function () {
+exports.loginNoIdProvider = function () {
 
     var result = auth.login({
         user: 'user1@enonic.com',
@@ -61,7 +61,7 @@ exports.loginNoUserStore = function () {
             "disabled": false,
             "email": "user1@enonic.com",
             "login": "user1",
-            "userStore": "enonic"
+            "idProvider": "enonic"
         }
     };
 
@@ -69,12 +69,12 @@ exports.loginNoUserStore = function () {
 
 };
 
-exports.loginMultipleUserStore = function () {
+exports.loginMultipleIdProvider = function () {
 
     var result = auth.login({
         user: 'user1@enonic.com',
         password: 'pwd123',
-        userStore: ['enonic', 'system']
+        idProvider: ['enonic', 'system']
     });
 
     var expectedJson = {
@@ -87,7 +87,7 @@ exports.loginMultipleUserStore = function () {
             "disabled": false,
             "email": "user1@enonic.com",
             "login": "user1",
-            "userStore": "enonic"
+            "idProvider": "enonic"
         }
     };
 
@@ -95,7 +95,7 @@ exports.loginMultipleUserStore = function () {
 
 };
 
-exports.loginMultipleUserStoresInOrder = function () {
+exports.loginMultipleIdProvidersInOrder = function () {
 
     var result = auth.login({
         user: 'user1@enonic.com',
@@ -112,7 +112,7 @@ exports.loginMultipleUserStoresInOrder = function () {
             "disabled": false,
             "email": "user1@enonic.com",
             "login": "user1",
-            "userStore": "enonic"
+            "idProvider": "enonic"
         }
     };
 

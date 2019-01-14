@@ -3,7 +3,7 @@ var auth = require('/lib/xp/auth.js');
 
 exports.getUserPrincipal = function () {
 
-    var result = auth.getPrincipal('user:myUserStore:userId');
+    var result = auth.getPrincipal('user:myIdProvider:userId');
 
     var expectedJson = {
         "type": "user",
@@ -13,7 +13,7 @@ exports.getUserPrincipal = function () {
         "disabled": false,
         "email": "user1@enonic.com",
         "login": "user1",
-        "userStore": "enonic"
+        "idProvider": "enonic"
     };
 
     t.assertJsonEquals(expectedJson, result);
@@ -54,7 +54,7 @@ exports.getGroupPrincipal = function () {
 
 exports.getNonExistingPrincipal = function () {
 
-    var result = auth.getPrincipal('user:myUserStore:XXX');
+    var result = auth.getPrincipal('user:myIdProvider:XXX');
 
     t.assertEquals(null, result);
 

@@ -31,7 +31,7 @@ exports.findPrincipalsDefaultParameters = function () {
                 "disabled": false,
                 "email": "user1@enonic.com",
                 "login": "user1",
-                "userStore": "enonic"
+                "idProvider": "enonic"
             }
         ]
     };
@@ -44,7 +44,7 @@ exports.findPrincipalsUsers = function () {
 
     var result = auth.findPrincipals({
         "type": "user",
-        "userStore": "enonic",
+        "idProvider": "enonic",
         "start": 2,
         "count": 3
     });
@@ -61,7 +61,7 @@ exports.findPrincipalsUsers = function () {
                 "disabled": false,
                 "email": "user1@enonic.com",
                 "login": "user1",
-                "userStore": "enonic"
+                "idProvider": "enonic"
             }
         ]
     };
@@ -74,7 +74,7 @@ exports.findPrincipalsGroups = function () {
 
     var result = auth.findPrincipals({
         "type": "group",
-        "userStore": "enonic",
+        "idProvider": "enonic",
         "start": 2,
         "count": 3
     });
@@ -101,7 +101,7 @@ exports.findPrincipalsRoles = function () {
 
     var result = auth.findPrincipals({
         "type": "role",
-        "userStore": "enonic",
+        "idProvider": "enonic",
         "start": 2,
         "count": 3
     });
@@ -127,7 +127,7 @@ exports.findPrincipalsRoles = function () {
 exports.findPrincipalsByName = function () {
 
     var result = auth.findPrincipals({
-        "userStore": "enonic",
+        "idProvider": "enonic",
         "name": "user1"
     });
 
@@ -143,7 +143,7 @@ exports.findPrincipalsByName = function () {
                 "disabled": false,
                 "email": "user1@enonic.com",
                 "login": "user1",
-                "userStore": "enonic"
+                "idProvider": "enonic"
             }
         ]
     };
@@ -170,7 +170,7 @@ exports.findPrincipalsBySearchText = function () {
                 "disabled": false,
                 "email": "user1@enonic.com",
                 "login": "user1",
-                "userStore": "enonic"
+                "idProvider": "enonic"
             }
         ]
     };

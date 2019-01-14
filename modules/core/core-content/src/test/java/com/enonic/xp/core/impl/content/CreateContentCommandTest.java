@@ -268,7 +268,7 @@ public class CreateContentCommandTest
         final PropertyTree parentNodeData = new PropertyTree();
         parentNodeData.setString( ContentPropertyNames.TYPE, ContentTypeName.unstructured().toString() );
         parentNodeData.setSet( ContentPropertyNames.DATA, new PropertySet() );
-        parentNodeData.setString( ContentPropertyNames.CREATOR, "user:myuserstore:user1" );
+        parentNodeData.setString( ContentPropertyNames.CREATOR, "user:myidprovider:user1" );
         final Node parentNode = Node.create().
             id( NodeId.from( "id1" ) ).
             name( "parent" ).
@@ -310,7 +310,7 @@ public class CreateContentCommandTest
         final PropertyTree parentNodeData = new PropertyTree();
         parentNodeData.setString( ContentPropertyNames.TYPE, ContentTypeName.site().toString() );
         parentNodeData.setSet( ContentPropertyNames.DATA, new PropertySet() );
-        parentNodeData.setString( ContentPropertyNames.CREATOR, "user:myuserstore:user1" );
+        parentNodeData.setString( ContentPropertyNames.CREATOR, "user:myidprovider:user1" );
         final Node parentNode = Node.create().
             id( NodeId.from( "id1" ) ).
             name( "parent" ).
@@ -344,7 +344,7 @@ public class CreateContentCommandTest
         final PropertyTree parentNodeData = new PropertyTree();
         parentNodeData.setString( ContentPropertyNames.TYPE, ContentTypeName.templateFolder().toString() );
         parentNodeData.setSet( ContentPropertyNames.DATA, new PropertySet() );
-        parentNodeData.setString( ContentPropertyNames.CREATOR, "user:myuserstore:user1" );
+        parentNodeData.setString( ContentPropertyNames.CREATOR, "user:myidprovider:user1" );
         final Node parentNode = Node.create().
             id( NodeId.from( "id1" ) ).
             name( "_templates" ).
@@ -378,7 +378,7 @@ public class CreateContentCommandTest
         final PropertyTree parentNodeData = new PropertyTree();
         parentNodeData.setString( ContentPropertyNames.TYPE, ContentTypeName.folder().toString() );
         parentNodeData.setSet( ContentPropertyNames.DATA, new PropertySet() );
-        parentNodeData.setString( ContentPropertyNames.CREATOR, "user:myuserstore:user1" );
+        parentNodeData.setString( ContentPropertyNames.CREATOR, "user:myidprovider:user1" );
         final Node parentNode = Node.create().
             id( NodeId.from( "id1" ) ).
             name( "_templates" ).
@@ -477,7 +477,7 @@ public class CreateContentCommandTest
         final PropertyTree nodeData = new PropertyTree();
         nodeData.setString( ContentPropertyNames.TYPE, contentTypeName.toString() );
         nodeData.setSet( ContentPropertyNames.DATA, new PropertySet() );
-        nodeData.setString( ContentPropertyNames.CREATOR, "user:myuserstore:user1" );
+        nodeData.setString( ContentPropertyNames.CREATOR, "user:myidprovider:user1" );
 
         final Node node = Node.create().
             id( NodeId.from( name ) ).

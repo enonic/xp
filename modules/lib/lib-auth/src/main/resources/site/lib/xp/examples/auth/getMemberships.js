@@ -3,7 +3,7 @@ var t = require('/lib/xp/testing');
 
 // BEGIN
 // Returns all memberships for specified principal key.
-var memberships = authLib.getMemberships('user:myUserStore:userId');
+var memberships = authLib.getMemberships('user:myIdProvider:userId');
 // END
 
 // BEGIN

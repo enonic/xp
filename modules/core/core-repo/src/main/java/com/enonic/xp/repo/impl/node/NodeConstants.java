@@ -4,15 +4,15 @@ import java.time.Clock;
 import java.time.ZoneOffset;
 
 import com.enonic.xp.blob.SegmentLevel;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
-import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public final class NodeConstants
 {
-    private static final PrincipalKey NODE_SUPER_USER_KEY = PrincipalKey.ofUser( UserStoreKey.system(), "node-su" );
+    private static final PrincipalKey NODE_SUPER_USER_KEY = PrincipalKey.ofUser( IdProviderKey.system(), "node-su" );
 
     private static final User NODE_SUPER_USER = User.create().key( NODE_SUPER_USER_KEY ).login( "node" ).build();
 

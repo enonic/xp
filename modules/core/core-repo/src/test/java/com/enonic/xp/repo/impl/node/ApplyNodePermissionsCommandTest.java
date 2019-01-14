@@ -22,8 +22,8 @@ import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.repo.impl.version.VersionIndexPath;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -40,7 +40,7 @@ import static org.junit.Assert.*;
 public class ApplyNodePermissionsCommandTest
     extends AbstractNodeTest
 {
-    private static final UserStoreKey USK = UserStoreKey.system();
+    private static final IdProviderKey USK = IdProviderKey.system();
 
     @Before
     public void setUp()

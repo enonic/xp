@@ -12,7 +12,7 @@ import org.junit.Test;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import com.enonic.xp.security.UserStoreKey;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
 
 public class VirtualHostConfigImplTest
@@ -86,8 +86,8 @@ public class VirtualHostConfigImplTest
         Assert.assertNotNull( mappings );
         Assert.assertEquals( 3, mappings.size() );
 
-        assertMapping( mappings.get( 1 ), "a", "localhost", "/status/a", "/full/path/status/a", UserStoreKey.system() );
-        assertMapping( mappings.get( 0 ), "b", "enonic.com", "/status/b", "/full/path/status/b", UserStoreKey.from( "enonic" ) );
+        assertMapping( mappings.get( 1 ), "a", "localhost", "/status/a", "/full/path/status/a", IdProviderKey.system() );
+        assertMapping( mappings.get( 0 ), "b", "enonic.com", "/status/b", "/full/path/status/b", IdProviderKey.from( "enonic" ) );
         assertMapping( mappings.get( 2 ), "c", "localhost", "/status/c", "/full/path/status/c", null );
     }
 
@@ -107,7 +107,7 @@ public class VirtualHostConfigImplTest
     }
 
     private void assertMapping( final VirtualHostMapping mapping, final String name, final String host, final String source,
-                                final String target, final UserStoreKey userStoreKey )
+                                final String target, final IdProviderKey userStoreKey )
     {
         Assert.assertEquals( name, mapping.getName() );
         Assert.assertEquals( host, mapping.getHost() );

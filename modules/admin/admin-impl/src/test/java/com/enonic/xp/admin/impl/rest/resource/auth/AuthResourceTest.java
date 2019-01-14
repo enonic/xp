@@ -12,13 +12,13 @@ import org.mockito.Mockito;
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.LocalScope;
+import com.enonic.xp.security.IdProvider;
+import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.security.IdProviders;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
-import com.enonic.xp.security.UserStore;
-import com.enonic.xp.security.UserStoreKey;
-import com.enonic.xp.security.UserStores;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.AuthenticationToken;
 import com.enonic.xp.session.SessionKey;
@@ -42,10 +42,10 @@ public class AuthResourceTest
 
         securityService = Mockito.mock( SecurityService.class );
         resource.setSecurityService( securityService );
-        final UserStore us1 = UserStore.create().key( UserStoreKey.from( "remote" ) ).displayName( "Remote" ).build();
-        final UserStore us2 = UserStore.create().key( UserStoreKey.system() ).displayName( "System" ).build();
-        final UserStores userStores = UserStores.from( us1, us2 );
-        Mockito.when( securityService.getUserStores() ).thenReturn( userStores );
+        final IdProvider us1 = IdProvider.create().key( IdProviderKey.from( "remote" ) ).displayName( "Remote" ).build();
+        final IdProvider us2 = IdProvider.create().key( IdProviderKey.system() ).displayName( "System" ).build();
+        final IdProviders idProviders = IdProviders.from( us1, us2 );
+        Mockito.when( securityService.getIdProviders() ).thenReturn( idProviders );
 
         return resource;
     }
@@ -55,7 +55,7 @@ public class AuthResourceTest
         throws Exception
     {
         final User user = User.create().
-            key( PrincipalKey.ofUser( UserStoreKey.system(), "user1" ) ).
+            key( PrincipalKey.ofUser( IdProviderKey.system(), "user1" ) ).
             displayName( "User 1" ).
             modifiedTime( Instant.now( clock ) ).
             email( "user1@enonic.com" ).
@@ -77,7 +77,7 @@ public class AuthResourceTest
         throws Exception
     {
         final User user = User.create().
-            key( PrincipalKey.ofUser( UserStoreKey.system(), "user1" ) ).
+            key( PrincipalKey.ofUser( IdProviderKey.system(), "user1" ) ).
             displayName( "User 1" ).
             modifiedTime( Instant.now( clock ) ).
             email( "user1@enonic.com" ).
@@ -95,11 +95,11 @@ public class AuthResourceTest
     }
 
     @Test
-    public void testLoginWithUserNameUserStore()
+    public void testLoginWithUserNameIdProvider()
         throws Exception
     {
         final User user = User.create().
-            key( PrincipalKey.ofUser( UserStoreKey.system(), "user1" ) ).
+            key( PrincipalKey.ofUser( IdProviderKey.system(), "user1" ) ).
             displayName( "User 1" ).
             modifiedTime( Instant.now( clock ) ).
             email( "user1@enonic.com" ).
@@ -136,7 +136,7 @@ public class AuthResourceTest
         throws Exception
     {
         final User user = User.create().
-            key( PrincipalKey.ofUser( UserStoreKey.system(), "user1" ) ).
+            key( PrincipalKey.ofUser( IdProviderKey.system(), "user1" ) ).
             displayName( "User 1" ).
             modifiedTime( Instant.now( clock ) ).
             email( "user1@enonic.com" ).
@@ -167,7 +167,7 @@ public class AuthResourceTest
         throws Exception
     {
         final User user = User.create().
-            key( PrincipalKey.ofUser( UserStoreKey.system(), "user1" ) ).
+            key( PrincipalKey.ofUser( IdProviderKey.system(), "user1" ) ).
             displayName( "User 1" ).
             modifiedTime( Instant.now( clock ) ).
             email( "user1@enonic.com" ).

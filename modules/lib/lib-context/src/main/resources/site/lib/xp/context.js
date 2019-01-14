@@ -19,7 +19,7 @@ var bean = __.newBean('com.enonic.xp.lib.context.ContextHandlerBean');
  * @param {string} [context.branch] Name of the branch to execute the callback in. Default is the current branch set in portal.
  * @param {object} [context.user] User to execute the callback with. Default is the current user.
  * @param {string} context.user.login Login of the user.
- * @param {string} [context.user.userStore] User store containing the user. By default, all the user stores will be used.
+ * @param {string} [context.user.idProvider] Id provider containing the user. By default, all the id providers will be used.
  * @param {array} [context.principals] Additional principals to execute the callback with.
  * @param {object} [context.attributes] Additional Context attributes.
  * @param {function} callback Function to execute.
@@ -41,8 +41,8 @@ exports.run = function (context, callback) {
         if (context.user.login) {
             params.username = context.user.login;
         }
-        if (context.user.userStore) {
-            params.userStore = context.user.userStore;
+        if (context.user.idProvider) {
+            params.idProvider = context.user.idProvider;
         }
     }
 

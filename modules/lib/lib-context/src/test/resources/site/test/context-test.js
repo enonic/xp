@@ -24,7 +24,7 @@ exports.testChange = function () {
         branch: 'mybranch',
         user: {
             login: 'su',
-            userStore: 'system'
+            idProvider: 'system'
         },
         principals: ["role:system.myrole"]
     }, function () {
@@ -41,7 +41,7 @@ exports.testChange = function () {
                 "displayName": "Super User",
                 "disabled": false,
                 "login": "su",
-                "userStore": "system"
+                "idProvider": "system"
             },
             "principals": [
                 "role:system.admin",

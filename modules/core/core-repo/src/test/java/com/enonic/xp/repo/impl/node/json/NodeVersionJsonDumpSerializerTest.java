@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.node.json;
 
 import java.net.URL;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -23,8 +22,8 @@ import com.enonic.xp.node.NodeType;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
@@ -59,7 +58,7 @@ public class NodeVersionJsonDumpSerializerTest
             deny( Permission.DELETE ).
             build();
         final AccessControlEntry entry2 = AccessControlEntry.create().
-            principal( PrincipalKey.ofUser( UserStoreKey.system(), "user1" ) ).
+            principal( PrincipalKey.ofUser( IdProviderKey.system(), "user1" ) ).
             allow( Permission.MODIFY ).
             deny( Permission.PUBLISH ).
             build();

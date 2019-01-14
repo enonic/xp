@@ -3,10 +3,10 @@ package com.enonic.xp.lib.auth;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalQuery;
 import com.enonic.xp.security.PrincipalQueryResult;
 import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.testing.ScriptTestSupport;
 
 public class FindPrincipalsHandlerTest
@@ -59,7 +59,7 @@ public class FindPrincipalsHandlerTest
     {
         final PrincipalQuery expectedQuery = PrincipalQuery.create().
             includeUsers().
-            userStore( UserStoreKey.from( "enonic" ) ).
+            idProvider( IdProviderKey.from( "enonic" ) ).
             from( 2 ).
             size( 3 ).
             build();
@@ -78,7 +78,7 @@ public class FindPrincipalsHandlerTest
     {
         final PrincipalQuery expectedQuery = PrincipalQuery.create().
             includeGroups().
-            userStore( UserStoreKey.from( "enonic" ) ).
+            idProvider( IdProviderKey.from( "enonic" ) ).
             from( 2 ).
             size( 3 ).
             build();
@@ -97,7 +97,7 @@ public class FindPrincipalsHandlerTest
     {
         final PrincipalQuery expectedQuery = PrincipalQuery.create().
             includeRoles().
-            userStore( UserStoreKey.from( "enonic" ) ).
+            idProvider( IdProviderKey.from( "enonic" ) ).
             from( 2 ).
             size( 3 ).
             build();
@@ -115,7 +115,7 @@ public class FindPrincipalsHandlerTest
     public void testFindPrincipalsByName()
     {
         final PrincipalQuery expectedQuery = PrincipalQuery.create().
-            userStore( UserStoreKey.from( "enonic" ) ).
+            idProvider( IdProviderKey.from( "enonic" ) ).
             name( "user1" ).
             build();
 

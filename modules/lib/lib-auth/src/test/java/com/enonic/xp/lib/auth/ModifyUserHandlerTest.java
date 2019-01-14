@@ -44,7 +44,8 @@ public class ModifyUserHandlerTest
     @Test
     public void testModifyUser()
     {
-        Mockito.<Optional<? extends Principal>>when( securityService.getUser( PrincipalKey.from( "user:myUserStore:userId" ) ) ).thenReturn(
+        Mockito.<Optional<? extends Principal>>when(
+            securityService.getUser( PrincipalKey.from( "user:myIdProvider:userId" ) ) ).thenReturn(
             Optional.of( TestDataFixtures.getTestUser() ) );
 
         Mockito.when( this.securityService.updateUser( Mockito.isA( UpdateUserParams.class ) ) ).thenAnswer(

@@ -3,7 +3,7 @@ var t = require('/lib/xp/testing');
 
 // BEGIN
 // Returns the principal information for specified principal key.
-var deleted = authLib.deletePrincipal('user:myUserStore:userId');
+var deleted = authLib.deletePrincipal('user:myIdProvider:userId');
 // END
 
 // BEGIN

@@ -14,7 +14,7 @@ class PrincipalIndexConfigFactory
             analyzer( ContentConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
             add( PrincipalPropertyNames.DISPLAY_NAME_KEY, IndexConfig.FULLTEXT ).
             add( PrincipalPropertyNames.PRINCIPAL_TYPE_KEY, IndexConfig.MINIMAL ).
-            add( PrincipalPropertyNames.USER_STORE_KEY, IndexConfig.MINIMAL ).
+            add( PrincipalPropertyNames.ID_PROVIDER_KEY, IndexConfig.MINIMAL ).
             add( PrincipalPropertyNames.EMAIL_KEY, IndexConfig.FULLTEXT ).
             add( PrincipalPropertyNames.LOGIN_KEY, IndexConfig.MINIMAL ).
             add( PrincipalPropertyNames.PRINCIPAL_KEY, IndexConfig.MINIMAL ).

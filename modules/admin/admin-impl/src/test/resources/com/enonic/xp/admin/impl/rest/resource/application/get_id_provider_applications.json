@@ -1,7 +1,13 @@
 {
   "applications": [
     {
-      "authConfig": {
+      "config": null,
+      "deletable": false,
+      "description": "Application description",
+      "displayName": "application display name",
+      "editable": false,
+      "iconUrl": "/admin/rest/application/icon/testapplication",
+      "idProviderConfig": {
         "formItems": [
           {
             "Input": {
@@ -23,12 +29,6 @@
           }
         ]
       },
-      "config": null,
-      "deletable": false,
-      "description": "Application description",
-      "displayName": "application display name",
-      "editable": false,
-      "iconUrl": "/admin/rest/application/icon/testapplication",
       "key": "testapplication",
       "local": false,
       "maxSystemVersion": "5.1",
