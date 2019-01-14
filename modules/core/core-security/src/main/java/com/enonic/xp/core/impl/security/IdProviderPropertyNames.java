@@ -6,7 +6,7 @@ final class IdProviderPropertyNames
 
     public static final String DESCRIPTION_KEY = "description";
 
-    public static final String APPLICATION = "application";
+    public static final String APPLICATION = "idProvider";
 
     public static final String ID_PROVIDER_APPLICATION_KEY = APPLICATION + "." + "applicationKey";
 
