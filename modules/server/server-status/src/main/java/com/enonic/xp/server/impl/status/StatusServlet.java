@@ -29,7 +29,7 @@ import com.google.common.net.MediaType;
 import com.enonic.xp.annotation.Order;
 import com.enonic.xp.status.StatusReporter;
 
-@Component(immediate = true, service = Servlet.class)
+@Component(immediate = true, service = Servlet.class, property = {"connector=status"})
 @Order(-200)
 @WebServlet({"/status", "/status/*"})
 public final class StatusServlet

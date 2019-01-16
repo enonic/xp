@@ -36,7 +36,7 @@ import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketContextFactory;
 
-@Component(immediate = true, service = Servlet.class)
+@Component(immediate = true, service = Servlet.class, property = {"connector=xp"})
 @Order(100)
 @WebServlet("/*")
 public final class WebDispatcherServlet
