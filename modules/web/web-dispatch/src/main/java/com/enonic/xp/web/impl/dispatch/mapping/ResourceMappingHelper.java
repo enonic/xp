@@ -1,5 +1,7 @@
 package com.enonic.xp.web.impl.dispatch.mapping;
 
+import java.util.List;
+
 import javax.servlet.Filter;
 import javax.servlet.Servlet;
 import javax.servlet.annotation.WebFilter;
@@ -13,7 +15,7 @@ import com.enonic.xp.web.dispatch.ServletMapping;
 
 final class ResourceMappingHelper
 {
-    static ServletMapping servlet( final Servlet servlet )
+    static ServletMapping servlet( final Servlet servlet, List<String> connectors )
     {
         final WebServlet config = servlet.getClass().getAnnotation( WebServlet.class );
         if ( config == null )
@@ -24,10 +26,11 @@ final class ResourceMappingHelper
         final MappingBuilder builder = MappingBuilder.newBuilder();
         configure( builder, config );
         configureOrder( builder, servlet );
+        builder.connectors( connectors );
         return builder.servlet( servlet );
     }
 
-    static FilterMapping filter( final Filter filter )
+    static FilterMapping filter( final Filter filter, final List<String> connectors )
     {
         final WebFilter config = filter.getClass().getAnnotation( WebFilter.class );
         if ( config == null )
@@ -38,6 +41,7 @@ final class ResourceMappingHelper
         final MappingBuilder builder = MappingBuilder.newBuilder();
         configure( builder, config );
         configureOrder( builder, filter );
+        builder.connectors( connectors );
         return builder.filter( filter );
     }
 

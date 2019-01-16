@@ -10,6 +10,7 @@ import javax.servlet.ServletException;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.impl.dispatch.mapping.ResourceDefinition;
 
 public abstract class ResourcePipelineImpl<T extends ResourceDefinition<?>>
@@ -21,10 +22,15 @@ public abstract class ResourcePipelineImpl<T extends ResourceDefinition<?>>
 
     final List<T> list;
 
+    private String connector;
+
+    private List<T> resourceQueue;
+
     ResourcePipelineImpl()
     {
         this.map = Maps.newHashMap();
         this.list = Lists.newCopyOnWriteArrayList();
+        this.resourceQueue = Lists.newCopyOnWriteArrayList();
     }
 
     @Override
@@ -33,6 +39,17 @@ public abstract class ResourcePipelineImpl<T extends ResourceDefinition<?>>
     {
         this.context = context;
         this.list.forEach( r -> r.init( this.context ) );
+    }
+
+    protected void activate( Map<String, Object> properties )
+    {
+        connector = (String) properties.get( DispatchConstants.CONNECTOR_PROPERTY );
+
+        if ( resourceQueue.size() > 0 )
+        {
+            resourceQueue.forEach( this::initResource );
+            resourceQueue.clear();
+        }
     }
 
     @Override
@@ -44,6 +61,23 @@ public abstract class ResourcePipelineImpl<T extends ResourceDefinition<?>>
     final void add( final T def )
     {
         if ( def == null )
+        {
+            return;
+        }
+
+        if ( this.connector == null )
+        {
+            resourceQueue.add( def );
+            return;
+        }
+
+        initResource( def );
+    }
+
+    void initResource( final T def )
+    {
+
+        if ( !sameConnector( def ) )
         {
             return;
         }
@@ -85,4 +119,17 @@ public abstract class ResourcePipelineImpl<T extends ResourceDefinition<?>>
     {
         return def1.getOrder() - def2.getOrder();
     }
+
+    boolean sameConnector( final T def )
+    {
+        final List<String> value = def.getConnectors();
+
+        if ( value.isEmpty() )
+        {
+            return true;
+        }
+
+        return value.contains( this.connector );
+    }
+
 }

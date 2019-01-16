@@ -23,9 +23,19 @@ public @interface JettyConfig
     boolean http_enabled() default true;
 
     /**
-     * Http port.
+     * Http xp port.
      */
-    int http_port() default 8080;
+    int http_xp_port() default 8080;
+
+    /**
+     * Http /api port.
+     */
+    int http_api_port() default 8081;
+
+    /**
+     * Http /status port.
+     */
+    int http_status_port() default 8082;
 
     /**
      * Session timeout in minutes.

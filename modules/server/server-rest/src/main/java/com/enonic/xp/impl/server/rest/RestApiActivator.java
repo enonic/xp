@@ -7,6 +7,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.jaxrs.JaxRsService;
 import com.enonic.xp.jaxrs.JaxRsServiceFactory;
+import com.enonic.xp.web.dispatch.DispatchConstants;
 
 @Component(immediate = true)
 public final class RestApiActivator
@@ -28,6 +29,6 @@ public final class RestApiActivator
     @Reference
     public void setJaxRsServiceFactory( final JaxRsServiceFactory factory )
     {
-        this.service = factory.newService( "api", "/api" );
+        this.service = factory.newService( "api", "/api", DispatchConstants.API_CONNECTOR );
     }
 }

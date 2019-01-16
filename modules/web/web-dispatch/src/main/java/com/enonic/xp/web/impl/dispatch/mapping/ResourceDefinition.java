@@ -1,5 +1,6 @@
 package com.enonic.xp.web.impl.dispatch.mapping;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -10,6 +11,8 @@ public interface ResourceDefinition<T>
     int getOrder();
 
     String getName();
+
+    List<String> getConnectors();
 
     Set<String> getUrlPatterns();
 

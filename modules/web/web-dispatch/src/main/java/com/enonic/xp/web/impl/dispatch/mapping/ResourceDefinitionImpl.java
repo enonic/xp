@@ -95,6 +95,12 @@ abstract class ResourceDefinitionImpl<T>
     }
 
     @Override
+    public final List<String> getConnectors()
+    {
+        return this.mapping.getConnectors();
+    }
+
+    @Override
     public final Set<String> getUrlPatterns()
     {
         return this.mapping.getUrlPatterns();

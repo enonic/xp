@@ -2,7 +2,9 @@ package com.enonic.xp.web.jetty.impl.websocket;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,6 +28,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.jetty.impl.JettyController;
 import com.enonic.xp.web.websocket.EndpointFactory;
 import com.enonic.xp.web.websocket.WebSocketService;
@@ -47,7 +50,17 @@ public final class WebSocketServiceImpl
     {
         final WebSocketPolicy policy = WebSocketPolicy.newServerPolicy();
 
-        this.serverFactory = new WebSocketServerFactory( this.controller.getServletContext(), policy );
+        final Optional<ServletContext> xpServletContext = this.controller.getServletContexts().stream().
+            filter( servletContext -> servletContext.getVirtualServerName().equals(
+                DispatchConstants.VIRTUAL_HOST_PREFIX + DispatchConstants.XP_CONNECTOR ) ).
+            findFirst();
+
+        if ( xpServletContext.isEmpty() )
+        {
+            throw new ServletException( "Servlet context not found: " + DispatchConstants.XP_CONNECTOR );
+        }
+
+        this.serverFactory = new WebSocketServerFactory( xpServletContext.get(), policy );
         final ServerContainerImpl serverContainer = new ServerContainerImpl( this.serverFactory );
 
         try
