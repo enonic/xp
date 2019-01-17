@@ -7,7 +7,7 @@ import java.util.Set;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.portal.url.IdentityUrlParams;
-import com.enonic.xp.security.UserStoreKey;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
@@ -15,7 +15,7 @@ public final class IdProviderUrlHandler
     extends AbstractUrlHandler
 {
     private final static Set<String> VALID_URL_PROPERTY_KEYS =
-        new HashSet<>( Arrays.asList( "userStore", "redirect", "contextPath", "type", "params" ) );
+        new HashSet<>( Arrays.asList( "idProvider", "redirect", "contextPath", "type", "params" ) );
 
     @Override
     protected String buildUrl( final Multimap<String, String> map )
@@ -23,12 +23,12 @@ public final class IdProviderUrlHandler
         final IdentityUrlParams params = new IdentityUrlParams().
             portalRequest( request ).
             idProviderFunction( null ).
-            userStoreKey( retrieveUserStoreKey() ).
+            idProviderKey( retrieveIdProviderKey() ).
             setAsMap( map );
         return this.urlService.identityUrl( params );
     }
 
-    private UserStoreKey retrieveUserStoreKey()
+    private IdProviderKey retrieveIdProviderKey()
     {
         final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( request.getRawRequest() );
         if ( virtualHost != null )

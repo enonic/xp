@@ -4,7 +4,7 @@ var t = require('/lib/xp/testing');
 // BEGIN
 // Creates a user.
 var user = authLib.createUser({
-    userStore: 'myUserStore',
+    idProvider: 'myIdProvider',
     name: 'userName',
     displayName: 'User display name',
     email: 'userName@enonic.com'
@@ -21,7 +21,7 @@ var expected = {
     "disabled": false,
     "email": "user1@enonic.com",
     "login": "user1",
-    "userStore": "enonic"
+    "idProvider": "enonic"
 };
 // END
 

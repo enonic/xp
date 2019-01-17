@@ -38,7 +38,7 @@ public class DeletePrincipalHandlerTest
     @Test
     public void testDeleteNonExistingUser()
     {
-        final PrincipalKey principalKey = PrincipalKey.from( "user:myUserStore:XXX" );
+        final PrincipalKey principalKey = PrincipalKey.from( "user:myIdProvider:XXX" );
         Mockito.doThrow( new PrincipalNotFoundException( principalKey ) ).when( securityService ).deletePrincipal( principalKey );
         runFunction( "/site/test/deletePrincipal-test.js", "deleteNonExistingUser" );
     }

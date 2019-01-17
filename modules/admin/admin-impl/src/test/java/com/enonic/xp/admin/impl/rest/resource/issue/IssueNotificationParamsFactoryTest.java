@@ -30,11 +30,11 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
-import com.enonic.xp.security.UserStoreKey;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.times;
@@ -228,14 +228,14 @@ public class IssueNotificationParamsFactoryTest
     private User generateUser()
     {
         final String userId = UUID.randomUUID().toString();
-        return User.create().key( PrincipalKey.ofUser( UserStoreKey.createDefault(), userId ) ).login( userId ).email(
+        return User.create().key( PrincipalKey.ofUser( IdProviderKey.createDefault(), userId ) ).login( userId ).email(
             "some@user.com" ).displayName( "Some User" ).build();
     }
 
     private User generateUserNoEmail()
     {
         final String userId = UUID.randomUUID().toString();
-        return User.create().key( PrincipalKey.ofUser( UserStoreKey.createDefault(), userId ) ).login( userId ).displayName(
+        return User.create().key( PrincipalKey.ofUser( IdProviderKey.createDefault(), userId ) ).login( userId ).displayName(
             "noemail" ).build();
     }
 }

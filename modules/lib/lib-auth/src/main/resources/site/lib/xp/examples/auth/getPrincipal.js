@@ -3,7 +3,7 @@ var t = require('/lib/xp/testing');
 
 // BEGIN
 // Returns the principal information for specified principal key.
-var principal = authLib.getPrincipal('user:myUserStore:userId');
+var principal = authLib.getPrincipal('user:myIdProvider:userId');
 // END
 
 // BEGIN
@@ -16,7 +16,7 @@ var expected = {
     "disabled": false,
     "email": "user1@enonic.com",
     "login": "user1",
-    "userStore": "enonic"
+    "idProvider": "enonic"
 };
 // END
 

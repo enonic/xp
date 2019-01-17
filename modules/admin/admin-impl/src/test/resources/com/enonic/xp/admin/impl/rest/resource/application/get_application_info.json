@@ -6,9 +6,9 @@
   "deployment": {
     "url": "http://localhost:80/app/testapplication"
   },
-  "idProvider": {
-    "mode": null,
-    "userStores": null
+  "idProviderApplication": {
+    "idProviders": null,
+    "mode": null
   },
   "layouts": {
     "descriptors": []

@@ -14,9 +14,9 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.auth.AuthControllerService;
 import com.enonic.xp.portal.handler.EndpointHandler;
-import com.enonic.xp.security.UserStoreKey;
+import com.enonic.xp.portal.idprovider.IdProviderControllerService;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.WebRequest;
@@ -28,13 +28,13 @@ import com.enonic.xp.web.handler.WebHandlerChain;
 public class IdentityHandler
     extends EndpointHandler
 {
-    private final static int USERSTORE_GROUP_INDEX = 1;
+    private final static int ID_PROVIDER_GROUP_INDEX = 1;
 
     private final static Pattern PATTERN = Pattern.compile( "^([^/^?]+)(?:/(login|logout))?" );
 
     private ContentService contentService;
 
-    protected AuthControllerService authControllerService;
+    protected IdProviderControllerService idProviderControllerService;
 
     public IdentityHandler()
     {
@@ -53,12 +53,12 @@ public class IdentityHandler
             throw notFound( "Not a valid idprovider url pattern" );
         }
 
-        final UserStoreKey userStoreKey = UserStoreKey.from( matcher.group( USERSTORE_GROUP_INDEX ) );
+        final IdProviderKey idProviderKey = IdProviderKey.from( matcher.group( ID_PROVIDER_GROUP_INDEX ) );
         String idProviderFunction = matcher.group( 2 );
 
         final PortalRequest portalRequest =
             webRequest instanceof PortalRequest ? (PortalRequest) webRequest : new PortalRequest( webRequest );
-        portalRequest.setContextPath( findPreRestPath( portalRequest ) + "/" + matcher.group( USERSTORE_GROUP_INDEX ) );
+        portalRequest.setContextPath( findPreRestPath( portalRequest ) + "/" + matcher.group( ID_PROVIDER_GROUP_INDEX ) );
 
         if ( idProviderFunction != null )
         {
@@ -73,10 +73,10 @@ public class IdentityHandler
         }
 
         final IdentityHandlerWorker worker = new IdentityHandlerWorker( portalRequest );
-        worker.userStoreKey = userStoreKey;
+        worker.idProviderKey = idProviderKey;
         worker.idProviderFunction = idProviderFunction;
         worker.setContentService( this.contentService );
-        worker.authControllerService = this.authControllerService;
+        worker.idProviderControllerService = this.idProviderControllerService;
         final Trace trace = Tracer.newTrace( "portalRequest" );
         if ( trace == null )
         {
@@ -157,8 +157,8 @@ public class IdentityHandler
     }
 
     @Reference
-    public void setAuthControllerService( final AuthControllerService authControllerService )
+    public void setIdProviderControllerService( final IdProviderControllerService idProviderControllerService )
     {
-        this.authControllerService = authControllerService;
+        this.idProviderControllerService = idProviderControllerService;
     }
 }

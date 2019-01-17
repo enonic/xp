@@ -46,11 +46,11 @@ public class AccessControlTest
     {
         final AccessControlList aclList = AccessControlList.create().
             add( AccessControlEntry.create().
-                principal( PrincipalKey.from( "user:myuserstore:rmy" ) ).
+                principal( PrincipalKey.from( "user:myidprovider:rmy" ) ).
                 allow( Permission.READ ).
                 build() ).
             add( AccessControlEntry.create().
-                principal( PrincipalKey.from( "user:myuserstore:tsi" ) ).
+                principal( PrincipalKey.from( "user:myidprovider:tsi" ) ).
                 allow( Permission.READ ).
                 build() ).
             build();
@@ -72,11 +72,11 @@ public class AccessControlTest
     {
         final AccessControlList aclList = AccessControlList.create().
             add( AccessControlEntry.create().
-                principal( PrincipalKey.from( "user:myuserstore:rmy" ) ).
+                principal( PrincipalKey.from( "user:myidprovider:rmy" ) ).
                 allow( Permission.READ ).
                 build() ).
             add( AccessControlEntry.create().
-                principal( PrincipalKey.from( "user:myuserstore:tsi" ) ).
+                principal( PrincipalKey.from( "user:myidprovider:tsi" ) ).
                 allow( Permission.READ ).
                 build() ).
             build();

@@ -4,7 +4,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.security.UserStoreKey;
+import com.enonic.xp.security.IdProviderKey;
 
 @Beta
 public final class UsernamePasswordAuthToken
@@ -30,7 +30,7 @@ public final class UsernamePasswordAuthToken
 
             try
             {
-                setUserStore( UserStoreKey.from( userParts[0] ) );
+                setIdProvider( IdProviderKey.from( userParts[0] ) );
                 this.username = userParts[1];
             }
             catch ( java.lang.IllegalArgumentException e )

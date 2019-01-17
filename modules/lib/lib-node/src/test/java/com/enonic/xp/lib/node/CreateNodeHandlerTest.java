@@ -12,9 +12,9 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
@@ -93,7 +93,7 @@ public class CreateNodeHandlerTest
                     build() ).
                 add( AccessControlEntry.create().
                     allow( Permission.READ, Permission.MODIFY, Permission.CREATE, Permission.DELETE ).
-                    principal( PrincipalKey.ofUser( UserStoreKey.system(), "user1" ) ).
+                    principal( PrincipalKey.ofUser( IdProviderKey.system(), "user1" ) ).
                     build() ).
                 build() ).
             build();

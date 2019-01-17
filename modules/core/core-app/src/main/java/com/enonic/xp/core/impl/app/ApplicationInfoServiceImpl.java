@@ -9,11 +9,11 @@ import com.enonic.xp.app.ApplicationInfo;
 import com.enonic.xp.app.ApplicationInfoService;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
-import com.enonic.xp.auth.AuthDescriptor;
-import com.enonic.xp.auth.AuthDescriptorService;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.descriptor.Descriptors;
+import com.enonic.xp.idprovider.IdProviderDescriptor;
+import com.enonic.xp.idprovider.IdProviderDescriptorService;
 import com.enonic.xp.macro.MacroDescriptorService;
 import com.enonic.xp.macro.MacroDescriptors;
 import com.enonic.xp.page.PageDescriptorService;
@@ -27,8 +27,8 @@ import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
 import com.enonic.xp.schema.relationship.RelationshipTypes;
+import com.enonic.xp.security.IdProviders;
 import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.security.UserStores;
 import com.enonic.xp.task.TaskDescriptor;
 import com.enonic.xp.task.TaskDescriptorService;
 
@@ -56,7 +56,7 @@ public final class ApplicationInfoServiceImpl
 
     private SecurityService securityService;
 
-    private AuthDescriptorService authDescriptorService;
+    private IdProviderDescriptorService idProviderDescriptorService;
 
     public ContentTypes getContentTypes( final ApplicationKey applicationKey )
     {
@@ -98,18 +98,18 @@ public final class ApplicationInfoServiceImpl
         return this.contentService.findByApplicationKey( applicationKey );
     }
 
-    public UserStores getUserStoreReferences( final ApplicationKey applicationKey )
+    public IdProviders getIdProviderReferences( final ApplicationKey applicationKey )
     {
-        return UserStores.from( securityService.getUserStores().
+        return IdProviders.from( securityService.getIdProviders().
             stream().
-            filter( userStore -> userStore.getAuthConfig() != null &&
-                userStore.getAuthConfig().getApplicationKey().equals( applicationKey ) ).collect( Collectors.toList() ) );
+            filter( idProvider -> idProvider.getIdProviderConfig() != null &&
+                idProvider.getIdProviderConfig().getApplicationKey().equals( applicationKey ) ).collect( Collectors.toList() ) );
 
     }
 
-    public AuthDescriptor getAuthDescriptor( final ApplicationKey applicationKey )
+    public IdProviderDescriptor getIdProviderDescriptor( final ApplicationKey applicationKey )
     {
-        return this.authDescriptorService.getDescriptor( applicationKey );
+        return this.idProviderDescriptorService.getDescriptor( applicationKey );
     }
 
     public ApplicationInfo getApplicationInfo( final ApplicationKey applicationKey )
@@ -121,10 +121,10 @@ public final class ApplicationInfoServiceImpl
             setLayouts( this.getLayoutDescriptors( applicationKey ) ).
             setRelations( this.getRelationshipTypes( applicationKey ) ).
             setContentReferences( this.getContentReferences( applicationKey ) ).
-            setUserStoreReferences( this.getUserStoreReferences( applicationKey ) ).
+            setIdProviderReferences( this.getIdProviderReferences( applicationKey ) ).
             setMacros( this.getMacroDescriptors( applicationKey ) ).
             setTasks( this.getTaskDescriptors( applicationKey ) ).
-            setAuthDescriptor( this.getAuthDescriptor( applicationKey ) ).
+            setIdProviderDescriptor( this.getIdProviderDescriptor( applicationKey ) ).
             build();
     }
 
@@ -189,9 +189,9 @@ public final class ApplicationInfoServiceImpl
     }
 
     @Reference
-    public void setAuthDescriptorService( final AuthDescriptorService authDescriptorService )
+    public void setIdProviderDescriptorService( final IdProviderDescriptorService idProviderDescriptorService )
     {
-        this.authDescriptorService = authDescriptorService;
+        this.idProviderDescriptorService = idProviderDescriptorService;
     }
 
 }

@@ -8,10 +8,10 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.PrincipalType;
-import com.enonic.xp.security.UserStoreKey;
 
 
 class PrincipalKeyNodeTranslator
@@ -28,15 +28,15 @@ class PrincipalKeyNodeTranslator
         final PropertyTree rootDataSet = node.data();
 
         final String principalType = rootDataSet.getString( PrincipalPropertyNames.PRINCIPAL_TYPE_KEY );
-        final String userStoreKey = rootDataSet.getString( PrincipalPropertyNames.USER_STORE_KEY );
+        final String idProviderKey = rootDataSet.getString( PrincipalPropertyNames.ID_PROVIDER_KEY );
 
         final PrincipalType type = PrincipalType.valueOf( principalType );
         switch ( type )
         {
             case USER:
-                return PrincipalKey.ofUser( UserStoreKey.from( userStoreKey ), principalId );
+                return PrincipalKey.ofUser( IdProviderKey.from( idProviderKey ), principalId );
             case GROUP:
-                return PrincipalKey.ofGroup( UserStoreKey.from( userStoreKey ), principalId );
+                return PrincipalKey.ofGroup( IdProviderKey.from( idProviderKey ), principalId );
             case ROLE:
                 return PrincipalKey.ofRole( principalId );
         }

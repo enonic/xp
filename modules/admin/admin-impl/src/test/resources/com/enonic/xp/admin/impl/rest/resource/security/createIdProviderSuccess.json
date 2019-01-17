@@ -1,0 +1,18 @@
+{
+  "description": "id provider description",
+  "displayName": "Enonic Id Provider",
+  "idProviderConfig": null,
+  "idProviderMode": null,
+  "key": "enonic",
+  "permissions": [
+    {
+      "access": "ADMINISTRATOR",
+      "principal": {
+        "description": null,
+        "displayName": "User 1",
+        "key": "user:system:user1",
+        "modifiedTime": "1970-01-01T00:00:00Z"
+      }
+    }
+  ]
+}

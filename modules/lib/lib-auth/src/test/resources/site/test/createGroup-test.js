@@ -4,7 +4,7 @@ var auth = require('/lib/xp/auth.js');
 exports.createGroup = function () {
 
     var result = auth.createGroup({
-        userStore: 'myUserStore',
+        idProvider: 'myIdProvider',
         name: 'groupId',
         displayName: 'group display name',
         description: "description"
@@ -25,7 +25,7 @@ exports.createGroup = function () {
 exports.createGroupUnAuthenticated = function () {
 
     var result = auth.createGroup({
-        userStore: 'myUserStore',
+        idProvider: 'myIdProvider',
         name: 'groupId',
         description: "description"
     });

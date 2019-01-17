@@ -129,8 +129,8 @@ exports.serviceUrl = function (params) {
  *
  *
  * @param {object} [params] Input parameters as JSON.
- * @param {string} [params.userStore] Key of a user store using an ID provider.
- * If userStore is not set, then the user store corresponding to the current execution context will be used.
+ * @param {string} [params.idProvider] Key of an ID provider.
+ * If idProvider is not set, then the id provider corresponding to the current execution context will be used.
  * @param {string} [params.contextPath=vhost] Context path. Either `vhost` (using vhost target path) or `relative` to the current path.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
  * @param {object} [params.params] Custom parameters to append to the url.
@@ -147,8 +147,8 @@ exports.idProviderUrl = function (params) {
  *
  *
  * @param {object} [params] Input parameters as JSON.
- * @param {string} [params.userStore] Key of a user store using an ID provider.
- * If userStore is not set, then the user store corresponding to the current execution context will be used.
+ * @param {string} [params.idProvider] Key of a id provider using an application.
+ * If idProvider is not set, then the id provider corresponding to the current execution context will be used.
  * @param {string} [params.redirect] The URL to redirect to after the login.
  * @param {string} [params.contextPath=vhost] Context path. Either `vhost` (using vhost target path) or `relative` to the current path.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
@@ -162,7 +162,7 @@ exports.loginUrl = function (params) {
 };
 
 /**
- * This function generates a URL pointing to the logout function of the ID provider corresponding to the current user.
+ * This function generates a URL pointing to the logout function of the application corresponding to the current user.
  *
  *
  * @param {object} [params] Input parameters as JSON.
@@ -282,14 +282,14 @@ exports.getComponent = function () {
 };
 
 /**
- * This function returns the user store key corresponding to the current execution context.
+ * This function returns the id provider key corresponding to the current execution context.
  *
- * @example-ref examples/portal/getUserStoreKey.js
+ * @example-ref examples/portal/getIdProviderKey.js
  *
- * @returns {object} The current user store as JSON.
+ * @returns {object} The current id provider as JSON.
  */
-exports.getUserStoreKey = function () {
-    var bean = __.newBean('com.enonic.xp.lib.portal.current.GetCurrentUserStoreKeyHandler');
+exports.getIdProviderKey = function () {
+    var bean = __.newBean('com.enonic.xp.lib.portal.current.GetCurrentIdProviderKeyHandler');
     return __.toNativeObject(bean.execute());
 };
 

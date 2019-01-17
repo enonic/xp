@@ -7,9 +7,9 @@ import org.mockito.Mockito;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.auth.AuthControllerExecutionParams;
-import com.enonic.xp.portal.auth.AuthControllerService;
-import com.enonic.xp.security.UserStoreKey;
+import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
+import com.enonic.xp.portal.idprovider.IdProviderControllerService;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
@@ -31,12 +31,12 @@ public class IdentityHandlerTest
     {
         this.request = new PortalRequest();
         final ContentService contentService = Mockito.mock( ContentService.class );
-        final AuthControllerService authControllerService = Mockito.mock( AuthControllerService.class );
+        final IdProviderControllerService idProviderControllerService = Mockito.mock( IdProviderControllerService.class );
 
-        Mockito.when( authControllerService.execute( Mockito.any() ) ).thenAnswer( invocation -> {
+        Mockito.when( idProviderControllerService.execute( Mockito.any() ) ).thenAnswer( invocation -> {
             Object[] args = invocation.getArguments();
-            final AuthControllerExecutionParams arg = (AuthControllerExecutionParams) args[0];
-            if ( UserStoreKey.from( "myuserstore" ).equals( arg.getUserStoreKey() ) && "get".equals( arg.getFunctionName() ) )
+            final IdProviderControllerExecutionParams arg = (IdProviderControllerExecutionParams) args[0];
+            if ( IdProviderKey.from( "myidprovider" ).equals( arg.getIdProviderKey() ) && "get".equals( arg.getFunctionName() ) )
             {
                 return PortalResponse.create().build();
             }
@@ -45,11 +45,11 @@ public class IdentityHandlerTest
 
         this.handler = new IdentityHandler();
         this.handler.setContentService( contentService );
-        this.handler.setAuthControllerService( authControllerService );
+        this.handler.setIdProviderControllerService( idProviderControllerService );
 
         this.request.setMethod( HttpMethod.GET );
-        this.request.setEndpointPath( "/_/idprovider/myuserstore?param1=value1" );
-        this.request.setRawPath( "/portal/draft/_/idprovider/myuserstore?param1=value1" );
+        this.request.setEndpointPath( "/_/idprovider/myidprovider?param1=value1" );
+        this.request.setRawPath( "/portal/draft/_/idprovider/myidprovider?param1=value1" );
     }
 
     @Test
@@ -78,10 +78,10 @@ public class IdentityHandlerTest
     public void testOptions()
         throws Exception
     {
-        final AuthControllerService authControllerService = Mockito.mock( AuthControllerService.class );
+        final IdProviderControllerService idProviderControllerService = Mockito.mock( IdProviderControllerService.class );
         final PortalResponse response = PortalResponse.create().status( HttpStatus.METHOD_NOT_ALLOWED ).build();
-        Mockito.when( authControllerService.execute( Mockito.any() ) ).thenReturn( response );
-        this.handler.setAuthControllerService( authControllerService );
+        Mockito.when( idProviderControllerService.execute( Mockito.any() ) ).thenReturn( response );
+        this.handler.setIdProviderControllerService( idProviderControllerService );
 
         this.request.setMethod( HttpMethod.OPTIONS );
 
@@ -117,6 +117,6 @@ public class IdentityHandlerTest
 
         assertEquals( HttpStatus.OK, portalResponse.getStatus() );
         assertEquals( HttpStatus.OK, portalResponse.getStatus() );
-        assertEquals( "/portal/draft/_/idprovider/myuserstore", this.request.getContextPath() );
+        assertEquals( "/portal/draft/_/idprovider/myidprovider", this.request.getContextPath() );
     }
 }

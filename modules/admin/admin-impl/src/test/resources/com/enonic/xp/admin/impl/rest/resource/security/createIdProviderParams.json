@@ -1,0 +1,12 @@
+{
+  "displayName": "Enonic Id Provider",
+  "key": "enonic",
+  "permissions": [
+    {
+      "access": "ADMINISTRATOR",
+      "principal": {
+        "key": "user:system:user1"
+      }
+    }
+  ]
+}

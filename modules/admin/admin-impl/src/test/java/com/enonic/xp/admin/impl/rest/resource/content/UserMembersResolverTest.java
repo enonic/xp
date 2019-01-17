@@ -4,12 +4,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.PrincipalRelationship;
 import com.enonic.xp.security.PrincipalRelationships;
 import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.security.UserStoreKey;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
@@ -19,17 +19,17 @@ import static org.mockito.Matchers.eq;
 public class UserMembersResolverTest
 {
 
-    private static final UserStoreKey USER_STORE = UserStoreKey.from( "myUserStore" );
+    private static final IdProviderKey ID_PROVIDER = IdProviderKey.from( "myIdProvider" );
 
-    private static final PrincipalKey GROUP_1 = PrincipalKey.ofGroup( USER_STORE, "group_1" );
+    private static final PrincipalKey GROUP_1 = PrincipalKey.ofGroup( ID_PROVIDER, "group_1" );
 
-    private static final PrincipalKey GROUP_2 = PrincipalKey.ofGroup( USER_STORE, "group_2" );
+    private static final PrincipalKey GROUP_2 = PrincipalKey.ofGroup( ID_PROVIDER, "group_2" );
 
-    private static final PrincipalKey USER_1 = PrincipalKey.ofUser( USER_STORE, "user_1" );
+    private static final PrincipalKey USER_1 = PrincipalKey.ofUser( ID_PROVIDER, "user_1" );
 
-    private static final PrincipalKey USER_2 = PrincipalKey.ofUser( USER_STORE, "user_2" );
+    private static final PrincipalKey USER_2 = PrincipalKey.ofUser( ID_PROVIDER, "user_2" );
 
-    private static final PrincipalKey USER_3 = PrincipalKey.ofUser( USER_STORE, "user_3" );
+    private static final PrincipalKey USER_3 = PrincipalKey.ofUser( ID_PROVIDER, "user_3" );
 
 
     private SecurityService securityService;

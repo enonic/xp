@@ -7,12 +7,12 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityConstants;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
-import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.VerifiedUsernameAuthToken;
 
@@ -44,19 +44,19 @@ public class NodeHandleFactory
             contextBuilder.branch( context.getBranch() );
         }
 
-        contextBuilder.authInfo( getAuthInfo( context.getUsername(), context.getUserStore(), context.getPrincipals() ) );
+        contextBuilder.authInfo( getAuthInfo( context.getUsername(), context.getIdProvider(), context.getPrincipals() ) );
 
         return new NodeHandler( contextBuilder.build(), this.nodeService );
     }
 
 
-    private AuthenticationInfo getAuthInfo( final String username, final String userStore, final PrincipalKey[] principals )
+    private AuthenticationInfo getAuthInfo( final String username, final String idProvider, final PrincipalKey[] principals )
     {
         AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
 
         if ( username != null )
         {
-            authInfo = runAsAuthenticated( () -> getAuthenticationInfo( username, userStore ) );
+            authInfo = runAsAuthenticated( () -> getAuthenticationInfo( username, idProvider ) );
         }
         if ( principals != null )
         {
@@ -69,11 +69,11 @@ public class NodeHandleFactory
         return authInfo;
     }
 
-    private AuthenticationInfo getAuthenticationInfo( final String username, final String userStore )
+    private AuthenticationInfo getAuthenticationInfo( final String username, final String idProvider )
     {
         final VerifiedUsernameAuthToken token = new VerifiedUsernameAuthToken();
         token.setUsername( username );
-        token.setUserStore( userStore == null ? null : UserStoreKey.from( userStore ) );
+        token.setIdProvider( idProvider == null ? null : IdProviderKey.from( idProvider ) );
         return this.securityService.authenticate( token );
     }
 

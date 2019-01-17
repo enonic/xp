@@ -3,7 +3,7 @@ var auth = require('/lib/xp/auth.js');
 
 exports.getUserMemberships = function () {
 
-    var result = auth.getMemberships('user:myUserStore:userId');
+    var result = auth.getMemberships('user:myIdProvider:userId');
 
     var expectedJson = [
         {
@@ -21,7 +21,7 @@ exports.getUserMemberships = function () {
 
 exports.getTransitiveUserMemberships = function () {
 
-    var result = auth.getMemberships('user:myUserStore:userId', true);
+    var result = auth.getMemberships('user:myIdProvider:userId', true);
 
     var expectedJson = [
         {
@@ -39,7 +39,7 @@ exports.getTransitiveUserMemberships = function () {
 
 exports.getUserMembershipsWithRoleAndGroup = function () {
 
-    var result = auth.getMemberships('user:myUserStore:userId');
+    var result = auth.getMemberships('user:myIdProvider:userId');
 
     var expectedJson = [
         {
@@ -64,7 +64,7 @@ exports.getUserMembershipsWithRoleAndGroup = function () {
 
 exports.getNonExistingMemberships = function () {
 
-    var result = auth.getMemberships('user:myUserStore:XXX');
+    var result = auth.getMemberships('user:myIdProvider:XXX');
 
     var expectedJson = [];
 

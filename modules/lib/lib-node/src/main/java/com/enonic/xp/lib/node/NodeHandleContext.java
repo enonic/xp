@@ -12,7 +12,7 @@ public class NodeHandleContext
 
     private String username;
 
-    private String userStore;
+    private String idProvider;
 
     private PrincipalKey[] principals;
 
@@ -31,9 +31,9 @@ public class NodeHandleContext
         return username;
     }
 
-    public String getUserStore()
+    public String getIdProvider()
     {
-        return userStore;
+        return idProvider;
     }
 
     public PrincipalKey[] getPrincipals()
@@ -56,9 +56,9 @@ public class NodeHandleContext
         this.username = username;
     }
 
-    public void setUserStore( final String userStore )
+    public void setIdProvider( final String idProvider )
     {
-        this.userStore = userStore;
+        this.idProvider = idProvider;
     }
 
     public void setPrincipals( final String[] principals )
