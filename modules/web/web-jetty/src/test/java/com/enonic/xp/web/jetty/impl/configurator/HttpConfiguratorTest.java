@@ -59,7 +59,7 @@ public class HttpConfiguratorTest
     {
         Mockito.when( this.config.host() ).thenReturn( "localhost" );
         Mockito.when( this.config.timeout() ).thenReturn( 10 );
-        Mockito.when( this.config.http_port() ).thenReturn( 9999 );
+        Mockito.when( this.config.http_xp_port() ).thenReturn( 9999 );
         Mockito.when( this.config.sendServerHeader() ).thenReturn( true );
         Mockito.when( this.config.http_requestHeaderSize() ).thenReturn( 8000 );
         Mockito.when( this.config.http_responseHeaderSize() ).thenReturn( 9000 );

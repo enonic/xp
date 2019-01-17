@@ -3,9 +3,12 @@ package com.enonic.xp.web.impl.dispatch.pipeline;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+
+import org.osgi.framework.ServiceReference;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -22,7 +25,7 @@ public abstract class ResourcePipelineImpl<T extends ResourceDefinition<?>>
 
     final List<T> list;
 
-    private String connector;
+    private Optional<String> connector;
 
     private List<T> resourceQueue;
 
@@ -43,7 +46,7 @@ public abstract class ResourcePipelineImpl<T extends ResourceDefinition<?>>
 
     protected void activate( Map<String, Object> properties )
     {
-        connector = (String) properties.get( DispatchConstants.CONNECTOR_PROPERTY );
+        connector = Optional.ofNullable( (String) properties.get( DispatchConstants.CONNECTOR_PROPERTY ) );
 
         if ( resourceQueue.size() > 0 )
         {
@@ -104,6 +107,15 @@ public abstract class ResourcePipelineImpl<T extends ResourceDefinition<?>>
         def.destroy();
     }
 
+    protected List<String> getConnectorsFromProperty( ServiceReference<?> serviceReference )
+    {
+        final Object connectorProperty = serviceReference.getProperty( DispatchConstants.CONNECTOR_PROPERTY );
+
+        return connectorProperty == null
+            ? List.of()
+            : connectorProperty instanceof String[] ? List.of( (String[]) connectorProperty ) : List.of( (String) connectorProperty );
+    }
+
     @Override
     public final Iterator<T> iterator()
     {
@@ -124,12 +136,12 @@ public abstract class ResourcePipelineImpl<T extends ResourceDefinition<?>>
     {
         final List<String> value = def.getConnectors();
 
-        if ( value.isEmpty() )
+        if ( value.isEmpty() || this.connector.isEmpty() )
         {
             return true;
         }
 
-        return value.contains( this.connector );
+        return value.contains( this.connector.get() );
     }
 
 }

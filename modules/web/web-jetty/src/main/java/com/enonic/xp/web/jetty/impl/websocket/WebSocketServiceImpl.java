@@ -51,8 +51,8 @@ public final class WebSocketServiceImpl
         final WebSocketPolicy policy = WebSocketPolicy.newServerPolicy();
 
         final Optional<ServletContext> xpServletContext = this.controller.getServletContexts().stream().
-            filter( servletContext -> servletContext.getVirtualServerName().equals(
-                DispatchConstants.VIRTUAL_HOST_PREFIX + DispatchConstants.XP_CONNECTOR ) ).
+            filter( servletContext -> ( DispatchConstants.VIRTUAL_HOST_PREFIX + DispatchConstants.XP_CONNECTOR ).equals(
+                servletContext.getVirtualServerName() ) ).
             findFirst();
 
         if ( xpServletContext.isEmpty() )

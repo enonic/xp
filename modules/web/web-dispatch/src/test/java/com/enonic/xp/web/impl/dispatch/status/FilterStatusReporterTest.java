@@ -42,7 +42,7 @@ public class FilterStatusReporterTest
         Mockito.when( pipeline.iterator() ).thenReturn( list.iterator() );
 
         final FilterStatusReporter reporter = new FilterStatusReporter();
-        reporter.setPipeline( pipeline );
+        reporter.addFilterPipeline( pipeline );
 
         assertEquals( "http.filter", reporter.getName() );
         assertNotNull( reporter.getReport() );

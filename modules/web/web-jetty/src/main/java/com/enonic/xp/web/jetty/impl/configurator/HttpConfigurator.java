@@ -25,11 +25,11 @@ public final class HttpConfigurator
 
         final ServerConnector connectorApi = new ServerConnector( this.object, factory );
         connectorApi.setName( DispatchConstants.API_CONNECTOR );
-        doConfigure( connectorApi, this.config.http_api_port() );
+        doConfigure( connectorApi, this.config.http_management_port() );
 
         final ServerConnector connectorStatus = new ServerConnector( this.object, factory );
         connectorStatus.setName( DispatchConstants.STATUS_CONNECTOR );
-        doConfigure( connectorStatus, this.config.http_status_port() );
+        doConfigure( connectorStatus, this.config.http_monitor_port() );
 
         this.object.addConnector( connectorXp );
         this.object.addConnector( connectorApi );

@@ -24,7 +24,7 @@ public class JaxRsServiceImplTest
     public void setup()
     {
         this.context = Mockito.mock( BundleContext.class );
-        this.service = new JaxRsServiceImpl( this.context, "test", "/*" );
+        this.service = new JaxRsServiceImpl( this.context, "test", "/*", null );
     }
 
     @SuppressWarnings("unchecked")
