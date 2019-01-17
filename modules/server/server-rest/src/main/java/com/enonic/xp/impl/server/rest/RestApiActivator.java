@@ -29,6 +29,6 @@ public final class RestApiActivator
     @Reference
     public void setJaxRsServiceFactory( final JaxRsServiceFactory factory )
     {
-        this.service = factory.newService( "api", "/api", DispatchConstants.API_CONNECTOR );
+        this.service = factory.newService( "api", "/", DispatchConstants.API_CONNECTOR );
     }
 }

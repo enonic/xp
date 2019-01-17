@@ -31,13 +31,11 @@ import com.enonic.xp.status.StatusReporter;
 
 @Component(immediate = true, service = Servlet.class, property = {"connector=status"})
 @Order(-200)
-@WebServlet({"/status", "/status/*"})
+@WebServlet({"/*"})
 public final class StatusServlet
     extends HttpServlet
 {
-    private final static String PATH_PREFIX = "/status";
-
-    private final static String PATH_PREFIX_SLASH = PATH_PREFIX + "/";
+    private final static String PATH_PREFIX = "/";
 
     private final Map<String, StatusReporter> reporters;
 
@@ -59,13 +57,13 @@ public final class StatusServlet
         throws ServletException, IOException
     {
         final String path = req.getRequestURI();
-        if ( path.equals( PATH_PREFIX ) || path.equals( PATH_PREFIX_SLASH ) )
+        if ( path.equals( PATH_PREFIX ) )
         {
             reportMainInfo( res );
             return;
         }
 
-        final String name = path.substring( PATH_PREFIX_SLASH.length() ).trim();
+        final String name = path.substring( PATH_PREFIX.length() ).trim();
         reportFromReporter( req, res, name );
     }
 

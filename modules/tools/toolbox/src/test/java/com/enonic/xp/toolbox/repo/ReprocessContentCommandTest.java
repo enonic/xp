@@ -28,7 +28,7 @@ public class ReprocessContentCommandTest
 
         final RecordedRequest request = takeRequest();
         assertEquals( "POST", request.getMethod() );
-        assertEquals( "/api/content/reprocess", request.getPath() );
+        assertEquals( "/content/reprocess", request.getPath() );
         assertEquals( JsonHelper.serialize( createRequestJson() ), request.getBody().readString( Charsets.UTF_8 ) );
     }
 

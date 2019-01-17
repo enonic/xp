@@ -20,7 +20,7 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.status.StatusReporter;
 import com.enonic.xp.util.Exceptions;
 
-@Path("/api/status")
+@Path("/status")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed(RoleKeys.ADMIN_ID)
 @Component(immediate = true, property = "group=api")

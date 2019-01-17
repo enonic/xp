@@ -18,7 +18,7 @@ import com.enonic.xp.task.TaskInfo;
 import com.enonic.xp.task.TaskInfoJson;
 import com.enonic.xp.task.TaskService;
 
-@Path("/api/task")
+@Path("/task")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed(RoleKeys.ADMIN_ID)
 @Component(immediate = true, property = "group=api")

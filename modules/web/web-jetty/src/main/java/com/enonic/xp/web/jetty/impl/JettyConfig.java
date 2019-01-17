@@ -28,12 +28,12 @@ public @interface JettyConfig
     int http_xp_port() default 8080;
 
     /**
-     * Http /api port.
+     * Http api port.
      */
     int http_api_port() default 8081;
 
     /**
-     * Http /status port.
+     * Http status port.
      */
     int http_status_port() default 8082;
 

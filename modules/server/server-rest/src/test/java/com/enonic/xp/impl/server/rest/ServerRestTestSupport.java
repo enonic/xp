@@ -8,6 +8,6 @@ public abstract class ServerRestTestSupport
 {
     public ServerRestTestSupport()
     {
-        setBasePath( "/api/" );
+        setBasePath( "/" );
     }
 }

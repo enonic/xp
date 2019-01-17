@@ -13,7 +13,7 @@ import com.enonic.xp.toolbox.util.JsonHelper;
 public final class SetReadOnlyCommand
     extends RepoCommand
 {
-    public static final String REST_PATH = "/api/repo/index/updateSettings";
+    public static final String REST_PATH = "/repo/index/updateSettings";
 
     @Arguments(description = "Read only mode enabled", required = true)
     public boolean readOnly;

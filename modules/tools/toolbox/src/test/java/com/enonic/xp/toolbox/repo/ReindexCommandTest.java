@@ -30,7 +30,7 @@ public class ReindexCommandTest
 
         final RecordedRequest request = takeRequest();
         assertEquals( "POST", request.getMethod() );
-        assertEquals( "/api/repo/index/reindex", request.getPath() );
+        assertEquals( "/repo/index/reindex", request.getPath() );
         assertEquals( JsonHelper.serialize( createRequestJson() ), request.getBody().readString( Charsets.UTF_8 ) );
     }
 

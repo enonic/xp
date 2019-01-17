@@ -11,7 +11,7 @@ import com.enonic.xp.toolbox.util.JsonHelper;
 public final class DumpCommand
     extends RepoCommand
 {
-    private static final String SYSTEM_DUMP_REST_PATH = "/api/system/dump";
+    private static final String SYSTEM_DUMP_REST_PATH = "/system/dump";
 
     @SuppressWarnings("WeakerAccess")
     @Option(name = "-t", description = "Dump name.", required = true)

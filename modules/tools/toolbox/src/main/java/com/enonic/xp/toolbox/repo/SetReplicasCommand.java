@@ -11,7 +11,7 @@ import com.enonic.xp.toolbox.util.JsonHelper;
 public final class SetReplicasCommand
     extends RepoCommand
 {
-    public static final String UPDATE_INDEX_SETTINGS_REST_PATH = "/api/repo/index/updateSettings";
+    public static final String UPDATE_INDEX_SETTINGS_REST_PATH = "/repo/index/updateSettings";
 
     @Arguments(description = "Number of replicas", required = true)
     public Integer numberOfReplicas;

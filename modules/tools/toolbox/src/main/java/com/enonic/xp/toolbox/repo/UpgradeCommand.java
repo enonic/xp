@@ -1,7 +1,5 @@
 package com.enonic.xp.toolbox.repo;
 
-import java.util.Scanner;
-
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import io.airlift.airline.Command;
@@ -13,7 +11,7 @@ import com.enonic.xp.toolbox.util.JsonHelper;
 public final class UpgradeCommand
     extends RepoCommand
 {
-    private static final String SYSTEM_UPGRADE_REST_PATH = "/api/system/upgrade";
+    private static final String SYSTEM_UPGRADE_REST_PATH = "/system/upgrade";
 
     @SuppressWarnings("WeakerAccess")
     @Option(name = "-d", description = "Dump name.", required = true)

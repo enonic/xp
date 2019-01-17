@@ -49,7 +49,7 @@ final class JaxRsServiceImpl
         final Hashtable<String, Object> props = new Hashtable<>();
 
         final ServletMapping mapping = MappingBuilder.newBuilder().
-            urlPatterns( this.path + "/*" ).
+            urlPatterns( this.path + ( this.path.endsWith( "/" ) ? "*" : "/*" ) ).
             connector( this.connector ).
             servlet( this.servlet );
 

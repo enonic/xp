@@ -13,7 +13,7 @@ import com.enonic.xp.toolbox.util.JsonHelper;
 public final class LoadCommand
     extends RepoCommand
 {
-    private static final String SYSTEM_DUMP_REST_PATH = "/api/system/load";
+    private static final String SYSTEM_DUMP_REST_PATH = "/system/load";
 
     @SuppressWarnings("WeakerAccess")
     @Option(name = "-s", description = "Dump name.", required = true)
