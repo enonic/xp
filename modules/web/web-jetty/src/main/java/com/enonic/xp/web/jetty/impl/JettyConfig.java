@@ -42,6 +42,21 @@ public @interface JettyConfig
     int http_monitor_port() default 2609;
 
     /**
+     * Connection pool size for xp port connector.
+     */
+    int xp_port_connection_number() default -1;
+
+    /**
+     * Connection pool size for management port connector.
+     */
+    int management_port_connection_number() default -1;
+
+    /**
+     * Connection pool size for monitor port connector.
+     */
+    int monitor_port_connection_number() default -1;
+
+    /**
      * Session timeout in minutes.
      */
     int session_timeout() default 60;
