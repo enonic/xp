@@ -1,5 +1,7 @@
 package com.enonic.xp.web.jetty.impl.websocket;
 
+import java.util.List;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -10,6 +12,7 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.ws.WebSocketCall;
 import com.squareup.okhttp.ws.WebSocketListener;
 
+import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.jetty.impl.JettyController;
 import com.enonic.xp.web.jetty.impl.JettyTestSupport;
 
@@ -35,7 +38,9 @@ public class WebSocketServiceImplTest
         this.endpoint = new TestEndpoint();
 
         final JettyController controller = Mockito.mock( JettyController.class );
-        Mockito.when( controller.getServletContext() ).thenReturn( this.server.getHandler().getServletContext() );
+
+        this.server.setVirtualHosts( new String[]{DispatchConstants.VIRTUAL_HOST_PREFIX + DispatchConstants.XP_CONNECTOR} );
+        Mockito.when( controller.getServletContexts() ).thenReturn( List.of( this.server.getHandler().getServletContext() ) );
 
         this.service = new WebSocketServiceImpl();
         this.service.setController( controller );

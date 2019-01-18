@@ -27,7 +27,7 @@ public class UpgradeCommandTest
 
         final RecordedRequest request = takeRequest();
         assertEquals( "POST", request.getMethod() );
-        assertEquals( "/api/system/upgrade", request.getPath() );
+        assertEquals( "/system/upgrade", request.getPath() );
         assertEquals( JsonHelper.serialize( createRequestJson() ), request.getBody().readString( Charsets.UTF_8 ) );
     }
 

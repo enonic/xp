@@ -3,6 +3,7 @@ package com.enonic.xp.web.jetty.impl;
 import java.util.Hashtable;
 
 import org.eclipse.jetty.server.session.SessionDataStore;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -48,7 +49,7 @@ public class JettyActivatorTest
         Mockito.when( this.bundleContext.getBundle() ).thenReturn( bundle );
 
         this.activator = new JettyActivator();
-        this.activator.setDispatchServlet( Mockito.mock( DispatchServlet.class ) );
+        this.activator.addDispatchServlet( Mockito.mock( DispatchServlet.class ) );
 
         this.sessionDataStore = Mockito.mock( SessionDataStore.class );
         this.activator.setSessionDataStore( this.sessionDataStore );
@@ -58,7 +59,14 @@ public class JettyActivatorTest
         this.activator.setClusterConfig( this.clusterConfig );
 
         this.config = new JettyConfigMockFactory().newConfig();
-        Mockito.when( this.config.http_port() ).thenReturn( 0 );
+        Mockito.when( this.config.http_xp_port() ).thenReturn( 0 );
+    }
+
+    @After
+    public void after()
+        throws Exception
+    {
+        this.activator.deactivate();
     }
 
     @Test

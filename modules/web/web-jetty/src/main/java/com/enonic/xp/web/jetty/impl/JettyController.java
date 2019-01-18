@@ -1,8 +1,10 @@
 package com.enonic.xp.web.jetty.impl;
 
+import java.util.List;
+
 import javax.servlet.ServletContext;
 
 public interface JettyController
 {
-    ServletContext getServletContext();
+    List<ServletContext> getServletContexts();
 }

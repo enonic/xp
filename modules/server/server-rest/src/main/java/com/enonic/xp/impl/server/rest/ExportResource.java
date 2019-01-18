@@ -21,7 +21,7 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.task.TaskResultJson;
 import com.enonic.xp.task.TaskService;
 
-@Path("/api/repo")
+@Path("/repo")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed(RoleKeys.ADMIN_ID)
 @Component(immediate = true, property = "group=api")

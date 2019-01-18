@@ -7,7 +7,7 @@ public class VacuumCommand
     extends RepoCommand
 {
 
-    private static final String VACUUM_REST_PATH = "/api/system/vacuum";
+    private static final String VACUUM_REST_PATH = "/system/vacuum";
 
     @Override
     protected void execute()

@@ -3,13 +3,17 @@ package com.enonic.xp.web.impl.dispatch.pipeline;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
+import org.osgi.framework.ServiceReference;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.impl.dispatch.mapping.ResourceDefinition;
 
 public abstract class ResourcePipelineImpl<T extends ResourceDefinition<?>>
@@ -21,10 +25,15 @@ public abstract class ResourcePipelineImpl<T extends ResourceDefinition<?>>
 
     final List<T> list;
 
+    private Optional<String> connector;
+
+    private List<T> resourceQueue;
+
     ResourcePipelineImpl()
     {
         this.map = Maps.newHashMap();
         this.list = Lists.newCopyOnWriteArrayList();
+        this.resourceQueue = Lists.newCopyOnWriteArrayList();
     }
 
     @Override
@@ -33,6 +42,17 @@ public abstract class ResourcePipelineImpl<T extends ResourceDefinition<?>>
     {
         this.context = context;
         this.list.forEach( r -> r.init( this.context ) );
+    }
+
+    protected void activate( Map<String, Object> properties )
+    {
+        connector = Optional.ofNullable( (String) properties.get( DispatchConstants.CONNECTOR_PROPERTY ) );
+
+        if ( resourceQueue.size() > 0 )
+        {
+            resourceQueue.forEach( this::initResource );
+            resourceQueue.clear();
+        }
     }
 
     @Override
@@ -44,6 +64,23 @@ public abstract class ResourcePipelineImpl<T extends ResourceDefinition<?>>
     final void add( final T def )
     {
         if ( def == null )
+        {
+            return;
+        }
+
+        if ( this.connector == null )
+        {
+            resourceQueue.add( def );
+            return;
+        }
+
+        initResource( def );
+    }
+
+    void initResource( final T def )
+    {
+
+        if ( !sameConnector( def ) )
         {
             return;
         }
@@ -70,6 +107,15 @@ public abstract class ResourcePipelineImpl<T extends ResourceDefinition<?>>
         def.destroy();
     }
 
+    protected List<String> getConnectorsFromProperty( ServiceReference<?> serviceReference )
+    {
+        final Object connectorProperty = serviceReference.getProperty( DispatchConstants.CONNECTOR_PROPERTY );
+
+        return connectorProperty == null
+            ? List.of()
+            : connectorProperty instanceof String[] ? List.of( (String[]) connectorProperty ) : List.of( (String) connectorProperty );
+    }
+
     @Override
     public final Iterator<T> iterator()
     {
@@ -85,4 +131,17 @@ public abstract class ResourcePipelineImpl<T extends ResourceDefinition<?>>
     {
         return def1.getOrder() - def2.getOrder();
     }
+
+    boolean sameConnector( final T def )
+    {
+        final List<String> value = def.getConnectors();
+
+        if ( value.isEmpty() || this.connector.isEmpty() )
+        {
+            return true;
+        }
+
+        return value.contains( this.connector.get() );
+    }
+
 }

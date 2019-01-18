@@ -33,8 +33,8 @@ public abstract class RepoCommand
     @Option(name = "-h", description = "Host name for server (default is localhost).")
     public String host = "localhost";
 
-    @Option(name = "-p", description = "Port number for server (default is 8080).")
-    public int port = 8080;
+    @Option(name = "-p", description = "Port number for server (default is 4848).")
+    public int port = 4848;
     
     protected String postRequest( final String urlPath, final JsonNode json )
         throws Exception

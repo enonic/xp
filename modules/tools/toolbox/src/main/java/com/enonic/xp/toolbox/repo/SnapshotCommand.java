@@ -11,7 +11,7 @@ import com.enonic.xp.toolbox.util.JsonHelper;
 public final class SnapshotCommand
     extends RepoCommand
 {
-    public static final String SNAPSHOT_REST_PATH = "/api/repo/snapshot";
+    public static final String SNAPSHOT_REST_PATH = "/repo/snapshot";
 
     @Option(name = "-r", description = "the name of the repository to snapshot.")
     public String repository;

@@ -17,7 +17,7 @@ import com.enonic.xp.annotation.Order;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.web.filter.OncePerRequestFilter;
 
-@Component(immediate = true, service = Filter.class)
+@Component(immediate = true, service = Filter.class, property = {"connector=xp", "connector=api"})
 @Order(-40)
 @WebFilter("/*")
 public final class BasicAuthFilter

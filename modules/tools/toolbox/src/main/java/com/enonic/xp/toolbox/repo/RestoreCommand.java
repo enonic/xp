@@ -11,7 +11,7 @@ import com.enonic.xp.toolbox.util.JsonHelper;
 public final class RestoreCommand
     extends RepoCommand
 {
-    public static final String RESTORE_SNAPSHOT_REST_PATH = "/api/repo/snapshot/restore";
+    public static final String RESTORE_SNAPSHOT_REST_PATH = "/repo/snapshot/restore";
 
     @Option(name = "-r", description = "The name of the repository to restore.")
     public String repository;

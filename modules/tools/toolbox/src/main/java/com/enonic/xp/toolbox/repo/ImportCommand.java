@@ -13,7 +13,7 @@ import com.enonic.xp.toolbox.util.JsonHelper;
 public final class ImportCommand
     extends RepoCommand
 {
-    public static final String IMPORT_REST_PATH = "/api/repo/import";
+    public static final String IMPORT_REST_PATH = "/repo/import";
 
     @Option(name = "-t", description = "Target path for import. Format: <repo-name>:<branch-name>:<node-path>. e.g 'cms-repo:draft:/'", required = true)
     public String targetRepoPath;

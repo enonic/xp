@@ -19,7 +19,7 @@ import com.enonic.xp.web.vhost.VirtualHostHelper;
 import com.enonic.xp.web.vhost.impl.config.VirtualHostConfig;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
 
-@Component(immediate = true, service = Filter.class)
+@Component(immediate = true, service = Filter.class, property = {"connector=xp"})
 @Order(-200)
 @WebFilter("/*")
 public final class VirtualHostFilter

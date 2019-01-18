@@ -16,7 +16,7 @@ import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.web.filter.OncePerRequestFilter;
 
-@Component(immediate = true, service = Filter.class)
+@Component(immediate = true, service = Filter.class, property = {"connector=xp", "connector=api"})
 @Order(-30)
 @WebFilter("/*")
 public final class IdProviderFilter

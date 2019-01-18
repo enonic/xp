@@ -1,5 +1,6 @@
 package com.enonic.xp.web.dispatch;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -16,58 +17,7 @@ import com.google.common.collect.Sets;
 
 public final class MappingBuilder
 {
-    private abstract class AbstractMapping<T>
-        implements ResourceMapping<T>
-    {
-        private int order;
-
-        private String name;
-
-        private final ImmutableMap<String, String> initParams;
-
-        private final ImmutableSet<String> urlPatterns;
-
-        private final T resource;
-
-        private AbstractMapping( final MappingBuilder builder, final T resource )
-        {
-            this.resource = resource;
-            this.order = builder.order;
-            this.name = Strings.isNullOrEmpty( builder.name ) ? this.resource.getClass().getSimpleName() : builder.name;
-            this.initParams = ImmutableMap.copyOf( builder.initParams );
-            this.urlPatterns = ImmutableSet.copyOf( builder.urlPatterns );
-        }
-
-        @Override
-        public final String getName()
-        {
-            return this.name;
-        }
-
-        @Override
-        public final int getOrder()
-        {
-            return this.order;
-        }
-
-        @Override
-        public final Map<String, String> getInitParams()
-        {
-            return this.initParams;
-        }
-
-        @Override
-        public final Set<String> getUrlPatterns()
-        {
-            return this.urlPatterns;
-        }
-
-        @Override
-        public final T getResource()
-        {
-            return this.resource;
-        }
-    }
+    private List<String> connectors;
 
     private final class FilterMappingImpl
         extends AbstractMapping<Filter>
@@ -93,15 +43,22 @@ public final class MappingBuilder
 
     private String name;
 
-    private final Map<String, String> initParams;
-
-    private final Set<String> urlPatterns;
-
     private MappingBuilder()
     {
         this.order = 0;
         this.initParams = Maps.newHashMap();
         this.urlPatterns = Sets.newTreeSet();
+        this.connectors = Lists.newArrayList();
+    }
+
+    private final Map<String, String> initParams;
+
+    private final Set<String> urlPatterns;
+
+    public MappingBuilder connector( final String connector )
+    {
+        this.connectors.add( connector );
+        return this;
     }
 
     public MappingBuilder order( final int order )
@@ -114,6 +71,74 @@ public final class MappingBuilder
     {
         this.name = name;
         return this;
+    }
+
+    public MappingBuilder connectors( final List<String> connectors )
+    {
+        this.connectors.addAll( connectors );
+        return this;
+    }
+
+    private abstract class AbstractMapping<T>
+        implements ResourceMapping<T>
+    {
+        private int order;
+
+        private String name;
+
+        private final ImmutableMap<String, String> initParams;
+
+        private final ImmutableSet<String> urlPatterns;
+
+        private final T resource;
+
+        private final List<String> connectors;
+
+        private AbstractMapping( final MappingBuilder builder, final T resource )
+        {
+            this.resource = resource;
+            this.order = builder.order;
+            this.name = Strings.isNullOrEmpty( builder.name ) ? this.resource.getClass().getSimpleName() : builder.name;
+            this.connectors = builder.connectors;
+            this.initParams = ImmutableMap.copyOf( builder.initParams );
+            this.urlPatterns = ImmutableSet.copyOf( builder.urlPatterns );
+        }
+
+        @Override
+        public final String getName()
+        {
+            return this.name;
+        }
+
+        @Override
+        public List<String> getConnectors()
+        {
+            return connectors;
+        }
+
+        @Override
+        public final int getOrder()
+        {
+            return this.order;
+        }
+
+        @Override
+        public final Map<String, String> getInitParams()
+        {
+            return this.initParams;
+        }
+
+        @Override
+        public final Set<String> getUrlPatterns()
+        {
+            return this.urlPatterns;
+        }
+
+        @Override
+        public final T getResource()
+        {
+            return this.resource;
+        }
     }
 
     public MappingBuilder initParam( final String key, final String value )

@@ -7,6 +7,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.jaxrs.JaxRsService;
 import com.enonic.xp.jaxrs.JaxRsServiceFactory;
+import com.enonic.xp.web.dispatch.DispatchConstants;
 
 @Component(immediate = true)
 public final class AdminRestActivator
@@ -28,6 +29,6 @@ public final class AdminRestActivator
     @Reference
     public void setJaxRsServiceFactory( final JaxRsServiceFactory factory )
     {
-        this.service = factory.newService( "admin", "/admin/rest" );
+        this.service = factory.newService( "admin", "/admin/rest", DispatchConstants.XP_CONNECTOR );
     }
 }

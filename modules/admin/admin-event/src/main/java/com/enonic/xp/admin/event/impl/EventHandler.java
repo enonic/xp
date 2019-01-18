@@ -25,7 +25,7 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.web.websocket.EndpointFactory;
 import com.enonic.xp.web.websocket.WebSocketService;
 
-@Component(immediate = true, service = {Servlet.class, WebSocketManager.class})
+@Component(immediate = true, service = {Servlet.class, WebSocketManager.class}, property = {"connector=xp"})
 @Order( -100 )
 @WebServlet("/admin/event")
 public final class EventHandler

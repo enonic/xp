@@ -26,7 +26,7 @@ import com.enonic.xp.impl.server.rest.model.ReprocessContentResultJson;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.security.RoleKeys;
 
-@Path("/api/content")
+@Path("/content")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @RolesAllowed(RoleKeys.ADMIN_ID)

@@ -27,7 +27,7 @@ import com.enonic.xp.task.TaskResultJson;
 import com.enonic.xp.task.TaskService;
 import com.enonic.xp.vacuum.VacuumService;
 
-@Path("/api/system")
+@Path("/system")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed(RoleKeys.ADMIN_ID)
 @Component(immediate = true, property = "group=api")

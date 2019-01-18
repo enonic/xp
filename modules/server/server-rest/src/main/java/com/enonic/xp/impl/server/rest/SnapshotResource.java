@@ -34,7 +34,7 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.snapshot.SnapshotService;
 import com.enonic.xp.util.DateTimeHelper;
 
-@Path("/api/repo/snapshot")
+@Path("/repo/snapshot")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed(RoleKeys.ADMIN_ID)
 @Component(immediate = true, property = "group=api")
