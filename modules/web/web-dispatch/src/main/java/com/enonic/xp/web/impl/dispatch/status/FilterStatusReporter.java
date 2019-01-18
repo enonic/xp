@@ -1,42 +1,47 @@
 package com.enonic.xp.web.impl.dispatch.status;
 
+
+import javax.servlet.Filter;
+
+import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.enonic.xp.status.StatusReporter;
-import com.enonic.xp.web.impl.dispatch.mapping.ResourceDefinition;
-import com.enonic.xp.web.impl.dispatch.pipeline.FilterPipeline;
+import com.enonic.xp.web.dispatch.FilterMapping;
+import com.enonic.xp.web.impl.dispatch.mapping.FilterDefinition;
+import com.enonic.xp.web.impl.dispatch.mapping.ResourceDefinitionFactory;
 
 @Component(immediate = true, service = StatusReporter.class)
 public final class FilterStatusReporter
-    extends ResourceStatusReporter
+    extends ResourceStatusReporter<FilterDefinition>
 {
-    private FilterPipeline filterPipeline;
-
     public FilterStatusReporter()
     {
         super( "http.filter" );
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
-    public void addFilterPipeline( final FilterPipeline pipeline )
+    public void addFilter( final Filter filter, final ServiceReference<Filter> filterServiceReference )
     {
-        this.filterPipeline = pipeline;
+        add( ResourceDefinitionFactory.create( filter, getConnectorsFromProperty( filterServiceReference ) ) );
     }
 
-    public void removeFilterPipeline( final FilterPipeline filterPipeline )
+    public void removeFilter( final Filter filter, final ServiceReference<Filter> filterServiceReference )
     {
-        if ( this.filterPipeline != null && this.filterPipeline.equals( filterPipeline ) )
-        {
-            this.filterPipeline = null;
-        }
+        remove( ResourceDefinitionFactory.create( filter, getConnectorsFromProperty( filterServiceReference ) ) );
     }
 
-    @Override
-    Iterable<? extends ResourceDefinition> getDefinitions()
+    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
+    public void addMapping( final FilterMapping mapping )
     {
-        return this.filterPipeline;
+        add( ResourceDefinitionFactory.create( mapping ) );
+    }
+
+    public void removeMapping( final FilterMapping mapping )
+    {
+        remove( mapping.getResource() );
     }
 }

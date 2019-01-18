@@ -63,6 +63,6 @@ public final class ServletPipelineImpl
 
     public void removeMapping( final ServletMapping mapping )
     {
-        remove( mapping );
+        remove( mapping.getResource() );
     }
 }

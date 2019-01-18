@@ -1,0 +1,33 @@
+[
+  {
+    "order": 10,
+    "name": "test1",
+    "class": "com.enonic.xp.web.impl.dispatch.status.ServletStatusReporterTest$MyServlet1",
+    "patterns": [
+      "/*",
+      "/321"
+    ],
+    "connectors": [
+      "a"
+    ],
+    "initParams": {
+      "a": "1"
+    }
+  },
+  {
+    "order": 20,
+    "name": "test2",
+    "class": "com.enonic.xp.web.impl.dispatch.status.ServletStatusReporterTest$MyServlet2",
+    "patterns": [
+      "/*/",
+      "/123"
+    ],
+    "connectors": [
+      "a",
+      "b"
+    ],
+    "initParams": {
+      "b": "2"
+    }
+  }
+]

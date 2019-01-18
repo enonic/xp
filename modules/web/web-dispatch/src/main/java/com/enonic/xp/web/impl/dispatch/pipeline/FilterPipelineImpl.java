@@ -58,6 +58,6 @@ public class FilterPipelineImpl
 
     public void removeMapping( final FilterMapping mapping )
     {
-        remove( mapping );
+        remove( mapping.getResource() );
     }
 }

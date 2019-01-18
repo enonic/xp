@@ -76,8 +76,6 @@ public class WebSocketServiceImplTest
     public void testNotSocket()
         throws Exception
     {
-//        this.server.setVirtualHosts( new String[]{DispatchConstants.VIRTUAL_HOST_PREFIX + DispatchConstants.XP_CONNECTOR} );
-
         this.req.setMethod( "GET" );
         this.servlet.service( this.req, this.res );
         assertEquals( 404, this.res.getStatus() );

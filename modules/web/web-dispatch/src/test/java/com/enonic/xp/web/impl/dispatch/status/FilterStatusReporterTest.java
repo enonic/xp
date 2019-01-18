@@ -1,50 +1,68 @@
 package com.enonic.xp.web.impl.dispatch.status;
 
-import java.util.List;
+import java.io.IOException;
 
 import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebFilter;
 
 import org.junit.Test;
 import org.mockito.Mockito;
-
-import com.google.common.collect.Lists;
-
-import com.enonic.xp.web.dispatch.FilterMapping;
-import com.enonic.xp.web.dispatch.MappingBuilder;
-import com.enonic.xp.web.impl.dispatch.mapping.FilterDefinition;
-import com.enonic.xp.web.impl.dispatch.mapping.ResourceDefinitionFactory;
-import com.enonic.xp.web.impl.dispatch.pipeline.FilterPipeline;
+import org.osgi.framework.ServiceReference;
 
 import static org.junit.Assert.*;
 
 public class FilterStatusReporterTest
+    extends ResourceReporterTest
 {
-    private FilterDefinition newDefinition()
-    {
-        final Filter filter = Mockito.mock( Filter.class );
-
-        final FilterMapping mapping = MappingBuilder.newBuilder().
-            order( 10 ).
-            name( "test" ).
-            initParam( "a", "1" ).
-            urlPatterns( "/*" ).
-            filter( filter );
-
-        return ResourceDefinitionFactory.create( mapping );
-    }
-
     @Test
     public void testReport()
+        throws Exception
     {
-        final List<FilterDefinition> list = Lists.newArrayList( newDefinition() );
+        final Filter filter1 = new MyFilter();
+        final Filter filter2 = new MyFilter();
 
-        final FilterPipeline pipeline = Mockito.mock( FilterPipeline.class );
-        Mockito.when( pipeline.iterator() ).thenReturn( list.iterator() );
+        final ServiceReference<Filter> serviceReference1 = Mockito.mock( ServiceReference.class );
+        final ServiceReference<Filter> serviceReference2 = Mockito.mock( ServiceReference.class );
+
+        Mockito.when( serviceReference1.getProperty( "connector" ) ).thenReturn( "a" );
+        Mockito.when( serviceReference2.getProperty( "connector" ) ).thenReturn( new String[]{"a", "b"} );
 
         final FilterStatusReporter reporter = new FilterStatusReporter();
-        reporter.addFilterPipeline( pipeline );
+        reporter.addFilter( filter1, serviceReference1 );
+        reporter.addFilter( filter2, serviceReference2 );
 
         assertEquals( "http.filter", reporter.getName() );
-        assertNotNull( reporter.getReport() );
+        assertEquals( parseJson( readFromFile( "filter_status_report.json" ) ), reporter.getReport() );
+    }
+
+
+    @WebFilter
+    private final class MyFilter
+        implements Filter
+    {
+        @Override
+        public void init( final FilterConfig config )
+            throws ServletException
+        {
+            // Do nothing
+        }
+
+        @Override
+        public void doFilter( final ServletRequest req, final ServletResponse res, final FilterChain chain )
+            throws IOException, ServletException
+        {
+            // Do nothing
+        }
+
+        @Override
+        public void destroy()
+        {
+            // Do nothing
+        }
     }
 }
