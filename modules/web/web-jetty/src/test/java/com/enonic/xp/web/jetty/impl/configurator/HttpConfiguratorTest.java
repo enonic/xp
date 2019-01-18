@@ -60,6 +60,10 @@ public class HttpConfiguratorTest
         Mockito.when( this.config.host() ).thenReturn( "localhost" );
         Mockito.when( this.config.timeout() ).thenReturn( 10 );
         Mockito.when( this.config.http_xp_port() ).thenReturn( 9999 );
+        Mockito.when( this.config.xp_port_connection_number() ).thenReturn( 123 );
+        Mockito.when( this.config.management_port_connection_number() ).thenReturn( 213 );
+        Mockito.when( this.config.monitor_port_connection_number() ).thenReturn( 321 );
+        Mockito.when( this.config.xp_port_connection_number() ).thenReturn( 123 );
         Mockito.when( this.config.sendServerHeader() ).thenReturn( true );
         Mockito.when( this.config.http_requestHeaderSize() ).thenReturn( 8000 );
         Mockito.when( this.config.http_responseHeaderSize() ).thenReturn( 9000 );
@@ -71,6 +75,10 @@ public class HttpConfiguratorTest
         assertEquals( "localhost", connector.getHost() );
         assertEquals( 9999, connector.getPort() );
         assertEquals( 10, connector.getIdleTimeout() );
+        assertEquals( 123, connector.getAcceptors() );
+
+        assertEquals( 213, getConnector( 1 ).getAcceptors() );
+        assertEquals( 321, getConnector( 2 ).getAcceptors() );
 
         final HttpConnectionFactory factory = connector.getConnectionFactory( HttpConnectionFactory.class );
         assertNotNull( factory );

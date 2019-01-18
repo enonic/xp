@@ -15,7 +15,12 @@ public abstract class ConnectorConfiguratorTest
 
     protected final ServerConnector getConnector()
     {
+        return getConnector( 0 );
+    }
+
+    protected final ServerConnector getConnector( final int index )
+    {
         final Connector[] connectors = this.object.getConnectors();
-        return connectors.length > 0 ? (ServerConnector) connectors[0] : null;
+        return connectors.length > index ? (ServerConnector) connectors[index] : null;
     }
 }
