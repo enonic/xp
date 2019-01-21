@@ -90,7 +90,7 @@ public class IdProviderControllerServiceImpl
             final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( params.getServletRequest() );
             if ( virtualHost != null )
             {
-                idProviderKey = virtualHost.getIdProviderKey();
+                idProviderKey = virtualHost.getDefaultIdProviderKey();
             }
         }
         return idProviderKey;

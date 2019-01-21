@@ -33,7 +33,7 @@ public final class IdProviderUrlHandler
         final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( request.getRawRequest() );
         if ( virtualHost != null )
         {
-            return virtualHost.getIdProviderKey();
+            return virtualHost.getDefaultIdProviderKey();
         }
         return null;
     }

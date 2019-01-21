@@ -3,6 +3,7 @@ package com.enonic.xp.web.vhost;
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.security.IdProviderKeys;
 
 @Beta
 public interface VirtualHost
@@ -15,5 +16,7 @@ public interface VirtualHost
 
     String getTarget();
 
-    IdProviderKey getIdProviderKey();
+    IdProviderKey getDefaultIdProviderKey();
+
+    IdProviderKeys getIdProviderKeys();
 }

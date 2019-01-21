@@ -69,10 +69,13 @@ public class VirtualHostMappingTest
     @Test
     public void testGetIdProviderKey()
     {
-        assertEquals( null, this.mapping.getIdProviderKey() );
+        assertNull( this.mapping.getDefaultIdProviderKey() );
 
-        this.mapping.setIdProviderKey( IdProviderKey.system() );
-        assertEquals( IdProviderKey.system(), this.mapping.getIdProviderKey() );
+        this.mapping.setVirtualHostIdProvidersMapping( VirtualHostIdProvidersMapping.create().
+            setDefaultIdProvider( IdProviderKey.system() ).
+            build() );
+
+        assertEquals( IdProviderKey.system(), this.mapping.getDefaultIdProviderKey() );
     }
 
     @Test

@@ -17,6 +17,7 @@ import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.web.filter.OncePerRequestFilter;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 import com.enonic.xp.web.vhost.impl.config.VirtualHostConfig;
+import com.enonic.xp.web.vhost.impl.mapping.VirtualHostIdProvidersMapping;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
 
 @Component(immediate = true, service = Filter.class, property = {"connector=xp"})
@@ -38,7 +39,9 @@ public final class VirtualHostFilter
             final VirtualHostMapping virtualHostMapping = this.config.getMappings().resolve( req );
             if ( virtualHostMapping == null )
             {
-                LOG.warn( "Virtual host mapping could not be resolved for host [" + req.getServerName() + "] and path [" +  req.getRequestURI() + "]" );
+                LOG.warn(
+                    "Virtual host mapping could not be resolved for host [" + req.getServerName() + "] and path [" + req.getRequestURI() +
+                        "]" );
                 res.setStatus( HttpServletResponse.SC_NOT_FOUND );
             }
             else
@@ -66,7 +69,9 @@ public final class VirtualHostFilter
         virtualHostMapping.setHost( serverName );
         virtualHostMapping.setSource( "/" );
         virtualHostMapping.setTarget( "/" );
-        virtualHostMapping.setIdProviderKey( IdProviderKey.system() );
+        virtualHostMapping.setVirtualHostIdProvidersMapping( VirtualHostIdProvidersMapping.create().
+            setDefaultIdProvider( IdProviderKey.system() ).
+            build() );
 
         return virtualHostMapping;
     }
