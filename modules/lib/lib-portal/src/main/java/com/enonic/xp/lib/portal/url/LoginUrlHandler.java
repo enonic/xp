@@ -39,7 +39,7 @@ public final class LoginUrlHandler
         final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( request.getRawRequest() );
         if ( virtualHost != null )
         {
-            return virtualHost.getUserStoreKey();
+            return virtualHost.getIdProviderKey();
         }
         return null;
     }

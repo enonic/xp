@@ -47,10 +47,10 @@ final class VirtualHostConfigMap
         mapping.setHost( getString( prefix + "host" ) );
         mapping.setSource( getString( prefix + "source" ) );
         mapping.setTarget( getString( prefix + "target" ) );
-        final String userStoreKeyString = getString( prefix + "userStore" );
-        if ( userStoreKeyString != null )
+        final String idProviderKeyString = getString( prefix + "idProvider" );
+        if ( idProviderKeyString != null )
         {
-            mapping.setIdProviderKey( IdProviderKey.from( userStoreKeyString ) );
+            mapping.setIdProviderKey( IdProviderKey.from( idProviderKeyString ) );
         }
         return mapping;
     }

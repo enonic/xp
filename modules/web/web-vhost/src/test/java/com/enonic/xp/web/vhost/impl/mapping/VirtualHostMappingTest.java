@@ -67,12 +67,12 @@ public class VirtualHostMappingTest
     }
 
     @Test
-    public void testGetUserStoreKey()
+    public void testGetIdProviderKey()
     {
-        assertEquals( null, this.mapping.getUserStoreKey() );
+        assertEquals( null, this.mapping.getIdProviderKey() );
 
         this.mapping.setIdProviderKey( IdProviderKey.system() );
-        assertEquals( IdProviderKey.system(), this.mapping.getUserStoreKey() );
+        assertEquals( IdProviderKey.system(), this.mapping.getIdProviderKey() );
     }
 
     @Test

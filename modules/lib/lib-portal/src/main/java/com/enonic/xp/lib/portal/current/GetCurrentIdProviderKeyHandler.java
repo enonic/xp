@@ -36,7 +36,7 @@ public final class GetCurrentIdProviderKeyHandler
         final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( req );
         if ( virtualHost != null )
         {
-            return virtualHost.getUserStoreKey();
+            return virtualHost.getIdProviderKey();
         }
         return null;
     }

@@ -107,12 +107,12 @@ public class VirtualHostConfigImplTest
     }
 
     private void assertMapping( final VirtualHostMapping mapping, final String name, final String host, final String source,
-                                final String target, final IdProviderKey userStoreKey )
+                                final String target, final IdProviderKey idProviderKey )
     {
         Assert.assertEquals( name, mapping.getName() );
         Assert.assertEquals( host, mapping.getHost() );
         Assert.assertEquals( source, mapping.getSource() );
         Assert.assertEquals( target, mapping.getTarget() );
-        Assert.assertEquals( userStoreKey, mapping.getUserStoreKey() );
+        Assert.assertEquals( idProviderKey, mapping.getIdProviderKey() );
     }
 }

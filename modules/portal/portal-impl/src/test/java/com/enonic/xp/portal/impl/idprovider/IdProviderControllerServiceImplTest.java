@@ -186,7 +186,7 @@ public class IdProviderControllerServiceImplTest
         final HttpServletRequest httpServletRequest = createHttpServletRequest();
 
         final VirtualHost virtualHost = Mockito.mock( VirtualHost.class );
-        Mockito.when( virtualHost.getUserStoreKey() ).thenReturn( IdProviderKey.from( "myuserstore" ) );
+        Mockito.when( virtualHost.getIdProviderKey() ).thenReturn( IdProviderKey.from( "myuserstore" ) );
         Mockito.when( httpServletRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
 
         VirtualHostHelper.setVirtualHost( httpServletRequest, virtualHost );

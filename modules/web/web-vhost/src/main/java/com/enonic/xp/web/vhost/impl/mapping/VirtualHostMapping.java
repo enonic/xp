@@ -22,7 +22,7 @@ public final class VirtualHostMapping
 
     private String target;
 
-    private IdProviderKey userStoreKey;
+    private IdProviderKey idProviderKey;
 
     public VirtualHostMapping( final String name )
     {
@@ -57,9 +57,9 @@ public final class VirtualHostMapping
     }
 
     @Override
-    public IdProviderKey getUserStoreKey()
+    public IdProviderKey getIdProviderKey()
     {
-        return userStoreKey;
+        return idProviderKey;
     }
 
     public void setHost( final String value )
@@ -79,7 +79,7 @@ public final class VirtualHostMapping
 
     public void setIdProviderKey( final IdProviderKey idProviderKey )
     {
-        this.userStoreKey = idProviderKey;
+        this.idProviderKey = idProviderKey;
     }
 
     public boolean matches( final HttpServletRequest req )

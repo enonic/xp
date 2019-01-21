@@ -15,5 +15,5 @@ public interface VirtualHost
 
     String getTarget();
 
-    IdProviderKey getUserStoreKey();
+    IdProviderKey getIdProviderKey();
 }
