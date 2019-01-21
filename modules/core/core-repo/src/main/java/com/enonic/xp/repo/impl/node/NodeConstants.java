@@ -24,6 +24,10 @@ public final class NodeConstants
 
     public static final SegmentLevel NODE_SEGMENT_LEVEL = SegmentLevel.from( "node" );
 
+    public static final SegmentLevel INDEX_CONFIG_SEGMENT_LEVEL = SegmentLevel.from( "index" );
+
+    public static final SegmentLevel ACCESS_CONTROL_SEGMENT_LEVEL = SegmentLevel.from( "access" );
+
     public static final SegmentLevel BINARY_SEGMENT_LEVEL = SegmentLevel.from( "binary" );
 
     public static final AuthenticationInfo NODE_SU_AUTH_INFO = AuthenticationInfo.create().

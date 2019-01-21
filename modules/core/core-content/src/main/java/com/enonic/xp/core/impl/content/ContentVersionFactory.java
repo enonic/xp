@@ -58,7 +58,7 @@ class ContentVersionFactory
 
     private NodeVersion getNodeVersion( final NodeVersionMetadata nodeVersionMetadata )
     {
-        return nodeService.getByBlobKey( nodeVersionMetadata.getBlobKey() );
+        return nodeService.getByNodeVersionKey( nodeVersionMetadata.getNodeVersionKey() );
     }
 
 }

@@ -30,6 +30,13 @@ public class BranchDumpEntryJson
         this.meta = meta;
     }
 
+    private BranchDumpEntryJson( final Builder builder )
+    {
+        nodeId = builder.nodeId;
+        meta = builder.meta;
+        binaries = builder.binaries;
+    }
+
     public static BranchDumpEntry fromJson( final BranchDumpEntryJson json )
     {
         return BranchDumpEntry.create().
@@ -42,7 +49,8 @@ public class BranchDumpEntryJson
     public static BranchDumpEntryJson from( final BranchDumpEntry branchDumpEntry )
     {
         String nodeId = branchDumpEntry.getNodeId().toString();
-        return new BranchDumpEntryJson( nodeId, branchDumpEntry.getBinaryReferences(), VersionDumpEntryJson.from( branchDumpEntry.getMeta() ) );
+        return new BranchDumpEntryJson( nodeId, branchDumpEntry.getBinaryReferences(),
+                                        VersionDumpEntryJson.from( branchDumpEntry.getMeta() ) );
     }
 
     private String getNodeId()
@@ -58,5 +66,46 @@ public class BranchDumpEntryJson
     public VersionDumpEntryJson getMeta()
     {
         return meta;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public static final class Builder
+    {
+        private String nodeId;
+
+        private VersionDumpEntryJson meta;
+
+        private Collection<String> binaries;
+
+        private Builder()
+        {
+        }
+
+        public Builder nodeId( final String nodeId )
+        {
+            this.nodeId = nodeId;
+            return this;
+        }
+
+        public Builder meta( final VersionDumpEntryJson meta )
+        {
+            this.meta = meta;
+            return this;
+        }
+
+        public Builder binaries( final Collection<String> binaries )
+        {
+            this.binaries = binaries;
+            return this;
+        }
+
+        public BranchDumpEntryJson build()
+        {
+            return new BranchDumpEntryJson( this );
+        }
     }
 }

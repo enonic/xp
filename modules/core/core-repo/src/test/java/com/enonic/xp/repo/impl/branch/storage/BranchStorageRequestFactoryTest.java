@@ -2,7 +2,7 @@ package com.enonic.xp.repo.impl.branch.storage;
 
 import org.junit.Test;
 
-import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
@@ -27,7 +27,7 @@ public class BranchStorageRequestFactoryTest
             nodePath( NodePath.create( "nodePath" ).build() ).
             nodeState( NodeState.DEFAULT ).
             nodeVersionId( NodeVersionId.from( "nodeVersionId" ) ).
-            blobKey( BlobKey.from( "blobKey" ) ).
+            nodeVersionKey( NodeVersionKey.from( "nodeBlobKey", "indexConfigBlobKey", "accessControlBlobKey" ) ).
             build(), InternalContext.create().
             branch( Branch.from( "myBranch" ) ).
             repositoryId( RepositoryId.from( "my-repo-id" ) ).

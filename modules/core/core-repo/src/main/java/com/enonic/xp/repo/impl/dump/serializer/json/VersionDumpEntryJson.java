@@ -5,7 +5,7 @@ import java.time.Instant;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersionId;
@@ -22,8 +22,14 @@ public class VersionDumpEntryJson
     @JsonProperty("version")
     private String version;
 
-    @JsonProperty("blobKey")
-    private String blobKey;
+    @JsonProperty("nodeBlobKey")
+    private String nodeBlobKey;
+
+    @JsonProperty("indexConfigBlobKey")
+    private String indexConfigBlobKey;
+
+    @JsonProperty("accessControlBlobKey")
+    private String accessControlBlobKey;
 
     @JsonProperty("nodeState")
     private String nodeState;
@@ -37,17 +43,21 @@ public class VersionDumpEntryJson
         nodePath = builder.nodePath;
         timestamp = builder.timestamp;
         version = builder.version;
-        blobKey = builder.blobKey;
+        nodeBlobKey = builder.nodeBlobKey;
+        indexConfigBlobKey = builder.indexConfigBlobKey;
+        accessControlBlobKey = builder.accessControlBlobKey;
         nodeState = builder.nodeState;
     }
 
     public static VersionMeta fromJson( final VersionDumpEntryJson json )
     {
+        final NodeVersionKey nodeVersionKey =
+            NodeVersionKey.from( json.getNodeBlobKey(), json.getIndexConfigBlobKey(), json.getAccessControlBlobKey() );
         return VersionMeta.create().
             nodePath( NodePath.create( json.nodePath ).build() ).
             timestamp( json.getTimestamp() != null ? Instant.parse( json.getTimestamp() ) : null ).
             version( json.getVersion() != null ? NodeVersionId.from( json.getVersion() ) : null ).
-            blobKey( json.getBlobKey() != null ? BlobKey.from( json.getBlobKey() ) : null ).
+            nodeVersionKey( nodeVersionKey ).
             nodeState( NodeState.from( json.getNodeState() ) ).
             build();
     }
@@ -58,11 +68,13 @@ public class VersionDumpEntryJson
             nodePath( meta.getNodePath().toString() ).
             timestamp( meta.getTimestamp() != null ? meta.getTimestamp().toString() : null ).
             version( meta.getVersion() != null ? meta.getVersion().toString() : null ).
-            blobKey( meta.getBlobKey() != null ? meta.getBlobKey().toString() : null ).
+            nodeBlobKey( meta.getNodeVersionKey().getNodeBlobKey().toString() ).
+            indexConfigBlobKey( meta.getNodeVersionKey().getIndexConfigBlobKey().toString() ).
+            accessControlBlobKey( meta.getNodeVersionKey().getAccessControlBlobKey().toString() ).
             build();
     }
 
-    private static Builder create()
+    public static Builder create()
     {
         return new Builder();
     }
@@ -82,9 +94,19 @@ public class VersionDumpEntryJson
         return version;
     }
 
-    public String getBlobKey()
+    public String getNodeBlobKey()
     {
-        return blobKey;
+        return nodeBlobKey;
+    }
+
+    public String getIndexConfigBlobKey()
+    {
+        return indexConfigBlobKey;
+    }
+
+    public String getAccessControlBlobKey()
+    {
+        return accessControlBlobKey;
     }
 
     private String getNodeState()
@@ -100,7 +122,11 @@ public class VersionDumpEntryJson
 
         private String version;
 
-        private String blobKey;
+        private String nodeBlobKey;
+
+        private String indexConfigBlobKey;
+
+        private String accessControlBlobKey;
 
         private String nodeState;
 
@@ -126,9 +152,21 @@ public class VersionDumpEntryJson
             return this;
         }
 
-        public Builder blobKey( final String val )
+        public Builder nodeBlobKey( final String val )
         {
-            blobKey = val;
+            nodeBlobKey = val;
+            return this;
+        }
+
+        public Builder indexConfigBlobKey( final String val )
+        {
+            indexConfigBlobKey = val;
+            return this;
+        }
+
+        public Builder accessControlBlobKey( final String val )
+        {
+            accessControlBlobKey = val;
             return this;
         }
 

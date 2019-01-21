@@ -2,7 +2,6 @@ package com.enonic.xp.repo.impl.dump;
 
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeState;
-import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.repo.impl.dump.model.VersionMeta;
 
@@ -14,7 +13,7 @@ class VersionMetaFactory
             timestamp( node.getTimestamp() ).
             nodePath( node.path() ).
             version( node.getNodeVersionId() ).
-            blobKey( metaData.getBlobKey() ).
+            nodeVersionKey( metaData.getNodeVersionKey() ).
             nodeState( node.getNodeState() ).
             build();
     }
@@ -25,7 +24,7 @@ class VersionMetaFactory
             timestamp( metaData.getTimestamp() ).
             nodePath( metaData.getNodePath() ).
             version( metaData.getNodeVersionId() ).
-            blobKey( metaData.getBlobKey() ).
+            nodeVersionKey( metaData.getNodeVersionKey() ).
             nodeState( NodeState.DEFAULT ).
             build();
     }

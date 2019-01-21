@@ -1,0 +1,26 @@
+{
+  "analyzer": "myAnalyzer",
+  "defaultConfig": {
+    "decideByType": false,
+    "enabled": true,
+    "fulltext": false,
+    "includeInAllText": false,
+    "nGram": false
+  },
+  "patternConfigs": [
+    {
+      "indexConfig": {
+        "decideByType": false,
+        "enabled": true,
+        "fulltext": true,
+        "includeInAllText": true,
+        "indexValueProcessors": [
+          "indexValueProcessor",
+          "indexValueProcessor"
+        ],
+        "nGram": true
+      },
+      "path": "myPath"
+    }
+  ]
+}

@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.ApplyNodePermissionsResult;
@@ -353,7 +353,7 @@ class NodeServiceMock
     }
 
     @Override
-    public NodeVersion getByBlobKey( final BlobKey blobKey )
+    public NodeVersion getByNodeVersionKey( final NodeVersionKey nodeVersionKey )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }

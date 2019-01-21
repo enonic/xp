@@ -84,7 +84,7 @@ public class BranchEntryProcessor
     {
         try
         {
-            return this.dumpReader.get( repositoryId, meta.getBlobKey() );
+            return this.dumpReader.get( repositoryId, meta.getNodeVersionKey() );
         }
         catch ( RepoLoadException e )
         {

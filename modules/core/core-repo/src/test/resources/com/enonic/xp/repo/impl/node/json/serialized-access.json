@@ -1,0 +1,15 @@
+{
+  "inheritPermissions": false,
+  "permissions": [
+    {
+      "allow": ["READ"],
+      "deny": ["DELETE"],
+      "principal": "user:system:anonymous"
+    },
+    {
+      "allow": ["MODIFY"],
+      "deny": ["PUBLISH"],
+      "principal": "user:system:user1"
+    }
+  ]
+}

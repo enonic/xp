@@ -4,6 +4,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.SearchSource;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
@@ -11,18 +12,20 @@ import com.enonic.xp.repo.impl.branch.storage.BranchIndexPath;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repo.impl.version.VersionIndexPath;
 import com.enonic.xp.repo.impl.version.search.NodeVersionDiffQuery;
-import com.enonic.xp.node.NodeVersionQuery;
 
 @Component
 public class NodeSearchServiceImpl
     implements NodeSearchService
 {
     private static final ReturnFields VERSION_RETURN_FIELDS =
-        ReturnFields.from( VersionIndexPath.VERSION_ID, VersionIndexPath.BLOB_KEY, VersionIndexPath.TIMESTAMP, VersionIndexPath.NODE_PATH, VersionIndexPath.NODE_ID );
+        ReturnFields.from( VersionIndexPath.VERSION_ID, VersionIndexPath.NODE_BLOB_KEY, VersionIndexPath.INDEX_CONFIG_BLOB_KEY,
+                           VersionIndexPath.ACCESS_CONTROL_BLOB_KEY, VersionIndexPath.TIMESTAMP, VersionIndexPath.NODE_PATH,
+                           VersionIndexPath.NODE_ID );
 
     private static final ReturnFields BRANCH_RETURN_FIELDS =
-        ReturnFields.from( BranchIndexPath.NODE_ID, BranchIndexPath.VERSION_ID, BranchIndexPath.BLOB_KEY, BranchIndexPath.STATE, BranchIndexPath.PATH,
-                           BranchIndexPath.TIMESTAMP );
+        ReturnFields.from( BranchIndexPath.NODE_ID, BranchIndexPath.VERSION_ID, BranchIndexPath.NODE_BLOB_KEY,
+                           BranchIndexPath.INDEX_CONFIG_BLOB_KEY, BranchIndexPath.ACCESS_CONTROL_BLOB_KEY, BranchIndexPath.STATE,
+                           BranchIndexPath.PATH, BranchIndexPath.TIMESTAMP );
 
     private SearchDao searchDao;
 

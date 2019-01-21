@@ -27,6 +27,12 @@ public class VersionsDumpEntryJson
         this.versions = versions;
     }
 
+    private VersionsDumpEntryJson( final Builder builder )
+    {
+        nodeId = builder.nodeId;
+        versions = builder.versions;
+    }
+
     public static VersionsDumpEntry fromJson( final VersionsDumpEntryJson json )
     {
         return VersionsDumpEntry.create( NodeId.from( json.getNodeId() ) ).
@@ -50,5 +56,39 @@ public class VersionsDumpEntryJson
     public Collection<VersionDumpEntryJson> getVersions()
     {
         return versions;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+
+    public static final class Builder
+    {
+        private String nodeId;
+
+        private Collection<VersionDumpEntryJson> versions;
+
+        private Builder()
+        {
+        }
+
+        public Builder nodeId( final String nodeId )
+        {
+            this.nodeId = nodeId;
+            return this;
+        }
+
+        public Builder versions( final Collection<VersionDumpEntryJson> versions )
+        {
+            this.versions = versions;
+            return this;
+        }
+
+        public VersionsDumpEntryJson build()
+        {
+            return new VersionsDumpEntryJson( this );
+        }
     }
 }

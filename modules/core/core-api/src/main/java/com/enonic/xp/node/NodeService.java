@@ -4,6 +4,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.util.BinaryReference;
@@ -68,7 +69,7 @@ public interface NodeService
 
     ReorderChildNodesResult reorderChildren( ReorderChildNodesParams params );
 
-    NodeVersion getByBlobKey( BlobKey blobKey );
+    NodeVersion getByNodeVersionKey( NodeVersionKey nodeVersionKey );
 
     ResolveSyncWorkResult resolveSyncWork( SyncWorkResolverParams params );
 

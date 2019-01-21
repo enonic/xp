@@ -71,7 +71,7 @@ public class RepoDumperTest
 
         assertEquals( 2, dumpEntries.size() );
         // 2 versions for the root node on draft and master + 2 versions of the node
-        assertEquals( 4, writer.getBlobKeys().size() );
+        assertEquals( 4, writer.getNodeVersionKeys().size() );
     }
 
     @Test

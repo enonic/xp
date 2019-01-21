@@ -144,7 +144,7 @@ public class NodeExporter
                 continue;
             }
 
-            final NodeVersion nodeVersion = this.nodeService.getByBlobKey( version.getBlobKey() );
+            final NodeVersion nodeVersion = this.nodeService.getByNodeVersionKey( version.getNodeVersionKey() );
 
             final Node exportNode = NodeFromNodeVersionBuilder.create( version, nodeVersion );
 

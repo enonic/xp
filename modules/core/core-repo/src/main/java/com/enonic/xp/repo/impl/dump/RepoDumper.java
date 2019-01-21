@@ -186,7 +186,7 @@ class RepoDumper
 
     private void doStoreVersion( final VersionsDumpEntry.Builder builder, final NodeVersionMetadata metaData )
     {
-        final NodeVersion nodeVersion = this.nodeService.getByBlobKey( metaData.getBlobKey() );
+        final NodeVersion nodeVersion = this.nodeService.getByNodeVersionKey( metaData.getNodeVersionKey() );
         builder.addVersion( VersionMetaFactory.create( metaData ) );
 
         storeVersionBlob( metaData );
@@ -197,7 +197,7 @@ class RepoDumper
     {
         try
         {
-            this.writer.writeVersionBlob( repositoryId, metaData.getBlobKey() );
+            this.writer.writeNodeVersionBlobs( repositoryId, metaData.getNodeVersionKey() );
         }
         catch ( Exception e )
         {
@@ -250,7 +250,7 @@ class RepoDumper
         {
             final BranchDumpEntry branchDumpEntry = createDumpEntry( nodeId );
             writer.writeBranchEntry( branchDumpEntry );
-            writer.writeVersionBlob( repositoryId, branchDumpEntry.getMeta().getBlobKey() );
+            writer.writeNodeVersionBlobs( repositoryId, branchDumpEntry.getMeta().getNodeVersionKey() );
             writeBinaries( dumpResult, branchDumpEntry );
             dumpResult.addedNode();
             reportNodeDumped();

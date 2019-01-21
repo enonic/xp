@@ -4,13 +4,13 @@ import java.time.Instant;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.blob.NodeVersionKey;
 
 public class NodeBranchEntry
 {
     private final NodeVersionId nodeVersionId;
 
-    private final BlobKey blobKey;
+    private final NodeVersionKey nodeVersionKey;
 
     private final NodeState nodeState;
 
@@ -23,7 +23,7 @@ public class NodeBranchEntry
     private NodeBranchEntry( Builder builder )
     {
         this.nodeVersionId = builder.nodeVersionId;
-        this.blobKey = builder.blobKey;
+        this.nodeVersionKey = builder.nodeVersionKey;
         this.nodeState = builder.state;
         this.nodePath = builder.nodePath;
         this.timestamp = builder.timestamp;
@@ -40,9 +40,9 @@ public class NodeBranchEntry
         return nodeVersionId;
     }
 
-    public BlobKey getBlobKey()
+    public NodeVersionKey getNodeVersionKey()
     {
-        return blobKey;
+        return nodeVersionKey;
     }
 
     public NodeState getNodeState()
@@ -83,7 +83,7 @@ public class NodeBranchEntry
         {
             return false;
         }
-        if ( blobKey != null ? !blobKey.equals( that.blobKey ) : that.blobKey != null )
+        if ( nodeVersionKey != null ? !nodeVersionKey.equals( that.nodeVersionKey ) : that.nodeVersionKey != null )
         {
             return false;
         }
@@ -107,7 +107,7 @@ public class NodeBranchEntry
     public int hashCode()
     {
         int result = nodeVersionId != null ? nodeVersionId.hashCode() : 0;
-        result = 31 * result + ( blobKey != null ? blobKey.hashCode() : 0 );
+        result = 31 * result + ( nodeVersionKey != null ? nodeVersionKey.hashCode() : 0 );
         result = 31 * result + ( nodeState != null ? nodeState.hashCode() : 0 );
         result = 31 * result + ( nodePath != null ? nodePath.hashCode() : 0 );
         result = 31 * result + ( timestamp != null ? timestamp.hashCode() : 0 );
@@ -119,7 +119,7 @@ public class NodeBranchEntry
     {
         private NodeVersionId nodeVersionId;
 
-        private BlobKey blobKey;
+        private NodeVersionKey nodeVersionKey;
 
         private NodeState state;
 
@@ -139,9 +139,9 @@ public class NodeBranchEntry
             return this;
         }
 
-        public Builder blobKey( final BlobKey blobKey )
+        public Builder nodeVersionKey( final NodeVersionKey nodeVersionKey )
         {
-            this.blobKey = blobKey;
+            this.nodeVersionKey = nodeVersionKey;
             return this;
         }
 

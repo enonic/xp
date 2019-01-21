@@ -109,15 +109,18 @@ public class NodeVersionJsonDumpSerializerTest
                 build() ).
             build();
 
-        final String expectedStr = readJson( "serialized-node.json" );
-
-        final String serializedNode = this.serializer.toString( nodeVersion );
-        System.out.println( expectedStr );
-        assertEquals( expectedStr, serializedNode );
-
-        final NodeVersion deSerialized = this.serializer.toNodeVersion( expectedStr );
-
-        assertEquals( nodeVersion, deSerialized );
+        final String expectedNodeStr = readJson( "serialized-node.json" );
+        final String expectedIndexConfigStr = readJson( "serialized-index.json" );
+        final String expectedAccessControlStr = readJson( "serialized-access.json" );
+        final String serializedNode = this.serializer.toNodeString( nodeVersion );
+        final String serializedIndexConfig = this.serializer.toIndexConfigDocumentString( nodeVersion );
+        final String serializedAccessControl = this.serializer.toAccessControlString( nodeVersion );
+        assertEquals( expectedNodeStr, serializedNode );
+        assertEquals( expectedIndexConfigStr, serializedIndexConfig );
+        assertEquals( expectedAccessControlStr, serializedAccessControl );
+        final NodeVersion deSerializedNode =
+            this.serializer.toNodeVersion( expectedNodeStr, expectedIndexConfigStr, expectedAccessControlStr );
+        assertEquals( nodeVersion, deSerializedNode );
     }
 
     private String readJson( final String name )

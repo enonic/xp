@@ -712,8 +712,8 @@ public class DumpServiceImplTest
             assertEquals( new Version( 0, 0, 0 ), result.getInitialVersion() );
             assertEquals( DumpConstants.MODEL_VERSION, result.getUpgradedVersion() );
 
-            Mockito.verify( upgradeListener, Mockito.times( 3 ) ).upgraded();
-            Mockito.verify( upgradeListener, Mockito.times( 1 ) ).total( 3 );
+            Mockito.verify( upgradeListener, Mockito.times( 4 ) ).upgraded();
+            Mockito.verify( upgradeListener, Mockito.times( 1 ) ).total( 4 );
 
             FileDumpReader reader = new FileDumpReader( tempFolder.getRoot().toPath(), dumpName, null );
             final DumpMeta updatedMeta = reader.getDumpMeta();
@@ -857,7 +857,7 @@ public class DumpServiceImplTest
 
     private void verifyVersionBinaries( final Node node, final Node updatedNode, final NodeVersionMetadata version )
     {
-        final NodeVersion storedNode = nodeService.getByBlobKey( version.getBlobKey() );
+        final NodeVersion storedNode = nodeService.getByNodeVersionKey( version.getNodeVersionKey() );
 
         storedNode.getAttachedBinaries().forEach( entry -> assertNotNull(
             this.nodeService.getBinary( version.getNodeId(), version.getNodeVersionId(), entry.getBinaryReference() ) ) );

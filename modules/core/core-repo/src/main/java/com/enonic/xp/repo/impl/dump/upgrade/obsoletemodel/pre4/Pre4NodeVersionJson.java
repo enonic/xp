@@ -1,4 +1,4 @@
-package com.enonic.xp.repo.impl.node.json;
+package com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre4;
 
 import java.util.List;
 
@@ -16,11 +16,14 @@ import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeType;
 import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.repo.impl.node.json.AccessControlEntryJson;
+import com.enonic.xp.repo.impl.node.json.AttachedBinaryJson;
+import com.enonic.xp.repo.impl.node.json.IndexConfigDocumentJson;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-final class NodeVersionJson
+public final class Pre4NodeVersionJson
 {
     @JsonProperty("id")
     private String id;
@@ -48,6 +51,21 @@ final class NodeVersionJson
 
     @JsonProperty("attachedBinaries")
     private List<AttachedBinaryJson> attachedBinaries;
+
+    public IndexConfigDocumentJson getIndexConfigDocument()
+    {
+        return indexConfigDocument;
+    }
+
+    public boolean isInheritPermissions()
+    {
+        return inheritPermissions;
+    }
+
+    public List<AccessControlEntryJson> getPermissions()
+    {
+        return permissions;
+    }
 
     public NodeVersion fromJson()
     {
@@ -86,9 +104,9 @@ final class NodeVersionJson
         return builder.build();
     }
 
-    public static NodeVersionJson toJson( final NodeVersion nodeVersion )
+    public static Pre4NodeVersionJson toJson( final NodeVersion nodeVersion )
     {
-        final NodeVersionJson json = new NodeVersionJson();
+        final Pre4NodeVersionJson json = new Pre4NodeVersionJson();
         json.id = nodeVersion.getId().toString();
         json.data = PropertyTreeJson.toJson( nodeVersion.getData() );
         json.indexConfigDocument = createEntityIndexConfig( nodeVersion.getIndexConfigDocument() );
