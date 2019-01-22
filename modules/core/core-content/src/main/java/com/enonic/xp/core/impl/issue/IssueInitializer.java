@@ -77,7 +77,7 @@ public class IssueInitializer
     @Override
     protected String getInitializationSubject()
     {
-        return "Cms-repo [issue] layout";
+        return "com.enonic.cms.default repo [issue] layout";
     }
 
     private void initIssueNode()

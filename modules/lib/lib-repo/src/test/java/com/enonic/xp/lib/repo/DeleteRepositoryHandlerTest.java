@@ -20,7 +20,7 @@ public class DeleteRepositoryHandlerTest
         throws Exception
     {
         final DeleteRepositoryHandler handler = new DeleteRepositoryHandler();
-        handler.setRepositoryId( "cms-repo" );
+        handler.setRepositoryId( "com.enonic.cms.default" );
         handler.execute();
     }
 }

@@ -9,7 +9,7 @@ var stream1 = TestClass.createByteSource('Hello World');
 // BEGIN
 
 var repo = nodeLib.connect({
-    repoId: "cms-repo",
+    repoId: "com.enonic.cms.default",
     branch: "master"
 });
 

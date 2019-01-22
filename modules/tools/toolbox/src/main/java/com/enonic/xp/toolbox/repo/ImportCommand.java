@@ -15,7 +15,7 @@ public final class ImportCommand
 {
     public static final String IMPORT_REST_PATH = "/repo/import";
 
-    @Option(name = "-t", description = "Target path for import. Format: <repo-name>:<branch-name>:<node-path>. e.g 'cms-repo:draft:/'", required = true)
+    @Option(name = "-t", description = "Target path for import. Format: <repo-name>:<branch-name>:<node-path>. e.g 'com.enonic.cms.default:draft:/'", required = true)
     public String targetRepoPath;
 
     @Option(name = "-s", description = "A named export to import.", required = true)

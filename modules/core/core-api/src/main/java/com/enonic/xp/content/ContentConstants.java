@@ -41,7 +41,7 @@ public class ContentConstants
         value( "master" ).
         build();
 
-    public static final RepositoryId CONTENT_REPO_ID = RepositoryId.from( "cms-repo" );
+    public static final RepositoryId CONTENT_REPO_ID = RepositoryId.from( "com.enonic.cms.default" );
 
     public static final Repository CONTENT_REPO = Repository.create().
         id( CONTENT_REPO_ID ).

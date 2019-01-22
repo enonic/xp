@@ -31,7 +31,7 @@ function required(params, name) {
  *
  * @param {object?} params JSON with the parameters.
  * @param {string} [params.mode='all'] Index type to be refreshed. Possible values: 'all' | 'search' | 'storage'.
- * @param {string} [params.repo='cms-repo'] Repository id: 'cms-repo' | 'system-repo'. Default is the current repository set in portal.
+ * @param {string} [params.repo='com.enonic.cms.default'] Repository id: 'com.enonic.cms.default' | 'system-repo'. Default is the current repository set in portal.
  * @param {string} [params.repo='branch'=master] Branch. Default is the current repository set in portal.
  *
  */

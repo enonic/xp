@@ -10,7 +10,7 @@ var multiRepoConnection = nodeLib.multiRepoConnect({
             principals: ["role:system.admin"]
         },
         {
-            repoId: 'cms-repo',
+            repoId: 'com.enonic.cms.default',
             branch: 'draft',
             principals: ["role:system.admin"]
         }
@@ -69,7 +69,7 @@ var expected = {
         {
             "id": "350ba4a6-589c-498b-8af0-f183850e1120",
             "score": 1.399999976158142,
-            "repoId": "cms-repo",
+            "repoId": "com.enonic.cms.default",
             "branch": "draft"
         }
     ]

@@ -1,1 +1,28 @@
-{"xpVersion":"6.15.5","timestamp":"2018-12-13T14:50:29.028Z","result":{"cms-repo":{"versions":27,"branchResults":{"draft":{"successful":7,"errors":[]},"master":{"successful":5,"errors":[]}}},"system-repo":{"versions":74,"branchResults":{"master":{"successful":26,"errors":[]}}}}}
+{
+  "xpVersion": "6.15.5",
+  "timestamp": "2018-12-13T14:50:29.028Z",
+  "result": {
+    "com.enonic.cms.default": {
+      "versions": 27,
+      "branchResults": {
+        "draft": {
+          "successful": 7,
+          "errors": []
+        },
+        "master": {
+          "successful": 5,
+          "errors": []
+        }
+      }
+    },
+    "system-repo": {
+      "versions": 74,
+      "branchResults": {
+        "master": {
+          "successful": 26,
+          "errors": []
+        }
+      }
+    }
+  }
+}
