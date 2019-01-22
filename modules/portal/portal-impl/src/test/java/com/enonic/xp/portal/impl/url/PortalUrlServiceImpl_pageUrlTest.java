@@ -25,7 +25,7 @@ public class PortalUrlServiceImpl_pageUrlTest
             param( "a", 3 );
 
         final String url = this.service.pageUrl( params );
-        assertEquals( "/portal/draft/context/path?a=3", url );
+        assertEquals( "/site/draft/context/path?a=3", url );
     }
 
     @Test
@@ -37,7 +37,7 @@ public class PortalUrlServiceImpl_pageUrlTest
             param( "a", 3 );
 
         final String url = this.service.pageUrl( params );
-        assertEquals( "/portal/draft/context/path/a/b?a=3", url );
+        assertEquals( "/site/draft/context/path/a/b?a=3", url );
     }
 
     @Test
@@ -48,7 +48,7 @@ public class PortalUrlServiceImpl_pageUrlTest
             path( "/a/b" );
 
         final String url = this.service.pageUrl( params );
-        assertEquals( "/portal/draft/a/b", url );
+        assertEquals( "/site/draft/a/b", url );
     }
 
     @Test
@@ -62,7 +62,7 @@ public class PortalUrlServiceImpl_pageUrlTest
             id( "123456" );
 
         final String url = this.service.pageUrl( params );
-        assertEquals( "/portal/draft/a/b/mycontent", url );
+        assertEquals( "/site/draft/a/b/mycontent", url );
     }
 
     @Test
@@ -77,7 +77,7 @@ public class PortalUrlServiceImpl_pageUrlTest
             path( "/a/b" );
 
         final String url = this.service.pageUrl( params );
-        assertEquals( "/portal/draft/a/b/mycontent", url );
+        assertEquals( "/site/draft/a/b/mycontent", url );
     }
 
     @Test
@@ -92,7 +92,7 @@ public class PortalUrlServiceImpl_pageUrlTest
             id( "123456" );
 
         final String url = this.service.pageUrl( params );
-        assertEquals( "/portal/draft/context/path/_/error/404?message=Content+with+id+%5B123456%5D+was+not+found+in+branch+%5Bdraft%5D",
+        assertEquals( "/site/draft/context/path/_/error/404?message=Content+with+id+%5B123456%5D+was+not+found+in+branch+%5Bdraft%5D",
                       url );
     }
 
@@ -108,6 +108,6 @@ public class PortalUrlServiceImpl_pageUrlTest
         ServletRequestHolder.setRequest( req );
 
         final String url = this.service.pageUrl( params );
-        assertEquals( "http://localhost/portal/draft/context/path?a=3", url );
+        assertEquals( "http://localhost/site/draft/context/path?a=3", url );
     }
 }

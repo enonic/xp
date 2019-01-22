@@ -79,7 +79,7 @@ public class ImageRendererTest
 
         // verify
         String result =
-            "<figure data-portal-component-type=\"image\"><img style=\"width: 100%\" src=\"/portal/draft/a/b/mycontent/_/image/abcdef1234567890:8cf45815bba82c9711c673c9bb7304039a790026/width-768/mycontent\"/><figcaption>Image Title</figcaption></figure>";
+            "<figure data-portal-component-type=\"image\"><img style=\"width: 100%\" src=\"/site/draft/a/b/mycontent/_/image/abcdef1234567890:8cf45815bba82c9711c673c9bb7304039a790026/width-768/mycontent\"/><figcaption>Image Title</figcaption></figure>";
         assertEquals( result, portalResponse.getAsString() );
     }
 

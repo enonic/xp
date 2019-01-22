@@ -143,7 +143,7 @@ public abstract class ScriptTestSupport
         request.setMode( RenderMode.LIVE );
         request.setBranch( Branch.from( "draft" ) );
         request.setApplicationKey( this.appKey );
-        request.setBaseUri( "/portal" );
+        request.setBaseUri( "/site" );
 
         final Content content = Content.create().id( ContentId.from( "123" ) ).path( "some/path" ).build();
         request.setContent( content );

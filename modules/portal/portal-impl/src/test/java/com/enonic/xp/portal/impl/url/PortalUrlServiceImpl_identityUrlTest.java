@@ -26,7 +26,7 @@ public class PortalUrlServiceImpl_identityUrlTest
             idProviderFunction( "login" );
 
         final String url = this.service.identityUrl( params );
-        assertEquals( "/portal/draft/_/idprovider/system/login", url );
+        assertEquals( "/site/draft/_/idprovider/system/login", url );
     }
 
     @Test
@@ -39,7 +39,7 @@ public class PortalUrlServiceImpl_identityUrlTest
             idProviderFunction( "login" );
 
         final String url = this.service.identityUrl( params );
-        assertEquals( "/portal/draft/context/path/_/idprovider/system/login", url );
+        assertEquals( "/site/draft/context/path/_/idprovider/system/login", url );
     }
 
     @Test
@@ -50,7 +50,7 @@ public class PortalUrlServiceImpl_identityUrlTest
             idProviderKey( IdProviderKey.system() );
 
         final String url = this.service.identityUrl( params );
-        assertEquals( "/portal/draft/_/idprovider/system", url );
+        assertEquals( "/site/draft/_/idprovider/system", url );
     }
 
     @Test
@@ -72,37 +72,37 @@ public class PortalUrlServiceImpl_identityUrlTest
         Mockito.when( virtualHost.getSource() ).thenReturn( "/main" );
         Mockito.when( virtualHost.getTarget() ).thenReturn( "/" );
         String url = this.service.identityUrl( params );
-        assertEquals( "/main/portal/draft/_/idprovider/system/login", url );
+        assertEquals( "/main/site/draft/_/idprovider/system/login", url );
 
-        //Calls the method with a virtual mapping /main -> /portal/draft/context
+        //Calls the method with a virtual mapping /main -> /site/draft/context
         Mockito.when( virtualHost.getSource() ).thenReturn( "/main" );
-        Mockito.when( virtualHost.getTarget() ).thenReturn( "/portal" );
+        Mockito.when( virtualHost.getTarget() ).thenReturn( "/site" );
         url = this.service.identityUrl( params );
         assertEquals( "/main/draft/_/idprovider/system/login", url );
 
-        //Calls the method with a virtual mapping /main -> /portal/draft/context
+        //Calls the method with a virtual mapping /main -> /site/draft/context
         Mockito.when( virtualHost.getSource() ).thenReturn( "/main" );
-        Mockito.when( virtualHost.getTarget() ).thenReturn( "/portal/draft" );
+        Mockito.when( virtualHost.getTarget() ).thenReturn( "/site/draft" );
         url = this.service.identityUrl( params );
         assertEquals( "/main/_/idprovider/system/login", url );
 
-        //Calls the method with a virtual mapping / -> /portal/draft/context
+        //Calls the method with a virtual mapping / -> /site/draft/context
         Mockito.when( virtualHost.getSource() ).thenReturn( "/" );
-        Mockito.when( virtualHost.getTarget() ).thenReturn( "/portal/draft/context" );
+        Mockito.when( virtualHost.getTarget() ).thenReturn( "/site/draft/context" );
         url = this.service.identityUrl( params );
         assertEquals( "/_/idprovider/system/login", url );
 
-        //Calls the method with a virtual mapping /main/path -> /portal/draft/context/path
+        //Calls the method with a virtual mapping /main/path -> /site/draft/context/path
         Mockito.when( virtualHost.getSource() ).thenReturn( "/main/path" );
-        Mockito.when( virtualHost.getTarget() ).thenReturn( "/portal/draft/context/path" );
+        Mockito.when( virtualHost.getTarget() ).thenReturn( "/site/draft/context/path" );
         url = this.service.identityUrl( params );
         assertEquals( "/main/path/_/idprovider/system/login", url );
 
-        //Calls the method with a virtual mapping /portal/draft/context/path -> /portal/draft/context/path
-        Mockito.when( virtualHost.getSource() ).thenReturn( "/portal/draft/context/path" );
-        Mockito.when( virtualHost.getTarget() ).thenReturn( "/portal/draft/context/path" );
+        //Calls the method with a virtual mapping /site/draft/context/path -> /site/draft/context/path
+        Mockito.when( virtualHost.getSource() ).thenReturn( "/site/draft/context/path" );
+        Mockito.when( virtualHost.getTarget() ).thenReturn( "/site/draft/context/path" );
         url = this.service.identityUrl( params );
-        assertEquals( "/portal/draft/context/path/_/idprovider/system/login", url );
+        assertEquals( "/site/draft/context/path/_/idprovider/system/login", url );
 
         //Post treatment
         ServletRequestHolder.setRequest( null );
@@ -121,6 +121,6 @@ public class PortalUrlServiceImpl_identityUrlTest
         ServletRequestHolder.setRequest( req );
 
         final String url = this.service.identityUrl( params );
-        assertEquals( "http://localhost/portal/draft/_/idprovider/system/login", url );
+        assertEquals( "http://localhost/site/draft/_/idprovider/system/login", url );
     }
 }

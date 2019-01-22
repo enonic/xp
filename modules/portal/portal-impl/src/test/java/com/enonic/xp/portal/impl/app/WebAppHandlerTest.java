@@ -80,7 +80,7 @@ public class WebAppHandlerTest
     @Test
     public void canHandle()
     {
-        this.request.setRawPath( "/portal/a/b" );
+        this.request.setRawPath( "/site/a/b" );
         assertEquals( false, this.handler.canHandle( this.request ) );
 
         this.request.setRawPath( "/app/myapp" );

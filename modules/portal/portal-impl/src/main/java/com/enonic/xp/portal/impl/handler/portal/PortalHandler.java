@@ -17,7 +17,7 @@ import com.enonic.xp.web.handler.WebHandler;
 public class PortalHandler
     extends BasePortalHandler
 {
-    private final static String BASE_URI = "/portal";
+    private final static String BASE_URI = "/site";
 
     private final static String BRANCH_PREFIX = BASE_URI + "/";
 

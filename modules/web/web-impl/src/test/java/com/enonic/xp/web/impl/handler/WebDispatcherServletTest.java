@@ -47,7 +47,7 @@ public class WebDispatcherServletTest
             status( HttpStatus.OK ).
             build();
 
-        addServlet( this.servlet, "/portal/*" );
+        addServlet( this.servlet, "/site/*" );
     }
 
     @Test
@@ -60,16 +60,16 @@ public class WebDispatcherServletTest
             body( "Hello World" ).
             build();
 
-        final Request request = newRequest( "/portal/master/a/b" ).
+        final Request request = newRequest( "/site/master/a/b" ).
             get().
             build();
 
         this.handler.verifier = req -> {
             Assert.assertEquals( this.server.getPort(), req.getPort() );
             Assert.assertEquals( "localhost", req.getHost() );
-            Assert.assertEquals( "/portal/master/a/b", req.getPath() );
+            Assert.assertEquals( "/site/master/a/b", req.getPath() );
             Assert.assertEquals( "http", req.getScheme() );
-            Assert.assertEquals( "http://localhost:" + this.server.getPort() + "/portal/master/a/b", req.getUrl() );
+            Assert.assertEquals( "http://localhost:" + this.server.getPort() + "/site/master/a/b", req.getUrl() );
             Assert.assertEquals( HttpMethod.GET, req.getMethod() );
         };
 
@@ -90,7 +90,7 @@ public class WebDispatcherServletTest
             header( "X-Header", "Value" ).
             build();
 
-        final Request request = newRequest( "/portal/master/a/b" ).
+        final Request request = newRequest( "/site/master/a/b" ).
             get().
             build();
 
@@ -103,7 +103,7 @@ public class WebDispatcherServletTest
     public void testRequestHeaders()
         throws Exception
     {
-        final Request request = newRequest( "/portal/master/a/b" ).
+        final Request request = newRequest( "/site/master/a/b" ).
             get().
             header( "X-Header", "Value" ).
             build();
@@ -121,7 +121,7 @@ public class WebDispatcherServletTest
     public void testReadCookies()
         throws Exception
     {
-        final Request request = newRequest( "/portal/master/a/b" ).
+        final Request request = newRequest( "/site/master/a/b" ).
             get().
             header( "Cookie", "theme=light; sessionToken=abc123" ).
             build();
@@ -139,7 +139,7 @@ public class WebDispatcherServletTest
     public void testParameters()
         throws Exception
     {
-        final Request request = newRequest( "/portal/master/a/b?a=1&b=2&b=3" ).
+        final Request request = newRequest( "/site/master/a/b?a=1&b=2&b=3" ).
             get().
             build();
 
@@ -161,7 +161,7 @@ public class WebDispatcherServletTest
             add( "expand", "true" ).
             build();
 
-        final Request request = newRequest( "/portal/master/a/b" ).
+        final Request request = newRequest( "/site/master/a/b" ).
             post( formBody ).
             build();
 
@@ -182,7 +182,7 @@ public class WebDispatcherServletTest
     {
         final RequestBody formBody = RequestBody.create( MediaType.parse( "text/plain" ), "Hello World" );
 
-        final Request request = newRequest( "/portal/master/a/b" ).
+        final Request request = newRequest( "/site/master/a/b" ).
             post( formBody ).
             build();
 
@@ -202,7 +202,7 @@ public class WebDispatcherServletTest
     {
         final RequestBody formBody = RequestBody.create( MediaType.parse( "application/json" ), "{}" );
 
-        final Request request = newRequest( "/portal/master/a/b" ).
+        final Request request = newRequest( "/site/master/a/b" ).
             post( formBody ).
             build();
 
@@ -222,7 +222,7 @@ public class WebDispatcherServletTest
     {
         this.servlet.removeWebHandler( this.handler );
 
-        final Request request = newRequest( "/portal/master/a/b" ).
+        final Request request = newRequest( "/site/master/a/b" ).
             get().
             build();
 

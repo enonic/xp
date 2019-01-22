@@ -29,7 +29,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             scale( "max(300)" );
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/portal/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent", url );
+        assertEquals( "/site/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent", url );
     }
 
     @Test
@@ -43,7 +43,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             scale( "max(300)" );
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/portal/draft/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent", url );
+        assertEquals( "/site/draft/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent", url );
     }
 
     @Test
@@ -57,7 +57,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             scale( "max(300)" );
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/portal/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png", url );
+        assertEquals( "/site/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png", url );
     }
 
     @Test
@@ -74,7 +74,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             scale( "max(300)" );
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/portal/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.jpg?" +
+        assertEquals( "/site/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.jpg?" +
                           "quality=90&background=00ff00&filter=scale%2810%2C10%29", url );
     }
 
@@ -89,7 +89,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             scale( "max(300)" );
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/portal/draft/context/path/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent", url );
+        assertEquals( "/site/draft/context/path/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent", url );
     }
 
     @Test
@@ -103,7 +103,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             scale( "max(300)" );
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/portal/draft/context/path/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent", url );
+        assertEquals( "/site/draft/context/path/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent", url );
     }
 
     @Test
@@ -117,7 +117,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             scale( "max(300)" );
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/portal/draft/context/path/_/error/404?message=Content+with+id+%5B123456%5D+was+not+found+in+branch+%5Bdraft%5D",
+        assertEquals( "/site/draft/context/path/_/error/404?message=Content+with+id+%5B123456%5D+was+not+found+in+branch+%5Bdraft%5D",
                       url );
     }
 
@@ -135,8 +135,8 @@ public class PortalUrlServiceImpl_imageUrlTest
         ServletRequestHolder.setRequest( req );
 
         final String url = this.service.imageUrl( params );
-        assertEquals(
-            "http://localhost/portal/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent", url );
+        assertEquals( "http://localhost/site/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent",
+                      url );
     }
 
     @Test
@@ -151,7 +151,7 @@ public class PortalUrlServiceImpl_imageUrlTest
 
         final String url = this.service.imageUrl( params );
         assertEquals(
-            "/portal/draft/a/b/name%20with%20spaces(and-others).png/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/name%20with%20spaces(and-others).png",
+            "/site/draft/a/b/name%20with%20spaces(and-others).png/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/name%20with%20spaces(and-others).png",
             url );
     }
 

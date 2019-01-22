@@ -49,7 +49,7 @@ public class IdentityHandlerTest
 
         this.request.setMethod( HttpMethod.GET );
         this.request.setEndpointPath( "/_/idprovider/myidprovider?param1=value1" );
-        this.request.setRawPath( "/portal/draft/_/idprovider/myidprovider?param1=value1" );
+        this.request.setRawPath( "/site/draft/_/idprovider/myidprovider?param1=value1" );
     }
 
     @Test
@@ -117,6 +117,6 @@ public class IdentityHandlerTest
 
         assertEquals( HttpStatus.OK, portalResponse.getStatus() );
         assertEquals( HttpStatus.OK, portalResponse.getStatus() );
-        assertEquals( "/portal/draft/_/idprovider/myidprovider", this.request.getContextPath() );
+        assertEquals( "/site/draft/_/idprovider/myidprovider", this.request.getContextPath() );
     }
 }

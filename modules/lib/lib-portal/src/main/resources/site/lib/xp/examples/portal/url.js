@@ -3,7 +3,7 @@ var assert = require('/lib/xp/testing');
 
 // BEGIN
 var url = portalLib.url({
-    path: '/portal/master/mysite',
+    path: '/site/master/mysite',
     params: {
         a: 1,
         b: 2
@@ -11,4 +11,4 @@ var url = portalLib.url({
 });
 // END
 
-assert.assertEquals('GenerateUrlParams{type=server, params={a=[1], b=[2]}, path=/portal/master/mysite}', url);
+assert.assertEquals('GenerateUrlParams{type=server, params={a=[1], b=[2]}, path=/site/master/mysite}', url);

@@ -37,8 +37,8 @@ abstract class GenericEndpointUrlBuilder<T extends AbstractUrlParams>
             return uriRewritingResult.getRewrittenUri();
         }
 
-        //Example of URI: /portal/draft/context/path/_/asset/myapplication/css/my.css
-        //Corresponding result: /portal/draft/_/asset/myapplication/css/my.css
+        //Example of URI: /site/draft/context/path/_/asset/myapplication/css/my.css
+        //Corresponding result: /site/draft/_/asset/myapplication/css/my.css
 
         StringBuilder result = new StringBuilder();
         String uriToProcess = uriRewritingResult.getRewrittenUri();
@@ -64,7 +64,7 @@ abstract class GenericEndpointUrlBuilder<T extends AbstractUrlParams>
 
     private String buildContentPathRegExp()
     {
-        //Example of uri: /portal/draft/context/path/_/asset/myapplication/css/my.css
+        //Example of uri: /site/draft/context/path/_/asset/myapplication/css/my.css
         //Corresponding regexp: (?:(?:context/)?path/)?_/asset
 
         final StringBuilder regexp = new StringBuilder();

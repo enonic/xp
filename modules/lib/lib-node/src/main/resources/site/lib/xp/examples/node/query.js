@@ -100,7 +100,7 @@ var expected = {
         "urls": {
             "buckets": [
                 {
-                    "key": "/portal/draft/superhero/search",
+                    "key": "/site/draft/superhero/search",
                     "docCount": 6762,
                     "duration": {
                         "buckets": [
@@ -120,7 +120,7 @@ var expected = {
                     }
                 },
                 {
-                    "key": "/portal/draft/superhero",
+                    "key": "/site/draft/superhero",
                     "docCount": 1245,
                     "duration": {
                         "buckets": [

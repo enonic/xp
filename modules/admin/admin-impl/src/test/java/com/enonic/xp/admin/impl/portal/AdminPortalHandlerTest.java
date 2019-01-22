@@ -48,7 +48,7 @@ public class AdminPortalHandlerTest
     @Test
     public void testCanHandle()
     {
-        this.request.setRawPath( "/admin/portal/master/content/1" );
+        this.request.setRawPath( "/admin/site/master/content/1" );
         assertTrue( this.handler.canHandle( this.request ) );
     }
 
@@ -62,17 +62,17 @@ public class AdminPortalHandlerTest
     @Test(expected = WebException.class)
     public void testCreatePortalRequestWithoutMode()
     {
-        this.request.setRawPath( "/admin/portal/master/content/1" );
+        this.request.setRawPath( "/admin/site/master/content/1" );
         this.handler.createPortalRequest( this.request, this.response );
     }
 
     @Test
     public void testCreatePortalRequest()
     {
-        this.request.setRawPath( "/admin/portal/edit/master/content/1" );
+        this.request.setRawPath( "/admin/site/edit/master/content/1" );
         PortalRequest portalRequest = this.handler.createPortalRequest( this.request, this.response );
 
-        assertEquals( "/admin/portal/edit", portalRequest.getBaseUri() );
+        assertEquals( "/admin/site/edit", portalRequest.getBaseUri() );
         assertEquals( "master", portalRequest.getBranch().toString() );
         assertEquals( "/content/1", portalRequest.getContentPath().toString() );
         assertEquals( "edit", portalRequest.getMode().toString() );

@@ -208,7 +208,7 @@ public class MacroResourceTest
 
         Mockito.when( this.macroDescriptorService.getByKey( MacroKey.from( "test:uppercase" ) ) ).thenReturn( macroDescriptor );
         Mockito.when( this.macroProcessorFactory.fromScript( any() ) ).thenReturn( macroProcessor );
-        Mockito.when( this.portalUrlService.pageUrl( any() ) ).thenReturn( "/portal/preview/draft/mysite/page" );
+        Mockito.when( this.portalUrlService.pageUrl( any() ) ).thenReturn( "/site/preview/draft/mysite/page" );
 
         final Site site = newSite();
         Mockito.when( this.contentService.getByPath( any() ) ).thenReturn( site );
