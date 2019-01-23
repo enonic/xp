@@ -6,6 +6,7 @@ import java.time.Instant;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.blob.NodeVersionKey;
+import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersionId;
@@ -34,6 +35,9 @@ public class VersionDumpEntryJson
     @JsonProperty("nodeState")
     private String nodeState;
 
+    @JsonProperty("commitId")
+    private String commitId;
+
     public VersionDumpEntryJson()
     {
     }
@@ -59,6 +63,7 @@ public class VersionDumpEntryJson
             version( json.getVersion() != null ? NodeVersionId.from( json.getVersion() ) : null ).
             nodeVersionKey( nodeVersionKey ).
             nodeState( NodeState.from( json.getNodeState() ) ).
+            nodeCommitId( json.getCommitId() == null ? null : NodeCommitId.from( json.getCommitId() ) ).
             build();
     }
 
@@ -71,6 +76,7 @@ public class VersionDumpEntryJson
             nodeBlobKey( meta.getNodeVersionKey().getNodeBlobKey().toString() ).
             indexConfigBlobKey( meta.getNodeVersionKey().getIndexConfigBlobKey().toString() ).
             accessControlBlobKey( meta.getNodeVersionKey().getAccessControlBlobKey().toString() ).
+            commitId( meta.getNodeCommitId().toString() ).
             build();
     }
 
@@ -114,6 +120,11 @@ public class VersionDumpEntryJson
         return nodeState;
     }
 
+    public String getCommitId()
+    {
+        return commitId;
+    }
+
     public static final class Builder
     {
         private String nodePath;
@@ -129,6 +140,8 @@ public class VersionDumpEntryJson
         private String accessControlBlobKey;
 
         private String nodeState;
+
+        private String commitId;
 
         private Builder()
         {
@@ -173,6 +186,12 @@ public class VersionDumpEntryJson
         public Builder nodeState( final String val )
         {
             nodeState = val;
+            return this;
+        }
+
+        public Builder commitId( final String val )
+        {
+            commitId = val;
             return this;
         }
 

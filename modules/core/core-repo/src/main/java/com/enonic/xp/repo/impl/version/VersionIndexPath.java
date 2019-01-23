@@ -18,4 +18,6 @@ public class VersionIndexPath
 
     public static final IndexPath NODE_PATH = IndexPath.from( "nodepath" );
 
+    public static final IndexPath COMMIT_ID = IndexPath.from( "commitid" );
+
 }

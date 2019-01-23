@@ -106,6 +106,7 @@ public class NodeRepositoryServiceImpl
         applyMapping( params, IndexType.SEARCH );
         applyMapping( params, IndexType.BRANCH );
         applyMapping( params, IndexType.VERSION );
+        applyMapping( params, IndexType.COMMIT );
     }
 
     private void applyMapping( final CreateRepositoryParams params, final IndexType indexType )
@@ -146,6 +147,10 @@ public class NodeRepositoryServiceImpl
                 return IndexNameResolver.resolveStorageIndexName( repositoryId );
             }
             case BRANCH:
+            {
+                return IndexNameResolver.resolveStorageIndexName( repositoryId );
+            }
+            case COMMIT:
             {
                 return IndexNameResolver.resolveStorageIndexName( repositoryId );
             }

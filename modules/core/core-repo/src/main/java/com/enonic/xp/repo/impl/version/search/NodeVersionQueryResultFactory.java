@@ -6,6 +6,7 @@ import com.google.common.base.Strings;
 
 import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.index.IndexPath;
+import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
@@ -64,6 +65,8 @@ public class NodeVersionQueryResultFactory
 
         final String nodeId = getStringValue( hit, VersionIndexPath.NODE_ID, true );
 
+        final String commitId = getStringValue( hit, VersionIndexPath.COMMIT_ID, true );
+
         final NodeVersionKey nodeVersionKey = NodeVersionKey.from( nodeBlobKey, indexConfigBlobKey, accessControlBlobKey );
 
         return NodeVersionMetadata.create().
@@ -72,6 +75,7 @@ public class NodeVersionQueryResultFactory
             timestamp( Strings.isNullOrEmpty( timestamp ) ? null : Instant.parse( timestamp ) ).
             nodePath( NodePath.create( nodePath ).build() ).
             nodeId( NodeId.from( nodeId ) ).
+            nodeCommitId( Strings.isNullOrEmpty( commitId ) ? null : NodeCommitId.from( commitId ) ).
             build();
     }
 

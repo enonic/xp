@@ -4,7 +4,6 @@ import java.time.Instant;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.NodeVersionKey;
 
 @Beta
@@ -19,6 +18,8 @@ public class NodeVersionMetadata
 
     private final NodePath nodePath;
 
+    private final NodeCommitId nodeCommitId;
+
     private final Instant timestamp;
 
     private NodeVersionMetadata( Builder builder )
@@ -27,6 +28,7 @@ public class NodeVersionMetadata
         nodeVersionKey = builder.nodeVersionKey;
         nodeId = builder.nodeId;
         nodePath = builder.nodePath;
+        nodeCommitId = builder.nodeCommitId;
         timestamp = builder.timestamp;
     }
 
@@ -53,6 +55,11 @@ public class NodeVersionMetadata
     public NodePath getNodePath()
     {
         return nodePath;
+    }
+
+    public NodeCommitId getNodeCommitId()
+    {
+        return nodeCommitId;
     }
 
     public Instant getTimestamp()
@@ -87,6 +94,8 @@ public class NodeVersionMetadata
 
         private NodePath nodePath;
 
+        private NodeCommitId nodeCommitId;
+
         private Instant timestamp;
 
         private Builder()
@@ -114,6 +123,12 @@ public class NodeVersionMetadata
         public Builder nodePath( NodePath nodePath )
         {
             this.nodePath = nodePath;
+            return this;
+        }
+
+        public Builder nodeCommitId( NodeCommitId nodeCommitId )
+        {
+            this.nodeCommitId = nodeCommitId;
             return this;
         }
 
@@ -159,6 +174,10 @@ public class NodeVersionMetadata
         {
             return false;
         }
+        if ( nodeCommitId != null ? !nodeCommitId.equals( that.nodeCommitId ) : that.nodeCommitId != null )
+        {
+            return false;
+        }
         return !( timestamp != null ? !timestamp.equals( that.timestamp ) : that.timestamp != null );
 
     }
@@ -170,6 +189,7 @@ public class NodeVersionMetadata
         result = 31 * result + ( nodeVersionKey != null ? nodeVersionKey.hashCode() : 0 );
         result = 31 * result + ( nodeId != null ? nodeId.hashCode() : 0 );
         result = 31 * result + ( nodePath != null ? nodePath.hashCode() : 0 );
+        result = 31 * result + ( nodeCommitId != null ? nodeCommitId.hashCode() : 0 );
         result = 31 * result + ( timestamp != null ? timestamp.hashCode() : 0 );
         return result;
     }

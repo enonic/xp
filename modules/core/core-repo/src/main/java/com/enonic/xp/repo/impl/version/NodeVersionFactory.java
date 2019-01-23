@@ -2,7 +2,10 @@ package com.enonic.xp.repo.impl.version;
 
 import java.time.Instant;
 
+import com.google.common.base.Strings;
+
 import com.enonic.xp.blob.NodeVersionKey;
+import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
@@ -23,6 +26,7 @@ class NodeVersionFactory
         final Instant timestamp = Instant.parse( values.getSingleValue( VersionIndexPath.TIMESTAMP.getPath() ).toString() );
         final String id = values.getSingleValue( VersionIndexPath.NODE_ID.getPath() ).toString();
         final String path = values.getSingleValue( VersionIndexPath.NODE_PATH.getPath() ).toString();
+        final String commitId = values.getSingleValue( VersionIndexPath.COMMIT_ID.getPath() ).toString();
 
         final NodeVersionKey nodeVersionKey = NodeVersionKey.from( nodeBlobKey, indexConfigBlobKey, accessControlBlobKey );
 
@@ -32,6 +36,7 @@ class NodeVersionFactory
             timestamp( timestamp ).
             nodeVersionId( NodeVersionId.from( versionId ) ).
             nodeVersionKey( nodeVersionKey ).
+            nodeCommitId( Strings.isNullOrEmpty( commitId ) ? null : NodeCommitId.from( commitId )  ).
             build();
     }
 

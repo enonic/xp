@@ -416,6 +416,11 @@ public abstract class AbstractNodeTest
         printAllIndexContent( IndexNameResolver.resolveStorageIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.VERSION.getName() );
     }
 
+    protected void printCommitIndex()
+    {
+        printAllIndexContent( IndexNameResolver.resolveStorageIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.COMMIT.getName() );
+    }
+
     protected PushNodesResult pushNodes( final Branch target, final NodeId... nodeIds )
     {
         return doPushNodes( NodeIds.from( Arrays.asList( nodeIds ) ), target );

@@ -1,5 +1,5 @@
 {
-  "version": {
+  "commit": {
     "_all": {
       "enabled": false
     },
@@ -9,17 +9,12 @@
     "date_detection": false,
     "numeric_detection": false,
     "properties": {
-      "nodeid": {
+      "commitid": {
         "type": "string",
         "store": "true",
         "index": "not_analyzed"
       },
-      "versionid": {
-        "type": "string",
-        "store": "true",
-        "index": "not_analyzed"
-      },
-      "blobkey": {
+      "message": {
         "type": "string",
         "store": "true",
         "index": "not_analyzed"
@@ -29,13 +24,7 @@
         "store": "true",
         "index": "not_analyzed"
       },
-      "nodepath": {
-        "type": "string",
-        "store": "true",
-        "index": "analyzed",
-        "analyzer": "keywordlowercase"
-      },
-      "commitid": {
+      "committer": {
         "type": "string",
         "store": "true",
         "index": "not_analyzed"
