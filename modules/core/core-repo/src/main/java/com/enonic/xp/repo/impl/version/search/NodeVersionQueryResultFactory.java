@@ -65,7 +65,7 @@ public class NodeVersionQueryResultFactory
 
         final String nodeId = getStringValue( hit, VersionIndexPath.NODE_ID, true );
 
-        final String commitId = getStringValue( hit, VersionIndexPath.COMMIT_ID, true );
+        final String commitId = getStringValue( hit, VersionIndexPath.COMMIT_ID, false );
 
         final NodeVersionKey nodeVersionKey = NodeVersionKey.from( nodeBlobKey, indexConfigBlobKey, accessControlBlobKey );
 

@@ -24,7 +24,7 @@ public class VersionStorageDocFactory
             add( VersionIndexPath.TIMESTAMP.getPath(), nodeVersion.getTimestamp() != null ? nodeVersion.getTimestamp() : Instant.now() ).
             add( VersionIndexPath.NODE_PATH.getPath(), nodeVersion.getNodePath().toString() );
 
-        if (nodeVersion.getNodeCommitId() != null) {
+        if ( nodeVersion.getNodeCommitId() != null) {
             data.add( VersionIndexPath.COMMIT_ID.getPath(), nodeVersion.getNodeCommitId().toString() );
         }
 

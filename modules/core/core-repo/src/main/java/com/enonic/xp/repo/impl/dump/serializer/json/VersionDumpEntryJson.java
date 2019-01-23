@@ -76,7 +76,7 @@ public class VersionDumpEntryJson
             nodeBlobKey( meta.getNodeVersionKey().getNodeBlobKey().toString() ).
             indexConfigBlobKey( meta.getNodeVersionKey().getIndexConfigBlobKey().toString() ).
             accessControlBlobKey( meta.getNodeVersionKey().getAccessControlBlobKey().toString() ).
-            commitId( meta.getNodeCommitId().toString() ).
+            commitId( meta.getNodeCommitId() == null ? null: meta.getNodeCommitId().toString() ).
             build();
     }
 

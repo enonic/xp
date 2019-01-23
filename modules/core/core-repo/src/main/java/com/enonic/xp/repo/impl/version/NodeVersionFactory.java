@@ -26,7 +26,7 @@ class NodeVersionFactory
         final Instant timestamp = Instant.parse( values.getSingleValue( VersionIndexPath.TIMESTAMP.getPath() ).toString() );
         final String id = values.getSingleValue( VersionIndexPath.NODE_ID.getPath() ).toString();
         final String path = values.getSingleValue( VersionIndexPath.NODE_PATH.getPath() ).toString();
-        final String commitId = values.getSingleValue( VersionIndexPath.COMMIT_ID.getPath() ).toString();
+        final Object commitId = values.getSingleValue( VersionIndexPath.COMMIT_ID.getPath() );
 
         final NodeVersionKey nodeVersionKey = NodeVersionKey.from( nodeBlobKey, indexConfigBlobKey, accessControlBlobKey );
 
@@ -36,7 +36,7 @@ class NodeVersionFactory
             timestamp( timestamp ).
             nodeVersionId( NodeVersionId.from( versionId ) ).
             nodeVersionKey( nodeVersionKey ).
-            nodeCommitId( Strings.isNullOrEmpty( commitId ) ? null : NodeCommitId.from( commitId )  ).
+            nodeCommitId( commitId == null ? null : NodeCommitId.from( commitId.toString() )  ).
             build();
     }
 
