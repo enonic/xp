@@ -11,6 +11,7 @@ import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.region.Component;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
@@ -21,7 +22,11 @@ public final class PortalRequest
 {
     private final static Branch DEFAULT_BRANCH = ContentConstants.BRANCH_DRAFT;
 
+    private final static RepositoryId DEFAULT_REPOSITORY_ID = ContentConstants.CONTENT_REPO_ID;
+
     private RenderMode mode;
+
+    private RepositoryId repositoryId;
 
     private Branch branch;
 
@@ -49,19 +54,19 @@ public final class PortalRequest
 
     public PortalRequest()
     {
+    }
+
+    {
         this.baseUri = "";
         this.contentPath = ContentPath.from( "/" );
         this.mode = RenderMode.LIVE;
         this.branch = DEFAULT_BRANCH;
+        this.repositoryId = DEFAULT_REPOSITORY_ID;
     }
 
     public PortalRequest( final WebRequest webRequest )
     {
         super(webRequest);
-        this.baseUri = "";
-        this.contentPath = ContentPath.from( "/" );
-        this.mode = RenderMode.LIVE;
-        this.branch = DEFAULT_BRANCH;
     }
 
     public Branch getBranch()
@@ -82,6 +87,16 @@ public final class PortalRequest
     public void setBranch( final Branch branch )
     {
         this.branch = branch;
+    }
+
+    public RepositoryId getRepositoryId()
+    {
+        return repositoryId;
+    }
+
+    public void setRepositoryId( final RepositoryId repositoryId )
+    {
+        this.repositoryId = repositoryId;
     }
 
     public String rewriteUri( final String uri )
@@ -198,8 +213,9 @@ public final class PortalRequest
     {
         this.validTicket = validTicket;
     }
-    
-    public boolean isPortalBase() {
+
+    public boolean isSiteBase()
+    {
         return baseUri.startsWith( "/site" ) || baseUri.startsWith( "/admin/site" );
     }
 }

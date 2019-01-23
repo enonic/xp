@@ -20,6 +20,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.impl.exception.OutOfScopeException;
 import com.enonic.xp.portal.url.AbstractUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 import com.enonic.xp.web.servlet.UriRewritingResult;
 
@@ -44,6 +45,11 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
     private Branch getBranch()
     {
         return this.portalRequest.getBranch();
+    }
+
+    private RepositoryId getRepositoryId()
+    {
+        return this.portalRequest.getRepositoryId();
     }
 
     public final void setParams( final T params )
@@ -170,8 +176,9 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
     {
         params.putAll( this.params.getParams() );
 
-        if ( isPortalBase() )
+        if ( isSiteBase() )
         {
+            appendPart( url, getRepositoryId().toString() );
             appendPart( url, getBranch().toString() );
         }
     }
@@ -197,9 +204,9 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
         }
     }
 
-    private boolean isPortalBase()
+    private boolean isSiteBase()
     {
-        return this.portalRequest.isPortalBase();
+        return this.portalRequest.isSiteBase();
     }
 
     protected final String buildErrorUrl( final int code, final String message )
@@ -207,8 +214,9 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
         final StringBuilder str = new StringBuilder();
         appendPart( str, getBaseUri() );
 
-        if ( isPortalBase() )
+        if ( isSiteBase() )
         {
+            appendPart( str, getRepositoryId().toString() );
             appendPart( str, getBranch().toString() );
             appendPart( str, this.portalRequest.getContentPath().toString() );
         }
