@@ -29,6 +29,8 @@ public class MockApplication
 
     private Configuration config;
 
+    private Bundle bundle;
+
     @Override
     public ApplicationKey getKey()
     {
@@ -86,7 +88,12 @@ public class MockApplication
     @Override
     public Bundle getBundle()
     {
-        return null;
+        return this.bundle;
+    }
+
+    public void setBundle( final Bundle bundle )
+    {
+        this.bundle = bundle;
     }
 
     @Override

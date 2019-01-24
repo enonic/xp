@@ -11,6 +11,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.descriptor.Descriptor;
+import com.enonic.xp.icon.Icon;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
@@ -21,6 +22,10 @@ public class WidgetDescriptor
     extends Descriptor
 {
     private final String displayName;
+
+    private final String description;
+
+    private final Icon icon;
 
     private final ImmutableSet<String> interfaces;
 
@@ -34,6 +39,8 @@ public class WidgetDescriptor
     {
         super( builder.key );
         this.displayName = builder.displayName;
+        this.description = builder.description;
+        this.icon = builder.icon;
         this.interfaces = ImmutableSet.copyOf( builder.interfaces );
         this.allowedPrincipals = builder.allowedPrincipals == null ? null : PrincipalKeys.from( builder.allowedPrincipals );
         this.config = ImmutableMap.copyOf( builder.config );
@@ -52,6 +59,16 @@ public class WidgetDescriptor
     public String getDisplayName()
     {
         return displayName;
+    }
+
+    public String getDescription()
+    {
+        return description;
+    }
+
+    public Icon getIcon()
+    {
+        return icon;
     }
 
     public Set<String> getInterfaces()
@@ -91,6 +108,10 @@ public class WidgetDescriptor
 
         private String displayName;
 
+        private String description;
+
+        private Icon icon;
+
         public final Set<String> interfaces = Sets.newTreeSet();
 
         private Collection<PrincipalKey> allowedPrincipals;
@@ -110,6 +131,18 @@ public class WidgetDescriptor
         public Builder displayName( final String displayName )
         {
             this.displayName = displayName;
+            return this;
+        }
+
+        public Builder description( final String description )
+        {
+            this.description = description;
+            return this;
+        }
+
+        public Builder setIcon( final Icon icon )
+        {
+            this.icon = icon;
             return this;
         }
 

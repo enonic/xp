@@ -655,6 +655,7 @@ public class ApplicationResourceTest
     {
         final WidgetDescriptor widgetDescriptor1 = WidgetDescriptor.create().
             displayName( "My widget" ).
+            description( "My widget description" ).
             addInterface( "com.enonic.xp.my-interface" ).
             addInterface( "com.enonic.xp.my-interface-2" ).
             key( DescriptorKey.from( "myapp:my-widget" ) ).

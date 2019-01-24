@@ -54,6 +54,7 @@ public class XmlWidgetDescriptorParserTest
         assertEquals( "myapplication:mywidget", result.getKey().toString() );
         assertEquals( "mywidget", result.getName() );
         assertEquals( "My widget", result.getDisplayName() );
+        assertEquals( "My widget description", result.getDescription() );
         assertEquals( "myapplication:mywidget", result.getKeyString() );
         assertEquals( "_/widgets/myapplication/mywidget", result.getUrl() );
 

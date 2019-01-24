@@ -8,6 +8,7 @@ import org.mockito.Mockito;
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.admin.widget.WidgetDescriptor;
 import com.enonic.xp.admin.widget.WidgetDescriptorService;
+import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.descriptor.Descriptors;
 import com.enonic.xp.page.DescriptorKey;
 
@@ -18,10 +19,13 @@ public class WidgetDescriptorResourceTest
 
     private WidgetDescriptorService widgetDescriptorService;
 
+    private ApplicationService applicationService;
+
     @Override
     protected Object getResourceInstance()
     {
         this.widgetDescriptorService = Mockito.mock( WidgetDescriptorService.class );
+        this.applicationService = Mockito.mock( ApplicationService.class );
 
         final WidgetDescriptorResource resource = new WidgetDescriptorResource();
         resource.setWidgetDescriptorService( widgetDescriptorService );
@@ -36,6 +40,7 @@ public class WidgetDescriptorResourceTest
 
         final WidgetDescriptor widgetDescriptor1 = WidgetDescriptor.create().
             displayName( "My widget" ).
+            description( "My widget description" ).
             addInterface( "com.enonic.xp.my-interface" ).
             addInterface( "com.enonic.xp.my-interface-2" ).
             key( DescriptorKey.from( "myapp:my-widget" ) ).
@@ -43,6 +48,7 @@ public class WidgetDescriptorResourceTest
 
         final WidgetDescriptor widgetDescriptor2 = WidgetDescriptor.create().
             displayName( "My second widget" ).
+            description( "My second widget description" ).
             key( DescriptorKey.from( "myapp:my-second-widget" ) ).
             addProperty( "key1", "value1" ).
             build();

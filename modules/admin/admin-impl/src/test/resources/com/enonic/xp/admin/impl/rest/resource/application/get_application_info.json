@@ -49,7 +49,9 @@
     "descriptors": [
       {
         "config": {},
+        "description": "My widget description",
         "displayName": "My widget",
+        "iconUrl": null,
         "interfaces": [
           "com.enonic.xp.my-interface",
           "com.enonic.xp.my-interface-2"
