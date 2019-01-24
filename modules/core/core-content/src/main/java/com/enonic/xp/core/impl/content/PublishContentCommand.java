@@ -200,7 +200,6 @@ public class PublishContentCommand
     {
         final NodeCommitEntry commitEntry = NodeCommitEntry.create().
             message( "Publish" ).
-            committer( getUserKey() ).
             build();
         final RoutableNodeVersionIds.Builder routableNodeVersionIds = RoutableNodeVersionIds.create();
         for ( NodeBranchEntry branchEntry : branchEntries )
@@ -210,20 +209,6 @@ public class PublishContentCommand
             routableNodeVersionIds.add( routableNodeVersionId );
         }
         nodeService.commit( commitEntry, routableNodeVersionIds.build() );
-    }
-
-    private String getUserKey()
-    {
-        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-        if ( authInfo != null )
-        {
-            final User user = authInfo.getUser();
-            if ( user != null )
-            {
-                return user.getKey().toString();
-            }
-        }
-        return null;
     }
 
 

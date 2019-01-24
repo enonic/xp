@@ -4,6 +4,11 @@ import java.time.Instant;
 
 import com.google.common.annotations.Beta;
 
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.User;
+import com.enonic.xp.security.auth.AuthenticationInfo;
+
 @Beta
 public class NodeCommitEntry
     implements Comparable<NodeCommitEntry>
@@ -21,17 +26,7 @@ public class NodeCommitEntry
         nodeCommitId = builder.nodeCommitId;
         message = builder.message == null ? "" : builder.message;
         timestamp = builder.timestamp == null ? Instant.now() : builder.timestamp;
-        committer = builder.committer == null ? "" : builder.committer;
-    }
-
-    public static Builder create()
-    {
-        return new Builder();
-    }
-
-    public static Builder create( NodeCommitEntry nodeCommitEntry )
-    {
-        return new Builder( nodeCommitEntry );
+        committer = builder.committer == null ? getCurrentUserKey() : builder.committer;
     }
 
     public NodeCommitId getNodeCommitId()
@@ -55,6 +50,7 @@ public class NodeCommitEntry
     }
 
     // Insert with newest first
+
     @Override
     public int compareTo( final NodeCommitEntry o )
     {
@@ -71,8 +67,37 @@ public class NodeCommitEntry
         return -1;
     }
 
+    private String getCurrentUserKey()
+    {
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+        if ( authInfo != null )
+        {
+            final User user = authInfo.getUser();
+            if ( user != null )
+            {
+                return user.getKey().toString();
+            }
+            else
+            {
+                return PrincipalKey.ofAnonymous().toString();
+            }
+        }
+        return "";
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public static Builder create( NodeCommitEntry nodeCommitEntry )
+    {
+        return new Builder( nodeCommitEntry );
+    }
+
     public static final class Builder
     {
+
         private NodeCommitId nodeCommitId;
 
         private String message;

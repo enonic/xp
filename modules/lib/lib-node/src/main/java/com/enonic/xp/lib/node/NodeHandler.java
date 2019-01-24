@@ -177,6 +177,16 @@ public class NodeHandler
     }
 
     @SuppressWarnings("unused")
+    public Object commit( final String[] keys, final String message )
+    {
+        return execute( CommitNodeHandler.create().
+            nodeService( this.nodeService ).
+            keys( NodeKeys.from( keys ) ).
+            message( message ).
+            build() );
+    }
+
+    @SuppressWarnings("unused")
     public Object setRootPermissions( final ScriptValue value )
     {
         final ScriptValueTranslatorResult translatorResult = new ScriptValueTranslator( false ).create( value );
