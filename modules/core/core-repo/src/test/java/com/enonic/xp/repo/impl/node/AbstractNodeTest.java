@@ -37,6 +37,7 @@ import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.binary.BinaryServiceImpl;
 import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;
+import com.enonic.xp.repo.impl.commit.CommitServiceImpl;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.elasticsearch.AbstractElasticsearchIntegrationTest;
 import com.enonic.xp.repo.impl.elasticsearch.IndexServiceInternalImpl;
@@ -109,6 +110,8 @@ public abstract class AbstractNodeTest
 
     protected BranchServiceImpl branchService;
 
+    protected CommitServiceImpl commitService;
+
     protected IndexServiceInternalImpl indexServiceInternal;
 
     private SnapshotServiceImpl snapshotService;
@@ -168,6 +171,9 @@ public abstract class AbstractNodeTest
         this.versionService = new VersionServiceImpl();
         this.versionService.setStorageDao( storageDao );
 
+        this.commitService = new CommitServiceImpl();
+        this.commitService.setStorageDao( storageDao );
+
         // Storage-service
         this.nodeDao = new NodeVersionServiceImpl();
         this.nodeDao.setBlobStore( blobStore );
@@ -178,6 +184,7 @@ public abstract class AbstractNodeTest
         this.storageService = new NodeStorageServiceImpl();
         this.storageService.setVersionService( this.versionService );
         this.storageService.setBranchService( this.branchService );
+        this.storageService.setCommitService( this.commitService );
         this.storageService.setNodeVersionService( this.nodeDao );
         this.storageService.setIndexDataService( this.indexedDataService );
 

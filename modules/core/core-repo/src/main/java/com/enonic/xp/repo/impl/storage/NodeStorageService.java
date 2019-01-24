@@ -7,6 +7,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeCommitEntry;
+import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
@@ -60,6 +61,8 @@ public interface NodeStorageService
     NodeBranchEntries getBranchNodeVersions( final NodeIds nodeIds, final boolean keepOrder, final InternalContext context );
 
     NodeVersionMetadata getVersion( final NodeId nodeId, final NodeVersionId nodeVersionId, final InternalContext context );
+
+    NodeCommitEntry getCommit( final NodeCommitId nodeCommitId, final InternalContext context );
 
     NodeId getIdForPath( final NodePath nodePath, final InternalContext context );
 

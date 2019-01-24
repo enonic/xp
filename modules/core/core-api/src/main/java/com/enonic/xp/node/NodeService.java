@@ -98,6 +98,10 @@ public interface NodeService
 
     NodeCommitEntry commit( NodeCommitEntry nodeCommitEntry, RoutableNodeVersionIds routableNodeVersionIds );
 
+    NodeCommitEntry commit( NodeCommitEntry nodeCommitEntry, NodeIds nodeIds );
+
+    NodeCommitEntry getCommit( NodeCommitId nodeCommitId );
+
     boolean hasChildren( Node node );
 
     boolean nodeExists( NodeId nodeId );

@@ -20,7 +20,7 @@ public class NodeCommitEntry
     {
         nodeCommitId = builder.nodeCommitId;
         message = builder.message == null ? "" : builder.message;
-        timestamp = builder.timestamp;
+        timestamp = builder.timestamp == null ? Instant.now() : builder.timestamp;
         committer = builder.committer == null ? "" : builder.committer;
     }
 

@@ -332,6 +332,12 @@ public class NodeStorageServiceImpl
     }
 
     @Override
+    public NodeCommitEntry getCommit( final NodeCommitId nodeCommitId, final InternalContext context )
+    {
+        return this.commitService.get( nodeCommitId, context );
+    }
+
+    @Override
     public NodeId getIdForPath( final NodePath nodePath, final InternalContext context )
     {
         final NodeBranchEntry nodeBranchEntry = this.branchService.get( nodePath, context );

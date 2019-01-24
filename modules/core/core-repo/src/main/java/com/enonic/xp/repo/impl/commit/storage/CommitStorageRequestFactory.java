@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.commit.storage;
 
-import java.time.Instant;
-
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.StorageSource;
@@ -19,8 +17,7 @@ public class CommitStorageRequestFactory
         final StorageData data = StorageData.create().
             add( CommitIndexPath.COMMIT_ID.getPath(), id ).
             add( CommitIndexPath.MESSAGE.getPath(), nodeCommitEntry.getMessage() ).
-            add( CommitIndexPath.TIMESTAMP.getPath(),
-                 nodeCommitEntry.getTimestamp() != null ? nodeCommitEntry.getTimestamp() : Instant.now() ).
+            add( CommitIndexPath.TIMESTAMP.getPath(), nodeCommitEntry.getTimestamp() ).
             add( CommitIndexPath.COMMITTER.getPath(), nodeCommitEntry.getCommitter() == null ).
             build();
 
