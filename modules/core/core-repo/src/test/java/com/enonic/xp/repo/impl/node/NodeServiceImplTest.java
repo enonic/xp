@@ -369,7 +369,7 @@ public class NodeServiceImplTest
         //Call commit with node ID
         final NodeCommitEntry commitEntry = NodeCommitEntry.create().
             message( "Commit message" ).
-            committer( "Commiter" ).
+            committer( "Committer" ).
             build();
         final NodeCommitEntry returnedCommitEntry = nodeService.commit( commitEntry, NodeIds.from( nodeId ) );
         nodeService.refresh( RefreshMode.STORAGE );
@@ -379,7 +379,7 @@ public class NodeServiceImplTest
         assertNotNull( nodeCommitId );
         assertEquals( "Commit message", returnedCommitEntry.getMessage() );
         assertNotNull( returnedCommitEntry.getTimestamp() );
-        assertEquals( "Commiter", returnedCommitEntry.getCommitter() );
+        assertEquals( "Committer", returnedCommitEntry.getCommitter() );
 
         //Check that only the latest version has a commit ID
         final NodeVersionsMetadata versionsMetadata2 = getVersionsMetadata( nodeId );
@@ -393,7 +393,7 @@ public class NodeServiceImplTest
         //Call commit with the node version ID of the first version
         final NodeCommitEntry commitEntry2 = NodeCommitEntry.create().
             message( "Commit message 2" ).
-            committer( "Commiter" ).
+            committer( "Committer" ).
             build();
         final RoutableNodeVersionId routableNodeVersionId = RoutableNodeVersionId.from( nodeId, firstVersionMetadata2.getNodeVersionId() );
         final NodeCommitEntry returnedCommitEntry2 =
