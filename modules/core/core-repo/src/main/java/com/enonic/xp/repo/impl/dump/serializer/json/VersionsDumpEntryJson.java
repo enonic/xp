@@ -48,7 +48,7 @@ public class VersionsDumpEntryJson
         return new VersionsDumpEntryJson( nodeId, versions );
     }
 
-    private String getNodeId()
+    public String getNodeId()
     {
         return nodeId;
     }
