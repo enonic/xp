@@ -8,7 +8,6 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
@@ -38,6 +37,7 @@ import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.MultiRepoNodeQuery;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
+import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
 import com.enonic.xp.node.NodeId;
@@ -60,6 +60,7 @@ import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.ReorderChildNodesParams;
 import com.enonic.xp.node.ReorderChildNodesResult;
 import com.enonic.xp.node.ResolveSyncWorkResult;
+import com.enonic.xp.node.RoutableNodeVersionIds;
 import com.enonic.xp.node.SetNodeChildOrderParams;
 import com.enonic.xp.node.SetNodeStateParams;
 import com.enonic.xp.node.SetNodeStateResult;
@@ -600,7 +601,7 @@ public class NodeServiceImpl
     }
 
     @Override
-    public boolean deleteVersion(final NodeId nodeId, final NodeVersionId nodeVersionId )
+    public boolean deleteVersion( final NodeId nodeId, final NodeVersionId nodeVersionId )
     {
         return DeleteVersionCommand.create().
             nodeId( nodeId ).
@@ -655,7 +656,6 @@ public class NodeServiceImpl
     public NodeVersion getByNodeVersionKey( final NodeVersionKey nodeVersionKey )
     {
         verifyContext();
-
 
         final Context currentContext = ContextAccessor.current();
         return this.nodeStorageService.getNodeVersion( nodeVersionKey, InternalContext.from( currentContext ) );
@@ -967,6 +967,13 @@ public class NodeServiceImpl
             indexServiceInternal( this.indexServiceInternal ).
             build().
             execute();
+    }
+
+    @Override
+    public NodeCommitEntry commit( final NodeCommitEntry nodeCommitEntry, final RoutableNodeVersionIds routableNodeVersionIds )
+    {
+        verifyContext();
+        return nodeStorageService.commit( nodeCommitEntry, routableNodeVersionIds, InternalContext.from( ContextAccessor.current() ) );
     }
 
     private void verifyContext()

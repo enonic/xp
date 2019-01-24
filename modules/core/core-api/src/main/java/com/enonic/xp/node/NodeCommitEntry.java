@@ -19,14 +19,19 @@ public class NodeCommitEntry
     private NodeCommitEntry( Builder builder )
     {
         nodeCommitId = builder.nodeCommitId;
-        message = builder.message;
+        message = builder.message == null ? "" : builder.message;
         timestamp = builder.timestamp;
-        committer = builder.committer;
+        committer = builder.committer == null ? "" : builder.committer;
     }
 
     public static Builder create()
     {
         return new Builder();
+    }
+
+    public static Builder create( NodeCommitEntry nodeCommitEntry )
+    {
+        return new Builder( nodeCommitEntry );
     }
 
     public NodeCommitId getNodeCommitId()
@@ -78,6 +83,14 @@ public class NodeCommitEntry
 
         private Builder()
         {
+        }
+
+        private Builder( NodeCommitEntry nodeCommitEntry )
+        {
+            nodeCommitId = nodeCommitEntry.nodeCommitId;
+            message = nodeCommitEntry.message;
+            timestamp = nodeCommitEntry.timestamp;
+            committer = nodeCommitEntry.committer;
         }
 
         public Builder nodeCommitId( final NodeCommitId nodeCommitId )

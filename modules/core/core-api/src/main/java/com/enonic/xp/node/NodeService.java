@@ -3,7 +3,6 @@ package com.enonic.xp.node;
 import com.google.common.annotations.Beta;
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -79,7 +78,7 @@ public interface NodeService
 
     ByteSource getBinary( NodeId nodeId, BinaryReference reference );
 
-    ByteSource getBinary(NodeId nodeId, NodeVersionId nodeVersionId, BinaryReference reference );
+    ByteSource getBinary( NodeId nodeId, NodeVersionId nodeVersionId, BinaryReference reference );
 
     String getBinaryKey( NodeId nodeId, BinaryReference reference );
 
@@ -96,6 +95,8 @@ public interface NodeService
     LoadNodeResult loadNode( final LoadNodeParams params );
 
     NodesHasChildrenResult hasChildren( Nodes nodes );
+
+    NodeCommitEntry commit( NodeCommitEntry nodeCommitEntry, RoutableNodeVersionIds routableNodeVersionIds );
 
     boolean hasChildren( Node node );
 
