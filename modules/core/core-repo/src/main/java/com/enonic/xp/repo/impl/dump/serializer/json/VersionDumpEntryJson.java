@@ -51,6 +51,7 @@ public class VersionDumpEntryJson
         indexConfigBlobKey = builder.indexConfigBlobKey;
         accessControlBlobKey = builder.accessControlBlobKey;
         nodeState = builder.nodeState;
+        commitId = builder.commitId;
     }
 
     public static VersionMeta fromJson( final VersionDumpEntryJson json )
@@ -76,7 +77,7 @@ public class VersionDumpEntryJson
             nodeBlobKey( meta.getNodeVersionKey().getNodeBlobKey().toString() ).
             indexConfigBlobKey( meta.getNodeVersionKey().getIndexConfigBlobKey().toString() ).
             accessControlBlobKey( meta.getNodeVersionKey().getAccessControlBlobKey().toString() ).
-            commitId( meta.getNodeCommitId() == null ? null: meta.getNodeCommitId().toString() ).
+            commitId( meta.getNodeCommitId() == null ? null : meta.getNodeCommitId().toString() ).
             build();
     }
 
