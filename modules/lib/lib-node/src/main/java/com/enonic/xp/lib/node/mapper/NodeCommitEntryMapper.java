@@ -20,7 +20,7 @@ public class NodeCommitEntryMapper
     {
         gen.value( "id", commitEntry.getNodeCommitId() );
         gen.value( "message", commitEntry.getMessage() );
-        gen.value( "commiter", commitEntry.getCommitter() );
+        gen.value( "committer", commitEntry.getCommitter() );
         gen.value( "timestamp", commitEntry.getTimestamp() );
     }
 }

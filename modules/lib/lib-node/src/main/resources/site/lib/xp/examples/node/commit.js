@@ -18,7 +18,7 @@ log.info('Commit created with id ' + result1._id);
 var expected1 = {
     "id": "aa1f76bf-4bb9-41be-b166-03561c1555b2",
     "message": "",
-    "commiter": "user:system:anonymous",
+    "committer": "user:system:anonymous",
     "timestamp": "2019-01-24T15:16:36.260799Z"
 };
 // END
@@ -38,7 +38,7 @@ log.info('Commit created with id ' + result2._id);
 var expected2 = {
     "id": "aa1f76bf-4bb9-41be-b166-03561c1555b2",
     "message": "Commit message",
-    "commiter": "user:system:anonymous",
+    "committer": "user:system:anonymous",
     "timestamp": "2019-01-24T15:16:36.260799Z"
 };
 // END
