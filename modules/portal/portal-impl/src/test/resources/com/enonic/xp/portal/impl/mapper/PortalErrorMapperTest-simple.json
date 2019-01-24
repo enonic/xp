@@ -13,6 +13,7 @@
     "remoteAddress": "10.0.0.1",
     "mode": "live",
     "webSocket": false,
+    "repositoryId": "com.enonic.cms.default",
     "branch": "draft",
     "contextPath": "/site/live/master/a",
     "params": {
