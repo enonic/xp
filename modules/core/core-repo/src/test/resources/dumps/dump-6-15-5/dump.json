@@ -2,7 +2,7 @@
   "xpVersion": "6.15.5",
   "timestamp": "2018-12-13T14:50:29.028Z",
   "result": {
-    "com.enonic.cms.default": {
+    "cms-repo": {
       "versions": 27,
       "branchResults": {
         "draft": {
