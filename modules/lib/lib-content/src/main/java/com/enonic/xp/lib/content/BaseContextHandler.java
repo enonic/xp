@@ -1,12 +1,8 @@
 package com.enonic.xp.lib.content;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.base.Strings;
 
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.context.Context;
-import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.lib.common.FormJsonToPropertyTreeTranslator;
@@ -26,32 +22,15 @@ public abstract class BaseContextHandler
 {
     protected ContentService contentService;
 
-    private String branch;
-
     private ContentTypeService contentTypeService;
 
     private MixinService mixinService;
 
     private XDataService xDataService;
 
-    public void setBranch( final String branch )
-    {
-        this.branch = branch;
-    }
-
     public final Object execute()
     {
-        if ( Strings.isNullOrEmpty( this.branch ) )
-        {
-            return doExecute();
-        }
-
-        final Context context = ContextBuilder.
-            from( ContextAccessor.current() ).
-            branch( this.branch ).
-            build();
-
-        return context.callWith( this::doExecute );
+        return this.doExecute();
     }
 
     protected abstract Object doExecute();

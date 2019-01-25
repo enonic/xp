@@ -7,8 +7,7 @@ var result = contentLib.getChildren({
     key: '/path/to',
     start: 0,
     count: 2,
-    sort: '_modifiedTime ASC',
-    branch: 'draft'
+    sort: '_modifiedTime ASC'
 });
 
 log.info('Found ' + result.total + ' number of contents');

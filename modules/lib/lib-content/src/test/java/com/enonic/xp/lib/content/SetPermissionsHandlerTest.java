@@ -56,25 +56,6 @@ public class SetPermissionsHandlerTest
     }
 
     @Test
-    public void testWithBranch()
-        throws Exception
-    {
-        final Content content = TestDataFixtures.newExampleContent();
-        Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
-
-        Mockito.when( this.contentService.applyPermissions( Mockito.any() ) ).thenReturn( ApplyContentPermissionsResult.create().build() );
-
-        SecurityService securityService = Mockito.mock( SecurityService.class );
-        addService( SecurityService.class, securityService );
-
-        final Optional<? extends Principal> value = Optional.of( User.ANONYMOUS );
-        Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( Mockito.any( PrincipalKey.class ) ) ).thenReturn(
-            value );
-
-        runFunction( "/site/test/SetPermissionsHandlerTest.js", "setPermissionsWithBranch" );
-    }
-
-    @Test
     public void testContentNotFoundByPath()
         throws Exception
     {

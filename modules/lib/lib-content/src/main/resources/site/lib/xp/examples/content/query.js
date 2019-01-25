@@ -40,7 +40,6 @@ var result = contentLib.query({
             values: ["id1", "id2"]
         }
     },
-    branch: "draft",
     contentTypes: [
         app.name + ":house",
         app.name + ":apartment"
