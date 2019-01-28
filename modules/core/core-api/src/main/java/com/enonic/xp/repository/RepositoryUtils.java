@@ -1,12 +1,18 @@
 package com.enonic.xp.repository;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang.StringUtils;
 
 import com.enonic.xp.content.ContentConstants;
 
 public final class RepositoryUtils
 {
-    public static final String VALID_CONTENT_NAME_REGEX = "([a-z0-9\\-])*";
+    private static final String CONTENT_NAME_REGEX = "([a-z0-9\\-]+)";
+
+    private static final Pattern CONTENT_REPOSITORY_ID_PATTERN =
+        Pattern.compile( "^" + ContentConstants.CONTENT_REPO_ID_PREFIX.replace( ".", "\\." ) + CONTENT_NAME_REGEX + "$" );
 
     public static RepositoryId fromContentRepoName( final String name )
     {
@@ -20,21 +26,27 @@ public final class RepositoryUtils
 
     public static String getContentRepoName( final RepositoryId repositoryId )
     {
-        if ( !isContentRepo( repositoryId ) )
+        final String contentRepoName = extractContentRepoName( repositoryId );
+        if ( contentRepoName == null )
         {
             throw new IllegalArgumentException( String.format( "'%s' is not a content repository", repositoryId.toString() ) );
         }
-        return extractContentRepoName( repositoryId.toString() );
+        return contentRepoName;
     }
 
-    private static boolean isContentRepo( final RepositoryId repositoryId )
+    private static String extractContentRepoName( final RepositoryId repositoryId )
     {
-        final String name = extractContentRepoName( repositoryId.toString() );
-        return StringUtils.isNotBlank( name ) && name.matches( "^" + VALID_CONTENT_NAME_REGEX + "$" );
-    }
+        if ( repositoryId == null || StringUtils.isBlank( repositoryId.toString() ) )
+        {
+            return null;
+        }
+        final Matcher matcher = CONTENT_REPOSITORY_ID_PATTERN.matcher( repositoryId.toString() );
 
-    private static String extractContentRepoName( final String value )
-    {
-        return StringUtils.substringAfter( value, ContentConstants.CONTENT_REPO_ID_PREFIX );
+        if ( !matcher.find() )
+        {
+            return null;
+        }
+
+        return matcher.group( 1 );
     }
 }
