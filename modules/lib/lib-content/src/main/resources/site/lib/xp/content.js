@@ -49,14 +49,12 @@ function nullOrValue(value) {
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.key Path or id to the content.
- * @param {string} [params.branch] Set by portal, depending on context, to either draft or master. May be overridden, but this is not recommended. Default is the current branch set in portal.
  *
  * @returns {object} The content (as JSON) fetched from the repository.
  */
 exports.get = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.GetContentHandler');
     bean.key = required(params, 'key');
-    bean.branch = nullOrValue(params.branch);
     return __.toNativeObject(bean.execute());
 };
 
@@ -172,14 +170,12 @@ exports.getSiteConfig = function (params) {
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.key Path or id to the content.
- * @param {string} [params.branch] Set by portal, depending on context, to either draft or master. May be overridden, but this is not recommended. Default is the current branch set in portal.
  *
  * @returns {boolean} True if deleted, false otherwise.
  */
 exports.delete = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.DeleteContentHandler');
     bean.key = required(params, 'key');
-    bean.branch = nullOrValue(params.branch);
     return bean.execute();
 };
 
@@ -193,14 +189,12 @@ exports.delete = function (params) {
  * @param {number} [params.start=0] Start index (used for paging).
  * @param {number} [params.count=10] Number of contents to fetch.
  * @param {string} [params.sort] Sorting expression.
- * @param {string} [params.branch] Set by portal, depending on context, to either draft or master. May be overridden, but this is not recommended. Default is the current branch set in portal.
  *
  * @returns {Object} Result (of content) fetched from the repository.
  */
 exports.getChildren = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.GetChildContentHandler');
     bean.key = required(params, 'key');
-    bean.branch = nullOrValue(params.branch);
     bean.start = params.start;
     bean.count = params.count;
     bean.sort = nullOrValue(params.sort);
@@ -228,7 +222,6 @@ exports.getChildren = function (params) {
  * @param {string} params.contentType Content type to use.
  * @param {string} [params.language] The language tag representing the content’s locale.
  * @param {string} [params.childOrder] Default ordering of children when doing getChildren if no order is given in query
- * @param {string} [params.branch] Set by portal, depending on context, to either draft or master. May be overridden, but this is not recommended. Default is the current branch set in portal.
  * @param {object} params.data Actual content data.
  * @param {object} [params.x] eXtra data to use.
  *
@@ -244,7 +237,6 @@ exports.create = function (params) {
     bean.refresh = nullOrValue(params.refresh);
     bean.language = nullOrValue(params.language);
     bean.childOrder = nullOrValue(params.childOrder);
-    bean.branch = nullOrValue(params.branch);
 
     bean.data = __.toScriptValue(params.data);
     bean.x = __.toScriptValue(params.x);
@@ -267,13 +259,11 @@ exports.create = function (params) {
  * @param {string} [params.sort] Sorting expression.
  * @param {string} [params.aggregations] Aggregations expression.
  * @param {string[]} [params.contentTypes] Content types to filter on.
- * @param {string} [params.branch] Set by portal, depending on context, to either draft or master. May be overridden, but this is not recommended. Default is the current branch set in portal.
  *
  * @returns {Object} Result of query.
  */
 exports.query = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.QueryContentHandler');
-    bean.branch = nullOrValue(params.branch);
     bean.start = params.start;
     bean.count = params.count;
     bean.query = nullOrValue(params.query);
@@ -292,7 +282,6 @@ exports.query = function (params) {
  * @param {object} params JSON with the parameters.
  * @param {string} params.key Path or id to the content.
  * @param {function} params.editor Editor callback function.
- * @param {string} [params.branch] Set by portal, depending on context, to either draft or master. May be overridden, but this is not recommended. Default is the current branch set in portal.
  * @param {boolean} [params.requireValid=true] The content has to be valid, according to the content type, to be updated. If requireValid=true and the content is not strictly valid, an error will be thrown.
  *
  * @returns {object} Modified content as JSON.
@@ -300,7 +289,6 @@ exports.query = function (params) {
 exports.modify = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.ModifyContentHandler');
     bean.key = required(params, 'key');
-    bean.branch = nullOrValue(params.branch);
     bean.editor = __.toScriptValue(params.editor);
     bean.requireValid = nullOrValue(params.requireValid);
     return __.toNativeObject(bean.execute());
@@ -370,7 +358,6 @@ exports.unpublish = function (params) {
  * @param {string} [params.mimeType] Mime-type of the data.
  * @param {number} [params.focalX] Focal point for X axis (if it's an image).
  * @param {number} [params.focalY] Focal point for Y axis (if it's an image).
- * @param {string} [params.branch] Set by portal, depending on context, to either draft or master. May be overridden, but this is not recommended. Default is the current branch set in portal.
  * @param  params.data Data (as stream) to use.
  *
  * @returns {object} Returns the created media content.
@@ -386,7 +373,6 @@ exports.createMedia = function (params) {
     if (params.focalY) {
         bean.focalY = params.focalY;
     }
-    bean.branch = nullOrValue(params.branch);
     bean.data = nullOrValue(params.data);
     bean.idGenerator = nullOrValue(params.idGenerator);
     return __.toNativeObject(bean.execute());
@@ -400,7 +386,6 @@ exports.createMedia = function (params) {
  * @param {object} params JSON with the parameters.
  * @param {string} params.source Path or id of the content to be moved or renamed.
  * @param {string} params.target New path or name for the content. If the target ends in slash '/', it specifies the parent path where to be moved. Otherwise it means the new desired path or name for the content.
- * @param {string} [params.branch] Set by portal, depending on context, to either draft or master. May be overridden, but this is not recommended. Default is the current branch set in portal.
  *
  * @returns {object} The content that was moved or renamed.
  */
@@ -408,7 +393,6 @@ exports.move = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.MoveContentHandler');
     bean.source = required(params, 'source');
     bean.target = required(params, 'target');
-    bean.branch = nullOrValue(params.branch);
     return __.toNativeObject(bean.execute());
 };
 
@@ -419,7 +403,6 @@ exports.move = function (params) {
  *
  * @param {object} params JSON parameters.
  * @param {string} params.key Path or id of the content.
- * @param {string} [params.branch] Set by portal, depending on context, to either draft or master. May be overridden. Default is the current branch set in portal.
  * @param {boolean} [params.inheritPermissions] Set to true if the content must inherit permissions. Default to false.
  * @param {boolean} [params.overwriteChildPermissions] Set to true to overwrite child permissions. Default to false.
  * @param {array} [params.permissions] Array of permissions.
@@ -443,7 +426,6 @@ exports.setPermissions = function (params) {
     if (params.permissions) {
         bean.permissions = __.toScriptValue(params.permissions);
     }
-    bean.branch = nullOrValue(params.branch);
     return __.toNativeObject(bean.execute());
 };
 
