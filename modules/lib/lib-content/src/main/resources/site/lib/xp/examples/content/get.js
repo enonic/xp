@@ -4,8 +4,7 @@ var assert = require('/lib/xp/testing');
 // BEGIN
 // Gets a single content by path.
 var result = contentLib.get({
-    key: '/path/to/mycontent',
-    branch: 'draft'
+    key: '/path/to/mycontent'
 });
 
 if (result) {
