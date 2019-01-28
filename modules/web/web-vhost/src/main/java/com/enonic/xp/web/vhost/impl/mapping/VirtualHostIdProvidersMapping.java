@@ -55,16 +55,9 @@ public class VirtualHostIdProvidersMapping
 
         public Builder addIdProviderKey( final IdProviderKey idProviderKey )
         {
-            if ( this.idProviderKeys.contains( idProviderKey ) )
+            if ( !this.idProviderKeys.contains( idProviderKey ) )
             {
-                return this;
-            }
-
-            this.idProviderKeys.add( idProviderKey );
-
-            if ( defaultIdProvider == null )
-            {
-                defaultIdProvider = idProviderKey;
+                this.idProviderKeys.add( idProviderKey );
             }
 
             return this;
