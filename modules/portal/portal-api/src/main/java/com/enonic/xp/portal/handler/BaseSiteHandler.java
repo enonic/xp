@@ -6,6 +6,7 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.RepositoryUtils;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 
@@ -20,7 +21,7 @@ public abstract class BaseSiteHandler
         {
             throw WebException.notFound( "Repository needs to be specified" );
         }
-        return RepositoryId.from( result );
+        return RepositoryUtils.fromContentRepoName( result );
     }
 
     private static Branch findBranch( final String baseSubPath )

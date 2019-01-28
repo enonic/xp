@@ -21,6 +21,7 @@ import com.enonic.xp.portal.impl.exception.OutOfScopeException;
 import com.enonic.xp.portal.url.AbstractUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.RepositoryUtils;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 import com.enonic.xp.web.servlet.UriRewritingResult;
 
@@ -178,7 +179,7 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
 
         if ( isSiteBase() )
         {
-            appendPart( url, getRepositoryId().toString() );
+            appendPart( url, RepositoryUtils.getContentRepoName( getRepositoryId() ) );
             appendPart( url, getBranch().toString() );
         }
     }
@@ -216,7 +217,7 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
 
         if ( isSiteBase() )
         {
-            appendPart( str, getRepositoryId().toString() );
+            appendPart( str, RepositoryUtils.getContentRepoName( getRepositoryId() ) );
             appendPart( str, getBranch().toString() );
             appendPart( str, this.portalRequest.getContentPath().toString() );
         }

@@ -68,9 +68,8 @@ public class ImageUrlBuilderTest
         final StringBuilder stringBuilder = new StringBuilder( "test/" );
 
         urlBuilder.buildUrl( stringBuilder, HashMultimap.create() );
-        assertEquals(
-            "test/com.enonic.cms.default/draft/context/path/_/image/testID:2f6070713fd0e2823530379eb08b73c660e9a288/testScale/testName",
-            stringBuilder.toString() );
+        assertEquals( "test/default/draft/context/path/_/image/testID:2f6070713fd0e2823530379eb08b73c660e9a288/testScale/testName",
+                      stringBuilder.toString() );
     }
 
     @Test
@@ -81,9 +80,8 @@ public class ImageUrlBuilderTest
         Mockito.when( media.getName() ).thenReturn( ContentName.from( "test+Name.png" ) );
 
         urlBuilder.buildUrl( stringBuilder, HashMultimap.create() );
-        assertEquals(
-            "test/com.enonic.cms.default/draft/context/path/_/image/testID:2f6070713fd0e2823530379eb08b73c660e9a288/testScale/test%2BName.png",
-            stringBuilder.toString() );
+        assertEquals( "test/default/draft/context/path/_/image/testID:2f6070713fd0e2823530379eb08b73c660e9a288/testScale/test%2BName.png",
+                      stringBuilder.toString() );
     }
 
     @Test
@@ -94,9 +92,8 @@ public class ImageUrlBuilderTest
         Mockito.when( media.getName() ).thenReturn( ContentName.from( "test Name.png" ) );
 
         urlBuilder.buildUrl( stringBuilder, HashMultimap.create() );
-        assertEquals(
-            "test/com.enonic.cms.default/draft/context/path/_/image/testID:2f6070713fd0e2823530379eb08b73c660e9a288/testScale/test%20Name.png",
-            stringBuilder.toString() );
+        assertEquals( "test/default/draft/context/path/_/image/testID:2f6070713fd0e2823530379eb08b73c660e9a288/testScale/test%20Name.png",
+                      stringBuilder.toString() );
     }
 
     @Test
@@ -106,9 +103,8 @@ public class ImageUrlBuilderTest
         imageUrlParams.format( "png" );
 
         urlBuilder.buildUrl( stringBuilder, HashMultimap.create() );
-        assertEquals(
-            "test/com.enonic.cms.default/draft/context/path/_/image/testID:2f6070713fd0e2823530379eb08b73c660e9a288/testScale/testName.png",
-            stringBuilder.toString() );
+        assertEquals( "test/default/draft/context/path/_/image/testID:2f6070713fd0e2823530379eb08b73c660e9a288/testScale/testName.png",
+                      stringBuilder.toString() );
     }
 
     @Test
@@ -120,9 +116,8 @@ public class ImageUrlBuilderTest
         Mockito.when( media.getName() ).thenReturn( ContentName.from( "testName.png" ) );
 
         urlBuilder.buildUrl( stringBuilder, HashMultimap.create() );
-        assertEquals(
-            "test/com.enonic.cms.default/draft/context/path/_/image/testID:2f6070713fd0e2823530379eb08b73c660e9a288/testScale/testName.png",
-            stringBuilder.toString() );
+        assertEquals( "test/default/draft/context/path/_/image/testID:2f6070713fd0e2823530379eb08b73c660e9a288/testScale/testName.png",
+                      stringBuilder.toString() );
     }
 
     @Test
@@ -134,9 +129,8 @@ public class ImageUrlBuilderTest
         Mockito.when( media.getName() ).thenReturn( ContentName.from( "testName.jpg" ) );
 
         urlBuilder.buildUrl( stringBuilder, HashMultimap.create() );
-        assertEquals(
-            "test/com.enonic.cms.default/draft/context/path/_/image/testID:2f6070713fd0e2823530379eb08b73c660e9a288/testScale/testName.jpg.png",
-            stringBuilder.toString() );
+        assertEquals( "test/default/draft/context/path/_/image/testID:2f6070713fd0e2823530379eb08b73c660e9a288/testScale/testName.jpg.png",
+                      stringBuilder.toString() );
     }
 
     @Test
@@ -146,9 +140,8 @@ public class ImageUrlBuilderTest
         imageUrlParams.scale( "block(310,175)" );
 
         urlBuilder.buildUrl( stringBuilder, HashMultimap.create() );
-        assertEquals(
-            "test/com.enonic.cms.default/draft/context/path/_/image/testID:2f6070713fd0e2823530379eb08b73c660e9a288/block-310-175/testName",
-            stringBuilder.toString() );
+        assertEquals( "test/default/draft/context/path/_/image/testID:2f6070713fd0e2823530379eb08b73c660e9a288/block-310-175/testName",
+                      stringBuilder.toString() );
     }
 
     @Test
@@ -158,8 +151,7 @@ public class ImageUrlBuilderTest
         imageUrlParams.scale( "block( 310, 175)" );
 
         urlBuilder.buildUrl( stringBuilder, HashMultimap.create() );
-        assertEquals(
-            "test/com.enonic.cms.default/draft/context/path/_/image/testID:2f6070713fd0e2823530379eb08b73c660e9a288/block-310-175/testName",
-            stringBuilder.toString() );
+        assertEquals( "test/default/draft/context/path/_/image/testID:2f6070713fd0e2823530379eb08b73c660e9a288/block-310-175/testName",
+                      stringBuilder.toString() );
     }
 }

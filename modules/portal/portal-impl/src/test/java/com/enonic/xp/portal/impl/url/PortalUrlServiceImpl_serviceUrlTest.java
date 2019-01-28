@@ -22,7 +22,7 @@ public class PortalUrlServiceImpl_serviceUrlTest
             param( "a", 3 );
 
         final String url = this.service.serviceUrl( params );
-        assertEquals( "/site/com.enonic.cms.default/draft/context/path/_/service/myapplication/myservice?a=3", url );
+        assertEquals( "/site/default/draft/context/path/_/service/myapplication/myservice?a=3", url );
     }
 
     @Test
@@ -35,7 +35,7 @@ public class PortalUrlServiceImpl_serviceUrlTest
             param( "a", 3 );
 
         final String url = this.service.serviceUrl( params );
-        assertEquals( "/site/com.enonic.cms.default/draft/_/service/myapplication/myservice?a=3", url );
+        assertEquals( "/site/default/draft/_/service/myapplication/myservice?a=3", url );
     }
 
     @Test
@@ -47,7 +47,7 @@ public class PortalUrlServiceImpl_serviceUrlTest
             application( "otherapplication" );
 
         final String url = this.service.serviceUrl( params );
-        assertEquals( "/site/com.enonic.cms.default/draft/context/path/_/service/otherapplication/myservice", url );
+        assertEquals( "/site/default/draft/context/path/_/service/otherapplication/myservice", url );
     }
 
     @Test
@@ -63,6 +63,6 @@ public class PortalUrlServiceImpl_serviceUrlTest
         ServletRequestHolder.setRequest( req );
 
         final String url = this.service.serviceUrl( params );
-        assertEquals( "http://localhost/site/com.enonic.cms.default/draft/context/path/_/service/myapplication/myservice?a=3", url );
+        assertEquals( "http://localhost/site/default/draft/context/path/_/service/myapplication/myservice?a=3", url );
     }
 }

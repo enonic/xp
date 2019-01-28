@@ -25,7 +25,7 @@ public class PortalUrlServiceImpl_pageUrlTest
             param( "a", 3 );
 
         final String url = this.service.pageUrl( params );
-        assertEquals( "/site/com.enonic.cms.default/draft/context/path?a=3", url );
+        assertEquals( "/site/default/draft/context/path?a=3", url );
     }
 
     @Test
@@ -37,7 +37,7 @@ public class PortalUrlServiceImpl_pageUrlTest
             param( "a", 3 );
 
         final String url = this.service.pageUrl( params );
-        assertEquals( "/site/com.enonic.cms.default/draft/context/path/a/b?a=3", url );
+        assertEquals( "/site/default/draft/context/path/a/b?a=3", url );
     }
 
     @Test
@@ -48,7 +48,7 @@ public class PortalUrlServiceImpl_pageUrlTest
             path( "/a/b" );
 
         final String url = this.service.pageUrl( params );
-        assertEquals( "/site/com.enonic.cms.default/draft/a/b", url );
+        assertEquals( "/site/default/draft/a/b", url );
     }
 
     @Test
@@ -62,7 +62,7 @@ public class PortalUrlServiceImpl_pageUrlTest
             id( "123456" );
 
         final String url = this.service.pageUrl( params );
-        assertEquals( "/site/com.enonic.cms.default/draft/a/b/mycontent", url );
+        assertEquals( "/site/default/draft/a/b/mycontent", url );
     }
 
     @Test
@@ -77,7 +77,7 @@ public class PortalUrlServiceImpl_pageUrlTest
             path( "/a/b" );
 
         final String url = this.service.pageUrl( params );
-        assertEquals( "/site/com.enonic.cms.default/draft/a/b/mycontent", url );
+        assertEquals( "/site/default/draft/a/b/mycontent", url );
     }
 
     @Test
@@ -93,7 +93,7 @@ public class PortalUrlServiceImpl_pageUrlTest
 
         final String url = this.service.pageUrl( params );
         assertEquals(
-            "/site/com.enonic.cms.default/draft/context/path/_/error/404?message=Content+with+id+%5B123456%5D+was+not+found+in+branch+%5Bdraft%5D",
+            "/site/default/draft/context/path/_/error/404?message=Content+with+id+%5B123456%5D+was+not+found+in+branch+%5Bdraft%5D",
             url );
     }
 
@@ -109,6 +109,6 @@ public class PortalUrlServiceImpl_pageUrlTest
         ServletRequestHolder.setRequest( req );
 
         final String url = this.service.pageUrl( params );
-        assertEquals( "http://localhost/site/com.enonic.cms.default/draft/context/path?a=3", url );
+        assertEquals( "http://localhost/site/default/draft/context/path?a=3", url );
     }
 }

@@ -29,9 +29,8 @@ public class PortalUrlServiceImpl_imageUrlTest
             scale( "max(300)" );
 
         final String url = this.service.imageUrl( params );
-        assertEquals(
-            "/site/com.enonic.cms.default/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent",
-            url );
+        assertEquals( "/site/default/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent",
+                      url );
     }
 
     @Test
@@ -45,7 +44,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             scale( "max(300)" );
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/site/com.enonic.cms.default/draft/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent", url );
+        assertEquals( "/site/default/draft/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent", url );
     }
 
     @Test
@@ -59,9 +58,8 @@ public class PortalUrlServiceImpl_imageUrlTest
             scale( "max(300)" );
 
         final String url = this.service.imageUrl( params );
-        assertEquals(
-            "/site/com.enonic.cms.default/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png",
-            url );
+        assertEquals( "/site/default/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png",
+                      url );
     }
 
     @Test
@@ -78,8 +76,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             scale( "max(300)" );
 
         final String url = this.service.imageUrl( params );
-        assertEquals(
-            "/site/com.enonic.cms.default/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.jpg?" +
+        assertEquals( "/site/default/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.jpg?" +
                           "quality=90&background=00ff00&filter=scale%2810%2C10%29", url );
     }
 
@@ -94,9 +91,8 @@ public class PortalUrlServiceImpl_imageUrlTest
             scale( "max(300)" );
 
         final String url = this.service.imageUrl( params );
-        assertEquals(
-            "/site/com.enonic.cms.default/draft/context/path/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent",
-            url );
+        assertEquals( "/site/default/draft/context/path/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent",
+                      url );
     }
 
     @Test
@@ -110,9 +106,8 @@ public class PortalUrlServiceImpl_imageUrlTest
             scale( "max(300)" );
 
         final String url = this.service.imageUrl( params );
-        assertEquals(
-            "/site/com.enonic.cms.default/draft/context/path/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent",
-            url );
+        assertEquals( "/site/default/draft/context/path/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent",
+                      url );
     }
 
     @Test
@@ -127,7 +122,7 @@ public class PortalUrlServiceImpl_imageUrlTest
 
         final String url = this.service.imageUrl( params );
         assertEquals(
-            "/site/com.enonic.cms.default/draft/context/path/_/error/404?message=Content+with+id+%5B123456%5D+was+not+found+in+branch+%5Bdraft%5D",
+            "/site/default/draft/context/path/_/error/404?message=Content+with+id+%5B123456%5D+was+not+found+in+branch+%5Bdraft%5D",
             url );
     }
 
@@ -146,7 +141,7 @@ public class PortalUrlServiceImpl_imageUrlTest
 
         final String url = this.service.imageUrl( params );
         assertEquals(
-            "http://localhost/site/com.enonic.cms.default/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent",
+            "http://localhost/site/default/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent",
             url );
     }
 
@@ -162,7 +157,7 @@ public class PortalUrlServiceImpl_imageUrlTest
 
         final String url = this.service.imageUrl( params );
         assertEquals(
-            "/site/com.enonic.cms.default/draft/a/b/name%20with%20spaces(and-others).png/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/name%20with%20spaces(and-others).png",
+            "/site/default/draft/a/b/name%20with%20spaces(and-others).png/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/name%20with%20spaces(and-others).png",
             url );
     }
 

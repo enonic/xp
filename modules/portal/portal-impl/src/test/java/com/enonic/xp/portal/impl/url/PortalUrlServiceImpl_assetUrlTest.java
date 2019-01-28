@@ -28,7 +28,7 @@ public class PortalUrlServiceImpl_assetUrlTest
             path( "css/my.css" );
 
         final String url = this.service.assetUrl( params );
-        assertEquals( "/site/com.enonic.cms.default/draft/_/asset/myapplication:31556889864403199/css/my.css", url );
+        assertEquals( "/site/default/draft/_/asset/myapplication:31556889864403199/css/my.css", url );
     }    
     
     @Test
@@ -40,7 +40,7 @@ public class PortalUrlServiceImpl_assetUrlTest
             path( "css/my.css" );
 
         final String url = this.service.assetUrl( params );
-        assertEquals( "/site/com.enonic.cms.default/draft/context/path/_/asset/myapplication:31556889864403199/css/my.css", url );
+        assertEquals( "/site/default/draft/context/path/_/asset/myapplication:31556889864403199/css/my.css", url );
     }
 
     @Test
@@ -58,7 +58,7 @@ public class PortalUrlServiceImpl_assetUrlTest
             path( "css/my.css" );
 
         final String url = this.service.assetUrl( params );
-        assertEquals( "/site/com.enonic.cms.default/draft/_/asset/otherapplication:31556889864403199/css/my.css", url );
+        assertEquals( "/site/default/draft/_/asset/otherapplication:31556889864403199/css/my.css", url );
     }
 
     @Test
@@ -79,37 +79,37 @@ public class PortalUrlServiceImpl_assetUrlTest
         Mockito.when( virtualHost.getSource() ).thenReturn( "/main" );
         Mockito.when( virtualHost.getTarget() ).thenReturn( "/" );
         String url = this.service.assetUrl( params );
-        assertEquals( "/main/site/com.enonic.cms.default/draft/_/asset/myapplication:31556889864403199/css/my.css", url );
+        assertEquals( "/main/site/default/draft/_/asset/myapplication:31556889864403199/css/my.css", url );
 
-        //Calls the method with a virtual mapping /main -> /site/com.enonic.cms.default/draft/context
+        //Calls the method with a virtual mapping /main -> /site/default/draft/context
         Mockito.when( virtualHost.getSource() ).thenReturn( "/main" );
         Mockito.when( virtualHost.getTarget() ).thenReturn( "/site" );
         url = this.service.assetUrl( params );
-        assertEquals( "/main/com.enonic.cms.default/draft/_/asset/myapplication:31556889864403199/css/my.css", url );
+        assertEquals( "/main/default/draft/_/asset/myapplication:31556889864403199/css/my.css", url );
 
-        //Calls the method with a virtual mapping /main -> /site/com.enonic.cms.default/draft/context
+        //Calls the method with a virtual mapping /main -> /site/default/draft/context
         Mockito.when( virtualHost.getSource() ).thenReturn( "/main" );
-        Mockito.when( virtualHost.getTarget() ).thenReturn( "/site/com.enonic.cms.default/draft" );
+        Mockito.when( virtualHost.getTarget() ).thenReturn( "/site/default/draft" );
         url = this.service.assetUrl( params );
         assertEquals( "/main/_/asset/myapplication:31556889864403199/css/my.css", url );
 
-        //Calls the method with a virtual mapping / -> /site/com.enonic.cms.default/draft/context
+        //Calls the method with a virtual mapping / -> /site/default/draft/context
         Mockito.when( virtualHost.getSource() ).thenReturn( "/" );
-        Mockito.when( virtualHost.getTarget() ).thenReturn( "/site/com.enonic.cms.default/draft/context" );
+        Mockito.when( virtualHost.getTarget() ).thenReturn( "/site/default/draft/context" );
         url = this.service.assetUrl( params );
         assertEquals( "/_/asset/myapplication:31556889864403199/css/my.css", url );
 
-        //Calls the method with a virtual mapping /main/path -> /site/com.enonic.cms.default/draft/context/path
+        //Calls the method with a virtual mapping /main/path -> /site/default/draft/context/path
         Mockito.when( virtualHost.getSource() ).thenReturn( "/main/path" );
-        Mockito.when( virtualHost.getTarget() ).thenReturn( "/site/com.enonic.cms.default/draft/context/path" );
+        Mockito.when( virtualHost.getTarget() ).thenReturn( "/site/default/draft/context/path" );
         url = this.service.assetUrl( params );
         assertEquals( "/main/path/_/asset/myapplication:31556889864403199/css/my.css", url );
 
-        //Calls the method with a virtual mapping /site/com.enonic.cms.default/draft/context/path -> /site/com.enonic.cms.default/draft/context/path
-        Mockito.when( virtualHost.getSource() ).thenReturn( "/site/com.enonic.cms.default/draft/context/path" );
-        Mockito.when( virtualHost.getTarget() ).thenReturn( "/site/com.enonic.cms.default/draft/context/path" );
+        //Calls the method with a virtual mapping /site/default/draft/context/path -> /site/default/draft/context/path
+        Mockito.when( virtualHost.getSource() ).thenReturn( "/site/default/draft/context/path" );
+        Mockito.when( virtualHost.getTarget() ).thenReturn( "/site/default/draft/context/path" );
         url = this.service.assetUrl( params );
-        assertEquals( "/site/com.enonic.cms.default/draft/context/path/_/asset/myapplication:31556889864403199/css/my.css", url );
+        assertEquals( "/site/default/draft/context/path/_/asset/myapplication:31556889864403199/css/my.css", url );
 
         //Post treatment
         ServletRequestHolder.setRequest( null );
@@ -127,7 +127,7 @@ public class PortalUrlServiceImpl_assetUrlTest
         ServletRequestHolder.setRequest( req );
 
         final String url = this.service.assetUrl( params );
-        assertEquals( "http://localhost/site/com.enonic.cms.default/draft/_/asset/myapplication:31556889864403199/css/my.css", url );
+        assertEquals( "http://localhost/site/default/draft/_/asset/myapplication:31556889864403199/css/my.css", url );
     }
 
     @Test
@@ -138,6 +138,6 @@ public class PortalUrlServiceImpl_assetUrlTest
             path( "css/my other & strange.css" );
 
         final String url = this.service.assetUrl( params );
-        assertEquals( "/site/com.enonic.cms.default/draft/_/asset/myapplication:31556889864403199/css/my%20other%20&%20strange.css", url );
+        assertEquals( "/site/default/draft/_/asset/myapplication:31556889864403199/css/my%20other%20&%20strange.css", url );
     }
 }
