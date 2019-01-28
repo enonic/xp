@@ -127,7 +127,7 @@ public class IdentityHandlerTest
 
         assertEquals( HttpStatus.OK, portalResponse.getStatus() );
         assertEquals( HttpStatus.OK, portalResponse.getStatus() );
-        assertEquals( "/portal/draft/_/idprovider/myidprovider", this.request.getContextPath() );
+        assertEquals( "/site/draft/_/idprovider/myidprovider", this.request.getContextPath() );
     }
 
     @Test
@@ -166,7 +166,7 @@ public class IdentityHandlerTest
 
         assertEquals( HttpStatus.OK, portalResponse.getStatus() );
         assertEquals( HttpStatus.OK, portalResponse.getStatus() );
-        assertEquals( "/portal/draft/_/idprovider/myidprovider", this.request.getContextPath() );
+        assertEquals( "/site/draft/_/idprovider/myidprovider", this.request.getContextPath() );
     }
 
     @Test
@@ -184,7 +184,7 @@ public class IdentityHandlerTest
 
         assertEquals( HttpStatus.OK, portalResponse.getStatus() );
         assertEquals( HttpStatus.OK, portalResponse.getStatus() );
-        assertEquals( "/portal/draft/_/idprovider/myidprovider", this.request.getContextPath() );
+        assertEquals( "/site/draft/_/idprovider/myidprovider", this.request.getContextPath() );
     }
 
     public VirtualHost initVirtualHost( final HttpServletRequest rawRequest, final VirtualHost virtualHost )
