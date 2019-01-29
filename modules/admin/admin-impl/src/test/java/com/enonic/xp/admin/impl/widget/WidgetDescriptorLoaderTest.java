@@ -1,10 +1,15 @@
 package com.enonic.xp.admin.impl.widget;
 
+import java.net.URL;
+
 import org.junit.Test;
+import org.mockito.Mockito;
+import org.osgi.framework.Bundle;
 
 import com.enonic.xp.admin.widget.WidgetDescriptor;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.ApplicationTestSupport;
+import com.enonic.xp.core.impl.app.MockApplication;
 import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.resource.Resource;
@@ -24,8 +29,16 @@ public class WidgetDescriptorLoaderTest
     {
         this.loader = new WidgetDescriptorLoader();
         this.loader.setResourceService( this.resourceService );
+        this.loader.setApplicationService( this.applicationService );
 
-        addApplication( "myapp1", "/apps/myapp1" );
+        final Bundle bundle = Mockito.mock( Bundle.class );
+        final URL iconUrl = getClass().getResource( "/apps/myapp1/admin/widgets/widget1/widget1.svg" );
+        Mockito.when( bundle.getEntry( "/admin/widgets/widget2/widget2.svg" ) ).thenReturn( null );
+        Mockito.when( bundle.getEntry( "/admin/widgets/widget1/widget1.svg" ) ).thenReturn( iconUrl );
+        Mockito.when( bundle.getResource( "/admin/widgets/widget1/widget1.svg" ) ).thenReturn( iconUrl );
+
+        final MockApplication app = addApplication( "myapp1", "/apps/myapp1" );
+        app.setBundle( bundle );
     }
 
     @Test
@@ -62,6 +75,7 @@ public class WidgetDescriptorLoaderTest
     public void testLoadMax()
     {
         final DescriptorKey descriptorKey = DescriptorKey.from( "myapp1:widget1" );
+        final WidgetIconUrlResolver iconUrlResolver = new WidgetIconUrlResolver();
 
         final ResourceKey resourceKey = this.loader.toResource( descriptorKey );
         assertEquals( "myapp1:/admin/widgets/widget1/widget1.xml", resourceKey.toString() );
@@ -70,6 +84,7 @@ public class WidgetDescriptorLoaderTest
         final WidgetDescriptor descriptor = this.loader.load( descriptorKey, resource );
 
         assertEquals( "MyWidget", descriptor.getDisplayName() );
+        assertTrue( iconUrlResolver.resolve( descriptor ).startsWith( "/admin/rest/application/icon/myapp1?hash=" ) );
         assertEquals( 1, descriptor.getInterfaces().size() );
         assertTrue( descriptor.getInterfaces().contains( "com.enonic.xp.my-interface" ) );
         assertEquals( 1, descriptor.getAllowedPrincipals().getSize() );
@@ -85,6 +100,7 @@ public class WidgetDescriptorLoaderTest
         final WidgetDescriptor descriptor = this.loader.load( descriptorKey, resource );
 
         assertEquals( "MyWidget2", descriptor.getDisplayName() );
+        assertEquals( "MyWidget2 description", descriptor.getDescription() );
         assertEquals( 1, descriptor.getInterfaces().size() );
         assertTrue( descriptor.getInterfaces().contains( "com.enonic.xp.my-interface" ) );
         assertNull( descriptor.getAllowedPrincipals() );

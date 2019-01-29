@@ -1,7 +1,9 @@
 [
   {
     "config": {},
+    "description": "My widget description",
     "displayName": "My widget",
+    "iconUrl": null,
     "interfaces": [
       "com.enonic.xp.my-interface",
       "com.enonic.xp.my-interface-2"
@@ -13,7 +15,9 @@
     "config": {
       "key1": "value1"
     },
+    "description": "My second widget description",
     "displayName": "My second widget",
+    "iconUrl": null,
     "interfaces": [],
     "key": "myapp:my-second-widget",
     "url": "_/widgets/myapp/my-second-widget"

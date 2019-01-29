@@ -1,5 +1,6 @@
 <widget>
   <display-name>MyWidget</display-name>
+  <description>MyWidget description</description>
   <interfaces>
     <interface>com.enonic.xp.my-interface</interface>
   </interfaces>
