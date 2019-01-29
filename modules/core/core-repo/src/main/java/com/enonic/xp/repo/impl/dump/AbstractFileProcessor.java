@@ -13,6 +13,12 @@ public abstract class AbstractFileProcessor
         return Paths.get( basePath.toString(), DumpConstants.META_BASE_PATH );
     }
 
+    protected Path createRepoPath( final Path basePath, final RepositoryId repositoryId )
+    {
+        return Paths.get( basePath.toString(), DumpConstants.META_BASE_PATH, repositoryId.toString() );
+    }
+
+
     protected Path createBranchRootPath( final Path basePath, final RepositoryId repositoryId )
     {
         return Paths.get( createRepoRootPath( basePath ).toString(), repositoryId.toString() );

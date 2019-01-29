@@ -8,7 +8,7 @@ import com.google.common.base.Preconditions;
 @Beta
 public final class RepositoryId
 {
-    private static final String VALID_REPOSITORY_ID_REGEX = "([a-z0-9\\-:])([a-z0-9_\\-\\.:])*";
+    public static final String VALID_REPOSITORY_ID_REGEX = "([a-z0-9\\-:])([a-z0-9_\\-\\.:])*";
 
     private final String value;
 

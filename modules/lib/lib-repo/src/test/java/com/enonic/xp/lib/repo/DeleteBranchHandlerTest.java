@@ -21,7 +21,7 @@ public class DeleteBranchHandlerTest
         throws Exception
     {
         final DeleteBranchHandler handler = new DeleteBranchHandler();
-        handler.setRepoId( "cms-repo" );
+        handler.setRepoId( "com.enonic.cms.default" );
         handler.setBranchId( "draft" );
         handler.execute();
     }
@@ -31,7 +31,7 @@ public class DeleteBranchHandlerTest
         throws Exception
     {
         final DeleteBranchHandler handler = new DeleteBranchHandler();
-        handler.setRepoId( "cms-repo" );
+        handler.setRepoId( "com.enonic.cms.default" );
         handler.setBranchId( "master" );
         handler.execute();
     }

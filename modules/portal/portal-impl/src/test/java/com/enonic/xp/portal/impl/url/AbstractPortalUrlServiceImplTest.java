@@ -35,7 +35,7 @@ public abstract class AbstractPortalUrlServiceImplTest
         this.portalRequest = new PortalRequest();
         this.portalRequest.setBranch( Branch.from( "draft" ) );
         this.portalRequest.setApplicationKey( applicationKey );
-        this.portalRequest.setBaseUri( "/portal" );
+        this.portalRequest.setBaseUri( "/site" );
         this.portalRequest.setContentPath( ContentPath.from( "context/path" ) );
 
         this.service = new PortalUrlServiceImpl();

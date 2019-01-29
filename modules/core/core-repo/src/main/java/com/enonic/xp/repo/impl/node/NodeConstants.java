@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
 import java.time.Clock;
+import java.time.Duration;
 import java.time.ZoneOffset;
 
 import com.enonic.xp.blob.SegmentLevel;
@@ -35,6 +36,6 @@ public final class NodeConstants
         user( NODE_SUPER_USER ).
         build();
 
-    final static Clock CLOCK = Clock.tickMillis( ZoneOffset.UTC );
+    final static Clock CLOCK = Clock.tick( Clock.system( ZoneOffset.UTC ), Duration.ofMillis( 1 ) );
 
 }

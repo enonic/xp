@@ -42,7 +42,7 @@ public class ControllerMappingsResolverTest
         throws Exception
     {
         final HttpServletRequest rawRequest = Mockito.mock( HttpServletRequest.class );
-        Mockito.when( rawRequest.getRequestURI() ).thenReturn( "/portal/master/mysite/landing-page" );
+        Mockito.when( rawRequest.getRequestURI() ).thenReturn( "/site/master/mysite/landing-page" );
 
         this.request = new PortalRequest();
         this.request.setMode( RenderMode.LIVE );

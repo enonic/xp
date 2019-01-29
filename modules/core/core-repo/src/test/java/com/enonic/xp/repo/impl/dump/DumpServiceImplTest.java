@@ -21,12 +21,14 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.dump.BranchDumpResult;
+import com.enonic.xp.dump.RepoDumpResult;
 import com.enonic.xp.dump.RepoLoadResult;
 import com.enonic.xp.dump.SystemDumpListener;
 import com.enonic.xp.dump.SystemDumpParams;
@@ -56,6 +58,7 @@ import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.reader.FileDumpReader;
+import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre5.Pre5ContentConstants;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 import com.enonic.xp.repo.impl.node.NodeHelper;
 import com.enonic.xp.repo.impl.node.RenameNodeCommand;
@@ -712,8 +715,8 @@ public class DumpServiceImplTest
             assertEquals( new Version( 0, 0, 0 ), result.getInitialVersion() );
             assertEquals( DumpConstants.MODEL_VERSION, result.getUpgradedVersion() );
 
-            Mockito.verify( upgradeListener, Mockito.times( 4 ) ).upgraded();
-            Mockito.verify( upgradeListener, Mockito.times( 1 ) ).total( 4 );
+            Mockito.verify( upgradeListener, Mockito.times( 5 ) ).upgraded();
+            Mockito.verify( upgradeListener, Mockito.times( 1 ) ).total( 5 );
 
             FileDumpReader reader = new FileDumpReader( tempFolder.getRoot().toPath(), dumpName, null );
             final DumpMeta updatedMeta = reader.getDumpMeta();
@@ -764,7 +767,17 @@ public class DumpServiceImplTest
 
             final Node fragmentNode = nodeService.getById( fragmentNodeId );
             checkPageFlatteningUpgradeFragment( fragmentNode );
+
+            checkRepositoryUpgrade( updatedMeta );
         } );
+    }
+
+    private void checkRepositoryUpgrade( final DumpMeta updatedMeta )
+    {
+        final RepoDumpResult repoDumpResult = updatedMeta.getSystemDumpResult().get( ContentConstants.CONTENT_REPO_ID );
+        assertNotNull( repoDumpResult );
+
+        assertNull( repositoryService.get( Pre5ContentConstants.CONTENT_REPO_ID ) );
     }
 
     private void checkPageFlatteningUpgradePage( final Node node )

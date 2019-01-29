@@ -35,6 +35,11 @@ public final class PortalRequestMapper
             gen.value( "validTicket", this.request.isValidTicket() );
         }
 
+        if ( this.request.getRepositoryId() != null )
+        {
+            gen.value( "repositoryId", this.request.getRepositoryId().toString() );
+        }
+
         if ( this.request.getBranch() != null )
         {
             gen.value( "branch", this.request.getBranch().getValue() );

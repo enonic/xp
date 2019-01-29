@@ -4,7 +4,7 @@ var assert = require('/lib/xp/testing');
 // BEGIN
 // Query content using aggregations.
 var repo = nodeLib.connect({
-    repoId: "cms-repo",
+    repoId: "com.enonic.cms.default",
     branch: "master"
 });
 
