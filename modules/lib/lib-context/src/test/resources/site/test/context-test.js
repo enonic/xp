@@ -8,7 +8,7 @@ exports.testNoChange = function () {
 
     assert.assertJsonEquals({
         "branch": "draft",
-        "repository": "cms-repo",
+        "repository": "com.enonic.cms.default",
         "authInfo": {
             "principals": [
                 "user:system:anonymous",

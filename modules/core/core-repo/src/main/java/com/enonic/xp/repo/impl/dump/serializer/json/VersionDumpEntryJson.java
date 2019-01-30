@@ -86,6 +86,11 @@ public class VersionDumpEntryJson
         return new Builder();
     }
 
+    public static Builder create( final VersionDumpEntryJson source )
+    {
+        return new Builder( source );
+    }
+
     public String getNodePath()
     {
         return nodePath;
@@ -146,6 +151,17 @@ public class VersionDumpEntryJson
 
         private Builder()
         {
+        }
+
+        private Builder( final VersionDumpEntryJson source )
+        {
+            this.nodePath = source.getNodePath();
+            this.timestamp = source.getTimestamp();
+            this.version = source.getVersion();
+            this.nodeBlobKey = source.getNodeBlobKey();
+            this.indexConfigBlobKey = source.getIndexConfigBlobKey();
+            this.accessControlBlobKey = source.getAccessControlBlobKey();
+            this.nodeState = source.getNodeState();
         }
 
         public Builder nodePath( final String val )

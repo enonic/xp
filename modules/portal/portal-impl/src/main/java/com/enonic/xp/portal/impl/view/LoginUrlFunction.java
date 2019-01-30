@@ -41,7 +41,7 @@ public final class LoginUrlFunction
         final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( portalRequest.getRawRequest() );
         if ( virtualHost != null )
         {
-            return virtualHost.getUserStoreKey();
+            return virtualHost.getDefaultIdProviderKey();
         }
         return null;
     }

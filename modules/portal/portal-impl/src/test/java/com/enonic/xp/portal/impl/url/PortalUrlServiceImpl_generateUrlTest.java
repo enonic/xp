@@ -65,13 +65,13 @@ public class PortalUrlServiceImpl_generateUrlTest
         String url = this.service.generateUrl( params );
         assertEquals( "http://localhost/main/admin?a=3", url );
 
-        //Calls the method with a virtual mapping /main -> /portal/draft/context
+        //Calls the method with a virtual mapping /main -> /site/default/draft/context
         Mockito.when( virtualHost.getSource() ).thenReturn( "/studio" );
         Mockito.when( virtualHost.getTarget() ).thenReturn( "/admin" );
         url = this.service.generateUrl( params );
         assertEquals( "http://localhost/studio?a=3", url );
 
-        //Calls the method with a virtual mapping /main -> /portal/draft/context
+        //Calls the method with a virtual mapping /main -> /site/default/draft/context
         Mockito.when( virtualHost.getSource() ).thenReturn( "/" );
         Mockito.when( virtualHost.getTarget() ).thenReturn( "/admin" );
         url = this.service.generateUrl( params );

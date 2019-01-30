@@ -23,6 +23,7 @@ import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre4.Pre4BranchDumpEnt
 import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre4.Pre4NodeVersionJson;
 import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre4.Pre4VersionDumpEntryJson;
 import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre4.Pre4VersionsDumpEntryJson;
+import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre5.Pre5ContentConstants;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositorySegmentUtils;
@@ -31,7 +32,7 @@ import com.enonic.xp.util.Version;
 public class FlattenedPageDumpUpgrader
     extends AbstractDumpUpgrader
 {
-    private static final RepositoryId REPOSITORY_ID = ContentConstants.CONTENT_REPO_ID;
+    private static final RepositoryId REPOSITORY_ID = Pre5ContentConstants.CONTENT_REPO_ID;
 
     private static final Segment SEGMENT =
         RepositorySegmentUtils.toSegment( ContentConstants.CONTENT_REPO_ID, NodeConstants.NODE_SEGMENT_LEVEL );

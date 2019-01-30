@@ -15,7 +15,6 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexPath;
-import com.enonic.xp.index.IndexService;
 import com.enonic.xp.init.ExternalInitializer;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
@@ -26,7 +25,6 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.Direction;
 import com.enonic.xp.repository.CreateBranchParams;
 import com.enonic.xp.repository.CreateRepositoryParams;
-import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
@@ -108,7 +106,7 @@ public final class ContentInitializer
     @Override
     protected String getInitializationSubject()
     {
-        return "Cms-repo";
+        return "com.enonic.cms.default repo";
     }
 
     private void createDraftBranch()
@@ -119,7 +117,7 @@ public final class ContentInitializer
     private void initializeRepository()
     {
         final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create().
-            repositoryId( RepositoryId.from( "cms-repo" ) ).
+            repositoryId( ContentConstants.CONTENT_REPO_ID ).
             rootPermissions( CONTENT_REPO_DEFAULT_ACL ).
             rootChildOrder( ContentConstants.DEFAULT_CONTENT_REPO_ROOT_ORDER ).
             build();

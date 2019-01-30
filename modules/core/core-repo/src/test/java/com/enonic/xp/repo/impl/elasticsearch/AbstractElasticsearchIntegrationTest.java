@@ -22,7 +22,7 @@ import com.enonic.xp.repository.RepositoryId;
 public abstract class AbstractElasticsearchIntegrationTest
 {
     protected static final Repository TEST_REPO = Repository.create().
-        id( RepositoryId.from( "cms-repo" ) ).
+        id( RepositoryId.from( "com.enonic.cms.default" ) ).
         branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
         build();
 

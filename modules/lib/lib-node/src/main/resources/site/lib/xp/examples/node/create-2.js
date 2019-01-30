@@ -10,7 +10,7 @@ var valueLib = require('/lib/xp/value');
 
 // Connect to repo
 var repo = nodeLib.connect({
-    repoId: "cms-repo",
+    repoId: "com.enonic.cms.default",
     branch: "master"
 });
 

@@ -59,17 +59,35 @@ public class RepoDumpResult
         return new Builder( repositoryId );
     }
 
+    public static Builder create( final RepoDumpResult source )
+    {
+        return new Builder( source );
+    }
+
     public static final class Builder
     {
-        private final List<BranchDumpResult> branchResults = Lists.newArrayList();
+        private List<BranchDumpResult> branchResults = Lists.newArrayList();
 
-        private final RepositoryId repositoryId;
+        private RepositoryId repositoryId;
 
         private Long versions = 0L;
 
         private Builder( final RepositoryId repositoryId )
         {
             this.repositoryId = repositoryId;
+        }
+
+        private Builder( final RepoDumpResult source )
+        {
+            this( source.repositoryId );
+            this.branchResults = Lists.newArrayList( source.branchResults );
+            this.versions = source.versions;
+        }
+
+        public Builder repositoryId( final RepositoryId repositoryId )
+        {
+            this.repositoryId = repositoryId;
+            return this;
         }
 
         public Builder add( final BranchDumpResult val )

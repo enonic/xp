@@ -19,10 +19,13 @@ import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
+import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.handler.WebHandlerChain;
+import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 @Component(immediate = true, service = WebHandler.class)
 public class IdentityHandler
@@ -54,6 +57,14 @@ public class IdentityHandler
         }
 
         final IdProviderKey idProviderKey = IdProviderKey.from( matcher.group( ID_PROVIDER_GROUP_INDEX ) );
+
+        final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( webRequest.getRawRequest() );
+
+        if ( !( virtualHost == null || virtualHost.getIdProviderKeys().contains( idProviderKey ) ) )
+        {
+            throw WebException.forbidden( String.format( "'%s' id provider is forbidden", idProviderKey ) );
+        }
+
         String idProviderFunction = matcher.group( 2 );
 
         final PortalRequest portalRequest =

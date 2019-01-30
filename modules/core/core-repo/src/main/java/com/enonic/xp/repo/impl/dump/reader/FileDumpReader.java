@@ -88,7 +88,7 @@ public class FileDumpReader
 
     private DumpMeta readDumpMetaData()
     {
-        final Path dumpMetaFile = Paths.get( this.dumpDirectory.toString(), "dump.json" );
+        final Path dumpMetaFile = Paths.get( getMetaDataFile().toURI() );
         try
         {
             final String json = Files.toString( dumpMetaFile.toFile(), Charset.defaultCharset() );
@@ -217,9 +217,8 @@ public class FileDumpReader
     {
         final EntriesLoadResult.Builder result = EntriesLoadResult.create();
 
-        try
+        try (final TarArchiveInputStream tarInputStream = openStream( tarFile ))
         {
-            final TarArchiveInputStream tarInputStream = openStream( tarFile );
             TarArchiveEntry entry = tarInputStream.getNextTarEntry();
             while ( entry != null )
             {
@@ -238,9 +237,8 @@ public class FileDumpReader
 
     public void processEntries( final BiConsumer<String, String> processor, final File tarFile )
     {
-        try
+        try (final TarArchiveInputStream tarInputStream = openStream( tarFile ))
         {
-            final TarArchiveInputStream tarInputStream = openStream( tarFile );
             TarArchiveEntry entry = tarInputStream.getNextTarEntry();
             while ( entry != null )
             {
@@ -272,13 +270,24 @@ public class FileDumpReader
     public File getBranchEntriesFile( final RepositoryId repositoryId, final Branch branch )
     {
         final Path metaPath = createBranchMetaPath( this.dumpDirectory, repositoryId, branch );
-        return doGetFile( metaPath );
+        return doGetFile( metaPath, false );
     }
 
     public File getVersionsFile( final RepositoryId repositoryId )
     {
         final Path metaPath = createVersionMetaPath( this.dumpDirectory, repositoryId );
         return doGetFile( metaPath, false );
+    }
+
+    public File getRepositoryDir( final RepositoryId repositoryId )
+    {
+        final Path repoPath = createRepoPath( this.dumpDirectory, repositoryId );
+        return doGetFile( repoPath, false );
+    }
+
+    public File getMetaDataFile()
+    {
+        return new File( this.dumpDirectory.toString(), "dump.json" );
     }
 
     private File doGetFile( final Path metaPath )

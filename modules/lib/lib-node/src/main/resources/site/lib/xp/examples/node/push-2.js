@@ -2,7 +2,7 @@ var nodeLib = require('/lib/xp/node');
 var t = require('/lib/xp/testing');
 
 var repo = nodeLib.connect({
-    repoId: "cms-repo",
+    repoId: "com.enonic.cms.default",
     branch: "master"
 });
 

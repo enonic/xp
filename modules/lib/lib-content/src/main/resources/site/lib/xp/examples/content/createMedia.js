@@ -10,7 +10,6 @@ var result = contentLib.createMedia({
     name: 'mycontent',
     parentPath: '/a/b',
     mimeType: 'text/plain',
-    branch: 'draft',
     data: stream
 });
 // END

@@ -11,7 +11,7 @@ public class RepositoryIdTest
     public void builtin()
         throws Exception
     {
-        RepositoryId.from( "cms-repo" );
+        RepositoryId.from( "com.enonic.cms.default" );
         RepositoryId.from( "system-repo" );
     }
 
