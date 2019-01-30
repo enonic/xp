@@ -39,6 +39,8 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeCommitId;
+import com.enonic.xp.node.NodeCommitQuery;
+import com.enonic.xp.node.NodeCommitQueryResult;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
 import com.enonic.xp.node.NodeId;
@@ -596,6 +598,18 @@ public class NodeServiceImpl
         verifyContext();
 
         return FindNodeVersionsCommand.create().
+            query( query ).
+            searchService( this.nodeSearchService ).
+            build().
+            execute();
+    }
+
+    @Override
+    public NodeCommitQueryResult findCommits( final NodeCommitQuery query )
+    {
+        verifyContext();
+
+        return FindNodeCommitsCommand.create().
             query( query ).
             searchService( this.nodeSearchService ).
             build().

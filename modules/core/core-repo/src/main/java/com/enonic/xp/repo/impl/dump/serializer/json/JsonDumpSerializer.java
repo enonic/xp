@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.enonic.xp.repo.impl.dump.RepoDumpException;
 import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
+import com.enonic.xp.repo.impl.dump.model.CommitDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.VersionsDumpEntry;
 import com.enonic.xp.repo.impl.dump.serializer.DumpSerializer;
 
@@ -34,6 +35,19 @@ public class JsonDumpSerializer
         try
         {
             return MAPPER.writeValueAsString( VersionsDumpEntryJson.from( versionsDumpEntry ) );
+        }
+        catch ( JsonProcessingException e )
+        {
+            throw new RepoDumpException( "Cannot serializer dumpEntry", e );
+        }
+    }
+
+    @Override
+    public String serialize( final CommitDumpEntry commitDumpEntry )
+    {
+        try
+        {
+            return MAPPER.writeValueAsString( CommitDumpEntryJson.from( commitDumpEntry ) );
         }
         catch ( JsonProcessingException e )
         {

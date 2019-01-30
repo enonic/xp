@@ -58,6 +58,8 @@ public interface NodeService
 
     NodeVersionQueryResult findVersions( NodeVersionQuery nodeVersionQuery );
 
+    NodeCommitQueryResult findCommits( NodeCommitQuery nodeCommitQuery );
+
     boolean deleteVersion( NodeId nodeId, NodeVersionId nodeVersionId );
 
     GetActiveNodeVersionsResult getActiveVersions( GetActiveNodeVersionsParams params );
