@@ -133,7 +133,7 @@ public class OccurrenceValidatorTest
     public void given_required_field_with_no_data_within_layout_when_validate_then_MinimumOccurrencesValidationError()
     {
 
-        contentType.getForm().addFormItem( FieldSet.create().label( "My layout" ).name( "myLayout" ).addFormItem(
+        contentType.getForm().addFormItem( FieldSet.create().label( "My layout" ).addFormItem(
             Input.create().name( "myField" ).label( "Field" ).inputType( InputTypeName.TEXT_LINE ).required( true ).build() ).build() );
         Content content = Content.create().path( MY_CONTENT_PATH ).build();
 
@@ -146,8 +146,8 @@ public class OccurrenceValidatorTest
     @Test
     public void given_required_input_with_no_data_within_layout_within_layout_when_validate_then_MinimumOccurrencesValidationError()
     {
-        contentType.getForm().addFormItem( FieldSet.create().label( "My outer layout" ).name( "myOuterlayout" ).addFormItem(
-            FieldSet.create().label( "My Layout" ).name( "myLayout" ).addFormItem(
+        contentType.getForm().addFormItem(
+            FieldSet.create().label( "My outer layout" ).addFormItem( FieldSet.create().label( "My Layout" ).addFormItem(
                 Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).required(
                     true ).build() ).build() ).build() );
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
@@ -188,7 +188,7 @@ public class OccurrenceValidatorTest
     @Test
     public void given_required_set_with_no_data_within_layout_when_validate_then_MinimumOccurrencesValidationError()
     {
-        contentType.getForm().addFormItem( FieldSet.create().label( "My layout" ).name( "myLayout" ).addFormItem(
+        contentType.getForm().addFormItem( FieldSet.create().label( "My layout" ).addFormItem(
             FormItemSet.create().name( "mySet" ).required( true ).addFormItem(
                 Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).build() ).build() ).build() );
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
@@ -529,8 +529,7 @@ public class OccurrenceValidatorTest
 
         myOptionSet.addOptionSetOption( option1.build() );
 
-        contentType.getForm().addFormItem(
-            FieldSet.create().label( "My layout" ).name( "myLayout" ).addFormItem( myOptionSet.build() ).build() );
+        contentType.getForm().addFormItem( FieldSet.create().label( "My layout" ).addFormItem( myOptionSet.build() ).build() );
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
 
         // exercise

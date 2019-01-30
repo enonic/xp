@@ -6,16 +6,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.StreamSupport;
 
-import org.apache.commons.lang.StringUtils;
-
-import com.google.common.base.Preconditions;
-
 public class FormOptionSet
-    extends FormItem
+    extends NamedFormItem
     implements Iterable<FormOptionSetOption>
 {
-    private final String name;
-
     private final String label;
 
     private final String labelI18nKey;
@@ -34,13 +28,8 @@ public class FormOptionSet
 
     private FormOptionSet( Builder builder )
     {
-        super();
+        super( builder.name );
 
-        Preconditions.checkNotNull( builder.name, "a name is required for a FormItemSet" );
-        Preconditions.checkArgument( StringUtils.isNotBlank( builder.name ), "a name is required for a FormOptionSet" );
-        Preconditions.checkArgument( !builder.name.contains( "." ), "name cannot contain punctuations: " + builder.name );
-
-        this.name = builder.name;
         this.label = builder.label;
         this.labelI18nKey = builder.labelI18nKey;
         this.helpText = builder.helpText;
@@ -53,12 +42,6 @@ public class FormOptionSet
         {
             this.optionSetOptions.add( formItem );
         }
-    }
-
-    @Override
-    public String getName()
-    {
-        return this.name;
     }
 
     @Override
@@ -140,7 +123,8 @@ public class FormOptionSet
             return false;
         }
         final FormOptionSet that = (FormOptionSet) o;
-        return super.equals( o ) && Objects.equals( expanded, that.expanded ) && Objects.equals( name, that.name ) &&
+
+        return super.equals( o ) && Objects.equals( expanded, that.expanded ) &&
             Objects.equals( label, that.label ) && Objects.equals( helpText, that.helpText ) &&
             Objects.equals( optionSetOptions, that.optionSetOptions ) && Objects.equals( occurrences, that.occurrences ) &&
             Objects.equals( multiselection, that.multiselection ) && Objects.equals( helpText, that.helpText ) &&
@@ -150,7 +134,7 @@ public class FormOptionSet
     @Override
     public int hashCode()
     {
-        return Objects.hash( super.hashCode(), name, label, expanded, optionSetOptions, occurrences, helpText );
+        return Objects.hash( super.hashCode(), label, expanded, optionSetOptions, occurrences, helpText );
     }
 
     public static Builder create()
@@ -164,9 +148,8 @@ public class FormOptionSet
     }
 
     public static class Builder
+        extends NamedFormItem.Builder<Builder>
     {
-        private String name;
-
         private String label;
 
         private String labelI18nKey;
@@ -189,7 +172,7 @@ public class FormOptionSet
 
         private Builder( final FormOptionSet source )
         {
-            this.name = source.name;
+            super( source );
             this.label = source.label;
             this.labelI18nKey = source.labelI18nKey;
             this.expanded = source.expanded;
@@ -202,12 +185,6 @@ public class FormOptionSet
             {
                 setOptionsList.add( formItemSource.copy() );
             }
-        }
-
-        public Builder name( final String name )
-        {
-            this.name = name;
-            return this;
         }
 
         public Builder label( final String label )

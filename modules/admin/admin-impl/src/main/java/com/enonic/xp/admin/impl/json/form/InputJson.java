@@ -21,7 +21,7 @@ import com.enonic.xp.inputtype.InputTypeProperty;
 
 @Beta
 public class InputJson
-    extends FormItemJson<Input>
+    extends NamedFormItemJson<Input>
 {
     private final Input input;
 

@@ -4,17 +4,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-
-import com.google.common.base.Preconditions;
-
 public class FormOptionSetOption
-    extends FormItem
+    extends NamedFormItem
     implements Iterable<FormItem>
 {
-
-    private final String name;
-
     private final String label;
 
     private final String labelI18nKey;
@@ -29,13 +22,8 @@ public class FormOptionSetOption
 
     private FormOptionSetOption( Builder builder )
     {
-        super();
+        super( builder.name );
 
-        Preconditions.checkNotNull( builder.name, "a name is required for a FormItemSet" );
-        Preconditions.checkArgument( StringUtils.isNotBlank( builder.name ), "a name is required for a FormItemSet" );
-        Preconditions.checkArgument( !builder.name.contains( "." ), "name cannot contain punctations: " + builder.name );
-
-        this.name = builder.name;
         this.label = builder.label;
         this.defaultOption = builder.defaultOption;
         this.helpText = builder.helpText;
@@ -47,11 +35,6 @@ public class FormOptionSetOption
         {
             this.formItems.add( formItem );
         }
-    }
-
-    public String getName()
-    {
-        return name;
     }
 
     public String getLabel()
@@ -118,7 +101,7 @@ public class FormOptionSetOption
             return false;
         }
         final FormOptionSetOption formItems1 = (FormOptionSetOption) o;
-        return defaultOption == formItems1.defaultOption && com.google.common.base.Objects.equal( name, formItems1.name ) &&
+        return defaultOption == formItems1.defaultOption &&
             com.google.common.base.Objects.equal( label, formItems1.label ) &&
             com.google.common.base.Objects.equal( labelI18nKey, formItems1.labelI18nKey ) &&
             com.google.common.base.Objects.equal( helpText, formItems1.helpText ) &&
@@ -129,7 +112,7 @@ public class FormOptionSetOption
     @Override
     public int hashCode()
     {
-        return com.google.common.base.Objects.hashCode( super.hashCode(), name, label, labelI18nKey, defaultOption, helpText,
+        return com.google.common.base.Objects.hashCode( super.hashCode(), label, labelI18nKey, defaultOption, helpText,
                                                         helpTextI18nKey, formItems );
     }
 
@@ -144,9 +127,8 @@ public class FormOptionSetOption
     }
 
     public static class Builder
+        extends NamedFormItem.Builder<Builder>
     {
-        private String name;
-
         private String label;
 
         private String labelI18nKey;
@@ -165,7 +147,7 @@ public class FormOptionSetOption
 
         public Builder( final FormOptionSetOption source )
         {
-            this.name = source.name;
+            super( source );
             this.label = source.label;
             this.defaultOption = source.defaultOption;
             this.helpText = source.helpText;
@@ -196,12 +178,6 @@ public class FormOptionSetOption
         public Builder clearFormItems()
         {
             formItemsList.clear();
-            return this;
-        }
-
-        public Builder name( final String name )
-        {
-            this.name = name;
             return this;
         }
 

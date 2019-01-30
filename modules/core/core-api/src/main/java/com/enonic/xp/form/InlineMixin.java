@@ -11,13 +11,13 @@ import com.enonic.xp.schema.mixin.MixinName;
 
 @Beta
 public class InlineMixin
-    extends FormItem
+    extends NamedFormItem
 {
     private final MixinName mixinName;
 
     private InlineMixin( Builder builder )
     {
-        super(  );
+        super( builder.mixinName.getLocalName() );
 
         Preconditions.checkNotNull( builder.mixinName, "mixinName is required" );
         this.mixinName = builder.mixinName;
@@ -32,11 +32,6 @@ public class InlineMixin
     public MixinName getMixinName()
     {
         return mixinName;
-    }
-
-    @Override
-    public String getName() {
-        return mixinName.getLocalName();
     }
 
     @Override

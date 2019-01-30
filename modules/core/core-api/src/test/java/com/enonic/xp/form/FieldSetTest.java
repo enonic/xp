@@ -14,7 +14,6 @@ public class FieldSetTest
     {
         FieldSet myFieldSet = FieldSet.create().
             label( "My FieldSet" ).
-            name( "myFieldSet" ).
             addFormItem( Input.create().name( "myInput" ).label( "input" ).inputType( InputTypeName.TEXT_LINE ).build() ).
             build();
 
@@ -22,10 +21,8 @@ public class FieldSetTest
 
         FieldSet myOuterFieldSet = FieldSet.create().
             label( "My Outer FieldSet" ).
-            name( "myOuterFieldSet" ).
             addFormItem( FieldSet.create().
                 label( "My inner FieldSet" ).
-                name( "myInnerFieldSet" ).
                 addFormItem( Input.create().name( "myInput" ).label( "my input" ).inputType( InputTypeName.TEXT_LINE ).build() ).build() ).
             build();
 

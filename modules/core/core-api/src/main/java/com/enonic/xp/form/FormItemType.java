@@ -13,6 +13,11 @@ public enum FormItemType
     FORM_OPTION_SET,
     FORM_OPTION_SET_OPTION;
 
+    public static void main( String[] args )
+    {
+        System.out.println( FormItemType.LAYOUT );
+    }
+
     public static FormItemType parse( final String value )
     {
         if ( Input.class.getSimpleName().equals( value ) )

@@ -131,7 +131,6 @@ public final class XmlFormMapper
     private FieldSet buildFieldSetItem( final DomElement root )
     {
         final FieldSet.Builder builder = FieldSet.create();
-        builder.name( root.getAttribute( "name" ) );
         final String labelI18n = getLabelI18n( root );
         builder.label( getLabel( root, labelI18n ) );
         builder.labelI18nKey( labelI18n );

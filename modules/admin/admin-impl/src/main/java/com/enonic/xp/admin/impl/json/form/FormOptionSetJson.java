@@ -13,7 +13,7 @@ import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolv
 import com.enonic.xp.form.FormOptionSet;
 
 public class FormOptionSetJson
-    extends FormItemJson<FormOptionSet>
+    extends NamedFormItemJson<FormOptionSet>
 {
     private final FormOptionSet formOptionSet;
 

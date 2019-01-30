@@ -3,13 +3,12 @@ package com.enonic.xp.admin.impl.json.form;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.InlineMixin;
 
 @Beta
 @SuppressWarnings("UnusedDeclaration")
 public class InlineMixinJson
-    extends FormItemJson
+    extends NamedFormItemJson<InlineMixin>
 {
     private final InlineMixin inline;
 
@@ -20,7 +19,7 @@ public class InlineMixinJson
 
     @JsonIgnore
     @Override
-    public FormItem getFormItem()
+    public InlineMixin getFormItem()
     {
         return inline;
     }

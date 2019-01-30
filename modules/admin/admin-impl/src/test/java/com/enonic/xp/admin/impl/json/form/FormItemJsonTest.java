@@ -128,7 +128,6 @@ public class FormItemJsonTest
         throws IOException
     {
         FieldSetJson fieldSetJson = new FieldSetJson( FieldSet.create().
-            name( "myFieldSet" ).
             label( "My field set" ).
             addFormItem( Input.create().name( "myTextLine" ).label( "myTextLine" ).inputType( InputTypeName.TEXT_LINE ).build() ).
             addFormItem( Input.create().name( "myDate" ).label( "myDate" ).inputType( InputTypeName.DATE ).

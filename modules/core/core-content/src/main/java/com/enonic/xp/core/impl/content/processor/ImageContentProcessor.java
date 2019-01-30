@@ -310,7 +310,7 @@ public final class ImageContentProcessor
             if ( InputTypeName.GEO_POINT.equals( input.getInputType() ) )
             {
                 final GeoPoint geoPoint = new GeoPoint( geoLat, geoLong );
-                extraData.getData().addGeoPoint( formItem.getName(), ValueTypes.GEO_POINT.convert( geoPoint ) );
+                extraData.getData().addGeoPoint( input.getName(), ValueTypes.GEO_POINT.convert( geoPoint ) );
             }
         }
         return extraData;

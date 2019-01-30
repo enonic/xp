@@ -218,7 +218,6 @@ public final class ContentTypeMapper
     {
         gen.map();
         gen.value( "formItemType", "Layout" );
-        gen.value( "name", fieldSet.getName() );
         gen.value( "label", fieldSet.getLabel() );
         gen.array( "items" );
         for ( FormItem formItem : fieldSet )

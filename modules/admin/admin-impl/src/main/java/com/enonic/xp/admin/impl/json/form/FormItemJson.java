@@ -17,8 +17,6 @@ import com.enonic.xp.form.FormItem;
     @JsonSubTypes.Type(value = FormOptionSetJson.class, name = "FormOptionSet")})
 public abstract class FormItemJson<T extends FormItem>
 {
-    public abstract String getName();
-
     @JsonIgnore
     public abstract T getFormItem();
 

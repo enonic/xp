@@ -15,6 +15,7 @@ import com.enonic.xp.form.FormDefaultValuesProcessor;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.Input;
+import com.enonic.xp.form.NamedFormItem;
 import com.enonic.xp.inputtype.InputTypes;
 
 import static com.enonic.xp.form.FormItemType.FORM_ITEM_SET;
@@ -61,7 +62,8 @@ public final class FormDefaultValuesProcessorImpl
             }
             else if ( formItem.getType() == FORM_ITEM_SET )
             {
-                processFormItems( formItem.toFormItemSet().getFormItems(), data, PropertyPath.from( parentPath, formItem.getName() ) );
+                processFormItems( formItem.toFormItemSet().getFormItems(), data,
+                                  PropertyPath.from( parentPath, ( (NamedFormItem) formItem ).getName() ) );
             }
             else if ( formItem.getType() == LAYOUT && formItem.toLayout() instanceof FieldSet )
             {
@@ -72,12 +74,14 @@ public final class FormDefaultValuesProcessorImpl
                 FormOptionSetOption option = formItem.toFormOptionSetOption();
                 if ( option.isDefaultOption() )
                 {
-                    processFormItems( option.getFormItems(), data, PropertyPath.from( parentPath, formItem.getName() ) );
+                    processFormItems( option.getFormItems(), data,
+                                      PropertyPath.from( parentPath, ( (NamedFormItem) formItem ).getName() ) );
                 }
             }
             else if ( formItem.getType() == FORM_OPTION_SET )
             {
-                processFormItems( formItem.toFormOptionSet().getFormItems(), data, PropertyPath.from( parentPath, formItem.getName() ) );
+                processFormItems( formItem.toFormOptionSet().getFormItems(), data,
+                                  PropertyPath.from( parentPath, ( (NamedFormItem) formItem ).getName() ) );
             }
         } );
     }

@@ -15,10 +15,8 @@ import com.enonic.xp.inputtype.InputTypeProperty;
 
 @Beta
 public final class Input
-    extends FormItem
+    extends NamedFormItem
 {
-    private final String name;
-
     private final InputTypeName type;
 
     private final String label;
@@ -47,17 +45,13 @@ public final class Input
 
     private Input( Builder builder )
     {
-        super();
+        super( builder.name );
 
-        Preconditions.checkNotNull( builder.name, "a name is required for a Input" );
-        Preconditions.checkArgument( StringUtils.isNotBlank( builder.name ), "a name is required for a Input" );
-        Preconditions.checkArgument( !builder.name.contains( "." ), "name cannot contain punctuations: " + builder.name );
         Preconditions.checkNotNull( builder.inputType, "inputType cannot be null" );
 
         Preconditions.checkNotNull( builder.label, "a label is required for a Input" );
         Preconditions.checkArgument( StringUtils.isNotBlank( builder.label ), "a label is required for a Input" );
 
-        this.name = builder.name;
         this.type = builder.inputType;
         this.label = builder.label;
         this.defaultValue = builder.defaultValue;
@@ -71,12 +65,6 @@ public final class Input
         this.maximizeUIInputWidth = builder.maximizeUIInputWidth;
         this.labelI18nKey = builder.labelI18nKey;
         this.helpTextI18nKey = builder.helpTextI18nKey;
-    }
-
-    @Override
-    public String getName()
-    {
-        return name;
     }
 
     @Override
@@ -208,9 +196,8 @@ public final class Input
     }
 
     public static class Builder
+        extends NamedFormItem.Builder<Builder>
     {
-        private String name;
-
         private InputTypeName inputType;
 
         private String label;
@@ -244,7 +231,7 @@ public final class Input
 
         public Builder( final Input source )
         {
-            this.name = source.name;
+            super( source );
             this.inputType = source.type;
             this.label = source.label;
             this.defaultValue = source.defaultValue;
@@ -261,12 +248,6 @@ public final class Input
             {
                 this.inputTypeConfig.config( source.inputTypeConfig );
             }
-        }
-
-        public Builder name( String value )
-        {
-            name = value;
-            return this;
         }
 
         public Builder inputType( InputTypeName value )

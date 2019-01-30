@@ -31,7 +31,6 @@ public class ContentTypeTest
         ContentType contentType = ContentType.create().superType( ContentTypeName.structured() ).name( "myapplication:test" ).build();
         FieldSet layout = FieldSet.create().
             label( "Personalia" ).
-            name( "personalia" ).
             addFormItem( Input.create().name( "eyeColour" ).label( "Eye color" ).inputType( InputTypeName.TEXT_LINE ).build() ).
             build();
 
@@ -47,7 +46,6 @@ public class ContentTypeTest
 
         FieldSet layout = FieldSet.create().
             label( "Personalia" ).
-            name( "personalia" ).
             addFormItem( Input.create().name( "eyeColour" ).label( "Eye color" ).inputType( InputTypeName.TEXT_LINE ).build() ).
             build();
 

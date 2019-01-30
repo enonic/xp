@@ -32,7 +32,6 @@ public class InputVisitorTest
             build();
 
         FieldSet myFieldSet = FieldSet.create().
-            name( "myFieldSet" ).
             label( "My field set" ).
             addFormItem( Input.create().
                 name( "myLong" ).

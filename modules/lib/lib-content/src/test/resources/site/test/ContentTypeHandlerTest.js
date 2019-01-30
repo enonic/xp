@@ -79,7 +79,6 @@ exports.testGet = function () {
             },
             {
                 "formItemType": "Layout",
-                "name": "myFieldSet",
                 "label": "My field set",
                 "items": [
                     {
@@ -273,7 +272,6 @@ exports.testList = function () {
                 },
                 {
                     "formItemType": "Layout",
-                    "name": "myFieldSet",
                     "label": "My field set",
                     "items": [
                         {

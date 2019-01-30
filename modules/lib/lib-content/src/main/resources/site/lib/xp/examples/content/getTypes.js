@@ -89,7 +89,6 @@ var expected = [
             },
             {
                 "formItemType": "Layout",
-                "name": "myFieldSet",
                 "label": "My field set",
                 "items": [
                     {

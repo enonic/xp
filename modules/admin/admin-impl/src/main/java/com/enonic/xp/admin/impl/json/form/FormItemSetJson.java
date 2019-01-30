@@ -17,7 +17,7 @@ import com.enonic.xp.form.FormItems;
 @Beta
 @SuppressWarnings("UnusedDeclaration")
 public class FormItemSetJson
-    extends FormItemJson<FormItemSet>
+    extends NamedFormItemJson<FormItemSet>
 {
     private final FormItemSet formItemSet;
 

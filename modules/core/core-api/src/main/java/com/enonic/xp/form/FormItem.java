@@ -1,16 +1,11 @@
 package com.enonic.xp.form;
 
-
-import java.util.Objects;
-
 import com.google.common.annotations.Beta;
 
 @Beta
 public abstract class FormItem
 {
     private FormItems parent;
-
-    public abstract String getName();
 
     public abstract FormItemType getType();
 
@@ -24,35 +19,13 @@ public abstract class FormItem
         return parent;
     }
 
-    public final FormItemPath getPath()
-    {
-        return resolvePath();
-    }
-
-    FormItemPath resolvePath()
-    {
-        return FormItemPath.from( resolveParentPath(), getName() );
-    }
-
-    final FormItemPath resolveParentPath()
-    {
-        if ( parent == null )
-        {
-            return FormItemPath.ROOT;
-        }
-        else
-        {
-            return parent.getPath();
-        }
-    }
-
     public abstract FormItem copy();
 
     public Input toInput()
     {
         if ( !( this instanceof Input ) )
         {
-            throw new IllegalArgumentException( "This FormItem [" + getName() + "] is not an Input: " + this.getClass().getSimpleName() );
+            throw new IllegalArgumentException( "This FormItem [" + toString() + "] is not an Input: " + this.getClass().getSimpleName() );
         }
         return (Input) this;
     }
@@ -62,7 +35,7 @@ public abstract class FormItem
         if ( !( this instanceof InlineMixin ) )
         {
             throw new IllegalArgumentException(
-                "This FormItem [" + getName() + "] is not an InlineMixin: " + this.getClass().getSimpleName() );
+                "This FormItem [" + toString() + "] is not an InlineMixin: " + this.getClass().getSimpleName() );
         }
         return (InlineMixin) this;
     }
@@ -72,7 +45,7 @@ public abstract class FormItem
         if ( !( this instanceof FormItemSet ) )
         {
             throw new IllegalArgumentException(
-                "This FormItem [" + getName() + "] is not a FormItemSet: " + this.getClass().getSimpleName() );
+                "This FormItem [" + toString() + "] is not a FormItemSet: " + this.getClass().getSimpleName() );
         }
         return (FormItemSet) this;
     }
@@ -81,7 +54,7 @@ public abstract class FormItem
     {
         if ( !( this instanceof Layout ) )
         {
-            throw new IllegalArgumentException( "This FormItem [" + getName() + "] is not a Layout: " + this.getClass().getSimpleName() );
+            throw new IllegalArgumentException( "This FormItem [" + toString() + "] is not a Layout: " + this.getClass().getSimpleName() );
         }
         return (Layout) this;
     }
@@ -91,7 +64,7 @@ public abstract class FormItem
         if ( !( this instanceof FormOptionSetOption ) )
         {
             throw new IllegalArgumentException(
-                "This FormItem [" + getName() + "] is not a FormOptionSetOption: " + this.getClass().getSimpleName() );
+                "This FormItem [" + toString() + "] is not a FormOptionSetOption: " + this.getClass().getSimpleName() );
         }
         return (FormOptionSetOption) this;
     }
@@ -101,37 +74,9 @@ public abstract class FormItem
         if ( !( this instanceof FormOptionSet ) )
         {
             throw new IllegalArgumentException(
-                "This FormItem [" + getName() + "] is not a FormOptionSet: " + this.getClass().getSimpleName() );
+                "This FormItem [" + toString() + "] is not a FormOptionSet: " + this.getClass().getSimpleName() );
         }
         return (FormOptionSet) this;
-    }
-
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( !( o instanceof FormItem ) )
-        {
-            return false;
-        }
-
-        final FormItem that = (FormItem) o;
-        return Objects.equals( getName(), that.getName() );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash( getName() );
-    }
-
-    @Override
-    public String toString()
-    {
-        return getName();
     }
 
     static FormItem from( final FormItem formItem )
@@ -148,7 +93,7 @@ public abstract class FormItem
         else
         {
             throw new IllegalArgumentException(
-                "Cannot create FormItem [" + formItem.getPath().toString() + "] of type: " + formItem.getClass().getSimpleName() );
+                "Cannot create FormItem [" + formItem.toString() + "] of type: " + formItem.getClass().getSimpleName() );
         }
         return newFormItem;
     }

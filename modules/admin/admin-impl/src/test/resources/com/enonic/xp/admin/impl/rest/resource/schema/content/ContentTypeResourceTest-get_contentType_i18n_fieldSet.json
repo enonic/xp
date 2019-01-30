@@ -33,8 +33,7 @@
               }
             }
           ],
-          "label": "translated.label",
-          "name": "myFieldSet"
+          "label": "translated.label"
         }
       }
     ]

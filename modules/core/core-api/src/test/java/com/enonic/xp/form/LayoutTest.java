@@ -14,7 +14,7 @@ public class LayoutTest
     public void toLayout_given_FormItem_of_type_Layout_then_Layout_is_returned()
     {
         // setup
-        FormItem formItem = FieldSet.create().name( "myFieldSet" ).label( "My label" ).build();
+        FormItem formItem = FieldSet.create().label( "My label" ).build();
 
         // exercise
         Layout layout = formItem.toLayout();

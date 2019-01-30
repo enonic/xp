@@ -6,18 +6,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
 
 @Beta
 public class FormItemSet
-    extends FormItem
+    extends NamedFormItem
     implements Iterable<FormItem>
 {
-    private final String name;
-
     private final String label;
 
     private final String labelI18nKey;
@@ -36,13 +31,8 @@ public class FormItemSet
 
     private FormItemSet( Builder builder )
     {
-        super();
+        super( builder.name );
 
-        Preconditions.checkNotNull( builder.name, "a name is required for a FormItemSet" );
-        Preconditions.checkArgument( StringUtils.isNotBlank( builder.name ), "a name is required for a FormItemSet" );
-        Preconditions.checkArgument( !builder.name.contains( "." ), "name cannot contain punctations: " + builder.name );
-
-        this.name = builder.name;
         this.label = builder.label;
         this.immutable = builder.immutable;
         this.occurrences = builder.occurrences;
@@ -56,12 +46,6 @@ public class FormItemSet
             this.formItems.add( formItem );
         }
 
-    }
-
-    @Override
-    public String getName()
-    {
-        return name;
     }
 
     @Override
@@ -246,9 +230,8 @@ public class FormItemSet
     }
 
     public static class Builder
+        extends NamedFormItem.Builder<Builder>
     {
-        private String name;
-
         private String label;
 
         private String labelI18nKey;
@@ -272,7 +255,7 @@ public class FormItemSet
 
         public Builder( final FormItemSet source )
         {
-            this.name = source.name;
+            super( source );
             this.label = source.label;
             this.immutable = source.immutable;
             this.occurrences = source.occurrences;
@@ -285,12 +268,6 @@ public class FormItemSet
             {
                 formItems.add( formItemSource.copy() );
             }
-        }
-
-        public Builder name( String value )
-        {
-            name = value;
-            return this;
         }
 
         public Builder label( String value )

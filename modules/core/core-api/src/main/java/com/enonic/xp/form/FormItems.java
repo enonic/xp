@@ -3,6 +3,7 @@ package com.enonic.xp.form;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Objects;
@@ -19,7 +20,7 @@ public final class FormItems
 
     private LinkedHashMap<String, FormItem> formItemByName = new LinkedHashMap<>();
 
-    private LinkedHashMap<String, Layout> layoutByName = new LinkedHashMap<>();
+    private LinkedHashSet<Layout> layouts = new LinkedHashSet<>();
 
     public FormItems()
     {
@@ -37,7 +38,18 @@ public final class FormItems
         {
             return FormItemPath.ROOT;
         }
-        return containerFormItem.getPath();
+
+        if ( containerFormItem instanceof NamedFormItem )
+        {
+            return ( (NamedFormItem) containerFormItem ).getPath();
+        }
+
+        if ( containerFormItem.getParent() == null )
+        {
+            return FormItemPath.ROOT;
+        }
+
+        return containerFormItem.getParent().getPath();
     }
 
     public FormItem getItemByName( String name )
@@ -50,16 +62,20 @@ public final class FormItems
         if ( formItem.getParent() != null )
         {
             throw new IllegalArgumentException(
-                "formItem [" + formItem.getName() + "] already added to: " + formItem.getParent().getPath().toString() );
+                "formItem [" + formItem.toString() + "] already added to: " + formItem.getParent().getPath().toString() );
         }
-        Object previous = formItemByName.put( formItem.getName(), formItem );
-        Preconditions.checkArgument( previous == null, "FormItem already added: " + formItem );
 
         formItem.setParent( this );
 
         if ( formItem instanceof Layout )
         {
-            layoutByName.put( formItem.getName(), (Layout) formItem );
+            formItemByName.put( formItem.getType() + "-" + layouts.size(), formItem );
+            layouts.add( (Layout) formItem );
+        }
+        else
+        {
+            Object previous = formItemByName.put( ( (NamedFormItem) formItem ).getName(), formItem );
+            Preconditions.checkArgument( previous == null, "FormItem already added: " + formItem );
         }
     }
 
@@ -205,7 +221,7 @@ public final class FormItems
         final int size = formItemByName.size();
         for ( FormItem formItem : formItemByName.values() )
         {
-            s.append( formItem.getName() );
+            s.append( formItem.toString() );
             if ( index < size - 1 )
             {
                 s.append( ", " );
@@ -219,7 +235,7 @@ public final class FormItems
     {
         FormItem foundFormItem = null;
 
-        for ( final Layout layout : layoutByName.values() )
+        for ( final Layout layout : layouts )
         {
             foundFormItem = layout.getFormItem( name );
             if ( foundFormItem != null )
@@ -245,6 +261,6 @@ public final class FormItems
     {
         Preconditions.checkArgument( type.isInstance( formItem ),
                                      "FormItem [%s] in [%s] is not of type %s: " + formItem.getClass().getName(), this.getPath(),
-                                     formItem.getName(), type.getSimpleName() );
+                                     formItem.toString(), type.getSimpleName() );
     }
 }

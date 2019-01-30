@@ -11,6 +11,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
+import com.enonic.xp.form.NamedFormItem;
 import com.enonic.xp.macro.Macro;
 import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroDescriptorService;
@@ -161,8 +162,11 @@ public final class MacroInstruction
         final Map<String, String> paramCaseTranslator = new HashMap<>( macroForm.size() );
         for ( FormItem formItem : macroForm )
         {
-            final String name = formItem.getName();
-            paramCaseTranslator.put( name.toLowerCase(), name );
+            if ( formItem instanceof NamedFormItem )
+            {
+                final String name = ( (NamedFormItem) formItem ).getName();
+                paramCaseTranslator.put( name.toLowerCase(), name );
+            }
         }
 
         final MacroContext.Builder context = MacroContext.create().name( macroDescriptor.getName() );

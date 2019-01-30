@@ -55,7 +55,6 @@ public class ValidateContentDataCommandTest
             name( "myapplication:my_type" ).
             addFormItem( FieldSet.create().
                 label( "My layout" ).
-                name( "myLayout" ).
                 addFormItem( FormItemSet.create().name( "mySet" ).required( true ).
                     addFormItem( Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).
                         build() ).
@@ -79,7 +78,7 @@ public class ValidateContentDataCommandTest
         throws Exception
     {
         // setup
-        final FieldSet fieldSet = FieldSet.create().label( "My layout" ).name( "myLayout" ).addFormItem(
+        final FieldSet fieldSet = FieldSet.create().label( "My layout" ).addFormItem(
             FormItemSet.create().name( "mySet" ).required( true ).addFormItem(
                 Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).build() ).build() ).build();
         final ContentType contentType = ContentType.create().
@@ -134,7 +133,7 @@ public class ValidateContentDataCommandTest
         throws Exception
     {
         // setup
-        final FieldSet fieldSet = FieldSet.create().label( "My layout" ).name( "myLayout" ).addFormItem(
+        final FieldSet fieldSet = FieldSet.create().label( "My layout" ).addFormItem(
             FormItemSet.create().name( "mySet" ).required( true ).addFormItem(
                 Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).build() ).build() ).build();
         final ContentType contentType = ContentType.create().
@@ -161,7 +160,7 @@ public class ValidateContentDataCommandTest
         throws Exception
     {
         // setup
-        final FieldSet fieldSet = FieldSet.create().label( "My layout" ).name( "myLayout" ).addFormItem(
+        final FieldSet fieldSet = FieldSet.create().label( "My layout" ).addFormItem(
             FormItemSet.create().name( "mySet" ).required( true ).addFormItem(
                 Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).build() ).build() ).build();
         final ContentType contentType = ContentType.create().

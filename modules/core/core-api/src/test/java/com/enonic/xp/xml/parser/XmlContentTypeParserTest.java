@@ -4,7 +4,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.FormItemPath;
 import com.enonic.xp.form.FormItemSet;
@@ -188,14 +187,7 @@ public class XmlContentTypeParserTest
         parse( this.parser, "-i18n.xml" );
         final ContentType result = this.builder.build();
 
-        final FormItem item = result.getForm().getFormItem( "field-set" );
-        assertNotNull( item );
-
-        final FieldSet fieldSet = (FieldSet) item;
-
-        assertEquals( "translated.label", fieldSet.getLabelI18nKey() );
-
-        final Input inputInsideFieldSet = fieldSet.getFormItems().getInput( FormItemPath.from( "textLine2" ) );
+        final Input inputInsideFieldSet = result.getForm().getInput( FormItemPath.from( "textLine2" ) );
 
         assertEquals( "translated.help-text", inputInsideFieldSet.getHelpTextI18nKey() );
         assertEquals( "translated.label", inputInsideFieldSet.getLabelI18nKey() );
@@ -268,16 +260,7 @@ public class XmlContentTypeParserTest
         assertEquals( "translated.label", radioOption.getLabelI18nKey() );
         assertEquals( "translated.label", radioOption.getLabel() );
 
-        // field set
-        final FormItem fieldSetItem = result.getForm().getFormItem( "field-set" );
-        assertNotNull( fieldSetItem );
-
-        final FieldSet fieldSet = (FieldSet) fieldSetItem;
-
-        assertEquals( "translated.label", fieldSet.getLabelI18nKey() );
-        assertEquals( "translated.label", fieldSet.getLabel() );
-
-        final Input inputInsideFieldSet = fieldSet.getFormItems().getInput( FormItemPath.from( "textLine2" ) );
+        final Input inputInsideFieldSet = result.getForm().getInput( FormItemPath.from( "textLine2" ) );
 
         assertEquals( "translated.help-text", inputInsideFieldSet.getHelpTextI18nKey() );
         assertEquals( "translated.help-text", inputInsideFieldSet.getHelpText() );

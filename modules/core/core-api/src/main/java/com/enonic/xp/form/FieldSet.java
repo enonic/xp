@@ -22,7 +22,7 @@ public class FieldSet
 
     private FieldSet( final Builder builder )
     {
-        super( builder.name );
+        super();
 
         Preconditions.checkNotNull( builder.label, "label is required" );
 
@@ -107,6 +107,12 @@ public class FieldSet
         return Objects.hash( super.hashCode(), this.label, this.labelI18nKey, this.formItems );
     }
 
+    @Override
+    public String toString()
+    {
+        return label;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -123,8 +129,6 @@ public class FieldSet
 
         private String labelI18nKey;
 
-        private String name;
-
         private List<FormItem> formItems = new ArrayList<FormItem>();
 
         private Builder()
@@ -136,7 +140,6 @@ public class FieldSet
         {
             this.label = source.label;
             this.labelI18nKey = source.labelI18nKey;
-            this.name = source.getName();
 
             for ( final FormItem formItemSource : source.formItems )
             {
@@ -153,12 +156,6 @@ public class FieldSet
         public Builder labelI18nKey( String value )
         {
             this.labelI18nKey = value;
-            return this;
-        }
-
-        public Builder name( String value )
-        {
-            this.name = value;
             return this;
         }
 

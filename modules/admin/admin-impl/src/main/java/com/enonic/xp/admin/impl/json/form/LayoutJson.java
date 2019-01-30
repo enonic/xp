@@ -23,10 +23,4 @@ public abstract class LayoutJson<T extends Layout>
     {
         return layout;
     }
-
-    @Override
-    public String getName()
-    {
-        return layout.getName();
-    }
 }

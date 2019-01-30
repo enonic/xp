@@ -279,7 +279,6 @@ public class FormJsonToPropertyTreeTranslatorTest
     private Form createFormForFieldSet()
     {
         final FieldSet fieldSet1 = FieldSet.create().
-            name( "properties" ).
             label( "Properties" ).
             addFormItem( Input.create().
                 name( "number" ).
@@ -300,7 +299,6 @@ public class FormJsonToPropertyTreeTranslatorTest
             build();
 
         final FieldSet fieldSet = FieldSet.create().
-            name( "attributes" ).
             label( "Attributes" ).
             addFormItem( itemSet ).
             build();
