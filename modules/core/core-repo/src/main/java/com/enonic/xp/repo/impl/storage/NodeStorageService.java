@@ -31,6 +31,8 @@ public interface NodeStorageService
 
     void storeVersion( final StoreNodeVersionParams params, final InternalContext context );
 
+    void storeCommit( final StoreNodeCommitParams params, final InternalContext context );
+
     void delete( final NodeIds nodeIds, final InternalContext context );
 
     Node updateMetadata( final Node node, final InternalContext context );

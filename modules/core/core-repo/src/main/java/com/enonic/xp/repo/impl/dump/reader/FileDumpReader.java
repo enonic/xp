@@ -29,6 +29,7 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.dump.BranchDumpResult;
 import com.enonic.xp.dump.BranchLoadResult;
+import com.enonic.xp.dump.CommitsLoadResult;
 import com.enonic.xp.dump.LoadError;
 import com.enonic.xp.dump.RepoDumpResult;
 import com.enonic.xp.dump.SystemDumpResult;
@@ -195,6 +196,29 @@ public class FileDumpReader
             build();
     }
 
+    @Override
+    public CommitsLoadResult loadCommits( final RepositoryId repositoryId, final LineProcessor<EntryLoadResult> processor )
+    {
+        final File commitsFile = getCommitsFile( repositoryId );
+
+        if ( this.listener != null )
+        {
+            this.listener.loadingVersions( repositoryId );
+        }
+
+        final CommitsLoadResult.Builder commitsLoadResult = CommitsLoadResult.create();
+
+        if ( commitsFile == null )
+        {
+            return commitsLoadResult.build();
+        }
+
+        final EntriesLoadResult result = doLoadEntries( processor, commitsFile );
+        return commitsLoadResult.successful( result.getSuccessful() ).
+            errors( result.getErrors().stream().map( error -> LoadError.error( error.getMessage() ) ).collect( Collectors.toList() ) ).
+            build();
+    }
+
     private Long getBranchSuccessfulCountFromMeta( final RepositoryId repositoryId, final Branch branch )
     {
         final SystemDumpResult systemDumpResult = this.dumpMeta.getSystemDumpResult();
@@ -276,6 +300,12 @@ public class FileDumpReader
     public File getVersionsFile( final RepositoryId repositoryId )
     {
         final Path metaPath = createVersionMetaPath( this.dumpDirectory, repositoryId );
+        return doGetFile( metaPath, false );
+    }
+
+    public File getCommitsFile( final RepositoryId repositoryId )
+    {
+        final Path metaPath = createCommitMetaPath( this.dumpDirectory, repositoryId );
         return doGetFile( metaPath, false );
     }
 

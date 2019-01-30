@@ -27,6 +27,7 @@ import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.GetActiveNodeVersionsParams;
 import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.GetNodeVersionsParams;
+import com.enonic.xp.node.ImportNodeCommitParams;
 import com.enonic.xp.node.ImportNodeParams;
 import com.enonic.xp.node.ImportNodeResult;
 import com.enonic.xp.node.ImportNodeVersionParams;
@@ -977,6 +978,24 @@ public class NodeServiceImpl
             nodePath( params.getNodePath() ).
             nodeVersion( params.getNodeVersion() ).
             nodeVersionId( params.getNodeVersionId() ).
+            nodeCommitId( params.getNodeCommitId() ).
+            timestamp( params.getTimestamp() ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
+            indexServiceInternal( this.indexServiceInternal ).
+            build().
+            execute();
+    }
+
+    @Override
+    public void importNodeCommit( final ImportNodeCommitParams params )
+    {
+        verifyRepositoryExists();
+
+        LoadNodeCommitCommand.create().
+            nodeCommitId( params.getNodeCommitId() ).
+            message( params.getMessage() ).
+            committer( params.getCommitter() ).
             timestamp( params.getTimestamp() ).
             storageService( this.nodeStorageService ).
             searchService( this.nodeSearchService ).

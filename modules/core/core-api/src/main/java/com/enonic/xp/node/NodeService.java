@@ -114,4 +114,6 @@ public interface NodeService
 
     void importNodeVersion( final ImportNodeVersionParams params );
 
+    void importNodeCommit( final ImportNodeCommitParams params );
+
 }

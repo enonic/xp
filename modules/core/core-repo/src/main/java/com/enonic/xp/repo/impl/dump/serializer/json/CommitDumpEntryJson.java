@@ -1,7 +1,10 @@
 package com.enonic.xp.repo.impl.dump.serializer.json;
 
+import java.time.Instant;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.repo.impl.dump.model.CommitDumpEntry;
 
 public class CommitDumpEntryJson
@@ -41,11 +44,20 @@ public class CommitDumpEntryJson
             build();
     }
 
+    public static CommitDumpEntry fromJson( final CommitDumpEntryJson commitDumpEntryJson )
+    {
+        return CommitDumpEntry.create().
+            nodeCommitId( NodeCommitId.from( commitDumpEntryJson.commitId ) ).
+            message( commitDumpEntryJson.message ).
+            committer( commitDumpEntryJson.committer ).
+            timestamp( Instant.parse( commitDumpEntryJson.timestamp ) ).
+            build();
+    }
+
     public static Builder create()
     {
         return new Builder();
     }
-
 
     public static final class Builder
     {

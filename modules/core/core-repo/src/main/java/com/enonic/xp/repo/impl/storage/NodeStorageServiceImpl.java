@@ -108,8 +108,20 @@ public class NodeStorageServiceImpl
             nodeVersionKey( nodeVersionKey ).
             nodeId( params.getNodeId() ).
             nodePath( params.getNodePath() ).
+            nodeCommitId( params.getNodeCommitId() ).
             timestamp( params.getTimestamp() ).
             build(), context );
+    }
+
+    @Override
+    public void storeCommit( final StoreNodeCommitParams params, final InternalContext context )
+    {
+        final NodeCommitEntry nodeCommitEntry = NodeCommitEntry.create().
+            nodeCommitId( params.getNodeCommitId() ).
+            message( params.getMessage() ).
+            committer( params.getCommitter() ).timestamp( params.getTimestamp() ).
+            build();
+        this.commitService.store( nodeCommitEntry, context );
     }
 
     @Override

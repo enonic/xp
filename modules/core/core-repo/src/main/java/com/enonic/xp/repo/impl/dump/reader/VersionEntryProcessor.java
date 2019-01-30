@@ -64,6 +64,7 @@ public class VersionEntryProcessor
                     nodePath( version.getNodePath() ).
                     nodeVersion( nodeVersion ).
                     nodeVersionId( version.getVersion() ).
+                    nodeCommitId( version.getNodeCommitId() ).
                     build() );
 
                 validateOrAddBinary( nodeVersion, result );

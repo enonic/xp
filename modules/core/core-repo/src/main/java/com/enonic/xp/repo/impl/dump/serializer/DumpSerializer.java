@@ -15,4 +15,6 @@ public interface DumpSerializer
     BranchDumpEntry toBranchMetaEntry( final String value );
 
     VersionsDumpEntry toNodeVersionsEntry( final String value );
+
+    CommitDumpEntry toCommitDumpEntry( final String value );
 }

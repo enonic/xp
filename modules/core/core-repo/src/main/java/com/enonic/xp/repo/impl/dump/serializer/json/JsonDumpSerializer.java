@@ -82,4 +82,18 @@ public class JsonDumpSerializer
             throw new RepoDumpException( "Cannot deserialize value [" + value + "] to DumpEntry", e );
         }
     }
+
+    @Override
+    public CommitDumpEntry toCommitDumpEntry( final String value )
+    {
+        try
+        {
+            final CommitDumpEntryJson commitDumpEntryJson = MAPPER.readValue( value, CommitDumpEntryJson.class );
+            return CommitDumpEntryJson.fromJson( commitDumpEntryJson );
+        }
+        catch ( IOException e )
+        {
+            throw new RepoDumpException( "Cannot deserialize value [" + value + "] to DumpEntry", e );
+        }
+    }
 }
