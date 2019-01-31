@@ -186,7 +186,7 @@ public class NodeStoreDocumentFactory
                         throw new RuntimeException( "Missing index configuration for data " + property.getPath() );
                     }
 
-                    builder.add( property, configForData );
+                    builder.add( property, node.getIndexConfigDocument() );
 
                     addReferenceAggregation( property );
                 }

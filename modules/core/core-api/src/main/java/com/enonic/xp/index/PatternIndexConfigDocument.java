@@ -21,6 +21,8 @@ public class PatternIndexConfigDocument
 
     private final IndexConfig defaultConfig;
 
+    private final AllTextIndexConfig allTextIndexConfig;
+
     public IndexConfig getDefaultConfig()
     {
         return defaultConfig;
@@ -79,6 +81,8 @@ public class PatternIndexConfigDocument
 
         private IndexConfig defaultConfig = IndexConfig.BY_TYPE;
 
+        private AllTextIndexConfig allTextIndexConfig;
+
         private Builder()
         {
         }
@@ -119,6 +123,12 @@ public class PatternIndexConfigDocument
         public Builder defaultConfig( IndexConfig defaultConfig )
         {
             this.defaultConfig = defaultConfig;
+            return this;
+        }
+
+        public Builder allTextIndexConfig( AllTextIndexConfig allTextIndexConfig )
+        {
+            this.allTextIndexConfig = allTextIndexConfig;
             return this;
         }
 

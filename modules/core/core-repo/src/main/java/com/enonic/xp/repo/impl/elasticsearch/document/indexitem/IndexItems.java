@@ -11,6 +11,7 @@ import com.google.common.collect.Multimap;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.index.IndexConfig;
+import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.repo.impl.index.IndexValueType;
 
@@ -48,14 +49,14 @@ public class IndexItems
         {
         }
 
-        public Builder add( final Property property, final IndexConfig indexConfig )
+        public Builder add( final Property property, final IndexConfigDocument indexConfigDocument )
         {
             if ( property.getValue() == null )
             {
                 return this;
             }
 
-            final List<IndexItem> indexItems = IndexItemFactory.create( property, indexConfig );
+            final List<IndexItem> indexItems = IndexItemFactory.create( property, indexConfigDocument );
 
             add( indexItems );
 

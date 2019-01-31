@@ -19,6 +19,7 @@ class AllTextTypeFactory
             allTextItems.add( new IndexItemAnalyzed( NodeIndexPath.ALL_TEXT, propertyValue.asString() ) );
 
             allTextItems.add( new IndexItemNgram( NodeIndexPath.ALL_TEXT, propertyValue.asString() ) );
+
         }
 
         return allTextItems;
