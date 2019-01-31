@@ -203,7 +203,7 @@ public class FileDumpReader
 
         if ( this.listener != null )
         {
-            this.listener.loadingVersions( repositoryId );
+            this.listener.loadingCommits( repositoryId );
         }
 
         final CommitsLoadResult.Builder commitsLoadResult = CommitsLoadResult.create();
