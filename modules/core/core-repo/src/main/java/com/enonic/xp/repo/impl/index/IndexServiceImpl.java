@@ -1,10 +1,13 @@
 package com.enonic.xp.repo.impl.index;
 
+import java.util.Map;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.index.PurgeIndexParams;
@@ -138,6 +141,12 @@ public class IndexServiceImpl
     public IndexSettings getIndexSettings( final RepositoryId repositoryId, final IndexType indexType )
     {
         return this.indexServiceInternal.getIndexSettings( repositoryId, indexType );
+    }
+
+    @Override
+    public Map<String, Object> getIndexMapping( final RepositoryId repositoryId, final Branch branch, final IndexType indexType )
+    {
+        return this.indexServiceInternal.getIndexMapping( repositoryId, branch, indexType );
     }
 
     @Override

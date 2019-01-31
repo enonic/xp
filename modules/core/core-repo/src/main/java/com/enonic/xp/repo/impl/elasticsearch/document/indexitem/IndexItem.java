@@ -4,7 +4,7 @@ import com.google.common.base.Strings;
 
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.repo.impl.index.IndexFieldNameNormalizer;
-import com.enonic.xp.repo.impl.index.IndexValueType;
+import com.enonic.xp.repo.impl.index.IndexValueTypeInterface;
 
 public abstract class IndexItem<T extends IndexValue>
 {
@@ -25,7 +25,7 @@ public abstract class IndexItem<T extends IndexValue>
         return IndexFieldNameNormalizer.normalize( indexPath.getPath() );
     }
 
-    public abstract IndexValueType valueType();
+    public abstract IndexValueTypeInterface valueType();
 
     public T getValue()
     {

@@ -33,6 +33,28 @@ final class IndexConfigJson
     @JsonProperty("indexValueProcessors")
     private List<String> indexValueProcessors;
 
+    @JsonProperty("languages")
+    private List<String> languages;
+
+    public static IndexConfigJson toJson( final IndexConfig config )
+    {
+        final IndexConfigJson json = new IndexConfigJson();
+        json.decideByType = config.isDecideByType();
+        json.enabled = config.isEnabled();
+        json.nGram = config.isnGram();
+        json.fulltext = config.isFulltext();
+        json.includeInAllText = config.isIncludeInAllText();
+        if ( !config.getIndexValueProcessors().isEmpty() )
+        {
+            json.indexValueProcessors = toStringList( config.getIndexValueProcessors() );
+        }
+        if ( !config.getLanguages().isEmpty() )
+        {
+            json.languages = List.copyOf( config.getLanguages() );
+        }
+        return json;
+    }
+
     public IndexConfig fromJson()
     {
         final IndexConfig.Builder builder = IndexConfig.create().
@@ -50,22 +72,15 @@ final class IndexConfigJson
             }
         }
 
-        return builder.build();
-    }
-
-    public static IndexConfigJson toJson( final IndexConfig config )
-    {
-        final IndexConfigJson json = new IndexConfigJson();
-        json.decideByType = config.isDecideByType();
-        json.enabled = config.isEnabled();
-        json.nGram = config.isnGram();
-        json.fulltext = config.isFulltext();
-        json.includeInAllText = config.isIncludeInAllText();
-        if ( !config.getIndexValueProcessors().isEmpty() )
+        if ( this.languages != null )
         {
-            json.indexValueProcessors = toStringList( config.getIndexValueProcessors() );
+            for ( final String language : this.languages )
+            {
+                builder.addLanguage( language );
+            }
         }
-        return json;
+
+        return builder.build();
     }
 
     private static List<String> toStringList( final Iterable<IndexValueProcessor> indexValueProcessors )

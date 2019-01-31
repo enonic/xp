@@ -19,6 +19,18 @@
           "letter",
           "digit"
         ]
+      },
+      "english_stop": {
+        "type": "stop",
+        "stopwords": "_english_"
+      },
+      "english_stemmer": {
+        "type": "stemmer",
+        "language": "english"
+      },
+      "russian_stemmer": {
+        "type": "stemmer",
+        "language": "russian"
       }
     },
     "tokenizer": {
@@ -120,8 +132,23 @@
           "lowercase",
           "asciifolding"
         ]
+      },
+      "language_analyzer_en": {
+        "tokenizer": "standard",
+        "filter": [
+          "lowercase",
+          "english_stop",
+          "english_stemmer"
+        ]
+      },
+      "language_analyzer_ru": {
+        "tokenizer": "standard",
+        "filter": [
+          "standard",
+          "lowercase",
+          "russian_stemmer"
+        ]
       }
     }
-
   }
 }

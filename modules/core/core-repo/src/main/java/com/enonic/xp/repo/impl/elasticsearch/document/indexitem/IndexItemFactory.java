@@ -53,6 +53,7 @@ class IndexItemFactory
             items.addAll( FulltextTypeFactory.create( indexPath, processedPropertyValue, indexConfig ) );
             items.add( OrderByTypeFactory.create( indexPath, processedPropertyValue ) );
             items.addAll( AllTextTypeFactory.create( processedPropertyValue, indexConfig ) );
+            items.addAll( StemmedTypeFactory.create( indexPath, processedPropertyValue, indexConfig ) );
 
             if ( indexConfig.isPath() )
             {

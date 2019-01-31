@@ -102,6 +102,30 @@
         }
       },
       {
+        "template_stemmed_en": {
+          "match": "*._stemmed_en",
+          "mapping": {
+            "type": "string",
+            "store": "no",
+            "index": "analyzed",
+            "analyzer": "language_analyzer_en",
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_stemmed_ru": {
+          "match": "*._stemmed_ru",
+          "mapping": {
+            "type": "string",
+            "store": "no",
+            "index": "analyzed",
+            "analyzer": "language_analyzer_ru",
+            "include_in_all": false
+          }
+        }
+      },
+      {
         "template_node_properties": {
           "match": "_*",
           "mapping": {
