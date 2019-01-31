@@ -133,6 +133,16 @@ public final class XmlNodeSerializer
             }
             this.builder.end();
         }
+
+        if ( !value.getLanguages().isEmpty() )
+        {
+            this.builder.start( "languages" );
+            for ( IndexValueProcessor indexValueProcessor : value.getIndexValueProcessors() )
+            {
+                serializeValueElement( "language", indexValueProcessor.getName() );
+            }
+            this.builder.end();
+        }
     }
 
     private void serialize( final PathIndexConfig value )

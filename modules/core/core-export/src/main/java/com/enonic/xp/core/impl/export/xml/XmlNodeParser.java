@@ -292,6 +292,15 @@ public final class XmlNodeParser
             }
         }
 
+        final DomElement languages = root.getChild( "languages" );
+        if ( languages != null )
+        {
+            for ( DomElement language : languages.getChildren() )
+            {
+                builder.addLanguage( language.getValue() );
+            }
+        }
+
         return builder.build();
     }
 
