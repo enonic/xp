@@ -162,7 +162,35 @@ public class IndexConfig
 
         final IndexConfig that = (IndexConfig) o;
 
-        return Objects.equal( this, that );
+        if ( decideByType != that.decideByType )
+        {
+            return false;
+        }
+        if ( enabled != that.enabled )
+        {
+            return false;
+        }
+        if ( nGram != that.nGram )
+        {
+            return false;
+        }
+        if ( fulltext != that.fulltext )
+        {
+            return false;
+        }
+        if ( includeInAllText != that.includeInAllText )
+        {
+            return false;
+        }
+        if ( path != that.path )
+        {
+            return false;
+        }
+        if ( !Objects.equal( languages, that.languages ) )
+        {
+            return false;
+        }
+        return true;
     }
 
     @Override
