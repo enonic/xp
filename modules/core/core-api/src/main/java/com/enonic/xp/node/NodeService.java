@@ -58,6 +58,8 @@ public interface NodeService
 
     NodeVersionQueryResult findVersions( NodeVersionQuery nodeVersionQuery );
 
+    NodeCommitQueryResult findCommits( NodeCommitQuery nodeCommitQuery );
+
     boolean deleteVersion( NodeId nodeId, NodeVersionId nodeVersionId );
 
     GetActiveNodeVersionsResult getActiveVersions( GetActiveNodeVersionsParams params );
@@ -111,5 +113,7 @@ public interface NodeService
     boolean hasUnpublishedChildren( NodeId parent, Branch target );
 
     void importNodeVersion( final ImportNodeVersionParams params );
+
+    void importNodeCommit( final ImportNodeCommitParams params );
 
 }

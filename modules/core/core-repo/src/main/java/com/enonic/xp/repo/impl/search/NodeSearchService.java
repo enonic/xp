@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.search;
 
+import com.enonic.xp.node.NodeCommitQuery;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.SearchSource;
@@ -17,6 +18,8 @@ public interface NodeSearchService
     SearchResult query( final NodeQuery query, final ReturnFields returnFields, final SearchSource source );
 
     SearchResult query( final NodeVersionQuery query, final SearchSource source );
+
+    SearchResult query( final NodeCommitQuery query, final SearchSource source );
 
     SearchResult query( final NodeBranchQuery nodeBranchQuery, final SearchSource source );
 

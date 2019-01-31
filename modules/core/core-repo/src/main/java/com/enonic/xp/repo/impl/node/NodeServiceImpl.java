@@ -27,6 +27,7 @@ import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.GetActiveNodeVersionsParams;
 import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.GetNodeVersionsParams;
+import com.enonic.xp.node.ImportNodeCommitParams;
 import com.enonic.xp.node.ImportNodeParams;
 import com.enonic.xp.node.ImportNodeResult;
 import com.enonic.xp.node.ImportNodeVersionParams;
@@ -39,6 +40,8 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeCommitId;
+import com.enonic.xp.node.NodeCommitQuery;
+import com.enonic.xp.node.NodeCommitQueryResult;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
 import com.enonic.xp.node.NodeId;
@@ -603,6 +606,18 @@ public class NodeServiceImpl
     }
 
     @Override
+    public NodeCommitQueryResult findCommits( final NodeCommitQuery query )
+    {
+        verifyContext();
+
+        return FindNodeCommitsCommand.create().
+            query( query ).
+            searchService( this.nodeSearchService ).
+            build().
+            execute();
+    }
+
+    @Override
     public boolean deleteVersion( final NodeId nodeId, final NodeVersionId nodeVersionId )
     {
         return DeleteVersionCommand.create().
@@ -963,6 +978,24 @@ public class NodeServiceImpl
             nodePath( params.getNodePath() ).
             nodeVersion( params.getNodeVersion() ).
             nodeVersionId( params.getNodeVersionId() ).
+            nodeCommitId( params.getNodeCommitId() ).
+            timestamp( params.getTimestamp() ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
+            indexServiceInternal( this.indexServiceInternal ).
+            build().
+            execute();
+    }
+
+    @Override
+    public void importNodeCommit( final ImportNodeCommitParams params )
+    {
+        verifyRepositoryExists();
+
+        LoadNodeCommitCommand.create().
+            nodeCommitId( params.getNodeCommitId() ).
+            message( params.getMessage() ).
+            committer( params.getCommitter() ).
             timestamp( params.getTimestamp() ).
             storageService( this.nodeStorageService ).
             searchService( this.nodeSearchService ).

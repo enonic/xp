@@ -8,7 +8,8 @@ public class SingleRepoStorageSource
     public enum Type
     {
         BRANCH,
-        VERSION
+        VERSION,
+        COMMIT
     }
 
     private final RepositoryId repositoryId;

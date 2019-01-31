@@ -55,4 +55,9 @@ public class SystemLoadListenerImpl
     public void loadingVersions( final RepositoryId repositoryId )
     {
     }
+
+    @Override
+    public void loadingCommits( final RepositoryId repositoryId )
+    {
+    }
 }

@@ -7,6 +7,7 @@ import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.dump.BranchLoadResult;
+import com.enonic.xp.dump.CommitsLoadResult;
 import com.enonic.xp.dump.VersionsLoadResult;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
@@ -22,6 +23,8 @@ public interface DumpReader
     BranchLoadResult loadBranch( final RepositoryId repositoryId, final Branch branch, final LineProcessor<EntryLoadResult> processor );
 
     VersionsLoadResult loadVersions( final RepositoryId repositoryId, final LineProcessor<EntryLoadResult> processor );
+
+    CommitsLoadResult loadCommits( final RepositoryId repositoryId, final LineProcessor<EntryLoadResult> processor );
 
     NodeVersion get( final RepositoryId repositoryId, final NodeVersionKey blobKey );
 
