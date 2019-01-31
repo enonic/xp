@@ -45,6 +45,10 @@ import com.enonic.xp.node.GetActiveNodeVersionsParams;
 import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeCommitEntry;
+import com.enonic.xp.node.NodeCommitId;
+import com.enonic.xp.node.NodeCommitQuery;
+import com.enonic.xp.node.NodeCommitQueryResult;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeName;
@@ -53,7 +57,9 @@ import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.NodeVersionMetadata;
+import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
@@ -763,6 +769,7 @@ public class DumpServiceImplTest
             assertEquals( nodePath, masterNode.path() );
             assertEquals( "2018-11-23T11:14:21.662Z", masterNode.getTimestamp().toString() );
 
+            checkCommitUpgrade( nodeId );
             checkPageFlatteningUpgradePage( draftNode );
 
             final Node fragmentNode = nodeService.getById( fragmentNodeId );
@@ -778,6 +785,41 @@ public class DumpServiceImplTest
         assertNotNull( repoDumpResult );
 
         assertNull( repositoryService.get( Pre5ContentConstants.CONTENT_REPO_ID ) );
+    }
+
+    private void checkCommitUpgrade( final NodeId nodeId )
+    {
+        nodeService.refresh( RefreshMode.ALL );
+        final NodeCommitQuery nodeCommitQuery = NodeCommitQuery.create().build();
+        final NodeCommitQueryResult nodeCommitQueryResult = ContextBuilder.
+            from( ContextAccessor.current() ).
+            branch( Branch.from( "master" ) ).
+            build().
+            callWith( () -> nodeService.findCommits( nodeCommitQuery ) );
+        assertEquals( 1, nodeCommitQueryResult.getTotalHits() );
+
+        final NodeCommitEntry commitEntry = nodeCommitQueryResult.getNodeCommitEntries().
+            iterator().
+            next();
+        final NodeCommitId nodeCommitId = commitEntry.getNodeCommitId();
+        assertEquals( "Dump upgrade", commitEntry.getMessage() );
+        assertEquals( "user:system:node-su", commitEntry.getCommitter() );
+
+        final NodeVersionQuery nodeVersionQuery = NodeVersionQuery.create().
+            nodeId( nodeId ).
+            build();
+        final NodeVersionQueryResult versionQueryResult = ContextBuilder.
+            from( ContextAccessor.current() ).
+            branch( Branch.from( "master" ) ).
+            build().
+            callWith( () -> nodeService.findVersions( nodeVersionQuery ) );
+        assertEquals( 2, versionQueryResult.getTotalHits() );
+
+        final Iterator<NodeVersionMetadata> versionMetadataIterator = versionQueryResult.getNodeVersionsMetadata().iterator();
+        final NodeVersionMetadata latestDraftVersionMetadata = versionMetadataIterator.next();
+        final NodeVersionMetadata latestMasterVersionMetadata = versionMetadataIterator.next();
+        assertEquals( nodeCommitId, latestMasterVersionMetadata.getNodeCommitId() );
+        assertNull( latestDraftVersionMetadata.getNodeCommitId() );
     }
 
     private void checkPageFlatteningUpgradePage( final Node node )

@@ -119,7 +119,8 @@ public class NodeStorageServiceImpl
         final NodeCommitEntry nodeCommitEntry = NodeCommitEntry.create().
             nodeCommitId( params.getNodeCommitId() ).
             message( params.getMessage() ).
-            committer( params.getCommitter() ).timestamp( params.getTimestamp() ).
+            committer( params.getCommitter() ).
+            timestamp( params.getTimestamp() ).
             build();
         this.commitService.store( nodeCommitEntry, context );
     }

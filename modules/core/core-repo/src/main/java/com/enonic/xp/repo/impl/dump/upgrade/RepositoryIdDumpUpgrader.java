@@ -23,11 +23,11 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.repo.impl.dump.DumpBlobRecord;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
-import com.enonic.xp.repo.impl.dump.serializer.json.BranchDumpEntryJson;
 import com.enonic.xp.repo.impl.dump.serializer.json.DumpMetaJsonSerializer;
-import com.enonic.xp.repo.impl.dump.serializer.json.VersionDumpEntryJson;
-import com.enonic.xp.repo.impl.dump.serializer.json.VersionsDumpEntryJson;
 import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre5.Pre5ContentConstants;
+import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre6.Pre6BranchDumpEntryJson;
+import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre6.Pre6VersionDumpEntryJson;
+import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre6.Pre6VersionsDumpEntryJson;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repo.impl.node.json.NodeVersionDataJson;
 import com.enonic.xp.repo.impl.node.json.NodeVersionJsonSerializer;
@@ -73,14 +73,14 @@ public class RepositoryIdDumpUpgrader
     @Override
     protected String upgradeVersionEntry( final RepositoryId repositoryId, final String entryContent )
     {
-        final VersionsDumpEntryJson sourceVersionsEntry = deserializeValue( entryContent, VersionsDumpEntryJson.class );
+        final Pre6VersionsDumpEntryJson sourceVersionsEntry = deserializeValue( entryContent, Pre6VersionsDumpEntryJson.class );
 
-        final Collection<VersionDumpEntryJson> upgradedVersionList = sourceVersionsEntry.getVersions().
+        final Collection<Pre6VersionDumpEntryJson> upgradedVersionList = sourceVersionsEntry.getVersions().
             stream().
             map( this::upgradeVersionDumpEntry ).
             collect( Collectors.toList() );
 
-        final VersionsDumpEntryJson upgradedVersionsEntry = VersionsDumpEntryJson.create().
+        final Pre6VersionsDumpEntryJson upgradedVersionsEntry = Pre6VersionsDumpEntryJson.create().
             nodeId( upgradeString( sourceVersionsEntry.getNodeId() ) ).
             versions( upgradedVersionList ).
             build();
@@ -91,12 +91,12 @@ public class RepositoryIdDumpUpgrader
     @Override
     protected String upgradeBranchEntry( final RepositoryId repositoryId, final String entryContent )
     {
-        final BranchDumpEntryJson sourceBranchEntry = deserializeValue( entryContent, BranchDumpEntryJson.class );
-        final VersionDumpEntryJson sourceVersionEntry = sourceBranchEntry.getMeta();
+        final Pre6BranchDumpEntryJson sourceBranchEntry = deserializeValue( entryContent, Pre6BranchDumpEntryJson.class );
+        final Pre6VersionDumpEntryJson sourceVersionEntry = sourceBranchEntry.getMeta();
 
-        final VersionDumpEntryJson updatedVersionEntry = upgradeVersionDumpEntry( sourceVersionEntry, false );
+        final Pre6VersionDumpEntryJson updatedVersionEntry = upgradeVersionDumpEntry( sourceVersionEntry, false );
 
-        final BranchDumpEntryJson updatedBranchEntry = BranchDumpEntryJson.create( sourceBranchEntry ).
+        final Pre6BranchDumpEntryJson updatedBranchEntry = Pre6BranchDumpEntryJson.create( sourceBranchEntry ).
             nodeId( upgradeString( sourceBranchEntry.getNodeId() ) ).
             meta( updatedVersionEntry ).
             build();
@@ -104,15 +104,15 @@ public class RepositoryIdDumpUpgrader
         return serialize( updatedBranchEntry );
     }
 
-    private VersionDumpEntryJson upgradeVersionDumpEntry( final VersionDumpEntryJson sourceVersionEntry )
+    private Pre6VersionDumpEntryJson upgradeVersionDumpEntry( final Pre6VersionDumpEntryJson sourceVersionEntry )
     {
         return this.upgradeVersionDumpEntry( sourceVersionEntry, true );
     }
 
-    private VersionDumpEntryJson upgradeVersionDumpEntry( final VersionDumpEntryJson sourceVersionEntry,
-                                                          final boolean updateNodeVersionBlob )
+    private Pre6VersionDumpEntryJson upgradeVersionDumpEntry( final Pre6VersionDumpEntryJson sourceVersionEntry,
+                                                              final boolean updateNodeVersionBlob )
     {
-        final VersionDumpEntryJson updatedVersionEntry = VersionDumpEntryJson.create( sourceVersionEntry ).
+        final Pre6VersionDumpEntryJson updatedVersionEntry = Pre6VersionDumpEntryJson.create( sourceVersionEntry ).
             nodePath( upgradeString( sourceVersionEntry.getNodePath() ) ).
             build();
 
