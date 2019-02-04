@@ -126,7 +126,6 @@
           <xs:element minOccurs="0" name="label" type="i18n"/>
           <xs:element minOccurs="0" name="items" type="formItems"/>
         </xs:all>
-        <xs:attribute name="name" type="xs:string" use="required"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
