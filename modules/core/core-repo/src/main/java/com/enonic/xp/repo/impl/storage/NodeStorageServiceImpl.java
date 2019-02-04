@@ -131,14 +131,17 @@ public class NodeStorageServiceImpl
     {
         final NodeBranchEntry nodeBranchEntry = this.branchService.get( params.getNode().id(), context );
 
-        final NodeVersionId nodeVersionId = new NodeVersionId();
+        final NodeVersionId nodeVersionId;
         final NodeVersionKey nodeVersionKey;
         if ( params.isUpdateMetadataOnly() )
         {
+            nodeVersionId = nodeBranchEntry.getVersionId();
             nodeVersionKey = nodeBranchEntry.getNodeVersionKey();
+
         }
         else
         {
+            nodeVersionId = new NodeVersionId();
             nodeVersionKey = nodeVersionService.store( NodeVersion.from( params.getNode() ), context );
         }
 

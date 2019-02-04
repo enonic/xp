@@ -741,6 +741,7 @@ public class DumpServiceImplTest
             this.dumpService.load( SystemLoadParams.create().
                 dumpName( dumpName ).
                 upgrade( true ).
+                includeVersions( true ).
                 build() );
 
             FileDumpReader reader = new FileDumpReader( tempFolder.getRoot().toPath(), dumpName, null );
@@ -790,6 +791,7 @@ public class DumpServiceImplTest
     private void checkCommitUpgrade( final NodeId nodeId )
     {
         nodeService.refresh( RefreshMode.ALL );
+
         final NodeCommitQuery nodeCommitQuery = NodeCommitQuery.create().build();
         final NodeCommitQueryResult nodeCommitQueryResult = ContextBuilder.
             from( ContextAccessor.current() ).
@@ -826,10 +828,10 @@ public class DumpServiceImplTest
             build();
         final NodeVersionQueryResult versionQueryResult = ContextBuilder.
             from( ContextAccessor.current() ).
-            branch( Branch.from( "master" ) ).
+            branch( Branch.from( "draft" ) ).
             build().
             callWith( () -> nodeService.findVersions( nodeVersionQuery ) );
-//        assertEquals( 15, versionQueryResult.getTotalHits() );
+        assertEquals( 15, versionQueryResult.getTotalHits() );
     }
 
     private void checkPageFlatteningUpgradePage( final Node node )
