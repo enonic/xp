@@ -62,8 +62,9 @@ public final class ContentImageResource
 
     @GET
     @Path("{contentId}")
-    public Response getContentImage( @PathParam("contentId") final String contentIdAsString, @QueryParam("size") final int size,
-                                     @QueryParam("scaleWidth") @DefaultValue("false") final boolean scaleWidth,
+    public Response getContentImage( @PathParam("contentId") final String contentIdAsString,
+                                     @QueryParam("size") @DefaultValue("0") final int size,
+                                     @QueryParam("scaleWidth") @DefaultValue("true") final boolean scaleWidth,
                                      @QueryParam("crop") @DefaultValue("true") final boolean crop,
                                      @QueryParam("scale") final String scale,
                                      @QueryParam("filter") final String filter )
@@ -150,7 +151,7 @@ public final class ContentImageResource
                     final String filterParam = filter;
                     final ScaleParams scaleParam = parseScaleParam( media, scale, size );
                     final FocalPoint focalPoint = media.getFocalPoint();
-                    final int width = (size > 0) ? size : getOriginalWidth( media );
+                    final int sizeParam = (size > 0) ? size : getOriginalWidth( media );
 
                     final ReadImageParams readImageParams = ReadImageParams.newImageParams().
                         contentId( media.getId() ).
@@ -158,7 +159,7 @@ public final class ContentImageResource
                         cropping( cropping ).
                         scaleParams( scaleParam ).
                         focalPoint( focalPoint ).
-                        scaleSize( width ).
+                        scaleSize( sizeParam ).
                         scaleWidth( scaleWidth ).
                         format( format ).
                         orientation( imageOrientation ).
@@ -212,19 +213,18 @@ public final class ContentImageResource
 
     private ScaleParams parseScaleParam( final Media media, final String scale, final int size )
     {
-        if ( scale != null )
-        {
-            final int pos = scale.indexOf( ":" );
-            final String horizontalProportion = scale.substring( 0, pos );
-            final String verticalProportion = scale.substring( pos + 1 );
-
-            final int width = size > 0 ? size : getOriginalWidth( media );
-            final int height = width / Integer.parseInt( horizontalProportion ) * Integer.parseInt( verticalProportion );
-
-            return new ScaleParams( "block", new Object[]{width, height} );
+        if ( scale == null ) {
+            return null;
         }
 
-        return null;
+        final int pos = scale.indexOf( ":" );
+        final String horizontalProportion = scale.substring( 0, pos );
+        final String verticalProportion = scale.substring( pos + 1 );
+
+        final int width = size > 0 ? size : getOriginalWidth( media );
+        final int height = width / Integer.parseInt( horizontalProportion ) * Integer.parseInt( verticalProportion );
+
+        return new ScaleParams( "block", new Object[]{width, height} );
     }
 
     private int getOriginalWidth( final Media media )
