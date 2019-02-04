@@ -241,8 +241,6 @@ public class DumpServiceImpl
             throw new RepoLoadException( "Only admin role users can load repositories" );
         }
 
-        final FileDumpReader dumpReader = new FileDumpReader( basePath, params.getDumpName(), params.getListener() );
-
         final Version modelVersion = getDumpModelVersion( params.getDumpName() );
         if ( modelVersion.getMajor() < DumpConstants.MODEL_VERSION.getMajor() )
         {
@@ -260,6 +258,7 @@ public class DumpServiceImpl
             }
         }
 
+        final FileDumpReader dumpReader = new FileDumpReader( basePath, params.getDumpName(), params.getListener() );
         final RepositoryIds dumpRepositories = dumpReader.getRepositories();
 
         if ( !dumpRepositories.contains( SystemConstants.SYSTEM_REPO.getId() ) )
