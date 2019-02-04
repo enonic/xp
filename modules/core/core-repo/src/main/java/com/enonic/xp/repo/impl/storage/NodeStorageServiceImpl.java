@@ -70,8 +70,9 @@ public class NodeStorageServiceImpl
     }
 
     @Override
-    public Node load( final Node node, final InternalContext context )
+    public Node load( final LoadNodeParams params, final InternalContext context )
     {
+        final Node node = params.getNode();
         final NodeVersion nodeVersion = NodeVersion.create().
             id( node.id() ).
             nodeType( node.getNodeType() ).
@@ -87,7 +88,7 @@ public class NodeStorageServiceImpl
         final NodeVersionId nodeVersionId = node.getNodeVersionId();
         final NodeVersionKey nodeVersionKey = nodeVersionService.store( nodeVersion, context );
 
-        storeVersionMetadata( node, nodeVersionId, nodeVersionKey, context );
+        loadVersionMetadata( node, nodeVersionId, nodeVersionKey, params.getNodeCommitId(), context );
 
         storeBranchMetadata( node, nodeVersionId, nodeVersionKey, context );
 
@@ -119,7 +120,8 @@ public class NodeStorageServiceImpl
         final NodeCommitEntry nodeCommitEntry = NodeCommitEntry.create().
             nodeCommitId( params.getNodeCommitId() ).
             message( params.getMessage() ).
-            committer( params.getCommitter() ).timestamp( params.getTimestamp() ).
+            committer( params.getCommitter() ).
+            timestamp( params.getTimestamp() ).
             build();
         this.commitService.store( nodeCommitEntry, context );
     }
@@ -430,6 +432,19 @@ public class NodeStorageServiceImpl
             nodeVersionId( nodeVersionId ).
             nodeVersionKey( nodeVersionKey ).
             nodePath( node.path() ).
+            timestamp( node.getTimestamp() ).
+            build(), context );
+    }
+
+    private void loadVersionMetadata( final Node node, final NodeVersionId nodeVersionId, final NodeVersionKey nodeVersionKey,
+                                      final NodeCommitId nodeCommitId, final InternalContext context )
+    {
+        this.versionService.store( NodeVersionMetadata.create().
+            nodeId( node.id() ).
+            nodeVersionId( nodeVersionId ).
+            nodeVersionKey( nodeVersionKey ).
+            nodePath( node.path() ).
+            nodeCommitId( nodeCommitId ).
             timestamp( node.getTimestamp() ).
             build(), context );
     }

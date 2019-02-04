@@ -41,6 +41,7 @@ import com.enonic.xp.repo.impl.dump.upgrade.DumpUpgrader;
 import com.enonic.xp.repo.impl.dump.upgrade.MissingModelVersionDumpUpgrader;
 import com.enonic.xp.repo.impl.dump.upgrade.RepositoryIdDumpUpgrader;
 import com.enonic.xp.repo.impl.dump.upgrade.VersionIdDumpUpgrader;
+import com.enonic.xp.repo.impl.dump.upgrade.commit.CommitDumpUpgrader;
 import com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageDumpUpgrader;
 import com.enonic.xp.repo.impl.dump.upgrade.indexaccesssegments.IndexAccessSegmentsDumpUpgrader;
 import com.enonic.xp.repo.impl.dump.writer.FileDumpWriter;
@@ -145,9 +146,9 @@ public class DumpServiceImpl
 
     private List<DumpUpgrader> createDumpUpgraders()
     {
-        return Lists.newArrayList( new MissingModelVersionDumpUpgrader(), new VersionIdDumpUpgrader( this.basePath ),
-                                   new FlattenedPageDumpUpgrader( this.basePath ), new IndexAccessSegmentsDumpUpgrader( this.basePath ),
-                                   new RepositoryIdDumpUpgrader( this.basePath ) );
+        return Lists.newArrayList( new MissingModelVersionDumpUpgrader(), new VersionIdDumpUpgrader( basePath ),
+                                   new FlattenedPageDumpUpgrader( basePath ), new IndexAccessSegmentsDumpUpgrader( basePath ),
+                                   new RepositoryIdDumpUpgrader( basePath ), new CommitDumpUpgrader( basePath ) );
     }
 
     private Version getDumpModelVersion( final String dumpName )
@@ -240,8 +241,6 @@ public class DumpServiceImpl
             throw new RepoLoadException( "Only admin role users can load repositories" );
         }
 
-        final FileDumpReader dumpReader = new FileDumpReader( basePath, params.getDumpName(), params.getListener() );
-
         final Version modelVersion = getDumpModelVersion( params.getDumpName() );
         if ( modelVersion.getMajor() < DumpConstants.MODEL_VERSION.getMajor() )
         {
@@ -259,6 +258,7 @@ public class DumpServiceImpl
             }
         }
 
+        final FileDumpReader dumpReader = new FileDumpReader( basePath, params.getDumpName(), params.getListener() );
         final RepositoryIds dumpRepositories = dumpReader.getRepositories();
 
         if ( !dumpRepositories.contains( SystemConstants.SYSTEM_REPO.getId() ) )

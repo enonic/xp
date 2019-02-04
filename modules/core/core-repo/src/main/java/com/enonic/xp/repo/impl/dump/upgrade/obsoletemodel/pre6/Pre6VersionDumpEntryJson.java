@@ -1,4 +1,4 @@
-package com.enonic.xp.repo.impl.dump.serializer.json;
+package com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre6;
 
 
 import java.time.Instant;
@@ -6,13 +6,12 @@ import java.time.Instant;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.blob.NodeVersionKey;
-import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.dump.model.VersionMeta;
 
-public class VersionDumpEntryJson
+public class Pre6VersionDumpEntryJson
 {
     @JsonProperty("nodePath")
     private String nodePath;
@@ -35,14 +34,11 @@ public class VersionDumpEntryJson
     @JsonProperty("nodeState")
     private String nodeState;
 
-    @JsonProperty("commitId")
-    private String commitId;
-
-    public VersionDumpEntryJson()
+    public Pre6VersionDumpEntryJson()
     {
     }
 
-    private VersionDumpEntryJson( final Builder builder )
+    private Pre6VersionDumpEntryJson( final Builder builder )
     {
         nodePath = builder.nodePath;
         timestamp = builder.timestamp;
@@ -51,10 +47,9 @@ public class VersionDumpEntryJson
         indexConfigBlobKey = builder.indexConfigBlobKey;
         accessControlBlobKey = builder.accessControlBlobKey;
         nodeState = builder.nodeState;
-        commitId = builder.commitId;
     }
 
-    public static VersionMeta fromJson( final VersionDumpEntryJson json )
+    public static VersionMeta fromJson( final Pre6VersionDumpEntryJson json )
     {
         final NodeVersionKey nodeVersionKey =
             NodeVersionKey.from( json.getNodeBlobKey(), json.getIndexConfigBlobKey(), json.getAccessControlBlobKey() );
@@ -64,20 +59,18 @@ public class VersionDumpEntryJson
             version( json.getVersion() != null ? NodeVersionId.from( json.getVersion() ) : null ).
             nodeVersionKey( nodeVersionKey ).
             nodeState( NodeState.from( json.getNodeState() ) ).
-            nodeCommitId( json.getCommitId() == null ? null : NodeCommitId.from( json.getCommitId() ) ).
             build();
     }
 
-    public static VersionDumpEntryJson from( final VersionMeta meta )
+    public static Pre6VersionDumpEntryJson from( final VersionMeta meta )
     {
-        return VersionDumpEntryJson.create().
+        return Pre6VersionDumpEntryJson.create().
             nodePath( meta.getNodePath().toString() ).
             timestamp( meta.getTimestamp() != null ? meta.getTimestamp().toString() : null ).
             version( meta.getVersion() != null ? meta.getVersion().toString() : null ).
             nodeBlobKey( meta.getNodeVersionKey().getNodeBlobKey().toString() ).
             indexConfigBlobKey( meta.getNodeVersionKey().getIndexConfigBlobKey().toString() ).
             accessControlBlobKey( meta.getNodeVersionKey().getAccessControlBlobKey().toString() ).
-            commitId( meta.getNodeCommitId() == null ? null : meta.getNodeCommitId().toString() ).
             build();
     }
 
@@ -86,7 +79,7 @@ public class VersionDumpEntryJson
         return new Builder();
     }
 
-    public static Builder create( final VersionDumpEntryJson source )
+    public static Builder create( final Pre6VersionDumpEntryJson source )
     {
         return new Builder( source );
     }
@@ -96,12 +89,12 @@ public class VersionDumpEntryJson
         return nodePath;
     }
 
-    private String getTimestamp()
+    public String getTimestamp()
     {
         return timestamp;
     }
 
-    private String getVersion()
+    public String getVersion()
     {
         return version;
     }
@@ -121,14 +114,9 @@ public class VersionDumpEntryJson
         return accessControlBlobKey;
     }
 
-    private String getNodeState()
+    public String getNodeState()
     {
         return nodeState;
-    }
-
-    public String getCommitId()
-    {
-        return commitId;
     }
 
     public static final class Builder
@@ -147,13 +135,11 @@ public class VersionDumpEntryJson
 
         private String nodeState;
 
-        private String commitId;
-
         private Builder()
         {
         }
 
-        private Builder( final VersionDumpEntryJson source )
+        private Builder( final Pre6VersionDumpEntryJson source )
         {
             this.nodePath = source.getNodePath();
             this.timestamp = source.getTimestamp();
@@ -162,7 +148,6 @@ public class VersionDumpEntryJson
             this.indexConfigBlobKey = source.getIndexConfigBlobKey();
             this.accessControlBlobKey = source.getAccessControlBlobKey();
             this.nodeState = source.getNodeState();
-            this.commitId = source.getCommitId();
         }
 
         public Builder nodePath( final String val )
@@ -207,15 +192,9 @@ public class VersionDumpEntryJson
             return this;
         }
 
-        public Builder commitId( final String val )
+        public Pre6VersionDumpEntryJson build()
         {
-            commitId = val;
-            return this;
-        }
-
-        public VersionDumpEntryJson build()
-        {
-            return new VersionDumpEntryJson( this );
+            return new Pre6VersionDumpEntryJson( this );
         }
     }
 }

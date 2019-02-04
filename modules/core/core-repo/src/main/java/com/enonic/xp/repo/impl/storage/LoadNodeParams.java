@@ -1,10 +1,13 @@
-package com.enonic.xp.node;
+package com.enonic.xp.repo.impl.storage;
+
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeCommitId;
 
 public class LoadNodeParams
 {
-    private final Node node;
+    final Node node;
 
-    private final NodeCommitId nodeCommitId;
+    final NodeCommitId nodeCommitId;
 
     private LoadNodeParams( final Builder builder )
     {
@@ -38,15 +41,15 @@ public class LoadNodeParams
         {
         }
 
-        public Builder node( final Node val )
+        public Builder node( final Node node )
         {
-            node = val;
+            this.node = node;
             return this;
         }
 
-        public Builder nodeCommitId( final NodeCommitId val )
+        public Builder nodeCommitId( final NodeCommitId nodeCommitId )
         {
-            nodeCommitId = val;
+            this.nodeCommitId = nodeCommitId;
             return this;
         }
 
