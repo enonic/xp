@@ -27,7 +27,7 @@ public interface NodeStorageService
 
     Node store( final Node node, final InternalContext context );
 
-    Node load( final Node node, final InternalContext context );
+    Node load( final LoadNodeParams params, final InternalContext context );
 
     void storeVersion( final StoreNodeVersionParams params, final InternalContext context );
 
