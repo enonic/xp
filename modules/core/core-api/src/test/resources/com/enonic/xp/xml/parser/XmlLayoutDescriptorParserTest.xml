@@ -27,7 +27,7 @@
           <indexed>false</indexed>
           <occurrences minimum="0" maximum="1"/>
         </input>
-        <field-set name="myFieldSet">
+        <field-set>
           <label>My field set</label>
           <items>
             <input type="TextLine" name="fieldSetItem">

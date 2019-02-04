@@ -12,7 +12,7 @@
       <label>mySet</label>
       <occurrences minimum="0" maximum="1"/>
       <items>
-        <field-set name="myFieldSet">
+        <field-set>
           <label>My field set</label>
           <items>
             <input name="myTextLine" type="TextLine">

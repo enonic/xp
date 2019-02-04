@@ -55,7 +55,7 @@
         </input>
       </items>
     </item-set>
-    <field-set name="field-set">
+    <field-set>
       <label i18n="translated.label"/>
       <items>
         <input name="textLine2" type="TextLine">
