@@ -4,6 +4,8 @@ import java.time.Instant;
 
 import com.google.common.base.Strings;
 
+import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.blob.BlobKeys;
 import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.node.NodeCommitId;
@@ -61,6 +63,8 @@ public class NodeVersionQueryResultFactory
 
         final String accessControlBlobKey = getStringValue( hit, VersionIndexPath.ACCESS_CONTROL_BLOB_KEY, true );
 
+        final ReturnValue binaryBlobKeyReturnValue = hit.getField( VersionIndexPath.BINARY_BLOB_KEYS.getPath(), true );
+
         final String nodePath = getStringValue( hit, VersionIndexPath.NODE_PATH, true );
 
         final String nodeId = getStringValue( hit, VersionIndexPath.NODE_ID, true );
@@ -68,10 +72,16 @@ public class NodeVersionQueryResultFactory
         final String commitId = getStringValue( hit, VersionIndexPath.COMMIT_ID, false );
 
         final NodeVersionKey nodeVersionKey = NodeVersionKey.from( nodeBlobKey, indexConfigBlobKey, accessControlBlobKey );
+        final BlobKeys.Builder binaryBlobKeys = BlobKeys.create();
+        binaryBlobKeyReturnValue.getValues().
+            stream().
+            map( value -> BlobKey.from( value.toString() ) ).
+            forEach( binaryBlobKeys::add );
 
         return NodeVersionMetadata.create().
             nodeVersionId( NodeVersionId.from( versionId ) ).
             nodeVersionKey( nodeVersionKey ).
+            binaryBlobKeys( binaryBlobKeys.build() ).
             timestamp( Strings.isNullOrEmpty( timestamp ) ? null : Instant.parse( timestamp ) ).
             nodePath( NodePath.create( nodePath ).build() ).
             nodeId( NodeId.from( nodeId ) ).

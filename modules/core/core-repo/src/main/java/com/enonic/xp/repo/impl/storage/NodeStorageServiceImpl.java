@@ -3,10 +3,14 @@ package com.enonic.xp.repo.impl.storage;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.blob.BlobKeys;
 import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.blob.NodeVersionKeys;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.node.AttachedBinaries;
+import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
@@ -107,6 +111,7 @@ public class NodeStorageServiceImpl
         this.versionService.store( NodeVersionMetadata.create().
             nodeVersionId( params.getNodeVersionId() ).
             nodeVersionKey( nodeVersionKey ).
+            binaryBlobKeys( getBinaryBlobKeys( params.getNodeVersion().getAttachedBinaries() ) ).
             nodeId( params.getNodeId() ).
             nodePath( params.getNodePath() ).
             nodeCommitId( params.getNodeCommitId() ).
@@ -431,9 +436,23 @@ public class NodeStorageServiceImpl
             nodeId( node.id() ).
             nodeVersionId( nodeVersionId ).
             nodeVersionKey( nodeVersionKey ).
+            binaryBlobKeys( getBinaryBlobKeys( node.getAttachedBinaries() ) ).
             nodePath( node.path() ).
             timestamp( node.getTimestamp() ).
             build(), context );
+    }
+
+    private BlobKeys getBinaryBlobKeys( final AttachedBinaries attachedBinaries )
+    {
+        final BlobKeys.Builder blobKeys = BlobKeys.create();
+        if ( attachedBinaries != null )
+        {
+            attachedBinaries.stream().
+                map( AttachedBinary::getBlobKey ).
+                map( BlobKey::from ).
+                forEach( blobKeys::add );
+        }
+        return blobKeys.build();
     }
 
     private void loadVersionMetadata( final Node node, final NodeVersionId nodeVersionId, final NodeVersionKey nodeVersionKey,
@@ -443,12 +462,12 @@ public class NodeStorageServiceImpl
             nodeId( node.id() ).
             nodeVersionId( nodeVersionId ).
             nodeVersionKey( nodeVersionKey ).
+            binaryBlobKeys( getBinaryBlobKeys( node.getAttachedBinaries() ) ).
             nodePath( node.path() ).
             nodeCommitId( nodeCommitId ).
             timestamp( node.getTimestamp() ).
             build(), context );
     }
-
 
     private Nodes doReturnNodes( final NodeBranchEntries nodeBranchEntries, final InternalContext context )
     {

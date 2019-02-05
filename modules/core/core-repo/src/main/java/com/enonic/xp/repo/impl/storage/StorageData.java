@@ -35,9 +35,9 @@ public class StorageData
 
         public Builder add( final String key, final Object value )
         {
-            if ( value instanceof Collection )
+            if ( value instanceof Iterable )
             {
-                values.putAll( key, ( (Collection) value ) );
+                values.putAll( key, ( (Iterable) value ) );
             }
             else if ( value instanceof Object[] )
             {

@@ -12,6 +12,8 @@ public class VersionIndexPath
 
     public static final IndexPath ACCESS_CONTROL_BLOB_KEY = IndexPath.from( "accesscontrolblobkey" );
 
+    public static final IndexPath BINARY_BLOB_KEYS = IndexPath.from( "binaryblobkeys" );
+
     public static final IndexPath NODE_ID = IndexPath.from( "nodeid" );
 
     public static final IndexPath TIMESTAMP = IndexPath.from( "timestamp" );

@@ -20,6 +20,7 @@ public class VersionStorageDocFactory
             add( VersionIndexPath.NODE_BLOB_KEY.getPath(), nodeVersion.getNodeVersionKey().getNodeBlobKey().toString() ).
             add( VersionIndexPath.INDEX_CONFIG_BLOB_KEY.getPath(), nodeVersion.getNodeVersionKey().getIndexConfigBlobKey().toString() ).
             add( VersionIndexPath.ACCESS_CONTROL_BLOB_KEY.getPath(), nodeVersion.getNodeVersionKey().getAccessControlBlobKey().toString() ).
+            add( VersionIndexPath.BINARY_BLOB_KEYS.getPath(), nodeVersion.getBinaryBlobKeys() ).
             add( VersionIndexPath.NODE_ID.getPath(), nodeVersion.getNodeId().toString() ).
             add( VersionIndexPath.TIMESTAMP.getPath(), nodeVersion.getTimestamp() != null ? nodeVersion.getTimestamp() : Instant.now() ).
             add( VersionIndexPath.NODE_PATH.getPath(), nodeVersion.getNodePath().toString() );
