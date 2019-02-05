@@ -6,7 +6,7 @@
     <item-set name="address">
       <occurrences minimum="0" maximum="1"/>
       <items>
-        <field-set name="fieldSet">
+        <field-set>
           <label>My Field Set</label>
           <items>
             <input type="TextLine" name="myFieldInLayout">
