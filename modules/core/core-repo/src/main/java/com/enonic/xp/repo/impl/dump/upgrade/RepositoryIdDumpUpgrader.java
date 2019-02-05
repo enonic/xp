@@ -1,0 +1,267 @@
+package com.enonic.xp.repo.impl.dump.upgrade;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Collection;
+import java.util.stream.Collectors;
+
+import org.apache.commons.io.FileUtils;
+
+import com.google.common.base.Charsets;
+import com.google.common.io.ByteSource;
+import com.google.common.io.CharSource;
+import com.google.common.io.Files;
+
+import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.blob.Segment;
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.dump.RepoDumpResult;
+import com.enonic.xp.dump.SystemDumpResult;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.repo.impl.dump.DumpBlobRecord;
+import com.enonic.xp.repo.impl.dump.model.DumpMeta;
+import com.enonic.xp.repo.impl.dump.serializer.json.BranchDumpEntryJson;
+import com.enonic.xp.repo.impl.dump.serializer.json.DumpMetaJsonSerializer;
+import com.enonic.xp.repo.impl.dump.serializer.json.VersionDumpEntryJson;
+import com.enonic.xp.repo.impl.dump.serializer.json.VersionsDumpEntryJson;
+import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre5.Pre5ContentConstants;
+import com.enonic.xp.repo.impl.node.NodeConstants;
+import com.enonic.xp.repo.impl.node.json.NodeVersionDataJson;
+import com.enonic.xp.repo.impl.node.json.NodeVersionJsonSerializer;
+import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.RepositorySegmentUtils;
+import com.enonic.xp.security.SystemConstants;
+import com.enonic.xp.util.Version;
+
+public class RepositoryIdDumpUpgrader
+    extends AbstractMetaDumpUpgrader
+{
+    private static final RepositoryId OLD_REPOSITORY_ID = Pre5ContentConstants.CONTENT_REPO_ID;
+
+    private static final RepositoryId NEW_REPOSITORY_ID = ContentConstants.CONTENT_REPO_ID;
+
+    private static final String OLD_REPOSITORY_FILE_NAME = OLD_REPOSITORY_ID + ".json";
+
+    private static final Segment SEGMENT =
+        RepositorySegmentUtils.toSegment( ContentConstants.CONTENT_REPO_ID, NodeConstants.NODE_SEGMENT_LEVEL );
+
+    private static final Version MODEL_VERSION = new Version( 5, 0, 0 );
+
+    public RepositoryIdDumpUpgrader( final Path basePath )
+    {
+        super( basePath );
+    }
+
+    @Override
+    public Version getModelVersion()
+    {
+        return MODEL_VERSION;
+    }
+
+    @Override
+    public void upgrade( final String dumpName )
+    {
+        super.upgrade( dumpName );
+
+        upgradeRepositoryDir();
+        upgradeDumpMetaFile();
+    }
+
+    @Override
+    protected String upgradeVersionEntry( final RepositoryId repositoryId, final String entryContent )
+    {
+        final VersionsDumpEntryJson sourceVersionsEntry = deserializeValue( entryContent, VersionsDumpEntryJson.class );
+
+        final Collection<VersionDumpEntryJson> upgradedVersionList = sourceVersionsEntry.getVersions().
+            stream().
+            map( this::upgradeVersionDumpEntry ).
+            collect( Collectors.toList() );
+
+        final VersionsDumpEntryJson upgradedVersionsEntry = VersionsDumpEntryJson.create().
+            nodeId( upgradeString( sourceVersionsEntry.getNodeId() ) ).
+            versions( upgradedVersionList ).
+            build();
+
+        return serialize( upgradedVersionsEntry );
+    }
+
+    @Override
+    protected String upgradeBranchEntry( final RepositoryId repositoryId, final String entryContent )
+    {
+        final BranchDumpEntryJson sourceBranchEntry = deserializeValue( entryContent, BranchDumpEntryJson.class );
+        final VersionDumpEntryJson sourceVersionEntry = sourceBranchEntry.getMeta();
+
+        final VersionDumpEntryJson updatedVersionEntry = upgradeVersionDumpEntry( sourceVersionEntry, false );
+
+        final BranchDumpEntryJson updatedBranchEntry = BranchDumpEntryJson.create( sourceBranchEntry ).
+            nodeId( upgradeString( sourceBranchEntry.getNodeId() ) ).
+            meta( updatedVersionEntry ).
+            build();
+
+        return serialize( updatedBranchEntry );
+    }
+
+    private VersionDumpEntryJson upgradeVersionDumpEntry( final VersionDumpEntryJson sourceVersionEntry )
+    {
+        return this.upgradeVersionDumpEntry( sourceVersionEntry, true );
+    }
+
+    private VersionDumpEntryJson upgradeVersionDumpEntry( final VersionDumpEntryJson sourceVersionEntry,
+                                                          final boolean updateNodeVersionBlob )
+    {
+        final VersionDumpEntryJson updatedVersionEntry = VersionDumpEntryJson.create( sourceVersionEntry ).
+            nodePath( upgradeString( sourceVersionEntry.getNodePath() ) ).
+            build();
+
+        if ( updateNodeVersionBlob )
+        {
+            upgradeNodeVersionBlob( updatedVersionEntry.getNodeBlobKey() );
+        }
+
+        return updatedVersionEntry;
+    }
+
+    private void upgradeNodeVersionBlob( final String nodeBlobKey )
+    {
+        final DumpBlobRecord dumpBlobRecord = (DumpBlobRecord) dumpReader.getDumpBlobStore().
+            getRecord( SEGMENT, BlobKey.from( nodeBlobKey ) );
+
+        final NodeVersionDataJson sourceNodeVersion = getNodeVersion( dumpBlobRecord );
+
+        final NodeVersion updatedNodeVersion = sourceNodeVersion.fromJson().
+            id( NodeId.from( upgradeString( sourceNodeVersion.getId() ) ) ).
+            build();
+
+        writeNodeVersion( updatedNodeVersion, dumpBlobRecord );
+    }
+
+    private void upgradeRepositoryDir()
+    {
+        final File oldRepoDirectory = this.dumpReader.getRepositoryDir( OLD_REPOSITORY_ID );
+
+        if ( oldRepoDirectory != null )
+        {
+            final File newRepoDirectory = new File( oldRepoDirectory.getParent(), NEW_REPOSITORY_ID.toString() );
+            try
+            {
+                FileUtils.moveDirectory( oldRepoDirectory, newRepoDirectory );
+            }
+            catch ( IOException e )
+            {
+                throw new DumpUpgradeException(
+                    String.format( "Cannot rename repository folder from '%s' to '%s'", OLD_REPOSITORY_ID, NEW_REPOSITORY_ID ), e );
+            }
+        }
+    }
+
+    private void upgradeDumpMetaFile()
+    {
+        final DumpMeta sourceDumpMeta = dumpReader.getDumpMeta();
+
+        final DumpMeta upgradedDumpMeta = DumpMeta.create( sourceDumpMeta ).
+            systemDumpResult( upgradeSystemDumpResult( sourceDumpMeta.getSystemDumpResult() ) ).
+            build();
+
+        final File dumpMetaFile = dumpReader.getMetaDataFile();
+
+        try
+        {
+            Files.write( new DumpMetaJsonSerializer().serialize( upgradedDumpMeta ).getBytes(), dumpMetaFile );
+        }
+        catch ( IOException e )
+        {
+            throw new DumpUpgradeException( "Unable to upgrade dump meta file: " + dumpMetaFile.getName(), e );
+        }
+    }
+
+    private SystemDumpResult upgradeSystemDumpResult( final SystemDumpResult sourceSystemDumpResult )
+    {
+        final SystemDumpResult.Builder upgradedSystemDumpResult = SystemDumpResult.create();
+
+        sourceSystemDumpResult.stream().
+            map( this::upgradeRepoDumpResult ).
+            forEach( upgradedSystemDumpResult::add );
+
+        return upgradedSystemDumpResult.build();
+    }
+
+    private RepoDumpResult upgradeRepoDumpResult( final RepoDumpResult sourceRepoDumpResult )
+    {
+        return RepoDumpResult.
+            create( sourceRepoDumpResult ).
+            repositoryId( upgradeRepositoryId( sourceRepoDumpResult.getRepositoryId() ) ).
+            build();
+    }
+
+
+    protected void upgradeRepository( final RepositoryId repositoryId )
+    {
+        if ( SystemConstants.SYSTEM_REPO_ID.equals( repositoryId ) )
+        {
+            super.upgradeRepository( repositoryId );
+        }
+    }
+
+    protected void upgradeBranch( final RepositoryId repositoryId, final Branch branch )
+    {
+        if ( ContentConstants.BRANCH_MASTER.equals( branch ) )
+        {
+            super.upgradeBranch( repositoryId, branch );
+        }
+    }
+
+    protected void upgradeBranchEntries( final RepositoryId repositoryId, final Branch branch, final File entriesFile )
+    {
+        super.upgradeBranchEntries( repositoryId, branch, entriesFile );
+    }
+
+    protected boolean hasToUpgradeEntry( final RepositoryId repositoryId, final String entryContent, final String entryName )
+    {
+        return OLD_REPOSITORY_FILE_NAME.equals( entryName );
+    }
+
+    protected String upgradeEntryName( final RepositoryId repositoryId, final String entryName )
+    {
+        return upgradeString( entryName );
+    }
+
+    private RepositoryId upgradeRepositoryId( final RepositoryId source )
+    {
+        return RepositoryId.from( upgradeString( source.toString() ) );
+    }
+
+    private String upgradeString( final String source )
+    {
+        return source.replace( OLD_REPOSITORY_ID.toString(), NEW_REPOSITORY_ID.toString() );
+    }
+
+    private NodeVersionDataJson getNodeVersion( final DumpBlobRecord dumpBlobRecord )
+    {
+        final CharSource charSource = dumpBlobRecord.getBytes().asCharSource( Charsets.UTF_8 );
+        try
+        {
+            return deserializeValue( charSource.read(), NodeVersionDataJson.class );
+        }
+        catch ( IOException e )
+        {
+            throw new DumpUpgradeException( "Cannot read node version [" + dumpBlobRecord.getKey() + "]", e );
+        }
+    }
+
+    private void writeNodeVersion( final NodeVersion nodeVersion, final DumpBlobRecord dumpBlobRecord )
+    {
+        final String serializedUpgradedNodeVersion = NodeVersionJsonSerializer.create( false ).toNodeString( nodeVersion );
+        final ByteSource byteSource = ByteSource.wrap( serializedUpgradedNodeVersion.getBytes( Charsets.UTF_8 ) );
+        try
+        {
+            byteSource.copyTo( dumpBlobRecord.getByteSink() );
+        }
+        catch ( IOException e )
+        {
+            throw new DumpUpgradeException( "Cannot copy node version [" + dumpBlobRecord.getKey() + "]", e );
+        }
+    }
+}

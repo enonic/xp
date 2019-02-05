@@ -77,7 +77,7 @@ public abstract class RenderBaseHandlerTest
         this.rawRequest = Mockito.mock( HttpServletRequest.class );
         Mockito.when( this.rawRequest.isUserInRole( Mockito.anyString() ) ).thenReturn( Boolean.TRUE );
         this.request.setRawRequest( this.rawRequest );
-        this.request.setBaseUri( "/portal" );
+        this.request.setBaseUri( "/site" );
     }
 
     protected final void setupContentAndSite()

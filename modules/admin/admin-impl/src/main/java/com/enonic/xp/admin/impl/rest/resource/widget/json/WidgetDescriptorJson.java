@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
 
+import com.enonic.xp.admin.impl.widget.WidgetIconUrlResolver;
 import com.enonic.xp.admin.widget.WidgetDescriptor;
 
 public final class WidgetDescriptorJson
@@ -13,6 +14,10 @@ public final class WidgetDescriptorJson
     public String key;
 
     public String displayName;
+
+    public String description;
+
+    public String iconUrl;
 
     public String url;
 
@@ -24,6 +29,8 @@ public final class WidgetDescriptorJson
     {
         this.key = widgetDescriptor.getKeyString();
         this.displayName = widgetDescriptor.getDisplayName();
+        this.description = widgetDescriptor.getDescription();
+        this.iconUrl = new WidgetIconUrlResolver().resolve( widgetDescriptor );
         this.url = widgetDescriptor.getUrl();
         this.interfaces = ImmutableSet.copyOf( widgetDescriptor.getInterfaces() );
         this.config = widgetDescriptor.getConfig();

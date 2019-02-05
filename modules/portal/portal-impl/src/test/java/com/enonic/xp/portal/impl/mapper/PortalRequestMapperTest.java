@@ -59,10 +59,10 @@ public class PortalRequestMapperTest
         this.portalRequest.setHost( "localhost" );
         this.portalRequest.setPort( 80 );
         this.portalRequest.setRemoteAddress( "10.0.0.1" );
-        this.portalRequest.setPath( "/portal/live/master/a/b" );
-        this.portalRequest.setRawPath( "/portal/live/master/a/b" );
-        this.portalRequest.setContextPath( "/portal/live/master/a" );
-        this.portalRequest.setUrl( "http://localhost/portal/live/master/a/b?param1=value1" );
+        this.portalRequest.setPath( "/site/live/master/a/b" );
+        this.portalRequest.setRawPath( "/site/live/master/a/b" );
+        this.portalRequest.setContextPath( "/site/live/master/a" );
+        this.portalRequest.setUrl( "http://localhost/site/live/master/a/b?param1=value1" );
         this.portalRequest.setValidTicket( Boolean.TRUE );
         this.portalRequest.getParams().put( "param1", "value1" );
         this.portalRequest.getParams().put( "param2", "value2" );

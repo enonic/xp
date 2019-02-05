@@ -9,18 +9,14 @@ import com.google.common.collect.Lists;
 import com.enonic.xp.data.PropertyArrayJson;
 import com.enonic.xp.data.PropertyTreeJson;
 import com.enonic.xp.index.ChildOrder;
-import com.enonic.xp.index.IndexConfigDocument;
-import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeType;
 import com.enonic.xp.node.NodeVersion;
-import com.enonic.xp.security.acl.AccessControlEntry;
-import com.enonic.xp.security.acl.AccessControlList;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-final class NodeVersionDataJson
+public final class NodeVersionDataJson
 {
     @JsonProperty("id")
     private String id;

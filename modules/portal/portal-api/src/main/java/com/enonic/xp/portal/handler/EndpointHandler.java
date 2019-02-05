@@ -55,8 +55,8 @@ public abstract class EndpointHandler
         return endpointPath.substring( matcher.group( 0 ).length() );
     }
 
-    protected boolean isPortalBase( final WebRequest req )
+    protected boolean isSiteBase( final WebRequest req )
     {
-        return req instanceof PortalRequest && ( (PortalRequest) req ).isPortalBase();
+        return req instanceof PortalRequest && ( (PortalRequest) req ).isSiteBase();
     }
 }

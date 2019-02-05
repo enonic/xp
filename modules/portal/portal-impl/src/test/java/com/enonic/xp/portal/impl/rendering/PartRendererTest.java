@@ -57,7 +57,7 @@ public class PartRendererTest
         this.portalRequest = new PortalRequest();
         this.portalRequest.setBranch( Branch.from( "draft" ) );
         this.portalRequest.setApplicationKey( ApplicationKey.from( "myapplication" ) );
-        this.portalRequest.setBaseUri( "/portal" );
+        this.portalRequest.setBaseUri( "/site" );
         this.portalRequest.setContentPath( ContentPath.from( "context/path" ) );
         this.portalResponse = PortalResponse.create().build();
         this.portalRequest.setMode( RenderMode.EDIT );

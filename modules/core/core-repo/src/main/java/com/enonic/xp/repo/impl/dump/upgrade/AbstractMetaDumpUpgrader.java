@@ -52,6 +52,10 @@ public abstract class AbstractMetaDumpUpgrader
             }
             throw new DumpUpgradeException( "Error while upgrading dump [" + dumpName + "]", e );
         }
+        finally
+        {
+            tmpDumpWriter.close();
+        }
     }
 
     protected void upgradeRepository( final RepositoryId repositoryId )
@@ -86,8 +90,16 @@ public abstract class AbstractMetaDumpUpgrader
         {
             dumpReader.processEntries( ( entryContent, entryName ) -> {
 
-                final String upgradedEntryContent = upgradeVersionEntry(repositoryId, entryContent );
-                tmpDumpWriter.storeTarEntry( upgradedEntryContent, entryName );
+                if ( hasToUpgradeEntry( repositoryId, entryContent, entryName ) )
+                {
+                    tmpDumpWriter.storeTarEntry( upgradeVersionEntry( repositoryId, entryContent ),
+                                                 upgradeEntryName( repositoryId, entryName ) );
+                }
+                else
+                {
+                    tmpDumpWriter.storeTarEntry( entryContent, entryName );
+                }
+
             }, entriesFile );
         }
         finally
@@ -102,8 +114,16 @@ public abstract class AbstractMetaDumpUpgrader
         try
         {
             dumpReader.processEntries( ( entryContent, entryName ) -> {
-                final String upgradedEntryContent = upgradeBranchEntry( repositoryId, entryContent );
-                tmpDumpWriter.storeTarEntry( upgradedEntryContent, entryName );
+
+                if ( hasToUpgradeEntry( repositoryId, entryContent, entryName ) )
+                {
+                    tmpDumpWriter.storeTarEntry( upgradeBranchEntry( repositoryId, entryContent ),
+                                                 upgradeEntryName( repositoryId, entryName ) );
+                }
+                else
+                {
+                    tmpDumpWriter.storeTarEntry( entryContent, entryName );
+                }
             }, entriesFile );
         }
         finally
@@ -117,12 +137,23 @@ public abstract class AbstractMetaDumpUpgrader
     {
         for ( RepositoryId repositoryId : dumpReader.getRepositories() )
         {
-            Files.move( tmpDumpReader.getVersionsFile( repositoryId ), dumpReader.getVersionsFile( repositoryId ) );
+            final File newVersions = tmpDumpReader.getVersionsFile( repositoryId );
+
+            if ( newVersions != null )
+            {
+                Files.move( tmpDumpReader.getVersionsFile( repositoryId ), dumpReader.getVersionsFile( repositoryId ) );
+            }
 
             for ( Branch branch : dumpReader.getBranches( repositoryId ) )
             {
-                Files.move( tmpDumpReader.getBranchEntriesFile( repositoryId, branch ),
-                            dumpReader.getBranchEntriesFile( repositoryId, branch ) );
+                final File newBranch = tmpDumpReader.getBranchEntriesFile( repositoryId, branch );
+
+                if ( newBranch != null )
+                {
+                    Files.move( tmpDumpReader.getBranchEntriesFile( repositoryId, branch ),
+                                dumpReader.getBranchEntriesFile( repositoryId, branch ) );
+                }
+
             }
         }
     }
@@ -147,6 +178,16 @@ public abstract class AbstractMetaDumpUpgrader
                 }
             }
         }
+    }
+
+    protected boolean hasToUpgradeEntry( final RepositoryId repositoryId, final String entryContent, final String entryName )
+    {
+        return true;
+    }
+
+    protected String upgradeEntryName( final RepositoryId repositoryId, final String entryName )
+    {
+        return entryName;
     }
 
     protected abstract String upgradeVersionEntry( final RepositoryId repositoryId, final String entryContent );

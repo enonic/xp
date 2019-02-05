@@ -50,7 +50,7 @@ public final class MappingHandler
             return false;
         }
         PortalRequest portalRequest = (PortalRequest) req;
-        return portalRequest.isPortalBase() && new ControllerMappingsResolver( siteService, contentService ).canHandle( portalRequest );
+        return portalRequest.isSiteBase() && new ControllerMappingsResolver( siteService, contentService ).canHandle( portalRequest );
     }
 
     @Override

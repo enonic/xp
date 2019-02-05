@@ -94,7 +94,7 @@ public class ServiceHandlerTest
         this.request.setMethod( HttpMethod.GET );
         this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
         this.request.setEndpointPath( "/_/service/demo/myservice" );
-        this.request.setRawPath( "/portal/draft/site/somepath/content/_/service/demo/myservice" );
+        this.request.setRawPath( "/site/draft/site/somepath/content/_/service/demo/myservice" );
     }
 
     @Test
@@ -213,7 +213,7 @@ public class ServiceHandlerTest
         assertNotNull( this.request.getApplicationKey() );
         assertNotNull( this.request.getSite() );
         assertNotNull( this.request.getContent() );
-        assertEquals( "/portal/draft/site/somepath/content/_/service/demo/test", this.request.getContextPath() );
+        assertEquals( "/site/draft/site/somepath/content/_/service/demo/test", this.request.getContextPath() );
     }
 
     @Test(expected = com.enonic.xp.web.WebException.class)
