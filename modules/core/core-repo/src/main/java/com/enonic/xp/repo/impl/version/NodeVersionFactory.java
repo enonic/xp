@@ -31,11 +31,7 @@ class NodeVersionFactory
         final Object commitId = values.getSingleValue( VersionIndexPath.COMMIT_ID.getPath() );
 
         final NodeVersionKey nodeVersionKey = NodeVersionKey.from( nodeBlobKey, indexConfigBlobKey, accessControlBlobKey );
-        final BlobKeys.Builder binaryBlobKeys = BlobKeys.create();
-        binaryBlobKeysReturnValue.getValues().
-            stream().
-            map( value -> BlobKey.from( value.toString() ) ).
-            forEach( binaryBlobKeys::add );
+        final BlobKeys binaryBlobKeys = toBlobKeys( binaryBlobKeysReturnValue );
 
         return NodeVersionMetadata.create().
             nodeId( NodeId.from( id ) ).
@@ -43,9 +39,22 @@ class NodeVersionFactory
             timestamp( timestamp ).
             nodeVersionId( NodeVersionId.from( versionId ) ).
             nodeVersionKey( nodeVersionKey ).
-            binaryBlobKeys( binaryBlobKeys.build() ).
+            binaryBlobKeys( binaryBlobKeys ).
             nodeCommitId( commitId == null ? null : NodeCommitId.from( commitId.toString() ) ).
             build();
+    }
+
+    private static BlobKeys toBlobKeys( final ReturnValue returnValue )
+    {
+        final BlobKeys.Builder blobKeys = BlobKeys.create();
+        if ( returnValue != null )
+        {
+            returnValue.getValues().
+                stream().
+                map( value -> BlobKey.from( value.toString() ) ).
+                forEach( blobKeys::add );
+        }
+        return blobKeys.build();
     }
 
 }
