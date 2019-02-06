@@ -11,6 +11,7 @@ import com.google.common.collect.Sets;
 import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
+import com.enonic.xp.repo.impl.dump.model.CommitDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.model.VersionsDumpEntry;
 import com.enonic.xp.repo.impl.dump.writer.DumpWriter;
@@ -53,6 +54,12 @@ class TestDumpWriter
     }
 
     @Override
+    public void openCommitsMeta( final RepositoryId repositoryId )
+    {
+        // Do nothing yet
+    }
+
+    @Override
     public void close()
     {
         current = null;
@@ -66,6 +73,12 @@ class TestDumpWriter
 
     @Override
     public void writeVersionsEntry( final VersionsDumpEntry versionsDumpEntry )
+    {
+        // Do nothing yet
+    }
+
+    @Override
+    public void writeCommitEntry( final CommitDumpEntry commitDumpEntry )
     {
         // Do nothing yet
     }

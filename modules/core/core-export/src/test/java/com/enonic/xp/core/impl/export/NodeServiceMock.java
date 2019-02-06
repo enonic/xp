@@ -31,6 +31,7 @@ import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.GetActiveNodeVersionsParams;
 import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.GetNodeVersionsParams;
+import com.enonic.xp.node.ImportNodeCommitParams;
 import com.enonic.xp.node.ImportNodeParams;
 import com.enonic.xp.node.ImportNodeResult;
 import com.enonic.xp.node.ImportNodeVersionParams;
@@ -39,6 +40,10 @@ import com.enonic.xp.node.LoadNodeResult;
 import com.enonic.xp.node.MoveNodeListener;
 import com.enonic.xp.node.MultiRepoNodeQuery;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeCommitEntry;
+import com.enonic.xp.node.NodeCommitId;
+import com.enonic.xp.node.NodeCommitQuery;
+import com.enonic.xp.node.NodeCommitQueryResult;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
 import com.enonic.xp.node.NodeId;
@@ -61,6 +66,7 @@ import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.ReorderChildNodesParams;
 import com.enonic.xp.node.ReorderChildNodesResult;
 import com.enonic.xp.node.ResolveSyncWorkResult;
+import com.enonic.xp.node.RoutableNodeVersionIds;
 import com.enonic.xp.node.SetNodeChildOrderParams;
 import com.enonic.xp.node.SetNodeStateParams;
 import com.enonic.xp.node.SetNodeStateResult;
@@ -105,6 +111,12 @@ class NodeServiceMock
     }
 
     @Override
+    public void importNodeCommit( final ImportNodeCommitParams params )
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
+    }
+
+    @Override
     public LoadNodeResult loadNode( final LoadNodeParams params )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
@@ -112,6 +124,12 @@ class NodeServiceMock
 
     @Override
     public NodeVersionQueryResult findVersions( final NodeVersionQuery nodeVersionQuery )
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
+    }
+
+    @Override
+    public NodeCommitQueryResult findCommits( final NodeCommitQuery nodeCommitQuery )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }
@@ -501,6 +519,24 @@ class NodeServiceMock
 
     @Override
     public boolean deleteVersion( final NodeId nodeId, final NodeVersionId nodeVersionId )
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
+    }
+
+    @Override
+    public NodeCommitEntry commit( final NodeCommitEntry nodeCommitEntry, final RoutableNodeVersionIds routableNodeVersionIds )
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
+    }
+
+    @Override
+    public NodeCommitEntry commit( final NodeCommitEntry nodeCommitEntry, final NodeIds nodeIds )
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
+    }
+
+    @Override
+    public NodeCommitEntry getCommit( final NodeCommitId nodeCommitId )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }

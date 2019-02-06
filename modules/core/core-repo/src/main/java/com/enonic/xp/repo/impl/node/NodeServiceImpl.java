@@ -8,7 +8,6 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
@@ -28,6 +27,7 @@ import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.GetActiveNodeVersionsParams;
 import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.GetNodeVersionsParams;
+import com.enonic.xp.node.ImportNodeCommitParams;
 import com.enonic.xp.node.ImportNodeParams;
 import com.enonic.xp.node.ImportNodeResult;
 import com.enonic.xp.node.ImportNodeVersionParams;
@@ -38,6 +38,10 @@ import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.MultiRepoNodeQuery;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
+import com.enonic.xp.node.NodeCommitEntry;
+import com.enonic.xp.node.NodeCommitId;
+import com.enonic.xp.node.NodeCommitQuery;
+import com.enonic.xp.node.NodeCommitQueryResult;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
 import com.enonic.xp.node.NodeId;
@@ -60,6 +64,8 @@ import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.ReorderChildNodesParams;
 import com.enonic.xp.node.ReorderChildNodesResult;
 import com.enonic.xp.node.ResolveSyncWorkResult;
+import com.enonic.xp.node.RoutableNodeVersionId;
+import com.enonic.xp.node.RoutableNodeVersionIds;
 import com.enonic.xp.node.SetNodeChildOrderParams;
 import com.enonic.xp.node.SetNodeStateParams;
 import com.enonic.xp.node.SetNodeStateResult;
@@ -600,7 +606,19 @@ public class NodeServiceImpl
     }
 
     @Override
-    public boolean deleteVersion(final NodeId nodeId, final NodeVersionId nodeVersionId )
+    public NodeCommitQueryResult findCommits( final NodeCommitQuery query )
+    {
+        verifyContext();
+
+        return FindNodeCommitsCommand.create().
+            query( query ).
+            searchService( this.nodeSearchService ).
+            build().
+            execute();
+    }
+
+    @Override
+    public boolean deleteVersion( final NodeId nodeId, final NodeVersionId nodeVersionId )
     {
         return DeleteVersionCommand.create().
             nodeId( nodeId ).
@@ -655,7 +673,6 @@ public class NodeServiceImpl
     public NodeVersion getByNodeVersionKey( final NodeVersionKey nodeVersionKey )
     {
         verifyContext();
-
 
         final Context currentContext = ContextAccessor.current();
         return this.nodeStorageService.getNodeVersion( nodeVersionKey, InternalContext.from( currentContext ) );
@@ -961,12 +978,59 @@ public class NodeServiceImpl
             nodePath( params.getNodePath() ).
             nodeVersion( params.getNodeVersion() ).
             nodeVersionId( params.getNodeVersionId() ).
+            nodeCommitId( params.getNodeCommitId() ).
             timestamp( params.getTimestamp() ).
             storageService( this.nodeStorageService ).
             searchService( this.nodeSearchService ).
             indexServiceInternal( this.indexServiceInternal ).
             build().
             execute();
+    }
+
+    @Override
+    public void importNodeCommit( final ImportNodeCommitParams params )
+    {
+        verifyRepositoryExists();
+
+        LoadNodeCommitCommand.create().
+            nodeCommitId( params.getNodeCommitId() ).
+            message( params.getMessage() ).
+            committer( params.getCommitter() ).
+            timestamp( params.getTimestamp() ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
+            indexServiceInternal( this.indexServiceInternal ).
+            build().
+            execute();
+    }
+
+    @Override
+    public NodeCommitEntry commit( final NodeCommitEntry nodeCommitEntry, final RoutableNodeVersionIds routableNodeVersionIds )
+    {
+        verifyContext();
+        return nodeStorageService.commit( nodeCommitEntry, routableNodeVersionIds, InternalContext.from( ContextAccessor.current() ) );
+    }
+
+    @Override
+    public NodeCommitEntry commit( final NodeCommitEntry nodeCommitEntry, final NodeIds nodeIds )
+    {
+        verifyContext();
+
+        final InternalContext context = InternalContext.from( ContextAccessor.current() );
+        final RoutableNodeVersionIds.Builder routableNodeVersionIds = RoutableNodeVersionIds.create();
+        final NodeBranchEntries branchNodeVersions = nodeStorageService.getBranchNodeVersions( nodeIds, false, context );
+        branchNodeVersions.
+            stream().
+            map( branchEntry -> RoutableNodeVersionId.from( branchEntry.getNodeId(), branchEntry.getVersionId() ) ).
+            forEach( routableNodeVersionIds::add );
+        return nodeStorageService.commit( nodeCommitEntry, routableNodeVersionIds.build(), context );
+    }
+
+    @Override
+    public NodeCommitEntry getCommit( final NodeCommitId nodeCommitId )
+    {
+        verifyContext();
+        return nodeStorageService.getCommit( nodeCommitId, InternalContext.from( ContextAccessor.current() ) );
     }
 
     private void verifyContext()

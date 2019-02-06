@@ -1,6 +1,5 @@
 package com.enonic.xp.dump;
 
-import java.time.Duration;
 import java.util.Iterator;
 import java.util.List;
 
@@ -15,6 +14,8 @@ public class RepoLoadResult
 
     private final VersionsLoadResult versionsLoadResult;
 
+    private final CommitsLoadResult commitsLoadResult;
+
     private final RepositoryId repositoryId;
 
     private RepoLoadResult( final Builder builder )
@@ -22,6 +23,7 @@ public class RepoLoadResult
         this.branchResults = builder.branchResults;
         this.repositoryId = builder.repositoryId;
         this.versionsLoadResult = builder.versionsLoadResult;
+        this.commitsLoadResult = builder.commitsLoadResult;
     }
 
     @Override
@@ -47,6 +49,11 @@ public class RepoLoadResult
         return versionsLoadResult;
     }
 
+    public CommitsLoadResult getCommitsLoadResult()
+    {
+        return commitsLoadResult;
+    }
+
     public static Builder create( final RepositoryId repositoryId )
     {
         return new Builder( repositoryId );
@@ -59,6 +66,8 @@ public class RepoLoadResult
         private final RepositoryId repositoryId;
 
         private VersionsLoadResult versionsLoadResult = VersionsLoadResult.create().build();
+
+        private CommitsLoadResult commitsLoadResult;
 
 
         private Builder( final RepositoryId repositoryId )
@@ -75,6 +84,12 @@ public class RepoLoadResult
         public Builder versions( final VersionsLoadResult val )
         {
             versionsLoadResult = val;
+            return this;
+        }
+
+        public Builder commits( final CommitsLoadResult val )
+        {
+            commitsLoadResult = val;
             return this;
         }
 

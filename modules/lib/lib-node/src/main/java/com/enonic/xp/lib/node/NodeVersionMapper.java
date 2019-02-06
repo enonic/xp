@@ -21,5 +21,6 @@ public final class NodeVersionMapper
         gen.value( "nodeId", value.getNodeId() );
         gen.value( "nodePath", value.getNodePath() );
         gen.value( "timestamp", value.getTimestamp() );
+        gen.value( "commitId", value.getNodeCommitId() );
     }
 }

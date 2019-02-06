@@ -3,7 +3,6 @@ package com.enonic.xp.node;
 import com.google.common.annotations.Beta;
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -59,6 +58,8 @@ public interface NodeService
 
     NodeVersionQueryResult findVersions( NodeVersionQuery nodeVersionQuery );
 
+    NodeCommitQueryResult findCommits( NodeCommitQuery nodeCommitQuery );
+
     boolean deleteVersion( NodeId nodeId, NodeVersionId nodeVersionId );
 
     GetActiveNodeVersionsResult getActiveVersions( GetActiveNodeVersionsParams params );
@@ -79,7 +80,7 @@ public interface NodeService
 
     ByteSource getBinary( NodeId nodeId, BinaryReference reference );
 
-    ByteSource getBinary(NodeId nodeId, NodeVersionId nodeVersionId, BinaryReference reference );
+    ByteSource getBinary( NodeId nodeId, NodeVersionId nodeVersionId, BinaryReference reference );
 
     String getBinaryKey( NodeId nodeId, BinaryReference reference );
 
@@ -97,6 +98,12 @@ public interface NodeService
 
     NodesHasChildrenResult hasChildren( Nodes nodes );
 
+    NodeCommitEntry commit( NodeCommitEntry nodeCommitEntry, RoutableNodeVersionIds routableNodeVersionIds );
+
+    NodeCommitEntry commit( NodeCommitEntry nodeCommitEntry, NodeIds nodeIds );
+
+    NodeCommitEntry getCommit( NodeCommitId nodeCommitId );
+
     boolean hasChildren( Node node );
 
     boolean nodeExists( NodeId nodeId );
@@ -106,5 +113,7 @@ public interface NodeService
     boolean hasUnpublishedChildren( NodeId parent, Branch target );
 
     void importNodeVersion( final ImportNodeVersionParams params );
+
+    void importNodeCommit( final ImportNodeCommitParams params );
 
 }

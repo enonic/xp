@@ -10,6 +10,8 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
+import com.enonic.xp.node.NodeCommitEntry;
+import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeNotFoundException;
@@ -23,9 +25,12 @@ import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.PushNodeEntries;
 import com.enonic.xp.node.PushNodeEntry;
 import com.enonic.xp.node.PushNodesListener;
+import com.enonic.xp.node.RoutableNodeVersionId;
+import com.enonic.xp.node.RoutableNodeVersionIds;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.branch.BranchService;
 import com.enonic.xp.repo.impl.branch.storage.NodeFactory;
+import com.enonic.xp.repo.impl.commit.CommitService;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionService;
 import com.enonic.xp.repo.impl.version.VersionService;
 import com.enonic.xp.security.RoleKeys;
@@ -40,6 +45,8 @@ public class NodeStorageServiceImpl
     private VersionService versionService;
 
     private BranchService branchService;
+
+    private CommitService commitService;
 
     private NodeVersionService nodeVersionService;
 
@@ -63,8 +70,9 @@ public class NodeStorageServiceImpl
     }
 
     @Override
-    public Node load( final Node node, final InternalContext context )
+    public Node load( final LoadNodeParams params, final InternalContext context )
     {
+        final Node node = params.getNode();
         final NodeVersion nodeVersion = NodeVersion.create().
             id( node.id() ).
             nodeType( node.getNodeType() ).
@@ -80,7 +88,7 @@ public class NodeStorageServiceImpl
         final NodeVersionId nodeVersionId = node.getNodeVersionId();
         final NodeVersionKey nodeVersionKey = nodeVersionService.store( nodeVersion, context );
 
-        storeVersionMetadata( node, nodeVersionId, nodeVersionKey, context );
+        loadVersionMetadata( node, nodeVersionId, nodeVersionKey, params.getNodeCommitId(), context );
 
         storeBranchMetadata( node, nodeVersionId, nodeVersionKey, context );
 
@@ -101,8 +109,21 @@ public class NodeStorageServiceImpl
             nodeVersionKey( nodeVersionKey ).
             nodeId( params.getNodeId() ).
             nodePath( params.getNodePath() ).
+            nodeCommitId( params.getNodeCommitId() ).
             timestamp( params.getTimestamp() ).
             build(), context );
+    }
+
+    @Override
+    public void storeCommit( final StoreNodeCommitParams params, final InternalContext context )
+    {
+        final NodeCommitEntry nodeCommitEntry = NodeCommitEntry.create().
+            nodeCommitId( params.getNodeCommitId() ).
+            message( params.getMessage() ).
+            committer( params.getCommitter() ).
+            timestamp( params.getTimestamp() ).
+            build();
+        this.commitService.store( nodeCommitEntry, context );
     }
 
     @Override
@@ -220,6 +241,26 @@ public class NodeStorageServiceImpl
             build(), context );
     }
 
+    @Override
+    public NodeCommitEntry commit( final NodeCommitEntry nodeCommitEntry, final RoutableNodeVersionIds routableNodeVersionIds,
+                                   final InternalContext context )
+    {
+        final NodeCommitId nodeCommitId = new NodeCommitId();
+        final NodeCommitEntry updatedCommitEntry = NodeCommitEntry.create( nodeCommitEntry ).
+            nodeCommitId( nodeCommitId ).
+            build();
+        this.commitService.store( updatedCommitEntry, context );
+        for ( RoutableNodeVersionId routableNodeVersionId : routableNodeVersionIds )
+        {
+            final NodeVersionMetadata existingVersion =
+                this.versionService.getVersion( routableNodeVersionId.getNodeId(), routableNodeVersionId.getNodeVersionId(), context );
+            final NodeVersionMetadata updatedVersion = NodeVersionMetadata.create( existingVersion ).
+                nodeCommitId( nodeCommitId ).
+                build();
+            this.versionService.store( updatedVersion, context );
+        }
+        return updatedCommitEntry;
+    }
 
     @Override
     public Node get( final NodeId nodeId, final InternalContext context )
@@ -302,6 +343,12 @@ public class NodeStorageServiceImpl
     public NodeVersionMetadata getVersion( final NodeId nodeId, final NodeVersionId nodeVersionId, final InternalContext context )
     {
         return this.versionService.getVersion( nodeId, nodeVersionId, context );
+    }
+
+    @Override
+    public NodeCommitEntry getCommit( final NodeCommitId nodeCommitId, final InternalContext context )
+    {
+        return this.commitService.get( nodeCommitId, context );
     }
 
     @Override
@@ -389,6 +436,19 @@ public class NodeStorageServiceImpl
             build(), context );
     }
 
+    private void loadVersionMetadata( final Node node, final NodeVersionId nodeVersionId, final NodeVersionKey nodeVersionKey,
+                                      final NodeCommitId nodeCommitId, final InternalContext context )
+    {
+        this.versionService.store( NodeVersionMetadata.create().
+            nodeId( node.id() ).
+            nodeVersionId( nodeVersionId ).
+            nodeVersionKey( nodeVersionKey ).
+            nodePath( node.path() ).
+            nodeCommitId( nodeCommitId ).
+            timestamp( node.getTimestamp() ).
+            build(), context );
+    }
+
 
     private Nodes doReturnNodes( final NodeBranchEntries nodeBranchEntries, final InternalContext context )
     {
@@ -459,6 +519,12 @@ public class NodeStorageServiceImpl
     public void setBranchService( final BranchService branchService )
     {
         this.branchService = branchService;
+    }
+
+    @Reference
+    public void setCommitService( final CommitService commitService )
+    {
+        this.commitService = commitService;
     }
 
     @Reference

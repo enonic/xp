@@ -4,14 +4,22 @@ public class LoadNodeParams
 {
     private final Node node;
 
+    private final NodeCommitId nodeCommitId;
+
     private LoadNodeParams( final Builder builder )
     {
         node = builder.node;
+        nodeCommitId = builder.nodeCommitId;
     }
 
     public Node getNode()
     {
         return node;
+    }
+
+    public NodeCommitId getNodeCommitId()
+    {
+        return nodeCommitId;
     }
 
     public static Builder create()
@@ -24,6 +32,8 @@ public class LoadNodeParams
     {
         private Node node;
 
+        private NodeCommitId nodeCommitId;
+
         private Builder()
         {
         }
@@ -31,6 +41,12 @@ public class LoadNodeParams
         public Builder node( final Node val )
         {
             node = val;
+            return this;
+        }
+
+        public Builder nodeCommitId( final NodeCommitId val )
+        {
+            nodeCommitId = val;
             return this;
         }
 

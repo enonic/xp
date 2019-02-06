@@ -13,15 +13,15 @@ import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.repo.impl.dump.DumpBlobRecord;
 import com.enonic.xp.repo.impl.dump.DumpConstants;
-import com.enonic.xp.repo.impl.dump.serializer.json.BranchDumpEntryJson;
-import com.enonic.xp.repo.impl.dump.serializer.json.VersionDumpEntryJson;
-import com.enonic.xp.repo.impl.dump.serializer.json.VersionsDumpEntryJson;
 import com.enonic.xp.repo.impl.dump.upgrade.AbstractMetaDumpUpgrader;
 import com.enonic.xp.repo.impl.dump.upgrade.DumpUpgradeException;
 import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre4.Pre4BranchDumpEntryJson;
 import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre4.Pre4NodeVersionJson;
 import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre4.Pre4VersionDumpEntryJson;
 import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre4.Pre4VersionsDumpEntryJson;
+import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre6.Pre6BranchDumpEntryJson;
+import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre6.Pre6VersionDumpEntryJson;
+import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre6.Pre6VersionsDumpEntryJson;
 import com.enonic.xp.repo.impl.node.json.AccessControlJson;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositorySegmentUtils;
@@ -48,12 +48,12 @@ public class IndexAccessSegmentsDumpUpgrader
     {
         final Pre4VersionsDumpEntryJson versionsDumpEntry = deserializeValue( entryContent, Pre4VersionsDumpEntryJson.class );
 
-        Collection<VersionDumpEntryJson> versions = versionsDumpEntry.getVersions().
+        Collection<Pre6VersionDumpEntryJson> versions = versionsDumpEntry.getVersions().
             stream().
-            map( versionDumpEntry -> upgradeVersionDumpEntry(repositoryId, versionDumpEntry) ).
+            map( versionDumpEntry -> upgradeVersionDumpEntry( repositoryId, versionDumpEntry ) ).
             collect( Collectors.toList() );
 
-        final VersionsDumpEntryJson upgradedVersionsDumpEntry = VersionsDumpEntryJson.create().
+        final Pre6VersionsDumpEntryJson upgradedVersionsDumpEntry = Pre6VersionsDumpEntryJson.create().
             nodeId( versionsDumpEntry.getNodeId() ).
             versions( versions ).
             build();
@@ -65,9 +65,9 @@ public class IndexAccessSegmentsDumpUpgrader
     protected String upgradeBranchEntry( final RepositoryId repositoryId, final String entryContent )
     {
         final Pre4BranchDumpEntryJson branchDumpEntry = deserializeValue( entryContent, Pre4BranchDumpEntryJson.class );
-        final VersionDumpEntryJson upgradedVersionDumpEntry = upgradeVersionDumpEntry( repositoryId, branchDumpEntry.getMeta() );
+        final Pre6VersionDumpEntryJson upgradedVersionDumpEntry = upgradeVersionDumpEntry( repositoryId, branchDumpEntry.getMeta() );
 
-        final BranchDumpEntryJson upgradedBranchDumpEntry = BranchDumpEntryJson.create().
+        final Pre6BranchDumpEntryJson upgradedBranchDumpEntry = Pre6BranchDumpEntryJson.create().
             nodeId( branchDumpEntry.getNodeId() ).
             binaries( branchDumpEntry.getBinaries() ).
             meta( upgradedVersionDumpEntry ).
@@ -76,7 +76,8 @@ public class IndexAccessSegmentsDumpUpgrader
         return serialize( upgradedBranchDumpEntry );
     }
 
-    private VersionDumpEntryJson upgradeVersionDumpEntry( final RepositoryId repositoryId, final Pre4VersionDumpEntryJson versionDumpEntry )
+    private Pre6VersionDumpEntryJson upgradeVersionDumpEntry( final RepositoryId repositoryId,
+                                                              final Pre4VersionDumpEntryJson versionDumpEntry )
     {
         //Retrieves the existing node version
         final Segment nodeDataSegment = RepositorySegmentUtils.toSegment( repositoryId, DumpConstants.DUMP_NODE_SEGMENT_LEVEL );
@@ -97,7 +98,7 @@ public class IndexAccessSegmentsDumpUpgrader
         final BlobKey accessControlBlobKey = addRecord( accessControlSegment, serializedAccessControl );
 
         //Return the new version dump entry
-        return VersionDumpEntryJson.create().
+        return Pre6VersionDumpEntryJson.create().
             nodePath( versionDumpEntry.getNodePath() ).
             timestamp( versionDumpEntry.getTimestamp() ).
             version( versionDumpEntry.getVersion() ).

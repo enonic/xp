@@ -28,7 +28,7 @@ public class VersionServiceImpl
     private static final ReturnFields VERSION_RETURN_FIELDS =
         ReturnFields.from( VersionIndexPath.VERSION_ID, VersionIndexPath.NODE_BLOB_KEY, VersionIndexPath.INDEX_CONFIG_BLOB_KEY,
                            VersionIndexPath.ACCESS_CONTROL_BLOB_KEY, VersionIndexPath.TIMESTAMP, VersionIndexPath.NODE_PATH,
-                           VersionIndexPath.NODE_ID );
+                           VersionIndexPath.NODE_ID, VersionIndexPath.COMMIT_ID );
 
     private StorageDao storageDao;
 
