@@ -28,6 +28,7 @@ import com.enonic.xp.repo.impl.dump.DumpBlobStore;
 import com.enonic.xp.repo.impl.dump.DumpConstants;
 import com.enonic.xp.repo.impl.dump.RepoDumpException;
 import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
+import com.enonic.xp.repo.impl.dump.model.CommitDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.model.VersionsDumpEntry;
 import com.enonic.xp.repo.impl.dump.serializer.DumpSerializer;
@@ -115,6 +116,20 @@ public class FileDumpWriter
         }
     }
 
+    @Override
+    public void openCommitsMeta( final RepositoryId repositoryId )
+    {
+        try
+        {
+            final File metaFile = createCommitsMeta( repositoryId );
+            doOpenFile( metaFile );
+        }
+        catch ( Exception e )
+        {
+            throw new RepoDumpException( "Could not open meta-file", e );
+        }
+    }
+
     private void doOpenFile( final File metaFile )
         throws IOException
     {
@@ -134,6 +149,13 @@ public class FileDumpWriter
     private File createVersionsMeta( final RepositoryId repositoryId )
     {
         final File metaFile = createVersionMetaPath( this.dumpDirectory, repositoryId ).toFile();
+
+        return doCreateMetaFile( metaFile );
+    }
+
+    private File createCommitsMeta( final RepositoryId repositoryId )
+    {
+        final File metaFile = createCommitMetaPath( this.dumpDirectory, repositoryId ).toFile();
 
         return doCreateMetaFile( metaFile );
     }
@@ -169,6 +191,14 @@ public class FileDumpWriter
     {
         final String serializedEntry = serializer.serialize( versionsDumpEntry );
         final String entryName = versionsDumpEntry.getNodeId().toString() + ".json";
+        storeTarEntry( serializedEntry, entryName );
+    }
+
+    @Override
+    public void writeCommitEntry( final CommitDumpEntry commitDumpEntry )
+    {
+        final String serializedEntry = serializer.serialize( commitDumpEntry );
+        final String entryName = commitDumpEntry.getNodeCommitId().toString() + ".json";
         storeTarEntry( serializedEntry, entryName );
     }
 

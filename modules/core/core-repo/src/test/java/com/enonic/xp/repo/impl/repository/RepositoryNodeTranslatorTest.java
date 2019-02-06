@@ -41,6 +41,10 @@ public class RepositoryNodeTranslatorTest
                         mapping( IndexMapping.from( indexMapping ) ).
                         settings( IndexSettings.from( indexSettings ) ).
                         build() ).
+                    add( IndexType.COMMIT, IndexDefinition.create().
+                        mapping( IndexMapping.from( indexMapping ) ).
+                        settings( IndexSettings.from( indexSettings ) ).
+                        build() ).
                     build() ).
                 build() ).
             build();

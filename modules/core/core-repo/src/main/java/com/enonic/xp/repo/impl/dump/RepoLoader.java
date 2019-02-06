@@ -10,6 +10,7 @@ import com.enonic.xp.dump.BranchLoadResult;
 import com.enonic.xp.dump.RepoLoadResult;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.repo.impl.dump.reader.BranchEntryProcessor;
+import com.enonic.xp.repo.impl.dump.reader.CommitEntryProcessor;
 import com.enonic.xp.repo.impl.dump.reader.DumpReader;
 import com.enonic.xp.repo.impl.dump.reader.VersionEntryProcessor;
 import com.enonic.xp.repository.CreateBranchParams;
@@ -34,6 +35,8 @@ class RepoLoader
 
     private final VersionEntryProcessor versionEntryProcessor;
 
+    private final CommitEntryProcessor commitEntryProcessor;
+
     private RepoLoader( final Builder builder )
     {
         repositoryId = builder.repositoryId;
@@ -48,6 +51,12 @@ class RepoLoader
             repositoryId( repositoryId ).
             build();
         this.versionEntryProcessor = VersionEntryProcessor.create().
+            dumpReader( this.reader ).
+            nodeService( this.nodeService ).
+            blobStore( builder.blobStore ).
+            repositoryId( repositoryId ).
+            build();
+        this.commitEntryProcessor = CommitEntryProcessor.create().
             dumpReader( this.reader ).
             nodeService( this.nodeService ).
             blobStore( builder.blobStore ).
@@ -68,6 +77,11 @@ class RepoLoader
                 branch( RepositoryConstants.MASTER_BRANCH ).
                 build().runWith( () -> loadVersions( loadResult ) );
         }
+
+        ContextBuilder.from( ContextAccessor.current() ).
+            repositoryId( this.repositoryId ).
+            branch( RepositoryConstants.MASTER_BRANCH ).
+            build().runWith( () -> loadCommits( loadResult ) );
 
         return loadResult.build();
     }
@@ -96,6 +110,11 @@ class RepoLoader
     private void loadVersions( final RepoLoadResult.Builder result )
     {
         result.versions( this.reader.loadVersions( repositoryId, this.versionEntryProcessor ) );
+    }
+
+    private void loadCommits( final RepoLoadResult.Builder result )
+    {
+        result.commits( this.reader.loadCommits( repositoryId, this.commitEntryProcessor ) );
     }
 
     private void verifyOrCreateBranch( final Branch branch )

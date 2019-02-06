@@ -21,12 +21,19 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.DeleteNodeListener;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeBranchEntries;
+import com.enonic.xp.node.NodeBranchEntry;
+import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.PushNodesListener;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.node.RoutableNodeVersionId;
+import com.enonic.xp.node.RoutableNodeVersionIds;
+import com.enonic.xp.security.User;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public class PublishContentCommand
     extends AbstractContentCommand
@@ -182,9 +189,26 @@ public class PublishContentCommand
 
         final PushNodesResult pushNodesResult = nodeService.push( nodesToPush, this.target, this );
 
+        commitPushedNodes( pushNodesResult.getSuccessful() );
+
         this.resultBuilder.setFailed( ContentNodeHelper.toContentIds( NodeIds.from( pushNodesResult.getFailed().
             stream().map( failed -> failed.getNodeBranchEntry().getNodeId() ).collect( Collectors.toList() ) ) ) );
         this.resultBuilder.setPushed( ContentNodeHelper.toContentIds( NodeIds.from( pushNodesResult.getSuccessful().getKeys() ) ) );
+    }
+
+    private void commitPushedNodes( final NodeBranchEntries branchEntries )
+    {
+        final NodeCommitEntry commitEntry = NodeCommitEntry.create().
+            message( "Publish" ).
+            build();
+        final RoutableNodeVersionIds.Builder routableNodeVersionIds = RoutableNodeVersionIds.create();
+        for ( NodeBranchEntry branchEntry : branchEntries )
+        {
+            final RoutableNodeVersionId routableNodeVersionId =
+                RoutableNodeVersionId.from( branchEntry.getNodeId(), branchEntry.getVersionId() );
+            routableNodeVersionIds.add( routableNodeVersionId );
+        }
+        nodeService.commit( commitEntry, routableNodeVersionIds.build() );
     }
 
 

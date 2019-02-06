@@ -188,7 +188,7 @@ public class XmlContentTypeParserTest
         parse( this.parser, "-i18n.xml" );
         final ContentType result = this.builder.build();
 
-        final FormItem item = result.getForm().getFormItem( "field-set" );
+        final FormItem item = result.getForm().getFormItem( "fieldSet1" );
         assertNotNull( item );
 
         final FieldSet fieldSet = (FieldSet) item;
@@ -269,7 +269,7 @@ public class XmlContentTypeParserTest
         assertEquals( "translated.label", radioOption.getLabel() );
 
         // field set
-        final FormItem fieldSetItem = result.getForm().getFormItem( "field-set" );
+        final FormItem fieldSetItem = result.getForm().getFormItem( "fieldSet1" );
         assertNotNull( fieldSetItem );
 
         final FieldSet fieldSet = (FieldSet) fieldSetItem;

@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.dump.serializer.json;
 
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -68,7 +69,7 @@ public class VersionsDumpEntryJson
     {
         private String nodeId;
 
-        private Collection<VersionDumpEntryJson> versions;
+        private Collection<VersionDumpEntryJson> versions = new LinkedList<>();
 
         private Builder()
         {
@@ -80,9 +81,9 @@ public class VersionsDumpEntryJson
             return this;
         }
 
-        public Builder versions( final Collection<VersionDumpEntryJson> versions )
+        public Builder version( final VersionDumpEntryJson version )
         {
-            this.versions = versions;
+            this.versions.add( version );
             return this;
         }
 

@@ -7,6 +7,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 
+import com.enonic.xp.node.NodeCommitQuery;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.query.Query;
@@ -34,6 +35,11 @@ public class ESQueryTranslator
         if ( query instanceof NodeVersionQuery )
         {
             return doTranslate( request, new NodeVersionQueryTranslator( (NodeVersionQuery) query ) );
+        }
+
+        if ( query instanceof NodeCommitQuery )
+        {
+            return doTranslate( request, new NodeCommitQueryTranslator( (NodeCommitQuery) query ) );
         }
 
         if ( query instanceof NodeBranchQuery )

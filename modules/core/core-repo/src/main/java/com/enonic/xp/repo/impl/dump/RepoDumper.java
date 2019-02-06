@@ -25,6 +25,8 @@ import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.GetActiveNodeVersionsParams;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeCommitEntries;
+import com.enonic.xp.node.NodeCommitQuery;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeService;
@@ -35,9 +37,11 @@ import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.filter.RangeFilter;
 import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
+import com.enonic.xp.repo.impl.dump.model.CommitDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.VersionsDumpEntry;
 import com.enonic.xp.repo.impl.dump.writer.DumpWriter;
 import com.enonic.xp.repo.impl.node.executor.BatchedGetChildrenExecutor;
+import com.enonic.xp.repo.impl.node.executor.BatchedGetCommitsExecutor;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
@@ -93,6 +97,8 @@ class RepoDumper
         {
             setContext( RepositoryConstants.MASTER_BRANCH ).runWith( () -> dumpVersions( dumpedNodes ) );
         }
+
+        setContext( RepositoryConstants.MASTER_BRANCH ).runWith( () -> dumpCommits() );
 
         return this.dumpResult.build();
     }
@@ -177,6 +183,40 @@ class RepoDumper
 
                 this.writer.writeVersionsEntry( builder.build() );
             } );
+        }
+        finally
+        {
+            writer.close();
+        }
+    }
+
+    private void dumpCommits()
+    {
+        try
+        {
+            writer.openCommitsMeta( this.repositoryId );
+
+            final NodeCommitQuery nodeCommitQuery = NodeCommitQuery.create().build();
+
+            final BatchedGetCommitsExecutor executor = BatchedGetCommitsExecutor.create().
+                nodeService( this.nodeService ).
+                query( nodeCommitQuery ).
+                batchSize( DEFAULT_BATCH_SIZE ).
+                build();
+
+            while ( executor.hasMore() )
+            {
+                final NodeCommitEntries nodeCommitEntries = executor.execute();
+
+                nodeCommitEntries.stream().
+                    map( nodeCommitEntry -> CommitDumpEntry.create().
+                        nodeCommitId( nodeCommitEntry.getNodeCommitId() ).
+                        message( nodeCommitEntry.getMessage() ).
+                        committer( nodeCommitEntry.getCommitter() ).
+                        timestamp( nodeCommitEntry.getTimestamp() ).
+                        build() ).
+                    forEach( this.writer::writeCommitEntry );
+            }
         }
         finally
         {

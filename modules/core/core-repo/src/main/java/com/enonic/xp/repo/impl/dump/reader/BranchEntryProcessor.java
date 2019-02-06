@@ -67,6 +67,7 @@ public class BranchEntryProcessor
         {
             this.nodeService.loadNode( LoadNodeParams.create().
                 node( node ).
+                nodeCommitId( meta.getNodeCommitId() ).
                 build() );
 
             validateOrAddBinary( nodeVersion, result );

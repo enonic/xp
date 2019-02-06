@@ -11,5 +11,7 @@ public interface SystemLoadListener
 
     void loadingVersions( final RepositoryId repositoryId );
 
+    void loadingCommits( final RepositoryId repositoryId );
+
     void entryLoaded();
 }
