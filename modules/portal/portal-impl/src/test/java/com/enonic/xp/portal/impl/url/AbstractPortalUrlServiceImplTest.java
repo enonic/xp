@@ -13,6 +13,8 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.impl.macro.MacroServiceImpl;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.style.StyleDescriptorService;
+import com.enonic.xp.style.StyleDescriptors;
 
 public abstract class AbstractPortalUrlServiceImplTest
 {
@@ -23,6 +25,8 @@ public abstract class AbstractPortalUrlServiceImplTest
     protected ContentService contentService;
 
     protected ApplicationService applicationService;
+
+    protected StyleDescriptorService styleDescriptorService;
 
     @Before
     public void setup()
@@ -43,6 +47,10 @@ public abstract class AbstractPortalUrlServiceImplTest
 
         this.contentService = Mockito.mock( ContentService.class );
         this.service.setContentService( this.contentService );
+
+        this.styleDescriptorService = Mockito.mock( StyleDescriptorService.class );
+        Mockito.when( this.styleDescriptorService.getByApplications( Mockito.any() ) ).thenReturn( StyleDescriptors.empty() );
+        this.service.setStyleDescriptorService( this.styleDescriptorService );
 
         this.applicationService = Mockito.mock( ApplicationService.class );
         Mockito.when( this.applicationService.getInstalledApplication( applicationKey ) ).thenReturn( application );
