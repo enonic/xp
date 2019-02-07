@@ -24,6 +24,7 @@ import com.enonic.xp.portal.url.ProcessHtmlParams;
 import com.enonic.xp.portal.url.ServiceUrlParams;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.style.StyleDescriptorService;
 
 @Component(immediate = true)
 public final class PortalUrlServiceImpl
@@ -34,6 +35,8 @@ public final class PortalUrlServiceImpl
     private ApplicationService applicationService;
 
     private MacroService macroService;
+
+    private StyleDescriptorService styleDescriptorService;
 
     @Override
     public String assetUrl( final AssetUrlParams params )
@@ -91,7 +94,7 @@ public final class PortalUrlServiceImpl
             return "";
         }
 
-        String processedHtml = new HtmlLinkProcessor( contentService, this ).
+        String processedHtml = new HtmlLinkProcessor( contentService, styleDescriptorService, this ).
             process( params.getValue(), params.getType(), params.getPortalRequest() );
         processedHtml = new HtmlMacroProcessor( macroService ).
             process( processedHtml );
@@ -112,11 +115,16 @@ public final class PortalUrlServiceImpl
         this.contentService = contentService;
     }
 
-
     @Reference
     public void setApplicationService( final ApplicationService applicationService )
     {
         this.applicationService = applicationService;
+    }
+
+    @Reference
+    public void setStyleDescriptorService( final StyleDescriptorService styleDescriptorService )
+    {
+        this.styleDescriptorService = styleDescriptorService;
     }
 
     @Reference
