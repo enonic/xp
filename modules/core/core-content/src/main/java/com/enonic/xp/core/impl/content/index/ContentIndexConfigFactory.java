@@ -10,6 +10,7 @@ import com.enonic.xp.core.impl.content.index.processor.AttachmentConfigProcessor
 import com.enonic.xp.core.impl.content.index.processor.BaseConfigProcessor;
 import com.enonic.xp.core.impl.content.index.processor.ContentIndexConfigProcessors;
 import com.enonic.xp.core.impl.content.index.processor.DataConfigProcessor;
+import com.enonic.xp.core.impl.content.index.processor.LanguageConfigProcessor;
 import com.enonic.xp.core.impl.content.index.processor.PageConfigProcessor;
 import com.enonic.xp.core.impl.content.index.processor.PageRegionsConfigProcessor;
 import com.enonic.xp.core.impl.content.index.processor.SiteConfigProcessor;
@@ -50,6 +51,8 @@ public class ContentIndexConfigFactory
 
         indexConfigProcessors.add(
             new PageRegionsConfigProcessor( builder.page, builder.partDescriptorService, builder.layoutDescriptorService ) );
+
+        indexConfigProcessors.add( new LanguageConfigProcessor( builder.language ) );
     }
 
     private Form getDataForm( final ContentTypeService contentTypeService, final ContentTypeName contentTypeName )
@@ -131,6 +134,8 @@ public class ContentIndexConfigFactory
 
         private ExtraDatas extraDatas;
 
+        private String language;
+
         public Builder contentTypeService( final ContentTypeService value )
         {
             this.contentTypeService = value;
@@ -188,6 +193,12 @@ public class ContentIndexConfigFactory
         public Builder extraDatas( final ExtraDatas value )
         {
             this.extraDatas = value;
+            return this;
+        }
+
+        public Builder language( final String value )
+        {
+            this.language = value;
             return this;
         }
 

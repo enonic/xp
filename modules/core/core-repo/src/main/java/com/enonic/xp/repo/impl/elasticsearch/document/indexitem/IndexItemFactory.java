@@ -15,21 +15,22 @@ class IndexItemFactory
 {
     public static List<IndexItem> create( final Property property, final IndexConfigDocument indexConfigDocument )
     {
-        Value processedPropertyValue = applyValueProcessors( property.getValue(), indexConfigDocument );
+        final Value processedPropertyValue =
+            applyValueProcessors( property.getValue(), indexConfigDocument.getConfigForPath( property.getPath() ) );
 
         return createItems( IndexPath.from( property ), indexConfigDocument, processedPropertyValue );
     }
 
-    public static List<IndexItem> create( final String name, final Value value, final IndexConfig indexConfig )
+    public static List<IndexItem> create( final IndexPath indexPath, final Value value, final IndexConfigDocument indexConfigDocument )
     {
-        return doCreate( name, value, indexConfig );
+        return doCreate( indexPath, value, indexConfigDocument );
     }
 
-    private static List<IndexItem> doCreate( final String name, final Value value, final IndexConfig indexConfig )
+    private static List<IndexItem> doCreate( final IndexPath indexPath, final Value value, final IndexConfigDocument indexConfigDocument )
     {
-        Value processedPropertyValue = applyValueProcessors( value, indexConfig );
+        Value processedPropertyValue = applyValueProcessors( value, indexConfigDocument.getConfigForPath( indexPath ) );
 
-        return createItems( IndexPath.from( name ), indexConfig, processedPropertyValue );
+        return createItems( indexPath, indexConfigDocument, processedPropertyValue );
     }
 
     private static Value applyValueProcessors( final Value value, final IndexConfig indexConfig )
@@ -48,14 +49,14 @@ class IndexItemFactory
     {
         final List<IndexItem> items = Lists.newArrayList();
 
-        indexConfigDocument.getConfigForPath( indexPath.getPath() )
+        final IndexConfig indexConfig = indexConfigDocument.getConfigForPath( indexPath );
 
         if ( indexConfig.isEnabled() )
         {
             items.addAll( BaseTypeFactory.create( indexPath, processedPropertyValue ) );
             items.addAll( FulltextTypeFactory.create( indexPath, processedPropertyValue, indexConfig ) );
             items.add( OrderByTypeFactory.create( indexPath, processedPropertyValue ) );
-            items.addAll( AllTextTypeFactory.create( processedPropertyValue, indexConfig ) );
+            items.addAll( AllTextTypeFactory.create( processedPropertyValue, indexConfig, indexConfigDocument.getAllTextConfig() ) );
             items.addAll( StemmedTypeFactory.create( indexPath, processedPropertyValue, indexConfig ) );
 
             if ( indexConfig.isPath() )

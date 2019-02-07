@@ -1,7 +1,10 @@
 package com.enonic.xp.index;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.SortedSet;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSortedSet;
@@ -34,6 +37,7 @@ public class PatternIndexConfigDocument
         this.pathIndexConfigs = ImmutableSortedSet.copyOf( builder.pathIndexConfigs );
         this.pathIndexConfigMap = builder.stringPathIndexConfigMap;
         this.defaultConfig = builder.defaultConfig;
+        this.allTextIndexConfig = builder.allTextIndexConfig.build();
     }
 
     public static Builder create()
@@ -49,7 +53,18 @@ public class PatternIndexConfigDocument
     @Override
     public IndexConfig getConfigForPath( final PropertyPath dataPath )
     {
-        final PathIndexConfig exactMatch = pathIndexConfigMap.get( dataPath.resetAllIndexesTo( 0 ).toString().toLowerCase() );
+        return doGetConfigForPath( dataPath.resetAllIndexesTo( 0 ).toString() );
+    }
+
+    @Override
+    public IndexConfig getConfigForPath( final IndexPath indexPath )
+    {
+        return doGetConfigForPath( indexPath.toString() );
+    }
+
+    private IndexConfig doGetConfigForPath( final String path )
+    {
+        final PathIndexConfig exactMatch = pathIndexConfigMap.get( path.toLowerCase() );
 
         if ( exactMatch != null )
         {
@@ -58,18 +73,53 @@ public class PatternIndexConfigDocument
 
         for ( final PathIndexConfig pathIndexConfig : pathIndexConfigs )
         {
-            if ( GlobPatternMatcher.match( pathIndexConfig.getPath().toString(), dataPath.resetAllIndexesTo( 0 ).toString(), "." ) )
+            if ( GlobPatternMatcher.match( pathIndexConfig.getPath().toString(), path, "." ) )
             {
                 return pathIndexConfig.getIndexConfig();
             }
 
-            if ( pathIndexConfig.matches( dataPath ) )
+            if ( pathIndexConfig.matches( path ) )
             {
                 return pathIndexConfig.getIndexConfig();
             }
         }
 
         return defaultConfig;
+    }
+
+    public AllTextIndexConfig getAllTextConfig()
+    {
+        return allTextIndexConfig;
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( !( o instanceof PatternIndexConfigDocument ) )
+        {
+            return false;
+        }
+
+        final PatternIndexConfigDocument that = (PatternIndexConfigDocument) o;
+
+        if ( !Objects.equals( defaultConfig, that.defaultConfig ) )
+        {
+            return false;
+        }
+        if ( !Objects.equals( pathIndexConfigs, that.pathIndexConfigs ) )
+        {
+            return false;
+        }
+        if ( !Objects.equals( this.allTextIndexConfig, that.allTextIndexConfig ) )
+        {
+            return false;
+        }
+
+        return true;
     }
 
     public static final class Builder
@@ -81,7 +131,7 @@ public class PatternIndexConfigDocument
 
         private IndexConfig defaultConfig = IndexConfig.BY_TYPE;
 
-        private AllTextIndexConfig allTextIndexConfig;
+        private AllTextIndexConfig.Builder allTextIndexConfig = AllTextIndexConfig.create();
 
         private Builder()
         {
@@ -126,9 +176,12 @@ public class PatternIndexConfigDocument
             return this;
         }
 
-        public Builder allTextIndexConfig( AllTextIndexConfig allTextIndexConfig )
+        public Builder addAllTextConfigLanguage( final String language )
         {
-            this.allTextIndexConfig = allTextIndexConfig;
+            if ( StringUtils.isNotBlank( language ) )
+            {
+                this.allTextIndexConfig.addLanguage( language );
+            }
             return this;
         }
 
@@ -136,32 +189,6 @@ public class PatternIndexConfigDocument
         {
             return new PatternIndexConfigDocument( this );
         }
-    }
-
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( !( o instanceof PatternIndexConfigDocument ) )
-        {
-            return false;
-        }
-
-        final PatternIndexConfigDocument that = (PatternIndexConfigDocument) o;
-
-        if ( defaultConfig != null ? !defaultConfig.equals( that.defaultConfig ) : that.defaultConfig != null )
-        {
-            return false;
-        }
-        if ( pathIndexConfigs != null ? !pathIndexConfigs.equals( that.pathIndexConfigs ) : that.pathIndexConfigs != null )
-        {
-            return false;
-        }
-
-        return true;
     }
 
     @Override

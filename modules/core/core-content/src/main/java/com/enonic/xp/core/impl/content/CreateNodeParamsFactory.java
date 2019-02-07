@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.attachment.CreateAttachment;
@@ -63,6 +65,8 @@ public class CreateNodeParamsFactory
 
         final PropertySet extraDataSet = contentAsData.getPropertySet( PropertyPath.from( ContentPropertyNames.EXTRA_DATA ) );
 
+        final String language = contentAsData.getString( PropertyPath.from( ContentPropertyNames.LANGUAGE ) );
+
         final SiteConfigs siteConfigs = new SiteConfigsDataSerializer().fromProperties(
             contentAsData.getPropertySet( PropertyPath.from( ContentPropertyNames.DATA ) ) ).build();
 
@@ -89,6 +93,11 @@ public class CreateNodeParamsFactory
         if ( extraData != null )
         {
             indexConfigFactoryBuilder.extraDatas( extraData );
+        }
+
+        if ( StringUtils.isNotBlank( language ) )
+        {
+            indexConfigFactoryBuilder.language( language );
         }
 
         final IndexConfigDocument indexConfigDocument = indexConfigFactoryBuilder.build().produce();

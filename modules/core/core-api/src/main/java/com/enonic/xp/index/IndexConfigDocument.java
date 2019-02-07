@@ -11,5 +11,7 @@ public interface IndexConfigDocument
 
     IndexConfig getConfigForPath( final PropertyPath dataPath );
 
+    IndexConfig getConfigForPath( final IndexPath indexPath );
+
     AllTextIndexConfig getAllTextConfig();
 }

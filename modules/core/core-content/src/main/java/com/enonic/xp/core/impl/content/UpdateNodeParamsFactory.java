@@ -90,9 +90,10 @@ public class UpdateNodeParamsFactory
             siteService( this.siteService ).
             xDataService( this.xDataService ).
             contentTypeName( content.getType() ).
-            page( content.getPage() != null ? content.getPage() : null ).
+            page( content.getPage() ).
             siteConfigs( content.isSite() ? ( (Site) content ).getSiteConfigs() : null ).
             extraDatas( content.getAllExtraData()).
+            language( content.getLanguage() != null ? content.getLanguage().getLanguage() : null ).
             build();
 
         return editableNode -> {

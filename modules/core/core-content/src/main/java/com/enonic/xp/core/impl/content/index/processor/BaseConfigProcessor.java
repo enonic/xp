@@ -33,7 +33,6 @@ public class BaseConfigProcessor
             add( SITE, IndexConfig.NONE ).
             add( TYPE, IndexConfig.MINIMAL ).
             add( ATTACHMENT, IndexConfig.MINIMAL ).
-            add( "_allText", IndexConfig.MINIMAL )
             defaultConfig( IndexConfig.BY_TYPE );
 
         return builder;
