@@ -222,7 +222,7 @@ public class HtmlLinkProcessor
             return "block(" + width + "," + height + ")";
         }
 
-        if ( keepSize || urlParams.isEmpty() ) //Backward compatibility
+        if ( keepSize)
         {
             return IMAGE_NO_SCALING;
         }
