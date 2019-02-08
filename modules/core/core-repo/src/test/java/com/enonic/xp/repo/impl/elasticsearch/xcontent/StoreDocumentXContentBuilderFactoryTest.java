@@ -5,6 +5,9 @@ import org.junit.Test;
 
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.index.IndexConfig;
+import com.enonic.xp.index.IndexConfigDocument;
+import com.enonic.xp.index.IndexPath;
+import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
 import com.enonic.xp.repo.impl.elasticsearch.document.indexitem.IndexItems;
@@ -17,7 +20,7 @@ public class StoreDocumentXContentBuilderFactoryTest
         throws Exception
     {
         final IndexItems indexItems = IndexItems.create().
-            add( "myProperty", ValueFactory.newString( "myValue" ), IndexConfig.MINIMAL ).
+            add( IndexPath.from( "myProperty" ), ValueFactory.newString( "myValue" ), createDefaultDocument( IndexConfig.MINIMAL ) ).
             build();
 
         final IndexDocument indexDocument = IndexDocument.create().
@@ -32,5 +35,11 @@ public class StoreDocumentXContentBuilderFactoryTest
 
         System.out.println( xContentBuilder.string() );
 
+    }
+
+    private IndexConfigDocument createDefaultDocument( final IndexConfig indexConfig )
+    {
+        final PatternIndexConfigDocument.Builder builder = PatternIndexConfigDocument.create().defaultConfig( indexConfig );
+        return builder.build();
     }
 }

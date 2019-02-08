@@ -24,7 +24,7 @@ public class PatternIndexConfigDocument
 
     private final IndexConfig defaultConfig;
 
-    private final AllTextIndexConfig allTextIndexConfig;
+    private final AllTextIndexConfig allTextConfig;
 
     public IndexConfig getDefaultConfig()
     {
@@ -37,7 +37,7 @@ public class PatternIndexConfigDocument
         this.pathIndexConfigs = ImmutableSortedSet.copyOf( builder.pathIndexConfigs );
         this.pathIndexConfigMap = builder.stringPathIndexConfigMap;
         this.defaultConfig = builder.defaultConfig;
-        this.allTextIndexConfig = builder.allTextIndexConfig.build();
+        this.allTextConfig = builder.allTextIndexConfig.build();
     }
 
     public static Builder create()
@@ -89,7 +89,7 @@ public class PatternIndexConfigDocument
 
     public AllTextIndexConfig getAllTextConfig()
     {
-        return allTextIndexConfig;
+        return allTextConfig;
     }
 
     @Override
@@ -114,7 +114,7 @@ public class PatternIndexConfigDocument
         {
             return false;
         }
-        if ( !Objects.equals( this.allTextIndexConfig, that.allTextIndexConfig ) )
+        if ( !Objects.equals( this.allTextConfig, that.allTextConfig ) )
         {
             return false;
         }

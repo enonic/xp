@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.Lists;
 
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexValueProcessor;
@@ -13,7 +14,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-final class IndexConfigJson
+public final class IndexConfigJson
 {
     @JsonProperty("decideByType")
     private boolean decideByType;
@@ -50,7 +51,7 @@ final class IndexConfigJson
         }
         if ( !config.getLanguages().isEmpty() )
         {
-            json.languages = List.copyOf( config.getLanguages() );
+            json.languages = Lists.newArrayList( config.getLanguages() );
         }
         return json;
     }
