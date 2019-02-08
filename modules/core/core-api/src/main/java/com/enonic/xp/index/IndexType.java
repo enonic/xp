@@ -7,7 +7,8 @@ public enum IndexType
 {
     SEARCH( true ),
     VERSION( false ),
-    BRANCH( false );
+    BRANCH( false ),
+    COMMIT( false );
 
     private final boolean dynamicTypes;
 

@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.storage;
 
 import java.time.Instant;
 
+import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersion;
@@ -17,8 +18,9 @@ public class StoreNodeVersionParams
 
     private final NodeVersion nodeVersion;
 
-    private final NodeVersionId nodeVersionId
-        ;
+    private final NodeVersionId nodeVersionId;
+
+    private final NodeCommitId nodeCommitId;
 
     private StoreNodeVersionParams( final Builder builder )
     {
@@ -27,6 +29,7 @@ public class StoreNodeVersionParams
         nodePath = builder.nodePath;
         nodeId = builder.nodeId;
         nodeVersionId = builder.nodeVersionId;
+        nodeCommitId = builder.nodeCommitId;
     }
 
     public NodeId getNodeId()
@@ -54,6 +57,11 @@ public class StoreNodeVersionParams
         return nodeVersionId;
     }
 
+    public NodeCommitId getNodeCommitId()
+    {
+        return nodeCommitId;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -71,6 +79,8 @@ public class StoreNodeVersionParams
         private NodeId nodeId;
 
         private NodeVersionId nodeVersionId;
+
+        private NodeCommitId nodeCommitId;
 
         private Builder()
         {
@@ -103,6 +113,12 @@ public class StoreNodeVersionParams
         public Builder nodeVersionId( final NodeVersionId val )
         {
             nodeVersionId = val;
+            return this;
+        }
+
+        public Builder nodeCommitId( final NodeCommitId val )
+        {
+            nodeCommitId = val;
             return this;
         }
 

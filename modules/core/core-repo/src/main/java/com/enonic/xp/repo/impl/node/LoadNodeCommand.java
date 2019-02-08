@@ -30,7 +30,7 @@ public class LoadNodeCommand
 
         if ( nodeToLoad.path().isRoot() )
         {
-            return loadRootNode( nodeToLoad );
+            return loadRootNode();
         }
         else
         {
@@ -51,7 +51,12 @@ public class LoadNodeCommand
         verifyParentExists();
         deleteIfExistsAtPath();
 
-        final Node loadedNode = this.nodeStorageService.load( this.params.getNode(), InternalContext.from( ContextAccessor.current() ) );
+        final com.enonic.xp.repo.impl.storage.LoadNodeParams loadNodeParams = com.enonic.xp.repo.impl.storage.LoadNodeParams.create().
+            node( params.getNode() ).
+            nodeCommitId( params.getNodeCommitId() ).
+            build();
+
+        final Node loadedNode = this.nodeStorageService.load( loadNodeParams, InternalContext.from( ContextAccessor.current() ) );
 
         return LoadNodeResult.create().
             node( loadedNode ).
@@ -90,11 +95,11 @@ public class LoadNodeCommand
             execute();
     }
 
-    private LoadNodeResult loadRootNode( final Node nodeToLoad )
+    private LoadNodeResult loadRootNode()
     {
         final CreateRootNodeParams createRootNodeParams = CreateRootNodeParams.create().
-            permissions( nodeToLoad.getPermissions() ).
-            childOrder( nodeToLoad.getChildOrder() ).
+            permissions( params.getNode().getPermissions() ).
+            childOrder( params.getNode().getChildOrder() ).
             build();
 
         final Node node = CreateRootNodeCommand.create( this ).

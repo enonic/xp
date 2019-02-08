@@ -1,0 +1,34 @@
+{
+  "commit": {
+    "_all": {
+      "enabled": false
+    },
+    "_source": {
+      "enabled": true
+    },
+    "date_detection": false,
+    "numeric_detection": false,
+    "properties": {
+      "commitid": {
+        "type": "string",
+        "store": "true",
+        "index": "not_analyzed"
+      },
+      "message": {
+        "type": "string",
+        "store": "true",
+        "index": "not_analyzed"
+      },
+      "timestamp": {
+        "type": "date",
+        "store": "true",
+        "index": "not_analyzed"
+      },
+      "committer": {
+        "type": "string",
+        "store": "true",
+        "index": "not_analyzed"
+      }
+    }
+  }
+}

@@ -15,6 +15,7 @@ class VersionMetaFactory
             version( node.getNodeVersionId() ).
             nodeVersionKey( metaData.getNodeVersionKey() ).
             nodeState( node.getNodeState() ).
+            nodeCommitId( metaData.getNodeCommitId() ).
             build();
     }
 
@@ -26,6 +27,7 @@ class VersionMetaFactory
             version( metaData.getNodeVersionId() ).
             nodeVersionKey( metaData.getNodeVersionKey() ).
             nodeState( NodeState.DEFAULT ).
+            nodeCommitId( metaData.getNodeCommitId() ).
             build();
     }
 }

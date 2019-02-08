@@ -30,6 +30,8 @@ public final class XmlFormMapper
 
     private XmlInputTypeDefaultMapper defaultMapper;
 
+    private int fieldSetCounter = 1;
+
     public XmlFormMapper( final ApplicationKey currentApplication )
     {
         this.currentApplication = currentApplication;
@@ -131,7 +133,7 @@ public final class XmlFormMapper
     private FieldSet buildFieldSetItem( final DomElement root )
     {
         final FieldSet.Builder builder = FieldSet.create();
-        builder.name( root.getAttribute( "name" ) );
+        builder.name( "fieldSet" + fieldSetCounter++ );
         final String labelI18n = getLabelI18n( root );
         builder.label( getLabel( root, labelI18n ) );
         builder.labelI18nKey( labelI18n );

@@ -62,6 +62,7 @@ import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.repo.impl.binary.BinaryServiceImpl;
 import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;
+import com.enonic.xp.repo.impl.commit.CommitServiceImpl;
 import com.enonic.xp.repo.impl.elasticsearch.AbstractElasticsearchIntegrationTest;
 import com.enonic.xp.repo.impl.elasticsearch.IndexServiceInternalImpl;
 import com.enonic.xp.repo.impl.elasticsearch.search.SearchDaoImpl;
@@ -155,7 +156,9 @@ public class AbstractContentServiceTest
     private VersionServiceImpl versionService;
 
     private BranchServiceImpl branchService;
-    
+
+    private CommitServiceImpl commitService;
+
     private IndexServiceInternalImpl indexServiceInternal;
 
     private IndexServiceImpl indexService;
@@ -204,6 +207,9 @@ public class AbstractContentServiceTest
         this.versionService = new VersionServiceImpl();
         this.versionService.setStorageDao( storageDao );
 
+        this.commitService = new CommitServiceImpl();
+        this.commitService.setStorageDao( storageDao );
+
         this.indexServiceInternal = new IndexServiceInternalImpl();
         this.indexServiceInternal.setClient( client );
 
@@ -221,6 +227,7 @@ public class AbstractContentServiceTest
         this.storageService = new NodeStorageServiceImpl();
         this.storageService.setBranchService( this.branchService );
         this.storageService.setVersionService( this.versionService );
+        this.storageService.setCommitService( this.commitService );
         this.storageService.setNodeVersionService( this.nodeDao );
         this.storageService.setIndexDataService( this.indexedDataService );
 
@@ -257,7 +264,6 @@ public class AbstractContentServiceTest
 
         this.mixinService = Mockito.mock( MixinService.class );
         Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
-
 
         this.xDataService = Mockito.mock( XDataService.class );
 

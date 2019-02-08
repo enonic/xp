@@ -52,6 +52,11 @@ public class NodeKey
         return isId;
     }
 
+    public boolean isPath()
+    {
+        return !isId;
+    }
+
     public String getValue()
     {
         return value;

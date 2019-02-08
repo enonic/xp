@@ -408,6 +408,23 @@ RepoConnection.prototype.setRootPermissions = function (params) {
 
 
 /**
+ * This function commits the active version of nodes.
+ *
+ * @example-ref examples/node/commit.js
+ *
+ * @param {...(string|string[])} keys Node keys to commit. Each argument could be an id, a path or an array of the two. Prefer the usage of ID rather than paths.
+ * @param {string} [message] Commit message.
+ *
+ * @returns {object} Commit object.
+ */
+RepoConnection.prototype.commit = function (params) {
+    var keys = argsToStringArray(params.keys);
+    var message = nullOrValue(params.message);
+    return __.toNativeObject(this.repoConnection.commit(keys, message));
+};
+
+
+/**
  * Creates a connection to a repository with a given branch and authentication info.
  *
  * @example-ref examples/node/connect.js
