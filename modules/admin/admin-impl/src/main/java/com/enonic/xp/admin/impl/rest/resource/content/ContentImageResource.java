@@ -62,11 +62,12 @@ public final class ContentImageResource
 
     @GET
     @Path("{contentId}")
-    public Response getContentImage( @PathParam("contentId") final String contentIdAsString, @QueryParam("size") final int size,
-                                     @QueryParam("scaleWidth") @DefaultValue("false") final boolean scaleWidth,
+    public Response getContentImage( @PathParam("contentId") final String contentIdAsString,
+                                     @QueryParam("size") @DefaultValue("0") final int size,
                                      @QueryParam("source") @DefaultValue("false") final boolean source,
                                      @QueryParam("scale") final String scale,
-                                     @QueryParam("filter") final String filter )
+                                     @QueryParam("filter") final String filter,
+                                     @QueryParam("crop") @DefaultValue("true") final boolean crop )
         throws Exception
     {
         if ( contentIdAsString == null )
@@ -91,7 +92,7 @@ public final class ContentImageResource
             }
             else
             {
-                resolvedImage = resolveResponseFromContentImageAttachment( (Media) content, size, scaleWidth, source, scale, filter );
+                resolvedImage = resolveResponseFromContentImageAttachment( (Media) content, size, source, scale, filter, crop );
             }
             if ( resolvedImage.isOK() )
             {
@@ -133,8 +134,8 @@ public final class ContentImageResource
         return ResolvedImage.unresolved();
     }
 
-    private ResolvedImage resolveResponseFromContentImageAttachment( final Media media, final int size, final boolean scaleWidth,
-                                                                     final boolean source, final String scale, final String filter )
+    private ResolvedImage resolveResponseFromContentImageAttachment( final Media media, final int size, final boolean source,
+                                                                     final String scale, final String filter, final boolean crop )
     {
         final Attachment attachment = media.getMediaAttachment();
         if ( attachment != null )
@@ -144,13 +145,13 @@ public final class ContentImageResource
             {
                 try
                 {
-                    final Cropping cropping = media.getCropping();
-                    final ImageOrientation imageOrientation = mediaInfoService.getImageOrientation( binary, media );
+                    final Cropping cropping = (!source && crop) ? media.getCropping() : null;
+                    final ImageOrientation imageOrientation = source ? null : mediaInfoService.getImageOrientation( binary, media );
+                    final FocalPoint focalPoint = source ? null : media.getFocalPoint();
                     final String format = imageService.getFormatByMimeType( attachment.getMimeType() );
-                    final String filterParam = source ? null : filter;
-                    final ScaleParams scaleParam = source ? null : parseScaleParam( media, scale, size );
-                    final FocalPoint focalPoint = media.getFocalPoint();
-                    final int width = source || (size == 0) ? getOriginalWidth( media ) : size;
+                    final String filterParam = filter;
+                    final int sizeParam = (size > 0) ? size : getOriginalWidth( media );
+                    final ScaleParams scaleParam = parseScaleParam( media, scale, sizeParam );
 
                     final ReadImageParams readImageParams = ReadImageParams.newImageParams().
                         contentId( media.getId() ).
@@ -158,8 +159,7 @@ public final class ContentImageResource
                         cropping( cropping ).
                         scaleParams( scaleParam ).
                         focalPoint( focalPoint ).
-                        scaleSize( width ).
-                        scaleWidth( scaleWidth ).
+                        scaleSize( sizeParam ).
                         format( format ).
                         orientation( imageOrientation ).
                         filterParam( filterParam ).
@@ -212,19 +212,18 @@ public final class ContentImageResource
 
     private ScaleParams parseScaleParam( final Media media, final String scale, final int size )
     {
-        if ( scale != null )
-        {
-            final int pos = scale.indexOf( ":" );
-            final String horizontalProportion = scale.substring( 0, pos );
-            final String verticalProportion = scale.substring( pos + 1 );
-
-            final int width = size > 0 ? size : getOriginalWidth( media );
-            final int height = width / Integer.parseInt( horizontalProportion ) * Integer.parseInt( verticalProportion );
-
-            return new ScaleParams( "block", new Object[]{width, height} );
+        if ( scale == null ) {
+            return null;
         }
 
-        return null;
+        final int pos = scale.indexOf( ":" );
+        final String horizontalProportion = scale.substring( 0, pos );
+        final String verticalProportion = scale.substring( pos + 1 );
+
+        final int width = size > 0 ? size : getOriginalWidth( media );
+        final int height = width / Integer.parseInt( horizontalProportion ) * Integer.parseInt( verticalProportion );
+
+        return new ScaleParams( "block", new Object[]{width, height} );
     }
 
     private int getOriginalWidth( final Media media )
