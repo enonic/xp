@@ -1,4 +1,7 @@
 {
+  "allTextConfig": {
+    "languages": []
+  },
   "analyzer": "myAnalyzer",
   "defaultConfig": {
     "decideByType": false,
