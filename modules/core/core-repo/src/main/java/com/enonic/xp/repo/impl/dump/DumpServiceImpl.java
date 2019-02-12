@@ -38,6 +38,7 @@ import com.enonic.xp.repo.impl.SecurityHelper;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.reader.FileDumpReader;
 import com.enonic.xp.repo.impl.dump.upgrade.DumpUpgrader;
+import com.enonic.xp.repo.impl.dump.upgrade.IndexConfigUpgrader;
 import com.enonic.xp.repo.impl.dump.upgrade.MissingModelVersionDumpUpgrader;
 import com.enonic.xp.repo.impl.dump.upgrade.RepositoryIdDumpUpgrader;
 import com.enonic.xp.repo.impl.dump.upgrade.VersionIdDumpUpgrader;
@@ -148,7 +149,8 @@ public class DumpServiceImpl
     {
         return Lists.newArrayList( new MissingModelVersionDumpUpgrader(), new VersionIdDumpUpgrader( basePath ),
                                    new FlattenedPageDumpUpgrader( basePath ), new IndexAccessSegmentsDumpUpgrader( basePath ),
-                                   new RepositoryIdDumpUpgrader( basePath ), new CommitDumpUpgrader( basePath ) );
+                                   new RepositoryIdDumpUpgrader( basePath ), new CommitDumpUpgrader( basePath ),
+                                   new IndexConfigUpgrader( basePath ) );
     }
 
     private Version getDumpModelVersion( final String dumpName )

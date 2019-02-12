@@ -1,8 +1,10 @@
 package com.enonic.xp.index;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -43,6 +45,11 @@ public class PatternIndexConfigDocument
     public static Builder create()
     {
         return new Builder();
+    }
+
+    public static Builder create( final PatternIndexConfigDocument source )
+    {
+        return new Builder( source );
     }
 
     public ImmutableSortedSet<PathIndexConfig> getPathIndexConfigs()
@@ -125,9 +132,9 @@ public class PatternIndexConfigDocument
     public static final class Builder
         extends AbstractIndexConfigDocument.Builder<Builder>
     {
-        private final SortedSet<PathIndexConfig> pathIndexConfigs = Sets.newTreeSet();
+        private SortedSet<PathIndexConfig> pathIndexConfigs = Sets.newTreeSet();
 
-        private final Map<String, PathIndexConfig> stringPathIndexConfigMap = Maps.newHashMap();
+        private Map<String, PathIndexConfig> stringPathIndexConfigMap = Maps.newHashMap();
 
         private IndexConfig defaultConfig = IndexConfig.BY_TYPE;
 
@@ -135,6 +142,14 @@ public class PatternIndexConfigDocument
 
         private Builder()
         {
+        }
+
+        private Builder( final PatternIndexConfigDocument source )
+        {
+            this.pathIndexConfigs = new TreeSet<>( source.pathIndexConfigs );
+            this.stringPathIndexConfigMap = new HashMap<>( source.pathIndexConfigMap );
+            this.defaultConfig = IndexConfig.create( source.defaultConfig ).build();
+            this.allTextIndexConfig = AllTextIndexConfig.create( source.allTextConfig );
         }
 
         public Builder add( final String path, final IndexConfig indexConfig )

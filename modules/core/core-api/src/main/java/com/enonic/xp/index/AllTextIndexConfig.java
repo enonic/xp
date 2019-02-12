@@ -1,5 +1,6 @@
 package com.enonic.xp.index;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -11,7 +12,7 @@ public final class AllTextIndexConfig
 {
     private List<String> languages;
 
-    protected AllTextIndexConfig( final Builder builder )
+    private AllTextIndexConfig( final Builder builder )
     {
         this.languages = ImmutableList.copyOf( builder.languages );
     }
@@ -19,6 +20,11 @@ public final class AllTextIndexConfig
     public static Builder create()
     {
         return new Builder();
+    }
+
+    public static Builder create( final AllTextIndexConfig source )
+    {
+        return new Builder( source );
     }
 
     public List<String> getLanguages()
@@ -50,6 +56,15 @@ public final class AllTextIndexConfig
     public static class Builder
     {
         private List<String> languages = Lists.arrayList();
+
+        Builder()
+        {
+        }
+
+        Builder( final AllTextIndexConfig source )
+        {
+            this.languages = new ArrayList<>( source.languages );
+        }
 
         public Builder addLanguage( final String language )
         {
