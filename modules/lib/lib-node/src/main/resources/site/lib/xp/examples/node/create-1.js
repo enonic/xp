@@ -35,7 +35,8 @@ var expected = {
             "fulltext": false,
             "includeInAllText": false,
             "path": false,
-            "indexValueProcessors": []
+            "indexValueProcessors": [],
+            "languages": []
         },
         "configs": []
     },

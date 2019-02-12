@@ -7,7 +7,8 @@
     "fulltext": false,
     "includeInAllText": false,
     "path": false,
-    "indexValueProcessors": []
+    "indexValueProcessors": [],
+    "languages": []
   },
   "configs": [
     {
@@ -19,7 +20,8 @@
         "fulltext": false,
         "includeInAllText": false,
         "path": false,
-        "indexValueProcessors": []
+        "indexValueProcessors": [],
+        "languages": []
       }
     },
     {
@@ -31,7 +33,8 @@
         "fulltext": false,
         "includeInAllText": false,
         "path": false,
-        "indexValueProcessors": []
+        "indexValueProcessors": [],
+        "languages": []
       }
     },
     {
@@ -43,7 +46,8 @@
         "fulltext": false,
         "includeInAllText": false,
         "path": false,
-        "indexValueProcessors": []
+        "indexValueProcessors": [],
+        "languages": []
       }
     },
     {
@@ -55,7 +59,8 @@
         "fulltext": false,
         "includeInAllText": false,
         "path": false,
-        "indexValueProcessors": []
+        "indexValueProcessors": [],
+        "languages": []
       }
     },
     {
@@ -67,7 +72,8 @@
         "fulltext": false,
         "includeInAllText": false,
         "path": false,
-        "indexValueProcessors": []
+        "indexValueProcessors": [],
+        "languages": []
       }
     },
     {
@@ -79,7 +85,8 @@
         "fulltext": false,
         "includeInAllText": false,
         "path": true,
-        "indexValueProcessors": []
+        "indexValueProcessors": [],
+        "languages": []
       }
     },
     {
@@ -91,7 +98,8 @@
         "fulltext": false,
         "includeInAllText": false,
         "path": false,
-        "indexValueProcessors": []
+        "indexValueProcessors": [],
+        "languages": []
       }
     },
     {
@@ -103,7 +111,8 @@
         "fulltext": false,
         "includeInAllText": false,
         "path": false,
-        "indexValueProcessors": []
+        "indexValueProcessors": [],
+        "languages": []
       }
     },
     {
@@ -115,7 +124,8 @@
         "fulltext": true,
         "includeInAllText": true,
         "path": false,
-        "indexValueProcessors": []
+        "indexValueProcessors": [],
+        "languages": []
       }
     },
     {
@@ -127,7 +137,8 @@
         "fulltext": false,
         "includeInAllText": false,
         "path": false,
-        "indexValueProcessors": []
+        "indexValueProcessors": [],
+        "languages": []
       }
     }
   ]

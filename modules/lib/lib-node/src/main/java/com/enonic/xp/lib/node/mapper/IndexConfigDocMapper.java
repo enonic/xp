@@ -80,20 +80,14 @@ class IndexConfigDocMapper
 
         final ImmutableList<IndexValueProcessor> indexValueProcessors = indexConfig.getIndexValueProcessors();
 
-        if ( indexValueProcessors.size() > 0 )
-        {
-            serializeArray( gen, "indexValueProcessors", indexValueProcessors.
-                stream().
-                map( IndexValueProcessor::getName ).
-                collect( Collectors.toList() ) );
-        }
+        serializeArray( gen, "indexValueProcessors", indexValueProcessors.
+            stream().
+            map( IndexValueProcessor::getName ).
+            collect( Collectors.toList() ) );
 
         final ImmutableList<String> languages = indexConfig.getLanguages();
 
-        if ( languages.size() > 0 )
-        {
-            serializeArray( gen, "languages", languages );
-        }
+        serializeArray( gen, "languages", languages );
     }
 
     private void serializeArray( final MapGenerator gen, final String name, final List<String> values )
