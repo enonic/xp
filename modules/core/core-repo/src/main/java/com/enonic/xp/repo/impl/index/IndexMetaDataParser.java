@@ -10,7 +10,7 @@ import com.google.common.collect.Maps;
 
 public class IndexMetaDataParser
 {
-    private static final String STEMMED_LANGUAGE_NAME_PREFIX = "([a-zA-Z_]+)";
+    private static final String STEMMED_LANGUAGE_NAME_PREFIX = "([a-zA-Z\\-]+)";
 
     private static final String STEMMED_TEMPLATE_NAME_PREFIX = "template" + StemmedIndexValueType.STEMMED_INDEX_PREFIX;
 

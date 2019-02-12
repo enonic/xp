@@ -102,6 +102,126 @@
         }
       },
       {
+        "template_stemmed_ar": {
+          "match": "*._stemmed_ar",
+          "mapping": {
+            "type": "string",
+            "store": "no",
+            "index": "analyzed",
+            "analyzer": "language_analyzer_ar",
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_stemmed_hy": {
+          "match": "*._stemmed_hy",
+          "mapping": {
+            "type": "string",
+            "store": "no",
+            "index": "analyzed",
+            "analyzer": "language_analyzer_hy",
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_stemmed_eu": {
+          "match": "*._stemmed_eu",
+          "mapping": {
+            "type": "string",
+            "store": "no",
+            "index": "analyzed",
+            "analyzer": "language_analyzer_eu",
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_stemmed_bn": {
+          "match": "*._stemmed_bn",
+          "mapping": {
+            "type": "string",
+            "store": "no",
+            "index": "analyzed",
+            "analyzer": "language_analyzer_bn",
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_stemmed_pt-br": {
+          "match": "*._stemmed_pt-br",
+          "mapping": {
+            "type": "string",
+            "store": "no",
+            "index": "analyzed",
+            "analyzer": "language_analyzer_pt-br",
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_stemmed_bg": {
+          "match": "*._stemmed_bg",
+          "mapping": {
+            "type": "string",
+            "store": "no",
+            "index": "analyzed",
+            "analyzer": "language_analyzer_bg",
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_stemmed_ca": {
+          "match": "*._stemmed_ca",
+          "mapping": {
+            "type": "string",
+            "store": "no",
+            "index": "analyzed",
+            "analyzer": "language_analyzer_ca",
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_stemmed_cs": {
+          "match": "*._stemmed_cs",
+          "mapping": {
+            "type": "string",
+            "store": "no",
+            "index": "analyzed",
+            "analyzer": "language_analyzer_cs",
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_stemmed_da": {
+          "match": "*._stemmed_da",
+          "mapping": {
+            "type": "string",
+            "store": "no",
+            "index": "analyzed",
+            "analyzer": "language_analyzer_da",
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_stemmed_nl": {
+          "match": "*._stemmed_nl",
+          "mapping": {
+            "type": "string",
+            "store": "no",
+            "index": "analyzed",
+            "analyzer": "language_analyzer_nl",
+            "include_in_all": false
+          }
+        }
+      },
+      {
         "template_stemmed_en": {
           "match": "*._stemmed_en",
           "mapping": {
@@ -114,6 +234,162 @@
         }
       },
       {
+        "template_stemmed_fi": {
+          "match": "*._stemmed_fi",
+          "mapping": {
+            "type": "string",
+            "store": "no",
+            "index": "analyzed",
+            "analyzer": "language_analyzer_fi",
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_stemmed_fr": {
+          "match": "*._stemmed_fr",
+          "mapping": {
+            "type": "string",
+            "store": "no",
+            "index": "analyzed",
+            "analyzer": "language_analyzer_fr",
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_stemmed_gl": {
+          "match": "*._stemmed_gl",
+          "mapping": {
+            "type": "string",
+            "store": "no",
+            "index": "analyzed",
+            "analyzer": "language_analyzer_gl",
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_stemmed_de": {
+          "match": "*._stemmed_de",
+          "mapping": {
+            "type": "string",
+            "store": "no",
+            "index": "analyzed",
+            "analyzer": "language_analyzer_de",
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_stemmed_hi": {
+          "match": "*._stemmed_hi",
+          "mapping": {
+            "type": "string",
+            "store": "no",
+            "index": "analyzed",
+            "analyzer": "language_analyzer_hi",
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_stemmed_hu": {
+          "match": "*._stemmed_hu",
+          "mapping": {
+            "type": "string",
+            "store": "no",
+            "index": "analyzed",
+            "analyzer": "language_analyzer_hu",
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_stemmed_ga": {
+          "match": "*._stemmed_ga",
+          "mapping": {
+            "type": "string",
+            "store": "no",
+            "index": "analyzed",
+            "analyzer": "language_analyzer_ga",
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_stemmed_lv": {
+          "match": "*._stemmed_lv",
+          "mapping": {
+            "type": "string",
+            "store": "no",
+            "index": "analyzed",
+            "analyzer": "language_analyzer_lv",
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_stemmed_lt": {
+          "match": "*._stemmed_lt",
+          "mapping": {
+            "type": "string",
+            "store": "no",
+            "index": "analyzed",
+            "analyzer": "language_analyzer_lt",
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_stemmed_no": {
+          "match": "*._stemmed_no",
+          "mapping": {
+            "type": "string",
+            "store": "no",
+            "index": "analyzed",
+            "analyzer": "language_analyzer_no",
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_stemmed_fa": {
+          "match": "*._stemmed_fa",
+          "mapping": {
+            "type": "string",
+            "store": "no",
+            "index": "analyzed",
+            "analyzer": "language_analyzer_fa",
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_stemmed_pt": {
+          "match": "*._stemmed_pt",
+          "mapping": {
+            "type": "string",
+            "store": "no",
+            "index": "analyzed",
+            "analyzer": "language_analyzer_pt",
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_stemmed_ro": {
+          "match": "*._stemmed_ro",
+          "mapping": {
+            "type": "string",
+            "store": "no",
+            "index": "analyzed",
+            "analyzer": "language_analyzer_ro",
+            "include_in_all": false
+          }
+        }
+      },
+      {
         "template_stemmed_ru": {
           "match": "*._stemmed_ru",
           "mapping": {
@@ -121,6 +397,54 @@
             "store": "no",
             "index": "analyzed",
             "analyzer": "language_analyzer_ru",
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_stemmed_es": {
+          "match": "*._stemmed_es",
+          "mapping": {
+            "type": "string",
+            "store": "no",
+            "index": "analyzed",
+            "analyzer": "language_analyzer_es",
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_stemmed_sv": {
+          "match": "*._stemmed_sv",
+          "mapping": {
+            "type": "string",
+            "store": "no",
+            "index": "analyzed",
+            "analyzer": "language_analyzer_sv",
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_stemmed_tr": {
+          "match": "*._stemmed_tr",
+          "mapping": {
+            "type": "string",
+            "store": "no",
+            "index": "analyzed",
+            "analyzer": "language_analyzer_tr",
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_stemmed_th": {
+          "match": "*._stemmed_th",
+          "mapping": {
+            "type": "string",
+            "store": "no",
+            "index": "analyzed",
+            "analyzer": "language_analyzer_th",
             "include_in_all": false
           }
         }
