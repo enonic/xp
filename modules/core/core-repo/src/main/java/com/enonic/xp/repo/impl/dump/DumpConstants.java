@@ -16,5 +16,5 @@ public class DumpConstants
 
     public static final SegmentLevel DUMP_BINARY_SEGMENT_LEVEL = NodeConstants.BINARY_SEGMENT_LEVEL;
 
-    public static final Version MODEL_VERSION = new Version( 6, 0, 0 );
+    public static final Version MODEL_VERSION = new Version( 7, 0, 0 );
 }
