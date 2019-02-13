@@ -12,8 +12,6 @@ public final class ServiceDescriptor
 {
     private final static String ROOT_SERVICE_PREFIX = "services/";
 
-    private final static String SITE_SERVICE_PREFIX = "site/services/";
-
     private final DescriptorKey key;
 
     private final PrincipalKeys allowedPrincipals;
@@ -43,11 +41,6 @@ public final class ServiceDescriptor
     public static ResourceKey toRootResourceKey( final DescriptorKey key )
     {
         return ResourceKey.from( key.getApplicationKey(), ROOT_SERVICE_PREFIX + key.getName() + "/" + key.getName() + ".xml" );
-    }
-
-    public static ResourceKey toSiteResourceKey( final DescriptorKey key )
-    {
-        return ResourceKey.from( key.getApplicationKey(), SITE_SERVICE_PREFIX + key.getName() + "/" + key.getName() + ".xml" );
     }
 
     public static Builder create()
