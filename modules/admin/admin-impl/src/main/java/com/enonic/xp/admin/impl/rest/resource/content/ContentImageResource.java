@@ -64,6 +64,7 @@ public final class ContentImageResource
     @Path("{contentId}")
     public Response getContentImage( @PathParam("contentId") final String contentIdAsString,
                                      @QueryParam("size") @DefaultValue("0") final int size,
+                                     @QueryParam("scaleWidth") @DefaultValue("true") final boolean scaleWidth,
                                      @QueryParam("source") @DefaultValue("false") final boolean source,
                                      @QueryParam("scale") final String scale,
                                      @QueryParam("filter") final String filter,
@@ -150,7 +151,7 @@ public final class ContentImageResource
                     final FocalPoint focalPoint = source ? null : media.getFocalPoint();
                     final String format = imageService.getFormatByMimeType( attachment.getMimeType() );
                     final String filterParam = filter;
-                    final int sizeParam = (size > 0) ? size : getOriginalWidth( media );
+                    final int sizeParam = (size > 0) ? size : (source ? 0 : getOriginalWidth( media ));
                     final ScaleParams scaleParam = parseScaleParam( media, scale, sizeParam );
 
                     final ReadImageParams readImageParams = ReadImageParams.newImageParams().
@@ -160,6 +161,7 @@ public final class ContentImageResource
                         scaleParams( scaleParam ).
                         focalPoint( focalPoint ).
                         scaleSize( sizeParam ).
+                        scaleWidth( true ).
                         format( format ).
                         orientation( imageOrientation ).
                         filterParam( filterParam ).
