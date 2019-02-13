@@ -19,8 +19,6 @@ final class AssetHandlerWorker
 {
     private final static String ROOT_ASSET_PREFIX = "assets/";
 
-    private final static String SITE_ASSET_PREFIX = "site/assets/";
-
     protected ResourceService resourceService;
 
     protected ApplicationKey applicationKey;
@@ -66,11 +64,7 @@ final class AssetHandlerWorker
         this.resource = this.resourceService.getResource( ResourceKey.from( this.applicationKey, ROOT_ASSET_PREFIX + this.name ) );
         if ( !this.resource.exists() )
         {
-            this.resource = this.resourceService.getResource( ResourceKey.from( this.applicationKey, SITE_ASSET_PREFIX + this.name ) );
-            if ( !this.resource.exists() )
-            {
-                throw notFound( "Resource [%s] not found", ResourceKey.from( this.applicationKey, ROOT_ASSET_PREFIX + this.name ) );
-            }
+            throw notFound( "Resource [%s] not found", ResourceKey.from( this.applicationKey, ROOT_ASSET_PREFIX + this.name ) );
         }
     }
 }
