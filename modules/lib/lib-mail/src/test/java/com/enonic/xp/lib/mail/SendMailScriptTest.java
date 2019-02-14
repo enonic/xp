@@ -179,7 +179,7 @@ public class SendMailScriptTest
         runFunction( "/test/send-test.js", "sendWithAttachments" );
 
         final MimeMessage message = mockCompose( this.actualMessage );
-        message.saveChanges(); / required to updated headers (mimeType)
+        message.saveChanges(); // required to updated headers (mimeType)
 
         MimeMultipart content = (MimeMultipart) message.getContent();
         assertEquals( 3, content.getCount() );
