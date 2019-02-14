@@ -42,7 +42,7 @@ public class MoveContentHandlerTest
         final ContentPath cp = ContentPath.from( "/my-site/folder/existing-content" );
         when( contentService.contentExists( cp ) ).thenReturn( true );
 
-        runScript( "/site/lib/xp/examples/content/move.js" );
+        runScript( "/lib/xp/examples/content/move.js" );
     }
 
     @Test
@@ -56,7 +56,7 @@ public class MoveContentHandlerTest
         mockGetByPath( "/my-site/my-content-name", sourceContent );
         mockRename( sourceContent.getId(), "new-name", mockContent( "/my-site/new-name" ) );
 
-        runFunction( "/site/test/MoveContentHandlerTest.js", "moveSameParentPath" );
+        runFunction( "/test/MoveContentHandlerTest.js", "moveSameParentPath" );
     }
 
     private Content mockContent( final String contentPath )

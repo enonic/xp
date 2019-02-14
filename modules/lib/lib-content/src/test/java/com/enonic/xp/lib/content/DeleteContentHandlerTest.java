@@ -17,7 +17,7 @@ public class DeleteContentHandlerTest
     {
         Mockito.when( this.contentService.deleteWithoutFetch( Mockito.any() ) ).thenReturn( DeleteContentsResult.create().build() );
 
-        runScript( "/site/lib/xp/examples/content/delete.js" );
+        runScript( "/lib/xp/examples/content/delete.js" );
     }
 
     @Test
@@ -29,7 +29,7 @@ public class DeleteContentHandlerTest
 
         Mockito.when( this.contentService.deleteWithoutFetch( Mockito.any() ) ).thenReturn( DeleteContentsResult.create().build() );
 
-        runFunction( "/site/test/DeleteContentHandlerTest.js", "deleteById" );
+        runFunction( "/test/DeleteContentHandlerTest.js", "deleteById" );
     }
 
     @Test
@@ -38,7 +38,7 @@ public class DeleteContentHandlerTest
     {
         Mockito.when( this.contentService.deleteWithoutFetch( Mockito.any() ) ).thenReturn( DeleteContentsResult.create().build() );
 
-        runFunction( "/site/test/DeleteContentHandlerTest.js", "deleteByPath" );
+        runFunction( "/test/DeleteContentHandlerTest.js", "deleteByPath" );
     }
 
     @Test
@@ -48,7 +48,7 @@ public class DeleteContentHandlerTest
         final ContentId id = ContentId.from( "123456" );
         Mockito.when( this.contentService.getById( Mockito.any() ) ).thenThrow( new ContentNotFoundException( id, null ) );
 
-        runFunction( "/site/test/DeleteContentHandlerTest.js", "deleteById_notFound" );
+        runFunction( "/test/DeleteContentHandlerTest.js", "deleteById_notFound" );
     }
 
     @Test
@@ -58,6 +58,6 @@ public class DeleteContentHandlerTest
         final ContentPath path = ContentPath.from( "/a/b" );
         Mockito.when( this.contentService.deleteWithoutFetch( Mockito.any() ) ).thenThrow( new ContentNotFoundException( path, null ) );
 
-        runFunction( "/site/test/DeleteContentHandlerTest.js", "deleteByPath_notFound" );
+        runFunction( "/test/DeleteContentHandlerTest.js", "deleteByPath_notFound" );
     }
 }

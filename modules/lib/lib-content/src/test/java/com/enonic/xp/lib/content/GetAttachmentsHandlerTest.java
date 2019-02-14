@@ -17,7 +17,7 @@ public class GetAttachmentsHandlerTest
         final Content content = TestDataFixtures.newContent();
         Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
 
-        runScript( "/site/lib/xp/examples/content/getAttachments.js" );
+        runScript( "/lib/xp/examples/content/getAttachments.js" );
     }
 
     @Test
@@ -27,7 +27,7 @@ public class GetAttachmentsHandlerTest
         final Content content = TestDataFixtures.newContent();
         Mockito.when( this.contentService.getById( content.getId() ) ).thenReturn( content );
 
-        runFunction( "/site/test/GetAttachmentsHandlerTest.js", "getById" );
+        runFunction( "/test/GetAttachmentsHandlerTest.js", "getById" );
     }
 
     @Test
@@ -37,7 +37,7 @@ public class GetAttachmentsHandlerTest
         final Content content = TestDataFixtures.newContent();
         Mockito.when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
 
-        runFunction( "/site/test/GetAttachmentsHandlerTest.js", "getByPath" );
+        runFunction( "/test/GetAttachmentsHandlerTest.js", "getByPath" );
     }
 
     @Test
@@ -47,7 +47,7 @@ public class GetAttachmentsHandlerTest
         final ContentId id = ContentId.from( "123456" );
         Mockito.when( this.contentService.getById( id ) ).thenThrow( new ContentNotFoundException( id, null ) );
 
-        runFunction( "/site/test/GetAttachmentsHandlerTest.js", "getById_notFound" );
+        runFunction( "/test/GetAttachmentsHandlerTest.js", "getById_notFound" );
     }
 
     @Test
@@ -57,6 +57,6 @@ public class GetAttachmentsHandlerTest
         final ContentPath path = ContentPath.from( "/a/b/mycontent" );
         Mockito.when( this.contentService.getByPath( path ) ).thenThrow( new ContentNotFoundException( path, null ) );
 
-        runFunction( "/site/test/GetAttachmentsHandlerTest.js", "getByPath_notFound" );
+        runFunction( "/test/GetAttachmentsHandlerTest.js", "getByPath_notFound" );
     }
 }

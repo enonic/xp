@@ -16,7 +16,7 @@ public class RemoveAttachmentHandlerTest
     {
         final Content content = TestDataFixtures.newExampleContent();
         Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
-        runScript( "/site/lib/xp/examples/content/removeAttachment.js" );
+        runScript( "/lib/xp/examples/content/removeAttachment.js" );
 
         Mockito.verify( this.contentService, Mockito.times( 2 ) ).update( Mockito.any( UpdateContentParams.class ) );
     }
@@ -28,7 +28,7 @@ public class RemoveAttachmentHandlerTest
         final Content content = TestDataFixtures.newExampleContent();
         Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
 
-        runFunction( "/site/test/RemoveAttachmentHandlerTest.js", "removeAttachmentSingle" );
+        runFunction( "/test/RemoveAttachmentHandlerTest.js", "removeAttachmentSingle" );
     }
 
     @Test
@@ -38,7 +38,7 @@ public class RemoveAttachmentHandlerTest
         final Content content = TestDataFixtures.newExampleContent();
         Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
 
-        runFunction( "/site/test/RemoveAttachmentHandlerTest.js", "removeAttachmentMulti" );
+        runFunction( "/test/RemoveAttachmentHandlerTest.js", "removeAttachmentMulti" );
     }
 
 }

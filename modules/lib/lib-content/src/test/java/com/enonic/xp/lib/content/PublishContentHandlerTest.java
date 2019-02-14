@@ -81,7 +81,7 @@ public class PublishContentHandlerTest
 
         Mockito.when( this.contentService.publish( pushParams ) ).thenReturn( exampleResult() );
 
-        runScript( "/site/lib/xp/examples/content/publish.js" );
+        runScript( "/lib/xp/examples/content/publish.js" );
     }
 
     @Test
@@ -96,7 +96,7 @@ public class PublishContentHandlerTest
 
         Mockito.when( this.contentService.publish( pushParams ) ).thenReturn( exampleResult() );
 
-        runFunction( "/site/test/PublishContentHandlerTest.js", "publishById" );
+        runFunction( "/test/PublishContentHandlerTest.js", "publishById" );
     }
 
     @Test
@@ -116,7 +116,7 @@ public class PublishContentHandlerTest
 
         Mockito.when( this.contentService.publish( pushParams ) ).thenReturn( exampleResult() );
 
-        runFunction( "/site/test/PublishContentHandlerTest.js", "publishByPath" );
+        runFunction( "/test/PublishContentHandlerTest.js", "publishByPath" );
     }
 
     @Test
@@ -139,6 +139,6 @@ public class PublishContentHandlerTest
 
         Mockito.when( this.contentService.publish( pushParams ) ).thenReturn( exampleResult );
 
-        runFunction( "/site/test/PublishContentHandlerTest.js", "publishWithoutChildrenOrDependencies" );
+        runFunction( "/test/PublishContentHandlerTest.js", "publishWithoutChildrenOrDependencies" );
     }
 }
