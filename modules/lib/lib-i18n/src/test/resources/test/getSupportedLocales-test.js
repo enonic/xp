@@ -8,5 +8,5 @@ exports.testgetLocales = function () {
 };
 
 exports.testExamples = function () {
-    t.runScript('/site/lib/xp/examples/i18n/getSupportedlocales.js');
+    t.runScript('/lib/xp/examples/i18n/getSupportedlocales.js');
 };

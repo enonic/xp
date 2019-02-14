@@ -26,7 +26,7 @@ public class DeleteRepositoryScriptTest
     @Test
     public void testExample()
     {
-        runScript( "/site/lib/xp/examples/repo/delete.js" );
+        runScript( "/lib/xp/examples/repo/delete.js" );
         Mockito.verify( this.repositoryService, Mockito.times( 1 ) ).deleteRepository( Mockito.any() );
     }
 }

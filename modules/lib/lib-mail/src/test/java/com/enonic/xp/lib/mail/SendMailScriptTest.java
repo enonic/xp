@@ -43,14 +43,14 @@ public class SendMailScriptTest
     @Test
     public void testExample()
     {
-        runScript( "/site/lib/xp/examples/mail/send.js" );
+        runScript( "/lib/xp/examples/mail/send.js" );
     }
 
     @Test
     public void testSimpleMail()
         throws Exception
     {
-        runFunction( "/site/test/send-test.js", "simpleMail" );
+        runFunction( "/test/send-test.js", "simpleMail" );
 
         final MimeMessage message = mockCompose( this.actualMessage );
 
@@ -69,7 +69,7 @@ public class SendMailScriptTest
     public void testMultiRecipientsMail()
         throws Exception
     {
-        runFunction( "/site/test/send-test.js", "multiRecipientsMail" );
+        runFunction( "/test/send-test.js", "multiRecipientsMail" );
 
         final MimeMessage message = mockCompose( this.actualMessage );
 
@@ -86,7 +86,7 @@ public class SendMailScriptTest
     public void testRFC822AddressMail()
         throws Exception
     {
-        runFunction( "/site/test/send-test.js", "rfc822AddressMail" );
+        runFunction( "/test/send-test.js", "rfc822AddressMail" );
 
         final MimeMessage message = mockCompose( this.actualMessage );
 
@@ -106,7 +106,7 @@ public class SendMailScriptTest
         };
         addService( MailService.class, mailService );
 
-        runFunction( "/site/test/send-test.js", "failSendMail" );
+        runFunction( "/test/send-test.js", "failSendMail" );
 
         Assert.assertNull( this.actualMessage );
     }
@@ -115,7 +115,7 @@ public class SendMailScriptTest
     public void testMailWithContentType()
         throws Exception
     {
-        runFunction( "/site/test/send-test.js", "sendMailWithContentType" );
+        runFunction( "/test/send-test.js", "sendMailWithContentType" );
 
         final MimeMessage message = mockCompose( this.actualMessage );
 
@@ -138,7 +138,7 @@ public class SendMailScriptTest
 
         try
         {
-            runFunction( "/site/test/send-test.js", "sendWithoutRequiredFrom" );
+            runFunction( "/test/send-test.js", "sendWithoutRequiredFrom" );
             Assert.fail( "Expected exception" );
         }
         catch ( ResourceProblemException e )
@@ -161,7 +161,7 @@ public class SendMailScriptTest
 
         try
         {
-            runFunction( "/site/test/send-test.js", "sendWithoutRequiredTo" );
+            runFunction( "/test/send-test.js", "sendWithoutRequiredTo" );
             Assert.fail( "Expected exception" );
         }
         catch ( ResourceProblemException e )
@@ -176,10 +176,10 @@ public class SendMailScriptTest
     public void testMailWithAttachments()
         throws Exception
     {
-        runFunction( "/site/test/send-test.js", "sendWithAttachments" );
+        runFunction( "/test/send-test.js", "sendWithAttachments" );
 
         final MimeMessage message = mockCompose( this.actualMessage );
-        message.saveChanges(); // required to updated headers (mimeType)
+        message.saveChanges(); / required to updated headers (mimeType)
 
         MimeMultipart content = (MimeMultipart) message.getContent();
         assertEquals( 3, content.getCount() );

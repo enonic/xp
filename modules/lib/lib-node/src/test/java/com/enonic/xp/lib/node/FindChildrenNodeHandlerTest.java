@@ -19,7 +19,7 @@ public class FindChildrenNodeHandlerTest
                 nodeIds( NodeIds.from( "b186d24f-ac38-42ca-a6db-1c1bda6c6c26", "350ba4a6-589c-498b-8af0-f183850e1120" ) ).
                 build() );
 
-        runScript( "/site/lib/xp/examples/node/findChildren.js" );
+        runScript( "/lib/xp/examples/node/findChildren.js" );
     }
 
 

@@ -64,7 +64,7 @@ public class MoveNodeHandlerTest
                 branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
                 build() );
 
-        runScript( "/site/lib/xp/examples/node/move-1.js" );
+        runScript( "/lib/xp/examples/node/move-1.js" );
     }
 
     @Test
@@ -78,7 +78,7 @@ public class MoveNodeHandlerTest
                 branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
                 build() );
 
-        runScript( "/site/lib/xp/examples/node/move-2.js" );
+        runScript( "/lib/xp/examples/node/move-2.js" );
     }
 
     @Test
@@ -92,7 +92,7 @@ public class MoveNodeHandlerTest
                 branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
                 build() );
 
-        runScript( "/site/lib/xp/examples/node/move-3.js" );
+        runScript( "/lib/xp/examples/node/move-3.js" );
     }
 
 }

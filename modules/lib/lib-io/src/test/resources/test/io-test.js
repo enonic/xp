@@ -34,7 +34,7 @@ exports.testGetMimeType = function () {
 };
 
 exports.testGetResource = function () {
-    var res = io.getResource('/site/test/sample.txt');
+    var res = io.getResource('/test/sample.txt');
     t.assertEquals(true, res.exists());
     t.assertEquals(11, res.getSize());
     t.assertEquals('sample text', io.readText(res.getStream()).trim());
@@ -49,7 +49,7 @@ exports.testGetResource = function () {
 };
 
 function runExample(name) {
-    t.runScript('/site/lib/xp/examples/io/' + name + '.js');
+    t.runScript('/lib/xp/examples/io/' + name + '.js');
 }
 
 exports.testExamples = function () {

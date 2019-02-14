@@ -34,7 +34,7 @@ public class GetNodeHandlerTest
                 branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
                 build() );
 
-        runScript( "/site/lib/xp/examples/node/get-1.js" );
+        runScript( "/lib/xp/examples/node/get-1.js" );
     }
 
     @Test
@@ -49,7 +49,7 @@ public class GetNodeHandlerTest
                 branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
                 build() );
 
-        runScript( "/site/lib/xp/examples/node/get-2.js" );
+        runScript( "/lib/xp/examples/node/get-2.js" );
     }
 
 }

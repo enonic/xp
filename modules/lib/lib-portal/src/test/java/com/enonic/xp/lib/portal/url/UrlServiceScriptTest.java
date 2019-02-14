@@ -30,7 +30,7 @@ public class UrlServiceScriptTest
 
     private boolean execute( final String method )
     {
-        final ScriptExports exports = runScript( "/site/test/url-test.js" );
+        final ScriptExports exports = runScript( "/test/url-test.js" );
         final ScriptValue value = exports.executeMethod( method );
         return value != null ? value.getValue( Boolean.class ) : false;
     }
@@ -134,54 +134,54 @@ public class UrlServiceScriptTest
     @Test
     public void testExample_assetUrl()
     {
-        runScript( "/site/lib/xp/examples/portal/assetUrl.js" );
+        runScript( "/lib/xp/examples/portal/assetUrl.js" );
     }
 
     @Test
     public void testExample_imageUrl()
     {
-        runScript( "/site/lib/xp/examples/portal/imageUrl.js" );
+        runScript( "/lib/xp/examples/portal/imageUrl.js" );
     }
 
     @Test
     public void testExample_componentUrl()
     {
-        runScript( "/site/lib/xp/examples/portal/componentUrl.js" );
+        runScript( "/lib/xp/examples/portal/componentUrl.js" );
     }
 
     @Test
     public void testExample_attachmentUrl()
     {
-        runScript( "/site/lib/xp/examples/portal/attachmentUrl.js" );
+        runScript( "/lib/xp/examples/portal/attachmentUrl.js" );
     }
 
     @Test
     public void testExample_pageUrl()
     {
-        runScript( "/site/lib/xp/examples/portal/pageUrl.js" );
+        runScript( "/lib/xp/examples/portal/pageUrl.js" );
     }
 
     @Test
     public void testExample_serviceUrl()
     {
-        runScript( "/site/lib/xp/examples/portal/serviceUrl.js" );
+        runScript( "/lib/xp/examples/portal/serviceUrl.js" );
     }
 
     @Test
     public void testExample_generateUrl()
     {
-        runScript( "/site/lib/xp/examples/portal/url.js" );
+        runScript( "/lib/xp/examples/portal/url.js" );
     }
 
     @Test
     public void testExample_processHtml()
     {
-        runScript( "/site/lib/xp/examples/portal/processHtml.js" );
+        runScript( "/lib/xp/examples/portal/processHtml.js" );
     }
 
     @Test
     public void testExample_imagePlaceholder()
     {
-        runScript( "/site/lib/xp/examples/portal/imagePlaceholder.js" );
+        runScript( "/lib/xp/examples/portal/imagePlaceholder.js" );
     }
 }

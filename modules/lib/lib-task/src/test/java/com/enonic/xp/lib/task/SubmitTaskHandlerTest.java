@@ -32,7 +32,7 @@ public class SubmitTaskHandlerTest
         final TaskId taskId = TaskId.from( "7ca603c1-3b88-4009-8f30-46ddbcc4bb19" );
         Mockito.when( this.taskService.submitTask( any( RunnableTask.class ), anyString() ) ).thenReturn( taskId );
 
-        runScript( "/site/lib/xp/examples/task/submit.js" );
+        runScript( "/lib/xp/examples/task/submit.js" );
     }
 
     @Test
@@ -41,7 +41,7 @@ public class SubmitTaskHandlerTest
     {
         Mockito.when( this.taskService.submitTask( any( RunnableTask.class ), anyString() ) ).thenReturn( TaskId.from( "123" ) );
 
-        runFunction( "/site/test/submit-test.js", "submitTask" );
+        runFunction( "/test/submit-test.js", "submitTask" );
     }
 
     @Test(expected = ResourceProblemException.class)
@@ -53,6 +53,6 @@ public class SubmitTaskHandlerTest
         this.taskService = mockTaskMan;
         addService( TaskService.class, taskService );
 
-        runFunction( "/site/test/submit-test.js", "submitTaskThrowingError" );
+        runFunction( "/test/submit-test.js", "submitTaskThrowingError" );
     }
 }

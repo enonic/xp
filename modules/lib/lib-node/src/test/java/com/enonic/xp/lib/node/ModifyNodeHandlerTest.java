@@ -114,7 +114,7 @@ public class ModifyNodeHandlerTest
                 branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
                 build() );
 
-        runScript( "/site/lib/xp/examples/node/modify.js" );
+        runScript( "/lib/xp/examples/node/modify.js" );
 
         Mockito.verify( this.nodeService ).update( updateCaptor.capture() );
         assertEquals( updateCaptor.getValue().getId(), NodeId.from( "abc" ) );
@@ -170,7 +170,7 @@ public class ModifyNodeHandlerTest
                 branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
                 build() );
 
-        runScript( "/site/lib/xp/examples/node/modify-keep-types.js" );
+        runScript( "/lib/xp/examples/node/modify-keep-types.js" );
 
         Mockito.verify( this.nodeService ).update( updateCaptor.capture() );
         assertEquals( updateCaptor.getValue().getId(), NodeId.from( "abc" ) );
