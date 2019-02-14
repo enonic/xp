@@ -37,8 +37,6 @@ final class ServiceHandlerWorker
 {
     private final static String ROOT_SERVICE_PREFIX = "services/";
 
-    private final static String SITE_SERVICE_PREFIX = "site/services/";
-
     protected ResourceService resourceService;
 
     protected ServiceDescriptorService serviceDescriptorService;
@@ -121,10 +119,6 @@ final class ServiceHandlerWorker
     {
         //Retrieves the resource
         Resource resource = this.resourceService.getResource( ResourceKey.from( this.applicationKey, ROOT_SERVICE_PREFIX + this.name ) );
-        if ( !resource.exists() )
-        {
-            resource = this.resourceService.getResource( ResourceKey.from( this.applicationKey, SITE_SERVICE_PREFIX + this.name ) );
-        }
 
         //Executes the service
         return this.controllerScriptFactory.fromDir( resource.getKey() );

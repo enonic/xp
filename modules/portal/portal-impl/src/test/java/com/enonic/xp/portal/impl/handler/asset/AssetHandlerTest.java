@@ -3,7 +3,9 @@ package com.enonic.xp.portal.impl.handler.asset;
 import java.util.Map;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 
@@ -74,6 +76,9 @@ public class AssetHandlerTest
         return res != null ? res : this.nullResource;
     }
 
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
+
     @Test
     public void testOrder()
     {
@@ -110,7 +115,7 @@ public class AssetHandlerTest
     public void testOptions()
         throws Exception
     {
-        final Resource resource = addResource( "demo:/site/assets/css/main.css" );
+        addResource( "demo:/assets/css/main.css" );
 
         this.request.setMethod( HttpMethod.OPTIONS );
 
@@ -121,23 +126,21 @@ public class AssetHandlerTest
     }
 
     @Test
-    public void testSiteResourceFound()
+    public void testSiteResourceNotFound()
         throws Exception
     {
-        final Resource resource = addResource( "demo:/site/assets/css/main.css" );
+        exception.expect( WebException.class );
+        exception.expectMessage( "Resource [demo:/assets/css/main.css] not found" );
 
-        final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
-        assertNotNull( res );
-        assertEquals( HttpStatus.OK, res.getStatus() );
-        assertEquals( MediaType.CSS_UTF_8.withoutParameters(), res.getContentType() );
-        assertSame( resource, res.getBody() );
+        addResource( "demo:/site/assets/css/main.css" );
+
+        this.handler.handle( this.request, PortalResponse.create().build(), null );
     }
 
     @Test
     public void testRootResourceFound()
         throws Exception
     {
-        addResource( "demo:/site/assets/css/main.css" );
         final Resource resource = addResource( "demo:/assets/css/main.css" );
 
         final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
@@ -185,7 +188,7 @@ public class AssetHandlerTest
     public void testCacheHeader()
         throws Exception
     {
-        addResource( "demo:/site/assets/css/main.css" );
+        addResource( "demo:/assets/css/main.css" );
         this.request.setEndpointPath( "/_/asset/demo:123/css/main.css" );
 
         final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
@@ -198,7 +201,7 @@ public class AssetHandlerTest
     public void testNoCacheHeader()
         throws Exception
     {
-        addResource( "demo:/site/assets/css/main.css" );
+        addResource( "demo:/assets/css/main.css" );
 
         this.request.setMode( RenderMode.EDIT );
 

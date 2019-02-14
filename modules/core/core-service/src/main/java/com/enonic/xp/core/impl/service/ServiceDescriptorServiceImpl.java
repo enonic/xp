@@ -7,7 +7,6 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -30,20 +29,14 @@ public final class ServiceDescriptorServiceImpl
 
     private final static String ROOT_PATH = "/services";
 
-    private final static String SITE_PATH = "/site/services";
-
     private ResourceService resourceService;
 
     @Override
     public ServiceDescriptor getByKey( final DescriptorKey descriptorKey )
     {
-        ResourceProcessor<DescriptorKey, ServiceDescriptor> processor = newRootProcessor( descriptorKey );
-        ServiceDescriptor descriptor = this.resourceService.processResource( processor );
-        if ( descriptor == null )
-        {
-            processor = newSiteProcessor( descriptorKey );
-            descriptor = this.resourceService.processResource( processor );
-        }
+        final ResourceProcessor<DescriptorKey, ServiceDescriptor> processor = newRootProcessor( descriptorKey );
+        final ServiceDescriptor descriptor = this.resourceService.processResource( processor );
+
         if ( descriptor != null )
         {
             return descriptor;
@@ -85,16 +78,6 @@ public final class ServiceDescriptorServiceImpl
             build();
     }
 
-    private ResourceProcessor<DescriptorKey, ServiceDescriptor> newSiteProcessor( final DescriptorKey key )
-    {
-        return new ResourceProcessor.Builder<DescriptorKey, ServiceDescriptor>().
-            key( key ).
-            segment( "siteServiceDescriptor" ).
-            keyTranslator( ServiceDescriptor::toSiteResourceKey ).
-            processor( resource -> loadDescriptor( key, resource ) ).
-            build();
-    }
-
     private ServiceDescriptor loadDescriptor( final DescriptorKey key, final Resource resource )
     {
         final ServiceDescriptor.Builder builder = ServiceDescriptor.create();
@@ -129,7 +112,7 @@ public final class ServiceDescriptorServiceImpl
 
     private Iterable<DescriptorKey> findDescriptorKeys( final ApplicationKey key )
     {
-        return Iterables.concat( findDescriptorKeys( ROOT_PATH, key ), findDescriptorKeys( SITE_PATH, key ) );
+        return findDescriptorKeys( ROOT_PATH, key );
     }
 
     private Iterable<DescriptorKey> findDescriptorKeys( final String path, final ApplicationKey key )
