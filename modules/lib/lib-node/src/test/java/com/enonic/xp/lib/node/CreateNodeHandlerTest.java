@@ -54,7 +54,7 @@ public class CreateNodeHandlerTest
                 branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
                 build() );
 
-        runScript( "/site/lib/xp/examples/node/create-1.js" );
+        runScript( "/lib/xp/examples/node/create-1.js" );
     }
 
     @Test
@@ -68,7 +68,7 @@ public class CreateNodeHandlerTest
                 branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
                 build() );
 
-        runScript( "/site/lib/xp/examples/node/create-2.js" );
+        runScript( "/lib/xp/examples/node/create-2.js" );
     }
 
     @Test
@@ -105,6 +105,6 @@ public class CreateNodeHandlerTest
                 branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
                 build() );
 
-        runScript( "/site/lib/xp/examples/node/create-3.js" );
+        runScript( "/lib/xp/examples/node/create-3.js" );
     }
 }

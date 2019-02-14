@@ -8,7 +8,7 @@ public class IOScriptTest
     @Override
     public String getScriptTestFile()
     {
-        return "/site/test/io-test.js";
+        return "/test/io-test.js";
     }
 }
 

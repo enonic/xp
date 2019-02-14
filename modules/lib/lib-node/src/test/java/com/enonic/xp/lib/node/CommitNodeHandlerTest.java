@@ -36,7 +36,7 @@ public class CommitNodeHandlerTest
     {
         mock();
 
-        runScript( "/site/lib/xp/examples/node/commit.js" );
+        runScript( "/lib/xp/examples/node/commit.js" );
     }
 
 }

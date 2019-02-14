@@ -16,7 +16,7 @@ public class SetNodeHandlerTest
     {
         final ArgumentCaptor<SetNodeChildOrderParams> argumentCaptor = ArgumentCaptor.forClass( SetNodeChildOrderParams.class );
         Mockito.when( nodeService.setChildOrder( Mockito.any() ) ).thenReturn( createNode() );
-        runScript( "/site/lib/xp/examples/node/setChildOrder.js" );
+        runScript( "/lib/xp/examples/node/setChildOrder.js" );
         Mockito.verify( nodeService ).setChildOrder( argumentCaptor.capture() );
 
         assertEquals( "nodeId", argumentCaptor.getValue().getNodeId().toString() );

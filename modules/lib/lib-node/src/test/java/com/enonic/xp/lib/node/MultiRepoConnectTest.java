@@ -23,6 +23,6 @@ public class MultiRepoConnectTest
                 build() ).
             build();
 
-        context.runWith( () -> runScript( "/site/lib/xp/examples/node/multiRepoConnect.js" ) );
+        context.runWith( () -> runScript( "/lib/xp/examples/node/multiRepoConnect.js" ) );
     }
 }

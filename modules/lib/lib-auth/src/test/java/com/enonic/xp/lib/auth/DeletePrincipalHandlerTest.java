@@ -26,13 +26,13 @@ public class DeletePrincipalHandlerTest
     @Test
     public void testExamples()
     {
-        runScript( "/site/lib/xp/examples/auth/deletePrincipal.js" );
+        runScript( "/lib/xp/examples/auth/deletePrincipal.js" );
     }
 
     @Test
     public void testDeleteUser()
     {
-        runFunction( "/site/test/deletePrincipal-test.js", "deleteUser" );
+        runFunction( "/test/deletePrincipal-test.js", "deleteUser" );
     }
 
     @Test
@@ -40,12 +40,12 @@ public class DeletePrincipalHandlerTest
     {
         final PrincipalKey principalKey = PrincipalKey.from( "user:myIdProvider:XXX" );
         Mockito.doThrow( new PrincipalNotFoundException( principalKey ) ).when( securityService ).deletePrincipal( principalKey );
-        runFunction( "/site/test/deletePrincipal-test.js", "deleteNonExistingUser" );
+        runFunction( "/test/deletePrincipal-test.js", "deleteNonExistingUser" );
     }
 
     @Test(expected = ResourceProblemException.class)
     public void testDeleteSystemUser()
     {
-        runFunction( "/site/test/deletePrincipal-test.js", "deleteSystemUser" );
+        runFunction( "/test/deletePrincipal-test.js", "deleteSystemUser" );
     }
 }

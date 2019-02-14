@@ -38,7 +38,7 @@ public class ModifyUserHandlerTest
         Mockito.when( this.securityService.updateUser( Mockito.isA( UpdateUserParams.class ) ) ).thenAnswer(
             invocationOnMock -> invokeUpdate( (UpdateUserParams) invocationOnMock.getArguments()[0] ) );
 
-        runScript( "/site/lib/xp/examples/auth/modifyUser.js" );
+        runScript( "/lib/xp/examples/auth/modifyUser.js" );
     }
 
     @Test
@@ -51,7 +51,7 @@ public class ModifyUserHandlerTest
         Mockito.when( this.securityService.updateUser( Mockito.isA( UpdateUserParams.class ) ) ).thenAnswer(
             invocationOnMock -> invokeUpdate( (UpdateUserParams) invocationOnMock.getArguments()[0] ) );
 
-        runFunction( "/site/test/modifyUser-test.js", "modifyUser" );
+        runFunction( "/test/modifyUser-test.js", "modifyUser" );
     }
 
     private User invokeUpdate( final UpdateUserParams params )

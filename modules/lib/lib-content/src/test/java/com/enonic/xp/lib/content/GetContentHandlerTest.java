@@ -17,7 +17,7 @@ public class GetContentHandlerTest
         final Content content = TestDataFixtures.newExampleContent();
         Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
 
-        runScript( "/site/lib/xp/examples/content/get.js" );
+        runScript( "/lib/xp/examples/content/get.js" );
     }
 
     @Test
@@ -27,7 +27,7 @@ public class GetContentHandlerTest
         final Content content = TestDataFixtures.newContent();
         Mockito.when( this.contentService.getById( content.getId() ) ).thenReturn( content );
 
-        runFunction( "/site/test/GetContentHandlerTest.js", "getById" );
+        runFunction( "/test/GetContentHandlerTest.js", "getById" );
     }
 
     @Test
@@ -37,7 +37,7 @@ public class GetContentHandlerTest
         final Content content = TestDataFixtures.newContentWithPageAsFragment();
         Mockito.when( this.contentService.getById( content.getId() ) ).thenReturn( content );
 
-        runFunction( "/site/test/GetContentHandlerTest.js", "getByIdWithPageAsFragment" );
+        runFunction( "/test/GetContentHandlerTest.js", "getByIdWithPageAsFragment" );
     }
 
     @Test
@@ -47,7 +47,7 @@ public class GetContentHandlerTest
         final Content content = TestDataFixtures.newContent();
         Mockito.when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
 
-        runFunction( "/site/test/GetContentHandlerTest.js", "getByPath" );
+        runFunction( "/test/GetContentHandlerTest.js", "getByPath" );
     }
 
     @Test
@@ -57,7 +57,7 @@ public class GetContentHandlerTest
         final ContentId id = ContentId.from( "123456" );
         Mockito.when( this.contentService.getById( id ) ).thenThrow( new ContentNotFoundException( id, null ) );
 
-        runFunction( "/site/test/GetContentHandlerTest.js", "getById_notFound" );
+        runFunction( "/test/GetContentHandlerTest.js", "getById_notFound" );
     }
 
     @Test
@@ -67,6 +67,6 @@ public class GetContentHandlerTest
         final ContentPath path = ContentPath.from( "/a/b/mycontent" );
         Mockito.when( this.contentService.getByPath( path ) ).thenThrow( new ContentNotFoundException( path, null ) );
 
-        runFunction( "/site/test/GetContentHandlerTest.js", "getByPath_notFound" );
+        runFunction( "/test/GetContentHandlerTest.js", "getByPath_notFound" );
     }
 }

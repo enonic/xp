@@ -41,7 +41,7 @@ public class ListRepositoriesScriptTest
     @Test
     public void testExample()
     {
-        runScript( "/site/lib/xp/examples/repo/list.js" );
+        runScript( "/lib/xp/examples/repo/list.js" );
         Mockito.verify( this.repositoryService, Mockito.times( 1 ) ).list();
     }
 }

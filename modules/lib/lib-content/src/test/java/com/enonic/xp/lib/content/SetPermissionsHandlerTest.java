@@ -34,7 +34,7 @@ public class SetPermissionsHandlerTest
         Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( Mockito.any( PrincipalKey.class ) ) ).thenReturn(
             value );
 
-        runScript( "/site/lib/xp/examples/content/setPermissions.js" );
+        runScript( "/lib/xp/examples/content/setPermissions.js" );
     }
 
     @Test
@@ -52,7 +52,7 @@ public class SetPermissionsHandlerTest
         Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( Mockito.any( PrincipalKey.class ) ) ).thenReturn(
             Optional.empty() );
 
-        runFunction( "/site/test/SetPermissionsHandlerTest.js", "setPermissionsMissingPrincipals" );
+        runFunction( "/test/SetPermissionsHandlerTest.js", "setPermissionsMissingPrincipals" );
     }
 
     @Test
@@ -68,7 +68,7 @@ public class SetPermissionsHandlerTest
         Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( Mockito.any( PrincipalKey.class ) ) ).thenReturn(
             value );
 
-        runFunction( "/site/test/SetPermissionsHandlerTest.js", "setPermissionsNotFoundByPath" );
+        runFunction( "/test/SetPermissionsHandlerTest.js", "setPermissionsNotFoundByPath" );
     }
 
     @Test
@@ -85,7 +85,7 @@ public class SetPermissionsHandlerTest
         Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( Mockito.any( PrincipalKey.class ) ) ).thenReturn(
             value );
 
-        runFunction( "/site/test/SetPermissionsHandlerTest.js", "setPermissionsNotFoundById" );
+        runFunction( "/test/SetPermissionsHandlerTest.js", "setPermissionsNotFoundById" );
     }
 
 }

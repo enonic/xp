@@ -41,7 +41,7 @@ public class GetMembersHandlerTest
 
         Mockito.when( securityService.getPrincipals( principalKeys ) ).thenReturn( Principals.from( user1, user2 ) );
 
-        runScript( "/site/lib/xp/examples/auth/getMembers.js" );
+        runScript( "/lib/xp/examples/auth/getMembers.js" );
     }
 
     @Test
@@ -59,7 +59,7 @@ public class GetMembersHandlerTest
 
         Mockito.when( securityService.getPrincipals( principalKeys ) ).thenReturn( Principals.from( user1, user2 ) );
 
-        runFunction( "/site/test/getMembers-test.js", "getMembers" );
+        runFunction( "/test/getMembers-test.js", "getMembers" );
     }
 
     @Test
@@ -72,6 +72,6 @@ public class GetMembersHandlerTest
 
         Mockito.when( securityService.getPrincipals( PrincipalKeys.empty() ) ).thenReturn( Principals.empty() );
 
-        runFunction( "/site/test/getMembers-test.js", "getNoMembers" );
+        runFunction( "/test/getMembers-test.js", "getNoMembers" );
     }
 }

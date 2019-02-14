@@ -51,7 +51,7 @@ public class FindVersionsHandlerTest
 
         final ArgumentCaptor<GetNodeVersionsParams> getNodeVersionsParamsCaptor = ArgumentCaptor.forClass( GetNodeVersionsParams.class );
         Mockito.when( nodeService.findVersions( Mockito.any( GetNodeVersionsParams.class ) ) ).thenReturn( result );
-        runScript( "/site/lib/xp/examples/node/findVersions.js" );
+        runScript( "/lib/xp/examples/node/findVersions.js" );
         Mockito.verify( nodeService ).findVersions( getNodeVersionsParamsCaptor.capture() );
 
         assertEquals( "nodeId", getNodeVersionsParamsCaptor.getValue().getNodeId().toString() );

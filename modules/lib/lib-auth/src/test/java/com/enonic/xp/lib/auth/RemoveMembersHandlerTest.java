@@ -37,7 +37,7 @@ public class RemoveMembersHandlerTest
     @Test
     public void testExamples()
     {
-        runScript( "/site/lib/xp/examples/auth/removeMembers.js" );
+        runScript( "/lib/xp/examples/auth/removeMembers.js" );
     }
 
     @Test
@@ -46,7 +46,7 @@ public class RemoveMembersHandlerTest
     {
         try
         {
-            runFunction( "/site/test/removeMembers-test.js", "removeMembersFromUser" );
+            runFunction( "/test/removeMembers-test.js", "removeMembersFromUser" );
             Assert.fail( "Expected exception" );
         }
         catch ( Exception e )
@@ -60,7 +60,7 @@ public class RemoveMembersHandlerTest
     public void testRemoveMembersFromRole()
         throws Exception
     {
-        runFunction( "/site/test/removeMembers-test.js", "removeMembersFromRole" );
+        runFunction( "/test/removeMembers-test.js", "removeMembersFromRole" );
 
         Mockito.verify( this.securityService ).removeRelationship( eq( PrincipalRelationship.from( ROLE ).to( USER ) ) );
         Mockito.verify( this.securityService ).removeRelationship( eq( PrincipalRelationship.from( ROLE ).to( GROUP ) ) );
@@ -70,7 +70,7 @@ public class RemoveMembersHandlerTest
     public void testRemoveMembersFromGroup()
         throws Exception
     {
-        runFunction( "/site/test/removeMembers-test.js", "removeMembersFromGroup" );
+        runFunction( "/test/removeMembers-test.js", "removeMembersFromGroup" );
 
         Mockito.verify( this.securityService ).removeRelationship( eq( PrincipalRelationship.from( GROUP ).to( USER ) ) );
         Mockito.verify( this.securityService ).removeRelationship( eq( PrincipalRelationship.from( GROUP ).to( GROUP2 ) ) );
@@ -80,7 +80,7 @@ public class RemoveMembersHandlerTest
     public void testRemoveMembersEmptyListPassed()
         throws Exception
     {
-        runFunction( "/site/test/removeMembers-test.js", "removeMembersEmptyList" );
+        runFunction( "/test/removeMembers-test.js", "removeMembersEmptyList" );
         Mockito.verify( this.securityService, Mockito.times( 0 ) ).removeRelationship( Mockito.any() );
     }
 }

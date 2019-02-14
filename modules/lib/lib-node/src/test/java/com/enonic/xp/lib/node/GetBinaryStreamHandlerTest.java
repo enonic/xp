@@ -27,6 +27,6 @@ public class GetBinaryStreamHandlerTest
     public void testExample()
     {
         mockGetBinary();
-        runScript( "/site/lib/xp/examples/node/getBinary.js" );
+        runScript( "/lib/xp/examples/node/getBinary.js" );
     }
 }

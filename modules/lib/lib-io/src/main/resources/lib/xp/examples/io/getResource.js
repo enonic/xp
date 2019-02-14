@@ -3,7 +3,7 @@ var assert = require('/lib/xp/testing');
 
 // BEGIN
 // Returns a file by name.
-var res1 = ioLib.getResource('/site/lib/xp/examples/io/sample.txt');
+var res1 = ioLib.getResource('/lib/xp/examples/io/sample.txt');
 var exists = res1.exists();
 var size = res1.getSize();
 var stream = res1.getStream();

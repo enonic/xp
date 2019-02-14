@@ -17,14 +17,14 @@ public class GetCurrentSiteScriptTest
         final Site site = TestDataFixtures.newSite();
         this.portalRequest.setSite( site );
 
-        runFunction( "/site/test/getCurrentSite-test.js", "currentSite" );
+        runFunction( "/test/getCurrentSite-test.js", "currentSite" );
     }
 
     @Test
     public void noCurrentSite()
     {
         this.portalRequest.setSite( null );
-        runFunction( "/site/test/getCurrentSite-test.js", "noCurrentSite" );
+        runFunction( "/test/getCurrentSite-test.js", "noCurrentSite" );
     }
 
     @Test
@@ -37,7 +37,7 @@ public class GetCurrentSiteScriptTest
         this.portalRequest.setSite( null );
         Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
         Mockito.when( this.contentService.getNearestSite( Mockito.any() ) ).thenReturn( site );
-        runFunction( "/site/test/getCurrentSite-test.js", "currentSite" );
+        runFunction( "/test/getCurrentSite-test.js", "currentSite" );
     }
 
     @Test
@@ -46,6 +46,6 @@ public class GetCurrentSiteScriptTest
         final Site site = TestDataFixtures.newSite();
         this.portalRequest.setSite( site );
 
-        runScript( "/site/lib/xp/examples/portal/getSite.js" );
+        runScript( "/lib/xp/examples/portal/getSite.js" );
     }
 }

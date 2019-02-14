@@ -38,7 +38,7 @@ public class ModifyRoleHandlerTest
         Mockito.when( this.securityService.updateRole( Mockito.isA( UpdateRoleParams.class ) ) ).thenAnswer(
             invocationOnMock -> invokeUpdate( (UpdateRoleParams) invocationOnMock.getArguments()[0] ) );
 
-        runScript( "/site/lib/xp/examples/auth/modifyRole.js" );
+        runScript( "/lib/xp/examples/auth/modifyRole.js" );
     }
 
     @Test
@@ -51,7 +51,7 @@ public class ModifyRoleHandlerTest
         Mockito.when( this.securityService.updateRole( Mockito.isA( UpdateRoleParams.class ) ) ).thenAnswer(
             invocationOnMock -> invokeUpdate( (UpdateRoleParams) invocationOnMock.getArguments()[0] ) );
 
-        runFunction( "/site/test/modifyRole-test.js", "modifyRole" );
+        runFunction( "/test/modifyRole-test.js", "modifyRole" );
     }
 
     private Role invokeUpdate( final UpdateRoleParams params )

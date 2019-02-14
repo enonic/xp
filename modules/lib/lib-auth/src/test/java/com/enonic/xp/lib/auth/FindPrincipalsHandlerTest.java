@@ -35,7 +35,7 @@ public class FindPrincipalsHandlerTest
 
         Mockito.when( securityService.query( Mockito.any( PrincipalQuery.class ) ) ).thenReturn( result );
 
-        runScript( "/site/lib/xp/examples/auth/findPrincipals.js" );
+        runScript( "/lib/xp/examples/auth/findPrincipals.js" );
     }
 
     @Test
@@ -51,7 +51,7 @@ public class FindPrincipalsHandlerTest
             build();
         Mockito.when( securityService.query( Mockito.eq( expectedQuery ) ) ).thenReturn( result );
 
-        runFunction( "/site/test/findPrincipals-test.js", "findPrincipalsDefaultParameters" );
+        runFunction( "/test/findPrincipals-test.js", "findPrincipalsDefaultParameters" );
     }
 
     @Test
@@ -70,7 +70,7 @@ public class FindPrincipalsHandlerTest
             build();
         Mockito.when( securityService.query( Mockito.eq( expectedQuery ) ) ).thenReturn( result );
 
-        runFunction( "/site/test/findPrincipals-test.js", "findPrincipalsUsers" );
+        runFunction( "/test/findPrincipals-test.js", "findPrincipalsUsers" );
     }
 
     @Test
@@ -89,7 +89,7 @@ public class FindPrincipalsHandlerTest
             build();
         Mockito.when( securityService.query( Mockito.eq( expectedQuery ) ) ).thenReturn( result );
 
-        runFunction( "/site/test/findPrincipals-test.js", "findPrincipalsGroups" );
+        runFunction( "/test/findPrincipals-test.js", "findPrincipalsGroups" );
     }
 
     @Test
@@ -108,7 +108,7 @@ public class FindPrincipalsHandlerTest
             build();
         Mockito.when( securityService.query( Mockito.eq( expectedQuery ) ) ).thenReturn( result );
 
-        runFunction( "/site/test/findPrincipals-test.js", "findPrincipalsRoles" );
+        runFunction( "/test/findPrincipals-test.js", "findPrincipalsRoles" );
     }
 
     @Test
@@ -125,7 +125,7 @@ public class FindPrincipalsHandlerTest
             build();
         Mockito.when( securityService.query( Mockito.eq( expectedQuery ) ) ).thenReturn( result );
 
-        runFunction( "/site/test/findPrincipals-test.js", "findPrincipalsByName" );
+        runFunction( "/test/findPrincipals-test.js", "findPrincipalsByName" );
     }
 
     @Test
@@ -141,6 +141,6 @@ public class FindPrincipalsHandlerTest
             build();
         Mockito.when( securityService.query( Mockito.eq( expectedQuery ) ) ).thenReturn( result );
 
-        runFunction( "/site/test/findPrincipals-test.js", "findPrincipalsBySearchText" );
+        runFunction( "/test/findPrincipals-test.js", "findPrincipalsBySearchText" );
     }
 }
