@@ -93,7 +93,7 @@ public final class ContentImageResource
             }
             else
             {
-                resolvedImage = resolveResponseFromContentImageAttachment( (Media) content, size, source, scale, filter, crop );
+                resolvedImage = resolveResponseFromContentImageAttachment( (Media) content, size, scaleWidth, source, scale, filter, crop );
             }
             if ( resolvedImage.isOK() )
             {
@@ -135,7 +135,8 @@ public final class ContentImageResource
         return ResolvedImage.unresolved();
     }
 
-    private ResolvedImage resolveResponseFromContentImageAttachment( final Media media, final int size, final boolean source,
+    private ResolvedImage resolveResponseFromContentImageAttachment( final Media media, final int size,
+                                                                     final boolean scaleWidth, final boolean source,
                                                                      final String scale, final String filter, final boolean crop )
     {
         final Attachment attachment = media.getMediaAttachment();
@@ -161,7 +162,7 @@ public final class ContentImageResource
                         scaleParams( scaleParam ).
                         focalPoint( focalPoint ).
                         scaleSize( sizeParam ).
-                        scaleWidth( true ).
+                        scaleWidth( scaleWidth ).
                         format( format ).
                         orientation( imageOrientation ).
                         filterParam( filterParam ).
