@@ -6,6 +6,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -31,6 +32,10 @@ public class SiteConfigs
     public SiteConfig get( final String applicationKey )
     {
         return get( ApplicationKey.from( applicationKey ) );
+    }
+
+    public ImmutableSet<ApplicationKey> getApplicationKeys() {
+        return applicationsByName.keySet();
     }
 
     public static SiteConfigs empty()

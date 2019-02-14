@@ -8,7 +8,7 @@ import com.google.common.base.Preconditions;
 public final class ImageStyle
     implements ElementStyle
 {
-    private final static String STYLE_ELEMENT_NAME = "image";
+    public final static String STYLE_ELEMENT_NAME = "image";
 
     private final String name;
 
