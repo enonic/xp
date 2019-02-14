@@ -24,7 +24,7 @@ public class CreateGroupHandlerTest
     public void testExamples()
     {
         Mockito.when( securityService.createGroup( Mockito.any() ) ).thenReturn( TestDataFixtures.getTestGroup() );
-        runScript( "/site/lib/xp/examples/auth/createGroup.js" );
+        runScript( "/lib/xp/examples/auth/createGroup.js" );
     }
 
     @Test
@@ -32,12 +32,12 @@ public class CreateGroupHandlerTest
     {
         Mockito.when( securityService.createGroup( Mockito.any() ) ).thenReturn( TestDataFixtures.getTestGroup() );
 
-        runFunction( "/site/test/createGroup-test.js", "createGroup" );
+        runFunction( "/test/createGroup-test.js", "createGroup" );
     }
 
     @Test
     public void testCreateGroupWithUnAuthenticated()
     {
-        runFunction( "/site/test/createGroup-test.js", "createGroupUnAuthenticated" );
+        runFunction( "/test/createGroup-test.js", "createGroupUnAuthenticated" );
     }
 }

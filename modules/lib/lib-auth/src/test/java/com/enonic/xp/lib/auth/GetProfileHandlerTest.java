@@ -28,7 +28,7 @@ public class GetProfileHandlerTest
         Mockito.when( securityService.getUser( Mockito.any() ) ).
             thenReturn( Optional.of( TestDataFixtures.getTestUser() ) );
 
-        runScript( "/site/lib/xp/examples/auth/getProfile.js" );
+        runScript( "/lib/xp/examples/auth/getProfile.js" );
     }
 
     @Test
@@ -37,6 +37,6 @@ public class GetProfileHandlerTest
         Mockito.when( securityService.getUser( Mockito.any() ) ).
             thenReturn( Optional.of( TestDataFixtures.getTestUser2() ) );
 
-        runFunction( "/site/test/getProfile-test.js", "noProfile" );
+        runFunction( "/test/getProfile-test.js", "noProfile" );
     }
 }

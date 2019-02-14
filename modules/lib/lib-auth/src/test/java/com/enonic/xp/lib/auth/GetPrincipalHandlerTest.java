@@ -30,7 +30,7 @@ public class GetPrincipalHandlerTest
         Mockito.<Optional<? extends Principal>>when(
             securityService.getPrincipal( PrincipalKey.from( "user:myIdProvider:userId" ) ) ).thenReturn(
             Optional.of( TestDataFixtures.getTestUser() ) );
-        runScript( "/site/lib/xp/examples/auth/getPrincipal.js" );
+        runScript( "/lib/xp/examples/auth/getPrincipal.js" );
     }
 
     @Test
@@ -40,7 +40,7 @@ public class GetPrincipalHandlerTest
             securityService.getPrincipal( PrincipalKey.from( "user:myIdProvider:userId" ) ) ).thenReturn(
             Optional.of( TestDataFixtures.getTestUser() ) );
 
-        runFunction( "/site/test/getPrincipal-test.js", "getUserPrincipal" );
+        runFunction( "/test/getPrincipal-test.js", "getUserPrincipal" );
     }
 
     @Test
@@ -49,7 +49,7 @@ public class GetPrincipalHandlerTest
         Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( PrincipalKey.from( "role:roleId" ) ) ).thenReturn(
             Optional.of( TestDataFixtures.getTestRole() ) );
 
-        runFunction( "/site/test/getPrincipal-test.js", "getRolePrincipal" );
+        runFunction( "/test/getPrincipal-test.js", "getRolePrincipal" );
     }
 
     @Test
@@ -59,7 +59,7 @@ public class GetPrincipalHandlerTest
             securityService.getPrincipal( PrincipalKey.from( "group:myGroupStore:groupId" ) ) ).thenReturn(
             Optional.of( TestDataFixtures.getTestGroup() ) );
 
-        runFunction( "/site/test/getPrincipal-test.js", "getGroupPrincipal" );
+        runFunction( "/test/getPrincipal-test.js", "getGroupPrincipal" );
     }
 
     @Test
@@ -68,6 +68,6 @@ public class GetPrincipalHandlerTest
         Mockito.<Optional<? extends Principal>>when(
             securityService.getPrincipal( PrincipalKey.from( "user:myIdProvider:XXX" ) ) ).thenReturn( Optional.ofNullable( null ) );
 
-        runFunction( "/site/test/getPrincipal-test.js", "getNonExistingPrincipal" );
+        runFunction( "/test/getPrincipal-test.js", "getNonExistingPrincipal" );
     }
 }

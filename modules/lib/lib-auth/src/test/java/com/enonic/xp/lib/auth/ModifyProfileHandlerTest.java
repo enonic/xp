@@ -42,7 +42,7 @@ public class ModifyProfileHandlerTest
         Mockito.when( this.securityService.updateUser( Mockito.isA( UpdateUserParams.class ) ) ).
             thenAnswer( invocationOnMock -> invokeUpdate( (UpdateUserParams) invocationOnMock.getArguments()[0], user ) );
 
-        runScript( "/site/lib/xp/examples/auth/modifyProfile.js" );
+        runScript( "/lib/xp/examples/auth/modifyProfile.js" );
     }
 
     @Test
@@ -73,7 +73,7 @@ public class ModifyProfileHandlerTest
                 return editedUser;
             } );
 
-        runScript( "/site/test/modifyProfile-test.js" );
+        runScript( "/test/modifyProfile-test.js" );
 
     }
 

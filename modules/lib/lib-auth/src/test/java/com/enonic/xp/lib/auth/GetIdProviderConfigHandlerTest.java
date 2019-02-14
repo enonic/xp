@@ -14,7 +14,7 @@ public class GetIdProviderConfigHandlerTest
         final IdProvider idProvider = TestDataFixtures.getTestIdProvider();
         this.portalRequest.setIdProvider( idProvider );
 
-        runScript( "/site/lib/xp/examples/auth/getIdProviderConfig.js" );
+        runScript( "/lib/xp/examples/auth/getIdProviderConfig.js" );
     }
 
 
@@ -22,6 +22,6 @@ public class GetIdProviderConfigHandlerTest
     public void noIdProviderConfig()
     {
         this.portalRequest.setIdProvider( null );
-        runFunction( "/site/test/getIdProviderConfig-test.js", "noIdProvider" );
+        runFunction( "/test/getIdProviderConfig-test.js", "noIdProvider" );
     }
 }

@@ -32,7 +32,7 @@ public class HasRoleHandlerTest
 
         this.session.setAttribute( authInfo );
 
-        runScript( "/site/lib/xp/examples/auth/hasRole.js" );
+        runScript( "/lib/xp/examples/auth/hasRole.js" );
     }
 
     @Test
@@ -43,7 +43,7 @@ public class HasRoleHandlerTest
 
         this.session.setAttribute( authInfo );
 
-        runFunction( "/site/test/hasRole-test.js", "hasRole" );
+        runFunction( "/test/hasRole-test.js", "hasRole" );
     }
 
     @Test
@@ -54,7 +54,7 @@ public class HasRoleHandlerTest
 
         this.session.setAttribute( authInfo );
 
-        runFunction( "/site/test/hasRole-test.js", "hasRoleByKey" );
+        runFunction( "/test/hasRole-test.js", "hasRoleByKey" );
     }
 
     @Test
@@ -65,6 +65,6 @@ public class HasRoleHandlerTest
 
         this.session.setAttribute( authInfo );
 
-        runFunction( "/site/test/hasRole-test.js", "doesNotHaveRole" );
+        runFunction( "/test/hasRole-test.js", "doesNotHaveRole" );
     }
 }

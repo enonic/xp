@@ -31,7 +31,7 @@ public class GetUserHandlerTest
 
         this.session.setAttribute( authInfo );
 
-        runScript( "/site/lib/xp/examples/auth/getUser.js" );
+        runScript( "/lib/xp/examples/auth/getUser.js" );
     }
 
     @Test
@@ -42,7 +42,7 @@ public class GetUserHandlerTest
 
         this.session.setAttribute( authInfo );
 
-        runFunction( "/site/test/getUser-test.js", "getUserAuthenticated" );
+        runFunction( "/test/getUser-test.js", "getUserAuthenticated" );
     }
 
     @Test
@@ -51,6 +51,6 @@ public class GetUserHandlerTest
         final AuthenticationInfo authInfo = AuthenticationInfo.unAuthenticated();
         this.session.setAttribute( authInfo );
 
-        runFunction( "/site/test/getUser-test.js", "getUserNotAuthenticated" );
+        runFunction( "/test/getUser-test.js", "getUserNotAuthenticated" );
     }
 }

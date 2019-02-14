@@ -38,7 +38,7 @@ public class ModifyGroupHandlerTest
         Mockito.when( this.securityService.updateGroup( Mockito.isA( UpdateGroupParams.class ) ) ).thenAnswer(
             invocationOnMock -> invokeUpdate( (UpdateGroupParams) invocationOnMock.getArguments()[0] ) );
 
-        runScript( "/site/lib/xp/examples/auth/modifyGroup.js" );
+        runScript( "/lib/xp/examples/auth/modifyGroup.js" );
     }
 
     @Test
@@ -51,7 +51,7 @@ public class ModifyGroupHandlerTest
         Mockito.when( this.securityService.updateGroup( Mockito.isA( UpdateGroupParams.class ) ) ).thenAnswer(
             invocationOnMock -> invokeUpdate( (UpdateGroupParams) invocationOnMock.getArguments()[0] ) );
 
-        runFunction( "/site/test/modifyGroup-test.js", "modifyGroup" );
+        runFunction( "/test/modifyGroup-test.js", "modifyGroup" );
     }
 
     private Group invokeUpdate( final UpdateGroupParams params )
