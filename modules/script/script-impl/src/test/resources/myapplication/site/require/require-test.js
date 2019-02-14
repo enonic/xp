@@ -6,10 +6,10 @@ assert.assertEquals('Hello World!', other.hello('World'));
 other = require('./other.js');
 assert.assertEquals('Hello World!', other.hello('World'));
 
-other = require('/require/other.js');
+other = require('/site/require/other.js');
 assert.assertEquals('Hello World!', other.hello('World'));
 
-var util = require('util');
+var util = require('/site/lib/util');
 assert.assertEquals('Hello from Lib!', util.hello());
 
 var all1 = require('./export/all1');
