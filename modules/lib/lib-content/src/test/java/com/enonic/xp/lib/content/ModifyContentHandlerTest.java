@@ -40,7 +40,7 @@ public class ModifyContentHandlerTest
             invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0], content ) );
 
         mockXData();
-        runScript( "/site/lib/xp/examples/content/modify.js" );
+        runScript( "/lib/xp/examples/content/modify.js" );
     }
 
     @Test
@@ -56,7 +56,7 @@ public class ModifyContentHandlerTest
 
         mockXData();
 
-        runFunction( "/site/test/ModifyContentHandlerTest.js", "modifyById" );
+        runFunction( "/test/ModifyContentHandlerTest.js", "modifyById" );
     }
 
     @Test
@@ -72,14 +72,14 @@ public class ModifyContentHandlerTest
 
         mockXData();
 
-        runFunction( "/site/test/ModifyContentHandlerTest.js", "modifyByPath" );
+        runFunction( "/test/ModifyContentHandlerTest.js", "modifyByPath" );
     }
 
     @Test
     public void modifyNotFound()
         throws Exception
     {
-        runFunction( "/site/test/ModifyContentHandlerTest.js", "modify_notFound" );
+        runFunction( "/test/ModifyContentHandlerTest.js", "modify_notFound" );
     }
 
     private void mockXData()

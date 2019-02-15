@@ -22,7 +22,7 @@ public class IOHandlerBeanTest
         super.initialize();
 
         this.bean = new IOHandlerBean();
-        this.bean.initialize( newBeanContext( ResourceKey.from( "myapp:/site/test" ) ) );
+        this.bean.initialize( newBeanContext( ResourceKey.from( "myapp:/test" ) ) );
     }
 
     @Test
@@ -89,7 +89,7 @@ public class IOHandlerBeanTest
         final Resource res2 = this.bean.getResource( "./sample.txt" );
         assertEquals( true, res2.exists() );
 
-        final Resource res3 = this.bean.getResource( ResourceKey.from( "myapp:/site/test/sample.txt" ) );
+        final Resource res3 = this.bean.getResource( ResourceKey.from( "myapp:/test/sample.txt" ) );
         assertEquals( true, res3.exists() );
     }
 }

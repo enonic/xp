@@ -31,7 +31,7 @@ public class RefreshScriptTest
     @Test
     public void testExample()
     {
-        runScript( "/site/lib/xp/examples/repo/refresh.js" );
+        runScript( "/lib/xp/examples/repo/refresh.js" );
         verify( this.nodeService, times( 1 ) ).refresh( RefreshMode.SEARCH );
         verify( this.nodeService, times( 1 ) ).refresh( RefreshMode.STORAGE );
         verify( this.nodeService, times( 1 ) ).refresh( RefreshMode.ALL );
@@ -41,7 +41,7 @@ public class RefreshScriptTest
     public void testRefreshDefault()
         throws Exception
     {
-        runFunction( "/site/test/refresh-test.js", "refreshDefault" );
+        runFunction( "/test/refresh-test.js", "refreshDefault" );
         verify( this.nodeService, times( 1 ) ).refresh( RefreshMode.ALL );
     }
 
@@ -49,7 +49,7 @@ public class RefreshScriptTest
     public void testRefreshAll()
         throws Exception
     {
-        runFunction( "/site/test/refresh-test.js", "refreshAll" );
+        runFunction( "/test/refresh-test.js", "refreshAll" );
         verify( this.nodeService, times( 1 ) ).refresh( RefreshMode.ALL );
     }
 
@@ -57,7 +57,7 @@ public class RefreshScriptTest
     public void testRefreshSearch()
         throws Exception
     {
-        runFunction( "/site/test/refresh-test.js", "refreshSearch" );
+        runFunction( "/test/refresh-test.js", "refreshSearch" );
         verify( this.nodeService, times( 1 ) ).refresh( RefreshMode.SEARCH );
     }
 
@@ -65,7 +65,7 @@ public class RefreshScriptTest
     public void testRefreshStorage()
         throws Exception
     {
-        runFunction( "/site/test/refresh-test.js", "refreshStorage" );
+        runFunction( "/test/refresh-test.js", "refreshStorage" );
         verify( this.nodeService, times( 1 ) ).refresh( RefreshMode.STORAGE );
     }
 
@@ -75,7 +75,7 @@ public class RefreshScriptTest
     {
         try
         {
-            runFunction( "/site/test/refresh-test.js", "refreshInvalid" );
+            runFunction( "/test/refresh-test.js", "refreshInvalid" );
             fail( "Exception expected" );
         }
         catch ( ResourceProblemException e )

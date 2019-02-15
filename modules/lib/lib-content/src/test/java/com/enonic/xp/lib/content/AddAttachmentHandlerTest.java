@@ -18,7 +18,7 @@ public class AddAttachmentHandlerTest
     {
         final Content content = TestDataFixtures.newExampleContent();
         Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
-        runScript( "/site/lib/xp/examples/content/addAttachment.js" );
+        runScript( "/lib/xp/examples/content/addAttachment.js" );
 
         Mockito.verify( this.contentService, Mockito.times( 1 ) ).update( Mockito.any( UpdateContentParams.class ) );
     }
@@ -30,7 +30,7 @@ public class AddAttachmentHandlerTest
         final Content content = TestDataFixtures.newExampleContent();
         Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
 
-        runFunction( "/site/test/AddAttachmentHandlerTest.js", "addAttachmentById" );
+        runFunction( "/test/AddAttachmentHandlerTest.js", "addAttachmentById" );
     }
 
     @Test
@@ -40,7 +40,7 @@ public class AddAttachmentHandlerTest
         final Content content = TestDataFixtures.newExampleContent();
         Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
 
-        runFunction( "/site/test/AddAttachmentHandlerTest.js", "addAttachmentWithString" );
+        runFunction( "/test/AddAttachmentHandlerTest.js", "addAttachmentWithString" );
     }
 
     @Test
@@ -50,7 +50,7 @@ public class AddAttachmentHandlerTest
         final Content content = TestDataFixtures.newExampleContent();
         Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
 
-        runFunction( "/site/test/AddAttachmentHandlerTest.js", "addAttachmentWithObject" );
+        runFunction( "/test/AddAttachmentHandlerTest.js", "addAttachmentWithObject" );
     }
 
     public static ByteSource createByteSource( final String value )

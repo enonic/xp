@@ -54,7 +54,7 @@ exports.testChange = function () {
 };
 
 function runExample(name) {
-    testInstance.runScript('/site/lib/xp/examples/context/' + name + '.js');
+    testInstance.runScript('/lib/xp/examples/context/' + name + '.js');
 }
 
 exports.testExamples = function () {

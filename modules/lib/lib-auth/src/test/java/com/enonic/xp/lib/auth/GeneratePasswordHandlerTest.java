@@ -12,7 +12,7 @@ public class GeneratePasswordHandlerTest
     @Test
     public void testExamples()
     {
-        runScript( "/site/lib/xp/examples/auth/generatePassword.js" );
+        runScript( "/lib/xp/examples/auth/generatePassword.js" );
     }
 
     @Test
@@ -28,7 +28,7 @@ public class GeneratePasswordHandlerTest
     @Test
     public void testFunction()
     {
-        runFunction( "/site/test/generatePassword-test.js", "generatePassword" );
+        runFunction( "/test/generatePassword-test.js", "generatePassword" );
     }
 
     private boolean isExtreme( String value )

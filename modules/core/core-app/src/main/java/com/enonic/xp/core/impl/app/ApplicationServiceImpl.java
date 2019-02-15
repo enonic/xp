@@ -135,7 +135,7 @@ public final class ApplicationServiceImpl
     {
         final Application application = installOrUpdateApplication( byteSource, true );
 
-        LOG.info( "Application [{}] installed successfully", application.getKey() );
+        LOG.info( "Application [{}] installed successfully from remote source", application.getKey() );
 
         publishInstalledEvent( application );
 
@@ -163,7 +163,7 @@ public final class ApplicationServiceImpl
     {
         final Application application = installOrUpdateApplication( byteSource, false );
 
-        LOG.info( "Application [{}] installed successfully", application.getKey() );
+        LOG.info( "Local application [{}] installed successfully", application.getKey() );
 
         doStartApplication( application.getKey(), false );
 
@@ -180,7 +180,7 @@ public final class ApplicationServiceImpl
     {
         final Application application = doInstallApplication( nodeId, true );
 
-        LOG.info( "Application [{}] installed successfully", application.getKey() );
+        LOG.info( "Stored application [{}] installed successfully", application.getKey() );
 
         doStartApplication( application.getKey(), false );
 
@@ -303,6 +303,7 @@ public final class ApplicationServiceImpl
         try
         {
             application.getBundle().start();
+            LOG.info( "Application [{}] started successfully", application.getKey() );
         }
         catch ( final Exception e )
         {
@@ -315,6 +316,7 @@ public final class ApplicationServiceImpl
         try
         {
             application.getBundle().stop();
+            LOG.info( "Application [{}] stopped successfully", application.getKey() );
         }
         catch ( final Exception e )
         {
@@ -340,6 +342,7 @@ public final class ApplicationServiceImpl
 
         try
         {
+            LOG.info( "Application [{}] uninstalled successfully", application.getKey() );
             bundle.uninstall();
         }
         catch ( BundleException e )

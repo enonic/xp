@@ -15,14 +15,14 @@ public class GetCurrentComponentScriptTest
         final Component component = TestDataFixtures.newLayoutComponent();
         this.portalRequest.setComponent( component );
 
-        runFunction( "/site/test/getCurrentComponent-test.js", "currentComponent" );
+        runFunction( "/test/getCurrentComponent-test.js", "currentComponent" );
     }
 
     @Test
     public void noCurrentComponent()
     {
         this.portalRequest.setComponent( null );
-        runFunction( "/site/test/getCurrentComponent-test.js", "noCurrentComponent" );
+        runFunction( "/test/getCurrentComponent-test.js", "noCurrentComponent" );
     }
 
     @Test
@@ -31,6 +31,6 @@ public class GetCurrentComponentScriptTest
         final Component component = TestDataFixtures.newLayoutComponent();
         this.portalRequest.setComponent( component );
 
-        runScript( "/site/lib/xp/examples/portal/getComponent.js" );
+        runScript( "/lib/xp/examples/portal/getComponent.js" );
     }
 }

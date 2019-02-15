@@ -19,7 +19,7 @@ public class SetActiveVersionHandlerTest
         final ArgumentCaptor<NodeId> nodeIdCaptor = ArgumentCaptor.forClass( NodeId.class );
         final ArgumentCaptor<NodeVersionId> nodeVersionIdCaptor = ArgumentCaptor.forClass( NodeVersionId.class );
         Mockito.when( nodeService.setActiveVersion( Mockito.any(), Mockito.any() ) ).thenReturn( nodeVersionId );
-        runScript( "/site/lib/xp/examples/node/setActiveVersion.js" );
+        runScript( "/lib/xp/examples/node/setActiveVersion.js" );
         Mockito.verify( nodeService ).setActiveVersion( nodeIdCaptor.capture(), nodeVersionIdCaptor.capture() );
 
         assertEquals( "nodeId", nodeIdCaptor.getValue().toString() );

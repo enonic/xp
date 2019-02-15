@@ -37,7 +37,7 @@ public class SetRootPermissionsHandlerTest
                 inheritPermissions( true ).
                 build() );
 
-        runScript( "/site/lib/xp/examples/node/modifyRootPermissions.js" );
+        runScript( "/lib/xp/examples/node/modifyRootPermissions.js" );
     }
 
 }

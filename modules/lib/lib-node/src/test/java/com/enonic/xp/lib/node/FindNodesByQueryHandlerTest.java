@@ -67,7 +67,7 @@ public class FindNodesByQueryHandlerTest
                 aggregations( agg ).
                 build() );
 
-        runScript( "/site/lib/xp/examples/node/query.js" );
+        runScript( "/lib/xp/examples/node/query.js" );
     }
 
     @Test
@@ -86,7 +86,7 @@ public class FindNodesByQueryHandlerTest
                     build() ).
                 build() );
 
-        runScript( "/site/lib/xp/examples/node/query-filter-array-on-root.js" );
+        runScript( "/lib/xp/examples/node/query-filter-array-on-root.js" );
     }
 
 }

@@ -22,7 +22,7 @@ public class GetAttachmentStreamHandlerTest
     public void testExample()
     {
         mockAttachmentBinary();
-        runScript( "/site/lib/xp/examples/content/getAttachmentStream.js" );
+        runScript( "/lib/xp/examples/content/getAttachmentStream.js" );
     }
 
     private void mockAttachmentBinary()
@@ -40,7 +40,7 @@ public class GetAttachmentStreamHandlerTest
         throws Exception
     {
         mockAttachmentBinary();
-        runFunction( "/site/test/GetAttachmentStreamHandlerTest.js", "getAttachmentStreamById" );
+        runFunction( "/test/GetAttachmentStreamHandlerTest.js", "getAttachmentStreamById" );
     }
 
     @Test
@@ -48,7 +48,7 @@ public class GetAttachmentStreamHandlerTest
         throws Exception
     {
         mockAttachmentBinary();
-        runFunction( "/site/test/GetAttachmentStreamHandlerTest.js", "getAttachmentStreamByPath" );
+        runFunction( "/test/GetAttachmentStreamHandlerTest.js", "getAttachmentStreamByPath" );
     }
 
     @Test
@@ -58,7 +58,7 @@ public class GetAttachmentStreamHandlerTest
         final ContentId id = ContentId.from( "123456" );
         Mockito.when( this.contentService.getById( id ) ).thenThrow( new ContentNotFoundException( id, null ) );
 
-        runFunction( "/site/test/GetAttachmentStreamHandlerTest.js", "getAttachmentStreamById_notFound" );
+        runFunction( "/test/GetAttachmentStreamHandlerTest.js", "getAttachmentStreamById_notFound" );
     }
 
     @Test
@@ -68,7 +68,7 @@ public class GetAttachmentStreamHandlerTest
         final ContentPath path = ContentPath.from( "/a/b/mycontent" );
         Mockito.when( this.contentService.getByPath( path ) ).thenThrow( new ContentNotFoundException( path, null ) );
 
-        runFunction( "/site/test/GetAttachmentStreamHandlerTest.js", "getAttachmentStreamByPath_notFound" );
+        runFunction( "/test/GetAttachmentStreamHandlerTest.js", "getAttachmentStreamByPath_notFound" );
     }
 
     @Test
@@ -82,6 +82,6 @@ public class GetAttachmentStreamHandlerTest
         Mockito.when( this.contentService.getBinary( content.getId(), attachment.getBinaryReference() ) ).thenReturn(
             ByteSource.wrap( ATTACHMENT_DATA ) );
 
-        runFunction( "/site/test/GetAttachmentStreamHandlerTest.js", "getAttachmentStreamById_AttachmentNotFound" );
+        runFunction( "/test/GetAttachmentStreamHandlerTest.js", "getAttachmentStreamById_AttachmentNotFound" );
     }
 }

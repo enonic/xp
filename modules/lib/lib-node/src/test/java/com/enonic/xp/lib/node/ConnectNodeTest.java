@@ -47,7 +47,7 @@ public class ConnectNodeTest
                 branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
                 build() );
 
-        context.runWith( () -> runScript( "/site/lib/xp/examples/node/connect.js" ) );
+        context.runWith( () -> runScript( "/lib/xp/examples/node/connect.js" ) );
     }
 
 

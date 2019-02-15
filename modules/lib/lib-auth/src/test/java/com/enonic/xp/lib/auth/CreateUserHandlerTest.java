@@ -25,7 +25,7 @@ public class CreateUserHandlerTest
     public void testExamples()
     {
         Mockito.when( securityService.createUser( Mockito.any() ) ).thenReturn( TestDataFixtures.getTestUser() );
-        runScript( "/site/lib/xp/examples/auth/createUser.js" );
+        runScript( "/lib/xp/examples/auth/createUser.js" );
     }
 
     @Test
@@ -33,7 +33,7 @@ public class CreateUserHandlerTest
     {
         Mockito.when( securityService.createUser( Mockito.any() ) ).thenReturn( TestDataFixtures.getTestUser() );
 
-        runFunction( "/site/test/createUser-test.js", "createUser" );
+        runFunction( "/test/createUser-test.js", "createUser" );
     }
 
     @Test
@@ -41,12 +41,12 @@ public class CreateUserHandlerTest
     {
         Mockito.when( securityService.createUser( Mockito.any() ) ).thenReturn( TestDataFixtures.getTestUserWithoutEmail() );
 
-        runFunction( "/site/test/createUser-test.js", "createUserNoEmail" );
+        runFunction( "/test/createUser-test.js", "createUserNoEmail" );
     }
 
     @Test(expected = ResourceProblemException.class)
     public void testCreateUserWithMissingArg()
     {
-        runFunction( "/site/test/createUser-test.js", "createUserWithMissingArg" );
+        runFunction( "/test/createUser-test.js", "createUserWithMissingArg" );
     }
 }

@@ -18,7 +18,7 @@ public class GetCurrentIdProviderKeyHandlerTest
         final IdProvider idProvider = TestDataFixtures.newIdProvider();
         this.portalRequest.setIdProvider( idProvider );
 
-        runScript( "/site/lib/xp/examples/portal/getIdProviderKey.js" );
+        runScript( "/lib/xp/examples/portal/getIdProviderKey.js" );
     }
 
     @Test
@@ -26,6 +26,6 @@ public class GetCurrentIdProviderKeyHandlerTest
     {
         this.portalRequest.setRawRequest( Mockito.mock( HttpServletRequest.class ) );
         this.portalRequest.setIdProvider( null );
-        runFunction( "/site/test/getIdProviderKey-test.js", "noIdProvider" );
+        runFunction( "/test/getIdProviderKey-test.js", "noIdProvider" );
     }
 }

@@ -25,7 +25,7 @@ public class CreateBranchScriptTest
     @Test
     public void testExample()
     {
-        runScript( "/site/lib/xp/examples/repo/createBranch.js" );
+        runScript( "/lib/xp/examples/repo/createBranch.js" );
         Mockito.verify( this.repositoryService, Mockito.times( 1 ) ).createBranch( Mockito.any() );
     }
 }

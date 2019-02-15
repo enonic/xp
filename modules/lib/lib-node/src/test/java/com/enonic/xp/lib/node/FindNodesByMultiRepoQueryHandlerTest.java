@@ -33,7 +33,7 @@ public class FindNodesByMultiRepoQueryHandlerTest
                     build() ).
                 build() );
 
-        runScript( "/site/lib/xp/examples/node/multiRepoQuery.js" );
+        runScript( "/lib/xp/examples/node/multiRepoQuery.js" );
     }
 
 

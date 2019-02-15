@@ -31,7 +31,7 @@ public class LogoutHandlerTest
 
         Assert.assertTrue( ContextAccessor.current().getAuthInfo().isAuthenticated() );
 
-        runScript( "/site/lib/xp/examples/auth/logout.js" );
+        runScript( "/lib/xp/examples/auth/logout.js" );
 
         Assert.assertFalse( ContextAccessor.current().getAuthInfo().isAuthenticated() );
     }
@@ -44,7 +44,7 @@ public class LogoutHandlerTest
 
         Assert.assertTrue( ContextAccessor.current().getAuthInfo().isAuthenticated() );
 
-        runFunction( "/site/test/logout-test.js", "logout" );
+        runFunction( "/test/logout-test.js", "logout" );
 
         Assert.assertFalse( ContextAccessor.current().getAuthInfo().isAuthenticated() );
     }
@@ -54,7 +54,7 @@ public class LogoutHandlerTest
     {
         Assert.assertFalse( ContextAccessor.current().getAuthInfo().isAuthenticated() );
 
-        runFunction( "/site/test/logout-test.js", "alreadyLoggedOut" );
+        runFunction( "/test/logout-test.js", "alreadyLoggedOut" );
 
         Assert.assertFalse( ContextAccessor.current().getAuthInfo().isAuthenticated() );
     }

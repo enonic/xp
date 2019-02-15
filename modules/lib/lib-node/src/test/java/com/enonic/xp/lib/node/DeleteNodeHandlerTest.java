@@ -39,7 +39,7 @@ public class DeleteNodeHandlerTest
                 branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
                 build() );
 
-        runScript( "/site/lib/xp/examples/node/delete.js" );
+        runScript( "/lib/xp/examples/node/delete.js" );
     }
 
 }

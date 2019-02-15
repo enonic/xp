@@ -26,7 +26,7 @@ public class CreateMediaHandlerTest
         Mockito.when( this.contentService.create( Mockito.any( CreateMediaParams.class ) ) ).thenAnswer(
             mock -> createContent( (CreateMediaParams) mock.getArguments()[0] ) );
 
-        runScript( "/site/lib/xp/examples/content/createMedia.js" );
+        runScript( "/lib/xp/examples/content/createMedia.js" );
     }
 
     @Test
@@ -35,7 +35,7 @@ public class CreateMediaHandlerTest
     {
         Mockito.when( this.contentService.create( Mockito.any( CreateMediaParams.class ) ) ).thenAnswer( mock -> createContent( (CreateMediaParams) mock.getArguments()[0] ) );
 
-        runFunction( "/site/test/CreateMediaHandlerTest.js", "createMedia" );
+        runFunction( "/test/CreateMediaHandlerTest.js", "createMedia" );
 
         final ArgumentCaptor<CreateMediaParams> argumentCaptor = ArgumentCaptor.forClass( CreateMediaParams.class );
         Mockito.verify( this.contentService, Mockito.times( 1 ) ).create( argumentCaptor.capture() );
@@ -51,7 +51,7 @@ public class CreateMediaHandlerTest
         Mockito.when( this.contentService.create( Mockito.any( CreateMediaParams.class ) ) ).thenAnswer(
             mock -> createContent( (CreateMediaParams) mock.getArguments()[0] ) );
 
-        runFunction( "/site/test/CreateMediaHandlerTest.js", "createMediaWithFocalPoints" );
+        runFunction( "/test/CreateMediaHandlerTest.js", "createMediaWithFocalPoints" );
 
         final ArgumentCaptor<CreateMediaParams> argumentCaptor = ArgumentCaptor.forClass( CreateMediaParams.class );
         Mockito.verify( this.contentService, Mockito.times( 1 ) ).create( argumentCaptor.capture() );
@@ -84,7 +84,7 @@ public class CreateMediaHandlerTest
         Mockito.when( this.contentService.contentExists( Mockito.eq( ContentPath.from( "/a/b/my-content-1.jpg" ) ) ) ).thenReturn( true );
         Mockito.when( this.contentService.contentExists( Mockito.eq( ContentPath.from( "/a/b/my-content-2.jpg" ) ) ) ).thenReturn( true );
 
-        runFunction( "/site/test/CreateMediaHandlerTest.js", "createMediaAutoGenerateName" );
+        runFunction( "/test/CreateMediaHandlerTest.js", "createMediaAutoGenerateName" );
     }
 
     public static ByteSource createByteSource( final String value )

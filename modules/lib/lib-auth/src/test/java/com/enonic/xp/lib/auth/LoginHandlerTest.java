@@ -50,7 +50,7 @@ public class LoginHandlerTest
         Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
         Mockito.when( this.securityService.getIdProviders() ).thenReturn( idProviders );
 
-        runScript( "/site/lib/xp/examples/auth/login.js" );
+        runScript( "/lib/xp/examples/auth/login.js" );
     }
 
     @Test
@@ -61,7 +61,7 @@ public class LoginHandlerTest
 
         Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
 
-        runFunction( "/site/test/login-test.js", "loginSuccess" );
+        runFunction( "/test/login-test.js", "loginSuccess" );
 
         final Session session = ContextAccessor.current().getLocalScope().getSession();
         final AuthenticationInfo sessionAuthInfo = session.getAttribute( AuthenticationInfo.class );
@@ -79,7 +79,7 @@ public class LoginHandlerTest
         Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
         Mockito.when( this.securityService.getIdProviders() ).thenReturn( idProviders );
 
-        runFunction( "/site/test/login-test.js", "loginNoIdProvider" );
+        runFunction( "/test/login-test.js", "loginNoIdProvider" );
 
         final Session session = ContextAccessor.current().getLocalScope().getSession();
         final AuthenticationInfo sessionAuthInfo = session.getAttribute( AuthenticationInfo.class );
@@ -93,7 +93,7 @@ public class LoginHandlerTest
 
         Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
 
-        runFunction( "/site/test/login-test.js", "loginMultipleIdProvider" );
+        runFunction( "/test/login-test.js", "loginMultipleIdProvider" );
 
         final Session session = ContextAccessor.current().getLocalScope().getSession();
         final AuthenticationInfo sessionAuthInfo = session.getAttribute( AuthenticationInfo.class );
@@ -107,7 +107,7 @@ public class LoginHandlerTest
 
         Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
 
-        runFunction( "/site/test/login-test.js", "invalidLogin" );
+        runFunction( "/test/login-test.js", "invalidLogin" );
 
         final Session session = ContextAccessor.current().getLocalScope().getSession();
         final AuthenticationInfo sessionAuthInfo = session.getAttribute( AuthenticationInfo.class );
@@ -136,7 +136,7 @@ public class LoginHandlerTest
         Mockito.when( this.securityService.authenticate( Mockito.argThat( matcher ) ) ).thenReturn( authInfo );
         Mockito.when( this.securityService.getIdProviders() ).thenReturn( idProviders );
 
-        runFunction( "/site/test/login-test.js", "loginMultipleIdProvidersInOrder" );
+        runFunction( "/test/login-test.js", "loginMultipleIdProvidersInOrder" );
 
         final Session session = ContextAccessor.current().getLocalScope().getSession();
         final AuthenticationInfo sessionAuthInfo = session.getAttribute( AuthenticationInfo.class );

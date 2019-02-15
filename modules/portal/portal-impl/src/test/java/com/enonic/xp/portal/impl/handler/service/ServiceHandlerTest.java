@@ -74,7 +74,6 @@ public class ServiceHandlerTest
         final Resource resource = Mockito.mock( Resource.class );
         Mockito.when( resource.exists() ).thenReturn( true );
         Mockito.when( this.resourceService.getResource( ResourceKey.from( "demo:/services/test" ) ) ).thenReturn( resourceNotFound );
-        Mockito.when( this.resourceService.getResource( ResourceKey.from( "demo:/site/services/test" ) ) ).thenReturn( resource );
 
         this.serviceDescriptorService = Mockito.mock( ServiceDescriptorService.class );
         final DescriptorKey serviceDescriptorKey = DescriptorKey.from( "demo:test" );

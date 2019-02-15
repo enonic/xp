@@ -12,6 +12,7 @@ import com.google.common.base.Charsets;
 import com.google.common.io.CharSource;
 import com.google.common.io.Resources;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.Content;
@@ -19,6 +20,9 @@ import com.enonic.xp.content.Media;
 import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.url.ProcessHtmlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
+import com.enonic.xp.style.ImageStyle;
+import com.enonic.xp.style.StyleDescriptor;
+import com.enonic.xp.style.StyleDescriptors;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 import static org.junit.Assert.*;
@@ -80,10 +84,8 @@ public class PortalUrlServiceImpl_processHtmlTest
 
         //Checks that the page URL of the content is returned
         final String processedHtml = this.service.processHtml( params );
-        assertEquals( "<a href=\"/site/default/draft/context/path/_/image/" + media.getId() +
-                          ":8cf45815bba82c9711c673c9bb7304039a790026/" + "full" +
-                "/" + media.getName() +
-                "\">Image</a>", processedHtml );
+        assertEquals( "<a href=\"/site/default/draft/context/path/_/image/" + media.getId() + ":8cf45815bba82c9711c673c9bb7304039a790026/" +
+                          "width-768" + "/" + media.getName() + "\">Image</a>", processedHtml );
     }
 
     @Test
@@ -102,9 +104,8 @@ public class PortalUrlServiceImpl_processHtmlTest
 
         //Checks that the page URL of the content is returned
         final String processedHtml = this.service.processHtml( params );
-        assertEquals( "<a href=\"/site/default/draft/context/path/_/image/" + media.getId() +
-                          ":8cf45815bba82c9711c673c9bb7304039a790026/" + "width-768" +
-                "/" + media.getName() + "\">Image</a>", processedHtml );
+        assertEquals( "<a href=\"/site/default/draft/context/path/_/image/" + media.getId() + ":8cf45815bba82c9711c673c9bb7304039a790026/" +
+                          "width-768" + "/" + media.getName() + "\">Image</a>", processedHtml );
     }
 
     @Test
@@ -138,9 +139,9 @@ public class PortalUrlServiceImpl_processHtmlTest
 
         //Checks that the URL of the source attachment of the content is returned
         String processedHtml = this.service.processHtml( params );
-        assertEquals( "<a href=\"/site/default/draft/context/path/_/attachment/inline/" + content.getId() + ":binaryHash2/" +
-                          source.getName() +
-                          "\">Media</a>", processedHtml );
+        assertEquals(
+            "<a href=\"/site/default/draft/context/path/_/attachment/inline/" + content.getId() + ":binaryHash2/" + source.getName() +
+                "\">Media</a>", processedHtml );
 
         //Process an html text containing a download link to this content
         params = new ProcessHtmlParams().
@@ -149,9 +150,9 @@ public class PortalUrlServiceImpl_processHtmlTest
 
         //Checks that the URL of the source attachment of the content is returned
         processedHtml = this.service.processHtml( params );
-        assertEquals( "<a href=\"/site/default/draft/context/path/_/attachment/download/" + content.getId() + ":binaryHash2/" +
-                source.getName() +
-                          "\">Media</a>", processedHtml );
+        assertEquals(
+            "<a href=\"/site/default/draft/context/path/_/attachment/download/" + content.getId() + ":binaryHash2/" + source.getName() +
+                "\">Media</a>", processedHtml );
 
         //Process an html text containing an inline link to this content in a img tag
         params = new ProcessHtmlParams().
@@ -160,10 +161,9 @@ public class PortalUrlServiceImpl_processHtmlTest
 
         //Checks that the URL of the source attachment of the content is returned
         processedHtml = this.service.processHtml( params );
-        assertEquals( "<a href=\"/some/page\"><img src=\"/site/default/draft/context/path/_/attachment/inline/" + content.getId() +
-                ":binaryHash2/" +
-                source.getName() +
-                "\">Media</a>", processedHtml );
+        assertEquals(
+            "<a href=\"/some/page\"><img src=\"/site/default/draft/context/path/_/attachment/inline/" + content.getId() + ":binaryHash2/" +
+                source.getName() + "\">Media</a>", processedHtml );
 
     }
 
@@ -197,8 +197,7 @@ public class PortalUrlServiceImpl_processHtmlTest
             value( "<p>A content link:&nbsp;<a href=\"content://" + content.getId() + "\">FirstLink</a></p>\n" +
                        "<p>A second content link:&nbsp;<a href=\"content://" + content.getId() + "\">SecondLink</a>" +
                        "&nbsp;and a download link:&nbsp;<a href=\"media://download/" + content.getId() + "\">Download</a></p>\n" +
-                       "<p>An external link:&nbsp;<a href=\"http://www.enonic.com\">An external  link</a></p>\n" +
-                       "<p>&nbsp;</p>\n" +
+                       "<p>An external link:&nbsp;<a href=\"http://www.enonic.com\">An external  link</a></p>\n" + "<p>&nbsp;</p>\n" +
                        "<a href=\"media://inline/" + content.getId() + "\">Inline</a>" );
 
         //Checks the returned value
@@ -208,8 +207,8 @@ public class PortalUrlServiceImpl_processHtmlTest
                           "&nbsp;and a download link:&nbsp;<a href=\"/site/default/draft/context/path/_/attachment/download/" +
                           content.getId() + ":binaryHash2/" + source.getName() + "\">Download</a></p>\n" +
                           "<p>An external link:&nbsp;<a href=\"http://www.enonic.com\">An external  link</a></p>\n" + "<p>&nbsp;</p>\n" +
-                          "<a href=\"/site/default/draft/context/path/_/attachment/inline/" +
-                          content.getId() + ":binaryHash2/" + source.getName() + "\">Inline</a>", processedHtml );
+                          "<a href=\"/site/default/draft/context/path/_/attachment/inline/" + content.getId() + ":binaryHash2/" +
+                          source.getName() + "\">Inline</a>", processedHtml );
     }
 
     @Test
@@ -272,8 +271,7 @@ public class PortalUrlServiceImpl_processHtmlTest
 
         //Checks that the page URL of the content is returned
         final String processedHtml = this.service.processHtml( params );
-        assertEquals( "<a href=\"http://localhost/site/default/draft" + content.getPath() + "\">Content</a>",
-                      processedHtml );
+        assertEquals( "<a href=\"http://localhost/site/default/draft" + content.getPath() + "\">Content</a>", processedHtml );
     }
 
     @Test
@@ -292,11 +290,8 @@ public class PortalUrlServiceImpl_processHtmlTest
 
         //Checks that the page URL of the content is returned
         final String processedHtml = this.service.processHtml( params );
-        assertEquals( "<a href=\"/site/default/draft/context/path/_/image/" + media.getId() +
-                          ":8cf45815bba82c9711c673c9bb7304039a790026/" +
-                          "block-300-126" +
-                          "/" + media.getName() +
-                          "\">Image</a>", processedHtml );
+        assertEquals( "<a href=\"/site/default/draft/context/path/_/image/" + media.getId() + ":8cf45815bba82c9711c673c9bb7304039a790026/" +
+                          "block-300-126" + "/" + media.getName() + "\">Image</a>", processedHtml );
     }
 
     @Test
@@ -305,6 +300,49 @@ public class PortalUrlServiceImpl_processHtmlTest
     {
         assertProcessHtml( "html-with-macros-input.txt", "html-with-macros-output.txt" );
         assertProcessHtml( "html-with-unclosed-macro-input.txt", "html-with-unclosed-macro-output.txt" );
+    }
+
+    @Test
+    public void process_image_with_styles()
+    {
+        //Creates a content
+        final Media media = ContentFixtures.newMedia();
+        Mockito.when( this.contentService.getById( media.getId() ) ).thenReturn( media );
+        Mockito.when( this.contentService.getBinaryKey( media.getId(), media.getMediaAttachment().getBinaryReference() ) ).thenReturn(
+            "binaryHash" );
+
+        final ImageStyle imageStyle = ImageStyle.create().name( "mystyle" ).
+            aspectRatio( "2:1" ).
+            filter( "myfilter" ).
+            build();
+        final StyleDescriptor styleDescriptor = StyleDescriptor.create().
+            application( ApplicationKey.from( "myapp" ) ).
+            addStyleElement( imageStyle ).
+            build();
+        Mockito.when( styleDescriptorService.getByApplications( Mockito.any() ) ).
+            thenReturn( StyleDescriptors.from( styleDescriptor ) );
+
+        //Process an html text containing a style
+        final String link1 = "<a href=\"image://" + media.getId() + "?style=mystyle\">Image</a>";
+        final String link2 = "<a href=\"image://" + media.getId() + "?style=missingstyle\">Image</a>";
+        final ProcessHtmlParams params1 = new ProcessHtmlParams().
+            portalRequest( this.portalRequest ).
+            value( link1 );
+        final ProcessHtmlParams params2 = new ProcessHtmlParams().
+            portalRequest( this.portalRequest ).
+            value( link2 );
+        final String processedLink1 = this.service.processHtml( params1 );
+        final String processedLink2 = this.service.processHtml( params2 );
+
+        //Checks that the page URL of the content is returned
+        final String expectedResult1 =
+            "<a href=\"/site/default/draft/context/path/_/image/" + media.getId() + ":8cf45815bba82c9711c673c9bb7304039a790026/" +
+                "block-768-384" + "/" + media.getName() + "?filter=myfilter\">Image</a>";
+        final String expectedResult2 =
+            "<a href=\"/site/default/draft/context/path/_/image/" + media.getId() + ":8cf45815bba82c9711c673c9bb7304039a790026/" +
+                "width-768" + "/" + media.getName() + "\">Image</a>";
+        assertEquals( expectedResult1, processedLink1 );
+        assertEquals( expectedResult2, processedLink2 );
     }
 
     private void assertProcessHtml( String inputName, String expectedOutputName )

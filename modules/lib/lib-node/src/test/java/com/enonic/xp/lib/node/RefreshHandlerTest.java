@@ -8,6 +8,6 @@ public class RefreshHandlerTest
     @Test
     public void testExample()
     {
-        runScript( "/site/lib/xp/examples/node/refresh.js" );
+        runScript( "/lib/xp/examples/node/refresh.js" );
     }
 }

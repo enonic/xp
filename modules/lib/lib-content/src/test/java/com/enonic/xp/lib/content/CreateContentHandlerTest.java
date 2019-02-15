@@ -98,7 +98,7 @@ public class CreateContentHandlerTest
     public void testExample()
     {
         mockCreateContent();
-        runScript( "/site/lib/xp/examples/content/create.js" );
+        runScript( "/lib/xp/examples/content/create.js" );
     }
 
     @Test
@@ -106,7 +106,7 @@ public class CreateContentHandlerTest
         throws Exception
     {
         mockCreateContent();
-        runFunction( "/site/test/CreateContentHandlerTest.js", "createContent" );
+        runFunction( "/test/CreateContentHandlerTest.js", "createContent" );
     }
 
     @Test
@@ -114,7 +114,7 @@ public class CreateContentHandlerTest
         throws Exception
     {
         mockCreateContent();
-        runFunction( "/site/test/CreateContentHandlerTest.js", "createContentWithChildOrder" );
+        runFunction( "/test/CreateContentHandlerTest.js", "createContentWithChildOrder" );
     }
 
     @Test
@@ -132,7 +132,7 @@ public class CreateContentHandlerTest
         GetContentTypeParams getContentType = GetContentTypeParams.from( ContentTypeName.from( "test:myContentType" ) );
         when( this.contentTypeService.getByName( Mockito.eq( getContentType ) ) ).thenReturn( contentType );
 
-        runFunction( "/site/test/CreateContentHandlerTest.js", "createContentNameAlreadyExists" );
+        runFunction( "/test/CreateContentHandlerTest.js", "createContentNameAlreadyExists" );
     }
 
     @Test
@@ -150,7 +150,7 @@ public class CreateContentHandlerTest
         GetContentTypeParams getContentType = GetContentTypeParams.from( ContentTypeName.from( "test:myContentType" ) );
         when( this.contentTypeService.getByName( Mockito.eq( getContentType ) ) ).thenReturn( contentType );
 
-        runFunction( "/site/test/CreateContentHandlerTest.js", "createContentAutoGenerateName" );
+        runFunction( "/test/CreateContentHandlerTest.js", "createContentAutoGenerateName" );
     }
 
     @Test
@@ -172,7 +172,7 @@ public class CreateContentHandlerTest
         GetContentTypeParams getContentType = GetContentTypeParams.from( ContentTypeName.from( "test:myContentType" ) );
         when( this.contentTypeService.getByName( Mockito.eq( getContentType ) ) ).thenReturn( contentType );
 
-        runFunction( "/site/test/CreateContentHandlerTest.js", "createContentAutoGenerateNameWithExistingName" );
+        runFunction( "/test/CreateContentHandlerTest.js", "createContentAutoGenerateNameWithExistingName" );
     }
 
     private Content createContent( final CreateContentParams params )

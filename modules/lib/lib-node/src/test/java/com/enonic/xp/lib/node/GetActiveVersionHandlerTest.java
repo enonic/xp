@@ -35,7 +35,7 @@ public class GetActiveVersionHandlerTest
         final ArgumentCaptor<GetActiveNodeVersionsParams> getActiveNodeVersionsParamsCaptor =
             ArgumentCaptor.forClass( GetActiveNodeVersionsParams.class );
         Mockito.when( nodeService.getActiveVersions( Mockito.any() ) ).thenReturn( getActiveNodeVersionsResult );
-        runScript( "/site/lib/xp/examples/node/getActiveVersion.js" );
+        runScript( "/lib/xp/examples/node/getActiveVersion.js" );
         Mockito.verify( nodeService ).getActiveVersions( getActiveNodeVersionsParamsCaptor.capture() );
 
         final GetActiveNodeVersionsParams params = getActiveNodeVersionsParamsCaptor.getValue();

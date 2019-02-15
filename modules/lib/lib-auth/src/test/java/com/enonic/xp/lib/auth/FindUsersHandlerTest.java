@@ -33,6 +33,6 @@ public class FindUsersHandlerTest
 
         Mockito.when( securityService.query( Mockito.any( UserQuery.class ) ) ).thenReturn( result );
 
-        runScript( "/site/lib/xp/examples/auth/findUsers.js" );
+        runScript( "/lib/xp/examples/auth/findUsers.js" );
     }
 }

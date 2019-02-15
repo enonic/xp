@@ -37,7 +37,7 @@ public class ContentTypeHandlerTest
         final GetContentTypeParams params = new GetContentTypeParams().contentTypeName( contentType.getName() );
         Mockito.when( contentTypeService.getByName( params ) ).thenReturn( contentType );
 
-        runScript( "/site/lib/xp/examples/content/getType.js" );
+        runScript( "/lib/xp/examples/content/getType.js" );
     }
 
     @Test
@@ -49,7 +49,7 @@ public class ContentTypeHandlerTest
         final ContentTypes contentTypes = testContentTypes();
         Mockito.when( contentTypeService.getAll() ).thenReturn( contentTypes );
 
-        runScript( "/site/lib/xp/examples/content/getTypes.js" );
+        runScript( "/lib/xp/examples/content/getTypes.js" );
     }
 
     @Test
@@ -63,21 +63,21 @@ public class ContentTypeHandlerTest
         final GetContentTypeParams params = new GetContentTypeParams().contentTypeName( contentType.getName() );
         Mockito.when( contentTypeService.getByName( params ) ).thenReturn( contentType );
 
-        runFunction( "/site/test/ContentTypeHandlerTest.js", "testGet" );
+        runFunction( "/test/ContentTypeHandlerTest.js", "testGet" );
     }
 
     @Test
     public void testGetNotFound()
         throws Exception
     {
-        runFunction( "/site/test/ContentTypeHandlerTest.js", "testGetNotFound" );
+        runFunction( "/test/ContentTypeHandlerTest.js", "testGetNotFound" );
     }
 
     @Test
     public void testGetNoName()
         throws Exception
     {
-        runFunction( "/site/test/ContentTypeHandlerTest.js", "testGetNoName" );
+        runFunction( "/test/ContentTypeHandlerTest.js", "testGetNoName" );
     }
 
     @Test
@@ -90,7 +90,7 @@ public class ContentTypeHandlerTest
         final ContentTypes contentTypes = testContentTypes();
         Mockito.when( contentTypeService.getAll() ).thenReturn( contentTypes );
 
-        runFunction( "/site/test/ContentTypeHandlerTest.js", "testList" );
+        runFunction( "/test/ContentTypeHandlerTest.js", "testList" );
     }
 
     private ContentType exampleContentType()
