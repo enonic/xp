@@ -14,7 +14,6 @@ import com.enonic.xp.util.Reference;
 import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageSourceConstants.SRC_COMPONENT_KEY;
 import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageSourceConstants.SRC_CONFIG_KEY;
 import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageSourceConstants.SRC_CONTROLLER_KEY;
-import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageSourceConstants.SRC_CUSTOMIZED_KEY;
 import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageSourceConstants.SRC_FRAGMENT_KEY;
 import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageSourceConstants.SRC_IMAGE_KEY;
 import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageSourceConstants.SRC_NAME_KEY;
@@ -231,7 +230,7 @@ public class FlattenedPageDataUpgrader
         }
     }
 
-    private String getTargetType( final String sourceComponentType )
+    public static String getTargetType( final String sourceComponentType )
     {
         switch ( sourceComponentType )
         {

@@ -3,12 +3,12 @@ package com.enonic.xp.repo.impl.dump.upgrade;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.base.Charsets;
+import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
 
@@ -16,10 +16,15 @@ import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.data.PropertyPath;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.index.PatternIndexConfigDocument;
+import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.repo.impl.dump.serializer.json.BranchDumpEntryJson;
 import com.enonic.xp.repo.impl.dump.serializer.json.VersionDumpEntryJson;
 import com.enonic.xp.repo.impl.dump.serializer.json.VersionsDumpEntryJson;
+import com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageIndexUpgrader;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repo.impl.node.json.IndexConfigDocumentJson;
 import com.enonic.xp.repo.impl.node.json.NodeVersionDataJson;
@@ -100,18 +105,14 @@ public class IndexConfigUpgrader
 
         final NodeVersionDataJson nodeVersionDataJson = getNode( nodeBlobRecord );
 
-        final String language = nodeVersionDataJson.fromJson().build().getData().getString( LANGUAGE );
+        final NodeVersion nodeVersion = nodeVersionDataJson.fromJson().build();
 
-        if ( StringUtils.isNotBlank( language ) )
-        {
-            final BlobKey newIndexConfigBlob = updateLanguageIndexConfig( BlobKey.from( version.getIndexConfigBlobKey() ), language );
+        final BlobKey newIndexConfigBlob = upgradeIndexConfigDocument( BlobKey.from( version.getIndexConfigBlobKey() ), nodeVersion );
 
-            return VersionDumpEntryJson.create( version ).
-                indexConfigBlobKey( newIndexConfigBlob.toString() ).
-                build();
-        }
+        return VersionDumpEntryJson.create( version ).
+            indexConfigBlobKey( newIndexConfigBlob.toString() ).
+            build();
 
-        return version;
     }
 
     private NodeVersionDataJson getNode( final BlobRecord nodeBlobRecord )
@@ -141,18 +142,58 @@ public class IndexConfigUpgrader
         }
     }
 
-    private BlobKey updateLanguageIndexConfig( final BlobKey blobKey, final String language )
+    private BlobKey upgradeIndexConfigDocument( final BlobKey blobKey, final NodeVersion nodeVersion )
     {
         final BlobRecord indexConfigBlobRecord = dumpReader.getDumpBlobStore().
             getRecord( INDEX_CONFIG_SEGMENT, blobKey );
 
-        final String normalizedLanguage = Locale.forLanguageTag( language ).getLanguage();
-        final PatternIndexConfigDocument indexConfigDocument = getIndexConfigDocument( indexConfigBlobRecord );
+        final PatternIndexConfigDocument sourceDocument = getIndexConfigDocument( indexConfigBlobRecord );
 
-        final PatternIndexConfigDocument updatedIndexConfigDocument =
-            PatternIndexConfigDocument.create( indexConfigDocument ).addAllTextConfigLanguage( normalizedLanguage ).build();
+        PatternIndexConfigDocument upgradedDocument = this.upgradeLanguageIndexConfig( sourceDocument, nodeVersion );
+        upgradedDocument = this.upgradePageIndexConfig( upgradedDocument, nodeVersion );
 
-        return storeIndexConfigBlob( updatedIndexConfigDocument );
+        return !upgradedDocument.equals( sourceDocument ) ? storeIndexConfigBlob( upgradedDocument ) : blobKey;
+    }
+
+    private PatternIndexConfigDocument upgradeLanguageIndexConfig( final PatternIndexConfigDocument sourceDocument,
+                                                                   final NodeVersion nodeVersion )
+    {
+        final String language = nodeVersion.getData().getString( LANGUAGE );
+        if ( language != null )
+        {
+            final String normalizedLanguage = Locale.forLanguageTag( language ).getLanguage();
+
+            return PatternIndexConfigDocument.create( sourceDocument ).addAllTextConfigLanguage( normalizedLanguage ).build();
+        }
+        return sourceDocument;
+    }
+
+    private PatternIndexConfigDocument upgradePageIndexConfig( final PatternIndexConfigDocument sourceDocument,
+                                                               final NodeVersion nodeVersion )
+    {
+
+        final List<PropertySet> components = Lists.newArrayList( nodeVersion.getData().getSets( "components" ) );
+
+        if ( components.size() == 0 )
+        {
+            return sourceDocument;
+        }
+
+        final String descriptorKeyStr = nodeVersion.getData().getString( PropertyPath.from( "components.page.descriptor" ) );
+        final DescriptorKey pageDescriptorKey = descriptorKeyStr != null ? DescriptorKey.from( descriptorKeyStr ) : null;
+
+        if ( pageDescriptorKey == null )
+        {
+            return sourceDocument;
+        }
+        final FlattenedPageIndexUpgrader pageIndexUpgrader = new FlattenedPageIndexUpgrader( pageDescriptorKey, components );
+
+        if ( pageIndexUpgrader.needAnUpgrade( sourceDocument ) )
+        {
+            return pageIndexUpgrader.upgrade( sourceDocument );
+        }
+
+        return sourceDocument;
     }
 
     private BlobKey storeIndexConfigBlob( final PatternIndexConfigDocument indexConfigDocument )

@@ -154,26 +154,36 @@ public class PatternIndexConfigDocument
 
         public Builder add( final String path, final IndexConfig indexConfig )
         {
-            final PathIndexConfig pathIndexConfig = PathIndexConfig.create().
-
+            add( PathIndexConfig.create().
                 path( PropertyPath.from( path ) ).
                 indexConfig( indexConfig ).
-                build();
-
-            this.pathIndexConfigs.add( pathIndexConfig );
-            this.stringPathIndexConfigMap.put( path.toLowerCase(), pathIndexConfig );
+                build() );
 
             return this;
         }
 
         public Builder add( final PropertyPath path, final IndexConfig indexConfig )
         {
-            final PathIndexConfig pathIndexConfig = PathIndexConfig.create().
+            add( PathIndexConfig.create().
                 path( path ).
                 indexConfig( indexConfig ).
-                build();
+                build() );
+
+            return this;
+        }
+
+        public Builder add( final PathIndexConfig pathIndexConfig )
+        {
             this.pathIndexConfigs.add( pathIndexConfig );
-            this.stringPathIndexConfigMap.put( path.resetAllIndexesTo( 0 ).toString().toLowerCase(), pathIndexConfig );
+            this.stringPathIndexConfigMap.put( pathIndexConfig.getPath().toString().toLowerCase(), pathIndexConfig );
+
+            return this;
+        }
+
+        public Builder remove( final PathIndexConfig pathIndexConfig )
+        {
+            this.pathIndexConfigs.remove( pathIndexConfig );
+            this.stringPathIndexConfigMap.remove( pathIndexConfig.getPath().toString().toLowerCase() );
 
             return this;
         }
