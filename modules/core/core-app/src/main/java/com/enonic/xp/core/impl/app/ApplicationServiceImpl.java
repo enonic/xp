@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentMap;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
+import org.osgi.framework.Version;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -302,6 +303,12 @@ public final class ApplicationServiceImpl
     {
         try
         {
+            final Version systemVersion = this.context.getBundle().getVersion();
+            if ( !application.includesSystemVersion( systemVersion ) )
+            {
+                throw new ApplicationInvalidVersionException( application, systemVersion );
+            }
+
             application.getBundle().start();
             LOG.info( "Application [{}] started successfully", application.getKey() );
         }
