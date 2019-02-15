@@ -140,7 +140,10 @@ public final class ApplicationServiceImpl
 
         publishInstalledEvent( application );
 
-        doStartApplication( application.getKey(), true );
+        if ( canStartApplication( application ) )
+        {
+            doStartApplication( application.getKey(), true );
+        }
 
         return application;
     }
@@ -166,7 +169,10 @@ public final class ApplicationServiceImpl
 
         LOG.info( "Local application [{}] installed successfully", application.getKey() );
 
-        doStartApplication( application.getKey(), false );
+        if ( canStartApplication( application ) )
+        {
+            doStartApplication( application.getKey(), false );
+        }
 
         return application;
     }
@@ -183,7 +189,10 @@ public final class ApplicationServiceImpl
 
         LOG.info( "Stored application [{}] installed successfully", application.getKey() );
 
-        doStartApplication( application.getKey(), false );
+        if ( canStartApplication( application ) )
+        {
+            doStartApplication( application.getKey(), false );
+        }
 
         return application;
     }
@@ -210,14 +219,14 @@ public final class ApplicationServiceImpl
 
                 LOG.info( "Stored application [{}] installed successfully", installedApp.getKey() );
 
-                if ( storedApplicationIsStarted( applicationNode ) )
+                if ( storedApplicationIsStarted( applicationNode ) && canStartApplication( installedApp ) )
                 {
                     doStartApplication( installedApp.getKey(), false );
                 }
             }
             catch ( Exception e )
             {
-                LOG.error( "Cannot install/start application [{}]", applicationNode.name(), e );
+                LOG.error( "Cannot install application [{}]", applicationNode.name(), e );
             }
         }
     }
@@ -272,11 +281,11 @@ public final class ApplicationServiceImpl
 
         if ( applicationNode != null )
         {
-            doInstallApplication( applicationNode.id(), true );
+            final Application installedApplication = doInstallApplication( applicationNode.id(), true );
 
             LOG.info( "Application [{}] installed successfully", application.getKey() );
 
-            if ( Boolean.TRUE.equals( storedApplicationIsStarted( applicationNode ) ) )
+            if ( Boolean.TRUE.equals( storedApplicationIsStarted( applicationNode ) ) && canStartApplication( installedApplication ) )
             {
                 doStartApplication( application.getKey(), false );
             }
@@ -310,10 +319,9 @@ public final class ApplicationServiceImpl
     {
         try
         {
-            final Version systemVersion = this.context.getBundle().getVersion();
-            if ( !application.includesSystemVersion( systemVersion ) )
+            if ( !hasValidSystemVersion( application ) )
             {
-                throw new ApplicationInvalidVersionException( application, systemVersion );
+                throw new ApplicationInvalidVersionException( application, getSystemVersion() );
             }
 
             application.getBundle().start();
@@ -323,6 +331,22 @@ public final class ApplicationServiceImpl
         {
             throw Exceptions.unchecked( e );
         }
+    }
+
+    private boolean canStartApplication( final Application application )
+    {
+        return hasValidSystemVersion( application );
+    }
+
+    private boolean hasValidSystemVersion( final Application application )
+    {
+        final Version systemVersion = getSystemVersion();
+        return application.includesSystemVersion( systemVersion );
+    }
+
+    private Version getSystemVersion()
+    {
+        return this.context.getBundle().getVersion();
     }
 
     private void doStopApplication( final Application application )
