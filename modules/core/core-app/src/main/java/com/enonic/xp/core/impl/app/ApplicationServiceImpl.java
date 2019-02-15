@@ -208,16 +208,16 @@ public final class ApplicationServiceImpl
             {
                 installedApp = doInstallApplication( applicationNode.id(), true );
 
+                LOG.info( "Stored application [{}] installed successfully", installedApp.getKey() );
+
                 if ( storedApplicationIsStarted( applicationNode ) )
                 {
                     doStartApplication( installedApp.getKey(), false );
                 }
-
-                LOG.info( "Application [{}] installed successfully", installedApp.getKey() );
             }
             catch ( Exception e )
             {
-                LOG.error( "Cannot install application [{}]", applicationNode.name(), e );
+                LOG.error( "Cannot install/start application [{}]", applicationNode.name(), e );
             }
         }
     }
@@ -243,7 +243,14 @@ public final class ApplicationServiceImpl
 
         if ( local )
         {
-            reinstallGlobalApplicationIfExists( key, application );
+            try
+            {
+                reinstallGlobalApplicationIfExists( key, application );
+            }
+            catch ( Exception e )
+            {
+                LOG.warn( "Cannot reinstall global application [{}]", application.getKey(), e );
+            }
         }
 
         if ( triggerEvent )
