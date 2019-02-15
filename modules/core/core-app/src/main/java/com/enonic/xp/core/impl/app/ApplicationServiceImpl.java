@@ -136,7 +136,7 @@ public final class ApplicationServiceImpl
     {
         final Application application = installOrUpdateApplication( byteSource, true );
 
-        LOG.info( "Application [{}] installed successfully from remote source", application.getKey() );
+        LOG.info( "Global Application [{}] installed successfully", application.getKey() );
 
         publishInstalledEvent( application );
 
