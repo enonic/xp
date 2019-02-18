@@ -114,6 +114,15 @@ public final class XmlNodeSerializer
         this.builder.start( "pathIndexConfigs" );
         value.getPathIndexConfigs().forEach( this::serialize );
         this.builder.end();
+
+        this.builder.start( "allTextIndexConfig" );
+        if ( !value.getAllTextConfig().getLanguages().isEmpty() )
+        {
+            this.builder.start( "languages" );
+            value.getAllTextConfig().getLanguages().forEach( language -> serializeValueElement( "language", language ) );
+            this.builder.end();
+        }
+        this.builder.end();
     }
 
     private void serialize( final IndexConfig value )
@@ -137,9 +146,9 @@ public final class XmlNodeSerializer
         if ( !value.getLanguages().isEmpty() )
         {
             this.builder.start( "languages" );
-            for ( IndexValueProcessor indexValueProcessor : value.getIndexValueProcessors() )
+            for ( String language : value.getLanguages() )
             {
-                serializeValueElement( "language", indexValueProcessor.getName() );
+                serializeValueElement( "language", language );
             }
             this.builder.end();
         }
