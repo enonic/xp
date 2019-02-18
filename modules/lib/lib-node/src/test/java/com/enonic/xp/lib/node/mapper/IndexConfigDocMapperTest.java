@@ -25,7 +25,7 @@ public class IndexConfigDocMapperTest
             add( "property1.*", IndexConfig.BY_TYPE ).
             add( "property1.x", IndexConfig.BY_TYPE ).
             add( "property1.property2", IndexConfig.BY_TYPE ).
-            add( "property1.*.property3", IndexConfig.BY_TYPE ).
+            add( "property1.*.property3", IndexConfig.create( IndexConfig.BY_TYPE ).addLanguage( "en" ).build() ).
             build();
 
         final JsonMapGenerator jsonGenerator = new JsonMapGenerator();

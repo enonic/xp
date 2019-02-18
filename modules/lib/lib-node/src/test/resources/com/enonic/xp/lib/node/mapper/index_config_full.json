@@ -21,7 +21,9 @@
         "includeInAllText": false,
         "path": false,
         "indexValueProcessors": [],
-        "languages": []
+        "languages": [
+          "en"
+        ]
       }
     },
     {

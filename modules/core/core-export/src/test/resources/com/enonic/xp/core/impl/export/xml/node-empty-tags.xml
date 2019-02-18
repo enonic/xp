@@ -85,9 +85,17 @@
           <indexValueProcessors>
             <indexValueProcessor>htmlStripper</indexValueProcessor>
           </indexValueProcessors>
+          <languages>
+            <language>en</language>
+          </languages>
         </indexConfig>
         <path>mydata</path>
       </pathIndexConfig>
     </pathIndexConfigs>
+    <allTextIndexConfig>
+      <languages>
+        <language>en</language>
+      </languages>
+    </allTextIndexConfig>
   </indexConfigs>
 </node>
