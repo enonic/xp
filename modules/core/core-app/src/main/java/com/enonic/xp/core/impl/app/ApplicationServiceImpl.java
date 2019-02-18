@@ -484,7 +484,7 @@ public final class ApplicationServiceImpl
     private boolean storedApplicationIsStarted( final Node node )
     {
         final PropertyTree data = node.data();
-        return data.getBoolean( ApplicationPropertyNames.STARTED );
+        return Boolean.TRUE.equals( data.getBoolean( ApplicationPropertyNames.STARTED ));
     }
 
     private boolean applicationBundleInstalled( final ApplicationKey applicationKey )
