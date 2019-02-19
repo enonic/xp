@@ -81,8 +81,11 @@ public class FlattenedPageIndexUpgrader
     {
         BASE_CONFIGS.forEach( result::add );
 
-        result.add( String.join( ELEMENT_DIVIDER, TGT_COMPONENTS_KEY, PAGE, TGT_CONFIG_KEY, getAppName( this.descriptorKey ), "*" ),
-                    IndexConfig.BY_TYPE );
+        if ( this.descriptorKey != null )
+        {
+            result.add( String.join( ELEMENT_DIVIDER, TGT_COMPONENTS_KEY, PAGE, TGT_CONFIG_KEY, getAppName( this.descriptorKey ), "*" ),
+                        IndexConfig.BY_TYPE );
+        }
     }
 
     private void upgradeOldConfigs( final PatternIndexConfigDocument sourceIndexConfigDocument )
