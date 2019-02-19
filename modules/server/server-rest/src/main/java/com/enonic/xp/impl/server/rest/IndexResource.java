@@ -4,7 +4,6 @@ import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -21,7 +20,6 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.impl.server.rest.model.ReindexRequestJson;
 import com.enonic.xp.impl.server.rest.model.ReindexResultJson;
-import com.enonic.xp.impl.server.rest.model.RepositoriesJson;
 import com.enonic.xp.impl.server.rest.model.UpdateIndexSettingsRequestJson;
 import com.enonic.xp.impl.server.rest.model.UpdateIndexSettingsResultJson;
 import com.enonic.xp.index.IndexService;
@@ -30,7 +28,6 @@ import com.enonic.xp.index.ReindexResult;
 import com.enonic.xp.index.UpdateIndexSettingsParams;
 import com.enonic.xp.index.UpdateIndexSettingsResult;
 import com.enonic.xp.jaxrs.JaxRsComponent;
-import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
 import com.enonic.xp.repository.RepositoryService;
@@ -59,14 +56,6 @@ public final class IndexResource
             build() );
 
         return ReindexResultJson.create( result );
-    }
-
-    @GET
-    @Path("listRepositories")
-    public RepositoriesJson listRepositories()
-    {
-        Repositories repos = this.repositoryService.list();
-        return RepositoriesJson.create( repos );
     }
 
     @POST
