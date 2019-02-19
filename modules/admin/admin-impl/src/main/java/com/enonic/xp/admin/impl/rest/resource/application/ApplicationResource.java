@@ -215,12 +215,12 @@ public final class ApplicationResource
                 if ( "localhost".equals( request.getServerName() ) )
                 {
                     builder.setDeploymentUrl(
-                        request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/app/" +
+                        request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/webapp/" +
                             applicationKey.toString() );
                 }
                 else
                 {
-                    builder.setDeploymentUrl( "app/" + applicationKey.toString() );
+                    builder.setDeploymentUrl( "webapp/" + applicationKey.toString() );
                 }
             }
         }

@@ -156,7 +156,7 @@ public class ApplicationResourceTest
         assertJson( "get_application_info.json", response );
 
         final String deploymentUrl = new ObjectMapper().readTree( response ).findPath( "deployment" ).findPath( "url" ).asText();
-        assertEquals( "http://localhost:80/app/testapplication", deploymentUrl );
+        assertEquals( "http://localhost:80/webapp/testapplication", deploymentUrl );
     }
 
     @Test

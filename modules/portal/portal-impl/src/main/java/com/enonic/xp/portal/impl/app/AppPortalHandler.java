@@ -19,7 +19,7 @@ import com.enonic.xp.web.handler.WebHandler;
 public class AppPortalHandler
     extends BasePortalHandler
 {
-    public final static Pattern PATTERN = Pattern.compile( "(/app/([^/]+))(?:/.*)?" );
+    public final static Pattern PATTERN = Pattern.compile( "(/webapp/([^/]+))(?:/.*)?" );
 
     @Override
     protected boolean canHandle( final WebRequest webRequest )

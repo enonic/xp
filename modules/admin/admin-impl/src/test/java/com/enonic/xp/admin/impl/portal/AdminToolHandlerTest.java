@@ -78,14 +78,14 @@ public class AdminToolHandlerTest
     @Test
     public void testCanHandle()
     {
-        this.portalRequest.setRawPath( "/admin/tool/app/tool/1" );
+        this.portalRequest.setRawPath( "/admin/tool/webapp/tool/1" );
         assertTrue( this.handler.canHandle( this.portalRequest ) );
     }
 
     @Test
     public void testCannotHandle()
     {
-        this.portalRequest.setRawPath( "/admin/app/tool/1" );
+        this.portalRequest.setRawPath( "/admin/webapp/tool/1" );
         assertFalse( this.handler.canHandle( this.portalRequest ) );
     }
 
@@ -93,7 +93,7 @@ public class AdminToolHandlerTest
     public void testWithoutPermissions()
         throws Exception
     {
-        this.portalRequest.setRawPath( "/admin/tool/app/tool/1" );
+        this.portalRequest.setRawPath( "/admin/tool/webapp/tool/1" );
         Mockito.when( this.rawRequest.isUserInRole( Mockito.anyString() ) ).thenReturn( false );
         this.handler.doHandle( this.portalRequest, this.webResponse, this.chain );
     }
@@ -103,7 +103,7 @@ public class AdminToolHandlerTest
         throws Exception
     {
         Mockito.when( this.adminToolDescriptorService.getByKey( Mockito.any( DescriptorKey.class ) ) ).thenReturn( null );
-        this.portalRequest.setRawPath( "/admin/tool/app/tool/1" );
+        this.portalRequest.setRawPath( "/admin/tool/webapp/tool/1" );
         this.handler.doHandle( this.portalRequest, this.webResponse, this.chain );
     }
 
@@ -112,7 +112,7 @@ public class AdminToolHandlerTest
         throws Exception
     {
         this.mockDescriptor( DescriptorKey.from( "app:tool" ), false );
-        this.portalRequest.setRawPath( "/admin/tool/app/tool/1" );
+        this.portalRequest.setRawPath( "/admin/tool/webapp/tool/1" );
         this.handler.doHandle( this.portalRequest, this.webResponse, this.chain );
     }
 
@@ -121,11 +121,11 @@ public class AdminToolHandlerTest
         throws Exception
     {
         this.mockDescriptor( DescriptorKey.from( "app:tool" ), true );
-        this.portalRequest.setBaseUri( "/admin/tool/app/tool" );
-        this.portalRequest.setRawPath( "/admin/tool/app/tool/1" );
+        this.portalRequest.setBaseUri( "/admin/tool/webapp/tool" );
+        this.portalRequest.setRawPath( "/admin/tool/webapp/tool/1" );
         WebResponse response = this.handler.doHandle( this.portalRequest, this.webResponse, this.chain );
         assertEquals( this.portalResponse, response );
-        assertEquals( "/admin/tool/app/tool", this.portalRequest.getContextPath() );
+        assertEquals( "/admin/tool/webapp/tool", this.portalRequest.getContextPath() );
     }
 
     private void mockDescriptor( DescriptorKey descriptorKey, boolean hasAccess )

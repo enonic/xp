@@ -19,9 +19,9 @@ import com.enonic.xp.toolbox.util.JsonHelper;
 public class InstallApplicationCommand
     extends RepoCommand
 {
-    public static final String INSTALL_APP_URL_REST_PATH = "/app/installUrl";
+    public static final String INSTALL_APP_URL_REST_PATH = "/webapp/installUrl";
 
-    public static final String INSTALL_APP_FILE_REST_PATH = "/app/install";
+    public static final String INSTALL_APP_FILE_REST_PATH = "/webapp/install";
 
     @Option(name = "-u", description = "The URL of the application", required = false)
     public String url;
