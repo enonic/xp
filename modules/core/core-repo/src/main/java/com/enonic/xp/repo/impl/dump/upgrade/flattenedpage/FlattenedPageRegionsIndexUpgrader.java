@@ -15,8 +15,6 @@ import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.page.DescriptorKey;
 
 import static com.enonic.xp.data.PropertyPath.ELEMENT_DIVIDER;
-import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageSourceConstants.SRC_PAGE_KEY;
-import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageSourceConstants.SRC_REGION_KEY;
 import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageTargetConstants.TGT_COMPONENTS_KEY;
 import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageTargetConstants.TGT_CONFIG_KEY;
 import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageTargetConstants.TGT_DESCRIPTOR_KEY;
@@ -59,10 +57,10 @@ public class FlattenedPageRegionsIndexUpgrader
         this.components = components;
     }
 
-    boolean needAnUpgrade( final PatternIndexConfigDocument sourceIndexConfigDocument )
+    boolean needAnUpgrade()
     {
-        return sourceIndexConfigDocument.getPathIndexConfigs().stream().
-            anyMatch( pathIndexConfig -> pathIndexConfig.matches( String.join( ELEMENT_DIVIDER, SRC_PAGE_KEY, SRC_REGION_KEY ) ) );
+        return !( components.isEmpty() || ( components.size() == 1 &&
+            FlattenedPageTargetConstants.TGT_TYPE_VALUE.PAGE.equals( components.get( 0 ).getString( TGT_TYPE_KEY ) ) ) );
     }
 
     public PatternIndexConfigDocument upgrade( final PatternIndexConfigDocument sourceIndexConfigDocument )

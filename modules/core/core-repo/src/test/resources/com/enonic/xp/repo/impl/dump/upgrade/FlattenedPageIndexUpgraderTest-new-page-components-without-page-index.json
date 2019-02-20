@@ -1,0 +1,14 @@
+{
+  "analyzer": null,
+  "patternConfigs": [],
+  "defaultConfig": {
+    "decideByType": true,
+    "enabled": true,
+    "nGram": false,
+    "fulltext": false,
+    "includeInAllText": false
+  },
+  "allTextConfig": {
+    "languages": []
+  }
+}

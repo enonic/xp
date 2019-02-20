@@ -42,6 +42,11 @@ public class PageConfigProcessor
     @Override
     public PatternIndexConfigDocument.Builder processDocument( final PatternIndexConfigDocument.Builder builder )
     {
+        if ( page == null )
+        {
+            return builder;
+        }
+        
         builder.add( COMPONENTS, IndexConfig.NONE ).
             add( String.join( ELEMENT_DIVIDER, COMPONENTS, PAGE, DESCRIPTOR ), IndexConfig.MINIMAL ).
             add( String.join( ELEMENT_DIVIDER, COMPONENTS, PAGE, TEMPLATE ), IndexConfig.MINIMAL ).

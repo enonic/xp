@@ -61,6 +61,12 @@ public abstract class AbstractRegions
         }
     }
 
+    public boolean hasComponents()
+    {
+        return !this.regions.isEmpty() && this.regions.stream().
+            anyMatch( region -> region.getComponents().size() > 0 );
+    }
+
     @Override
     public Iterator<Region> iterator()
     {

@@ -39,6 +39,16 @@ public class PageConfigProcessorTest
     }
 
     @Test
+    public void test_empty()
+        throws Exception
+    {
+        final PageConfigProcessor configProcessor = new PageConfigProcessor( null, null );
+
+        final PatternIndexConfigDocument result = configProcessor.processDocument( PatternIndexConfigDocument.create() ).build();
+        assertEquals( 0, result.getPathIndexConfigs().size() );
+    }
+
+    @Test
     public void test_size()
         throws Exception
     {

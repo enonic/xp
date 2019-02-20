@@ -57,7 +57,7 @@ public class PageRegionsConfigProcessor
     @Override
     public PatternIndexConfigDocument.Builder processDocument( final PatternIndexConfigDocument.Builder builder )
     {
-        if ( page == null )
+        if ( page == null || !page.hasComponents() )
         {
             return builder;
         }

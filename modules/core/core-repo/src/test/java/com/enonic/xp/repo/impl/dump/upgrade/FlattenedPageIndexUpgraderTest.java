@@ -33,6 +33,19 @@ public class FlattenedPageIndexUpgraderTest
         test( "page-components", "old-page-components-index", "new-page-components-index" );
     }
 
+    @Test
+    public void testPageFlattenedWithoutRegions()
+        throws Exception
+    {
+        test( "page-components-without-regions", "old-page-components-index", "new-page-components-without-regions-index" );
+    }
+
+    @Test
+    public void testPageFlattenedWithoutPage()
+        throws Exception
+    {
+        test( "page-components-without-page", "old-page-components-index", "new-page-components-without-page-index" );
+    }
 
     private void test( final String dataFile, final String oldIndexDocumentFile, final String newIndexDocumentFile )
         throws Exception
@@ -43,19 +56,9 @@ public class FlattenedPageIndexUpgraderTest
 
         final List<PropertySet> components = Lists.newArrayList( data.getSets( "components" ) );
 
-        if ( components.size() == 0 )
-        {
-            throw new RuntimeException( "page components is empty" );
-        }
-
         final String descriptorKeyStr = data.getString( PropertyPath.from( "components.page.descriptor" ) );
 
-        if ( descriptorKeyStr == null )
-        {
-            throw new RuntimeException( "page descriptorKey is null" );
-        }
-
-        final DescriptorKey descriptorKey = DescriptorKey.from( descriptorKeyStr );
+        final DescriptorKey descriptorKey = descriptorKeyStr != null ? DescriptorKey.from( descriptorKeyStr ) : null;
 
         final PatternIndexConfigDocument oldDocument = getIndexConfigDocument( oldIndexDocumentFile );
 

@@ -1,0 +1,23 @@
+{
+  "components": [
+    {
+      "type": "page",
+      "path": "/",
+      "page": [
+        {
+          "descriptor": "com.enonic.app.features:main",
+          "customized": "true",
+          "config": [
+            {
+              "com-enonic-app-features": [
+                {
+                  "htmlArea1": "<b>html value</b>"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

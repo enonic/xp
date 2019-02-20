@@ -90,6 +90,11 @@ public final class Page
         return regions.getComponent( path );
     }
 
+    public boolean hasComponents()
+    {
+        return regions.hasComponents();
+    }
+
     public boolean isCustomized()
     {
         return customized;

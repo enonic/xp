@@ -1,0 +1,78 @@
+{
+  "analyzer": null,
+  "patternConfigs": [
+    {
+      "path": "components.page.config.com-enonic-app-features.htmlarea1",
+      "indexConfig": {
+        "decideByType": true,
+        "enabled": true,
+        "nGram": false,
+        "fulltext": false,
+        "includeInAllText": false,
+        "indexValueProcessors": [
+          "htmlStripper"
+        ]
+      }
+    },
+    {
+      "path": "components.page.config.com-enonic-app-features.*",
+      "indexConfig": {
+        "decideByType": true,
+        "enabled": true,
+        "nGram": false,
+        "fulltext": false,
+        "includeInAllText": false
+      }
+    },
+    {
+      "path": "components.page.template",
+      "indexConfig": {
+        "decideByType": false,
+        "enabled": true,
+        "nGram": false,
+        "fulltext": false,
+        "includeInAllText": false
+      }
+    },
+    {
+      "path": "components.page.descriptor",
+      "indexConfig": {
+        "decideByType": false,
+        "enabled": true,
+        "nGram": false,
+        "fulltext": false,
+        "includeInAllText": false
+      }
+    },
+    {
+      "path": "components.page.customized",
+      "indexConfig": {
+        "decideByType": false,
+        "enabled": true,
+        "nGram": false,
+        "fulltext": false,
+        "includeInAllText": false
+      }
+    },
+    {
+      "path": "components",
+      "indexConfig": {
+        "decideByType": false,
+        "enabled": false,
+        "nGram": false,
+        "fulltext": false,
+        "includeInAllText": false
+      }
+    }
+  ],
+  "defaultConfig": {
+    "decideByType": true,
+    "enabled": true,
+    "nGram": false,
+    "fulltext": false,
+    "includeInAllText": false
+  },
+  "allTextConfig": {
+    "languages": []
+  }
+}

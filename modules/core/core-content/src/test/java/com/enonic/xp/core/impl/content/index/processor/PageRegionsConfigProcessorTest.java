@@ -20,6 +20,7 @@ import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.region.FragmentComponent;
 import com.enonic.xp.region.FragmentComponentType;
+import com.enonic.xp.region.ImageComponent;
 import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.LayoutComponentType;
 import com.enonic.xp.region.LayoutDescriptor;
@@ -32,6 +33,7 @@ import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.region.RegionDescriptor;
 import com.enonic.xp.region.RegionDescriptors;
+import com.enonic.xp.region.TextComponent;
 import com.enonic.xp.region.TextComponentType;
 
 import static com.enonic.xp.core.impl.content.index.processor.PageConfigProcessor.COMPONENTS;
@@ -69,10 +71,30 @@ public class PageRegionsConfigProcessorTest
     }
 
     @Test
-    public void test_size()
+    public void test_empty()
         throws Exception
     {
         final PatternIndexConfigDocument result = processPage( Page.create().regions( PageRegions.create().build() ).build(), null, null );
+        assertEquals( 0, result.getPathIndexConfigs().size() );
+    }
+
+    @Test
+    public void test_size()
+        throws Exception
+    {
+        final Page page = Page.
+            create().
+            regions( PageRegions.create().
+                add( Region.create().
+                    name( "anyRegion" ).
+                    add( ImageComponent.create().
+                        name( "anyComponent" ).
+                        build() ).
+                    build() ).
+                build() ).
+            build();
+
+        final PatternIndexConfigDocument result = processPage( page, null, null );
         assertEquals( 5, result.getPathIndexConfigs().size() );
     }
 
@@ -80,8 +102,21 @@ public class PageRegionsConfigProcessorTest
     public void test_text_component()
         throws Exception
     {
-        final PatternIndexConfigDocument result = processPage( Page.create().regions( PageRegions.create().build() ).build(), null, null );
 
+        final Page page = Page.
+            create().
+            regions( PageRegions.create().
+                add( Region.create().
+                    name( "region1" ).
+                    add( TextComponent.create().
+                        name( "text" ).
+                        text( "textValue" ).
+                        build() ).
+                    build() ).
+                build() ).
+            build();
+
+        final PatternIndexConfigDocument result = processPage( page, null, null );
         assertEquals( TEXT_COMPONENT_INDEX_CONFIG,
                       result.getConfigForPath( PropertyPath.from( COMPONENTS, TextComponentType.INSTANCE.toString(), VALUE ) ) );
 
