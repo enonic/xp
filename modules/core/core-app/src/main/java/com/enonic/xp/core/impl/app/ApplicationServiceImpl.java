@@ -140,7 +140,7 @@ public final class ApplicationServiceImpl
 
         publishInstalledEvent( application );
 
-        if ( canStartApplication( application ) )
+        if ( checkApplicationValidity( application ) )
         {
             doStartApplication( application.getKey(), true );
         }
@@ -169,7 +169,7 @@ public final class ApplicationServiceImpl
 
         LOG.info( "Local application [{}] installed successfully", application.getKey() );
 
-        if ( canStartApplication( application ) )
+        if ( checkApplicationValidity( application ) )
         {
             doStartApplication( application.getKey(), false );
         }
@@ -189,7 +189,7 @@ public final class ApplicationServiceImpl
 
         LOG.info( "Stored application [{}] installed successfully", application.getKey() );
 
-        if ( canStartApplication( application ) )
+        if ( checkApplicationValidity( application ) )
         {
             doStartApplication( application.getKey(), false );
         }
@@ -219,7 +219,7 @@ public final class ApplicationServiceImpl
 
                 LOG.info( "Stored application [{}] installed successfully", installedApp.getKey() );
 
-                if ( storedApplicationIsStarted( applicationNode ) && canStartApplication( installedApp ) )
+                if ( storedApplicationIsStarted( applicationNode ) && checkApplicationValidity( installedApp ) )
                 {
                     doStartApplication( installedApp.getKey(), false );
                 }
@@ -285,7 +285,7 @@ public final class ApplicationServiceImpl
 
             LOG.info( "Application [{}] installed successfully", application.getKey() );
 
-            if ( Boolean.TRUE.equals( storedApplicationIsStarted( applicationNode ) ) && canStartApplication( installedApplication ) )
+            if ( Boolean.TRUE.equals( storedApplicationIsStarted( applicationNode ) ) && checkApplicationValidity( installedApplication ) )
             {
                 doStartApplication( application.getKey(), false );
             }
@@ -319,9 +319,10 @@ public final class ApplicationServiceImpl
     {
         try
         {
-            if ( !hasValidSystemVersion( application ) )
+            final Version systemVersion = getSystemVersion();
+            if ( !application.includesSystemVersion( systemVersion )  )
             {
-                throw new ApplicationInvalidVersionException( application, getSystemVersion() );
+                throw new ApplicationInvalidVersionException( application, systemVersion );
             }
 
             application.getBundle().start();
@@ -333,15 +334,16 @@ public final class ApplicationServiceImpl
         }
     }
 
-    private boolean canStartApplication( final Application application )
-    {
-        return hasValidSystemVersion( application );
-    }
-
-    private boolean hasValidSystemVersion( final Application application )
+    private boolean checkApplicationValidity( final Application application )
     {
         final Version systemVersion = getSystemVersion();
-        return application.includesSystemVersion( systemVersion );
+        if ( !application.includesSystemVersion( systemVersion ) )
+        {
+            LOG.warn( "Application [{}] has an invalid system version range [{}]. Current system version is [{}]", application.getKey(),
+                      application.getSystemVersion(), systemVersion );
+            return false;
+        }
+        return true;
     }
 
     private Version getSystemVersion()
@@ -484,7 +486,7 @@ public final class ApplicationServiceImpl
     private boolean storedApplicationIsStarted( final Node node )
     {
         final PropertyTree data = node.data();
-        return Boolean.TRUE.equals( data.getBoolean( ApplicationPropertyNames.STARTED ));
+        return Boolean.TRUE.equals( data.getBoolean( ApplicationPropertyNames.STARTED ) );
     }
 
     private boolean applicationBundleInstalled( final ApplicationKey applicationKey )
