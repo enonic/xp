@@ -13,13 +13,14 @@ import com.enonic.xp.index.IndexValueProcessor;
 import com.enonic.xp.index.PathIndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.util.Reference;
 
 public class HtmlAreaNodeDataUpgrader
 {
     private static final Pattern HTML_LINK_PATTERN =
         Pattern.compile( "(?:href|src)=(\"((content|media|image)://(?:(download|inline)/)?([0-9a-z-/]+)(\\?[^\"]+)?)\")" );
 
-    private Set<String> references = Sets.newHashSet();
+    private Set<Reference> references = Sets.newHashSet();
 
     private final PatternIndexConfigDocument indexConfigDocument;
 
@@ -42,6 +43,11 @@ public class HtmlAreaNodeDataUpgrader
         //TODO Handle old cases that did not have htmlStripper processors
 
         System.out.println( "References" + references );
+        if ( !references.isEmpty() )
+        {
+            references.forEach( reference -> nodeData.addReference( "processedReferences", reference ) );
+            return true;
+        }
 
         return false;
     }
@@ -84,7 +90,7 @@ public class HtmlAreaNodeDataUpgrader
                 if ( contentMatcher.groupCount() >= 5 )
                 {
                     final String reference = contentMatcher.group( 5 );
-                    references.add( reference );
+                    references.add( Reference.from( reference ) );
                 }
             }
         }
