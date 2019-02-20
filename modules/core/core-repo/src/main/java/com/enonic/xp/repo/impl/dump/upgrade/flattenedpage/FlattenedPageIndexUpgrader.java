@@ -56,7 +56,7 @@ public class FlattenedPageIndexUpgrader
 
             if ( this.flattenedPageRegionsIndexUpgrader.needAnUpgrade() )
             {
-                this.flattenedPageRegionsIndexUpgrader.upgrade( result.build() );
+                result = PatternIndexConfigDocument.create( this.flattenedPageRegionsIndexUpgrader.upgrade( result.build() ) );
             }
         }
 
