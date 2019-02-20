@@ -17,7 +17,17 @@
         "store": "true",
         "index": "not_analyzed"
       },
-      "blobkey": {
+      "nodeblobkey": {
+        "type": "string",
+        "store": "true",
+        "index": "not_analyzed"
+      },
+      "indexconfigblobkey": {
+        "type": "string",
+        "store": "true",
+        "index": "not_analyzed"
+      },
+      "accesscontrolblobkey": {
         "type": "string",
         "store": "true",
         "index": "not_analyzed"

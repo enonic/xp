@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentMap;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
+import org.osgi.framework.Version;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -135,11 +136,14 @@ public final class ApplicationServiceImpl
     {
         final Application application = installOrUpdateApplication( byteSource, true );
 
-        LOG.info( "Application [{}] installed successfully from remote source", application.getKey() );
+        LOG.info( "Global Application [{}] installed successfully", application.getKey() );
 
         publishInstalledEvent( application );
 
-        doStartApplication( application.getKey(), true );
+        if ( checkApplicationValidity( application ) )
+        {
+            doStartApplication( application.getKey(), true );
+        }
 
         return application;
     }
@@ -165,7 +169,10 @@ public final class ApplicationServiceImpl
 
         LOG.info( "Local application [{}] installed successfully", application.getKey() );
 
-        doStartApplication( application.getKey(), false );
+        if ( checkApplicationValidity( application ) )
+        {
+            doStartApplication( application.getKey(), false );
+        }
 
         return application;
     }
@@ -182,7 +189,10 @@ public final class ApplicationServiceImpl
 
         LOG.info( "Stored application [{}] installed successfully", application.getKey() );
 
-        doStartApplication( application.getKey(), false );
+        if ( checkApplicationValidity( application ) )
+        {
+            doStartApplication( application.getKey(), false );
+        }
 
         return application;
     }
@@ -207,12 +217,12 @@ public final class ApplicationServiceImpl
             {
                 installedApp = doInstallApplication( applicationNode.id(), true );
 
-                if ( storedApplicationIsStarted( applicationNode ) )
+                LOG.info( "Stored application [{}] installed successfully", installedApp.getKey() );
+
+                if ( storedApplicationIsStarted( applicationNode ) && checkApplicationValidity( installedApp ) )
                 {
                     doStartApplication( installedApp.getKey(), false );
                 }
-
-                LOG.info( "Application [{}] installed successfully", installedApp.getKey() );
             }
             catch ( Exception e )
             {
@@ -242,7 +252,14 @@ public final class ApplicationServiceImpl
 
         if ( local )
         {
-            reinstallGlobalApplicationIfExists( key, application );
+            try
+            {
+                reinstallGlobalApplicationIfExists( key, application );
+            }
+            catch ( Exception e )
+            {
+                LOG.warn( "Cannot reinstall global application [{}]", application.getKey(), e );
+            }
         }
 
         if ( triggerEvent )
@@ -264,11 +281,11 @@ public final class ApplicationServiceImpl
 
         if ( applicationNode != null )
         {
-            doInstallApplication( applicationNode.id(), true );
+            final Application installedApplication = doInstallApplication( applicationNode.id(), true );
 
             LOG.info( "Application [{}] installed successfully", application.getKey() );
 
-            if ( Boolean.TRUE.equals( storedApplicationIsStarted( applicationNode ) ) )
+            if ( Boolean.TRUE.equals( storedApplicationIsStarted( applicationNode ) ) && checkApplicationValidity( installedApplication ) )
             {
                 doStartApplication( application.getKey(), false );
             }
@@ -302,6 +319,12 @@ public final class ApplicationServiceImpl
     {
         try
         {
+            final Version systemVersion = getSystemVersion();
+            if ( !application.includesSystemVersion( systemVersion )  )
+            {
+                throw new ApplicationInvalidVersionException( application, systemVersion );
+            }
+
             application.getBundle().start();
             LOG.info( "Application [{}] started successfully", application.getKey() );
         }
@@ -309,6 +332,23 @@ public final class ApplicationServiceImpl
         {
             throw Exceptions.unchecked( e );
         }
+    }
+
+    private boolean checkApplicationValidity( final Application application )
+    {
+        final Version systemVersion = getSystemVersion();
+        if ( !application.includesSystemVersion( systemVersion ) )
+        {
+            LOG.warn( "Application [{}] has an invalid system version range [{}]. Current system version is [{}]", application.getKey(),
+                      application.getSystemVersion(), systemVersion );
+            return false;
+        }
+        return true;
+    }
+
+    private Version getSystemVersion()
+    {
+        return this.context.getBundle().getVersion();
     }
 
     private void doStopApplication( final Application application )
@@ -446,7 +486,7 @@ public final class ApplicationServiceImpl
     private boolean storedApplicationIsStarted( final Node node )
     {
         final PropertyTree data = node.data();
-        return data.getBoolean( ApplicationPropertyNames.STARTED );
+        return Boolean.TRUE.equals( data.getBoolean( ApplicationPropertyNames.STARTED ) );
     }
 
     private boolean applicationBundleInstalled( final ApplicationKey applicationKey )

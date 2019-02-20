@@ -4,6 +4,7 @@ import java.time.Instant;
 
 import com.google.common.annotations.Beta;
 
+import com.enonic.xp.blob.BlobKeys;
 import com.enonic.xp.blob.NodeVersionKey;
 
 @Beta
@@ -13,6 +14,8 @@ public class NodeVersionMetadata
     private final NodeVersionId nodeVersionId;
 
     private final NodeVersionKey nodeVersionKey;
+
+    private final BlobKeys binaryBlobKeys;
 
     private final NodeId nodeId;
 
@@ -26,6 +29,7 @@ public class NodeVersionMetadata
     {
         nodeVersionId = builder.nodeVersionId;
         nodeVersionKey = builder.nodeVersionKey;
+        binaryBlobKeys = builder.binaryBlobKeys;
         nodeId = builder.nodeId;
         nodePath = builder.nodePath;
         nodeCommitId = builder.nodeCommitId;
@@ -50,6 +54,11 @@ public class NodeVersionMetadata
     public NodeVersionKey getNodeVersionKey()
     {
         return nodeVersionKey;
+    }
+
+    public BlobKeys getBinaryBlobKeys()
+    {
+        return binaryBlobKeys;
     }
 
     public NodeId getNodeId()
@@ -95,6 +104,8 @@ public class NodeVersionMetadata
 
         private NodeVersionKey nodeVersionKey;
 
+        private BlobKeys binaryBlobKeys;
+
         private NodeId nodeId;
 
         private NodePath nodePath;
@@ -111,6 +122,7 @@ public class NodeVersionMetadata
         {
             nodeVersionId = nodeVersionMetadata.nodeVersionId;
             nodeVersionKey = nodeVersionMetadata.nodeVersionKey;
+            binaryBlobKeys = nodeVersionMetadata.binaryBlobKeys;
             nodeId = nodeVersionMetadata.nodeId;
             nodePath = nodeVersionMetadata.nodePath;
             nodeCommitId = nodeVersionMetadata.nodeCommitId;
@@ -126,6 +138,12 @@ public class NodeVersionMetadata
         public Builder nodeVersionKey( NodeVersionKey nodeVersionKey )
         {
             this.nodeVersionKey = nodeVersionKey;
+            return this;
+        }
+
+        public Builder binaryBlobKeys( BlobKeys binaryBlobKeys )
+        {
+            this.binaryBlobKeys = binaryBlobKeys;
             return this;
         }
 
@@ -181,6 +199,10 @@ public class NodeVersionMetadata
         {
             return false;
         }
+        if ( binaryBlobKeys != null ? !binaryBlobKeys.equals( that.binaryBlobKeys ) : that.binaryBlobKeys != null )
+        {
+            return false;
+        }
         if ( nodeId != null ? !nodeId.equals( that.nodeId ) : that.nodeId != null )
         {
             return false;
@@ -202,6 +224,7 @@ public class NodeVersionMetadata
     {
         int result = nodeVersionId != null ? nodeVersionId.hashCode() : 0;
         result = 31 * result + ( nodeVersionKey != null ? nodeVersionKey.hashCode() : 0 );
+        result = 31 * result + ( binaryBlobKeys != null ? binaryBlobKeys.hashCode() : 0 );
         result = 31 * result + ( nodeId != null ? nodeId.hashCode() : 0 );
         result = 31 * result + ( nodePath != null ? nodePath.hashCode() : 0 );
         result = 31 * result + ( nodeCommitId != null ? nodeCommitId.hashCode() : 0 );

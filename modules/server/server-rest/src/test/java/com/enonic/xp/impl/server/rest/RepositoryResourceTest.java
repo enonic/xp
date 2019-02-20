@@ -10,20 +10,28 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.impl.server.rest.model.ExportNodesRequestJson;
 import com.enonic.xp.impl.server.rest.model.ImportNodesRequestJson;
+import com.enonic.xp.impl.server.rest.model.RepositoriesJson;
 import com.enonic.xp.impl.server.rest.task.ExportRunnableTask;
 import com.enonic.xp.impl.server.rest.task.ImportRunnableTask;
+import com.enonic.xp.repository.Repositories;
+import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repository.RepositoryConstants;
+import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskResultJson;
 import com.enonic.xp.task.TaskService;
 
 import static org.mockito.Matchers.eq;
 
-public class ExportResourceTest
+public class RepositoryResourceTest
     extends ServerRestTestSupport
 {
     private TaskService taskService;
 
-    private ExportResource resource;
+    private RepositoryService repoService;
+
+    private RepositoryResource resource;
 
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
@@ -37,12 +45,14 @@ public class ExportResourceTest
     }
 
     @Override
-    protected ExportResource getResourceInstance()
+    protected RepositoryResource getResourceInstance()
     {
         taskService = Mockito.mock( TaskService.class );
+        repoService = Mockito.mock( RepositoryService.class );
 
-        resource = new ExportResource();
+        resource = new RepositoryResource();
         resource.setTaskService( taskService );
+        resource.setRepositoryService( repoService );
 
         return resource;
     }
@@ -72,5 +82,19 @@ public class ExportResourceTest
 
         final TaskResultJson result = resource.importNodes( json );
         assertEquals( "task-id", result.getTaskId() );
+    }
+
+    @Test
+    public void listRepositories()
+    {
+        Repositories.Builder builder = Repositories.create();
+        for ( int i = 0; i < 5; i++ )
+        {
+            builder.add( Repository.create().id( RepositoryId.from( "repo-" + i ) ).branches( RepositoryConstants.MASTER_BRANCH ).build() );
+        }
+        Mockito.when( repoService.list() ).thenReturn( builder.build() );
+
+        final RepositoriesJson result = resource.listRepositories();
+        assertEquals( 5, result.repositories.size() );
     }
 }

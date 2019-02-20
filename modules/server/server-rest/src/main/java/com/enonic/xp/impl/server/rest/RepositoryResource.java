@@ -1,6 +1,7 @@
 package com.enonic.xp.impl.server.rest;
 
 import javax.annotation.security.RolesAllowed;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -12,10 +13,12 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.export.ExportService;
 import com.enonic.xp.impl.server.rest.model.ExportNodesRequestJson;
 import com.enonic.xp.impl.server.rest.model.ImportNodesRequestJson;
+import com.enonic.xp.impl.server.rest.model.RepositoriesJson;
 import com.enonic.xp.impl.server.rest.task.ExportRunnableTask;
 import com.enonic.xp.impl.server.rest.task.ImportRunnableTask;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.repository.NodeRepositoryService;
+import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.task.TaskResultJson;
@@ -25,7 +28,7 @@ import com.enonic.xp.task.TaskService;
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed(RoleKeys.ADMIN_ID)
 @Component(immediate = true, property = "group=api")
-public final class ExportResource
+public final class RepositoryResource
     implements JaxRsComponent
 {
     private ExportService exportService;
@@ -64,6 +67,14 @@ public final class ExportResource
             params( request ).
             build().
             createTaskResult();
+    }
+
+    @GET
+    @Path("list")
+    public RepositoriesJson listRepositories()
+    {
+        Repositories repos = this.repositoryService.list();
+        return RepositoriesJson.create( repos );
     }
 
     @SuppressWarnings("UnusedDeclaration")
