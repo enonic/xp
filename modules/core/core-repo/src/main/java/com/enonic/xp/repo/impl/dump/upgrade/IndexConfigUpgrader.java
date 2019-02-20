@@ -107,11 +107,16 @@ public class IndexConfigUpgrader
 
         final NodeVersion nodeVersion = nodeVersionDataJson.fromJson().build();
 
-        final BlobKey newIndexConfigBlob = upgradeIndexConfigDocument( BlobKey.from( version.getIndexConfigBlobKey() ), nodeVersion );
+        if ( ContentConstants.CONTENT_NODE_COLLECTION.equals( nodeVersion.getNodeType() ) )
+        {
+            final BlobKey newIndexConfigBlob = upgradeIndexConfigDocument( BlobKey.from( version.getIndexConfigBlobKey() ), nodeVersion );
 
-        return VersionDumpEntryJson.create( version ).
-            indexConfigBlobKey( newIndexConfigBlob.toString() ).
-            build();
+            return VersionDumpEntryJson.create( version ).
+                indexConfigBlobKey( newIndexConfigBlob.toString() ).
+                build();
+        }
+
+        return version;
 
     }
 
@@ -171,21 +176,11 @@ public class IndexConfigUpgrader
     private PatternIndexConfigDocument upgradePageIndexConfig( final PatternIndexConfigDocument sourceDocument,
                                                                final NodeVersion nodeVersion )
     {
-
         final List<PropertySet> components = Lists.newArrayList( nodeVersion.getData().getSets( "components" ) );
-
-        if ( components.size() == 0 )
-        {
-            return sourceDocument;
-        }
 
         final String descriptorKeyStr = nodeVersion.getData().getString( PropertyPath.from( "components.page.descriptor" ) );
         final DescriptorKey pageDescriptorKey = descriptorKeyStr != null ? DescriptorKey.from( descriptorKeyStr ) : null;
 
-        if ( pageDescriptorKey == null )
-        {
-            return sourceDocument;
-        }
         final FlattenedPageIndexUpgrader pageIndexUpgrader = new FlattenedPageIndexUpgrader( pageDescriptorKey, components );
 
         if ( pageIndexUpgrader.needAnUpgrade( sourceDocument ) )
