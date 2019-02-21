@@ -228,7 +228,7 @@ public class ServiceHandlerTest
     public void executeScript_validApplication()
         throws Exception
     {
-        this.request.setRawPath( "/app/demo/_/service/demo/test" );
+        this.request.setRawPath( "/webapp/demo/_/service/demo/test" );
         this.request.setEndpointPath( "/_/service/demo/test" );
 
         final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), null );
@@ -241,7 +241,7 @@ public class ServiceHandlerTest
     public void executeScript_invalidApplication()
         throws Exception
     {
-        this.request.setRawPath( "/app/forbidden/_/service/demo/test" );
+        this.request.setRawPath( "/webapp/forbidden/_/service/demo/test" );
         this.request.setEndpointPath( "/_/service/demo/test" );
 
         final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), null );

@@ -4,7 +4,7 @@
     "total": 0
   },
   "deployment": {
-    "url": "http://localhost:80/app/testapplication"
+    "url": "http://localhost:80/webapp/testapplication"
   },
   "idProviderApplication": {
     "idProviders": null,

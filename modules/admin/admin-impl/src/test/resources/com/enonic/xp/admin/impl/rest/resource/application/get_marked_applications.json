@@ -8,7 +8,7 @@
       "latestVersion": "1.2.0",
       "versions": {
         "1.2.0": {
-          "downloadUrl": "http://repo.enonic.com/public/com/enonic/app/superhero/1.2.0/superhero-1.2.0.jar"
+          "downloadUrl": "http://repo.enonic.com/public/com/enonic/webapp/superhero/1.2.0/superhero-1.2.0.jar"
         }
       }
     },
@@ -20,10 +20,10 @@
       "latestVersion": "1.1.0",
       "versions": {
         "1.0.0": {
-          "downloadUrl": "https://repo.enonic.com/public/com/enonic/app/app-google-analytics/1.0.0/app-google-analytics-1.1.0.jar"
+          "downloadUrl": "https://repo.enonic.com/public/com/enonic/webapp/app-google-analytics/1.0.0/app-google-analytics-1.1.0.jar"
         },
         "1.1.0": {
-          "downloadUrl": "https://repo.enonic.com/public/com/enonic/app/app-google-analytics/1.0.0/app-google-analytics-1.0.0.jar"
+          "downloadUrl": "https://repo.enonic.com/public/com/enonic/webapp/app-google-analytics/1.0.0/app-google-analytics-1.0.0.jar"
         }
       }
     }

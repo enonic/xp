@@ -83,10 +83,10 @@ public class WebAppHandlerTest
         this.request.setRawPath( "/site/a/b" );
         assertEquals( false, this.handler.canHandle( this.request ) );
 
-        this.request.setRawPath( "/app/myapp" );
+        this.request.setRawPath( "/webapp/myapp" );
         assertEquals( true, this.handler.canHandle( this.request ) );
 
-        this.request.setRawPath( "/app/myapp/a/b" );
+        this.request.setRawPath( "/webapp/myapp/a/b" );
         assertEquals( true, this.handler.canHandle( this.request ) );
     }
 
@@ -104,7 +104,7 @@ public class WebAppHandlerTest
     {
         final Resource resource = mockResource( "myapp:/assets/a/b.txt", "hello".getBytes() );
 
-        this.request.setRawPath( "/app/myapp/a/b.txt" );
+        this.request.setRawPath( "/webapp/myapp/a/b.txt" );
         this.request.setMethod( HttpMethod.GET );
 
         final WebResponse response = this.handler.doHandle( this.request, null, this.chain );
@@ -119,8 +119,8 @@ public class WebAppHandlerTest
         mockResource( "myapp:/assets/a.txt", null );
 
         this.request.setApplicationKey( ApplicationKey.from( "myapp" ) );
-        this.request.setBaseUri( "/app/myapp" );
-        this.request.setRawPath( "/app/myapp/a.txt" );
+        this.request.setBaseUri( "/webapp/myapp" );
+        this.request.setRawPath( "/webapp/myapp/a.txt" );
 
         final ControllerScript script = Mockito.mock( ControllerScript.class );
         Mockito.when( this.controllerScriptFactory.fromScript( ResourceKey.from( "myapp:/webapp/webapp.js" ) ) ).thenReturn( script );
@@ -129,7 +129,7 @@ public class WebAppHandlerTest
         Mockito.when( script.execute( Mockito.any() ) ).thenReturn( response );
 
         assertSame( response, this.handler.doHandle( this.request, null, this.chain ) );
-        assertEquals( "/app/myapp", this.request.getContextPath() );
+        assertEquals( "/webapp/myapp", this.request.getContextPath() );
     }
 
     @Test
@@ -139,7 +139,7 @@ public class WebAppHandlerTest
         mockResource( "myapp:/assets/a.txt", null );
 
         this.request.setApplicationKey( ApplicationKey.from( "myapp" ) );
-        this.request.setRawPath( "/app/myapp/a.txt" );
+        this.request.setRawPath( "/webapp/myapp/a.txt" );
 
         final WebResponse response = this.handler.doHandle( this.request, null, this.chain );
         assertEquals( HttpStatus.INTERNAL_SERVER_ERROR, response.getStatus() );
