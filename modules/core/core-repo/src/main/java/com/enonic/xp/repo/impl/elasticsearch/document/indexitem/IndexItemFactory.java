@@ -7,28 +7,30 @@ import com.google.common.collect.Lists;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.index.IndexConfig;
+import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.index.IndexValueProcessor;
 
 class IndexItemFactory
 {
-    public static List<IndexItem> create( final Property property, final IndexConfig indexConfig )
+    public static List<IndexItem> create( final Property property, final IndexConfigDocument indexConfigDocument )
     {
-        Value processedPropertyValue = applyValueProcessors( property.getValue(), indexConfig );
+        final Value processedPropertyValue =
+            applyValueProcessors( property.getValue(), indexConfigDocument.getConfigForPath( property.getPath() ) );
 
-        return createItems( IndexPath.from( property ), indexConfig, processedPropertyValue );
+        return createItems( IndexPath.from( property ), indexConfigDocument, processedPropertyValue );
     }
 
-    public static List<IndexItem> create( final String name, final Value value, final IndexConfig indexConfig )
+    public static List<IndexItem> create( final IndexPath indexPath, final Value value, final IndexConfigDocument indexConfigDocument )
     {
-        return doCreate( name, value, indexConfig );
+        return doCreate( indexPath, value, indexConfigDocument );
     }
 
-    private static List<IndexItem> doCreate( final String name, final Value value, final IndexConfig indexConfig )
+    private static List<IndexItem> doCreate( final IndexPath indexPath, final Value value, final IndexConfigDocument indexConfigDocument )
     {
-        Value processedPropertyValue = applyValueProcessors( value, indexConfig );
+        Value processedPropertyValue = applyValueProcessors( value, indexConfigDocument.getConfigForPath( indexPath ) );
 
-        return createItems( IndexPath.from( name ), indexConfig, processedPropertyValue );
+        return createItems( indexPath, indexConfigDocument, processedPropertyValue );
     }
 
     private static Value applyValueProcessors( final Value value, final IndexConfig indexConfig )
@@ -42,17 +44,20 @@ class IndexItemFactory
         return processedPropertyValue;
     }
 
-    private static List<IndexItem> createItems( final IndexPath indexPath, final IndexConfig indexConfig,
+    private static List<IndexItem> createItems( final IndexPath indexPath, final IndexConfigDocument indexConfigDocument,
                                                 final Value processedPropertyValue )
     {
         final List<IndexItem> items = Lists.newArrayList();
+
+        final IndexConfig indexConfig = indexConfigDocument.getConfigForPath( indexPath );
 
         if ( indexConfig.isEnabled() )
         {
             items.addAll( BaseTypeFactory.create( indexPath, processedPropertyValue ) );
             items.addAll( FulltextTypeFactory.create( indexPath, processedPropertyValue, indexConfig ) );
             items.add( OrderByTypeFactory.create( indexPath, processedPropertyValue ) );
-            items.addAll( AllTextTypeFactory.create( processedPropertyValue, indexConfig ) );
+            items.addAll( AllTextTypeFactory.create( processedPropertyValue, indexConfig, indexConfigDocument.getAllTextConfig() ) );
+            items.addAll( StemmedTypeFactory.create( indexPath, processedPropertyValue, indexConfig ) );
 
             if ( indexConfig.isPath() )
             {

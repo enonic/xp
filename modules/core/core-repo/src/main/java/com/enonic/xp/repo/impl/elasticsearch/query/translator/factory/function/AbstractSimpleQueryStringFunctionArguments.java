@@ -29,13 +29,6 @@ public abstract class AbstractSimpleQueryStringFunctionArguments
 
     private String analyzer;
 
-    protected abstract String getDefaultAnalyzer();
-
-    public String getAnalyzer()
-    {
-        return analyzer;
-    }
-
     AbstractSimpleQueryStringFunctionArguments( final List<ValueExpr> arguments )
     {
         verifyNumberOfArguments( arguments );
@@ -84,15 +77,9 @@ public abstract class AbstractSimpleQueryStringFunctionArguments
         }
     }
 
-    private void setAnalyzer( final ValueExpr expr )
+    public String getAnalyzer()
     {
-        if ( expr == null )
-        {
-            this.analyzer = getDefaultAnalyzer();
-            return;
-        }
-
-        this.analyzer = expr.getValue().asString();
+        return analyzer;
     }
 
     private ValueExpr getValueAt( final List<ValueExpr> arguments, final int pos )
@@ -119,6 +106,13 @@ public abstract class AbstractSimpleQueryStringFunctionArguments
     {
         return searchString;
     }
+
+    private void setAnalyzer( final ValueExpr expr )
+    {
+        this.analyzer = this.resolveAnalyzer( expr != null ? expr.getValue().asString() : "" );
+    }
+
+    protected abstract String resolveAnalyzer( final String value );
 
     public abstract String resolveQueryFieldName( final String baseFieldName );
 }

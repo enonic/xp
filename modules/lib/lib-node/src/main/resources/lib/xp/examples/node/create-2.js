@@ -86,7 +86,8 @@ var expected = {
                 "fulltext": false,
                 "includeInAllText": false,
                 "path": false,
-                "indexValueProcessors": []
+                "indexValueProcessors": [],
+                "languages": []
             },
             "configs": [
                 {
@@ -98,7 +99,8 @@ var expected = {
                         "fulltext": true,
                         "includeInAllText": true,
                         "path": false,
-                        "indexValueProcessors": []
+                        "indexValueProcessors": [],
+                        "languages": []
                     }
                 }
             ]

@@ -11,6 +11,7 @@ import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.index.IndexFieldNameNormalizer;
 import com.enonic.xp.repo.impl.index.IndexValueType;
+import com.enonic.xp.repo.impl.index.IndexValueTypeInterface;
 
 abstract class AbstractQueryFieldNameResolver
     implements QueryFieldNameResolver
@@ -46,7 +47,7 @@ abstract class AbstractQueryFieldNameResolver
     }
 
 
-    public String resolve( final String queryFieldName, final IndexValueType indexValueType )
+    public String resolve( final String queryFieldName, final IndexValueTypeInterface indexValueType )
     {
         return appendIndexValueType( queryFieldName, indexValueType );
     }
@@ -90,5 +91,5 @@ abstract class AbstractQueryFieldNameResolver
 
     protected abstract List<String> getBuiltInFields();
 
-    protected abstract String appendIndexValueType( final String baseFieldName, final IndexValueType indexValueType );
+    protected abstract String appendIndexValueType( final String baseFieldName, final IndexValueTypeInterface indexValueType );
 }

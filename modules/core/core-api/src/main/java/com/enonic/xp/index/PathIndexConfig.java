@@ -27,8 +27,11 @@ public class PathIndexConfig
 
     public boolean matches( final PropertyPath dataPath )
     {
-        final String testPath = dataPath.resetAllIndexesTo( 0 ).toString();
+        return matches( dataPath.resetAllIndexesTo( 0 ).toString() );
+    }
 
+    public boolean matches( final String testPath )
+    {
         return testPath.startsWith( path.toString() );
     }
 

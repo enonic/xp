@@ -1,0 +1,26 @@
+{
+  "dynamic_templates": [
+    {
+      "template_stemmed_en": {
+        "mapping": {
+          "type": "string",
+          "store": "no",
+          "index": "analyzed",
+          "analyzer": "language_analyzer_en",
+          "include_in_all": false
+        },
+        "match": "*._stemmed_en"
+      },
+      "template_stemmed_no": {
+        "mapping": {
+          "type": "string",
+          "store": "no",
+          "index": "analyzed",
+          "analyzer": "language_analyzer_no",
+          "include_in_all": false
+        },
+        "match": "*._stemmed_no"
+      }
+    }
+  ]
+}

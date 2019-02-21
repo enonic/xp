@@ -1,0 +1,157 @@
+{
+  "allTextConfig": {
+    "languages": []
+  },
+  "analyzer": "document_index_default",
+  "defaultConfig": {
+    "decideByType": true,
+    "enabled": true,
+    "fulltext": false,
+    "includeInAllText": false,
+    "nGram": false
+  },
+  "patternConfigs": [
+    {
+      "indexConfig": {
+        "decideByType": true,
+        "enabled": true,
+        "fulltext": false,
+        "includeInAllText": false,
+        "nGram": false
+      },
+      "path": "page.region.**.PartComponent.config.*"
+    },
+    {
+      "indexConfig": {
+        "decideByType": true,
+        "enabled": true,
+        "fulltext": false,
+        "includeInAllText": false,
+        "nGram": false
+      },
+      "path": "page.region.**.LayoutComponent.config.*"
+    },
+    {
+      "indexConfig": {
+        "decideByType": false,
+        "enabled": true,
+        "fulltext": true,
+        "includeInAllText": true,
+        "indexValueProcessors": [
+          "htmlStripper"
+        ],
+        "nGram": true
+      },
+      "path": "page.region.**.TextComponent.text"
+    },
+    {
+      "indexConfig": {
+        "decideByType": false,
+        "enabled": true,
+        "fulltext": false,
+        "includeInAllText": false,
+        "nGram": false
+      },
+      "path": "page.region.**.TextComponent.*"
+    },
+    {
+      "indexConfig": {
+        "decideByType": false,
+        "enabled": true,
+        "fulltext": false,
+        "includeInAllText": false,
+        "nGram": false
+      },
+      "path": "page.region.**.PartComponent.*"
+    },
+    {
+      "indexConfig": {
+        "decideByType": false,
+        "enabled": true,
+        "fulltext": false,
+        "includeInAllText": false,
+        "nGram": false
+      },
+      "path": "page.region.**.LayoutComponent.*"
+    },
+    {
+      "indexConfig": {
+        "decideByType": false,
+        "enabled": true,
+        "fulltext": false,
+        "includeInAllText": false,
+        "nGram": false
+      },
+      "path": "page.region.**.FragmentComponent.*"
+    },
+    {
+      "indexConfig": {
+        "decideByType": true,
+        "enabled": true,
+        "fulltext": false,
+        "includeInAllText": false,
+        "indexValueProcessors": [
+          "htmlStripper"
+        ],
+        "nGram": false
+      },
+      "path": "page.region.component.LayoutComponent.region.component.PartComponent.config.htmlarea3"
+    },
+    {
+      "indexConfig": {
+        "decideByType": true,
+        "enabled": true,
+        "fulltext": false,
+        "includeInAllText": false,
+        "indexValueProcessors": [
+          "htmlStripper"
+        ],
+        "nGram": false
+      },
+      "path": "page.region.component.LayoutComponent.config.htmlarea2"
+    },
+    {
+      "indexConfig": {
+        "decideByType": true,
+        "enabled": true,
+        "fulltext": false,
+        "includeInAllText": false,
+        "indexValueProcessors": [
+          "htmlStripper"
+        ],
+        "nGram": false
+      },
+      "path": "page.config.htmlarea1"
+    },
+    {
+      "indexConfig": {
+        "decideByType": false,
+        "enabled": false,
+        "fulltext": false,
+        "includeInAllText": false,
+        "nGram": false
+      },
+      "path": "page.regions"
+    },
+    {
+      "indexConfig": {
+        "decideByType": false,
+        "enabled": true,
+        "fulltext": false,
+        "includeInAllText": false,
+        "nGram": false
+      },
+      "path": "page.controller"
+    },
+    {
+      "indexConfig": {
+        "decideByType": false,
+        "enabled": false,
+        "fulltext": false,
+        "includeInAllText": false,
+        "nGram": false
+      },
+      "path": "page"
+    }
+  ]
+}

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.index.PathIndexConfig;
 
-final class PatternConfigJson
+public final class PatternConfigJson
 {
     @JsonProperty("path")
     private String path;

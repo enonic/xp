@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.index;
 
 public enum IndexValueType
+    implements IndexValueTypeInterface
 {
     DATETIME( "_datetime" ),
 
@@ -17,8 +18,6 @@ public enum IndexValueType
     PATH( "_path" ),
 
     STRING( "" );
-
-    public static final String INDEX_VALUE_TYPE_SEPARATOR = ".";
 
     private final String postfix;
 

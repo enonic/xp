@@ -18,6 +18,19 @@ public final class IndexConfigDocumentJson
     @JsonProperty("defaultConfig")
     private IndexConfigJson defaultConfig;
 
+    @JsonProperty("allTextConfig")
+    private AllTextIndexConfigJson allTextConfig;
+
+    public static IndexConfigDocumentJson toJson( final PatternIndexConfigDocument config )
+    {
+        final IndexConfigDocumentJson json = new IndexConfigDocumentJson();
+        json.analyzer = config.getAnalyzer();
+        json.patternConfigs = config.getPathIndexConfigs().stream().map( PatternConfigJson::toJson ).collect( Collectors.toList() );
+        json.defaultConfig = IndexConfigJson.toJson( config.getDefaultConfig() );
+        json.allTextConfig = AllTextIndexConfigJson.toJson( config.getAllTextConfig() );
+        return json;
+    }
+
     public PatternIndexConfigDocument fromJson()
     {
         final PatternIndexConfigDocument.Builder builder = PatternIndexConfigDocument.create().
@@ -29,15 +42,10 @@ public final class IndexConfigDocumentJson
             builder.addPattern( patternConfigJson.fromJson() );
         }
 
+        if ( this.allTextConfig != null )
+        {
+            this.allTextConfig.fromJson().getLanguages().forEach( builder::addAllTextConfigLanguage );
+        }
         return builder.build();
-    }
-
-    public static IndexConfigDocumentJson toJson( final PatternIndexConfigDocument config )
-    {
-        final IndexConfigDocumentJson json = new IndexConfigDocumentJson();
-        json.analyzer = config.getAnalyzer();
-        json.patternConfigs = config.getPathIndexConfigs().stream().map( PatternConfigJson::toJson ).collect( Collectors.toList() );
-        json.defaultConfig = IndexConfigJson.toJson( config.getDefaultConfig() );
-        return json;
     }
 }

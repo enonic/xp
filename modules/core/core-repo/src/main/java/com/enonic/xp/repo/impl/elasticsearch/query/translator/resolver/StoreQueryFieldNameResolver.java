@@ -5,7 +5,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.repo.impl.index.IndexFieldNameNormalizer;
-import com.enonic.xp.repo.impl.index.IndexValueType;
+import com.enonic.xp.repo.impl.index.IndexValueTypeInterface;
 
 public class StoreQueryFieldNameResolver
     extends AbstractQueryFieldNameResolver
@@ -20,7 +20,7 @@ public class StoreQueryFieldNameResolver
     }
 
     @Override
-    protected String appendIndexValueType( final String baseFieldName, final IndexValueType indexValueType )
+    protected String appendIndexValueType( final String baseFieldName, final IndexValueTypeInterface indexValueType )
     {
         return IndexFieldNameNormalizer.normalize( baseFieldName );
     }

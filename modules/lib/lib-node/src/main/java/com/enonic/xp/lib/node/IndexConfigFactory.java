@@ -7,6 +7,8 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexConfigDocument;
+import com.enonic.xp.index.IndexValueProcessor;
+import com.enonic.xp.index.IndexValueProcessors;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 
 import static com.enonic.xp.lib.node.NodePropertyConstants.ANALYZER;
@@ -107,6 +109,7 @@ public class IndexConfigFactory
         final Boolean path = settings.getBoolean( "path" );
 
         final Iterable<String> indexValueProcessors = settings.getStrings( "indexValueProcessors" );
+        final Iterable<String> languages = settings.getStrings( "languages" );
 
         final IndexConfig.Builder builder = IndexConfig.create().
             decideByType( decideByType != null ? decideByType : false ).
@@ -116,9 +119,18 @@ public class IndexConfigFactory
             includeInAllText( includeInAllText != null ? includeInAllText : false ).
             path( path != null ? path : false );
 
-        for ( final String indexValueProcessor : indexValueProcessors )
+        for ( final String indexValueProcessorName : indexValueProcessors )
         {
-            // TODO: How to inject these?
+            final IndexValueProcessor indexValueProcessor = IndexValueProcessors.get( indexValueProcessorName );
+            if ( indexValueProcessor != null )
+            {
+                builder.addIndexValueProcessor( indexValueProcessor );
+            }
+        }
+
+        for ( final String language : languages )
+        {
+            builder.addLanguage( language );
         }
 
         return builder.build();

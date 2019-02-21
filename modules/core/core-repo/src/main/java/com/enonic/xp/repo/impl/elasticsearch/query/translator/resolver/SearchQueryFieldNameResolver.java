@@ -7,6 +7,7 @@ import com.google.common.collect.Lists;
 
 import com.enonic.xp.repo.impl.index.IndexFieldNameNormalizer;
 import com.enonic.xp.repo.impl.index.IndexValueType;
+import com.enonic.xp.repo.impl.index.IndexValueTypeInterface;
 
 public class SearchQueryFieldNameResolver
     extends AbstractQueryFieldNameResolver
@@ -20,7 +21,7 @@ public class SearchQueryFieldNameResolver
         return BUILT_IN_FIELDS;
     }
 
-    protected String appendIndexValueType( final String baseFieldName, final IndexValueType indexValueType )
+    protected String appendIndexValueType( final String baseFieldName, final IndexValueTypeInterface indexValueType )
     {
         return IndexFieldNameNormalizer.normalize( baseFieldName + ( Strings.isNullOrEmpty( indexValueType.getPostfix() )
             ? ""

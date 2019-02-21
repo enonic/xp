@@ -6,6 +6,9 @@ import org.junit.Test;
 
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.index.IndexConfig;
+import com.enonic.xp.index.IndexConfigDocument;
+import com.enonic.xp.index.IndexPath;
+import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.repo.impl.index.IndexValueType;
 
 import static org.junit.Assert.*;
@@ -17,7 +20,7 @@ public class IndexItemsTest
         throws Exception
     {
         final IndexItems indexItems = IndexItems.create().
-            add( "myItem", ValueFactory.newString( "ost" ), IndexConfig.MINIMAL ).
+            add( IndexPath.from( "myItem" ), ValueFactory.newString( "ost" ), createDefaultDocument( IndexConfig.MINIMAL ) ).
             build();
 
         final Collection<IndexValue> values = indexItems.get( "myitem" );
@@ -36,8 +39,8 @@ public class IndexItemsTest
         throws Exception
     {
         final IndexItems indexItems = IndexItems.create().
-            add( "myItem", ValueFactory.newString( "ost" ), IndexConfig.MINIMAL ).
-            add( "myItem", ValueFactory.newString( "fisk" ), IndexConfig.MINIMAL ).
+            add( IndexPath.from( "myItem" ), ValueFactory.newString( "ost" ), createDefaultDocument( IndexConfig.MINIMAL ) ).
+            add( IndexPath.from( "myItem" ), ValueFactory.newString( "fisk" ), createDefaultDocument( IndexConfig.MINIMAL ) ).
             build();
 
         final Collection<IndexValue> values = indexItems.get( "myitem" );
@@ -57,8 +60,8 @@ public class IndexItemsTest
         throws Exception
     {
         final IndexItems indexItems = IndexItems.create().
-            add( "myItem", ValueFactory.newString( "ost" ), IndexConfig.MINIMAL ).
-            add( "myItem", ValueFactory.newString( "fisk" ), IndexConfig.MINIMAL ).
+            add( IndexPath.from( "myItem" ), ValueFactory.newString( "ost" ), createDefaultDocument( IndexConfig.MINIMAL ) ).
+            add( IndexPath.from( "myItem" ), ValueFactory.newString( "fisk" ), createDefaultDocument( IndexConfig.MINIMAL ) ).
             build();
 
         final Collection<IndexValue> values =
@@ -73,4 +76,9 @@ public class IndexItemsTest
         assertEquals( "ost", value.getValue() );
     }
 
+    private IndexConfigDocument createDefaultDocument( final IndexConfig indexConfig )
+    {
+        final PatternIndexConfigDocument.Builder builder = PatternIndexConfigDocument.create().defaultConfig( indexConfig );
+        return builder.build();
+    }
 }

@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.dump.serializer.json;
 
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -59,11 +60,31 @@ public class VersionsDumpEntryJson
         return versions;
     }
 
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+        final VersionsDumpEntryJson that = (VersionsDumpEntryJson) o;
+        return Objects.equals( nodeId, that.nodeId ) && Objects.equals( versions, that.versions );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( nodeId, versions );
+    }
+
     public static Builder create()
     {
         return new Builder();
     }
-
 
     public static final class Builder
     {
@@ -84,6 +105,12 @@ public class VersionsDumpEntryJson
         public Builder version( final VersionDumpEntryJson version )
         {
             this.versions.add( version );
+            return this;
+        }
+
+        public Builder versions( final Collection<VersionDumpEntryJson> versions )
+        {
+            this.versions.addAll( versions );
             return this;
         }
 

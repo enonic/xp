@@ -4,6 +4,9 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
@@ -271,6 +274,7 @@ public final class XmlNodeParser
         }
 
         parsePathIndexConfigs( builder, root.getChild( "pathIndexConfigs" ) );
+        parseAllTextIndexConfig( builder, root.getChild( "allTextIndexConfig" ) );
         return builder.build();
     }
 
@@ -289,6 +293,15 @@ public final class XmlNodeParser
             for ( DomElement indexValueProcessor : indexValueProcessors.getChildren() )
             {
                 builder.addIndexValueProcessor( IndexValueProcessors.get( indexValueProcessor.getValue() ) );
+            }
+        }
+
+        final DomElement languages = root.getChild( "languages" );
+        if ( languages != null )
+        {
+            for ( DomElement language : languages.getChildren() )
+            {
+                builder.addLanguage( language.getValue() );
             }
         }
 
@@ -314,5 +327,29 @@ public final class XmlNodeParser
         builder.path( PropertyPath.from( root.getChildValue( "path" ) ) );
         builder.indexConfig( parseIndexConfig( root.getChild( "indexConfig" ) ) );
         return builder.build();
+    }
+
+    private void parseAllTextIndexConfig( final PatternIndexConfigDocument.Builder builder, final DomElement root )
+    {
+        if ( root == null )
+        {
+            return;
+        }
+
+        parseAllTextIndexConfigLanguages( root.getChild( "languages" ) ).
+            forEach( builder::addAllTextConfigLanguage );
+    }
+
+    private List<String> parseAllTextIndexConfigLanguages( final DomElement languages )
+    {
+        if ( languages != null )
+        {
+            return languages.getChildren().
+                stream().
+                map( DomElement::getValue ).
+                collect( Collectors.toList() );
+        }
+
+        return Collections.emptyList();
     }
 }

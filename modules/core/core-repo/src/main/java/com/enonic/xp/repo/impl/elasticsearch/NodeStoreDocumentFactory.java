@@ -13,6 +13,7 @@ import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexConfigDocument;
+import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
@@ -110,7 +111,8 @@ public class NodeStoreDocumentFactory
     {
         if ( this.node.getNodeState() != null )
         {
-            builder.add( NodeIndexPath.STATE, ValueFactory.newString( this.node.getNodeState().value() ), IndexConfig.MINIMAL );
+            builder.add( NodeIndexPath.STATE, ValueFactory.newString( this.node.getNodeState().value() ),
+                         createDefaultDocument( IndexConfig.MINIMAL ) );
         }
     }
 
@@ -118,7 +120,8 @@ public class NodeStoreDocumentFactory
     {
         if ( this.node.getTimestamp() != null )
         {
-            builder.add( NodeIndexPath.TIMESTAMP, ValueFactory.newDateTime( this.node.getTimestamp() ), IndexConfig.MINIMAL );
+            builder.add( NodeIndexPath.TIMESTAMP, ValueFactory.newDateTime( this.node.getTimestamp() ),
+                         createDefaultDocument( IndexConfig.MINIMAL ) );
         }
     }
 
@@ -126,7 +129,8 @@ public class NodeStoreDocumentFactory
     {
         if ( this.node.getNodeType() != null )
         {
-            builder.add( NodeIndexPath.NODE_TYPE, ValueFactory.newString( this.node.getNodeType().getName() ), IndexConfig.MINIMAL );
+            builder.add( NodeIndexPath.NODE_TYPE, ValueFactory.newString( this.node.getNodeType().getName() ),
+                         createDefaultDocument( IndexConfig.MINIMAL ) );
         }
     }
 
@@ -134,7 +138,8 @@ public class NodeStoreDocumentFactory
     {
         if ( this.node.getManualOrderValue() != null )
         {
-            builder.add( NodeIndexPath.MANUAL_ORDER_VALUE, ValueFactory.newLong( this.node.getManualOrderValue() ), IndexConfig.MINIMAL );
+            builder.add( NodeIndexPath.MANUAL_ORDER_VALUE, ValueFactory.newLong( this.node.getManualOrderValue() ),
+                         createDefaultDocument( IndexConfig.MINIMAL ) );
         }
     }
 
@@ -142,7 +147,8 @@ public class NodeStoreDocumentFactory
     {
         if ( this.node.parentPath() != null )
         {
-            builder.add( NodeIndexPath.PARENT_PATH, ValueFactory.newString( this.node.parentPath().toString() ), IndexConfig.MINIMAL );
+            builder.add( NodeIndexPath.PARENT_PATH, ValueFactory.newString( this.node.parentPath().toString() ),
+                         createDefaultDocument( IndexConfig.MINIMAL ) );
         }
     }
 
@@ -150,7 +156,8 @@ public class NodeStoreDocumentFactory
     {
         if ( this.node.path() != null )
         {
-            builder.add( NodeIndexPath.PATH, ValueFactory.newString( this.node.path().toString() ), IndexConfig.PATH );
+            builder.add( NodeIndexPath.PATH, ValueFactory.newString( this.node.path().toString() ),
+                         createDefaultDocument( IndexConfig.PATH ) );
         }
     }
 
@@ -158,7 +165,8 @@ public class NodeStoreDocumentFactory
     {
         if ( this.node.name() != null )
         {
-            builder.add( NodeIndexPath.NAME, ValueFactory.newString( this.node.name().toString() ), IndexConfig.FULLTEXT );
+            builder.add( NodeIndexPath.NAME, ValueFactory.newString( this.node.name().toString() ),
+                         createDefaultDocument( IndexConfig.FULLTEXT ) );
         }
     }
 
@@ -166,7 +174,8 @@ public class NodeStoreDocumentFactory
     {
         if ( this.node.getNodeVersionId() != null )
         {
-            builder.add( NodeIndexPath.VERSION, ValueFactory.newString( node.getNodeVersionId().toString() ), IndexConfig.MINIMAL );
+            builder.add( NodeIndexPath.VERSION, ValueFactory.newString( node.getNodeVersionId().toString() ),
+                         createDefaultDocument( IndexConfig.MINIMAL ) );
         }
     }
 
@@ -186,7 +195,7 @@ public class NodeStoreDocumentFactory
                         throw new RuntimeException( "Missing index configuration for data " + property.getPath() );
                     }
 
-                    builder.add( property, configForData );
+                    builder.add( property, node.getIndexConfigDocument() );
 
                     addReferenceAggregation( property );
                 }
@@ -196,12 +205,24 @@ public class NodeStoreDocumentFactory
             {
                 if ( property.getType().equals( ValueTypes.REFERENCE ) )
                 {
-                    builder.add( NodeIndexPath.REFERENCE, property.getValue(), IndexConfig.MINIMAL );
+                    builder.add( NodeIndexPath.REFERENCE, property.getValue(), createDefaultDocument( IndexConfig.MINIMAL ) );
                 }
             }
         };
 
         visitor.traverse( this.node.data() );
+    }
+
+    private IndexConfigDocument createDefaultDocument( final IndexConfig indexConfig )
+    {
+        final PatternIndexConfigDocument.Builder builder = PatternIndexConfigDocument.create().defaultConfig( indexConfig );
+
+        this.node.getIndexConfigDocument().
+            getAllTextConfig().
+            getLanguages().
+            forEach( builder::addAllTextConfigLanguage );
+
+        return builder.build();
     }
 
     public static final class Builder

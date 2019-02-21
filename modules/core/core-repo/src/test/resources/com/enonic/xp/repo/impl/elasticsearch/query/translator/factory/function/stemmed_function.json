@@ -1,0 +1,10 @@
+{
+  "simple_query_string": {
+    "query": "organize",
+    "fields": [
+      "field._stemmed_en"
+    ],
+    "analyzer": "language_analyzer_en",
+    "default_operator": "or"
+  }
+}

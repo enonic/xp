@@ -10,4 +10,8 @@ public interface IndexConfigDocument
     String getAnalyzer();
 
     IndexConfig getConfigForPath( final PropertyPath dataPath );
+
+    IndexConfig getConfigForPath( final IndexPath indexPath );
+
+    AllTextIndexConfig getAllTextConfig();
 }
