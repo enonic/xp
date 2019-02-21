@@ -59,12 +59,6 @@ public class FlattenedPageRegionsIndexUpgrader
         this.components = components;
     }
 
-    boolean needAnUpgrade( final PatternIndexConfigDocument sourceIndexConfigDocument )
-    {
-        return sourceIndexConfigDocument.getPathIndexConfigs().stream().
-            anyMatch( pathIndexConfig -> pathIndexConfig.matches( String.join( ELEMENT_DIVIDER, SRC_PAGE_KEY, SRC_REGION_KEY ) ) );
-    }
-
     public PatternIndexConfigDocument upgrade( final PatternIndexConfigDocument sourceIndexConfigDocument )
     {
         result = PatternIndexConfigDocument.create( sourceIndexConfigDocument );
