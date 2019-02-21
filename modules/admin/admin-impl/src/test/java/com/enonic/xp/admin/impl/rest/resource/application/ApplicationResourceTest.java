@@ -432,7 +432,7 @@ public class ApplicationResourceTest
             queryParam( "hash", "123" ).
             get().getDataAsString();
 
-        String expected = (String) Response.ok( readFromFile( "app_default.svg" ), "image/svg+xml" ).build().getEntity();
+        String expected = (String) Response.ok( readFromFile( "application.svg" ), "image/svg+xml" ).build().getEntity();
 
         assertEquals( expected, response );
     }

@@ -1,9 +1,8 @@
 package com.enonic.xp.admin.impl.rest.resource.application;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
-import java.time.Instant;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,7 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.io.ByteSource;
-import com.google.common.io.ByteStreams;
 
 import com.enonic.xp.admin.impl.market.MarketService;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
@@ -100,8 +98,6 @@ public final class ApplicationResource
 
     private final static Logger LOG = LoggerFactory.getLogger( ApplicationResource.class );
 
-    private final Icon defaultAppIcon;
-
     private ApplicationService applicationService;
 
     private ApplicationDescriptorService applicationDescriptorService;
@@ -134,10 +130,10 @@ public final class ApplicationResource
 
     private ContentTypeIconUrlResolver contentTypeIconUrlResolver;
 
+    private static final ApplicationImageHelper HELPER = new ApplicationImageHelper();
+
     public ApplicationResource()
     {
-        final byte[] image = loadDefaultImage( "app_default.svg" );
-        defaultAppIcon = Icon.from( image, "image/svg+xml", Instant.ofEpochMilli( 0L ) );
         iconUrlResolver = new ApplicationIconUrlResolver();
     }
 
@@ -370,6 +366,7 @@ public final class ApplicationResource
         final Response.ResponseBuilder responseBuilder;
         if ( icon == null )
         {
+            final Icon defaultAppIcon = HELPER.getDefaultApplicationIcon();
             responseBuilder = Response.ok( defaultAppIcon.asInputStream(), defaultAppIcon.getMimeType() );
             applyMaxAge( Integer.MAX_VALUE, responseBuilder );
         }
@@ -548,27 +545,10 @@ public final class ApplicationResource
         return json;
     }
 
-    private byte[] loadDefaultImage( final String imageName )
-    {
-        try (final InputStream in = getClass().getResourceAsStream( imageName ))
-        {
-            if ( in == null )
-            {
-                throw new IllegalArgumentException( "Image [" + imageName + "] not found" );
-            }
-
-            return ByteStreams.toByteArray( in );
-        }
-        catch ( IOException e )
-        {
-            throw new RuntimeException( "Failed to load default image: " + imageName, e );
-        }
-    }
-
     private Applications sortApplications( final Applications applications )
     {
         return Applications.from( applications.stream().
-            sorted( ( app1, app2 ) -> app1.getDisplayName().compareTo( app2.getDisplayName() ) ).
+            sorted( Comparator.comparing( Application::getDisplayName ) ).
             collect( Collectors.toList() ) );
     }
 
