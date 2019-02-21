@@ -83,6 +83,7 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.upgrade.UpgradeListener;
 import com.enonic.xp.util.BinaryReference;
+import com.enonic.xp.util.Reference;
 import com.enonic.xp.util.Version;
 
 import static org.junit.Assert.*;
@@ -721,8 +722,8 @@ public class DumpServiceImplTest
             assertEquals( new Version( 0, 0, 0 ), result.getInitialVersion() );
             assertEquals( DumpConstants.MODEL_VERSION, result.getUpgradedVersion() );
 
-            Mockito.verify( upgradeListener, Mockito.times( 7 ) ).upgraded();
-            Mockito.verify( upgradeListener, Mockito.times( 1 ) ).total( 7 );
+            Mockito.verify( upgradeListener, Mockito.times( 8 ) ).upgraded();
+            Mockito.verify( upgradeListener, Mockito.times( 1 ) ).total( 8 );
 
             FileDumpReader reader = new FileDumpReader( tempFolder.getRoot().toPath(), dumpName, null );
             final DumpMeta updatedMeta = reader.getDumpMeta();
@@ -750,15 +751,16 @@ public class DumpServiceImplTest
 
             final NodeId nodeId = NodeId.from( "f0fb822c-092d-41f9-a961-f3811d81e55a" );
             final NodeId fragmentNodeId = NodeId.from( "7ee16649-85c6-4a76-8788-74be03be6c7a" );
+            final NodeId postNodeId = NodeId.from( "1f798176-5868-411b-8093-242820c20620" );
             final NodePath nodePath = NodePath.create( "/content/mysite" ).build();
-            final NodeVersionId draftNodeVersionId = NodeVersionId.from( "8d617bde8625caaba47924a1bb35b6b101f963ac" );
-            final NodeVersionId masterNodeVersionId = NodeVersionId.from( "ac555e940583f1a4d0f25aaff8bc97649ac2de68" );
+            final NodeVersionId draftNodeVersionId = NodeVersionId.from( "f3765655d5f0c7c723887071b517808dae00556c" );
+            final NodeVersionId masterNodeVersionId = NodeVersionId.from( "02e61f29a57309834d96bbf7838207ac456bbf5c" );
 
             final Node draftNode = nodeService.getById( nodeId );
             assertNotNull( draftNode );
             assertEquals( draftNodeVersionId, draftNode.getNodeVersionId() );
             assertEquals( nodePath, draftNode.path() );
-            assertEquals( "2018-12-13T14:50:24.495Z", draftNode.getTimestamp().toString() );
+            assertEquals( "2019-02-20T14:44:06.883Z", draftNode.getTimestamp().toString() );
 
             final Node masterNode = ContextBuilder.
                 from( ContextAccessor.current() ).
@@ -777,6 +779,9 @@ public class DumpServiceImplTest
             checkPageFlatteningUpgradeFragment( fragmentNode );
 
             checkRepositoryUpgrade( updatedMeta );
+
+            final Node postNode = nodeService.getById( postNodeId );
+            checkHtmlAreaUpgrade( draftNode, postNode );
         } );
     }
 
@@ -831,7 +836,7 @@ public class DumpServiceImplTest
             branch( Branch.from( "draft" ) ).
             build().
             callWith( () -> nodeService.findVersions( nodeVersionQuery ) );
-        assertEquals( 15, versionQueryResult.getTotalHits() );
+        assertEquals( 16, versionQueryResult.getTotalHits() );
     }
 
     private void checkPageFlatteningUpgradePage( final Node node )
@@ -888,6 +893,15 @@ public class DumpServiceImplTest
         assertEquals( "text", textComponent.getString( "type" ) );
         final PropertySet textComponentData = textComponent.getSet( "text" );
         assertEquals( "<p>text1</p>\n" + "\n" + "<p>&nbsp;</p>\n", textComponentData.getString( "value" ) );
+    }
+
+    private void checkHtmlAreaUpgrade( final Node siteNode, final Node postNode )
+    {
+        final Iterable<Reference> siteProcessedReferences = siteNode.data().getReferences( "processedReferences" );
+        assertEquals( 1, Iterables.size( siteProcessedReferences ) );
+
+        final Iterable<Reference> postProcessedReferences = postNode.data().getReferences( "processedReferences" );
+        assertEquals( 2, Iterables.size( postProcessedReferences ) );
     }
 
     private void checkPageFlatteningUpgradeFragment( final Node node )
