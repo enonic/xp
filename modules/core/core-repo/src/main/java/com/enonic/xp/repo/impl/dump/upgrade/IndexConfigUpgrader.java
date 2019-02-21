@@ -183,12 +183,7 @@ public class IndexConfigUpgrader
 
         final FlattenedPageIndexUpgrader pageIndexUpgrader = new FlattenedPageIndexUpgrader( pageDescriptorKey, components );
 
-        if ( pageIndexUpgrader.needAnUpgrade( sourceDocument ) )
-        {
-            return pageIndexUpgrader.upgrade( sourceDocument );
-        }
-
-        return sourceDocument;
+        return pageIndexUpgrader.upgrade( sourceDocument );
     }
 
     private BlobKey storeIndexConfigBlob( final PatternIndexConfigDocument indexConfigDocument )

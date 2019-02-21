@@ -35,6 +35,8 @@ public class FlattenedPageIndexUpgrader
 
     private final DescriptorKey descriptorKey;
 
+    private final List<PropertySet> components;
+
     private FlattenedPageRegionsIndexUpgrader flattenedPageRegionsIndexUpgrader;
 
     private PatternIndexConfigDocument.Builder result;
@@ -42,6 +44,7 @@ public class FlattenedPageIndexUpgrader
     public FlattenedPageIndexUpgrader( final DescriptorKey descriptorKey, final List<PropertySet> components )
     {
         this.descriptorKey = descriptorKey;
+        this.components = components;
         this.flattenedPageRegionsIndexUpgrader = new FlattenedPageRegionsIndexUpgrader( components );
     }
 
@@ -49,10 +52,14 @@ public class FlattenedPageIndexUpgrader
     {
         result = PatternIndexConfigDocument.create( sourceIndexConfigDocument );
 
-        addNewConfigs();
-        upgradeOldConfigs( sourceIndexConfigDocument );
+        if (components.size() > 0) {
+            addNewConfigs();
+        }
+        if (descriptorKey != null) {
+            upgradeOldConfigs( sourceIndexConfigDocument );
+        }
 
-        if ( this.flattenedPageRegionsIndexUpgrader.needAnUpgrade( sourceIndexConfigDocument ) )
+        if ( components.size() > 0 )
         {
             return removeOldConfigs( this.flattenedPageRegionsIndexUpgrader.upgrade( result.build() ) );
         }
@@ -69,12 +76,6 @@ public class FlattenedPageIndexUpgrader
             forEach( result::remove );
 
         return result.build();
-    }
-
-    public boolean needAnUpgrade( final PatternIndexConfigDocument sourceIndexConfigDocument )
-    {
-        return sourceIndexConfigDocument.getPathIndexConfigs().stream().
-            anyMatch( pathIndexConfig -> pathIndexConfig.matches( SRC_PAGE_KEY ) );
     }
 
     private void addNewConfigs()
