@@ -37,15 +37,17 @@ abstract class DescriptorBasedComponentDataSerializer<DATA extends DescriptorBas
     {
         if ( specialBlockSet.hasProperty( CONFIG ) )
         {
-
             final String appKeyAsString = appNameToConfigPropertyName( descriptorKey.getApplicationKey().toString() );
-            final String componentName = appNameToConfigPropertyName( descriptorKey.getName() );
 
-            final PropertySet configSet = specialBlockSet.getSet( CONFIG ).getSet( appKeyAsString );
-
-            if ( configSet.hasProperty( componentName ) )
+            if ( specialBlockSet.getSet( CONFIG ).hasProperty( appKeyAsString ) )
             {
-                return configSet.getSet( componentName ).toTree();
+                final PropertySet configSet = specialBlockSet.getSet( CONFIG ).getSet( appKeyAsString );
+                final String componentName = appNameToConfigPropertyName( descriptorKey.getName() );
+
+                if ( configSet.hasProperty( componentName ) )
+                {
+                    return configSet.getSet( componentName ).toTree();
+                }
             }
         }
 

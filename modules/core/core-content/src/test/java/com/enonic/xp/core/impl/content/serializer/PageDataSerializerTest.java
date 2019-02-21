@@ -68,6 +68,32 @@ public class PageDataSerializerTest
     }
 
     @Test
+    public void page_config()
+    {
+        final Page page = createPage();
+
+        final PropertyTree pageAsData = new PropertyTree();
+        pageDataSerializer.toData( page, pageAsData.getRoot() );
+
+        final PropertySet pageOnlyData = pageAsData.getRoot().getProperties( COMPONENTS ).get( 0 ).getSet();
+        assertTrue( pageOnlyData.hasProperty( "page.config.app-key.d-name" ) );
+        assertEquals( "42.0", pageOnlyData.getString( "page.config.app-key.d-name.aim" ) );
+    }
+
+    @Test
+    public void component_config()
+    {
+        final Page page = createPage();
+
+        final PropertyTree pageAsData = new PropertyTree();
+        pageDataSerializer.toData( page, pageAsData.getRoot() );
+
+        final PropertySet componentOnlyData = pageAsData.getRoot().getProperties( COMPONENTS ).get( 1 ).getSet();
+        assertTrue( componentOnlyData.hasProperty( "part.config.app-descriptor-x.name-x" ) );
+        assertEquals( "somevalue", componentOnlyData.getString( "part.config.app-descriptor-x.name-x.some" ) );
+    }
+
+    @Test
     public void page_deserialize_custom_order_of_components()
     {
         final Page page = createPage();
@@ -161,7 +187,7 @@ public class PageDataSerializerTest
     private Page createPage()
     {
         final PropertyTree myPartConfig = new PropertyTree();
-        myPartConfig.addString( "some", "config" );
+        myPartConfig.addString( "some", "somevalue" );
         final PropertyTree imageConfig = new PropertyTree();
         imageConfig.addString( "caption", "Caption" );
         final DescriptorKey pageDescriptorKey = DescriptorKey.from( "app-key:d-name" );
