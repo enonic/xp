@@ -32,6 +32,8 @@ public class HtmlAreaNodeDataUpgrader
     private static final Pattern HTML_LINK_PATTERN =
         Pattern.compile( "(?:href|src)=(\"((content|media|image)://(?:(download|inline)/)?([0-9a-z-/]+)(\\?[^\"]+)?)\")" );
 
+    private static final int HTML_LINK_PATTERN_TYPE_GROUP = 3;
+
     private static final int HTML_LINK_PATTERN_ID_GROUP = 5;
 
     private static final String PROCESSED_REFERENCES_PROPERTY_NAME = "processedReferences";
@@ -134,15 +136,32 @@ public class HtmlAreaNodeDataUpgrader
             {
                 final Matcher contentMatcher = HTML_LINK_PATTERN.matcher( value );
 
+                boolean containsHtmlAreaImage = false;
                 while ( contentMatcher.find() )
                 {
                     if ( contentMatcher.groupCount() >= HTML_LINK_PATTERN_ID_GROUP )
                     {
+                        if ( "image".equals( contentMatcher.group( HTML_LINK_PATTERN_TYPE_GROUP ) ) )
+                        {
+                            containsHtmlAreaImage = true;
+                        }
                         final String reference = contentMatcher.group( HTML_LINK_PATTERN_ID_GROUP );
                         references.add( Reference.from( reference ) );
                     }
                 }
+
+                if ( containsHtmlAreaImage )
+                {
+                    upgradeFigures( property );
+                }
             }
         }
+    }
+
+    private void upgradeFigures( final Property property )
+    {
+        System.out.println( "Before:" + property.getString() );
+        final String target = new HtmlAreaFigureXsltTransformer().transform( property.getString() );
+        System.out.println( "After:" + target );
     }
 }
