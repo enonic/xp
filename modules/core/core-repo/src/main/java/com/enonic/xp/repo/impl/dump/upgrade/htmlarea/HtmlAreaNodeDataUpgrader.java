@@ -37,6 +37,9 @@ public class HtmlAreaNodeDataUpgrader
 
     private static final int HTML_LINK_PATTERN_ID_GROUP = 5;
 
+    private static final Pattern KEEP_SIZE_IMAGE_PATTERN =
+        Pattern.compile( "(href|src)=\"image://([0-9a-z-/]+)\\?keepSize=true\"" );
+
     private static final String PROCESSED_REFERENCES_PROPERTY_NAME = "processedReferences";
 
     private static final String HTML_STRIPPER_PROCESSOR_NAME = "htmlStripper";
@@ -133,11 +136,10 @@ public class HtmlAreaNodeDataUpgrader
     {
         if ( STRING_PROPERTY_TYPE_NAME.equals( property.getType().getName() ) )
         {
-            final String value = property.getString();
+            String value = property.getString();
             if ( value != null )
             {
                 final Matcher contentMatcher = HTML_LINK_PATTERN.matcher( value );
-
                 boolean containsHtmlAreaImage = false;
                 while ( contentMatcher.find() )
                 {
@@ -154,15 +156,42 @@ public class HtmlAreaNodeDataUpgrader
 
                 if ( containsHtmlAreaImage )
                 {
-                    upgradeFigures( property );
+                    upgradePropertyValue( property );
                 }
             }
         }
     }
 
-    private void upgradeFigures( final Property property )
+    private void upgradePropertyValue( final Property property )
     {
-        final String upgradedValue = figureXsltTransformer.transform( property.getString() );
+        String upgradedValue = upgradeKeepSizeImages( property.getString() );
+        upgradedValue = upgradeFigures( upgradedValue );
         property.setValue( ValueFactory.newString( upgradedValue ) );
+    }
+
+    private String upgradeKeepSizeImages( final String value )
+    {
+        final Matcher matcher = KEEP_SIZE_IMAGE_PATTERN.matcher( value );
+        matcher.reset();
+        boolean result = matcher.find();
+        if (result) {
+            StringBuffer sb = new StringBuffer();
+            do {
+                final String attributeName = matcher.group( 1 );
+                final String contentId = matcher.group( 2 );
+                final String attachmentLinkEquivalent = attributeName + "=\"media://" + contentId + "\"";
+
+                matcher.appendReplacement(sb, attachmentLinkEquivalent);
+                result = matcher.find();
+            } while (result);
+            matcher.appendTail(sb);
+            return sb.toString();
+        }
+        return value;
+    }
+
+    private String upgradeFigures( final String value )
+    {
+        return figureXsltTransformer.transform( value );
     }
 }
