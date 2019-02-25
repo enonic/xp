@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.TreeSet;
 
 import org.apache.commons.io.FileUtils;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -25,6 +26,7 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.dump.BranchDumpResult;
@@ -902,6 +904,11 @@ public class DumpServiceImplTest
 
         final Iterable<Reference> postProcessedReferences = postNode.data().getReferences( "processedReferences" );
         assertEquals( 2, Iterables.size( postProcessedReferences ) );
+
+        final String postValue = postNode.data().getString( "data.post" );
+        Assert.assertTrue( postValue.contains( "<figure class=\"editor-align-justify\">" ) );
+        Assert.assertTrue( postValue.contains( "<figure class=\"editor-align-justify editor-style-original\">" ) );
+        Assert.assertTrue( postValue.contains( "src=\"media://cf09fe7a-1be9-46bb-ad84-87ba69630cb7\"" ) );
     }
 
     private void checkPageFlatteningUpgradeFragment( final Node node )
