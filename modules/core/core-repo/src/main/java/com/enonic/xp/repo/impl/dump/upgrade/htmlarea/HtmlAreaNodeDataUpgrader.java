@@ -46,17 +46,13 @@ public class HtmlAreaNodeDataUpgrader
 
     private static final String STRING_PROPERTY_TYPE_NAME = "String";
 
-    private Set<Reference> references = Sets.newHashSet();
+    private HtmlAreaFigureXsltTransformer figureXsltTransformer = new HtmlAreaFigureXsltTransformer();
 
-    private HtmlAreaFigureXsltTransformer figureXsltTransformer;
-
-    public HtmlAreaNodeDataUpgrader()
-    {
-        this.figureXsltTransformer = new HtmlAreaFigureXsltTransformer();
-    }
+    private Set<Reference> references;
 
     public boolean upgrade( final NodeVersion nodeVersion, final PatternIndexConfigDocument indexConfigDocument )
     {
+        references = Sets.newHashSet();
 
         if ( !isContent( nodeVersion ) )
         {
