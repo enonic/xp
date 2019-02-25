@@ -13,65 +13,60 @@
     <xsl:copy>
       <xsl:apply-templates select="node() | @*"/>
     </xsl:copy>
-    <xsl:if test="parent::root">
-      <xsl:text>&#xa;&#xa;</xsl:text>
-    </xsl:if>
+    <xsl:call-template name="root-element-format"/>
   </xsl:template>
 
   <xsl:template match="figure[starts-with(@style,'float:left')]">
-    <figure class="editor-align-left" style='float: left; width: 40%;'>
-      <xsl:if test="child::img[starts-with(@src, 'media://')]">
-        <xsl:attribute name="class">editor-align-left editor-style-original</xsl:attribute>
-      </xsl:if>
-      <xsl:text>&#xa;</xsl:text>
-      <xsl:apply-templates select="*"/>
-      <xsl:text>&#xa;</xsl:text>
+    <figure class="" style='float: left; width: 40%;'>
+      <xsl:call-template name="figure-common">
+        <xsl:with-param name="class-value">editor-align-left</xsl:with-param>
+      </xsl:call-template>
     </figure>
-    <xsl:if test="parent::root">
-      <xsl:text>&#xa;&#xa;</xsl:text>
-    </xsl:if>
+    <xsl:call-template name="root-element-format"/>
   </xsl:template>
 
   <xsl:template match="figure[starts-with(@style,'float:right')]">
-    <figure class="editor-align-right" style='float: right; width: 40%;'>
-      <xsl:if test="child::img[starts-with(@src, 'media://')]">
-        <xsl:attribute name="class">editor-align-right editor-style-original</xsl:attribute>
-      </xsl:if>
-      <xsl:text>&#xa;</xsl:text>
-      <xsl:apply-templates select="*"/>
-      <xsl:text>&#xa;</xsl:text>
+    <figure class="" style='float: right; width: 40%;'>
+      <xsl:call-template name="figure-common">
+        <xsl:with-param name="class-value">editor-align-right</xsl:with-param>
+      </xsl:call-template>
     </figure>
-    <xsl:if test="parent::root">
-      <xsl:text>&#xa;&#xa;</xsl:text>
-    </xsl:if>
+    <xsl:call-template name="root-element-format"/>
   </xsl:template>
 
   <xsl:template match="figure[starts-with(@style,'float:none')]">
-    <figure class="editor-align-center" style='margin: auto; width: 60%;'>
-      <xsl:if test="child::img[starts-with(@src, 'media://')]">
-        <xsl:attribute name="class">editor-align-center editor-style-original</xsl:attribute>
-      </xsl:if>
-      <xsl:text>&#xa;</xsl:text>
-      <xsl:apply-templates select="*"/>
-      <xsl:text>&#xa;</xsl:text>
+    <figure class="" style='margin: auto; width: 60%;'>
+      <xsl:call-template name="figure-common">
+        <xsl:with-param name="class-value">editor-align-center</xsl:with-param>
+      </xsl:call-template>
     </figure>
+    <xsl:call-template name="root-element-format"/>
+  </xsl:template>
+
+  <xsl:template match="figure[@class='justify']">
+    <figure class="">
+      <xsl:call-template name="figure-common">
+        <xsl:with-param name="class-value">editor-align-justify</xsl:with-param>
+      </xsl:call-template>
+    </figure>
+    <xsl:call-template name="root-element-format"/>
+  </xsl:template>
+
+  <xsl:template name="root-element-format">
     <xsl:if test="parent::root">
       <xsl:text>&#xa;&#xa;</xsl:text>
     </xsl:if>
   </xsl:template>
 
-  <xsl:template match="figure[@class='justify']">
-    <figure class="editor-align-justify">
-      <xsl:if test="child::img[starts-with(@src, 'media://')]">
-        <xsl:attribute name="class">editor-align-justify editor-style-original</xsl:attribute>
-      </xsl:if>
-      <xsl:text>&#xa;</xsl:text>
-      <xsl:apply-templates select="*"/>
-      <xsl:text>&#xa;</xsl:text>
-    </figure>
-    <xsl:if test="parent::root">
-      <xsl:text>&#xa;&#xa;</xsl:text>
+  <xsl:template name="figure-common">
+    <xsl:param name="class-value" />
+    <xsl:attribute name="class"><xsl:value-of select="$class-value"/></xsl:attribute>
+    <xsl:if test="child::img[starts-with(@src, 'media://')]">
+      <xsl:attribute name="class"><xsl:value-of select="$class-value"/> editor-style-original</xsl:attribute>
     </xsl:if>
+    <xsl:text>&#xa;</xsl:text>
+    <xsl:apply-templates select="*"/>
+    <xsl:text>&#xa;</xsl:text>
   </xsl:template>
 
 
