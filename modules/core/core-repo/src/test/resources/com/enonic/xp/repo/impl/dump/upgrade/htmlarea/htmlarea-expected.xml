@@ -1,0 +1,62 @@
+<p>Text</p>
+
+<p style="text-align:center"><strong>Bold text centered&nbsp;&lt;&amp;</strong></p>
+
+<ul>
+<li style="text-align:center"><strong>Bullet1</strong></li>
+<li style="text-align:center"><strong>Bullet2</strong></li>
+</ul>
+
+<ol>
+<li style="text-align:center">Numbered item 1</li>
+<li style="text-align:center">Numbered item 2&nbsp;&nbsp;</li>
+<li style="text-align:center">
+  <p><a id="Anchor" name="Anchor"></a></p>
+</li>
+</ol>
+
+<p>[embed]IFrame Content[/embed]</p>
+
+<p><a href="content://e1f57280-d672-4cd8-b674-98e26e5b69ae" target="_blank">Content Link</a></p>
+
+<p><a href="media://download/32169e70-49e1-444c-a6ac-d38f22438134">Download image</a></p>
+
+<p><a href="mailto:me@enonic.com?subject=Subject">Email address</a></p>
+
+<table border="1" cellpadding="1" cellspacing="1" style="width:100%">
+<tbody>
+  <tr>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+</tbody>
+</table>
+
+<figure class="justify"><img alt="superhero_4.jpg" src="image://32169e70-49e1-444c-a6ac-d38f22438134" style="text-align:justify; width:100%"></img>
+<figcaption style="text-align:left">No crop / No original size</figcaption>
+</figure>
+
+<p>&nbsp;</p>
+
+<figure class="justify"><img alt="superhero_5.jpg" src="image://be1ca151-cf61-4a54-9ea4-c8d01ce83e0e?keepSize=true" style="text-align:justify; width:auto"></img>
+<figcaption style="text-align:left">No crop / Original size</figcaption>
+</figure>
+
+<p>&nbsp;</p>
+
+<figure class="center" style="float:none; margin:auto; width:60%"><img alt="superhero_featured_4.jpg" src="image://81b1e3cd-575f-4565-a618-3c85d56224f6?scale=1:1&amp;size=640" style="text-align:center; width:100%"></img>
+<figcaption style="text-align:left">Squared centered image</figcaption>
+</figure>
+
+<p>&nbsp;</p>
+
+<figure style="float:right; margin:15px"><img alt="superhero_featured_3.jpg" src="image://43d54e23-d8ce-4058-befb-777abe1a0d9f?scale=21:9&amp;keepSize=true" style="text-align:right; width:auto"></img>
+<figcaption style="text-align:left">Cinema / Original size</figcaption>
+</figure>
+
+<p>&nbsp;</p>
+

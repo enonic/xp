@@ -15,6 +15,7 @@ import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.PropertyVisitor;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.index.IndexValueProcessor;
 import com.enonic.xp.index.PathIndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
@@ -44,22 +45,23 @@ public class HtmlAreaNodeDataUpgrader
 
     private Set<Reference> references = Sets.newHashSet();
 
-    private final PatternIndexConfigDocument indexConfigDocument;
+    private HtmlAreaFigureXsltTransformer figureXsltTransformer;
 
-    public HtmlAreaNodeDataUpgrader( final PatternIndexConfigDocument indexConfigDocument )
+    public HtmlAreaNodeDataUpgrader()
     {
-        this.indexConfigDocument = indexConfigDocument;
+        this.figureXsltTransformer = new HtmlAreaFigureXsltTransformer();
     }
 
-    public boolean upgrade( final NodeVersion nodeVersion )
+    public boolean upgrade( final NodeVersion nodeVersion, final PatternIndexConfigDocument indexConfigDocument )
     {
+
         if ( !isContent( nodeVersion ) )
         {
             return false;
         }
 
         final PropertyTree nodeData = nodeVersion.getData();
-        upgradeNodeData( nodeData.getRoot() );
+        upgradeNodeData( nodeData.getRoot(), indexConfigDocument );
 
         if ( !references.isEmpty() )
         {
@@ -75,7 +77,7 @@ public class HtmlAreaNodeDataUpgrader
         return ContentConstants.CONTENT_NODE_COLLECTION.equals( nodeVersion.getNodeType() );
     }
 
-    private void upgradeNodeData( final PropertySet nodeData )
+    private void upgradeNodeData( final PropertySet nodeData, final PatternIndexConfigDocument indexConfigDocument )
     {
         final List<Pattern> htmlAreaPatterns = indexConfigDocument.getPathIndexConfigs().
             stream().
@@ -160,8 +162,7 @@ public class HtmlAreaNodeDataUpgrader
 
     private void upgradeFigures( final Property property )
     {
-        System.out.println( "Before:" + property.getString() );
-        final String target = new HtmlAreaFigureXsltTransformer().transform( property.getString() );
-        System.out.println( "After:" + target );
+        final String upgradedValue = figureXsltTransformer.transform( property.getString() );
+        property.setValue( ValueFactory.newString( upgradedValue ) );
     }
 }

@@ -10,7 +10,6 @@ import com.google.common.io.CharSource;
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.repo.impl.dump.DumpBlobRecord;
@@ -35,9 +34,12 @@ public class HtmlAreaDumpUpgrader
     private static final Segment INDEX_SEGMENT =
         RepositorySegmentUtils.toSegment( ContentConstants.CONTENT_REPO_ID, NodeConstants.INDEX_CONFIG_SEGMENT_LEVEL );
 
+    private final HtmlAreaNodeDataUpgrader nodeDataUpgrader;
+
     public HtmlAreaDumpUpgrader( final Path basePath )
     {
         super( basePath );
+        this.nodeDataUpgrader = new HtmlAreaNodeDataUpgrader();
     }
 
     @Override
@@ -134,6 +136,6 @@ public class HtmlAreaDumpUpgrader
 
     private boolean upgradeNodeVersion( final NodeVersion nodeVersion, final PatternIndexConfigDocument indexConfigDocument )
     {
-        return new HtmlAreaNodeDataUpgrader(indexConfigDocument).upgrade( nodeVersion );
+        return nodeDataUpgrader.upgrade( nodeVersion, indexConfigDocument );
     }
 }
