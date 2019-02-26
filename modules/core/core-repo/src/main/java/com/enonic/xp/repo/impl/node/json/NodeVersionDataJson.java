@@ -36,6 +36,11 @@ public final class NodeVersionDataJson
     @JsonProperty("attachedBinaries")
     private List<AttachedBinaryJson> attachedBinaries;
 
+    public List<PropertyArrayJson> getData()
+    {
+        return data;
+    }
+
     public NodeVersion.Builder fromJson()
     {
         return NodeVersion.create().
