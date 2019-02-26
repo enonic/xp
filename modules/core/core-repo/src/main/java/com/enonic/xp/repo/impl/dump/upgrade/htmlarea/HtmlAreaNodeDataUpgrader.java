@@ -161,7 +161,7 @@ public class HtmlAreaNodeDataUpgrader
     private void upgradePropertyValue( final Property property )
     {
         String upgradedValue = upgradeKeepSizeImages( property.getString() );
-        upgradedValue = upgradeFigures( upgradedValue );
+        upgradedValue = upgradeFigures(property.getName(), upgradedValue );
         property.setValue( ValueFactory.newString( upgradedValue ) );
     }
 
@@ -186,8 +186,8 @@ public class HtmlAreaNodeDataUpgrader
         return value;
     }
 
-    private String upgradeFigures( final String value )
+    private String upgradeFigures(final String propertyName, final String value )
     {
-        return figureXsltTransformer.transform( value );
+        return figureXsltTransformer.transform(propertyName, value );
     }
 }

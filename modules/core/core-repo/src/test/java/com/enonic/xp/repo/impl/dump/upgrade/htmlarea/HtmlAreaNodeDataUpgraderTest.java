@@ -42,7 +42,7 @@ public class HtmlAreaNodeDataUpgraderTest
     }
 
     @Test
-    public void test()
+    public void testUpgrade()
         throws IOException
     {
         final PropertyTree data = new PropertyTree();

@@ -10,11 +10,15 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.sf.saxon.Configuration;
 import net.sf.saxon.TransformerFactoryImpl;
 
 public class HtmlAreaFigureXsltTransformer
 {
+    private final static Logger LOG = LoggerFactory.getLogger( HtmlAreaFigureXsltTransformer.class );
 
     private final Transformer transformer;
 
@@ -34,11 +38,10 @@ public class HtmlAreaFigureXsltTransformer
         }
     }
 
-    public String transform( final String source )
+    public String transform(final String propertyName, final String source )
     {
         try
         {
-//            final String source2 = source.replace( "&nbsp;", "<xsl:text disable-output-escaping=\"yes\">&nbsp;</xsl:text>" );
             final StringReader reader = new StringReader( "<!DOCTYPE test [ <!ENTITY nbsp \"&#160;\">]><root>" + source + "</root>" );
             final StringWriter writer = new StringWriter();
             transformer.transform( new StreamSource( reader ), new StreamResult( writer ) );
@@ -47,7 +50,8 @@ public class HtmlAreaFigureXsltTransformer
         }
         catch ( Exception e )
         {
-            throw new RuntimeException( "Failed to transform HTML Area property '" + source + "'", e );
+            LOG.warn( "Failed to transform HTML Area property [{}]: {}", propertyName, e.getMessage() );
+            return source;
         }
     }
 
