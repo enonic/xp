@@ -94,7 +94,7 @@ public class RepositoryIdDumpUpgrader
         final Pre6BranchDumpEntryJson sourceBranchEntry = deserializeValue( entryContent, Pre6BranchDumpEntryJson.class );
         final Pre6VersionDumpEntryJson sourceVersionEntry = sourceBranchEntry.getMeta();
 
-        final Pre6VersionDumpEntryJson updatedVersionEntry = upgradeVersionDumpEntry( sourceVersionEntry, false );
+        final Pre6VersionDumpEntryJson updatedVersionEntry = upgradeVersionDumpEntry( sourceVersionEntry );
 
         final Pre6BranchDumpEntryJson updatedBranchEntry = Pre6BranchDumpEntryJson.create( sourceBranchEntry ).
             nodeId( upgradeString( sourceBranchEntry.getNodeId() ) ).
@@ -106,20 +106,11 @@ public class RepositoryIdDumpUpgrader
 
     private Pre6VersionDumpEntryJson upgradeVersionDumpEntry( final Pre6VersionDumpEntryJson sourceVersionEntry )
     {
-        return this.upgradeVersionDumpEntry( sourceVersionEntry, true );
-    }
-
-    private Pre6VersionDumpEntryJson upgradeVersionDumpEntry( final Pre6VersionDumpEntryJson sourceVersionEntry,
-                                                              final boolean updateNodeVersionBlob )
-    {
         final Pre6VersionDumpEntryJson updatedVersionEntry = Pre6VersionDumpEntryJson.create( sourceVersionEntry ).
             nodePath( upgradeString( sourceVersionEntry.getNodePath() ) ).
             build();
 
-        if ( updateNodeVersionBlob )
-        {
-            upgradeNodeVersionBlob( updatedVersionEntry.getNodeBlobKey() );
-        }
+        upgradeNodeVersionBlob( updatedVersionEntry.getNodeBlobKey() );
 
         return updatedVersionEntry;
     }
