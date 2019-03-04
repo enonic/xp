@@ -27,7 +27,21 @@ import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.FormItemPath;
 import com.enonic.xp.form.FormItems;
+import com.enonic.xp.page.Page;
+import com.enonic.xp.page.PageDescriptor;
+import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.portal.impl.url.HtmlLinkProcessor;
+import com.enonic.xp.region.AbstractRegions;
+import com.enonic.xp.region.ComponentDescriptor;
+import com.enonic.xp.region.DescriptorBasedComponent;
+import com.enonic.xp.region.LayoutComponent;
+import com.enonic.xp.region.LayoutDescriptor;
+import com.enonic.xp.region.LayoutDescriptorService;
+import com.enonic.xp.region.PartComponent;
+import com.enonic.xp.region.PartDescriptor;
+import com.enonic.xp.region.PartDescriptorService;
+import com.enonic.xp.region.Region;
+import com.enonic.xp.region.TextComponent;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
@@ -46,6 +60,12 @@ public class HtmlAreaContentProcessor
     private XDataService xDataService;
 
     private SiteService siteService;
+
+    private PageDescriptorService pageDescriptorService;
+
+    private PartDescriptorService partDescriptorService;
+
+    private LayoutDescriptorService layoutDescriptorService;
 
     @Override
     public boolean supports( final ContentType contentType )
@@ -85,6 +105,8 @@ public class HtmlAreaContentProcessor
 
             processContentData( editable.data, contentType, processedIds );
             processExtraData( editable.extraDatas, contentType, processedIds );
+            processPageData( editable.page, processedIds );
+
             if ( editable instanceof EditableSite )
             {
                 processSiteConfigData( ( (EditableSite) editable ).siteConfigs, processedIds );
@@ -110,6 +132,48 @@ public class HtmlAreaContentProcessor
             final Collection<Property> properties = getProperties( siteConfig.getConfig(), siteDescriptor.getForm().getFormItems() );
             processDataTree( properties, processedIds );
         } );
+    }
+
+    private void processPageData( final Page page, final ContentIds.Builder processedIds )
+    {
+        if ( page == null )
+        {
+            return;
+        }
+
+        if ( page.hasDescriptor() )
+        {
+            final PageDescriptor pageDescriptor = pageDescriptorService.getByKey( page.getDescriptor() );
+
+            final Collection<Property> properties = getProperties( page.getConfig(), pageDescriptor.getConfig().getFormItems() );
+            processDataTree( properties, processedIds );
+        }
+
+        if ( page.hasRegions() )
+        {
+            processRegionsData( page.getRegions(), processedIds );
+        }
+    }
+
+    private void processRegionsData( final AbstractRegions regions, final ContentIds.Builder processedIds )
+    {
+        regions.forEach( ( region ) -> this.processRegionData( region, processedIds ) );
+    }
+
+    private void processRegionData( final Region region, final ContentIds.Builder processedIds )
+    {
+        region.getComponents().
+            forEach( component -> {
+                if ( component instanceof TextComponent )
+                {
+                    processString( ( (TextComponent) component ).getText(), processedIds );
+                }
+
+                if ( component instanceof DescriptorBasedComponent )
+                {
+                    processComponent( (DescriptorBasedComponent) component, processedIds );
+                }
+            } );
     }
 
     private void processExtraData( final ExtraDatas extraDatas, final ContentType contentType, final ContentIds.Builder processedIds )
@@ -162,26 +226,69 @@ public class HtmlAreaContentProcessor
 
     private void processDataTree( final Collection<Property> properties, final ContentIds.Builder processedIds )
     {
-        properties.forEach( ( property -> {
-            final String value = property.getString();
+        properties.stream().
+            map( Property::getString ).
+            forEach( ( value -> processString( value, processedIds ) ) );
+    }
 
-            if ( StringUtils.isBlank( value ) )
+    private void processComponent( final DescriptorBasedComponent component, final ContentIds.Builder processedIds )
+    {
+        if ( component.hasDescriptor() )
+        {
+            if ( component instanceof LayoutComponent )
             {
-                return;
-            }
+                final LayoutDescriptor layoutDescriptor = this.layoutDescriptorService.getByKey( component.getDescriptor() );
 
-            final Matcher contentMatcher = HtmlLinkProcessor.CONTENT_PATTERN.matcher( value );
-
-            while ( contentMatcher.find() )
-            {
-                if ( contentMatcher.groupCount() >= HtmlLinkProcessor.NB_GROUPS )
+                if ( layoutDescriptor != null )
                 {
-                    final String id = contentMatcher.group( HtmlLinkProcessor.ID_INDEX );
-                    final ContentId contentId = ContentId.from( id );
-                    processedIds.add( contentId );
+                    processComponentDescriptor( component, layoutDescriptor, processedIds );
+                }
+
+                final LayoutComponent layoutComponent = (LayoutComponent) component;
+
+                if ( layoutComponent.hasRegions() )
+                {
+                    processRegionsData( layoutComponent.getRegions(), processedIds );
                 }
             }
-        } ) );
+
+            if ( component instanceof PartComponent )
+            {
+                final PartDescriptor partDescriptor = this.partDescriptorService.getByKey( component.getDescriptor() );
+
+                if ( partDescriptor != null )
+                {
+                    processComponentDescriptor( component, partDescriptor, processedIds );
+                }
+            }
+        }
+    }
+
+    private void processString( final String value, final ContentIds.Builder processedIds )
+    {
+        if ( StringUtils.isBlank( value ) )
+        {
+            return;
+        }
+
+        final Matcher contentMatcher = HtmlLinkProcessor.CONTENT_PATTERN.matcher( value );
+
+        while ( contentMatcher.find() )
+        {
+            if ( contentMatcher.groupCount() >= HtmlLinkProcessor.NB_GROUPS )
+            {
+                final String id = contentMatcher.group( HtmlLinkProcessor.ID_INDEX );
+                final ContentId contentId = ContentId.from( id );
+                processedIds.add( contentId );
+            }
+        }
+    }
+
+    private void processComponentDescriptor( final DescriptorBasedComponent component, final ComponentDescriptor componentDescriptor,
+                                             final ContentIds.Builder processedIds )
+    {
+        final Collection<Property> properties = getProperties( component.getConfig(), componentDescriptor.getConfig().getFormItems() );
+        processDataTree( properties, processedIds );
     }
 
     @Reference
@@ -191,7 +298,7 @@ public class HtmlAreaContentProcessor
     }
 
     @Reference
-    public void setxDataService( final XDataService xDataService )
+    public void setXDataService( final XDataService xDataService )
     {
         this.xDataService = xDataService;
     }
@@ -200,5 +307,23 @@ public class HtmlAreaContentProcessor
     public void setSiteService( final SiteService siteService )
     {
         this.siteService = siteService;
+    }
+
+    @Reference
+    public void setPageDescriptorService( final PageDescriptorService pageDescriptorService )
+    {
+        this.pageDescriptorService = pageDescriptorService;
+    }
+
+    @Reference
+    public void setPartDescriptorService( final PartDescriptorService partDescriptorService )
+    {
+        this.partDescriptorService = partDescriptorService;
+    }
+
+    @Reference
+    public void setLayoutDescriptorService( final LayoutDescriptorService layoutDescriptorService )
+    {
+        this.layoutDescriptorService = layoutDescriptorService;
     }
 }
