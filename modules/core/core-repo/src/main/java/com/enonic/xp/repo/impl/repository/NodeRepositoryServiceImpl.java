@@ -5,6 +5,8 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.repo.impl.elasticsearch.ClusterHealthStatus;
 import com.enonic.xp.repo.impl.elasticsearch.ClusterStatusCode;
@@ -16,6 +18,7 @@ import com.enonic.xp.repository.IndexMapping;
 import com.enonic.xp.repository.IndexSettings;
 import com.enonic.xp.repository.NodeRepositoryService;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.util.JsonHelper;
 
 @Component(immediate = true)
@@ -90,15 +93,42 @@ public class NodeRepositoryServiceImpl
 
     private IndexSettings mergeWithDefaultSettings( final CreateRepositoryParams params, final IndexType indexType )
     {
-        final IndexSettings defaultSetting = DEFAULT_INDEX_RESOURCE_PROVIDER.getSettings( params.getRepositoryId(), indexType );
+        final IndexSettings defaultSettings = getDefaultSettings( params, indexType );
 
         final IndexSettings indexSettings = params.getRepositorySettings().getIndexSettings( indexType );
         if ( indexSettings != null )
         {
-            return new IndexSettings( JsonHelper.merge( defaultSetting.getNode(), indexSettings.getNode() ) );
+            return new IndexSettings( JsonHelper.merge( defaultSettings.getNode(), indexSettings.getNode() ) );
         }
 
-        return defaultSetting;
+        return defaultSettings;
+    }
+
+    private IndexSettings getDefaultSettings( final CreateRepositoryParams params, final IndexType indexType )
+    {
+        final IndexSettings defaultSettings = DEFAULT_INDEX_RESOURCE_PROVIDER.getSettings( params.getRepositoryId(), indexType );
+        if ( SystemConstants.SYSTEM_REPO.getId().equals( params.getRepositoryId() ) )
+        {
+            return defaultSettings;
+        }
+
+        try
+        {
+            final String numberOfReplicasString =
+                indexServiceInternal.getIndexSettings( SystemConstants.SYSTEM_REPO.getId(), IndexType.VERSION ).getNode().
+                    get( "index.number_of_replicas" ).
+                    textValue();
+            final int numberOfReplicas = Integer.parseInt( numberOfReplicasString );
+            final ObjectNode indexNodeObject = (ObjectNode) defaultSettings.getNode().get( "index" );
+            indexNodeObject.put( "number_of_replicas", numberOfReplicas );
+        }
+        catch ( Exception e )
+        {
+            LOG.warn( "Failed to retrieve number of replicas from [" +
+                          resolveIndexName( SystemConstants.SYSTEM_REPO.getId(), IndexType.VERSION ) + "]" );
+        }
+
+        return defaultSettings;
     }
 
     private void applyMappings( final CreateRepositoryParams params )
