@@ -53,13 +53,13 @@ public class ClusterManagerImplTest
 
         provider.setHealth( ClusterHealth.red() );
         Thread.sleep( CHECK_INTERVAL_MS );
-        assertClusterOk();
-        assertActive( provider );
+        assertClusterError();
+        assertDeactivated( provider );
 
         provider.setHealth( ClusterHealth.green() );
         Thread.sleep( CHECK_INTERVAL_MS );
-        assertClusterError();
-        assertDeactivated( provider );
+        assertClusterOk();
+        assertActive( provider );
     }
 
     @Test
