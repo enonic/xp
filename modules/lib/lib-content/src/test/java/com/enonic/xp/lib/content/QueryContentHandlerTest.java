@@ -71,7 +71,7 @@ public class QueryContentHandlerTest
             add( NumericRangeBucket.create().key( "c" ).docCount( 4 ).from( 100 ).build() ).
             build();
         final Buckets buckets4 = Buckets.create().
-            add( DateRangeBucket.create().from( t1 ).docCount( 2 ).build() ).
+            add( DateRangeBucket.create().from( t1 ).docCount( 2 ).key( "date range bucket key" ).build() ).
             add( DateRangeBucket.create().to( t1 ).from( t2 ).docCount( 5 ).build() ).
             add( DateRangeBucket.create().to( t3 ).docCount( 7 ).build() ).
             build();
