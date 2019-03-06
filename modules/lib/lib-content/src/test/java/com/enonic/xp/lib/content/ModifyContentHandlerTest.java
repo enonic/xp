@@ -76,6 +76,38 @@ public class ModifyContentHandlerTest
     }
 
     @Test
+    public void modifyNotMappedXDataFieldNameStricted()
+        throws Exception
+    {
+        final Content content = TestDataFixtures.newSmallContent();
+        when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
+
+        when( this.contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenAnswer(
+            invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0],
+                                              TestDataFixtures.newSmallContent() ) );
+
+        mockXData();
+
+        runFunction( "/test/ModifyContentHandlerTest.js", "modifyNotMappedXDataFieldName_stricted" );
+    }
+
+    @Test
+    public void modifyNotMappedXDataFieldNameNotStricted()
+        throws Exception
+    {
+        final Content content = TestDataFixtures.newSmallContent();
+        when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
+
+        when( this.contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenAnswer(
+            invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0],
+                                              TestDataFixtures.newSmallContent() ) );
+
+        mockXData();
+
+        runFunction( "/test/ModifyContentHandlerTest.js", "modifyNotMappedXDataFieldName_notStricted" );
+    }
+
+    @Test
     public void modifyNotFound()
         throws Exception
     {

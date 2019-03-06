@@ -81,7 +81,7 @@ public final class CreateContentHandler
             requireValid( this.requireValid ).
             type( contentTypeName ).
             contentData( createPropertyTree( data, contentTypeName ) ).
-            extraDatas( createExtraDatas( x ) ).
+            extraDatas( createExtraDatas( x, contentTypeName ) ).
             language( language != null ? Locale.forLanguageTag( language ) : null ).
             childOrder( childOrder != null ? ChildOrder.from( childOrder ) : null ).
             refresh( this.refresh ).
@@ -108,14 +108,14 @@ public final class CreateContentHandler
         return this.translateToPropertyTree( createJson( value ), contentTypeName );
     }
 
-    private PropertyTree createPropertyTree( final Map<?, ?> value, final XDataName xDataName )
+    private PropertyTree createPropertyTree( final Map<?, ?> value, final XDataName xDataName, final ContentTypeName contentTypeName )
     {
         if ( value == null )
         {
             return null;
         }
 
-        return this.translateToPropertyTree( createJson( value ), xDataName );
+        return this.translateToPropertyTree( createJson( value ), xDataName, contentTypeName );
     }
 
     private JsonNode createJson( final Map<?, ?> value )
@@ -124,7 +124,7 @@ public final class CreateContentHandler
         return mapper.valueToTree( value );
     }
 
-    private ExtraDatas createExtraDatas( final Map<String, Object> value )
+    private ExtraDatas createExtraDatas( final Map<String, Object> value, final ContentTypeName contentTypeName )
     {
         if ( value == null )
         {
@@ -145,7 +145,7 @@ public final class CreateContentHandler
             for ( final Map.Entry<?, ?> entry : extradatas.entrySet() )
             {
                 final XDataName xDataName = XDataName.from( applicationKey, entry.getKey().toString() );
-                final ExtraData item = createExtraData( xDataName, entry.getValue() );
+                final ExtraData item = createExtraData( xDataName, contentTypeName, entry.getValue() );
                 if ( item != null )
                 {
                     extradatasBuilder.add( item );
@@ -156,11 +156,11 @@ public final class CreateContentHandler
         return extradatasBuilder.build();
     }
 
-    private ExtraData createExtraData( final XDataName xDataName, final Object value )
+    private ExtraData createExtraData( final XDataName xDataName, final ContentTypeName contentTypeName, final Object value )
     {
         if ( value instanceof Map )
         {
-            final PropertyTree tree = createPropertyTree( (Map) value, xDataName );
+            final PropertyTree tree = createPropertyTree( (Map) value, xDataName, contentTypeName );
             return tree != null ? new ExtraData( xDataName, tree ) : null;
         }
 

@@ -45,6 +45,11 @@ public abstract class BaseContextHandler
         return true;
     }
 
+    private boolean strictContentValidation( final ContentTypeName contentTypeName )
+    {
+        return ( !contentTypeName.isUnstructured() ) && strictDataValidation();
+    }
+
     protected PropertyTree translateToPropertyTree( final JsonNode json, final ContentTypeName contentTypeName )
     {
         final ContentType contentType = this.contentTypeService.getByName( GetContentTypeParams.from( contentTypeName ) );
@@ -54,11 +59,11 @@ public abstract class BaseContextHandler
             throw new IllegalArgumentException( "Content type not found [" + contentTypeName + "]" );
         }
 
-        final boolean strict = ( !contentType.getName().isUnstructured() ) && strictDataValidation();
-        return new FormJsonToPropertyTreeTranslator( inlineMixins( contentType.getForm() ), strict ).translate( json );
+        return new FormJsonToPropertyTreeTranslator( inlineMixins( contentType.getForm() ),
+                                                     strictContentValidation( contentTypeName ) ).translate( json );
     }
 
-    protected PropertyTree translateToPropertyTree( final JsonNode json, final XDataName xDataName )
+    protected PropertyTree translateToPropertyTree( final JsonNode json, final XDataName xDataName, final ContentTypeName contentTypeName )
     {
         final XData xData = this.xDataService.getByName( xDataName );
 
@@ -67,7 +72,8 @@ public abstract class BaseContextHandler
             throw new IllegalArgumentException( "XData not found [" + xDataName + "]" );
         }
 
-        return new FormJsonToPropertyTreeTranslator( inlineMixins( xData.getForm() ), true ).translate( json );
+        return new FormJsonToPropertyTreeTranslator( inlineMixins( xData.getForm() ),
+                                                     strictContentValidation( contentTypeName ) ).translate( json );
     }
 
     private Form inlineMixins( final Form form )
