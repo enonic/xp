@@ -99,7 +99,7 @@ final class PageDataSerializer
 
         specialBlockSet.addBoolean( CUSTOMIZED, page.isCustomized() );
 
-        if ( page.hasConfig() )
+        if ( page.hasConfig() && page.getConfig().getTotalSize() > 0 )
         {
             final PropertySet configSet = specialBlockSet.addSet( CONFIG );
             final String appKeyAsString = appNameToConfigPropertyName( page.getDescriptor().getApplicationKey().toString() );
