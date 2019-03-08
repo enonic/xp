@@ -24,6 +24,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.collect.Sets;
 
+import com.enonic.xp.cluster.ClusterManager;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.DeleteSnapshotParams;
 import com.enonic.xp.node.DeleteSnapshotsResult;
@@ -51,6 +52,8 @@ public class SnapshotServiceImpl
     private RepositoryService repositoryService;
 
     private EventPublisher eventPublisher;
+
+    private ClusterManager clusterManager;
 
     @Override
     public SnapshotResult snapshot( final SnapshotParams snapshotParams )
@@ -90,6 +93,7 @@ public class SnapshotServiceImpl
             snapshotName( restoreParams.getSnapshotName() ).
             client( this.client ).
             repositoryService( this.repositoryService ).
+            clusterManager( this.clusterManager ).
             snapshotRepositoryName( SNAPSHOT_REPOSITORY_NAME ).
             build().
             execute();
@@ -317,5 +321,11 @@ public class SnapshotServiceImpl
     public void setEventPublisher( final EventPublisher eventPublisher )
     {
         this.eventPublisher = eventPublisher;
+    }
+
+    @Reference
+    public void setClusterManager( final ClusterManager clusterManager )
+    {
+        this.clusterManager = clusterManager;
     }
 }
