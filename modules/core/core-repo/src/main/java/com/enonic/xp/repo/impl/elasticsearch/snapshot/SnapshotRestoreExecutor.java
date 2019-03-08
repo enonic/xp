@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch.snapshot;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -13,7 +14,6 @@ import com.enonic.xp.cluster.ClusterManager;
 import com.enonic.xp.node.RestoreResult;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
-import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.util.Exceptions;
 
 public class SnapshotRestoreExecutor
@@ -65,28 +65,19 @@ public class SnapshotRestoreExecutor
 
     private RestoreResult restoreAllRepositories()
     {
-        final RestoreResult.Builder builder = RestoreResult.create();
-        final RepositoryIds existingRepositoryIds = getRepositories( true );
-        RepositoryIds currentRepositoryIds = null;
+        final RepositoryIds repositoryIds = getRepositories( true );
 
         try
         {
-            //Closes  current indices and wait for ES provider to be disabled
-            closeIndices( existingRepositoryIds );
+            //Closes current indices and wait for ES provider to be disabled
+            closeIndices( repositoryIds );
             while ( !clusterManager.isHealthy() )
             {
                 Thread.sleep( 1000l );
             }
 
-            //Restore system indices
-            addResult( builder, doRestoreRepo( SystemConstants.SYSTEM_REPO.getId() ) );
-            openIndices( RepositoryIds.from( SystemConstants.SYSTEM_REPO.getId() ) );
-
-            //Restore other indices
-            currentRepositoryIds = getRepositories( false );
-            closeIndices( currentRepositoryIds );
-            currentRepositoryIds.forEach( ( repo ) -> addResult( builder, doRestoreRepo( repo ) ) );
-            return builder.build();
+            //Restore indices
+            return doRestoreIndices( Collections.emptySet() );
         }
         catch ( InterruptedException e )
         {
@@ -94,9 +85,7 @@ public class SnapshotRestoreExecutor
         }
         finally
         {
-            //TODO Bug: Obsolete indices should be deleted
-            openIndices( existingRepositoryIds );
-            openIndices( currentRepositoryIds );
+            openIndices( repositoryIds );
         }
     }
 
@@ -105,8 +94,19 @@ public class SnapshotRestoreExecutor
         final RepositoryIds repositoryIds = RepositoryIds.from( repositoryId );
         try
         {
+            //Closes indices and wait for ES provider to be disabled
             closeIndices( repositoryIds );
+            while ( !clusterManager.isHealthy() )
+            {
+                Thread.sleep( 1000l );
+            }
+
+            //Restore indice
             return doRestoreRepo( this.repositoryToRestore );
+        }
+        catch ( InterruptedException e )
+        {
+            throw Exceptions.unchecked( e );
         }
         finally
         {
