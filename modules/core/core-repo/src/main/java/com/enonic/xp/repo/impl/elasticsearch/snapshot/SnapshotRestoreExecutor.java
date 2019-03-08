@@ -71,7 +71,7 @@ public class SnapshotRestoreExecutor
         {
             //Closes current indices and wait for ES provider to be disabled
             closeIndices( repositoryIds );
-            while ( !clusterManager.isHealthy() )
+            while ( clusterManager.isHealthy() )
             {
                 Thread.sleep( 1000l );
             }
@@ -96,7 +96,7 @@ public class SnapshotRestoreExecutor
         {
             //Closes indices and wait for ES provider to be disabled
             closeIndices( repositoryIds );
-            while ( !clusterManager.isHealthy() )
+            while ( clusterManager.isHealthy() )
             {
                 Thread.sleep( 1000l );
             }
