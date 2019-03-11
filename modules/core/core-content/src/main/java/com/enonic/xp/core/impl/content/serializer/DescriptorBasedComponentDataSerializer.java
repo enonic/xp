@@ -26,10 +26,10 @@ abstract class DescriptorBasedComponentDataSerializer<DATA extends DescriptorBas
 
         if ( component.hasConfig() )
         {
-            final PropertySet configSet = specBlock.addSet( CONFIG );
             final String appKeyAsString = appNameToConfigPropertyName( component.getDescriptor().getApplicationKey().toString() );
-
-            configSet.addSet( appKeyAsString, component.getConfig().getRoot().copy( asData.getTree() ) );
+            final PropertySet configSet = specBlock.addSet( CONFIG ).addSet( appKeyAsString );
+            final String componentName = appNameToConfigPropertyName( component.getDescriptor().getName() );
+            configSet.addSet( componentName, component.getConfig().getRoot().copy( asData.getTree() ) );
         }
     }
 
@@ -37,12 +37,17 @@ abstract class DescriptorBasedComponentDataSerializer<DATA extends DescriptorBas
     {
         if ( specialBlockSet.hasProperty( CONFIG ) )
         {
-            final PropertySet configSet = specialBlockSet.getSet( CONFIG );
             final String appKeyAsString = appNameToConfigPropertyName( descriptorKey.getApplicationKey().toString() );
 
-            if ( configSet.hasProperty( appKeyAsString ) )
+            if ( specialBlockSet.getSet( CONFIG ).hasProperty( appKeyAsString ) )
             {
-                return configSet.getSet( appKeyAsString ).toTree();
+                final PropertySet configSet = specialBlockSet.getSet( CONFIG ).getSet( appKeyAsString );
+                final String componentName = appNameToConfigPropertyName( descriptorKey.getName() );
+
+                if ( configSet.hasProperty( componentName ) )
+                {
+                    return configSet.getSet( componentName ).toTree();
+                }
             }
         }
 
