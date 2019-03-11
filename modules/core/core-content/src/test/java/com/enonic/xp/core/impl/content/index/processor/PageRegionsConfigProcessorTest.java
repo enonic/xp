@@ -112,7 +112,7 @@ public class PageRegionsConfigProcessorTest
         final PatternIndexConfigDocument result = processPage( page, Arrays.asList( configFormWithHtmlArea ).listIterator(), null );
         assertEquals( "htmlStripper", result.getConfigForPath(
             PropertyPath.from( COMPONENTS, PartComponentType.INSTANCE.toString(), CONFIG, partDescriptorKey.getApplicationKey().toString(),
-                               htmlarea ) ).getIndexValueProcessors().get( 0 ).getName() );
+                               partDescriptorKey.getName(), htmlarea ) ).getIndexValueProcessors().get( 0 ).getName() );
     }
 
     @Test
@@ -139,8 +139,8 @@ public class PageRegionsConfigProcessorTest
         final PatternIndexConfigDocument result = processPage( page, null, Arrays.asList( configFormWithHtmlArea ).listIterator() );
         assertEquals( "htmlStripper", result.getConfigForPath(
             PropertyPath.from( COMPONENTS, LayoutComponentType.INSTANCE.toString(), CONFIG,
-                               layoutDescriptorKey.getApplicationKey().toString(), htmlarea ) ).getIndexValueProcessors().get(
-            0 ).getName() );
+                               layoutDescriptorKey.getApplicationKey().toString(), layoutDescriptorKey.getName(),
+                               htmlarea ) ).getIndexValueProcessors().get( 0 ).getName() );
     }
 
     @Test

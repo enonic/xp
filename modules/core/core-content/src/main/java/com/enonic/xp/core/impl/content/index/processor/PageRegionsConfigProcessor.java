@@ -104,13 +104,13 @@ public class PageRegionsConfigProcessor
     {
         final String appKeyAsString = appNameToConfigPropertyName( component.getDescriptor() );
 
-        final IndexConfigVisitor indexConfigVisitor =
-            new IndexConfigVisitor( String.join( ELEMENT_DIVIDER, COMPONENTS, component.getType().toString(), CONFIG, appKeyAsString ),
-                                    builder );
+        final IndexConfigVisitor indexConfigVisitor = new IndexConfigVisitor(
+            String.join( ELEMENT_DIVIDER, COMPONENTS, component.getType().toString(), CONFIG, appKeyAsString,
+                         component.getDescriptor().getName() ), builder );
         indexConfigVisitor.traverse( getComponentConfig( component ) );
 
-        builder.add( String.join( ELEMENT_DIVIDER, COMPONENTS, component.getType().toString(), CONFIG, appKeyAsString, ALL_PATTERN ),
-                     IndexConfig.BY_TYPE );
+        builder.add( String.join( ELEMENT_DIVIDER, COMPONENTS, component.getType().toString(), CONFIG, appKeyAsString,
+                                  component.getDescriptor().getName(), ALL_PATTERN ), IndexConfig.BY_TYPE );
 
         if ( component instanceof LayoutComponent )
         {
