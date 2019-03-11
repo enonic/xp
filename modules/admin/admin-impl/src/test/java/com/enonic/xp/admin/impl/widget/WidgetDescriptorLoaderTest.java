@@ -84,7 +84,7 @@ public class WidgetDescriptorLoaderTest
         final WidgetDescriptor descriptor = this.loader.load( descriptorKey, resource );
 
         assertEquals( "MyWidget", descriptor.getDisplayName() );
-        assertTrue( iconUrlResolver.resolve( descriptor ).startsWith( "/admin/rest/application/icon/myapp1?hash=" ) );
+        assertTrue( iconUrlResolver.resolve( descriptor ).startsWith( "/admin/rest/widget/icon/myapp1/widget1?hash=" ) );
         assertEquals( 1, descriptor.getInterfaces().size() );
         assertTrue( descriptor.getInterfaces().contains( "com.enonic.xp.my-interface" ) );
         assertEquals( 1, descriptor.getAllowedPrincipals().getSize() );

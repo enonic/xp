@@ -7,7 +7,7 @@ import com.enonic.xp.icon.Icon;
 public class WidgetIconUrlResolver
     extends IconUrlResolver
 {
-    private static final String REST_SCHEMA_ICON_URL = "/admin/rest/application/icon/";
+    private static final String REST_SCHEMA_ICON_URL = "/admin/rest/widget/icon/";
 
     public WidgetIconUrlResolver()
     {
@@ -17,7 +17,9 @@ public class WidgetIconUrlResolver
     {
         if ( widgetDescriptor != null && widgetDescriptor.getIcon() != null )
         {
-            final String baseUrl = REST_SCHEMA_ICON_URL + widgetDescriptor.getApplicationKey().toString();
+            final String appKeyStr = widgetDescriptor.getApplicationKey().toString();
+            final String name = widgetDescriptor.getName();
+            final String baseUrl = REST_SCHEMA_ICON_URL + appKeyStr + "/" + name;
             final Icon icon = widgetDescriptor.getIcon();
             return generateIconUrl( baseUrl, icon );
         }
