@@ -84,7 +84,7 @@ public class FlattenedPageIndexUpgrader
 
         if ( this.descriptorKey != null )
         {
-            result.add( String.join( ELEMENT_DIVIDER, TGT_COMPONENTS_KEY, PAGE, TGT_CONFIG_KEY, getAppName( descriptorKey ), getComponentName( descriptorKey ), "*" ),
+            result.add( String.join( ELEMENT_DIVIDER, TGT_COMPONENTS_KEY, PAGE, TGT_CONFIG_KEY, getAppName( this.descriptorKey ), "*" ),
                         IndexConfig.BY_TYPE );
         }
     }
@@ -106,8 +106,8 @@ public class FlattenedPageIndexUpgrader
         {
             if ( sourcePath.startsWith( String.join( ELEMENT_DIVIDER, PAGE, TGT_CONFIG_KEY ) ) )
             {
-                final String newPathPrefix = String.format( String.join( ELEMENT_DIVIDER, TGT_COMPONENTS_KEY, PAGE, TGT_CONFIG_KEY, "%s", "%s" ),
-                                                            getAppName( descriptorKey ), getComponentName( descriptorKey ) );
+                final String newPathPrefix = String.format( String.join( ELEMENT_DIVIDER, TGT_COMPONENTS_KEY, PAGE, TGT_CONFIG_KEY, "%s" ),
+                                                            getAppName( this.descriptorKey ) );
                 final String newPath = sourcePath.replace( String.join( ELEMENT_DIVIDER, PAGE, TGT_CONFIG_KEY ), newPathPrefix );
 
                 return PathIndexConfig.create().indexConfig( source.getIndexConfig() ).path( PropertyPath.from( newPath ) ).build();
@@ -120,10 +120,5 @@ public class FlattenedPageIndexUpgrader
     private String getAppName( final DescriptorKey descriptor )
     {
         return descriptor.getApplicationKey().toString().replace( ".", "-" );
-    }
-
-    private String getComponentName( final DescriptorKey descriptor )
-    {
-        return descriptor.getName().replace( ".", "-" );
     }
 }

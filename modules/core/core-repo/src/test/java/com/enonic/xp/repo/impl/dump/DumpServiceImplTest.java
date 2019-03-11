@@ -856,7 +856,7 @@ public class DumpServiceImplTest
         assertEquals( "com.enonic.app.superhero:default", pageComponentData.getString( "descriptor" ) );
         assertEquals( Boolean.TRUE, pageComponentData.getBoolean( "customized" ) );
         final PropertySet pageConfig = pageComponentData.getSet( "config" );
-        assertNotNull( pageConfig.getSet( "com-enonic-app-superhero" ) );
+        assertNotNull( pageConfig.getSet( "com-enonic-app-superhero" ).getSet( "default" ) );
 
         //Checks layout component
         final PropertySet layoutComponent =
@@ -864,7 +864,7 @@ public class DumpServiceImplTest
         assertEquals( "layout", layoutComponent.getString( "type" ) );
         final PropertySet layoutComponentData = layoutComponent.getSet( "layout" );
         assertEquals( "com.enonic.app.superhero:two-column", layoutComponentData.getString( "descriptor" ) );
-        assertNotNull( layoutComponentData.getSet( "config" ).getSet( "com-enonic-app-superhero" ) );
+        assertNotNull( layoutComponentData.getSet( "config" ).getSet( "com-enonic-app-superhero" ).getSet( "two-column" ) );
 
         //Checks image component
         final PropertySet imageComponent =
@@ -880,7 +880,7 @@ public class DumpServiceImplTest
         assertEquals( "part", partComponent.getString( "type" ) );
         final PropertySet partComponentData = partComponent.getSet( "part" );
         assertEquals( "com.enonic.app.superhero:tag-cloud", partComponentData.getString( "descriptor" ) );
-        assertNotNull( partComponentData.getSet( "config" ).getSet( "com-enonic-app-superhero" ) );
+        assertNotNull( partComponentData.getSet( "config" ).getSet( "com-enonic-app-superhero" ).getSet( "tag-cloud" ) );
 
         //Checks fragment component
         final PropertySet fragmentComponent =
@@ -923,7 +923,7 @@ public class DumpServiceImplTest
         assertEquals( "/", partComponent.getString( "path" ) );
         final PropertySet partComponentData = partComponent.getSet( "part" );
         assertEquals( "com.enonic.app.superhero:meta", partComponentData.getString( "descriptor" ) );
-        assertNotNull( partComponentData.getSet( "config" ).getSet( "com-enonic-app-superhero" ) );
+        assertNotNull( partComponentData.getSet( "config" ).getSet( "com-enonic-app-superhero" ).getSet( "meta" ) );
     }
 
     private File createIncompatibleDump( final String dumpName )

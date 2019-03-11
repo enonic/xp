@@ -11,6 +11,8 @@
             {
               "com-enonic-app-features": [
                 {
+                  "main": {
+                  }
                 }
               ]
             }
@@ -28,6 +30,8 @@
             {
               "com-enonic-app-features": [
                 {
+                  "layout-25-75": {
+                  }
                 }
               ]
             }
@@ -45,6 +49,8 @@
             {
               "com-enonic-app-features": [
                 {
+                  "cities-distance-facet": {
+                  }
                 }
               ]
             }
@@ -91,6 +97,8 @@
             {
               "com-enonic-app-features": [
                 {
+                  "getComponent": {
+                  }
                 }
               ]
             }
