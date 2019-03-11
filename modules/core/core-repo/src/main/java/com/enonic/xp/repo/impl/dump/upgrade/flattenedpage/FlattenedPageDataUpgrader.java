@@ -106,30 +106,45 @@ public class FlattenedPageDataUpgrader
             }
         }
 
-        if (descriptorKey != null) {
+        if ( descriptorKey != null )
+        {
             pageComponentDataSet.setString( TGT_DESCRIPTOR_KEY, descriptorKey );
             pageComponentDataSet.setBoolean( TGT_CUSTOMIZED_KEY, true );
 
             final PropertySet sourceConfigSet = sourcePageSet.getSet( SRC_CONFIG_KEY );
-            if ( sourceConfigSet != null)
+            if ( sourceConfigSet != null )
             {
                 final PropertySet configSet = pageComponentDataSet.addSet( TGT_CONFIG_KEY );
-                final String applicationPropertyKey = getApplicationPropertyKey( descriptorKey );
-                configSet.setSet( applicationPropertyKey, sourceConfigSet );
+                final String applicationKey = getSanitizedApplicationKey( descriptorKey );
+                final PropertySet applicationConfigSet = configSet.addSet( applicationKey );
+                final String componentName = getSanitizedComponentName( descriptorKey );
+                applicationConfigSet.setSet( componentName, sourceConfigSet );
             }
-        } else {
+        }
+        else
+        {
             pageComponentDataSet.setBoolean( TGT_CUSTOMIZED_KEY, false );
         }
     }
 
-    private String getApplicationPropertyKey( String descriptorKey )
+    private String getSanitizedApplicationKey( String descriptorKey )
     {
         return getApplicationKey( descriptorKey ).replace( '.', '-' );
+    }
+
+    private String getSanitizedComponentName( String descriptorKey )
+    {
+        return getComponentName( descriptorKey ).replace( '.', '-' );
     }
 
     private String getApplicationKey( String descriptorKey )
     {
         return descriptorKey.split( ":" )[0];
+    }
+
+    private String getComponentName( String descriptorKey )
+    {
+        return descriptorKey.split( ":" )[1];
     }
 
     private void addComponents( final PropertyTree nodeData )
@@ -225,8 +240,10 @@ public class FlattenedPageDataUpgrader
         if ( sourceConfigSet != null && sourceTemplateKey != null )
         {
             final PropertySet targetConfigSet = targetComponentDataSet.addSet( TGT_CONFIG_KEY );
-            final String applicationPropertyKey = getApplicationPropertyKey( sourceTemplateKey );
-            targetConfigSet.setSet( applicationPropertyKey, sourceConfigSet );
+            final String applicationKey = getSanitizedApplicationKey( sourceTemplateKey );
+            final PropertySet applicationConfigSet = targetConfigSet.addSet( applicationKey );
+            final String componentName = getSanitizedComponentName( sourceTemplateKey );
+            applicationConfigSet.setSet( componentName, sourceConfigSet );
         }
     }
 

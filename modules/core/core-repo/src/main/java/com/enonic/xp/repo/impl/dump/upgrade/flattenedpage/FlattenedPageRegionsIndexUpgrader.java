@@ -15,8 +15,6 @@ import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.page.DescriptorKey;
 
 import static com.enonic.xp.data.PropertyPath.ELEMENT_DIVIDER;
-import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageSourceConstants.SRC_PAGE_KEY;
-import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageSourceConstants.SRC_REGION_KEY;
 import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageTargetConstants.TGT_COMPONENTS_KEY;
 import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageTargetConstants.TGT_CONFIG_KEY;
 import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageTargetConstants.TGT_DESCRIPTOR_KEY;
@@ -111,7 +109,7 @@ public class FlattenedPageRegionsIndexUpgrader
         {
             final DescriptorKey descriptorKey = DescriptorKey.from( descriptorKeyStr );
 
-            result.add( String.join( ELEMENT_DIVIDER, TGT_COMPONENTS_KEY, componentType, TGT_CONFIG_KEY, getAppName( descriptorKey ), "*" ),
+            result.add( String.join( ELEMENT_DIVIDER, TGT_COMPONENTS_KEY, componentType, TGT_CONFIG_KEY, getAppName( descriptorKey ), getComponentName( descriptorKey ), "*" ),
                         IndexConfig.BY_TYPE );
         }
     }
@@ -150,5 +148,10 @@ public class FlattenedPageRegionsIndexUpgrader
     private String getAppName( final DescriptorKey descriptor )
     {
         return descriptor.getApplicationKey().toString().replace( ".", "-" );
+    }
+
+    private String getComponentName( final DescriptorKey descriptor )
+    {
+        return descriptor.getName().replace( ".", "-" );
     }
 }
