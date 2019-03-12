@@ -54,11 +54,7 @@ public class ApplicationDeployerManager
         this.deployDirectoryWatcher = deployDirectoryWatcher;
     }
 
-    //TODO Temporary fix. To be removed in next breaking change after the fix of libraries
-    // On Deactivation/activation of a transitive dependency, ApplicationDeployerManager will be reactivated
-    // The main controller of applications having a dependency to a service might be executed before these services are available
-    // Current behaviour of libraries is not blocking until activation of required services
-
+    //TODO Temporary fix. See issue xp#7003
     @Reference
     public void setAdminToolDescriptorService( final AdminToolDescriptorService adminToolDescriptorService )
     {

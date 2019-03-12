@@ -4,7 +4,7 @@ dependencies {
     compile project( ':core:core-api' )
     testCompile project( path: ':core:core-api', configuration: 'testOutput' )
 
-    //TODO Temporary fix. See comment in com.enonic.xp.server.internal.deploy.ApplicationDeployerManager
+    //TODO Temporary fix. See issue xp#7003
     compile project( ':admin:admin-api' )
 }
 
