@@ -26,7 +26,8 @@ import static com.enonic.xp.core.impl.content.index.processor.PageConfigProcesso
 import static com.enonic.xp.core.impl.content.index.processor.PageConfigProcessor.COMPONENTS;
 import static com.enonic.xp.core.impl.content.index.processor.PageConfigProcessor.CONFIG;
 import static com.enonic.xp.core.impl.content.index.processor.PageConfigProcessor.DESCRIPTOR;
-import static com.enonic.xp.core.impl.content.index.processor.PageConfigProcessor.appNameToConfigPropertyName;
+import static com.enonic.xp.core.impl.content.index.processor.PageConfigProcessor.getSanitizedAppName;
+import static com.enonic.xp.core.impl.content.index.processor.PageConfigProcessor.getSanitizedComponentName;
 import static com.enonic.xp.data.PropertyPath.ELEMENT_DIVIDER;
 
 public class PageRegionsConfigProcessor
@@ -102,15 +103,17 @@ public class PageRegionsConfigProcessor
     private void processDescriptorBasedComponent( final DescriptorBasedComponent component,
                                                   final PatternIndexConfigDocument.Builder builder )
     {
-        final String appKeyAsString = appNameToConfigPropertyName( component.getDescriptor() );
+        final String appNameAsString = getSanitizedAppName( component.getDescriptor() );
+        final String componentNameAsString = getSanitizedComponentName( component.getDescriptor() );
 
         final IndexConfigVisitor indexConfigVisitor = new IndexConfigVisitor(
-            String.join( ELEMENT_DIVIDER, COMPONENTS, component.getType().toString(), CONFIG, appKeyAsString,
-                         component.getDescriptor().getName() ), builder );
+            String.join( ELEMENT_DIVIDER, COMPONENTS, component.getType().toString(), CONFIG, appNameAsString, componentNameAsString ),
+            builder );
         indexConfigVisitor.traverse( getComponentConfig( component ) );
 
-        builder.add( String.join( ELEMENT_DIVIDER, COMPONENTS, component.getType().toString(), CONFIG, appKeyAsString,
-                                  component.getDescriptor().getName(), ALL_PATTERN ), IndexConfig.BY_TYPE );
+        builder.add(
+            String.join( ELEMENT_DIVIDER, COMPONENTS, component.getType().toString(), CONFIG, appNameAsString, componentNameAsString,
+                         ALL_PATTERN ), IndexConfig.BY_TYPE );
 
         if ( component instanceof LayoutComponent )
         {

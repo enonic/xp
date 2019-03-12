@@ -15,13 +15,10 @@ import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.page.DescriptorKey;
 
 import static com.enonic.xp.data.PropertyPath.ELEMENT_DIVIDER;
-import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageSourceConstants.SRC_PAGE_KEY;
-import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageSourceConstants.SRC_REGION_KEY;
 import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageTargetConstants.TGT_COMPONENTS_KEY;
 import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageTargetConstants.TGT_CONFIG_KEY;
 import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageTargetConstants.TGT_DESCRIPTOR_KEY;
 import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageTargetConstants.TGT_ID_KEY;
-import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageTargetConstants.TGT_TYPE_KEY;
 import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageTargetConstants.TGT_TYPE_VALUE.FRAGMENT;
 import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageTargetConstants.TGT_TYPE_VALUE.IMAGE;
 import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageTargetConstants.TGT_TYPE_VALUE.LAYOUT;
@@ -47,7 +44,7 @@ public class FlattenedPageRegionsIndexUpgrader
             build() ).build() );
 
     private final Pattern HTML_AREA_CONFIG_PATH_PATTERN =
-        Pattern.compile( "(?i)^page\\.(region\\.component\\.(layoutcomponent|partcomponent)\\.)+config\\.(\\w+)$" );
+        Pattern.compile( "(?i)^page\\.(region\\.component\\.(layoutcomponent|partcomponent)\\.)+config\\.(\\S+)$" );
 
     private final List<PropertySet> components;
 
@@ -111,8 +108,9 @@ public class FlattenedPageRegionsIndexUpgrader
         {
             final DescriptorKey descriptorKey = DescriptorKey.from( descriptorKeyStr );
 
-            result.add( String.join( ELEMENT_DIVIDER, TGT_COMPONENTS_KEY, componentType, TGT_CONFIG_KEY, getAppName( descriptorKey ), "*" ),
-                        IndexConfig.BY_TYPE );
+            result.add(
+                String.join( ELEMENT_DIVIDER, TGT_COMPONENTS_KEY, componentType, TGT_CONFIG_KEY, getSanitizedAppName( descriptorKey ),
+                             getSanitizedComponentName( descriptorKey ), "*" ), IndexConfig.BY_TYPE );
         }
     }
 
@@ -126,7 +124,7 @@ public class FlattenedPageRegionsIndexUpgrader
 
                 final String componentNewType = FlattenedPageDataUpgrader.getTargetType( matcher.group( 2 ) );
 
-                if ( componentNewType != null && componentNewType.equals( componentSet.getString( TGT_TYPE_KEY ) ) )
+                if ( componentNewType != null )
                 {
                     final String descriptorKeyStr =
                         componentSet.getString( String.join( ELEMENT_DIVIDER, componentNewType, TGT_DESCRIPTOR_KEY ) );
@@ -135,11 +133,20 @@ public class FlattenedPageRegionsIndexUpgrader
                     {
                         final DescriptorKey descriptorKey = DescriptorKey.from( descriptorKeyStr );
 
-                        String newHtmlAreaPath =
-                            String.join( ELEMENT_DIVIDER, TGT_COMPONENTS_KEY, FlattenedPageDataUpgrader.getTargetType( matcher.group( 2 ) ),
-                                         TGT_CONFIG_KEY, getAppName( descriptorKey ), matcher.group( 3 ) );
+                        final String property = componentSet.getString(
+                            String.join( ELEMENT_DIVIDER, componentNewType, TGT_CONFIG_KEY, getSanitizedAppName( descriptorKey ),
+                                         getSanitizedComponentName( descriptorKey ), matcher.group( 3 ) ) );
 
-                        result.add( newHtmlAreaPath, pathIndexConfig.getIndexConfig() );
+                        if ( property != null )
+                        {
+
+                            String newHtmlAreaPath = String.join( ELEMENT_DIVIDER, TGT_COMPONENTS_KEY,
+                                                                  FlattenedPageDataUpgrader.getTargetType( matcher.group( 2 ) ),
+                                                                  TGT_CONFIG_KEY, getSanitizedAppName( descriptorKey ),
+                                                                  getSanitizedComponentName( descriptorKey ), matcher.group( 3 ) );
+
+                            result.add( newHtmlAreaPath, pathIndexConfig.getIndexConfig() );
+                        }
                     }
                 }
             } );
@@ -147,8 +154,13 @@ public class FlattenedPageRegionsIndexUpgrader
 
     }
 
-    private String getAppName( final DescriptorKey descriptor )
+    private String getSanitizedAppName( final DescriptorKey descriptor )
     {
         return descriptor.getApplicationKey().toString().replace( ".", "-" );
+    }
+
+    private String getSanitizedComponentName( final DescriptorKey descriptor )
+    {
+        return descriptor.getName().replace( ".", "-" );
     }
 }
