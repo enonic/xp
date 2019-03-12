@@ -8,7 +8,9 @@ import org.elasticsearch.action.admin.cluster.state.ClusterStateRequest;
 import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
+import org.elasticsearch.cluster.metadata.IndexMetaData;
 import org.elasticsearch.cluster.node.DiscoveryNodes;
+import org.elasticsearch.common.collect.UnmodifiableIterator;
 import org.elasticsearch.node.Node;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -74,6 +76,16 @@ public final class ElasticsearchCluster
         try
         {
             final ClusterHealthResponse healthResponse = doGetHealth();
+            if ( healthResponse.getStatus() != org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus.RED )
+            {
+                if ( !checkAllIndicesOpened() )
+                {
+                    return ClusterHealth.create().
+                        status( ClusterHealthStatus.RED ).
+                        errorMessage( "Closed indices" ).
+                        build();
+                }
+            }
             return toClusterHealth( healthResponse.getStatus() );
         }
         catch ( Exception e )
@@ -83,6 +95,32 @@ public final class ElasticsearchCluster
                 errorMessage( e.getClass().getSimpleName() + "[" + e.getMessage() + "]" ).
                 build();
         }
+    }
+
+    private boolean checkAllIndicesOpened()
+    {
+        final ClusterStateRequest clusterStateRequest = Requests.clusterStateRequest().
+            clear().
+            metaData( true ).
+            masterNodeTimeout( CLUSTER_HEALTH_TIMEOUT );
+        final ClusterStateResponse clusterStateResponse = this.node.client().
+            admin().
+            cluster().
+            state( clusterStateRequest ).
+            actionGet();
+        final UnmodifiableIterator<IndexMetaData> indiceIterator = clusterStateResponse.getState().
+            getMetaData().
+            getIndices().
+            valuesIt();
+        while ( indiceIterator.hasNext() )
+        {
+            final IndexMetaData indexMetaData = indiceIterator.next();
+            if ( IndexMetaData.State.CLOSE == indexMetaData.getState() )
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override

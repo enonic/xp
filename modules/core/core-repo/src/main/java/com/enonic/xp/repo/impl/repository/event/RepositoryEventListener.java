@@ -6,7 +6,6 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
@@ -31,15 +30,12 @@ public class RepositoryEventListener
 
     private RepositoryRestoreInitializedHandler repositoryRestoreInitializedHandler;
 
-    private ApplicationService applicationService;
-
     @Activate
     public void initialize()
     {
         this.repositoryRestoredHandler = RepositoryRestoredHandler.create().
             repositoryService( repositoryService ).
             nodeStorageService( storageService ).
-            applicationService( applicationService ).
             build();
         this.repositoryInvalidateByIdHandler = new RepositoryInvalidateByIdHandler( repositoryService );
         this.repositoryRestoreInitializedHandler = new RepositoryRestoreInitializedHandler( repositoryService, storageService );
@@ -111,9 +107,4 @@ public class RepositoryEventListener
         this.repositoryService = repositoryService;
     }
 
-    @Reference
-    public void setApplicationService( final ApplicationService applicationService )
-    {
-        this.applicationService = applicationService;
-    }
 }
