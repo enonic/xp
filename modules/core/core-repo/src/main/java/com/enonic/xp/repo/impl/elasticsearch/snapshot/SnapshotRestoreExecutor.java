@@ -7,6 +7,8 @@ import java.util.Set;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotRequestBuilder;
 import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
@@ -19,6 +21,8 @@ import com.enonic.xp.util.Exceptions;
 public class SnapshotRestoreExecutor
     extends AbstractSnapshotExecutor
 {
+    private final Logger LOG = LoggerFactory.getLogger( SnapshotRestoreExecutor.class );
+
     private final ClusterManager clusterManager;
 
     private final String snapshotName;
@@ -73,6 +77,7 @@ public class SnapshotRestoreExecutor
             closeIndices( repositoryIds );
             while ( clusterManager.isHealthy() )
             {
+                LOG.info( "Waiting for cluster providers to be deactivated to initiate restore" );
                 Thread.sleep( 1000l );
             }
 
