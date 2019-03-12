@@ -4,6 +4,20 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.admin.tool.AdminToolDescriptorService;
+import com.enonic.xp.i18n.LocaleService;
+import com.enonic.xp.mail.MailService;
+import com.enonic.xp.portal.owasp.HtmlSanitizer;
+import com.enonic.xp.portal.url.PortalUrlService;
+import com.enonic.xp.portal.view.ViewFunctionService;
+import com.enonic.xp.portal.websocket.WebSocketManager;
+import com.enonic.xp.schema.content.ContentTypeService;
+import com.enonic.xp.script.event.ScriptEventManager;
+import com.enonic.xp.security.SecurityService;
+import com.enonic.xp.task.TaskDescriptorService;
+import com.enonic.xp.task.TaskService;
+import com.enonic.xp.web.multipart.MultipartService;
+
 @Component(immediate = true)
 public class ApplicationDeployerManager
 {
@@ -39,4 +53,75 @@ public class ApplicationDeployerManager
     {
         this.deployDirectoryWatcher = deployDirectoryWatcher;
     }
+
+    //TODO Temporary fix. To be removed in next breaking change after the fix of libraries
+    // On Deactivation/activation of a transitive dependency, ApplicationDeployerManager will be reactivated
+    // The main controller of applications having a dependency to a service might be executed before these services are available
+    // Current behaviour of libraries is not blocking until activation of required services
+
+    @Reference
+    public void setAdminToolDescriptorService( final AdminToolDescriptorService adminToolDescriptorService )
+    {
+    }
+
+    @Reference
+    public void setContentTypeService( final ContentTypeService contentTypeService )
+    {
+    }
+
+    @Reference
+    public void setHtmlSanitizer( final HtmlSanitizer htmlSanitizer )
+    {
+    }
+
+    @Reference
+    public void setLocaleService( final LocaleService localeService )
+    {
+    }
+
+    @Reference
+    public void setMailService( final MailService mailService )
+    {
+    }
+
+    @Reference
+    public void setMultipartService( final MultipartService multipartService )
+    {
+    }
+
+    @Reference
+    public void setPortalUrlService( final PortalUrlService portalUrlService )
+    {
+    }
+
+    @Reference
+    public void setSecurityService( final SecurityService securityService )
+    {
+    }
+
+    @Reference
+    public void setScriptEventManager( final ScriptEventManager scriptEventManager )
+    {
+    }
+
+    @Reference
+    public void setTaskDescriptorService( final TaskDescriptorService taskDescriptorService )
+    {
+    }
+
+    @Reference
+    public void setTaskService( final TaskService taskService )
+    {
+    }
+
+    @Reference
+    public void setViewFunctionService( final ViewFunctionService viewFunctionService )
+    {
+    }
+
+    @Reference
+    public void setWebSocketManager( final WebSocketManager webSocketManager )
+    {
+    }
+
 }
