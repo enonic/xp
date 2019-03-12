@@ -127,6 +127,12 @@ final class BuiltinContentTypes
             labelI18nKey( "media.image.tags.label" ).
             occurrences( 0, 0 ).
             build() ).
+        addFormItem( Input.create().name( "altText" ).
+            inputType( InputTypeName.TEXT_LINE ).
+            label( "Alternative text" ).
+            labelI18nKey( "media.image.alttext.label" ).
+            occurrences( 0, 1 ).
+            build() ).
         build();
 
     private static final Form MEDIA_VECTOR_FORM = Form.create().
