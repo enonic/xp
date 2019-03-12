@@ -216,6 +216,29 @@ public class Version
         return versionString = result.toString();
     }
 
+    public String toShortestString()
+    {
+        int q = qualifier.length();
+        StringBuffer result = new StringBuffer();
+        result.append( major );
+        if ( minor > 0 || micro > 0 || q > 0 )
+        {
+            result.append( SEPARATOR );
+            result.append( minor );
+            if ( micro > 0 || q > 0 )
+            {
+                result.append( SEPARATOR );
+                result.append( micro );
+                if ( q > 0 )
+                {
+                    result.append( SEPARATOR );
+                    result.append( qualifier );
+                }
+            }
+        }
+        return result.toString();
+    }
+
     @Override
     public int hashCode()
     {

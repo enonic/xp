@@ -37,7 +37,7 @@ public class DumpMetaJson
         this.xpVersion = builder.xpVersion;
         this.timestamp = builder.timestamp;
         this.result = builder.result;
-        this.modelVersion = builder.modelVersion.toString();
+        this.modelVersion = builder.modelVersion.toShortestString();
     }
 
     public static DumpMetaJson from( final DumpMeta dumpMeta )
@@ -48,8 +48,12 @@ public class DumpMetaJson
             result.put( repoDumpResult.getRepositoryId().toString(), repoDumpResultJson );
         } );
 
-        return DumpMetaJson.create().xpVersion( dumpMeta.getXpVersion() ).timestamp( dumpMeta.getTimestamp().toString() ).result(
-            result ).build();
+        return DumpMetaJson.create().
+            xpVersion( dumpMeta.getXpVersion() ).
+            modelVersion(dumpMeta.getModelVersion()).
+            timestamp( dumpMeta.getTimestamp().toString() ).
+            result(result ).
+            build();
     }
 
     public static DumpMeta fromJson( final DumpMetaJson dumpMetaJson )
