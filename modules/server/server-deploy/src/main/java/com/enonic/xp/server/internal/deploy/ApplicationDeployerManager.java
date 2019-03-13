@@ -58,66 +58,79 @@ public class ApplicationDeployerManager
     @Reference
     public void setAdminToolDescriptorService( final AdminToolDescriptorService adminToolDescriptorService )
     {
+        //Needed to ensure startup-order
     }
 
     @Reference
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
+        //Needed to ensure startup-order
     }
 
     @Reference
     public void setHtmlSanitizer( final HtmlSanitizer htmlSanitizer )
     {
+        //Needed to ensure startup-order
     }
 
     @Reference
     public void setLocaleService( final LocaleService localeService )
     {
+        //Needed to ensure startup-order
     }
 
     @Reference
     public void setMailService( final MailService mailService )
     {
+        //Needed to ensure startup-order
     }
 
     @Reference
     public void setMultipartService( final MultipartService multipartService )
     {
+        //Needed to ensure startup-order
     }
 
     @Reference
     public void setPortalUrlService( final PortalUrlService portalUrlService )
     {
+        //Needed to ensure startup-order
     }
 
     @Reference
     public void setSecurityService( final SecurityService securityService )
     {
+        //Needed to ensure startup-order
     }
 
     @Reference
     public void setScriptEventManager( final ScriptEventManager scriptEventManager )
     {
+        //Needed to ensure startup-order
     }
 
     @Reference
     public void setTaskDescriptorService( final TaskDescriptorService taskDescriptorService )
     {
+        //Needed to ensure startup-order
     }
 
     @Reference
     public void setTaskService( final TaskService taskService )
     {
+        //Needed to ensure startup-order
     }
 
     @Reference
     public void setViewFunctionService( final ViewFunctionService viewFunctionService )
     {
+        //Needed to ensure startup-order
     }
 
     @Reference
     public void setWebSocketManager( final WebSocketManager webSocketManager )
     {
+        //Needed to ensure startup-order
     }
 
 }
