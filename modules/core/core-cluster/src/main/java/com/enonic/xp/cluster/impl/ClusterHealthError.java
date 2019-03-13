@@ -1,16 +1,16 @@
 package com.enonic.xp.cluster.impl;
 
 import com.enonic.xp.cluster.ClusterId;
-import com.enonic.xp.cluster.ClusterValidationWarning;
+import com.enonic.xp.cluster.ClusterValidationError;
 
-class ClusterHealthWarning
-    implements ClusterValidationWarning
+class ClusterHealthError
+    implements ClusterValidationError
 {
     private final ClusterId providerId;
 
     private final String errorMessage;
 
-    ClusterHealthWarning( final ClusterId providerId, final String errorMessage )
+    ClusterHealthError( final ClusterId providerId, final String errorMessage )
     {
         this.providerId = providerId;
         this.errorMessage = errorMessage;
