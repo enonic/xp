@@ -53,8 +53,8 @@ public class ClusterManagerImplTest
 
         provider.setHealth( ClusterHealth.red() );
         Thread.sleep( CHECK_INTERVAL_MS );
-        assertClusterOk();
-        assertActive( provider );
+        assertClusterError();
+        assertDeactivated( provider );
 
         provider.setHealth( ClusterHealth.green() );
         Thread.sleep( CHECK_INTERVAL_MS );
@@ -91,8 +91,8 @@ public class ClusterManagerImplTest
 
         provider1.setHealth( ClusterHealth.red() );
         Thread.sleep( CHECK_INTERVAL_MS );
-        assertClusterOk();
-        assertActive( provider1, provider2 );
+        assertClusterError();
+        assertDeactivated( provider1, provider2 );
     }
 
     @Test

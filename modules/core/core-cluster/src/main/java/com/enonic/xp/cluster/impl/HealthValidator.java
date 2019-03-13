@@ -15,10 +15,10 @@ class HealthValidator
         {
             if ( !provider.getHealth().isHealthy() )
             {
-                final ClusterHealthWarning warning = new ClusterHealthWarning( provider.getId(), provider.getHealth().getErrorMessage() );
+                final ClusterHealthError error = new ClusterHealthError( provider.getId(), provider.getHealth().getErrorMessage() );
 
                 return ClusterValidatorResult.create().
-                    warning( warning ).
+                    error( error ).
                     build();
             }
         }
