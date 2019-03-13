@@ -101,9 +101,10 @@ final class PageDataSerializer
 
         if ( page.hasConfig() )
         {
-            final PropertySet configSet = specialBlockSet.addSet( CONFIG );
+            final String pageName = appNameToConfigPropertyName( page.getDescriptor().getName() );
             final String appKeyAsString = appNameToConfigPropertyName( page.getDescriptor().getApplicationKey().toString() );
-            configSet.addSet( appKeyAsString, page.getConfig().getRoot().copy( asSet.getTree() ) );
+            final PropertySet configSet = specialBlockSet.addSet( CONFIG ).addSet( appKeyAsString );
+            configSet.addSet( pageName, page.getConfig().getRoot().copy( asSet.getTree() ) );
         }
     }
 

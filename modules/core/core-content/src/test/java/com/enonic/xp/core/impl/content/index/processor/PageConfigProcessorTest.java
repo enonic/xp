@@ -35,7 +35,7 @@ public class PageConfigProcessorTest
         throws Exception
     {
         this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
-        this.descriptorKey = DescriptorKey.from( "descriptorKey" );
+        this.descriptorKey = DescriptorKey.from( "appKey:descriptorName" );
     }
 
     @Test
@@ -83,10 +83,10 @@ public class PageConfigProcessorTest
 
         assertEquals( 6, result.getPathIndexConfigs().size() );
         assertTrue( result.getPathIndexConfigs().contains( PathIndexConfig.create().path(
-            PropertyPath.from( COMPONENTS, PAGE, CONFIG, descriptorKey.getApplicationKey().toString(), ALL_PATTERN ) ).indexConfig(
-            IndexConfig.BY_TYPE ).build() ) );
+            PropertyPath.from( COMPONENTS, PAGE, CONFIG, descriptorKey.getApplicationKey().toString(), descriptorKey.getName(),
+                               ALL_PATTERN ) ).indexConfig( IndexConfig.BY_TYPE ).build() ) );
         assertEquals( "htmlStripper", result.getConfigForPath(
-            PropertyPath.from( COMPONENTS, PAGE, CONFIG, descriptorKey.getApplicationKey().toString(),
+            PropertyPath.from( COMPONENTS, PAGE, CONFIG, descriptorKey.getApplicationKey().toString(), descriptorKey.getName(),
                                "htmlarea" ) ).getIndexValueProcessors().get( 0 ).getName() );
     }
 
