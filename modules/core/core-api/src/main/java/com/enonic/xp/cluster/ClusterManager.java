@@ -5,4 +5,6 @@ public interface ClusterManager
     ClusterState getClusterState();
 
     Clusters getClusters();
+
+    boolean isHealthy();
 }

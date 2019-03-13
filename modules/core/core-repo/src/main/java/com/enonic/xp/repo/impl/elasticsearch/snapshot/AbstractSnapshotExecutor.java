@@ -40,6 +40,17 @@ class AbstractSnapshotExecutor
         repositoryService = builder.repositoryService;
     }
 
+    void closeIndices( final RepositoryIds repositoryIds )
+    {
+        if ( repositoryIds != null )
+        {
+            final Set<String> indexNames = repositoryIds.stream().
+                flatMap( repositoryId -> getIndexNames( repositoryId ).stream() ).
+                collect( Collectors.toSet() );
+            closeIndices( indexNames );
+        }
+    }
+
     void closeIndices( final Set<String> indexNames )
     {
         for ( final String indexName : indexNames )
@@ -57,6 +68,17 @@ class AbstractSnapshotExecutor
             {
                 LOG.warn( "Could not close index [" + indexName + "], not found" );
             }
+        }
+    }
+
+    void openIndices( final RepositoryIds repositoryIds )
+    {
+        if ( repositoryIds != null )
+        {
+            final Set<String> indexNames = repositoryIds.stream().
+                flatMap( repositoryId -> getIndexNames( repositoryId ).stream() ).
+                collect( Collectors.toSet() );
+            openIndices( indexNames );
         }
     }
 
