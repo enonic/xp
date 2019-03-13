@@ -112,6 +112,7 @@ var expectedJson = {
         "my_date_range": {
             "buckets": [
                 {
+                    "key": "date range bucket key",
                     "docCount": 2,
                     "from": "2014-09-01T00:00:00Z",
                 },

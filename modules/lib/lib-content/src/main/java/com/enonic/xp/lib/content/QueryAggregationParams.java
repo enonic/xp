@@ -215,7 +215,8 @@ final class QueryAggregationParams
         {
             final Double from = getDouble( rangeParams, "from" );
             final Double to = getDouble( rangeParams, "to" );
-            final NumericRange range = NumericRange.create().from( from ).to( to ).build();
+            final String key = (String) rangeParams.getOrDefault( "key", null );
+            final NumericRange range = NumericRange.create().from( from ).to( to ).key( key ).build();
             ranges.add( range );
         }
 
@@ -234,7 +235,8 @@ final class QueryAggregationParams
         {
             final String from = (String) rangeParams.getOrDefault( "from", null );
             final String to = (String) rangeParams.getOrDefault( "to", null );
-            final DateRange range = DateRange.create().from( from ).to( to ).build();
+            final String key = (String) rangeParams.getOrDefault( "key", null );
+            final DateRange range = DateRange.create().from( from ).to( to ).key( key ).build();
             ranges.add( range );
         }
 
@@ -273,7 +275,9 @@ final class QueryAggregationParams
             {
                 to = null;
             }
-            final DistanceRange range = DistanceRange.create().from( from ).to( to ).build();
+            final String key = (String) rangeParams.getOrDefault( "key", null );
+
+            final DistanceRange range = DistanceRange.create().from( from ).to( to ).key( key ).build();
             ranges.add( range );
         }
 
