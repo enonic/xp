@@ -24,6 +24,22 @@ import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
+import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.page.Page;
+import com.enonic.xp.page.PageDescriptor;
+import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.page.PageRegions;
+import com.enonic.xp.region.LayoutComponent;
+import com.enonic.xp.region.LayoutDescriptor;
+import com.enonic.xp.region.LayoutDescriptorService;
+import com.enonic.xp.region.LayoutRegions;
+import com.enonic.xp.region.PartComponent;
+import com.enonic.xp.region.PartDescriptor;
+import com.enonic.xp.region.PartDescriptorService;
+import com.enonic.xp.region.Region;
+import com.enonic.xp.region.RegionDescriptor;
+import com.enonic.xp.region.RegionDescriptors;
+import com.enonic.xp.region.TextComponent;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -53,6 +69,12 @@ public class HtmlAreaContentProcessorTest
 
     private SiteService siteService;
 
+    private PageDescriptorService pageDescriptorService;
+
+    private PartDescriptorService partDescriptorService;
+
+    private LayoutDescriptorService layoutDescriptorService;
+
     private ContentTypeName contentTypeName;
 
     private ContentType contentType;
@@ -65,6 +87,9 @@ public class HtmlAreaContentProcessorTest
         this.siteService = Mockito.mock( SiteService.class );
         this.xDataService = Mockito.mock( XDataService.class );
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
+        this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
+        this.partDescriptorService = Mockito.mock( PartDescriptorService.class );
+        this.layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
 
         contentTypeName = ContentTypeName.from( "myContentType" );
 
@@ -85,7 +110,10 @@ public class HtmlAreaContentProcessorTest
         htmlAreaContentProcessor = new HtmlAreaContentProcessor();
         htmlAreaContentProcessor.setContentTypeService( contentTypeService );
         htmlAreaContentProcessor.setSiteService( siteService );
-        htmlAreaContentProcessor.setxDataService( xDataService );
+        htmlAreaContentProcessor.setXDataService( xDataService );
+        htmlAreaContentProcessor.setPageDescriptorService( pageDescriptorService );
+        htmlAreaContentProcessor.setPartDescriptorService( partDescriptorService );
+        htmlAreaContentProcessor.setLayoutDescriptorService( layoutDescriptorService );
 
         result = htmlAreaContentProcessor.processUpdate( processUpdateParams );
     }
@@ -198,6 +226,166 @@ public class HtmlAreaContentProcessorTest
 
         assertEquals( 1, editableSite.processedReferences.build().getSize() );
         assertTrue( editableSite.processedReferences.build().contains( ContentId.from( "image-id" ) ) );
+    }
+
+    @Test
+    public void page_config_data()
+        throws IOException
+    {
+        final PropertyTree data = new PropertyTree();
+        data.addProperty( "htmlData", ValueFactory.newString( "<img data-src=\"image://image-id\"/>" ) );
+
+        final Form form = Form.create().addFormItem(
+            Input.create().name( "htmlData" ).label( "htmlData" ).inputType( InputTypeName.HTML_AREA ).build() ).build();
+
+        final PageDescriptor pageDescriptor = PageDescriptor.create().config( form ).regions( RegionDescriptors.create().build() ).key(
+            DescriptorKey.from( "aaa:bbb" ) ).build();
+        Mockito.when( pageDescriptorService.getByKey( Mockito.isA( DescriptorKey.class ) ) ).thenReturn( pageDescriptor );
+
+        final Page page = Page.create().config( data ).descriptor( pageDescriptor.getKey() ).build();
+
+        final EditableContent editableContent = new EditableContent( Media.create().
+            name( "myContentName" ).
+            type( contentTypeName ).
+            page( page ).
+            parentPath( ContentPath.ROOT ).
+            data( new PropertyTree() ).
+            build() );
+
+        result.getEditor().edit( editableContent );
+
+        assertEquals( 1, editableContent.processedReferences.build().getSize() );
+        assertTrue( editableContent.processedReferences.build().contains( ContentId.from( "image-id" ) ) );
+
+    }
+
+    @Test
+    public void component_config_data()
+        throws IOException
+    {
+        final PropertyTree data = new PropertyTree();
+        data.addProperty( "htmlData", ValueFactory.newString( "<img data-src=\"image://image-id\"/>" ) );
+
+        final Form form = Form.create().addFormItem(
+            Input.create().name( "htmlData" ).label( "htmlData" ).inputType( InputTypeName.HTML_AREA ).build() ).build();
+
+        final PartDescriptor partDescriptor = PartDescriptor.create().key( DescriptorKey.from( "app:part" ) ).config( form ).build();
+        Mockito.when( partDescriptorService.getByKey( partDescriptor.getKey() ) ).thenReturn( partDescriptor );
+
+        final PartComponent partComponent =
+            PartComponent.create().name( "part" ).descriptor( partDescriptor.getKey() ).config( data ).build();
+
+        final PageDescriptor pageDescriptor = PageDescriptor.create().regions(
+            RegionDescriptors.create().add( RegionDescriptor.create().name( "region" ).build() ).build() ).key(
+            DescriptorKey.from( "app:page" ) ).config( Form.create().build() ).build();
+        Mockito.when( pageDescriptorService.getByKey( pageDescriptor.getKey() ) ).thenReturn( pageDescriptor );
+
+        final Page page = Page.create().config( new PropertyTree() ).descriptor( pageDescriptor.getKey() ).regions(
+            PageRegions.create().add( Region.create().name( "region" ).add( partComponent ).build() ).build() ).build();
+
+        final EditableContent editableContent = new EditableContent( Media.create().
+            name( "myContentName" ).
+            type( contentTypeName ).
+            page( page ).
+            parentPath( ContentPath.ROOT ).
+            data( new PropertyTree() ).
+            build() );
+
+        result.getEditor().edit( editableContent );
+
+        assertEquals( 1, editableContent.processedReferences.build().getSize() );
+        assertTrue( editableContent.processedReferences.build().contains( ContentId.from( "image-id" ) ) );
+
+    }
+
+    @Test
+    public void inner_component_data()
+        throws IOException
+    {
+        final PropertyTree data1 = new PropertyTree();
+        data1.addProperty( "htmlData", ValueFactory.newString( "<img data-src=\"image://image-id1\"/>" ) );
+
+        final PropertyTree data2 = new PropertyTree();
+        data2.addProperty( "htmlData", ValueFactory.newString( "<img data-src=\"image://image-id2\"/>" ) );
+
+        final Form form = Form.create().addFormItem(
+            Input.create().name( "htmlData" ).label( "htmlData" ).inputType( InputTypeName.HTML_AREA ).build() ).build();
+
+        final PartDescriptor partDescriptor = PartDescriptor.create().key( DescriptorKey.from( "app:part" ) ).config( form ).build();
+        Mockito.when( partDescriptorService.getByKey( partDescriptor.getKey() ) ).thenReturn( partDescriptor );
+
+        final PartComponent partComponent =
+            PartComponent.create().name( "partest" ).descriptor( partDescriptor.getKey() ).config( data2 ).build();
+
+        final LayoutDescriptor layoutDescriptor =
+            LayoutDescriptor.create().key( DescriptorKey.from( "app:layout" ) ).config( form ).regions(
+                RegionDescriptors.create().add( RegionDescriptor.create().name( "part" ).build() ).build() ).build();
+        Mockito.when( layoutDescriptorService.getByKey( layoutDescriptor.getKey() ) ).thenReturn( layoutDescriptor );
+
+        final LayoutComponent layoutComponent = LayoutComponent.create().name( "layout" ).descriptor( layoutDescriptor.getKey() ).regions(
+            LayoutRegions.create().add( Region.create().name( "part" ).add( partComponent ).build() ).build() ).config( data1 ).build();
+
+        final PageDescriptor pageDescriptor = PageDescriptor.create().regions(
+            RegionDescriptors.create().add( RegionDescriptor.create().name( "region" ).build() ).build() ).key(
+            DescriptorKey.from( "app:page" ) ).config( Form.create().build() ).build();
+        Mockito.when( pageDescriptorService.getByKey( pageDescriptor.getKey() ) ).thenReturn( pageDescriptor );
+
+        final Page page = Page.create().config( new PropertyTree() ).descriptor( pageDescriptor.getKey() ).regions(
+            PageRegions.create().add( Region.create().name( "region" ).add( layoutComponent ).build() ).build() ).build();
+
+        final EditableContent editableContent = new EditableContent( Media.create().
+            name( "myContentName" ).
+            type( contentTypeName ).
+            page( page ).
+            parentPath( ContentPath.ROOT ).
+            data( new PropertyTree() ).
+            build() );
+
+        result.getEditor().edit( editableContent );
+
+        assertEquals( 2, editableContent.processedReferences.build().getSize() );
+        assertTrue( editableContent.processedReferences.build().contains( ContentId.from( "image-id1" ) ) );
+        assertTrue( editableContent.processedReferences.build().contains( ContentId.from( "image-id2" ) ) );
+
+    }
+
+    @Test
+    public void text_component_value()
+        throws IOException
+    {
+//        final PropertyTree data = new PropertyTree();
+//        data.addProperty( "htmlData", ValueFactory.newString( "<img data-src=\"image://image-id\"/>" ) );
+
+//        final Form form = Form.create().addFormItem(
+//            Input.create().name( "htmlData" ).label( "htmlData" ).inputType( InputTypeName.HTML_AREA ).build() ).build();
+
+//        final PartDescriptor partDescriptor = PartDescriptor.create().key( DescriptorKey.from( "app:part" ) ).config( form ).build();
+//        Mockito.when( partDescriptorService.getByKey( partDescriptor.getKey() ) ).thenReturn( partDescriptor );
+
+        final TextComponent textComponent = TextComponent.create().name( "part" ).text( "<img data-src=\"image://image-id\"/>" ).build();
+
+        final PageDescriptor pageDescriptor = PageDescriptor.create().regions(
+            RegionDescriptors.create().add( RegionDescriptor.create().name( "region" ).build() ).build() ).key(
+            DescriptorKey.from( "app:page" ) ).config( Form.create().build() ).build();
+
+        Mockito.when( pageDescriptorService.getByKey( pageDescriptor.getKey() ) ).thenReturn( pageDescriptor );
+
+        final Page page = Page.create().config( new PropertyTree() ).descriptor( pageDescriptor.getKey() ).regions(
+            PageRegions.create().add( Region.create().name( "region" ).add( textComponent ).build() ).build() ).build();
+
+        final EditableContent editableContent = new EditableContent( Media.create().
+            name( "myContentName" ).
+            type( contentTypeName ).
+            page( page ).
+            parentPath( ContentPath.ROOT ).
+            data( new PropertyTree() ).
+            build() );
+
+        result.getEditor().edit( editableContent );
+
+        assertEquals( 1, editableContent.processedReferences.build().getSize() );
+        assertTrue( editableContent.processedReferences.build().contains( ContentId.from( "image-id" ) ) );
+
     }
 
     @Test
