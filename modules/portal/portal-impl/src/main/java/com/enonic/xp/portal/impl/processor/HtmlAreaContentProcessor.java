@@ -83,7 +83,7 @@ public class HtmlAreaContentProcessor
         final ContentType contentType = contentTypeService.getByName( GetContentTypeParams.from( createContentParams.getType() ) );
 
         processContentData( createContentParams.getData(), contentType, processedIds );
-        processExtraData( createContentParams.getExtraDatas(), contentType, processedIds );
+        processExtraData( createContentParams.getExtraDatas(), processedIds );
 
         return new ProcessCreateResult( CreateContentParams.
             create( createContentParams ).
@@ -104,7 +104,7 @@ public class HtmlAreaContentProcessor
             final ContentType contentType = contentTypeService.getByName( GetContentTypeParams.from( editable.source.getType() ) );
 
             processContentData( editable.data, contentType, processedIds );
-            processExtraData( editable.extraDatas, contentType, processedIds );
+            processExtraData( editable.extraDatas, processedIds );
             processPageData( editable.page, processedIds );
 
             if ( editable instanceof EditableSite )
@@ -176,9 +176,9 @@ public class HtmlAreaContentProcessor
             } );
     }
 
-    private void processExtraData( final ExtraDatas extraDatas, final ContentType contentType, final ContentIds.Builder processedIds )
+    private void processExtraData( final ExtraDatas extraDatas, final ContentIds.Builder processedIds )
     {
-        final XDatas xDatas = xDataService.getByNames( contentType.getXData() );
+        final XDatas xDatas = xDataService.getByNames( extraDatas.getNames() );
 
         if ( xDatas.getSize() > 0 )
         {
