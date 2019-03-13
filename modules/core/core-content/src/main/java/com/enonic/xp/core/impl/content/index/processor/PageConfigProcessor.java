@@ -57,6 +57,16 @@ public class PageConfigProcessor
         return builder;
     }
 
+    static String getSanitizedAppName( final DescriptorKey descriptor )
+    {
+        return descriptor.getApplicationKey().toString().replace( DOT, DASH );
+    }
+
+    static String getSanitizedComponentName( final DescriptorKey descriptor )
+    {
+        return descriptor.getName().replace( DOT, DASH );
+    }
+
     private void applyConfigProcessors( final PatternIndexConfigDocument.Builder builder )
     {
         if ( this.pageConfigForm == null || this.pageConfigForm.size() == 0 )
@@ -64,20 +74,15 @@ public class PageConfigProcessor
             return;
         }
 
-        final String descriptorName = page.getDescriptor().getName();
-
-        final String appKeyAsString = appNameToConfigPropertyName( page.getDescriptor() );
+        final String appNameAsString = getSanitizedAppName( page.getDescriptor() );
+        final String componentNameAsString = getSanitizedComponentName( page.getDescriptor() );
 
         final IndexConfigVisitor indexConfigVisitor =
-            new IndexConfigVisitor( String.join( ELEMENT_DIVIDER, COMPONENTS, PAGE, CONFIG, appKeyAsString, descriptorName ), builder );
+            new IndexConfigVisitor( String.join( ELEMENT_DIVIDER, COMPONENTS, PAGE, CONFIG, appNameAsString, componentNameAsString ),
+                                    builder );
         indexConfigVisitor.traverse( pageConfigForm );
 
-        builder.add( String.join( ELEMENT_DIVIDER, COMPONENTS, PAGE, CONFIG, appKeyAsString, descriptorName, ALL_PATTERN ),
+        builder.add( String.join( ELEMENT_DIVIDER, COMPONENTS, PAGE, CONFIG, appNameAsString, componentNameAsString, ALL_PATTERN ),
                      IndexConfig.BY_TYPE );
-    }
-
-    static String appNameToConfigPropertyName( final DescriptorKey descriptor )
-    {
-        return descriptor.getApplicationKey().toString().replace( DOT, DASH );
     }
 }

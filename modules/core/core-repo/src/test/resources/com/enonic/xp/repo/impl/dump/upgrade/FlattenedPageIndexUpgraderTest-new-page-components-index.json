@@ -22,7 +22,7 @@
         ],
         "nGram": false
       },
-      "path": "components.part.config.com-enonic-app-features.htmlarea3"
+      "path": "components.part.config.com-enonic-app-features.cities-distance-facet.htmlarea3"
     },
     {
       "indexConfig": {
@@ -32,30 +32,7 @@
         "includeInAllText": false,
         "nGram": false
       },
-      "path": "components.part.config.com-enonic-app-features.*"
-    },
-    {
-      "indexConfig": {
-        "decideByType": true,
-        "enabled": true,
-        "fulltext": false,
-        "includeInAllText": false,
-        "indexValueProcessors": [
-          "htmlStripper"
-        ],
-        "nGram": false
-      },
-      "path": "components.page.config.com-enonic-app-features.htmlarea1"
-    },
-    {
-      "indexConfig": {
-        "decideByType": true,
-        "enabled": true,
-        "fulltext": false,
-        "includeInAllText": false,
-        "nGram": false
-      },
-      "path": "components.page.config.com-enonic-app-features.*"
+      "path": "components.part.config.com-enonic-app-features.cities-distance-facet.*"
     },
     {
       "indexConfig": {
@@ -68,7 +45,20 @@
         ],
         "nGram": false
       },
-      "path": "components.layout.config.com-enonic-app-features.htmlarea2"
+      "path": "components.part.config.com-enonic-app-features.getComponent.*"
+    },
+    {
+      "indexConfig": {
+        "decideByType": true,
+        "enabled": true,
+        "fulltext": false,
+        "includeInAllText": false,
+        "indexValueProcessors": [
+          "htmlStripper"
+        ],
+        "nGram": false
+      },
+      "path": "components.page.config.com-enonic-app-features.main.htmlarea1"
     },
     {
       "indexConfig": {
@@ -78,7 +68,30 @@
         "includeInAllText": false,
         "nGram": false
       },
-      "path": "components.layout.config.com-enonic-app-features.*"
+      "path": "components.page.config.com-enonic-app-features.main.*"
+    },
+    {
+      "indexConfig": {
+        "decideByType": true,
+        "enabled": true,
+        "fulltext": false,
+        "includeInAllText": false,
+        "indexValueProcessors": [
+          "htmlStripper"
+        ],
+        "nGram": false
+      },
+      "path": "components.layout.config.com-enonic-app-features.layout-25-75.htmlarea2"
+    },
+    {
+      "indexConfig": {
+        "decideByType": true,
+        "enabled": true,
+        "fulltext": false,
+        "includeInAllText": false,
+        "nGram": false
+      },
+      "path": "components.layout.config.com-enonic-app-features.layout-25-75.*"
     },
     {
       "indexConfig": {

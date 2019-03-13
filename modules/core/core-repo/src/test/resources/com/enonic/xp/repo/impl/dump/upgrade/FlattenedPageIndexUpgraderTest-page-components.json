@@ -9,11 +9,11 @@
           "customized": "true",
           "config": [
             {
-              "com-enonic-app-features": [
-                {
-                  "htmlArea1": "<b>html value</b>"
+              "com-enonic-app-features": {
+                "main": {
+                  "htmlarea1": "<b>html value</b>"
                 }
-              ]
+              }
             }
           ]
         }
@@ -27,11 +27,11 @@
           "descriptor": "com.enonic.app.features:layout-25-75",
           "config": [
             {
-              "com-enonic-app-features": [
-                {
-                  "htmlArea2": "<b>html value</b>"
+              "com-enonic-app-features": {
+                "layout-25-75": {
+                  "htmlarea2": "<b>html value</b>"
                 }
-              ]
+              }
             }
           ]
         }
@@ -45,11 +45,11 @@
           "descriptor": "com.enonic.app.features:cities-distance-facet",
           "config": [
             {
-              "com-enonic-app-features": [
-                {
-                  "htmlArea3": "<b>html value</b>"
+              "com-enonic-app-features": {
+                "cities-distance-facet": {
+                  "htmlarea3": "<b>html value</b>"
                 }
-              ]
+              }
             }
           ]
         }
@@ -92,10 +92,10 @@
           "descriptor": "com.enonic.app.features:getComponent",
           "config": [
             {
-              "com-enonic-app-features": [
-                {
+              "com-enonic-app-features": {
+                "getComponent": {
                 }
-              ]
+              }
             }
           ]
         }
