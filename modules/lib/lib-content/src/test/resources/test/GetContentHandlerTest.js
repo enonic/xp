@@ -92,14 +92,12 @@ var expectedJson = {
                         "path": "/top/1",
                         "type": "layout",
                         "descriptor": "layoutDescriptor:name",
-                        "config": {},
                         "regions": {
                             "left": {
                                 "components": [
                                     {
                                         "path": "/top/1/left/0",
-                                        "type": "part",
-                                        "config": {}
+                                        "type": "part"
                                     },
                                     {
                                         "path": "/top/1/left/1",
@@ -131,7 +129,6 @@ var expectedJson = {
                     {
                         "path": "/top/2",
                         "type": "layout",
-                        "config": {},
                         "regions": {}
                     }
                 ]
@@ -181,14 +178,12 @@ var pageAsFragmentJson = {
     "fragment": {
         "type": "layout",
         "descriptor": "layoutDescriptor:name",
-        "config": {},
         "regions": {
             "left": {
                 "components": [
                     {
                         "path": "/left/0",
-                        "type": "part",
-                        "config": {}
+                        "type": "part"
                     },
                     {
                         "path": "/left/1",
