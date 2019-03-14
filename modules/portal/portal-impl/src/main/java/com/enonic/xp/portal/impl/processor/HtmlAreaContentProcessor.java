@@ -178,23 +178,25 @@ public class HtmlAreaContentProcessor
 
     private void processExtraData( final ExtraDatas extraDatas, final ContentIds.Builder processedIds )
     {
-        final XDatas xDatas = xDataService.getByNames( extraDatas.getNames() );
+        if (extraDatas != null) {
+            final XDatas xDatas = xDataService.getByNames( extraDatas.getNames() );
 
-        if ( xDatas.getSize() > 0 )
-        {
-            xDatas.forEach( xData -> {
-                if ( extraDatas == null )
-                {
-                    return;
-                }
+            if ( xDatas.getSize() > 0 )
+            {
+                xDatas.forEach( xData -> {
+                    if ( extraDatas == null )
+                    {
+                        return;
+                    }
 
-                final ExtraData extraData = extraDatas.getMetadata( xData.getName() );
-                if ( extraData != null )
-                {
-                    final Collection<Property> properties = getProperties( extraData.getData(), xData.getForm().getFormItems() );
-                    processDataTree( properties, processedIds );
-                }
-            } );
+                    final ExtraData extraData = extraDatas.getMetadata( xData.getName() );
+                    if ( extraData != null )
+                    {
+                        final Collection<Property> properties = getProperties( extraData.getData(), xData.getForm().getFormItems() );
+                        processDataTree( properties, processedIds );
+                    }
+                } );
+            }
         }
     }
 
