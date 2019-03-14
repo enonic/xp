@@ -32,7 +32,7 @@
   "name": "template-myapplication-2",
   "owner": "user:myStore:me",
   "page": {
-    "config": [],
+    "config": null,
     "controller": "my-descriptor:",
     "customized": false,
     "fragment": null,
