@@ -68,7 +68,7 @@ public final class ComponentMapper
     {
         gen.value( DESCRIPTOR, comp.getDescriptor() );
 
-        if ( comp.getConfig() != null )
+        if ( comp.hasConfig() )
         {
             gen.map( CONFIG );
             new PropertyTreeMapper( comp.getConfig() ).serialize( gen );

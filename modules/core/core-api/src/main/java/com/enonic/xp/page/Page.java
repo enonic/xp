@@ -33,7 +33,7 @@ public final class Page
 
         this.descriptor = builder.descriptor;
         this.template = builder.template;
-        this.config = builder.config;
+        this.config = builder.config != null ? builder.config : new PropertyTree();
         this.regions = builder.regions;
         this.customized = builder.customized;
         this.fragment = builder.fragment;
@@ -77,7 +77,7 @@ public final class Page
 
     public boolean hasConfig()
     {
-        return config != null;
+        return config != null && config.getTotalSize() > 0;
     }
 
     public PropertyTree getConfig()

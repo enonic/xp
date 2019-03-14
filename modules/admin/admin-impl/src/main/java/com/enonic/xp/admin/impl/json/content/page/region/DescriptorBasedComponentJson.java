@@ -16,7 +16,7 @@ public abstract class DescriptorBasedComponentJson<COMPONENT extends DescriptorB
     protected DescriptorBasedComponentJson( final COMPONENT component )
     {
         super( component );
-        this.config = component.getConfig() != null ? PropertyTreeJson.toJson( component.getConfig() ) : null;
+        this.config = component.hasConfig() ? PropertyTreeJson.toJson( component.getConfig() ) : null;
     }
 
     public String getDescriptor()

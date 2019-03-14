@@ -84,7 +84,7 @@ public abstract class DescriptorBasedComponent
         protected Builder( final DescriptorBasedComponent source )
         {
             super( source );
-            this.config = source.getConfig() != null ? source.getConfig().copy() : null;
+            this.config = source.hasConfig() ? source.getConfig().copy() : null;
             this.descriptor = source.getDescriptor();
         }
 
