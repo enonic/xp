@@ -3,6 +3,7 @@ package com.enonic.xp.repo.impl.dump.model;
 import java.time.Instant;
 
 import com.enonic.xp.node.NodeCommitId;
+import com.enonic.xp.security.PrincipalKey;
 
 public class CommitDumpEntry
 {
@@ -12,14 +13,14 @@ public class CommitDumpEntry
 
     private final Instant timestamp;
 
-    private final String committer;
+    private final PrincipalKey committer;
 
     private CommitDumpEntry( final Builder builder )
     {
         nodeCommitId = builder.nodeCommitId;
         message = builder.message == null ? "" : builder.message;
         timestamp = builder.timestamp == null ? Instant.now() : builder.timestamp;
-        committer = builder.committer == null ? "" : builder.committer;
+        committer = builder.committer == null ? PrincipalKey.ofAnonymous() : builder.committer;
     }
 
     public NodeCommitId getNodeCommitId()
@@ -37,7 +38,7 @@ public class CommitDumpEntry
         return timestamp;
     }
 
-    public String getCommitter()
+    public PrincipalKey getCommitter()
     {
         return committer;
     }
@@ -55,7 +56,7 @@ public class CommitDumpEntry
 
         private Instant timestamp;
 
-        private String committer;
+        private PrincipalKey committer;
 
         private Builder()
         {
@@ -79,7 +80,7 @@ public class CommitDumpEntry
             return this;
         }
 
-        public Builder committer( final String committer )
+        public Builder committer( final PrincipalKey committer )
         {
             this.committer = committer;
             return this;

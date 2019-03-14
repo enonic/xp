@@ -378,7 +378,7 @@ public class NodeServiceImplTest
         assertNotNull( nodeCommitId );
         assertEquals( "Commit message", returnedCommitEntry.getMessage() );
         assertNotNull( returnedCommitEntry.getTimestamp() );
-        assertEquals( "user:system:test-user", returnedCommitEntry.getCommitter() );
+        assertEquals( "user:system:test-user", returnedCommitEntry.getCommitter().toString() );
 
         //Check that only the latest version has a commit ID
         final NodeVersionsMetadata versionsMetadata2 = getVersionsMetadata( nodeId );

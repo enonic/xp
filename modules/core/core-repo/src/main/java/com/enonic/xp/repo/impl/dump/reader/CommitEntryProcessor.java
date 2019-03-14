@@ -16,8 +16,6 @@ public class CommitEntryProcessor
 {
     private EntryLoadResult result;
 
-    private final static Logger LOG = LoggerFactory.getLogger( CommitEntryProcessor.class );
-
     private CommitEntryProcessor( final Builder builder )
     {
         super( builder );

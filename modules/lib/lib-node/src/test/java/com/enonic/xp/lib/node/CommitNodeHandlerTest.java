@@ -10,6 +10,7 @@ import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.security.PrincipalKey;
 
 public class CommitNodeHandlerTest
     extends BaseNodeHandlerTest
@@ -22,7 +23,7 @@ public class CommitNodeHandlerTest
             final NodeCommitEntry commitEntry = invocation.getArgumentAt( 0, NodeCommitEntry.class );
             return NodeCommitEntry.create( commitEntry ).
                 nodeCommitId( NodeCommitId.from( "aa1f76bf-4bb9-41be-b166-03561c1555b2" ) ).
-                committer( "user:system:anonymous" ).
+                committer( PrincipalKey.from( "user:system:anonymous" ) ).
                 timestamp( Instant.parse( "2019-01-24T15:16:36.260799Z" ) ).
                 build();
         };

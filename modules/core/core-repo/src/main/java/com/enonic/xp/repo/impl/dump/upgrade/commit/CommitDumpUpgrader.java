@@ -73,7 +73,7 @@ public class CommitDumpUpgrader
             final CommitDumpEntryJson commitDumpEntryJson = CommitDumpEntryJson.create().
                 commitId( commitId ).
                 message( "Dump upgrade" ).
-                committer( nodeCommitEntry.getCommitter() ).
+                committer( nodeCommitEntry.getCommitter().toString() ).
                 timestamp( nodeCommitEntry.getTimestamp().toString() ).
                 build();
             final String commitDumpEntrySerialized = serialize( commitDumpEntryJson );

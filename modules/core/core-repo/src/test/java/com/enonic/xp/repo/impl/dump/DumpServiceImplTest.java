@@ -812,7 +812,7 @@ public class DumpServiceImplTest
             next();
         final NodeCommitId nodeCommitId = commitEntry.getNodeCommitId();
         assertEquals( "Dump upgrade", commitEntry.getMessage() );
-        assertEquals( "user:system:node-su", commitEntry.getCommitter() );
+        assertEquals( "user:system:node-su", commitEntry.getCommitter().toString() );
 
         final GetActiveNodeVersionsParams activeNodeVersionsParams = GetActiveNodeVersionsParams.create().
             nodeId( nodeId ).

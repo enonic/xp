@@ -19,7 +19,7 @@ public class NodeCommitEntry
 
     private final Instant timestamp;
 
-    private final String committer;
+    private final PrincipalKey committer;
 
     private NodeCommitEntry( Builder builder )
     {
@@ -44,12 +44,10 @@ public class NodeCommitEntry
         return timestamp;
     }
 
-    public String getCommitter()
+    public PrincipalKey getCommitter()
     {
         return committer;
     }
-
-    // Insert with newest first
 
     @Override
     public int compareTo( final NodeCommitEntry o )
@@ -67,7 +65,7 @@ public class NodeCommitEntry
         return -1;
     }
 
-    private String getCurrentUserKey()
+    private PrincipalKey getCurrentUserKey()
     {
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
         if ( authInfo != null )
@@ -75,14 +73,10 @@ public class NodeCommitEntry
             final User user = authInfo.getUser();
             if ( user != null )
             {
-                return user.getKey().toString();
-            }
-            else
-            {
-                return PrincipalKey.ofAnonymous().toString();
+                return user.getKey();
             }
         }
-        return "";
+        return PrincipalKey.ofAnonymous();
     }
 
     public static Builder create()
@@ -104,7 +98,7 @@ public class NodeCommitEntry
 
         private Instant timestamp;
 
-        private String committer;
+        private PrincipalKey committer;
 
         private Builder()
         {
@@ -136,7 +130,7 @@ public class NodeCommitEntry
             return this;
         }
 
-        public Builder committer( final String committer )
+        public Builder committer( final PrincipalKey committer )
         {
             this.committer = committer;
             return this;

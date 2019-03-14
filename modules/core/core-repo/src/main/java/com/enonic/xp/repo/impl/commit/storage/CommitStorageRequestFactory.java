@@ -18,7 +18,7 @@ public class CommitStorageRequestFactory
             add( CommitIndexPath.COMMIT_ID.getPath(), id ).
             add( CommitIndexPath.MESSAGE.getPath(), nodeCommitEntry.getMessage() ).
             add( CommitIndexPath.TIMESTAMP.getPath(), nodeCommitEntry.getTimestamp() ).
-            add( CommitIndexPath.COMMITTER.getPath(), nodeCommitEntry.getCommitter() ).
+            add( CommitIndexPath.COMMITTER.getPath(), nodeCommitEntry.getCommitter().toString() ).
             build();
 
         return StoreRequest.create().
