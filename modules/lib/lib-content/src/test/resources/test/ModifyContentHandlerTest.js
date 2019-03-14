@@ -187,3 +187,46 @@ exports.modifyByPath = function () {
 
     assert.assertJsonEquals(expectedJson, result);
 };
+
+exports.modifyNotMappedXDataFieldName_stricted = function () {
+
+    try {
+        var result = content.modify({
+            key: '/a/b/mycontent',
+            editor: function (c) {
+                editor(c);
+                c.x['com-enonic-myapplication'].other = {
+                    name: 'test',
+                    notMappedField: 'value'
+                };
+
+                return c;
+            }
+        });
+
+        throw new Error();
+    } catch (e) {
+        assert.assertEquals("No mapping defined for property notMappedField with value value", e.message);
+    }
+
+
+};
+
+exports.modifyNotMappedXDataFieldName_notStricted = function () {
+
+    var result = content.modify({
+        key: '/a/b/mycontent',
+        requireValid: false,
+        editor: function (c) {
+            editor(c);
+            c.x['com-enonic-myapplication'].other = {
+                name: 'test',
+                notMappedField: 'value'
+            };
+
+            return c;
+        }
+    });
+
+    assert.assertNotNull(result);
+};

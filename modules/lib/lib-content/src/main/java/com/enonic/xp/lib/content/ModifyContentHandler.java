@@ -106,7 +106,7 @@ public final class ModifyContentHandler
         final Object extraData = map.get( "x" );
         if ( extraData instanceof Map )
         {
-            target.extraDatas = createExtraDatas( (Map) extraData );
+            target.extraDatas = createExtraDatas( (Map) extraData, existingContent.getType() );
         }
 
         final Object publishInfo = map.get( "publish" );
@@ -157,14 +157,14 @@ public final class ModifyContentHandler
         return this.translateToPropertyTree( createJson( value ), contentTypeName );
     }
 
-    private PropertyTree createPropertyTree( final Map<?, ?> value, final XDataName xDataName )
+    private PropertyTree createPropertyTree( final Map<?, ?> value, final XDataName xDataName, final ContentTypeName contentTypeName )
     {
         if ( value == null )
         {
             return null;
         }
 
-        return this.translateToPropertyTree( createJson( value ), xDataName );
+        return this.translateToPropertyTree( createJson( value ), xDataName, contentTypeName );
     }
 
     private JsonNode createJson( final Map<?, ?> value )
@@ -173,7 +173,7 @@ public final class ModifyContentHandler
         return mapper.valueToTree( value );
     }
 
-    private ExtraDatas createExtraDatas( final Map<String, Object> value )
+    private ExtraDatas createExtraDatas( final Map<String, Object> value, final ContentTypeName contentTypeName )
     {
         if ( value == null )
         {
@@ -195,7 +195,7 @@ public final class ModifyContentHandler
             for ( final String metadataName : metadatas.keySet() )
             {
                 final XDataName xDataName = XDataName.from( applicationKey, metadataName );
-                final ExtraData item = createExtraData( xDataName, metadatas.get( metadataName ) );
+                final ExtraData item = createExtraData( xDataName, contentTypeName, metadatas.get( metadataName ) );
                 if ( item != null )
                 {
                     extradatasBuilder.add( item );
@@ -207,11 +207,11 @@ public final class ModifyContentHandler
     }
 
 
-    private ExtraData createExtraData( final XDataName xDataName, final Object value )
+    private ExtraData createExtraData( final XDataName xDataName, final ContentTypeName contentTypeName, final Object value )
     {
         if ( value instanceof Map )
         {
-            final PropertyTree propertyTree = createPropertyTree( (Map) value, xDataName );
+            final PropertyTree propertyTree = createPropertyTree( (Map) value, xDataName, contentTypeName );
 
             if ( propertyTree != null )
             {
