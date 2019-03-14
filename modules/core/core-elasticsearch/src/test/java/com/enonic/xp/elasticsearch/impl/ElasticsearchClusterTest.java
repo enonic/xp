@@ -1,11 +1,16 @@
 package com.enonic.xp.elasticsearch.impl;
 
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
+import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
 import org.elasticsearch.action.support.PlainActionFuture;
 import org.elasticsearch.client.AdminClient;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.ClusterAdminClient;
+import org.elasticsearch.cluster.ClusterState;
 import org.elasticsearch.cluster.health.ClusterHealthStatus;
+import org.elasticsearch.cluster.metadata.IndexMetaData;
+import org.elasticsearch.cluster.metadata.MetaData;
+import org.elasticsearch.common.collect.ImmutableOpenMap;
 import org.elasticsearch.node.Node;
 import org.junit.Assert;
 import org.junit.Before;
@@ -48,6 +53,17 @@ public class ElasticsearchClusterTest
 
         this.clusterAdminClient = Mockito.mock( ClusterAdminClient.class );
         Mockito.when( adminClient.cluster() ).thenReturn( this.clusterAdminClient );
+
+        final ImmutableOpenMap<String, IndexMetaData> indices = ImmutableOpenMap.<String, IndexMetaData>builder().build();
+        final MetaData metaData = Mockito.mock( MetaData.class );
+        Mockito.when( metaData.getIndices() ).thenReturn( indices );
+        final ClusterState clusterState = Mockito.mock( ClusterState.class );
+        Mockito.when( clusterState.getMetaData() ).thenReturn( metaData );
+        final ClusterStateResponse clusterStateResponse = Mockito.mock( ClusterStateResponse.class );
+        Mockito.when( clusterStateResponse.getState() ).thenReturn( clusterState );
+        final PlainActionFuture<ClusterStateResponse> actionClusterStateResponse = new PlainActionFuture<>();
+        actionClusterStateResponse.onResponse( clusterStateResponse );
+        Mockito.when( clusterAdminClient.state( Mockito.any() ) ).thenReturn( actionClusterStateResponse );
     }
 
     private void setClusterHealth( final ClusterHealthStatus status )
