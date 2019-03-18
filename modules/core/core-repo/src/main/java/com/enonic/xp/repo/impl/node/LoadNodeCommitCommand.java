@@ -6,6 +6,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.storage.StoreNodeCommitParams;
+import com.enonic.xp.security.PrincipalKey;
 
 public class LoadNodeCommitCommand
     extends AbstractNodeCommand
@@ -14,7 +15,7 @@ public class LoadNodeCommitCommand
 
     private final String message;
 
-    private final String committer;
+    private final PrincipalKey committer;
 
     private final Instant timestamp;
 
@@ -49,7 +50,7 @@ public class LoadNodeCommitCommand
 
         private String message;
 
-        private String committer;
+        private PrincipalKey committer;
 
         private Instant timestamp;
 
@@ -74,7 +75,7 @@ public class LoadNodeCommitCommand
             return this;
         }
 
-        public Builder committer( final String val )
+        public Builder committer( final PrincipalKey val )
         {
             committer = val;
             return this;

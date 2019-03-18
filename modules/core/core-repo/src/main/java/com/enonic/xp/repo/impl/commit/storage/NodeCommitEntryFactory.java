@@ -5,6 +5,7 @@ import java.time.Instant;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.repo.impl.ReturnValues;
+import com.enonic.xp.security.PrincipalKey;
 
 public class NodeCommitEntryFactory
 {
@@ -20,7 +21,7 @@ public class NodeCommitEntryFactory
             nodeCommitId( NodeCommitId.from( commitId.toString() ) ).
             message( message.toString() ).
             timestamp( Instant.parse( timestamp.toString() ) ).
-            committer( committer.toString() ).
+            committer( PrincipalKey.from(committer.toString()) ).
             build();
     }
 }

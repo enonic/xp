@@ -2,13 +2,15 @@ package com.enonic.xp.node;
 
 import java.time.Instant;
 
+import com.enonic.xp.security.PrincipalKey;
+
 public class ImportNodeCommitParams
 {
     private final NodeCommitId nodeCommitId;
 
     private final String message;
 
-    private final String committer;
+    private final PrincipalKey committer;
 
     private final Instant timestamp;
 
@@ -30,7 +32,7 @@ public class ImportNodeCommitParams
         return message;
     }
 
-    public String getCommitter()
+    public PrincipalKey getCommitter()
     {
         return committer;
     }
@@ -51,7 +53,7 @@ public class ImportNodeCommitParams
 
         private String message;
 
-        private String committer;
+        private PrincipalKey committer;
 
         private Instant timestamp;
 
@@ -71,7 +73,7 @@ public class ImportNodeCommitParams
             return this;
         }
 
-        public Builder committer( final String committer )
+        public Builder committer( final PrincipalKey committer )
         {
             this.committer = committer;
             return this;

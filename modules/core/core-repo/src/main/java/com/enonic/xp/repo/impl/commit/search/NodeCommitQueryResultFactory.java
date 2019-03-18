@@ -12,6 +12,7 @@ import com.enonic.xp.repo.impl.ReturnValue;
 import com.enonic.xp.repo.impl.commit.storage.CommitIndexPath;
 import com.enonic.xp.repo.impl.search.result.SearchHit;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
+import com.enonic.xp.security.PrincipalKey;
 
 public class NodeCommitQueryResultFactory
 {
@@ -56,7 +57,7 @@ public class NodeCommitQueryResultFactory
         return NodeCommitEntry.create().
             nodeCommitId( NodeCommitId.from( commitId ) ).
             message( message ).
-            committer( committer ).
+            committer( PrincipalKey.from(committer) ).
             timestamp( Instant.parse( timestamp ) ).
             build();
     }

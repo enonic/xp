@@ -64,7 +64,13 @@ public class NodeStorageServiceImpl
 
         storeVersionMetadata( node, nodeVersionId, nodeVersionKey, context );
 
-        storeBranchMetadata( node, nodeVersionId, nodeVersionKey, context );
+        final StoreBranchMetadataParams storeBranchMetadataParams = StoreBranchMetadataParams.create().
+            node( node ).
+            nodeVersionId( nodeVersionId ).
+            nodeVersionKey( nodeVersionKey ).
+            context( context ).
+            build();
+        storeBranchMetadata( storeBranchMetadataParams );
 
         indexNode( node, nodeVersionId, context );
 
@@ -92,9 +98,22 @@ public class NodeStorageServiceImpl
         final NodeVersionId nodeVersionId = node.getNodeVersionId();
         final NodeVersionKey nodeVersionKey = nodeVersionService.store( nodeVersion, context );
 
-        loadVersionMetadata( node, nodeVersionId, nodeVersionKey, params.getNodeCommitId(), context );
+        final LoadVersionMetadataParams loadVersionMetadataParams = LoadVersionMetadataParams.create().
+            node( node ).
+            nodeVersionId( nodeVersionId ).
+            nodeVersionKey( nodeVersionKey ).
+            nodeCommitId( params.getNodeCommitId() ).
+            context( context ).
+            build();
+        loadVersionMetadata( loadVersionMetadataParams );
 
-        storeBranchMetadata( node, nodeVersionId, nodeVersionKey, context );
+        final StoreBranchMetadataParams storeBranchMetadataParams = StoreBranchMetadataParams.create().
+            node( node ).
+            nodeVersionId( nodeVersionId ).
+            nodeVersionKey( nodeVersionKey ).
+            context( context ).
+            build();
+        storeBranchMetadata( storeBranchMetadataParams );
 
         indexNode( node, nodeVersionId, context );
 
@@ -175,7 +194,13 @@ public class NodeStorageServiceImpl
         final NodeVersionId nodeVersionId = nodeBranchEntry.getVersionId();
         final NodeVersionKey nodeVersionKey = nodeBranchEntry.getNodeVersionKey();
 
-        storeBranchMetadata( node, nodeVersionId, nodeVersionKey, context );
+        final StoreBranchMetadataParams storeBranchMetadataParams = StoreBranchMetadataParams.create().
+            node( node ).
+            nodeVersionId( nodeVersionId ).
+            nodeVersionKey( nodeVersionKey ).
+            context( context ).
+            build();
+        storeBranchMetadata( storeBranchMetadataParams );
 
         indexNode( node, nodeVersionId, context );
 
@@ -455,18 +480,18 @@ public class NodeStorageServiceImpl
         return blobKeys.build();
     }
 
-    private void loadVersionMetadata( final Node node, final NodeVersionId nodeVersionId, final NodeVersionKey nodeVersionKey,
-                                      final NodeCommitId nodeCommitId, final InternalContext context )
+    private void loadVersionMetadata( final LoadVersionMetadataParams loadVersionMetadataParams )
     {
+        final Node node = loadVersionMetadataParams.getNode();
         this.versionService.store( NodeVersionMetadata.create().
             nodeId( node.id() ).
-            nodeVersionId( nodeVersionId ).
-            nodeVersionKey( nodeVersionKey ).
+            nodeVersionId( loadVersionMetadataParams.getNodeVersionId() ).
+            nodeVersionKey( loadVersionMetadataParams.getNodeVersionKey() ).
             binaryBlobKeys( getBinaryBlobKeys( node.getAttachedBinaries() ) ).
             nodePath( node.path() ).
-            nodeCommitId( nodeCommitId ).
+            nodeCommitId( loadVersionMetadataParams.getNodeCommitId() ).
             timestamp( node.getTimestamp() ).
-            build(), context );
+            build(), loadVersionMetadataParams.getContext() );
     }
 
     private Nodes doReturnNodes( final NodeBranchEntries nodeBranchEntries, final InternalContext context )
@@ -486,17 +511,17 @@ public class NodeStorageServiceImpl
         return filteredNodes.build();
     }
 
-    private void storeBranchMetadata( final Node node, final NodeVersionId nodeVersionId, final NodeVersionKey nodeVersionKey,
-                                      final InternalContext context )
+    private void storeBranchMetadata( final StoreBranchMetadataParams storeBranchMetadataParams )
     {
+        final Node node = storeBranchMetadataParams.getNode();
         this.branchService.store( NodeBranchEntry.create().
-            nodeVersionId( nodeVersionId ).
-            nodeVersionKey( nodeVersionKey ).
+            nodeVersionId( storeBranchMetadataParams.getNodeVersionId() ).
+            nodeVersionKey( storeBranchMetadataParams.getNodeVersionKey() ).
             nodeId( node.id() ).
             nodeState( node.getNodeState() ).
             timestamp( node.getTimestamp() ).
             nodePath( node.path() ).
-            build(), context );
+            build(), storeBranchMetadataParams.getContext() );
     }
 
     private Node moveInBranchAndReIndex( final Node node, final NodeVersionId nodeVersionId, final NodeVersionKey nodeVersionKey,

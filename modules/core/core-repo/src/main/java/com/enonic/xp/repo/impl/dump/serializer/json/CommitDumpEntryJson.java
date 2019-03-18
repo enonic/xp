@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.repo.impl.dump.model.CommitDumpEntry;
+import com.enonic.xp.security.PrincipalKey;
 
 public class CommitDumpEntryJson
 {
@@ -39,7 +40,7 @@ public class CommitDumpEntryJson
         return create().
             commitId( commitDumpEntry.getNodeCommitId().toString() ).
             message( commitDumpEntry.getMessage() ).
-            committer( commitDumpEntry.getCommitter() ).
+            committer( commitDumpEntry.getCommitter().toString() ).
             timestamp( commitDumpEntry.getTimestamp().toString() ).
             build();
     }
@@ -49,7 +50,7 @@ public class CommitDumpEntryJson
         return CommitDumpEntry.create().
             nodeCommitId( NodeCommitId.from( commitDumpEntryJson.commitId ) ).
             message( commitDumpEntryJson.message ).
-            committer( commitDumpEntryJson.committer ).
+            committer( PrincipalKey.from(commitDumpEntryJson.committer) ).
             timestamp( Instant.parse( commitDumpEntryJson.timestamp ) ).
             build();
     }
