@@ -109,6 +109,12 @@ final class BuiltinContentTypes
             labelI18nKey( "media.image.caption.label" ).
             occurrences( 0, 1 ).
             build() ).
+        addFormItem( Input.create().name( "altText" ).
+            inputType( InputTypeName.TEXT_LINE ).
+            label( "Alternative text" ).
+            labelI18nKey( "media.image.alttext.label" ).
+            occurrences( 0, 1 ).
+            build() ).
         addFormItem( Input.create().name( "artist" ).
             inputType( InputTypeName.TAG ).
             label( "Artist" ).
@@ -126,12 +132,6 @@ final class BuiltinContentTypes
             label( "Tags" ).
             labelI18nKey( "media.image.tags.label" ).
             occurrences( 0, 0 ).
-            build() ).
-        addFormItem( Input.create().name( "altText" ).
-            inputType( InputTypeName.TEXT_LINE ).
-            label( "Alternative text" ).
-            labelI18nKey( "media.image.alttext.label" ).
-            occurrences( 0, 1 ).
             build() ).
         build();
 
