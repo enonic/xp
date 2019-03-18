@@ -15,7 +15,7 @@ class AllTextTypeFactory
     {
         List<IndexItem> allTextItems = Lists.newArrayList();
 
-        if ( indexConfig.isDecideByType() || indexConfig.isIncludeInAllText() )
+        if ( ( indexConfig.isDecideByType() && propertyValue.isText() ) || indexConfig.isIncludeInAllText() )
         {
             allTextItems.add( new IndexItemAnalyzed( NodeIndexPath.ALL_TEXT, propertyValue.asString() ) );
 
