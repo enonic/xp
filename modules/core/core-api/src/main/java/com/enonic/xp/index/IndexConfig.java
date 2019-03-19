@@ -57,6 +57,15 @@ public class IndexConfig
         path( false ).
         build();
 
+    public final static IndexConfig NGRAM = IndexConfig.create().
+        enabled( true ).
+        nGram( true ).
+        fulltext( false ).
+        decideByType( false ).
+        includeInAllText( false ).
+        path( false ).
+        build();
+
     public static final Comparator<IndexConfig> COMPARATOR =
         Comparator.comparingInt( ( IndexConfig indexConfig ) -> indexConfig.decideByType ? 1 : 0 ).
             thenComparingInt( indexConfig -> indexConfig.enabled ? 1 : 0 ).
