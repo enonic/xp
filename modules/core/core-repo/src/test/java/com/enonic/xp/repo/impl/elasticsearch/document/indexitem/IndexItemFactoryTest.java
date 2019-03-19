@@ -38,9 +38,8 @@ public class IndexItemFactoryTest
             IndexItemFactory.create( IndexPath.from( "myProperty" ), ValueFactory.newDateTime( Instant.parse( "2015-12-11T10:29:30Z" ) ),
                                      createDefaultDocument( IndexConfig.BY_TYPE ) );
 
-        assertEquals( 5, indexItems.size() );
-        assertTypes( indexItems, IndexValueType.DATETIME, IndexValueType.STRING, IndexValueType.ORDERBY, IndexValueType.ANALYZED,
-                     IndexValueType.NGRAM );
+        assertEquals( 3, indexItems.size() );
+        assertTypes( indexItems, IndexValueType.DATETIME, IndexValueType.STRING, IndexValueType.ORDERBY );
     }
 
     @Test
