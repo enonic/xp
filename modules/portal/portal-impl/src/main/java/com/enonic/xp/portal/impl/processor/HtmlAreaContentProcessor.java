@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.processor;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -178,7 +179,8 @@ public class HtmlAreaContentProcessor
 
     private void processExtraData( final ExtraDatas extraDatas, final ContentIds.Builder processedIds )
     {
-        if (extraDatas != null) {
+        if ( extraDatas != null )
+        {
             final XDatas xDatas = xDataService.getByNames( extraDatas.getNames() );
 
             if ( xDatas.getSize() > 0 )
@@ -209,6 +211,11 @@ public class HtmlAreaContentProcessor
     private Collection<Property> getProperties( final PropertyTree data, final FormItems formItems )
     {
         final Set<String> paths = getPaths( formItems );
+
+        if ( data == null || data.getTotalSize() == 0 || paths.size() == 0 )
+        {
+            return Collections.emptyList();
+        }
 
         return paths.
             stream().
