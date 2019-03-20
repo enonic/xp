@@ -18,6 +18,7 @@ import com.enonic.xp.blob.Segment;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.page.DescriptorKey;
@@ -163,12 +164,17 @@ public class IndexConfigUpgrader
     private PatternIndexConfigDocument upgradeLanguageIndexConfig( final PatternIndexConfigDocument sourceDocument,
                                                                    final NodeVersion nodeVersion )
     {
+        final PatternIndexConfigDocument.Builder builder = PatternIndexConfigDocument.create( sourceDocument );
+
         final String language = nodeVersion.getData().getString( LANGUAGE );
         if ( language != null )
         {
             final String normalizedLanguage = Locale.forLanguageTag( language ).getLanguage();
 
-            return PatternIndexConfigDocument.create( sourceDocument ).addAllTextConfigLanguage( normalizedLanguage ).build();
+            builder.addAllTextConfigLanguage( normalizedLanguage );
+            builder.add( LANGUAGE, IndexConfig.NGRAM );
+
+            return builder.build();
         }
         return sourceDocument;
     }

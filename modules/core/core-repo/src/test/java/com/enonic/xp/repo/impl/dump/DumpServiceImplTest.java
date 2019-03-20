@@ -4,6 +4,7 @@ import java.io.File;
 import java.net.URI;
 import java.time.Instant;
 import java.util.Iterator;
+import java.util.List;
 import java.util.TreeSet;
 
 import org.apache.commons.io.FileUtils;
@@ -26,7 +27,7 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.data.Property;
+import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.dump.BranchDumpResult;
@@ -42,6 +43,7 @@ import com.enonic.xp.dump.SystemLoadParams;
 import com.enonic.xp.dump.SystemLoadResult;
 import com.enonic.xp.dump.VersionsLoadResult;
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.GetActiveNodeVersionsParams;
 import com.enonic.xp.node.GetActiveNodeVersionsResult;
@@ -784,6 +786,8 @@ public class DumpServiceImplTest
 
             final Node postNode = nodeService.getById( postNodeId );
             checkHtmlAreaUpgrade( draftNode, postNode );
+
+            checkLanguageUpgrade( draftNode );
         } );
     }
 
@@ -909,6 +913,17 @@ public class DumpServiceImplTest
         Assert.assertTrue( postValue.contains( "<figure class=\"editor-align-justify\">" ) );
         Assert.assertTrue( postValue.contains( "<figure class=\"editor-align-justify editor-style-original\">" ) );
         Assert.assertTrue( postValue.contains( "src=\"media://cf09fe7a-1be9-46bb-ad84-87ba69630cb7\"" ) );
+    }
+
+    private void checkLanguageUpgrade( final Node draftNode )
+    {
+        final IndexConfig indexConfigBefore = draftNode.getIndexConfigDocument().getConfigForPath( PropertyPath.from( "language" ) );
+        final List<String> languages = draftNode.getIndexConfigDocument().getAllTextConfig().getLanguages();
+
+        assertEquals( IndexConfig.NGRAM, indexConfigBefore );
+
+        assertEquals( 1, languages.size() );
+        assertEquals( "no", languages.get( 0 ) );
     }
 
     private void checkPageFlatteningUpgradeFragment( final Node node )
