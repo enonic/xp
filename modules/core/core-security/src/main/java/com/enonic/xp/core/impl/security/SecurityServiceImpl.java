@@ -296,15 +296,15 @@ public final class SecurityServiceImpl
 
     private PrincipalKeys resolveMemberships( final PrincipalKey userKey )
     {
-        final Set<PrincipalKey> resolvedMemberships = Sets.newHashSet();
+        final Set<PrincipalKey> resolvedMemberships = Sets.newLinkedHashSet();
         final PrincipalKeys directMemberships = queryDirectMemberships( userKey );
         resolvedMemberships.addAll( directMemberships.getSet() );
 
-        final Set<PrincipalKey> queriedMemberships = Sets.newHashSet();
+        final Set<PrincipalKey> queriedMemberships = Sets.newLinkedHashSet();
 
         do
         {
-            final Set<PrincipalKey> newMemberships = Sets.newHashSet();
+            final Set<PrincipalKey> newMemberships = Sets.newLinkedHashSet();
             resolvedMemberships.stream().filter( principal -> !queriedMemberships.contains( principal ) ).forEach( principal -> {
                 final PrincipalKeys indirectMemberships = queryDirectMemberships( principal );
                 newMemberships.addAll( indirectMemberships.getSet() );
