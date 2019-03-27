@@ -7,10 +7,8 @@ dependencies {
     compile 'javax.annotation:javax.annotation-api:1.2'
 }
 
-bundle {
-    instruction 'Bundle-Name', 'Resteasy Library'
-    instruction 'Export-Package', 'org.jboss.resteasy.*;version=3.0.8'
-    instruction 'Export-Package', 'javax.annotation.*;-split-package:=merge-first'
-    instruction 'Export-Package', 'javax.ws.rs.*;version=2.0'
-    instruction 'Import-Package', '*;resolution:=optional'
+jar {
+    bnd( 'Bundle-Name': 'Resteasy Library',
+         'Export-Package': 'org.jboss.resteasy.*;version=3.0.8,javax.annotation.*;-split-package:=merge-first,javax.ws.rs.*;version=2.0',
+         'Import-Package': '*;resolution:=optional' )
 }

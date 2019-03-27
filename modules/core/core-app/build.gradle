@@ -7,6 +7,6 @@ dependencies {
     testCompile 'org.ops4j.pax.tinybundles:tinybundles:2.1.1'
 }
 
-bundle {
-    instruction 'Bundle-Name', 'Enonic XP Core - App'
+jar {
+    bnd( 'Bundle-Name': 'Enonic XP Core - App' )
 }

@@ -1,12 +1,16 @@
 import com.enonic.gradle.OsgiConfigurator
 
-apply plugin: 'org.dm.bundle'
+apply plugin: 'biz.aQute.bnd.builder'
 
-bundle {
-    instruction 'Bundle-SymbolicName', group + '.' + name.replace( '-', '.' )
-    instruction '-nouses', 'true'
-    instruction '-dsannotations', '*'
-    instruction 'Implementation-Version', project.version
+ext {
+    symbolicName = group + '.' + name.replace( '-', '.' )
+}
+
+jar {
+    bnd( 'Bundle-SymbolicName': symbolicName,
+         '-nouses': 'true',
+         '-dsannotations': '*',
+         'Implementation-Version': project.version )
 }
 
 OsgiConfigurator.configure( project );

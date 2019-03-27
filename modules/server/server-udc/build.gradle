@@ -6,6 +6,6 @@ dependencies {
     testCompile 'com.squareup.okhttp:mockwebserver:2.5.0'
 }
 
-bundle {
-    instruction 'Bundle-Name', 'Enonic XP Server - UDC'
+jar {
+    bnd( 'Bundle-Name': 'Enonic XP Server - UDC' )
 }

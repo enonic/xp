@@ -7,6 +7,6 @@ dependencies {
     testCompile project( path: ':jaxrs:jaxrs-impl', configuration: 'testOutput' )
 }
 
-bundle {
-    instruction 'Bundle-Name', 'Enonic XP Server - Rest'
+jar {
+    bnd( 'Bundle-Name': 'Enonic XP Server - Rest' )
 }

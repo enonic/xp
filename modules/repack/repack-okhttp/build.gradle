@@ -4,9 +4,8 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp:2.5.0'
 }
 
-bundle {
-    instruction 'Bundle-Name', 'OkHttp Library'
-    instruction 'Export-Package', 'com.squareup.okhttp.*;version=2.5.0'
-    instruction 'Export-Package', 'okio.*'
-    instruction 'Import-Package', '*;resolution:=optional'
+jar {
+    bnd( 'Bundle-Name': 'OkHttp Library',
+         'Export-Package': 'com.squareup.okhttp.*;version=2.5.0,okio.*',
+         'Import-Package': '*;resolution:=optional' )
 }

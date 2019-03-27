@@ -69,4 +69,9 @@ public class VacuumServiceImpl
     {
         this.tasks.add( task );
     }
+
+    public void removeTask( final VacuumTask task )
+    {
+        this.tasks.remove( task );
+    }
 }
