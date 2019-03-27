@@ -6,8 +6,8 @@ dependencies {
     }
 }
 
-bundle {
-    instruction 'Bundle-Name', 'Saxon-HE'
-    instruction 'Export-Package', 'net.sf.saxon.*'
-    instruction 'Import-Package', '*;resolution:=optional'
+jar {
+    bnd( 'Bundle-Name': 'Saxon-HE',
+         'Export-Package': 'net.sf.saxon.*',
+         'Import-Package': '*;resolution:=optional' )
 }

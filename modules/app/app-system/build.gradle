@@ -1,6 +1,6 @@
 apply from: "$rootDir/gradle/osgi.gradle"
 
-bundle {
-    instruction 'Bundle-Name', 'System'
-    instruction 'X-Bundle-Type', 'system'
+jar {
+    bnd( 'Bundle-Name': 'System',
+         'X-Bundle-Type': 'system' )
 }

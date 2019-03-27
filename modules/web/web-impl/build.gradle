@@ -9,6 +9,6 @@ dependencies {
     testCompile 'com.squareup.okhttp:okhttp:2.5.0'
 }
 
-bundle {
-    instruction 'Bundle-Name', 'Enonic XP Web - Impl'
+jar {
+    bnd( 'Bundle-Name': 'Enonic XP Web - Impl' )
 }

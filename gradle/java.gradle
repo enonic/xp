@@ -26,6 +26,9 @@ configurations {
 
 dependencies {
     testCompile 'junit:junit:4.12'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.1.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.1.0'
+    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.1.0'
     testCompile 'org.mockito:mockito-core:1.10.19'
     testCompile 'org.hamcrest:hamcrest-library:1.3'
     testCompile 'org.springframework:spring-test:4.1.6.RELEASE'
@@ -45,10 +48,11 @@ task sourcesJar( type: Jar ) {
     classifier = 'sources'
 }
 
-sourceCompatibility = '1.8'
+sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = sourceCompatibility
 
 test {
+    useJUnitPlatform()
     systemProperty 'java.awt.headless', 'true'
     jvmArgs '-Xmx2048m'
 

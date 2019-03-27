@@ -6,8 +6,8 @@ dependencies {
     }
 }
 
-bundle {
-    instruction 'Bundle-Name', 'AttoParser Library'
-    instruction 'Export-Package', 'org.attoparser.*;version=1.3'
-    instruction 'Import-Package', '*;resolution:=optional'
+jar {
+    bnd( 'Bundle-Name': 'AttoParser Library',
+         'Export-Package': 'org.attoparser.*;version=1.3',
+         'Import-Package': '*;resolution:=optional' )
 }

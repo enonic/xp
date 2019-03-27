@@ -14,10 +14,14 @@ dependencies {
     compile 'io.dropwizard.metrics:metrics-core:3.1.2'
 }
 
-bundle {
-    instruction 'Bundle-Name', 'Enonic XP Core - Api'
-    instruction 'Export-Package', 'com.enonic.xp.*;-split-package:=first'
+jar {
+    bnd( 'Bundle-Name': 'Enonic XP Core - Api',
+         'Export-Package': 'com.enonic.xp.*' )
 }
 
-// Change the output directory for the main source set back to the old path
-sourceSets.main.output.classesDir = new File(buildDir, "classes/main")
+sourceSets {
+    main {
+        // Change the output directory for the main source set back to the old path
+        java.outputDir = file( 'build/classes/main' )
+    }
+}
