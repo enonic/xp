@@ -13,16 +13,16 @@ import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
-import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 @Beta
 public class ContentConstants
 {
-    private static final PrincipalKey CONTENT_SUPER_USER_KEY = PrincipalKey.ofUser( UserStoreKey.system(), "content-su" );
+    private static final PrincipalKey CONTENT_SUPER_USER_KEY = PrincipalKey.ofUser( IdProviderKey.system(), "content-su" );
 
     private static final User CONTENT_SUPER_USER = User.create().key( CONTENT_SUPER_USER_KEY ).login( "content" ).build();
 
@@ -41,8 +41,12 @@ public class ContentConstants
         value( "master" ).
         build();
 
+    public static final String CONTENT_REPO_ID_PREFIX = "com.enonic.cms.";
+
+    public static final RepositoryId CONTENT_REPO_ID = RepositoryId.from( CONTENT_REPO_ID_PREFIX + "default" );
+
     public static final Repository CONTENT_REPO = Repository.create().
-        id( RepositoryId.from( "cms-repo" ) ).
+        id( CONTENT_REPO_ID ).
         branches( Branches.from( BRANCH_DRAFT, BRANCH_MASTER ) ).
         build();
 

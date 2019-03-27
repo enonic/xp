@@ -11,10 +11,10 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
-import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public class ConnectNodeTest
@@ -36,18 +36,18 @@ public class ConnectNodeTest
 
         final Context context = ContextBuilder.create().
             authInfo( AuthenticationInfo.create().
-                user( User.create().key( PrincipalKey.ofUser( UserStoreKey.system(), "test-user" ) ).login( "test-user" ).build() ).
+                user( User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "test-user" ) ).login( "test-user" ).build() ).
                 principals( RoleKeys.ADMIN ).
                 build() ).
             build();
 
-        Mockito.when( this.repositoryService.get( RepositoryId.from( "cms-repo" ) ) ).
+        Mockito.when( this.repositoryService.get( RepositoryId.from( "com.enonic.cms.default" ) ) ).
             thenReturn( Repository.create().
-                id( RepositoryId.from( "cms-repo" ) ).
+                id( RepositoryId.from( "com.enonic.cms.default" ) ).
                 branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
                 build() );
 
-        context.runWith( () -> runScript( "/site/lib/xp/examples/node/connect.js" ) );
+        context.runWith( () -> runScript( "/lib/xp/examples/node/connect.js" ) );
     }
 
 

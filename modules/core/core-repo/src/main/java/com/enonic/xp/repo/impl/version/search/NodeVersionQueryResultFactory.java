@@ -4,7 +4,11 @@ import java.time.Instant;
 
 import com.google.common.base.Strings;
 
+import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.blob.BlobKeys;
+import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.index.IndexPath;
+import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
@@ -53,16 +57,45 @@ public class NodeVersionQueryResultFactory
 
         final String versionId = getStringValue( hit, VersionIndexPath.VERSION_ID, true );
 
+        final String nodeBlobKey = getStringValue( hit, VersionIndexPath.NODE_BLOB_KEY, true );
+
+        final String indexConfigBlobKey = getStringValue( hit, VersionIndexPath.INDEX_CONFIG_BLOB_KEY, true );
+
+        final String accessControlBlobKey = getStringValue( hit, VersionIndexPath.ACCESS_CONTROL_BLOB_KEY, true );
+
+        final ReturnValue binaryBlobKeyReturnValue = hit.getField( VersionIndexPath.BINARY_BLOB_KEYS.getPath(), false );
+
         final String nodePath = getStringValue( hit, VersionIndexPath.NODE_PATH, true );
 
         final String nodeId = getStringValue( hit, VersionIndexPath.NODE_ID, true );
 
+        final String commitId = getStringValue( hit, VersionIndexPath.COMMIT_ID, false );
+
+        final NodeVersionKey nodeVersionKey = NodeVersionKey.from( nodeBlobKey, indexConfigBlobKey, accessControlBlobKey );
+        final BlobKeys binaryBlobKeys = toBlobKeys( binaryBlobKeyReturnValue );
+
         return NodeVersionMetadata.create().
             nodeVersionId( NodeVersionId.from( versionId ) ).
+            nodeVersionKey( nodeVersionKey ).
+            binaryBlobKeys( binaryBlobKeys ).
             timestamp( Strings.isNullOrEmpty( timestamp ) ? null : Instant.parse( timestamp ) ).
             nodePath( NodePath.create( nodePath ).build() ).
             nodeId( NodeId.from( nodeId ) ).
+            nodeCommitId( Strings.isNullOrEmpty( commitId ) ? null : NodeCommitId.from( commitId ) ).
             build();
+    }
+
+    private static BlobKeys toBlobKeys( final ReturnValue returnValue )
+    {
+        final BlobKeys.Builder blobKeys = BlobKeys.create();
+        if ( returnValue != null )
+        {
+            returnValue.getValues().
+                stream().
+                map( value -> BlobKey.from( value.toString() ) ).
+                forEach( blobKeys::add );
+        }
+        return blobKeys.build();
     }
 
     private static String getStringValue( final SearchHit hit, final IndexPath indexPath, final boolean required )

@@ -36,6 +36,6 @@ public class ContextScriptTest
     @Override
     public String getScriptTestFile()
     {
-        return "/site/test/context-test.js";
+        return "/test/context-test.js";
     }
 }

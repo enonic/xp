@@ -1,7 +1,6 @@
 package com.enonic.xp.admin.impl.json.schema.xdata;
 
 import java.time.Instant;
-import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -10,6 +9,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.admin.impl.json.ItemJson;
 import com.enonic.xp.admin.impl.json.form.FormJson;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
+import com.enonic.xp.admin.impl.rest.resource.schema.mixin.InlineMixinResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.mixin.MixinIconUrlResolver;
 import com.enonic.xp.schema.xdata.XData;
 
@@ -18,17 +18,21 @@ public class XDataJson
 {
     private final XData xData;
 
-    private final Boolean isExternal;
+    private final Boolean isOptional;
 
     private final LocaleMessageResolver localeMessageResolver;
+
+    private final InlineMixinResolver inlineMixinResolver;
 
     public XDataJson( final Builder builder )
     {
         Preconditions.checkNotNull( builder.localeMessageResolver );
+        Preconditions.checkNotNull( builder.inlineMixinResolver );
 
         this.xData = builder.xData;
-        this.isExternal = builder.isExternal;
+        this.isOptional = builder.isOptional;
         this.localeMessageResolver = builder.localeMessageResolver;
+        this.inlineMixinResolver = builder.inlineMixinResolver;
     }
 
     public static Builder create()
@@ -77,7 +81,7 @@ public class XDataJson
 
     public FormJson getForm()
     {
-        return new FormJson( xData.getForm(), this.localeMessageResolver );
+        return new FormJson( xData.getForm(), this.localeMessageResolver, this.inlineMixinResolver );
     }
 
     public String getCreator()
@@ -90,14 +94,9 @@ public class XDataJson
         return xData.getModifier() != null ? xData.getModifier().toString() : null;
     }
 
-    public List<String> getAllowedContentTypes()
+    public Boolean getIsOptional()
     {
-        return this.xData.getAllowContentTypes();
-    }
-
-    public Boolean getExternal()
-    {
-        return isExternal;
+        return isOptional;
     }
 
     @Override
@@ -116,11 +115,13 @@ public class XDataJson
     {
         private XData xData;
 
-        private Boolean isExternal = false;
+        private Boolean isOptional = false;
 
         private MixinIconUrlResolver iconUrlResolver;
 
         private LocaleMessageResolver localeMessageResolver;
+
+        private InlineMixinResolver inlineMixinResolver;
 
         private Builder()
         {
@@ -132,9 +133,9 @@ public class XDataJson
             return this;
         }
 
-        public Builder setExternal( final Boolean external )
+        public Builder setOptional( final Boolean optional )
         {
-            isExternal = external;
+            isOptional = optional;
             return this;
         }
 
@@ -150,10 +151,17 @@ public class XDataJson
             return this;
         }
 
+        public Builder setInlineMixinResolver( final InlineMixinResolver inlineMixinResolver )
+        {
+            this.inlineMixinResolver = inlineMixinResolver;
+            return this;
+        }
+
         private void validate()
         {
             Preconditions.checkNotNull( localeMessageResolver );
             Preconditions.checkNotNull( iconUrlResolver );
+            Preconditions.checkNotNull( inlineMixinResolver );
         }
 
         public XDataJson build()

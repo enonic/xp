@@ -4,9 +4,13 @@ import java.time.Instant;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.blob.NodeVersionKey;
+
 public class NodeBranchEntry
 {
     private final NodeVersionId nodeVersionId;
+
+    private final NodeVersionKey nodeVersionKey;
 
     private final NodeState nodeState;
 
@@ -19,6 +23,7 @@ public class NodeBranchEntry
     private NodeBranchEntry( Builder builder )
     {
         this.nodeVersionId = builder.nodeVersionId;
+        this.nodeVersionKey = builder.nodeVersionKey;
         this.nodeState = builder.state;
         this.nodePath = builder.nodePath;
         this.timestamp = builder.timestamp;
@@ -33,6 +38,11 @@ public class NodeBranchEntry
     public NodeVersionId getVersionId()
     {
         return nodeVersionId;
+    }
+
+    public NodeVersionKey getNodeVersionKey()
+    {
+        return nodeVersionKey;
     }
 
     public NodeState getNodeState()
@@ -73,6 +83,10 @@ public class NodeBranchEntry
         {
             return false;
         }
+        if ( nodeVersionKey != null ? !nodeVersionKey.equals( that.nodeVersionKey ) : that.nodeVersionKey != null )
+        {
+            return false;
+        }
         if ( nodeState != that.nodeState )
         {
             return false;
@@ -93,6 +107,7 @@ public class NodeBranchEntry
     public int hashCode()
     {
         int result = nodeVersionId != null ? nodeVersionId.hashCode() : 0;
+        result = 31 * result + ( nodeVersionKey != null ? nodeVersionKey.hashCode() : 0 );
         result = 31 * result + ( nodeState != null ? nodeState.hashCode() : 0 );
         result = 31 * result + ( nodePath != null ? nodePath.hashCode() : 0 );
         result = 31 * result + ( timestamp != null ? timestamp.hashCode() : 0 );
@@ -103,6 +118,8 @@ public class NodeBranchEntry
     public static final class Builder
     {
         private NodeVersionId nodeVersionId;
+
+        private NodeVersionKey nodeVersionKey;
 
         private NodeState state;
 
@@ -119,6 +136,12 @@ public class NodeBranchEntry
         public Builder nodeVersionId( final NodeVersionId nodeVersionId )
         {
             this.nodeVersionId = nodeVersionId;
+            return this;
+        }
+
+        public Builder nodeVersionKey( final NodeVersionKey nodeVersionKey )
+        {
+            this.nodeVersionKey = nodeVersionKey;
             return this;
         }
 

@@ -10,6 +10,6 @@ public final class ImageComponentType
 
     private ImageComponentType()
     {
-        super( "image", ImageComponent.class );
+        super( "image" );
     }
 }

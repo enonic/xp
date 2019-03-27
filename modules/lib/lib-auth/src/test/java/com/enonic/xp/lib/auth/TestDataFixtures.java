@@ -2,20 +2,25 @@ package com.enonic.xp.lib.auth;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.ZoneId;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.security.AuthConfig;
 import com.enonic.xp.security.Group;
+import com.enonic.xp.security.IdProvider;
+import com.enonic.xp.security.IdProviderConfig;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.Role;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
-import com.enonic.xp.security.UserStore;
-import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.util.BinaryReference;
+import com.enonic.xp.util.GeoPoint;
+import com.enonic.xp.util.Link;
+import com.enonic.xp.util.Reference;
 
 public class TestDataFixtures
 {
@@ -26,7 +31,7 @@ public class TestDataFixtures
     public static User getTestUser()
     {
         return User.create().
-            key( PrincipalKey.ofUser( UserStoreKey.from( "enonic" ), "user1" ) ).
+            key( PrincipalKey.ofUser( IdProviderKey.from( "enonic" ), "user1" ) ).
             displayName( "User 1" ).
             modifiedTime( Instant.now( clock ) ).
             email( "user1@enonic.com" ).
@@ -52,7 +57,7 @@ public class TestDataFixtures
     {
 
         return User.create().
-            key( PrincipalKey.ofUser( UserStoreKey.from( "enonic" ), "user2" ) ).
+            key( PrincipalKey.ofUser( IdProviderKey.from( "enonic" ), "user2" ) ).
             displayName( "User 2" ).
             modifiedTime( Instant.now( clock ) ).
             email( "user2@enonic.com" ).
@@ -60,10 +65,37 @@ public class TestDataFixtures
             build();
     }
 
+    public static User getTestUserWithProfile()
+    {
+        final PropertySet data = new PropertySet();
+        data.setString( "untouchedString", "originalValue" );
+        data.setBoolean( "untouchedBoolean", true );
+        data.setDouble( "untouchedDouble", 2.0 );
+        data.setLong( "untouchedLong", 2L );
+        data.setLink( "untouchedLink", Link.from( "myLink" ) );
+        data.setInstant( "untouchedInstant", Instant.parse( "2017-01-02T10:00:00Z" ) );
+        data.setBinaryReference( "untouchedBinaryRef", BinaryReference.from( "abcd" ) );
+        data.setGeoPoint( "untouchedGeoPoint", GeoPoint.from( "30,-30" ) );
+        data.setLocalDate( "untouchedLocalDate", LocalDate.parse( "2017-03-24" ) );
+        data.setReference( "untouchedReference", Reference.from( "myReference" ) );
+
+        final PropertyTree profile = new PropertyTree();
+        profile.setSet( "myApp", data );
+
+        return User.create().
+            key( PrincipalKey.ofUser( IdProviderKey.from( "enonic" ), "user1" ) ).
+            displayName( "User 1" ).
+            modifiedTime( Instant.now( clock ) ).
+            email( "user1@enonic.com" ).
+            login( "user1" ).
+            profile( profile ).
+            build();
+    }
+
     public static User getTestUserWithoutEmail()
     {
         return User.create().
-            key( PrincipalKey.ofUser( UserStoreKey.from( "enonic" ), "user1" ) ).
+            key( PrincipalKey.ofUser( IdProviderKey.from( "enonic" ), "user1" ) ).
             displayName( "User 1" ).
             modifiedTime( Instant.now( clock ) ).
             login( "user1" ).
@@ -83,24 +115,24 @@ public class TestDataFixtures
     public static Group getTestGroup()
     {
         return Group.create().
-            key( PrincipalKey.ofGroup( UserStoreKey.system(), "group-a" ) ).
+            key( PrincipalKey.ofGroup( IdProviderKey.system(), "group-a" ) ).
             displayName( "Group A" ).
             modifiedTime( Instant.now( clock ) ).
             description( "description" ).
             build();
     }
 
-    public static UserStore getTestUserStore()
+    public static IdProvider getTestIdProvider()
     {
-        return UserStore.create().
-            key( UserStoreKey.from( "userStoreTestKey" ) ).
-            description( "User store used for testing" ).
-            displayName( "User store test" ).
-            authConfig( getTestAuthConfig() ).
+        return IdProvider.create().
+            key( IdProviderKey.from( "idProviderTestKey" ) ).
+            description( "Id Provider used for testing" ).
+            displayName( "Id Provider test" ).
+            idProviderConfig( getTestIdProviderConfig() ).
             build();
     }
 
-    private static AuthConfig getTestAuthConfig()
+    private static IdProviderConfig getTestIdProviderConfig()
     {
         final PropertySet backgroundPropertySet = new PropertySet();
         backgroundPropertySet.setString( "subString", "subStringValue" );
@@ -110,7 +142,7 @@ public class TestDataFixtures
         config.setSet( "set", backgroundPropertySet );
         config.setString( "string", "stringValue" );
 
-        return AuthConfig.create().
+        return IdProviderConfig.create().
             applicationKey( ApplicationKey.from( "com.enonic.app.test" ) ).
             config( config ).
             build();

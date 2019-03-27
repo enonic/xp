@@ -14,7 +14,7 @@ public final class ContextRunParams
 
     protected String username;
 
-    protected String userStore;
+    protected String idProvider;
 
     protected PrincipalKey[] principals;
 
@@ -37,9 +37,9 @@ public final class ContextRunParams
         this.username = username;
     }
 
-    public void setUserStore( final String userStore )
+    public void setIdProvider( final String idProvider )
     {
-        this.userStore = userStore;
+        this.idProvider = idProvider;
     }
 
     public void setPrincipals( final String[] principals )

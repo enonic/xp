@@ -23,10 +23,11 @@ import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateContentTranslatorParams;
 import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.processor.ContentProcessor;
+import com.enonic.xp.content.processor.ProcessCreateParams;
+import com.enonic.xp.content.processor.ProcessCreateResult;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.core.impl.content.processor.ContentProcessor;
-import com.enonic.xp.core.impl.content.processor.ProcessCreateParams;
-import com.enonic.xp.core.impl.content.processor.ProcessCreateResult;
+import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.core.impl.content.validate.InputValidator;
 import com.enonic.xp.core.impl.content.validate.ValidationError;
 import com.enonic.xp.core.impl.content.validate.ValidationErrors;
@@ -66,6 +67,8 @@ final class CreateContentCommand
 
     private final LayoutDescriptorService layoutDescriptorService;
 
+    private final ContentDataSerializer contentDataSerializer;
+
     private CreateContentCommand( final Builder builder )
     {
         super( builder );
@@ -75,6 +78,7 @@ final class CreateContentCommand
         this.pageDescriptorService = builder.pageDescriptorService;
         this.partDescriptorService = builder.partDescriptorService;
         this.layoutDescriptorService = builder.layoutDescriptorService;
+        this.contentDataSerializer = builder.contentDataSerializer;
     }
 
     static Builder create()
@@ -107,9 +111,10 @@ final class CreateContentCommand
         final CreateNodeParams createNodeParams = CreateNodeParamsFactory.create( createContentTranslatorParams ).
             contentTypeService(this.contentTypeService ).
             pageDescriptorService( this.pageDescriptorService ).
-            mixinService( this.mixinService ).
+            xDataService( this.xDataService ).
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
+            contentDataSerializer( this.contentDataSerializer ).
             siteService( this.siteService ).
             build().produce();
 
@@ -196,14 +201,14 @@ final class CreateContentCommand
             if ( !parent.getType().isTemplateFolder() )
             {
                 final ContentPath path = ContentPath.from( params.getParent(), params.getName().toString() );
-                throw new IllegalArgumentException(
+                throw new RuntimeException(
                     "A page template can only be created below a content of type 'template-folder'. Path: " + path );
             }
         }
         catch ( ContentNotFoundException e )
         {
             final ContentPath path = ContentPath.from( params.getParent(), params.getName().toString() );
-            throw new IllegalArgumentException(
+            throw new RuntimeException(
                 "Parent not found; A page template can only be created below a content of type 'template-folder'. Path: " + path, e );
         }
     }
@@ -411,7 +416,7 @@ final class CreateContentCommand
             name( builder.getName() ).
             displayName( builder.getDisplayName() ).
             extradatas( builder.getExtraDatas() != null ? ExtraDatas.from( builder.getExtraDatas() ) : ExtraDatas.empty() ).
-            mixinService( this.mixinService ).
+            xDataService( this.xDataService ).
             siteService( this.siteService ).
             contentTypeService( this.contentTypeService ).
             build().
@@ -451,6 +456,8 @@ final class CreateContentCommand
         private PartDescriptorService partDescriptorService;
 
         private LayoutDescriptorService layoutDescriptorService;
+
+        private ContentDataSerializer contentDataSerializer;
 
         private Builder()
         {
@@ -494,6 +501,12 @@ final class CreateContentCommand
         Builder layoutDescriptorService( final LayoutDescriptorService value )
         {
             this.layoutDescriptorService = value;
+            return this;
+        }
+
+        Builder contentDataSerializer( final ContentDataSerializer value )
+        {
+            this.contentDataSerializer = value;
             return this;
         }
 

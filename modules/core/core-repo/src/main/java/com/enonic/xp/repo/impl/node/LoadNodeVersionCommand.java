@@ -3,9 +3,11 @@ package com.enonic.xp.repo.impl.node;
 import java.time.Instant;
 
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.storage.StoreNodeVersionParams;
 
@@ -20,6 +22,10 @@ public class LoadNodeVersionCommand
 
     private final NodeVersion nodeVersion;
 
+    private final NodeVersionId nodeVersionId;
+
+    private final NodeCommitId nodeCommitId;
+
     private LoadNodeVersionCommand( final Builder builder )
     {
         super( builder );
@@ -27,6 +33,8 @@ public class LoadNodeVersionCommand
         nodePath = builder.nodePath;
         timestamp = builder.timestamp;
         nodeVersion = builder.nodeVersion;
+        nodeVersionId = builder.nodeVersionId;
+        nodeCommitId = builder.nodeCommitId;
     }
 
     public void execute()
@@ -35,6 +43,8 @@ public class LoadNodeVersionCommand
             nodeId( this.nodeId ).
             nodePath( this.nodePath ).
             nodeVersion( this.nodeVersion ).
+            nodeVersionId( this.nodeVersionId ).
+            nodeCommitId( this.nodeCommitId ).
             timestamp( this.timestamp ).
             build(), InternalContext.from( ContextAccessor.current() ) );
     }
@@ -54,6 +64,10 @@ public class LoadNodeVersionCommand
         private Instant timestamp;
 
         private NodeVersion nodeVersion;
+
+        private NodeVersionId nodeVersionId;
+
+        private NodeCommitId nodeCommitId;
 
         private Builder()
         {
@@ -85,6 +99,18 @@ public class LoadNodeVersionCommand
         public Builder nodeVersion( final NodeVersion val )
         {
             nodeVersion = val;
+            return this;
+        }
+
+        public Builder nodeVersionId( final NodeVersionId val )
+        {
+            nodeVersionId = val;
+            return this;
+        }
+
+        public Builder nodeCommitId( final NodeCommitId val )
+        {
+            nodeCommitId = val;
             return this;
         }
     }

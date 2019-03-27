@@ -59,7 +59,7 @@ public class LayoutRendererTest
         this.portalRequest = new PortalRequest();
         this.portalRequest.setBranch( Branch.from( "draft" ) );
         this.portalRequest.setApplicationKey( ApplicationKey.from( "myapplication" ) );
-        this.portalRequest.setBaseUri( "/portal" );
+        this.portalRequest.setBaseUri( "/site" );
         this.portalRequest.setContentPath( ContentPath.from( "context/path" ) );
         this.portalResponse = PortalResponse.create().build();
         this.portalRequest.setMode( RenderMode.EDIT );
@@ -79,6 +79,15 @@ public class LayoutRendererTest
     {
         // verify
         String response = this.configureEmptyComponent( RenderMode.PREVIEW );
+        String result = "<div data-portal-component-type=\"layout\"></div>";
+        assertEquals( result, response );
+    }
+
+    @Test
+    public void emptyComponentInlineMode()
+    {
+        // verify
+        String response = this.configureEmptyComponent( RenderMode.INLINE );
         String result = "<div data-portal-component-type=\"layout\"></div>";
         assertEquals( result, response );
     }

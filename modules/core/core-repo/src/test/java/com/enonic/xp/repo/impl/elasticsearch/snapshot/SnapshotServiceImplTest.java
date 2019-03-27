@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
+import com.enonic.xp.cluster.ClusterManager;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.DeleteSnapshotParams;
@@ -36,6 +37,8 @@ public class SnapshotServiceImplTest
 
     private EventPublisher eventPublisher;
 
+    private ClusterManager clusterManager;
+
     @Before
     public void setUp()
         throws Exception
@@ -56,13 +59,17 @@ public class SnapshotServiceImplTest
 
         eventPublisher = Mockito.mock( EventPublisher.class );
 
+        clusterManager = Mockito.mock( ClusterManager.class );
+        Mockito.when( clusterManager.isHealthy() ).thenReturn( false );
+
         this.snapshotService.setRepositoryService( repositoryService );
         final RepoConfiguration configuration = Mockito.mock( RepoConfiguration.class );
-        Mockito.when( configuration.getSnapshotsDir() ).thenReturn( snapshotRepo.getRoot() );
+        Mockito.when( configuration.getSnapshotsDir() ).thenReturn( getServer().getSnapshotsDir() );
 
         this.snapshotService.setConfiguration( configuration );
         this.snapshotService.setClient( this.client );
         this.snapshotService.setEventPublisher( eventPublisher );
+        this.snapshotService.setClusterManager( clusterManager );
     }
 
     @Test

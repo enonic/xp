@@ -8,7 +8,7 @@ import com.enonic.xp.portal.url.IdentityUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.view.ViewFunction;
 import com.enonic.xp.portal.view.ViewFunctionParams;
-import com.enonic.xp.security.UserStoreKey;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
@@ -28,7 +28,7 @@ public final class LoginUrlFunction
     public Object execute( final ViewFunctionParams params )
     {
         final IdentityUrlParams urlParams = new IdentityUrlParams().
-            userStoreKey( retrieveUserStoreKey( params.getPortalRequest() ) ).
+            idProviderKey( retrieveIdProviderKey( params.getPortalRequest() ) ).
             idProviderFunction( "login" ).
             portalRequest( params.getPortalRequest() ).
             setAsMap( params.getArgs() );
@@ -36,12 +36,12 @@ public final class LoginUrlFunction
         return this.urlService.identityUrl( urlParams );
     }
 
-    private UserStoreKey retrieveUserStoreKey( final PortalRequest portalRequest )
+    private IdProviderKey retrieveIdProviderKey( final PortalRequest portalRequest )
     {
         final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( portalRequest.getRawRequest() );
         if ( virtualHost != null )
         {
-            return virtualHost.getUserStoreKey();
+            return virtualHost.getDefaultIdProviderKey();
         }
         return null;
     }

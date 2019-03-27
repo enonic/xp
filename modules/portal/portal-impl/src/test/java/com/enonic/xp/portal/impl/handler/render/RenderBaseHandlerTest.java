@@ -77,7 +77,7 @@ public abstract class RenderBaseHandlerTest
         this.rawRequest = Mockito.mock( HttpServletRequest.class );
         Mockito.when( this.rawRequest.isUserInRole( Mockito.anyString() ) ).thenReturn( Boolean.TRUE );
         this.request.setRawRequest( this.rawRequest );
-        this.request.setBaseUri( "/portal" );
+        this.request.setBaseUri( "/site" );
     }
 
     protected final void setupContentAndSite()
@@ -100,7 +100,7 @@ public abstract class RenderBaseHandlerTest
     {
         Content content = createPage( "id", "site/somepath/content", "myapplication:ctype", true );
         final PageDescriptor controllerDescriptor = createDescriptor();
-        Page page = Page.create( content.getPage() ).template( null ).controller( controllerDescriptor.getKey() ).build();
+        Page page = Page.create( content.getPage() ).template( null ).descriptor( controllerDescriptor.getKey() ).build();
         content = Content.create( content ).page( page ).build();
 
         Mockito.when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ).asAbsolute() ) ).

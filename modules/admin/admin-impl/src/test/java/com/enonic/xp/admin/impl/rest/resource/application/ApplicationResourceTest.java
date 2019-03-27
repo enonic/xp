@@ -1,20 +1,31 @@
 package com.enonic.xp.admin.impl.rest.resource.application;
 
+import java.net.URL;
 import java.time.Instant;
+import java.util.Arrays;
+import java.util.Collections;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
+import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.AdditionalAnswers;
 import org.mockito.Mockito;
 import org.osgi.framework.Version;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
+import com.google.common.io.ByteSource;
 
 import com.enonic.xp.admin.impl.market.MarketService;
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
+import com.enonic.xp.admin.impl.rest.resource.application.json.MarketAppVersionInfoJson;
+import com.enonic.xp.admin.impl.rest.resource.application.json.MarketApplicationJson;
+import com.enonic.xp.admin.impl.rest.resource.application.json.MarketApplicationsJson;
 import com.enonic.xp.admin.tool.AdminToolDescriptor;
 import com.enonic.xp.admin.tool.AdminToolDescriptorService;
 import com.enonic.xp.admin.tool.AdminToolDescriptors;
@@ -28,13 +39,15 @@ import com.enonic.xp.app.ApplicationInfoService;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
-import com.enonic.xp.auth.AuthDescriptor;
-import com.enonic.xp.auth.AuthDescriptorService;
+import com.enonic.xp.core.impl.app.ApplicationInstallException;
 import com.enonic.xp.descriptor.Descriptors;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
+import com.enonic.xp.icon.Icon;
+import com.enonic.xp.idprovider.IdProviderDescriptor;
+import com.enonic.xp.idprovider.IdProviderDescriptorService;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.macro.MacroDescriptorService;
 import com.enonic.xp.page.DescriptorKey;
@@ -43,10 +56,13 @@ import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.content.ContentTypeService;
+import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
+import com.enonic.xp.web.multipart.MultipartForm;
+import com.enonic.xp.web.multipart.MultipartItem;
 
 public class ApplicationResourceTest
     extends AdminResourceTestSupport
@@ -61,7 +77,7 @@ public class ApplicationResourceTest
 
     private MarketService marketService;
 
-    private AuthDescriptorService authDescriptorService;
+    private IdProviderDescriptorService idProviderDescriptorService;
 
     private RelationshipTypeService relationshipTypeService;
 
@@ -79,6 +95,8 @@ public class ApplicationResourceTest
 
     private LocaleService localeService;
 
+    private MixinService mixinService;
+
     @Test
     public void get_application_list()
         throws Exception
@@ -88,10 +106,12 @@ public class ApplicationResourceTest
         Mockito.when( this.applicationService.getInstalledApplications() ).thenReturn( applications );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
-        final AuthDescriptor authDescriptor = createAuthDescriptor();
-        Mockito.when( this.authDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( authDescriptor );
+        final IdProviderDescriptor idProviderDescriptor = createIdProviderDescriptor();
+        Mockito.when( this.idProviderDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn(
+            idProviderDescriptor );
         final ApplicationDescriptor appDescriptor = createApplicationDescriptor();
         Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
+        Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
 
         String response = request().
             path( "application/list" ).
@@ -104,7 +124,7 @@ public class ApplicationResourceTest
         throws Exception
     {
         final ApplicationKey applicationKey = createApplication().getKey();
-        final ResourceKey resourceKey = ResourceKey.from( applicationKey, "/main.js" );
+        final ResourceKey resourceKey = ResourceKey.from( applicationKey, "/webapp/webapp.js" );
 
         final ApplicationInfo applicationInfo = ApplicationInfo.create().build();
 
@@ -136,7 +156,7 @@ public class ApplicationResourceTest
         assertJson( "get_application_info.json", response );
 
         final String deploymentUrl = new ObjectMapper().readTree( response ).findPath( "deployment" ).findPath( "url" ).asText();
-        assertEquals( "http://localhost:80/app/testapplication", deploymentUrl );
+        assertEquals( "http://localhost:80/webapp/testapplication", deploymentUrl );
     }
 
     @Test
@@ -148,10 +168,12 @@ public class ApplicationResourceTest
         Mockito.when( this.applicationService.getInstalledApplications() ).thenReturn( applications );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
-        final AuthDescriptor authDescriptor = createAuthDescriptor();
-        Mockito.when( this.authDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( authDescriptor );
+        final IdProviderDescriptor idProviderDescriptor = createIdProviderDescriptor();
+        Mockito.when( this.idProviderDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn(
+            idProviderDescriptor );
         final ApplicationDescriptor appDescriptor = createApplicationDescriptor();
         Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
+        Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
 
         String response = request().
             path( "application/list" ).
@@ -169,8 +191,9 @@ public class ApplicationResourceTest
         Mockito.when( this.applicationService.getInstalledApplications() ).thenReturn( applications );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
-        final AuthDescriptor authDescriptor = createAuthDescriptor();
-        Mockito.when( this.authDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( authDescriptor );
+        final IdProviderDescriptor idProviderDescriptor = createIdProviderDescriptor();
+        Mockito.when( this.idProviderDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn(
+            idProviderDescriptor );
         final ApplicationDescriptor appDescriptor = createApplicationDescriptor();
         Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
 
@@ -190,8 +213,9 @@ public class ApplicationResourceTest
         Mockito.when( this.applicationService.getInstalledApplications() ).thenReturn( applications );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
-        final AuthDescriptor authDescriptor = createAuthDescriptor();
-        Mockito.when( this.authDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( authDescriptor );
+        final IdProviderDescriptor idProviderDescriptor = createIdProviderDescriptor();
+        Mockito.when( this.idProviderDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn(
+            idProviderDescriptor );
         final ApplicationDescriptor appDescriptor = createApplicationDescriptor();
         Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
 
@@ -209,10 +233,13 @@ public class ApplicationResourceTest
         Mockito.when( this.applicationService.getInstalledApplication( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( application );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
-        final AuthDescriptor authDescriptor = createAuthDescriptor();
-        Mockito.when( this.authDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( authDescriptor );
+        final IdProviderDescriptor idProviderDescriptor = createIdProviderDescriptor();
+        Mockito.when( this.idProviderDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn(
+            idProviderDescriptor );
         final ApplicationDescriptor appDescriptor = createApplicationDescriptor();
         Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
+
+        Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
 
         String response = request().
             path( "application" ).
@@ -229,8 +256,9 @@ public class ApplicationResourceTest
         Mockito.when( this.applicationService.getInstalledApplication( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( application );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
         Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
-        final AuthDescriptor authDescriptor = createAuthDescriptor();
-        Mockito.when( this.authDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( authDescriptor );
+        final IdProviderDescriptor idProviderDescriptor = createIdProviderDescriptor();
+        Mockito.when( this.idProviderDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn(
+            idProviderDescriptor );
         final ApplicationDescriptor appDescriptor = createApplicationDescriptor();
         Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
 
@@ -242,6 +270,8 @@ public class ApplicationResourceTest
         Mockito.when( messageBundle.localize( "site.config.label" ) ).thenReturn( "translated.site.label" );
 
         Mockito.when( this.localeService.getBundle( Mockito.any(), Mockito.any() ) ).thenReturn( messageBundle );
+
+        Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
 
         String response = request().
             path( "application" ).
@@ -281,15 +311,284 @@ public class ApplicationResourceTest
         final Application application = createApplication();
         final Applications applications = Applications.from( application );
         Mockito.when( this.applicationService.getInstalledApplications() ).thenReturn( applications );
-        final AuthDescriptor authDescriptor = createAuthDescriptor();
-        Mockito.when( this.authDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( authDescriptor );
+        final IdProviderDescriptor idProviderDescriptor = createIdProviderDescriptor();
+        Mockito.when( this.idProviderDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn(
+            idProviderDescriptor );
         final ApplicationDescriptor appDescriptor = createApplicationDescriptor();
         Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
+
+        Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
 
         String response = request().
             path( "application/getIdProviderApplications" ).
             get().getAsString();
         assertJson( "get_id_provider_applications.json", response );
+    }
+
+    @Test
+    public void get_id_provider_application_empty()
+        throws Exception
+    {
+        String response = request().
+            path( "application/getIdProviderApplication" ).
+            queryParam( "applicationKey", "nonexistentAppKey" ).
+            get().getAsString();
+        assertEquals( "", response );
+    }
+
+    @Test
+    public void get_id_provider_applcation()
+        throws Exception
+    {
+        final Application application = createApplication();
+        Mockito.when( this.applicationService.getInstalledApplication( application.getKey() ) ).thenReturn( application );
+
+        final IdProviderDescriptor idProviderDescriptor = createIdProviderDescriptor();
+        Mockito.when( this.idProviderDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn(
+            idProviderDescriptor );
+
+        final ApplicationDescriptor appDescriptor = createApplicationDescriptor();
+        Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
+
+        Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
+
+        String response = request().
+            path( "application/getIdProviderApplication" ).
+            queryParam( "applicationKey", "testapplication" ).
+            get().getAsString();
+        assertJson( "get_id_provider_application.json", response );
+    }
+
+    @Test
+    public void get_site_applications_validQuery()
+        throws Exception
+    {
+        final Application application = createApplication();
+        final Applications applications = Applications.from( application );
+        Mockito.when( this.applicationService.getInstalledApplications() ).thenReturn( applications );
+
+        final SiteDescriptor siteDescriptor = createSiteDescriptor();
+        Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
+
+        final ApplicationDescriptor appDescriptor = createApplicationDescriptor();
+        Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
+
+        Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
+
+        String response = request().
+            path( "application/getSiteApplications" ).
+            queryParam( "query", "" ).
+            get().getAsString();
+        assertJson( "get_site_applications.json", response );
+    }
+
+    @Test
+    public void get_site_applications_empty()
+        throws Exception
+    {
+        final Application application = createApplication();
+        final Applications applications = Applications.from( application );
+        Mockito.when( this.applicationService.getInstalledApplications() ).thenReturn( applications );
+
+        String response = request().
+            path( "application/getSiteApplications" ).
+            queryParam( "query", "skip all applications" ).
+            get().getAsString();
+        assertEquals( "{\"applications\":[],\"total\":0}", response );
+    }
+
+    @Test
+    public void get_market_applications()
+        throws Exception
+    {
+        final MarketApplicationJson marketApplicationJson = new MarketApplicationJson();
+        marketApplicationJson.setName( "app1" );
+        marketApplicationJson.setDisplayName( "market application displayname" );
+        marketApplicationJson.setDescription( "market application description" );
+        marketApplicationJson.setIconUrl( "http://market.enonic.com/app1" );
+        marketApplicationJson.setVersions( Collections.singletonMap( "1", new MarketAppVersionInfoJson() ) );
+        marketApplicationJson.setLatestVersion( "version-1.0" );
+
+        final MarketApplicationsJson json = new MarketApplicationsJson();
+        json.add( "appKey", marketApplicationJson );
+
+        Mockito.when( this.marketService.get( Arrays.asList( "a", "b" ), "version-1.0", 0, 10 ) ).thenReturn( json );
+
+        String response = request().
+            path( "application/getMarketApplications" ).
+            entity( "{\"version\":\"version-1.0\", \"start\":\"0\", \"count\":\"10\", \"ids\":[\"a\",\"b\"]}",
+                    MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+        assertJson( "get_market_applications.json", response );
+    }
+
+    @Test
+    public void get_icon_default()
+        throws Exception
+    {
+        String response = request().
+            path( "application/icon/applicationKey" ).
+            queryParam( "appKey", "applicationKey" ).
+            queryParam( "hash", "123" ).
+            get().getDataAsString();
+
+        String expected = (String) Response.ok( readFromFile( "application.svg" ), "image/svg+xml" ).build().getEntity();
+
+        assertEquals( expected, response );
+    }
+
+    @Test
+    public void get_icon()
+        throws Exception
+    {
+        final Icon icon = Icon.from( new byte[]{0, 1, 2}, "image/png", Instant.now() );
+
+        final ApplicationDescriptor appDescriptor = createApplicationDescriptor( icon );
+        Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
+
+        byte[] response = request().
+            path( "application/icon/applicationKey" ).
+            queryParam( "appKey", "applicationKey" ).
+            queryParam( "hash", "123" ).
+            get().getData();
+
+        byte[] expected = icon.toByteArray();
+
+        Assert.assertTrue( Arrays.equals( expected, response ) );
+    }
+
+    @Test
+    public void install_url_invalid_url()
+        throws Exception
+    {
+        String response = request().
+            path( "application/installUrl" ).
+            entity( "{\"URL\":\"" + "http://enonic.net" + "\"}", MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+    }
+
+    @Test
+    public void install_url_invalid_protocol()
+        throws Exception
+    {
+        String response = request().
+            path( "application/installUrl" ).
+            entity( "{\"URL\":\"" + "inv://enonic.net" + "\"}", MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertEquals( "{\"applicationInstalledJson\":null,\"failure\":\"Failed to upload application from inv://enonic.net\"}", response );
+    }
+
+    @Test
+    public void install_url_not_allowed_protocol()
+        throws Exception
+    {
+        String response = request().
+            path( "application/installUrl" ).
+            entity( "{\"URL\":\"" + "ftp://enonic.net" + "\"}", MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertEquals( "{\"applicationInstalledJson\":null,\"failure\":\"Illegal protocol: ftp\"}", response );
+    }
+
+    @Test
+    public void install_url()
+        throws Exception
+    {
+        final Application application = createApplication();
+        Mockito.when( this.applicationService.installGlobalApplication( new URL( application.getUrl() ) ) ).thenReturn( application );
+
+        String response = request().
+            path( "application/installUrl" ).
+            entity( "{\"URL\":\"" + application.getUrl() + "\"}", MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+        assertJson( "install_url.json", response );
+    }
+
+    @Test(expected = ApplicationInstallException.class)
+    public void test_uninstall_failed()
+        throws Exception
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "testapplication" );
+        Mockito.doThrow( new ApplicationInstallException( "" ) ).when( this.applicationService ).uninstallApplication( applicationKey,
+                                                                                                                       true );
+
+        request().
+            path( "application/uninstall" ).
+            entity( "{\"key\":[\"" + applicationKey.toString() + "\"]}", MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+    }
+
+    @Test
+    public void test_uninstall()
+        throws Exception
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "testapplication" );
+
+        final String response = request().
+            path( "application/uninstall" ).
+            entity( "{\"key\":[\"" + applicationKey.toString() + "\"]}", MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertEquals( "{}", response );
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void test_install_empty()
+        throws Exception
+    {
+        final MultipartForm form = Mockito.mock( MultipartForm.class );
+        Mockito.when( form.get( "file" ) ).thenReturn( null );
+
+        Mockito.when( this.multipartService.parse( Mockito.any() ) ).thenReturn( form );
+
+        request().path( "application/install" ).multipart( "file", "file.jar", new byte[]{0, 1, 2}, MediaType.MULTIPART_FORM_DATA_TYPE ).
+            post();
+    }
+
+    @Test
+    public void test_install_invalid()
+        throws Exception
+    {
+        final MultipartForm form = Mockito.mock( MultipartForm.class );
+
+        final MultipartItem file = createItem( "file", 10, "jar", "image/png" );
+
+        Mockito.when( form.iterator() ).thenReturn( Lists.newArrayList( file ).iterator() );
+        Mockito.when( form.get( "file" ) ).thenReturn( file );
+        Mockito.when( this.multipartService.parse( Mockito.any() ) ).thenReturn( form );
+
+        Mockito.when( this.applicationService.installGlobalApplication( file.getBytes(), "file.jar" ) ).thenThrow( new RuntimeException() );
+
+        String response = request().
+            path( "application/install" ).multipart( "file", "file.jar", new byte[]{0, 1, 2}, MediaType.MULTIPART_FORM_DATA_TYPE ).
+            post().getAsString();
+
+        assertEquals( "{\"applicationInstalledJson\":null,\"failure\":\"Failed to process application file.jar\"}", response );
+    }
+
+    @Test
+    public void test_install()
+        throws Exception
+    {
+
+        final MultipartForm form = Mockito.mock( MultipartForm.class );
+
+        final MultipartItem file = createItem( "file", 10, "jar", "image/png" );
+
+        Mockito.when( form.iterator() ).thenReturn( Lists.newArrayList( file ).iterator() );
+        Mockito.when( form.get( "file" ) ).thenReturn( file );
+        Mockito.when( this.multipartService.parse( Mockito.any() ) ).thenReturn( form );
+
+        final Application application = createApplication();
+
+        Mockito.when( this.applicationService.installGlobalApplication( file.getBytes(), "file.jar" ) ).thenReturn( application );
+
+        String response = request().
+            path( "application/install" ).multipart( "file", "file.jar", new byte[]{0, 1, 2}, MediaType.MULTIPART_FORM_DATA_TYPE ).
+            post().getAsString();
+
+        assertJson( "install_url.json", response );
     }
 
     private Application createApplication()
@@ -311,9 +610,15 @@ public class ApplicationResourceTest
 
     private ApplicationDescriptor createApplicationDescriptor()
     {
+        return createApplicationDescriptor( null );
+    }
+
+    private ApplicationDescriptor createApplicationDescriptor( final Icon icon )
+    {
         return ApplicationDescriptor.create().
             key( ApplicationKey.from( "testapplication" ) ).
             description( "Application description" ).
+            icon( icon ).
             build();
     }
 
@@ -335,13 +640,13 @@ public class ApplicationResourceTest
         return SiteDescriptor.create().form( config ).build();
     }
 
-    private AuthDescriptor createAuthDescriptor()
+    private IdProviderDescriptor createIdProviderDescriptor()
     {
         final Form config = Form.create().
             addFormItem( Input.create().name( "some-name" ).label( "some-label" ).labelI18nKey( "key.label" ).helpTextI18nKey(
                 "key.help-text" ).inputType( InputTypeName.TEXT_LINE ).build() ).
             build();
-        return AuthDescriptor.create().
+        return IdProviderDescriptor.create().
             config( config ).
             build();
     }
@@ -350,6 +655,7 @@ public class ApplicationResourceTest
     {
         final WidgetDescriptor widgetDescriptor1 = WidgetDescriptor.create().
             displayName( "My widget" ).
+            description( "My widget description" ).
             addInterface( "com.enonic.xp.my-interface" ).
             addInterface( "com.enonic.xp.my-interface-2" ).
             key( DescriptorKey.from( "myapp:my-widget" ) ).
@@ -370,6 +676,22 @@ public class ApplicationResourceTest
         return AdminToolDescriptors.from( adminToolDescriptor );
     }
 
+    private MultipartItem createItem( final String name, final long size, final String ext, final String type )
+    {
+        return createItem( name, name, size, ext, type );
+    }
+
+    private MultipartItem createItem( final String name, final String fileName, final long size, final String ext, final String type )
+    {
+        final MultipartItem item = Mockito.mock( MultipartItem.class );
+        Mockito.when( item.getName() ).thenReturn( name );
+        Mockito.when( item.getFileName() ).thenReturn( fileName + "." + ext );
+        Mockito.when( item.getContentType() ).thenReturn( com.google.common.net.MediaType.parse( type ) );
+        Mockito.when( item.getSize() ).thenReturn( size );
+        Mockito.when( item.getBytes() ).thenReturn( ByteSource.wrap( name.getBytes() ) );
+        return item;
+    }
+
     @Override
     protected Object getResourceInstance()
     {
@@ -378,7 +700,7 @@ public class ApplicationResourceTest
         this.applicationInfoService = Mockito.mock( ApplicationInfoService.class );
         this.siteService = Mockito.mock( SiteService.class );
         this.marketService = Mockito.mock( MarketService.class );
-        this.authDescriptorService = Mockito.mock( AuthDescriptorService.class );
+        this.idProviderDescriptorService = Mockito.mock( IdProviderDescriptorService.class );
         this.resourceService = Mockito.mock( ResourceService.class );
         this.portalScriptService = Mockito.mock( PortalScriptService.class );
         this.relationshipTypeService = Mockito.mock( RelationshipTypeService.class );
@@ -387,12 +709,13 @@ public class ApplicationResourceTest
         this.localeService = Mockito.mock( LocaleService.class );
         this.widgetDescriptorService = Mockito.mock( WidgetDescriptorService.class );
         this.adminToolDescriptorService = Mockito.mock( AdminToolDescriptorService.class );
+        this.mixinService = Mockito.mock( MixinService.class );
 
         final ApplicationResource resource = new ApplicationResource();
         resource.setApplicationService( this.applicationService );
         resource.setSiteService( this.siteService );
         resource.setMarketService( this.marketService );
-        resource.setAuthDescriptorService( this.authDescriptorService );
+        resource.setIdProviderDescriptorService( this.idProviderDescriptorService );
         resource.setApplicationDescriptorService( this.applicationDescriptorService );
         resource.setApplicationInfoService( this.applicationInfoService );
         resource.setContentTypeService( this.contentTypeService );
@@ -403,6 +726,7 @@ public class ApplicationResourceTest
         resource.setLocaleService( this.localeService );
         resource.setWidgetDescriptorService( this.widgetDescriptorService );
         resource.setAdminToolDescriptorService( this.adminToolDescriptorService );
+        resource.setMixinService( this.mixinService );
 
         return resource;
     }

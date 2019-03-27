@@ -1,5 +1,7 @@
 package com.enonic.xp.admin.impl.json.aggregation;
 
+import java.util.Objects;
+
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.aggregation.Bucket;
@@ -37,4 +39,24 @@ public class BucketAggregationJson
         return buckets;
     }
 
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+        final BucketAggregationJson that = (BucketAggregationJson) o;
+        return Objects.equals( buckets, that.buckets );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( buckets );
+    }
 }

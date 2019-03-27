@@ -4,10 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.Instant;
 import java.util.concurrent.Callable;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
 
 import org.osgi.service.component.annotations.Activate;
@@ -23,6 +21,7 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
+import com.enonic.xp.content.ApplyContentPermissionsResult;
 import com.enonic.xp.content.CompareContentParams;
 import com.enonic.xp.content.CompareContentResult;
 import com.enonic.xp.content.CompareContentResults;
@@ -82,11 +81,12 @@ import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
+import com.enonic.xp.content.processor.ContentProcessor;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.core.impl.content.processor.ContentProcessor;
 import com.enonic.xp.core.impl.content.processor.ContentProcessors;
+import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.form.FormDefaultValuesProcessor;
@@ -110,7 +110,7 @@ import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
-import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -146,7 +146,7 @@ public class ContentServiceImpl
 
     private MediaInfoService mediaInfoService;
 
-    private MixinService mixinService;
+    private XDataService xDataService;
 
     private SiteService siteService;
 
@@ -163,6 +163,8 @@ public class ContentServiceImpl
     private PartDescriptorService partDescriptorService;
 
     private LayoutDescriptorService layoutDescriptorService;
+
+    private ContentDataSerializer contentDataSerializer;
 
     public ContentServiceImpl()
     {
@@ -183,6 +185,15 @@ public class ContentServiceImpl
             setRepositoryService( repositoryService ).
             build().
             initialize();
+
+        this.contentDataSerializer = ContentDataSerializer.create().
+            contentService( this ).
+            layoutDescriptorService( layoutDescriptorService ).
+            pageDescriptorService( pageDescriptorService ).
+            partDescriptorService( partDescriptorService ).
+            build();
+
+        this.translator = new ContentNodeTranslator( nodeService, contentDataSerializer );
     }
 
     @Override
@@ -208,12 +219,13 @@ public class ContentServiceImpl
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             siteService( this.siteService ).
-            mixinService( this.mixinService ).
+            xDataService( this.xDataService ).
             contentProcessors( this.contentProcessors ).
             formDefaultValuesProcessor( this.formDefaultValuesProcessor ).
             pageDescriptorService( this.pageDescriptorService ).
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
+            contentDataSerializer( this.contentDataSerializer ).
             params( createContentParams ).
             build().
             execute();
@@ -241,12 +253,13 @@ public class ContentServiceImpl
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             siteService( this.siteService ).
-            mixinService( this.mixinService ).
+            xDataService( this.xDataService ).
             contentProcessors( this.contentProcessors ).
             formDefaultValuesProcessor( this.formDefaultValuesProcessor ).
             pageDescriptorService( this.pageDescriptorService ).
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
+            contentDataSerializer( this.contentDataSerializer ).
             params( params ).
             build().
             execute();
@@ -281,12 +294,13 @@ public class ContentServiceImpl
             eventPublisher( this.eventPublisher ).
             mediaInfoService( this.mediaInfoService ).
             siteService( this.siteService ).
-            mixinService( this.mixinService ).
+            xDataService( this.xDataService ).
             contentProcessors( this.contentProcessors ).
             formDefaultValuesProcessor( this.formDefaultValuesProcessor ).
             pageDescriptorService( this.pageDescriptorService ).
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
+            contentDataSerializer( this.contentDataSerializer ).
             build().
             execute();
     }
@@ -300,11 +314,12 @@ public class ContentServiceImpl
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             siteService( this.siteService ).
-            mixinService( this.mixinService ).
+            xDataService( this.xDataService ).
             contentProcessors( this.contentProcessors ).
             pageDescriptorService( this.pageDescriptorService ).
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
+            contentDataSerializer( this.contentDataSerializer ).
             build().
             execute();
     }
@@ -322,8 +337,9 @@ public class ContentServiceImpl
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
             siteService( this.siteService ).
-            mixinService( this.mixinService ).
+            xDataService( this.xDataService ).
             contentProcessors( this.contentProcessors ).
+            contentDataSerializer( this.contentDataSerializer ).
             build().
             execute();
     }
@@ -401,6 +417,7 @@ public class ContentServiceImpl
             excludeChildrenIds( getExcludeChildrenIds( params ) ).
             includeDependencies( params.isIncludeDependencies() ).
             pushListener( params.getPushContentListener() ).
+            deleteListener( params.getDeleteContentListener() ).
             build().
             execute();
     }
@@ -719,7 +736,7 @@ public class ContentServiceImpl
     {
         return RenameContentCommand.create( params ).
             nodeService( this.nodeService ).
-            mixinService( this.mixinService ).
+            xDataService( this.xDataService ).
             siteService( this.siteService ).
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
@@ -728,6 +745,7 @@ public class ContentServiceImpl
             pageDescriptorService( this.pageDescriptorService ).
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
+            contentDataSerializer( this.contentDataSerializer ).
             build().
             execute();
     }
@@ -946,30 +964,15 @@ public class ContentServiceImpl
     }
 
     @Override
-    public Future<Integer> applyPermissions( final ApplyContentPermissionsParams params )
+    public ApplyContentPermissionsResult applyPermissions( final ApplyContentPermissionsParams params )
     {
-        final ApplyContentPermissionsCommand applyPermissionsCommand = ApplyContentPermissionsCommand.create( params ).
+        return ApplyContentPermissionsCommand.create( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
-            build();
-
-        final Context context = ContextAccessor.current();
-
-        return CompletableFuture.supplyAsync( () -> {
-            try
-            {
-                // set current context as background thread context
-                final Context futureContext = ContextBuilder.from( context ).detachSession().build();
-                return futureContext.callWith( applyPermissionsCommand::execute );
-            }
-            catch ( Throwable t )
-            {
-                LOG.warn( "Error applying permissions", t );
-                return 0;
-            }
-        }, applyPermissionsExecutor );
+            build().
+            execute();
     }
 
     @Override
@@ -993,7 +996,7 @@ public class ContentServiceImpl
     public ContentIds getOutboundDependencies( final ContentId id )
     {
         final ContentOutboundDependenciesIdsResolver contentOutboundDependenciesIdsResolver =
-            new ContentOutboundDependenciesIdsResolver( this );
+            new ContentOutboundDependenciesIdsResolver( this, contentDataSerializer );
 
         return contentOutboundDependenciesIdsResolver.resolve( id );
     }
@@ -1073,8 +1076,9 @@ public class ContentServiceImpl
             pageDescriptorService( this.pageDescriptorService ).
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
+            contentDataSerializer( this.contentDataSerializer ).
             siteService( this.siteService ).
-            mixinService( this.mixinService ).
+            xDataService( this.xDataService ).
             contentProcessors( this.contentProcessors ).
             build().
             execute();
@@ -1126,21 +1130,15 @@ public class ContentServiceImpl
     }
 
     @Reference
-    public void setMixinService( final MixinService mixinService )
+    public void setxDataService( final XDataService xDataService )
     {
-        this.mixinService = mixinService;
+        this.xDataService = xDataService;
     }
 
     @Reference
     public void setSiteService( final SiteService siteService )
     {
         this.siteService = siteService;
-    }
-
-    @Reference
-    public void setTranslator( final ContentNodeTranslator translator )
-    {
-        this.translator = translator;
     }
 
     @SuppressWarnings("unused")

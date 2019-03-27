@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
 <layout xmlns="urn:enonic:xp:model:1.0">
   <display-name i18n="key.display-name">My Layout</display-name>
-  <config>
+  <description i18n="key.description">My Layout Description</description>
+  <form>
     <input type="Double" name="pause">
       <label i18n="key1.label">Pause parameter</label>
       <immutable>false</immutable>
@@ -26,7 +27,7 @@
           <indexed>false</indexed>
           <occurrences minimum="0" maximum="1"/>
         </input>
-        <field-set name="myFieldSet">
+        <field-set>
           <label>My field set</label>
           <items>
             <input type="TextLine" name="fieldSetItem">
@@ -40,7 +41,7 @@
         </field-set>
       </items>
     </item-set>
-  </config>
+  </form>
   <regions>
     <region name="header"/>
     <region name="main"/>

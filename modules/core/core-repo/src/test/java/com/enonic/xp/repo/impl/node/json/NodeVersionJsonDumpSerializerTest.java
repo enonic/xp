@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.node.json;
 
 import java.net.URL;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -23,8 +22,8 @@ import com.enonic.xp.node.NodeType;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
@@ -59,7 +58,7 @@ public class NodeVersionJsonDumpSerializerTest
             deny( Permission.DELETE ).
             build();
         final AccessControlEntry entry2 = AccessControlEntry.create().
-            principal( PrincipalKey.ofUser( UserStoreKey.system(), "user1" ) ).
+            principal( PrincipalKey.ofUser( IdProviderKey.system(), "user1" ) ).
             allow( Permission.MODIFY ).
             deny( Permission.PUBLISH ).
             build();
@@ -108,18 +107,20 @@ public class NodeVersionJsonDumpSerializerTest
                 add( new AttachedBinary( BinaryReference.from( "myImage1" ), "a" ) ).
                 add( new AttachedBinary( BinaryReference.from( "myImage2" ), "b" ) ).
                 build() ).
-            timestamp( Instant.parse( "2015-10-19T08:04:51.830Z" ) ).
             build();
 
-        final String expectedStr = readJson( "serialized-node.json" );
-
-        final String serializedNode = this.serializer.toString( nodeVersion );
-        System.out.println( expectedStr );
-        assertEquals( expectedStr, serializedNode );
-
-        final NodeVersion deSerialized = this.serializer.toNodeVersion( expectedStr );
-
-        assertEquals( nodeVersion, deSerialized );
+        final String expectedNodeStr = readJson( "serialized-node.json" );
+        final String expectedIndexConfigStr = readJson( "serialized-index.json" );
+        final String expectedAccessControlStr = readJson( "serialized-access.json" );
+        final String serializedNode = this.serializer.toNodeString( nodeVersion );
+        final String serializedIndexConfig = this.serializer.toIndexConfigDocumentString( nodeVersion );
+        final String serializedAccessControl = this.serializer.toAccessControlString( nodeVersion );
+        assertEquals( expectedNodeStr, serializedNode );
+        assertEquals( expectedIndexConfigStr, serializedIndexConfig );
+        assertEquals( expectedAccessControlStr, serializedAccessControl );
+        final NodeVersion deSerializedNode =
+            this.serializer.toNodeVersion( expectedNodeStr, expectedIndexConfigStr, expectedAccessControlStr );
+        assertEquals( nodeVersion, deSerializedNode );
     }
 
     private String readJson( final String name )

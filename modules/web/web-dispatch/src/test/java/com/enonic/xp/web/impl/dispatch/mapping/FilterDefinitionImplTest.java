@@ -9,6 +9,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import com.google.common.collect.Lists;
+
 import com.enonic.xp.web.dispatch.MappingBuilder;
 
 import static org.junit.Assert.*;
@@ -34,7 +36,7 @@ public class FilterDefinitionImplTest
     @Test
     public void create_noAnnotations()
     {
-        assertNull( ResourceDefinitionFactory.create( this.resource ) );
+        assertNull( ResourceDefinitionFactory.create( this.resource, Lists.newArrayList() ) );
     }
 
     @Override

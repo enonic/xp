@@ -144,7 +144,7 @@ public class NodeExporter
                 continue;
             }
 
-            final NodeVersion nodeVersion = this.nodeService.getByNodeVersion( version.getNodeVersionId() );
+            final NodeVersion nodeVersion = this.nodeService.getByNodeVersionKey( version.getNodeVersionKey() );
 
             final Node exportNode = NodeFromNodeVersionBuilder.create( version, nodeVersion );
 
@@ -250,7 +250,7 @@ public class NodeExporter
         for ( final AttachedBinary attachedBinary : relativeNode.getAttachedBinaries() )
         {
             final BinaryReference reference = attachedBinary.getBinaryReference();
-            final ByteSource byteSource = this.nodeService.getBinary( relativeNode.getNodeVersionId(), reference );
+            final ByteSource byteSource = this.nodeService.getBinary( relativeNode.id(), relativeNode.getNodeVersionId(), reference );
 
             if ( !dryRun )
             {

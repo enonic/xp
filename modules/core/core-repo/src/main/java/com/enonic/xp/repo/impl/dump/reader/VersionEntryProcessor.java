@@ -63,6 +63,8 @@ public class VersionEntryProcessor
                     timestamp( version.getTimestamp() ).
                     nodePath( version.getNodePath() ).
                     nodeVersion( nodeVersion ).
+                    nodeVersionId( version.getVersion() ).
+                    nodeCommitId( version.getNodeCommitId() ).
                     build() );
 
                 validateOrAddBinary( nodeVersion, result );
@@ -81,7 +83,7 @@ public class VersionEntryProcessor
     {
         try
         {
-            return this.dumpReader.get( meta.getVersion() );
+            return this.dumpReader.get( repositoryId, meta.getNodeVersionKey() );
         }
         catch ( RepoLoadException e )
         {

@@ -4,14 +4,15 @@ import org.elasticsearch.cluster.ClusterService;
 import org.elasticsearch.cluster.ClusterState;
 import org.elasticsearch.cluster.node.DiscoveryNode;
 import org.elasticsearch.cluster.node.DiscoveryNodes;
-import org.elasticsearch.common.collect.ImmutableList;
-import org.elasticsearch.common.collect.UnmodifiableIterator;
 import org.elasticsearch.transport.TransportRequest;
 import org.elasticsearch.transport.TransportResponseHandler;
 import org.elasticsearch.transport.TransportService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.UnmodifiableIterator;
 
 import com.enonic.xp.event.Event;
 

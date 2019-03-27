@@ -3,8 +3,10 @@ package com.enonic.xp.internal.blobstore.file;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.stream.Stream;
 
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +18,7 @@ import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.BlobStoreException;
 import com.enonic.xp.blob.Segment;
+import com.enonic.xp.blob.SegmentLevel;
 
 public final class FileBlobStore
     implements BlobStore
@@ -111,6 +114,46 @@ public final class FileBlobStore
         }
     }
 
+    @Override
+    public Stream<Segment> listSegments()
+    {
+        return Arrays.stream( this.baseDir.listFiles() ).
+            flatMap( firstSegmentLevelFile -> {
+                final String firstSegmentLevel = firstSegmentLevelFile.getName();
+
+                return Arrays.stream( firstSegmentLevelFile.listFiles() ).
+                    map( secondSegmentLevelFile -> {
+                        final String secondSegmentLevel = secondSegmentLevelFile.getName();
+                        return Segment.from( firstSegmentLevel, secondSegmentLevel );
+                    } );
+            } );
+    }
+
+    @Override
+    public void deleteSegment( final Segment segment )
+    {
+        try
+        {
+            final File segmentParentDirectory = new File( this.baseDir, segment.getLevel( 0 ).getValue() );
+            final File segmentDirectory = new File( segmentParentDirectory, segment.getLevel( 1 ).getValue() );
+
+            if ( segmentDirectory.exists() )
+            {
+                FileUtils.deleteDirectory( segmentDirectory );
+            }
+
+            if ( segmentParentDirectory.exists() && segmentParentDirectory.list().length == 0 )
+            {
+                segmentParentDirectory.delete();
+            }
+
+        }
+        catch ( IOException e )
+        {
+            throw new BlobStoreException( "Failed to delete segment", e );
+        }
+    }
+
     @SuppressWarnings("unusedReturnValue")
     private BlobRecord addRecord( final Segment segment, final BlobKey key, final ByteSource in )
         throws IOException
@@ -146,7 +189,10 @@ public final class FileBlobStore
     {
         final String id = key.toString();
         File file = this.baseDir;
-        file = new File( file, segment.getValue() );
+        for ( SegmentLevel level : segment.getLevels() )
+        {
+            file = new File( file, level.getValue() );
+        }
         file = new File( file, id.substring( 0, 2 ) );
         file = new File( file, id.substring( 2, 4 ) );
         file = new File( file, id.substring( 4, 6 ) );

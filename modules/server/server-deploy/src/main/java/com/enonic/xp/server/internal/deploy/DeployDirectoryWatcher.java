@@ -86,7 +86,14 @@ public final class DeployDirectoryWatcher
 
         for ( final File file : files )
         {
-            installApplication( file );
+            try
+            {
+                installApplication( file );
+            }
+            catch ( Exception e )
+            {
+                LOGGER.error( "Failed to install local application [" + file.getName() + "]", e );
+            }
         }
     }
 
@@ -218,7 +225,16 @@ public final class DeployDirectoryWatcher
                     //Installs this previous application
                     final String previousInstalledFile = fileNameStack.peek();
                     final ByteSource byteSource = Files.asByteSource( new File( previousInstalledFile ) );
-                    DeployHelper.runAsAdmin( () -> applicationService.installLocalApplication( byteSource, previousInstalledFile ) );
+                    DeployHelper.runAsAdmin( () -> {
+                        try
+                        {
+                            applicationService.installLocalApplication( byteSource, previousInstalledFile );
+                        }
+                        catch ( Exception e )
+                        {
+                            LOGGER.warn( "Failed to reinstall local application [" + previousInstalledFile + "]", e );
+                        }
+                    } );
                 }
             }
             else

@@ -4,7 +4,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.repo.impl.RepositoryEvents;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
@@ -16,8 +15,6 @@ public class RepositoryEventListenerTest
 
     private NodeStorageService storageService;
 
-    private ApplicationService applicationService;
-
     private RepositoryService repositoryService;
 
     @Before
@@ -25,13 +22,11 @@ public class RepositoryEventListenerTest
         throws Exception
     {
         this.storageService = Mockito.mock( NodeStorageService.class );
-        this.applicationService = Mockito.mock( ApplicationService.class );
         this.repositoryService = Mockito.mock( RepositoryService.class );
 
         repositoryEventListener = new RepositoryEventListener();
         repositoryEventListener.setStorageService( storageService );
         repositoryEventListener.setRepositoryService( repositoryService );
-        repositoryEventListener.setApplicationService( applicationService );
         repositoryEventListener.initialize();
     }
 
@@ -45,7 +40,6 @@ public class RepositoryEventListenerTest
             build() );
         Mockito.verify( storageService, Mockito.times( 1 ) ).invalidate();
         Mockito.verify( repositoryService, Mockito.times( 1 ) ).invalidateAll();
-        Mockito.verify( applicationService, Mockito.times( 1 ) ).installAllStoredApplications();
     }
 
 

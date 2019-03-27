@@ -20,6 +20,7 @@ import com.enonic.xp.admin.impl.json.content.page.region.PartDescriptorJson;
 import com.enonic.xp.admin.impl.json.content.page.region.PartDescriptorsJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
+import com.enonic.xp.admin.impl.rest.resource.schema.mixin.InlineMixinResolver;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.jaxrs.JaxRsComponent;
@@ -27,11 +28,12 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.region.PartDescriptors;
+import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.RoleKeys;
 
 @Path(ResourceConstants.REST_ROOT + "content/page/part/descriptor")
 @Produces(MediaType.APPLICATION_JSON)
-@RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
+@RolesAllowed({RoleKeys.ADMIN_LOGIN_ID, RoleKeys.ADMIN_ID})
 @Component(immediate = true, property = "group=admin")
 public final class PartDescriptorResource
     implements JaxRsComponent
@@ -40,6 +42,8 @@ public final class PartDescriptorResource
 
     private LocaleService localeService;
 
+    private MixinService mixinService;
+
     @GET
     public PartDescriptorJson getByKey( @QueryParam("key") final String partDescriptorKey )
     {
@@ -47,7 +51,7 @@ public final class PartDescriptorResource
         final PartDescriptor descriptor = partDescriptorService.getByKey( key );
 
         final LocaleMessageResolver localeMessageResolver = new LocaleMessageResolver( this.localeService, descriptor.getApplicationKey() );
-        return new PartDescriptorJson( descriptor, localeMessageResolver );
+        return new PartDescriptorJson( descriptor, localeMessageResolver, new InlineMixinResolver( mixinService ) );
     }
 
     @GET
@@ -58,7 +62,7 @@ public final class PartDescriptorResource
 
         final LocaleMessageResolver localeMessageResolver =
             new LocaleMessageResolver( this.localeService, ApplicationKey.from( applicationKey ) );
-        return new PartDescriptorsJson( descriptors, localeMessageResolver );
+        return new PartDescriptorsJson( descriptors, localeMessageResolver, new InlineMixinResolver( mixinService ) );
     }
 
 
@@ -72,8 +76,8 @@ public final class PartDescriptorResource
         params.getApplicationKeys().forEach( applicationKey -> {
             partDescriptorsJsonBuilder.addAll( this.partDescriptorService.getByApplication( applicationKey ).
                 stream().
-                map( partDescriptor -> new PartDescriptorJson( partDescriptor,
-                                                               new LocaleMessageResolver( localeService, applicationKey ) ) ).
+                map( partDescriptor -> new PartDescriptorJson( partDescriptor, new LocaleMessageResolver( localeService, applicationKey ),
+                                                               new InlineMixinResolver( mixinService ) ) ).
                 collect( Collectors.toList() ) );
         } );
         return new PartDescriptorsJson( partDescriptorsJsonBuilder.build() );
@@ -89,5 +93,11 @@ public final class PartDescriptorResource
     public void setLocaleService( final LocaleService localeService )
     {
         this.localeService = localeService;
+    }
+
+    @Reference
+    public void setMixinService( final MixinService mixinService )
+    {
+        this.mixinService = mixinService;
     }
 }

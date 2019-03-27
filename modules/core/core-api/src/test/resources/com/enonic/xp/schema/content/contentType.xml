@@ -2,7 +2,7 @@
 <content-type xmlns="urn:enonic:xp:model:1.0">
   <display-name>All the Base Types</display-name>
   <description>description</description>
-  <content-display-name-script>$('firstName') + ' ' + $('lastName')</content-display-name-script>
+  <display-name-expression>${firstName} ${lastName}</display-name-expression>
   <super-type>myapplication:content</super-type>
   <is-abstract>false</is-abstract>
   <is-final>true</is-final>
@@ -12,7 +12,7 @@
       <label>mySet</label>
       <occurrences minimum="0" maximum="1"/>
       <items>
-        <field-set name="myFieldSet">
+        <field-set>
           <label>My field set</label>
           <items>
             <input name="myTextLine" type="TextLine">

@@ -1,6 +1,8 @@
 package com.enonic.xp.core.impl.app.resolver;
 
+import java.io.File;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Set;
 
 import org.junit.Before;
@@ -14,8 +16,11 @@ public class ClassLoaderApplicationUrlResolverTest
 
     @Before
     public void setup()
+        throws Exception
     {
-        this.resolver = new ClassLoaderApplicationUrlResolver( getClass().getClassLoader() );
+        URL resourcesPath[] = {new File( "src/test/resources" ).toURI().toURL()};
+        URLClassLoader loader = new URLClassLoader( resourcesPath, ClassLoader.getSystemClassLoader() );
+        this.resolver = new ClassLoaderApplicationUrlResolver( loader );
     }
 
     @Test

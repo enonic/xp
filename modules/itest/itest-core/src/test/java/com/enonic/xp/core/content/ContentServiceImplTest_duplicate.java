@@ -12,10 +12,10 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
-import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -78,7 +78,7 @@ public class ContentServiceImplTest_duplicate
         throws Exception
     {
         final User otherUser = User.create().
-            key( PrincipalKey.ofUser( UserStoreKey.system(), "fisk" ) ).
+            key( PrincipalKey.ofUser( IdProviderKey.system(), "fisk" ) ).
             login( "fisk" ).
             build();
 

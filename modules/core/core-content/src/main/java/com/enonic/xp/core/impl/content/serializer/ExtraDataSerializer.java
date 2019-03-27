@@ -4,29 +4,13 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.data.PropertySet;
-import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.xdata.XDataName;
 
 import static com.enonic.xp.content.ContentPropertyNames.EXTRA_DATA;
 
-public final class ExtraDataSerializer
-    extends AbstractDataSetSerializer<ExtraDatas, ExtraDatas>
+final class ExtraDataSerializer
+    extends AbstractDataSetSerializer<ExtraDatas>
 {
-    private static final String CONTROLLER = "controller";
-
-    private static final String TEMPLATE = "template";
-
-    private static final String CONFIG = "config";
-
-    private static final String REGION = "region";
-
-    private static final String CUSTOMIZED = "customized";
-
-    private static final String FRAGMENT = "fragment";
-
-    private final RegionDataSerializer regionDataSerializer = new RegionDataSerializer();
-
-    private final ComponentDataSerializerProvider componentDataSerializerProvider = new ComponentDataSerializerProvider();
-
     @Override
     public void toData( final ExtraDatas extraDatas, final PropertySet parent )
     {
@@ -58,7 +42,7 @@ public final class ExtraDataSerializer
 
                     final ApplicationKey applicationKey = ExtraData.fromApplicationPrefix( metadataApplicationPrefix );
 
-                    final MixinName metadataName = MixinName.from( applicationKey, metadataLocalName );
+                    final XDataName metadataName = XDataName.from( applicationKey, metadataLocalName );
                     extradatasBuilder.add( new ExtraData( metadataName, xDataApplication.getSet( metadataLocalName ).toTree() ) );
                 }
             }

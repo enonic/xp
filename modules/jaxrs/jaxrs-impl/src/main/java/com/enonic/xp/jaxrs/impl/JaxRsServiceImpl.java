@@ -23,17 +23,20 @@ final class JaxRsServiceImpl
 
     private final String path;
 
+    private final String connector;
+
     private final JaxRsServlet servlet;
 
     private final ServiceTracker tracker;
 
     private ServiceRegistration<ServletMapping> registration;
 
-    JaxRsServiceImpl( final BundleContext context, final String group, final String path )
+    JaxRsServiceImpl( final BundleContext context, final String group, final String path, final String connector )
     {
         this.context = context;
         this.group = group;
         this.path = path;
+        this.connector = connector;
         this.servlet = new JaxRsServlet();
         this.tracker = new ServiceTracker<>( this.context, JaxRsComponent.class, this );
     }
@@ -46,7 +49,8 @@ final class JaxRsServiceImpl
         final Hashtable<String, Object> props = new Hashtable<>();
 
         final ServletMapping mapping = MappingBuilder.newBuilder().
-            urlPatterns( this.path + "/*" ).
+            urlPatterns( this.path + ( this.path.endsWith( "/" ) ? "*" : "/*" ) ).
+            connector( this.connector ).
             servlet( this.servlet );
 
         this.registration = this.context.registerService( ServletMapping.class, mapping, props );

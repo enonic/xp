@@ -3,10 +3,10 @@ package com.enonic.xp.lib.auth;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalQuery;
 import com.enonic.xp.security.PrincipalQueryResult;
 import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.testing.ScriptTestSupport;
 
 public class FindPrincipalsHandlerTest
@@ -35,7 +35,7 @@ public class FindPrincipalsHandlerTest
 
         Mockito.when( securityService.query( Mockito.any( PrincipalQuery.class ) ) ).thenReturn( result );
 
-        runScript( "/site/lib/xp/examples/auth/findPrincipals.js" );
+        runScript( "/lib/xp/examples/auth/findPrincipals.js" );
     }
 
     @Test
@@ -51,7 +51,7 @@ public class FindPrincipalsHandlerTest
             build();
         Mockito.when( securityService.query( Mockito.eq( expectedQuery ) ) ).thenReturn( result );
 
-        runFunction( "/site/test/findPrincipals-test.js", "findPrincipalsDefaultParameters" );
+        runFunction( "/test/findPrincipals-test.js", "findPrincipalsDefaultParameters" );
     }
 
     @Test
@@ -59,7 +59,7 @@ public class FindPrincipalsHandlerTest
     {
         final PrincipalQuery expectedQuery = PrincipalQuery.create().
             includeUsers().
-            userStore( UserStoreKey.from( "enonic" ) ).
+            idProvider( IdProviderKey.from( "enonic" ) ).
             from( 2 ).
             size( 3 ).
             build();
@@ -70,7 +70,7 @@ public class FindPrincipalsHandlerTest
             build();
         Mockito.when( securityService.query( Mockito.eq( expectedQuery ) ) ).thenReturn( result );
 
-        runFunction( "/site/test/findPrincipals-test.js", "findPrincipalsUsers" );
+        runFunction( "/test/findPrincipals-test.js", "findPrincipalsUsers" );
     }
 
     @Test
@@ -78,7 +78,7 @@ public class FindPrincipalsHandlerTest
     {
         final PrincipalQuery expectedQuery = PrincipalQuery.create().
             includeGroups().
-            userStore( UserStoreKey.from( "enonic" ) ).
+            idProvider( IdProviderKey.from( "enonic" ) ).
             from( 2 ).
             size( 3 ).
             build();
@@ -89,7 +89,7 @@ public class FindPrincipalsHandlerTest
             build();
         Mockito.when( securityService.query( Mockito.eq( expectedQuery ) ) ).thenReturn( result );
 
-        runFunction( "/site/test/findPrincipals-test.js", "findPrincipalsGroups" );
+        runFunction( "/test/findPrincipals-test.js", "findPrincipalsGroups" );
     }
 
     @Test
@@ -97,7 +97,7 @@ public class FindPrincipalsHandlerTest
     {
         final PrincipalQuery expectedQuery = PrincipalQuery.create().
             includeRoles().
-            userStore( UserStoreKey.from( "enonic" ) ).
+            idProvider( IdProviderKey.from( "enonic" ) ).
             from( 2 ).
             size( 3 ).
             build();
@@ -108,14 +108,14 @@ public class FindPrincipalsHandlerTest
             build();
         Mockito.when( securityService.query( Mockito.eq( expectedQuery ) ) ).thenReturn( result );
 
-        runFunction( "/site/test/findPrincipals-test.js", "findPrincipalsRoles" );
+        runFunction( "/test/findPrincipals-test.js", "findPrincipalsRoles" );
     }
 
     @Test
     public void testFindPrincipalsByName()
     {
         final PrincipalQuery expectedQuery = PrincipalQuery.create().
-            userStore( UserStoreKey.from( "enonic" ) ).
+            idProvider( IdProviderKey.from( "enonic" ) ).
             name( "user1" ).
             build();
 
@@ -125,7 +125,7 @@ public class FindPrincipalsHandlerTest
             build();
         Mockito.when( securityService.query( Mockito.eq( expectedQuery ) ) ).thenReturn( result );
 
-        runFunction( "/site/test/findPrincipals-test.js", "findPrincipalsByName" );
+        runFunction( "/test/findPrincipals-test.js", "findPrincipalsByName" );
     }
 
     @Test
@@ -141,6 +141,6 @@ public class FindPrincipalsHandlerTest
             build();
         Mockito.when( securityService.query( Mockito.eq( expectedQuery ) ) ).thenReturn( result );
 
-        runFunction( "/site/test/findPrincipals-test.js", "findPrincipalsBySearchText" );
+        runFunction( "/test/findPrincipals-test.js", "findPrincipalsBySearchText" );
     }
 }

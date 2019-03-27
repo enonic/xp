@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.attachment.CreateAttachment;
@@ -20,18 +22,20 @@ import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeService;
-import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.SiteService;
 
 public class CreateNodeParamsFactory
 {
+    private static final String COMPONENTS = "components";
+
     private final CreateContentTranslatorParams params;
 
     private final ContentTypeService contentTypeService;
 
-    private final MixinService mixinService;
+    private final XDataService xDataService;
 
     private final PageDescriptorService pageDescriptorService;
 
@@ -41,38 +45,40 @@ public class CreateNodeParamsFactory
 
     private final SiteService siteService;
 
-    private static final ContentDataSerializer CONTENT_DATA_SERIALIZER = new ContentDataSerializer();
+    private final ContentDataSerializer contentDataSerializer;
 
     public CreateNodeParamsFactory( final Builder builder )
     {
         this.params = builder.params;
         this.contentTypeService = builder.contentTypeService;
-        this.mixinService = builder.mixinService;
+        this.xDataService = builder.xDataService;
         this.siteService = builder.siteService;
         this.pageDescriptorService = builder.pageDescriptorService;
         this.partDescriptorService = builder.partDescriptorService;
         this.layoutDescriptorService = builder.layoutDescriptorService;
+        this.contentDataSerializer = builder.contentDataSerializer;
     }
 
     public CreateNodeParams produce()
     {
-        final PropertyTree contentAsData = CONTENT_DATA_SERIALIZER.toCreateNodeData( params );
+        final PropertyTree contentAsData = contentDataSerializer.toCreateNodeData( params );
 
-        final PropertySet pageSet = contentAsData.getPropertySet( PropertyPath.from( ContentPropertyNames.PAGE ) );
         final PropertySet extraDataSet = contentAsData.getPropertySet( PropertyPath.from( ContentPropertyNames.EXTRA_DATA ) );
+
+        final String language = contentAsData.getString( PropertyPath.from( ContentPropertyNames.LANGUAGE ) );
 
         final SiteConfigs siteConfigs = new SiteConfigsDataSerializer().fromProperties(
             contentAsData.getPropertySet( PropertyPath.from( ContentPropertyNames.DATA ) ) ).build();
 
-        final Page page = pageSet != null ? ContentDataSerializer.PAGE_SERIALIZER.fromData( pageSet ) : null;
+        final Page page = contentAsData.hasProperty( COMPONENTS ) ? contentDataSerializer.fromPageData( contentAsData.getRoot() ) : null;
 
-        final ExtraDatas extraData = pageSet != null ? ContentDataSerializer.EXTRA_DATA_SERIALIZER.fromData( extraDataSet ) : null;
+        final ExtraDatas extraData = extraDataSet != null ? contentDataSerializer.fromExtraData( extraDataSet ) : null;
 
         final ContentIndexConfigFactory.Builder indexConfigFactoryBuilder = ContentIndexConfigFactory.create().
             contentTypeName( params.getType() ).
             siteConfigs( siteConfigs ).
             siteService( siteService ).
-            mixinService( mixinService ).
+            xDataService( xDataService ).
             contentTypeService( contentTypeService );
 
         if ( page != null )
@@ -84,8 +90,14 @@ public class CreateNodeParamsFactory
                 layoutDescriptorService( layoutDescriptorService );
         }
 
-        if(extraData != null) {
+        if ( extraData != null )
+        {
             indexConfigFactoryBuilder.extraDatas( extraData );
+        }
+
+        if ( StringUtils.isNotBlank( language ) )
+        {
+            indexConfigFactoryBuilder.language( language );
         }
 
         final IndexConfigDocument indexConfigDocument = indexConfigFactoryBuilder.build().produce();
@@ -129,13 +141,15 @@ public class CreateNodeParamsFactory
 
         private ContentTypeService contentTypeService;
 
-        private MixinService mixinService;
+        private XDataService xDataService;
 
         private PageDescriptorService pageDescriptorService;
 
         private PartDescriptorService partDescriptorService;
 
         private LayoutDescriptorService layoutDescriptorService;
+
+        private ContentDataSerializer contentDataSerializer;
 
         private SiteService siteService;
 
@@ -150,9 +164,9 @@ public class CreateNodeParamsFactory
             return this;
         }
 
-        Builder mixinService( final MixinService value )
+        Builder xDataService( final XDataService value )
         {
-            this.mixinService = value;
+            this.xDataService = value;
             return this;
         }
 
@@ -180,13 +194,20 @@ public class CreateNodeParamsFactory
             return this;
         }
 
+        Builder contentDataSerializer( final ContentDataSerializer value )
+        {
+            this.contentDataSerializer = value;
+            return this;
+        }
+
         void validate()
         {
             Preconditions.checkNotNull( params );
             Preconditions.checkNotNull( contentTypeService );
             Preconditions.checkNotNull( pageDescriptorService );
             Preconditions.checkNotNull( siteService );
-            Preconditions.checkNotNull( mixinService );
+            Preconditions.checkNotNull( xDataService );
+            Preconditions.checkNotNull( contentDataSerializer );
         }
 
         public CreateNodeParamsFactory build()

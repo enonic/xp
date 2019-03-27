@@ -11,6 +11,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.admin.impl.json.ItemJson;
 import com.enonic.xp.admin.impl.json.form.FormJson;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
+import com.enonic.xp.admin.impl.rest.resource.schema.mixin.InlineMixinResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.mixin.MixinIconUrlResolver;
 import com.enonic.xp.schema.mixin.Mixin;
 
@@ -19,20 +20,20 @@ public class MixinJson
 {
     private final Mixin mixin;
 
-    private final Boolean isExternal;
-
     private final String iconUrl;
 
     private final LocaleMessageResolver localeMessageResolver;
+
+    private final InlineMixinResolver inlineMixinResolver;
 
     public MixinJson( final Builder builder )
     {
         Preconditions.checkNotNull( builder.localeMessageResolver );
 
         this.mixin = builder.mixin;
-        this.isExternal = builder.isExternal;
         this.iconUrl = builder.iconUrlResolver.resolve( mixin );
         this.localeMessageResolver = builder.localeMessageResolver;
+        this.inlineMixinResolver = builder.inlineMixinResolver;
     }
 
     public static Builder create()
@@ -86,7 +87,7 @@ public class MixinJson
 
     public FormJson getForm()
     {
-        return new FormJson( mixin.getForm(), this.localeMessageResolver );
+        return new FormJson( mixin.getForm(), this.localeMessageResolver, this.inlineMixinResolver );
     }
 
     public String getCreator()
@@ -102,11 +103,6 @@ public class MixinJson
     public List<String> getAllowedContentTypes()
     {
         return Collections.emptyList();
-    }
-
-    public Boolean getExternal()
-    {
-        return isExternal;
     }
 
     @Override
@@ -125,11 +121,11 @@ public class MixinJson
     {
         private Mixin mixin;
 
-        private Boolean isExternal = false;
-
         private MixinIconUrlResolver iconUrlResolver;
 
         private LocaleMessageResolver localeMessageResolver;
+
+        private InlineMixinResolver inlineMixinResolver;
 
         private Builder()
         {
@@ -138,12 +134,6 @@ public class MixinJson
         public Builder setMixin( final Mixin mixin )
         {
             this.mixin = mixin;
-            return this;
-        }
-
-        public Builder setExternal( final Boolean external )
-        {
-            isExternal = external;
             return this;
         }
 
@@ -159,9 +149,16 @@ public class MixinJson
             return this;
         }
 
+        public Builder setInlineMixinResolver( final InlineMixinResolver inlineMixinResolver )
+        {
+            this.inlineMixinResolver = inlineMixinResolver;
+            return this;
+        }
+
         private void validate()
         {
             Preconditions.checkNotNull( localeMessageResolver );
+            Preconditions.checkNotNull( inlineMixinResolver );
             Preconditions.checkNotNull( iconUrlResolver );
         }
 

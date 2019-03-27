@@ -109,10 +109,13 @@ public class XmlNodeSerializerTest
             decideByType( false ).
             includeInAllText( true ).
             addIndexValueProcessor( IndexValueProcessors.HTML_STRIPPER ).
+            addLanguage( "en" ).
             build();
         final PatternIndexConfigDocument.Builder indexConfigDocumentBuilder = PatternIndexConfigDocument.create();
         indexConfigDocumentBuilder.analyzer( "no" );
         indexConfigDocumentBuilder.add( "mydata", indexConfig );
+
+        indexConfigDocumentBuilder.addAllTextConfigLanguage( "en" );
 
         // Permissions
         final Permission createPermission = Permission.CREATE;

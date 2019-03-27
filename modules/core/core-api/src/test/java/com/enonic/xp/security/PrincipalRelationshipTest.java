@@ -6,13 +6,13 @@ import static org.junit.Assert.*;
 
 public class PrincipalRelationshipTest
 {
-    private final static PrincipalKey USER = PrincipalKey.ofUser( UserStoreKey.system(), "user" );
+    private final static PrincipalKey USER = PrincipalKey.ofUser( IdProviderKey.system(), "user" );
 
-    private final static PrincipalKey USER_2 = PrincipalKey.ofUser( UserStoreKey.system(), "user2" );
+    private final static PrincipalKey USER_2 = PrincipalKey.ofUser( IdProviderKey.system(), "user2" );
 
-    private final static PrincipalKey GROUP = PrincipalKey.ofGroup( UserStoreKey.system(), "group" );
+    private final static PrincipalKey GROUP = PrincipalKey.ofGroup( IdProviderKey.system(), "group" );
 
-    private final static PrincipalKey GROUP_2 = PrincipalKey.ofGroup( UserStoreKey.system(), "group2" );
+    private final static PrincipalKey GROUP_2 = PrincipalKey.ofGroup( IdProviderKey.system(), "group2" );
 
     private final static PrincipalKey ROLE = PrincipalKey.ofRole( "role" );
 
@@ -107,10 +107,10 @@ public class PrincipalRelationshipTest
     public void testEquals()
         throws Exception
     {
-        PrincipalRelationship rel = PrincipalRelationship.from( PrincipalKey.ofGroup( UserStoreKey.system(), "group" ) ).
-            to( PrincipalKey.ofUser( UserStoreKey.system(), "user" ) );
-        PrincipalRelationship rel2 = PrincipalRelationship.from( PrincipalKey.ofGroup( UserStoreKey.system(), "group" ) ).
-            to( PrincipalKey.ofUser( UserStoreKey.system(), "user" ) );
+        PrincipalRelationship rel = PrincipalRelationship.from( PrincipalKey.ofGroup( IdProviderKey.system(), "group" ) ).
+            to( PrincipalKey.ofUser( IdProviderKey.system(), "user" ) );
+        PrincipalRelationship rel2 = PrincipalRelationship.from( PrincipalKey.ofGroup( IdProviderKey.system(), "group" ) ).
+            to( PrincipalKey.ofUser( IdProviderKey.system(), "user" ) );
 
         assertTrue( rel != rel2 );
         assertTrue( rel.getTo() != rel2.getTo() );

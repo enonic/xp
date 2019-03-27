@@ -14,10 +14,27 @@
     "properties": {
       "versionid": {
         "type": "string",
+        "store": "true",
+        "index": "not_analyzed"
+      },
+      "nodeblobkey": {
+        "type": "string",
+        "store": "true",
+        "index": "not_analyzed"
+      },
+      "indexconfigblobkey": {
+        "type": "string",
+        "store": "true",
+        "index": "not_analyzed"
+      },
+      "accesscontrolblobkey": {
+        "type": "string",
+        "store": "true",
         "index": "not_analyzed"
       },
       "timestamp": {
         "type": "date",
+        "store": "true",
         "index": "not_analyzed"
       },
       "status": {
@@ -27,7 +44,7 @@
       "path": {
         "type": "string",
         "index": "analyzed",
-        "index_analyzer": "keywordlowercase"
+        "analyzer": "keywordlowercase"
       },
       "state": {
         "type": "string",
@@ -39,6 +56,7 @@
       },
       "nodeid": {
         "type": "string",
+        "store": "true",
         "index": "not_analyzed"
       }
     }

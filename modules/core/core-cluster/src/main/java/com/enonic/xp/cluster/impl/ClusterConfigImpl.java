@@ -85,16 +85,22 @@ public class ClusterConfigImpl
     }
 
     @Override
+    public boolean isSessionReplicationEnabled()
+    {
+        return Boolean.parseBoolean( this.config.getOrDefault( "session.replication.enabled", "false" ) );
+    }
+
+    @Override
     public String networkPublishHost()
     {
         final String host = this.config.get( "network.publish.host" );
-        return host == null ? host : networkInterfaceResolver.resolveAddress( host );
+        return host == null ? null : networkInterfaceResolver.resolveAddress( host );
     }
 
     @Override
     public String networkHost()
     {
         final String host = this.config.get( "network.host" );
-        return host == null ? host : networkInterfaceResolver.resolveAddress( host );
+        return host == null ? null : networkInterfaceResolver.resolveAddress( host );
     }
 }

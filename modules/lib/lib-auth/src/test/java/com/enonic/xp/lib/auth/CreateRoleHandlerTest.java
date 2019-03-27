@@ -24,7 +24,7 @@ public class CreateRoleHandlerTest
     public void testExamples()
     {
         Mockito.when( securityService.createRole( Mockito.any() ) ).thenReturn( TestDataFixtures.getTestRole() );
-        runScript( "/site/lib/xp/examples/auth/createRole.js" );
+        runScript( "/lib/xp/examples/auth/createRole.js" );
     }
 
     @Test
@@ -32,12 +32,12 @@ public class CreateRoleHandlerTest
     {
         Mockito.when( securityService.createRole( Mockito.any() ) ).thenReturn( TestDataFixtures.getTestRole() );
 
-        runFunction( "/site/test/createRole-test.js", "createRole" );
+        runFunction( "/test/createRole-test.js", "createRole" );
     }
 
     @Test
     public void testCreateRoleWithUnAuthenticated()
     {
-        runFunction( "/site/test/createRole-test.js", "createRoleUnAuthenticated" );
+        runFunction( "/test/createRole-test.js", "createRoleUnAuthenticated" );
     }
 }

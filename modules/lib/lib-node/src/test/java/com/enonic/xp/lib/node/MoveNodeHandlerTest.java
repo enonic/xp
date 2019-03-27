@@ -58,13 +58,13 @@ public class MoveNodeHandlerTest
     {
         mockGetNode();
 
-        Mockito.when( this.repositoryService.get( RepositoryId.from( "cms-repo" ) ) ).
+        Mockito.when( this.repositoryService.get( RepositoryId.from( "com.enonic.cms.default" ) ) ).
             thenReturn( Repository.create().
-                id( RepositoryId.from( "cms-repo" ) ).
+                id( RepositoryId.from( "com.enonic.cms.default" ) ).
                 branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
                 build() );
 
-        runScript( "/site/lib/xp/examples/node/move-1.js" );
+        runScript( "/lib/xp/examples/node/move-1.js" );
     }
 
     @Test
@@ -72,13 +72,13 @@ public class MoveNodeHandlerTest
     {
         mockGetNode();
 
-        Mockito.when( this.repositoryService.get( RepositoryId.from( "cms-repo" ) ) ).
+        Mockito.when( this.repositoryService.get( RepositoryId.from( "com.enonic.cms.default" ) ) ).
             thenReturn( Repository.create().
-                id( RepositoryId.from( "cms-repo" ) ).
+                id( RepositoryId.from( "com.enonic.cms.default" ) ).
                 branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
                 build() );
 
-        runScript( "/site/lib/xp/examples/node/move-2.js" );
+        runScript( "/lib/xp/examples/node/move-2.js" );
     }
 
     @Test
@@ -86,13 +86,13 @@ public class MoveNodeHandlerTest
     {
         mockGetNode();
 
-        Mockito.when( this.repositoryService.get( RepositoryId.from( "cms-repo" ) ) ).
+        Mockito.when( this.repositoryService.get( RepositoryId.from( "com.enonic.cms.default" ) ) ).
             thenReturn( Repository.create().
-                id( RepositoryId.from( "cms-repo" ) ).
+                id( RepositoryId.from( "com.enonic.cms.default" ) ).
                 branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
                 build() );
 
-        runScript( "/site/lib/xp/examples/node/move-3.js" );
+        runScript( "/lib/xp/examples/node/move-3.js" );
     }
 
 }

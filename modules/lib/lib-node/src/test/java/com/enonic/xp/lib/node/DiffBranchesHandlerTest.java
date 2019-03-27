@@ -22,7 +22,7 @@ public class DiffBranchesHandlerTest
                 add( new NodeComparison( createEntry( "c" ), createEntry( "c" ), CompareStatus.OLDER ) ).
                 build() );
 
-        runScript( "/site/lib/xp/examples/node/diff-1.js" );
+        runScript( "/lib/xp/examples/node/diff-1.js" );
     }
 
 }

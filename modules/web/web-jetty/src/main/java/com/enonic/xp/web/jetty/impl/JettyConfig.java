@@ -23,9 +23,23 @@ public @interface JettyConfig
     boolean http_enabled() default true;
 
     /**
-     * Http port.
+     * Http xp port.
      */
-    int http_port() default 8080;
+    int http_xp_port() default 8080;
+
+    /**
+     * Http management port.
+     *
+     * @see <a href="https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers">iana.org port numbers</a>
+     */
+    int http_management_port() default 4848;
+
+    /**
+     * Http monitor port.
+     *
+     * @see <a href="https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers">iana.org port numbers</a>
+     */
+    int http_monitor_port() default 2609;
 
     /**
      * Session timeout in minutes.

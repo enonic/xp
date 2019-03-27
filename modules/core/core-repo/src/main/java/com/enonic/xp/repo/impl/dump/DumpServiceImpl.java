@@ -6,12 +6,15 @@ import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
 
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.blob.BlobStore;
@@ -22,6 +25,8 @@ import com.enonic.xp.dump.DumpService;
 import com.enonic.xp.dump.RepoDumpResult;
 import com.enonic.xp.dump.SystemDumpParams;
 import com.enonic.xp.dump.SystemDumpResult;
+import com.enonic.xp.dump.SystemDumpUpgradeParams;
+import com.enonic.xp.dump.SystemDumpUpgradeResult;
 import com.enonic.xp.dump.SystemLoadParams;
 import com.enonic.xp.dump.SystemLoadResult;
 import com.enonic.xp.home.HomeDir;
@@ -32,6 +37,15 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.SecurityHelper;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.reader.FileDumpReader;
+import com.enonic.xp.repo.impl.dump.upgrade.DumpUpgrader;
+import com.enonic.xp.repo.impl.dump.upgrade.IndexConfigUpgrader;
+import com.enonic.xp.repo.impl.dump.upgrade.MissingModelVersionDumpUpgrader;
+import com.enonic.xp.repo.impl.dump.upgrade.RepositoryIdDumpUpgrader;
+import com.enonic.xp.repo.impl.dump.upgrade.VersionIdDumpUpgrader;
+import com.enonic.xp.repo.impl.dump.upgrade.commit.CommitDumpUpgrader;
+import com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageDumpUpgrader;
+import com.enonic.xp.repo.impl.dump.upgrade.htmlarea.HtmlAreaDumpUpgrader;
+import com.enonic.xp.repo.impl.dump.upgrade.indexaccesssegments.IndexAccessSegmentsDumpUpgrader;
 import com.enonic.xp.repo.impl.dump.writer.FileDumpWriter;
 import com.enonic.xp.repo.impl.node.NodeHelper;
 import com.enonic.xp.repo.impl.node.executor.BatchedGetChildrenExecutor;
@@ -43,12 +57,15 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.SystemConstants;
+import com.enonic.xp.util.Version;
 
 @Component(immediate = true)
 @SuppressWarnings("WeakerAccess")
 public class DumpServiceImpl
     implements DumpService
 {
+    private final static Logger LOG = LoggerFactory.getLogger( DumpServiceImpl.class );
+
     private BlobStore blobStore;
 
     private NodeService nodeService;
@@ -61,8 +78,6 @@ public class DumpServiceImpl
 
     private Path basePath = Paths.get( HomeDir.get().toString(), "data", "dump" );
 
-    private final static Logger LOG = LoggerFactory.getLogger( DumpServiceImpl.class );
-
     @SuppressWarnings("unused")
     @Activate
     public void activate( final ComponentContext context )
@@ -74,6 +89,100 @@ public class DumpServiceImpl
     }
 
     @Override
+    public SystemDumpUpgradeResult upgrade( final SystemDumpUpgradeParams params )
+    {
+        if ( !SecurityHelper.isAdmin() )
+        {
+            throw new RepoDumpException( "Only admin role users can upgrade dumps" );
+        }
+
+        final String dumpName = params.getDumpName();
+        if ( StringUtils.isBlank( dumpName ) )
+        {
+            throw new RepoDumpException( "dump name cannot be empty" );
+        }
+
+        return doUpgrade( params );
+    }
+
+    private SystemDumpUpgradeResult doUpgrade( final SystemDumpUpgradeParams params )
+    {
+        final SystemDumpUpgradeResult.Builder result = SystemDumpUpgradeResult.create();
+
+        final String dumpName = params.getDumpName();
+        Version modelVersion = getDumpModelVersion( dumpName );
+        result.initialVersion( modelVersion );
+        if ( modelVersion.lessThan( DumpConstants.MODEL_VERSION ) )
+        {
+            final List<DumpUpgrader> dumpUpgraders = createDumpUpgraders();
+
+            if ( params.getUpgradeListener() != null )
+            {
+                final long total = dumpUpgraders.stream().
+                    map( DumpUpgrader::getModelVersion ).
+                    filter( modelVersion::lessThan ).
+                    count();
+
+                params.getUpgradeListener().total( total );
+            }
+
+            for ( DumpUpgrader dumpUpgrader : dumpUpgraders )
+            {
+                final Version targetModelVersion = dumpUpgrader.getModelVersion();
+                if ( modelVersion.lessThan( targetModelVersion ) )
+                {
+                    dumpUpgrader.upgrade( dumpName );
+                    modelVersion = targetModelVersion;
+                    updateDumpModelVersion( dumpName, modelVersion );
+
+                    if ( params.getUpgradeListener() != null )
+                    {
+                        params.getUpgradeListener().upgraded();
+                    }
+                }
+            }
+        }
+        result.upgradedVersion( modelVersion );
+        return result.build();
+    }
+
+    private List<DumpUpgrader> createDumpUpgraders()
+    {
+        return Lists.newArrayList( new MissingModelVersionDumpUpgrader(), new VersionIdDumpUpgrader( basePath ),
+                                   new FlattenedPageDumpUpgrader( basePath ), new IndexAccessSegmentsDumpUpgrader( basePath ),
+                                   new RepositoryIdDumpUpgrader( basePath ), new CommitDumpUpgrader( basePath ),
+                                   new IndexConfigUpgrader( basePath ), new HtmlAreaDumpUpgrader( basePath ) );
+    }
+
+    private Version getDumpModelVersion( final String dumpName )
+    {
+        Version modelVersion = getDumpMeta( dumpName ).
+            getModelVersion();
+        if ( modelVersion == null )
+        {
+            return Version.emptyVersion;
+        }
+        return modelVersion;
+    }
+
+    private void updateDumpModelVersion( final String dumpName, final Version modelVersion )
+    {
+        final DumpMeta dumpMeta = getDumpMeta( dumpName );
+        final DumpMeta updatedDumpMeta = DumpMeta.create( dumpMeta ).
+            modelVersion( modelVersion ).
+            build();
+
+        new FileDumpWriter( basePath, dumpName, this.blobStore ).
+            writeDumpMetaData( updatedDumpMeta );
+    }
+
+    private DumpMeta getDumpMeta( final String dumpName )
+    {
+        final FileDumpReader dumpReader = new FileDumpReader( basePath, dumpName, null );
+        return dumpReader.getDumpMeta();
+    }
+
+    @Override
     public SystemDumpResult dump( final SystemDumpParams params )
     {
         if ( !SecurityHelper.isAdmin() )
@@ -81,13 +190,19 @@ public class DumpServiceImpl
             throw new RepoDumpException( "Only admin role users can dump repositories" );
         }
 
-        final FileDumpWriter writer = FileDumpWriter.create().
-            basePath( basePath ).
-            dumpName( params.getDumpName() ).
-            blobStore( this.blobStore ).
-            build();
+        final FileDumpWriter writer = new FileDumpWriter( basePath, params.getDumpName(), blobStore );
 
         final Repositories repositories = this.repositoryService.list();
+
+        if ( params.getListener() != null )
+        {
+            final long branchesCount = repositories.
+                stream().
+                flatMap( repository -> repository.getBranches().stream() ).
+                count();
+
+            params.getListener().totalBranches( branchesCount );
+        }
 
         final SystemDumpResult.Builder dumpResults = SystemDumpResult.create();
 
@@ -110,8 +225,12 @@ public class DumpServiceImpl
         }
 
         final SystemDumpResult systemDumpResult = dumpResults.build();
-        writer.writeDumpMetaData( new DumpMeta( this.xpVersion, Instant.now(), systemDumpResult ) );   
-        
+        writer.writeDumpMetaData( DumpMeta.create().
+            xpVersion( this.xpVersion ).
+            modelVersion( DumpConstants.MODEL_VERSION ).
+            timestamp( Instant.now() ).
+            systemDumpResult( systemDumpResult ).build() );
+
         return systemDumpResult;
     }
 
@@ -125,14 +244,42 @@ public class DumpServiceImpl
             throw new RepoLoadException( "Only admin role users can load repositories" );
         }
 
-        final FileDumpReader dumpReader = new FileDumpReader( basePath, params.getDumpName(), params.getListener() );
+        final Version modelVersion = getDumpModelVersion( params.getDumpName() );
+        if ( modelVersion.getMajor() < DumpConstants.MODEL_VERSION.getMajor() )
+        {
+            if ( params.isUpgrade() )
+            {
+                final SystemDumpUpgradeParams dumpUpgradeParams = SystemDumpUpgradeParams.create().
+                    dumpName( params.getDumpName() ).
+                    build();
+                doUpgrade( dumpUpgradeParams );
+            }
+            else
+            {
+                throw new RepoLoadException(
+                    "Cannot load system-dump; major model version previous to the current version; upgrade the system-dump" );
+            }
+        }
 
+        final FileDumpReader dumpReader = new FileDumpReader( basePath, params.getDumpName(), params.getListener() );
         final RepositoryIds dumpRepositories = dumpReader.getRepositories();
 
         if ( !dumpRepositories.contains( SystemConstants.SYSTEM_REPO.getId() ) )
         {
             throw new SystemDumpException( "Cannot load system-dump; dump does not contain system repository" );
         }
+
+        if ( params.getListener() != null )
+        {
+            final long branchesCount = dumpReader.getRepositories().
+                stream().
+                flatMap( repositoryId -> dumpReader.getBranches( repositoryId ).stream() ).
+                count();
+
+            params.getListener().totalBranches( branchesCount );
+        }
+
+        doDeleteRepositories();
 
         initializeSystemRepo( params, dumpReader, results );
 
@@ -192,14 +339,21 @@ public class DumpServiceImpl
         } );
     }
 
+    private void doDeleteRepositories()
+    {
+        repositoryService.list().stream().
+            filter( ( repo ) -> !repo.getId().equals( SystemConstants.SYSTEM_REPO.getId() ) ).
+            forEach( ( repo ) -> doDeleteRepository( repo.getId() ) );
+    }
+
+    private void doDeleteRepository( final RepositoryId repositoryId )
+    {
+        LOG.info( "Deleting repository [" + repositoryId + "]" );
+        this.repositoryService.deleteRepository( DeleteRepositoryParams.from( repositoryId ) );
+    }
+
     private void initializeRepo( final Repository repository )
     {
-        if ( this.repositoryService.isInitialized( repository.getId() ) )
-        {
-            LOG.info( "Deleting repository [" + repository.getId() + "] before loading" );
-            this.repositoryService.deleteRepository( DeleteRepositoryParams.from( repository.getId() ) );
-        }
-
         final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create().
             repositoryId( repository.getId() ).
             repositorySettings( repository.getSettings() ).

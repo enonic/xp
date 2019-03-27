@@ -22,7 +22,7 @@ public class PushNodeHandlerTest
                 addSuccess( createEntry( "a" ) ).
                 build() );
 
-        runScript( "/site/lib/xp/examples/node/push-1.js" );
+        runScript( "/lib/xp/examples/node/push-1.js" );
     }
 
     @Test
@@ -43,7 +43,7 @@ public class PushNodeHandlerTest
                 addFailed( createEntry( "d" ), PushNodesResult.Reason.ACCESS_DENIED ).
                 build() );
 
-        runScript( "/site/lib/xp/examples/node/push-2.js" );
+        runScript( "/lib/xp/examples/node/push-2.js" );
     }
 
     @Test
@@ -62,7 +62,7 @@ public class PushNodeHandlerTest
                 addSuccess( createEntry( "d" ) ).
                 build() );
 
-        runScript( "/site/lib/xp/examples/node/push-3.js" );
+        runScript( "/lib/xp/examples/node/push-3.js" );
     }
 
 }

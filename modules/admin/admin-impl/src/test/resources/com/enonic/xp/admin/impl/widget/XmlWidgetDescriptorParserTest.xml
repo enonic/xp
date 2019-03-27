@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <widget xmlns="urn:enonic:xp:model:1.0">
   <display-name>My widget</display-name>
+  <description>My widget description</description>
   <interfaces>
     <interface>com.enonic.xp.my-interface</interface>
     <interface>com.enonic.xp.my-interface-2</interface>

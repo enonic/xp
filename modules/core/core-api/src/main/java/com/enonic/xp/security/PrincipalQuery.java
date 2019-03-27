@@ -14,7 +14,7 @@ import com.google.common.collect.Sets;
 @Beta
 public final class PrincipalQuery
 {
-    private static final int DEFAULT_SIZE = 10;
+    public static final int DEFAULT_SIZE = 10;
 
     private static final int GET_ALL_SIZE_FLAG = -1;
 
@@ -26,7 +26,7 @@ public final class PrincipalQuery
 
     private final ImmutableSet<PrincipalType> principalTypes;
 
-    private final UserStoreKeys userStores;
+    private final IdProviderKeys idProviders;
 
     private final String searchText;
 
@@ -44,7 +44,7 @@ public final class PrincipalQuery
         email = builder.email;
         name = builder.name;
         displayName = builder.displayName;
-        userStores = UserStoreKeys.from( builder.userStores.build() );
+        idProviders = IdProviderKeys.from( builder.idProviders.build() );
         if ( builder.principalTypes.isEmpty() )
         {
             principalTypes = ALL_TYPES;
@@ -70,9 +70,9 @@ public final class PrincipalQuery
         return principalTypes;
     }
 
-    public UserStoreKeys getUserStores()
+    public IdProviderKeys getIdProviders()
     {
-        return userStores;
+        return idProviders;
     }
 
     public String getSearchText()
@@ -109,8 +109,7 @@ public final class PrincipalQuery
         final PrincipalQuery that = (PrincipalQuery) o;
         return from == that.from &&
             size == that.size &&
-            Objects.equals( principalTypes, that.principalTypes ) &&
-            Objects.equals( userStores, that.userStores ) &&
+            Objects.equals( principalTypes, that.principalTypes ) && Objects.equals( idProviders, that.idProviders ) &&
             Objects.equals( searchText, that.searchText ) &&
             Objects.equals( email, that.email ) &&
             Objects.equals( name, that.name ) &&
@@ -120,7 +119,7 @@ public final class PrincipalQuery
     @Override
     public int hashCode()
     {
-        return Objects.hash( from, size, principalTypes, userStores, searchText, email, name, displayName );
+        return Objects.hash( from, size, principalTypes, idProviders, searchText, email, name, displayName );
     }
 
     public static Builder create()
@@ -136,7 +135,7 @@ public final class PrincipalQuery
 
         private final EnumSet<PrincipalType> principalTypes;
 
-        private final ImmutableList.Builder<UserStoreKey> userStores;
+        private final ImmutableList.Builder<IdProviderKey> idProviders;
 
         private String searchText;
 
@@ -149,7 +148,7 @@ public final class PrincipalQuery
         private Builder()
         {
             this.principalTypes = EnumSet.noneOf( PrincipalType.class );
-            this.userStores = ImmutableList.builder();
+            this.idProviders = ImmutableList.builder();
         }
 
         public Builder from( final int from )
@@ -200,15 +199,15 @@ public final class PrincipalQuery
             return this;
         }
 
-        public Builder userStore( final UserStoreKey userStoreKey )
+        public Builder idProvider( final IdProviderKey idProviderKey )
         {
-            this.userStores.add( userStoreKey );
+            this.idProviders.add( idProviderKey );
             return this;
         }
 
-        public Builder userStores( final Iterable<UserStoreKey> userStoreKeys )
+        public Builder idProviders( final Iterable<IdProviderKey> idProviderKeys )
         {
-            this.userStores.addAll( userStoreKeys );
+            this.idProviders.addAll( idProviderKeys );
             return this;
         }
 

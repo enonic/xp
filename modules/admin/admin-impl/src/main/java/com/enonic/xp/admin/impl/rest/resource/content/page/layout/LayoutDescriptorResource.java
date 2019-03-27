@@ -20,6 +20,7 @@ import com.enonic.xp.admin.impl.json.content.page.region.LayoutDescriptorJson;
 import com.enonic.xp.admin.impl.json.content.page.region.LayoutDescriptorsJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
+import com.enonic.xp.admin.impl.rest.resource.schema.mixin.InlineMixinResolver;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.jaxrs.JaxRsComponent;
@@ -27,11 +28,12 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.LayoutDescriptors;
+import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.RoleKeys;
 
 @Path(ResourceConstants.REST_ROOT + "content/page/layout/descriptor")
 @Produces(MediaType.APPLICATION_JSON)
-@RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
+@RolesAllowed({RoleKeys.ADMIN_LOGIN_ID, RoleKeys.ADMIN_ID})
 @Component(immediate = true, property = "group=admin")
 public final class LayoutDescriptorResource
     implements JaxRsComponent
@@ -40,6 +42,8 @@ public final class LayoutDescriptorResource
 
     private LocaleService localeService;
 
+    private MixinService mixinService;
+
     @GET
     public LayoutDescriptorJson getByKey( @QueryParam("key") final String layoutDescriptorKey )
     {
@@ -47,7 +51,7 @@ public final class LayoutDescriptorResource
         final LayoutDescriptor descriptor = layoutDescriptorService.getByKey( key );
 
         final LocaleMessageResolver localeMessageResolver = new LocaleMessageResolver( this.localeService, descriptor.getApplicationKey() );
-        return new LayoutDescriptorJson( descriptor, localeMessageResolver );
+        return new LayoutDescriptorJson( descriptor, localeMessageResolver, new InlineMixinResolver( mixinService ) );
     }
 
     @GET
@@ -58,7 +62,7 @@ public final class LayoutDescriptorResource
 
         final LocaleMessageResolver localeMessageResolver =
             new LocaleMessageResolver( this.localeService, ApplicationKey.from( applicationKey ) );
-        return new LayoutDescriptorsJson( descriptors, localeMessageResolver );
+        return new LayoutDescriptorsJson( descriptors, localeMessageResolver, new InlineMixinResolver( mixinService ) );
     }
 
     @POST
@@ -72,7 +76,8 @@ public final class LayoutDescriptorResource
             layoutDescriptorsJsonBuilder.addAll( this.layoutDescriptorService.getByApplication( applicationKey ).
                 stream().
                 map( layoutDescriptor -> new LayoutDescriptorJson( layoutDescriptor,
-                                                                   new LocaleMessageResolver( localeService, applicationKey ) ) ).
+                                                                   new LocaleMessageResolver( localeService, applicationKey ),
+                                                                   new InlineMixinResolver( mixinService ) ) ).
                 collect( Collectors.toList() ) );
         } );
 
@@ -89,5 +94,11 @@ public final class LayoutDescriptorResource
     public void setLocaleService( final LocaleService localeService )
     {
         this.localeService = localeService;
+    }
+
+    @Reference
+    public void setMixinService( final MixinService mixinService )
+    {
+        this.mixinService = mixinService;
     }
 }

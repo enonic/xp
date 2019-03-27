@@ -22,6 +22,7 @@ import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.DuplicateContentsResult;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.GetContentByIdsParams;
+import com.enonic.xp.task.AbstractRunnableTaskTest;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
 
@@ -90,7 +91,7 @@ public class DuplicateRunnableTaskTest
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
 
         Assert.assertEquals(
-            "{\"state\":\"WARNING\",\"message\":\"Duplicated 4 items ( Already duplicated: \\\"content3\\\" ). Item \\\"id2\\\" could not be duplicated.\"}",
+            "{\"state\":\"WARNING\",\"message\":\"4 items are duplicated ( Already duplicated: \\\"content3\\\" ). Item \\\"id2\\\" could not be duplicated.\"}",
             resultMessage );
     }
 
@@ -107,7 +108,7 @@ public class DuplicateRunnableTaskTest
             FindContentIdsByQueryResult.create().totalHits( 1 ).build() );
         Mockito.when( contentService.duplicate( Mockito.isA( DuplicateContentParams.class ) ) ).
             thenReturn( DuplicateContentsResult.create().addDuplicated( contents.get( 0 ).getId() ).setContentName(
-                contents.get( 0 ).getDisplayName() ).build() );
+                contents.get( 0 ).getDisplayName() ).setSourceContentPath( contents.get( 0 ).getPath() ).build() );
 
         createAndRunTask();
 
@@ -115,7 +116,7 @@ public class DuplicateRunnableTaskTest
 
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
 
-        Assert.assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"Item \\\"id1\\\" was duplicated.\"}", resultMessage );
+        Assert.assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"Item \\\"content1\\\" is duplicated.\"}", resultMessage );
     }
 
     @Test

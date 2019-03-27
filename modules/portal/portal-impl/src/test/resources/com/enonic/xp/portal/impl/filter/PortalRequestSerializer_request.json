@@ -1,0 +1,26 @@
+{
+  "method": "post",
+  "scheme": "https",
+  "host": "myhost",
+  "port": 1234,
+  "path": "/some/path",
+  "url": "https://myhost:1234/some/path/url",
+  "remoteAddress": "127.0.0.42",
+  "mode": "edit",
+  "validTicket": true,
+  "branch": "draft",
+  "contentType": "application/json",
+  "body": "POST BODY",
+  "headers": {
+    "header": "header-value",
+    "header2": "header-value2"
+  },
+  "cookies": {
+    "cookie": "cookie-value",
+    "cookie2": "cookie-value2"
+  },
+  "params": {
+    "param": "param-value",
+    "param2": "param-value2"
+  }
+}

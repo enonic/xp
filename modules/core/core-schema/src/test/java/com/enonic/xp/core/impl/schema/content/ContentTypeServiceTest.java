@@ -11,7 +11,6 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.schema.content.ContentTypes;
-import com.enonic.xp.schema.content.GetAllContentTypesParams;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.mixin.MixinService;
 
@@ -38,7 +37,7 @@ public class ContentTypeServiceTest
     @Test
     public void testEmpty()
     {
-        final ContentTypes types1 = this.service.getAll( new GetAllContentTypesParams() );
+        final ContentTypes types1 = this.service.getAll();
         assertNotNull( types1 );
         assertEquals( 22, types1.getSize() );
 
@@ -56,7 +55,7 @@ public class ContentTypeServiceTest
     {
         initializeApps();
 
-        final ContentTypes types1 = this.service.getAll( new GetAllContentTypesParams() );
+        final ContentTypes types1 = this.service.getAll();
         assertNotNull( types1 );
         assertEquals( 24, types1.getSize() );
 
@@ -75,7 +74,7 @@ public class ContentTypeServiceTest
     @Test
     public void testSystemApplication()
     {
-        ContentTypes contentTypes = this.service.getAll( new GetAllContentTypesParams() );
+        ContentTypes contentTypes = this.service.getAll();
         assertNotNull( contentTypes );
         assertEquals( 22, contentTypes.getSize() );
 
@@ -108,7 +107,7 @@ public class ContentTypeServiceTest
         assertEquals( imageMimeTypes.size(), 9 );
 
         final Collection<String> videoMimeTypes = this.service.getMimeTypes( ContentTypeNames.from( ContentTypeName.videoMedia() ) );
-        assertEquals( videoMimeTypes.size(), 10 );
+        assertEquals( videoMimeTypes.size(), 15 );
 
         final Collection<String> archiveMimeTypes = this.service.getMimeTypes( ContentTypeNames.from( ContentTypeName.archiveMedia() ) );
         assertEquals( archiveMimeTypes.size(), 5 );

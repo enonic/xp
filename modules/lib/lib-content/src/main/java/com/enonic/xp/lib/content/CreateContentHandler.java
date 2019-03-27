@@ -16,10 +16,11 @@ import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.lib.content.mapper.ContentMapper;
 import com.enonic.xp.name.NamePrettyfier;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.script.ScriptValue;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
@@ -47,6 +48,8 @@ public final class CreateContentHandler
     private String contentType;
 
     private String language;
+
+    private String childOrder;
 
     private Supplier<String> idGenerator = () -> Long.toString( Math.abs( RANDOM.nextLong() ) );
 
@@ -78,8 +81,9 @@ public final class CreateContentHandler
             requireValid( this.requireValid ).
             type( contentTypeName ).
             contentData( createPropertyTree( data, contentTypeName ) ).
-            extraDatas( createExtraDatas( x ) ).
+            extraDatas( createExtraDatas( x, contentTypeName ) ).
             language( language != null ? Locale.forLanguageTag( language ) : null ).
+            childOrder( childOrder != null ? ChildOrder.from( childOrder ) : null ).
             refresh( this.refresh ).
             build();
     }
@@ -104,14 +108,14 @@ public final class CreateContentHandler
         return this.translateToPropertyTree( createJson( value ), contentTypeName );
     }
 
-    private PropertyTree createPropertyTree( final Map<?, ?> value, final MixinName mixinName )
+    private PropertyTree createPropertyTree( final Map<?, ?> value, final XDataName xDataName, final ContentTypeName contentTypeName )
     {
         if ( value == null )
         {
             return null;
         }
 
-        return this.translateToPropertyTree( createJson( value ), mixinName );
+        return this.translateToPropertyTree( createJson( value ), xDataName, contentTypeName );
     }
 
     private JsonNode createJson( final Map<?, ?> value )
@@ -120,7 +124,7 @@ public final class CreateContentHandler
         return mapper.valueToTree( value );
     }
 
-    private ExtraDatas createExtraDatas( final Map<String, Object> value )
+    private ExtraDatas createExtraDatas( final Map<String, Object> value, final ContentTypeName contentTypeName )
     {
         if ( value == null )
         {
@@ -140,8 +144,8 @@ public final class CreateContentHandler
             final Map<?, ?> extradatas = (Map<?, ?>) extradatasObject;
             for ( final Map.Entry<?, ?> entry : extradatas.entrySet() )
             {
-                final MixinName mixinName = MixinName.from( applicationKey, entry.getKey().toString() );
-                final ExtraData item = createExtraData( mixinName, entry.getValue() );
+                final XDataName xDataName = XDataName.from( applicationKey, entry.getKey().toString() );
+                final ExtraData item = createExtraData( xDataName, contentTypeName, entry.getValue() );
                 if ( item != null )
                 {
                     extradatasBuilder.add( item );
@@ -152,12 +156,12 @@ public final class CreateContentHandler
         return extradatasBuilder.build();
     }
 
-    private ExtraData createExtraData( final MixinName mixinName, final Object value )
+    private ExtraData createExtraData( final XDataName xDataName, final ContentTypeName contentTypeName, final Object value )
     {
         if ( value instanceof Map )
         {
-            final PropertyTree tree = createPropertyTree( (Map) value, mixinName );
-            return tree != null ? new ExtraData( mixinName, tree ) : null;
+            final PropertyTree tree = createPropertyTree( (Map) value, xDataName, contentTypeName );
+            return tree != null ? new ExtraData( xDataName, tree ) : null;
         }
 
         return null;
@@ -232,6 +236,11 @@ public final class CreateContentHandler
     public void setLanguage( final String language )
     {
         this.language = language;
+    }
+
+    public void setChildOrder( final String childOrder )
+    {
+        this.childOrder = childOrder;
     }
 
     public void setIdGenerator( final Supplier<String> idGenerator )

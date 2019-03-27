@@ -1,34 +1,19 @@
 {
-  "nodeExportResults": [
+  "repositories": [
     {
-      "dryRun": true,
-      "exportErrors": [
-        "Error"
+      "branches": [
+        {
+          "branch": "branch-value",
+          "errors": [
+            {
+              "message": "error-message"
+            }
+          ],
+          "successful": 3
+        }
       ],
-      "exportedBinaries": [],
-      "exportedNodes": [
-        "/path/to/node"
-      ]
-    },
-    {
-      "dryRun": true,
-      "exportErrors": [
-        "Error"
-      ],
-      "exportedBinaries": [],
-      "exportedNodes": [
-        "/path/to/node"
-      ]
-    },
-    {
-      "dryRun": true,
-      "exportErrors": [
-        "Error"
-      ],
-      "exportedBinaries": [],
-      "exportedNodes": [
-        "/path/to/node"
-      ]
+      "repositoryId": "my-repo",
+      "versions": 3
     }
   ]
 }

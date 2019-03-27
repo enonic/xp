@@ -4,11 +4,14 @@ import java.util.Iterator;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
+import com.enonic.xp.content.ApplyPermissionsListener;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
+import com.enonic.xp.node.ApplyNodePermissionsResult;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.Node;
@@ -16,12 +19,11 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
-import com.enonic.xp.node.Nodes;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.repo.impl.version.VersionIndexPath;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -38,7 +40,7 @@ import static org.junit.Assert.*;
 public class ApplyNodePermissionsCommandTest
     extends AbstractNodeTest
 {
-    private static final UserStoreKey USK = UserStoreKey.system();
+    private static final IdProviderKey USK = IdProviderKey.system();
 
     @Before
     public void setUp()
@@ -61,10 +63,10 @@ public class ApplyNodePermissionsCommandTest
         final PrincipalKey user2 = PrincipalKey.ofUser( USK, "user2" );
         final PrincipalKey group1 = PrincipalKey.ofGroup( USK, "group1" );
 
-        final AccessControlList permissions =
-            AccessControlList.of( AccessControlEntry.create().principal( PrincipalKey.ofAnonymous() ).allow( READ ).build(),
-                                  AccessControlEntry.create().principal( user1 ).allow( READ, MODIFY ).build(),
-                                  AccessControlEntry.create().principal( group1 ).allow( READ, CREATE, DELETE, MODIFY ).build() );
+        final AccessControlList permissions = AccessControlList.of(
+            AccessControlEntry.create().principal( PrincipalKey.ofAnonymous() ).allow( READ, WRITE_PERMISSIONS ).build(),
+            AccessControlEntry.create().principal( user1 ).allow( READ, MODIFY ).build(),
+            AccessControlEntry.create().principal( group1 ).allow( READ, CREATE, DELETE, MODIFY ).build() );
 
         CreateRootNodeCommand.create().
             params( CreateRootNodeParams.create().
@@ -120,10 +122,12 @@ public class ApplyNodePermissionsCommandTest
 
         final ApplyNodePermissionsParams params = ApplyNodePermissionsParams.create().
             nodeId( topNode.id() ).
+            permissions( topNode.getPermissions() ).
             overwriteChildPermissions( true ).
+            applyPermissionsListener( Mockito.mock( ApplyPermissionsListener.class ) ).
             build();
 
-        final Nodes updateNodes = ApplyNodePermissionsCommand.create().
+        final ApplyNodePermissionsResult updateNodes = ApplyNodePermissionsCommand.create().
             params( params ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
@@ -133,7 +137,7 @@ public class ApplyNodePermissionsCommandTest
 
         refresh();
 
-        assertEquals( 5, updateNodes.getSize() );
+        assertEquals( 6, updateNodes.getSucceedNodes().getSize() );
 
         final Node topNodeUpdated = getNodeById( topNode.id() );
         assertEquals( permissions, topNodeUpdated.getPermissions() );
@@ -248,9 +252,11 @@ public class ApplyNodePermissionsCommandTest
         final ApplyNodePermissionsParams params = ApplyNodePermissionsParams.create().
             nodeId( topNode.id() ).
             overwriteChildPermissions( false ).
+            permissions( topNode.getPermissions() ).
+            applyPermissionsListener( Mockito.mock( ApplyPermissionsListener.class ) ).
             build();
 
-        final Nodes updatedNodes = ApplyNodePermissionsCommand.create().
+        final ApplyNodePermissionsResult updatedNodes = ApplyNodePermissionsCommand.create().
             params( params ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
@@ -260,7 +266,7 @@ public class ApplyNodePermissionsCommandTest
 
         refresh();
 
-        assertEquals( 5, updatedNodes.getSize() );
+        assertEquals( 6, updatedNodes.getSucceedNodes().getSize() );
 
         final Node topNodeUpdated = getNodeById( topNode.id() );
         assertEquals( permissions, topNodeUpdated.getPermissions() );

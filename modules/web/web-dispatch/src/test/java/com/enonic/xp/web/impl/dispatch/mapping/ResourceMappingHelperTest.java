@@ -18,6 +18,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.google.common.collect.Lists;
+
 import com.enonic.xp.annotation.Order;
 import com.enonic.xp.web.dispatch.FilterMapping;
 import com.enonic.xp.web.dispatch.MappingBuilder;
@@ -75,7 +77,7 @@ public class ResourceMappingHelperTest
     @Test
     public void testFilter_none()
     {
-        final FilterMapping mapping = ResourceMappingHelper.filter( this.mockFilter );
+        final FilterMapping mapping = ResourceMappingHelper.filter( this.mockFilter, Lists.newArrayList() );
         assertNull( mapping );
     }
 
@@ -88,7 +90,7 @@ public class ResourceMappingHelperTest
     @Test
     public void testServlet_none()
     {
-        final ServletMapping mapping = ResourceMappingHelper.servlet( this.mockServlet );
+        final ServletMapping mapping = ResourceMappingHelper.servlet( this.mockServlet, Lists.newArrayList() );
         assertNull( mapping );
     }
 
@@ -111,7 +113,7 @@ public class ResourceMappingHelperTest
     public void testConfigure_servlet()
     {
         final MyServlet servlet = new MyServlet();
-        final ServletMapping mapping = ResourceMappingHelper.servlet( servlet );
+        final ServletMapping mapping = ResourceMappingHelper.servlet( servlet, Lists.newArrayList() );
 
         assertNotNull( mapping );
         assertSame( servlet, mapping.getResource() );
@@ -123,7 +125,7 @@ public class ResourceMappingHelperTest
     public void testConfigure_filter()
     {
         final MyFilter filter = new MyFilter();
-        final FilterMapping mapping = ResourceMappingHelper.filter( filter );
+        final FilterMapping mapping = ResourceMappingHelper.filter( filter, Lists.newArrayList() );
 
         assertNotNull( mapping );
         assertSame( filter, mapping.getResource() );

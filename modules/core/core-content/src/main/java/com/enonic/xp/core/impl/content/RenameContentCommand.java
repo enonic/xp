@@ -6,6 +6,7 @@ import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.UpdateContentParams;
+import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.core.impl.content.validate.ValidationErrors;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
@@ -30,6 +31,8 @@ final class RenameContentCommand
 
     private final LayoutDescriptorService layoutDescriptorService;
 
+    private final ContentDataSerializer contentDataSerializer;
+
     private RenameContentCommand( final Builder builder )
     {
         super( builder );
@@ -37,6 +40,7 @@ final class RenameContentCommand
         this.pageDescriptorService = builder.pageDescriptorService;
         this.partDescriptorService = builder.partDescriptorService;
         this.layoutDescriptorService = builder.layoutDescriptorService;
+        this.contentDataSerializer = builder.contentDataSerializer;
     }
 
     public static Builder create( final RenameContentParams params )
@@ -91,7 +95,7 @@ final class RenameContentCommand
             displayName( content.getDisplayName() ).
             extradatas( content.getAllExtraData() ).
             contentTypeService( this.contentTypeService ).
-            mixinService( this.mixinService ).
+            xDataService( this.xDataService ).
             siteService( this.siteService ).
             build().
             execute();
@@ -111,10 +115,11 @@ final class RenameContentCommand
         return UpdateContentCommand.create( this ).params( updateContentParams ).
             siteService( siteService ).
             contentTypeService( contentTypeService ).
-            mixinService( this.mixinService ).
+            xDataService( this.xDataService ).
             pageDescriptorService( this.pageDescriptorService ).
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
+            contentDataSerializer( this.contentDataSerializer ).
             build().execute();
     }
 
@@ -128,6 +133,8 @@ final class RenameContentCommand
         private PartDescriptorService partDescriptorService;
 
         private LayoutDescriptorService layoutDescriptorService;
+
+        private ContentDataSerializer contentDataSerializer;
 
         public Builder( final RenameContentParams params )
         {
@@ -149,6 +156,12 @@ final class RenameContentCommand
         Builder layoutDescriptorService( final LayoutDescriptorService value )
         {
             this.layoutDescriptorService = value;
+            return this;
+        }
+
+        Builder contentDataSerializer( final ContentDataSerializer value )
+        {
+            this.contentDataSerializer = value;
             return this;
         }
 

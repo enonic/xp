@@ -9,9 +9,6 @@ import org.mockito.Mockito;
 import com.enonic.xp.app.ApplicationInfo;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
-import com.enonic.xp.auth.AuthDescriptor;
-import com.enonic.xp.auth.AuthDescriptorMode;
-import com.enonic.xp.auth.AuthDescriptorService;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
@@ -20,6 +17,9 @@ import com.enonic.xp.content.Contents;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.Descriptors;
 import com.enonic.xp.form.Form;
+import com.enonic.xp.idprovider.IdProviderDescriptor;
+import com.enonic.xp.idprovider.IdProviderDescriptorMode;
+import com.enonic.xp.idprovider.IdProviderDescriptorService;
 import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroDescriptorService;
 import com.enonic.xp.macro.MacroDescriptors;
@@ -44,12 +44,12 @@ import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.relationship.RelationshipType;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
 import com.enonic.xp.schema.relationship.RelationshipTypes;
-import com.enonic.xp.security.AuthConfig;
+import com.enonic.xp.security.IdProvider;
+import com.enonic.xp.security.IdProviderConfig;
+import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.security.IdProviders;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.security.UserStore;
-import com.enonic.xp.security.UserStoreKey;
-import com.enonic.xp.security.UserStores;
 import com.enonic.xp.task.TaskDescriptor;
 import com.enonic.xp.task.TaskDescriptorService;
 
@@ -77,7 +77,7 @@ public class ApplicationInfoServiceImplTest
 
     private SecurityService securityService;
 
-    private AuthDescriptorService authDescriptorService;
+    private IdProviderDescriptorService idProviderDescriptorService;
 
     private ApplicationInfoServiceImpl service;
 
@@ -98,7 +98,7 @@ public class ApplicationInfoServiceImplTest
         this.resourceService = Mockito.mock( ResourceService.class );
         this.taskDescriptorService = Mockito.mock( TaskDescriptorService.class );
         this.securityService = Mockito.mock( SecurityService.class );
-        this.authDescriptorService = Mockito.mock( AuthDescriptorService.class );
+        this.idProviderDescriptorService = Mockito.mock( IdProviderDescriptorService.class );
 
         this.service.setContentTypeService( this.contentTypeService );
         this.service.setPageDescriptorService( this.pageDescriptorService );
@@ -110,7 +110,7 @@ public class ApplicationInfoServiceImplTest
         this.service.setResourceService( this.resourceService );
         this.service.setTaskDescriptorService( this.taskDescriptorService );
         this.service.setSecurityService( this.securityService );
-        this.service.setAuthDescriptorService( this.authDescriptorService );
+        this.service.setIdProviderDescriptorService( this.idProviderDescriptorService );
 
     }
 
@@ -193,16 +193,16 @@ public class ApplicationInfoServiceImplTest
     }
 
     @Test
-    public void testIdProvider()
+    public void testIdProviderApplication()
     {
-        mockIdProvider( this.applicationKey );
-        final AuthDescriptor authDescriptor = this.service.getAuthDescriptor( this.applicationKey );
+        mockIdProviderApplication( this.applicationKey );
+        final IdProviderDescriptor idProviderDescriptor = this.service.getIdProviderDescriptor( this.applicationKey );
 
-        assertNotNull( authDescriptor );
+        assertNotNull( idProviderDescriptor );
 
-        final UserStores userStores = this.service.getUserStoreReferences( this.applicationKey );
+        final IdProviders idProviders = this.service.getIdProviderReferences( this.applicationKey );
 
-        assertEquals( userStores.getSize(), 2 );
+        assertEquals( idProviders.getSize(), 2 );
     }
 
     @Test
@@ -219,16 +219,28 @@ public class ApplicationInfoServiceImplTest
         assertEquals( applicationInfo.getContentReferences().getSize(), 2 );
         assertEquals( applicationInfo.getTasks().getSize(), 2 );
         assertEquals( applicationInfo.getMacros().getSize(), 2 );
-        assertEquals( applicationInfo.getUserStoreReferences().getSize(), 2 );
+        assertEquals( applicationInfo.getIdProviderReferences().getSize(), 2 );
     }
 
     private void mockContentTypes( final ApplicationKey applicationKey )
     {
         final ContentType contentType =
-            ContentType.create().name( ContentTypeName.media() ).form( Form.create().build() ).setAbstract().setFinal().allowChildContent(
-                true ).setBuiltIn().contentDisplayNameScript( "contentDisplayNameScript" ).metadata( null ).displayName(
-                "displayName" ).description( "description" ).modifiedTime( Instant.ofEpochSecond( 1000 ) ).createdTime(
-                Instant.ofEpochSecond( 1000 ) ).creator( PrincipalKey.ofAnonymous() ).modifier( PrincipalKey.ofAnonymous() ).build();
+            ContentType.
+                create().
+                name( ContentTypeName.media() ).
+                form( Form.create().build() ).
+                setAbstract().
+                setFinal().
+                allowChildContent( true ).
+                setBuiltIn().
+                displayNameExpression( "displayNameExpression" ).
+                displayName( "displayName" ).
+                description( "description" ).
+                modifiedTime( Instant.ofEpochSecond( 1000 ) ).
+                createdTime( Instant.ofEpochSecond( 1000 ) ).
+                creator( PrincipalKey.ofAnonymous() ).
+                modifier( PrincipalKey.ofAnonymous() ).
+                build();
 
         final ContentTypes contentTypes = ContentTypes.from( contentType );
         Mockito.when( this.contentTypeService.getByApplication( applicationKey ) ).thenReturn( contentTypes );
@@ -379,36 +391,36 @@ public class ApplicationInfoServiceImplTest
         Mockito.when( this.taskDescriptorService.getTasks( applicationKey ) ).thenReturn( descriptors );
     }
 
-    private void mockIdProvider( final ApplicationKey applicationKey )
+    private void mockIdProviderApplication( final ApplicationKey applicationKey )
     {
-        final AuthDescriptor authDescriptor = AuthDescriptor.create().
+        final IdProviderDescriptor idProviderDescriptor = IdProviderDescriptor.create().
             config( Form.create().build() ).
             key( applicationKey ).
-            mode( AuthDescriptorMode.EXTERNAL ).
+            mode( IdProviderDescriptorMode.EXTERNAL ).
             build();
 
-        final UserStore userStore1 = UserStore.create().
-            displayName( "userStore1" ).
-            key( UserStoreKey.from( "userStore1" ) ).
-            authConfig( AuthConfig.
+        final IdProvider idProvider1 = IdProvider.create().
+            displayName( "idProvider1" ).
+            key( IdProviderKey.from( "idProvider1" ) ).
+            idProviderConfig( IdProviderConfig.
                 create().
                 applicationKey( applicationKey ).
                 config( new PropertyTree() ).
                 build() ).
             build();
 
-        final UserStore userStore2 = UserStore.create().
-            displayName( "userStore2" ).
-            key( UserStoreKey.from( "userStore2" + "" ) ).
-            authConfig( AuthConfig.
+        final IdProvider idProvider2 = IdProvider.create().
+            displayName( "idProvider2" ).
+            key( IdProviderKey.from( "idProvider2" + "" ) ).
+            idProviderConfig( IdProviderConfig.
                 create().
                 applicationKey( applicationKey ).
                 config( new PropertyTree() ).
                 build() ).
             build();
 
-        Mockito.when( this.authDescriptorService.getDescriptor( applicationKey ) ).thenReturn( authDescriptor );
-        Mockito.when( this.securityService.getUserStores() ).thenReturn( UserStores.from( userStore1, userStore2 ) );
+        Mockito.when( this.idProviderDescriptorService.getDescriptor( applicationKey ) ).thenReturn( idProviderDescriptor );
+        Mockito.when( this.securityService.getIdProviders() ).thenReturn( IdProviders.from( idProvider1, idProvider2 ) );
 
     }
 
@@ -422,14 +434,7 @@ public class ApplicationInfoServiceImplTest
         mockMacros( applicationKey );
         mockReferences( applicationKey );
         mockTasks( applicationKey );
-        mockIdProvider( applicationKey );
+        mockIdProviderApplication( applicationKey );
     }
-/*
-    private void mockDeployment( final ApplicationKey applicationKey )
-    {
-        final Resource resourceMock = Mockito.mock( Resource.class );
-        Mockito.when( resourceMock.exists() ).thenReturn( true );
 
-        Mockito.when( this.resourceService.getResource( ResourceKey.from( applicationKey, "/main.js" ) ) ).thenReturn( resourceMock );
-    }*/
 }

@@ -29,6 +29,8 @@ public class MockApplication
 
     private Configuration config;
 
+    private Bundle bundle;
+
     @Override
     public ApplicationKey getKey()
     {
@@ -66,6 +68,12 @@ public class MockApplication
     }
 
     @Override
+    public boolean includesSystemVersion( final Version version )
+    {
+        return true;
+    }
+
+    @Override
     public String getUrl()
     {
         return null;
@@ -86,7 +94,12 @@ public class MockApplication
     @Override
     public Bundle getBundle()
     {
-        return null;
+        return this.bundle;
+    }
+
+    public void setBundle( final Bundle bundle )
+    {
+        this.bundle = bundle;
     }
 
     @Override
@@ -131,7 +144,7 @@ public class MockApplication
 
     public void setClassLoaderUrlResolver( final ClassLoader loader, final String prefix )
     {
-        final ApplicationUrlResolver resolver = new ClassLoaderApplicationUrlResolver( loader );
+        final ApplicationUrlResolver resolver = new ClassLoaderApplicationUrlResolver( (URLClassLoader) loader );
         final ApplicationUrlResolver prefixedReslver = new PrefixApplicationUrlResolver( resolver, prefix );
         setUrlResolver( prefixedReslver );
     }

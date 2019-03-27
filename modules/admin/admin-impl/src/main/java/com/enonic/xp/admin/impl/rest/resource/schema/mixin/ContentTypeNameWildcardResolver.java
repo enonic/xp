@@ -6,12 +6,11 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.codehaus.jparsec.util.Lists;
+import com.google.common.collect.Lists;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationWildcardResolver;
 import com.enonic.xp.schema.content.ContentTypeService;
-import com.enonic.xp.schema.content.GetAllContentTypesParams;
 
 public class ContentTypeNameWildcardResolver
 {
@@ -31,15 +30,26 @@ public class ContentTypeNameWildcardResolver
             s -> this.applicationWildcardResolver.hasAnyWildcard( s ) || this.applicationWildcardResolver.startWithAppWildcard( s ) );
     }
 
-    public List<String> resolveWildcards( final List<String> namesToResolve, final ApplicationKey currentApplicationKey )
+    public List<String> resolveContentTypeName( final String regex )
     {
-        List<String> allContentTypes = contentTypeService.
-            getAll( new GetAllContentTypesParams().inlineMixinsToFormItems( false ) ).
+
+        final List<String> allContentTypes = contentTypeService.
+            getAll().
             stream().
             map( type -> type.getName().toString() ).
             collect( Collectors.toList() );
 
-        List<String> resolvedNames = Lists.arrayList();
+        final Predicate<String> pattern = Pattern.compile( regex ).asPredicate();
+
+        return allContentTypes.
+            stream().
+            filter( pattern ).
+            collect( Collectors.toList() );
+    }
+
+    public List<String> resolveWildcards( final List<String> namesToResolve, final ApplicationKey currentApplicationKey )
+    {
+        final List<String> resolvedNames = Lists.newArrayList();
 
         namesToResolve.forEach( name -> {
             if ( this.applicationWildcardResolver.hasAnyWildcard( name ) || this.applicationWildcardResolver.startWithAppWildcard( name ) )
@@ -55,7 +65,7 @@ public class ContentTypeNameWildcardResolver
                 }
                 if ( this.applicationWildcardResolver.hasAnyWildcard( resolvedName ) )
                 {
-                    resolvedNames.addAll( this.resolveAnyWildcard( resolvedName, allContentTypes ) );
+                    resolvedNames.addAll( this.resolveAnyWildcard( resolvedName ) );
                 }
                 else
                 {
@@ -71,10 +81,9 @@ public class ContentTypeNameWildcardResolver
         return resolvedNames;
     }
 
-    private List<String> resolveAnyWildcard( final String nameToResolve, final List<String> allContentTypes )
+    private List<String> resolveAnyWildcard( final String nameToResolve )
     {
-        Predicate<String> pattern = Pattern.compile( nameToResolve.replaceAll( "\\*", ".*" ) ).asPredicate();
-        return allContentTypes.stream().filter( pattern ).collect( Collectors.toList() );
+        return resolveContentTypeName( nameToResolve.replaceAll( "\\*", ".*" ) );
     }
 
     @Override

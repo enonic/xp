@@ -3,6 +3,7 @@ package com.enonic.xp.node;
 import com.google.common.annotations.Beta;
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.util.BinaryReference;
@@ -21,6 +22,8 @@ public interface NodeService
     PushNodesResult push( NodeIds ids, Branch target, PushNodesListener pushListener );
 
     NodeIds deleteById( NodeId id );
+
+    NodeIds deleteById( NodeId id, DeleteNodeListener deleteListener );
 
     NodeIds deleteByPath( NodePath path );
 
@@ -55,7 +58,9 @@ public interface NodeService
 
     NodeVersionQueryResult findVersions( NodeVersionQuery nodeVersionQuery );
 
-    boolean deleteVersion( NodeVersionId nodeVersionId);
+    NodeCommitQueryResult findCommits( NodeCommitQuery nodeCommitQuery );
+
+    boolean deleteVersion( NodeId nodeId, NodeVersionId nodeVersionId );
 
     GetActiveNodeVersionsResult getActiveVersions( GetActiveNodeVersionsParams params );
 
@@ -65,17 +70,17 @@ public interface NodeService
 
     ReorderChildNodesResult reorderChildren( ReorderChildNodesParams params );
 
-    NodeVersion getByNodeVersion( NodeVersionId nodeVersionId );
+    NodeVersion getByNodeVersionKey( NodeVersionKey nodeVersionKey );
 
     ResolveSyncWorkResult resolveSyncWork( SyncWorkResolverParams params );
 
     void refresh( RefreshMode refreshMode );
 
-    int applyPermissions( ApplyNodePermissionsParams params );
+    ApplyNodePermissionsResult applyPermissions( ApplyNodePermissionsParams params );
 
     ByteSource getBinary( NodeId nodeId, BinaryReference reference );
 
-    ByteSource getBinary( NodeVersionId nodeVersionId, BinaryReference reference );
+    ByteSource getBinary( NodeId nodeId, NodeVersionId nodeVersionId, BinaryReference reference );
 
     String getBinaryKey( NodeId nodeId, BinaryReference reference );
 
@@ -93,6 +98,12 @@ public interface NodeService
 
     NodesHasChildrenResult hasChildren( Nodes nodes );
 
+    NodeCommitEntry commit( NodeCommitEntry nodeCommitEntry, RoutableNodeVersionIds routableNodeVersionIds );
+
+    NodeCommitEntry commit( NodeCommitEntry nodeCommitEntry, NodeIds nodeIds );
+
+    NodeCommitEntry getCommit( NodeCommitId nodeCommitId );
+
     boolean hasChildren( Node node );
 
     boolean nodeExists( NodeId nodeId );
@@ -102,5 +113,7 @@ public interface NodeService
     boolean hasUnpublishedChildren( NodeId parent, Branch target );
 
     void importNodeVersion( final ImportNodeVersionParams params );
+
+    void importNodeCommit( final ImportNodeCommitParams params );
 
 }

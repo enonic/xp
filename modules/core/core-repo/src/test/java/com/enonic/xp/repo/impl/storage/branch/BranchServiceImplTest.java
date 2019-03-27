@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
@@ -77,6 +78,7 @@ public class BranchServiceImplTest
             nodePath( path ).
             nodeState( NodeState.DEFAULT ).
             nodeVersionId( NodeVersionId.from( "nodeVersionId" ) ).
+            nodeVersionKey( NodeVersionKey.from( "nodeBlobKey", "indexConfigBlobKey", "accessControlBlobKey" ) ).
             timestamp( Instant.now() ).
             build(), context );
 
@@ -87,6 +89,9 @@ public class BranchServiceImplTest
                     add( BranchIndexPath.PATH.getPath(), "/fisk" ).
                     add( BranchIndexPath.STATE.getPath(), "default" ).
                     add( BranchIndexPath.VERSION_ID.getPath(), "nodeVersionId" ).
+                    add( BranchIndexPath.NODE_BLOB_KEY.getPath(), "nodeBlobKey" ).
+                    add( BranchIndexPath.INDEX_CONFIG_BLOB_KEY.getPath(), "indexConfigBlobKey" ).
+                    add( BranchIndexPath.ACCESS_CONTROL_BLOB_KEY.getPath(), "accessControlBlobKey" ).
                     add( BranchIndexPath.NODE_ID.getPath(), "123" ).
                     add( BranchIndexPath.TIMESTAMP.getPath(), Instant.now().toString() ).
                     build() ).

@@ -1,20 +1,24 @@
 package com.enonic.xp.repo.impl.node;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
-import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionDeleteException;
 import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.node.NodeVersionMetadata;
+import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryService;
 
 public class DeleteVersionCommand
     extends AbstractNodeCommand
 {
+    private final NodeId nodeId;
+
     private final NodeVersionId nodeVersionId;
 
     private final RepositoryService repositoryService;
@@ -22,6 +26,7 @@ public class DeleteVersionCommand
     private DeleteVersionCommand( final Builder builder )
     {
         super( builder );
+        nodeId = builder.nodeId;
         nodeVersionId = builder.nodeVersionId;
         repositoryService = builder.repositoryService;
     }
@@ -34,9 +39,11 @@ public class DeleteVersionCommand
 
     private void doExecute()
     {
-        final NodeVersion nodeVersion = this.nodeStorageService.get( this.nodeVersionId );
+        final Context currentContext = ContextAccessor.current();
+        final NodeVersionMetadata nodeVersionMetadata =
+            this.nodeStorageService.getVersion( this.nodeId, this.nodeVersionId, InternalContext.from( currentContext ) );
 
-        if ( isInUse( nodeVersion.getId() ) )
+        if ( isInUse( nodeVersionMetadata.getNodeId() ) )
         {
             throw new NodeVersionDeleteException( "Cannot delete version of a node that is in use" );
         }
@@ -87,12 +94,20 @@ public class DeleteVersionCommand
     public static final class Builder
         extends AbstractNodeCommand.Builder<Builder>
     {
+        private NodeId nodeId;
+
         private NodeVersionId nodeVersionId;
 
         private RepositoryService repositoryService;
 
         private Builder()
         {
+        }
+
+        public Builder nodeId( final NodeId val )
+        {
+            nodeId = val;
+            return this;
         }
 
         public Builder nodeVersionId( final NodeVersionId val )

@@ -70,7 +70,7 @@ public class SubmitNamedTaskHandlerTest
         final TaskId taskId = TaskId.from( "7ca603c1-3b88-4009-8f30-46ddbcc4bb19" );
         Mockito.when( this.taskService.submitTask( any( DescriptorKey.class ), any( PropertyTree.class ) ) ).thenReturn( taskId );
 
-        runScript( "/site/lib/xp/examples/task/submitNamed.js" );
+        runScript( "/lib/xp/examples/task/submitNamed.js" );
     }
 
     @Test
@@ -80,7 +80,7 @@ public class SubmitNamedTaskHandlerTest
         Mockito.when( this.taskService.submitTask( any( DescriptorKey.class ), any( PropertyTree.class ) ) ).thenReturn(
             TaskId.from( "123" ) );
 
-        runFunction( "/site/test/submitNamed-test.js", "submitTask" );
+        runFunction( "/test/submitNamed-test.js", "submitTask" );
     }
 
     @Test
@@ -92,6 +92,6 @@ public class SubmitNamedTaskHandlerTest
         this.taskService = mockTaskMan;
         addService( TaskService.class, taskService );
 
-        runFunction( "/site/test/submitNamed-test.js", "submitTaskFromApp" );
+        runFunction( "/test/submitNamed-test.js", "submitTaskFromApp" );
     }
 }

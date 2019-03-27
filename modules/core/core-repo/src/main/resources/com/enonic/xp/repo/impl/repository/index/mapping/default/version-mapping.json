@@ -19,6 +19,26 @@
         "store": "true",
         "index": "not_analyzed"
       },
+      "nodeblobkey": {
+        "type": "string",
+        "store": "true",
+        "index": "not_analyzed"
+      },
+      "indexconfigblobkey": {
+        "type": "string",
+        "store": "true",
+        "index": "not_analyzed"
+      },
+      "accesscontrolblobkey": {
+        "type": "string",
+        "store": "true",
+        "index": "not_analyzed"
+      },
+      "binaryblobkeys": {
+        "type": "string",
+        "store": "true",
+        "index": "not_analyzed"
+      },
       "timestamp": {
         "type": "date",
         "store": "true",
@@ -29,6 +49,11 @@
         "store": "true",
         "index": "analyzed",
         "analyzer": "keywordlowercase"
+      },
+      "commitid": {
+        "type": "string",
+        "store": "true",
+        "index": "not_analyzed"
       }
     }
   }

@@ -1,0 +1,27 @@
+var contextLib = require('/lib/xp/context');
+var assert = require('/lib/xp/testing');
+
+// BEGIN
+// Define the callback to be executed.
+function callback() {
+    return 'Hello from context';
+}
+
+// Executes a function using different context.
+var result = contextLib.run({
+    repository: 'system-repo',
+    branch: 'master',
+    user: {
+        login: 'su',
+        idProvider: 'system'
+    },
+    principals: ["role:system.admin"],
+    attributes: {
+        'ignorePublishTimes': true
+    }
+}, callback);
+
+log.info('Callback says "%s"', result);
+// END
+
+assert.assertEquals('Hello from context', result);

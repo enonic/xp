@@ -40,12 +40,12 @@ public class FindNodesByQueryHandlerTest
             add( Aggregation.bucketAggregation( "urls" ).
                 buckets( Buckets.create().
                     add( Bucket.create().
-                        key( "/portal/draft/superhero/search" ).
+                        key( "/site/draft/superhero/search" ).
                         docCount( 6762L ).
                         addAggregations( Aggregations.from( duration ) ).
                         build() ).
                     add( Bucket.create().
-                        key( "/portal/draft/superhero" ).
+                        key( "/site/draft/superhero" ).
                         docCount( 1245 ).
                         addAggregations( Aggregations.from( duration ) ).
                         build() ).
@@ -67,7 +67,7 @@ public class FindNodesByQueryHandlerTest
                 aggregations( agg ).
                 build() );
 
-        runScript( "/site/lib/xp/examples/node/query.js" );
+        runScript( "/lib/xp/examples/node/query.js" );
     }
 
     @Test
@@ -86,7 +86,7 @@ public class FindNodesByQueryHandlerTest
                     build() ).
                 build() );
 
-        runScript( "/site/lib/xp/examples/node/query-filter-array-on-root.js" );
+        runScript( "/lib/xp/examples/node/query-filter-array-on-root.js" );
     }
 
 }

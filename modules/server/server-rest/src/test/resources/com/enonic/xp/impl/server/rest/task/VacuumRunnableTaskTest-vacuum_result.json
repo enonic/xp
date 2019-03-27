@@ -1,0 +1,11 @@
+{
+  "taskResults": [
+    {
+      "processed": 1,
+      "deleted": 2,
+      "inUse": 1,
+      "failed": 1,
+      "taskName": "vacuum-task-name"
+    }
+  ]
+}

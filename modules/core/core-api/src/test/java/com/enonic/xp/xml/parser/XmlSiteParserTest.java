@@ -49,8 +49,8 @@ public class XmlSiteParserTest
         SiteDescriptor siteDescriptor = siteDescriptorBuilder.build();
 
         assertEquals( 1, siteDescriptor.getForm().getFormItems().size() );
-        assertEquals( 2, siteDescriptor.getMetaSteps().getSize() );
-        assertEquals( 2, siteDescriptor.getFilterDescriptors().getSize() );
+        assertEquals( 2, siteDescriptor.getXDataMappings().getSize() );
+        assertEquals( 2, siteDescriptor.getResponseProcessors().getSize() );
         assertEquals( 0, siteDescriptor.getMappingDescriptors().getSize() );
     }
 
@@ -70,8 +70,8 @@ public class XmlSiteParserTest
         SiteDescriptor siteDescriptor = siteDescriptorBuilder.build();
 
         assertEquals( 0, siteDescriptor.getForm().getFormItems().size() );
-        assertEquals( 0, siteDescriptor.getMetaSteps().getSize() );
-        assertEquals( 0, siteDescriptor.getFilterDescriptors().getSize() );
+        assertEquals( 0, siteDescriptor.getXDataMappings().getSize() );
+        assertEquals( 0, siteDescriptor.getResponseProcessors().getSize() );
         assertEquals( 0, siteDescriptor.getMappingDescriptors().getSize() );
     }
 
@@ -91,8 +91,8 @@ public class XmlSiteParserTest
         SiteDescriptor siteDescriptor = siteDescriptorBuilder.build();
 
         assertEquals( 1, siteDescriptor.getForm().getFormItems().size() );
-        assertEquals( 2, siteDescriptor.getMetaSteps().getSize() );
-        assertEquals( 2, siteDescriptor.getFilterDescriptors().getSize() );
+        assertEquals( 2, siteDescriptor.getXDataMappings().getSize() );
+        assertEquals( 2, siteDescriptor.getResponseProcessors().getSize() );
         assertEquals( 3, siteDescriptor.getMappingDescriptors().getSize() );
 
         final ControllerMappingDescriptor mapping1 = siteDescriptor.getMappingDescriptors().get( 0 );
@@ -115,6 +115,36 @@ public class XmlSiteParserTest
     }
 
     @Test
+    public void testSiteXmlDeserializationWithMappingFilters()
+    {
+        final String xml = loadTestXml( "serialized-site-with-mapping-filters.xml" );
+
+        final SiteDescriptor.Builder siteDescriptorBuilder = SiteDescriptor.create();
+        ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
+
+        this.parser.source( xml ).
+            currentApplication( applicationKey ).
+            siteDescriptorBuilder( siteDescriptorBuilder ).
+            parse();
+
+        SiteDescriptor siteDescriptor = siteDescriptorBuilder.build();
+
+        assertEquals( 2, siteDescriptor.getMappingDescriptors().getSize() );
+
+        final ControllerMappingDescriptor mapping1 = siteDescriptor.getMappingDescriptors().get( 0 );
+        final ControllerMappingDescriptor mapping2 = siteDescriptor.getMappingDescriptors().get( 1 );
+        assertEquals( "myapplication:/filter1.js", mapping1.getFilter().toString() );
+        assertEquals( "_path:'/*/fisk'", mapping1.getContentConstraint().toString() );
+        assertEquals( "/.*", mapping1.getPattern().toString() );
+        assertEquals( 50, mapping1.getOrder() );
+
+        assertEquals( "myapplication:/filter2.js", mapping2.getFilter().toString() );
+        assertEquals( "type:'portal:fragment'", mapping2.getContentConstraint().toString() );
+        assertEquals( "/.*", mapping2.getPattern().toString() );
+        assertEquals( 5, mapping2.getOrder() );
+    }
+
+    @Test
     public void testSiteXmlWithUtf8BomEncoding()
     {
         final String xml = loadTestFile( "utf8bom.xml", Charsets.UTF_8 );
@@ -130,8 +160,8 @@ public class XmlSiteParserTest
         SiteDescriptor siteDescriptor = siteDescriptorBuilder.build();
 
         assertEquals( 1, siteDescriptor.getForm().getFormItems().size() );
-        assertEquals( 2, siteDescriptor.getMetaSteps().getSize() );
-        assertEquals( 2, siteDescriptor.getFilterDescriptors().getSize() );
+        assertEquals( 2, siteDescriptor.getXDataMappings().getSize() );
+        assertEquals( 2, siteDescriptor.getResponseProcessors().getSize() );
         assertEquals( 0, siteDescriptor.getMappingDescriptors().getSize() );
     }
 
@@ -151,8 +181,8 @@ public class XmlSiteParserTest
         SiteDescriptor siteDescriptor = siteDescriptorBuilder.build();
 
         assertEquals( 1, siteDescriptor.getForm().getFormItems().size() );
-        assertEquals( 2, siteDescriptor.getMetaSteps().getSize() );
-        assertEquals( 2, siteDescriptor.getFilterDescriptors().getSize() );
+        assertEquals( 2, siteDescriptor.getXDataMappings().getSize() );
+        assertEquals( 2, siteDescriptor.getResponseProcessors().getSize() );
         assertEquals( 0, siteDescriptor.getMappingDescriptors().getSize() );
     }
 
@@ -172,8 +202,8 @@ public class XmlSiteParserTest
         SiteDescriptor siteDescriptor = siteDescriptorBuilder.build();
 
         assertEquals( 1, siteDescriptor.getForm().getFormItems().size() );
-        assertEquals( 2, siteDescriptor.getMetaSteps().getSize() );
-        assertEquals( 2, siteDescriptor.getFilterDescriptors().getSize() );
+        assertEquals( 2, siteDescriptor.getXDataMappings().getSize() );
+        assertEquals( 2, siteDescriptor.getResponseProcessors().getSize() );
         assertEquals( 0, siteDescriptor.getMappingDescriptors().getSize() );
     }
 

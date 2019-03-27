@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl.index;
 
+import java.util.Map;
+
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.node.NodeId;
@@ -26,6 +28,8 @@ public interface IndexServiceInternal
     ClusterHealthStatus getClusterHealth( final String timeout, final String... indexNames );
 
     IndexSettings getIndexSettings( final RepositoryId repositoryId, final IndexType indexType );
+
+    Map<String, Object> getIndexMapping( final RepositoryId repositoryId, final Branch branch, final IndexType indexType );
 
     void refresh( final String... indexNames );
 

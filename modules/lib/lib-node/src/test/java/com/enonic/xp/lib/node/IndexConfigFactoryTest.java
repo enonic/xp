@@ -1,5 +1,7 @@
 package com.enonic.xp.lib.node;
 
+import java.util.List;
+
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -9,6 +11,8 @@ import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexConfigDocument;
+import com.enonic.xp.index.IndexPath;
+import com.enonic.xp.index.IndexValueProcessor;
 import com.enonic.xp.index.PathIndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.lib.common.JsonToPropertyTreeTranslator;
@@ -22,15 +26,11 @@ public class IndexConfigFactoryTest
     public void default_with_alias()
         throws Exception
     {
-        IndexConfigDocument minimal = create( "{\n" +
-                                                  " \"default\": \"minimal\"" +
-                                                  " }" );
+        IndexConfigDocument minimal = create( "{\n" + " \"default\": \"minimal\"" + " }" );
 
         assertEquals( IndexConfig.MINIMAL, minimal.getConfigForPath( PropertyPath.from( "my.random.path" ) ) );
 
-        IndexConfigDocument byType = create( "{\n" +
-                                                 " \"default\": \"byType\"" +
-                                                 " }" );
+        IndexConfigDocument byType = create( "{\n" + " \"default\": \"byType\"" + " }" );
 
         assertEquals( IndexConfig.BY_TYPE, byType.getConfigForPath( PropertyPath.from( "my.random.path" ) ) );
     }
@@ -39,17 +39,11 @@ public class IndexConfigFactoryTest
     public void default_full()
         throws Exception
     {
-        IndexConfigDocument config = create( " {" +
-                                                 "\"default\": {\n" +
-                                                 "                \"decideByType\": true,\n" +
-                                                 "                \"enabled\": true,\n" +
-                                                 "                \"nGram\": false,\n" +
-                                                 "                \"fulltext\": false,\n" +
-                                                 "                \"includeInAllText\": false,\n" +
-                                                 "                \"path\": true,\n" +
-                                                 "                \"indexValueProcessors\": []\n" +
-                                                 "            }" +
-                                                 "}" );
+        IndexConfigDocument config = create(
+            " {" + "\"default\": {\n" + "                \"decideByType\": true,\n" + "                \"enabled\": true,\n" +
+                "                \"nGram\": false,\n" + "                \"fulltext\": false,\n" +
+                "                \"includeInAllText\": false,\n" + "                \"path\": true,\n" +
+                "                \"indexValueProcessors\": [],\n" + "                \"languages\": []\n" + "            }" + "}" );
 
         assertTrue( config instanceof PatternIndexConfigDocument );
         final PatternIndexConfigDocument patternIndexConfigDocument = (PatternIndexConfigDocument) config;
@@ -74,6 +68,25 @@ public class IndexConfigFactoryTest
         assertEquals( IndexConfig.FULLTEXT, fullConfig.getConfigForPath( PropertyPath.from( "displayName" ) ) );
     }
 
+    @Test
+    public void indexProcessors()
+        throws Exception
+    {
+        final List<IndexValueProcessor> processors =
+            createFullConfig().getConfigForPath( IndexPath.from( "myHtmlField" ) ).getIndexValueProcessors();
+        assertEquals( 1, processors.size() );
+        assertEquals( "htmlStripper", processors.get( 0 ).getName() );
+    }
+
+    @Test
+    public void languages()
+        throws Exception
+    {
+        final List<String> languages = createFullConfig().getConfigForPath( IndexPath.from( "myHtmlField" ) ).getLanguages();
+        assertEquals( 2, languages.size() );
+        assertEquals( "en", languages.get( 0 ) );
+        assertEquals( "no", languages.get( 1 ) );
+    }
 
     @Test
     public void empty()
@@ -101,39 +114,22 @@ public class IndexConfigFactoryTest
 
     private PatternIndexConfigDocument createFullConfig()
     {
-        final IndexConfigDocument indexConfigDoc = create( "{\n" +
-                                                               "            \"configs\": [\n" +
-                                                               "                {\n" +
-                                                               "                    \"path\": \"displayName\",\n" +
-                                                               "                    \"config\": \"fulltext\"" +
-                                                               "                },\n" +
-                                                               "                {\n" +
-                                                               "                    \"path\": \"myHtmlField\",\n" +
-                                                               "                    \"config\": {\n" +
-                                                               "                        \"decideByType\": false,\n" +
-                                                               "                        \"enabled\": true,\n" +
-                                                               "                        \"nGram\": false,\n" +
-                                                               "                        \"fulltext\": false,\n" +
-                                                               "                        \"includeInAllText\": true,\n" +
-                                                               "                        \"indexValueProcessors\": [\n" +
-                                                               "                            \"myProcessor\"\n" +
-                                                               "                        ]\n" +
-                                                               "                    }\n" +
-                                                               "                },\n" +
-                                                               "                {\n" +
-                                                               "                    \"path\": \"type\",\n" +
-                                                               "                    \"config\": {\n" +
-                                                               "                        \"decideByType\": false,\n" +
-                                                               "                        \"enabled\": false,\n" +
-                                                               "                        \"nGram\": false,\n" +
-                                                               "                        \"fulltext\": false,\n" +
-                                                               "                        \"includeInAllText\": false,\n" +
-                                                               "                        \"path\": false,\n" +
-                                                               "                        \"indexValueProcessors\": []\n" +
-                                                               "                    }\n" +
-                                                               "                }\n" +
-                                                               "            ]\n" +
-                                                               "        }" );
+        final IndexConfigDocument indexConfigDoc = create(
+            "{\n" + "            \"configs\": [\n" + "                {\n" + "                    \"path\": \"displayName\",\n" +
+                "                    \"config\": \"fulltext\"" + "                },\n" + "                {\n" +
+                "                    \"path\": \"myHtmlField\",\n" + "                    \"config\": {\n" +
+                "                        \"decideByType\": false,\n" + "                        \"enabled\": true,\n" +
+                "                        \"nGram\": false,\n" + "                        \"fulltext\": false,\n" +
+                "                        \"includeInAllText\": true,\n" + "                        \"indexValueProcessors\": [\n" +
+                "                            \"htmlStripper\"\n" + "                        ],\n" +
+                "                        \"languages\": [\n" + "                            \"en\",\"no\"\n" +
+                "                        ]\n" + "                    }\n" + "                },\n" + "                {\n" +
+                "                    \"path\": \"type\",\n" + "                    \"config\": {\n" +
+                "                        \"decideByType\": false,\n" + "                        \"enabled\": false,\n" +
+                "                        \"nGram\": false,\n" + "                        \"fulltext\": false,\n" +
+                "                        \"includeInAllText\": false,\n" + "                        \"path\": false,\n" +
+                "                        \"indexValueProcessors\": []\n" + "                    }\n" + "                }\n" +
+                "            ]\n" + "        }" );
 
         assertTrue( indexConfigDoc instanceof PatternIndexConfigDocument );
         return (PatternIndexConfigDocument) indexConfigDoc;

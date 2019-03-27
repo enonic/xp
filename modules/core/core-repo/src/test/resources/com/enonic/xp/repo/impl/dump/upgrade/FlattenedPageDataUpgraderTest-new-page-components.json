@@ -1,0 +1,119 @@
+{
+  "components": [
+    {
+      "type": "page",
+      "path": "/",
+      "page": [
+        {
+          "descriptor": "com.enonic.app.features:main",
+          "customized": "true",
+          "config": [
+            {
+              "com-enonic-app-features": [
+                {
+                  "main": {
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "layout",
+      "path": "/main/0",
+      "layout": [
+        {
+          "descriptor": "com.enonic.app.features:layout-25-75",
+          "config": [
+            {
+              "com-enonic-app-features": [
+                {
+                  "layout-25-75": {
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "part",
+      "path": "/main/0/left/0",
+      "part": [
+        {
+          "descriptor": "com.enonic.app.features:cities-distance-facet",
+          "config": [
+            {
+              "com-enonic-app-features": [
+                {
+                  "cities-distance-facet": {
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "image",
+      "path": "/main/0/right/0",
+      "image": [
+        {
+          "id": "19b48941-135a-48b8-adc7-cd9c911762d3",
+          "caption": "null"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "path": "/main/0/right/1",
+      "text": [
+        {
+          "value": "null"
+        }
+      ]
+    },
+    {
+      "type": "image",
+      "path": "/main/1",
+      "image": [
+        {
+          "id": "8383331b-c0a5-4926-bc79-83a29c6da195",
+          "caption": "null"
+        }
+      ]
+    },
+    {
+      "type": "part",
+      "path": "/main/2",
+      "part": [
+        {
+          "descriptor": "com.enonic.app.features:getComponent",
+          "config": [
+            {
+              "com-enonic-app-features": [
+                {
+                  "getComponent": {
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "path": "/main/3",
+      "text": [
+        {
+          "value": "Lorem ipsum"
+        }
+      ]
+    }
+  ]
+}

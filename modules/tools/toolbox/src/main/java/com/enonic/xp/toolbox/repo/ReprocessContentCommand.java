@@ -11,7 +11,7 @@ import com.enonic.xp.toolbox.util.JsonHelper;
 public final class ReprocessContentCommand
     extends RepoCommand
 {
-    public static final String REPROCESS_CONTENT_REST_PATH = "/api/content/reprocess";
+    public static final String REPROCESS_CONTENT_REST_PATH = "/content/reprocess";
 
     @Option(name = "-s", description = "Target content path to be reprocessed. Format: <branch-name>:<content-path>. e.g 'draft:/'", required = true)
     public String sourceBranchPath;

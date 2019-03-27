@@ -6,7 +6,8 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 
-import com.enonic.xp.security.UserStoreKey;
+import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.security.IdProviderKeys;
 import com.enonic.xp.web.vhost.VirtualHost;
 
 public final class VirtualHostMapping
@@ -22,7 +23,7 @@ public final class VirtualHostMapping
 
     private String target;
 
-    private UserStoreKey userStoreKey;
+    private VirtualHostIdProvidersMapping virtualHostIdProvidersMapping;
 
     public VirtualHostMapping( final String name )
     {
@@ -57,9 +58,15 @@ public final class VirtualHostMapping
     }
 
     @Override
-    public UserStoreKey getUserStoreKey()
+    public IdProviderKey getDefaultIdProviderKey()
     {
-        return userStoreKey;
+        return virtualHostIdProvidersMapping == null ? null : virtualHostIdProvidersMapping.getDefaultIdProvider();
+    }
+
+    @Override
+    public IdProviderKeys getIdProviderKeys()
+    {
+        return virtualHostIdProvidersMapping == null ? IdProviderKeys.empty() : virtualHostIdProvidersMapping.getIdProviderKeys();
     }
 
     public void setHost( final String value )
@@ -77,9 +84,9 @@ public final class VirtualHostMapping
         this.target = normalizePath( value );
     }
 
-    public void setUserStoreKey( final UserStoreKey userStoreKey )
+    public void setVirtualHostIdProvidersMapping( final VirtualHostIdProvidersMapping virtualHostIdProvidersMapping )
     {
-        this.userStoreKey = userStoreKey;
+        this.virtualHostIdProvidersMapping = virtualHostIdProvidersMapping;
     }
 
     public boolean matches( final HttpServletRequest req )

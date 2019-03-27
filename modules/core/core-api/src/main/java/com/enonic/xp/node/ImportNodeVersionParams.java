@@ -12,12 +12,18 @@ public class ImportNodeVersionParams
 
     private final NodeVersion nodeVersion;
 
+    private final NodeVersionId nodeVersionId;
+
+    private final NodeCommitId nodeCommitId;
+
     private ImportNodeVersionParams( final Builder builder )
     {
         nodeId = builder.nodeId;
         nodePath = builder.nodePath;
         timestamp = builder.timestamp;
         nodeVersion = builder.nodeVersion;
+        nodeVersionId = builder.nodeVersionId;
+        nodeCommitId = builder.nodeCommitId;
     }
 
     public NodeId getNodeId()
@@ -40,6 +46,16 @@ public class ImportNodeVersionParams
         return nodeVersion;
     }
 
+    public NodeVersionId getNodeVersionId()
+    {
+        return nodeVersionId;
+    }
+
+    public NodeCommitId getNodeCommitId()
+    {
+        return nodeCommitId;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -54,6 +70,10 @@ public class ImportNodeVersionParams
         private Instant timestamp;
 
         private NodeVersion nodeVersion;
+
+        private NodeVersionId nodeVersionId;
+
+        private NodeCommitId nodeCommitId;
 
         private Builder()
         {
@@ -80,6 +100,18 @@ public class ImportNodeVersionParams
         public Builder nodeVersion( final NodeVersion val )
         {
             nodeVersion = val;
+            return this;
+        }
+
+        public Builder nodeVersionId( final NodeVersionId val )
+        {
+            nodeVersionId = val;
+            return this;
+        }
+
+        public Builder nodeCommitId( final NodeCommitId val )
+        {
+            nodeCommitId = val;
             return this;
         }
 

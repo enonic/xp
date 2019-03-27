@@ -71,7 +71,7 @@ public class UnpublishContentHandlerTest
 
         Mockito.when( this.contentService.unpublishContent( unpublishParams ) ).thenReturn( exampleResult() );
 
-        runScript( "/site/lib/xp/examples/content/unpublish.js" );
+        runScript( "/lib/xp/examples/content/unpublish.js" );
     }
 
     @Test
@@ -87,7 +87,7 @@ public class UnpublishContentHandlerTest
 
         Mockito.when( this.contentService.unpublishContent( unpublishParams ) ).thenReturn( exampleResult() );
 
-        runFunction( "/site/test/UnpublishContentHandlerTest.js", "unpublishById" );
+        runFunction( "/test/UnpublishContentHandlerTest.js", "unpublishById" );
     }
 
     @Test
@@ -108,6 +108,6 @@ public class UnpublishContentHandlerTest
 
         Mockito.when( this.contentService.unpublishContent( unpublishParams ) ).thenReturn( exampleResult() );
 
-        runFunction( "/site/test/UnpublishContentHandlerTest.js", "unpublishByPath" );
+        runFunction( "/test/UnpublishContentHandlerTest.js", "unpublishByPath" );
     }
 }

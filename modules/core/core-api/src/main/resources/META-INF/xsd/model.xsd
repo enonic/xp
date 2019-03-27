@@ -4,7 +4,6 @@
            elementFormDefault="qualified">
 
   <xs:element name="content-type" type="contentType"/>
-  <xs:element name="image" type="imageDescriptor"/>
   <xs:element name="layout" type="layoutDescriptor"/>
   <xs:element name="mixin" type="mixin"/>
   <xs:element name="x-data" type="xdataType"/>
@@ -19,12 +18,13 @@
   <xs:element name="macro" type="macroType"/>
   <xs:element name="application" type="applicationType"/>
   <xs:element name="task" type="taskDescriptor"/>
+  <xs:element name="styles" type="styleDescriptor"/>
 
   <xs:complexType name="site">
     <xs:sequence>
       <xs:element minOccurs="0" maxOccurs="unbounded" name="x-data" type="xdata"/>
-      <xs:element minOccurs="0" name="config" type="form"/>
-      <xs:element minOccurs="0" name="filters" type="filters"/>
+      <xs:element minOccurs="0" name="form" type="form"/>
+      <xs:element minOccurs="0" name="processors" type="processors"/>
       <xs:element minOccurs="0" name="mappings" type="mappings"/>
     </xs:sequence>
   </xs:complexType>
@@ -34,8 +34,9 @@
   </xs:complexType>
 
   <xs:complexType name="xdata">
-    <xs:attribute name="mixin" type="xs:string"/>
     <xs:attribute name="name" type="xs:string"/>
+    <xs:attribute name="allowContentTypes" type="xs:string"/>
+    <xs:attribute name="optional" type="xs:boolean"/>
   </xs:complexType>
 
   <xs:complexType name="form">
@@ -50,7 +51,7 @@
     <xs:sequence>
       <xs:choice maxOccurs="unbounded" minOccurs="0">
         <xs:element name="input" type="input"/>
-        <xs:element name="inline" type="inline"/>
+        <xs:element name="mixin" type="inline-mixin"/>
         <xs:element name="field-set" type="fieldSet"/>
         <xs:element name="item-set" type="itemSet"/>
         <xs:element name="option-set" type="optionSet"/>
@@ -110,10 +111,10 @@
     <xs:attribute name="maximum" type="xs:int" use="required"/>
   </xs:complexType>
 
-  <xs:complexType name="inline">
+  <xs:complexType name="inline-mixin">
     <xs:complexContent>
       <xs:extension base="formItem">
-        <xs:attribute name="mixin" type="xs:string"/>
+        <xs:attribute name="name" type="xs:string"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -125,7 +126,6 @@
           <xs:element minOccurs="0" name="label" type="i18n"/>
           <xs:element minOccurs="0" name="items" type="formItems"/>
         </xs:all>
-        <xs:attribute name="name" type="xs:string" use="required"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -183,13 +183,13 @@
     <xs:sequence>
       <xs:element minOccurs="0" name="display-name" type="i18n"/>
       <xs:element minOccurs="0" name="description" type="i18n"/>
-      <xs:element minOccurs="0" name="content-display-name-script" type="xs:string"/>
+      <xs:element minOccurs="0" name="display-name-expression" type="xs:string"/>
       <xs:element minOccurs="0" name="super-type" type="xs:string"/>
       <xs:element minOccurs="0" name="is-abstract" type="xs:boolean"/>
       <xs:element minOccurs="0" name="is-final" type="xs:boolean"/>
       <xs:element minOccurs="0" name="allow-child-content" type="xs:boolean"/>
       <xs:element minOccurs="0" maxOccurs="unbounded" name="x-data" type="xdata"/>
-      <xs:element minOccurs="0" name="form" type="formItems"/>
+      <xs:element minOccurs="0" name="form" type="form"/>
     </xs:sequence>
   </xs:complexType>
 
@@ -197,7 +197,7 @@
     <xs:sequence>
       <xs:element minOccurs="0" name="display-name" type="i18n"/>
       <xs:element minOccurs="0" name="description" type="i18n"/>
-      <xs:element minOccurs="0" name="items" type="formItems"/>
+      <xs:element minOccurs="0" name="form" type="form"/>
     </xs:sequence>
   </xs:complexType>
 
@@ -205,15 +205,15 @@
     <xs:sequence>
       <xs:element minOccurs="0" name="display-name" type="i18n"/>
       <xs:element minOccurs="0" name="description" type="i18n"/>
-      <xs:element minOccurs="0" name="items" type="formItems"/>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="allowContentType" type="xs:string"/>
+      <xs:element minOccurs="0" name="form" type="form"/>
     </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="layoutDescriptor">
     <xs:sequence>
       <xs:element minOccurs="0" name="display-name" type="i18n"/>
-      <xs:element minOccurs="0" name="config" type="form"/>
+      <xs:element minOccurs="0" name="description" type="i18n"/>
+      <xs:element minOccurs="0" name="form" type="form"/>
       <xs:element minOccurs="0" name="regions" type="regions"/>
     </xs:sequence>
   </xs:complexType>
@@ -226,7 +226,8 @@
   <xs:complexType name="pageDescriptor">
     <xs:sequence>
       <xs:element minOccurs="0" name="display-name" type="i18n"/>
-      <xs:element minOccurs="0" name="config" type="form"/>
+      <xs:element minOccurs="0" name="description" type="i18n"/>
+      <xs:element minOccurs="0" name="form" type="form"/>
       <xs:element minOccurs="0" name="regions" type="regions"/>
     </xs:sequence>
   </xs:complexType>
@@ -240,7 +241,8 @@
   <xs:complexType name="partDescriptor">
     <xs:sequence>
       <xs:element minOccurs="0" name="display-name" type="i18n"/>
-      <xs:element minOccurs="0" name="config" type="form"/>
+      <xs:element minOccurs="0" name="description" type="i18n"/>
+      <xs:element minOccurs="0" name="form" type="form"/>
     </xs:sequence>
   </xs:complexType>
 
@@ -256,16 +258,10 @@
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="imageDescriptor">
-    <xs:sequence>
-      <xs:element minOccurs="0" name="display-name" type="xs:string"/>
-      <xs:element minOccurs="0" name="config" type="form"/>
-    </xs:sequence>
-  </xs:complexType>
-
   <xs:complexType name="widgetDescriptor">
     <xs:sequence>
       <xs:element minOccurs="0" name="display-name" type="xs:string"/>
+      <xs:element minOccurs="0" name="description" type="xs:string"/>
       <xs:element minOccurs="0" name="interfaces">
         <xs:complexType>
           <xs:sequence>
@@ -309,7 +305,7 @@
           </xs:restriction>
         </xs:simpleType>
       </xs:element>
-      <xs:element minOccurs="0" name="config" type="form"/>
+      <xs:element minOccurs="0" name="form" type="form"/>
     </xs:sequence>
   </xs:complexType>
 
@@ -335,21 +331,21 @@
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="responseFilter">
+  <xs:complexType name="responseProcessor">
     <xs:attribute name="name" type="xs:string" use="required"/>
     <xs:attribute name="order" type="xs:int" use="required"/>
   </xs:complexType>
 
-  <xs:complexType name="filters">
+  <xs:complexType name="processors">
     <xs:sequence>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="response-filter" type="responseFilter"/>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="response-processor" type="responseProcessor"/>
     </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="mappingPattern">
     <xs:simpleContent>
       <xs:extension base="xs:string">
-        <xs:attribute name="invert" type="xs:boolean" use="optional"/>
+        <xs:attribute name="invert" type="xs:boolean"/>
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
@@ -359,8 +355,9 @@
       <xs:element name="match" type="xs:string" minOccurs="0"/>
       <xs:element name="pattern" type="mappingPattern" minOccurs="0"/>
     </xs:all>
-    <xs:attribute name="controller" type="xs:string" use="required"/>
-    <xs:attribute name="order" type="xs:int" use="optional"/>
+    <xs:attribute name="controller" type="xs:string"/>
+    <xs:attribute name="filter" type="xs:string"/>
+    <xs:attribute name="order" type="xs:int"/>
   </xs:complexType>
 
   <xs:complexType name="mappings">
@@ -373,7 +370,7 @@
     <xs:sequence>
       <xs:element minOccurs="0" name="display-name" type="i18n"/>
       <xs:element minOccurs="0" name="description" type="i18n"/>
-      <xs:element minOccurs="0" name="form" type="formItems"/>
+      <xs:element minOccurs="0" name="form" type="form"/>
     </xs:sequence>
   </xs:complexType>
 
@@ -386,8 +383,34 @@
   <xs:complexType name="taskDescriptor">
     <xs:sequence>
       <xs:element minOccurs="1" name="description" type="xs:string"/>
-      <xs:element minOccurs="0" name="config" type="form"/>
+      <xs:element minOccurs="0" name="form" type="form"/>
     </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="styleDescriptor">
+    <xs:sequence>
+      <xs:choice maxOccurs="unbounded" minOccurs="0">
+        <xs:element minOccurs="0" name="image" type="styleImageElement"/>
+        <xs:element minOccurs="0" name="style" type="styleElement"/>
+      </xs:choice>
+    </xs:sequence>
+    <xs:attribute name="css" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="styleElement">
+    <xs:sequence>
+      <xs:element name="display-name" type="i18n"/>
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="styleImageElement">
+    <xs:sequence>
+      <xs:element name="display-name" type="i18n"/>
+      <xs:element minOccurs="0" name="aspect-ratio" type="xs:string"/>
+      <xs:element minOccurs="0" name="filter" type="xs:string"/>
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string"/>
   </xs:complexType>
 
 </xs:schema>

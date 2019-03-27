@@ -10,7 +10,7 @@ public final class PartComponentType
 
     private PartComponentType()
     {
-        super( "part", PartComponent.class );
+        super( "part" );
     }
 
 }

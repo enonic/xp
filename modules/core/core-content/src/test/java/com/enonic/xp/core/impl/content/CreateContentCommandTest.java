@@ -14,8 +14,10 @@ import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
+import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.core.impl.content.processor.ContentProcessors;
+import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
@@ -29,11 +31,13 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeType;
 import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.region.LayoutDescriptorService;
+import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -45,7 +49,7 @@ public class CreateContentCommandTest
 {
     private ContentTypeService contentTypeService;
 
-    private MixinService mixinService;
+    private XDataService xDataService;
 
     private SiteService siteService;
 
@@ -53,9 +57,17 @@ public class CreateContentCommandTest
 
     private PageDescriptorService pageDescriptorService;
 
-    private ContentNodeTranslatorImpl translator;
+    private PartDescriptorService partDescriptorService;
+
+    private LayoutDescriptorService layoutDescriptorService;
+
+    private ContentService contentService;
+
+    private ContentNodeTranslator translator;
 
     private EventPublisher eventPublisher;
+
+    private ContentDataSerializer contentDataSerializer;
 
     @Before
     public void setUp()
@@ -64,11 +76,21 @@ public class CreateContentCommandTest
         this.siteService = Mockito.mock( SiteService.class );
         this.nodeService = Mockito.mock( NodeService.class );
         this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
-        this.translator = new ContentNodeTranslatorImpl();
-        this.translator.setNodeService( this.nodeService );
         this.eventPublisher = Mockito.mock( EventPublisher.class );
-        this.mixinService = Mockito.mock( MixinService.class );
+        this.xDataService = Mockito.mock( XDataService.class );
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
+        this.partDescriptorService = Mockito.mock( PartDescriptorService.class );
+        this.layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
+        this.contentService = Mockito.mock( ContentService.class );
+
+        this.contentDataSerializer = ContentDataSerializer.create().
+            contentService( contentService ).
+            layoutDescriptorService( layoutDescriptorService ).
+            pageDescriptorService( pageDescriptorService ).
+            partDescriptorService( partDescriptorService ).
+            build();
+
+        this.translator = new ContentNodeTranslator( nodeService, contentDataSerializer );
 
         Mockito.when( this.nodeService.hasChildren( Mockito.any( Node.class ) ) ).thenReturn( false );
         Mockito.when( this.nodeService.create( Mockito.any( CreateNodeParams.class ) ) ).thenAnswer( this::mockNodeServiceCreate );
@@ -246,7 +268,7 @@ public class CreateContentCommandTest
         final PropertyTree parentNodeData = new PropertyTree();
         parentNodeData.setString( ContentPropertyNames.TYPE, ContentTypeName.unstructured().toString() );
         parentNodeData.setSet( ContentPropertyNames.DATA, new PropertySet() );
-        parentNodeData.setString( ContentPropertyNames.CREATOR, "user:myuserstore:user1" );
+        parentNodeData.setString( ContentPropertyNames.CREATOR, "user:myidprovider:user1" );
         final Node parentNode = Node.create().
             id( NodeId.from( "id1" ) ).
             name( "parent" ).
@@ -288,7 +310,7 @@ public class CreateContentCommandTest
         final PropertyTree parentNodeData = new PropertyTree();
         parentNodeData.setString( ContentPropertyNames.TYPE, ContentTypeName.site().toString() );
         parentNodeData.setSet( ContentPropertyNames.DATA, new PropertySet() );
-        parentNodeData.setString( ContentPropertyNames.CREATOR, "user:myuserstore:user1" );
+        parentNodeData.setString( ContentPropertyNames.CREATOR, "user:myidprovider:user1" );
         final Node parentNode = Node.create().
             id( NodeId.from( "id1" ) ).
             name( "parent" ).
@@ -322,7 +344,7 @@ public class CreateContentCommandTest
         final PropertyTree parentNodeData = new PropertyTree();
         parentNodeData.setString( ContentPropertyNames.TYPE, ContentTypeName.templateFolder().toString() );
         parentNodeData.setSet( ContentPropertyNames.DATA, new PropertySet() );
-        parentNodeData.setString( ContentPropertyNames.CREATOR, "user:myuserstore:user1" );
+        parentNodeData.setString( ContentPropertyNames.CREATOR, "user:myidprovider:user1" );
         final Node parentNode = Node.create().
             id( NodeId.from( "id1" ) ).
             name( "_templates" ).
@@ -356,7 +378,7 @@ public class CreateContentCommandTest
         final PropertyTree parentNodeData = new PropertyTree();
         parentNodeData.setString( ContentPropertyNames.TYPE, ContentTypeName.folder().toString() );
         parentNodeData.setSet( ContentPropertyNames.DATA, new PropertySet() );
-        parentNodeData.setString( ContentPropertyNames.CREATOR, "user:myuserstore:user1" );
+        parentNodeData.setString( ContentPropertyNames.CREATOR, "user:myidprovider:user1" );
         final Node parentNode = Node.create().
             id( NodeId.from( "id1" ) ).
             name( "_templates" ).
@@ -385,7 +407,7 @@ public class CreateContentCommandTest
             command.execute();
             Assert.fail( "Expected exception" );
         }
-        catch ( IllegalArgumentException e )
+        catch ( RuntimeException e )
         {
             assertEquals( "A page template can only be created below a content of type 'template-folder'. Path: /_templates/mytemplate",
                           e.getMessage() );
@@ -414,9 +436,10 @@ public class CreateContentCommandTest
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             mediaInfo( mediaInfo ).
-            mixinService( this.mixinService ).
+            xDataService( this.xDataService ).
             siteService( this.siteService ).
             pageDescriptorService( this.pageDescriptorService ).
+            contentDataSerializer( contentDataSerializer ).
             contentProcessors( new ContentProcessors() ).
             formDefaultValuesProcessor( ( form, data ) -> {
             } ).
@@ -454,7 +477,7 @@ public class CreateContentCommandTest
         final PropertyTree nodeData = new PropertyTree();
         nodeData.setString( ContentPropertyNames.TYPE, contentTypeName.toString() );
         nodeData.setSet( ContentPropertyNames.DATA, new PropertySet() );
-        nodeData.setString( ContentPropertyNames.CREATOR, "user:myuserstore:user1" );
+        nodeData.setString( ContentPropertyNames.CREATOR, "user:myidprovider:user1" );
 
         final Node node = Node.create().
             id( NodeId.from( name ) ).

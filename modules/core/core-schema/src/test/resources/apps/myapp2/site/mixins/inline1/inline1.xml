@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mixin xmlns="urn:enonic:xp:model:1.0">
   <display-name>Inline Mixin 1</display-name>
-  <items>
+  <form>
     <input type="TextLine" name="text1">
       <label>Text 1</label>
     </input>
 
-    <inline mixin="myapp2:inline2"/>
-  </items>
+    <mixin name="myapp2:inline2"/>
+  </form>
 </mixin>

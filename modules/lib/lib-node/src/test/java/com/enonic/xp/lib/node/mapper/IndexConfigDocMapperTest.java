@@ -21,6 +21,11 @@ public class IndexConfigDocMapperTest
             add( "minimal", IndexConfig.MINIMAL ).
             add( "full", IndexConfig.FULLTEXT ).
             add( "byType", IndexConfig.BY_TYPE ).
+            add( "property1", IndexConfig.BY_TYPE ).
+            add( "property1.*", IndexConfig.BY_TYPE ).
+            add( "property1.x", IndexConfig.BY_TYPE ).
+            add( "property1.property2", IndexConfig.BY_TYPE ).
+            add( "property1.*.property3", IndexConfig.create( IndexConfig.BY_TYPE ).addLanguage( "en" ).build() ).
             build();
 
         final JsonMapGenerator jsonGenerator = new JsonMapGenerator();

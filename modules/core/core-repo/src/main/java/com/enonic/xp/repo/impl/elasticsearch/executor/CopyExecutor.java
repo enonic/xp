@@ -6,7 +6,6 @@ import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
-import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
@@ -47,7 +46,7 @@ public class CopyExecutor
             values( copyRequest.getNodeIds() ).
             build();
 
-        final FilterBuilder idFilterBuilder = new FilterBuilderFactory( new SearchQueryFieldNameResolver() ).
+        final QueryBuilder idFilterBuilder = new FilterBuilderFactory( new SearchQueryFieldNameResolver() ).
             create( Filters.from( idFilter ) );
 
         QueryBuilder query = QueryBuilders.matchAllQuery();

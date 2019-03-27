@@ -4,11 +4,11 @@ import java.util.function.Supplier;
 
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalQuery;
 import com.enonic.xp.security.PrincipalQueryResult;
 import com.enonic.xp.security.PrincipalType;
 import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.security.UserStoreKey;
 
 public final class FindPrincipalsHandler
     implements ScriptBean
@@ -17,7 +17,7 @@ public final class FindPrincipalsHandler
 
     private PrincipalType type;
 
-    private UserStoreKey userStore;
+    private IdProviderKey idProvider;
 
     private int start = 0;
 
@@ -55,14 +55,14 @@ public final class FindPrincipalsHandler
         }
     }
 
-    public void setUserStore( final String userStore )
+    public void setIdProvider( final String idProvider )
     {
-        if ( userStore == null || userStore.trim().isEmpty() )
+        if ( idProvider == null || idProvider.trim().isEmpty() )
         {
-            this.userStore = null;
+            this.idProvider = null;
             return;
         }
-        this.userStore = UserStoreKey.from( userStore );
+        this.idProvider = IdProviderKey.from( idProvider );
     }
 
     public void setStart( final Integer start )
@@ -93,9 +93,9 @@ public final class FindPrincipalsHandler
         {
             query.includeTypes( this.type );
         }
-        if ( this.userStore != null )
+        if ( this.idProvider != null )
         {
-            query.userStore( this.userStore );
+            query.idProvider( this.idProvider );
         }
         query.name( this.name );
         query.from( this.start );

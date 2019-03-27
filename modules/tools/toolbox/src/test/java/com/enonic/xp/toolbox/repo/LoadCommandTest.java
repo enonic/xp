@@ -28,7 +28,7 @@ public class LoadCommandTest
 
         final RecordedRequest request = takeRequest();
         assertEquals( "POST", request.getMethod() );
-        assertEquals( "/api/system/load", request.getPath() );
+        assertEquals( "/system/load", request.getPath() );
         assertEquals( JsonHelper.serialize( createRequestJson() ), request.getBody().readString( Charsets.UTF_8 ) );
     }
 
@@ -36,6 +36,7 @@ public class LoadCommandTest
     {
         final ObjectNode json = JsonHelper.newObjectNode();
         json.put( "name", "source-path" );
+        json.put( "upgrade", Boolean.FALSE );
         return json;
     }
 

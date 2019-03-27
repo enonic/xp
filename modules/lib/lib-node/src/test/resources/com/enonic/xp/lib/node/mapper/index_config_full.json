@@ -7,43 +7,75 @@
     "fulltext": false,
     "includeInAllText": false,
     "path": false,
-    "indexValueProcessors": []
+    "indexValueProcessors": [],
+    "languages": []
   },
   "configs": [
     {
-      "path": "minimal",
+      "path": "property1.*.property3",
       "config": {
-        "decideByType": false,
+        "decideByType": true,
         "enabled": true,
         "nGram": false,
         "fulltext": false,
         "includeInAllText": false,
         "path": false,
-        "indexValueProcessors": []
+        "indexValueProcessors": [],
+        "languages": [
+          "en"
+        ]
       }
     },
     {
-      "path": "full",
+      "path": "property1.x",
       "config": {
-        "decideByType": false,
+        "decideByType": true,
         "enabled": true,
-        "nGram": true,
-        "fulltext": true,
-        "includeInAllText": true,
-        "path": false,
-        "indexValueProcessors": []
-      }
-    },
-    {
-      "path": "none",
-      "config": {
-        "decideByType": false,
-        "enabled": false,
         "nGram": false,
         "fulltext": false,
         "includeInAllText": false,
         "path": false,
-        "indexValueProcessors": []
+        "indexValueProcessors": [],
+        "languages": []
+      }
+    },
+    {
+      "path": "property1.property2",
+      "config": {
+        "decideByType": true,
+        "enabled": true,
+        "nGram": false,
+        "fulltext": false,
+        "includeInAllText": false,
+        "path": false,
+        "indexValueProcessors": [],
+        "languages": []
+      }
+    },
+    {
+      "path": "property1.*",
+      "config": {
+        "decideByType": true,
+        "enabled": true,
+        "nGram": false,
+        "fulltext": false,
+        "includeInAllText": false,
+        "path": false,
+        "indexValueProcessors": [],
+        "languages": []
+      }
+    },
+    {
+      "path": "property1",
+      "config": {
+        "decideByType": true,
+        "enabled": true,
+        "nGram": false,
+        "fulltext": false,
+        "includeInAllText": false,
+        "path": false,
+        "indexValueProcessors": [],
+        "languages": []
       }
     },
     {
@@ -55,7 +87,47 @@
         "fulltext": false,
         "includeInAllText": false,
         "path": true,
-        "indexValueProcessors": []
+        "indexValueProcessors": [],
+        "languages": []
+      }
+    },
+    {
+      "path": "none",
+      "config": {
+        "decideByType": false,
+        "enabled": false,
+        "nGram": false,
+        "fulltext": false,
+        "includeInAllText": false,
+        "path": false,
+        "indexValueProcessors": [],
+        "languages": []
+      }
+    },
+    {
+      "path": "minimal",
+      "config": {
+        "decideByType": false,
+        "enabled": true,
+        "nGram": false,
+        "fulltext": false,
+        "includeInAllText": false,
+        "path": false,
+        "indexValueProcessors": [],
+        "languages": []
+      }
+    },
+    {
+      "path": "full",
+      "config": {
+        "decideByType": false,
+        "enabled": true,
+        "nGram": true,
+        "fulltext": true,
+        "includeInAllText": true,
+        "path": false,
+        "indexValueProcessors": [],
+        "languages": []
       }
     },
     {
@@ -67,7 +139,8 @@
         "fulltext": false,
         "includeInAllText": false,
         "path": false,
-        "indexValueProcessors": []
+        "indexValueProcessors": [],
+        "languages": []
       }
     }
   ]

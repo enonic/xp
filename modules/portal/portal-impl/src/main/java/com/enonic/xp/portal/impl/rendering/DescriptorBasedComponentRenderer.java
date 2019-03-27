@@ -111,8 +111,7 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
                 return renderEmptyComponentEditMode( component );
 
             case PREVIEW:
-                return renderEmptyComponentPreviewMode( component );
-
+            case INLINE:
             case LIVE:
                 return renderEmptyComponentPreviewMode( component );
 

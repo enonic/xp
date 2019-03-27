@@ -28,7 +28,7 @@ public class SanitizeHtmlHandlerTest
     {
         final String cleanHtml = "<p><a href=\"http://example.com/\">Link</a></p>";
         Mockito.when( this.htmlSanitizer.sanitizeHtml( Matchers.anyString() ) ).thenReturn( cleanHtml );
-        runFunction( "/site/test/htmlSanitizer-test.js", "sanitizeHtml" );
+        runFunction( "/test/htmlSanitizer-test.js", "sanitizeHtml" );
     }
 
     @Test
@@ -37,6 +37,6 @@ public class SanitizeHtmlHandlerTest
         final String cleanHtml = "<p><a href=\"http://example.com/\">Link</a></p>";
         Mockito.when( this.htmlSanitizer.sanitizeHtml( Matchers.anyString() ) ).thenReturn( cleanHtml );
 
-        runScript( "/site/lib/xp/examples/portal/sanitizeHtml.js" );
+        runScript( "/lib/xp/examples/portal/sanitizeHtml.js" );
     }
 }

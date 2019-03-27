@@ -16,7 +16,8 @@ import org.osgi.service.component.annotations.Component;
 
 import com.enonic.xp.annotation.Order;
 
-@Component(immediate = true, service = Filter.class, configurationPid = "com.enonic.xp.web.dos")
+@Component(immediate = true, service = Filter.class, configurationPid = "com.enonic.xp.web.dos", property = {"connector=xp",
+    "connector=api"})
 @Order(-400)
 @WebFilter("/*")
 public final class DosFilterWrapper

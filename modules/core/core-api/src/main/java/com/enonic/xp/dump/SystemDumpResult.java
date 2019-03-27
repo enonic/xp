@@ -2,6 +2,7 @@ package com.enonic.xp.dump;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Stream;
 
 import com.google.common.collect.Lists;
 
@@ -34,6 +35,11 @@ public class SystemDumpResult
     public Iterator<RepoDumpResult> iterator()
     {
         return repoDumpResults.iterator();
+    }
+
+    public Stream<RepoDumpResult> stream()
+    {
+        return repoDumpResults.stream();
     }
 
     public static Builder create()

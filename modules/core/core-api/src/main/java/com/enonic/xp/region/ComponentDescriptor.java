@@ -16,15 +16,21 @@ public abstract class ComponentDescriptor
 
     private final String displayNameI18nKey;
 
+    private final String description;
+
+    private final String descriptionI18nKey;
+
     private final Form config;
 
-    ComponentDescriptor( final BaseBuilder builder )
+    protected ComponentDescriptor( final BaseBuilder builder )
     {
         super( builder.key );
 
         Preconditions.checkNotNull( builder.config, "config cannot be null" );
         this.displayName = builder.displayName == null || builder.displayName.trim().isEmpty() ? builder.name : builder.displayName;
         this.displayNameI18nKey = builder.displayNameI18nKey;
+        this.description = builder.description;
+        this.descriptionI18nKey = builder.descriptionI18nKey;
         this.config = builder.config;
     }
 
@@ -36,6 +42,16 @@ public abstract class ComponentDescriptor
     public String getDisplayNameI18nKey()
     {
         return displayNameI18nKey;
+    }
+
+    public String getDescription()
+    {
+        return description;
+    }
+
+    public String getDescriptionI18nKey()
+    {
+        return descriptionI18nKey;
     }
 
     public final Form getConfig()
@@ -55,18 +71,24 @@ public abstract class ComponentDescriptor
 
         protected String displayNameI18nKey;
 
+        protected String description;
+
+        protected String descriptionI18nKey;
+
         protected Form config;
 
-        BaseBuilder()
+        protected BaseBuilder()
         {
         }
 
-        BaseBuilder( final ComponentDescriptor descriptor )
+        protected BaseBuilder( final ComponentDescriptor descriptor )
         {
             this.key = descriptor.getKey();
             this.name = descriptor.getName();
             this.displayName = descriptor.getDisplayName();
             this.displayNameI18nKey = descriptor.getDisplayNameI18nKey();
+            this.description = descriptor.getDescription();
+            this.descriptionI18nKey = descriptor.getDescriptionI18nKey();
             this.config = descriptor.getConfig();
         }
 
@@ -85,6 +107,18 @@ public abstract class ComponentDescriptor
         public final T displayNameI18nKey( final String displayNameI18nKey )
         {
             this.displayNameI18nKey = displayNameI18nKey;
+            return typecastToBuilder( this );
+        }
+
+        public final T description( String description )
+        {
+            this.description = description;
+            return typecastToBuilder( this );
+        }
+
+        public final T descriptionI18nKey( final String descriptionI18nKey )
+        {
+            this.descriptionI18nKey = descriptionI18nKey;
             return typecastToBuilder( this );
         }
 

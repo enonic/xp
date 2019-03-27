@@ -45,6 +45,8 @@ public final class CreateContentParams
 
     private final ContentPublishInfo contentPublishInfo;
 
+    private final ContentIds processedIds;
+
     private CreateContentParams( Builder builder )
     {
         this.data = builder.data;
@@ -62,6 +64,7 @@ public final class CreateContentParams
         this.language = builder.language;
         this.refresh = builder.refresh;
         this.contentPublishInfo = builder.contentPublishInfo;
+        this.processedIds = builder.processedIds.build();
     }
 
     public static Builder create()
@@ -149,6 +152,11 @@ public final class CreateContentParams
         return refresh;
     }
 
+    public ContentIds getProcessedIds()
+    {
+        return processedIds;
+    }
+
     public static final class Builder
     {
         private PropertyTree data;
@@ -180,6 +188,8 @@ public final class CreateContentParams
         private ContentPublishInfo contentPublishInfo;
 
         private boolean refresh = true;
+
+        private ContentIds.Builder processedIds = ContentIds.create();
 
         private Builder()
         {
@@ -297,6 +307,12 @@ public final class CreateContentParams
         public Builder contentPublishInfo( final ContentPublishInfo info )
         {
             this.contentPublishInfo = info;
+            return this;
+        }
+
+        public Builder addProcessedIds( final ContentIds processedIds )
+        {
+            this.processedIds.addAll( processedIds );
             return this;
         }
 

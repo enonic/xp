@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.node.ApplyNodePermissionsParams;
+import com.enonic.xp.node.ApplyNodePermissionsResult;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
@@ -16,6 +17,7 @@ import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
+import static com.enonic.xp.repo.impl.node.NodeConstants.CLOCK;
 import static com.enonic.xp.repo.impl.node.NodePermissionsResolver.contextUserHasPermissionOrAdmin;
 
 final class ApplyNodePermissionsCommand
@@ -27,7 +29,7 @@ final class ApplyNodePermissionsCommand
 
     private final PermissionsMergingStrategy mergingStrategy;
 
-    private final Nodes.Builder updatedNodes = Nodes.create();
+    private final ApplyNodePermissionsResult.Builder resultBuilder = ApplyNodePermissionsResult.create();
 
     private ApplyNodePermissionsCommand( final Builder builder )
     {
@@ -41,18 +43,18 @@ final class ApplyNodePermissionsCommand
         return new Builder();
     }
 
-    public Nodes execute()
+    public ApplyNodePermissionsResult execute()
     {
         final Node node = doGetById( params.getNodeId() );
 
         if ( node == null )
         {
-            return Nodes.empty();
+            return resultBuilder.build();
         }
 
-        applyPermissionsToChildren( node );
+        applyPermissions( params.getPermissions() != null ? params.getPermissions() : node.getPermissions(), node );
 
-        return updatedNodes.build();
+        return resultBuilder.build();
     }
 
     private void applyPermissionsToChildren( final Node parent )
@@ -73,29 +75,49 @@ final class ApplyNodePermissionsCommand
 
         for ( Node child : children )
         {
-            if ( contextUserHasPermissionOrAdmin( Permission.WRITE_PERMISSIONS, child ) )
-            {
-                final Node childApplied = applyNodePermissions( parentPermissions, child );
-                applyPermissionsToChildren( childApplied );
-                updatedNodes.add( childApplied );
-            }
-            else
-            {
-                LOG.info( "Not enough rights for applying permissions to node [" + child.id() + "] " + child.path() );
-            }
+            applyPermissions( parentPermissions, child );
         }
     }
 
-    private Node applyNodePermissions( final AccessControlList parentPermissions, final Node node )
+    private Node applyPermissions( final AccessControlList permissions, final Node node )
     {
-        final Node updatedNode;
-        if ( params.isOverwriteChildPermissions() || node.inheritsPermissions() )
+        if ( contextUserHasPermissionOrAdmin( Permission.WRITE_PERMISSIONS, node ) )
         {
-            updatedNode = createUpdatedNode( node, parentPermissions, true );
+            final Node childApplied = storePermissions( permissions, node );
+
+            if ( params.getListener() != null )
+            {
+                params.getListener().permissionsApplied( 1 );
+            }
+
+            applyPermissionsToChildren( childApplied );
+            resultBuilder.succeedNode( childApplied );
+
+            return childApplied;
         }
         else
         {
-            final AccessControlList mergedPermissions = mergingStrategy.mergePermissions( node.getPermissions(), parentPermissions );
+            params.getListener().notEnoughRights( 1 );
+            resultBuilder.skippedNode( node );
+
+            LOG.info( "Not enough rights for applying permissions to node [" + node.id() + "] " + node.path() );
+
+            return node;
+        }
+    }
+
+    private Node storePermissions( final AccessControlList permissions, final Node node )
+    {
+        final Node updatedNode;
+        final boolean isParent = node.id().equals( params.getNodeId() );
+
+        if ( params.isOverwriteChildPermissions() || node.inheritsPermissions() || isParent )
+        {
+            updatedNode = createUpdatedNode( node, permissions, !isParent || params.isInheritPermissions() );
+        }
+        else
+        {
+            final AccessControlList mergedPermissions = mergingStrategy.mergePermissions( node.getPermissions(), permissions );
             updatedNode = createUpdatedNode( node, mergedPermissions, false );
         }
 
@@ -111,7 +133,7 @@ final class ApplyNodePermissionsCommand
     private Node createUpdatedNode( final Node persistedNode, final AccessControlList permissions, final boolean inheritsPermissions )
     {
         final Node.Builder updateNodeBuilder = Node.create( persistedNode ).
-            timestamp( Instant.now() ).
+            timestamp( Instant.now( CLOCK ) ).
             permissions( permissions ).
             inheritPermissions( inheritsPermissions );
         return updateNodeBuilder.build();

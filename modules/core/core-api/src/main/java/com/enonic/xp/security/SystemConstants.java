@@ -17,8 +17,10 @@ public final class SystemConstants
         value( "master" ).
         build();
 
+    public static final RepositoryId SYSTEM_REPO_ID = RepositoryId.from( "system-repo" );
+
     public static final Repository SYSTEM_REPO = Repository.create().
-        id( RepositoryId.from( "system-repo" ) ).
+        id( SYSTEM_REPO_ID ).
         branches( Branches.from( BRANCH_SYSTEM ) ).
         build();
 

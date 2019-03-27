@@ -12,7 +12,7 @@ public class ControllerMappingDescriptorTest
 {
 
     @Test
-    public void testCreate()
+    public void testCreateMappingController()
         throws Exception
     {
         final ControllerMappingDescriptor descriptor = ControllerMappingDescriptor.create().
@@ -23,6 +23,44 @@ public class ControllerMappingDescriptorTest
             build();
         Assert.assertNotNull( descriptor );
         Assert.assertEquals( ApplicationKey.from( "com.enonic.test.app" ), descriptor.getApplication() );
+        Assert.assertEquals( ResourceKey.from( "com.enonic.test.app:/site/controllers/mycontroller.js" ), descriptor.getController() );
+        Assert.assertNull( descriptor.getFilter() );
+        Assert.assertTrue( descriptor.isController() );
+        Assert.assertFalse( descriptor.isFilter() );
+    }
+
+    @Test
+    public void testCreateMappingFilter()
+        throws Exception
+    {
+        final ControllerMappingDescriptor descriptor = ControllerMappingDescriptor.create().
+            filter( ResourceKey.from( ApplicationKey.from( "com.enonic.test.app" ), "/site/controllers/myfilter.js" ) ).
+            pattern( "/people/.*" ).
+            invertPattern( true ).
+            contentConstraint( "type:'com.enonic.test.app:people'" ).
+            order( 5 ).
+            build();
+        Assert.assertNotNull( descriptor );
+        Assert.assertTrue( descriptor.invertPattern() );
+        Assert.assertEquals( ApplicationKey.from( "com.enonic.test.app" ), descriptor.getApplication() );
+        Assert.assertEquals( ResourceKey.from( "com.enonic.test.app:/site/controllers/myfilter.js" ), descriptor.getFilter() );
+        Assert.assertNull( descriptor.getController() );
+        Assert.assertFalse( descriptor.isController() );
+        Assert.assertTrue( descriptor.isFilter() );
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testCreateFilterOrController()
+        throws Exception
+    {
+        final ControllerMappingDescriptor descriptor = ControllerMappingDescriptor.create().
+            controller( ResourceKey.from( ApplicationKey.from( "com.enonic.test.app" ), "/site/controllers/mycontroller.js" ) ).
+            filter( ResourceKey.from( ApplicationKey.from( "com.enonic.test.app" ), "/site/controllers/myfilter.js" ) ).
+            pattern( "/people/.*" ).
+            invertPattern( true ).
+            contentConstraint( "type:'com.enonic.test.app:people'" ).
+            order( 5 ).
+            build();
     }
 
     @Test
@@ -36,12 +74,10 @@ public class ControllerMappingDescriptorTest
             order( 5 ).
             build();
 
-        Assert.assertEquals( "ControllerMappingDescriptor{" +
-                                 "controller=com.enonic.test.app:/site/controllers/mycontroller.js, " +
-                                 "pattern=/people/.*, " +
-                                 "invertPattern=false, " +
-                                 "contentConstraint=type:'com.enonic.test.app:people', " +
-                                 "order=5}", descriptor.toString() );
+        Assert.assertEquals(
+            "ControllerMappingDescriptor{" + "controller=com.enonic.test.app:/site/controllers/mycontroller.js, " + "filter=null, " +
+                "pattern=/people/.*, " + "invertPattern=false, " + "contentConstraint=type:'com.enonic.test.app:people', " + "order=5}",
+            descriptor.toString() );
     }
 
     @Test
@@ -77,6 +113,8 @@ public class ControllerMappingDescriptorTest
             build();
         Assert.assertEquals( descriptor, copy );
         Assert.assertEquals( descriptor.hashCode(), copy.hashCode() );
+        Assert.assertEquals( descriptor, descriptor );
+        Assert.assertNotEquals( descriptor, descriptor.toString() );
     }
 
     @Test

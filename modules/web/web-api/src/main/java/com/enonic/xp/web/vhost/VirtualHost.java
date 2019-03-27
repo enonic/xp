@@ -2,7 +2,8 @@ package com.enonic.xp.web.vhost;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.security.UserStoreKey;
+import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.security.IdProviderKeys;
 
 @Beta
 public interface VirtualHost
@@ -15,5 +16,7 @@ public interface VirtualHost
 
     String getTarget();
 
-    UserStoreKey getUserStoreKey();
+    IdProviderKey getDefaultIdProviderKey();
+
+    IdProviderKeys getIdProviderKeys();
 }

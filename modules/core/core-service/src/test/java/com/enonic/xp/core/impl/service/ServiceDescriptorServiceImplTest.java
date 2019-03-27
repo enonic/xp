@@ -50,6 +50,6 @@ public class ServiceDescriptorServiceImplTest
     {
         final ServiceDescriptors descriptors = this.service.getByApplication( ApplicationKey.from( "myapp1" ) );
         assertNotNull( descriptors );
-        assertEquals( 2, descriptors.getSize() );
+        assertEquals( 1, descriptors.getSize() );
     }
 }

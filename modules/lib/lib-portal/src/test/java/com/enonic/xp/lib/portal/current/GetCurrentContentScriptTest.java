@@ -16,14 +16,14 @@ public class GetCurrentContentScriptTest
         final Content content = TestDataFixtures.newContent();
         this.portalRequest.setContent( content );
 
-        runFunction( "/site/test/getCurrentContent-test.js", "currentContent" );
+        runFunction( "/test/getCurrentContent-test.js", "currentContent" );
     }
 
     @Test
     public void noCurrentContent()
     {
         this.portalRequest.setContent( null );
-        runFunction( "/site/test/getCurrentContent-test.js", "noCurrentContent" );
+        runFunction( "/test/getCurrentContent-test.js", "noCurrentContent" );
     }
 
     @Test
@@ -31,8 +31,9 @@ public class GetCurrentContentScriptTest
     {
         final Content content = TestDataFixtures.newContent();
         this.portalRequest.setContent( null );
+        this.portalRequest.setContentPath( content.getPath() );
         Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
-        runFunction( "/site/test/getCurrentContent-test.js", "currentContent" );
+        runFunction( "/test/getCurrentContent-test.js", "currentContent" );
     }
 
     @Test
@@ -41,6 +42,6 @@ public class GetCurrentContentScriptTest
         final Content content = TestDataFixtures.newExampleContent();
         this.portalRequest.setContent( content );
 
-        runScript( "/site/lib/xp/examples/portal/getContent.js" );
+        runScript( "/lib/xp/examples/portal/getContent.js" );
     }
 }

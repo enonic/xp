@@ -27,6 +27,11 @@ import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.Media;
+import com.enonic.xp.content.processor.ContentProcessor;
+import com.enonic.xp.content.processor.ProcessCreateParams;
+import com.enonic.xp.content.processor.ProcessCreateResult;
+import com.enonic.xp.content.processor.ProcessUpdateParams;
+import com.enonic.xp.content.processor.ProcessUpdateResult;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
@@ -40,10 +45,10 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.mixin.Mixin;
-import com.enonic.xp.schema.mixin.MixinName;
-import com.enonic.xp.schema.mixin.MixinService;
-import com.enonic.xp.schema.mixin.Mixins;
+import com.enonic.xp.schema.xdata.XData;
+import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.xdata.XDataService;
+import com.enonic.xp.schema.xdata.XDatas;
 import com.enonic.xp.util.Exceptions;
 import com.enonic.xp.util.GeoPoint;
 
@@ -78,7 +83,7 @@ public final class ImageContentProcessor
 
     protected ContentTypeService contentTypeService;
 
-    protected MixinService mixinService;
+    protected XDataService xDataService;
 
     @Override
     public boolean supports( final ContentType contentType )
@@ -86,11 +91,10 @@ public final class ImageContentProcessor
         return contentType.getName().isImageMedia();
     }
 
-    protected Mixins getMixins( final ContentTypeName contentTypeName )
+    protected XDatas getXDatas( final ContentTypeName contentTypeName )
     {
         final ContentType contentType = contentTypeService.getByName( GetContentTypeParams.from( contentTypeName ) );
-
-        return mixinService.getByContentType( contentType );
+        return xDataService.getFromContentType( contentType );
     }
 
     @Override
@@ -104,12 +108,11 @@ public final class ImageContentProcessor
 
         final CreateAttachment sourceAttachment = originalAttachments.first();
 
-        final Mixins contentMixins = getMixins( createContentParams.getType() );
-
+        final XDatas contentXDatas = getXDatas( createContentParams.getType() );
         ExtraDatas extraDatas = null;
         if ( mediaInfo != null )
         {
-            extraDatas = extractMetadata( mediaInfo, contentMixins, sourceAttachment );
+            extraDatas = extractMetadata( mediaInfo, contentXDatas, sourceAttachment );
         }
 
         final CreateAttachments.Builder builder = CreateAttachments.create();
@@ -132,9 +135,8 @@ public final class ImageContentProcessor
         if ( mediaInfo != null )
         {
             editor = editable -> {
-
-                final Mixins contentMixins = getMixins( params.getContentType().getName() );
-                editable.extraDatas = extractMetadata( mediaInfo, contentMixins, sourceAttachment );
+                final XDatas contentXDatas = getXDatas( params.getContentType().getName() );
+                editable.extraDatas = extractMetadata( mediaInfo, contentXDatas, sourceAttachment );
 
             };
         }
@@ -154,6 +156,7 @@ public final class ImageContentProcessor
         return new ProcessUpdateResult( createAttachments, editor );
 
     }
+
 
     private ExtraDatas updateImageMetadata( final EditableContent editable )
     {
@@ -234,34 +237,31 @@ public final class ImageContentProcessor
                                   (int) ( height * cropping.height() ) );
     }
 
-    private ExtraDatas extractMetadata( final MediaInfo mediaInfo, final Mixins mixins, final CreateAttachment sourceAttachment )
+    private ExtraDatas extractMetadata( final MediaInfo mediaInfo, final XDatas xDatas, final CreateAttachment sourceAttachment )
     {
         final ExtraDatas.Builder extradatasBuilder = ExtraDatas.create();
-        final Map<MixinName, ExtraData> metadataMap = new HashMap<>();
-
-        final ExtraData geoData = extractGeoLocation( mediaInfo, mixins );
+        final Map<XDataName, ExtraData> metadataMap = new HashMap<>();
+        final ExtraData geoData = extractGeoLocation( mediaInfo, xDatas );
         if ( geoData != null )
         {
             metadataMap.put( MediaInfo.GPS_INFO_METADATA_NAME, geoData );
             extradatasBuilder.add( geoData );
         }
-
         for ( Map.Entry<String, Collection<String>> entry : mediaInfo.getMetadata().asMap().entrySet() )
         {
-            for ( Mixin mixin : mixins )
+            for ( XData xData : xDatas )
             {
                 final String formItemName = getConformityName( entry.getKey() );
-                final FormItem formItem = mixin.getForm().getFormItems().getItemByName( formItemName );
+                final FormItem formItem = xData.getForm().getFormItems().getItemByName( formItemName );
                 if ( formItem == null )
                 {
                     continue;
                 }
-
-                ExtraData extraData = metadataMap.get( mixin.getName() );
+                ExtraData extraData = metadataMap.get( xData.getName() );
                 if ( extraData == null )
                 {
-                    extraData = new ExtraData( mixin.getName(), new PropertyTree() );
-                    metadataMap.put( mixin.getName(), extraData );
+                    extraData = new ExtraData( xData.getName(), new PropertyTree() );
+                    metadataMap.put( xData.getName(), extraData );
                     extradatasBuilder.add( extraData );
                 }
                 if ( FormItemType.INPUT.equals( formItem.getType() ) )
@@ -282,15 +282,13 @@ public final class ImageContentProcessor
                         extraData.getData().addStrings( formItemName, entry.getValue() );
                     }
                 }
-
             }
         }
         fillComputedFormItems( metadataMap.values(), mediaInfo, sourceAttachment );
-
         return extradatasBuilder.build();
     }
 
-    private ExtraData extractGeoLocation( final MediaInfo mediaInfo, final Mixins mixins )
+    private ExtraData extractGeoLocation( final MediaInfo mediaInfo, final XDatas xDatas )
     {
         final ImmutableMultimap<String, String> mediaItems = mediaInfo.getMetadata();
         final Double geoLat = parseDouble( mediaItems.get( GEO_LATITUDE ).stream().findFirst().orElse( null ) );
@@ -299,8 +297,7 @@ public final class ImageContentProcessor
         {
             return null;
         }
-
-        final Mixin geoMixin = mixins.getMixin( MediaInfo.GPS_INFO_METADATA_NAME );
+        final XData geoMixin = xDatas.getXData( MediaInfo.GPS_INFO_METADATA_NAME );
         if ( geoMixin == null )
         {
             return null;
@@ -361,7 +358,6 @@ public final class ImageContentProcessor
                     xData.setLong( IMAGE_INFO_IMAGE_HEIGHT, tiffImageLength );
                     xData.setLong( IMAGE_INFO_IMAGE_WIDTH, tiffImageWidth );
                 }
-
                 if ( sourceAttachment != null )
                 {
                     try
@@ -379,9 +375,9 @@ public final class ImageContentProcessor
     }
 
     @Reference
-    public void setMixinService( final MixinService mixinService )
+    public void setXDataService( final XDataService xDataService )
     {
-        this.mixinService = mixinService;
+        this.xDataService = xDataService;
     }
 
     @Reference

@@ -59,8 +59,10 @@ public class MacroContextMapperTest
         portalRequest.setScheme( "http" );
         portalRequest.setHost( "localhost" );
         portalRequest.setPort( 80 );
-        portalRequest.setPath( "/portal/live/master/a/b" );
-        portalRequest.setUrl( "http://localhost/portal/live/master/a/b?param1=value1" );
+        portalRequest.setPath( "/site/live/master/a/b" );
+        portalRequest.setRawPath( "/site/live/master/a/b" );
+        portalRequest.setContextPath( "/site/live/master/a" );
+        portalRequest.setUrl( "http://localhost/site/live/master/a/b?param1=value1" );
         portalRequest.setRemoteAddress( "127.0.0.1" );
         portalRequest.getParams().put( "param1", "value1" );
         portalRequest.getParams().put( "param2", "value2" );

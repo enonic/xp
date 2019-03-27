@@ -1,9 +1,10 @@
 package com.enonic.xp.web.jetty.impl;
 
-import javax.servlet.Servlet;
+import java.util.List;
 
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.session.DefaultSessionIdManager;
 import org.eclipse.jetty.server.session.NullSessionCache;
 import org.eclipse.jetty.server.session.SessionDataStore;
@@ -16,10 +17,11 @@ import org.slf4j.LoggerFactory;
 import com.codahale.metrics.jetty9.InstrumentedHandler;
 
 import com.enonic.xp.util.Metrics;
+import com.enonic.xp.web.dispatch.DispatchConstants;
+import com.enonic.xp.web.dispatch.DispatchServlet;
 import com.enonic.xp.web.jetty.impl.configurator.GZipConfigurator;
 import com.enonic.xp.web.jetty.impl.configurator.HttpConfigurator;
 import com.enonic.xp.web.jetty.impl.configurator.MultipartConfigurator;
-import com.enonic.xp.web.jetty.impl.configurator.RequestLogConfigurator;
 import com.enonic.xp.web.jetty.impl.configurator.SessionConfigurator;
 
 final class JettyService
@@ -30,9 +32,9 @@ final class JettyService
 
     protected JettyConfig config;
 
-    protected Servlet dispatcherServlet;
+    protected List<DispatchServlet> dispatcherServlets;
 
-    protected ServletContextHandler context;
+    protected ContextHandlerCollection contexts;
 
     protected String workerName;
 
@@ -73,28 +75,40 @@ final class JettyService
     {
         this.server = new Server();
 
-        this.context = new ServletContextHandler( null, "/", ServletContextHandler.SESSIONS );
-        final SessionHandler sessionHandler = this.context.getSessionHandler();
-        new SessionConfigurator().configure( this.config, sessionHandler );
-        new GZipConfigurator().configure( this.config, this.context );
-        new RequestLogConfigurator().configure( this.config, this.server );
+        this.contexts = new ContextHandlerCollection();
 
-        final ServletHolder holder = new ServletHolder( this.dispatcherServlet );
-        holder.setAsyncSupported( true );
-        this.context.addServlet( holder, "/*" );
+        this.dispatcherServlets.stream().
+            map( this::initServletContextHandler ).
+            forEach( contexts::addHandler );
 
-        new MultipartConfigurator().configure( this.config, holder );
         new HttpConfigurator().configure( this.config, this.server );
 
         Metrics.removeAll( Handler.class );
         final InstrumentedHandler instrumentedHandler = new InstrumentedHandler( Metrics.registry(), Handler.class.getName() );
-        instrumentedHandler.setHandler( this.context );
+        instrumentedHandler.setHandler( contexts );
 
-        this.server.setHandler( instrumentedHandler );
+        this.server.setHandler( contexts );
 
         final DefaultSessionIdManager sessionManager = new DefaultSessionIdManager( this.server );
         sessionManager.setWorkerName( this.workerName );
         this.server.setSessionIdManager( sessionManager );
+
+        this.server.start();
+    }
+
+    private ServletContextHandler initServletContextHandler( final DispatchServlet servlet )
+    {
+        final ServletContextHandler context = new ServletContextHandler( null, "/", ServletContextHandler.SESSIONS );
+        final SessionHandler sessionHandler = context.getSessionHandler();
+
+        final ServletHolder holder = new ServletHolder( servlet );
+        holder.setAsyncSupported( true );
+        context.addServlet( holder, "/*" );
+        context.setVirtualHosts( new String[]{DispatchConstants.VIRTUAL_HOST_PREFIX + servlet.getConnector()} );
+
+        new SessionConfigurator().configure( this.config, sessionHandler );
+        new GZipConfigurator().configure( this.config, context );
+        new MultipartConfigurator().configure( this.config, holder );
 
         if ( sessionDataStore != null )
         {
@@ -106,7 +120,7 @@ final class JettyService
             sessionHandler.setSessionCache( sessionCache );
         }
 
-        this.server.start();
+        return context;
     }
 
     private void stopJetty()

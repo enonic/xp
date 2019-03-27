@@ -1,7 +1,6 @@
 package com.enonic.xp.core.impl.event.cluster;
 
 import org.elasticsearch.threadpool.ThreadPool;
-import org.elasticsearch.transport.BaseTransportRequestHandler;
 import org.elasticsearch.transport.TransportChannel;
 import org.elasticsearch.transport.TransportRequestHandler;
 import org.elasticsearch.transport.TransportService;
@@ -15,7 +14,7 @@ import com.enonic.xp.event.EventPublisher;
 
 @Component(immediate = true, service = TransportRequestHandler.class)
 public final class SendEventRequestHandler
-    extends BaseTransportRequestHandler<SendEventRequest>
+    extends TransportRequestHandler<SendEventRequest>
 {
     private TransportService transportService;
 
@@ -24,7 +23,8 @@ public final class SendEventRequestHandler
     @Activate
     public void activate()
     {
-        this.transportService.registerHandler( ClusterEventSender.ACTION, this );
+        this.transportService.registerRequestHandler( ClusterEventSender.ACTION, SendEventRequest.class, ThreadPool.Names.MANAGEMENT,
+                                                      this );
     }
 
     @Deactivate
@@ -34,23 +34,11 @@ public final class SendEventRequestHandler
     }
 
     @Override
-    public SendEventRequest newInstance()
-    {
-        return new SendEventRequest();
-    }
-
-    @Override
     public void messageReceived( final SendEventRequest request, final TransportChannel channel )
     {
         final Event receivedEvent = request.getEvent();
         final Event forwardedEvent = Event.create( receivedEvent ).distributed( false ).localOrigin( false ).build();
         this.eventPublisher.publish( forwardedEvent );
-    }
-
-    @Override
-    public String executor()
-    {
-        return ThreadPool.Names.MANAGEMENT;
     }
 
     @Reference

@@ -54,6 +54,12 @@ public final class JettyTestServer
         return this.handler;
     }
 
+
+    public void setVirtualHosts( final String[] hosts )
+    {
+        this.handler.setVirtualHosts( hosts );
+    }
+
     public void addFilter( final Filter filter, final String mapping )
     {
         final FilterHolder holder = new FilterHolder();

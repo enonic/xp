@@ -10,7 +10,7 @@ import com.google.common.collect.Multimap;
 
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
-import com.enonic.xp.index.IndexConfig;
+import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.repo.impl.index.IndexValueType;
 
@@ -48,28 +48,23 @@ public class IndexItems
         {
         }
 
-        public Builder add( final Property property, final IndexConfig indexConfig )
+        public Builder add( final Property property, final IndexConfigDocument indexConfigDocument )
         {
             if ( property.getValue() == null )
             {
                 return this;
             }
 
-            final List<IndexItem> indexItems = IndexItemFactory.create( property, indexConfig );
+            final List<IndexItem> indexItems = IndexItemFactory.create( property, indexConfigDocument );
 
             add( indexItems );
 
             return this;
         }
 
-        public Builder add( final IndexPath indexPath, final Value value, final IndexConfig indexConfig )
+        public Builder add( final IndexPath indexPath, final Value value, final IndexConfigDocument indexConfigDocument )
         {
-            return doAdd( indexPath.getPath(), value, indexConfig );
-        }
-
-        public Builder add( final String propertyName, final Value value, final IndexConfig indexConfig )
-        {
-            return doAdd( propertyName, value, indexConfig );
+            return doAdd( indexPath, value, indexConfigDocument );
         }
 
         public Builder add( final List<IndexItem> indexItems )
@@ -77,14 +72,14 @@ public class IndexItems
             return doAdd( indexItems );
         }
 
-        private Builder doAdd( final String propertyName, final Value value, final IndexConfig indexConfig )
+        private Builder doAdd( final IndexPath indexPath, final Value value, final IndexConfigDocument indexConfigDocument )
         {
             if ( value == null )
             {
                 return this;
             }
 
-            final List<IndexItem> indexItems = IndexItemFactory.create( propertyName, value, indexConfig );
+            final List<IndexItem> indexItems = IndexItemFactory.create( indexPath, value, indexConfigDocument );
 
             add( indexItems );
 

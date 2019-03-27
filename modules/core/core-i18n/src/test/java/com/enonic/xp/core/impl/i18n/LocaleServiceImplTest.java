@@ -110,9 +110,6 @@ public class LocaleServiceImplTest
         assertEquals( "ŁĄŻĘĆŃŚŹ", bundle.localize( "polish" ) );
         assertEquals( "ЯБГДЖЙ", bundle.localize( "russian" ) );
         assertEquals( "ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃ", bundle.localize( "japanese" ) );
-
-        assertEquals( "{msg=en, a=en, german=ÄäÜüß, japanese=ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃ, c=none, russian=ЯБГДЖЙ, polish=ŁĄŻĘĆŃŚŹ, norwegian=æøå}",
-                      bundle.asMap().toString() );
     }
 
     @Test

@@ -1,0 +1,23 @@
+[
+  {
+    "order": 0,
+    "name": "MyFilter",
+    "class": "com.enonic.xp.web.impl.dispatch.status.FilterStatusReporterTest$MyFilter",
+    "patterns": [],
+    "connectors": [
+      "a"
+    ],
+    "initParams": {}
+  },
+  {
+    "order": 0,
+    "name": "MyFilter",
+    "class": "com.enonic.xp.web.impl.dispatch.status.FilterStatusReporterTest$MyFilter",
+    "patterns": [],
+    "connectors": [
+      "a",
+      "b"
+    ],
+    "initParams": {}
+  }
+]

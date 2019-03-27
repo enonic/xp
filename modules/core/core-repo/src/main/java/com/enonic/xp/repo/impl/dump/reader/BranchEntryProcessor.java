@@ -58,14 +58,16 @@ public class BranchEntryProcessor
         final Node node = NodeFactory.create( nodeVersion, NodeBranchEntry.create().
             nodeId( branchDumpEntry.getNodeId() ).
             nodePath( meta.getNodePath() ).
-            timestamp( nodeVersion.getTimestamp() ).
+            timestamp( meta.getTimestamp() ).
             nodeState( meta.getNodeState() ).
+            nodeVersionId( meta.getVersion() ).
             build() );
 
         try
         {
             this.nodeService.loadNode( LoadNodeParams.create().
                 node( node ).
+                nodeCommitId( meta.getNodeCommitId() ).
                 build() );
 
             validateOrAddBinary( nodeVersion, result );
@@ -83,7 +85,7 @@ public class BranchEntryProcessor
     {
         try
         {
-            return this.dumpReader.get( meta.getVersion() );
+            return this.dumpReader.get( repositoryId, meta.getNodeVersionKey() );
         }
         catch ( RepoLoadException e )
         {

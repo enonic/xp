@@ -21,12 +21,12 @@ class UnpublishTaskMessageGenerator
 
     void appendMessageForSingleSuccess( final StringBuilder builder, final UnpublishRunnableTaskResult result )
     {
-        builder.append( String.format( "Item \"%s\" was unpublished.", result.getSucceeded().get( 0 ).getName() ) );
+        builder.append( String.format( "Item \"%s\" is unpublished.", result.getSucceeded().get( 0 ).getName() ) );
     }
 
     void appendMessageForMultipleSuccess( final StringBuilder builder, final UnpublishRunnableTaskResult result )
     {
-        builder.append( String.format( "Unpublished %s items", result.getSuccessCount() ) );
+        builder.append( String.format( "%s items are unpublished", result.getSuccessCount() ) );
     }
 
 }

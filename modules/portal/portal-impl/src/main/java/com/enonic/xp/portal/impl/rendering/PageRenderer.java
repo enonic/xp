@@ -12,13 +12,14 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
-import com.enonic.xp.portal.impl.filter.FilterChainResolver;
-import com.enonic.xp.portal.impl.filter.FilterExecutor;
+import com.enonic.xp.portal.impl.processor.ProcessorChainResolver;
+import com.enonic.xp.portal.impl.processor.ResponseProcessorExecutor;
 import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.web.HttpStatus;
 
 import static com.enonic.xp.portal.RenderMode.EDIT;
+import static com.enonic.xp.portal.RenderMode.INLINE;
 import static com.enonic.xp.portal.RenderMode.PREVIEW;
 import static com.enonic.xp.portal.impl.postprocess.instruction.ComponentInstruction.COMPONENT_INSTRUCTION_PREFIX;
 import static com.enonic.xp.portal.impl.postprocess.instruction.ComponentInstruction.FRAGMENT_COMPONENT;
@@ -44,14 +45,14 @@ public final class PageRenderer
         PortalResponse portalResponse;
         if ( pageDescriptor != null )
         {
-            final ControllerScript controllerScript = this.controllerScriptFactory.fromDir( pageDescriptor.getResourceKey() );
+            final ControllerScript controllerScript = this.controllerScriptFactory.fromDir( pageDescriptor.getComponentPath() );
             portalResponse = controllerScript.execute( portalRequest );
         }
         else if ( portalRequest.getControllerScript() != null )
         {
             portalResponse = portalRequest.getControllerScript().execute( portalRequest );
         }
-        else if ( ( mode == EDIT || mode == PREVIEW ) && portalRequest.getContent().getType().isFragment() )
+        else if ( ( mode == EDIT || mode == PREVIEW || mode == INLINE ) && portalRequest.getContent().getType().isFragment() )
         {
             portalResponse = renderDefaultFragmentPage( portalRequest, content );
         }
@@ -128,13 +129,12 @@ public final class PageRenderer
     @Reference
     public void setScriptService( final PortalScriptService scriptService )
     {
-        this.filterExecutor = new FilterExecutor( scriptService );
+        this.processorExecutor = new ResponseProcessorExecutor( scriptService );
     }
 
-
     @Reference
-    public void setFilterChainResolver( final FilterChainResolver filterChainResolver )
+    public void setProcessorChainResolver( final ProcessorChainResolver processorChainResolver )
     {
-        this.filterChainResolver = filterChainResolver;
+        this.processorChainResolver = processorChainResolver;
     }
 }

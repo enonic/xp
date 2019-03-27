@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.junit.Before;
+import org.mockito.AdditionalAnswers;
 import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
@@ -41,7 +42,6 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.content.ContentInitializer;
-import com.enonic.xp.core.impl.content.ContentNodeTranslatorImpl;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
 import com.enonic.xp.core.impl.media.MediaInfoServiceImpl;
@@ -62,6 +62,7 @@ import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.repo.impl.binary.BinaryServiceImpl;
 import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;
+import com.enonic.xp.repo.impl.commit.CommitServiceImpl;
 import com.enonic.xp.repo.impl.elasticsearch.AbstractElasticsearchIntegrationTest;
 import com.enonic.xp.repo.impl.elasticsearch.IndexServiceInternalImpl;
 import com.enonic.xp.repo.impl.elasticsearch.search.SearchDaoImpl;
@@ -81,10 +82,11 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
+import com.enonic.xp.schema.xdata.XDataService;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
-import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Reference;
@@ -95,7 +97,7 @@ public class AbstractContentServiceTest
     extends AbstractElasticsearchIntegrationTest
 {
     public static final User TEST_DEFAULT_USER =
-        User.create().key( PrincipalKey.ofUser( UserStoreKey.system(), "test-user" ) ).login( "test-user" ).build();
+        User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "test-user" ) ).login( "test-user" ).build();
 
     public static final AuthenticationInfo TEST_DEFAULT_USER_AUTHINFO = AuthenticationInfo.create().
         principals( RoleKeys.AUTHENTICATED ).
@@ -145,7 +147,7 @@ public class AbstractContentServiceTest
 
     protected MixinService mixinService;
 
-    protected ContentNodeTranslatorImpl translator;
+    protected XDataService xDataService;
 
     protected ContentTypeServiceImpl contentTypeService;
 
@@ -154,7 +156,9 @@ public class AbstractContentServiceTest
     private VersionServiceImpl versionService;
 
     private BranchServiceImpl branchService;
-    
+
+    private CommitServiceImpl commitService;
+
     private IndexServiceInternalImpl indexServiceInternal;
 
     private IndexServiceImpl indexService;
@@ -203,6 +207,9 @@ public class AbstractContentServiceTest
         this.versionService = new VersionServiceImpl();
         this.versionService.setStorageDao( storageDao );
 
+        this.commitService = new CommitServiceImpl();
+        this.commitService.setStorageDao( storageDao );
+
         this.indexServiceInternal = new IndexServiceInternalImpl();
         this.indexServiceInternal.setClient( client );
 
@@ -220,6 +227,7 @@ public class AbstractContentServiceTest
         this.storageService = new NodeStorageServiceImpl();
         this.storageService.setBranchService( this.branchService );
         this.storageService.setVersionService( this.versionService );
+        this.storageService.setCommitService( this.commitService );
         this.storageService.setNodeVersionService( this.nodeDao );
         this.storageService.setIndexDataService( this.indexedDataService );
 
@@ -255,7 +263,9 @@ public class AbstractContentServiceTest
         this.nodeService.initialize();
 
         this.mixinService = Mockito.mock( MixinService.class );
-        Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).thenReturn( Form.create().build() );
+        Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
+
+        this.xDataService = Mockito.mock( XDataService.class );
 
         Map<String, List<String>> metadata = Maps.newHashMap();
         metadata.put( HttpHeaders.CONTENT_TYPE, Lists.newArrayList( "image/jpg" ) );
@@ -279,9 +289,6 @@ public class AbstractContentServiceTest
         this.contentTypeService = new ContentTypeServiceImpl();
         contentTypeService.setMixinService( mixinService );
 
-        this.translator = new ContentNodeTranslatorImpl();
-        this.translator.setNodeService( this.nodeService );
-
         this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
         this.partDescriptorService = Mockito.mock( PartDescriptorService.class );
         this.layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
@@ -291,27 +298,17 @@ public class AbstractContentServiceTest
         this.contentService.setMediaInfoService( mediaInfoService );
         this.contentService.setSiteService( siteService );
         this.contentService.setContentTypeService( contentTypeService );
-        this.contentService.setMixinService( mixinService );
-        this.contentService.setTranslator( this.translator );
+        this.contentService.setxDataService( xDataService );
         this.contentService.setPageDescriptorService( this.pageDescriptorService );
         this.contentService.setPartDescriptorService( this.partDescriptorService );
         this.contentService.setLayoutDescriptorService( this.layoutDescriptorService );
         this.contentService.setFormDefaultValuesProcessor( ( form, data ) -> {
         } );
+        this.contentService.setIndexService( indexService );
+        this.contentService.setNodeService( nodeService );
+        this.contentService.setRepositoryService( repositoryService );
+        this.contentService.initialize();
 
-
-        initializeRepository();
-    }
-
-
-    private void initializeRepository()
-    {
-        ContentInitializer.create().
-            setIndexService( indexService ).
-            setNodeService( nodeService ).
-            setRepositoryService( repositoryService ).
-            build().
-            initialize();
         waitForClusterHealth();
     }
 

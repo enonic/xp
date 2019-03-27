@@ -11,13 +11,16 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
+import com.enonic.xp.node.ApplyNodePermissionsResult;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
+import com.enonic.xp.node.DeleteNodeListener;
 import com.enonic.xp.node.DuplicateNodeParams;
 import com.enonic.xp.node.EditableNode;
 import com.enonic.xp.node.FindNodePathsByQueryResult;
@@ -28,6 +31,7 @@ import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.GetActiveNodeVersionsParams;
 import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.GetNodeVersionsParams;
+import com.enonic.xp.node.ImportNodeCommitParams;
 import com.enonic.xp.node.ImportNodeParams;
 import com.enonic.xp.node.ImportNodeResult;
 import com.enonic.xp.node.ImportNodeVersionParams;
@@ -36,6 +40,10 @@ import com.enonic.xp.node.LoadNodeResult;
 import com.enonic.xp.node.MoveNodeListener;
 import com.enonic.xp.node.MultiRepoNodeQuery;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeCommitEntry;
+import com.enonic.xp.node.NodeCommitId;
+import com.enonic.xp.node.NodeCommitQuery;
+import com.enonic.xp.node.NodeCommitQueryResult;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
 import com.enonic.xp.node.NodeId;
@@ -58,6 +66,7 @@ import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.ReorderChildNodesParams;
 import com.enonic.xp.node.ReorderChildNodesResult;
 import com.enonic.xp.node.ResolveSyncWorkResult;
+import com.enonic.xp.node.RoutableNodeVersionIds;
 import com.enonic.xp.node.SetNodeChildOrderParams;
 import com.enonic.xp.node.SetNodeStateParams;
 import com.enonic.xp.node.SetNodeStateResult;
@@ -102,6 +111,12 @@ class NodeServiceMock
     }
 
     @Override
+    public void importNodeCommit( final ImportNodeCommitParams params )
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
+    }
+
+    @Override
     public LoadNodeResult loadNode( final LoadNodeParams params )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
@@ -109,6 +124,12 @@ class NodeServiceMock
 
     @Override
     public NodeVersionQueryResult findVersions( final NodeVersionQuery nodeVersionQuery )
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
+    }
+
+    @Override
+    public NodeCommitQueryResult findCommits( final NodeCommitQuery nodeCommitQuery )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }
@@ -194,6 +215,12 @@ class NodeServiceMock
     @Override
     public NodeIds deleteById( final NodeId id )
     {
+        return deleteById( id, null );
+    }
+
+    @Override
+    public NodeIds deleteById( final NodeId id, final DeleteNodeListener deleteNodeListener )
+    {
         final Node toBeRemoved = this.nodeIdMap.get( id );
 
         final MockNodeTree<NodePath> treeNode = nodeTree.find( toBeRemoved.path() );
@@ -272,7 +299,7 @@ class NodeServiceMock
         final FindNodesByParentResult.Builder resultBuilder = FindNodesByParentResult.create();
 
         final Nodes.Builder nodesBuilder = Nodes.create();
-        getNodes(parentNode, nodesBuilder, params.isRecursive());
+        getNodes( parentNode, nodesBuilder, params.isRecursive() );
         final Nodes nodes = nodesBuilder.build();
 
         return resultBuilder.hits( nodes.getSize() ).
@@ -282,12 +309,14 @@ class NodeServiceMock
             totalHits( nodes.getSize() ).
             build();
     }
-    
-    private void getNodes(MockNodeTree<NodePath> parentNode, Nodes.Builder nodesBuilder, final boolean recursive) {
+
+    private void getNodes( MockNodeTree<NodePath> parentNode, Nodes.Builder nodesBuilder, final boolean recursive )
+    {
         for ( final MockNodeTree<NodePath> treeNode : parentNode.children )
         {
             nodesBuilder.add( nodePathMap.get( treeNode.data ) );
-            if (recursive) {
+            if ( recursive )
+            {
                 getNodes( treeNode, nodesBuilder, recursive );
             }
         }
@@ -342,7 +371,7 @@ class NodeServiceMock
     }
 
     @Override
-    public NodeVersion getByNodeVersion( final NodeVersionId nodeVersionId )
+    public NodeVersion getByNodeVersionKey( final NodeVersionKey nodeVersionKey )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }
@@ -360,9 +389,9 @@ class NodeServiceMock
     }
 
     @Override
-    public int applyPermissions( final ApplyNodePermissionsParams params )
+    public ApplyNodePermissionsResult applyPermissions( final ApplyNodePermissionsParams params )
     {
-        return 0;
+        return ApplyNodePermissionsResult.create().build();
     }
 
     @Override
@@ -435,7 +464,7 @@ class NodeServiceMock
     }
 
     @Override
-    public ByteSource getBinary( final NodeVersionId nodeVersionId, final BinaryReference reference )
+    public ByteSource getBinary( final NodeId nodeId, final NodeVersionId nodeVersionId, final BinaryReference reference )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }
@@ -489,7 +518,25 @@ class NodeServiceMock
     }
 
     @Override
-    public boolean deleteVersion( final NodeVersionId nodeVersionId )
+    public boolean deleteVersion( final NodeId nodeId, final NodeVersionId nodeVersionId )
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
+    }
+
+    @Override
+    public NodeCommitEntry commit( final NodeCommitEntry nodeCommitEntry, final RoutableNodeVersionIds routableNodeVersionIds )
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
+    }
+
+    @Override
+    public NodeCommitEntry commit( final NodeCommitEntry nodeCommitEntry, final NodeIds nodeIds )
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
+    }
+
+    @Override
+    public NodeCommitEntry getCommit( final NodeCommitId nodeCommitId )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }

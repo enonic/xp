@@ -2,6 +2,7 @@ package com.enonic.xp.admin.impl.rest.resource.content.task;
 
 import java.util.List;
 
+import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 
 class DeleteTaskMessageGenerator
@@ -29,21 +30,30 @@ class DeleteTaskMessageGenerator
         final List<ContentPath> deleted = result.getSucceeded();
         if ( pending != null && pending.size() == 1 )
         {
-            builder.append( String.format( "Item \"%s\" was marked for deletion.", pending.get( 0 ).getName() ) );
+            builder.append( String.format( "Item \"%s\" is marked for deletion.", pending.get( 0 ).getName() ) );
         }
         else if ( deleted != null && deleted.size() == 1 )
         {
-            builder.append( String.format( "Item \"%s\" was deleted.", deleted.get( 0 ).getName() ) );
+            ContentName name = ContentName.from( deleted.get( 0 ).getName() );
+            if ( name.isUnnamed() )
+            {
+                builder.append( "Item is deleted" );
+            }
+            else
+            {
+                builder.append( String.format( "Item \"%s\" is deleted.", name ) );
+            }
         }
     }
 
     void appendMessageForMultipleSuccess( final StringBuilder builder, final DeleteRunnableTaskResult result )
     {
         final List<ContentPath> pending = result.getPending();
-        builder.append( String.format( "Deleted %s items", result.getSuccessCount() ) );
+        builder.append( String.format( "%s items are deleted", result.getSuccessCount() ) );
         if ( pending.size() > 0 )
         {
-            builder.append( String.format( " ( Marked for deletion: %s )", getNameOrSize( pending ) ) );
+            final String isOrAre = pending.size() > 1 ? "are" : "is";
+            builder.append( String.format( " ( %s %s marked for deletion )", getNameOrSize( pending ), isOrAre ) );
         }
         builder.append( "." );
     }

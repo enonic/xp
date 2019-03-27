@@ -1,0 +1,17 @@
+{
+  "principals": [
+    {
+      "description": null,
+      "displayName": "Anonymous User",
+      "key": "user:system:anonymous",
+      "modifiedTime": null
+    },
+    {
+      "description": null,
+      "displayName": "everyone",
+      "key": "role:system.everyone",
+      "modifiedTime": null
+    }
+  ],
+  "totalSize": 0
+}

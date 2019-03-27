@@ -2,12 +2,12 @@
 <mixin xmlns="urn:enonic:xp:model:1.0">
   <display-name i18n="key.display-name">display name</display-name>
   <description i18n="key.description">description</description>
-  <items>
+  <form>
     <item-set name="mySet">
       <immutable>false</immutable>
       <occurrences minimum="0" maximum="1"/>
       <items>
-        <field-set name="myFieldSet">
+        <field-set>
           <label>My field set</label>
           <items>
             <input type="TextLine" name="myTextLine">
@@ -20,5 +20,5 @@
         </field-set>
       </items>
     </item-set>
-  </items>
+  </form>
 </mixin>

@@ -108,13 +108,13 @@ public class ModifyNodeHandlerTest
         mockGetNode( node );
         mockUpdateNode( node );
 
-        Mockito.when( this.repositoryService.get( RepositoryId.from( "cms-repo" ) ) ).
+        Mockito.when( this.repositoryService.get( RepositoryId.from( "com.enonic.cms.default" ) ) ).
             thenReturn( Repository.create().
-                id( RepositoryId.from( "cms-repo" ) ).
+                id( RepositoryId.from( "com.enonic.cms.default" ) ).
                 branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
                 build() );
 
-        runScript( "/site/lib/xp/examples/node/modify.js" );
+        runScript( "/lib/xp/examples/node/modify.js" );
 
         Mockito.verify( this.nodeService ).update( updateCaptor.capture() );
         assertEquals( updateCaptor.getValue().getId(), NodeId.from( "abc" ) );
@@ -164,13 +164,13 @@ public class ModifyNodeHandlerTest
         mockGetNode( node );
         mockUpdateNode( node );
 
-        Mockito.when( this.repositoryService.get( RepositoryId.from( "cms-repo" ) ) ).
+        Mockito.when( this.repositoryService.get( RepositoryId.from( "com.enonic.cms.default" ) ) ).
             thenReturn( Repository.create().
-                id( RepositoryId.from( "cms-repo" ) ).
+                id( RepositoryId.from( "com.enonic.cms.default" ) ).
                 branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
                 build() );
 
-        runScript( "/site/lib/xp/examples/node/modify-keep-types.js" );
+        runScript( "/lib/xp/examples/node/modify-keep-types.js" );
 
         Mockito.verify( this.nodeService ).update( updateCaptor.capture() );
         assertEquals( updateCaptor.getValue().getId(), NodeId.from( "abc" ) );

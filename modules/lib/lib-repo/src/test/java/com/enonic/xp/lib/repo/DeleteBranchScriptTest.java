@@ -25,7 +25,7 @@ public class DeleteBranchScriptTest
     @Test
     public void testExample()
     {
-        runScript( "/site/lib/xp/examples/repo/deleteBranch.js" );
+        runScript( "/lib/xp/examples/repo/deleteBranch.js" );
         Mockito.verify( this.repositoryService, Mockito.times( 1 ) ).deleteBranch( Mockito.any() );
     }
 }

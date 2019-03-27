@@ -38,7 +38,7 @@ goto fail
 
 :init
 set XP_INSTALL=%DIRNAME%..
-set DEFAULT_JAVA_OPTS=
+set DEFAULT_JAVA_OPTS=-XX:+CMSParallelRemarkEnabled -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSInitiatingOccupancyFraction=60 -XX:+ScavengeBeforeFullGC -XX:+CMSScavengeBeforeRemark
 set DEFAULT_JAVA_DEBUG_OPTS=-Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005
 
 if "%JAVA_OPTS%" == "" set JAVA_OPTS=%DEFAULT_JAVA_OPTS%
@@ -47,5 +47,5 @@ if "%JAVA_DEBUG_OPTS%" == "" set JAVA_DEBUG_OPTS=%DEFAULT_JAVA_DEBUG_OPTS%
 IF "%1"=="debug" set JAVA_OPTS=%JAVA_OPTS% %JAVA_DEBUG_OPTS%
 
 :execute
-"%JAVA_EXE%" %JAVA_OPTS% -Dxp.install="%XP_INSTALL%" -Dfile.encoding=UTF8 %XP_OPTS% -classpath "%XP_INSTALL%\lib\*" com.enonic.xp.launcher.LauncherMain %ARGS%
+"%JAVA_EXE%" %JAVA_OPTS% -Dxp.install="%XP_INSTALL%" -Dfile.encoding=UTF8 %XP_OPTS% -Dmapper.allow_dots_in_name=true -classpath "%XP_INSTALL%\lib\*" com.enonic.xp.launcher.LauncherMain %ARGS%
 endlocal

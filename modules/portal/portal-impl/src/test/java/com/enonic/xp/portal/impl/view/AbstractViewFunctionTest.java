@@ -25,7 +25,7 @@ public abstract class AbstractViewFunctionTest
         this.portalRequest = new PortalRequest();
         this.portalRequest.setBranch( Branch.from( "draft" ) );
         this.portalRequest.setApplicationKey( ApplicationKey.from( "myapplication" ) );
-        this.portalRequest.setBaseUri( "/portal" );
+        this.portalRequest.setBaseUri( "/site" );
         this.portalRequest.setContentPath( ContentPath.from( "context/path" ) );
 
         HttpServletRequest httpServletRequest = Mockito.mock( HttpServletRequest.class );

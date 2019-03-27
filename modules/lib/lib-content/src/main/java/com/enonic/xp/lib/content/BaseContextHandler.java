@@ -1,12 +1,8 @@
 package com.enonic.xp.lib.content;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.base.Strings;
 
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.context.Context;
-import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.lib.common.FormJsonToPropertyTreeTranslator;
@@ -14,9 +10,10 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.mixin.Mixin;
-import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.schema.xdata.XData;
+import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 
@@ -25,30 +22,15 @@ public abstract class BaseContextHandler
 {
     protected ContentService contentService;
 
-    private String branch;
-
     private ContentTypeService contentTypeService;
 
     private MixinService mixinService;
 
-    public void setBranch( final String branch )
-    {
-        this.branch = branch;
-    }
+    private XDataService xDataService;
 
     public final Object execute()
     {
-        if ( Strings.isNullOrEmpty( this.branch ) )
-        {
-            return doExecute();
-        }
-
-        final Context context = ContextBuilder.
-            from( ContextAccessor.current() ).
-            branch( this.branch ).
-            build();
-
-        return context.callWith( this::doExecute );
+        return this.doExecute();
     }
 
     protected abstract Object doExecute();
@@ -63,6 +45,11 @@ public abstract class BaseContextHandler
         return true;
     }
 
+    private boolean strictContentValidation( final ContentTypeName contentTypeName )
+    {
+        return ( !contentTypeName.isUnstructured() ) && strictDataValidation();
+    }
+
     protected PropertyTree translateToPropertyTree( final JsonNode json, final ContentTypeName contentTypeName )
     {
         final ContentType contentType = this.contentTypeService.getByName( GetContentTypeParams.from( contentTypeName ) );
@@ -72,20 +59,21 @@ public abstract class BaseContextHandler
             throw new IllegalArgumentException( "Content type not found [" + contentTypeName + "]" );
         }
 
-        final boolean strict = ( !contentType.getName().isUnstructured() ) && strictDataValidation();
-        return new FormJsonToPropertyTreeTranslator( inlineMixins( contentType.getForm() ), strict ).translate( json );
+        return new FormJsonToPropertyTreeTranslator( inlineMixins( contentType.getForm() ),
+                                                     strictContentValidation( contentTypeName ) ).translate( json );
     }
 
-    protected PropertyTree translateToPropertyTree( final JsonNode json, final MixinName mixinName )
+    protected PropertyTree translateToPropertyTree( final JsonNode json, final XDataName xDataName, final ContentTypeName contentTypeName )
     {
-        final Mixin mixin = this.mixinService.getByName( mixinName );
+        final XData xData = this.xDataService.getByName( xDataName );
 
-        if ( mixin == null )
+        if ( xData == null )
         {
-            throw new IllegalArgumentException( "Mixin not found [" + mixinName + "]" );
+            throw new IllegalArgumentException( "XData not found [" + xDataName + "]" );
         }
 
-        return new FormJsonToPropertyTreeTranslator( inlineMixins( mixin.getForm() ), true ).translate( json );
+        return new FormJsonToPropertyTreeTranslator( inlineMixins( xData.getForm() ),
+                                                     strictContentValidation( contentTypeName ) ).translate( json );
     }
 
     private Form inlineMixins( final Form form )
@@ -99,5 +87,6 @@ public abstract class BaseContextHandler
         this.contentService = context.getService( ContentService.class ).get();
         this.contentTypeService = context.getService( ContentTypeService.class ).get();
         this.mixinService = context.getService( MixinService.class ).get();
+        this.xDataService = context.getService( XDataService.class ).get();
     }
 }

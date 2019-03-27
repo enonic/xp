@@ -1,0 +1,13 @@
+apply from: "$rootDir/gradle/osgi.gradle"
+
+dependencies {
+    compile( 'net.sf.saxon:Saxon-HE:9.5.1-8' ) {
+        transitive = false
+    }
+}
+
+bundle {
+    instruction 'Bundle-Name', 'Saxon-HE'
+    instruction 'Export-Package', 'net.sf.saxon.*'
+    instruction 'Import-Package', '*;resolution:=optional'
+}

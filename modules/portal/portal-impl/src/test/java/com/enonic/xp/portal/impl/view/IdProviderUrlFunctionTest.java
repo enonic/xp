@@ -19,7 +19,7 @@ public class IdProviderUrlFunctionTest
     @Test
     public void testExecute()
     {
-        final Object result = execute( "idProviderUrl", "_userStore=system" );
-        assertEquals( "IdentityUrlParams{type=server, params={}, userStoreKey=system}", result );
+        final Object result = execute( "idProviderUrl", "_idProvider=system" );
+        assertEquals( "IdentityUrlParams{type=server, params={}, idProviderKey=system}", result );
     }
 }

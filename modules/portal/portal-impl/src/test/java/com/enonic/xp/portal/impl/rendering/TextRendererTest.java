@@ -5,6 +5,8 @@ import java.util.function.Function;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.macro.Macro;
 import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.portal.PortalRequest;
@@ -13,6 +15,9 @@ import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.url.PortalUrlServiceImpl;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.region.TextComponent;
+import com.enonic.xp.style.StyleDescriptor;
+import com.enonic.xp.style.StyleDescriptorService;
+import com.enonic.xp.style.StyleDescriptors;
 
 import static org.junit.Assert.*;
 
@@ -35,6 +40,7 @@ public class TextRendererTest
         portalResponse = PortalResponse.create().build();
         PortalUrlServiceImpl portalUrlService = new PortalUrlServiceImpl();
         portalUrlService.setMacroService( new MockMacroService() );
+        portalUrlService.setStyleDescriptorService( new MockStyleDescriptorService() );
         service = portalUrlService;
         portalRequest.setMode( RenderMode.LIVE );
     }
@@ -74,6 +80,22 @@ public class TextRendererTest
     {
         // setup
         portalRequest.setMode( RenderMode.PREVIEW );
+        textComponent = TextComponent.create().name( "myTextComponent" ).build();
+        renderer = new TextRenderer();
+        renderer.setPortalUrlService( service );
+
+        // exercise
+        portalResponse = renderer.render( textComponent, portalRequest );
+
+        // verify
+        assertEquals( "<section data-portal-component-type=\"text\"></section>", portalResponse.getAsString() );
+    }
+
+    @Test
+    public void textComponentWithNoTextAndRenderModeInline()
+    {
+        // setup
+        portalRequest.setMode( RenderMode.INLINE );
         textComponent = TextComponent.create().name( "myTextComponent" ).build();
         renderer = new TextRenderer();
         renderer.setPortalUrlService( service );
@@ -152,6 +174,28 @@ public class TextRendererTest
 
         @Override
         public String postProcessInstructionSerialize( final Macro macro )
+        {
+            return null;
+        }
+    }
+
+    private class MockStyleDescriptorService
+        implements StyleDescriptorService
+    {
+        @Override
+        public StyleDescriptor getByApplication( final ApplicationKey key )
+        {
+            return null;
+        }
+
+        @Override
+        public StyleDescriptors getByApplications( final ApplicationKeys applicationKeys )
+        {
+            return StyleDescriptors.empty();
+        }
+
+        @Override
+        public StyleDescriptors getAll()
         {
             return null;
         }

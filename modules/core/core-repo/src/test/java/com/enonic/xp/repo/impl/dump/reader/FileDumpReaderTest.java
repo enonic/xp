@@ -122,7 +122,7 @@ public class FileDumpReaderTest
     private void createMetaDataFile( final File parent )
         throws IOException
     {
-        final String content = "{\"xpVersion\":\"X.Y.Z.SNAPSHOT\",\"timestamp\":\"1970-01-01T00:00:00.000Z\"}";
+        final String content = "{\"xpVersion\":\"X.Y.Z.SNAPSHOT\",\"timestamp\":\"1970-01-01T00:00:00.000Z\",\"modelVersion\":\"1.0.0\"}";
         Files.write( content, new File( parent, "dump.json" ), Charset.defaultCharset() );
     }
 

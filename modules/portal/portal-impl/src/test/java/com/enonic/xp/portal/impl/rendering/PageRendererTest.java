@@ -17,13 +17,13 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
-import com.enonic.xp.portal.impl.filter.FilterChainResolver;
 import com.enonic.xp.portal.impl.postprocess.PostProcessorImpl;
 import com.enonic.xp.portal.impl.postprocess.TestPostProcessInjection;
+import com.enonic.xp.portal.impl.processor.ProcessorChainResolver;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.site.filter.FilterDescriptors;
+import com.enonic.xp.site.processor.ResponseProcessorDescriptors;
 
 import static org.junit.Assert.*;
 
@@ -43,7 +43,7 @@ public class PageRendererTest
         this.portalRequest = new PortalRequest();
         this.portalRequest.setBranch( Branch.from( "draft" ) );
         this.portalRequest.setApplicationKey( ApplicationKey.from( "myapplication" ) );
-        this.portalRequest.setBaseUri( "/portal" );
+        this.portalRequest.setBaseUri( "/site" );
         this.portalRequest.setContentPath( ContentPath.from( "context/path" ) );
         this.portalResponse = PortalResponse.create().build();
         this.portalRequest.setMode( RenderMode.EDIT );
@@ -109,9 +109,9 @@ public class PageRendererTest
         postProcessor.addInjection( new TestPostProcessInjection() );
         renderer.setPostProcessor( postProcessor );
 
-        final FilterChainResolver resolver = Mockito.mock( FilterChainResolver.class );
-        Mockito.when( resolver.resolve( this.portalRequest ) ).thenReturn( FilterDescriptors.empty() );
-        renderer.setFilterChainResolver( resolver );
+        final ProcessorChainResolver resolver = Mockito.mock( ProcessorChainResolver.class );
+        Mockito.when( resolver.resolve( this.portalRequest ) ).thenReturn( ResponseProcessorDescriptors.empty() );
+        renderer.setProcessorChainResolver( resolver );
     }
 
     private Content createContent( final String id, final String name, final String contentTypeName )
@@ -132,7 +132,7 @@ public class PageRendererTest
             modifiedTime( Instant.parse( "2013-08-23T12:55:09.162Z" ) ).
             modifier( PrincipalKey.from( "user:system:admin" ) ).
             type( ContentTypeName.from( contentTypeName ) ).
-            addExtraData( new ExtraData( MixinName.from( "myApplication:myField" ), metadata ) ).
+            addExtraData( new ExtraData( XDataName.from( "myApplication:myField" ), metadata ) ).
             build();
     }
 
@@ -154,7 +154,7 @@ public class PageRendererTest
             modifiedTime( Instant.parse( "2013-08-23T12:55:09.162Z" ) ).
             modifier( PrincipalKey.from( "user:system:admin" ) ).
             type( ContentTypeName.fragment() ).
-            addExtraData( new ExtraData( MixinName.from( "myApplication:myField" ), metadata ) ).
+            addExtraData( new ExtraData( XDataName.from( "myApplication:myField" ), metadata ) ).
             build();
     }
 }

@@ -1,0 +1,14 @@
+{
+  "components": [
+    {
+      "type": "page",
+      "path": "/",
+      "page": [
+        {
+          "template": "templateId",
+          "customized": "false"
+        }
+      ]
+    }
+  ]
+}

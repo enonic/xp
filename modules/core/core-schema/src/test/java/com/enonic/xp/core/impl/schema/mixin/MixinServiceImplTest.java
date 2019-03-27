@@ -12,12 +12,8 @@ import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.InlineMixin;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
-import com.enonic.xp.media.MediaInfo;
-import com.enonic.xp.schema.content.ContentType;
-import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
-import com.enonic.xp.schema.mixin.MixinNames;
 import com.enonic.xp.schema.mixin.Mixins;
 
 import static org.junit.Assert.*;
@@ -48,7 +44,7 @@ public class MixinServiceImplTest
     {
         final Mixins types1 = this.service.getAll();
         assertNotNull( types1 );
-        assertEquals( 3, types1.getSize() );
+        assertEquals( 0, types1.getSize() );
 
         final Mixins types2 = this.service.getByApplication( ApplicationKey.from( "other" ) );
         assertNotNull( types2 );
@@ -59,64 +55,13 @@ public class MixinServiceImplTest
     }
 
     @Test
-    public void testSystemMixins()
-    {
-        Mixins mixins = service.getAll();
-        assertNotNull( mixins );
-        assertEquals( 3, mixins.getSize() );
-
-        mixins = service.getByApplication( ApplicationKey.MEDIA_MOD );
-        assertNotNull( mixins );
-        assertEquals( 2, mixins.getSize() );
-
-        Mixin mixin = service.getByName( MediaInfo.GPS_INFO_METADATA_NAME );
-        assertNotNull( mixin );
-
-        mixin = service.getByName( MediaInfo.IMAGE_INFO_METADATA_NAME );
-        assertNotNull( mixin );
-
-        mixin = service.getByName( MediaInfo.CAMERA_INFO_METADATA_NAME );
-        assertNotNull( mixin );
-    }
-
-    @Test
-    public void testGetByContentType()
-    {
-        initializeApps();
-
-        final ContentType contentType = ContentType.create().
-            superType( ContentTypeName.structured() ).
-            name( "myapp2:mixin1" ).
-            metadata( MixinNames.from( "myapp2:mixin1", "myapp2:mixin3" ) ).
-            build();
-
-        final Mixins mixins = service.getByContentType( contentType );
-        assertNotNull( mixins );
-        assertEquals( 1, mixins.getSize() );
-    }
-
-    @Test
-    public void testGetByNames()
-    {
-        Mixins mixins = service.getByNames( MixinNames.from( MediaInfo.GPS_INFO_METADATA_NAME ) );
-        assertEquals( 1, mixins.getSize() );
-
-        mixins = service.getByNames( MixinNames.from( MediaInfo.GPS_INFO_METADATA_NAME, MediaInfo.IMAGE_INFO_METADATA_NAME ) );
-        assertEquals( 2, mixins.getSize() );
-
-        mixins = service.getByNames(
-            MixinNames.from( MediaInfo.GPS_INFO_METADATA_NAME, MediaInfo.IMAGE_INFO_METADATA_NAME, MediaInfo.CAMERA_INFO_METADATA_NAME ) );
-        assertEquals( 3, mixins.getSize() );
-    }
-
-    @Test
     public void testApplications()
     {
         initializeApps();
 
         final Mixins types1 = this.service.getAll();
         assertNotNull( types1 );
-        assertEquals( 11, types1.getSize() );
+        assertEquals( 8, types1.getSize() );
 
         final Mixins types2 = this.service.getByApplication( ApplicationKey.from( "myapp1" ) );
         assertNotNull( types2 );

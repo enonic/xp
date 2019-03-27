@@ -7,8 +7,10 @@ import org.junit.Test;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
+import com.enonic.xp.blob.NodeVersionKey;
+import com.enonic.xp.blob.NodeVersionKeys;
+import com.enonic.xp.blob.Segment;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.internal.blobstore.MemoryBlobRecord;
@@ -19,12 +21,11 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeType;
 import com.enonic.xp.node.NodeVersion;
-import com.enonic.xp.node.NodeVersionId;
-import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.NodeVersions;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 
-import static com.enonic.xp.repo.impl.node.NodeConstants.NODE_SEGMENT;
+import static com.enonic.xp.repo.impl.node.NodeConstants.INDEX_CONFIG_SEGMENT_LEVEL;
+import static com.enonic.xp.repo.impl.node.NodeConstants.NODE_SEGMENT_LEVEL;
 import static org.junit.Assert.*;
 
 public class NodeVersionServiceImplTest
@@ -52,12 +53,15 @@ public class NodeVersionServiceImplTest
             childOrder( ChildOrder.defaultOrder() ).
             data( data ).
             build();
-        final NodeVersionId nodeVersionId = nodeDao.store( nodeVersion );
+        final NodeVersionKey nodeVersionKey = nodeDao.store( nodeVersion, createInternalContext() );
 
-        assertNotNull( nodeVersionId );
+        assertNotNull( nodeVersionKey );
 
-        final BlobRecord blob = blobStore.getRecord( NODE_SEGMENT, BlobKey.from( nodeVersionId.toString() ) );
-        assertNotNull( blob );
+        final BlobRecord nodeBlobRecord = blobStore.getRecord( createSegment( NODE_SEGMENT_LEVEL ), nodeVersionKey.getNodeBlobKey() );
+        assertNotNull( nodeBlobRecord );
+        final BlobRecord indexBlobRecord =
+            blobStore.getRecord( createSegment( INDEX_CONFIG_SEGMENT_LEVEL ), nodeVersionKey.getIndexConfigBlobKey() );
+        assertNotNull( indexBlobRecord );
     }
 
     @Test
@@ -71,10 +75,9 @@ public class NodeVersionServiceImplTest
 
         final Node createdNode = createNode( createNodeParams );
 
-        final NodeVersion nodeVersion = nodeDao.get( createdNode.getNodeVersionId() );
+        final NodeVersion nodeVersion = nodeDao.get( getNodeVersionKey( createdNode ), createInternalContext() );
 
         assertEquals( createdNode.id(), nodeVersion.getId() );
-        assertEquals( createdNode.getNodeVersionId(), nodeVersion.getVersionId() );
         assertEquals( createdNode.data(), nodeVersion.getData() );
     }
 
@@ -98,14 +101,13 @@ public class NodeVersionServiceImplTest
         final Node createdNode2 = createNode( createNodeParams2 );
 
         final NodeVersions nodeVersions =
-            nodeDao.get( NodeVersionIds.from( createdNode.getNodeVersionId(), createdNode2.getNodeVersionId() ) );
+            nodeDao.get( NodeVersionKeys.from( getNodeVersionKey( createdNode ), getNodeVersionKey( createdNode2 ) ),
+                         createInternalContext() );
 
         assertEquals( 2, nodeVersions.getSize() );
         assertEquals( createdNode.id(), nodeVersions.get( 0 ).getId() );
-        assertEquals( createdNode.getNodeVersionId(), nodeVersions.get( 0 ).getVersionId() );
         assertEquals( createdNode.data(), nodeVersions.get( 0 ).getData() );
         assertEquals( createdNode2.id(), nodeVersions.get( 1 ).getId() );
-        assertEquals( createdNode2.getNodeVersionId(), nodeVersions.get( 1 ).getVersionId() );
         assertEquals( createdNode2.data(), nodeVersions.get( 1 ).getData() );
     }
 
@@ -119,21 +121,23 @@ public class NodeVersionServiceImplTest
             build();
 
         final Node createdNode = createNode( createNodeParams );
+        final NodeVersionKey nodeVersionKey = getNodeVersionKey( createdNode );
 
-        final BlobRecord blob = this.blobStore.getRecord( NODE_SEGMENT, BlobKey.from( createdNode.getNodeVersionId().toString() ) );
+        final Segment segment = createSegment( NODE_SEGMENT_LEVEL );
+        final BlobRecord blob = this.blobStore.getRecord( segment, nodeVersionKey.getNodeBlobKey() );
         byte[] blobData = blob.getBytes().read();
         blobData = Arrays.copyOf( blobData, blobData.length / 2 );
         final MemoryBlobRecord corruptedBlob = new MemoryBlobRecord( blob.getKey(), ByteSource.wrap( blobData ) );
-        this.blobStore.addRecord( NODE_SEGMENT, corruptedBlob );
+        this.blobStore.addRecord( segment, corruptedBlob );
 
         try
         {
-            nodeDao.get( createdNode.getNodeVersionId() );
+            nodeDao.get( nodeVersionKey, createInternalContext() );
             fail( "Expected exception" );
         }
         catch ( RuntimeException e )
         {
-            assertTrue( e.getMessage().startsWith( "Failed to load blob with key" ) );
+            assertTrue( e.getMessage().startsWith( "Failed to load blobs with keys" ) );
         }
     }
 
@@ -150,28 +154,36 @@ public class NodeVersionServiceImplTest
             build();
 
         final Node createdNode = createNode( createNodeParams );
+        final NodeVersionKey nodeVersionKey = getNodeVersionKey( createdNode );
 
-        final BlobRecord blob = this.blobStore.getRecord( NODE_SEGMENT, BlobKey.from( createdNode.getNodeVersionId().toString() ) );
+        final Segment segment = createSegment( NODE_SEGMENT_LEVEL );
+        final BlobRecord blob = this.blobStore.getRecord( segment, nodeVersionKey.getNodeBlobKey() );
         final byte[] blobData = blob.getBytes().read();
         final byte[] blobDataTruncated = Arrays.copyOf( blobData, blobData.length / 2 );
         final MemoryBlobRecord corruptedBlob = new MemoryBlobRecord( blob.getKey(), ByteSource.wrap( blobDataTruncated ) );
-        this.blobStore.addRecord( NODE_SEGMENT, corruptedBlob );
-        cachedBlobStore.invalidate( NODE_SEGMENT, blob.getKey() );
+        this.blobStore.addRecord( segment, corruptedBlob );
+        cachedBlobStore.invalidate( segment, blob.getKey() );
 
         try
         {
-            nodeDao.get( createdNode.getNodeVersionId() );
+            nodeDao.get( nodeVersionKey, createInternalContext() );
             fail( "Expected exception" );
         }
         catch ( RuntimeException e )
         {
-            assertTrue( e.getMessage().startsWith( "Failed to load blob with key" ) );
+            assertTrue( e.getMessage().startsWith( "Failed to load blobs with keys" ) );
         }
 
         // restore original blob in source blob store
-        this.blobStore.addRecord( NODE_SEGMENT, blob );
+        this.blobStore.addRecord( segment, blob );
 
-        final NodeVersion nodeVersion = nodeDao.get( createdNode.getNodeVersionId() );
+        final NodeVersion nodeVersion = nodeDao.get( nodeVersionKey, createInternalContext() );
         assertNotNull( nodeVersion );
+    }
+
+    private NodeVersionKey getNodeVersionKey( Node node )
+    {
+        return branchService.get( node.id(), createInternalContext() ).
+            getNodeVersionKey();
     }
 }

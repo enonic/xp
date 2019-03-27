@@ -1,0 +1,40 @@
+{
+  "page": {
+    "config": {
+    },
+    "customized": false,
+    "fragment": {
+      "type": "LayoutComponent",
+      "LayoutComponent": {
+        "name": "25/75",
+        "template": "com.enonic.app.features:layout-25-75",
+        "config": {
+        },
+        "region": [
+          {
+            "name": "left",
+            "component": {
+              "type": "PartComponent",
+              "PartComponent": {
+                "name": "Cities Distance Facet",
+                "template": "com.enonic.app.features:cities-distance-facet",
+                "config": {
+                }
+              }
+            }
+          },
+          {
+            "name": "right",
+            "component": {
+              "type": "TextComponent",
+              "TextComponent": {
+                "name": "Text",
+                "text": "<p>Lorem Ipsum</p>"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

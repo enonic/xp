@@ -28,7 +28,7 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
 
-@Path("/api/app")
+@Path("/app")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed(RoleKeys.ADMIN_ID)
 @Component(immediate = true, property = "group=api")

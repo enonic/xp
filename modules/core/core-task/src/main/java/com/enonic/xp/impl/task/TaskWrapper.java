@@ -1,5 +1,8 @@
 package com.enonic.xp.impl.task;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
@@ -17,6 +20,8 @@ import com.enonic.xp.trace.Tracer;
 final class TaskWrapper
     implements Runnable, ProgressReporter
 {
+    private final static Logger LOG = LoggerFactory.getLogger( TaskWrapper.class );
+
     private final TaskInfo taskInfo;
 
     private final TaskId taskId;
@@ -72,7 +77,10 @@ final class TaskWrapper
         }
         catch ( Throwable t )
         {
+            taskManager.updateProgress( taskId, t.getMessage() );
             taskManager.updateState( taskId, TaskState.FAILED );
+
+            LOG.error( "Error executing task [{}] '{}': {}", taskId.toString(), taskInfo.getDescription(), t.getMessage(), t );
         }
     }
 

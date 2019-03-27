@@ -1,5 +1,5 @@
 <node>
-  <childOrder>_manualordervalue DESC, _timestamp DESC</childOrder>
+  <childOrder>_manualordervalue DESC, _ts DESC</childOrder>
   <nodeType>content</nodeType>
   <permissions/>
   <data>

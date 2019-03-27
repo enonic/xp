@@ -3,6 +3,7 @@ package com.enonic.xp.admin.impl.rest.resource.content.page.layout;
 import javax.ws.rs.core.MediaType;
 
 import org.junit.Test;
+import org.mockito.AdditionalAnswers;
 import org.mockito.Mockito;
 
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
@@ -18,6 +19,7 @@ import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.LayoutDescriptors;
 import com.enonic.xp.region.RegionDescriptor;
 import com.enonic.xp.region.RegionDescriptors;
+import com.enonic.xp.schema.mixin.MixinService;
 
 public class LayoutDescriptorResourceTest
     extends AdminResourceTestSupport
@@ -26,15 +28,19 @@ public class LayoutDescriptorResourceTest
 
     private LocaleService localeService;
 
+    private MixinService mixinService;
+
     @Override
     protected Object getResourceInstance()
     {
         layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
         localeService = Mockito.mock( LocaleService.class );
+        mixinService = Mockito.mock( MixinService.class );
 
         final LayoutDescriptorResource resource = new LayoutDescriptorResource();
         resource.setLayoutDescriptorService( layoutDescriptorService );
         resource.setLocaleService( localeService );
+        resource.setMixinService( mixinService );
 
         return resource;
     }
@@ -55,6 +61,7 @@ public class LayoutDescriptorResourceTest
 
         final LayoutDescriptor layoutDescriptor = LayoutDescriptor.create().
             displayName( "Fancy layout" ).
+            description( "description" ).
             config( layoutForm ).
             regions( RegionDescriptors.create().
                 add( RegionDescriptor.create().name( "left" ).build() ).
@@ -64,6 +71,8 @@ public class LayoutDescriptorResourceTest
             build();
 
         Mockito.when( layoutDescriptorService.getByKey( key ) ).thenReturn( layoutDescriptor );
+        Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
+
 
         String jsonString = request().path( "content/page/layout/descriptor" ).
             queryParam( "key", "application:fancy-layout" ).get().getAsString();
@@ -90,6 +99,8 @@ public class LayoutDescriptorResourceTest
         final LayoutDescriptor layoutDescriptor = LayoutDescriptor.create().
             displayName( "Fancy layout" ).
             displayNameI18nKey( "key.display-name" ).
+            description( "description" ).
+            descriptionI18nKey( "key.description" ).
             config( layoutForm ).
             regions( RegionDescriptors.create().
                 add( RegionDescriptor.create().name( "left" ).build() ).
@@ -104,8 +115,10 @@ public class LayoutDescriptorResourceTest
         Mockito.when( messageBundle.localize( "key.label" ) ).thenReturn( "translated.label" );
         Mockito.when( messageBundle.localize( "key.help-text" ) ).thenReturn( "translated.helpText" );
         Mockito.when( messageBundle.localize( "key.display-name" ) ).thenReturn( "translated.displayName" );
+        Mockito.when( messageBundle.localize( "key.description" ) ).thenReturn( "translated.description" );
 
         Mockito.when( this.localeService.getBundle( Mockito.any(), Mockito.any() ) ).thenReturn( messageBundle );
+        Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
 
         String jsonString = request().path( "content/page/layout/descriptor" ).
             queryParam( "key", "application:fancy-layout" ).get().getAsString();
@@ -123,6 +136,7 @@ public class LayoutDescriptorResourceTest
 
         final LayoutDescriptor layoutDescriptor1 = LayoutDescriptor.create().
             displayName( "Fancy layout" ).
+            description( "description 1" ).
             config( layoutForm ).
             regions( RegionDescriptors.create().
                 add( RegionDescriptor.create().name( "left" ).build() ).
@@ -133,6 +147,7 @@ public class LayoutDescriptorResourceTest
 
         final LayoutDescriptor layoutDescriptor2 = LayoutDescriptor.create().
             displayName( "Putty layout" ).
+            description( "description 2" ).
             config( layoutForm ).
             regions( RegionDescriptors.create().
                 add( RegionDescriptor.create().name( "top" ).build() ).
@@ -147,6 +162,7 @@ public class LayoutDescriptorResourceTest
             LayoutDescriptors.from( layoutDescriptor2 ) );
         Mockito.when( layoutDescriptorService.getByApplication( ApplicationKey.from( "application3" ) ) ).thenReturn(
             LayoutDescriptors.empty() );
+        Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
 
         String jsonString = request().path( "content/page/layout/descriptor/list/by_applications" ).
             entity( readFromFile( "get_by_applications_params.json" ), MediaType.APPLICATION_JSON_TYPE ).

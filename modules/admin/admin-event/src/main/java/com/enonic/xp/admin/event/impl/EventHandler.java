@@ -25,7 +25,7 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.web.websocket.EndpointFactory;
 import com.enonic.xp.web.websocket.WebSocketService;
 
-@Component(immediate = true, service = {Servlet.class, WebSocketManager.class})
+@Component(immediate = true, service = {Servlet.class, WebSocketManager.class}, property = {"connector=xp"})
 @Order( -100 )
 @WebServlet("/admin/event")
 public final class EventHandler
@@ -44,7 +44,7 @@ public final class EventHandler
     protected void doGet( final HttpServletRequest req, final HttpServletResponse res )
         throws ServletException, IOException
     {
-        if ( !req.isUserInRole( RoleKeys.ADMIN_LOGIN.getId() ) )
+        if ( !req.isUserInRole( RoleKeys.ADMIN_LOGIN.getId() ) && !req.isUserInRole( RoleKeys.ADMIN.getId() ) )
         {
             res.sendError( HttpServletResponse.SC_FORBIDDEN );
             return;

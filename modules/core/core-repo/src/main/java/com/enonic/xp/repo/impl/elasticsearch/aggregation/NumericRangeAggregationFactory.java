@@ -25,9 +25,9 @@ class NumericRangeAggregationFactory
         for ( final Range.Bucket bucket : buckets )
         {
             final NumericRangeBucket.Builder builder = NumericRangeBucket.create().
-                from( bucket.getFrom() ).
-                to( bucket.getTo() ).
-                key( bucket.getKey() ).
+                from( (Number) bucket.getFrom() ).
+                to( (Number) bucket.getTo() ).
+                key( bucket.getKeyAsString() ).
                 docCount( bucket.getDocCount() );
 
             doAddSubAggregations( bucket, builder );

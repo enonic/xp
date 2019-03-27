@@ -24,8 +24,8 @@ public final class TraceWebFilter
     @Override
     protected boolean canHandle( final WebRequest req )
     {
-        return req.getRawPath().startsWith( "/portal/" ) || req.getRawPath().startsWith( "/app/" ) ||
-            req.getRawPath().startsWith( "/admin/portal/" ) || req.getRawPath().startsWith( "/admin/tool/" );
+        return req.getRawPath().startsWith( "/site/" ) || req.getRawPath().startsWith( "/webapp/" ) ||
+            req.getRawPath().startsWith( "/admin/site/" ) || req.getRawPath().startsWith( "/admin/tool/" );
     }
 
     @Override
@@ -50,6 +50,7 @@ public final class TraceWebFilter
         return Tracer.traceEx( trace, () -> {
             final WebResponse webResponse = chain.handle( req, res );
             addTraceInfo( trace, webResponse );
+            trace.put( "httpResponse", webResponse );
             return webResponse;
         } );
     }

@@ -6,11 +6,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Strings;
-import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
-import com.enonic.xp.security.UserStore;
+import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.web.websocket.WebSocketContext;
 
 @Beta
@@ -48,11 +48,11 @@ public class WebRequest
 
     private WebSocketContext webSocketContext;
 
-    private UserStore userStore;
+    private IdProvider idProvider;
 
     public WebRequest()
     {
-        this.params = HashMultimap.create();
+        this.params = LinkedHashMultimap.create();
         this.headers = Maps.newHashMap();
         this.cookies = Maps.newHashMap();
     }
@@ -75,7 +75,7 @@ public class WebRequest
         this.body = webRequest.body;
         this.rawRequest = webRequest.rawRequest;
         this.webSocketContext = webRequest.webSocketContext;
-        this.userStore = webRequest.userStore;
+        this.idProvider = webRequest.idProvider;
     }
 
     public HttpMethod getMethod()
@@ -168,14 +168,14 @@ public class WebRequest
         return this.headers;
     }
 
-    public UserStore getUserStore()
+    public IdProvider getIdProvider()
     {
-        return userStore;
+        return idProvider;
     }
 
-    public void setUserStore( final UserStore userStore )
+    public void setIdProvider( final IdProvider idProvider )
     {
-        this.userStore = userStore;
+        this.idProvider = idProvider;
     }
 
     public Map<String, String> getCookies()

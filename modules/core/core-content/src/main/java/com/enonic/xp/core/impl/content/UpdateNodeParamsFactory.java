@@ -16,7 +16,7 @@ import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeService;
-import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteService;
 
@@ -26,7 +26,7 @@ public class UpdateNodeParamsFactory
 
     private final ContentTypeService contentTypeService;
 
-    private final MixinService mixinService;
+    private final XDataService xDataService;
 
     private final PageDescriptorService pageDescriptorService;
 
@@ -36,16 +36,17 @@ public class UpdateNodeParamsFactory
 
     private final SiteService siteService;
 
-    private static final ContentDataSerializer CONTENT_DATA_SERIALIZER = new ContentDataSerializer();
+    private final ContentDataSerializer contentDataSerializer;
 
     public UpdateNodeParamsFactory( final Builder builder )
     {
         this.params = builder.params;
         this.contentTypeService = builder.contentTypeService;
-        this.mixinService = builder.mixinService;
+        this.xDataService = builder.xDataService;
         this.pageDescriptorService = builder.pageDescriptorService;
         this.partDescriptorService = builder.partDescriptorService;
         this.layoutDescriptorService = builder.layoutDescriptorService;
+        this.contentDataSerializer = builder.contentDataSerializer;
         this.siteService = builder.siteService;
     }
 
@@ -79,7 +80,7 @@ public class UpdateNodeParamsFactory
     {
         final Content content = params.getEditedContent();
 
-        final PropertyTree nodeData = CONTENT_DATA_SERIALIZER.toUpdateNodeData( params );
+        final PropertyTree nodeData = contentDataSerializer.toUpdateNodeData( params );
 
         final ContentIndexConfigFactory indexConfigFactory = ContentIndexConfigFactory.create().
             contentTypeService( contentTypeService ).
@@ -87,11 +88,12 @@ public class UpdateNodeParamsFactory
             partDescriptorService( partDescriptorService ).
             layoutDescriptorService( layoutDescriptorService ).
             siteService( this.siteService ).
-            mixinService( this.mixinService ).
+            xDataService( this.xDataService ).
             contentTypeName( content.getType() ).
-            page( content.getPage() != null ? content.getPage() : null ).
+            page( content.getPage() ).
             siteConfigs( content.isSite() ? ( (Site) content ).getSiteConfigs() : null ).
             extraDatas( content.getAllExtraData()).
+            language( content.getLanguage() != null ? content.getLanguage().getLanguage() : null ).
             build();
 
         return editableNode -> {
@@ -108,13 +110,15 @@ public class UpdateNodeParamsFactory
 
         private ContentTypeService contentTypeService;
 
-        private MixinService mixinService;
+        private XDataService xDataService;
 
         private PageDescriptorService pageDescriptorService;
 
         private PartDescriptorService partDescriptorService;
 
         private LayoutDescriptorService layoutDescriptorService;
+
+        private ContentDataSerializer contentDataSerializer;
 
         private SiteService siteService;
 
@@ -129,9 +133,9 @@ public class UpdateNodeParamsFactory
             return this;
         }
 
-        Builder mixinService( final MixinService value )
+        Builder xDataService( final XDataService value )
         {
-            this.mixinService = value;
+            this.xDataService = value;
             return this;
         }
 
@@ -159,14 +163,21 @@ public class UpdateNodeParamsFactory
             return this;
         }
 
+        Builder contentDataSerializer( final ContentDataSerializer contentDataSerializer )
+        {
+            this.contentDataSerializer = contentDataSerializer;
+            return this;
+        }
+
         void validate()
         {
             Preconditions.checkNotNull( params );
             Preconditions.checkNotNull( contentTypeService );
-            Preconditions.checkNotNull( mixinService );
+            Preconditions.checkNotNull( xDataService );
             Preconditions.checkNotNull( pageDescriptorService );
             Preconditions.checkNotNull( partDescriptorService );
             Preconditions.checkNotNull( layoutDescriptorService );
+            Preconditions.checkNotNull( contentDataSerializer );
         }
 
         public UpdateNodeParamsFactory build()

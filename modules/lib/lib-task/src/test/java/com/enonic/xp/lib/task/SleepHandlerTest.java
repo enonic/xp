@@ -18,14 +18,14 @@ public class SleepHandlerTest
     @Test
     public void testExample()
     {
-        runScript( "/site/lib/xp/examples/task/sleep.js" );
+        runScript( "/lib/xp/examples/task/sleep.js" );
     }
 
     @Test
     public void testSleep200()
         throws Exception
     {
-        runFunction( "/site/test/sleep-test.js", "sleep" );
+        runFunction( "/test/sleep-test.js", "sleep" );
     }
 
 }

@@ -4,23 +4,35 @@ import java.time.Instant;
 
 import com.google.common.annotations.Beta;
 
+import com.enonic.xp.blob.BlobKeys;
+import com.enonic.xp.blob.NodeVersionKey;
+
 @Beta
 public class NodeVersionMetadata
     implements Comparable<NodeVersionMetadata>
 {
     private final NodeVersionId nodeVersionId;
 
+    private final NodeVersionKey nodeVersionKey;
+
+    private final BlobKeys binaryBlobKeys;
+
     private final NodeId nodeId;
 
     private final NodePath nodePath;
+
+    private final NodeCommitId nodeCommitId;
 
     private final Instant timestamp;
 
     private NodeVersionMetadata( Builder builder )
     {
         nodeVersionId = builder.nodeVersionId;
+        nodeVersionKey = builder.nodeVersionKey;
+        binaryBlobKeys = builder.binaryBlobKeys;
         nodeId = builder.nodeId;
         nodePath = builder.nodePath;
+        nodeCommitId = builder.nodeCommitId;
         timestamp = builder.timestamp;
     }
 
@@ -29,9 +41,24 @@ public class NodeVersionMetadata
         return new Builder();
     }
 
+    public static Builder create( NodeVersionMetadata nodeVersionMetadata )
+    {
+        return new Builder( nodeVersionMetadata );
+    }
+
     public NodeVersionId getNodeVersionId()
     {
         return nodeVersionId;
+    }
+
+    public NodeVersionKey getNodeVersionKey()
+    {
+        return nodeVersionKey;
+    }
+
+    public BlobKeys getBinaryBlobKeys()
+    {
+        return binaryBlobKeys;
     }
 
     public NodeId getNodeId()
@@ -42,6 +69,11 @@ public class NodeVersionMetadata
     public NodePath getNodePath()
     {
         return nodePath;
+    }
+
+    public NodeCommitId getNodeCommitId()
+    {
+        return nodeCommitId;
     }
 
     public Instant getTimestamp()
@@ -70,9 +102,15 @@ public class NodeVersionMetadata
     {
         private NodeVersionId nodeVersionId;
 
+        private NodeVersionKey nodeVersionKey;
+
+        private BlobKeys binaryBlobKeys;
+
         private NodeId nodeId;
 
         private NodePath nodePath;
+
+        private NodeCommitId nodeCommitId;
 
         private Instant timestamp;
 
@@ -80,9 +118,32 @@ public class NodeVersionMetadata
         {
         }
 
+        private Builder( NodeVersionMetadata nodeVersionMetadata )
+        {
+            nodeVersionId = nodeVersionMetadata.nodeVersionId;
+            nodeVersionKey = nodeVersionMetadata.nodeVersionKey;
+            binaryBlobKeys = nodeVersionMetadata.binaryBlobKeys;
+            nodeId = nodeVersionMetadata.nodeId;
+            nodePath = nodeVersionMetadata.nodePath;
+            nodeCommitId = nodeVersionMetadata.nodeCommitId;
+            timestamp = nodeVersionMetadata.timestamp;
+        }
+
         public Builder nodeVersionId( NodeVersionId nodeVersionId )
         {
             this.nodeVersionId = nodeVersionId;
+            return this;
+        }
+
+        public Builder nodeVersionKey( NodeVersionKey nodeVersionKey )
+        {
+            this.nodeVersionKey = nodeVersionKey;
+            return this;
+        }
+
+        public Builder binaryBlobKeys( BlobKeys binaryBlobKeys )
+        {
+            this.binaryBlobKeys = binaryBlobKeys;
             return this;
         }
 
@@ -95,6 +156,12 @@ public class NodeVersionMetadata
         public Builder nodePath( NodePath nodePath )
         {
             this.nodePath = nodePath;
+            return this;
+        }
+
+        public Builder nodeCommitId( NodeCommitId nodeCommitId )
+        {
+            this.nodeCommitId = nodeCommitId;
             return this;
         }
 
@@ -128,11 +195,23 @@ public class NodeVersionMetadata
         {
             return false;
         }
+        if ( nodeVersionKey != null ? !nodeVersionKey.equals( that.nodeVersionKey ) : that.nodeVersionKey != null )
+        {
+            return false;
+        }
+        if ( binaryBlobKeys != null ? !binaryBlobKeys.equals( that.binaryBlobKeys ) : that.binaryBlobKeys != null )
+        {
+            return false;
+        }
         if ( nodeId != null ? !nodeId.equals( that.nodeId ) : that.nodeId != null )
         {
             return false;
         }
         if ( nodePath != null ? !nodePath.equals( that.nodePath ) : that.nodePath != null )
+        {
+            return false;
+        }
+        if ( nodeCommitId != null ? !nodeCommitId.equals( that.nodeCommitId ) : that.nodeCommitId != null )
         {
             return false;
         }
@@ -144,8 +223,11 @@ public class NodeVersionMetadata
     public int hashCode()
     {
         int result = nodeVersionId != null ? nodeVersionId.hashCode() : 0;
+        result = 31 * result + ( nodeVersionKey != null ? nodeVersionKey.hashCode() : 0 );
+        result = 31 * result + ( binaryBlobKeys != null ? binaryBlobKeys.hashCode() : 0 );
         result = 31 * result + ( nodeId != null ? nodeId.hashCode() : 0 );
         result = 31 * result + ( nodePath != null ? nodePath.hashCode() : 0 );
+        result = 31 * result + ( nodeCommitId != null ? nodeCommitId.hashCode() : 0 );
         result = 31 * result + ( timestamp != null ? timestamp.hashCode() : 0 );
         return result;
     }

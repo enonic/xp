@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <x-data xmlns="urn:enonic:xp:model:1.0">
   <display-name>X-Data Address</display-name>
-  <items>
+  <form>
     <item-set name="address">
       <label>Address</label>
       <immutable>false</immutable>
@@ -35,6 +35,5 @@
         </input>
       </items>
     </item-set>
-  </items>
-  <allowContentType>${app}:*</allowContentType>
+  </form>
 </x-data>

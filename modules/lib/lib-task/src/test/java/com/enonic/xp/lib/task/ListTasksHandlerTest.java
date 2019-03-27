@@ -48,7 +48,7 @@ public class ListTasksHandlerTest
 
         Mockito.when( this.taskService.getAllTasks() ).thenReturn( taskList() ).thenReturn( Collections.singletonList( taskInfo ) );
 
-        runScript( "/site/lib/xp/examples/task/list.js" );
+        runScript( "/lib/xp/examples/task/list.js" );
     }
 
     @Test
@@ -57,7 +57,7 @@ public class ListTasksHandlerTest
     {
         Mockito.when( this.taskService.getAllTasks() ).thenReturn( taskList() );
 
-        runFunction( "/site/test/list-test.js", "getExistingTasks" );
+        runFunction( "/test/list-test.js", "getExistingTasks" );
     }
 
     @Test
@@ -66,7 +66,7 @@ public class ListTasksHandlerTest
     {
         Mockito.when( this.taskService.getAllTasks() ).thenReturn( new ArrayList<>() );
 
-        runFunction( "/site/test/list-test.js", "listNone" );
+        runFunction( "/test/list-test.js", "listNone" );
     }
 
     private List<TaskInfo> taskList()

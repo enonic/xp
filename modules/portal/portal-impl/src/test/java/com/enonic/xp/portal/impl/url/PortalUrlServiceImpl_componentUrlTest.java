@@ -25,7 +25,7 @@ public class PortalUrlServiceImpl_componentUrlTest
             param( "a", 3 );
 
         final String url = this.service.componentUrl( params );
-        assertEquals( "/portal/draft/context/path?a=3", url );
+        assertEquals( "/site/default/draft/context/path?a=3", url );
     }
 
     @Test
@@ -37,7 +37,7 @@ public class PortalUrlServiceImpl_componentUrlTest
             portalRequest( this.portalRequest );
 
         final String url = this.service.componentUrl( params );
-        assertEquals( "/portal/draft/context/path/_/component/main/0", url );
+        assertEquals( "/site/default/draft/context/path/_/component/main/0", url );
     }
 
     @Test
@@ -48,7 +48,7 @@ public class PortalUrlServiceImpl_componentUrlTest
             component( "other/1" );
 
         final String url = this.service.componentUrl( params );
-        assertEquals( "/portal/draft/context/path/_/component/other/1", url );
+        assertEquals( "/site/default/draft/context/path/_/component/other/1", url );
     }
 
     @Test
@@ -60,7 +60,7 @@ public class PortalUrlServiceImpl_componentUrlTest
             component( "other/1" );
 
         final String url = this.service.componentUrl( params );
-        assertEquals( "/portal/draft/a/b/_/component/other/1", url );
+        assertEquals( "/site/default/draft/a/b/_/component/other/1", url );
     }
 
     @Test
@@ -75,7 +75,7 @@ public class PortalUrlServiceImpl_componentUrlTest
             component( "other/1" );
 
         final String url = this.service.componentUrl( params );
-        assertEquals( "/portal/draft/a/b/mycontent/_/component/other/1", url );
+        assertEquals( "/site/default/draft/a/b/mycontent/_/component/other/1", url );
     }
 
     @Test
@@ -90,7 +90,7 @@ public class PortalUrlServiceImpl_componentUrlTest
         ServletRequestHolder.setRequest( req );
 
         final String url = this.service.componentUrl( params );
-        assertEquals( "http://localhost/portal/draft/context/path?a=3", url );
+        assertEquals( "http://localhost/site/default/draft/context/path?a=3", url );
     }
 
     private void addComponent()

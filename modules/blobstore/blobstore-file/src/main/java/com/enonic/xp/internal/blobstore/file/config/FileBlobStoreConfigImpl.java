@@ -6,7 +6,6 @@ import java.util.Map;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 
-import com.enonic.xp.blob.Segment;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.config.ConfigInterpolator;
 import com.enonic.xp.config.Configuration;
@@ -29,18 +28,6 @@ public final class FileBlobStoreConfigImpl
             build();
 
         this.config = new ConfigInterpolator().interpolate( this.config );
-    }
-
-    @Override
-    public Map<Segment, String> segments()
-    {
-        return SegmentsMapFactory.create().
-            configuration( config ).
-            configName( BASE_DIR ).
-            collectionPrefix( "baseDir" + "." ).
-            requiredSegments( Segment.DEFAULT_REQUIRED_SEGMENTS ).
-            build().
-            execute();
     }
 
     @Override

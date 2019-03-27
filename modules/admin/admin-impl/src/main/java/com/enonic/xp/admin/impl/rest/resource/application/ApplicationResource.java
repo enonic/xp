@@ -1,9 +1,8 @@
 package com.enonic.xp.admin.impl.rest.resource.application;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
-import java.time.Instant;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,7 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.io.ByteSource;
-import com.google.common.io.ByteStreams;
 
 import com.enonic.xp.admin.impl.market.MarketService;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
@@ -48,6 +46,7 @@ import com.enonic.xp.admin.impl.rest.resource.macro.MacroIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
+import com.enonic.xp.admin.impl.rest.resource.schema.mixin.InlineMixinResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.relationship.RelationshipTypeIconResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.relationship.RelationshipTypeIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.tool.json.AdminToolDescriptorJson;
@@ -65,11 +64,11 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
-import com.enonic.xp.auth.AuthDescriptor;
-import com.enonic.xp.auth.AuthDescriptorService;
 import com.enonic.xp.descriptor.Descriptors;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.icon.Icon;
+import com.enonic.xp.idprovider.IdProviderDescriptor;
+import com.enonic.xp.idprovider.IdProviderDescriptorService;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.macro.MacroDescriptorService;
 import com.enonic.xp.portal.script.PortalScriptService;
@@ -77,6 +76,7 @@ import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.content.ContentTypeService;
+import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.security.RoleKeys;
@@ -89,7 +89,7 @@ import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
 
 @Path(ResourceConstants.REST_ROOT + "application")
 @Produces(MediaType.APPLICATION_JSON)
-@RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
+@RolesAllowed({RoleKeys.ADMIN_LOGIN_ID, RoleKeys.ADMIN_ID})
 @Component(immediate = true, property = "group=admin")
 public final class ApplicationResource
     implements JaxRsComponent
@@ -97,8 +97,6 @@ public final class ApplicationResource
     private final static String[] ALLOWED_PROTOCOLS = {"http", "https"};
 
     private final static Logger LOG = LoggerFactory.getLogger( ApplicationResource.class );
-
-    private final Icon defaultAppIcon;
 
     private ApplicationService applicationService;
 
@@ -108,7 +106,7 @@ public final class ApplicationResource
 
     private MarketService marketService;
 
-    private AuthDescriptorService authDescriptorService;
+    private IdProviderDescriptorService idProviderDescriptorService;
 
     private ApplicationInfoService applicationInfoService;
 
@@ -122,6 +120,8 @@ public final class ApplicationResource
 
     private AdminToolDescriptorService adminToolDescriptorService;
 
+    private MixinService mixinService;
+
     private ApplicationIconUrlResolver iconUrlResolver;
 
     private RelationshipTypeIconUrlResolver relationshipTypeIconUrlResolver;
@@ -130,10 +130,10 @@ public final class ApplicationResource
 
     private ContentTypeIconUrlResolver contentTypeIconUrlResolver;
 
+    private static final ApplicationImageHelper HELPER = new ApplicationImageHelper();
+
     public ApplicationResource()
     {
-        final byte[] image = loadDefaultImage( "app_default.svg" );
-        defaultAppIcon = Icon.from( image, "image/svg+xml", Instant.ofEpochMilli( 0L ) );
         iconUrlResolver = new ApplicationIconUrlResolver();
     }
 
@@ -154,7 +154,7 @@ public final class ApplicationResource
             if ( !application.isSystem() )
             {
                 final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( applicationKey );
-                final AuthDescriptor authDescriptor = this.authDescriptorService.getDescriptor( applicationKey );
+                final IdProviderDescriptor idProviderDescriptor = this.idProviderDescriptorService.getDescriptor( applicationKey );
                 final boolean localApplication = this.applicationService.isLocalApplication( applicationKey );
                 final ApplicationDescriptor appDescriptor = this.applicationDescriptorService.get( applicationKey );
 
@@ -163,9 +163,10 @@ public final class ApplicationResource
                     setLocal( localApplication ).
                     setApplicationDescriptor( appDescriptor ).
                     setSiteDescriptor( siteDescriptor ).
-                    setAuthDescriptor( authDescriptor ).
+                    setIdProviderDescriptor( idProviderDescriptor ).
                     setIconUrlResolver( this.iconUrlResolver ).
                     setLocaleMessageResolver( new LocaleMessageResolver( this.localeService, applicationKey ) ).
+                    setInlineMixinResolver( new InlineMixinResolver( this.mixinService ) ).
                     build() );
             }
         }
@@ -197,9 +198,10 @@ public final class ApplicationResource
             setContentTypeIconUrlResolver( this.contentTypeIconUrlResolver ).
             setMacroIconUrlResolver( this.macroIconUrlResolver ).
             setRelationshipTypeIconUrlResolver( this.relationshipTypeIconUrlResolver ).
-            setLocaleMessageResolver( new LocaleMessageResolver( this.localeService, applicationKey ) );
+            setLocaleMessageResolver( new LocaleMessageResolver( this.localeService, applicationKey ) ).
+            setInlineMixinResolver( new InlineMixinResolver( this.mixinService ) );
 
-        final Resource resource = resourceService.getResource( ResourceKey.from( applicationKey, "/main.js" ) );
+        final Resource resource = resourceService.getResource( ResourceKey.from( applicationKey, "/webapp/webapp.js" ) );
         if ( resource != null && resource.exists() )
         {
             final ScriptExports exports = portalScriptService.execute( resource.getKey() );
@@ -209,12 +211,12 @@ public final class ApplicationResource
                 if ( "localhost".equals( request.getServerName() ) )
                 {
                     builder.setDeploymentUrl(
-                        request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/app/" +
+                        request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/webapp/" +
                             applicationKey.toString() );
                 }
                 else
                 {
-                    builder.setDeploymentUrl( "app/" + applicationKey.toString() );
+                    builder.setDeploymentUrl( "webapp/" + applicationKey.toString() );
                 }
             }
         }
@@ -247,7 +249,7 @@ public final class ApplicationResource
 
         final boolean local = this.applicationService.isLocalApplication( appKey );
         final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( appKey );
-        final AuthDescriptor authDescriptor = this.authDescriptorService.getDescriptor( appKey );
+        final IdProviderDescriptor idProviderDescriptor = this.idProviderDescriptorService.getDescriptor( appKey );
         final ApplicationDescriptor appDescriptor = applicationDescriptorService.get( appKey );
 
         return ApplicationJson.create().
@@ -255,14 +257,16 @@ public final class ApplicationResource
             setLocal( local ).
             setApplicationDescriptor( appDescriptor ).
             setSiteDescriptor( siteDescriptor ).
-            setAuthDescriptor( authDescriptor ).
+            setIdProviderDescriptor( idProviderDescriptor ).
             setIconUrlResolver( this.iconUrlResolver ).
             setLocaleMessageResolver( new LocaleMessageResolver( this.localeService, appKey ) ).
+            setInlineMixinResolver( new InlineMixinResolver( this.mixinService ) ).
             build();
     }
 
     @POST
     @Path("start")
+    @RolesAllowed(RoleKeys.ADMIN_ID)
     @Consumes(MediaType.APPLICATION_JSON)
     public ApplicationSuccessJson start( final ApplicationListParams params )
         throws Exception
@@ -273,6 +277,7 @@ public final class ApplicationResource
 
     @POST
     @Path("stop")
+    @RolesAllowed(RoleKeys.ADMIN_ID)
     @Consumes(MediaType.APPLICATION_JSON)
     public ApplicationSuccessJson stop( final ApplicationListParams params )
         throws Exception
@@ -283,6 +288,7 @@ public final class ApplicationResource
 
     @POST
     @Path("install")
+    @RolesAllowed(RoleKeys.ADMIN_ID)
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public ApplicationInstallResultJson install( final MultipartForm form )
         throws Exception
@@ -301,6 +307,7 @@ public final class ApplicationResource
 
     @POST
     @Path("uninstall")
+    @RolesAllowed(RoleKeys.ADMIN_ID)
     @Consumes(MediaType.APPLICATION_JSON)
     public ApplicationSuccessJson uninstall( final ApplicationListParams params )
         throws Exception
@@ -311,6 +318,7 @@ public final class ApplicationResource
 
     @POST
     @Path("installUrl")
+    @RolesAllowed(RoleKeys.ADMIN_ID)
     @Consumes(MediaType.APPLICATION_JSON)
     public ApplicationInstallResultJson installUrl( final ApplicationInstallParams params )
         throws Exception
@@ -358,6 +366,7 @@ public final class ApplicationResource
         final Response.ResponseBuilder responseBuilder;
         if ( icon == null )
         {
+            final Icon defaultAppIcon = HELPER.getDefaultApplicationIcon();
             responseBuilder = Response.ok( defaultAppIcon.asInputStream(), defaultAppIcon.getMimeType() );
             applyMaxAge( Integer.MAX_VALUE, responseBuilder );
         }
@@ -453,7 +462,7 @@ public final class ApplicationResource
 
             if ( siteDescriptor != null )
             {
-                final AuthDescriptor authDescriptor = this.authDescriptorService.getDescriptor( applicationKey );
+                final IdProviderDescriptor idProviderDescriptor = this.idProviderDescriptorService.getDescriptor( applicationKey );
                 final boolean localApplication = this.applicationService.isLocalApplication( applicationKey );
                 final ApplicationDescriptor appDescriptor = this.applicationDescriptorService.get( applicationKey );
 
@@ -462,9 +471,10 @@ public final class ApplicationResource
                     setLocal( localApplication ).
                     setApplicationDescriptor( appDescriptor ).
                     setSiteDescriptor( siteDescriptor ).
-                    setAuthDescriptor( authDescriptor ).
+                    setIdProviderDescriptor( idProviderDescriptor ).
                     setIconUrlResolver( this.iconUrlResolver ).
                     setLocaleMessageResolver( new LocaleMessageResolver( this.localeService, applicationKey ) ).
+                    setInlineMixinResolver( new InlineMixinResolver( this.mixinService ) ).
                     build() );
             }
         }
@@ -472,14 +482,14 @@ public final class ApplicationResource
     }
 
     @GET
-    @Path("getIdProvider")
-    public ApplicationJson getIdProvider( @QueryParam("applicationKey") String key )
+    @Path("getIdProviderApplication")
+    public ApplicationJson getIdProviderApplication( @QueryParam("applicationKey") String key )
     {
         final ApplicationKey applicationKey = ApplicationKey.from( key );
 
-        final AuthDescriptor authDescriptor = this.authDescriptorService.getDescriptor( applicationKey );
+        final IdProviderDescriptor idProviderDescriptor = this.idProviderDescriptorService.getDescriptor( applicationKey );
 
-        if ( authDescriptor != null )
+        if ( idProviderDescriptor != null )
         {
             final Application application = this.applicationService.getInstalledApplication( applicationKey );
             final boolean localApplication = this.applicationService.isLocalApplication( applicationKey );
@@ -492,9 +502,10 @@ public final class ApplicationResource
                 setLocal( localApplication ).
                 setApplicationDescriptor( appDescriptor ).
                 setSiteDescriptor( siteDescriptor ).
-                setAuthDescriptor( authDescriptor ).
+                setIdProviderDescriptor( idProviderDescriptor ).
                 setIconUrlResolver( this.iconUrlResolver ).
                 setLocaleMessageResolver( new LocaleMessageResolver( this.localeService, applicationKey ) ).
+                setInlineMixinResolver( new InlineMixinResolver( this.mixinService ) ).
                 build();
         }
         return null;
@@ -510,9 +521,9 @@ public final class ApplicationResource
         for ( final Application application : applications )
         {
             final ApplicationKey applicationKey = application.getKey();
-            final AuthDescriptor authDescriptor = this.authDescriptorService.getDescriptor( applicationKey );
+            final IdProviderDescriptor idProviderDescriptor = this.idProviderDescriptorService.getDescriptor( applicationKey );
 
-            if ( authDescriptor != null )
+            if ( idProviderDescriptor != null )
             {
                 final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( applicationKey );
                 final boolean localApplication = this.applicationService.isLocalApplication( applicationKey );
@@ -523,9 +534,10 @@ public final class ApplicationResource
                     setLocal( localApplication ).
                     setApplicationDescriptor( appDescriptor ).
                     setSiteDescriptor( siteDescriptor ).
-                    setAuthDescriptor( authDescriptor ).
+                    setIdProviderDescriptor( idProviderDescriptor ).
                     setIconUrlResolver( this.iconUrlResolver ).
                     setLocaleMessageResolver( new LocaleMessageResolver( this.localeService, applicationKey ) ).
+                    setInlineMixinResolver( new InlineMixinResolver( this.mixinService ) ).
                     build() );
             }
         }
@@ -533,27 +545,10 @@ public final class ApplicationResource
         return json;
     }
 
-    private byte[] loadDefaultImage( final String imageName )
-    {
-        try (final InputStream in = getClass().getResourceAsStream( imageName ))
-        {
-            if ( in == null )
-            {
-                throw new IllegalArgumentException( "Image [" + imageName + "] not found" );
-            }
-
-            return ByteStreams.toByteArray( in );
-        }
-        catch ( IOException e )
-        {
-            throw new RuntimeException( "Failed to load default image: " + imageName, e );
-        }
-    }
-
     private Applications sortApplications( final Applications applications )
     {
         return Applications.from( applications.stream().
-            sorted( ( app1, app2 ) -> app1.getDisplayName().compareTo( app2.getDisplayName() ) ).
+            sorted( Comparator.comparing( Application::getDisplayName ) ).
             collect( Collectors.toList() ) );
     }
 
@@ -598,9 +593,9 @@ public final class ApplicationResource
     }
 
     @Reference
-    public void setAuthDescriptorService( final AuthDescriptorService authDescriptorService )
+    public void setIdProviderDescriptorService( final IdProviderDescriptorService idProviderDescriptorService )
     {
-        this.authDescriptorService = authDescriptorService;
+        this.idProviderDescriptorService = idProviderDescriptorService;
     }
 
     @Reference
@@ -658,5 +653,10 @@ public final class ApplicationResource
         this.localeService = localeService;
     }
 
+    @Reference
+    public void setMixinService( final MixinService mixinService )
+    {
+        this.mixinService = mixinService;
+    }
 }
 

@@ -4,6 +4,7 @@ import java.time.Instant;
 
 import com.google.common.annotations.Beta;
 
+import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexConfigDocument;
@@ -14,11 +15,7 @@ public class NodeVersion
 {
     private final NodeId id;
 
-    private final NodeVersionId versionId;
-
     private final NodeType nodeType;
-
-    private final Instant timestamp;
 
     private final PropertyTree data;
 
@@ -37,9 +34,7 @@ public class NodeVersion
     private NodeVersion( Builder builder )
     {
         id = builder.id;
-        versionId = builder.versionId;
         nodeType = builder.nodeType;
-        timestamp = builder.timestamp;
         data = builder.data;
         indexConfigDocument = builder.indexConfigDocument;
         childOrder = builder.childOrder;
@@ -53,7 +48,6 @@ public class NodeVersion
     {
         return NodeVersion.create().
             id( node.id() ).
-            versionId( node.getNodeVersionId() ).
             nodeType( node.getNodeType() ).
             data( node.data() ).
             indexConfigDocument( node.getIndexConfigDocument() ).
@@ -62,7 +56,6 @@ public class NodeVersion
             permissions( node.getPermissions() ).
             inheritPermissions( node.inheritsPermissions() ).
             attachedBinaries( node.getAttachedBinaries() ).
-            timestamp( node.getTimestamp() != null ? node.getTimestamp() : Instant.now() ).
             build();
     }
 
@@ -71,19 +64,9 @@ public class NodeVersion
         return id;
     }
 
-    public NodeVersionId getVersionId()
-    {
-        return versionId;
-    }
-
     public NodeType getNodeType()
     {
         return nodeType;
-    }
-
-    public Instant getTimestamp()
-    {
-        return timestamp;
     }
 
     public PropertyTree getData()
@@ -136,11 +119,7 @@ public class NodeVersion
     {
         private NodeId id;
 
-        private NodeVersionId versionId;
-
         private NodeType nodeType = NodeType.DEFAULT_NODE_COLLECTION;
-
-        private Instant timestamp = Instant.now();
 
         private PropertyTree data = new PropertyTree();
 
@@ -163,9 +142,7 @@ public class NodeVersion
         private Builder( NodeVersion nodeVersion )
         {
             this.id = nodeVersion.id;
-            this.versionId = nodeVersion.versionId;
             this.nodeType = nodeVersion.nodeType;
-            this.timestamp = nodeVersion.timestamp;
             this.data = nodeVersion.data;
             this.indexConfigDocument = nodeVersion.indexConfigDocument;
             this.childOrder = nodeVersion.childOrder;
@@ -181,21 +158,9 @@ public class NodeVersion
             return this;
         }
 
-        public Builder versionId( NodeVersionId versionId )
-        {
-            this.versionId = versionId;
-            return this;
-        }
-
         public Builder nodeType( NodeType nodeType )
         {
             this.nodeType = nodeType;
-            return this;
-        }
-
-        public Builder timestamp( Instant timestamp )
-        {
-            this.timestamp = timestamp;
             return this;
         }
 
@@ -270,15 +235,7 @@ public class NodeVersion
         {
             return false;
         }
-        if ( versionId != null ? !versionId.equals( that.versionId ) : that.versionId != null )
-        {
-            return false;
-        }
         if ( nodeType != null ? !nodeType.equals( that.nodeType ) : that.nodeType != null )
-        {
-            return false;
-        }
-        if ( timestamp != null ? !timestamp.equals( that.timestamp ) : that.timestamp != null )
         {
             return false;
         }
@@ -310,9 +267,7 @@ public class NodeVersion
     public int hashCode()
     {
         int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + ( versionId != null ? versionId.hashCode() : 0 );
         result = 31 * result + ( nodeType != null ? nodeType.hashCode() : 0 );
-        result = 31 * result + ( timestamp != null ? timestamp.hashCode() : 0 );
         result = 31 * result + ( data != null ? data.hashCode() : 0 );
         result = 31 * result + ( indexConfigDocument != null ? indexConfigDocument.hashCode() : 0 );
         result = 31 * result + ( childOrder != null ? childOrder.hashCode() : 0 );
@@ -328,9 +283,7 @@ public class NodeVersion
     {
         return "NodeVersion{" +
             "id=" + id +
-            ", versionId=" + versionId +
             ", nodeType=" + nodeType +
-            ", timestamp=" + timestamp +
             ", data=" + data +
             ", indexConfigDocument=" + indexConfigDocument +
             ", childOrder=" + childOrder +

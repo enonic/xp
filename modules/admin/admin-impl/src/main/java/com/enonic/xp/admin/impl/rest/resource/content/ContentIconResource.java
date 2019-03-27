@@ -39,7 +39,7 @@ import com.enonic.xp.util.Exceptions;
 
 @Path(ResourceConstants.REST_ROOT + "content/icon")
 @Produces("image/*")
-@RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
+@RolesAllowed({RoleKeys.ADMIN_LOGIN_ID, RoleKeys.ADMIN_ID})
 @Component(immediate = true, property = "group=admin")
 public final class ContentIconResource
     implements JaxRsComponent
@@ -247,7 +247,15 @@ public final class ContentIconResource
     private ImageOrientation getThumbnailOrientation( final Thumbnail thumbnail, final Content content )
     {
         final ByteSource sourceBinary = contentService.getBinary( content.getId(), thumbnail.getBinaryReference() );
-        return mediaInfoService.getImageOrientation( sourceBinary, content );
+        if ( content instanceof Media )
+        {
+            final Media media = (Media) content;
+            if ( media.isImage() )
+            {
+                return mediaInfoService.getImageOrientation( sourceBinary, media );
+            }
+        }
+        return mediaInfoService.getImageOrientation( sourceBinary );
     }
 
     private Response cacheAndReturnResponse( final String timestamp, final ResolvedImage resolvedImage )

@@ -15,7 +15,7 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.handler.ControllerHandlerWorker;
-import com.enonic.xp.portal.impl.app.AppHandler;
+import com.enonic.xp.portal.impl.app.WebAppHandler;
 import com.enonic.xp.portal.impl.websocket.WebSocketEndpointImpl;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
@@ -36,8 +36,6 @@ final class ServiceHandlerWorker
     extends ControllerHandlerWorker
 {
     private final static String ROOT_SERVICE_PREFIX = "services/";
-
-    private final static String SITE_SERVICE_PREFIX = "site/services/";
 
     protected ResourceService resourceService;
 
@@ -121,10 +119,6 @@ final class ServiceHandlerWorker
     {
         //Retrieves the resource
         Resource resource = this.resourceService.getResource( ResourceKey.from( this.applicationKey, ROOT_SERVICE_PREFIX + this.name ) );
-        if ( !resource.exists() )
-        {
-            resource = this.resourceService.getResource( ResourceKey.from( this.applicationKey, SITE_SERVICE_PREFIX + this.name ) );
-        }
 
         //Executes the service
         return this.controllerScriptFactory.fromDir( resource.getKey() );
@@ -132,7 +126,7 @@ final class ServiceHandlerWorker
 
     private ApplicationKey getBaseApplicationKey()
     {
-        final Matcher matcher = AppHandler.PATTERN.matcher( this.request.getRawPath() );
+        final Matcher matcher = WebAppHandler.PATTERN.matcher( this.request.getRawPath() );
         if ( matcher.matches() )
         {
             final String applicationBase = matcher.group( 1 );

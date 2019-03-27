@@ -16,15 +16,15 @@ import org.elasticsearch.action.count.CountResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteRequestBuilder;
 import org.elasticsearch.action.delete.DeleteResponse;
-import org.elasticsearch.action.deletebyquery.DeleteByQueryRequest;
-import org.elasticsearch.action.deletebyquery.DeleteByQueryRequestBuilder;
-import org.elasticsearch.action.deletebyquery.DeleteByQueryResponse;
 import org.elasticsearch.action.exists.ExistsRequest;
 import org.elasticsearch.action.exists.ExistsRequestBuilder;
 import org.elasticsearch.action.exists.ExistsResponse;
 import org.elasticsearch.action.explain.ExplainRequest;
 import org.elasticsearch.action.explain.ExplainRequestBuilder;
 import org.elasticsearch.action.explain.ExplainResponse;
+import org.elasticsearch.action.fieldstats.FieldStatsRequest;
+import org.elasticsearch.action.fieldstats.FieldStatsRequestBuilder;
+import org.elasticsearch.action.fieldstats.FieldStatsResponse;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetRequestBuilder;
 import org.elasticsearch.action.get.GetResponse;
@@ -43,8 +43,6 @@ import org.elasticsearch.action.indexedscripts.get.GetIndexedScriptResponse;
 import org.elasticsearch.action.indexedscripts.put.PutIndexedScriptRequest;
 import org.elasticsearch.action.indexedscripts.put.PutIndexedScriptRequestBuilder;
 import org.elasticsearch.action.indexedscripts.put.PutIndexedScriptResponse;
-import org.elasticsearch.action.mlt.MoreLikeThisRequest;
-import org.elasticsearch.action.mlt.MoreLikeThisRequestBuilder;
 import org.elasticsearch.action.percolate.MultiPercolateRequest;
 import org.elasticsearch.action.percolate.MultiPercolateRequestBuilder;
 import org.elasticsearch.action.percolate.MultiPercolateResponse;
@@ -65,17 +63,18 @@ import org.elasticsearch.action.search.SearchScrollRequestBuilder;
 import org.elasticsearch.action.suggest.SuggestRequest;
 import org.elasticsearch.action.suggest.SuggestRequestBuilder;
 import org.elasticsearch.action.suggest.SuggestResponse;
-import org.elasticsearch.action.termvector.MultiTermVectorsRequest;
-import org.elasticsearch.action.termvector.MultiTermVectorsRequestBuilder;
-import org.elasticsearch.action.termvector.MultiTermVectorsResponse;
-import org.elasticsearch.action.termvector.TermVectorRequest;
-import org.elasticsearch.action.termvector.TermVectorRequestBuilder;
-import org.elasticsearch.action.termvector.TermVectorResponse;
+import org.elasticsearch.action.termvectors.MultiTermVectorsRequest;
+import org.elasticsearch.action.termvectors.MultiTermVectorsRequestBuilder;
+import org.elasticsearch.action.termvectors.MultiTermVectorsResponse;
+import org.elasticsearch.action.termvectors.TermVectorsRequest;
+import org.elasticsearch.action.termvectors.TermVectorsRequestBuilder;
+import org.elasticsearch.action.termvectors.TermVectorsResponse;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.action.update.UpdateRequestBuilder;
 import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.AdminClient;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.client.support.Headers;
 import org.elasticsearch.common.Nullable;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.threadpool.ThreadPool;
@@ -190,24 +189,6 @@ public class ClientProxy
     public BulkRequestBuilder prepareBulk()
     {
         return this.client.prepareBulk();
-    }
-
-    @Override
-    public ActionFuture<DeleteByQueryResponse> deleteByQuery( final DeleteByQueryRequest request )
-    {
-        return this.client.deleteByQuery( request );
-    }
-
-    @Override
-    public void deleteByQuery( final DeleteByQueryRequest request, final ActionListener<DeleteByQueryResponse> listener )
-    {
-        this.client.deleteByQuery( request, listener );
-    }
-
-    @Override
-    public DeleteByQueryRequestBuilder prepareDeleteByQuery( final String... indices )
-    {
-        return this.client.prepareDeleteByQuery( indices );
     }
 
     @Override
@@ -433,43 +414,25 @@ public class ClientProxy
     }
 
     @Override
-    public ActionFuture<SearchResponse> moreLikeThis( final MoreLikeThisRequest request )
-    {
-        return this.client.moreLikeThis( request );
-    }
-
-    @Override
-    public void moreLikeThis( final MoreLikeThisRequest request, final ActionListener<SearchResponse> listener )
-    {
-        this.client.moreLikeThis( request, listener );
-    }
-
-    @Override
-    public MoreLikeThisRequestBuilder prepareMoreLikeThis( final String index, final String type, final String id )
-    {
-        return this.client.prepareMoreLikeThis( index, type, id );
-    }
-
-    @Override
-    public ActionFuture<TermVectorResponse> termVector( final TermVectorRequest request )
+    public ActionFuture<TermVectorsResponse> termVector( final TermVectorsRequest request )
     {
         return this.client.termVector( request );
     }
 
     @Override
-    public void termVector( final TermVectorRequest request, final ActionListener<TermVectorResponse> listener )
+    public void termVector( final TermVectorsRequest request, final ActionListener<TermVectorsResponse> listener )
     {
         this.client.termVector( request, listener );
     }
 
     @Override
-    public TermVectorRequestBuilder prepareTermVector()
+    public TermVectorsRequestBuilder prepareTermVector()
     {
         return this.client.prepareTermVector();
     }
 
     @Override
-    public TermVectorRequestBuilder prepareTermVector( final String index, final String type, final String id )
+    public TermVectorsRequestBuilder prepareTermVector( final String index, final String type, final String id )
     {
         return this.client.prepareTermVector( index, type, id );
     }
@@ -571,24 +534,72 @@ public class ClientProxy
     }
 
     @Override
-    public <Request extends ActionRequest, Response extends ActionResponse, RequestBuilder extends ActionRequestBuilder<Request, Response, RequestBuilder, Client>> ActionFuture<Response> execute(
-        final Action<Request, Response, RequestBuilder, Client> action, final Request request )
+    public <Request extends ActionRequest, Response extends ActionResponse, RequestBuilder extends ActionRequestBuilder<Request, Response, RequestBuilder>> ActionFuture<Response> execute(
+        final Action<Request, Response, RequestBuilder> action, final Request request )
     {
         return this.client.execute( action, request );
     }
 
     @Override
-    public <Request extends ActionRequest, Response extends ActionResponse, RequestBuilder extends ActionRequestBuilder<Request, Response, RequestBuilder, Client>> void execute(
-        final Action<Request, Response, RequestBuilder, Client> action, final Request request, final ActionListener<Response> listener )
+    public <Request extends ActionRequest, Response extends ActionResponse, RequestBuilder extends ActionRequestBuilder<Request, Response, RequestBuilder>> void execute(
+        final Action<Request, Response, RequestBuilder> action, final Request request, final ActionListener<Response> listener )
     {
         this.client.execute( action, request, listener );
     }
 
     @Override
-    public <Request extends ActionRequest, Response extends ActionResponse, RequestBuilder extends ActionRequestBuilder<Request, Response, RequestBuilder, Client>> RequestBuilder prepareExecute(
-        final Action<Request, Response, RequestBuilder, Client> action )
+    public <Request extends ActionRequest, Response extends ActionResponse, RequestBuilder extends ActionRequestBuilder<Request, Response, RequestBuilder>> RequestBuilder prepareExecute(
+        final Action<Request, Response, RequestBuilder> action )
     {
         return this.client.prepareExecute( action );
+    }
+
+    @Override
+    public ActionFuture<TermVectorsResponse> termVectors( final TermVectorsRequest request )
+    {
+        return this.client.termVectors( request );
+    }
+
+    @Override
+    public void termVectors( final TermVectorsRequest request, final ActionListener<TermVectorsResponse> listener )
+    {
+        this.client.termVectors( request, listener );
+    }
+
+    @Override
+    public TermVectorsRequestBuilder prepareTermVectors()
+    {
+        return this.client.prepareTermVectors();
+    }
+
+    @Override
+    public TermVectorsRequestBuilder prepareTermVectors( final String index, final String type, final String id )
+    {
+        return this.client.prepareTermVectors( index, type, id );
+    }
+
+    @Override
+    public FieldStatsRequestBuilder prepareFieldStats()
+    {
+        return this.client.prepareFieldStats();
+    }
+
+    @Override
+    public ActionFuture<FieldStatsResponse> fieldStats( final FieldStatsRequest request )
+    {
+        return this.client.fieldStats( request );
+    }
+
+    @Override
+    public void fieldStats( final FieldStatsRequest request, final ActionListener<FieldStatsResponse> listener )
+    {
+        this.client.fieldStats( request, listener );
+    }
+
+    @Override
+    public Headers headers()
+    {
+        return this.client.headers();
     }
 
     @Override

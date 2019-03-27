@@ -11,6 +11,7 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.Segment;
+import com.enonic.xp.blob.SegmentLevel;
 import com.enonic.xp.internal.blobstore.MemoryBlobRecord;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.repo.impl.node.NodeConstants;
@@ -27,22 +28,28 @@ public class UnusedBinaryFileCleanerTaskTest
 
     private BlobStore blobStore;
 
+    private Segment binarySegment;
+
+    private Segment nodeSegment;
+
     @Before
     public void setUp()
         throws Exception
     {
         this.blobStore = new MemoryBlobStore();
+        this.binarySegment = Segment.from( SegmentLevel.from( "test" ), NodeConstants.BINARY_SEGMENT_LEVEL );
+        this.nodeSegment = Segment.from( SegmentLevel.from( "test" ), NodeConstants.NODE_SEGMENT_LEVEL );
     }
 
     @Test
     public void test_delete_unused()
         throws Exception
     {
-        this.blobStore.addRecord( NodeConstants.BINARY_SEGMENT, createBinaryRecord( 'a' ) );
-        this.blobStore.addRecord( NodeConstants.BINARY_SEGMENT, createBinaryRecord( 'b' ) );
-        this.blobStore.addRecord( NodeConstants.BINARY_SEGMENT, createBinaryRecord( 'c' ) );
+        this.blobStore.addRecord( binarySegment, createBinaryRecord( 'a' ) );
+        this.blobStore.addRecord( binarySegment, createBinaryRecord( 'b' ) );
+        this.blobStore.addRecord( binarySegment, createBinaryRecord( 'c' ) );
 
-        this.blobStore.addRecord( NodeConstants.NODE_SEGMENT, createVersionRecordWithBinaryRef( "1", 'a' ) );
+        this.blobStore.addRecord( nodeSegment, createVersionRecordWithBinaryRef( "1", 'a' ) );
 
         final UnusedBinaryFileCleanerTask task = new UnusedBinaryFileCleanerTask();
         task.setBlobStore( this.blobStore );
@@ -58,11 +65,11 @@ public class UnusedBinaryFileCleanerTaskTest
     public void test_progress_report()
         throws Exception
     {
-        this.blobStore.addRecord( NodeConstants.BINARY_SEGMENT, createBinaryRecord( 'a' ) );
-        this.blobStore.addRecord( NodeConstants.BINARY_SEGMENT, createBinaryRecord( 'b' ) );
-        this.blobStore.addRecord( NodeConstants.BINARY_SEGMENT, createBinaryRecord( 'c' ) );
+        this.blobStore.addRecord( binarySegment, createBinaryRecord( 'a' ) );
+        this.blobStore.addRecord( binarySegment, createBinaryRecord( 'b' ) );
+        this.blobStore.addRecord( binarySegment, createBinaryRecord( 'c' ) );
 
-        this.blobStore.addRecord( NodeConstants.NODE_SEGMENT, createVersionRecordWithBinaryRef( "1", 'a' ) );
+        this.blobStore.addRecord( nodeSegment, createVersionRecordWithBinaryRef( "1", 'a' ) );
 
         final UnusedBinaryFileCleanerTask task = new UnusedBinaryFileCleanerTask();
         task.setBlobStore( this.blobStore );
@@ -73,7 +80,7 @@ public class UnusedBinaryFileCleanerTaskTest
             @Override
             public void vacuumingBlobSegment( final Segment segment )
             {
-                assertEquals( Segment.from( "binary" ), segment );
+                assertEquals( Segment.from( "test", "binary" ), segment );
             }
 
             @Override
@@ -107,7 +114,7 @@ public class UnusedBinaryFileCleanerTaskTest
     public void age_threshold()
         throws Exception
     {
-        this.blobStore.addRecord( NodeConstants.BINARY_SEGMENT, createBinaryRecord( 'a' ) );
+        this.blobStore.addRecord( binarySegment, createBinaryRecord( 'a' ) );
 
         final UnusedBinaryFileCleanerTask task = new UnusedBinaryFileCleanerTask();
         task.setBlobStore( this.blobStore );

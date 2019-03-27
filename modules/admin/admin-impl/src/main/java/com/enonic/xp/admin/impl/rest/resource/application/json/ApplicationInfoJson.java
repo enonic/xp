@@ -11,6 +11,7 @@ import com.enonic.xp.admin.impl.rest.resource.macro.MacroIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.macro.json.MacrosJson;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
+import com.enonic.xp.admin.impl.rest.resource.schema.mixin.InlineMixinResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.relationship.RelationshipTypeIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.tool.json.AdminToolDescriptorsJson;
 import com.enonic.xp.admin.impl.rest.resource.widget.json.WidgetDescriptorsJson;
@@ -43,7 +44,7 @@ public class ApplicationInfoJson
 
     private AdminToolDescriptorsJson tools;
 
-    private ApplicationIdProviderJson idProvider;
+    private IdProviderApplicationJson idProviderApplication;
 
     private ApplicationDeploymentJson deployment;
 
@@ -51,19 +52,27 @@ public class ApplicationInfoJson
     {
         this.contentTypes = new ContentTypeSummaryListJson( builder.applicationInfo.getContentTypes(), builder.contentTypeIconUrlResolver,
                                                             builder.localeMessageResolver );
-        this.pages =
-            new PageDescriptorListJson( PageDescriptors.from( builder.applicationInfo.getPages() ), builder.localeMessageResolver );
-        this.parts = new PartDescriptorsJson( PartDescriptors.from( builder.applicationInfo.getParts() ), builder.localeMessageResolver );
+        this.pages = new PageDescriptorListJson( PageDescriptors.from( builder.applicationInfo.getPages() ), builder.localeMessageResolver,
+                                                 builder.inlineMixinResolver );
+        this.parts = new PartDescriptorsJson( PartDescriptors.from( builder.applicationInfo.getParts() ), builder.localeMessageResolver,
+                                              builder.inlineMixinResolver );
         this.layouts =
-            new LayoutDescriptorsJson( LayoutDescriptors.from( builder.applicationInfo.getLayouts() ), builder.localeMessageResolver );
+            new LayoutDescriptorsJson( LayoutDescriptors.from( builder.applicationInfo.getLayouts() ), builder.localeMessageResolver,
+                                       builder.inlineMixinResolver );
         this.relations = new RelationshipTypeListJson( builder.applicationInfo.getRelations(), builder.relationshipTypeIconUrlResolver );
         this.references = new ContentReferencesJson( builder.applicationInfo.getContentReferences() );
-        this.macros = new MacrosJson( builder.applicationInfo.getMacros(), builder.macroIconUrlResolver, builder.localeMessageResolver );
+        this.macros = MacrosJson.
+            create().
+            setMacroDescriptors( builder.applicationInfo.getMacros() ).
+            setMacroIconUrlResolver( builder.macroIconUrlResolver ).
+            setLocaleMessageResolver( builder.localeMessageResolver ).
+            setInlineMixinResolver( builder.inlineMixinResolver ).
+            build();
         this.tasks = new ApplicationTaskDescriptorsJson( builder.applicationInfo.getTasks() );
         this.widgets = new WidgetDescriptorsJson( builder.widgetDescriptors );
         this.tools = builder.adminToolDescriptors;
-        this.idProvider =
-            new ApplicationIdProviderJson( builder.applicationInfo.getAuthDescriptor(), builder.applicationInfo.getUserStoreReferences() );
+        this.idProviderApplication = new IdProviderApplicationJson( builder.applicationInfo.getIdProviderDescriptor(),
+                                                                    builder.applicationInfo.getIdProviderReferences() );
         this.deployment = new ApplicationDeploymentJson( builder.deploymentUrl );
     }
 
@@ -107,9 +116,9 @@ public class ApplicationInfoJson
         return tasks;
     }
 
-    public ApplicationIdProviderJson getIdProvider()
+    public IdProviderApplicationJson getIdProviderApplication()
     {
-        return idProvider;
+        return idProviderApplication;
     }
 
     public ApplicationDeploymentJson getDeployment()
@@ -149,6 +158,8 @@ public class ApplicationInfoJson
         private ContentTypeIconUrlResolver contentTypeIconUrlResolver;
 
         private LocaleMessageResolver localeMessageResolver;
+
+        private InlineMixinResolver inlineMixinResolver;
 
         private Builder()
         {
@@ -202,12 +213,19 @@ public class ApplicationInfoJson
             return this;
         }
 
+        public Builder setInlineMixinResolver( final InlineMixinResolver inlineMixinResolver )
+        {
+            this.inlineMixinResolver = inlineMixinResolver;
+            return this;
+        }
+
         public void validate()
         {
             Preconditions.checkNotNull( this.applicationInfo, "applicationInfo cannot be null" );
             Preconditions.checkNotNull( this.relationshipTypeIconUrlResolver, "relationshipTypeIconUrlResolver cannot be null" );
             Preconditions.checkNotNull( this.macroIconUrlResolver, "macroIconUrlResolver cannot be null" );
             Preconditions.checkNotNull( this.contentTypeIconUrlResolver, "contentTypeIconUrlResolver cannot be null" );
+            Preconditions.checkNotNull( this.inlineMixinResolver, "inlineMixinResolver cannot be null" );
         }
 
         public ApplicationInfoJson build()

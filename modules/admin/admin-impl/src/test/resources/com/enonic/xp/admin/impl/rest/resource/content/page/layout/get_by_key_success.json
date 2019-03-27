@@ -22,6 +22,7 @@
         ]
     },
     "deletable": false,
+    "description": "description",
     "displayName": "Fancy layout",
     "editable": false,
     "key": "application:fancy-layout",

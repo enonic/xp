@@ -1,11 +1,13 @@
 package com.enonic.xp.node;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexConfig;
@@ -374,6 +376,10 @@ public final class Node
         public Builder timestamp( final Instant timestamp )
         {
             this.timestamp = timestamp;
+            if ( timestamp != null && timestamp.getNano() % 1_000_000 != 0 )
+            {
+                this.timestamp = timestamp.truncatedTo( ChronoUnit.MILLIS );
+            }
             return this;
         }
 

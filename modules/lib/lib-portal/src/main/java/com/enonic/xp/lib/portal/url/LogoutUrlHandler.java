@@ -9,7 +9,7 @@ import com.google.common.collect.Multimap;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.portal.url.IdentityUrlParams;
 import com.enonic.xp.script.bean.BeanContext;
-import com.enonic.xp.security.UserStoreKey;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public final class LogoutUrlHandler
@@ -26,20 +26,20 @@ public final class LogoutUrlHandler
         final IdentityUrlParams params = new IdentityUrlParams().
             portalRequest( request ).
             idProviderFunction( "logout" ).
-            userStoreKey( retrieveUserStoreKey() ).
+            idProviderKey( retrieveIdProviderKey() ).
             setAsMap( map );
 
         return this.urlService.identityUrl( params );
     }
 
-    private UserStoreKey retrieveUserStoreKey()
+    private IdProviderKey retrieveIdProviderKey()
     {
         final AuthenticationInfo authInfo = this.context.getAuthInfo();
         if ( authInfo.isAuthenticated() )
         {
             return authInfo.getUser().
                 getKey().
-                getUserStore();
+                getIdProviderKey();
         }
         return null;
     }

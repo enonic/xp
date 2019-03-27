@@ -1,7 +1,6 @@
 package com.enonic.xp.script.impl.function;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -28,13 +27,9 @@ final class RequireResolver
         {
             return resolveAbsolute( path );
         }
-        else if ( path.startsWith( "./" ) || path.startsWith( "../" ) )
-        {
-            return resolveRelative( path );
-        }
         else
         {
-            return resolveLibScan( path );
+            return resolveRelative( path );
         }
     }
 
@@ -48,20 +43,9 @@ final class RequireResolver
         return doResolve( this.baseKey.resolve( "../" + path ) );
     }
 
-    private ResourceKey resolveLibScan( final String path )
-    {
-        final ResourceKey key = doResolve( this.baseKey.resolve( "/lib/" + path ) );
-        if ( exists( key ) )
-        {
-            return key;
-        }
-
-        return resolveRelative( path );
-    }
-
     private ResourceKey doResolve( final ResourceKey key )
     {
-        for ( final String path : findAllSearchPaths( key.getPath() ) )
+        for ( final String path : findSearchPaths( key.getPath() ) )
         {
             final ResourceKey pathKey = ResourceKey.from( key.getApplicationKey(), path );
             if ( exists( pathKey ) )
@@ -73,14 +57,7 @@ final class RequireResolver
         return key;
     }
 
-    static List<String> findAllSearchPaths( final String path )
-    {
-        final List<String> paths = findSearchPaths( path );
-        paths.addAll( paths.stream().map( it -> "/site" + it ).collect( Collectors.toList() ) );
-        return paths;
-    }
-
-    private static List<String> findSearchPaths( final String path )
+    static List<String> findSearchPaths( final String path )
     {
         if ( !Strings.isNullOrEmpty( Files.getFileExtension( path ) ) )
         {

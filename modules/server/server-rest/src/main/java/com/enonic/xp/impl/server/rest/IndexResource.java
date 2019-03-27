@@ -33,7 +33,7 @@ import com.enonic.xp.repository.RepositoryIds;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.RoleKeys;
 
-@Path("/api/repo/index")
+@Path("/repo/index")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @RolesAllowed(RoleKeys.ADMIN_ID)

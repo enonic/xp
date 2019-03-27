@@ -25,7 +25,7 @@ public class JaxRsServiceFactoryImplTest
     @Test
     public void newService()
     {
-        final JaxRsService service = this.factory.newService( "test", "/*" );
+        final JaxRsService service = this.factory.newService( "test", "/*", null );
         assertNotNull( service );
     }
 }

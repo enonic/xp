@@ -21,6 +21,7 @@ import com.enonic.xp.admin.impl.json.content.page.PageDescriptorListJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.content.page.part.GetByApplicationsParams;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
+import com.enonic.xp.admin.impl.rest.resource.schema.mixin.InlineMixinResolver;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.jaxrs.JaxRsComponent;
@@ -28,11 +29,12 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageDescriptors;
+import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.RoleKeys;
 
 @Path(ResourceConstants.REST_ROOT + "content/page/descriptor")
 @Produces(MediaType.APPLICATION_JSON)
-@RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
+@RolesAllowed({RoleKeys.ADMIN_LOGIN_ID, RoleKeys.ADMIN_ID})
 @Component(immediate = true, property = "group=admin")
 public final class PageDescriptorResource
     implements JaxRsComponent
@@ -41,6 +43,8 @@ public final class PageDescriptorResource
 
     private LocaleService localeService;
 
+    private MixinService mixinService;
+
     @GET
     public PageDescriptorJson getByKey( @QueryParam("key") final String pageDescriptorKey )
     {
@@ -48,7 +52,8 @@ public final class PageDescriptorResource
         final PageDescriptor descriptor = pageDescriptorService.getByKey( key );
 
         final LocaleMessageResolver localeMessageResolver = new LocaleMessageResolver( this.localeService, key.getApplicationKey() );
-        final PageDescriptorJson json = new PageDescriptorJson( descriptor, localeMessageResolver );
+        final InlineMixinResolver inlineMixinResolver = new InlineMixinResolver( this.mixinService );
+        final PageDescriptorJson json = new PageDescriptorJson( descriptor, localeMessageResolver, inlineMixinResolver );
         return json;
     }
 
@@ -60,7 +65,8 @@ public final class PageDescriptorResource
 
         final LocaleMessageResolver localeMessageResolver =
             new LocaleMessageResolver( this.localeService, ApplicationKey.from( applicationKey ) );
-        return new PageDescriptorListJson( PageDescriptors.from( pageDescriptors ), localeMessageResolver );
+        return new PageDescriptorListJson( PageDescriptors.from( pageDescriptors ), localeMessageResolver,
+                                           new InlineMixinResolver( mixinService ) );
     }
 
     @POST
@@ -73,8 +79,8 @@ public final class PageDescriptorResource
         params.getApplicationKeys().forEach( applicationKey -> {
             pageDescriptorsJsonBuilder.addAll( this.pageDescriptorService.getByApplication( applicationKey ).
                 stream().
-                map( pageDescriptor -> new PageDescriptorJson( pageDescriptor,
-                                                               new LocaleMessageResolver( localeService, applicationKey ) ) ).
+                map( pageDescriptor -> new PageDescriptorJson( pageDescriptor, new LocaleMessageResolver( localeService, applicationKey ),
+                                                               new InlineMixinResolver( mixinService ) ) ).
                 collect( Collectors.toList() ) );
         } );
 
@@ -91,5 +97,11 @@ public final class PageDescriptorResource
     public void setLocaleService( final LocaleService localeService )
     {
         this.localeService = localeService;
+    }
+
+    @Reference
+    public void setMixinService( final MixinService mixinService )
+    {
+        this.mixinService = mixinService;
     }
 }

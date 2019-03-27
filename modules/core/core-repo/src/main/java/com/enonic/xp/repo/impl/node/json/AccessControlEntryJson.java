@@ -11,7 +11,7 @@ import com.enonic.xp.security.acl.Permission;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
 
-final class AccessControlEntryJson
+public final class AccessControlEntryJson
 {
     @JsonProperty("principal")
     private String principalKey;

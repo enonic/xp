@@ -26,6 +26,7 @@ import com.enonic.xp.admin.impl.json.schema.content.ContentTypeSummaryJson;
 import com.enonic.xp.admin.impl.json.schema.content.ContentTypeSummaryListJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.schema.SchemaImageHelper;
+import com.enonic.xp.admin.impl.rest.resource.schema.mixin.InlineMixinResolver;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
@@ -37,8 +38,8 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.ContentTypes;
-import com.enonic.xp.schema.content.GetAllContentTypesParams;
 import com.enonic.xp.schema.content.GetContentTypeParams;
+import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
@@ -46,7 +47,7 @@ import com.enonic.xp.support.AbstractImmutableEntityList;
 
 @Path(ResourceConstants.REST_ROOT + "schema/content")
 @Produces("application/json")
-@RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
+@RolesAllowed({RoleKeys.ADMIN_LOGIN_ID, RoleKeys.ADMIN_ID})
 @Component(immediate = true, property = "group=admin")
 public final class ContentTypeResource
     implements JaxRsComponent
@@ -63,13 +64,13 @@ public final class ContentTypeResource
 
     private ContentService contentService;
 
+    private MixinService mixinService;
+
     @GET
-    public ContentTypeJson get( @QueryParam("name") final String nameAsString,
-                                @DefaultValue("false") @QueryParam("inlineMixinsToFormItems") final boolean inlineMixinsToFormItems )
+    public ContentTypeJson get( @QueryParam("name") final String nameAsString )
     {
         final ContentTypeName name = ContentTypeName.from( nameAsString );
-        final GetContentTypeParams getContentTypes = GetContentTypeParams.from( name ).
-            inlineMixinsToFormItems( inlineMixinsToFormItems );
+        final GetContentTypeParams getContentTypes = GetContentTypeParams.from( name );
 
         final ContentType contentType = contentTypeService.getByName( getContentTypes );
         if ( contentType == null )
@@ -78,24 +79,29 @@ public final class ContentTypeResource
         }
         final LocaleMessageResolver localeMessageResolver =
             new LocaleMessageResolver( this.localeService, contentType.getName().getApplicationKey() );
-        return new ContentTypeJson( contentType, this.contentTypeIconUrlResolver, localeMessageResolver );
+
+        return ContentTypeJson.
+            create().
+            setContentType( contentType ).
+            setContentTypeIconUrlResolver( this.contentTypeIconUrlResolver ).
+            setInlineMixinResolver( new InlineMixinResolver( this.mixinService ) ).
+            setLocaleMessageResolver( localeMessageResolver ).
+            build();
     }
 
     @GET
     @Path("all")
     public ContentTypeSummaryListJson all()
     {
-        return list( true );
+        return list();
     }
 
     @GET
     @Path("list")
-    public ContentTypeSummaryListJson list(
-        @DefaultValue("false") @QueryParam("inlineMixinsToFormItems") final boolean inlineMixinsToFormItems )
+    public ContentTypeSummaryListJson list()
     {
 
-        final GetAllContentTypesParams getAll = new GetAllContentTypesParams().inlineMixinsToFormItems( inlineMixinsToFormItems );
-        final ContentTypes contentTypes = contentTypeService.getAll( getAll );
+        final ContentTypes contentTypes = contentTypeService.getAll();
 
         ImmutableList.Builder<ContentTypeSummaryJson> summariesJsonBuilder = new ImmutableList.Builder();
 
@@ -209,5 +215,11 @@ public final class ContentTypeResource
     public void setContentService( final ContentService contentService )
     {
         this.contentService = contentService;
+    }
+
+    @Reference
+    public void setMixinService( final MixinService mixinService )
+    {
+        this.mixinService = mixinService;
     }
 }

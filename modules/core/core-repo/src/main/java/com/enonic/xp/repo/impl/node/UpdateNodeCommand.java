@@ -16,6 +16,7 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.util.Exceptions;
 
+import static com.enonic.xp.repo.impl.node.NodeConstants.CLOCK;
 import static com.enonic.xp.repo.impl.node.NodePermissionsResolver.requireContextUserPermissionOrAdmin;
 
 public final class UpdateNodeCommand
@@ -75,7 +76,7 @@ public final class UpdateNodeCommand
         }
 
         final Node updatedNode = createUpdatedNode( Node.create( editedNode ).
-            timestamp( Instant.now() ).
+            timestamp( Instant.now( CLOCK ) ).
             attachedBinaries( updatedBinaries ).
             build() );
 

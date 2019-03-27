@@ -1,0 +1,48 @@
+.preview-frame-body, .preview-frame-body figure {
+    margin: 0;
+}
+
+.preview-frame-body {
+    overflow: hidden;
+}
+
+figure img {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+figure.editor-align-left,
+figure.editor-align-right {
+    width: 40%;
+}
+
+figure.editor-align-left {
+    float: left;
+}
+
+figure.editor-align-right {
+    float: right;
+}
+
+figure.editor-align-center {
+    margin: auto;
+    width: 60%;
+}
+
+figure.editor-style-original img {
+    width: auto;
+}
+
+figure.editor-align-center img {
+    margin: 0 auto;
+}
+
+figure.editor-align-left img {
+    margin-right: auto;
+}
+
+figure.editor-align-right img {
+    margin-left: auto;
+}

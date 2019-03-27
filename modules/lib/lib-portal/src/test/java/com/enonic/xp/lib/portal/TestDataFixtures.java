@@ -20,10 +20,10 @@ import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.LayoutRegions;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
-import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.security.IdProvider;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.UserStore;
-import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
@@ -47,7 +47,7 @@ public final class TestDataFixtures
         builder.language( Locale.ENGLISH );
         builder.data( newPropertyTree() );
 
-        builder.addExtraData( new ExtraData( MixinName.from( "com.enonic.myapplication:myschema" ), newTinyPropertyTree() ) );
+        builder.addExtraData( new ExtraData( XDataName.from( "com.enonic.myapplication:myschema" ), newTinyPropertyTree() ) );
         builder.page( newPage() );
 
         return builder.build();
@@ -111,7 +111,7 @@ public final class TestDataFixtures
     {
         final Page.Builder builder = Page.create();
         builder.config( newTinyPropertyTree() );
-        builder.controller( DescriptorKey.from( "myapplication:mycontroller" ) );
+        builder.descriptor( DescriptorKey.from( "myapplication:mycontroller" ) );
         builder.regions( newPageRegions() );
         return builder.build();
     }
@@ -186,11 +186,11 @@ public final class TestDataFixtures
         return site.build();
     }
 
-    public static UserStore newUserStore()
+    public static IdProvider newIdProvider()
     {
-        return UserStore.create().
-            key( UserStoreKey.from( "myuserstore" ) ).
-            displayName( "My user store" ).
+        return IdProvider.create().
+            key( IdProviderKey.from( "myidprovider" ) ).
+            displayName( "My id provider" ).
             build();
     }
 }

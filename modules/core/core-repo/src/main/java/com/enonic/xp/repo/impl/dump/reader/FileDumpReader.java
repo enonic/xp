@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 
@@ -22,18 +23,19 @@ import com.google.common.io.LineProcessor;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
-import com.enonic.xp.blob.BlobStore;
+import com.enonic.xp.blob.NodeVersionKey;
+import com.enonic.xp.blob.Segment;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.dump.BranchDumpResult;
 import com.enonic.xp.dump.BranchLoadResult;
+import com.enonic.xp.dump.CommitsLoadResult;
 import com.enonic.xp.dump.LoadError;
 import com.enonic.xp.dump.RepoDumpResult;
 import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.dump.SystemLoadListener;
 import com.enonic.xp.dump.VersionsLoadResult;
 import com.enonic.xp.node.NodeVersion;
-import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.dump.AbstractFileProcessor;
 import com.enonic.xp.repo.impl.dump.DumpBlobStore;
 import com.enonic.xp.repo.impl.dump.DumpConstants;
@@ -43,6 +45,7 @@ import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.serializer.json.DumpMetaJsonSerializer;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
+import com.enonic.xp.repository.RepositorySegmentUtils;
 
 public class FileDumpReader
     extends AbstractFileProcessor
@@ -50,7 +53,7 @@ public class FileDumpReader
 {
     private final Path dumpDirectory;
 
-    private final BlobStore dumpBlobStore;
+    private final DumpBlobStore dumpBlobStore;
 
     private final NodeVersionFactory factory;
 
@@ -73,6 +76,11 @@ public class FileDumpReader
         this.dumpMeta = readDumpMetaData();
     }
 
+    public DumpBlobStore getDumpBlobStore()
+    {
+        return dumpBlobStore;
+    }
+
     private java.nio.file.Path getDumpDirectory( final Path basePath, final String name )
     {
         return Paths.get( basePath.toString(), name ).toAbsolutePath();
@@ -81,7 +89,7 @@ public class FileDumpReader
 
     private DumpMeta readDumpMetaData()
     {
-        final Path dumpMetaFile = Paths.get( this.dumpDirectory.toString(), "dump.json" );
+        final Path dumpMetaFile = Paths.get( getMetaDataFile().toURI() );
         try
         {
             final String json = Files.toString( dumpMetaFile.toFile(), Charset.defaultCharset() );
@@ -188,6 +196,29 @@ public class FileDumpReader
             build();
     }
 
+    @Override
+    public CommitsLoadResult loadCommits( final RepositoryId repositoryId, final LineProcessor<EntryLoadResult> processor )
+    {
+        final File commitsFile = getCommitsFile( repositoryId );
+
+        if ( this.listener != null )
+        {
+            this.listener.loadingCommits( repositoryId );
+        }
+
+        final CommitsLoadResult.Builder commitsLoadResult = CommitsLoadResult.create();
+
+        if ( commitsFile == null )
+        {
+            return commitsLoadResult.build();
+        }
+
+        final EntriesLoadResult result = doLoadEntries( processor, commitsFile );
+        return commitsLoadResult.successful( result.getSuccessful() ).
+            errors( result.getErrors().stream().map( error -> LoadError.error( error.getMessage() ) ).collect( Collectors.toList() ) ).
+            build();
+    }
+
     private Long getBranchSuccessfulCountFromMeta( final RepositoryId repositoryId, final Branch branch )
     {
         final SystemDumpResult systemDumpResult = this.dumpMeta.getSystemDumpResult();
@@ -210,9 +241,8 @@ public class FileDumpReader
     {
         final EntriesLoadResult.Builder result = EntriesLoadResult.create();
 
-        try
+        try (final TarArchiveInputStream tarInputStream = openStream( tarFile ))
         {
-            final TarArchiveInputStream tarInputStream = openStream( tarFile );
             TarArchiveEntry entry = tarInputStream.getNextTarEntry();
             while ( entry != null )
             {
@@ -229,6 +259,24 @@ public class FileDumpReader
         return result.build();
     }
 
+    public void processEntries( final BiConsumer<String, String> processor, final File tarFile )
+    {
+        try (final TarArchiveInputStream tarInputStream = openStream( tarFile ))
+        {
+            TarArchiveEntry entry = tarInputStream.getNextTarEntry();
+            while ( entry != null )
+            {
+                String entryContent = readEntry( tarInputStream );
+                processor.accept( entryContent, entry.getName() );
+                entry = tarInputStream.getNextTarEntry();
+            }
+        }
+        catch ( IOException e )
+        {
+            throw new RepoDumpException( "Cannot read meta-data", e );
+        }
+    }
+
     private TarArchiveInputStream openStream( final File tarFile )
         throws IOException
     {
@@ -243,16 +291,33 @@ public class FileDumpReader
         return file.exists() && file.isDirectory() && !file.isHidden();
     }
 
-    private File getBranchEntriesFile( final RepositoryId repositoryId, final Branch branch )
+    public File getBranchEntriesFile( final RepositoryId repositoryId, final Branch branch )
     {
         final Path metaPath = createBranchMetaPath( this.dumpDirectory, repositoryId, branch );
-        return doGetFile( metaPath );
+        return doGetFile( metaPath, false );
     }
 
-    private File getVersionsFile( final RepositoryId repositoryId )
+    public File getVersionsFile( final RepositoryId repositoryId )
     {
         final Path metaPath = createVersionMetaPath( this.dumpDirectory, repositoryId );
         return doGetFile( metaPath, false );
+    }
+
+    public File getCommitsFile( final RepositoryId repositoryId )
+    {
+        final Path metaPath = createCommitMetaPath( this.dumpDirectory, repositoryId );
+        return doGetFile( metaPath, false );
+    }
+
+    public File getRepositoryDir( final RepositoryId repositoryId )
+    {
+        final Path repoPath = createRepoPath( this.dumpDirectory, repositoryId );
+        return doGetFile( repoPath, false );
+    }
+
+    public File getMetaDataFile()
+    {
+        return new File( this.dumpDirectory.toString(), "dump.json" );
     }
 
     private File doGetFile( final Path metaPath )
@@ -307,23 +372,40 @@ public class FileDumpReader
     }
 
     @Override
-    public NodeVersion get( final NodeVersionId nodeVersionId )
+    public NodeVersion get( final RepositoryId repositoryId, final NodeVersionKey nodeVersionKey )
     {
-        final BlobRecord record =
-            this.dumpBlobStore.getRecord( DumpConstants.DUMP_SEGMENT_NODES, BlobKey.from( nodeVersionId.toString() ) );
-
-        if ( record == null )
+        final Segment nodeSegment = RepositorySegmentUtils.toSegment( repositoryId, DumpConstants.DUMP_NODE_SEGMENT_LEVEL );
+        final BlobRecord dataRecord = this.dumpBlobStore.getRecord( nodeSegment, nodeVersionKey.getNodeBlobKey() );
+        if ( dataRecord == null )
         {
-            throw new RepoLoadException( "Cannot find referred version id " + nodeVersionId + " in dump" );
+            throw new RepoLoadException( "Cannot find referred node blob " + nodeVersionKey.getNodeBlobKey() + " in dump" );
         }
 
-        return this.factory.create( record.getBytes() );
+        final Segment indexConfigSegment = RepositorySegmentUtils.toSegment( repositoryId, DumpConstants.DUMP_INDEX_CONFIG_SEGMENT_LEVEL );
+        final BlobRecord indexConfigRecord = this.dumpBlobStore.getRecord( indexConfigSegment, nodeVersionKey.getIndexConfigBlobKey() );
+        if ( indexConfigRecord == null )
+        {
+            throw new RepoLoadException( "Cannot find referred index config blob " + nodeVersionKey.getIndexConfigBlobKey() + " in dump" );
+        }
+
+        final Segment accessControlSegment =
+            RepositorySegmentUtils.toSegment( repositoryId, DumpConstants.DUMP_ACCESS_CONTROL_SEGMENT_LEVEL );
+        final BlobRecord accessControlRecord =
+            this.dumpBlobStore.getRecord( accessControlSegment, nodeVersionKey.getAccessControlBlobKey() );
+        if ( accessControlRecord == null )
+        {
+            throw new RepoLoadException(
+                "Cannot find referred access control blob " + nodeVersionKey.getAccessControlBlobKey() + " in dump" );
+        }
+
+        return this.factory.create( dataRecord.getBytes(), indexConfigRecord.getBytes(), accessControlRecord.getBytes() );
     }
 
     @Override
-    public ByteSource getBinary( final String blobKey )
+    public ByteSource getBinary( final RepositoryId repositoryId, final String blobKey )
     {
-        final BlobRecord record = this.dumpBlobStore.getRecord( DumpConstants.DUMP_SEGMENT_BINARIES, BlobKey.from( blobKey ) );
+        final Segment segment = RepositorySegmentUtils.toSegment( repositoryId, DumpConstants.DUMP_BINARY_SEGMENT_LEVEL );
+        final BlobRecord record = this.dumpBlobStore.getRecord( segment, BlobKey.from( blobKey ) );
 
         if ( record == null )
         {
@@ -331,5 +413,11 @@ public class FileDumpReader
         }
 
         return record.getBytes();
+    }
+
+    @Override
+    public DumpMeta getDumpMeta()
+    {
+        return this.dumpMeta;
     }
 }

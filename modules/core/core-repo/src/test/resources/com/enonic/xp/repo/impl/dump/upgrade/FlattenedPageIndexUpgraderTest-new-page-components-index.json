@@ -1,0 +1,190 @@
+{
+  "allTextConfig": {
+    "languages": []
+  },
+  "analyzer": null,
+  "defaultConfig": {
+    "decideByType": true,
+    "enabled": true,
+    "fulltext": false,
+    "includeInAllText": false,
+    "nGram": false
+  },
+  "patternConfigs": [
+    {
+      "indexConfig": {
+        "decideByType": true,
+        "enabled": true,
+        "fulltext": false,
+        "includeInAllText": false,
+        "indexValueProcessors": [
+          "htmlStripper"
+        ],
+        "nGram": false
+      },
+      "path": "components.part.config.com-enonic-app-features.cities-distance-facet.htmlarea3"
+    },
+    {
+      "indexConfig": {
+        "decideByType": true,
+        "enabled": true,
+        "fulltext": false,
+        "includeInAllText": false,
+        "nGram": false
+      },
+      "path": "components.part.config.com-enonic-app-features.cities-distance-facet.*"
+    },
+    {
+      "indexConfig": {
+        "decideByType": true,
+        "enabled": true,
+        "fulltext": false,
+        "includeInAllText": false,
+        "indexValueProcessors": [
+          "htmlStripper"
+        ],
+        "nGram": false
+      },
+      "path": "components.part.config.com-enonic-app-features.getComponent.*"
+    },
+    {
+      "indexConfig": {
+        "decideByType": true,
+        "enabled": true,
+        "fulltext": false,
+        "includeInAllText": false,
+        "indexValueProcessors": [
+          "htmlStripper"
+        ],
+        "nGram": false
+      },
+      "path": "components.page.config.com-enonic-app-features.main.htmlarea1"
+    },
+    {
+      "indexConfig": {
+        "decideByType": true,
+        "enabled": true,
+        "fulltext": false,
+        "includeInAllText": false,
+        "nGram": false
+      },
+      "path": "components.page.config.com-enonic-app-features.main.*"
+    },
+    {
+      "indexConfig": {
+        "decideByType": true,
+        "enabled": true,
+        "fulltext": false,
+        "includeInAllText": false,
+        "indexValueProcessors": [
+          "htmlStripper"
+        ],
+        "nGram": false
+      },
+      "path": "components.layout.config.com-enonic-app-features.layout-25-75.htmlarea2"
+    },
+    {
+      "indexConfig": {
+        "decideByType": true,
+        "enabled": true,
+        "fulltext": false,
+        "includeInAllText": false,
+        "nGram": false
+      },
+      "path": "components.layout.config.com-enonic-app-features.layout-25-75.*"
+    },
+    {
+      "indexConfig": {
+        "decideByType": false,
+        "enabled": true,
+        "fulltext": true,
+        "includeInAllText": true,
+        "indexValueProcessors": [
+          "htmlStripper"
+        ],
+        "nGram": true
+      },
+      "path": "components.text.value"
+    },
+    {
+      "indexConfig": {
+        "decideByType": false,
+        "enabled": true,
+        "fulltext": false,
+        "includeInAllText": false,
+        "nGram": false
+      },
+      "path": "components.part.descriptor"
+    },
+    {
+      "indexConfig": {
+        "decideByType": false,
+        "enabled": true,
+        "fulltext": false,
+        "includeInAllText": false,
+        "nGram": false
+      },
+      "path": "components.page.template"
+    },
+    {
+      "indexConfig": {
+        "decideByType": false,
+        "enabled": true,
+        "fulltext": false,
+        "includeInAllText": false,
+        "nGram": false
+      },
+      "path": "components.page.descriptor"
+    },
+    {
+      "indexConfig": {
+        "decideByType": false,
+        "enabled": true,
+        "fulltext": false,
+        "includeInAllText": false,
+        "nGram": false
+      },
+      "path": "components.page.customized"
+    },
+    {
+      "indexConfig": {
+        "decideByType": false,
+        "enabled": true,
+        "fulltext": false,
+        "includeInAllText": false,
+        "nGram": false
+      },
+      "path": "components.layout.descriptor"
+    },
+    {
+      "indexConfig": {
+        "decideByType": false,
+        "enabled": true,
+        "fulltext": false,
+        "includeInAllText": false,
+        "nGram": false
+      },
+      "path": "components.image.id"
+    },
+    {
+      "indexConfig": {
+        "decideByType": false,
+        "enabled": true,
+        "fulltext": false,
+        "includeInAllText": false,
+        "nGram": false
+      },
+      "path": "components.fragment.id"
+    },
+    {
+      "indexConfig": {
+        "decideByType": false,
+        "enabled": false,
+        "fulltext": false,
+        "includeInAllText": false,
+        "nGram": false
+      },
+      "path": "components"
+    }
+  ]
+}

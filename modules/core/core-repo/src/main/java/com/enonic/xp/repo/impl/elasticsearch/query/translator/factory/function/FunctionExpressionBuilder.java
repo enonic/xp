@@ -26,6 +26,10 @@ public class FunctionExpressionBuilder
         {
             return PathMatchFunction.create( function );
         }
+        else if ( "stemmed".equals( functionName ) )
+        {
+            return StemmedFunction.create( function );
+        }
 
         throw new UnsupportedOperationException( "Function '" + functionName + "' is not supported" );
     }

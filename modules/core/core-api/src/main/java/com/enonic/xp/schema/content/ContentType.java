@@ -7,7 +7,7 @@ import com.google.common.base.MoreObjects;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.schema.BaseSchema;
-import com.enonic.xp.schema.mixin.MixinNames;
+import com.enonic.xp.schema.xdata.XDataNames;
 
 @Beta
 public final class ContentType
@@ -25,9 +25,9 @@ public final class ContentType
 
     private final Form form;
 
-    private final String contentDisplayNameScript;
+    private final String displayNameExpression;
 
-    private final MixinNames metadata;
+    private final XDataNames xData;
 
     ContentType( final Builder builder )
     {
@@ -46,8 +46,8 @@ public final class ContentType
         this.allowChildContent = builder.allowChildContent;
         this.isBuiltIn = builder.isBuiltIn;
         this.form = builder.formBuilder != null ? builder.formBuilder.build() : Form.create().build();
-        this.contentDisplayNameScript = builder.contentDisplayNameScript;
-        this.metadata = builder.metadata;
+        this.displayNameExpression = builder.displayNameExpression;
+        this.xData = builder.xData;
     }
 
     public static Builder create()
@@ -95,16 +95,15 @@ public final class ContentType
         return this.form;
     }
 
-    public String getContentDisplayNameScript()
+    public String getDisplayNameExpression()
     {
-        return contentDisplayNameScript;
+        return displayNameExpression;
     }
 
-    public MixinNames getMetadata()
+    public XDataNames getXData()
     {
-        return metadata;
+        return xData;
     }
-
 
     @Override
     public String toString()
@@ -113,7 +112,7 @@ public final class ContentType
         s.add( "name", getName() );
         s.add( "displayName", getDisplayName() );
         s.add( "description", getDescription() );
-        s.add( "metadata", metadata );
+        s.add( "metadata", xData );
         s.add( "superType", superType );
         s.add( "isAbstract", isAbstract );
         s.add( "isFinal", isFinal );
@@ -140,9 +139,9 @@ public final class ContentType
 
         private ContentTypeName superType;
 
-        private String contentDisplayNameScript;
+        private String displayNameExpression;
 
-        private MixinNames metadata;
+        private XDataNames xData;
 
         private Builder()
         {
@@ -152,7 +151,7 @@ public final class ContentType
             isFinal = true;
             allowChildContent = true;
             isBuiltIn = false;
-            metadata = MixinNames.empty();
+            xData = XDataNames.empty();
         }
 
         private Builder( final ContentType source )
@@ -167,8 +166,8 @@ public final class ContentType
             {
                 this.formBuilder = Form.create( source.getForm() );
             }
-            this.contentDisplayNameScript = source.getContentDisplayNameScript();
-            this.metadata = source.metadata;
+            this.displayNameExpression = source.getDisplayNameExpression();
+            this.xData = source.xData;
         }
 
         @Override
@@ -243,15 +242,15 @@ public final class ContentType
             return this;
         }
 
-        public Builder contentDisplayNameScript( final String contentDisplayNameScript )
+        public Builder displayNameExpression( final String displayNameExpression )
         {
-            this.contentDisplayNameScript = contentDisplayNameScript;
+            this.displayNameExpression = displayNameExpression;
             return this;
         }
 
-        public Builder metadata( final MixinNames metadata )
+        public Builder xData( final XDataNames xData )
         {
-            this.metadata = metadata;
+            this.xData = xData;
             return this;
         }
 

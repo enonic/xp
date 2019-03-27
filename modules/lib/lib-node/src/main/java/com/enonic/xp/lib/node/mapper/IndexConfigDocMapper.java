@@ -1,5 +1,8 @@
 package com.enonic.xp.lib.node.mapper;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSortedSet;
 
@@ -74,16 +77,25 @@ class IndexConfigDocMapper
         gen.value( "fulltext", indexConfig.isFulltext() );
         gen.value( "includeInAllText", indexConfig.isIncludeInAllText() );
         gen.value( "path", indexConfig.isPath() );
+
         final ImmutableList<IndexValueProcessor> indexValueProcessors = indexConfig.getIndexValueProcessors();
-        serialize( gen, indexValueProcessors );
+
+        serializeArray( gen, "indexValueProcessors", indexValueProcessors.
+            stream().
+            map( IndexValueProcessor::getName ).
+            collect( Collectors.toList() ) );
+
+        final ImmutableList<String> languages = indexConfig.getLanguages();
+
+        serializeArray( gen, "languages", languages );
     }
 
-    private void serialize( final MapGenerator gen, final ImmutableList<IndexValueProcessor> indexValueProcessors )
+    private void serializeArray( final MapGenerator gen, final String name, final List<String> values )
     {
-        gen.array( "indexValueProcessors" );
-        for ( final IndexValueProcessor processor : indexValueProcessors )
+        gen.array( name );
+        for ( final String value : values )
         {
-            gen.value( processor.getName() );
+            gen.value( value );
         }
         gen.end();
     }

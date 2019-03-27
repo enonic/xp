@@ -53,9 +53,14 @@ public class ImageComponent
         return image;
     }
 
+    public boolean hasImage()
+    {
+        return this.image != null;
+    }
+
     public boolean hasConfig()
     {
-        return config != null;
+        return config != null && config.getTotalSize() > 0;
     }
 
     public PropertyTree getConfig()

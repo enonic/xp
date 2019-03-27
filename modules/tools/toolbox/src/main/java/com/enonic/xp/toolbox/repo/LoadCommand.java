@@ -13,7 +13,7 @@ import com.enonic.xp.toolbox.util.JsonHelper;
 public final class LoadCommand
     extends RepoCommand
 {
-    private static final String SYSTEM_DUMP_REST_PATH = "/api/system/load";
+    private static final String SYSTEM_DUMP_REST_PATH = "/system/load";
 
     @SuppressWarnings("WeakerAccess")
     @Option(name = "-s", description = "Dump name.", required = true)
@@ -22,6 +22,10 @@ public final class LoadCommand
     @SuppressWarnings("WeakerAccess")
     @Option(name = "-y", description = "Automatic yes to prompts; assume “Yes” as answer to all prompts and run non-interactively.")
     public boolean interactive = false;
+
+    @SuppressWarnings("WeakerAccess")
+    @Option(name = "--upgrade", description = "Upgrade the dump if necessary (default is false)")
+    public boolean upgrade = false;
 
 
     @Override
@@ -59,6 +63,7 @@ public final class LoadCommand
     {
         final ObjectNode json = JsonHelper.newObjectNode();
         json.put( "name", this.source );
+        json.put( "upgrade", this.upgrade );
         return json;
     }
 }

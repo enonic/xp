@@ -2,7 +2,7 @@ package com.enonic.xp.core.impl.issue;
 
 import java.util.List;
 
-import org.codehaus.jparsec.util.Lists;
+import com.google.common.collect.Lists;
 
 import com.enonic.xp.core.impl.issue.serializer.IssueCommentDataSerializer;
 import com.enonic.xp.issue.IssueComment;
@@ -20,7 +20,7 @@ public class IssueCommentNodeTranslator
 
     public static List<IssueComment> fromNodes( final Nodes nodes )
     {
-        List<IssueComment> issues = Lists.arrayList();
+        final List<IssueComment> issues = Lists.newArrayList();
 
         for ( final Node node : nodes )
         {

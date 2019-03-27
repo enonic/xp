@@ -1,107 +1,97 @@
 package com.enonic.xp.impl.server.rest;
 
-import javax.ws.rs.core.MediaType;
-
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 
-import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.dump.DumpService;
-import com.enonic.xp.export.ExportError;
-import com.enonic.xp.export.ExportNodesParams;
-import com.enonic.xp.export.ExportService;
-import com.enonic.xp.export.ImportNodesParams;
-import com.enonic.xp.export.NodeExportResult;
-import com.enonic.xp.export.NodeImportResult;
-import com.enonic.xp.node.NodePath;
-import com.enonic.xp.repository.NodeRepositoryService;
-import com.enonic.xp.repository.Repositories;
-import com.enonic.xp.repository.RepositoryService;
-import com.enonic.xp.security.SystemConstants;
+import com.enonic.xp.impl.server.rest.model.SystemDumpRequestJson;
+import com.enonic.xp.impl.server.rest.model.SystemDumpUpgradeRequestJson;
+import com.enonic.xp.impl.server.rest.model.SystemLoadRequestJson;
+import com.enonic.xp.impl.server.rest.task.DumpRunnableTask;
+import com.enonic.xp.impl.server.rest.task.LoadRunnableTask;
+import com.enonic.xp.impl.server.rest.task.UpgradeRunnableTask;
+import com.enonic.xp.impl.server.rest.task.VacuumRunnableTask;
+import com.enonic.xp.task.TaskId;
+import com.enonic.xp.task.TaskResultJson;
+import com.enonic.xp.task.TaskService;
 
-import static org.mockito.Matchers.isA;
+import static org.mockito.Matchers.eq;
 
 public class SystemResourceTest
     extends ServerRestTestSupport
 {
-    private ExportService exportService;
+    private TaskService taskService;
 
-    private RepositoryService repositoryService;
+    private SystemResource resource;
 
-    private NodeRepositoryService nodeRepositoryService;
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
-    private DumpService dumpService;
-
-    @BeforeClass
-    public static void setHomeDir()
-    {
-        System.setProperty( "xp.home", "~" );
-    }
-
-    @AfterClass
-    public static void unsetHomeDir()
-    {
-        System.clearProperty( "xp.home" );
-    }
-
-
-    @Ignore // Until new dump-stuff is ready
-    @Test
-    public void dump()
+    @Before
+    public void setup()
         throws Exception
     {
-        final NodeExportResult exportResult = NodeExportResult.create().
-            addNodePath( NodePath.create( "/path/to/node" ).build() ).
-            addError( new ExportError( "Error" ) ).
-            dryRun( true ).
-            build();
-        Mockito.when( this.exportService.exportNodes( isA( ExportNodesParams.class ) ) ).thenReturn( exportResult );
-
-        Mockito.when( this.repositoryService.list() ).
-            thenReturn( Repositories.from( SystemConstants.SYSTEM_REPO, ContentConstants.CONTENT_REPO ) );
-
-        final String result = request().path( "system/dump" ).
-            entity( readFromFile( "dump_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post().getAsString();
-
-        assertJson( "dump.json", result );
     }
 
-    @Ignore
+    @Test
+    public void dumpTask()
+        throws Exception
+    {
+        Mockito.when( taskService.submitTask( Mockito.isA( DumpRunnableTask.class ), eq( "dump" ) ) ).thenReturn(
+            TaskId.from( "task-id" ) );
+
+        final SystemDumpRequestJson json = Mockito.mock( SystemDumpRequestJson.class );
+
+        final TaskResultJson result = resource.systemDump( json );
+        assertEquals( "task-id", result.getTaskId() );
+    }
+
     @Test
     public void load()
         throws Exception
     {
-        final NodeImportResult importResult = NodeImportResult.create().
-            added( NodePath.create( "/path/to/node1" ).build() ).
-            updated( NodePath.create( "/path/to/node2" ).build() ).
-            dryRun( true ).
-            build();
-        Mockito.when( this.exportService.importNodes( isA( ImportNodesParams.class ) ) ).thenReturn( importResult );
+        Mockito.when( taskService.submitTask( Mockito.isA( LoadRunnableTask.class ), eq( "load" ) ) ).thenReturn(
+            TaskId.from( "task-id" ) );
 
-        final String result = request().path( "system/load" ).
-            entity( readFromFile( "load_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post().getAsString();
+        final SystemLoadRequestJson json = Mockito.mock( SystemLoadRequestJson.class );
 
-        assertJson( "load.json", result );
+        final TaskResultJson result = resource.load( json );
+        assertEquals( "task-id", result.getTaskId() );
+    }
+
+    @Test
+    public void vacuum()
+        throws Exception
+    {
+        Mockito.when( taskService.submitTask( Mockito.isA( VacuumRunnableTask.class ), eq( "vacuum" ) ) ).thenReturn(
+            TaskId.from( "task-id" ) );
+
+        final TaskResultJson result = resource.vacuum();
+        assertEquals( "task-id", result.getTaskId() );
+    }
+
+    @Test
+    public void upgrade()
+        throws Exception
+    {
+        Mockito.when( taskService.submitTask( Mockito.isA( UpgradeRunnableTask.class ), eq( "upgrade" ) ) ).thenReturn(
+            TaskId.from( "task-id" ) );
+
+        final SystemDumpUpgradeRequestJson json = Mockito.mock( SystemDumpUpgradeRequestJson.class );
+
+        final TaskResultJson result = resource.upgrade( json );
+        assertEquals( "task-id", result.getTaskId() );
     }
 
     @Override
     protected Object getResourceInstance()
     {
-        this.exportService = Mockito.mock( ExportService.class );
-        this.repositoryService = Mockito.mock( RepositoryService.class );
-        this.nodeRepositoryService = Mockito.mock( NodeRepositoryService.class );
-        this.dumpService = Mockito.mock( DumpService.class );
+        this.taskService = Mockito.mock( TaskService.class );
 
-        final SystemResource resource = new SystemResource();
-        resource.setExportService( exportService );
-        resource.setRepositoryService( repositoryService );
-        resource.setNodeRepositoryService( nodeRepositoryService );
-        resource.setDumpService( dumpService );
+        resource = new SystemResource();
+        resource.setTaskService( taskService );
         return resource;
     }
 }

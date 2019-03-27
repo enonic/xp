@@ -1,13 +1,13 @@
 apply from: "$rootDir/gradle/osgi.gradle"
 
 dependencies {
-    compile( 'org.jparsec:jparsec:2.1' ) {
+    compile( 'org.jparsec:jparsec:3.0' ) {
         transitive = false
     }
 }
 
 bundle {
     instruction 'Bundle-Name', 'JParsec Library'
-    instruction 'Export-Package', 'org.codehaus.jparsec.*;version=2.1'
+    instruction 'Export-Package', 'org.jparsec.*;version=3.0'
     instruction 'Import-Package', '*;resolution:=optional'
 }

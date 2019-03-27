@@ -51,6 +51,7 @@ public final class WidgetHandler
         }
         final PortalRequest portalRequest =
             webRequest instanceof PortalRequest ? (PortalRequest) webRequest : new PortalRequest( webRequest );
+        portalRequest.setContextPath( findPreRestPath( portalRequest ) + "/" + matcher.group( 0 ) );
 
         final WidgetHandlerWorker worker = new WidgetHandlerWorker( portalRequest );
         worker.controllerScriptFactory = this.controllerScriptFactory;

@@ -1,11 +1,11 @@
 apply from: "$rootDir/gradle/osgi.gradle"
 
 dependencies {
-    compile 'com.google.guava:guava:18.0'
+    compile 'com.google.guava:guava:26.0-jre'
     compile 'commons-lang:commons-lang:2.4'
-    compile 'com.fasterxml.jackson.core:jackson-databind:2.6.2'
-    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.6.2'
-    compile 'org.jparsec:jparsec:2.1'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.9.6'
+    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.6'
+    compile 'org.jparsec:jparsec:3.0'
     compile 'commons-io:commons-io:2.4'
     compile 'org.osgi:osgi.core:6.0.0'
     compile 'org.osgi:osgi.cmpn:6.0.0'

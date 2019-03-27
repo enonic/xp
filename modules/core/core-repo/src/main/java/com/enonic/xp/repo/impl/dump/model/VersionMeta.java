@@ -2,6 +2,8 @@ package com.enonic.xp.repo.impl.dump.model;
 
 import java.time.Instant;
 
+import com.enonic.xp.blob.NodeVersionKey;
+import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersionId;
@@ -14,14 +16,20 @@ public class VersionMeta
 
     private final NodeVersionId version;
 
+    private final NodeVersionKey nodeVersionKey;
+
     private final NodeState nodeState;
+
+    private final NodeCommitId nodeCommitId;
 
     private VersionMeta( final Builder builder )
     {
         nodePath = builder.nodePath;
         timestamp = builder.timestamp;
         version = builder.version;
+        nodeVersionKey = builder.nodeVersionKey;
         nodeState = builder.nodeState;
+        nodeCommitId = builder.nodeCommitId;
     }
 
     public NodePath getNodePath()
@@ -39,9 +47,19 @@ public class VersionMeta
         return version;
     }
 
+    public NodeVersionKey getNodeVersionKey()
+    {
+        return nodeVersionKey;
+    }
+
     public NodeState getNodeState()
     {
         return nodeState;
+    }
+
+    public NodeCommitId getNodeCommitId()
+    {
+        return nodeCommitId;
     }
 
     public static Builder create()
@@ -57,7 +75,11 @@ public class VersionMeta
 
         private NodeVersionId version;
 
+        private NodeVersionKey nodeVersionKey;
+
         private NodeState nodeState;
+
+        private NodeCommitId nodeCommitId;
 
         private Builder()
         {
@@ -81,9 +103,21 @@ public class VersionMeta
             return this;
         }
 
+        public Builder nodeVersionKey( final NodeVersionKey val )
+        {
+            nodeVersionKey = val;
+            return this;
+        }
+
         public Builder nodeState( final NodeState val )
         {
             nodeState = val;
+            return this;
+        }
+
+        public Builder nodeCommitId( final NodeCommitId val )
+        {
+            nodeCommitId = val;
             return this;
         }
 
@@ -119,6 +153,14 @@ public class VersionMeta
         {
             return false;
         }
+        if ( nodeVersionKey != null ? !nodeVersionKey.equals( meta.nodeVersionKey ) : meta.nodeVersionKey != null )
+        {
+            return false;
+        }
+        if ( nodeCommitId != null ? !nodeCommitId.equals( meta.nodeCommitId ) : meta.nodeCommitId != null )
+        {
+            return false;
+        }
         return nodeState == meta.nodeState;
 
     }
@@ -129,7 +171,9 @@ public class VersionMeta
         int result = nodePath != null ? nodePath.hashCode() : 0;
         result = 31 * result + ( timestamp != null ? timestamp.hashCode() : 0 );
         result = 31 * result + ( version != null ? version.hashCode() : 0 );
+        result = 31 * result + ( nodeVersionKey != null ? nodeVersionKey.hashCode() : 0 );
         result = 31 * result + ( nodeState != null ? nodeState.hashCode() : 0 );
+        result = 31 * result + ( nodeCommitId != null ? nodeCommitId.hashCode() : 0 );
         return result;
     }
 }

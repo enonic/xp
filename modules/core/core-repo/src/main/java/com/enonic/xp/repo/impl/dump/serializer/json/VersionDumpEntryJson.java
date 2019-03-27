@@ -5,6 +5,8 @@ import java.time.Instant;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import com.enonic.xp.blob.NodeVersionKey;
+import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersionId;
@@ -21,8 +23,20 @@ public class VersionDumpEntryJson
     @JsonProperty("version")
     private String version;
 
+    @JsonProperty("nodeBlobKey")
+    private String nodeBlobKey;
+
+    @JsonProperty("indexConfigBlobKey")
+    private String indexConfigBlobKey;
+
+    @JsonProperty("accessControlBlobKey")
+    private String accessControlBlobKey;
+
     @JsonProperty("nodeState")
     private String nodeState;
+
+    @JsonProperty("commitId")
+    private String commitId;
 
     public VersionDumpEntryJson()
     {
@@ -33,16 +47,24 @@ public class VersionDumpEntryJson
         nodePath = builder.nodePath;
         timestamp = builder.timestamp;
         version = builder.version;
+        nodeBlobKey = builder.nodeBlobKey;
+        indexConfigBlobKey = builder.indexConfigBlobKey;
+        accessControlBlobKey = builder.accessControlBlobKey;
         nodeState = builder.nodeState;
+        commitId = builder.commitId;
     }
 
     public static VersionMeta fromJson( final VersionDumpEntryJson json )
     {
+        final NodeVersionKey nodeVersionKey =
+            NodeVersionKey.from( json.getNodeBlobKey(), json.getIndexConfigBlobKey(), json.getAccessControlBlobKey() );
         return VersionMeta.create().
             nodePath( NodePath.create( json.nodePath ).build() ).
             timestamp( json.getTimestamp() != null ? Instant.parse( json.getTimestamp() ) : null ).
             version( json.getVersion() != null ? NodeVersionId.from( json.getVersion() ) : null ).
+            nodeVersionKey( nodeVersionKey ).
             nodeState( NodeState.from( json.getNodeState() ) ).
+            nodeCommitId( json.getCommitId() == null ? null : NodeCommitId.from( json.getCommitId() ) ).
             build();
     }
 
@@ -52,12 +74,21 @@ public class VersionDumpEntryJson
             nodePath( meta.getNodePath().toString() ).
             timestamp( meta.getTimestamp() != null ? meta.getTimestamp().toString() : null ).
             version( meta.getVersion() != null ? meta.getVersion().toString() : null ).
+            nodeBlobKey( meta.getNodeVersionKey().getNodeBlobKey().toString() ).
+            indexConfigBlobKey( meta.getNodeVersionKey().getIndexConfigBlobKey().toString() ).
+            accessControlBlobKey( meta.getNodeVersionKey().getAccessControlBlobKey().toString() ).
+            commitId( meta.getNodeCommitId() == null ? null : meta.getNodeCommitId().toString() ).
             build();
     }
 
-    private static Builder create()
+    public static Builder create()
     {
         return new Builder();
+    }
+
+    public static Builder create( final VersionDumpEntryJson source )
+    {
+        return new Builder( source );
     }
 
     public String getNodePath()
@@ -75,9 +106,29 @@ public class VersionDumpEntryJson
         return version;
     }
 
+    public String getNodeBlobKey()
+    {
+        return nodeBlobKey;
+    }
+
+    public String getIndexConfigBlobKey()
+    {
+        return indexConfigBlobKey;
+    }
+
+    public String getAccessControlBlobKey()
+    {
+        return accessControlBlobKey;
+    }
+
     private String getNodeState()
     {
         return nodeState;
+    }
+
+    public String getCommitId()
+    {
+        return commitId;
     }
 
     public static final class Builder
@@ -88,10 +139,30 @@ public class VersionDumpEntryJson
 
         private String version;
 
+        private String nodeBlobKey;
+
+        private String indexConfigBlobKey;
+
+        private String accessControlBlobKey;
+
         private String nodeState;
+
+        private String commitId;
 
         private Builder()
         {
+        }
+
+        private Builder( final VersionDumpEntryJson source )
+        {
+            this.nodePath = source.getNodePath();
+            this.timestamp = source.getTimestamp();
+            this.version = source.getVersion();
+            this.nodeBlobKey = source.getNodeBlobKey();
+            this.indexConfigBlobKey = source.getIndexConfigBlobKey();
+            this.accessControlBlobKey = source.getAccessControlBlobKey();
+            this.nodeState = source.getNodeState();
+            this.commitId = source.getCommitId();
         }
 
         public Builder nodePath( final String val )
@@ -112,9 +183,33 @@ public class VersionDumpEntryJson
             return this;
         }
 
+        public Builder nodeBlobKey( final String val )
+        {
+            nodeBlobKey = val;
+            return this;
+        }
+
+        public Builder indexConfigBlobKey( final String val )
+        {
+            indexConfigBlobKey = val;
+            return this;
+        }
+
+        public Builder accessControlBlobKey( final String val )
+        {
+            accessControlBlobKey = val;
+            return this;
+        }
+
         public Builder nodeState( final String val )
         {
             nodeState = val;
+            return this;
+        }
+
+        public Builder commitId( final String val )
+        {
+            commitId = val;
             return this;
         }
 

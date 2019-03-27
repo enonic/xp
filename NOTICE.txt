@@ -33,6 +33,10 @@ Licenses used by Enonic XP
     MIT License
     https://github.com/graphql-java/graphql-java/blob/master/LICENSE.md
 
+    Apache Ignite
+    Apache License 2.0
+    https://apacheignite.readme.io/v2.3/docs/license
+
     Jackson Annotations
     Apache License 2.0
     https://github.com/FasterXML/jackson-annotations

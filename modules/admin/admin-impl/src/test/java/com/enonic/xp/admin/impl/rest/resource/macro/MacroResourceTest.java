@@ -8,6 +8,7 @@ import javax.ws.rs.core.Response;
 
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.junit.Test;
+import org.mockito.AdditionalAnswers;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -35,6 +36,7 @@ import com.enonic.xp.portal.macro.MacroProcessor;
 import com.enonic.xp.portal.macro.MacroProcessorFactory;
 import com.enonic.xp.portal.postprocess.HtmlTag;
 import com.enonic.xp.portal.url.PortalUrlService;
+import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
@@ -56,6 +58,8 @@ public class MacroResourceTest
 
     private LocaleService localeService;
 
+    private MixinService mixinService;
+
     private MacroResource macroResource;
 
     @Override
@@ -66,6 +70,7 @@ public class MacroResourceTest
         this.portalUrlService = Mockito.mock( PortalUrlService.class );
         this.contentService = Mockito.mock( ContentService.class );
         this.localeService = Mockito.mock( LocaleService.class );
+        this.mixinService = Mockito.mock( MixinService.class );
 
         this.macroResource = new MacroResource();
         macroResource.setMacroDescriptorService( this.macroDescriptorService );
@@ -73,6 +78,7 @@ public class MacroResourceTest
         macroResource.setPortalUrlService( this.portalUrlService );
         macroResource.setContentService( this.contentService );
         macroResource.setLocaleService( this.localeService );
+        macroResource.setMixinService( this.mixinService );
 
         return macroResource;
     }
@@ -127,6 +133,8 @@ public class MacroResourceTest
         Mockito.when( this.macroDescriptorService.getByApplication( ApplicationKey.from( "appKey2" ) ) ).thenReturn(
             MacroDescriptors.from( macroDescriptor3 ) );
 
+        Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
+
         String response = request().
             path( "macro/getByApps" ).
             entity( "{\"appKeys\": [\"appKey1\", \"appKey2\"]}", MediaType.APPLICATION_JSON_TYPE ).
@@ -169,6 +177,7 @@ public class MacroResourceTest
         Mockito.when( messageBundle.localize( "key.c.display-name" ) ).thenReturn( "translated.C.displayName" );
 
         Mockito.when( this.localeService.getBundle( Mockito.any(), Mockito.any() ) ).thenReturn( messageBundle );
+        Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
 
         String response = request().
             path( "macro/getByApps" ).
@@ -199,7 +208,7 @@ public class MacroResourceTest
 
         Mockito.when( this.macroDescriptorService.getByKey( MacroKey.from( "test:uppercase" ) ) ).thenReturn( macroDescriptor );
         Mockito.when( this.macroProcessorFactory.fromScript( any() ) ).thenReturn( macroProcessor );
-        Mockito.when( this.portalUrlService.pageUrl( any() ) ).thenReturn( "/portal/preview/draft/mysite/page" );
+        Mockito.when( this.portalUrlService.pageUrl( any() ) ).thenReturn( "/site/preview/draft/mysite/page" );
 
         final Site site = newSite();
         Mockito.when( this.contentService.getByPath( any() ) ).thenReturn( site );

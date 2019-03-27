@@ -59,8 +59,27 @@ public class ImageRendererTest
     @Test
     public void imageComponentWithImage()
     {
-        // setup
-        this.portalRequest.setContent( createContent() );
+        String expected =
+            "<figure data-portal-component-type=\"image\"><img style=\"width: 100%\" src=\"/site/default/draft/a/b/mycontent/_/image/abcdef1234567890:8cf45815bba82c9711c673c9bb7304039a790026/width-768/mycontent\" alt=\"logo.png\"/><figcaption>Image Title</figcaption></figure>";
+
+        testImageComponentWithImage( createContent(), expected );
+    }
+
+    @Test
+    public void imageComponentWithImageAndAltFieldSet()
+    {
+        final Content content = createContent();
+        content.getData().setString( "altText", "alternative" );
+
+        String expected =
+            "<figure data-portal-component-type=\"image\"><img style=\"width: 100%\" src=\"/site/default/draft/a/b/mycontent/_/image/abcdef1234567890:8cf45815bba82c9711c673c9bb7304039a790026/width-768/mycontent\" alt=\"alternative\"/><figcaption>Image Title</figcaption></figure>";
+
+        testImageComponentWithImage( content, expected );
+    }
+
+    private void testImageComponentWithImage( final Content content, final String expected )
+    {
+        this.portalRequest.setContent( content );
         Mockito.when( this.contentService.contentExists( Mockito.any( ContentId.class ) ) ).thenReturn( true );
 
         final PropertyTree config = new PropertyTree();
@@ -78,9 +97,7 @@ public class ImageRendererTest
         portalResponse = renderer.render( imageComponent, portalRequest );
 
         // verify
-        String result =
-            "<figure data-portal-component-type=\"image\"><img style=\"width: 100%\" src=\"/portal/draft/a/b/mycontent/_/image/abcdef1234567890:8cf45815bba82c9711c673c9bb7304039a790026/width-768/mycontent\"/><figcaption>Image Title</figcaption></figure>";
-        assertEquals( result, portalResponse.getAsString() );
+        assertEquals( expected, portalResponse.getAsString() );
     }
 
 

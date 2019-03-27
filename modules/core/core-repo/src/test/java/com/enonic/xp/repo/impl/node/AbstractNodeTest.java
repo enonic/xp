@@ -7,6 +7,8 @@ import java.util.Iterator;
 import org.junit.Before;
 import org.mockito.Mockito;
 
+import com.enonic.xp.blob.Segment;
+import com.enonic.xp.blob.SegmentLevel;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
@@ -32,8 +34,10 @@ import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.query.parser.QueryParser;
+import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.binary.BinaryServiceImpl;
 import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;
+import com.enonic.xp.repo.impl.commit.CommitServiceImpl;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.elasticsearch.AbstractElasticsearchIntegrationTest;
 import com.enonic.xp.repo.impl.elasticsearch.IndexServiceInternalImpl;
@@ -55,10 +59,11 @@ import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.RepositorySegmentUtils;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
-import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -70,7 +75,7 @@ public abstract class AbstractNodeTest
     extends AbstractElasticsearchIntegrationTest
 {
     public static final User TEST_DEFAULT_USER =
-        User.create().key( PrincipalKey.ofUser( UserStoreKey.system(), "test-user" ) ).login( "test-user" ).build();
+        User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "test-user" ) ).login( "test-user" ).build();
 
     private static final AuthenticationInfo TEST_DEFAULT_USER_AUTHINFO = AuthenticationInfo.create().
         principals( RoleKeys.AUTHENTICATED, RoleKeys.EVERYONE ).
@@ -105,6 +110,8 @@ public abstract class AbstractNodeTest
 
     protected BranchServiceImpl branchService;
 
+    protected CommitServiceImpl commitService;
+
     protected IndexServiceInternalImpl indexServiceInternal;
 
     private SnapshotServiceImpl snapshotService;
@@ -137,6 +144,7 @@ public abstract class AbstractNodeTest
         Mockito.when( repoConfig.getSnapshotsDir() ).thenReturn( new File( this.xpHome.getRoot(), "repo/snapshots" ) );
 
         System.setProperty( "xp.home", xpHome.getRoot().getPath() );
+        System.setProperty( "mapper.allow_dots_in_name", "true" );
 
         ContextAccessor.INSTANCE.set( CTX_DEFAULT );
 
@@ -163,6 +171,9 @@ public abstract class AbstractNodeTest
         this.versionService = new VersionServiceImpl();
         this.versionService.setStorageDao( storageDao );
 
+        this.commitService = new CommitServiceImpl();
+        this.commitService.setStorageDao( storageDao );
+
         // Storage-service
         this.nodeDao = new NodeVersionServiceImpl();
         this.nodeDao.setBlobStore( blobStore );
@@ -173,6 +184,7 @@ public abstract class AbstractNodeTest
         this.storageService = new NodeStorageServiceImpl();
         this.storageService.setVersionService( this.versionService );
         this.storageService.setBranchService( this.branchService );
+        this.storageService.setCommitService( this.commitService );
         this.storageService.setNodeVersionService( this.nodeDao );
         this.storageService.setIndexDataService( this.indexedDataService );
 
@@ -257,6 +269,19 @@ public abstract class AbstractNodeTest
                 refresh();
                 return null;
             } );
+    }
+
+    protected InternalContext createInternalContext()
+    {
+        final Context currentContext = ContextAccessor.current();
+        return InternalContext.create( currentContext ).
+            build();
+    }
+
+    protected Segment createSegment( SegmentLevel blobTypeLevel )
+    {
+        final RepositoryId repositoryId = ContextAccessor.current().getRepositoryId();
+        return RepositorySegmentUtils.toSegment( repositoryId, blobTypeLevel );
     }
 
     protected Node createDefaultRootNode()
@@ -396,6 +421,11 @@ public abstract class AbstractNodeTest
     protected void printVersionIndex()
     {
         printAllIndexContent( IndexNameResolver.resolveStorageIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.VERSION.getName() );
+    }
+
+    protected void printCommitIndex()
+    {
+        printAllIndexContent( IndexNameResolver.resolveStorageIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.COMMIT.getName() );
     }
 
     protected PushNodesResult pushNodes( final Branch target, final NodeId... nodeIds )

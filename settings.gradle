@@ -19,7 +19,7 @@ include 'core:core-auth'
 include 'core:core-macro'
 include 'core:core-task'
 include 'core:core-cluster'
-include 'core:core-ignite'
+//include 'core:core-ignite'
 
 include 'server:server-config'
 include 'server:server-deploy'
@@ -53,7 +53,6 @@ include 'admin:admin-event'
 
 include 'itest:itest-core'
 
-include 'tools:upgrade'
 include 'tools:toolbox'
 include 'tools:testing'
 
@@ -61,8 +60,6 @@ include 'lib:lib-common'
 include 'lib:lib-content'
 include 'lib:lib-i18n'
 include 'lib:lib-portal'
-include 'lib:lib-mustache'
-include 'lib:lib-thymeleaf'
 include 'lib:lib-mail'
 include 'lib:lib-auth'
 include 'lib:lib-io'
@@ -91,11 +88,14 @@ include 'repack:repack-jparsec'
 include 'repack:repack-okhttp'
 include 'repack:repack-resteasy'
 include 'repack:repack-javax-cache-api'
+include 'repack:repack-saxon'
 
 include 'runtime'
 include 'docs'
 
 rootProject.name = 'xp'
+
+enableFeaturePreview( 'STABLE_PUBLISHING' )
 
 configureProjects( rootProject )
 
@@ -113,4 +113,6 @@ def configureProject( p )
     p.projectDir = new File( (File) settingsDir, "modules/${dirName}" )
     assert p.projectDir.isDirectory()
 }
+
+
 

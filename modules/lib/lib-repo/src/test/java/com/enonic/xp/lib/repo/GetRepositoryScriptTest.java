@@ -35,7 +35,7 @@ public class GetRepositoryScriptTest
     @Test
     public void testExample()
     {
-        runScript( "/site/lib/xp/examples/repo/get.js" );
+        runScript( "/lib/xp/examples/repo/get.js" );
         Mockito.verify( this.repositoryService, Mockito.times( 1 ) ).get( Mockito.any() );
     }
 }

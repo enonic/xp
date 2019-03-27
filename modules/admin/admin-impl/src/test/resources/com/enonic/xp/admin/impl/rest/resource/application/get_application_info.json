@@ -4,11 +4,11 @@
     "total": 0
   },
   "deployment": {
-    "url": "http://localhost:80/app/testapplication"
+    "url": "http://localhost:80/webapp/testapplication"
   },
-  "idProvider": {
-    "mode": null,
-    "userStores": null
+  "idProviderApplication": {
+    "idProviders": null,
+    "mode": null
   },
   "layouts": {
     "descriptors": []
@@ -49,7 +49,9 @@
     "descriptors": [
       {
         "config": {},
+        "description": "My widget description",
         "displayName": "My widget",
+        "iconUrl": null,
         "interfaces": [
           "com.enonic.xp.my-interface",
           "com.enonic.xp.my-interface-2"

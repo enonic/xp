@@ -1,0 +1,51 @@
+{
+  "components": [
+    {
+      "type": "layout",
+      "path": "/",
+      "layout": [
+        {
+          "descriptor": "com.enonic.app.features:layout-25-75",
+          "config": [
+            {
+              "com-enonic-app-features": [
+                {
+                  "layout-25-75": {
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "part",
+      "path": "/left/0",
+      "part": [
+        {
+          "descriptor": "com.enonic.app.features:cities-distance-facet",
+          "config": [
+            {
+              "com-enonic-app-features": [
+                {
+                  "cities-distance-facet": {
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "path": "/right/0",
+      "text": [
+        {
+          "value": "<p>Lorem Ipsum</p>"
+        }
+      ]
+    }
+  ]
+}

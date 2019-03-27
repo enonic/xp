@@ -10,7 +10,7 @@ interface PrincipalPropertyNames
 
     String PRINCIPAL_KEY = "principalKey";
 
-    String USER_STORE_KEY = "userStoreKey";
+    String ID_PROVIDER_KEY = "userStoreKey";
 
     String EMAIL_KEY = "email";
     

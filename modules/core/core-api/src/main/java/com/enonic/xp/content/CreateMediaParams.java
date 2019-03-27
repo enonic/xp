@@ -1,6 +1,8 @@
 package com.enonic.xp.content;
 
 
+import java.util.Objects;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
@@ -144,5 +146,29 @@ public final class CreateMediaParams
     public String getTags()
     {
         return tags;
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+        final CreateMediaParams that = (CreateMediaParams) o;
+        return Double.compare( that.focalX, focalX ) == 0 && Double.compare( that.focalY, focalY ) == 0 &&
+            Objects.equals( parent, that.parent ) && Objects.equals( name, that.name ) && Objects.equals( mimeType, that.mimeType ) &&
+            Objects.equals( byteSource, that.byteSource ) && Objects.equals( caption, that.caption ) &&
+            Objects.equals( artist, that.artist ) && Objects.equals( copyright, that.copyright ) && Objects.equals( tags, that.tags );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( parent, name, mimeType, byteSource, focalX, focalY, caption, artist, copyright, tags );
     }
 }

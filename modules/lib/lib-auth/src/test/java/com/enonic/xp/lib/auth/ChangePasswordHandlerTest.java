@@ -41,16 +41,16 @@ public class ChangePasswordHandlerTest
 
         this.session.setAttribute( authInfo );
 
-        runScript( "/site/lib/xp/examples/auth/changePassword.js" );
+        runScript( "/lib/xp/examples/auth/changePassword.js" );
         Mockito.verify( this.securityService ).setPassword( eq( authInfo.getUser().getKey() ), eq( "new-secret-password" ) );
     }
 
     @Test
     public void testChangePassword()
     {
-        runFunction( "/site/test/changePassword-test.js", "changePassword" );
+        runFunction( "/test/changePassword-test.js", "changePassword" );
 
-        Mockito.verify( this.securityService ).setPassword( eq( PrincipalKey.from( "user:myUserStore:userId" ) ),
+        Mockito.verify( this.securityService ).setPassword( eq( PrincipalKey.from( "user:myIdProvider:userId" ) ),
                                                             eq( "test-password-without-spaces" ) );
     }
 }

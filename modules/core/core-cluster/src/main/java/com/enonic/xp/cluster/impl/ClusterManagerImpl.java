@@ -31,7 +31,7 @@ public class ClusterManagerImpl
     private final Long checkIntervalMs;
 
     private final static List<ClusterId> DEFAULT_REQUIRED_INSTANCES =
-        Lists.newArrayList( ClusterId.from( "elasticsearch" ), ClusterId.from( "ignite" ) );
+        Lists.newArrayList( ClusterId.from( "elasticsearch" ));
 
     private final Clusters instances;
 
@@ -41,7 +41,7 @@ public class ClusterManagerImpl
 
     private final List<ClusterValidator> validators = Lists.newArrayList( new HealthValidator(), new ClusterMembersValidator() );
 
-    private boolean isHealthy;
+    private volatile boolean isHealthy;
 
     @SuppressWarnings("WeakerAccess")
     public ClusterManagerImpl()
@@ -89,6 +89,11 @@ public class ClusterManagerImpl
     public Clusters getClusters()
     {
         return this.instances;
+    }
+
+    public boolean isHealthy()
+    {
+        return isHealthy;
     }
 
     private void activateProviders()

@@ -1,15 +1,15 @@
 package com.enonic.xp.app;
 
-import com.enonic.xp.auth.AuthDescriptor;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.descriptor.Descriptors;
+import com.enonic.xp.idprovider.IdProviderDescriptor;
 import com.enonic.xp.macro.MacroDescriptors;
 import com.enonic.xp.page.PageDescriptors;
 import com.enonic.xp.region.LayoutDescriptors;
 import com.enonic.xp.region.PartDescriptors;
 import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.relationship.RelationshipTypes;
-import com.enonic.xp.security.UserStores;
+import com.enonic.xp.security.IdProviders;
 import com.enonic.xp.task.TaskDescriptor;
 
 
@@ -31,9 +31,9 @@ public final class ApplicationInfo
 
     private Contents contentReferences;
 
-    private UserStores userStoreReferences;
+    private IdProviders idProviderReferences;
 
-    private AuthDescriptor authDescriptor;
+    private IdProviderDescriptor idProviderDescriptor;
 
     private ApplicationInfo( final Builder builder )
     {
@@ -46,8 +46,8 @@ public final class ApplicationInfo
         this.macros = builder.macros;
         this.tasks = builder.tasks;
         this.contentReferences = builder.contentReferences;
-        this.userStoreReferences = builder.userStoreReferences;
-        this.authDescriptor = builder.authDescriptor;
+        this.idProviderReferences = builder.idProviderReferences;
+        this.idProviderDescriptor = builder.idProviderDescriptor;
     }
 
     public ContentTypes getContentTypes()
@@ -90,14 +90,14 @@ public final class ApplicationInfo
         return contentReferences;
     }
 
-    public UserStores getUserStoreReferences()
+    public IdProviders getIdProviderReferences()
     {
-        return userStoreReferences;
+        return idProviderReferences;
     }
 
-    public AuthDescriptor getAuthDescriptor()
+    public IdProviderDescriptor getIdProviderDescriptor()
     {
-        return authDescriptor;
+        return idProviderDescriptor;
     }
 
     public static Builder create()
@@ -124,9 +124,9 @@ public final class ApplicationInfo
 
         private Contents contentReferences;
 
-        private UserStores userStoreReferences;
+        private IdProviders idProviderReferences;
 
-        private AuthDescriptor authDescriptor;
+        private IdProviderDescriptor idProviderDescriptor;
 
         private Builder()
         {
@@ -180,15 +180,15 @@ public final class ApplicationInfo
             return this;
         }
 
-        public Builder setUserStoreReferences( final UserStores userStoreReferences )
+        public Builder setIdProviderReferences( final IdProviders idProviderReferences )
         {
-            this.userStoreReferences = userStoreReferences;
+            this.idProviderReferences = idProviderReferences;
             return this;
         }
 
-        public Builder setAuthDescriptor( final AuthDescriptor authDescriptor )
+        public Builder setIdProviderDescriptor( final IdProviderDescriptor idProviderDescriptor )
         {
-            this.authDescriptor = authDescriptor;
+            this.idProviderDescriptor = idProviderDescriptor;
             return this;
         }
 

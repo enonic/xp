@@ -71,6 +71,8 @@ public class Content
 
     private final ContentState contentState;
 
+    private final ContentIds processedReferences;
+
     protected Content( final Builder builder )
     {
         Preconditions.checkNotNull( builder.name, "name is required for a Content" );
@@ -79,8 +81,8 @@ public class Content
 
         if ( builder.page != null )
         {
-            Preconditions.checkArgument( !( builder.page.getController() != null && builder.page.getTemplate() != null ),
-                                         "A Page cannot have both have a controller and a template set" );
+            Preconditions.checkArgument( !( builder.page.getDescriptor() != null && builder.page.getTemplate() != null ),
+                                         "A Page cannot have both have a descriptor and a template set" );
         }
 
         if ( builder.type == null )
@@ -112,6 +114,7 @@ public class Content
         this.inheritPermissions = builder.inheritPermissions;
         this.language = builder.language;
         this.contentState = builder.contentState == null ? ContentState.DEFAULT : builder.contentState;
+        this.processedReferences = builder.processedReferences.build();
     }
 
     public static Builder create( final ContentTypeName type )
@@ -317,6 +320,11 @@ public class Content
         return contentState;
     }
 
+    public ContentIds getProcessedReferences()
+    {
+        return processedReferences;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -352,8 +360,8 @@ public class Content
             Objects.equals( extraDatas, other.extraDatas ) &&
             Objects.equals( page, other.page ) &&
             Objects.equals( language, other.language ) &&
-            Objects.equals( contentState, other.contentState ) &&
-            Objects.equals( publishInfo, other.publishInfo );
+            Objects.equals( contentState, other.contentState ) && Objects.equals( publishInfo, other.publishInfo ) &&
+            Objects.equals( processedReferences, other.processedReferences );
     }
 
     @Override
@@ -361,7 +369,7 @@ public class Content
     {
         return Objects.hash( id, name, parentPath, displayName, type, valid, modifier, creator, owner, createdTime, modifiedTime,
                              hasChildren, inheritPermissions, childOrder, thumbnail, permissions, attachments, data, extraDatas, page,
-                             language, contentState, publishInfo );
+                             language, contentState, publishInfo, processedReferences );
     }
 
     public static class Builder<BUILDER extends Builder>
@@ -412,12 +420,15 @@ public class Content
 
         protected ContentState contentState;
 
+        protected ContentIds.Builder processedReferences;
+
         protected Builder()
         {
             this.data = new PropertyTree();
             this.attachments = Attachments.empty();
             this.extraDatas = ExtraDatas.empty();
             this.inheritPermissions = true;
+            this.processedReferences = ContentIds.create();
         }
 
         protected Builder( final Content source )
@@ -445,6 +456,7 @@ public class Content
             this.language = source.language;
             this.contentState = source.contentState;
             this.publishInfo = source.publishInfo;
+            this.processedReferences = ContentIds.create().addAll( source.processedReferences );
         }
 
         public BUILDER parentPath( final ContentPath path )
@@ -623,6 +635,18 @@ public class Content
         public BUILDER contentState( final ContentState contentState )
         {
             this.contentState = contentState;
+            return (BUILDER) this;
+        }
+
+        public BUILDER processedReferences( final ContentIds references )
+        {
+            this.processedReferences = ContentIds.create().addAll( references );
+            return (BUILDER) this;
+        }
+
+        public BUILDER addProcessedReference( final ContentId reference )
+        {
+            this.processedReferences.add( reference );
             return (BUILDER) this;
         }
 

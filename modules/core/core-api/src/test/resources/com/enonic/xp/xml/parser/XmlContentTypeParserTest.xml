@@ -2,12 +2,12 @@
 <content-type xmlns="urn:enonic:xp:model:1.0">
   <display-name>All the Base Types</display-name>
   <description>description</description>
-  <content-display-name-script>$('firstName') + ' ' + $('lastName')</content-display-name-script>
+  <display-name-expression>${firstName} ${lastName}</display-name-expression>
   <super-type>content</super-type>
   <is-abstract>false</is-abstract>
   <is-final>true</is-final>
   <allow-child-content>true</allow-child-content>
-  <x-data mixin="myapplication:metadata"/>
+  <x-data name="myapplication:metadata"/>
   <form>
     <input type="Date" name="myDate">
       <label>label</label>
@@ -30,7 +30,7 @@
       <immutable>false</immutable>
       <occurrences minimum="0" maximum="1"/>
       <items>
-        <field-set name="myFieldSet">
+        <field-set>
           <label>My field set</label>
           <items>
             <input type="TextLine" name="myTextLine">

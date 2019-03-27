@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
@@ -24,7 +23,7 @@ public class ElasticsearchQuery
 
     private final QueryBuilder query;
 
-    private final FilterBuilder filter;
+    private final QueryBuilder filter;
 
     private final Set<String> indexTypes;
 
@@ -80,7 +79,7 @@ public class ElasticsearchQuery
         return query;
     }
 
-    public FilterBuilder getFilter()
+    public QueryBuilder getFilter()
     {
         return filter;
     }
@@ -140,16 +139,8 @@ public class ElasticsearchQuery
     {
         final String sortBuildersAsString = getSortBuildersAsString();
 
-        return "ElasticsearchQuery{" +
-            "query=" + query +
-            ", size=" + size +
-            ", from=" + from +
-            ", filter=" + filter +
-            ", indexType=" + indexTypes +
-            ", index=" + indexNames +
-            ", sortBuilders=" + sortBuildersAsString +
-            ", aggregations= " + aggregations +
-            '}';
+        return "ElasticsearchQuery{" + "query=" + query + ", size=" + size + ", from=" + from + ", filter=" + filter + ", indexType=" +
+            indexTypes + ", index=" + indexNames + ", sortBuilders=" + sortBuildersAsString + ", aggregations= " + aggregations + '}';
     }
 
     private String getSortBuildersAsString()
@@ -168,7 +159,7 @@ public class ElasticsearchQuery
     {
         private QueryBuilder queryBuilder;
 
-        private FilterBuilder filter;
+        private QueryBuilder filter;
 
         private final Set<String> indexTypes = Sets.newHashSet();
 
@@ -198,7 +189,7 @@ public class ElasticsearchQuery
             return this;
         }
 
-        public Builder filter( final FilterBuilder filter )
+        public Builder filter( final QueryBuilder filter )
         {
             this.filter = filter;
             return this;

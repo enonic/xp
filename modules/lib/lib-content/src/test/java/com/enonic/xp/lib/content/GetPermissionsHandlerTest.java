@@ -25,6 +25,6 @@ public class GetPermissionsHandlerTest
             build();
         Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
 
-        runScript( "/site/lib/xp/examples/content/getPermissions.js" );
+        runScript( "/lib/xp/examples/content/getPermissions.js" );
     }
 }

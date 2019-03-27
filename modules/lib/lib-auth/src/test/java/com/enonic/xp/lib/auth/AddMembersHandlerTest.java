@@ -33,7 +33,7 @@ public class AddMembersHandlerTest
     @Test
     public void testExamples()
     {
-        runScript( "/site/lib/xp/examples/auth/addMembers.js" );
+        runScript( "/lib/xp/examples/auth/addMembers.js" );
 
         Mockito.verify( this.securityService ).addRelationship( eq( PrincipalRelationship.from( ROLE ).to( USER ) ) );
         Mockito.verify( this.securityService ).addRelationship( eq( PrincipalRelationship.from( ROLE ).to( GROUP ) ) );
@@ -42,7 +42,7 @@ public class AddMembersHandlerTest
     @Test
     public void testAddUserAndGroupMembersToRole()
     {
-        runFunction( "/site/test/addMembers-test.js", "addUserAndGroupMembersToRole" );
+        runFunction( "/test/addMembers-test.js", "addUserAndGroupMembersToRole" );
 
         Mockito.verify( this.securityService ).addRelationship( eq( PrincipalRelationship.from( ROLE ).to( USER ) ) );
         Mockito.verify( this.securityService ).addRelationship( eq( PrincipalRelationship.from( ROLE ).to( GROUP ) ) );
@@ -51,14 +51,14 @@ public class AddMembersHandlerTest
     @Test
     public void testAddGroupMemberToRole()
     {
-        runFunction( "/site/test/addMembers-test.js", "addGroupMemberToRole" );
+        runFunction( "/test/addMembers-test.js", "addGroupMemberToRole" );
         Mockito.verify( this.securityService ).addRelationship( eq( PrincipalRelationship.from( ROLE ).to( GROUP ) ) );
     }
 
     @Test
     public void testAddMembersEmptyListPassed()
     {
-        runFunction( "/site/test/addMembers-test.js", "addMembersEmptyList" );
+        runFunction( "/test/addMembers-test.js", "addMembersEmptyList" );
         Mockito.verify( this.securityService, Mockito.times( 0 ) ).addRelationship( Mockito.any() );
     }
 }

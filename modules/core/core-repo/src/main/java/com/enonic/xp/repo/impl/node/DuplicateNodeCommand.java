@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.node;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
@@ -20,6 +21,7 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.util.Reference;
 
 public final class DuplicateNodeCommand
@@ -157,7 +159,8 @@ public final class DuplicateNodeCommand
     {
         for ( final AttachedBinary attachedBinary : node.getAttachedBinaries() )
         {
-            paramsBuilder.attachBinary( attachedBinary.getBinaryReference(), this.binaryService.get( attachedBinary ) );
+            final RepositoryId repositoryId = ContextAccessor.current().getRepositoryId();
+            paramsBuilder.attachBinary( attachedBinary.getBinaryReference(), this.binaryService.get( repositoryId, attachedBinary ) );
         }
     }
 
@@ -208,6 +211,8 @@ public final class DuplicateNodeCommand
                 build().
                 execute();
         }
+
+        nodeReferencesUpdated( 1 );
     }
 
     private String resolveNewNodeName( final Node existingNode )
@@ -244,6 +249,14 @@ public final class DuplicateNodeCommand
         if ( params.getDuplicateListener() != null )
         {
             params.getDuplicateListener().nodesDuplicated( count );
+        }
+    }
+
+    private void nodeReferencesUpdated( final int count )
+    {
+        if ( params.getDuplicateListener() != null )
+        {
+            params.getDuplicateListener().nodesReferencesUpdated( count );
         }
     }
 

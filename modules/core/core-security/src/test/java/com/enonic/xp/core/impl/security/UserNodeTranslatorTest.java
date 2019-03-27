@@ -10,10 +10,10 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalType;
 import com.enonic.xp.security.User;
-import com.enonic.xp.security.UserStoreKey;
 
 import static org.junit.Assert.*;
 
@@ -32,7 +32,7 @@ public class UserNodeTranslatorTest
             email( "rmy@enonic.com" ).
             login( "login" ).
             authenticationHash( "password" ).
-            key( PrincipalKey.ofUser( UserStoreKey.system(), "rmy" ) ).
+            key( PrincipalKey.ofUser( IdProviderKey.system(), "rmy" ) ).
             modifiedTime( Instant.now( clock ) ).
             build();
 
@@ -41,7 +41,7 @@ public class UserNodeTranslatorTest
         assertEquals( "rmy", createNodeParams.getName() );
 
         final PropertyTree rootDataSet = createNodeParams.getData();
-        assertEquals( UserStoreKey.system().toString(), rootDataSet.getString( PrincipalPropertyNames.USER_STORE_KEY ) );
+        assertEquals( IdProviderKey.system().toString(), rootDataSet.getString( PrincipalPropertyNames.ID_PROVIDER_KEY ) );
         assertEquals( PrincipalType.USER.toString(), rootDataSet.getString( PrincipalPropertyNames.PRINCIPAL_TYPE_KEY ) );
         assertEquals( "displayname", rootDataSet.getString( PrincipalPropertyNames.DISPLAY_NAME_KEY ) );
         assertNotNull( rootDataSet );
@@ -53,14 +53,14 @@ public class UserNodeTranslatorTest
     public void toUser()
         throws Exception
     {
-        final PrincipalKey userKey = PrincipalKey.ofUser( UserStoreKey.system(), "i-am-a-user" );
+        final PrincipalKey userKey = PrincipalKey.ofUser( IdProviderKey.system(), "i-am-a-user" );
 
         final PropertyTree rootDataSet = new PropertyTree();
         rootDataSet.setString( PrincipalPropertyNames.LOGIN_KEY, "loginkey" );
         rootDataSet.setString( PrincipalPropertyNames.EMAIL_KEY, "rmy@enonic.com" );
         rootDataSet.setString( PrincipalPropertyNames.DISPLAY_NAME_KEY, "displayname" );
         rootDataSet.setString( PrincipalPropertyNames.PRINCIPAL_TYPE_KEY, userKey.getType().toString() );
-        rootDataSet.setString( PrincipalPropertyNames.USER_STORE_KEY, userKey.getUserStore().toString() );
+        rootDataSet.setString( PrincipalPropertyNames.ID_PROVIDER_KEY, userKey.getIdProviderKey().toString() );
         rootDataSet.setString( PrincipalPropertyNames.AUTHENTICATION_HASH_KEY, "clear:password" );
 
         final Node node = Node.create().

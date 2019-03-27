@@ -2,11 +2,11 @@
 <mixin xmlns="urn:enonic:xp:model:1.0">
   <display-name>display name</display-name>
   <description>description</description>
-  <items>
+  <form>
     <item-set name="address">
       <occurrences minimum="0" maximum="1"/>
       <items>
-        <field-set name="fieldSet">
+        <field-set>
           <label>My Field Set</label>
           <items>
             <input type="TextLine" name="myFieldInLayout">
@@ -53,5 +53,5 @@
         </input>
       </items>
     </item-set>
-  </items>
+  </form>
 </mixin>

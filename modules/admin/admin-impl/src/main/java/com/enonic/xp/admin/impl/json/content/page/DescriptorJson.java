@@ -7,6 +7,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.admin.impl.json.ItemJson;
 import com.enonic.xp.admin.impl.json.form.FormJson;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
+import com.enonic.xp.admin.impl.rest.resource.schema.mixin.InlineMixinResolver;
 import com.enonic.xp.region.ComponentDescriptor;
 
 
@@ -19,15 +20,23 @@ public abstract class DescriptorJson
 
     private final LocaleMessageResolver localeMessageResolver;
 
-    public DescriptorJson( final ComponentDescriptor descriptor, final LocaleMessageResolver localeMessageResolver )
+    private final boolean editable;
+
+    private final boolean deletable;
+
+    public DescriptorJson( final ComponentDescriptor descriptor, final LocaleMessageResolver localeMessageResolver,
+                           final InlineMixinResolver inlineMixinResolver )
     {
         Preconditions.checkNotNull( descriptor );
         Preconditions.checkNotNull( localeMessageResolver );
 
+        this.editable = false;
+        this.deletable = false;
+
         this.localeMessageResolver = localeMessageResolver;
         this.descriptor = descriptor;
 
-        this.configJson = new FormJson( descriptor.getConfig(), localeMessageResolver );
+        this.configJson = new FormJson( descriptor.getConfig(), localeMessageResolver, inlineMixinResolver );
     }
 
     public String getKey()
@@ -52,9 +61,32 @@ public abstract class DescriptorJson
         }
     }
 
+    public String getDescription()
+    {
+        if ( StringUtils.isNotBlank( descriptor.getDescriptionI18nKey() ) )
+        {
+            return localeMessageResolver.localizeMessage( descriptor.getDescriptionI18nKey(), descriptor.getDescription() );
+        }
+        else
+        {
+            return descriptor.getDescription();
+        }
+    }
+
     public FormJson getConfig()
     {
         return configJson;
     }
 
+    @Override
+    public boolean getEditable()
+    {
+        return editable;
+    }
+
+    @Override
+    public boolean getDeletable()
+    {
+        return deletable;
+    }
 }

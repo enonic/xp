@@ -4,10 +4,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.elasticsearch.ElasticsearchException;
+import org.elasticsearch.action.admin.indices.close.CloseIndexAction;
 import org.elasticsearch.action.admin.indices.close.CloseIndexRequestBuilder;
+import org.elasticsearch.action.admin.indices.open.OpenIndexAction;
 import org.elasticsearch.action.admin.indices.open.OpenIndexRequestBuilder;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.indices.IndexMissingException;
+import org.elasticsearch.index.IndexNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,22 +40,45 @@ class AbstractSnapshotExecutor
         repositoryService = builder.repositoryService;
     }
 
+    void closeIndices( final RepositoryIds repositoryIds )
+    {
+        if ( repositoryIds != null )
+        {
+            final Set<String> indexNames = repositoryIds.stream().
+                flatMap( repositoryId -> getIndexNames( repositoryId ).stream() ).
+                collect( Collectors.toSet() );
+            closeIndices( indexNames );
+        }
+    }
+
     void closeIndices( final Set<String> indexNames )
     {
         for ( final String indexName : indexNames )
         {
-            CloseIndexRequestBuilder closeIndexRequestBuilder = new CloseIndexRequestBuilder( this.client.admin().indices() ).
-                setIndices( indexName );
+            CloseIndexRequestBuilder closeIndexRequestBuilder =
+                new CloseIndexRequestBuilder( this.client.admin().indices(), CloseIndexAction.INSTANCE ).
+                    setIndices( indexName );
 
             try
             {
                 this.client.admin().indices().close( closeIndexRequestBuilder.request() ).actionGet();
                 LOG.info( "Closed index " + indexName );
             }
-            catch ( IndexMissingException e )
+            catch ( IndexNotFoundException e )
             {
                 LOG.warn( "Could not close index [" + indexName + "], not found" );
             }
+        }
+    }
+
+    void openIndices( final RepositoryIds repositoryIds )
+    {
+        if ( repositoryIds != null )
+        {
+            final Set<String> indexNames = repositoryIds.stream().
+                flatMap( repositoryId -> getIndexNames( repositoryId ).stream() ).
+                collect( Collectors.toSet() );
+            openIndices( indexNames );
         }
     }
 
@@ -61,8 +86,9 @@ class AbstractSnapshotExecutor
     {
         for ( final String indexName : indexNames )
         {
-            OpenIndexRequestBuilder openIndexRequestBuilder = new OpenIndexRequestBuilder( this.client.admin().indices() ).
-                setIndices( indexName );
+            OpenIndexRequestBuilder openIndexRequestBuilder =
+                new OpenIndexRequestBuilder( this.client.admin().indices(), OpenIndexAction.INSTANCE ).
+                    setIndices( indexName );
 
             try
             {

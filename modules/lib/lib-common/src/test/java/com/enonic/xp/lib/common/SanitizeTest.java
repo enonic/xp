@@ -18,6 +18,6 @@ public class SanitizeTest
     @Test
     public void testExamples()
     {
-        runScript( "/site/lib/xp/examples/common/sanitize.js" );
+        runScript( "/lib/xp/examples/common/sanitize.js" );
     }
 }

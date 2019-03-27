@@ -30,7 +30,7 @@ public class TaskProgressHandlerTest
     {
         taskService.taskId = TaskId.from( "7ca603c1-3b88-4009-8f30-46ddbcc4bb19" );
 
-        runScript( "/site/lib/xp/examples/task/progress.js" );
+        runScript( "/lib/xp/examples/task/progress.js" );
 
         final List<TaskProgress> progress = taskService.progressHistory;
         assertEquals( 22, progress.size() );
@@ -46,7 +46,7 @@ public class TaskProgressHandlerTest
         throws Exception
     {
         taskService.taskId = TaskId.from( "7ca603c1-3b88-4009-8f30-46ddbcc4bb19" );
-        runFunction( "/site/test/progress-test.js", "reportProgress" );
+        runFunction( "/test/progress-test.js", "reportProgress" );
 
         final List<TaskProgress> progress = taskService.progressHistory;
         assertEquals( 22, progress.size() );
@@ -63,7 +63,7 @@ public class TaskProgressHandlerTest
     {
         try
         {
-            runFunction( "/site/test/progress-test.js", "reportProgressOutsideTask" );
+            runFunction( "/test/progress-test.js", "reportProgressOutsideTask" );
             fail( "Expected exception" );
         }
         catch ( Exception e )

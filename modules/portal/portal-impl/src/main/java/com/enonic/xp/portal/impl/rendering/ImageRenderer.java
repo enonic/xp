@@ -10,8 +10,10 @@ import org.slf4j.LoggerFactory;
 import com.google.common.html.HtmlEscapers;
 import com.google.common.net.MediaType;
 
-import com.enonic.xp.content.ContentId;
+import com.enonic.xp.attachment.Attachment;
+import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.Media;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
@@ -43,72 +45,189 @@ public final class ImageRenderer
     @Override
     public PortalResponse render( final ImageComponent component, final PortalRequest portalRequest )
     {
-        final RenderMode renderMode = getRenderingMode( portalRequest );
-        final PortalResponse.Builder portalResponseBuilder = PortalResponse.create();
+        return new ImageComponentRenderer( component, portalRequest ).render();
+    }
 
-        final StringBuilder html = new StringBuilder();
+    private final class ImageComponentRenderer
+    {
+        private final ImageComponent component;
 
-        final String type = component.getType().toString();
-        if ( component.getImage() != null )
+        private final PortalRequest portalRequest;
+
+        private final static String ERROR_IMAGE_NOT_FOUND = "Image could not be found";
+
+        private ImageComponentRenderer( final ImageComponent component, final PortalRequest portalRequest )
+        {
+            this.component = component;
+            this.portalRequest = portalRequest;
+        }
+
+        private PortalResponse render()
+        {
+            if ( component.hasImage() )
+            {
+                return renderResponseWithImage();
+            }
+
+            return renderResponseNoImage();
+        }
+
+        private PortalResponse renderResponseWithImage()
         {
             if ( contentService.contentExists( component.getImage() ) )
             {
-                final String imageUrl = buildUrl( portalRequest, component.getImage() );
-                html.append( "<figure " ).append( RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE ).append( "=\"" ).append( type ).append(
-                    "\">" );
-                html.append( "<img style=\"width: 100%\" src=\"" ).append( imageUrl ).append( "\"/>" );
-                if ( component.hasCaption() )
-                {
-                    html.append( "<figcaption>" ).append( component.getCaption() ).append( "</figcaption>" );
-                }
-                html.append( "</figure>" );
+                return renderOkResponse( generateImageHtml() );
             }
-            else
-            {
-                LOG.warn( "Image content could not be found. ContentId: " + component.getImage().toString() );
 
-                if ( renderMode == RenderMode.EDIT )
-                {
-                    final String errorMessage = "Image could not be found";
-                    return renderErrorComponentPlaceHolder( component, errorMessage );
-                }
-                else
-                {
-                    html.append( MessageFormat.format( EMPTY_IMAGE_HTML, type ) );
-                }
-            }
+            return renderResponseImageNotFound();
         }
-        else if ( renderMode == RenderMode.EDIT )
+
+        private String generateImageHtml()
         {
-            html.append( MessageFormat.format( EMPTY_IMAGE_HTML, type ) );
+            final StringBuilder html = new StringBuilder();
+
+            appendFigureTag( html );
+
+            return html.toString();
         }
 
-        portalResponseBuilder.body( html.toString() ).contentType( MediaType.create( "text", "html" ) ).postProcess( false );
-        return portalResponseBuilder.build();
-    }
+        private void appendFigureTag( final StringBuilder html )
+        {
+            openFigureTag( html );
+            appendImageTag( html );
+            appendCaptionTag( html );
+            closeFigureTag( html );
+        }
 
-    private String buildUrl( final PortalRequest portalRequest, final ContentId id )
-    {
-        final ImageUrlParams params = new ImageUrlParams().portalRequest( portalRequest );
-        params.id( id.toString() );
-        params.scale( "width(768)" );
-        return this.urlService.imageUrl( params );
-    }
+        private void openFigureTag( final StringBuilder html )
+        {
+            final String type = component.getType().toString();
+            html.append( "<figure " ).append( RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE ).append( "=\"" ).append( type ).append(
+                "\">" );
+        }
 
-    private RenderMode getRenderingMode( final PortalRequest portalRequest )
-    {
-        return portalRequest == null ? RenderMode.LIVE : portalRequest.getMode();
-    }
+        private void appendImageTag( final StringBuilder html )
+        {
+            html.append( "<img style=\"width: 100%\" src=\"" ).append( buildUrl() ).append( "\" " );
 
-    private PortalResponse renderErrorComponentPlaceHolder( final ImageComponent component, final String errorMessage )
-    {
-        final String escapedMessage = HtmlEscapers.htmlEscaper().escape( errorMessage );
-        final String html = MessageFormat.format( COMPONENT_PLACEHOLDER_ERROR_HTML, component.getType().toString(), escapedMessage );
-        return PortalResponse.create().
-            contentType( MediaType.create( "text", "html" ) ).
-            postProcess( false ).
-            body( html ).
-            build();
+            appendAltAttribute( html );
+
+            html.append( "/>" );
+        }
+
+        private void appendAltAttribute( final StringBuilder html )
+        {
+            final String altText = getImageAlternativeText();
+
+            if ( altText != null )
+            {
+                html.append( "alt=\"" ).append( altText ).append( "\"" );
+            }
+        }
+
+        private String buildUrl()
+        {
+            final ImageUrlParams params =
+                new ImageUrlParams().portalRequest( portalRequest ).id( component.getImage().toString() ).scale( "width(768)" );
+
+            return urlService.imageUrl( params );
+        }
+
+        private String getImageAlternativeText()
+        {
+            final Content image = contentService.getById( component.getImage() );
+
+            final String altText = image.getData().getString( "altText" );
+
+            if ( altText != null && !altText.isEmpty() )
+            {
+                return altText;
+            }
+
+            return getImageAttachmentName( image );
+        }
+
+        private String getImageAttachmentName( final Content image )
+        {
+            if ( !( image instanceof Media ) )
+            {
+                return null;
+            }
+
+            final Attachment attachment = ( (Media) image ).getMediaAttachment();
+
+            if ( attachment != null )
+            {
+                return attachment.getName();
+            }
+
+            return null;
+        }
+
+        private void appendCaptionTag( final StringBuilder html )
+        {
+            if ( component.hasCaption() )
+            {
+                html.append( "<figcaption>" ).append( component.getCaption() ).append( "</figcaption>" );
+            }
+        }
+
+        private void closeFigureTag( final StringBuilder html )
+        {
+            html.append( "</figure>" );
+        }
+
+        private PortalResponse renderOkResponse( final String html )
+        {
+            return PortalResponse.create().body( html ).contentType( MediaType.create( "text", "html" ) ).postProcess( false ).build();
+        }
+
+        private PortalResponse renderResponseImageNotFound()
+        {
+            LOG.warn( "Image content could not be found. ContentId: " + component.getImage().toString() );
+
+            final RenderMode renderMode = getRenderingMode();
+
+            if ( renderMode == RenderMode.EDIT )
+            {
+                return renderErrorResponse();
+            }
+
+            final String componentType = component.getType().toString();
+
+            return renderOkResponse( MessageFormat.format( EMPTY_IMAGE_HTML, componentType ) );
+        }
+
+        private PortalResponse renderResponseNoImage()
+        {
+            final RenderMode renderMode = getRenderingMode();
+
+            if ( renderMode == RenderMode.EDIT )
+            {
+                final String componentType = component.getType().toString();
+
+                return renderOkResponse( MessageFormat.format( EMPTY_IMAGE_HTML, componentType ) );
+            }
+
+            return renderOkResponse( "" );
+        }
+
+        private RenderMode getRenderingMode()
+        {
+            return portalRequest == null ? RenderMode.LIVE : portalRequest.getMode();
+        }
+
+        private PortalResponse renderErrorResponse()
+        {
+            final String escapedMessage = HtmlEscapers.htmlEscaper().escape( ERROR_IMAGE_NOT_FOUND );
+            final String html = MessageFormat.format( COMPONENT_PLACEHOLDER_ERROR_HTML, component.getType().toString(), escapedMessage );
+
+            return PortalResponse.create().
+                contentType( MediaType.create( "text", "html" ) ).
+                postProcess( false ).
+                body( html ).
+                build();
+        }
     }
 
     @Reference

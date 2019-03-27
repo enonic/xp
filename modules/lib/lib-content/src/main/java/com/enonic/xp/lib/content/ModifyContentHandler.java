@@ -23,7 +23,7 @@ import com.enonic.xp.convert.Converters;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.lib.content.mapper.ContentMapper;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.script.ScriptValue;
 
 public final class ModifyContentHandler
@@ -106,7 +106,7 @@ public final class ModifyContentHandler
         final Object extraData = map.get( "x" );
         if ( extraData instanceof Map )
         {
-            target.extraDatas = createExtraDatas( (Map) extraData );
+            target.extraDatas = createExtraDatas( (Map) extraData, existingContent.getType() );
         }
 
         final Object publishInfo = map.get( "publish" );
@@ -157,14 +157,14 @@ public final class ModifyContentHandler
         return this.translateToPropertyTree( createJson( value ), contentTypeName );
     }
 
-    private PropertyTree createPropertyTree( final Map<?, ?> value, final MixinName mixinName )
+    private PropertyTree createPropertyTree( final Map<?, ?> value, final XDataName xDataName, final ContentTypeName contentTypeName )
     {
         if ( value == null )
         {
             return null;
         }
 
-        return this.translateToPropertyTree( createJson( value ), mixinName );
+        return this.translateToPropertyTree( createJson( value ), xDataName, contentTypeName );
     }
 
     private JsonNode createJson( final Map<?, ?> value )
@@ -173,7 +173,7 @@ public final class ModifyContentHandler
         return mapper.valueToTree( value );
     }
 
-    private ExtraDatas createExtraDatas( final Map<String, Object> value )
+    private ExtraDatas createExtraDatas( final Map<String, Object> value, final ContentTypeName contentTypeName )
     {
         if ( value == null )
         {
@@ -194,8 +194,8 @@ public final class ModifyContentHandler
 
             for ( final String metadataName : metadatas.keySet() )
             {
-                final MixinName mixinName = MixinName.from( applicationKey, metadataName );
-                final ExtraData item = createExtraData( mixinName, metadatas.get( metadataName ) );
+                final XDataName xDataName = XDataName.from( applicationKey, metadataName );
+                final ExtraData item = createExtraData( xDataName, contentTypeName, metadatas.get( metadataName ) );
                 if ( item != null )
                 {
                     extradatasBuilder.add( item );
@@ -207,15 +207,15 @@ public final class ModifyContentHandler
     }
 
 
-    private ExtraData createExtraData( final MixinName mixinName, final Object value )
+    private ExtraData createExtraData( final XDataName xDataName, final ContentTypeName contentTypeName, final Object value )
     {
         if ( value instanceof Map )
         {
-            final PropertyTree propertyTree = createPropertyTree( (Map) value, mixinName );
+            final PropertyTree propertyTree = createPropertyTree( (Map) value, xDataName, contentTypeName );
 
             if ( propertyTree != null )
             {
-                return new ExtraData( mixinName, propertyTree );
+                return new ExtraData( xDataName, propertyTree );
             }
         }
 

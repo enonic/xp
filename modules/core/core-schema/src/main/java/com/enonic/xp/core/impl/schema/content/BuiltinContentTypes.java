@@ -13,14 +13,15 @@ import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.icon.Icon;
+import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypes;
-import com.enonic.xp.schema.mixin.MixinNames;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
+import com.enonic.xp.schema.xdata.XDataNames;
 
 final class BuiltinContentTypes
 {
@@ -65,6 +66,9 @@ final class BuiltinContentTypes
             helpTextI18nKey( "base.shortcut.target.helpText" ).
             inputType( InputTypeName.CONTENT_SELECTOR ).
             inputTypeProperty( InputTypeProperty.create( "relationshipType", RelationshipTypeName.REFERENCE.toString() ).build() ).
+            inputTypeConfig( InputTypeConfig.create().property(
+                InputTypeProperty.create( "allowPath", "*" ).build()
+            ).build() ).
             required( true ).
             build() ).
         addFormItem( FormItemSet.create().name( "parameters" ).
@@ -103,6 +107,12 @@ final class BuiltinContentTypes
             inputType( InputTypeName.TEXT_AREA ).
             label( "Caption" ).
             labelI18nKey( "media.image.caption.label" ).
+            occurrences( 0, 1 ).
+            build() ).
+        addFormItem( Input.create().name( "altText" ).
+            inputType( InputTypeName.TEXT_LINE ).
+            label( "Alternative text" ).
+            labelI18nKey( "media.image.alttext.label" ).
             occurrences( 0, 1 ).
             build() ).
         addFormItem( Input.create().name( "artist" ).
@@ -183,7 +193,7 @@ final class BuiltinContentTypes
         addFormItem( Input.create().name( "tags" ).
             inputType( InputTypeName.TAG ).
             label( "Tags" ).
-            label( "media.default.tags.label" ).
+            labelI18nKey( "media.default.tags.label" ).
             occurrences( 0, 0 ).
             build() ).
         build();
@@ -258,8 +268,8 @@ final class BuiltinContentTypes
 
     private static final ContentType MEDIA_IMAGE = createSystemType( ContentTypeName.imageMedia() ).superType( ContentTypeName.media() ).
         setFinal( true ).setAbstract( false ).allowChildContent( false ).form( MEDIA_IMAGE_FORM ).
-        metadata( MixinNames.from( MediaInfo.IMAGE_INFO_METADATA_NAME, MediaInfo.CAMERA_INFO_METADATA_NAME,
-                                   MediaInfo.GPS_INFO_METADATA_NAME ) ).build();
+        xData( XDataNames.from( MediaInfo.IMAGE_INFO_METADATA_NAME, MediaInfo.CAMERA_INFO_METADATA_NAME,
+                                MediaInfo.GPS_INFO_METADATA_NAME ) ).build();
 
     private static final ContentType MEDIA_VECTOR = createSystemType( ContentTypeName.vectorMedia() ).superType( ContentTypeName.media() ).
         setFinal( true ).setAbstract( false ).allowChildContent( false ).form( MEDIA_VECTOR_FORM ).build();

@@ -16,7 +16,8 @@ import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.mixin.Mixin;
+import com.enonic.xp.schema.xdata.XData;
+import com.enonic.xp.schema.xdata.XDataName;
 
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.Matchers.any;
@@ -39,7 +40,7 @@ public class ModifyContentHandlerTest
             invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0], content ) );
 
         mockXData();
-        runScript( "/site/lib/xp/examples/content/modify.js" );
+        runScript( "/lib/xp/examples/content/modify.js" );
     }
 
     @Test
@@ -55,7 +56,7 @@ public class ModifyContentHandlerTest
 
         mockXData();
 
-        runFunction( "/site/test/ModifyContentHandlerTest.js", "modifyById" );
+        runFunction( "/test/ModifyContentHandlerTest.js", "modifyById" );
     }
 
     @Test
@@ -71,14 +72,46 @@ public class ModifyContentHandlerTest
 
         mockXData();
 
-        runFunction( "/site/test/ModifyContentHandlerTest.js", "modifyByPath" );
+        runFunction( "/test/ModifyContentHandlerTest.js", "modifyByPath" );
+    }
+
+    @Test
+    public void modifyNotMappedXDataFieldNameStricted()
+        throws Exception
+    {
+        final Content content = TestDataFixtures.newSmallContent();
+        when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
+
+        when( this.contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenAnswer(
+            invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0],
+                                              TestDataFixtures.newSmallContent() ) );
+
+        mockXData();
+
+        runFunction( "/test/ModifyContentHandlerTest.js", "modifyNotMappedXDataFieldName_stricted" );
+    }
+
+    @Test
+    public void modifyNotMappedXDataFieldNameNotStricted()
+        throws Exception
+    {
+        final Content content = TestDataFixtures.newSmallContent();
+        when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
+
+        when( this.contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenAnswer(
+            invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0],
+                                              TestDataFixtures.newSmallContent() ) );
+
+        mockXData();
+
+        runFunction( "/test/ModifyContentHandlerTest.js", "modifyNotMappedXDataFieldName_notStricted" );
     }
 
     @Test
     public void modifyNotFound()
         throws Exception
     {
-        runFunction( "/site/test/ModifyContentHandlerTest.js", "modify_notFound" );
+        runFunction( "/test/ModifyContentHandlerTest.js", "modify_notFound" );
     }
 
     private void mockXData()
@@ -129,25 +162,26 @@ public class ModifyContentHandlerTest
         GetContentTypeParams getContentType = GetContentTypeParams.from( ContentTypeName.from( "test:myContentType" ) );
         when( this.contentTypeService.getByName( Mockito.eq( getContentType ) ) ).thenReturn( contentType );
 
-        final Mixin mixin1 = Mixin.create().
-            name( "com.enonic.myapplication:myschema" ).
+        final XData xData1 = XData.create().
+            name( XDataName.from( "com.enonic.myapplication:myschema" ) ).
             addFormItem( Input.create().
                 label( "a" ).
                 name( "a" ).
                 inputType( InputTypeName.DOUBLE ).
                 build() ).
             build();
-        when( this.mixinService.getByName( Mockito.eq( mixin1.getName() ) ) ).thenReturn( mixin1 );
+        when( this.xDataService.getByName( Mockito.eq( xData1.getName() ) ) ).thenReturn( xData1 );
 
-        final Mixin mixin2 = Mixin.create().
-            name( "com.enonic.myapplication:other" ).
+        final XData xData2 = XData.create().
+            name( XDataName.from( "com.enonic.myapplication:other" ) ).
             addFormItem( Input.create().
                 label( "name" ).
                 name( "name" ).
                 inputType( InputTypeName.TEXT_LINE ).
                 build() ).
             build();
-        when( this.mixinService.getByName( Mockito.eq( mixin2.getName() ) ) ).thenReturn( mixin2 );
+        when( this.xDataService.getByName( Mockito.eq( xData1.getName() ) ) ).thenReturn( xData1 );
+        when( this.xDataService.getByName( Mockito.eq( xData2.getName() ) ) ).thenReturn( xData2 );
         when( this.mixinService.inlineFormItems( any( Form.class ) ) ).then( returnsFirstArg() );
     }
 

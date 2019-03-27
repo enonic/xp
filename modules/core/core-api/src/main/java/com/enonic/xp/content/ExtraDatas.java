@@ -13,15 +13,15 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.schema.mixin.MixinName;
-import com.enonic.xp.schema.mixin.MixinNames;
+import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.xdata.XDataNames;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 @Beta
 public final class ExtraDatas
     extends AbstractImmutableEntitySet<ExtraData>
 {
-    private final ImmutableMap<MixinName, ExtraData> map;
+    private final ImmutableMap<XDataName, ExtraData> map;
 
     private ExtraDatas( final Set<ExtraData> set )
     {
@@ -29,13 +29,13 @@ public final class ExtraDatas
         this.map = Maps.uniqueIndex( set, new ToNameFunction() );
     }
 
-    public MixinNames getNames()
+    public XDataNames getNames()
     {
-        final Collection<MixinName> names = Collections2.transform( this.set, new ToNameFunction() );
-        return MixinNames.from( names );
+        final Collection<XDataName> names = Collections2.transform( this.set, new ToNameFunction() );
+        return XDataNames.from( names );
     }
 
-    public ExtraData getMetadata( final MixinName name )
+    public ExtraData getMetadata( final XDataName name )
     {
         return this.map.get( name );
     }
@@ -70,10 +70,10 @@ public final class ExtraDatas
     }
 
     private final static class ToNameFunction
-        implements Function<ExtraData, MixinName>
+        implements Function<ExtraData, XDataName>
     {
         @Override
-        public MixinName apply( final ExtraData value )
+        public XDataName apply( final ExtraData value )
         {
             return value.getName();
         }

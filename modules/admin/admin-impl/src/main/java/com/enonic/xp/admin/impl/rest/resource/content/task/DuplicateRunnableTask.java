@@ -14,6 +14,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.DuplicateContentsResult;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.task.AbstractRunnableTask;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
@@ -69,7 +70,14 @@ public class DuplicateRunnableTask
             try
             {
                 final DuplicateContentsResult result = contentService.duplicate( duplicateContentParams );
-                resultBuilder.succeeded( result.getDuplicatedContents() );
+                if ( result.getDuplicatedContents().getSize() == 1 )
+                {
+                    resultBuilder.succeeded( result.getSourceContentPath() );
+                }
+                else
+                {
+                    resultBuilder.succeeded( result.getDuplicatedContents() );
+                }
             }
             catch ( ContentAlreadyMovedException e )
             {
@@ -77,12 +85,12 @@ public class DuplicateRunnableTask
             }
             catch ( final Exception e )
             {
-                final Content item = contentService.getById( contentId );
-                if ( item != null )
+                try
                 {
+                    final Content item = contentService.getById( contentId );
                     resultBuilder.failed( item.getPath() );
                 }
-                else
+                catch ( Exception exc )
                 {
                     resultBuilder.failed( ContentIds.from( contentId ) );
                 }

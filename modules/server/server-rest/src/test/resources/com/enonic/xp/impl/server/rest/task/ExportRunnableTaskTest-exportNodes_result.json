@@ -1,0 +1,10 @@
+{
+  "dryRun": false,
+  "exportedNodes": [
+    "/node/path"
+  ],
+  "exportErrors": [],
+  "exportedBinaries": [
+    "binary[binaryRef]"
+  ]
+}

@@ -18,8 +18,8 @@ import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.mixin.MixinName;
-import com.enonic.xp.schema.mixin.MixinNames;
+import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.xdata.XDataNames;
 
 import static org.junit.Assert.*;
 
@@ -64,14 +64,12 @@ public class XmlContentTypeParserTest
         assertEquals( "myapplication:mytype", result.getName().toString() );
         assertEquals( "All the Base Types", result.getDisplayName() );
         assertEquals( "description", result.getDescription() );
-        assertEquals( "$('firstName') + ' ' + $('lastName')", result.getContentDisplayNameScript() );
+        assertEquals( "${firstName} ${lastName}", result.getDisplayNameExpression() );
         assertEquals( "myapplication:content", result.getSuperType().toString() );
-        assertEquals( "[myapplication:metadata]", result.getMetadata().toString() );
         assertEquals( false, result.isAbstract() );
         assertEquals( true, result.isFinal() );
 
         assertEquals( 4, result.getForm().size() );
-        assertEquals( "[myapplication:metadata]", result.getMetadata().toString() );
 
         final FormItem item = result.getForm().getFormItem( "myDate" );
         assertNotNull( item );
@@ -123,12 +121,11 @@ public class XmlContentTypeParserTest
         parse( this.parser, "-mixins.xml" );
         final ContentType result = this.builder.build();
 
-        final MixinNames mixinNames = result.getMetadata();
+        final XDataNames xDataNames = result.getXData();
 
-        assertEquals( 2, mixinNames.getSize() );
-        assertTrue( mixinNames.contains( MixinName.from( "myapplication:metadata1" ) ) );
-        assertTrue( mixinNames.contains( MixinName.from( "myapplication:metadata2" ) ) );
-
+        assertEquals( 2, xDataNames.getSize() );
+        assertTrue( xDataNames.contains( XDataName.from( "myapplication:metadata1" ) ) );
+        assertTrue( xDataNames.contains( XDataName.from( "myapplication:metadata2" ) ) );
     }
 
     @Test
@@ -191,7 +188,7 @@ public class XmlContentTypeParserTest
         parse( this.parser, "-i18n.xml" );
         final ContentType result = this.builder.build();
 
-        final FormItem item = result.getForm().getFormItem( "field-set" );
+        final FormItem item = result.getForm().getFormItem( "fieldSet1" );
         assertNotNull( item );
 
         final FieldSet fieldSet = (FieldSet) item;
@@ -272,7 +269,7 @@ public class XmlContentTypeParserTest
         assertEquals( "translated.label", radioOption.getLabel() );
 
         // field set
-        final FormItem fieldSetItem = result.getForm().getFormItem( "field-set" );
+        final FormItem fieldSetItem = result.getForm().getFormItem( "fieldSet1" );
         assertNotNull( fieldSetItem );
 
         final FieldSet fieldSet = (FieldSet) fieldSetItem;

@@ -8,7 +8,6 @@ import com.enonic.xp.repo.impl.storage.StaticStorageType;
 import com.enonic.xp.repo.impl.storage.StorageData;
 import com.enonic.xp.repo.impl.storage.StoreRequest;
 import com.enonic.xp.repo.impl.storage.StoreStorageName;
-import com.enonic.xp.repo.impl.version.NodeVersionDocumentId;
 import com.enonic.xp.repo.impl.version.VersionIndexPath;
 import com.enonic.xp.repository.RepositoryId;
 
@@ -16,28 +15,30 @@ public class VersionStorageDocFactory
 {
     public static StoreRequest create( final NodeVersionMetadata nodeVersion, final RepositoryId repositoryId )
     {
-        final StorageData data = StorageData.create().
+        final StorageData.Builder data = StorageData.create().
             add( VersionIndexPath.VERSION_ID.getPath(), nodeVersion.getNodeVersionId().toString() ).
+            add( VersionIndexPath.NODE_BLOB_KEY.getPath(), nodeVersion.getNodeVersionKey().getNodeBlobKey().toString() ).
+            add( VersionIndexPath.INDEX_CONFIG_BLOB_KEY.getPath(), nodeVersion.getNodeVersionKey().getIndexConfigBlobKey().toString() ).
+            add( VersionIndexPath.ACCESS_CONTROL_BLOB_KEY.getPath(), nodeVersion.getNodeVersionKey().getAccessControlBlobKey().toString() ).
+            add( VersionIndexPath.BINARY_BLOB_KEYS.getPath(), nodeVersion.getBinaryBlobKeys() ).
             add( VersionIndexPath.NODE_ID.getPath(), nodeVersion.getNodeId().toString() ).
             add( VersionIndexPath.TIMESTAMP.getPath(), nodeVersion.getTimestamp() != null ? nodeVersion.getTimestamp() : Instant.now() ).
-            add( VersionIndexPath.NODE_PATH.getPath(), nodeVersion.getNodePath().toString() ).
-            build();
+            add( VersionIndexPath.NODE_PATH.getPath(), nodeVersion.getNodePath().toString() );
+
+        if ( nodeVersion.getNodeCommitId() != null) {
+            data.add( VersionIndexPath.COMMIT_ID.getPath(), nodeVersion.getNodeCommitId().toString() );
+        }
 
         return StoreRequest.create().
             nodePath( nodeVersion.getNodePath() ).
-            id( createId( nodeVersion ) ).
+            id( nodeVersion.getNodeVersionId().toString() ).
             forceRefresh( false ).
             settings( StorageSource.create().
                 storageName( StoreStorageName.from( repositoryId ) ).
                 storageType( StaticStorageType.VERSION ).
                 build() ).
-            data( data ).
+            data( data.build() ).
             routing( nodeVersion.getNodeId().toString() ).
             build();
-    }
-
-    private static String createId( final NodeVersionMetadata nodeVersion )
-    {
-        return new NodeVersionDocumentId( nodeVersion.getNodeId(), nodeVersion.getNodeVersionId() ).toString();
     }
 }

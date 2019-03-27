@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.ServiceReference;
 
 import com.enonic.xp.web.impl.dispatch.pipeline.FilterPipeline;
 import com.enonic.xp.web.impl.dispatch.pipeline.ServletPipeline;
@@ -27,8 +29,8 @@ public class DispatchServletImplTest
         this.servletPipeline = Mockito.mock( ServletPipeline.class );
 
         this.servlet = new DispatchServletImpl();
-        this.servlet.setFilterPipeline( this.filterPipeline );
-        this.servlet.setServletPipeline( this.servletPipeline );
+        this.servlet.addFilterPipeline( this.filterPipeline, new MyServiceReference<FilterPipeline>() );
+        this.servlet.addServletPipeline( this.servletPipeline, new MyServiceReference<ServletPipeline>() );
     }
 
     @Test
@@ -63,5 +65,45 @@ public class DispatchServletImplTest
 
         this.servlet.service( req, res );
         Mockito.verify( this.filterPipeline, Mockito.times( 1 ) ).filter( req, res, this.servletPipeline );
+    }
+
+    private final class MyServiceReference<T>
+        implements ServiceReference<T>
+    {
+        @Override
+        public Object getProperty( final String key )
+        {
+            return null;
+        }
+
+        @Override
+        public String[] getPropertyKeys()
+        {
+            return new String[0];
+        }
+
+        @Override
+        public Bundle getBundle()
+        {
+            return null;
+        }
+
+        @Override
+        public Bundle[] getUsingBundles()
+        {
+            return new Bundle[0];
+        }
+
+        @Override
+        public boolean isAssignableTo( final Bundle bundle, final String className )
+        {
+            return false;
+        }
+
+        @Override
+        public int compareTo( final Object reference )
+        {
+            return 0;
+        }
     }
 }

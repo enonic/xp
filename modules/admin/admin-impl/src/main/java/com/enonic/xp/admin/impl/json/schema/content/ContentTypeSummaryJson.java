@@ -12,7 +12,7 @@ import com.enonic.xp.admin.impl.json.ItemJson;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.schema.content.ContentType;
-import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.xdata.XDataName;
 
 @SuppressWarnings("UnusedDeclaration")
 public class ContentTypeSummaryJson
@@ -22,9 +22,9 @@ public class ContentTypeSummaryJson
 
     private final String iconUrl;
 
-    private final ImmutableList<String> metadataMixinNames;
-
     private final LocaleMessageResolver localeMessageResolver;
+
+    private final ImmutableList<String> metadataMixinNames;
 
     public ContentTypeSummaryJson( final ContentType contentType, final ContentTypeIconUrlResolver iconUrlResolver,
                                    final LocaleMessageResolver localeMessageResolver )
@@ -33,15 +33,15 @@ public class ContentTypeSummaryJson
         this.localeMessageResolver = localeMessageResolver;
         this.iconUrl = iconUrlResolver.resolve( contentType );
 
-        ImmutableList.Builder<String> mixinNamesBuilder = new ImmutableList.Builder<>();
-        if ( this.contentType.getMetadata() != null )
+        ImmutableList.Builder<String> xDataNamesBuilder = new ImmutableList.Builder<>();
+        if ( this.contentType.getXData() != null )
         {
-            for ( MixinName mixinName : this.contentType.getMetadata() )
+            for ( XDataName xDataName : this.contentType.getXData() )
             {
-                mixinNamesBuilder.add( mixinName.toString() );
+                xDataNamesBuilder.add( xDataName.toString() );
             }
         }
-        this.metadataMixinNames = mixinNamesBuilder.build();
+        this.metadataMixinNames = xDataNamesBuilder.build();
     }
 
     public String getName()
@@ -90,14 +90,19 @@ public class ContentTypeSummaryJson
         return iconUrl;
     }
 
-    public String getContentDisplayNameScript()
+    public String getDisplayNameExpression()
     {
-        return contentType.getContentDisplayNameScript();
+        return contentType.getDisplayNameExpression();
     }
 
     public String getSuperType()
     {
         return contentType.getSuperType() != null ? contentType.getSuperType().toString() : null;
+    }
+
+    public List<String> getMetadata()
+    {
+        return metadataMixinNames;
     }
 
     public boolean isAbstract()
@@ -125,11 +130,6 @@ public class ContentTypeSummaryJson
     public String getModifier()
     {
         return contentType.getModifier() != null ? contentType.getModifier().toString() : null;
-    }
-
-    public List<String> getMetadata()
-    {
-        return metadataMixinNames;
     }
 
     @Override

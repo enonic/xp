@@ -36,7 +36,7 @@ public class CreateRepositoryScriptTest
     @Test
     public void testExample()
     {
-        runScript( "/site/lib/xp/examples/repo/create.js" );
+        runScript( "/lib/xp/examples/repo/create.js" );
         Mockito.verify( this.repositoryService, Mockito.times( 2 ) ).createRepository( Mockito.isA( CreateRepositoryParams.class ) );
     }
 }

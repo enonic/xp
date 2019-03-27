@@ -30,6 +30,8 @@ public final class XmlFormMapper
 
     private XmlInputTypeDefaultMapper defaultMapper;
 
+    private int fieldSetCounter = 1;
+
     public XmlFormMapper( final ApplicationKey currentApplication )
     {
         this.currentApplication = currentApplication;
@@ -74,9 +76,9 @@ public final class XmlFormMapper
             return buildFieldSetItem( root );
         }
 
-        if ( "inline".equals( tagName ) )
+        if ( "mixin".equals( tagName ) )
         {
-            return buildInlineItem( root );
+            return buildInlineMixinItem( root );
         }
 
         if ( "item-set".equals( tagName ) )
@@ -131,7 +133,7 @@ public final class XmlFormMapper
     private FieldSet buildFieldSetItem( final DomElement root )
     {
         final FieldSet.Builder builder = FieldSet.create();
-        builder.name( root.getAttribute( "name" ) );
+        builder.name( "fieldSet" + fieldSetCounter++ );
         final String labelI18n = getLabelI18n( root );
         builder.label( getLabel( root, labelI18n ) );
         builder.labelI18nKey( labelI18n );
@@ -139,10 +141,10 @@ public final class XmlFormMapper
         return builder.build();
     }
 
-    private InlineMixin buildInlineItem( final DomElement root )
+    private InlineMixin buildInlineMixinItem( final DomElement root )
     {
         final InlineMixin.Builder builder = InlineMixin.create();
-        builder.mixin( new ApplicationRelativeResolver( this.currentApplication ).toMixinName( root.getAttribute( "mixin" ) ) );
+        builder.mixin( new ApplicationRelativeResolver( this.currentApplication ).toMixinName( root.getAttribute( "name" ) ) );
         return builder.build();
     }
 
@@ -241,7 +243,7 @@ public final class XmlFormMapper
         {
             label = null;
         }
-        return label != null ? label : defaultValue;
+        return label != null ? label : defaultValue != null ? defaultValue : "";
     }
 
     private String getHelpTextI18n( final DomElement element )

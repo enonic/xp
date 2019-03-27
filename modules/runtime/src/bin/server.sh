@@ -50,7 +50,7 @@ locateJava() {
 }
 
 setupDefaults() {
-    DEFAULT_JAVA_OPTS="-XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSInitiatingOccupancyFraction=60 -XX:+ScavengeBeforeFullGC -XX:+CMSScavengeBeforeRemark"
+    DEFAULT_JAVA_OPTS="-XX:+CMSParallelRemarkEnabled -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSInitiatingOccupancyFraction=60 -XX:+ScavengeBeforeFullGC -XX:+CMSScavengeBeforeRemark"
     DEFAULT_JAVA_DEBUG_OPTS="-Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005"
 }
 
@@ -88,7 +88,7 @@ init() {
 }
 
 run() {
-    exec "$JAVACMD" $JAVA_OPTS -Dxp.install="$XP_INSTALL" -Dfile.encoding=UTF8 $XP_OPTS -classpath "$XP_INSTALL/lib/*" com.enonic.xp.launcher.LauncherMain $ARGS
+    exec "$JAVACMD" $JAVA_OPTS -Dxp.install="$XP_INSTALL" -Dfile.encoding=UTF8 $XP_OPTS -Dmapper.allow_dots_in_name=true -classpath "$XP_INSTALL/lib/*" com.enonic.xp.launcher.LauncherMain $ARGS
 }
 
 main() {

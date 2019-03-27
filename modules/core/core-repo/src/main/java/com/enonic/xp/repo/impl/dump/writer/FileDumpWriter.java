@@ -20,13 +20,15 @@ import com.google.common.io.Files;
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
+import com.enonic.xp.blob.NodeVersionKey;
+import com.enonic.xp.blob.Segment;
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.dump.AbstractFileProcessor;
 import com.enonic.xp.repo.impl.dump.DumpBlobStore;
 import com.enonic.xp.repo.impl.dump.DumpConstants;
 import com.enonic.xp.repo.impl.dump.RepoDumpException;
 import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
+import com.enonic.xp.repo.impl.dump.model.CommitDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.model.VersionsDumpEntry;
 import com.enonic.xp.repo.impl.dump.serializer.DumpSerializer;
@@ -34,6 +36,7 @@ import com.enonic.xp.repo.impl.dump.serializer.json.DumpMetaJsonSerializer;
 import com.enonic.xp.repo.impl.dump.serializer.json.JsonDumpSerializer;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.RepositorySegmentUtils;
 
 public class FileDumpWriter
     extends AbstractFileProcessor
@@ -55,12 +58,12 @@ public class FileDumpWriter
 
     private TarArchiveOutputStream tarOutputStream;
 
-    private FileDumpWriter( final Builder builder )
+    public FileDumpWriter( final Path basePath, final String dumpName, final BlobStore blobStore )
     {
-        this.dumpDirectory = getDumpDirectory( builder.basePath, builder.dumpName );
+        this.dumpDirectory = getDumpDirectory( basePath, dumpName );
         this.dumpBlobStore = new DumpBlobStore( this.dumpDirectory.toFile() );
         this.serializer = new JsonDumpSerializer();
-        this.blobStore = builder.blobStore;
+        this.blobStore = blobStore;
     }
 
     private Path getDumpDirectory( final Path basePath, final String name )
@@ -113,6 +116,20 @@ public class FileDumpWriter
         }
     }
 
+    @Override
+    public void openCommitsMeta( final RepositoryId repositoryId )
+    {
+        try
+        {
+            final File metaFile = createCommitsMeta( repositoryId );
+            doOpenFile( metaFile );
+        }
+        catch ( Exception e )
+        {
+            throw new RepoDumpException( "Could not open meta-file", e );
+        }
+    }
+
     private void doOpenFile( final File metaFile )
         throws IOException
     {
@@ -132,6 +149,13 @@ public class FileDumpWriter
     private File createVersionsMeta( final RepositoryId repositoryId )
     {
         final File metaFile = createVersionMetaPath( this.dumpDirectory, repositoryId ).toFile();
+
+        return doCreateMetaFile( metaFile );
+    }
+
+    private File createCommitsMeta( final RepositoryId repositoryId )
+    {
+        final File metaFile = createCommitMetaPath( this.dumpDirectory, repositoryId ).toFile();
 
         return doCreateMetaFile( metaFile );
     }
@@ -170,7 +194,15 @@ public class FileDumpWriter
         storeTarEntry( serializedEntry, entryName );
     }
 
-    private void storeTarEntry( final String serializedEntry, final String entryName )
+    @Override
+    public void writeCommitEntry( final CommitDumpEntry commitDumpEntry )
+    {
+        final String serializedEntry = serializer.serialize( commitDumpEntry );
+        final String entryName = commitDumpEntry.getNodeCommitId().toString() + ".json";
+        storeTarEntry( serializedEntry, entryName );
+    }
+
+    public void storeTarEntry( final String serializedEntry, final String entryName )
     {
         try
         {
@@ -187,32 +219,60 @@ public class FileDumpWriter
         }
     }
 
-
     @Override
-    public void writeVersionBlob( final NodeVersionId nodeVersionId )
+    public void writeNodeVersionBlobs( final RepositoryId repositoryId, final NodeVersionKey nodeVersionKey )
     {
-        final BlobRecord existingVersion =
-            blobStore.getRecord( DumpConstants.DUMP_SEGMENT_NODES, BlobKey.from( nodeVersionId.toString() ) );
-
-        if ( existingVersion == null )
+        final Segment nodeDumpSegment = RepositorySegmentUtils.toSegment( repositoryId, DumpConstants.DUMP_NODE_SEGMENT_LEVEL );
+        final BlobRecord existingNodeBlobRecord = blobStore.getRecord( nodeDumpSegment, nodeVersionKey.getNodeBlobKey() );
+        if ( existingNodeBlobRecord == null )
         {
-            throw new RepoDumpException( "Cannot write node version with key [" + nodeVersionId + "], not found in blobStore" );
+            throw new RepoDumpException(
+                "Cannot write node blob with key [" + nodeVersionKey.getNodeBlobKey() + "], not found in blobStore" );
         }
 
-        this.dumpBlobStore.addRecord( NodeConstants.NODE_SEGMENT, existingVersion.getBytes() );
+        final Segment indexConfigDumpSegment =
+            RepositorySegmentUtils.toSegment( repositoryId, DumpConstants.DUMP_INDEX_CONFIG_SEGMENT_LEVEL );
+        final BlobRecord existingIndexConfigBlobRecord =
+            blobStore.getRecord( indexConfigDumpSegment, nodeVersionKey.getIndexConfigBlobKey() );
+        if ( existingIndexConfigBlobRecord == null )
+        {
+            throw new RepoDumpException(
+                "Cannot write index config blob with key [" + nodeVersionKey.getIndexConfigBlobKey() + "], not found in blobStore" );
+        }
+
+        final Segment accessControlDumpSegment =
+            RepositorySegmentUtils.toSegment( repositoryId, DumpConstants.DUMP_ACCESS_CONTROL_SEGMENT_LEVEL );
+        final BlobRecord existingAccessControlBlobRecord =
+            blobStore.getRecord( accessControlDumpSegment, nodeVersionKey.getAccessControlBlobKey() );
+        if ( existingAccessControlBlobRecord == null )
+        {
+            throw new RepoDumpException(
+                "Cannot write access control blob with key [" + nodeVersionKey.getAccessControlBlobKey() + "], not found in blobStore" );
+        }
+
+        final Segment nodeSegment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.NODE_SEGMENT_LEVEL );
+        this.dumpBlobStore.addRecord( nodeSegment, existingNodeBlobRecord.getBytes() );
+
+        final Segment indexConfigSegment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.INDEX_CONFIG_SEGMENT_LEVEL );
+        this.dumpBlobStore.addRecord( indexConfigSegment, existingIndexConfigBlobRecord.getBytes() );
+
+        final Segment accessControlSegment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.ACCESS_CONTROL_SEGMENT_LEVEL );
+        this.dumpBlobStore.addRecord( accessControlSegment, existingAccessControlBlobRecord.getBytes() );
     }
 
     @Override
-    public void writeBinaryBlob( final String blobKey )
+    public void writeBinaryBlob( final RepositoryId repositoryId, final String blobKey )
     {
-        final BlobRecord binaryRecord = blobStore.getRecord( DumpConstants.DUMP_SEGMENT_BINARIES, BlobKey.from( blobKey ) );
+        final Segment dumpSegment = RepositorySegmentUtils.toSegment( repositoryId, DumpConstants.DUMP_BINARY_SEGMENT_LEVEL );
+        final BlobRecord binaryRecord = blobStore.getRecord( dumpSegment, BlobKey.from( blobKey ) );
 
         if ( binaryRecord == null )
         {
             throw new RepoDumpException( "Cannot write binary with key [" + blobKey + "], not found in blobStore" );
         }
 
-        this.dumpBlobStore.addRecord( NodeConstants.BINARY_SEGMENT, binaryRecord.getBytes() );
+        final Segment segment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.BINARY_SEGMENT_LEVEL );
+        this.dumpBlobStore.addRecord( segment, binaryRecord.getBytes() );
     }
 
     @Override
@@ -238,47 +298,6 @@ public class FileDumpWriter
         catch ( IOException e )
         {
             LOG.warn( "Cannot close stream [" + stream.getClass().getName() + "]", e );
-        }
-    }
-
-    public static Builder create()
-    {
-        return new Builder();
-    }
-
-    public static final class Builder
-    {
-        private Path basePath;
-
-        private String dumpName;
-
-        private BlobStore blobStore;
-
-        private Builder()
-        {
-        }
-
-        public Builder basePath( final Path basePath )
-        {
-            this.basePath = basePath;
-            return this;
-        }
-
-        public Builder dumpName( final String dumpName )
-        {
-            this.dumpName = dumpName;
-            return this;
-        }
-
-        public Builder blobStore( final BlobStore val )
-        {
-            blobStore = val;
-            return this;
-        }
-
-        public FileDumpWriter build()
-        {
-            return new FileDumpWriter( this );
         }
     }
 }

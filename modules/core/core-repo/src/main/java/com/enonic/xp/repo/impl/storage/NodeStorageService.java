@@ -1,10 +1,13 @@
 package com.enonic.xp.repo.impl.storage;
 
 
+import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
+import com.enonic.xp.node.NodeCommitEntry;
+import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
@@ -15,8 +18,8 @@ import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.PushNodeEntries;
 import com.enonic.xp.node.PushNodesListener;
+import com.enonic.xp.node.RoutableNodeVersionIds;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.version.NodeVersionDocumentId;
 
 public interface NodeStorageService
 {
@@ -24,9 +27,11 @@ public interface NodeStorageService
 
     Node store( final Node node, final InternalContext context );
 
-    Node load( final Node node, final InternalContext context );
+    Node load( final LoadNodeParams params, final InternalContext context );
 
     void storeVersion( final StoreNodeVersionParams params, final InternalContext context );
+
+    void storeCommit( final StoreNodeCommitParams params, final InternalContext context );
 
     void delete( final NodeIds nodeIds, final InternalContext context );
 
@@ -38,6 +43,9 @@ public interface NodeStorageService
 
     void push( final PushNodeEntries entries, final PushNodesListener pushListener, final InternalContext context );
 
+    NodeCommitEntry commit( final NodeCommitEntry entry, final RoutableNodeVersionIds routableNodeVersionIds,
+                            final InternalContext context );
+
     Node get( final NodeId nodeId, final InternalContext context );
 
     Node get( final NodePath nodePath, final InternalContext context );
@@ -46,15 +54,17 @@ public interface NodeStorageService
 
     Nodes get( final NodePaths nodePaths, final InternalContext context );
 
-    Node get( final NodeVersionId nodeVersionId, final InternalContext context );
+    Node get( final NodeId nodeId, final NodeVersionId nodeVersionId, final InternalContext context );
 
-    NodeVersion get( final NodeVersionId nodeVersionId );
+    NodeVersion getNodeVersion( final NodeVersionKey nodeVersionKey, final InternalContext context );
 
     NodeBranchEntry getBranchNodeVersion( final NodeId nodeId, final InternalContext context );
 
     NodeBranchEntries getBranchNodeVersions( final NodeIds nodeIds, final boolean keepOrder, final InternalContext context );
 
-    NodeVersionMetadata getVersion( final NodeVersionDocumentId versionId, final InternalContext context );
+    NodeVersionMetadata getVersion( final NodeId nodeId, final NodeVersionId nodeVersionId, final InternalContext context );
+
+    NodeCommitEntry getCommit( final NodeCommitId nodeCommitId, final InternalContext context );
 
     NodeId getIdForPath( final NodePath nodePath, final InternalContext context );
 

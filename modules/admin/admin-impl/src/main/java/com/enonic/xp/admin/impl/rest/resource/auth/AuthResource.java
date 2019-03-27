@@ -34,9 +34,9 @@ public final class AuthResource
     {
         final AuthHelper helper = new AuthHelper( this.securityService );
         final AuthenticationInfo authInfo =
-            helper.login( request.getUser(), request.getPassword(), request.getUserStore(), request.isRememberMe() );
+            helper.login( request.getUser(), request.getPassword(), request.getIdProvider(), request.isRememberMe() );
 
-        if ( authInfo.isAuthenticated() && !authInfo.hasRole( RoleKeys.ADMIN_LOGIN ) )
+        if ( authInfo.isAuthenticated() && !authInfo.hasRole( RoleKeys.ADMIN_LOGIN ) && !authInfo.hasRole( RoleKeys.ADMIN ) )
         {
             AuthHelper.logout();
             return new LoginResultJson( AuthenticationInfo.unAuthenticated(), "Access Denied" );

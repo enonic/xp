@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import com.enonic.xp.web.dispatch.FilterMapping;
 import com.enonic.xp.web.impl.dispatch.mapping.FilterDefinition;
@@ -68,7 +69,9 @@ public class FilterPipelineImplTest
         final MyFilter filter = new MyFilter();
 
         assertEquals( 0, Lists.newArrayList( this.pipeline ).size() );
-        this.pipeline.addFilter( filter );
+        this.pipeline.addFilter( filter, new MyServiceReference<Filter>() );
+
+        this.pipeline.activate( Maps.newHashMap() );
 
         assertEquals( 1, Lists.newArrayList( this.pipeline ).size() );
         this.pipeline.removeFilter( filter );
@@ -81,6 +84,8 @@ public class FilterPipelineImplTest
 
         assertEquals( 0, Lists.newArrayList( this.pipeline ).size() );
         this.pipeline.addMapping( mapping );
+
+        this.pipeline.activate( Maps.newHashMap() );
 
         assertEquals( 1, Lists.newArrayList( this.pipeline ).size() );
         this.pipeline.removeMapping( mapping );

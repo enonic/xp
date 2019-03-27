@@ -10,6 +10,6 @@ public final class LayoutComponentType
 
     private LayoutComponentType()
     {
-        super( "layout", LayoutComponent.class );
+        super( "layout" );
     }
 }

@@ -44,7 +44,6 @@ public final class ServiceHandler
     {
         final String restPath = findRestPath( webRequest );
         final Matcher matcher = PATTERN.matcher( restPath );
-
         if ( !matcher.find() )
         {
             throw notFound( "Not a valid service url pattern" );
@@ -52,6 +51,7 @@ public final class ServiceHandler
 
         final PortalRequest portalRequest =
             webRequest instanceof PortalRequest ? (PortalRequest) webRequest : new PortalRequest( webRequest );
+        portalRequest.setContextPath( findPreRestPath( portalRequest ) + "/" + matcher.group( 0 ) );
 
         final ServiceHandlerWorker worker = new ServiceHandlerWorker( portalRequest );
         worker.applicationKey = ApplicationKey.from( matcher.group( 1 ) );

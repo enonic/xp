@@ -18,7 +18,7 @@ public class EditablePageTest
         final EditablePage editablePage = new EditablePage( page );
 
         assertEquals( page.getConfig(), editablePage.config );
-        assertEquals( page.getController(), editablePage.controller );
+        assertEquals( page.getDescriptor(), editablePage.controller );
         assertEquals( page.getRegions(), editablePage.regions );
         assertEquals( page.getTemplate(), editablePage.template );
     }
@@ -31,7 +31,7 @@ public class EditablePageTest
         final Page page = editablePage.build();
 
         assertEquals( editablePage.config, page.getConfig() );
-        assertEquals( editablePage.controller, page.getController() );
+        assertEquals( editablePage.controller, page.getDescriptor() );
         assertEquals( editablePage.regions, page.getRegions() );
         assertEquals( editablePage.template, page.getTemplate() );
     }

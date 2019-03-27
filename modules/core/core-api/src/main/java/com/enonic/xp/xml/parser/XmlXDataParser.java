@@ -2,7 +2,6 @@ package com.enonic.xp.xml.parser;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.app.ApplicationRelativeResolver;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.xml.DomElement;
@@ -33,19 +32,7 @@ public final class XmlXDataParser
             root.getChild( "description" ) != null ? root.getChild( "description" ).getAttribute( "i18n" ) : null );
 
         final XmlFormMapper mapper = new XmlFormMapper( this.currentApplication );
-        final Form form = mapper.buildForm( root.getChild( "items" ) );
+        final Form form = mapper.buildForm( root.getChild( "form" ) );
         this.builder.form( form );
-
-        final ApplicationRelativeResolver applicationRelativeResolver =
-            this.currentApplication != null ? new ApplicationRelativeResolver( this.currentApplication ) : null;
-
-        root.getChildren( "allowContentType" ).forEach( domElement -> {
-
-            final String value = applicationRelativeResolver != null
-                ? applicationRelativeResolver.toContentTypeNameRegexp( domElement.getValue() )
-                : domElement.getValue();
-
-            this.builder.allowContentType( value );
-        } );
     }
 }

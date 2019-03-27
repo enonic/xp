@@ -30,14 +30,14 @@ public class QueryContentHandlerTest
     public void testExample()
     {
         setupQuery( 2, true );
-        runScript( "/site/lib/xp/examples/content/query.js" );
+        runScript( "/lib/xp/examples/content/query.js" );
     }
 
     @Test
     public void filterArray()
     {
         setupQuery( 2, false );
-        runFunction( "/site/test/QueryContentHandlerTest_filter_array.js", "query" );
+        runFunction( "/test/QueryContentHandlerTest_filter_array.js", "query" );
     }
 
     @Test
@@ -45,7 +45,7 @@ public class QueryContentHandlerTest
         throws Exception
     {
         setupQuery( 3, true );
-        runFunction( "/site/test/QueryContentHandlerTest.js", "query" );
+        runFunction( "/test/QueryContentHandlerTest.js", "query" );
     }
 
     private void setupQuery( final int count, final boolean aggs )
@@ -71,7 +71,7 @@ public class QueryContentHandlerTest
             add( NumericRangeBucket.create().key( "c" ).docCount( 4 ).from( 100 ).build() ).
             build();
         final Buckets buckets4 = Buckets.create().
-            add( DateRangeBucket.create().from( t1 ).docCount( 2 ).build() ).
+            add( DateRangeBucket.create().from( t1 ).docCount( 2 ).key( "date range bucket key" ).build() ).
             add( DateRangeBucket.create().to( t1 ).from( t2 ).docCount( 5 ).build() ).
             add( DateRangeBucket.create().to( t3 ).docCount( 7 ).build() ).
             build();
@@ -105,6 +105,6 @@ public class QueryContentHandlerTest
         Mockito.when( this.contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn( findResult );
         Mockito.when( this.contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ) ) ).thenReturn( Contents.empty() );
 
-        runFunction( "/site/test/QueryContentHandlerTest.js", "queryEmpty" );
+        runFunction( "/test/QueryContentHandlerTest.js", "queryEmpty" );
     }
 }

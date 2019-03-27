@@ -27,13 +27,13 @@ public class FindNodesByMultiRepoQueryHandlerTest
                     build() ).
                 addNodeHit( MultiRepoNodeHit.create().
                     branch( Branch.from( "draft" ) ).
-                    repositoryId( RepositoryId.from( "cms-repo" ) ).
+                    repositoryId( RepositoryId.from( "com.enonic.cms.default" ) ).
                     nodeId( NodeId.from( "350ba4a6-589c-498b-8af0-f183850e1120" ) ).
                     score( 1.40f ).
                     build() ).
                 build() );
 
-        runScript( "/site/lib/xp/examples/node/multiRepoQuery.js" );
+        runScript( "/lib/xp/examples/node/multiRepoQuery.js" );
     }
 
 

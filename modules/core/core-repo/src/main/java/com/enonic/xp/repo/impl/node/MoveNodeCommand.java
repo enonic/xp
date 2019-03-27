@@ -28,6 +28,8 @@ import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repo.impl.storage.MoveNodeParams;
 import com.enonic.xp.security.acl.Permission;
 
+import static com.enonic.xp.repo.impl.node.NodeConstants.CLOCK;
+
 public class MoveNodeCommand
     extends AbstractNodeCommand
 {
@@ -182,7 +184,7 @@ public class MoveNodeCommand
             name( nodeName ).
             parentPath( newParentPath ).
             indexConfigDocument( persistedNode.getIndexConfigDocument() ).
-            timestamp( Instant.now() );
+            timestamp( Instant.now( CLOCK ) );
 
         final Node movedNode;
 

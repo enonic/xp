@@ -30,4 +30,7 @@ public @interface IgniteSettings
 
     String off_heap_max_size() default "512MB";
 
+    int communication_message_queue_limit() default 1024;
+
+    String discovery_unicast_sockets();
 }

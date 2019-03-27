@@ -55,6 +55,9 @@ public class XmlLayoutDescriptorParserTest
         assertEquals( "My Layout", result.getDisplayName() );
         assertEquals( "key.display-name", result.getDisplayNameI18nKey() );
 
+        assertEquals( "My Layout Description", result.getDescription() );
+        assertEquals( "key.description", result.getDescriptionI18nKey() );
+
         final Form config = result.getConfig();
         assertNotNull( config );
         assertEquals( InputTypeName.DOUBLE, config.getFormItem( "pause" ).toInput().getInputType() );

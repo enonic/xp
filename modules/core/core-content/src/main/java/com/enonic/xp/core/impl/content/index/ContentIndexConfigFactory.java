@@ -10,6 +10,7 @@ import com.enonic.xp.core.impl.content.index.processor.AttachmentConfigProcessor
 import com.enonic.xp.core.impl.content.index.processor.BaseConfigProcessor;
 import com.enonic.xp.core.impl.content.index.processor.ContentIndexConfigProcessors;
 import com.enonic.xp.core.impl.content.index.processor.DataConfigProcessor;
+import com.enonic.xp.core.impl.content.index.processor.LanguageConfigProcessor;
 import com.enonic.xp.core.impl.content.index.processor.PageConfigProcessor;
 import com.enonic.xp.core.impl.content.index.processor.PageRegionsConfigProcessor;
 import com.enonic.xp.core.impl.content.index.processor.SiteConfigProcessor;
@@ -24,8 +25,8 @@ import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.mixin.MixinService;
-import com.enonic.xp.schema.mixin.Mixins;
+import com.enonic.xp.schema.xdata.XDataService;
+import com.enonic.xp.schema.xdata.XDatas;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteService;
 
@@ -41,14 +42,17 @@ public class ContentIndexConfigFactory
 
         indexConfigProcessors.add( new DataConfigProcessor( getDataForm( builder.contentTypeService, builder.contentTypeName ) ) );
 
-        indexConfigProcessors.add( new XDataConfigProcessor( getMixins( builder.mixinService, builder.extraDatas ) ) );
+        indexConfigProcessors.add( new XDataConfigProcessor( getXDatas( builder.xDataService, builder.extraDatas ) ) );
 
-        indexConfigProcessors.add( new PageConfigProcessor( getPageConfigForm( builder.pageDescriptorService, builder.page ) ) );
+        indexConfigProcessors.add(
+            new PageConfigProcessor( builder.page, getPageConfigForm( builder.pageDescriptorService, builder.page ) ) );
 
         indexConfigProcessors.add( new SiteConfigProcessor( getSiteConfigForms( builder.siteService, builder.siteConfigs ) ) );
 
         indexConfigProcessors.add(
             new PageRegionsConfigProcessor( builder.page, builder.partDescriptorService, builder.layoutDescriptorService ) );
+
+        indexConfigProcessors.add( new LanguageConfigProcessor( builder.language ) );
     }
 
     private Form getDataForm( final ContentTypeService contentTypeService, final ContentTypeName contentTypeName )
@@ -58,27 +62,26 @@ public class ContentIndexConfigFactory
             return null;
         }
         return contentTypeService.getByName( new GetContentTypeParams().
-            inlineMixinsToFormItems( true ).
             contentTypeName( contentTypeName ) ).
             getForm();
     }
 
-    private Mixins getMixins( final MixinService mixinService, final ExtraDatas extraDatas )
+    private XDatas getXDatas( final XDataService xDataService, final ExtraDatas extraDatas )
     {
-        if ( mixinService == null || extraDatas == null )
+        if ( xDataService == null || extraDatas == null )
         {
             return null;
         }
-        return mixinService.getByNames( extraDatas.getNames() );
+        return xDataService.getByNames( extraDatas.getNames() );
     }
 
     private Form getPageConfigForm( final PageDescriptorService pageDescriptorService, final Page page )
     {
-        if ( pageDescriptorService == null || page == null || page.getController() == null )
+        if ( pageDescriptorService == null || page == null || page.getDescriptor() == null )
         {
             return null;
         }
-        return pageDescriptorService.getByKey( page.getController() ).getConfig();
+        return pageDescriptorService.getByKey( page.getDescriptor() ).getConfig();
     }
 
     private Collection<Form> getSiteConfigForms( final SiteService siteService, final SiteConfigs siteConfigs )
@@ -113,7 +116,7 @@ public class ContentIndexConfigFactory
     {
         private ContentTypeService contentTypeService;
 
-        private MixinService mixinService;
+        private XDataService xDataService;
 
         private PageDescriptorService pageDescriptorService;
 
@@ -131,15 +134,17 @@ public class ContentIndexConfigFactory
 
         private ExtraDatas extraDatas;
 
+        private String language;
+
         public Builder contentTypeService( final ContentTypeService value )
         {
             this.contentTypeService = value;
             return this;
         }
 
-        public Builder mixinService( final MixinService value )
+        public Builder xDataService( final XDataService value )
         {
-            this.mixinService = value;
+            this.xDataService = value;
             return this;
         }
 
@@ -188,6 +193,12 @@ public class ContentIndexConfigFactory
         public Builder extraDatas( final ExtraDatas value )
         {
             this.extraDatas = value;
+            return this;
+        }
+
+        public Builder language( final String value )
+        {
+            this.language = value;
             return this;
         }
 

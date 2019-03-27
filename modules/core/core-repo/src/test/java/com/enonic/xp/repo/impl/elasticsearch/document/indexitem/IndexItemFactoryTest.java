@@ -7,6 +7,9 @@ import org.junit.Test;
 
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.index.IndexConfig;
+import com.enonic.xp.index.IndexConfigDocument;
+import com.enonic.xp.index.IndexPath;
+import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.repo.impl.index.IndexValueType;
 import com.enonic.xp.util.GeoPoint;
@@ -20,8 +23,8 @@ public class IndexItemFactoryTest
         throws Exception
     {
         final List<IndexItem> indexItems =
-            IndexItemFactory.create( "myProperty", ValueFactory.newDateTime( Instant.parse( "2015-12-11T10:29:30Z" ) ),
-                                     IndexConfig.MINIMAL );
+            IndexItemFactory.create( IndexPath.from( "myProperty" ), ValueFactory.newDateTime( Instant.parse( "2015-12-11T10:29:30Z" ) ),
+                                     createDefaultDocument( IndexConfig.MINIMAL ) );
 
         assertEquals( 3, indexItems.size() );
         assertTypes( indexItems, IndexValueType.DATETIME, IndexValueType.STRING, IndexValueType.ORDERBY );
@@ -32,19 +35,19 @@ public class IndexItemFactoryTest
         throws Exception
     {
         final List<IndexItem> indexItems =
-            IndexItemFactory.create( "myProperty", ValueFactory.newDateTime( Instant.parse( "2015-12-11T10:29:30Z" ) ),
-                                     IndexConfig.BY_TYPE );
+            IndexItemFactory.create( IndexPath.from( "myProperty" ), ValueFactory.newDateTime( Instant.parse( "2015-12-11T10:29:30Z" ) ),
+                                     createDefaultDocument( IndexConfig.BY_TYPE ) );
 
-        assertEquals( 5, indexItems.size() );
-        assertTypes( indexItems, IndexValueType.DATETIME, IndexValueType.STRING, IndexValueType.ORDERBY, IndexValueType.ANALYZED,
-                     IndexValueType.NGRAM );
+        assertEquals( 3, indexItems.size() );
+        assertTypes( indexItems, IndexValueType.DATETIME, IndexValueType.STRING, IndexValueType.ORDERBY );
     }
 
     @Test
     public void string_minimal()
         throws Exception
     {
-        final List<IndexItem> indexItems = IndexItemFactory.create( "myProperty", ValueFactory.newString( "ost" ), IndexConfig.MINIMAL );
+        final List<IndexItem> indexItems = IndexItemFactory.create( IndexPath.from( "myProperty" ), ValueFactory.newString( "ost" ),
+                                                                    createDefaultDocument( IndexConfig.MINIMAL ) );
 
         assertEquals( 2, indexItems.size() );
         assertTypes( indexItems, IndexValueType.STRING, IndexValueType.ORDERBY );
@@ -54,7 +57,8 @@ public class IndexItemFactoryTest
     public void string_by_type()
         throws Exception
     {
-        final List<IndexItem> indexItems = IndexItemFactory.create( "myProperty", ValueFactory.newString( "ost" ), IndexConfig.BY_TYPE );
+        final List<IndexItem> indexItems = IndexItemFactory.create( IndexPath.from( "myProperty" ), ValueFactory.newString( "ost" ),
+                                                                    createDefaultDocument( IndexConfig.BY_TYPE ) );
 
         assertEquals( 6, indexItems.size() );
         assertTypes( indexItems, IndexValueType.ANALYZED, IndexValueType.STRING, IndexValueType.NGRAM, IndexValueType.ORDERBY );
@@ -64,7 +68,8 @@ public class IndexItemFactoryTest
     public void double_minimal()
         throws Exception
     {
-        final List<IndexItem> indexItems = IndexItemFactory.create( "myProperty", ValueFactory.newDouble( 12.3 ), IndexConfig.MINIMAL );
+        final List<IndexItem> indexItems = IndexItemFactory.create( IndexPath.from( "myProperty" ), ValueFactory.newDouble( 12.3 ),
+                                                                    createDefaultDocument( IndexConfig.MINIMAL ) );
         assertEquals( 3, indexItems.size() );
         assertTypes( indexItems, IndexValueType.NUMBER, IndexValueType.STRING, IndexValueType.ORDERBY );
     }
@@ -74,7 +79,8 @@ public class IndexItemFactoryTest
         throws Exception
     {
         final List<IndexItem> indexItems =
-            IndexItemFactory.create( "myProperty", ValueFactory.newGeoPoint( new GeoPoint( 80, 80 ) ), IndexConfig.MINIMAL );
+            IndexItemFactory.create( IndexPath.from( "myProperty" ), ValueFactory.newGeoPoint( new GeoPoint( 80, 80 ) ),
+                                     createDefaultDocument( IndexConfig.MINIMAL ) );
         assertEquals( 3, indexItems.size() );
         assertTypes( indexItems, IndexValueType.GEO_POINT, IndexValueType.STRING, IndexValueType.ORDERBY );
     }
@@ -131,5 +137,10 @@ public class IndexItemFactoryTest
         return false;
     }
 
+    private IndexConfigDocument createDefaultDocument( final IndexConfig indexConfig )
+    {
+        final PatternIndexConfigDocument.Builder builder = PatternIndexConfigDocument.create().defaultConfig( indexConfig );
+        return builder.build();
+    }
 
 }

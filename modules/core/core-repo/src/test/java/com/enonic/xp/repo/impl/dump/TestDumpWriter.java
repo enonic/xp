@@ -8,9 +8,10 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Sets;
 
+import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
+import com.enonic.xp.repo.impl.dump.model.CommitDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.model.VersionsDumpEntry;
 import com.enonic.xp.repo.impl.dump.writer.DumpWriter;
@@ -25,7 +26,7 @@ class TestDumpWriter
 
     private final Set<String> binaries = Sets.newHashSet();
 
-    private final Set<NodeVersionId> nodeVersions = Sets.newHashSet();
+    private final Set<NodeVersionKey> nodeVersionKeys = Sets.newHashSet();
 
     private DumpMeta dumpMeta;
 
@@ -53,6 +54,12 @@ class TestDumpWriter
     }
 
     @Override
+    public void openCommitsMeta( final RepositoryId repositoryId )
+    {
+        // Do nothing yet
+    }
+
+    @Override
     public void close()
     {
         current = null;
@@ -71,13 +78,20 @@ class TestDumpWriter
     }
 
     @Override
-    public void writeVersionBlob( final NodeVersionId nodeVersionId )
+    public void writeCommitEntry( final CommitDumpEntry commitDumpEntry )
     {
-        nodeVersions.add( nodeVersionId );
+        // Do nothing yet
+    }
+
+
+    @Override
+    public void writeNodeVersionBlobs( final RepositoryId repositoryId, final NodeVersionKey nodeVersionKey )
+    {
+        nodeVersionKeys.add( nodeVersionKey );
     }
 
     @Override
-    public void writeBinaryBlob( final String key )
+    public void writeBinaryBlob( final RepositoryId repositoryId, final String key )
     {
         binaries.add( key );
     }
@@ -97,14 +111,14 @@ class TestDumpWriter
         return dumpMeta;
     }
 
-    public boolean hasVersions( final NodeVersionId... versions )
+    public boolean hasNodeVersions( final NodeVersionKey... nodeVersionKeys )
     {
-        return this.nodeVersions.containsAll( Arrays.asList( versions ) );
+        return this.nodeVersionKeys.containsAll( Arrays.asList( nodeVersionKeys ) );
     }
 
-    public Set<NodeVersionId> getNodeVersions()
+    public Set<NodeVersionKey> getNodeVersionKeys()
     {
-        return nodeVersions;
+        return nodeVersionKeys;
     }
 
     class RepoBranchEntry

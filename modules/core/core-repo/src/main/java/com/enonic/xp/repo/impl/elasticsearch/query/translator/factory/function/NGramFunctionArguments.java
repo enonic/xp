@@ -2,6 +2,8 @@ package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.function;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQueryFieldNameResolver;
 import com.enonic.xp.repo.impl.index.IndexValueType;
@@ -12,9 +14,9 @@ public class NGramFunctionArguments
 {
 
     @Override
-    protected String getDefaultAnalyzer()
+    protected String resolveAnalyzer( final String value )
     {
-        return NodeConstants.DEFAULT_NGRAM_SEARCH_ANALYZER;
+        return StringUtils.isBlank( value ) ? NodeConstants.DEFAULT_NGRAM_SEARCH_ANALYZER : value;
     }
 
     @Override

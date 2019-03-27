@@ -1,10 +1,14 @@
 package com.enonic.xp.dump;
 
+import java.util.Objects;
+
 public class SystemLoadParams
 {
     private final String dumpName;
 
     private final boolean includeVersions;
+
+    private final boolean upgrade;
 
     private final SystemLoadListener listener;
 
@@ -13,6 +17,7 @@ public class SystemLoadParams
         this.dumpName = builder.dumpName;
         this.includeVersions = builder.includeVersions;
         this.listener = builder.listener;
+        this.upgrade = builder.upgrade;
     }
 
     public String getDumpName()
@@ -30,9 +35,36 @@ public class SystemLoadParams
         return listener;
     }
 
+    public boolean isUpgrade()
+    {
+        return upgrade;
+    }
+
     public static Builder create()
     {
         return new Builder();
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+        final SystemLoadParams that = (SystemLoadParams) o;
+        return includeVersions == that.includeVersions && upgrade == that.upgrade && Objects.equals( dumpName, that.dumpName ) &&
+            Objects.equals( listener, that.listener );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( dumpName, includeVersions, upgrade, listener );
     }
 
     public static final class Builder
@@ -40,6 +72,8 @@ public class SystemLoadParams
         private String dumpName;
 
         private boolean includeVersions = false;
+
+        private boolean upgrade = false;
 
         private SystemLoadListener listener;
 
@@ -62,6 +96,12 @@ public class SystemLoadParams
         public Builder includeVersions( final boolean val )
         {
             includeVersions = val;
+            return this;
+        }
+
+        public Builder upgrade( final boolean upgrade )
+        {
+            this.upgrade = upgrade;
             return this;
         }
 

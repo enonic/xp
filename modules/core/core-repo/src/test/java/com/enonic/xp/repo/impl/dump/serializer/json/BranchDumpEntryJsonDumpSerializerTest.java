@@ -6,6 +6,8 @@ import org.junit.Test;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.xp.blob.NodeVersionKey;
+import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;
@@ -29,6 +31,8 @@ public class BranchDumpEntryJsonDumpSerializerTest
                 nodePath( NodePath.create( "/fisk/ost" ).build() ).
                 timestamp( Instant.now() ).
                 version( NodeVersionId.from( "fisk" ) ).
+                nodeVersionKey( NodeVersionKey.from( "fiskKey", "fiskKey2", "fiskKey3" ) ).
+                nodeCommitId( NodeCommitId.from( "commitId" ) ).
                 build() ).
             setBinaryReferences( Lists.newArrayList( "1" ) ).
             nodeId( NodeId.from( "myOtherId" ) ).

@@ -2,6 +2,7 @@ package com.enonic.xp.admin.impl.rest.resource.application.json;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 
@@ -9,10 +10,10 @@ import com.enonic.xp.admin.impl.json.ItemJson;
 import com.enonic.xp.admin.impl.json.form.FormJson;
 import com.enonic.xp.admin.impl.rest.resource.application.ApplicationIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
+import com.enonic.xp.admin.impl.rest.resource.schema.mixin.InlineMixinResolver;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationDescriptor;
-import com.enonic.xp.auth.AuthDescriptor;
-import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.idprovider.IdProviderDescriptor;
 import com.enonic.xp.site.SiteDescriptor;
 
 public class ApplicationJson
@@ -26,7 +27,7 @@ public class ApplicationJson
 
     private final FormJson config;
 
-    private final FormJson authConfig;
+    private final FormJson idProviderConfig;
 
     private final ImmutableList<String> metaStepMixinNames;
 
@@ -37,22 +38,29 @@ public class ApplicationJson
         this.application = builder.application;
         this.applicationDescriptor = builder.applicationDescriptor;
         this.local = builder.local;
-        this.config = builder.siteDescriptor != null && builder.siteDescriptor.getForm() != null ? new FormJson(
-            builder.siteDescriptor.getForm(), builder.localeMessageResolver )
-            : null;
-        this.authConfig =
-            builder.authDescriptor != null && builder.authDescriptor.getConfig() != null
-                ? new FormJson( builder.authDescriptor.getConfig(), builder.localeMessageResolver )
+
+        this.config =
+            builder.siteDescriptor != null && builder.siteDescriptor.getForm() != null ? new FormJson( builder.siteDescriptor.getForm(),
+                                                                                                       builder.localeMessageResolver,
+                                                                                                       builder.inlineMixinResolver )
                 : null;
-        ImmutableList.Builder<String> mixinNamesBuilder = new ImmutableList.Builder<>();
-        if ( builder.siteDescriptor != null && builder.siteDescriptor.getMetaSteps() != null )
+
+        this.idProviderConfig = builder.idProviderDescriptor != null && builder.idProviderDescriptor.getConfig() != null ? new FormJson(
+            builder.idProviderDescriptor.getConfig(), builder.localeMessageResolver, builder.inlineMixinResolver )
+                : null;
+
+        if ( builder.siteDescriptor != null && builder.siteDescriptor.getXDataMappings() != null )
         {
-            for ( MixinName mixinName : builder.siteDescriptor.getMetaSteps() )
-            {
-                mixinNamesBuilder.add( mixinName.toString() );
-            }
+            this.metaStepMixinNames = ImmutableList.copyOf( builder.siteDescriptor.getXDataMappings().
+                stream().
+                map( xDataMapping -> xDataMapping.getXDataName().toString() ).
+                distinct().
+                collect( Collectors.toList() ) );
         }
-        this.metaStepMixinNames = mixinNamesBuilder.build();
+        else
+        {
+            this.metaStepMixinNames = ImmutableList.of();
+        }
         this.iconUrl = builder.iconUrlResolver.resolve( application.getKey(), applicationDescriptor );
     }
 
@@ -116,9 +124,9 @@ public class ApplicationJson
         return config;
     }
 
-    public FormJson getAuthConfig()
+    public FormJson getIdProviderConfig()
     {
-        return authConfig;
+        return idProviderConfig;
     }
 
     public List<String> getMetaSteps()
@@ -161,11 +169,13 @@ public class ApplicationJson
 
         private SiteDescriptor siteDescriptor;
 
-        private AuthDescriptor authDescriptor;
+        private IdProviderDescriptor idProviderDescriptor;
 
         private ApplicationIconUrlResolver iconUrlResolver;
 
         private LocaleMessageResolver localeMessageResolver;
+
+        private InlineMixinResolver inlineMixinResolver;
 
         private boolean local;
 
@@ -192,9 +202,9 @@ public class ApplicationJson
             return this;
         }
 
-        public Builder setAuthDescriptor( final AuthDescriptor authDescriptor )
+        public Builder setIdProviderDescriptor( final IdProviderDescriptor idProviderDescriptor )
         {
-            this.authDescriptor = authDescriptor;
+            this.idProviderDescriptor = idProviderDescriptor;
             return this;
         }
 
@@ -207,6 +217,12 @@ public class ApplicationJson
         public Builder setLocaleMessageResolver( final LocaleMessageResolver localeMessageResolver )
         {
             this.localeMessageResolver = localeMessageResolver;
+            return this;
+        }
+
+        public Builder setInlineMixinResolver( final InlineMixinResolver inlineMixinResolver )
+        {
+            this.inlineMixinResolver = inlineMixinResolver;
             return this;
         }
 

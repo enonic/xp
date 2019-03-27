@@ -5,7 +5,6 @@ import org.apache.ignite.cache.CacheMode;
 import org.apache.ignite.cache.CacheWriteSynchronizationMode;
 import org.apache.ignite.cache.eviction.lru.LruEvictionPolicy;
 import org.apache.ignite.configuration.CacheConfiguration;
-import org.eclipse.jetty.server.session.SessionData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,9 +12,9 @@ class SessionCacheConfigFactory
 {
     private final static Logger LOG = LoggerFactory.getLogger( SessionCacheConfigFactory.class );
 
-    static CacheConfiguration<String, SessionData> create( final String cacheName, final WebSessionConfig config )
+    static CacheConfiguration<String, SessionDataWrapper> create( final String cacheName, final WebSessionConfig config )
     {
-        final CacheConfiguration<String, SessionData> cacheConfig = new CacheConfiguration<>();
+        final CacheConfiguration<String, SessionDataWrapper> cacheConfig = new CacheConfiguration<>();
 
         cacheConfig.setAtomicityMode( CacheAtomicityMode.ATOMIC );
         cacheConfig.setWriteSynchronizationMode( getWriteSyncMode( config.write_sync_mode() ) );
@@ -43,7 +42,7 @@ class SessionCacheConfigFactory
         }
     }
 
-    private static void setCacheMode( final WebSessionConfig config, final CacheConfiguration<String, SessionData> cacheConfig )
+    private static void setCacheMode( final WebSessionConfig config, final CacheConfiguration<String, SessionDataWrapper> cacheConfig )
     {
         switch ( config.cache_mode().toLowerCase() )
         {
@@ -63,7 +62,7 @@ class SessionCacheConfigFactory
         }
     }
 
-    private static void setEvictionPolicy( final WebSessionConfig config, final CacheConfiguration<String, SessionData> cacheConfig )
+    private static void setEvictionPolicy( final WebSessionConfig config, final CacheConfiguration<String, SessionDataWrapper> cacheConfig )
     {
         final LruEvictionPolicy evictPlc = new LruEvictionPolicy();
         evictPlc.setMaxSize( config.eviction_max_size() );

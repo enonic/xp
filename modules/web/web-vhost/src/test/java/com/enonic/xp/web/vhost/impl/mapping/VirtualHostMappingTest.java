@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import com.enonic.xp.security.UserStoreKey;
+import com.enonic.xp.security.IdProviderKey;
 
 import static org.junit.Assert.*;
 
@@ -67,12 +67,15 @@ public class VirtualHostMappingTest
     }
 
     @Test
-    public void testGetUserStoreKey()
+    public void testGetIdProviderKey()
     {
-        assertEquals( null, this.mapping.getUserStoreKey() );
+        assertNull( this.mapping.getDefaultIdProviderKey() );
 
-        this.mapping.setUserStoreKey( UserStoreKey.system() );
-        assertEquals( UserStoreKey.system(), this.mapping.getUserStoreKey() );
+        this.mapping.setVirtualHostIdProvidersMapping( VirtualHostIdProvidersMapping.create().
+            setDefaultIdProvider( IdProviderKey.system() ).
+            build() );
+
+        assertEquals( IdProviderKey.system(), this.mapping.getDefaultIdProviderKey() );
     }
 
     @Test

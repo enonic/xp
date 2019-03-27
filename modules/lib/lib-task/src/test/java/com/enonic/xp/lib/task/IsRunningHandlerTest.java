@@ -39,7 +39,7 @@ public class IsRunningHandlerTest
             build();
         Mockito.when( this.taskService.getRunningTasks() ).thenReturn( Collections.singletonList( taskInfo ) );
 
-        runScript( "/site/lib/xp/examples/task/isRunning.js" );
+        runScript( "/lib/xp/examples/task/isRunning.js" );
     }
 
     @Test
@@ -48,7 +48,7 @@ public class IsRunningHandlerTest
     {
         Mockito.when( this.taskService.getRunningTasks() ).thenReturn( new ArrayList<>() );
 
-        runFunction( "/site/test/isRunning-test.js", "isRunning" );
+        runFunction( "/test/isRunning-test.js", "isRunning" );
     }
 
 }

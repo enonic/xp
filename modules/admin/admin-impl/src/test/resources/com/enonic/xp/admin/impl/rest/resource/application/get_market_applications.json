@@ -1,0 +1,18 @@
+{
+  "hits": {
+    "appKey": {
+      "description": "market application description",
+      "displayName": "market application displayname",
+      "iconUrl": "http://market.enonic.com/app1",
+      "latestVersion": "version-1.0",
+      "name": "app1",
+      "url": null,
+      "versions": {
+        "1": {
+          "applicationUrl": null
+        }
+      }
+    }
+  },
+  "total": 0
+}

@@ -27,7 +27,7 @@ public class DumpCommandTest
 
         final RecordedRequest request = takeRequest();
         assertEquals( "POST", request.getMethod() );
-        assertEquals( "/api/system/dump", request.getPath() );
+        assertEquals( "/system/dump", request.getPath() );
         assertEquals( JsonHelper.serialize( createRequestJson() ), request.getBody().readString( Charsets.UTF_8 ) );
     }
 

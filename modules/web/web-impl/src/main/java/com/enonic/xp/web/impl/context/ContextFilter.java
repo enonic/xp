@@ -14,7 +14,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.web.filter.OncePerRequestFilter;
 
-@Component(immediate = true, service = Filter.class)
+@Component(immediate = true, service = Filter.class, property = {"connector=xp", "connector=api", "connector=status"})
 @Order(-180)
 @WebFilter("/*")
 public final class ContextFilter

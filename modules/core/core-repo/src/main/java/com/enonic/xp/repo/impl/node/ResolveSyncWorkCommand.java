@@ -170,17 +170,12 @@ public class ResolveSyncWorkCommand
 
     private NodeIds getNodeDependencies( final NodeIds initialDiff )
     {
-        final NodeIds dependencies = FindNodesDependenciesCommand.create( this ).
+        return FindNodesDependenciesCommand.create( this ).
             nodeIds( initialDiff ).
+            excludedIds( excludedIds ).
             recursive( true ).
             build().
             execute();
-
-        final NodeIds filtered = NodeIds.from( dependencies.getSet().stream().
-            filter( ( nodeId ) -> !this.excludedIds.contains( nodeId ) ).
-            collect( Collectors.toSet() ) );
-
-        return filtered;
     }
 
     private void addNewAndMovedParents( final Set<NodeComparison> comparisons )

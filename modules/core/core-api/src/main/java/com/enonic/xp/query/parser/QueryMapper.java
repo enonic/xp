@@ -1,13 +1,13 @@
 package com.enonic.xp.query.parser;
 
 import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
-import org.codehaus.jparsec.Tokens;
-import org.codehaus.jparsec.functors.Binary;
-import org.codehaus.jparsec.functors.Map;
-import org.codehaus.jparsec.functors.Map2;
-import org.codehaus.jparsec.functors.Map3;
-import org.codehaus.jparsec.functors.Unary;
+import org.jparsec.Tokens;
+import org.jparsec.functors.Map3;
 
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.ConstraintExpr;
@@ -24,12 +24,12 @@ import com.enonic.xp.query.expr.ValueExpr;
 
 final class QueryMapper
 {
-    public static Map<String, ValueExpr> stringValueExpr()
+    public static Function<String, ValueExpr> stringValueExpr()
     {
         return ValueExpr::string;
     }
 
-    public static Map<String, ValueExpr> numberValueExpr()
+    public static Function<String, ValueExpr> numberValueExpr()
     {
         return value -> {
             final Double number = Double.parseDouble( value );
@@ -37,32 +37,32 @@ final class QueryMapper
         };
     }
 
-    public static Map2<ConstraintExpr, List<OrderExpr>, QueryExpr> queryExpr()
+    public static BiFunction<ConstraintExpr, List<OrderExpr>, QueryExpr> queryExpr()
     {
         return QueryExpr::new;
     }
 
-    public static Map<String, FieldExpr> fieldExpr()
+    public static Function<String, FieldExpr> fieldExpr()
     {
         return FieldExpr::from;
     }
 
-    public static Map<String, Tokens.Fragment> fragment( final String tag )
+    public static Function<String, Tokens.Fragment> fragment( final String tag )
     {
         return from -> Tokens.fragment( from, tag );
     }
 
-    public static Unary<ConstraintExpr> notExpr()
+    public static UnaryOperator<ConstraintExpr> notExpr()
     {
         return NotExpr::new;
     }
 
-    public static Binary<ConstraintExpr> andExpr()
+    public static BinaryOperator<ConstraintExpr> andExpr()
     {
         return LogicalExpr::and;
     }
 
-    public static Binary<ConstraintExpr> orExpr()
+    public static BinaryOperator<ConstraintExpr> orExpr()
     {
         return LogicalExpr::or;
     }
@@ -77,32 +77,32 @@ final class QueryMapper
         return CompareExpr::create;
     }
 
-    public static Map2<String, List<ValueExpr>, FunctionExpr> functionExpr()
+    public static BiFunction<String, List<ValueExpr>, FunctionExpr> functionExpr()
     {
         return FunctionExpr::new;
     }
 
-    public static Map<FunctionExpr, DynamicConstraintExpr> dynamicConstraintExpr()
+    public static Function<FunctionExpr, DynamicConstraintExpr> dynamicConstraintExpr()
     {
         return DynamicConstraintExpr::new;
     }
 
-    public static Map2<FieldExpr, OrderExpr.Direction, FieldOrderExpr> fieldOrderExpr()
+    public static BiFunction<FieldExpr, OrderExpr.Direction, FieldOrderExpr> fieldOrderExpr()
     {
         return FieldOrderExpr::new;
     }
 
-    public static Map2<FunctionExpr, OrderExpr.Direction, DynamicOrderExpr> dynamicOrderExpr()
+    public static BiFunction<FunctionExpr, OrderExpr.Direction, DynamicOrderExpr> dynamicOrderExpr()
     {
         return DynamicOrderExpr::new;
     }
 
-    public static Map<FunctionExpr, ValueExpr> executeValueFunction()
+    public static Function<FunctionExpr, ValueExpr> executeValueFunction()
     {
         return StaticFunctions::execute;
     }
 
-    public static Unary<Object> skip()
+    public static UnaryOperator<Object> skip()
     {
         return v -> v;
     }

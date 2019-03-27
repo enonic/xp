@@ -1,0 +1,26 @@
+{
+  "repositories": [
+    {
+      "branches": [
+        {
+          "branch": "branch-value",
+          "successful": 2,
+          "errors": [
+            {
+              "message": "error-message"
+            }
+          ]
+        }
+      ],
+      "versions": {
+        "successful": 1,
+        "errors": [
+          {
+            "message": "version-load-error-message"
+          }
+        ]
+      },
+      "repository": "my-repo"
+    }
+  ]
+}

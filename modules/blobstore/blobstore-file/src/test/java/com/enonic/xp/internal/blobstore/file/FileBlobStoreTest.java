@@ -25,7 +25,7 @@ public class FileBlobStoreTest
 
     private FileBlobStore blobStore;
 
-    private final Segment segment = Segment.from( "test" );
+    private final Segment segment = Segment.from( "test", "blob" );
 
     @Before
     public void setup()
@@ -96,6 +96,31 @@ public class FileBlobStoreTest
     }
 
     @Test
+    public void listSegments()
+    {
+        final Segment secondSegment = Segment.from( "test", "blob2" );
+        assertEquals( 0, blobStore.listSegments().count() );
+
+        createRecord( "hello" ).getKey();
+        assertEquals( 1, blobStore.listSegments().count() );
+        assertEquals( segment, blobStore.listSegments().findFirst().get() );
+
+        createRecord( secondSegment, "hello" ).getKey();
+        assertEquals( 2, blobStore.listSegments().count() );
+    }
+
+    @Test
+    public void deleteSegment()
+    {
+        final Segment secondSegment = Segment.from( "test", "blob2" );
+        createRecord( "hello" ).getKey();
+        createRecord( secondSegment, "hello" ).getKey();
+        blobStore.deleteSegment( secondSegment );
+        assertEquals( 1, blobStore.listSegments().count() );
+        assertEquals( segment, blobStore.listSegments().findFirst().get() );
+    }
+
+    @Test
     public void lastModifiedUpdated()
         throws Exception
     {
@@ -109,7 +134,12 @@ public class FileBlobStoreTest
 
     private BlobRecord createRecord( final String str )
     {
+        return createRecord( segment, str );
+    }
+
+    private BlobRecord createRecord( final Segment segment, final String str )
+    {
         final ByteSource source = ByteSource.wrap( str.getBytes() );
-        return this.blobStore.addRecord( this.segment, source );
+        return this.blobStore.addRecord( segment, source );
     }
 }

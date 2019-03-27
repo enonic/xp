@@ -11,7 +11,7 @@ import com.enonic.xp.toolbox.util.JsonHelper;
 public final class DeleteSnapshotsCommand
     extends RepoCommand
 {
-    public static final String DELETE_SNAPSHOTS_REST_PATH = "/api/repo/snapshot/delete";
+    public static final String DELETE_SNAPSHOTS_REST_PATH = "/repo/snapshot/delete";
 
     @Option(name = "-b", description = "Delete snapshots before this timestamp.", required = true)
     public String before;

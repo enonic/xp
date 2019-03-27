@@ -45,7 +45,7 @@ import com.enonic.xp.site.SiteService;
 
 @javax.ws.rs.Path(ResourceConstants.REST_ROOT + "content/page/template")
 @Produces(MediaType.APPLICATION_JSON)
-@RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
+@RolesAllowed({RoleKeys.ADMIN_LOGIN_ID, RoleKeys.ADMIN_ID})
 @Component(immediate = true, property = "group=admin")
 public final class PageTemplateResource
     implements JaxRsComponent
@@ -154,7 +154,7 @@ public final class PageTemplateResource
                 }
 
                 final Page page = content.getPage();
-                if ( page != null && page.hasController() )
+                if ( page != null && page.hasDescriptor() )
                 {
                     return true;
                 }

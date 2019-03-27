@@ -9,10 +9,10 @@ import org.junit.Test;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeName;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalType;
 import com.enonic.xp.security.User;
-import com.enonic.xp.security.UserStoreKey;
 
 import static org.junit.Assert.*;
 
@@ -26,7 +26,7 @@ public class PrincipalKeyNodeTranslatorTest
     public void toNodeName()
         throws Exception
     {
-        PrincipalKey principalKey = PrincipalKey.ofUser( UserStoreKey.from( "myuserstore" ), "rmy" );
+        PrincipalKey principalKey = PrincipalKey.ofUser( IdProviderKey.from( "myidprovider" ), "rmy" );
 
         User user = User.create().
             key( principalKey ).
@@ -47,7 +47,7 @@ public class PrincipalKeyNodeTranslatorTest
     {
         PropertyTree rootDataSet = new PropertyTree();
         rootDataSet.setString( PrincipalPropertyNames.PRINCIPAL_TYPE_KEY, PrincipalType.USER.toString() );
-        rootDataSet.setString( PrincipalPropertyNames.USER_STORE_KEY, UserStoreKey.system().toString() );
+        rootDataSet.setString( PrincipalPropertyNames.ID_PROVIDER_KEY, IdProviderKey.system().toString() );
 
         Node userNode = Node.create().data( rootDataSet ).
             name( NodeName.from( "rmy" ) ).
@@ -57,7 +57,7 @@ public class PrincipalKeyNodeTranslatorTest
 
         assertTrue( principalKey.isUser() );
         assertEquals( PrincipalType.USER, principalKey.getType() );
-        assertEquals( UserStoreKey.system(), principalKey.getUserStore() );
+        assertEquals( IdProviderKey.system(), principalKey.getIdProviderKey() );
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -66,7 +66,7 @@ public class PrincipalKeyNodeTranslatorTest
     {
         PropertyTree rootDataSet = new PropertyTree();
         rootDataSet.setString( PrincipalPropertyNames.PRINCIPAL_TYPE_KEY, "fisk" );
-        rootDataSet.setString( PrincipalPropertyNames.USER_STORE_KEY, UserStoreKey.system().toString() );
+        rootDataSet.setString( PrincipalPropertyNames.ID_PROVIDER_KEY, IdProviderKey.system().toString() );
 
         Node userNode = Node.create().data( rootDataSet ).
             name( NodeName.from( "rmy" ) ).

@@ -1,52 +1,74 @@
 package com.enonic.xp.repo.impl.dump;
 
+import java.io.File;
+import java.net.URI;
 import java.time.Instant;
 import java.util.Iterator;
+import java.util.List;
 import java.util.TreeSet;
 
+import org.apache.commons.io.FileUtils;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.data.PropertyPath;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.dump.BranchDumpResult;
+import com.enonic.xp.dump.RepoDumpResult;
 import com.enonic.xp.dump.RepoLoadResult;
 import com.enonic.xp.dump.SystemDumpListener;
 import com.enonic.xp.dump.SystemDumpParams;
 import com.enonic.xp.dump.SystemDumpResult;
+import com.enonic.xp.dump.SystemDumpUpgradeParams;
+import com.enonic.xp.dump.SystemDumpUpgradeResult;
 import com.enonic.xp.dump.SystemLoadListener;
 import com.enonic.xp.dump.SystemLoadParams;
 import com.enonic.xp.dump.SystemLoadResult;
 import com.enonic.xp.dump.VersionsLoadResult;
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.GetActiveNodeVersionsParams;
 import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeCommitEntry;
+import com.enonic.xp.node.NodeCommitId;
+import com.enonic.xp.node.NodeCommitQuery;
+import com.enonic.xp.node.NodeCommitQueryResult;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.NodeVersionMetadata;
+import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.repo.impl.dump.model.DumpMeta;
+import com.enonic.xp.repo.impl.dump.reader.FileDumpReader;
+import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre5.Pre5ContentConstants;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 import com.enonic.xp.repo.impl.node.NodeHelper;
 import com.enonic.xp.repo.impl.node.RenameNodeCommand;
@@ -63,7 +85,10 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.upgrade.UpgradeListener;
 import com.enonic.xp.util.BinaryReference;
+import com.enonic.xp.util.Reference;
+import com.enonic.xp.util.Version;
 
 import static org.junit.Assert.*;
 
@@ -117,8 +142,50 @@ public class DumpServiceImplTest
 
         NodeHelper.runAsAdmin( this::doLoad );
 
-        assertNotNull( getNode( node.id() ) );
+        // assertNotNull( getNode( node.id() ) );
         assertNull( getNode( toBeDeleted.id() ) );
+    }
+
+
+    @Test
+    public void obsolete_repository_deleted()
+        throws Exception
+    {
+        final AccessControlList newRepoACL = AccessControlList.create().
+            add( AccessControlEntry.create().
+                principal( RoleKeys.EVERYONE ).
+                allowAll().
+                build() ).
+            build();
+
+        final Repository newRepoInsideDump =
+            NodeHelper.runAsAdmin( () -> this.repositoryService.createRepository( CreateRepositoryParams.create().
+                repositoryId( RepositoryId.from( "new-repo-inside-dump" ) ).
+                rootChildOrder( ChildOrder.manualOrder() ).
+                rootPermissions( newRepoACL ).
+                build() ) );
+
+        NodeHelper.runAsAdmin( () -> doDump( SystemDumpParams.create().dumpName( "myTestDump" ).
+            build() ) );
+
+        final Repository newRepoOutsideDump =
+            NodeHelper.runAsAdmin( () -> this.repositoryService.createRepository( CreateRepositoryParams.create().
+                repositoryId( RepositoryId.from( "new-repo-outside-dump" ) ).
+                rootChildOrder( ChildOrder.manualOrder() ).
+                rootPermissions( newRepoACL ).
+                build() ) );
+
+        final Repositories oldRepos = NodeHelper.runAsAdmin( () -> this.repositoryService.list() );
+
+        NodeHelper.runAsAdmin( this::doLoad );
+
+        final Repositories newRepos = NodeHelper.runAsAdmin( () -> this.repositoryService.list() );
+
+        assertEquals( 4, oldRepos.getIds().getSize() );
+        assertEquals( 3, newRepos.getIds().getSize() );
+
+        assertNotNull( newRepos.getRepositoryById( newRepoInsideDump.getId() ) );
+        assertNull( newRepos.getRepositoryById( newRepoOutsideDump.getId() ) );
     }
 
     @Test
@@ -623,6 +690,269 @@ public class DumpServiceImplTest
         assertEquals( currentNode.data(), currentStoredNode.data() );
     }
 
+    @Test
+    public void upgrade_up_to_date()
+    {
+        NodeHelper.runAsAdmin( () -> {
+            doDump( SystemDumpParams.create().
+                dumpName( "testDump" ).
+                build() );
+
+            final SystemDumpUpgradeParams params = SystemDumpUpgradeParams.create().
+                dumpName( "testDump" ).
+                build();
+            final SystemDumpUpgradeResult result = this.dumpService.upgrade( params );
+            assertEquals( DumpConstants.MODEL_VERSION, result.getInitialVersion() );
+            assertEquals( DumpConstants.MODEL_VERSION, result.getUpgradedVersion() );
+        } );
+    }
+
+    @Test
+    public void upgrade()
+        throws Exception
+    {
+        final String dumpName = "testDump";
+        createIncompatibleDump( dumpName );
+
+        NodeHelper.runAsAdmin( () -> {
+            final UpgradeListener upgradeListener = Mockito.mock( UpgradeListener.class );
+
+            final SystemDumpUpgradeParams params = SystemDumpUpgradeParams.create().
+                dumpName( dumpName ).
+                upgradeListener( upgradeListener ).
+                build();
+
+            final SystemDumpUpgradeResult result = this.dumpService.upgrade( params );
+            assertEquals( new Version( 0, 0, 0 ), result.getInitialVersion() );
+            assertEquals( DumpConstants.MODEL_VERSION, result.getUpgradedVersion() );
+
+            Mockito.verify( upgradeListener, Mockito.times( 8 ) ).upgraded();
+            Mockito.verify( upgradeListener, Mockito.times( 1 ) ).total( 8 );
+
+            FileDumpReader reader = new FileDumpReader( tempFolder.getRoot().toPath(), dumpName, null );
+            final DumpMeta updatedMeta = reader.getDumpMeta();
+            assertEquals( DumpConstants.MODEL_VERSION, updatedMeta.getModelVersion() );
+        } );
+    }
+
+    @Test
+    public void loadWithUpgrade()
+        throws Exception
+    {
+        final String dumpName = "testDump";
+        createIncompatibleDump( dumpName );
+
+        NodeHelper.runAsAdmin( () -> {
+            this.dumpService.load( SystemLoadParams.create().
+                dumpName( dumpName ).
+                upgrade( true ).
+                includeVersions( true ).
+                build() );
+
+            FileDumpReader reader = new FileDumpReader( tempFolder.getRoot().toPath(), dumpName, null );
+            final DumpMeta updatedMeta = reader.getDumpMeta();
+            assertEquals( DumpConstants.MODEL_VERSION, updatedMeta.getModelVersion() );
+
+            final NodeId nodeId = NodeId.from( "f0fb822c-092d-41f9-a961-f3811d81e55a" );
+            final NodeId fragmentNodeId = NodeId.from( "7ee16649-85c6-4a76-8788-74be03be6c7a" );
+            final NodeId postNodeId = NodeId.from( "1f798176-5868-411b-8093-242820c20620" );
+            final NodePath nodePath = NodePath.create( "/content/mysite" ).build();
+            final NodeVersionId draftNodeVersionId = NodeVersionId.from( "f3765655d5f0c7c723887071b517808dae00556c" );
+            final NodeVersionId masterNodeVersionId = NodeVersionId.from( "02e61f29a57309834d96bbf7838207ac456bbf5c" );
+
+            final Node draftNode = nodeService.getById( nodeId );
+            assertNotNull( draftNode );
+            assertEquals( draftNodeVersionId, draftNode.getNodeVersionId() );
+            assertEquals( nodePath, draftNode.path() );
+            assertEquals( "2019-02-20T14:44:06.883Z", draftNode.getTimestamp().toString() );
+
+            final Node masterNode = ContextBuilder.
+                from( ContextAccessor.current() ).
+                branch( Branch.from( "master" ) ).
+                build().
+                callWith( () -> nodeService.getById( nodeId ) );
+            assertNotNull( masterNode );
+            assertEquals( masterNodeVersionId, masterNode.getNodeVersionId() );
+            assertEquals( nodePath, masterNode.path() );
+            assertEquals( "2018-11-23T11:14:21.662Z", masterNode.getTimestamp().toString() );
+
+            checkCommitUpgrade( nodeId );
+            checkPageFlatteningUpgradePage( draftNode );
+
+            final Node fragmentNode = nodeService.getById( fragmentNodeId );
+            checkPageFlatteningUpgradeFragment( fragmentNode );
+
+            checkRepositoryUpgrade( updatedMeta );
+
+            final Node postNode = nodeService.getById( postNodeId );
+            checkHtmlAreaUpgrade( draftNode, postNode );
+
+            checkLanguageUpgrade( draftNode );
+        } );
+    }
+
+    private void checkRepositoryUpgrade( final DumpMeta updatedMeta )
+    {
+        final RepoDumpResult repoDumpResult = updatedMeta.getSystemDumpResult().get( ContentConstants.CONTENT_REPO_ID );
+        assertNotNull( repoDumpResult );
+
+        assertNull( repositoryService.get( Pre5ContentConstants.CONTENT_REPO_ID ) );
+    }
+
+    private void checkCommitUpgrade( final NodeId nodeId )
+    {
+        nodeService.refresh( RefreshMode.ALL );
+
+        final NodeCommitQuery nodeCommitQuery = NodeCommitQuery.create().build();
+        final NodeCommitQueryResult nodeCommitQueryResult = ContextBuilder.
+            from( ContextAccessor.current() ).
+            branch( Branch.from( "master" ) ).
+            build().
+            callWith( () -> nodeService.findCommits( nodeCommitQuery ) );
+        assertEquals( 1, nodeCommitQueryResult.getTotalHits() );
+
+        final NodeCommitEntry commitEntry = nodeCommitQueryResult.getNodeCommitEntries().
+            iterator().
+            next();
+        final NodeCommitId nodeCommitId = commitEntry.getNodeCommitId();
+        assertEquals( "Dump upgrade", commitEntry.getMessage() );
+        assertEquals( "user:system:node-su", commitEntry.getCommitter().toString() );
+
+        final GetActiveNodeVersionsParams activeNodeVersionsParams = GetActiveNodeVersionsParams.create().
+            nodeId( nodeId ).
+            branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
+            build();
+        final GetActiveNodeVersionsResult activeNodeVersionsResult = ContextBuilder.
+            from( ContextAccessor.current() ).
+            branch( Branch.from( "master" ) ).
+            build().
+            callWith( () -> nodeService.getActiveVersions( activeNodeVersionsParams ) );
+        final NodeVersionMetadata draftNodeVersion = activeNodeVersionsResult.getNodeVersions().
+            get( ContentConstants.BRANCH_DRAFT );
+        assertNull( draftNodeVersion.getNodeCommitId() );
+        final NodeVersionMetadata masterNodeVersion = activeNodeVersionsResult.getNodeVersions().
+            get( ContentConstants.BRANCH_MASTER );
+        assertEquals( nodeCommitId, masterNodeVersion.getNodeCommitId() );
+
+        final NodeVersionQuery nodeVersionQuery = NodeVersionQuery.create().
+            nodeId( nodeId ).
+            build();
+        final NodeVersionQueryResult versionQueryResult = ContextBuilder.
+            from( ContextAccessor.current() ).
+            branch( Branch.from( "draft" ) ).
+            build().
+            callWith( () -> nodeService.findVersions( nodeVersionQuery ) );
+        assertEquals( 16, versionQueryResult.getTotalHits() );
+    }
+
+    private void checkPageFlatteningUpgradePage( final Node node )
+    {
+        final PropertyTree nodeData = node.data();
+        assertTrue( nodeData.hasProperty( "components" ) );
+        assertFalse( nodeData.hasProperty( "page" ) );
+
+        //Check page component
+        final Iterable<PropertySet> components = nodeData.getSets( "components" );
+        final PropertySet pageComponent = components.iterator().next();
+        assertEquals( "page", pageComponent.getString( "type" ) );
+        assertEquals( "/", pageComponent.getString( "path" ) );
+        final PropertySet pageComponentData = pageComponent.getSet( "page" );
+        assertEquals( "com.enonic.app.superhero:default", pageComponentData.getString( "descriptor" ) );
+        assertEquals( Boolean.TRUE, pageComponentData.getBoolean( "customized" ) );
+        final PropertySet pageConfig = pageComponentData.getSet( "config" );
+        assertNotNull( pageConfig.getSet( "com-enonic-app-superhero" ).getSet( "default" ) );
+
+        //Checks layout component
+        final PropertySet layoutComponent =
+            Iterables.filter( components, component -> "/main/0".equals( component.getString( "path" ) ) ).iterator().next();
+        assertEquals( "layout", layoutComponent.getString( "type" ) );
+        final PropertySet layoutComponentData = layoutComponent.getSet( "layout" );
+        assertEquals( "com.enonic.app.superhero:two-column", layoutComponentData.getString( "descriptor" ) );
+        assertNotNull( layoutComponentData.getSet( "config" ).getSet( "com-enonic-app-superhero" ).getSet( "two-column" ) );
+
+        //Checks image component
+        final PropertySet imageComponent =
+            Iterables.filter( components, component -> "/main/0/left/0".equals( component.getString( "path" ) ) ).iterator().next();
+        assertEquals( "image", imageComponent.getString( "type" ) );
+        final PropertySet imageComponentData = imageComponent.getSet( "image" );
+        assertEquals( "cf09fe7a-1be9-46bb-ad84-87ba69630cb7", imageComponentData.getString( "id" ) );
+        assertEquals( "A caption", imageComponentData.getString( "caption" ) );
+
+        //Checks part component
+        final PropertySet partComponent =
+            Iterables.filter( components, component -> "/main/0/right/0".equals( component.getString( "path" ) ) ).iterator().next();
+        assertEquals( "part", partComponent.getString( "type" ) );
+        final PropertySet partComponentData = partComponent.getSet( "part" );
+        assertEquals( "com.enonic.app.superhero:tag-cloud", partComponentData.getString( "descriptor" ) );
+        assertNotNull( partComponentData.getSet( "config" ).getSet( "com-enonic-app-superhero" ).getSet( "tag-cloud" ) );
+
+        //Checks fragment component
+        final PropertySet fragmentComponent =
+            Iterables.filter( components, component -> "/main/0/right/1".equals( component.getString( "path" ) ) ).iterator().next();
+        assertEquals( "fragment", fragmentComponent.getString( "type" ) );
+        final PropertySet fragmentComponentData = fragmentComponent.getSet( "fragment" );
+        assertEquals( "7ee16649-85c6-4a76-8788-74be03be6c7a", fragmentComponentData.getString( "id" ) );
+
+        //Checks text component
+        final PropertySet textComponent =
+            Iterables.filter( components, component -> "/main/1".equals( component.getString( "path" ) ) ).iterator().next();
+        assertEquals( "text", textComponent.getString( "type" ) );
+        final PropertySet textComponentData = textComponent.getSet( "text" );
+        assertEquals( "<p>text1</p>\n" + "\n" + "<p>&nbsp;</p>\n", textComponentData.getString( "value" ) );
+    }
+
+    private void checkHtmlAreaUpgrade( final Node siteNode, final Node postNode )
+    {
+        final Iterable<Reference> siteProcessedReferences = siteNode.data().getReferences( "processedReferences" );
+        assertEquals( 1, Iterables.size( siteProcessedReferences ) );
+
+        final Iterable<Reference> postProcessedReferences = postNode.data().getReferences( "processedReferences" );
+        assertEquals( 2, Iterables.size( postProcessedReferences ) );
+
+        final String postValue = postNode.data().getString( "data.post" );
+        Assert.assertTrue( postValue.contains( "<figure class=\"editor-align-justify\">" ) );
+        Assert.assertTrue( postValue.contains( "<figure class=\"editor-align-justify editor-style-original\">" ) );
+        Assert.assertTrue( postValue.contains( "src=\"media://cf09fe7a-1be9-46bb-ad84-87ba69630cb7\"" ) );
+    }
+
+    private void checkLanguageUpgrade( final Node draftNode )
+    {
+        final IndexConfig indexConfigBefore = draftNode.getIndexConfigDocument().getConfigForPath( PropertyPath.from( "language" ) );
+        final List<String> languages = draftNode.getIndexConfigDocument().getAllTextConfig().getLanguages();
+
+        assertEquals( IndexConfig.NGRAM, indexConfigBefore );
+
+        assertEquals( 1, languages.size() );
+        assertEquals( "no", languages.get( 0 ) );
+    }
+
+    private void checkPageFlatteningUpgradeFragment( final Node node )
+    {
+        final PropertyTree nodeData = node.data();
+        assertTrue( nodeData.hasProperty( "components" ) );
+        assertFalse( nodeData.hasProperty( "fragment" ) );
+
+        final Iterable<PropertySet> components = nodeData.getSets( "components" );
+        final PropertySet partComponent = components.iterator().next();
+        assertEquals( "part", partComponent.getString( "type" ) );
+        assertEquals( "/", partComponent.getString( "path" ) );
+        final PropertySet partComponentData = partComponent.getSet( "part" );
+        assertEquals( "com.enonic.app.superhero:meta", partComponentData.getString( "descriptor" ) );
+        assertNotNull( partComponentData.getSet( "config" ).getSet( "com-enonic-app-superhero" ).getSet( "meta" ) );
+    }
+
+    private File createIncompatibleDump( final String dumpName )
+        throws Exception
+    {
+        final URI oldDumpUri = getClass().
+            getResource( "/dumps/dump-6-15-5" ).
+            toURI();
+        final File oldDumpFile = new File( oldDumpUri );
+        final File tmpDumpFile = tempFolder.newFolder( dumpName );
+        FileUtils.copyDirectory( oldDumpFile, tmpDumpFile );
+        return tmpDumpFile;
+    }
+
     private void verifyBinaries( final Node node, final Node updatedNode, final NodeVersionQueryResult versions )
     {
         versions.getNodeVersionsMetadata().forEach( ( version ) -> verifyVersionBinaries( node, updatedNode, version ) );
@@ -630,16 +960,16 @@ public class DumpServiceImplTest
 
     private void verifyVersionBinaries( final Node node, final Node updatedNode, final NodeVersionMetadata version )
     {
-        final NodeVersion storedNode = nodeService.getByNodeVersion( version.getNodeVersionId() );
+        final NodeVersion storedNode = nodeService.getByNodeVersionKey( version.getNodeVersionKey() );
 
-        storedNode.getAttachedBinaries().forEach(
-            entry -> assertNotNull( this.nodeService.getBinary( storedNode.getVersionId(), entry.getBinaryReference() ) ) );
+        storedNode.getAttachedBinaries().forEach( entry -> assertNotNull(
+            this.nodeService.getBinary( version.getNodeId(), version.getNodeVersionId(), entry.getBinaryReference() ) ) );
 
-        if ( storedNode.getVersionId().equals( node.getNodeVersionId() ) )
+        if ( version.getNodeVersionId().equals( node.getNodeVersionId() ) )
         {
             assertEquals( node.getAttachedBinaries(), storedNode.getAttachedBinaries() );
         }
-        else if ( storedNode.getVersionId().equals( updatedNode.getNodeVersionId() ) )
+        else if ( version.getNodeVersionId().equals( updatedNode.getNodeVersionId() ) )
         {
             assertEquals( updatedNode.getAttachedBinaries(), storedNode.getAttachedBinaries() );
         }
@@ -716,35 +1046,6 @@ public class DumpServiceImplTest
             id( node.id() ).
             editor( ( n ) -> n.data.setInstant( "timestamp", Instant.now() ) ).
             build() );
-    }
-
-    private class TestDumpListener
-        implements SystemDumpListener
-    {
-        private int nodesDumped = 0;
-
-        private long total = 0;
-
-        private final ListMultimap<RepositoryId, Branch> dumpedBranches = ArrayListMultimap.create();
-
-        @Override
-        public void dumpingBranch( final RepositoryId repositoryId, final Branch branch, final long total )
-        {
-            dumpedBranches.put( repositoryId, branch );
-            this.total = total;
-        }
-
-        @Override
-        public void nodeDumped()
-        {
-            this.nodesDumped++;
-        }
-
-        int getNodesDumped()
-        {
-            return nodesDumped;
-        }
-
     }
 
 }

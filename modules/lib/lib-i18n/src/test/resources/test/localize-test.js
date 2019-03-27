@@ -47,5 +47,5 @@ exports.testGetPhrases = function () {
 };
 
 exports.testExamples = function () {
-    t.runScript('/site/lib/xp/examples/i18n/localize.js');
+    t.runScript('/lib/xp/examples/i18n/localize.js');
 };

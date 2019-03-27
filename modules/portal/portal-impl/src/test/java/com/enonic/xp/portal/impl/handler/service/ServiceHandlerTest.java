@@ -74,7 +74,6 @@ public class ServiceHandlerTest
         final Resource resource = Mockito.mock( Resource.class );
         Mockito.when( resource.exists() ).thenReturn( true );
         Mockito.when( this.resourceService.getResource( ResourceKey.from( "demo:/services/test" ) ) ).thenReturn( resourceNotFound );
-        Mockito.when( this.resourceService.getResource( ResourceKey.from( "demo:/site/services/test" ) ) ).thenReturn( resource );
 
         this.serviceDescriptorService = Mockito.mock( ServiceDescriptorService.class );
         final DescriptorKey serviceDescriptorKey = DescriptorKey.from( "demo:test" );
@@ -94,7 +93,7 @@ public class ServiceHandlerTest
         this.request.setMethod( HttpMethod.GET );
         this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
         this.request.setEndpointPath( "/_/service/demo/myservice" );
-        this.request.setRawPath( "portal/draft/site/somepath/content/_/service/demo/myservice" );
+        this.request.setRawPath( "/site/draft/site/somepath/content/_/service/demo/myservice" );
     }
 
     @Test
@@ -213,9 +212,10 @@ public class ServiceHandlerTest
         assertNotNull( this.request.getApplicationKey() );
         assertNotNull( this.request.getSite() );
         assertNotNull( this.request.getContent() );
+        assertEquals( "/site/draft/site/somepath/content/_/service/demo/test", this.request.getContextPath() );
     }
 
-    @Test(expected=com.enonic.xp.web.WebException.class)
+    @Test(expected = com.enonic.xp.web.WebException.class)
     public void executeScript_invalidSite()
         throws Exception
     {
@@ -228,24 +228,24 @@ public class ServiceHandlerTest
     public void executeScript_validApplication()
         throws Exception
     {
-        this.request.setRawPath( "/app/demo/_/service/demo/test" );
+        this.request.setRawPath( "/webapp/demo/_/service/demo/test" );
         this.request.setEndpointPath( "/_/service/demo/test" );
 
         final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), null );
-        assertEquals( HttpStatus.OK, response.getStatus() );        
+        assertEquals( HttpStatus.OK, response.getStatus() );
         Mockito.verify( this.controllerScript ).execute( this.request );
         assertNotNull( this.request.getApplicationKey() );
     }
 
-    @Test(expected=com.enonic.xp.web.WebException.class)
+    @Test(expected = com.enonic.xp.web.WebException.class)
     public void executeScript_invalidApplication()
         throws Exception
     {
-        this.request.setRawPath( "/app/forbidden/_/service/demo/test" );
+        this.request.setRawPath( "/webapp/forbidden/_/service/demo/test" );
         this.request.setEndpointPath( "/_/service/demo/test" );
 
         final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), null );
-        assertEquals( HttpStatus.OK, response.getStatus() );        
+        assertEquals( HttpStatus.OK, response.getStatus() );
         Mockito.verify( this.controllerScript ).execute( this.request );
         assertNotNull( this.request.getApplicationKey() );
     }

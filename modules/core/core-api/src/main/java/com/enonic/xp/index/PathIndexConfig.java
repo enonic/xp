@@ -1,5 +1,7 @@
 package com.enonic.xp.index;
 
+import java.util.Comparator;
+
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.data.PropertyPath;
@@ -8,6 +10,11 @@ import com.enonic.xp.data.PropertyPath;
 public class PathIndexConfig
     implements Comparable<PathIndexConfig>
 {
+    public static final Comparator<PathIndexConfig> COMPARATOR =
+        Comparator.comparing( ( PathIndexConfig pathIndexConfig ) -> pathIndexConfig.path.toString() ).
+            thenComparing( ( PathIndexConfig pathIndexConfig ) -> pathIndexConfig.indexConfig ).
+            reversed();
+
     private final PropertyPath path;
 
     private final IndexConfig indexConfig;
@@ -20,8 +27,11 @@ public class PathIndexConfig
 
     public boolean matches( final PropertyPath dataPath )
     {
-        final String testPath = dataPath.resetAllIndexesTo( 0 ).toString();
+        return matches( dataPath.resetAllIndexesTo( 0 ).toString() );
+    }
 
+    public boolean matches( final String testPath )
+    {
         return testPath.startsWith( path.toString() );
     }
 
@@ -92,7 +102,7 @@ public class PathIndexConfig
             return BEFORE;
         }
 
-        return this.hashCode() - o.hashCode();
+        return COMPARATOR.compare( this, o );
     }
 
     @Override

@@ -23,7 +23,10 @@ import com.enonic.xp.dump.RepoDumpResult;
 import com.enonic.xp.dump.SystemDumpListener;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.AttachedBinary;
+import com.enonic.xp.node.GetActiveNodeVersionsParams;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeCommitEntries;
+import com.enonic.xp.node.NodeCommitQuery;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeService;
@@ -34,10 +37,11 @@ import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.filter.RangeFilter;
 import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
-import com.enonic.xp.repo.impl.dump.model.DumpMeta;
+import com.enonic.xp.repo.impl.dump.model.CommitDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.VersionsDumpEntry;
 import com.enonic.xp.repo.impl.dump.writer.DumpWriter;
 import com.enonic.xp.repo.impl.node.executor.BatchedGetChildrenExecutor;
+import com.enonic.xp.repo.impl.node.executor.BatchedGetCommitsExecutor;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
@@ -93,6 +97,8 @@ class RepoDumper
         {
             setContext( RepositoryConstants.MASTER_BRANCH ).runWith( () -> dumpVersions( dumpedNodes ) );
         }
+
+        setContext( RepositoryConstants.MASTER_BRANCH ).runWith( () -> dumpCommits() );
 
         return this.dumpResult.build();
     }
@@ -184,10 +190,44 @@ class RepoDumper
         }
     }
 
+    private void dumpCommits()
+    {
+        try
+        {
+            writer.openCommitsMeta( this.repositoryId );
+
+            final NodeCommitQuery nodeCommitQuery = NodeCommitQuery.create().build();
+
+            final BatchedGetCommitsExecutor executor = BatchedGetCommitsExecutor.create().
+                nodeService( this.nodeService ).
+                query( nodeCommitQuery ).
+                batchSize( DEFAULT_BATCH_SIZE ).
+                build();
+
+            while ( executor.hasMore() )
+            {
+                final NodeCommitEntries nodeCommitEntries = executor.execute();
+
+                nodeCommitEntries.stream().
+                    map( nodeCommitEntry -> CommitDumpEntry.create().
+                        nodeCommitId( nodeCommitEntry.getNodeCommitId() ).
+                        message( nodeCommitEntry.getMessage() ).
+                        committer( nodeCommitEntry.getCommitter() ).
+                        timestamp( nodeCommitEntry.getTimestamp() ).
+                        build() ).
+                    forEach( this.writer::writeCommitEntry );
+            }
+        }
+        finally
+        {
+            writer.close();
+        }
+    }
+
     private void doStoreVersion( final VersionsDumpEntry.Builder builder, final NodeVersionMetadata metaData )
     {
-        final NodeVersion nodeVersion = this.nodeService.getByNodeVersion( metaData.getNodeVersionId() );
-        builder.addVersion( VersionMetaFactory.create( nodeVersion, metaData ) );
+        final NodeVersion nodeVersion = this.nodeService.getByNodeVersionKey( metaData.getNodeVersionKey() );
+        builder.addVersion( VersionMetaFactory.create( metaData ) );
 
         storeVersionBlob( metaData );
         storeVersionBinaries( metaData, nodeVersion );
@@ -197,7 +237,7 @@ class RepoDumper
     {
         try
         {
-            this.writer.writeVersionBlob( metaData.getNodeVersionId() );
+            this.writer.writeNodeVersionBlobs( repositoryId, metaData.getNodeVersionKey() );
         }
         catch ( Exception e )
         {
@@ -211,7 +251,7 @@ class RepoDumper
         nodeVersion.getAttachedBinaries().forEach( ( attachedBinary ) -> {
             try
             {
-                this.writer.writeBinaryBlob( attachedBinary.getBlobKey() );
+                this.writer.writeBinaryBlob( repositoryId, attachedBinary.getBlobKey() );
             }
             catch ( Exception e )
             {
@@ -250,7 +290,7 @@ class RepoDumper
         {
             final BranchDumpEntry branchDumpEntry = createDumpEntry( nodeId );
             writer.writeBranchEntry( branchDumpEntry );
-            writer.writeVersionBlob( branchDumpEntry.getMeta().getVersion() );
+            writer.writeNodeVersionBlobs( repositoryId, branchDumpEntry.getMeta().getNodeVersionKey() );
             writeBinaries( dumpResult, branchDumpEntry );
             dumpResult.addedNode();
             reportNodeDumped();
@@ -266,7 +306,7 @@ class RepoDumper
         branchDumpEntry.getBinaryReferences().forEach( ( ref ) -> {
             try
             {
-                this.writer.writeBinaryBlob( ref );
+                this.writer.writeBinaryBlob( repositoryId, ref );
             }
             catch ( RepoDumpException e )
             {
@@ -290,8 +330,9 @@ class RepoDumper
             nodeId( nodeId );
 
         final Node currentNode = this.nodeService.getById( nodeId );
+        final NodeVersionMetadata currentVersionMetaData = getActiveVersion( nodeId );
 
-        builder.meta( VersionMetaFactory.create( currentNode ) );
+        builder.meta( VersionMetaFactory.create( currentNode, currentVersionMetaData ) );
 
         if ( this.includeBinaries )
         {
@@ -300,6 +341,18 @@ class RepoDumper
         }
 
         return builder.build();
+    }
+
+    private NodeVersionMetadata getActiveVersion( final NodeId nodeId )
+    {
+        final Branch branch = ContextAccessor.current().
+            getBranch();
+        final GetActiveNodeVersionsParams params = GetActiveNodeVersionsParams.create().nodeId( nodeId ).
+            branches( Branches.from( branch ) ).
+            build();
+        return this.nodeService.getActiveVersions( params ).
+            getNodeVersions().
+            get( branch );
     }
 
     private NodeVersionQueryResult getVersions( final NodeId nodeId )
@@ -395,7 +448,7 @@ class RepoDumper
             this.writer = writer;
             return this;
         }
-        
+
         public Builder maxAge( final Integer maxAge )
         {
             this.maxAge = maxAge;
