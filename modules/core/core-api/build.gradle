@@ -22,6 +22,6 @@ jar {
 sourceSets {
     main {
         // Change the output directory for the main source set back to the old path
-        java.outputDir = file( 'classes/main' )
+        java.outputDir = file( 'build/classes/main' )
     }
 }
