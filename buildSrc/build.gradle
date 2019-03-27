@@ -17,5 +17,4 @@ dependencies {
     compile 'com.netflix.nebula:gradle-extra-configurations-plugin:2.2.2'
     compile 'com.gradle.publish:plugin-publish-plugin:0.9.3'
     compile 'gradle.plugin.com.enonic.gradle:gradle-defaults:2.0.1'
-    compile 'org.junit.platform:junit-platform-gradle-plugin:1.0.0-RC3'
 }
