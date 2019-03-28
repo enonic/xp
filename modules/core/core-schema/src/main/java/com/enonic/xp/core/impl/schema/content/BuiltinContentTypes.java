@@ -35,7 +35,11 @@ final class BuiltinContentTypes
         setFinal( false ).setAbstract( false ).build();
 
     private static final ContentType FOLDER = createSystemType( ContentTypeName.folder() ).
-        setFinal( false ).setAbstract( false ).build();
+        description( "Container of items" ).
+        descriptionI18nKey( "base.folder.description" ).
+        setFinal( false ).
+        setAbstract( false ).
+        build();
 
     private static final Form SITE_FORM = Form.create().
         addFormItem( Input.create().
@@ -208,6 +212,8 @@ final class BuiltinContentTypes
         build();
 
     private static final ContentType TEMPLATE_FOLDER = createSystemType( ContentTypeName.templateFolder() ).
+        description( "Root content for sites" ).
+        descriptionI18nKey( "portal.template-folder.description" ).
         setFinal( true ).
         setAbstract( false ).
         superType( ContentTypeName.folder() ).
@@ -229,6 +235,8 @@ final class BuiltinContentTypes
     private static final Form FRAGMENT_FORM = Form.create().build();
 
     private static final ContentType PAGE_TEMPLATE = createSystemType( ContentTypeName.pageTemplate() ).
+        description( "Predesigned customizable page" ).
+        descriptionI18nKey( "portal.page-template.description" ).
         allowChildContent( false ).
         setFinal( false ).
         setAbstract( false ).
@@ -237,6 +245,8 @@ final class BuiltinContentTypes
         build();
 
     private static final ContentType SHORTCUT = createSystemType( ContentTypeName.shortcut() ).
+        description( "Redirect to other item" ).
+        descriptionI18nKey( "base.shortcut.description" ).
         setFinal( true ).
         setAbstract( false ).
         form( SHORTCUT_FORM ).
