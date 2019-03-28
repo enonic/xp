@@ -183,7 +183,6 @@ copyDistroToInstallPath()
     _cp ${XP_DISTRO_PATH}/bin ${XP_INSTALL_FULL_PATH}
     _cp ${XP_DISTRO_PATH}/lib ${XP_INSTALL_FULL_PATH}
     _cp ${XP_DISTRO_PATH}/system ${XP_INSTALL_FULL_PATH}
-    _cp ${XP_DISTRO_PATH}/toolbox ${XP_INSTALL_FULL_PATH}
     _cp ${XP_DISTRO_PATH}/NOTICE.txt ${XP_INSTALL_FULL_PATH}
     _cp ${XP_DISTRO_PATH}/LICENSE.txt ${XP_INSTALL_FULL_PATH}
     createLink
