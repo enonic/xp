@@ -94,6 +94,9 @@ final class JettyService
         this.server.setSessionIdManager( sessionManager );
 
         this.server.start();
+        LOG.info( "Started Jetty" );
+        LOG.info( "Listening on ports [{}](xp), [{}](management) and [{}](monitoring)", config.http_xp_port(),
+                  config.http_management_port(), config.http_monitor_port() );
     }
 
     private ServletContextHandler initServletContextHandler( final DispatchServlet servlet )
