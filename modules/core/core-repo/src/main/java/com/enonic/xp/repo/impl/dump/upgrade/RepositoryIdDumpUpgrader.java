@@ -39,6 +39,10 @@ import com.enonic.xp.util.Version;
 public class RepositoryIdDumpUpgrader
     extends AbstractMetaDumpUpgrader
 {
+    private static final Version MODEL_VERSION = new Version( 5 );
+
+    private static final String NAME = "CMS Repository renaming";
+
     private static final RepositoryId OLD_REPOSITORY_ID = Pre5ContentConstants.CONTENT_REPO_ID;
 
     private static final RepositoryId NEW_REPOSITORY_ID = ContentConstants.CONTENT_REPO_ID;
@@ -47,8 +51,6 @@ public class RepositoryIdDumpUpgrader
 
     private static final Segment SEGMENT =
         RepositorySegmentUtils.toSegment( ContentConstants.CONTENT_REPO_ID, NodeConstants.NODE_SEGMENT_LEVEL );
-
-    private static final Version MODEL_VERSION = new Version( 5, 0, 0 );
 
     public RepositoryIdDumpUpgrader( final Path basePath )
     {
@@ -62,7 +64,13 @@ public class RepositoryIdDumpUpgrader
     }
 
     @Override
-    public void upgrade( final String dumpName )
+    public String getName()
+    {
+        return NAME;
+    }
+
+    @Override
+    public void doUpgrade( final String dumpName )
     {
         super.upgrade( dumpName );
 

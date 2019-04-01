@@ -1,17 +1,24 @@
 package com.enonic.xp.dump;
 
+import java.util.List;
+
+import com.google.common.collect.ImmutableList;
+
 import com.enonic.xp.util.Version;
 
-public class SystemDumpUpgradeResult
+public class DumpUpgradeResult
 {
     private Version initialVersion;
 
     private Version upgradedVersion;
 
-    public SystemDumpUpgradeResult( final Builder builder )
+    private List<DumpUpgradeStepResult> stepResults;
+
+    public DumpUpgradeResult( final Builder builder )
     {
         this.initialVersion = builder.initialVersion;
         this.upgradedVersion = builder.upgradedVersion;
+        this.stepResults = builder.stepResults.build();
     }
 
     public Version getInitialVersion()
@@ -24,6 +31,11 @@ public class SystemDumpUpgradeResult
         return upgradedVersion;
     }
 
+    public List<DumpUpgradeStepResult> getStepResults()
+    {
+        return stepResults;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -34,6 +46,8 @@ public class SystemDumpUpgradeResult
         private Version initialVersion;
 
         private Version upgradedVersion;
+
+        private ImmutableList.Builder<DumpUpgradeStepResult> stepResults = ImmutableList.builder();
 
         private Builder()
         {
@@ -51,9 +65,15 @@ public class SystemDumpUpgradeResult
             return this;
         }
 
-        public SystemDumpUpgradeResult build()
+        public Builder stepResult( final DumpUpgradeStepResult stepResult )
         {
-            return new SystemDumpUpgradeResult( this );
+            this.stepResults.add( stepResult );
+            return this;
+        }
+
+        public DumpUpgradeResult build()
+        {
+            return new DumpUpgradeResult( this );
         }
     }
 }

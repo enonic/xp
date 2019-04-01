@@ -6,7 +6,7 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.dump.DumpService;
 import com.enonic.xp.dump.SystemDumpUpgradeParams;
-import com.enonic.xp.dump.SystemDumpUpgradeResult;
+import com.enonic.xp.dump.DumpUpgradeResult;
 import com.enonic.xp.impl.server.rest.model.SystemDumpUpgradeRequestJson;
 import com.enonic.xp.task.AbstractRunnableTaskTest;
 import com.enonic.xp.task.RunnableTask;
@@ -49,7 +49,7 @@ public class UpgradeRunnableTaskTest
     @Test
     public void upgrade()
     {
-        final SystemDumpUpgradeResult upgradeResult = SystemDumpUpgradeResult.create().
+        final DumpUpgradeResult upgradeResult = DumpUpgradeResult.create().
             initialVersion( Version.emptyVersion ).
             upgradedVersion( new Version( 1, 0, 0 ) ).
             build();

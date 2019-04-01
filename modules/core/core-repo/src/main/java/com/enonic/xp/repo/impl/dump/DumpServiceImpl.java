@@ -22,11 +22,12 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.dump.DumpService;
+import com.enonic.xp.dump.DumpUpgradeResult;
+import com.enonic.xp.dump.DumpUpgradeStepResult;
 import com.enonic.xp.dump.RepoDumpResult;
 import com.enonic.xp.dump.SystemDumpParams;
 import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.dump.SystemDumpUpgradeParams;
-import com.enonic.xp.dump.SystemDumpUpgradeResult;
 import com.enonic.xp.dump.SystemLoadParams;
 import com.enonic.xp.dump.SystemLoadResult;
 import com.enonic.xp.home.HomeDir;
@@ -89,7 +90,7 @@ public class DumpServiceImpl
     }
 
     @Override
-    public SystemDumpUpgradeResult upgrade( final SystemDumpUpgradeParams params )
+    public DumpUpgradeResult upgrade( final SystemDumpUpgradeParams params )
     {
         if ( !SecurityHelper.isAdmin() )
         {
@@ -105,9 +106,9 @@ public class DumpServiceImpl
         return doUpgrade( params );
     }
 
-    private SystemDumpUpgradeResult doUpgrade( final SystemDumpUpgradeParams params )
+    private DumpUpgradeResult doUpgrade( final SystemDumpUpgradeParams params )
     {
-        final SystemDumpUpgradeResult.Builder result = SystemDumpUpgradeResult.create();
+        final DumpUpgradeResult.Builder result = DumpUpgradeResult.create();
 
         final String dumpName = params.getDumpName();
         Version modelVersion = getDumpModelVersion( dumpName );
@@ -131,9 +132,12 @@ public class DumpServiceImpl
                 final Version targetModelVersion = dumpUpgrader.getModelVersion();
                 if ( modelVersion.lessThan( targetModelVersion ) )
                 {
-                    dumpUpgrader.upgrade( dumpName );
+                    LOG.info( "Running upgrade step [{}]...", dumpUpgrader.getName() );
+                    final DumpUpgradeStepResult stepResult = dumpUpgrader.upgrade( dumpName );
                     modelVersion = targetModelVersion;
                     updateDumpModelVersion( dumpName, modelVersion );
+                    LOG.info( "Finished upgrade step [{}]: processed: {}, errors: {}, warnings: {}", dumpUpgrader.getName(),
+                              stepResult.getProcessed(), stepResult.getErrors(), stepResult.getWarnings() );
 
                     if ( params.getUpgradeListener() != null )
                     {

@@ -3,7 +3,7 @@ package com.enonic.xp.impl.server.rest.model;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.enonic.xp.dump.SystemDumpUpgradeResult;
+import com.enonic.xp.dump.DumpUpgradeResult;
 
 public class SystemDumpUpgradeResultJson
 {
@@ -17,7 +17,7 @@ public class SystemDumpUpgradeResultJson
         this.upgradedVersion = builder.upgradedVersion;
     }
 
-    public static SystemDumpUpgradeResultJson from( final SystemDumpUpgradeResult result )
+    public static SystemDumpUpgradeResultJson from( final DumpUpgradeResult result )
     {
         return SystemDumpUpgradeResultJson.create().
             initialVersion( result.getInitialVersion().toString() ).

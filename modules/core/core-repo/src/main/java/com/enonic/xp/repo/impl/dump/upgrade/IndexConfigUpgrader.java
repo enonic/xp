@@ -38,6 +38,10 @@ import static com.enonic.xp.content.ContentPropertyNames.LANGUAGE;
 public class IndexConfigUpgrader
     extends AbstractMetaDumpUpgrader
 {
+    private static final Version MODEL_VERSION = new Version( 7 );
+
+    private static final String NAME = "Index config";
+
     private static final Segment INDEX_CONFIG_SEGMENT =
         RepositorySegmentUtils.toSegment( ContentConstants.CONTENT_REPO_ID, NodeConstants.INDEX_CONFIG_SEGMENT_LEVEL );
 
@@ -53,7 +57,13 @@ public class IndexConfigUpgrader
     @Override
     public Version getModelVersion()
     {
-        return new Version( 7, 0, 0 );
+        return MODEL_VERSION;
+    }
+
+    @Override
+    public String getName()
+    {
+        return NAME;
     }
 
     protected void upgradeRepository( final RepositoryId repositoryId )

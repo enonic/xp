@@ -37,7 +37,7 @@ import com.enonic.xp.dump.SystemDumpListener;
 import com.enonic.xp.dump.SystemDumpParams;
 import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.dump.SystemDumpUpgradeParams;
-import com.enonic.xp.dump.SystemDumpUpgradeResult;
+import com.enonic.xp.dump.DumpUpgradeResult;
 import com.enonic.xp.dump.SystemLoadListener;
 import com.enonic.xp.dump.SystemLoadParams;
 import com.enonic.xp.dump.SystemLoadResult;
@@ -701,7 +701,7 @@ public class DumpServiceImplTest
             final SystemDumpUpgradeParams params = SystemDumpUpgradeParams.create().
                 dumpName( "testDump" ).
                 build();
-            final SystemDumpUpgradeResult result = this.dumpService.upgrade( params );
+            final DumpUpgradeResult result = this.dumpService.upgrade( params );
             assertEquals( DumpConstants.MODEL_VERSION, result.getInitialVersion() );
             assertEquals( DumpConstants.MODEL_VERSION, result.getUpgradedVersion() );
         } );
@@ -722,7 +722,7 @@ public class DumpServiceImplTest
                 upgradeListener( upgradeListener ).
                 build();
 
-            final SystemDumpUpgradeResult result = this.dumpService.upgrade( params );
+            final DumpUpgradeResult result = this.dumpService.upgrade( params );
             assertEquals( new Version( 0, 0, 0 ), result.getInitialVersion() );
             assertEquals( DumpConstants.MODEL_VERSION, result.getUpgradedVersion() );
 

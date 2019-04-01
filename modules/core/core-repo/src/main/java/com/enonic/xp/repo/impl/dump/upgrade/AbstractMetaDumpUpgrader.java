@@ -15,7 +15,7 @@ import com.enonic.xp.repository.RepositoryId;
 public abstract class AbstractMetaDumpUpgrader
     extends AbstractDumpUpgrader
 {
-    private final Logger LOG = LoggerFactory.getLogger( VersionIdDumpUpgrader.class );
+    private final Logger LOG = LoggerFactory.getLogger( AbstractMetaDumpUpgrader.class );
 
     protected BufferFileDumpReader tmpDumpReader;
 
@@ -89,17 +89,23 @@ public abstract class AbstractMetaDumpUpgrader
         try
         {
             dumpReader.processEntries( ( entryContent, entryName ) -> {
-
+                String upgradedEntryContent = entryContent;
+                String upgradedEntryName = entryName;
                 if ( hasToUpgradeEntry( repositoryId, entryContent, entryName ) )
                 {
-                    tmpDumpWriter.storeTarEntry( upgradeVersionEntry( repositoryId, entryContent ),
-                                                 upgradeEntryName( repositoryId, entryName ) );
+                    result.processed();
+                    try
+                    {
+                        upgradedEntryContent = upgradeVersionEntry( repositoryId, entryContent );
+                        upgradedEntryName = upgradeEntryName( repositoryId, entryName );
+                    }
+                    catch ( Exception e )
+                    {
+                        result.error();
+                        LOG.error( "Error while upgrading version entry [" + entryName + "]", e );
+                    }
                 }
-                else
-                {
-                    tmpDumpWriter.storeTarEntry( entryContent, entryName );
-                }
-
+                tmpDumpWriter.storeTarEntry( upgradedEntryContent, upgradedEntryName );
             }, entriesFile );
         }
         finally
@@ -115,15 +121,23 @@ public abstract class AbstractMetaDumpUpgrader
         {
             dumpReader.processEntries( ( entryContent, entryName ) -> {
 
+                String upgradedEntryContent = entryContent;
+                String upgradedEntryName = entryName;
                 if ( hasToUpgradeEntry( repositoryId, entryContent, entryName ) )
                 {
-                    tmpDumpWriter.storeTarEntry( upgradeBranchEntry( repositoryId, entryContent ),
-                                                 upgradeEntryName( repositoryId, entryName ) );
+                    result.processed();
+                    try
+                    {
+                        upgradedEntryContent = upgradeBranchEntry( repositoryId, entryContent );
+                        upgradedEntryName = upgradeEntryName( repositoryId, entryName );
+                    }
+                    catch ( Exception e )
+                    {
+                        result.error();
+                        LOG.error( "Error while upgrading branch entry [" + entryName + "]", e );
+                    }
                 }
-                else
-                {
-                    tmpDumpWriter.storeTarEntry( entryContent, entryName );
-                }
+                tmpDumpWriter.storeTarEntry( upgradedEntryContent, upgradedEntryName );
             }, entriesFile );
         }
         finally

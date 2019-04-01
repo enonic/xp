@@ -2,7 +2,7 @@ package com.enonic.xp.impl.server.rest.task;
 
 import com.enonic.xp.dump.DumpService;
 import com.enonic.xp.dump.SystemDumpUpgradeParams;
-import com.enonic.xp.dump.SystemDumpUpgradeResult;
+import com.enonic.xp.dump.DumpUpgradeResult;
 import com.enonic.xp.impl.server.rest.model.SystemDumpUpgradeRequestJson;
 import com.enonic.xp.impl.server.rest.model.SystemDumpUpgradeResultJson;
 import com.enonic.xp.impl.server.rest.task.listener.UpgradeListenerImpl;
@@ -40,7 +40,7 @@ public class UpgradeRunnableTask
             upgradeListener( upgradeListener ).
             build();
 
-        final SystemDumpUpgradeResult result = this.dumpService.upgrade( upgradeParams );
+        final DumpUpgradeResult result = this.dumpService.upgrade( upgradeParams );
         upgradeListener.finished();
 
         progressReporter.info( SystemDumpUpgradeResultJson.from( result ).toString() );

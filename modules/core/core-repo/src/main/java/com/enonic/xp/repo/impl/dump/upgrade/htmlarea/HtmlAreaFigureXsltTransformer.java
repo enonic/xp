@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.TransformerFactoryImpl;
 
+import com.enonic.xp.dump.DumpUpgradeStepResult;
+
 public class HtmlAreaFigureXsltTransformer
 {
     private final static Logger LOG = LoggerFactory.getLogger( HtmlAreaFigureXsltTransformer.class );
@@ -38,7 +40,7 @@ public class HtmlAreaFigureXsltTransformer
         }
     }
 
-    public String transform(final String propertyName, final String source )
+    public String transform( final String propertyName, final String source, final DumpUpgradeStepResult.Builder result )
     {
         try
         {
@@ -50,6 +52,7 @@ public class HtmlAreaFigureXsltTransformer
         }
         catch ( Exception e )
         {
+            result.warning();
             LOG.warn( "Failed to transform HTML Area property [{}]: {}", propertyName, e.getMessage() );
             return source;
         }
