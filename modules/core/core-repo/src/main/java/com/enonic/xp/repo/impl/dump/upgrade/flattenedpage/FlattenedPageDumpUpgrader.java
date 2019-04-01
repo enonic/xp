@@ -66,7 +66,7 @@ public class FlattenedPageDumpUpgrader
     @Override
     public void doUpgrade( final String dumpName )
     {
-        super.upgrade( dumpName );
+        super.doUpgrade( dumpName );
 
         final File versionsFile = dumpReader.getVersionsFile( REPOSITORY_ID );
         if ( versionsFile != null )

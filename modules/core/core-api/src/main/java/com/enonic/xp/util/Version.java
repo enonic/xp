@@ -6,7 +6,7 @@ import java.util.StringTokenizer;
 public class Version
     implements Comparable<Version>
 {
-    public static final Version emptyVersion = new Version( 0, 0, 0 );
+    public static final Version emptyVersion = new Version( 0 );
 
     private static final String SEPARATOR = ".";
 
@@ -21,6 +21,16 @@ public class Version
     private transient String versionString /* default to null */;
 
     private transient int hash /* default to 0 */;
+
+    public Version( int major )
+    {
+        this( major, 0, 0, null );
+    }
+
+    public Version( int major, int minor )
+    {
+        this( major, minor, 0, null );
+    }
 
     public Version( int major, int minor, int micro )
     {

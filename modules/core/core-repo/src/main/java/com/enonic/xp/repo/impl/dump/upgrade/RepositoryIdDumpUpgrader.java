@@ -72,7 +72,7 @@ public class RepositoryIdDumpUpgrader
     @Override
     public void doUpgrade( final String dumpName )
     {
-        super.upgrade( dumpName );
+        super.doUpgrade( dumpName );
 
         upgradeRepositoryDir();
         upgradeDumpMetaFile();

@@ -1,13 +1,10 @@
 package com.enonic.xp.repo.impl.dump.upgrade;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.io.Files;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.RepositoryId;
@@ -23,9 +20,9 @@ public abstract class AbstractMetaBlobUpgrader
     }
 
     @Override
-    public void upgrade( final String dumpName )
+    public void doUpgrade( final String dumpName )
     {
-        super.upgrade( dumpName );
+        super.doUpgrade( dumpName );
 
         try
         {

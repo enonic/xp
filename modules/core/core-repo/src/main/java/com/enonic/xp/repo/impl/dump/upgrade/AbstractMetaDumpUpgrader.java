@@ -27,9 +27,9 @@ public abstract class AbstractMetaDumpUpgrader
     }
 
     @Override
-    public void upgrade( final String dumpName )
+    public void doUpgrade( final String dumpName )
     {
-        super.upgrade( dumpName );
+        super.doUpgrade( dumpName );
         final String timeMillis = Long.toString( System.currentTimeMillis() );
         tmpDumpReader = new BufferFileDumpReader( basePath, dumpName, null, timeMillis );
         tmpDumpWriter = new BufferFileDumpWriter( basePath, dumpName, null, timeMillis );
