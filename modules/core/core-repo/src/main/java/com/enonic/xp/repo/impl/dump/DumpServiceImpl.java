@@ -138,6 +138,7 @@ public class DumpServiceImpl
                     updateDumpModelVersion( dumpName, modelVersion );
                     LOG.info( "Finished upgrade step [{}]: processed: {}, errors: {}, warnings: {}", dumpUpgrader.getName(),
                               stepResult.getProcessed(), stepResult.getErrors(), stepResult.getWarnings() );
+                    result.stepResult( stepResult );
 
                     if ( params.getUpgradeListener() != null )
                     {

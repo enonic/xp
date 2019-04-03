@@ -1,7 +1,10 @@
 package com.enonic.xp.impl.server.rest.model;
 
+import java.util.List;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.dump.DumpUpgradeResult;
 
@@ -11,18 +14,13 @@ public class SystemDumpUpgradeResultJson
 
     private final String upgradedVersion;
 
+    private List<SystemDumpUpgradeStepResultJson> stepResults;
+
     private SystemDumpUpgradeResultJson( final Builder builder )
     {
         this.initialVersion = builder.initialVersion;
         this.upgradedVersion = builder.upgradedVersion;
-    }
-
-    public static SystemDumpUpgradeResultJson from( final DumpUpgradeResult result )
-    {
-        return SystemDumpUpgradeResultJson.create().
-            initialVersion( result.getInitialVersion().toString() ).
-            upgradedVersion( result.getUpgradedVersion().toString() ).
-            build();
+        this.stepResults = builder.stepResults.build();
     }
 
     @SuppressWarnings("unused")
@@ -37,6 +35,22 @@ public class SystemDumpUpgradeResultJson
         return upgradedVersion;
     }
 
+    @SuppressWarnings("unused")
+    public List<SystemDumpUpgradeStepResultJson> getStepResults()
+    {
+        return stepResults;
+    }
+
+    public static SystemDumpUpgradeResultJson from( final DumpUpgradeResult result )
+    {
+        final Builder json = SystemDumpUpgradeResultJson.create().
+            initialVersion( result.getInitialVersion().toString() ).
+            upgradedVersion( result.getUpgradedVersion().toString() );
+        result.getStepResults().stream().map( SystemDumpUpgradeStepResultJson::from ).
+            forEach( json::stepResult );
+        return json.build();
+    }
+
     private static Builder create()
     {
         return new Builder();
@@ -47,6 +61,8 @@ public class SystemDumpUpgradeResultJson
         private String initialVersion;
 
         private String upgradedVersion;
+
+        private ImmutableList.Builder<SystemDumpUpgradeStepResultJson> stepResults = ImmutableList.builder();
 
         private Builder()
         {
@@ -61,6 +77,12 @@ public class SystemDumpUpgradeResultJson
         public Builder upgradedVersion( final String upgradedVersion )
         {
             this.upgradedVersion = upgradedVersion;
+            return this;
+        }
+
+        public Builder stepResult( final SystemDumpUpgradeStepResultJson stepResult )
+        {
+            this.stepResults.add( stepResult );
             return this;
         }
 
