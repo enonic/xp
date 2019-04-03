@@ -4,14 +4,5 @@
     "number_of_replicas": 1
   },
   "analysis": {
-    "analyzer": {
-      "keywordlowercase": {
-        "type": "custom",
-        "tokenizer": "keyword",
-        "filter": [
-          "lowercase"
-        ]
-      }
-    }
   }
 }
