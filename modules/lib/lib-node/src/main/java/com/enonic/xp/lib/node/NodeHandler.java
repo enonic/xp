@@ -111,6 +111,7 @@ public class NodeHandler
             filters( params.getFilters() ).
             explain( params.isExplain() ).
             nodeService( this.nodeService ).
+            explain( params.isExplain() ).
             build() );
     }
 
