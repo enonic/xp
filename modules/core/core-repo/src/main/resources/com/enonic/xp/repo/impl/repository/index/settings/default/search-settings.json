@@ -15,7 +15,7 @@
     "filter": {
       "front_ngram": {
         "side": "front",
-        "max_gram": 15,
+        "max_gram": 25,
         "min_gram": 1,
         "type": "edgeNGram"
       },
