@@ -8,22 +8,13 @@
     },
     "date_detection": false,
     "numeric_detection": false,
-    "properties": {
-      "displayname._ngram": {
-        "type": "string",
-        "store": "no",
-        "index": "analyzed",
-        "analyzer": "ngram_index",
-        "include_in_all": false
-      }
-    },
     "dynamic_templates": [
       {
         "template_fulltext": {
           "match": "*._analyzed",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
             "analyzer": "document_index_default",
             "include_in_all": false
@@ -35,7 +26,7 @@
           "match": "*._path",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
             "analyzer": "path_analyzer",
             "include_in_all": false
@@ -47,7 +38,7 @@
           "match": "*._ngram",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
             "analyzer": "ngram_index_front",
             "search_analyzer": "document_index_default",
@@ -60,7 +51,7 @@
           "match": "*._datetime",
           "mapping": {
             "type": "date",
-            "store": "no",
+            "store": false,
             "index": "not_analyzed",
             "include_in_all": false
           }
@@ -71,7 +62,7 @@
           "match": "*._number",
           "mapping": {
             "type": "double",
-            "store": "no",
+            "store": false,
             "index": "not_analyzed",
             "include_in_all": false
           }
@@ -82,7 +73,7 @@
           "match": "*._orderby",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
             "analyzer": "keywordlowercase",
             "ignore_above": 3072,
@@ -95,7 +86,7 @@
           "match": "*._geopoint",
           "mapping": {
             "type": "geo_point",
-            "store": "no",
+            "store": false,
             "index": "not_analyzed",
             "include_in_all": false
           }
@@ -106,7 +97,7 @@
           "match": "*._stemmed_ar",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
             "analyzer": "language_analyzer_ar",
             "include_in_all": false
@@ -118,7 +109,7 @@
           "match": "*._stemmed_hy",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
             "analyzer": "language_analyzer_hy",
             "include_in_all": false
@@ -130,7 +121,7 @@
           "match": "*._stemmed_eu",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
             "analyzer": "language_analyzer_eu",
             "include_in_all": false
@@ -142,7 +133,7 @@
           "match": "*._stemmed_bn",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
             "analyzer": "language_analyzer_bn",
             "include_in_all": false
@@ -154,7 +145,7 @@
           "match": "*._stemmed_pt-br",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
             "analyzer": "language_analyzer_pt-br",
             "include_in_all": false
@@ -166,7 +157,7 @@
           "match": "*._stemmed_bg",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
             "analyzer": "language_analyzer_bg",
             "include_in_all": false
@@ -178,7 +169,7 @@
           "match": "*._stemmed_ca",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
             "analyzer": "language_analyzer_ca",
             "include_in_all": false
@@ -190,7 +181,7 @@
           "match": "*._stemmed_cs",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
             "analyzer": "language_analyzer_cs",
             "include_in_all": false
@@ -202,7 +193,7 @@
           "match": "*._stemmed_da",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
             "analyzer": "language_analyzer_da",
             "include_in_all": false
@@ -214,7 +205,7 @@
           "match": "*._stemmed_nl",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
             "analyzer": "language_analyzer_nl",
             "include_in_all": false
@@ -226,7 +217,7 @@
           "match": "*._stemmed_en",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
             "analyzer": "language_analyzer_en",
             "include_in_all": false
@@ -238,7 +229,7 @@
           "match": "*._stemmed_fi",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
             "analyzer": "language_analyzer_fi",
             "include_in_all": false
@@ -250,7 +241,7 @@
           "match": "*._stemmed_fr",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
             "analyzer": "language_analyzer_fr",
             "include_in_all": false
@@ -262,7 +253,7 @@
           "match": "*._stemmed_gl",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
             "analyzer": "language_analyzer_gl",
             "include_in_all": false
@@ -274,7 +265,7 @@
           "match": "*._stemmed_de",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
             "analyzer": "language_analyzer_de",
             "include_in_all": false
@@ -286,7 +277,7 @@
           "match": "*._stemmed_hi",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
             "analyzer": "language_analyzer_hi",
             "include_in_all": false
@@ -298,7 +289,7 @@
           "match": "*._stemmed_hu",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
             "analyzer": "language_analyzer_hu",
             "include_in_all": false
@@ -310,7 +301,7 @@
           "match": "*._stemmed_ga",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
             "analyzer": "language_analyzer_ga",
             "include_in_all": false
@@ -322,7 +313,7 @@
           "match": "*._stemmed_lv",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
             "analyzer": "language_analyzer_lv",
             "include_in_all": false
@@ -334,7 +325,7 @@
           "match": "*._stemmed_lt",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
             "analyzer": "language_analyzer_lt",
             "include_in_all": false
@@ -346,7 +337,7 @@
           "match": "*._stemmed_no",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
             "analyzer": "language_analyzer_no",
             "include_in_all": false
@@ -358,7 +349,7 @@
           "match": "*._stemmed_fa",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
             "analyzer": "language_analyzer_fa",
             "include_in_all": false
@@ -370,7 +361,7 @@
           "match": "*._stemmed_pt",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
             "analyzer": "language_analyzer_pt",
             "include_in_all": false
@@ -382,7 +373,7 @@
           "match": "*._stemmed_ro",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
             "analyzer": "language_analyzer_ro",
             "include_in_all": false
@@ -394,7 +385,7 @@
           "match": "*._stemmed_ru",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
             "analyzer": "language_analyzer_ru",
             "include_in_all": false
@@ -406,7 +397,7 @@
           "match": "*._stemmed_es",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
             "analyzer": "language_analyzer_es",
             "include_in_all": false
@@ -418,7 +409,7 @@
           "match": "*._stemmed_sv",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
             "analyzer": "language_analyzer_sv",
             "include_in_all": false
@@ -430,7 +421,7 @@
           "match": "*._stemmed_tr",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
             "analyzer": "language_analyzer_tr",
             "include_in_all": false
@@ -442,7 +433,7 @@
           "match": "*._stemmed_th",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
             "analyzer": "language_analyzer_th",
             "include_in_all": false
@@ -454,7 +445,7 @@
           "match": "_*",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
             "analyzer": "keywordlowercase",
             "ignore_above": 3072,
@@ -467,7 +458,7 @@
           "match": "*",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
             "analyzer": "keywordlowercase",
             "ignore_above": 3072,

@@ -15,18 +15,9 @@
     "filter": {
       "front_ngram": {
         "side": "front",
-        "max_gram": 12,
+        "max_gram": 25,
         "min_gram": 1,
         "type": "edgeNGram"
-      },
-      "ngram": {
-        "type": "nGram",
-        "min_gram": "2",
-        "max_gram": "12",
-        "token_chars": [
-          "letter",
-          "digit"
-        ]
       },
       "arabic_stemmer": {
         "type": "stemmer",
@@ -287,17 +278,6 @@
           "asciifolding",
           "word_delimiter",
           "front_ngram"
-        ],
-        "tokenizer": "standard"
-      },
-      "ngram_index": {
-        "type": "custom",
-        "filter": [
-          "standard",
-          "lowercase",
-          "asciifolding",
-          "word_delimiter",
-          "ngram"
         ],
         "tokenizer": "standard"
       },
