@@ -14,7 +14,9 @@ import com.enonic.xp.util.Version;
 public class VersionIdDumpUpgrader
     extends AbstractMetaDumpUpgrader
 {
-    private static final Version MODEL_VERSION = new Version( 2, 0, 0 );
+    private static final Version MODEL_VERSION = new Version( 2 );
+
+    private static final String NAME = "Version ID";
 
     public VersionIdDumpUpgrader( final Path basePath )
     {
@@ -25,6 +27,12 @@ public class VersionIdDumpUpgrader
     public Version getModelVersion()
     {
         return MODEL_VERSION;
+    }
+
+    @Override
+    public String getName()
+    {
+        return NAME;
     }
 
     @Override

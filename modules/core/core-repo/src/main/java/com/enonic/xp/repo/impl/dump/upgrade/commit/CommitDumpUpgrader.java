@@ -23,7 +23,9 @@ import com.enonic.xp.util.Version;
 public class CommitDumpUpgrader
     extends AbstractMetaDumpUpgrader
 {
-    private static final Version MODEL_VERSION = new Version( 6, 0, 0 );
+    private static final Version MODEL_VERSION = new Version( 6 );
+
+    private static final String NAME = "Version commit";
 
     final HashSet<String> commitedNodeIds = Sets.newHashSet();
 
@@ -152,5 +154,11 @@ public class CommitDumpUpgrader
     public Version getModelVersion()
     {
         return MODEL_VERSION;
+    }
+
+    @Override
+    public String getName()
+    {
+        return NAME;
     }
 }

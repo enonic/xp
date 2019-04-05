@@ -1,13 +1,10 @@
 package com.enonic.xp.repo.impl.dump.upgrade;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.io.Files;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.RepositoryId;
@@ -15,15 +12,17 @@ import com.enonic.xp.repository.RepositoryId;
 public abstract class AbstractMetaBlobUpgrader
     extends AbstractDumpUpgrader
 {
+    private final Logger LOG = LoggerFactory.getLogger( AbstractMetaBlobUpgrader.class );
+
     public AbstractMetaBlobUpgrader( final Path basePath )
     {
         super( basePath );
     }
 
     @Override
-    public void upgrade( final String dumpName )
+    public void doUpgrade( final String dumpName )
     {
-        super.upgrade( dumpName );
+        super.doUpgrade( dumpName );
 
         try
         {
@@ -63,12 +62,35 @@ public abstract class AbstractMetaBlobUpgrader
 
     protected void upgradeVersionEntries( final RepositoryId repositoryId, final File entriesFile )
     {
-        dumpReader.processEntries( ( entryContent, entryName ) -> upgradeVersionEntry( repositoryId, entryContent ), entriesFile );
+        dumpReader.processEntries( ( entryContent, entryName ) -> {
+            result.processed();
+            try
+            {
+                upgradeVersionEntry( repositoryId, entryContent );
+            }
+            catch ( Exception e )
+            {
+                result.error();
+                LOG.error( "Error while upgrading version entry [" + entryName + "]", e );
+            }
+        }, entriesFile );
     }
 
     protected void upgradeBranchEntries( final RepositoryId repositoryId, final Branch branch, final File entriesFile )
     {
-        dumpReader.processEntries( ( entryContent, entryName ) -> upgradeBranchEntry( repositoryId, entryContent ), entriesFile );
+        dumpReader.processEntries( ( entryContent, entryName ) -> {
+            result.processed();
+            try
+            {
+                upgradeBranchEntry( repositoryId, entryContent );
+            }
+            catch ( Exception e )
+            {
+                result.error();
+                LOG.error( "Error while upgrading branch entry [" + entryName + "]", e );
+            }
+
+        }, entriesFile );
     }
 
     protected abstract void upgradeVersionEntry( final RepositoryId repositoryId, final String entryContent );
