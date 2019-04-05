@@ -8,6 +8,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.common.collect.ImmutableMap;
+
 import com.enonic.xp.query.expr.FunctionExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.BaseTestBuilderFactory;
@@ -27,8 +29,8 @@ public class StemmedFunctionTest
         analyzers.setAccessible( true );
         indexValueTypes.setAccessible( true );
 
-        analyzers.set( null, Collections.singletonMap( "en", "language_analyzer_en" ) );
-        indexValueTypes.set( null, Collections.singletonMap( "en", new StemmedIndexValueType( "en" ) ) );
+        analyzers.set( null, ImmutableMap.of( "en", "language_analyzer_en" ) );
+        indexValueTypes.set( null, ImmutableMap.of( "en", new StemmedIndexValueType( "en" ) ) );
     }
 
     @Test
