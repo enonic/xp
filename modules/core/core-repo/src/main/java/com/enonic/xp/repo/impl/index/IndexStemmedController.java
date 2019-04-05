@@ -2,39 +2,61 @@ package com.enonic.xp.repo.impl.index;
 
 import java.util.Map;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
-
-import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.index.IndexService;
-import com.enonic.xp.index.IndexType;
+import com.google.common.collect.ImmutableMap;
 
 public class IndexStemmedController
 {
-    private static Map<String, String> SUPPORTED_ANALYZERS;
+    private static ImmutableMap<String, String> SUPPORTED_ANALYZERS = ImmutableMap.<String, String>builder().
+        put( "ar", "arabic" ).
+        put( "hy", "armenian" ).
+        put( "eu", "basque" ).
+        put( "bn", "bengali" ).
+        put( "pt-BR", "brazilian" ).
+        put( "bg", "bulgarian" ).
+        put( "ca", "catalan" ).
+        put( "zh", "cjk" ).
+        put( "ja", "cjk" ).
+        put( "ko", "cjk" ).
+        put( "cs", "czech" ).
+        put( "da", "danish" ).
+        put( "nl", "dutch" ).
+        put( "en", "english" ).
+        put( "fi", "finnish" ).
+        put( "fr", "french" ).
+        put( "gl", "galician" ).
+        put( "de", "german" ).
+        put( "el", "greek" ).
+        put( "hi", "hindi" ).
+        put( "hu", "hungarian" ).
+        put( "id", "indonesian" ).
+        put( "ga", "irish" ).
+        put( "it", "italian" ).
+        put( "lv", "latvian" ).
+        put( "lt", "lithuanian" ).
+        put( "no", "norwegian" ).
+        put( "nb", "norwegian" ).
+        put( "nn", "language_analyzer_nn" ).
+        put( "fa", "persian" ).
+        put( "pt", "portuguese" ).
+        put( "ro", "romanian" ).
+        put( "ru", "russian" ).
+        put( "ku", "sorani" ).
+        put( "es", "spanish" ).
+        put( "sv", "swedish" ).
+        put( "tr", "turkish" ).
+        put( "th", "thai" ).
+        build();
 
     private static Map<String, StemmedIndexValueType> SUPPORTED_INDEX_VALUE_TYPES;
 
     static
     {
-        final Bundle bundle = FrameworkUtil.getBundle( IndexService.class );
-
-        if ( bundle != null )
-        {
-            final BundleContext bundleContext = bundle.getBundleContext();
-            final IndexService indexService = bundleContext.getService( bundleContext.getServiceReference( IndexService.class ) );
-
-            final Map<String, Object> indexMapping =
-                indexService.getIndexMapping( ContextAccessor.current().getRepositoryId(), ContextAccessor.current().getBranch(),
-                                              IndexType.SEARCH );
-
-            final IndexMetaDataParser parser = new IndexMetaDataParser( indexMapping );
-            parser.parse();
-
-            IndexStemmedController.SUPPORTED_ANALYZERS = parser.getStemmedAnalyzers();
-            IndexStemmedController.SUPPORTED_INDEX_VALUE_TYPES = parser.getStemmedIndexValueTypes();
-        }
+        final ImmutableMap.Builder<String, StemmedIndexValueType> indexValueTypeMap = ImmutableMap.builder();
+        SUPPORTED_ANALYZERS.keySet().
+            forEach( isoCode -> {
+                indexValueTypeMap.put( isoCode, new StemmedIndexValueType( isoCode ) );
+            } );
+        SUPPORTED_INDEX_VALUE_TYPES = indexValueTypeMap.build();
     }
 
     public static String resolveAnalyzer( final String language )
