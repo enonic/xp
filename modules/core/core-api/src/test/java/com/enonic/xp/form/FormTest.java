@@ -1,6 +1,7 @@
 package com.enonic.xp.form;
 
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.enonic.xp.inputtype.InputTypeName;
