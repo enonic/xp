@@ -87,7 +87,16 @@ public class NodeExporter
                 final long childNodeCount = getRecursiveNodeCountByParentPath( sourceNodePath );
                 nodeExportListener.nodeResolved( childNodeCount + 1 );
             }
-            exportNode( rootNode );
+
+            try
+            {
+                exportNode( rootNode );
+            }
+            catch ( Exception e )
+            {
+                LOG.error( String.format( "Failed to export node with path [%s]", rootNode.path() ), e );
+                result.addError( new ExportError( e.toString() ) );
+            }
         }
         else
         {
