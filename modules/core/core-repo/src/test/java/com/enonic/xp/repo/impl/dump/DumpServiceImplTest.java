@@ -21,6 +21,7 @@ import com.google.common.collect.Sets;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.app.Applications;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ContentConstants;
@@ -111,7 +112,9 @@ public class DumpServiceImplTest
         this.dumpService.setNodeService( this.nodeService );
         this.dumpService.setRepositoryService( this.repositoryService );
         this.dumpService.setBasePath( tempFolder.getRoot().toPath() );
-        this.dumpService.setApplicationService( Mockito.mock( ApplicationService.class ) );
+        final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
+        Mockito.when( applicationService.getInstalledApplications() ).thenReturn( Applications.empty() );
+        this.dumpService.setApplicationService( applicationService );
     }
 
     @Test(expected = RepoDumpException.class)
