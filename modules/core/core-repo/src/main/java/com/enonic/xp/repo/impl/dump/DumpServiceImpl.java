@@ -16,7 +16,9 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.app.Applications;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -274,6 +276,8 @@ public class DumpServiceImpl
             throw new SystemDumpException( "Cannot load system-dump; dump does not contain system repository" );
         }
 
+        uninstallNonSystemApplications();
+
         if ( params.getListener() != null )
         {
             final long branchesCount = dumpReader.getRepositories().
@@ -303,9 +307,28 @@ public class DumpServiceImpl
         return results.build();
     }
 
+    private void uninstallNonSystemApplications()
+    {
+        LOG.info( "Uninstall global applications" );
+        NodeHelper.runAsAdmin( () -> {
+            final Applications installedApplications = applicationService.getInstalledApplications();
+            installedApplications.forEach( installedApplication -> {
+                if ( !installedApplication.isSystem() )
+                {
+                    final ApplicationKey applicationKey = installedApplication.getKey();
+                    if (applicationService.isLocalApplication( applicationKey )) {
+                        applicationService.publishUninstalledEvent(applicationKey);
+                    } else {
+                        applicationService.uninstallApplication( installedApplication.getKey(), true );
+                    }
+                }
+            } );
+        } );
+    }
+
     private void initApplications()
     {
-        LOG.info( "Install applications" );
+        LOG.info( "Install global applications" );
         NodeHelper.runAsAdmin( () -> applicationService.installAllStoredApplications() );
     }
 
