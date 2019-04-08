@@ -16,6 +16,7 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.PropertyVisitor;
 import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.dump.DumpUpgradeStepResult;
 import com.enonic.xp.index.IndexValueProcessor;
 import com.enonic.xp.index.PathIndexConfig;
@@ -26,7 +27,7 @@ import com.enonic.xp.util.Reference;
 public class HtmlAreaNodeDataUpgrader
 {
     private static final List<Pattern> BACKWARD_COMPATIBILITY_HTML_PROPERTY_PATH_PATTERNS =
-        Stream.of( "x.**", "* data.siteConfig.confg.**", "components.layout.config.*.**", "components.part.config.*.**",
+        Stream.of( "x.**", "data.**", "components.layout.config.*.**", "components.part.config.*.**",
                    "components.page.config.*.**", "components.text.value" ).
             map( HtmlAreaNodeDataUpgrader::toPattern ).
             collect( Collectors.toList() );
@@ -104,7 +105,7 @@ public class HtmlAreaNodeDataUpgrader
 
             private boolean isHtmlAreaProperty( Property property )
             {
-                return htmlAreaPatterns.stream().
+                return ValueTypes.STRING.equals( property.getType() ) && htmlAreaPatterns.stream().
                     anyMatch( htmlPattern -> htmlPattern.matcher( property.getPath().toString() ).matches() );
             }
         };
