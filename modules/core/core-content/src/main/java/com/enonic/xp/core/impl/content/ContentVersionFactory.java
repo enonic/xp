@@ -5,6 +5,7 @@ import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentVersion;
 import com.enonic.xp.content.ContentVersionId;
 import com.enonic.xp.content.ContentVersions;
+import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeService;
@@ -47,10 +48,13 @@ class ContentVersionFactory
     {
         final PropertyTree data = nodeVersion.getData();
 
+        final Property modifiedProperty = data.getProperty( ContentPropertyNames.MODIFIED_TIME );
+        final Property createdProperty = data.getProperty( ContentPropertyNames.CREATED_TIME );
+
         return ContentVersion.create().
             displayName( data.getProperty( ContentPropertyNames.DISPLAY_NAME ).getString() ).
             comment( "No comments" ).
-            modified( data.getProperty( ContentPropertyNames.MODIFIED_TIME ).getInstant() ).
+            modified( modifiedProperty != null ? modifiedProperty.getInstant() : createdProperty.getInstant() ).
             modifier( PrincipalKey.from( data.getProperty( ContentPropertyNames.MODIFIER ).getString() ) ).
             id( ContentVersionId.from( nodeVersionId.toString() ) ).
             build();
