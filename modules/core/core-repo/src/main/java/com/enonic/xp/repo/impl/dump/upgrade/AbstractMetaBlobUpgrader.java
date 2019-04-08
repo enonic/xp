@@ -41,9 +41,10 @@ public abstract class AbstractMetaBlobUpgrader
         if ( versionsFile != null )
         {
             upgradeVersionEntries( repositoryId, versionsFile );
+        } else {
+            dumpReader.getBranches( repositoryId ).
+                forEach( branch -> upgradeBranch( repositoryId, branch ) );
         }
-        dumpReader.getBranches( repositoryId ).
-            forEach( branch -> upgradeBranch( repositoryId, branch ) );
     }
 
     protected void upgradeBranch( final RepositoryId repositoryId, final Branch branch )
