@@ -15,6 +15,7 @@ import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.repo.impl.dump.DumpBlobRecord;
 import com.enonic.xp.repo.impl.dump.serializer.json.BranchDumpEntryJson;
 import com.enonic.xp.repo.impl.dump.serializer.json.VersionDumpEntryJson;
+import com.enonic.xp.repo.impl.dump.serializer.json.VersionsDumpEntryJson;
 import com.enonic.xp.repo.impl.dump.upgrade.AbstractMetaBlobUpgrader;
 import com.enonic.xp.repo.impl.dump.upgrade.DumpUpgradeException;
 import com.enonic.xp.repo.impl.node.NodeConstants;
@@ -69,7 +70,9 @@ public class HtmlAreaDumpUpgrader
     @Override
     protected void upgradeVersionEntry( final RepositoryId repositoryId, final String entryContent )
     {
-
+        final VersionsDumpEntryJson versionsDumpEntryJson = deserializeValue( entryContent, VersionsDumpEntryJson.class );
+        versionsDumpEntryJson.getVersions().
+            forEach(this::upgradeVersionMeta);
     }
 
     @Override
