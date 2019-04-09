@@ -184,7 +184,7 @@ public class HtmlAreaNodeDataUpgrader
 
                 if ( containsHtmlLink && backwardCompatible )
                 {
-                    LOG.info( "Property [{}] in node [{}] contains HTML Area links but is not indexed as an HTML Area input",
+                    LOG.info( "Property [{}] in node [{}] contains HTML Area links but is not indexed as an HTML Area input. Treating as an HTML Area",
                               property.getPath(), nodeVersion.getId() );
                 }
 
