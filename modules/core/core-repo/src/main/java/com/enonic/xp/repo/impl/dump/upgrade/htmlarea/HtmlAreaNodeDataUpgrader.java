@@ -7,6 +7,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.content.ContentConstants;
@@ -16,6 +19,7 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.PropertyVisitor;
 import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.dump.DumpUpgradeStepResult;
 import com.enonic.xp.index.IndexValueProcessor;
 import com.enonic.xp.index.PathIndexConfig;
@@ -25,9 +29,11 @@ import com.enonic.xp.util.Reference;
 
 public class HtmlAreaNodeDataUpgrader
 {
+    private final static Logger LOG = LoggerFactory.getLogger( HtmlAreaNodeDataUpgrader.class );
+
     private static final List<Pattern> BACKWARD_COMPATIBILITY_HTML_PROPERTY_PATH_PATTERNS =
-        Stream.of( "x.**", "* data.siteConfig.confg.**", "components.layout.config.*.**", "components.part.config.*.**",
-                   "components.page.config.*.**", "components.text.value" ).
+        Stream.of( "x.**", "data.**", "components.layout.config.*.**", "components.part.config.*.**", "components.page.config.*.**",
+                   "components.text.value" ).
             map( HtmlAreaNodeDataUpgrader::toPattern ).
             collect( Collectors.toList() );
 
@@ -40,6 +46,13 @@ public class HtmlAreaNodeDataUpgrader
 
     private static final Pattern KEEP_SIZE_IMAGE_PATTERN = Pattern.compile( "(href|src)=\"image://([0-9a-z-/]+)\\?keepSize=true\"" );
 
+    private static final Pattern FIGURE_PATTERN =
+        Pattern.compile( "<figure(?:\\s+([^>]+))?>(.*?)<\\/figure>", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL );
+
+    private static final Pattern CLASS_VALUE_PATTERN = Pattern.compile( "class\\s*=\\s*\"([^\"]*)\"" );
+
+    private static final Pattern STYLE_VALUE_PATTERN = Pattern.compile( "style\\s*=\\s*\"([^\"]*)\"" );
+
     private static final String PROCESSED_REFERENCES_PROPERTY_NAME = "processedReferences";
 
     private static final String HTML_STRIPPER_PROCESSOR_NAME = "htmlStripper";
@@ -50,12 +63,16 @@ public class HtmlAreaNodeDataUpgrader
 
     private Set<Reference> references;
 
+    private NodeVersion nodeVersion;
+
     private DumpUpgradeStepResult.Builder result;
 
     public boolean upgrade( final NodeVersion nodeVersion, final PatternIndexConfigDocument indexConfigDocument,
                             DumpUpgradeStepResult.Builder result )
     {
         references = Sets.newHashSet();
+        this.nodeVersion = nodeVersion;
+
         this.result = result;
 
         if ( !isContent( nodeVersion ) )
@@ -89,7 +106,6 @@ public class HtmlAreaNodeDataUpgrader
             map( PropertyPath::toString ).
             map( HtmlAreaNodeDataUpgrader::toPattern ).
             collect( Collectors.toList() );
-        htmlAreaPatterns.addAll( BACKWARD_COMPATIBILITY_HTML_PROPERTY_PATH_PATTERNS );
 
         final PropertyVisitor propertyVisitor = new PropertyVisitor()
         {
@@ -98,13 +114,23 @@ public class HtmlAreaNodeDataUpgrader
             {
                 if ( isHtmlAreaProperty( property ) )
                 {
-                    upgradeHtmlAreaProperty( property );
+                    upgradeHtmlAreaProperty( property, false );
+                }
+                else if ( isBackwardCompatibleHtmlAreaProperty( property ) )
+                {
+                    upgradeHtmlAreaProperty( property, true );
                 }
             }
 
             private boolean isHtmlAreaProperty( Property property )
             {
-                return htmlAreaPatterns.stream().
+                return ValueTypes.STRING.equals( property.getType() ) && htmlAreaPatterns.stream().
+                    anyMatch( htmlPattern -> htmlPattern.matcher( property.getPath().toString() ).matches() );
+            }
+
+            private boolean isBackwardCompatibleHtmlAreaProperty( Property property )
+            {
+                return ValueTypes.STRING.equals( property.getType() ) && BACKWARD_COMPATIBILITY_HTML_PROPERTY_PATH_PATTERNS.stream().
                     anyMatch( htmlPattern -> htmlPattern.matcher( property.getPath().toString() ).matches() );
             }
         };
@@ -132,7 +158,7 @@ public class HtmlAreaNodeDataUpgrader
         return false;
     }
 
-    private void upgradeHtmlAreaProperty( final Property property )
+    private void upgradeHtmlAreaProperty( final Property property, final boolean backwardCompatible )
     {
         if ( STRING_PROPERTY_TYPE_NAME.equals( property.getType().getName() ) )
         {
@@ -140,9 +166,11 @@ public class HtmlAreaNodeDataUpgrader
             if ( value != null )
             {
                 final Matcher contentMatcher = HTML_LINK_PATTERN.matcher( value );
+                boolean containsHtmlLink = false;
                 boolean containsHtmlAreaImage = false;
                 while ( contentMatcher.find() )
                 {
+                    containsHtmlLink = true;
                     if ( contentMatcher.groupCount() >= HTML_LINK_PATTERN_ID_GROUP )
                     {
                         if ( "image".equals( contentMatcher.group( HTML_LINK_PATTERN_TYPE_GROUP ) ) )
@@ -152,6 +180,12 @@ public class HtmlAreaNodeDataUpgrader
                         final String reference = contentMatcher.group( HTML_LINK_PATTERN_ID_GROUP );
                         references.add( Reference.from( reference ) );
                     }
+                }
+
+                if ( containsHtmlLink && backwardCompatible )
+                {
+                    LOG.info( "Property [{}] in node [{}] contains HTML Area links but is not indexed as an HTML Area input. Treating as an HTML Area",
+                              property.getPath(), nodeVersion.getId() );
                 }
 
                 if ( containsHtmlAreaImage )
@@ -195,6 +229,102 @@ public class HtmlAreaNodeDataUpgrader
 
     private String upgradeFigures( final String propertyName, final String value )
     {
-        return figureXsltTransformer.transform( propertyName, value, result );
+        //For each figure
+        final Matcher matcher = FIGURE_PATTERN.matcher( value );
+        matcher.reset();
+        boolean result = matcher.find();
+        if ( result )
+        {
+            StringBuffer sb = new StringBuffer();
+            do
+            {
+                //Retrieves attributes and content
+                final String figureElement = matcher.group( 0 );
+                String attributes = matcher.group( 1 );
+                if ( attributes == null )
+                {
+                    attributes = "";
+                }
+                final String figureContent = matcher.group( 2 );
+
+                //Retrieves class and style values and if it contains an image with a media URL
+                String oldClassValue = null;
+                String oldStyleValue = null;
+                final Matcher classMatcher = CLASS_VALUE_PATTERN.matcher( attributes );
+                if ( classMatcher.find() )
+                {
+                    oldClassValue = classMatcher.group( 1 );
+                }
+                final Matcher styleMatcher = STYLE_VALUE_PATTERN.matcher( attributes );
+                if ( styleMatcher.find() )
+                {
+                    oldStyleValue = styleMatcher.group( 1 );
+                }
+                final boolean containsMediaUrl = figureContent.contains( "=\"media://" );
+
+                //Generates the new style value
+                String newStyleValue = null;
+                String newClassValue = null;
+                if ( oldStyleValue != null && oldStyleValue.startsWith( "float:left" ) )
+                {
+                    newStyleValue = "float: left; width: 40%;";
+                    newClassValue = "editor-align-left";
+                }
+                else if ( oldStyleValue != null && oldStyleValue.startsWith( "float:right" ) )
+                {
+                    newStyleValue = "float: right; width: 40%;";
+                    newClassValue = "editor-align-right";
+                }
+                else if ( oldStyleValue != null && oldStyleValue.startsWith( "float:none" ) )
+                {
+                    newStyleValue = "margin: auto; width: 60%;";
+                    newClassValue = "editor-align-center";
+                }
+                else if ( "justify".equals( oldClassValue ) )
+                {
+                    newClassValue = "editor-align-justify";
+                }
+                if ( containsMediaUrl )
+                {
+                    newClassValue = ( newClassValue == null ? "" : newClassValue + " " ) + "editor-style-original";
+                }
+                final String newStyleKeyValue = newStyleValue == null ? "" : "style=\"" + newStyleValue + "\"";
+                final String newClassKeyValue = newClassValue == null ? "" : "class=\"" + newClassValue + "\"";
+
+                //Adds or replace the style and class value
+                if ( oldStyleValue == null )
+                {
+                    if ( !newStyleKeyValue.isEmpty() )
+                    {
+                        attributes = ( attributes.isEmpty() ? "" : attributes + " " ) + newStyleKeyValue;
+                    }
+                }
+                else
+                {
+                    attributes = attributes.replace( styleMatcher.group( 0 ), newStyleKeyValue );
+                }
+                if ( oldClassValue == null )
+                {
+                    if ( !newClassKeyValue.isEmpty() )
+                    {
+                        attributes = ( attributes.isEmpty() ? "" : attributes + " " ) + newClassKeyValue;
+                    }
+                }
+                else
+                {
+                    attributes = attributes.replace( classMatcher.group( 0 ), newClassKeyValue );
+                }
+
+                final String newValue = "<figure" + ( attributes.isEmpty() ? "" : " " + attributes ) + ">" + figureContent + "</figure>";
+
+                matcher.appendReplacement( sb, newValue );
+                result = matcher.find();
+            }
+            while ( result );
+            matcher.appendTail( sb );
+            return sb.toString();
+        }
+        return value;
+        // return figureXsltTransformer.transform( propertyName, value, result );
     }
 }
