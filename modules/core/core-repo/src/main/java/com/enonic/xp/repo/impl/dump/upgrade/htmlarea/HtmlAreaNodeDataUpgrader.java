@@ -7,6 +7,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.content.ContentConstants;
@@ -26,6 +29,8 @@ import com.enonic.xp.util.Reference;
 
 public class HtmlAreaNodeDataUpgrader
 {
+    private final static Logger LOG = LoggerFactory.getLogger( HtmlAreaNodeDataUpgrader.class );
+
     private static final List<Pattern> BACKWARD_COMPATIBILITY_HTML_PROPERTY_PATH_PATTERNS =
         Stream.of( "x.**", "data.**", "components.layout.config.*.**", "components.part.config.*.**", "components.page.config.*.**",
                    "components.text.value" ).
@@ -58,12 +63,16 @@ public class HtmlAreaNodeDataUpgrader
 
     private Set<Reference> references;
 
+    private NodeVersion nodeVersion;
+
     private DumpUpgradeStepResult.Builder result;
 
     public boolean upgrade( final NodeVersion nodeVersion, final PatternIndexConfigDocument indexConfigDocument,
                             DumpUpgradeStepResult.Builder result )
     {
         references = Sets.newHashSet();
+        this.nodeVersion = nodeVersion;
+
         this.result = result;
 
         if ( !isContent( nodeVersion ) )
@@ -97,7 +106,6 @@ public class HtmlAreaNodeDataUpgrader
             map( PropertyPath::toString ).
             map( HtmlAreaNodeDataUpgrader::toPattern ).
             collect( Collectors.toList() );
-        htmlAreaPatterns.addAll( BACKWARD_COMPATIBILITY_HTML_PROPERTY_PATH_PATTERNS );
 
         final PropertyVisitor propertyVisitor = new PropertyVisitor()
         {
@@ -106,13 +114,23 @@ public class HtmlAreaNodeDataUpgrader
             {
                 if ( isHtmlAreaProperty( property ) )
                 {
-                    upgradeHtmlAreaProperty( property );
+                    upgradeHtmlAreaProperty( property, false );
+                }
+                else if ( isBackwardCompatibleHtmlAreaProperty( property ) )
+                {
+                    upgradeHtmlAreaProperty( property, true );
                 }
             }
 
             private boolean isHtmlAreaProperty( Property property )
             {
                 return ValueTypes.STRING.equals( property.getType() ) && htmlAreaPatterns.stream().
+                    anyMatch( htmlPattern -> htmlPattern.matcher( property.getPath().toString() ).matches() );
+            }
+
+            private boolean isBackwardCompatibleHtmlAreaProperty( Property property )
+            {
+                return ValueTypes.STRING.equals( property.getType() ) && BACKWARD_COMPATIBILITY_HTML_PROPERTY_PATH_PATTERNS.stream().
                     anyMatch( htmlPattern -> htmlPattern.matcher( property.getPath().toString() ).matches() );
             }
         };
@@ -140,7 +158,7 @@ public class HtmlAreaNodeDataUpgrader
         return false;
     }
 
-    private void upgradeHtmlAreaProperty( final Property property )
+    private void upgradeHtmlAreaProperty( final Property property, final boolean backwardCompatible )
     {
         if ( STRING_PROPERTY_TYPE_NAME.equals( property.getType().getName() ) )
         {
@@ -148,9 +166,11 @@ public class HtmlAreaNodeDataUpgrader
             if ( value != null )
             {
                 final Matcher contentMatcher = HTML_LINK_PATTERN.matcher( value );
+                boolean containsHtmlLink = false;
                 boolean containsHtmlAreaImage = false;
                 while ( contentMatcher.find() )
                 {
+                    containsHtmlLink = true;
                     if ( contentMatcher.groupCount() >= HTML_LINK_PATTERN_ID_GROUP )
                     {
                         if ( "image".equals( contentMatcher.group( HTML_LINK_PATTERN_TYPE_GROUP ) ) )
@@ -160,6 +180,12 @@ public class HtmlAreaNodeDataUpgrader
                         final String reference = contentMatcher.group( HTML_LINK_PATTERN_ID_GROUP );
                         references.add( Reference.from( reference ) );
                     }
+                }
+
+                if ( containsHtmlLink && backwardCompatible )
+                {
+                    LOG.info( "Property [{}] in node [{}] contains HTML Area links but is not indexed as an HTML Area input",
+                              property.getPath(), nodeVersion.getId() );
                 }
 
                 if ( containsHtmlAreaImage )
@@ -268,7 +294,8 @@ public class HtmlAreaNodeDataUpgrader
                 //Adds or replace the style and class value
                 if ( oldStyleValue == null )
                 {
-                    if (!newStyleKeyValue.isEmpty()) {
+                    if ( !newStyleKeyValue.isEmpty() )
+                    {
                         attributes = ( attributes.isEmpty() ? "" : attributes + " " ) + newStyleKeyValue;
                     }
                 }
@@ -278,7 +305,8 @@ public class HtmlAreaNodeDataUpgrader
                 }
                 if ( oldClassValue == null )
                 {
-                    if (!newClassKeyValue.isEmpty()) {
+                    if ( !newClassKeyValue.isEmpty() )
+                    {
                         attributes = ( attributes.isEmpty() ? "" : attributes + " " ) + newClassKeyValue;
                     }
                 }
