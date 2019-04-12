@@ -40,7 +40,7 @@ public final class RegionMapper
             new ComponentMapper( component ).serialize( gen );
             gen.end();
         }
-        gen.value( "name", this.value.getName() );
         gen.end();
+        gen.value( "name", this.value.getName() );
     }
 }
