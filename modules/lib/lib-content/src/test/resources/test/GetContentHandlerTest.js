@@ -111,7 +111,8 @@ var expectedJson = {
                                         "type": "text",
                                         "text": ""
                                     }
-                                ]
+                                ],
+                                name: "left"
                             },
                             "right": {
                                 "components": [
@@ -124,7 +125,8 @@ var expectedJson = {
                                         "type": "fragment",
                                         "fragment": "213sda-ss222"
                                     }
-                                ]
+                                ],
+                                name: "right"
                             }
                         }
                     },
@@ -134,7 +136,8 @@ var expectedJson = {
                         "config": {},
                         "regions": {}
                     }
-                ]
+                ],
+                name: "top"
             },
             "bottom": {
                 "components": [
@@ -154,7 +157,8 @@ var expectedJson = {
                         "path": "/bottom/2",
                         "type": "image"
                     }
-                ]
+                ],
+                name: "bottom"
             }
         }
     },
@@ -200,7 +204,8 @@ var pageAsFragmentJson = {
                         "type": "text",
                         "text": ""
                     }
-                ]
+                ],
+                name: "left"
             },
             "right": {
                 "components": [
@@ -213,7 +218,8 @@ var pageAsFragmentJson = {
                         "type": "fragment",
                         "fragment": "213sda-ss222"
                     }
-                ]
+                ],
+                name: "right"
             }
         }
     }
