@@ -26,7 +26,8 @@ var expected = {
                         "a": "1"
                     }
                 }
-            ]
+            ],
+            "name": "bottom"
         }
     }
 };
