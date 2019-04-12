@@ -5,8 +5,6 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 
-import com.enonic.xp.exception.InitializationException;
-
 public class InitializerTest
 {
     @Rule
@@ -15,12 +13,23 @@ public class InitializerTest
     @Test
     public void testNonMaster()
     {
-        expectedException.expect( InitializationException.class );
-        expectedException.expectMessage( "Initialization test not initialized by master node" );
-
         final Runnable doInitalization = Mockito.mock( Runnable.class );
-        createInitializer( false, false, doInitalization ).
-            initialize();
+        final TestInitializer initializer = createInitializer( false, false, doInitalization );
+
+        new Thread( () -> {
+            try
+            {
+                Thread.sleep( 100 );
+            }
+            catch ( InterruptedException e )
+            {
+                e.printStackTrace();
+            }
+            initializer.setInitialized( true );
+        } ).start();
+
+        initializer.initialize();
+        Mockito.verify( doInitalization, Mockito.never() ).run();
     }
 
     @Test
@@ -50,7 +59,7 @@ public class InitializerTest
         Mockito.verify( doInitalization, Mockito.never() ).run();
     }
 
-    private Initializer createInitializer( final boolean isMaster, final boolean isInitialized, final Runnable initialization )
+    private TestInitializer createInitializer( final boolean isMaster, final boolean isInitialized, final Runnable initialization )
     {
         return TestInitializer.create().
             setInitializationCheckMaxCount( 2l ).
