@@ -106,11 +106,13 @@ var expectedJson = {
                                             "a": "1"
                                         }
                                     }
-                                ]
+                                ],
+                                "name": "bottom"
                             }
                         }
                     }
-                ]
+                ],
+                "name": "top"
             }
         }
     },
