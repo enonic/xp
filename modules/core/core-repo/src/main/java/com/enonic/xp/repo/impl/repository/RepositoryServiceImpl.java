@@ -17,6 +17,8 @@ import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.event.Event;
+import com.enonic.xp.event.EventListener;
 import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeNotFoundException;
@@ -25,6 +27,7 @@ import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.node.DeleteNodeByIdCommand;
 import com.enonic.xp.repo.impl.node.RefreshCommand;
+import com.enonic.xp.repo.impl.repository.event.RepositoryEventListener;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.repository.BranchNotFoundException;
@@ -44,7 +47,7 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 
 @Component(immediate = true)
 public class RepositoryServiceImpl
-    implements RepositoryService
+    implements RepositoryService, EventListener
 {
     private static final Logger LOG = LoggerFactory.getLogger( RepositoryServiceImpl.class );
 
@@ -60,16 +63,24 @@ public class RepositoryServiceImpl
 
     private NodeSearchService nodeSearchService;
 
+    private RepositoryEventListener repositoryEventListener;
+
     @SuppressWarnings("unused")
     @Activate
     public void initialize()
     {
+        this.repositoryEventListener = RepositoryEventListener.create().
+            repositoryService( this ).
+            storageService( nodeStorageService ).
+            build();
+
         SystemRepoInitializer.create().
             setIndexServiceInternal( indexServiceInternal ).
             setRepositoryService( this ).
             setNodeStorageService( nodeStorageService ).
             build().
             initialize();
+
     }
 
     @Override
@@ -380,5 +391,17 @@ public class RepositoryServiceImpl
     public void setNodeSearchService( final NodeSearchService nodeSearchService )
     {
         this.nodeSearchService = nodeSearchService;
+    }
+
+    @Override
+    public int getOrder()
+    {
+        return repositoryEventListener.getOrder();
+    }
+
+    @Override
+    public void onEvent( final Event event )
+    {
+        repositoryEventListener.onEvent( event );
     }
 }
