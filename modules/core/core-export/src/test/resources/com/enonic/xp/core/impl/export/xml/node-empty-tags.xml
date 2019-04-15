@@ -38,7 +38,7 @@
     <long name="myLong"/>
     <xml name="myXml">&lt;car&gt;&lt;color&gt;Arctic Grey&lt;color&gt;&lt;car&gt;</xml>
     <xml isNull="true" name="myXml"/>
-    <string name="myHtmlEncoded">&gt;&lt;p&gt;&lt;a href="/naringsliv/tema/forsikrings-og-pensjonspakker" data-event="{&amp;quot;event_category&amp;quot;: &amp;quot;button&amp;quot;, &amp;quot;event_action&amp;quot;: &amp;quot;click&amp;quot;,&amp;quot;event_label&amp;quot;: &amp;quot;se-php&amp;quot;}"&gt;Se pakkene her&lt;/a&gt;&lt;/p&gt;</string>
+    <string name="myHtmlEncoded">&lt;p&gt;&lt;a href="/naringsliv/tema/forsikrings-og-pensjonspakker" data-event="{&amp;quot;event_category&amp;quot;: &amp;quot;button&amp;quot;, &amp;quot;event_action&amp;quot;: &amp;quot;click&amp;quot;,&amp;quot;event_label&amp;quot;: &amp;quot;se-php&amp;quot;}"&gt;Se pakkene her&lt;/a&gt;&lt;/p&gt;</string>
     <geoPoint name="myGeoPoint">8.0,4.0</geoPoint>
     <geoPoint name="myGeoPoint"/>
     <dateTime name="myInstant">2014-11-28T14:16:00.000Z</dateTime>
