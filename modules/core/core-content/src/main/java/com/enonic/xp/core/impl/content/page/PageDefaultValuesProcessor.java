@@ -97,7 +97,6 @@ final class PageDefaultValuesProcessor
             if ( sourceCmp == null )
             {
                 applyComponentDefaultValues( layoutOrPart );
-                continue; // skip further processing if no valid source found
             }
 
             // layout regions
