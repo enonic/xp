@@ -58,6 +58,7 @@ public class XmlNodeSerializerTest
         propertyTree.addDouble( "myDouble", 123.1 );
         propertyTree.addLong( "myLong", 111L );
         propertyTree.addXml( "myXml", "<car><color>Arctic Grey<color><car>" );
+        propertyTree.addString( "myHtmlEncoded", "<p><a href=\"/naringsliv/tema/forsikrings-og-pensjonspakker\" data-event=\"{&quot;event_category&quot;: &quot;button&quot;, &quot;event_action&quot;: &quot;click&quot;,&quot;event_label&quot;: &quot;se-php&quot;}\">Se pakkene her</a></p>" );
         propertyTree.addGeoPoint( "myGeoPoint", GeoPoint.from( "8,4" ) );
 
         // Date & Time
