@@ -191,9 +191,6 @@ public class RepositoryServiceImpl
     @Override
     public RepositoryId deleteRepository( final DeleteRepositoryParams params )
     {
-        final Repository repository = get( params.getRepositoryId() );
-        final Branches branches = repository.getBranches();
-
         requireAdminRole();
         final RepositoryId repositoryId = params.getRepositoryId();
         repositoryMap.compute( repositoryId, ( key, previousRepository ) -> {
@@ -202,17 +199,14 @@ public class RepositoryServiceImpl
             return null;
         } );
 
-        invalidatePathCacheForDeletedRepo( branches, repositoryId );
+        invalidatePathCache();
 
         return repositoryId;
     }
 
-    private void invalidatePathCacheForDeletedRepo( final Branches branches, final RepositoryId repositoryId )
+    private void invalidatePathCache()
     {
-        branches.forEach( ( branch ) -> ContextBuilder.from( ContextAccessor.current() ).
-            repositoryId( repositoryId ).
-            branch( branch ).
-            build().runWith( () -> this.nodeStorageService.invalidate() ) );
+        this.nodeStorageService.invalidate();
     }
 
     @Override
@@ -223,6 +217,8 @@ public class RepositoryServiceImpl
             getRepositoryId();
 
         repositoryMap.compute( repositoryId, ( key, previousRepository ) -> doDeleteBranch( params, repositoryId, previousRepository ) );
+
+        invalidatePathCache();
 
         return params.getBranch();
     }
