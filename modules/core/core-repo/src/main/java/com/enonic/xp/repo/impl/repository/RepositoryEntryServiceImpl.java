@@ -145,7 +145,7 @@ public class RepositoryEntryServiceImpl
         createContext().callWith( () -> {
             RefreshCommand.create().
                 indexServiceInternal( this.indexServiceInternal ).
-                refreshMode( RefreshMode.SEARCH ).
+                refreshMode( RefreshMode.ALL ).
                 build().
                 execute();
             return null;
