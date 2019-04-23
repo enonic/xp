@@ -171,7 +171,7 @@ public final class XmlNodeParser
 
     private void addStringProperty( final PropertySet set, final String name, final String value )
     {
-        set.addString( name, xmlDecodeString( value ) );
+        set.addString( name, value );
     }
 
     private void addDoubleProperty( final PropertySet set, final String name, final String value )
