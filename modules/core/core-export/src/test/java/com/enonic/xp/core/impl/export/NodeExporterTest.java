@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.export;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.junit.Before;
@@ -12,6 +13,7 @@ import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.core.impl.export.writer.ExportWriter;
 import com.enonic.xp.core.impl.export.writer.FileExportWriter;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.export.NodeExportListener;
@@ -253,6 +255,28 @@ public class NodeExporterTest
             execute();
 
         assertFileExists( "/myRoot/export.properties" );
+    }
+
+    @Test
+    public void one_node_error()
+        throws Exception
+    {
+        createNode( "mynode", NodePath.ROOT );
+
+        final ExportWriter exportWriter = Mockito.mock( ExportWriter.class );
+        Mockito.doThrow( new RuntimeException( "exception message" ) ).when( exportWriter ).writeElement( Mockito.isA( Path.class ),
+                                                                                                          Mockito.anyString() );
+
+        final NodeExportResult result = NodeExporter.create().
+            nodeService( this.nodeService ).
+            nodeExportWriter( exportWriter ).
+            sourceNodePath( NodePath.ROOT ).
+            targetDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myExport" ) ).
+            build().
+            execute();
+
+        assertEquals( 1, result.getExportErrors().size() );
+        assertEquals( "java.lang.RuntimeException: exception message", result.getExportErrors().get( 0 ).toString() );
     }
 
 
