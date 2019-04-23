@@ -28,7 +28,7 @@ public class RepositoryEventListener
             repositoryService( builder.repositoryService ).
             nodeStorageService( builder.storageService ).
             build();
-        this.repositoryInvalidateByIdHandler = new RepositoryInvalidateByIdHandler( builder.repositoryService );
+        this.repositoryInvalidateByIdHandler = new RepositoryInvalidateByIdHandler( builder.repositoryService, builder.storageService );
         this.repositoryRestoreInitializedHandler =
             new RepositoryRestoreInitializedHandler( builder.repositoryService, builder.storageService );
     }
