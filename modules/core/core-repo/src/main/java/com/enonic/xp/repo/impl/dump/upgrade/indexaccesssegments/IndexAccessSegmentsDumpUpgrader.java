@@ -30,7 +30,9 @@ import com.enonic.xp.util.Version;
 public class IndexAccessSegmentsDumpUpgrader
     extends AbstractMetaDumpUpgrader
 {
-    private static final Version MODEL_VERSION = new Version( 4, 0, 0 );
+    private static final Version MODEL_VERSION = new Version( 4 );
+
+    private static final String NAME = "Index & Access segments";
 
     public IndexAccessSegmentsDumpUpgrader( final Path basePath )
     {
@@ -41,6 +43,12 @@ public class IndexAccessSegmentsDumpUpgrader
     public Version getModelVersion()
     {
         return MODEL_VERSION;
+    }
+
+    @Override
+    public String getName()
+    {
+        return NAME;
     }
 
     @Override

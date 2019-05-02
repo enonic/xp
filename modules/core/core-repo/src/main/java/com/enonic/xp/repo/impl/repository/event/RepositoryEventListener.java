@@ -1,8 +1,5 @@
 package com.enonic.xp.repo.impl.repository.event;
 
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,14 +11,9 @@ import com.enonic.xp.repo.impl.RepositoryEvents;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.repository.RepositoryService;
 
-@Component(immediate = true)
 public class RepositoryEventListener
     implements EventListener
 {
-    private NodeStorageService storageService;
-
-    private RepositoryService repositoryService;
-
     private final static Logger LOG = LoggerFactory.getLogger( RepositoryEventListener.class );
 
     private RepositoryRestoredHandler repositoryRestoredHandler;
@@ -30,15 +22,20 @@ public class RepositoryEventListener
 
     private RepositoryRestoreInitializedHandler repositoryRestoreInitializedHandler;
 
-    @Activate
-    public void initialize()
+    private RepositoryEventListener( final Builder builder )
     {
         this.repositoryRestoredHandler = RepositoryRestoredHandler.create().
-            repositoryService( repositoryService ).
-            nodeStorageService( storageService ).
+            repositoryService( builder.repositoryService ).
+            nodeStorageService( builder.storageService ).
             build();
-        this.repositoryInvalidateByIdHandler = new RepositoryInvalidateByIdHandler( repositoryService );
-        this.repositoryRestoreInitializedHandler = new RepositoryRestoreInitializedHandler( repositoryService, storageService );
+        this.repositoryInvalidateByIdHandler = new RepositoryInvalidateByIdHandler( builder.repositoryService, builder.storageService );
+        this.repositoryRestoreInitializedHandler =
+            new RepositoryRestoreInitializedHandler( builder.repositoryService, builder.storageService );
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
     }
 
     @Override
@@ -95,16 +92,31 @@ public class RepositoryEventListener
         }
     }
 
-    @Reference
-    public void setStorageService( final NodeStorageService storageService )
+    public static final class Builder
     {
-        this.storageService = storageService;
-    }
+        private NodeStorageService storageService;
 
-    @Reference
-    public void setRepositoryService( final RepositoryService repositoryService )
-    {
-        this.repositoryService = repositoryService;
-    }
+        private RepositoryService repositoryService;
 
+        private Builder()
+        {
+        }
+
+        public Builder storageService( final NodeStorageService storageService )
+        {
+            this.storageService = storageService;
+            return this;
+        }
+
+        public Builder repositoryService( final RepositoryService repositoryService )
+        {
+            this.repositoryService = repositoryService;
+            return this;
+        }
+
+        public RepositoryEventListener build()
+        {
+            return new RepositoryEventListener( this );
+        }
+    }
 }

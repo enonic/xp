@@ -180,6 +180,7 @@ copyDistroToInstallPath()
     _mkdir ${XP_INSTALL_FULL_PATH}
     cd ${XP_INSTALL_FULL_PATH}
 
+    _cp ${XP_DISTRO_PATH}/jdk ${XP_INSTALL_FULL_PATH}
     _cp ${XP_DISTRO_PATH}/bin ${XP_INSTALL_FULL_PATH}
     _cp ${XP_DISTRO_PATH}/lib ${XP_INSTALL_FULL_PATH}
     _cp ${XP_DISTRO_PATH}/system ${XP_INSTALL_FULL_PATH}

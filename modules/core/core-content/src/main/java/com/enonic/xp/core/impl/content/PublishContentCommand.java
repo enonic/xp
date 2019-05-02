@@ -199,7 +199,7 @@ public class PublishContentCommand
     private void commitPushedNodes( final NodeBranchEntries branchEntries )
     {
         final NodeCommitEntry commitEntry = NodeCommitEntry.create().
-            message( "Publish" ).
+            message( "COM_ENONIC_XP_CONTENT_PUBLISH" ).
             build();
         final RoutableNodeVersionIds.Builder routableNodeVersionIds = RoutableNodeVersionIds.create();
         for ( NodeBranchEntry branchEntry : branchEntries )

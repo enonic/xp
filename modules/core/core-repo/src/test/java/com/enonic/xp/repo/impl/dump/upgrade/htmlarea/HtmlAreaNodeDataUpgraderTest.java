@@ -17,6 +17,7 @@ import com.google.common.io.Resources;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.Value;
+import com.enonic.xp.dump.DumpUpgradeStepResult;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexValueProcessor;
 import com.enonic.xp.index.PatternIndexConfigDocument;
@@ -37,7 +38,8 @@ public class HtmlAreaNodeDataUpgraderTest
     public void testUpgrade_nonContent()
     {
         final NodeVersion nodeVersion = NodeVersion.create().build();
-        final boolean upgraded = htmlAreaNodeDataUpgrader.upgrade( nodeVersion, null );
+        final DumpUpgradeStepResult.Builder result = DumpUpgradeStepResult.create();
+        final boolean upgraded = htmlAreaNodeDataUpgrader.upgrade( nodeVersion, null, result );
         Assert.assertFalse( upgraded );
     }
 
@@ -53,7 +55,8 @@ public class HtmlAreaNodeDataUpgraderTest
             build();
         final PatternIndexConfigDocument indexConfigDocument = createIndexConfigDocument();
 
-        final boolean upgraded = htmlAreaNodeDataUpgrader.upgrade( nodeVersion, indexConfigDocument );
+        final DumpUpgradeStepResult.Builder result = DumpUpgradeStepResult.create();
+        final boolean upgraded = htmlAreaNodeDataUpgrader.upgrade( nodeVersion, indexConfigDocument, result );
         Assert.assertTrue( upgraded );
 
         final PropertyTree upgradedData = nodeVersion.getData();

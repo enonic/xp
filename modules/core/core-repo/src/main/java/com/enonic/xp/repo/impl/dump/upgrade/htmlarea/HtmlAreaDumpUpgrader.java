@@ -15,6 +15,7 @@ import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.repo.impl.dump.DumpBlobRecord;
 import com.enonic.xp.repo.impl.dump.serializer.json.BranchDumpEntryJson;
 import com.enonic.xp.repo.impl.dump.serializer.json.VersionDumpEntryJson;
+import com.enonic.xp.repo.impl.dump.serializer.json.VersionsDumpEntryJson;
 import com.enonic.xp.repo.impl.dump.upgrade.AbstractMetaBlobUpgrader;
 import com.enonic.xp.repo.impl.dump.upgrade.DumpUpgradeException;
 import com.enonic.xp.repo.impl.node.NodeConstants;
@@ -27,6 +28,10 @@ import com.enonic.xp.util.Version;
 public class HtmlAreaDumpUpgrader
     extends AbstractMetaBlobUpgrader
 {
+
+    private static final Version MODEL_VERSION = new Version( 8 );
+
+    private static final String NAME = "Html Area";
 
     private static final Segment NODE_SEGMENT =
         RepositorySegmentUtils.toSegment( ContentConstants.CONTENT_REPO_ID, NodeConstants.NODE_SEGMENT_LEVEL );
@@ -45,7 +50,13 @@ public class HtmlAreaDumpUpgrader
     @Override
     public Version getModelVersion()
     {
-        return new Version( 8, 0, 0 );
+        return MODEL_VERSION;
+    }
+
+    @Override
+    public String getName()
+    {
+        return NAME;
     }
 
     protected void upgradeRepository( final RepositoryId repositoryId )
@@ -59,7 +70,9 @@ public class HtmlAreaDumpUpgrader
     @Override
     protected void upgradeVersionEntry( final RepositoryId repositoryId, final String entryContent )
     {
-
+        final VersionsDumpEntryJson versionsDumpEntryJson = deserializeValue( entryContent, VersionsDumpEntryJson.class );
+        versionsDumpEntryJson.getVersions().
+            forEach(this::upgradeVersionMeta);
     }
 
     @Override
@@ -136,6 +149,6 @@ public class HtmlAreaDumpUpgrader
 
     private boolean upgradeNodeVersion( final NodeVersion nodeVersion, final PatternIndexConfigDocument indexConfigDocument )
     {
-        return nodeDataUpgrader.upgrade( nodeVersion, indexConfigDocument );
+        return nodeDataUpgrader.upgrade( nodeVersion, indexConfigDocument, result );
     }
 }

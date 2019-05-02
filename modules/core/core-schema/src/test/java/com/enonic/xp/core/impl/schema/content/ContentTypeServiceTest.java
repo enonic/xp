@@ -101,7 +101,7 @@ public class ContentTypeServiceTest
     public void getMimeTypes()
     {
         final Collection<String> audioMimeTypes = this.service.getMimeTypes( ContentTypeNames.from( ContentTypeName.audioMedia() ) );
-        assertEquals( audioMimeTypes.size(), 11 );
+        assertEquals( audioMimeTypes.size(), 12 );
 
         final Collection<String> imageMimeTypes = this.service.getMimeTypes( ContentTypeNames.from( ContentTypeName.imageMedia() ) );
         assertEquals( imageMimeTypes.size(), 9 );

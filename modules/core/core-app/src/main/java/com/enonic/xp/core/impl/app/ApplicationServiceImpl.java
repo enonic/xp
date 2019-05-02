@@ -212,10 +212,9 @@ public final class ApplicationServiceImpl
 
         for ( final Node applicationNode : applicationNodes )
         {
-            final Application installedApp;
             try
             {
-                installedApp = doInstallApplication( applicationNode.id(), true );
+                final Application installedApp = doInstallApplication( applicationNode.id(), true );
 
                 LOG.info( "Stored application [{}] installed successfully", installedApp.getKey() );
 
@@ -250,7 +249,7 @@ public final class ApplicationServiceImpl
 
         final Boolean local = localApplicationSet.remove( key );
 
-        if ( local )
+        if ( Boolean.TRUE.equals( local) )
         {
             try
             {
@@ -266,13 +265,21 @@ public final class ApplicationServiceImpl
         {
             this.eventPublisher.publish( ApplicationClusterEvents.uninstalled( application.getKey() ) );
         }
-
     }
 
     private void publishInstalledEvent( final Application application )
     {
         final Node node = this.repoService.getApplicationNode( application.getKey() );
         this.eventPublisher.publish( ApplicationClusterEvents.installed( node ) );
+    }
+
+    @Override
+    public void publishUninstalledEvent( final ApplicationKey applicationKey )
+    {
+        final Node node = this.repoService.getApplicationNode( applicationKey );
+        if (node != null) {
+            this.eventPublisher.publish( ApplicationClusterEvents.uninstalled( applicationKey ) );
+        }
     }
 
     private void reinstallGlobalApplicationIfExists( final ApplicationKey key, final Application application )

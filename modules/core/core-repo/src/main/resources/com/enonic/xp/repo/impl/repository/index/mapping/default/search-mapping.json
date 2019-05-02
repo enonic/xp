@@ -8,22 +8,13 @@
     },
     "date_detection": false,
     "numeric_detection": false,
-    "properties": {
-      "displayname._ngram": {
-        "type": "string",
-        "store": "no",
-        "index": "analyzed",
-        "analyzer": "ngram_index",
-        "include_in_all": false
-      }
-    },
     "dynamic_templates": [
       {
         "template_fulltext": {
           "match": "*._analyzed",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
             "analyzer": "document_index_default",
             "include_in_all": false
@@ -35,7 +26,7 @@
           "match": "*._path",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
             "analyzer": "path_analyzer",
             "include_in_all": false
@@ -47,7 +38,7 @@
           "match": "*._ngram",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
             "analyzer": "ngram_index_front",
             "search_analyzer": "document_index_default",
@@ -60,7 +51,7 @@
           "match": "*._datetime",
           "mapping": {
             "type": "date",
-            "store": "no",
+            "store": false,
             "index": "not_analyzed",
             "include_in_all": false
           }
@@ -71,7 +62,7 @@
           "match": "*._number",
           "mapping": {
             "type": "double",
-            "store": "no",
+            "store": false,
             "index": "not_analyzed",
             "include_in_all": false
           }
@@ -82,7 +73,7 @@
           "match": "*._orderby",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
             "analyzer": "keywordlowercase",
             "ignore_above": 3072,
@@ -95,7 +86,7 @@
           "match": "*._geopoint",
           "mapping": {
             "type": "geo_point",
-            "store": "no",
+            "store": false,
             "index": "not_analyzed",
             "include_in_all": false
           }
@@ -106,9 +97,9 @@
           "match": "*._stemmed_ar",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
-            "analyzer": "language_analyzer_ar",
+            "analyzer": "arabic",
             "include_in_all": false
           }
         }
@@ -118,9 +109,9 @@
           "match": "*._stemmed_hy",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
-            "analyzer": "language_analyzer_hy",
+            "analyzer": "armenian",
             "include_in_all": false
           }
         }
@@ -130,9 +121,9 @@
           "match": "*._stemmed_eu",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
-            "analyzer": "language_analyzer_eu",
+            "analyzer": "basque",
             "include_in_all": false
           }
         }
@@ -142,9 +133,9 @@
           "match": "*._stemmed_bn",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
-            "analyzer": "language_analyzer_bn",
+            "analyzer": "bengali",
             "include_in_all": false
           }
         }
@@ -154,9 +145,9 @@
           "match": "*._stemmed_pt-br",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
-            "analyzer": "language_analyzer_pt-br",
+            "analyzer": "brazilian",
             "include_in_all": false
           }
         }
@@ -166,9 +157,9 @@
           "match": "*._stemmed_bg",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
-            "analyzer": "language_analyzer_bg",
+            "analyzer": "bulgarian",
             "include_in_all": false
           }
         }
@@ -178,9 +169,45 @@
           "match": "*._stemmed_ca",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
-            "analyzer": "language_analyzer_ca",
+            "analyzer": "catalan",
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_stemmed_zh": {
+          "match": "*._stemmed_zh",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "cjk",
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_stemmed_ja": {
+          "match": "*._stemmed_ja",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "cjk",
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_stemmed_ko": {
+          "match": "*._stemmed_ko",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "cjk",
             "include_in_all": false
           }
         }
@@ -190,9 +217,9 @@
           "match": "*._stemmed_cs",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
-            "analyzer": "language_analyzer_cs",
+            "analyzer": "czech",
             "include_in_all": false
           }
         }
@@ -202,9 +229,9 @@
           "match": "*._stemmed_da",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
-            "analyzer": "language_analyzer_da",
+            "analyzer": "danish",
             "include_in_all": false
           }
         }
@@ -214,9 +241,9 @@
           "match": "*._stemmed_nl",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
-            "analyzer": "language_analyzer_nl",
+            "analyzer": "dutch",
             "include_in_all": false
           }
         }
@@ -226,9 +253,9 @@
           "match": "*._stemmed_en",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
-            "analyzer": "language_analyzer_en",
+            "analyzer": "english",
             "include_in_all": false
           }
         }
@@ -238,9 +265,9 @@
           "match": "*._stemmed_fi",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
-            "analyzer": "language_analyzer_fi",
+            "analyzer": "finnish",
             "include_in_all": false
           }
         }
@@ -250,9 +277,9 @@
           "match": "*._stemmed_fr",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
-            "analyzer": "language_analyzer_fr",
+            "analyzer": "french",
             "include_in_all": false
           }
         }
@@ -262,9 +289,9 @@
           "match": "*._stemmed_gl",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
-            "analyzer": "language_analyzer_gl",
+            "analyzer": "galician",
             "include_in_all": false
           }
         }
@@ -274,9 +301,21 @@
           "match": "*._stemmed_de",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
-            "analyzer": "language_analyzer_de",
+            "analyzer": "german",
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_stemmed_el": {
+          "match": "*._stemmed_el",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "greek",
             "include_in_all": false
           }
         }
@@ -286,9 +325,9 @@
           "match": "*._stemmed_hi",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
-            "analyzer": "language_analyzer_hi",
+            "analyzer": "hindi",
             "include_in_all": false
           }
         }
@@ -298,9 +337,21 @@
           "match": "*._stemmed_hu",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
-            "analyzer": "language_analyzer_hu",
+            "analyzer": "hungarian",
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_stemmed_id": {
+          "match": "*._stemmed_id",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "indonesian",
             "include_in_all": false
           }
         }
@@ -310,9 +361,21 @@
           "match": "*._stemmed_ga",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
-            "analyzer": "language_analyzer_ga",
+            "analyzer": "irish",
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_stemmed_it": {
+          "match": "*._stemmed_it",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "italian",
             "include_in_all": false
           }
         }
@@ -322,9 +385,9 @@
           "match": "*._stemmed_lv",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
-            "analyzer": "language_analyzer_lv",
+            "analyzer": "latvian",
             "include_in_all": false
           }
         }
@@ -334,9 +397,9 @@
           "match": "*._stemmed_lt",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
-            "analyzer": "language_analyzer_lt",
+            "analyzer": "lithuanian",
             "include_in_all": false
           }
         }
@@ -346,9 +409,33 @@
           "match": "*._stemmed_no",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
-            "analyzer": "language_analyzer_no",
+            "analyzer": "norwegian",
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_stemmed_nb": {
+          "match": "*._stemmed_nb",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "norwegian",
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_stemmed_nn": {
+          "match": "*._stemmed_nn",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "language_analyzer_nn",
             "include_in_all": false
           }
         }
@@ -358,9 +445,9 @@
           "match": "*._stemmed_fa",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
-            "analyzer": "language_analyzer_fa",
+            "analyzer": "persian",
             "include_in_all": false
           }
         }
@@ -370,9 +457,9 @@
           "match": "*._stemmed_pt",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
-            "analyzer": "language_analyzer_pt",
+            "analyzer": "portuguese",
             "include_in_all": false
           }
         }
@@ -382,9 +469,9 @@
           "match": "*._stemmed_ro",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
-            "analyzer": "language_analyzer_ro",
+            "analyzer": "romanian",
             "include_in_all": false
           }
         }
@@ -394,9 +481,21 @@
           "match": "*._stemmed_ru",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
-            "analyzer": "language_analyzer_ru",
+            "analyzer": "russian",
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_stemmed_ku": {
+          "match": "*._stemmed_ku",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "sorani",
             "include_in_all": false
           }
         }
@@ -406,9 +505,9 @@
           "match": "*._stemmed_es",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
-            "analyzer": "language_analyzer_es",
+            "analyzer": "spanish",
             "include_in_all": false
           }
         }
@@ -418,9 +517,9 @@
           "match": "*._stemmed_sv",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
-            "analyzer": "language_analyzer_sv",
+            "analyzer": "swedish",
             "include_in_all": false
           }
         }
@@ -430,9 +529,9 @@
           "match": "*._stemmed_tr",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
-            "analyzer": "language_analyzer_tr",
+            "analyzer": "turkish",
             "include_in_all": false
           }
         }
@@ -442,9 +541,9 @@
           "match": "*._stemmed_th",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
-            "analyzer": "language_analyzer_th",
+            "analyzer": "thai",
             "include_in_all": false
           }
         }
@@ -454,7 +553,7 @@
           "match": "_*",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
             "analyzer": "keywordlowercase",
             "ignore_above": 3072,
@@ -467,7 +566,7 @@
           "match": "*",
           "mapping": {
             "type": "string",
-            "store": "no",
+            "store": false,
             "index": "analyzed",
             "analyzer": "keywordlowercase",
             "ignore_above": 3072,

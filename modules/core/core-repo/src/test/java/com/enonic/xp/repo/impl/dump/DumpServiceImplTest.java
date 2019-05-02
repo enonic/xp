@@ -21,6 +21,7 @@ import com.google.common.collect.Sets;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.app.Applications;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ContentConstants;
@@ -37,7 +38,7 @@ import com.enonic.xp.dump.SystemDumpListener;
 import com.enonic.xp.dump.SystemDumpParams;
 import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.dump.SystemDumpUpgradeParams;
-import com.enonic.xp.dump.SystemDumpUpgradeResult;
+import com.enonic.xp.dump.DumpUpgradeResult;
 import com.enonic.xp.dump.SystemLoadListener;
 import com.enonic.xp.dump.SystemLoadParams;
 import com.enonic.xp.dump.SystemLoadResult;
@@ -111,7 +112,9 @@ public class DumpServiceImplTest
         this.dumpService.setNodeService( this.nodeService );
         this.dumpService.setRepositoryService( this.repositoryService );
         this.dumpService.setBasePath( tempFolder.getRoot().toPath() );
-        this.dumpService.setApplicationService( Mockito.mock( ApplicationService.class ) );
+        final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
+        Mockito.when( applicationService.getInstalledApplications() ).thenReturn( Applications.empty() );
+        this.dumpService.setApplicationService( applicationService );
     }
 
     @Test(expected = RepoDumpException.class)
@@ -701,7 +704,7 @@ public class DumpServiceImplTest
             final SystemDumpUpgradeParams params = SystemDumpUpgradeParams.create().
                 dumpName( "testDump" ).
                 build();
-            final SystemDumpUpgradeResult result = this.dumpService.upgrade( params );
+            final DumpUpgradeResult result = this.dumpService.upgrade( params );
             assertEquals( DumpConstants.MODEL_VERSION, result.getInitialVersion() );
             assertEquals( DumpConstants.MODEL_VERSION, result.getUpgradedVersion() );
         } );
@@ -722,7 +725,7 @@ public class DumpServiceImplTest
                 upgradeListener( upgradeListener ).
                 build();
 
-            final SystemDumpUpgradeResult result = this.dumpService.upgrade( params );
+            final DumpUpgradeResult result = this.dumpService.upgrade( params );
             assertEquals( new Version( 0, 0, 0 ), result.getInitialVersion() );
             assertEquals( DumpConstants.MODEL_VERSION, result.getUpgradedVersion() );
 

@@ -6,5 +6,5 @@ public interface DumpService
 
     SystemLoadResult load( final SystemLoadParams param );
 
-    SystemDumpUpgradeResult upgrade( final SystemDumpUpgradeParams params );
+    DumpUpgradeResult upgrade( final SystemDumpUpgradeParams params );
 }

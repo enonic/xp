@@ -14,7 +14,7 @@ public final class NashornHelper
 
     public static ScriptEngine getScriptEngine( final ClassLoader loader )
     {
-        return FACTORY.getScriptEngine( new String[]{"--global-per-engine", "-strict", "--language=es6", "--no-deprecation-warning"},
+        return FACTORY.getScriptEngine( new String[]{"--optimistic-types=false", "--global-per-engine", "-strict", "--language=es6", "--no-deprecation-warning"},
                                         loader );
     }
 

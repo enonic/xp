@@ -11,9 +11,11 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.Segment;
+import com.enonic.xp.dump.DumpUpgradeStepResult;
 import com.enonic.xp.json.ObjectMapperHelper;
 import com.enonic.xp.repo.impl.dump.RepoDumpException;
 import com.enonic.xp.repo.impl.dump.reader.FileDumpReader;
+import com.enonic.xp.util.Version;
 
 public abstract class AbstractDumpUpgrader
     implements DumpUpgrader
@@ -24,13 +26,25 @@ public abstract class AbstractDumpUpgrader
 
     protected ObjectMapper mapper = ObjectMapperHelper.create();
 
+    protected DumpUpgradeStepResult.Builder result;
+
     public AbstractDumpUpgrader( final Path basePath )
     {
         this.basePath = basePath;
     }
 
     @Override
-    public void upgrade( final String dumpName )
+    public DumpUpgradeStepResult upgrade( final String dumpName )
+    {
+        result = DumpUpgradeStepResult.create().
+            initialVersion( new Version( getModelVersion().getMajor() - 1 ) ).
+            upgradedVersion( getModelVersion() ).
+            stepName( getName() );
+        doUpgrade( dumpName );
+        return result.build();
+    }
+
+    protected void doUpgrade( final String dumpName )
     {
         dumpReader = new FileDumpReader( basePath, dumpName, null );
         mapper = ObjectMapperHelper.create();

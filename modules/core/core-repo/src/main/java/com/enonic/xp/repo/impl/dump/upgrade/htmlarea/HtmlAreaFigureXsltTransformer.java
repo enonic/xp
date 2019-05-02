@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.TransformerFactoryImpl;
 
+import com.enonic.xp.dump.DumpUpgradeStepResult;
+
 public class HtmlAreaFigureXsltTransformer
 {
     private final static Logger LOG = LoggerFactory.getLogger( HtmlAreaFigureXsltTransformer.class );
@@ -38,11 +40,23 @@ public class HtmlAreaFigureXsltTransformer
         }
     }
 
-    public String transform(final String propertyName, final String source )
+    public String transform( final String propertyName, final String source, final DumpUpgradeStepResult.Builder result )
     {
         try
         {
-            final StringReader reader = new StringReader( "<!DOCTYPE test [ <!ENTITY nbsp \"&#160;\">]><root>" + source + "</root>" );
+            final StringReader reader = new StringReader( "<!DOCTYPE test [ " +
+                                                              "<!ENTITY nbsp \"&#160;\">" +
+                                                              "<!ENTITY aring \"&#229;\">" +
+                                                              "<!ENTITY aelig \"&#230;\">" +
+                                                              "<!ENTITY oslash \"&#248;\">" +
+                                                              "<!ENTITY aelig \"&#230;\">" +
+                                                              "<!ENTITY ndash \"&#8211;\">" +
+                                                              "<!ENTITY lsquo \"&#8213;\">" +
+                                                              "<!ENTITY rsquo \"&#8217;\">" +
+                                                              "<!ENTITY ldquo \"&#8220;\">" +
+                                                              "<!ENTITY rdquo \"&#8221;\">" +
+                                                              "<!ENTITY hellip \"&#8230;\">" +
+                                                              "]><root>" + source + "</root>" );
             final StringWriter writer = new StringWriter();
             transformer.transform( new StreamSource( reader ), new StreamResult( writer ) );
             final String target = writer.toString();
@@ -50,7 +64,8 @@ public class HtmlAreaFigureXsltTransformer
         }
         catch ( Exception e )
         {
-            LOG.warn( "Failed to transform HTML Area property [{}]: {}", propertyName, e.getMessage() );
+            result.warning();
+            LOG.warn( "Failed to transform figures in HTML Area property [{}]: {}", propertyName, e.getMessage() );
             return source;
         }
     }
