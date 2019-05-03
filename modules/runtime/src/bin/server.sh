@@ -3,7 +3,7 @@
 DIRNAME=`dirname "$0"`
 PROGNAME=`basename "$0"`
 ARG1=$1
-ARGS=$@
+ARGS=("$@")
 
 XP_SCRIPT=$PROGNAME
 export XP_SCRIPT
@@ -88,7 +88,7 @@ init() {
 }
 
 run() {
-    exec "$JAVACMD" $JAVA_OPTS -Dxp.install="$XP_INSTALL" -Dfile.encoding=UTF8 -Dnashorn.args="--no-deprecation-warning" $XP_OPTS -Dmapper.allow_dots_in_name=true --add-opens java.base/java.net=ALL-UNNAMED --add-opens java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED -classpath "$XP_INSTALL/lib/*" com.enonic.xp.launcher.LauncherMain $ARGS
+    exec "$JAVACMD" $JAVA_OPTS -Dxp.install="$XP_INSTALL" -Dfile.encoding=UTF8 -Dnashorn.args="--no-deprecation-warning" $XP_OPTS -Dmapper.allow_dots_in_name=true --add-opens java.base/java.net=ALL-UNNAMED --add-opens java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED -classpath "$XP_INSTALL/lib/*" com.enonic.xp.launcher.LauncherMain "${ARGS[@]}"
 }
 
 main() {
