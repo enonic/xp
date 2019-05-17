@@ -13,9 +13,12 @@ import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
+import com.enonic.xp.content.ExtraData;
+import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.core.impl.content.ContentOutboundDependenciesIdsResolver;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.util.Reference;
 
@@ -37,6 +40,12 @@ public class ContentOutboundDependenciesIdsResolverTest
 
     private Content createContent( final String id, final PropertyTree data, final ContentTypeName contentTypeName )
     {
+        return this.createContent( id, data, contentTypeName, ExtraDatas.empty() );
+    }
+
+    private Content createContent( final String id, final PropertyTree data, final ContentTypeName contentTypeName,
+                                   final ExtraDatas extraDatas )
+    {
         return Content.create().
             id( ContentId.from( id ) ).
             data( data ).
@@ -46,6 +55,7 @@ public class ContentOutboundDependenciesIdsResolverTest
             creator( PrincipalKey.from( "user:system:admin" ) ).
             owner( PrincipalKey.from( "user:myStore:me" ) ).
             language( Locale.ENGLISH ).
+            extraDatas( extraDatas ).
             displayName( "My Content" ).
             modifier( PrincipalKey.from( "user:system:admin" ) ).
             type( contentTypeName ).
@@ -105,5 +115,37 @@ public class ContentOutboundDependenciesIdsResolverTest
 
         Assert.assertEquals( result.getSize(), 3 );
         Assert.assertTrue( result.contains( ContentId.from( "some-id" ) ) );
+    }
+
+    @Test
+    public void resolve_outbound_from_xdata()
+        throws Exception
+    {
+        final PropertyTree data = new PropertyTree();
+
+        final Content folderRefContent1 = createContent( "folderRefContent1", data, ContentTypeName.folder() );
+
+        final Content folderRefContent2 = createContent( "folderRefContent2", data, ContentTypeName.folder() );
+
+        final Content siteRefContent1 = createContent( "siteRefContent1", data, ContentTypeName.site() );
+
+        data.addReference( "myRef1", Reference.from( folderRefContent1.getId().toString() ) );
+        data.addReference( "myRef2", Reference.from( folderRefContent2.getId().toString() ) );
+        data.addReference( "myRef3", Reference.from( siteRefContent1.getId().toString() ) );
+        data.addReference( "refToMyself", Reference.from( "contentId" ) );
+
+        final Content content = createContent( "contentId", new PropertyTree(), ContentTypeName.site(),
+                                               ExtraDatas.create().add( new ExtraData( MixinName.from( "x-data" ), data ) ).build() );
+
+        Mockito.when( contentService.getByIds( Mockito.any() ) ).thenReturn(
+            Contents.from( folderRefContent1, folderRefContent2, siteRefContent1 ) );
+        Mockito.when( contentService.getById( content.getId() ) ).thenReturn( content );
+
+        final ContentIds result = resolver.resolve( content.getId() );
+
+        Assert.assertEquals( result.getSize(), 3 );
+        Assert.assertTrue( result.contains( folderRefContent1.getId() ) );
+        Assert.assertTrue( result.contains( folderRefContent2.getId() ) );
+        Assert.assertTrue( result.contains( siteRefContent1.getId() ) );
     }
 }
