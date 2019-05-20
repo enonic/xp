@@ -69,6 +69,10 @@ Licenses used by Enonic XP
     Common Development and Distribution License (CDDL) v.1.0
     https://javaee.github.io/javamail/LICENSE
 
+    Java Native Access
+    Apache License 2.0
+    https://github.com/java-native-access/jna/blob/master/LICENSE
+
     Metrics
     Apache License 2.0
     https://github.com/dropwizard/metrics/blob/4.0-development/LICENSE
@@ -85,6 +89,10 @@ Licenses used by Enonic XP
     Rest Easy
     Apache License 2.0
     https://github.com/resteasy/Resteasy/blob/master/License.html
+
+    Saxon-HE
+    Mozilla Public License 2.0
+    https://www.mozilla.org/en-US/MPL/2.0/
 
     SLF4J Libraries
     MIT License
