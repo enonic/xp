@@ -57,14 +57,6 @@ Licenses used by Enonic XP
     Apache License 2.0
     https://github.com/FasterXML/jackson-jaxrs-providers
 
-    JParSec
-    Apache License 2.0
-    https://github.com/jparsec/jparsec/blob/master/LICENSE
-
-    Logback Libraries
-    Eclipse Public License - Version 1.0
-    https://www.eclipse.org/legal/epl-v10.html
-
     JavaMail
     Common Development and Distribution License (CDDL) v.1.0
     https://javaee.github.io/javamail/LICENSE
@@ -72,6 +64,14 @@ Licenses used by Enonic XP
     Java Native Access
     Apache License 2.0
     https://github.com/java-native-access/jna/blob/master/LICENSE
+
+    JParSec
+    Apache License 2.0
+    https://github.com/jparsec/jparsec/blob/master/LICENSE
+
+    Logback Libraries
+    Eclipse Public License - Version 1.0
+    https://www.eclipse.org/legal/epl-v10.html
 
     Metrics
     Apache License 2.0
