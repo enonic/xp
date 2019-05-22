@@ -51,7 +51,7 @@ public class ApplicationResourceTest
 
         MultipartForm multipartForm = Mockito.mock( MultipartForm.class );
 
-        Mockito.when( this.applicationService.installGlobalApplication( Mockito.isA( ByteSource.class ), eq( fileName ), true ) ).thenReturn(
+        Mockito.when( this.applicationService.installGlobalApplication( Mockito.isA( ByteSource.class ), eq( fileName ), eq(true) ) ).thenReturn(
             application );
 
         Mockito.when( multipartForm.get( "file" ) ).thenReturn( multipartItem );
@@ -77,7 +77,7 @@ public class ApplicationResourceTest
 
         MultipartForm multipartForm = Mockito.mock( MultipartForm.class );
 
-        Mockito.when( this.applicationService.installGlobalApplication( Mockito.isA( ByteSource.class ), eq( "app-name" ), true ) ).thenThrow(
+        Mockito.when( this.applicationService.installGlobalApplication( Mockito.isA( ByteSource.class ), eq( "app-name" ), eq(true) ) ).thenThrow(
             new RuntimeException() );
 
         Mockito.when( multipartForm.get( "file" ) ).thenReturn( multipartItem );
