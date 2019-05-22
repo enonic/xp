@@ -29,7 +29,7 @@ public class AutoDeployerTest
     {
         this.deployer.activate( Maps.newHashMap() );
         this.deployer.deploy();
-        Mockito.verify( this.service, Mockito.times( 0 ) ).installGlobalApplication( Mockito.any(), true );
+        Mockito.verify( this.service, Mockito.times( 0 ) ).installGlobalApplication( Mockito.any(), Mockito.eq(true) );
     }
 
     @Test
@@ -42,6 +42,6 @@ public class AutoDeployerTest
         this.deployer.activate( config );
 
         this.deployer.deploy();
-        Mockito.verify( this.service, Mockito.times( 2 ) ).installGlobalApplication( Mockito.any(), true );
+        Mockito.verify( this.service, Mockito.times( 2 ) ).installGlobalApplication( Mockito.any(), Mockito.eq(true) );
     }
 }
