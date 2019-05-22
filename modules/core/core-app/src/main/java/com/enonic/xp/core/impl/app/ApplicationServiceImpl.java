@@ -104,9 +104,23 @@ public final class ApplicationServiceImpl
     }
 
     @Override
+    @Deprecated
+    public Application installGlobalApplication( final URL url )
+    {
+        return installGlobalApplication( url, true );
+    }
+
+    @Override
     public Application installGlobalApplication( final URL url, final boolean triggerEvent )
     {
         return ApplicationHelper.callWithContext( () -> doInstallGlobalApplicationFromUrl( url, triggerEvent ) );
+    }
+
+    @Override
+    @Deprecated
+    public Application installGlobalApplication( final ByteSource byteSource, final String applicationName )
+    {
+        return installGlobalApplication( byteSource, applicationName, true );
     }
 
     @Override
@@ -176,6 +190,13 @@ public final class ApplicationServiceImpl
     }
 
     @Override
+    @Deprecated
+    public Application installStoredApplication( final NodeId nodeId )
+    {
+        return installStoredApplication( nodeId, false, false );
+    }
+
+    @Override
     public Application installStoredApplication( final NodeId nodeId, final boolean start, final boolean triggerEvent )
     {
         return ApplicationHelper.callWithContext( () -> doInstallStoredApplication( nodeId, start, triggerEvent ) );
@@ -193,6 +214,13 @@ public final class ApplicationServiceImpl
         }
 
         return application;
+    }
+
+    @Override
+    @Deprecated
+    public void installAllStoredApplications()
+    {
+        installAllStoredApplications( false );
     }
 
     @Override

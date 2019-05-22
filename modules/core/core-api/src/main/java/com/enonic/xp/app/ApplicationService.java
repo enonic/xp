@@ -23,11 +23,20 @@ public interface ApplicationService
 
     void stopApplication( ApplicationKey key, final boolean triggerEvent );
 
+    @Deprecated
+    Application installGlobalApplication( final URL url );
+
     Application installGlobalApplication( final URL url, final boolean triggerEvent );
+
+    @Deprecated
+    Application installGlobalApplication( final ByteSource byteSource, final String applicationName);
 
     Application installGlobalApplication( final ByteSource byteSource, final String applicationName, final boolean triggerEvent );
 
     Application installLocalApplication( final ByteSource byteSource, final String applicationName );
+
+    @Deprecated
+    Application installStoredApplication( final NodeId nodeId);
 
     Application installStoredApplication( final NodeId nodeId, final boolean start, final boolean triggerEvent );
 
@@ -36,6 +45,9 @@ public interface ApplicationService
     void publishUninstalledEvent( final ApplicationKey key );
 
     void invalidate( ApplicationKey key );
+
+    @Deprecated
+    void installAllStoredApplications();
 
     void installAllStoredApplications( final boolean triggerEvent );
 }
