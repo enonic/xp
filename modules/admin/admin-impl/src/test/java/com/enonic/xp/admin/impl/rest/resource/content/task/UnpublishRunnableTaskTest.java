@@ -56,28 +56,64 @@ public class UnpublishRunnableTaskTest
         return task;
     }
 
-    @Test
-    public void create_message_multiple()
-        throws Exception
+    private void mockResult( final Set<String> ids, final UnpublishContentsResult unpublishResult,
+                             final CompareContentResults compareResults )
     {
-        final UnpublishContentsResult result = UnpublishContentsResult.create().
-            addUnpublished( contents.get( 0 ).getId() ).
-            addUnpublished( contents.get( 1 ).getId() ).
-            addUnpublished( contents.get( 2 ).getId() ).
-            build();
-
-        Set<String> ids = contents.stream().map( content -> content.getId().toString() ).collect( Collectors.toSet() );
-
-        final ArgumentCaptor<Integer> progressArgumentCaptor = ArgumentCaptor.forClass( Integer.class );
-
         Mockito.when( params.getIds() ).thenReturn( ids );
         Mockito.when( contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ) ) ).thenReturn( Contents.from( contents ) );
         Mockito.when( contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn(
             FindContentIdsByQueryResult.create().contents( ContentIds.from( ids ) ).build() );
-        Mockito.when( contentService.unpublishContent( Mockito.isA( UnpublishContentParams.class ) ) ).thenReturn( result );
+        Mockito.when( contentService.unpublishContent( Mockito.isA( UnpublishContentParams.class ) ) ).thenReturn( unpublishResult );
         Mockito.when( contentService.compare( Mockito.isA( CompareContentsParams.class ) ) ).
-            thenReturn(
-                CompareContentResults.create().add( new CompareContentResult( CompareStatus.EQUAL, ContentId.from( "id4" ) ) ).build() );
+            thenReturn( compareResults );
+    }
+
+    private String mockSingleAndRunTask( final boolean deleted )
+    {
+        final Set<String> ids = Collections.singleton( contents.get( 0 ).getId().toString() );
+        final UnpublishContentsResult.Builder unpublishResultBuilder = UnpublishContentsResult.create().
+            addUnpublished( contents.get( 0 ).getId() ).
+            setContentPath( contents.get( 0 ).getPath() );
+        if ( deleted )
+        {
+            unpublishResultBuilder.addDeleted( contents.get( 0 ).getId() );
+        }
+        final UnpublishContentsResult unpublishResult = unpublishResultBuilder.build();
+        final CompareContentResults compareResults = CompareContentResults.create().build();
+
+        mockResult( ids, unpublishResult, compareResults );
+
+        createAndRunTask();
+
+        Mockito.verify( progressReporter, Mockito.times( 2 ) ).info( contentQueryArgumentCaptor.capture() );
+
+        return contentQueryArgumentCaptor.getAllValues().get( 1 );
+    }
+
+    private String mockMultipleAndRunTask( final boolean deleted, final boolean deleteAll )
+    {
+        final Set<String> ids = contents.stream().map( content -> content.getId().toString() ).collect( Collectors.toSet() );
+        final UnpublishContentsResult.Builder unpublishResultBuilder = UnpublishContentsResult.create().
+            addUnpublished( contents.get( 0 ).getId() ).
+            addUnpublished( contents.get( 1 ).getId() ).
+            addUnpublished( contents.get( 2 ).getId() );
+        if ( deleted )
+        {
+            if ( deleteAll )
+            {
+                unpublishResultBuilder.addDeleted( contents.get( 0 ).getId() );
+                unpublishResultBuilder.addDeleted( contents.get( 1 ).getId() );
+            }
+            unpublishResultBuilder.addDeleted( contents.get( 2 ).getId() );
+            unpublishResultBuilder.setContentPath( contents.get( 2 ).getPath() );
+        }
+        final UnpublishContentsResult unpublishResult = unpublishResultBuilder.build();
+        final CompareContentResults compareResults =
+            CompareContentResults.create().add( new CompareContentResult( CompareStatus.EQUAL, ContentId.from( "id4" ) ) ).build();
+
+        final ArgumentCaptor<Integer> progressArgumentCaptor = ArgumentCaptor.forClass( Integer.class );
+
+        mockResult( ids, unpublishResult, compareResults );
 
         final UnpublishRunnableTask task = createAndRunTask();
         task.createTaskResult();
@@ -87,55 +123,71 @@ public class UnpublishRunnableTaskTest
         Mockito.verify( taskService, Mockito.times( 1 ) ).submitTask( Mockito.isA( RunnableTask.class ),
                                                                       Mockito.eq( "Unpublish content" ) );
 
-        final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
-
         Assert.assertEquals( 4, progressArgumentCaptor.getValue().intValue() );
-        Assert.assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"3 items are unpublished\"}", resultMessage );
+
+        return contentQueryArgumentCaptor.getAllValues().get( 1 );
+    }
+
+    private String mockMultipleAndRunTask( final boolean deleted )
+    {
+        return mockMultipleAndRunTask( deleted, false );
+    }
+
+    @Test
+    public void create_message_multiple()
+        throws Exception
+    {
+        final String resultMessage = mockMultipleAndRunTask( false );
+
+        Assert.assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"3 items are unpublished.\"}", resultMessage );
+    }
+
+    @Test
+    public void create_message_multiple_and_single_deleted()
+        throws Exception
+    {
+        final String resultMessage = mockMultipleAndRunTask( true );
+
+        Assert.assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"3 items are unpublished ( \\\"content3\\\" deleted ).\"}",
+                             resultMessage );
+    }
+
+    @Test
+    public void create_message_multiple_and_all_deleted()
+        throws Exception
+    {
+        final String resultMessage = mockMultipleAndRunTask( true, true );
+
+        Assert.assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"3 items are unpublished ( 3 deleted ).\"}", resultMessage );
     }
 
     @Test
     public void create_message_single()
         throws Exception
     {
-        final UnpublishContentsResult result = UnpublishContentsResult.create().
-            addUnpublished( contents.get( 0 ).getId() ).
-            setContentPath( contents.get( 0 ).getPath() ).
-            build();
-
-        Set<String> ids = Collections.singleton( contents.get( 0 ).getId().toString() );
-
-        Mockito.when( params.getIds() ).thenReturn( ids );
-        Mockito.when( contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ) ) ).thenReturn( Contents.from( contents ) );
-        Mockito.when( contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn(
-            FindContentIdsByQueryResult.create().contents( ContentIds.from( ids ) ).build() );
-        Mockito.when( contentService.unpublishContent( Mockito.isA( UnpublishContentParams.class ) ) ).thenReturn( result );
-        Mockito.when( contentService.compare( Mockito.isA( CompareContentsParams.class ) ) ).
-            thenReturn( CompareContentResults.create().build() );
-
-        createAndRunTask();
-
-        Mockito.verify( progressReporter, Mockito.times( 2 ) ).info( contentQueryArgumentCaptor.capture() );
-
-        final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
+        final String resultMessage = mockSingleAndRunTask( false );
 
         Assert.assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"Item \\\"content1\\\" is unpublished.\"}", resultMessage );
+    }
+
+    @Test
+    public void create_message_single_deleted()
+        throws Exception
+    {
+        final String resultMessage = mockSingleAndRunTask( true );
+
+        Assert.assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"Item \\\"content1\\\" is deleted.\"}", resultMessage );
     }
 
     @Test
     public void create_message_none()
         throws Exception
     {
-        final UnpublishContentsResult result = UnpublishContentsResult.create().build();
+        final Set<String> ids = Collections.emptySet();
+        final UnpublishContentsResult unpublishResult = UnpublishContentsResult.create().build();
+        final CompareContentResults compareResults = CompareContentResults.create().build();
 
-        Set<String> ids = Collections.emptySet();
-
-        Mockito.when( params.getIds() ).thenReturn( ids );
-        Mockito.when( contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ) ) ).thenReturn( Contents.from( contents ) );
-        Mockito.when( contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn(
-            FindContentIdsByQueryResult.create().contents( ContentIds.from( ids ) ).build() );
-        Mockito.when( contentService.unpublishContent( Mockito.isA( UnpublishContentParams.class ) ) ).thenReturn( result );
-        Mockito.when( contentService.compare( Mockito.isA( CompareContentsParams.class ) ) ).
-            thenReturn( CompareContentResults.create().build() );
+        mockResult( ids, unpublishResult, compareResults );
 
         createAndRunTask();
 

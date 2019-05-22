@@ -74,17 +74,22 @@ public class UnpublishContentCommand
             addUnpublished( contentIds );
 
         draftContext.callWith( () -> {
-            resultBuilder.setContentPath( this.getContent( contentIds.first() ).getPath() );
+            final Nodes draftNodes = this.nodeService.getByIds( NodeIds.from( contentIds.asStrings() ) );
+            final ContentIds deletedIds = ContentIds.from( draftNodes.stream().
+                filter( draftNode -> draftNode.getNodeState().value().equalsIgnoreCase( ContentState.PENDING_DELETE.toString() ) ).
+                map( draftNode -> ContentId.from( draftNode.toString() ) ).
+                collect( Collectors.toList() ) );
+            resultBuilder.addDeleted( deletedIds );
 
-            if ( contentIds.getSize() > 1 )
+            if ( deletedIds.getSize() == 1 )
             {
-                final Nodes draftNodes = this.nodeService.getByIds( NodeIds.from( contentIds.asStrings() ) );
-                final ContentIds deletedIds = ContentIds.from( draftNodes.stream().
-                    filter( draftNode -> draftNode.getNodeState().value().equalsIgnoreCase( ContentState.PENDING_DELETE.toString() ) ).
-                    map( draftNode -> ContentId.from( draftNode.toString() ) ).
-                    collect( Collectors.toList() ) );
-                resultBuilder.addDeleted( deletedIds );
+                resultBuilder.setContentPath( this.getContent( deletedIds.first() ).getPath() );
             }
+            else if ( contentIds.getSize() == 1 )
+            {
+                resultBuilder.setContentPath( this.getContent( contentIds.first() ).getPath() );
+            }
+
             return null;
         } );
 
