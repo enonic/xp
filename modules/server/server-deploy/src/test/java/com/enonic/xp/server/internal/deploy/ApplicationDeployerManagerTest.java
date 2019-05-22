@@ -56,7 +56,7 @@ public class ApplicationDeployerManagerTest
         deployDirectoryWatcher.setApplicationService( applicationService );
 
         applicationDeployerManager.activate();
-        Mockito.verify( applicationService ).installAllStoredApplications(true);
+        Mockito.verify( applicationService ).installAllStoredApplications(false);
         Mockito.verify( applicationService ).installGlobalApplication( new URL( "http://localhost/url1" ), true );
     }
 }
