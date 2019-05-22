@@ -138,8 +138,6 @@ public final class ApplicationServiceImpl
 
         LOG.info( "Global Application [{}] installed successfully", application.getKey() );
 
-        publishInstalledEvent( application );
-
         if ( checkApplicationValidity( application ) )
         {
             doStartApplication( application.getKey(), true );
