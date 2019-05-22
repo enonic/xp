@@ -28,6 +28,11 @@ public class HasUnpublishedChildrenCommand
     {
         final Node parentNode = doGetById( parent );
 
+        if ( parentNode == null )
+        {
+            return false;
+        }
+
         final SearchResult result = nodeSearchService.query( NodeVersionDiffQuery.create().
             source( ContextAccessor.current().getBranch() ).
             target( target ).
