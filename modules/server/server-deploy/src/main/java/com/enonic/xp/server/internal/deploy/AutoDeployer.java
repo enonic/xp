@@ -58,7 +58,7 @@ public final class AutoDeployer
 
     private void doDeploy( final URL url )
     {
-        this.applicationService.installGlobalApplication( url );
+        this.applicationService.installGlobalApplication( url, true );
     }
 
     @Reference

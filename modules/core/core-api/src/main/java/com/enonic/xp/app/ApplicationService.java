@@ -23,13 +23,13 @@ public interface ApplicationService
 
     void stopApplication( ApplicationKey key, final boolean triggerEvent );
 
-    Application installGlobalApplication( final URL url );
+    Application installGlobalApplication( final URL url, final boolean triggerEvent );
 
-    Application installGlobalApplication( final ByteSource byteSource, final String applicationName );
+    Application installGlobalApplication( final ByteSource byteSource, final String applicationName, final boolean triggerEvent );
 
     Application installLocalApplication( final ByteSource byteSource, final String applicationName );
 
-    Application installStoredApplication( final NodeId nodeId );
+    Application installStoredApplication( final NodeId nodeId, final boolean triggerEvent );
 
     void uninstallApplication( final ApplicationKey key, final boolean triggerEvent );
 
@@ -37,5 +37,5 @@ public interface ApplicationService
 
     void invalidate( ApplicationKey key );
 
-    void installAllStoredApplications();
+    void installAllStoredApplications( final boolean triggerEvent );
 }

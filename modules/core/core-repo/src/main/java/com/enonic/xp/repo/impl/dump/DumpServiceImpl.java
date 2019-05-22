@@ -329,7 +329,7 @@ public class DumpServiceImpl
     private void initApplications()
     {
         LOG.info( "Install global applications" );
-        NodeHelper.runAsAdmin( () -> applicationService.installAllStoredApplications() );
+        NodeHelper.runAsAdmin( () -> applicationService.installAllStoredApplications(true) );
     }
 
     private void initializeSystemRepo( final SystemLoadParams params, final FileDumpReader dumpReader,

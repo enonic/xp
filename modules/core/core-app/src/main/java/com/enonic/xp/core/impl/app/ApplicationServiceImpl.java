@@ -104,13 +104,13 @@ public final class ApplicationServiceImpl
     }
 
     @Override
-    public Application installGlobalApplication( final URL url )
+    public Application installGlobalApplication( final URL url, final boolean triggerEvent )
     {
         return ApplicationHelper.callWithContext( () -> doInstallGlobalApplicationFromUrl( url ) );
     }
 
     @Override
-    public Application installGlobalApplication( final ByteSource byteSource, final String applicationName )
+    public Application installGlobalApplication( final ByteSource byteSource, final String applicationName, final boolean triggerEvent )
     {
         return ApplicationHelper.callWithContext( () -> {
             try
@@ -178,7 +178,7 @@ public final class ApplicationServiceImpl
     }
 
     @Override
-    public Application installStoredApplication( final NodeId nodeId )
+    public Application installStoredApplication( final NodeId nodeId, final boolean triggerEvent )
     {
         return ApplicationHelper.callWithContext( () -> doInstallStoredApplication( nodeId ) );
     }
@@ -197,9 +197,10 @@ public final class ApplicationServiceImpl
         return application;
     }
 
-    public void installAllStoredApplications()
+    @Override
+    public void installAllStoredApplications(final boolean triggerEvent)
     {
-        ApplicationHelper.runWithContext( this::doInstallStoredApplications );
+        ApplicationHelper.runWithContext( () -> doInstallStoredApplications() );
     }
 
     private void doInstallStoredApplications()

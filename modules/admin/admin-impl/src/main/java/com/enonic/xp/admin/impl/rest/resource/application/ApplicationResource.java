@@ -395,7 +395,7 @@ public final class ApplicationResource
 
         try
         {
-            final Application application = this.applicationService.installGlobalApplication( url );
+            final Application application = this.applicationService.installGlobalApplication( url, true );
 
             result.setApplicationInstalledJson( new ApplicationInstalledJson( application, false, iconUrlResolver ) );
         }
@@ -415,7 +415,7 @@ public final class ApplicationResource
 
         try
         {
-            final Application application = this.applicationService.installGlobalApplication( byteSource, applicationName );
+            final Application application = this.applicationService.installGlobalApplication( byteSource, applicationName, true );
 
             result.setApplicationInstalledJson( new ApplicationInstalledJson( application, false, iconUrlResolver ) );
         }

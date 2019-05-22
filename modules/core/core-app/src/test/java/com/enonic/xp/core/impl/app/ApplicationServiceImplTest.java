@@ -196,7 +196,7 @@ public class ApplicationServiceImplTest
 
         final ByteSource byteSource = createBundleSource( bundleName );
 
-        final Application application = this.service.installGlobalApplication( byteSource, bundleName );
+        final Application application = this.service.installGlobalApplication( byteSource, bundleName, true );
 
         assertNotNull( application );
         assertEquals( bundleName, application.getKey().getName() );
@@ -226,7 +226,7 @@ public class ApplicationServiceImplTest
 
         final ByteSource byteSource = createBundleSource( bundleName, false );
 
-        this.service.installGlobalApplication( byteSource, bundleName );
+        this.service.installGlobalApplication( byteSource, bundleName, true );
     }
 
     @Test
@@ -303,13 +303,13 @@ public class ApplicationServiceImplTest
 
         final Application originalApplication =
             this.service.installGlobalApplication( ByteSource.wrap( ByteStreams.toByteArray( newBundle( bundleName, true, "1.0.0" ).
-                build() ) ), bundleName );
+                build() ) ), bundleName, true );
 
         mockRepoGetNode( node, bundleName );
 
         final Application updatedApplication =
             this.service.installGlobalApplication( ByteSource.wrap( ByteStreams.toByteArray( newBundle( bundleName, true, "1.0.1" ).
-                build() ) ), bundleName );
+                build() ) ), bundleName, true );
 
         assertEquals( "1.0.0", originalApplication.getVersion().toString() );
         assertEquals( "1.0.1", updatedApplication.getVersion().toString() );
@@ -358,7 +358,7 @@ public class ApplicationServiceImplTest
     public void install_stored_application_not_found()
         throws Exception
     {
-        this.service.installStoredApplication( NodeId.from( "dummy" ) );
+        this.service.installStoredApplication( NodeId.from( "dummy" ), false );
     }
 
     @Test
@@ -378,7 +378,7 @@ public class ApplicationServiceImplTest
         Mockito.when( this.repoService.getApplicationSource( node.id() ) ).
             thenReturn( createBundleSource( bundleName ) );
 
-        final Application application = this.service.installStoredApplication( node.id() );
+        final Application application = this.service.installStoredApplication( node.id(), false );
 
         assertNotNull( application );
         assertEquals( bundleName, application.getKey().getName() );
@@ -406,7 +406,7 @@ public class ApplicationServiceImplTest
         Mockito.when( this.repoService.getApplicationSource( node.id() ) ).
             thenReturn( createBundleSource( bundleName ) );
 
-        final Application application = this.service.installStoredApplication( node.id() );
+        final Application application = this.service.installStoredApplication( node.id(), false );
 
         this.service.uninstallApplication( application.getKey(), true );
 
@@ -466,7 +466,7 @@ public class ApplicationServiceImplTest
 
         final Application originalApplication =
             this.service.installGlobalApplication( ByteSource.wrap( ByteStreams.toByteArray( newBundle( bundleName, true, "1.0.0" ).
-                build() ) ), bundleName );
+                build() ) ), bundleName, true );
 
         assertFalse( this.service.isLocalApplication( originalApplication.getKey() ) );
 
@@ -510,7 +510,7 @@ public class ApplicationServiceImplTest
 
         final Application originalApplication =
             this.service.installGlobalApplication( ByteSource.wrap( ByteStreams.toByteArray( newBundle( bundleName, true, "1.0.0" ).
-                build() ) ), bundleName );
+                build() ) ), bundleName, true );
 
         final ApplicationKey applicationKey = originalApplication.getKey();
 
@@ -562,7 +562,7 @@ public class ApplicationServiceImplTest
             thenReturn( null ).
             thenReturn( applicationNode );
 
-        this.service.installGlobalApplication( byteSource, bundleName );
+        this.service.installGlobalApplication( byteSource, bundleName, true );
 
         assertTrue( this.service.isLocalApplication( application.getKey() ) );
 
