@@ -78,6 +78,7 @@ public class UnpublishRunnableTask
                 build() );
 
             final ContentIds unpublishedContents = result.getUnpublishedContents();
+            final ContentIds deleted = result.getDeletedContents();
 
             if ( unpublishedContents.getSize() == 1 )
             {
@@ -86,6 +87,14 @@ public class UnpublishRunnableTask
             else
             {
                 resultBuilder.succeeded( result.getUnpublishedContents() );
+            }
+            if ( deleted.getSize() == 1 )
+            {
+                resultBuilder.deleted( result.getContentPath() );
+            }
+            else
+            {
+                resultBuilder.deleted( deleted );
             }
         }
         catch ( Exception e )

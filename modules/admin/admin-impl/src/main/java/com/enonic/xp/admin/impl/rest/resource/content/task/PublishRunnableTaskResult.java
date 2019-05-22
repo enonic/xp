@@ -8,12 +8,10 @@ import com.google.common.collect.Lists;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 
-
 public class PublishRunnableTaskResult
     extends RunnableTaskResult
 {
     private final List<ContentPath> deleted;
-
 
     private PublishRunnableTaskResult( Builder builder )
     {

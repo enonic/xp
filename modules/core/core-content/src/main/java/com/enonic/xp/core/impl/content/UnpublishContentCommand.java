@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 
@@ -71,14 +72,21 @@ public class UnpublishContentCommand
 
         final UnpublishContentsResult.Builder resultBuilder = UnpublishContentsResult.create().
             addUnpublished( contentIds );
-        if ( contentIds.getSize() == 1 )
-        {
 
-            draftContext.callWith( () -> {
-                resultBuilder.setContentPath( this.getContent( contentIds.first() ).getPath() );
-                return null;
-            } );
-        }
+        draftContext.callWith( () -> {
+            resultBuilder.setContentPath( this.getContent( contentIds.first() ).getPath() );
+
+            if ( contentIds.getSize() > 1 )
+            {
+                final Nodes draftNodes = this.nodeService.getByIds( NodeIds.from( contentIds.asStrings() ) );
+                final ContentIds deletedIds = ContentIds.from( draftNodes.stream().
+                    filter( draftNode -> draftNode.getNodeState().value().equalsIgnoreCase( ContentState.PENDING_DELETE.toString() ) ).
+                    map( draftNode -> ContentId.from( draftNode.toString() ) ).
+                    collect( Collectors.toList() ) );
+                resultBuilder.addDeleted( deletedIds );
+            }
+            return null;
+        } );
 
         final UnpublishContentsResult result = resultBuilder.build();
 
