@@ -496,7 +496,7 @@ public class ApplicationResourceTest
         throws Exception
     {
         final Application application = createApplication();
-        Mockito.when( this.applicationService.installGlobalApplication( new URL( application.getUrl() ) ) ).thenReturn( application );
+        Mockito.when( this.applicationService.installGlobalApplication( new URL( application.getUrl() ), true ) ).thenReturn( application );
 
         String response = request().
             path( "application/installUrl" ).
@@ -558,7 +558,7 @@ public class ApplicationResourceTest
         Mockito.when( form.get( "file" ) ).thenReturn( file );
         Mockito.when( this.multipartService.parse( Mockito.any() ) ).thenReturn( form );
 
-        Mockito.when( this.applicationService.installGlobalApplication( file.getBytes(), "file.jar" ) ).thenThrow( new RuntimeException() );
+        Mockito.when( this.applicationService.installGlobalApplication( file.getBytes(), "file.jar", true ) ).thenThrow( new RuntimeException() );
 
         String response = request().
             path( "application/install" ).multipart( "file", "file.jar", new byte[]{0, 1, 2}, MediaType.MULTIPART_FORM_DATA_TYPE ).
@@ -582,7 +582,7 @@ public class ApplicationResourceTest
 
         final Application application = createApplication();
 
-        Mockito.when( this.applicationService.installGlobalApplication( file.getBytes(), "file.jar" ) ).thenReturn( application );
+        Mockito.when( this.applicationService.installGlobalApplication( file.getBytes(), "file.jar", true ) ).thenReturn( application );
 
         String response = request().
             path( "application/install" ).multipart( "file", "file.jar", new byte[]{0, 1, 2}, MediaType.MULTIPART_FORM_DATA_TYPE ).

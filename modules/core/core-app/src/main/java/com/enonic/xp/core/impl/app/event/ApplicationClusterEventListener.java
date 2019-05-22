@@ -61,7 +61,7 @@ public class ApplicationClusterEventListener
 
         if ( valueAs.isPresent() )
         {
-            ApplicationHelper.runAsAdmin( () -> this.applicationService.installStoredApplication( NodeId.from( valueAs.get() ) ) );
+            ApplicationHelper.runAsAdmin( () -> this.applicationService.installStoredApplication( NodeId.from( valueAs.get() ), false ) );
         }
     }
 

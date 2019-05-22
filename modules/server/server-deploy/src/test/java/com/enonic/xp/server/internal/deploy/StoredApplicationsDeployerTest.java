@@ -24,6 +24,6 @@ public class StoredApplicationsDeployerTest
     public void deploy()
     {
         this.deployer.deploy();
-        Mockito.verify( this.applicationService, Mockito.times( 1 ) ).installAllStoredApplications();
+        Mockito.verify( this.applicationService, Mockito.times( 1 ) ).installAllStoredApplications(true);
     }
 }

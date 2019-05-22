@@ -45,7 +45,7 @@ public class ApplicationClusterEventListenerTest
         Mockito.when( application.getKey() ).
             thenReturn( ApplicationKey.from( "appKey" ) );
 
-        Mockito.when( applicationService.installStoredApplication( node.id() ) ).
+        Mockito.when( applicationService.installStoredApplication( node.id(), false ) ).
             thenReturn( application );
 
         this.applicationClusterEventListener.onEvent( Event.create( ApplicationClusterEvents.EVENT_TYPE ).

@@ -12,7 +12,7 @@ public final class StoredApplicationsDeployer
 
     public void deploy()
     {
-        DeployHelper.runAsAdmin( () -> applicationService.installAllStoredApplications() );
+        DeployHelper.runAsAdmin( () -> applicationService.installAllStoredApplications(false) );
     }
 
     @Reference
