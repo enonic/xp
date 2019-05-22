@@ -358,7 +358,7 @@ public class ApplicationServiceImplTest
     public void install_stored_application_not_found()
         throws Exception
     {
-        this.service.installStoredApplication( NodeId.from( "dummy" ), false );
+        this.service.installStoredApplication( NodeId.from( "dummy" ), false, false );
     }
 
     @Test
@@ -378,7 +378,7 @@ public class ApplicationServiceImplTest
         Mockito.when( this.repoService.getApplicationSource( node.id() ) ).
             thenReturn( createBundleSource( bundleName ) );
 
-        final Application application = this.service.installStoredApplication( node.id(), false );
+        final Application application = this.service.installStoredApplication( node.id(), false, false );
 
         assertNotNull( application );
         assertEquals( bundleName, application.getKey().getName() );
@@ -406,7 +406,7 @@ public class ApplicationServiceImplTest
         Mockito.when( this.repoService.getApplicationSource( node.id() ) ).
             thenReturn( createBundleSource( bundleName ) );
 
-        final Application application = this.service.installStoredApplication( node.id(), false );
+        final Application application = this.service.installStoredApplication( node.id(), false, false );
 
         this.service.uninstallApplication( application.getKey(), true );
 

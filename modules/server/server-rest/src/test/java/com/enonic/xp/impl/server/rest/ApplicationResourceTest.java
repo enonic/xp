@@ -133,7 +133,7 @@ public class ApplicationResourceTest
     {
         Application application = createApplication( "ftp://enonic.jar" );
 
-        Mockito.when( this.applicationService.installGlobalApplication( new URL( application.getUrl() ) ) ).thenReturn( application );
+        Mockito.when( this.applicationService.installGlobalApplication( new URL( application.getUrl() ), true ) ).thenReturn( application );
 
         String jsonString = request().path( "app/installUrl" ).
             entity( "{\"URL\":\"" + application.getUrl() + "\"}", MediaType.APPLICATION_JSON_TYPE ).

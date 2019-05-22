@@ -29,7 +29,7 @@ public interface ApplicationService
 
     Application installLocalApplication( final ByteSource byteSource, final String applicationName );
 
-    Application installStoredApplication( final NodeId nodeId, final boolean triggerEvent );
+    Application installStoredApplication( final NodeId nodeId, final boolean start, final boolean triggerEvent );
 
     void uninstallApplication( final ApplicationKey key, final boolean triggerEvent );
 

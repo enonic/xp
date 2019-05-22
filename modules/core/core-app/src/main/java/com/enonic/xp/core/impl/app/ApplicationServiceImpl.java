@@ -176,18 +176,18 @@ public final class ApplicationServiceImpl
     }
 
     @Override
-    public Application installStoredApplication( final NodeId nodeId, final boolean triggerEvent )
+    public Application installStoredApplication( final NodeId nodeId, final boolean start, final boolean triggerEvent )
     {
-        return ApplicationHelper.callWithContext( () -> doInstallStoredApplication( nodeId, triggerEvent ) );
+        return ApplicationHelper.callWithContext( () -> doInstallStoredApplication( nodeId, start, triggerEvent ) );
     }
 
-    private Application doInstallStoredApplication( final NodeId nodeId, final boolean triggerEvent )
+    private Application doInstallStoredApplication( final NodeId nodeId, final boolean start, final boolean triggerEvent )
     {
         final Application application = doInstallApplication( nodeId, true, triggerEvent );
 
         LOG.info( "Stored application [{}] installed successfully", application.getKey() );
 
-        if ( checkApplicationValidity( application ) )
+        if ( start && checkApplicationValidity( application ) )
         {
             doStartApplication( application.getKey(), false );
         }
