@@ -106,7 +106,7 @@ public final class ApplicationServiceImpl
     @Override
     public Application installGlobalApplication( final URL url, final boolean triggerEvent )
     {
-        return ApplicationHelper.callWithContext( () -> doInstallGlobalApplicationFromUrl( url ) );
+        return ApplicationHelper.callWithContext( () -> doInstallGlobalApplicationFromUrl( url, triggerEvent ) );
     }
 
     @Override
@@ -115,7 +115,7 @@ public final class ApplicationServiceImpl
         return ApplicationHelper.callWithContext( () -> {
             try
             {
-                return doInstallGlobalApplication( byteSource );
+                return doInstallGlobalApplication( byteSource, triggerEvent );
             }
             catch ( ApplicationInstallException e )
             {
@@ -125,16 +125,16 @@ public final class ApplicationServiceImpl
 
     }
 
-    private Application doInstallGlobalApplicationFromUrl( final URL url )
+    private Application doInstallGlobalApplicationFromUrl( final URL url, final boolean triggerEvent )
     {
         final ByteSource byteSource = loadApplication( url, true );
 
-        return this.doInstallGlobalApplication( byteSource );
+        return this.doInstallGlobalApplication( byteSource, triggerEvent );
     }
 
-    private Application doInstallGlobalApplication( final ByteSource byteSource )
+    private Application doInstallGlobalApplication( final ByteSource byteSource, final boolean triggerEvent )
     {
-        final Application application = installOrUpdateApplication( byteSource, true );
+        final Application application = installOrUpdateApplication( byteSource, true, triggerEvent );
 
         LOG.info( "Global Application [{}] installed successfully", application.getKey() );
 
@@ -165,7 +165,7 @@ public final class ApplicationServiceImpl
 
     private Application doInstallLocalApplication( final ByteSource byteSource )
     {
-        final Application application = installOrUpdateApplication( byteSource, false );
+        final Application application = installOrUpdateApplication( byteSource, false, false );
 
         LOG.info( "Local application [{}] installed successfully", application.getKey() );
 
@@ -180,12 +180,12 @@ public final class ApplicationServiceImpl
     @Override
     public Application installStoredApplication( final NodeId nodeId, final boolean triggerEvent )
     {
-        return ApplicationHelper.callWithContext( () -> doInstallStoredApplication( nodeId ) );
+        return ApplicationHelper.callWithContext( () -> doInstallStoredApplication( nodeId, triggerEvent ) );
     }
 
-    private Application doInstallStoredApplication( final NodeId nodeId )
+    private Application doInstallStoredApplication( final NodeId nodeId, final boolean triggerEvent )
     {
-        final Application application = doInstallApplication( nodeId, true );
+        final Application application = doInstallApplication( nodeId, true, triggerEvent );
 
         LOG.info( "Stored application [{}] installed successfully", application.getKey() );
 
@@ -198,12 +198,12 @@ public final class ApplicationServiceImpl
     }
 
     @Override
-    public void installAllStoredApplications(final boolean triggerEvent)
+    public void installAllStoredApplications( final boolean triggerEvent )
     {
-        ApplicationHelper.runWithContext( () -> doInstallStoredApplications() );
+        ApplicationHelper.runWithContext( () -> doInstallStoredApplications( triggerEvent ) );
     }
 
-    private void doInstallStoredApplications()
+    private void doInstallStoredApplications( final boolean triggerEvent )
     {
         LOG.info( "Searching for installed applications" );
 
@@ -215,7 +215,7 @@ public final class ApplicationServiceImpl
         {
             try
             {
-                final Application installedApp = doInstallApplication( applicationNode.id(), true );
+                final Application installedApp = doInstallApplication( applicationNode.id(), true, triggerEvent );
 
                 LOG.info( "Stored application [{}] installed successfully", installedApp.getKey() );
 
@@ -247,24 +247,23 @@ public final class ApplicationServiceImpl
         }
 
         doUninstallApplication( application );
+        if ( triggerEvent )
+        {
+            this.eventPublisher.publish( ApplicationClusterEvents.uninstalled( application.getKey() ) );
+        }
 
         final Boolean local = localApplicationSet.remove( key );
 
-        if ( Boolean.TRUE.equals( local) )
+        if ( Boolean.TRUE.equals( local ) )
         {
             try
             {
-                reinstallGlobalApplicationIfExists( key, application );
+                reinstallGlobalApplicationIfExists( key, application, triggerEvent );
             }
             catch ( Exception e )
             {
                 LOG.warn( "Cannot reinstall global application [{}]", application.getKey(), e );
             }
-        }
-
-        if ( triggerEvent )
-        {
-            this.eventPublisher.publish( ApplicationClusterEvents.uninstalled( application.getKey() ) );
         }
     }
 
@@ -278,18 +277,19 @@ public final class ApplicationServiceImpl
     public void publishUninstalledEvent( final ApplicationKey applicationKey )
     {
         final Node node = this.repoService.getApplicationNode( applicationKey );
-        if (node != null) {
+        if ( node != null )
+        {
             this.eventPublisher.publish( ApplicationClusterEvents.uninstalled( applicationKey ) );
         }
     }
 
-    private void reinstallGlobalApplicationIfExists( final ApplicationKey key, final Application application )
+    private void reinstallGlobalApplicationIfExists( final ApplicationKey key, final Application application, final boolean triggerEvent )
     {
         final Node applicationNode = this.repoService.getApplicationNode( key );
 
         if ( applicationNode != null )
         {
-            final Application installedApplication = doInstallApplication( applicationNode.id(), true );
+            final Application installedApplication = doInstallApplication( applicationNode.id(), true, triggerEvent );
 
             LOG.info( "Application [{}] installed successfully", application.getKey() );
 
@@ -328,7 +328,7 @@ public final class ApplicationServiceImpl
         try
         {
             final Version systemVersion = getSystemVersion();
-            if ( !application.includesSystemVersion( systemVersion )  )
+            if ( !application.includesSystemVersion( systemVersion ) )
             {
                 throw new ApplicationInvalidVersionException( application, systemVersion );
             }
@@ -372,7 +372,7 @@ public final class ApplicationServiceImpl
         }
     }
 
-    private Application doInstallApplication( final NodeId nodeId, final boolean global )
+    private Application doInstallApplication( final NodeId nodeId, final boolean global, final boolean triggerEvent )
     {
         final ByteSource byteSource = this.repoService.getApplicationSource( nodeId );
 
@@ -381,7 +381,7 @@ public final class ApplicationServiceImpl
             throw new ApplicationInstallException( "Cannot install application with id [" + nodeId + "], source not found" );
         }
 
-        return installOrUpdateApplication( byteSource, global );
+        return installOrUpdateApplication( byteSource, global, triggerEvent );
     }
 
     private void doUninstallApplication( final Application application )
@@ -408,7 +408,7 @@ public final class ApplicationServiceImpl
         }
     }
 
-    private Application installOrUpdateApplication( final ByteSource byteSource, final boolean global )
+    private Application installOrUpdateApplication( final ByteSource byteSource, final boolean global, final boolean triggerEvent )
     {
         final ApplicationKey applicationKey = getApplicationKey( byteSource );
 
@@ -432,6 +432,11 @@ public final class ApplicationServiceImpl
         else if ( global )
         {
             repoService.createApplicationNode( application, byteSource );
+        }
+
+        if ( triggerEvent )
+        {
+            publishInstalledEvent( application );
         }
 
         return application;
