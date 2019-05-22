@@ -247,7 +247,7 @@ public final class ApplicationServiceImpl
 
                 if ( storedApplicationIsStarted( applicationNode ) && checkApplicationValidity( installedApp ) )
                 {
-                    doStartApplication( installedApp.getKey(), false );
+                    doStartApplication( installedApp.getKey(), triggerEvent );
                 }
             }
             catch ( Exception e )
