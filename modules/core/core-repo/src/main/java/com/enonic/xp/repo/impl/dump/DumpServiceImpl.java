@@ -13,6 +13,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.app.ApplicationInstallationParams;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
@@ -177,7 +178,9 @@ public class DumpServiceImpl
     private void initApplications()
     {
         LOG.info( "Install global applications" );
-        NodeHelper.runAsAdmin( () -> applicationService.installAllStoredApplications() );
+        final ApplicationInstallationParams params = ApplicationInstallationParams.create().
+            build();
+        NodeHelper.runAsAdmin( () -> applicationService.installAllStoredApplications(params) );
     }
 
     private void initializeSystemRepo( final SystemLoadParams params, final FileDumpReader dumpReader,
