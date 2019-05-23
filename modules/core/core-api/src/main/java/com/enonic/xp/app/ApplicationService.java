@@ -29,7 +29,10 @@ public interface ApplicationService
 
     Application installLocalApplication( final ByteSource byteSource, final String applicationName );
 
+    @Deprecated
     Application installStoredApplication( final NodeId nodeId );
+
+    Application installStoredApplication( final NodeId nodeId, final ApplicationInstallationParams params );
 
     void uninstallApplication( final ApplicationKey key, final boolean triggerEvent );
 
@@ -37,5 +40,8 @@ public interface ApplicationService
 
     void invalidate( ApplicationKey key );
 
+    @Deprecated
     void installAllStoredApplications();
+
+    void installAllStoredApplications(final ApplicationInstallationParams params);
 }
