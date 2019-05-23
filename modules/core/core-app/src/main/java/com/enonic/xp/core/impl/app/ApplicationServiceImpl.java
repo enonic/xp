@@ -135,7 +135,7 @@ public final class ApplicationServiceImpl
     {
         final Application application = installOrUpdateApplication( byteSource, true );
 
-        LOG.info( "Application [{}] installed successfully", application.getKey() );
+        LOG.info( "Global Application [{}] installed successfully", application.getKey() );
 
         publishInstalledEvent( application );
 
@@ -163,7 +163,7 @@ public final class ApplicationServiceImpl
     {
         final Application application = installOrUpdateApplication( byteSource, false );
 
-        LOG.info( "Application [{}] installed successfully", application.getKey() );
+        LOG.info( "Local application [{}] installed successfully", application.getKey() );
 
         doStartApplication( application.getKey(), false );
 
@@ -180,7 +180,7 @@ public final class ApplicationServiceImpl
     {
         final Application application = doInstallApplication( nodeId, true );
 
-        LOG.info( "Application [{}] installed successfully", application.getKey() );
+        LOG.info( "Stored application [{}] installed successfully", application.getKey() );
 
         doStartApplication( application.getKey(), false );
 
@@ -202,17 +202,16 @@ public final class ApplicationServiceImpl
 
         for ( final Node applicationNode : applicationNodes )
         {
-            final Application installedApp;
             try
             {
-                installedApp = doInstallApplication( applicationNode.id(), true );
+                final Application installedApp = doInstallApplication( applicationNode.id(), true );
+
+                LOG.info( "Stored application [{}] installed successfully", installedApp.getKey() );
 
                 if ( storedApplicationIsStarted( applicationNode ) )
                 {
                     doStartApplication( installedApp.getKey(), false );
                 }
-
-                LOG.info( "Application [{}] installed successfully", installedApp.getKey() );
             }
             catch ( Exception e )
             {
@@ -240,22 +239,37 @@ public final class ApplicationServiceImpl
 
         final Boolean local = localApplicationSet.remove( key );
 
-        if ( local )
+        if ( Boolean.TRUE.equals( local) )
         {
-            reinstallGlobalApplicationIfExists( key, application );
+            try
+            {
+                reinstallGlobalApplicationIfExists( key, application );
+            }
+            catch ( Exception e )
+            {
+                LOG.warn( "Cannot reinstall global application [{}]", application.getKey(), e );
+            }
         }
 
         if ( triggerEvent )
         {
             this.eventPublisher.publish( ApplicationClusterEvents.uninstalled( application.getKey() ) );
         }
-
     }
 
     private void publishInstalledEvent( final Application application )
     {
         final Node node = this.repoService.getApplicationNode( application.getKey() );
         this.eventPublisher.publish( ApplicationClusterEvents.installed( node ) );
+    }
+
+    @Override
+    public void publishUninstalledEvent( final ApplicationKey applicationKey )
+    {
+        final Node node = this.repoService.getApplicationNode( applicationKey );
+        if (node != null) {
+            this.eventPublisher.publish( ApplicationClusterEvents.uninstalled( applicationKey ) );
+        }
     }
 
     private void reinstallGlobalApplicationIfExists( final ApplicationKey key, final Application application )
@@ -315,6 +329,7 @@ public final class ApplicationServiceImpl
         try
         {
             application.getBundle().stop();
+            LOG.info( "Application [{}] stopped successfully", application.getKey() );
         }
         catch ( final Exception e )
         {
@@ -340,6 +355,7 @@ public final class ApplicationServiceImpl
 
         try
         {
+            LOG.info( "Application [{}] uninstalled successfully", application.getKey() );
             bundle.uninstall();
         }
         catch ( BundleException e )
@@ -443,7 +459,7 @@ public final class ApplicationServiceImpl
     private boolean storedApplicationIsStarted( final Node node )
     {
         final PropertyTree data = node.data();
-        return data.getBoolean( ApplicationPropertyNames.STARTED );
+        return Boolean.TRUE.equals( data.getBoolean( ApplicationPropertyNames.STARTED ) );
     }
 
     private boolean applicationBundleInstalled( final ApplicationKey applicationKey )
