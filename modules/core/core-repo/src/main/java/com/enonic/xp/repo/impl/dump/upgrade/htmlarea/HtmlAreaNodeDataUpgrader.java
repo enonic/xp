@@ -59,8 +59,6 @@ public class HtmlAreaNodeDataUpgrader
 
     private static final String STRING_PROPERTY_TYPE_NAME = "String";
 
-    private HtmlAreaFigureXsltTransformer figureXsltTransformer = new HtmlAreaFigureXsltTransformer();
-
     private Set<Reference> references;
 
     private NodeVersion nodeVersion;
@@ -325,6 +323,5 @@ public class HtmlAreaNodeDataUpgrader
             return sb.toString();
         }
         return value;
-        // return figureXsltTransformer.transform( propertyName, value, result );
     }
 }

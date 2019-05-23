@@ -90,10 +90,6 @@ Licenses used by Enonic XP
     Apache License 2.0
     https://github.com/resteasy/Resteasy/blob/master/License.html
 
-    Saxon-HE
-    Mozilla Public License 2.0
-    https://www.mozilla.org/en-US/MPL/2.0/
-
     SLF4J Libraries
     MIT License
     http://slf4j.org/license.html
