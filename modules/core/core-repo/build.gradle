@@ -10,4 +10,7 @@ dependencies {
 
 bundle {
     instruction 'Bundle-Name', 'Enonic XP Core - Repo'
+
+    //Temporary export until refactoring
+    instruction 'Export-Package', 'com.enonic.xp.repo.impl.branch;-split-package:=first'
 }
