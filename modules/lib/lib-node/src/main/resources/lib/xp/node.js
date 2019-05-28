@@ -56,7 +56,6 @@ function argsToStringArray(argsArray) {
  *
  * @returns {*} native Native repo-connection object.
  * @constructor
- * @private
  */
 function RepoConnection(repoConnection) {
     this.repoConnection = repoConnection;
@@ -67,7 +66,6 @@ function RepoConnection(repoConnection) {
  *
  * @returns {*} native Native multirepo-connection object.
  * @constructor
- * @private
  */
 function MultiRepoConnection(multiRepoConnection) {
     this.multiRepoConnection = multiRepoConnection;
