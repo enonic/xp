@@ -80,8 +80,7 @@ public class ImageServiceImpl
     private boolean renderAsSourceGif( final ReadImageParams params )
     {
         final boolean noScale =
-            ( params.getScaleParams() == null || "full".equals( params.getScaleParams().getName() ) ) && !params.isScaleSquare() &&
-                !params.isScaleWidth();
+            ( params.getScaleParams() == null || "full".equals( params.getScaleParams().getName() ) ) && !params.isScaleSquare();
         final boolean noCropping = params.getCropping() == null;
         final boolean noFilter = params.getFilterParam() == null;
         final boolean isGifFormat = "gif".equals( params.getFormat() );
