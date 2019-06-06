@@ -94,6 +94,12 @@ public final class ExtraDatas
             return this;
         }
 
+        public Builder addAll( final Collection<ExtraData> value )
+        {
+            set.addAll( value );
+            return this;
+        }
+
         public ExtraDatas build()
         {
             return new ExtraDatas( set );
