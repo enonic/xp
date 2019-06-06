@@ -53,7 +53,9 @@ public class ImageServiceImpl
         throws IOException
     {
         final Path cachedImagePath = getCachedImagePath( readImageParams );
-        ByteSource imageByteSource = ImmutableFilesHelper.computeIfAbsent( cachedImagePath, () -> createImage( readImageParams ) );
+
+        ByteSource imageByteSource = ImmutableFilesHelper.computeIfAbsent( cachedImagePath, () -> createImage( readImageParams ),
+                                                                           ( blob ) -> !isGifImage( readImageParams, blob ) );
         return imageByteSource;
     }
 
@@ -87,6 +89,11 @@ public class ImageServiceImpl
         final boolean isGifFormat = "gif".equals( params.getFormat() );
 
         return isGifFormat && noScale && noCropping && noFilter;
+    }
+
+    private boolean isGifImage( final ReadImageParams params, final ByteSource blob )
+    {
+        return renderAsSourceGif( params ) && isGifImage( blob );
     }
 
     private boolean isGifImage( final ByteSource blob )

@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Function;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
@@ -25,7 +26,9 @@ public class ImmutableFilesHelper
     private static final Map<Path, Condition> CONDITION_MAP = new HashMap<>();
 
 
-    public static <E extends Exception> ByteSource computeIfAbsent( Path path, SupplierWithException<? extends ByteSource, E> supplier )
+    public static <E extends Exception> ByteSource computeIfAbsent( final Path path,
+                                                                    final SupplierWithException<? extends ByteSource, E> supplier,
+                                                                    final Function<ByteSource, Boolean> createNewSource )
         throws E, IOException
     {
         Preconditions.checkNotNull( path, "path is required" );
@@ -46,7 +49,7 @@ public class ImmutableFilesHelper
             {
                 byteSource = supplier.get();
 
-                if ( byteSource != null )
+                if ( byteSource != null && createNewSource.apply( byteSource ) )
                 {
                     File parentFile = file.getParentFile();
                     if ( !parentFile.exists() )
