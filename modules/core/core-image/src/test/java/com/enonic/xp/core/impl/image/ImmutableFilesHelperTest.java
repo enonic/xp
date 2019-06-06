@@ -40,12 +40,17 @@ public class ImmutableFilesHelperTest
             return ByteSource.wrap( bytes );
         };
 
-        ByteSource byteSource = ImmutableFilesHelper.computeIfAbsent( path, supplier );
+        ByteSource byteSource = ImmutableFilesHelper.computeIfAbsent( path, supplier, blob -> false );
         Assert.assertTrue( supplierCall == 1 );
         Assert.assertTrue( source.contentEquals( byteSource ) );
+        Assert.assertFalse( path.toFile().exists() );
 
-        byteSource = ImmutableFilesHelper.computeIfAbsent( path, supplier );
-        Assert.assertTrue( supplierCall == 1 );
+        byteSource = ImmutableFilesHelper.computeIfAbsent( path, supplier, blob -> true );
+        Assert.assertTrue( supplierCall == 2 );
+        Assert.assertTrue( source.contentEquals( byteSource ) );
+
+        byteSource = ImmutableFilesHelper.computeIfAbsent( path, supplier, blob -> true );
+        Assert.assertTrue( supplierCall == 2 );
         Assert.assertTrue( source.contentEquals( byteSource ) );
     }
 
@@ -56,7 +61,7 @@ public class ImmutableFilesHelperTest
         Path path = Paths.get( temporaryFolder.getRoot().toString(), "unknown_file.txt" );
         SupplierWithException<ByteSource, Exception> supplier = () -> null;
 
-        ByteSource byteSource = ImmutableFilesHelper.computeIfAbsent( path, supplier );
+        ByteSource byteSource = ImmutableFilesHelper.computeIfAbsent( path, supplier, blob -> true );
         Assert.assertNull( byteSource );
     }
 }
