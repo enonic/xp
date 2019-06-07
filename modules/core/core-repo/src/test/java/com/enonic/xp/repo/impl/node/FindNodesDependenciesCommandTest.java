@@ -1,8 +1,11 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.Set;
+
 import org.junit.Before;
 import org.junit.Test;
 
+import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
@@ -43,6 +46,27 @@ public class FindNodesDependenciesCommandTest
             execute();
 
         assertEquals( "Should contain [node1_1(r),node1_1_1(r), contains " + dependants.getAsStrings(), 2, dependants.getSize() );
+    }
+
+    @Test
+    public void several_layers_of_dependencies_stopped_by_status()
+        throws Exception
+    {
+        final Node node1 = createNodeWithReference( "n1", NodePath.ROOT, "n1_1" );
+        final Node node1_1 = createNodeWithReference( "n1_1", node1.path(), "n1_1_1" );
+        createNodeWithReference( "n1_1_1", node1_1.path(), null );
+
+        final NodeIds dependants = FindNodesDependenciesCommand.create().
+            recursive( true ).
+            nodeIds( NodeIds.from( node1.id() ) ).
+            indexServiceInternal( this.indexServiceInternal ).
+            searchService( this.searchService ).
+            storageService( this.storageService ).
+            statusesToStopRecursiveSearch( Set.of( CompareStatus.EQUAL ) ).
+            build().
+            execute();
+
+        assertEquals( "Should contain 'node1_1', contains " + dependants.getAsStrings(), 1, dependants.getSize() );
     }
 
     @Test
