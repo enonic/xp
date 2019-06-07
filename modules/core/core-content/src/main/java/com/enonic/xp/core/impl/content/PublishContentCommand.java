@@ -32,8 +32,6 @@ import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RoutableNodeVersionId;
 import com.enonic.xp.node.RoutableNodeVersionIds;
-import com.enonic.xp.security.User;
-import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public class PublishContentCommand
     extends AbstractContentCommand
@@ -50,8 +48,6 @@ public class PublishContentCommand
     private final ContentPublishInfo contentPublishInfo;
 
     private final boolean includeDependencies;
-
-    private final boolean resolveSyncWork = true;
 
     private final PublishContentResult.Builder resultBuilder;
 
@@ -82,21 +78,8 @@ public class PublishContentCommand
     {
         this.nodeService.refresh( RefreshMode.ALL );
 
-        final CompareContentResults results;
+        final CompareContentResults results = getSyncWork();
 
-        if ( resolveSyncWork )
-        {
-            results = getSyncWork();
-        }
-        else
-        {
-            results = CompareContentsCommand.create().
-                contentIds( this.contentIds ).
-                nodeService( this.nodeService ).
-                target( this.target ).
-                build().
-                execute();
-        }
         if ( pushContentListener != null )
         {
             pushContentListener.contentResolved( results.size() );

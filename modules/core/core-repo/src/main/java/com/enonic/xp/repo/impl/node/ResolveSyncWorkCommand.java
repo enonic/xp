@@ -51,6 +51,8 @@ public class ResolveSyncWorkCommand
 
     private final Function<NodeIds, NodeIds> initialDiffFilter;
 
+    private final Set<CompareStatus> statusesToStopDependenciesSearch;
+
     private static final Logger LOG = LoggerFactory.getLogger( ResolveSyncWorkCommand.class );
 
     private ResolveSyncWorkCommand( final Builder builder )
@@ -63,6 +65,7 @@ public class ResolveSyncWorkCommand
         this.excludedIds = builder.excludedIds;
         this.includeDependencies = builder.includeDependencies;
         this.initialDiffFilter = builder.initialDiffFilter;
+        this.statusesToStopDependenciesSearch = builder.statusesToStopDependenciesSearch;
 
         final Node publishRootNode = doGetById( builder.nodeId );
 
@@ -174,6 +177,8 @@ public class ResolveSyncWorkCommand
             nodeIds( initialDiff ).
             excludedIds( excludedIds ).
             recursive( true ).
+            statusesToStopRecursiveSearch( statusesToStopDependenciesSearch ).
+            target( target ).
             build().
             execute();
     }
@@ -377,6 +382,8 @@ public class ResolveSyncWorkCommand
 
         private Function<NodeIds, NodeIds> initialDiffFilter;
 
+        private Set<CompareStatus> statusesToStopDependenciesSearch;
+
         private Builder()
         {
         }
@@ -417,6 +424,12 @@ public class ResolveSyncWorkCommand
         public Builder initialDiffFilter( final Function<NodeIds, NodeIds> initialDiffFilter )
         {
             this.initialDiffFilter = initialDiffFilter;
+            return this;
+        }
+
+        public Builder statusesToStopDependenciesSearch( final Set<CompareStatus> statusesToStopDependenciesSearch )
+        {
+            this.statusesToStopDependenciesSearch = statusesToStopDependenciesSearch;
             return this;
         }
 
