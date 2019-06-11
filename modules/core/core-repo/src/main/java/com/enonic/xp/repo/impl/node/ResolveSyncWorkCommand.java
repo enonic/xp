@@ -173,12 +173,25 @@ public class ResolveSyncWorkCommand
 
     private NodeIds getNodeDependencies( final NodeIds initialDiff )
     {
+
         return FindNodesDependenciesCommand.create( this ).
             nodeIds( initialDiff ).
             excludedIds( excludedIds ).
             recursive( true ).
-            statusesToStopRecursiveSearch( statusesToStopDependenciesSearch ).
-            target( target ).
+            recursionFilter( nodeIds -> {
+                final NodeIds.Builder filteredNodeIds = NodeIds.create();
+                final NodeComparisons currentLevelNodeComparisons = CompareNodesCommand.create().
+                    nodeIds( nodeIds ).
+                    target( target ).
+                    storageService( this.nodeStorageService ).
+                    build().
+                    execute();
+                nodeIds.stream().
+                    filter( nodeId -> !statusesToStopDependenciesSearch.contains( currentLevelNodeComparisons.get( nodeId ).
+                        getCompareStatus() ) ).
+                    forEach( filteredNodeIds::add );
+                return filteredNodeIds.build();
+            } ).
             build().
             execute();
     }

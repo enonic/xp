@@ -1,14 +1,14 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.Set;
-
 import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.xp.content.CompareStatus;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeComparisons;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
@@ -62,7 +62,19 @@ public class FindNodesDependenciesCommandTest
             indexServiceInternal( this.indexServiceInternal ).
             searchService( this.searchService ).
             storageService( this.storageService ).
-            statusesToStopRecursiveSearch( Set.of( CompareStatus.EQUAL ) ).
+            recursionFilter( nodeIds -> {
+                final NodeIds.Builder filteredNodeIds = NodeIds.create();
+                final NodeComparisons currentLevelNodeComparisons = CompareNodesCommand.create().
+                    nodeIds( nodeIds ).
+                    storageService( this.storageService ).
+                    target( ContextAccessor.current().getBranch() ).
+                    build().
+                    execute();
+                nodeIds.stream().
+                    filter( nodeId -> !CompareStatus.EQUAL.equals( currentLevelNodeComparisons.get( nodeId ).getCompareStatus() ) ).
+                    forEach( filteredNodeIds::add );
+                return filteredNodeIds.build();
+            } ).
             build().
             execute();
 
