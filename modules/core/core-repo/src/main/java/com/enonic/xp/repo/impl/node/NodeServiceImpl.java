@@ -689,6 +689,7 @@ public class NodeServiceImpl
             includeChildren( params.isIncludeChildren() ).
             includeDependencies( params.isIncludeDependencies() ).
             initialDiffFilter( params.getInitialDiffFilter() ).
+            statusesToStopDependenciesSearch( params.getStatusesToStopDependenciesSearch() ).
             indexServiceInternal( indexServiceInternal ).
             storageService( this.nodeStorageService ).
             searchService( this.nodeSearchService ).
