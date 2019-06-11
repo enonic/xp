@@ -1,15 +1,13 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.branch.Branch;
-import com.enonic.xp.content.CompareStatus;
+import net.sf.cglib.core.internal.Function;
+
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.node.NodeComparisons;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
@@ -33,18 +31,15 @@ public class FindNodesDependenciesCommand
 
     private final boolean recursive;
 
-    private final Branch target;
-
-    private final Set<CompareStatus> statusesToStopRecursiveSearch;
+    private final Function<NodeIds, NodeIds> recursionFilter;
 
     private FindNodesDependenciesCommand( final Builder builder )
     {
         super( builder );
         recursive = builder.recursive;
+        recursionFilter = builder.recursionFilter;
         nodeIds = builder.nodeIds.build();
         excludedIds = builder.excludedIds.build();
-        target = builder.target;
-        statusesToStopRecursiveSearch = builder.statusesToStopRecursiveSearch;
     }
 
     public static Builder create()
@@ -88,21 +83,12 @@ public class FindNodesDependenciesCommand
 
         if ( this.recursive )
         {
-            final NodeIds currentLevelDependencies = builder.build();
-
-            final NodeComparisons currentLevelNodeComparisons = CompareNodesCommand.create().
-                nodeIds( currentLevelDependencies ).
-                target( target ).
-                storageService( this.nodeStorageService ).
-                build().
-                execute();
-
-            final List<NodeId> nextLevelRoot = currentLevelDependencies.stream().filter(
-                nodeId -> !statusesToStopRecursiveSearch.contains( currentLevelNodeComparisons.get( nodeId ).
-                    getCompareStatus() ) ).
-                collect( Collectors.toList() );
-
-            builder.addAll( resolveDependencies( NodeIds.from( nextLevelRoot ) ) );
+            NodeIds currentLevelDependencies = builder.build();
+            if ( recursionFilter != null )
+            {
+                currentLevelDependencies = recursionFilter.apply( currentLevelDependencies );
+            }
+            builder.addAll( resolveDependencies( currentLevelDependencies ) );
         }
 
         return builder.build();
@@ -150,11 +136,9 @@ public class FindNodesDependenciesCommand
 
         private NodeIds.Builder excludedIds = NodeIds.create();
 
-        private Branch target = ContextAccessor.current().getBranch();
-
-        private Set<CompareStatus> statusesToStopRecursiveSearch = Sets.newHashSet();
-
         private boolean recursive;
+
+        private Function<NodeIds, NodeIds> recursionFilter = null;
 
         private Builder()
         {
@@ -183,18 +167,9 @@ public class FindNodesDependenciesCommand
             return this;
         }
 
-        public Builder target( final Branch target )
+        public Builder recursionFilter( final Function<NodeIds, NodeIds> val )
         {
-            this.target = target;
-            return this;
-        }
-
-        public Builder statusesToStopRecursiveSearch( final Set<CompareStatus> statusesToStopRecursiveSearch )
-        {
-            if ( statusesToStopRecursiveSearch != null )
-            {
-                this.statusesToStopRecursiveSearch.addAll( statusesToStopRecursiveSearch );
-            }
+            recursionFilter = val;
             return this;
         }
 
