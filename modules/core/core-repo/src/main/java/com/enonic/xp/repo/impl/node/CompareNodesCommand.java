@@ -8,12 +8,12 @@ import com.google.common.collect.Sets;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.InternalContext;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
-import com.enonic.xp.repo.impl.InternalContext;
 
 public class CompareNodesCommand
     extends AbstractCompareNodeCommand

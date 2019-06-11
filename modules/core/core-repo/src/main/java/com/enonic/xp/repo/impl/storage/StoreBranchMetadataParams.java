@@ -1,9 +1,9 @@
 package com.enonic.xp.repo.impl.storage;
 
 import com.enonic.xp.blob.NodeVersionKey;
+import com.enonic.xp.context.InternalContext;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeVersionId;
-import com.enonic.xp.repo.impl.InternalContext;
 
 public class StoreBranchMetadataParams
 {

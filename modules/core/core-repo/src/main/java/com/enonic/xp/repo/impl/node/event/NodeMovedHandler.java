@@ -3,9 +3,9 @@ package com.enonic.xp.repo.impl.node.event;
 import java.util.List;
 import java.util.Map;
 
+import com.enonic.xp.context.InternalContext;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.storage.NodeMovedParams;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
 

@@ -3,12 +3,12 @@ package com.enonic.xp.repo.impl.node;
 import java.time.Instant;
 
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.InternalContext;
 import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
-import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.storage.StoreNodeVersionParams;
 
 public class LoadNodeVersionCommand

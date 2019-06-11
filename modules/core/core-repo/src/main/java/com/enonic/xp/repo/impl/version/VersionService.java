@@ -2,10 +2,10 @@ package com.enonic.xp.repo.impl.version;
 
 import java.util.Collection;
 
+import com.enonic.xp.context.InternalContext;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
-import com.enonic.xp.repo.impl.InternalContext;
 
 public interface VersionService
 {

@@ -2,9 +2,9 @@ package com.enonic.xp.repo.impl.node.dao;
 
 import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.blob.NodeVersionKeys;
+import com.enonic.xp.context.InternalContext;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersions;
-import com.enonic.xp.repo.impl.InternalContext;
 
 public interface NodeVersionService
 {

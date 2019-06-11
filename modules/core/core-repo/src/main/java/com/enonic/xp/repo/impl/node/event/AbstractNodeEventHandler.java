@@ -6,10 +6,10 @@ import java.util.Map;
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.context.InternalContext;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repository.RepositoryId;
 
 abstract class AbstractNodeEventHandler

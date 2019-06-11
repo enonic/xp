@@ -10,6 +10,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.util.concurrent.Striped;
 
+import com.enonic.xp.context.InternalContext;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeBranchEntries;
@@ -22,7 +23,6 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.query.filter.IdFilter;
 import com.enonic.xp.query.filter.ValueFilter;
-import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.SingleRepoStorageSource;

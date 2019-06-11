@@ -3,6 +3,7 @@ package com.enonic.xp.repo.impl.storage;
 
 import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.context.InternalContext;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
@@ -19,7 +20,6 @@ import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.PushNodeEntries;
 import com.enonic.xp.node.PushNodesListener;
 import com.enonic.xp.node.RoutableNodeVersionIds;
-import com.enonic.xp.repo.impl.InternalContext;
 
 public interface NodeStorageService
 {

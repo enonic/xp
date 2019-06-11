@@ -3,9 +3,10 @@ package com.enonic.xp.repo.impl.commit;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.commit.CommitService;
+import com.enonic.xp.context.InternalContext;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeCommitId;
-import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.StorageSource;
 import com.enonic.xp.repo.impl.commit.storage.CommitIndexPath;

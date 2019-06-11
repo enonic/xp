@@ -1,7 +1,7 @@
 package com.enonic.xp.repo.impl.branch.storage;
 
+import com.enonic.xp.context.InternalContext;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.StorageSource;
 import com.enonic.xp.repo.impl.storage.DeleteRequest;
 import com.enonic.xp.repo.impl.storage.StaticStorageType;

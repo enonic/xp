@@ -8,12 +8,12 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.context.InternalContext;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersionId;
-import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.ReturnValues;
 import com.enonic.xp.repo.impl.branch.storage.BranchIndexPath;
 import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;

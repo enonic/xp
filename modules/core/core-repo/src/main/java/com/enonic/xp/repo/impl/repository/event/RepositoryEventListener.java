@@ -4,9 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.InternalContext;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
-import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.RepositoryEvents;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.repository.RepositoryService;

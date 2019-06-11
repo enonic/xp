@@ -1,12 +1,12 @@
 package com.enonic.xp.repo.impl.branch;
 
+import com.enonic.xp.context.InternalContext;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
-import com.enonic.xp.repo.impl.InternalContext;
 
 public interface BranchService
 {

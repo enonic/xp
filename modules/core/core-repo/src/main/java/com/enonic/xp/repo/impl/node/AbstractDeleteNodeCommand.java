@@ -5,6 +5,7 @@ import java.util.List;
 import com.google.common.collect.Iterables;
 
 import com.enonic.xp.context.Context;
+import com.enonic.xp.context.InternalContext;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.DeleteNodeListener;
 import com.enonic.xp.node.FindNodesByParentResult;
@@ -15,7 +16,6 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.security.acl.Permission;
 

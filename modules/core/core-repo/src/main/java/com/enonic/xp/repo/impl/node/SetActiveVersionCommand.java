@@ -1,11 +1,11 @@
 package com.enonic.xp.repo.impl.node;
 
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.InternalContext;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodeVersionId;
-import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.security.acl.Permission;
 
 public class SetActiveVersionCommand

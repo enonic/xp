@@ -4,11 +4,11 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.InternalContext;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersionMetadata;
-import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
 
 class CompareStatusResolver

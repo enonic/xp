@@ -3,9 +3,9 @@ package com.enonic.xp.repo.impl.node;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.InternalContext;
 import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.node.Nodes;
-import com.enonic.xp.repo.impl.InternalContext;
 
 public class GetNodesByPathsCommand
     extends AbstractNodeCommand

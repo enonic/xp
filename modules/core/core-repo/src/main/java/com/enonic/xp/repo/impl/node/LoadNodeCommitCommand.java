@@ -3,8 +3,8 @@ package com.enonic.xp.repo.impl.node;
 import java.time.Instant;
 
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.InternalContext;
 import com.enonic.xp.node.NodeCommitId;
-import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.storage.StoreNodeCommitParams;
 import com.enonic.xp.security.PrincipalKey;
 

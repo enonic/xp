@@ -2,10 +2,10 @@ package com.enonic.xp.repo.impl.branch.storage;
 
 import java.util.Collection;
 
+import com.enonic.xp.context.InternalContext;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.StorageSource;
 import com.enonic.xp.repo.impl.cache.PathCache;
