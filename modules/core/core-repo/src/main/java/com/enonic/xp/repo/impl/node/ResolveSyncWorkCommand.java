@@ -178,7 +178,7 @@ public class ResolveSyncWorkCommand
             nodeIds( initialDiff ).
             excludedIds( excludedIds ).
             recursive( true ).
-            recursionFilter( nodeIds -> {
+            recursionFilter( statusesToStopDependenciesSearch == null ? null : nodeIds -> {
                 final NodeIds.Builder filteredNodeIds = NodeIds.create();
                 final NodeComparisons currentLevelNodeComparisons = CompareNodesCommand.create().
                     nodeIds( nodeIds ).
