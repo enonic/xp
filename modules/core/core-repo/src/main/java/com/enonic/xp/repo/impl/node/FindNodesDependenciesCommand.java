@@ -1,11 +1,10 @@
 package com.enonic.xp.repo.impl.node;
 
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Sets;
-
-import net.sf.cglib.core.internal.Function;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.NodeId;
