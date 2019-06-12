@@ -24,6 +24,18 @@ public class MediaTypesTest
         Assert.assertNotNull( mediaTypes.fromExt( "html" ) );
         assertEquals( "text/html", mediaTypes.fromExt( "html" ).toString() );
 
+        Assert.assertNotNull( mediaTypes.fromExt( "js" ) );
+        assertEquals( "application/javascript", mediaTypes.fromExt( "js" ).toString() );
+
+        Assert.assertNotNull( mediaTypes.fromExt( "es" ) );
+        assertEquals( "application/javascript", mediaTypes.fromExt( "es" ).toString() );
+
+        Assert.assertNotNull( mediaTypes.fromExt( "es6" ) );
+        assertEquals( "application/javascript", mediaTypes.fromExt( "es6" ).toString() );
+
+        Assert.assertNotNull( mediaTypes.fromExt( "mjs" ) );
+        assertEquals( "application/javascript", mediaTypes.fromExt( "mjs" ).toString() );
+
         Assert.assertNotNull( mediaTypes.fromExt( "any" ) );
         assertEquals( "application/octet-stream", mediaTypes.fromExt( "any" ).toString() );
     }
