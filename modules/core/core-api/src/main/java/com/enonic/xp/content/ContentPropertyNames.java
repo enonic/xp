@@ -86,4 +86,10 @@ public class ContentPropertyNames
     public static final String MODIFIED_TIME = "modifiedTime";
 
     public static final String PROCESSED_REFERENCES = "processedReferences";
+
+    public static final String WORKFLOW_INFO = "workflow";
+
+    public static final String WORKFLOW_INFO_STATE = "state";
+
+    public static final String WORKFLOW_INFO_CHECKS = "checks";
 }

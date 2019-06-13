@@ -24,6 +24,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.CreateContentTranslatorParams;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.UpdateContentTranslatorParams;
+import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.icon.Thumbnail;
@@ -56,6 +57,9 @@ import static com.enonic.xp.content.ContentPropertyNames.PUBLISH_INFO;
 import static com.enonic.xp.content.ContentPropertyNames.PUBLISH_TO;
 import static com.enonic.xp.content.ContentPropertyNames.TYPE;
 import static com.enonic.xp.content.ContentPropertyNames.VALID;
+import static com.enonic.xp.content.ContentPropertyNames.WORKFLOW_INFO;
+import static com.enonic.xp.content.ContentPropertyNames.WORKFLOW_INFO_STATE;
+import static com.enonic.xp.content.ContentPropertyNames.WORKFLOW_INFO_CHECKS;
 import static com.enonic.xp.core.impl.content.serializer.ComponentDataSerializer.COMPONENTS;
 
 public class ContentDataSerializer
@@ -96,6 +100,7 @@ public class ContentDataSerializer
         contentAsData.addSet( DATA, params.getData().getRoot().copy( contentAsData.getTree() ) );
 
         addPublishInfo( contentAsData, params.getContentPublishInfo() );
+        addWorkflowInfo( contentAsData, params.getWorkflowInfo() );
 
         final ExtraDatas extraData = params.getExtraDatas();
 
@@ -175,6 +180,7 @@ public class ContentDataSerializer
         extractAttachments( contentAsSet, builder );
         extractPublishInfo( contentAsSet, builder );
         extractProcessedReferences( contentAsSet, builder );
+        extractWorkflowInfo( contentAsSet, builder );
 
         return builder;
     }
@@ -191,6 +197,7 @@ public class ContentDataSerializer
         contentAsData.ifNotNull().addString( CREATOR, content.getCreator().toString() );
         contentAsData.ifNotNull().addInstant( CREATED_TIME, content.getCreatedTime() );
         addPublishInfo( contentAsData, content.getPublishInfo() );
+        addWorkflowInfo( contentAsData, content.getWorkflowInfo() );
     }
 
     private void addProcessedReferences( final PropertySet contentAsData, final ContentIds processedIds )
@@ -213,6 +220,17 @@ public class ContentDataSerializer
             publishInfo.addInstant( PUBLISH_FIRST, data.getFirst() );
             publishInfo.addInstant( PUBLISH_FROM, data.getFrom() );
             publishInfo.addInstant( PUBLISH_TO, data.getTo() );
+        }
+    }
+
+    private void addWorkflowInfo( final PropertySet contentAsData, final WorkflowInfo data )
+    {
+        if ( data != null ) {
+            final PropertySet workflowInfo = contentAsData.addSet( WORKFLOW_INFO );
+            workflowInfo.addString( WORKFLOW_INFO_STATE, data.getState().toString() );
+
+            final PropertySet workflowInfoChecks = workflowInfo.addSet( WORKFLOW_INFO_CHECKS );
+            data.getChecks().entrySet().forEach( e -> workflowInfoChecks.addString( e.getKey(), e.getValue().toString() ) );
         }
     }
 
@@ -296,6 +314,21 @@ public class ContentDataSerializer
         Iterable<Reference> references = contentAsSet.getReferences( PROCESSED_REFERENCES );
 
         references.forEach( reference -> builder.addProcessedReference( ContentId.from( reference ) ) );
+    }
+
+    private void extractWorkflowInfo( final PropertySet contentAsSet, final Content.Builder builder )
+    {
+        final PropertySet workflowInfo = contentAsSet.getSet( WORKFLOW_INFO );
+
+        if(workflowInfo != null) {
+            builder.workflowInfo( WorkflowInfo.create()
+                .state( workflowInfo.getString( WORKFLOW_INFO_STATE ) )
+                .checks( workflowInfo.getSet( WORKFLOW_INFO_CHECKS ) )
+                .build()
+            );
+        } else {
+            builder.workflowInfo( WorkflowInfo.ready() );
+        }
     }
 
     private Attachments dataToAttachments( final Iterable<PropertySet> attachmentSets )

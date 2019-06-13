@@ -47,6 +47,8 @@ public final class CreateContentParams
 
     private final ContentIds processedIds;
 
+    private final WorkflowInfo workflowInfo;
+
     private CreateContentParams( Builder builder )
     {
         this.data = builder.data;
@@ -65,6 +67,7 @@ public final class CreateContentParams
         this.refresh = builder.refresh;
         this.contentPublishInfo = builder.contentPublishInfo;
         this.processedIds = builder.processedIds.build();
+        this.workflowInfo = builder.workflowInfo;
     }
 
     public static Builder create()
@@ -157,6 +160,11 @@ public final class CreateContentParams
         return processedIds;
     }
 
+    public WorkflowInfo getWorkflowInfo()
+    {
+        return workflowInfo;
+    }
+
     public static final class Builder
     {
         private PropertyTree data;
@@ -191,6 +199,8 @@ public final class CreateContentParams
 
         private ContentIds.Builder processedIds = ContentIds.create();
 
+        private WorkflowInfo workflowInfo;
+
         private Builder()
         {
         }
@@ -211,6 +221,7 @@ public final class CreateContentParams
             this.childOrder = source.childOrder;
             this.language = source.language;
             this.contentPublishInfo = source.contentPublishInfo;
+            this.workflowInfo = source.workflowInfo;
         }
 
         public Builder contentData( final PropertyTree data )
@@ -313,6 +324,11 @@ public final class CreateContentParams
         public Builder addProcessedIds( final ContentIds processedIds )
         {
             this.processedIds.addAll( processedIds );
+            return this;
+        }
+
+        public Builder workflowInfo( final WorkflowInfo workflowInfo ) {
+            this.workflowInfo = workflowInfo;
             return this;
         }
 
