@@ -26,11 +26,11 @@ public class ListRepositoriesScriptTest
             thenAnswer( invocation -> {
                 final Repository testRepository = Repository.create().
                     id( RepositoryId.from( "test-repo" ) ).
-                    branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) ).
+                    branchInfos( RepositoryConstants.MASTER_BRANCH_INFO  ).
                     build();
                 final Repository anotherRepository = Repository.create().
                     id( RepositoryId.from( "another-repo" ) ).
-                    branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) ).
+                    branchInfos( RepositoryConstants.MASTER_BRANCH_INFO  ).
                     build();
                 return Repositories.from( testRepository, anotherRepository );
 

@@ -3,7 +3,9 @@ package com.enonic.xp.lib.repo;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.branch.BranchInfos;
 import com.enonic.xp.branch.Branches;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
@@ -26,7 +28,7 @@ public class CreateRepositoryScriptTest
                 final CreateRepositoryParams params = (CreateRepositoryParams) invocation.getArguments()[0];
                 return Repository.create().
                     id( params.getRepositoryId() ).
-                    branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) ).
+                    branchInfos( RepositoryConstants.MASTER_BRANCH_INFO  ).
                     settings( params.getRepositorySettings() ).
                     build();
             } );

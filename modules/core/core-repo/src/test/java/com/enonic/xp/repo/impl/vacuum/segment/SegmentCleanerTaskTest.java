@@ -10,6 +10,7 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchInfo;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
@@ -47,8 +48,8 @@ public class SegmentCleanerTaskTest
         this.repositoryService = Mockito.mock( RepositoryService.class );
 
         final Branch branch = Branch.from( "master" );
-        final Repository repository = Repository.create().id( repositoryId ).branches( branch ).build();
-        final Repository repository2 = Repository.create().id( repositoryId ).branches( branch ).build();
+        final Repository repository = Repository.create().id( repositoryId ).branchInfos( BranchInfo.from( branch ) ).build();
+        final Repository repository2 = Repository.create().id( repositoryId ).branchInfos( BranchInfo.from( branch ) ).build();
         Mockito.when( repositoryService.list() ).thenReturn( Repositories.from( repository, repository2 ) );
     }
 

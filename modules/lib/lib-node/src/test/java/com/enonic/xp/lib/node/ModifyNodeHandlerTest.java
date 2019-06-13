@@ -16,6 +16,7 @@ import org.mockito.stubbing.Answer;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.branch.BranchInfos;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.data.PropertyPath;
@@ -111,7 +112,7 @@ public class ModifyNodeHandlerTest
         Mockito.when( this.repositoryService.get( RepositoryId.from( "com.enonic.cms.default" ) ) ).
             thenReturn( Repository.create().
                 id( RepositoryId.from( "com.enonic.cms.default" ) ).
-                branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
+                branchInfos( BranchInfos.from( ContentConstants.BRANCH_INFO_DRAFT, ContentConstants.BRANCH_INFO_MASTER ) ).
                 build() );
 
         runScript( "/lib/xp/examples/node/modify.js" );
@@ -167,7 +168,7 @@ public class ModifyNodeHandlerTest
         Mockito.when( this.repositoryService.get( RepositoryId.from( "com.enonic.cms.default" ) ) ).
             thenReturn( Repository.create().
                 id( RepositoryId.from( "com.enonic.cms.default" ) ).
-                branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
+                branchInfos( BranchInfos.from( ContentConstants.BRANCH_INFO_DRAFT, ContentConstants.BRANCH_INFO_MASTER ) ).
                 build() );
 
         runScript( "/lib/xp/examples/node/modify-keep-types.js" );

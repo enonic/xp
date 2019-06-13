@@ -1,10 +1,13 @@
 package com.enonic.xp.repo.impl.repository;
 
-import java.util.Iterator;
+import java.util.LinkedList;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchInfo;
+import com.enonic.xp.branch.BranchInfos;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -36,7 +39,7 @@ public class RepositoryNodeTranslator
     public static Node toNode( final Repository repository )
     {
         final PropertyTree repositoryData = new PropertyTree();
-        toNodeData( repository.getBranches(), repositoryData );
+        toNodeData( repository.getBranchInfos(), repositoryData );
         final RepositorySettings repositorySettings = repository.getSettings();
         toNodeData( repositorySettings.getIndexDefinitions(), repositoryData );
 
@@ -50,31 +53,40 @@ public class RepositoryNodeTranslator
             build();
     }
 
-    public static NodeEditor toCreateBranchNodeEditor( final Branch branch )
+    public static NodeEditor toCreateBranchNodeEditor( final BranchInfo branchInfo )
     {
-        return toBeEdited -> toBeEdited.data.addString( BRANCHES_KEY, branch.getValue() );
+        return toBeEdited -> toNodeData( branchInfo, toBeEdited.data );
     }
 
-    public static NodeEditor toDeleteBranchNodeEditor( final Branch branch )
+    public static NodeEditor toDeleteBranchNodeEditor( final Branch branchToDelete )
     {
         return toBeEdited -> {
-            final Iterable<String> branches = toBeEdited.data.getStrings( BRANCHES_KEY );
+            final BranchInfos existingBranchInfos = toBranchInfos( toBeEdited.data );
 
-            toBeEdited.data.removeProperties( BRANCHES_KEY );
-            for ( Iterator<String> branchIterator = branches.iterator(); branchIterator.hasNext(); )
+            toBeEdited.data.removeProperties( BRANCH_INFOS_KEY );
+            for ( BranchInfo existingBranchInfo : existingBranchInfos )
             {
-                final String currentBranch = branchIterator.next();
-                if ( !branch.getValue().equals( currentBranch ) )
+                if ( !branchToDelete.getValue().equals( existingBranchInfo.getBranch().getValue() ) )
                 {
-                    toBeEdited.data.addString( BRANCHES_KEY, currentBranch );
+                    toNodeData(existingBranchInfo, toBeEdited.data);
                 }
             }
         };
     }
 
-    private static void toNodeData( final Branches branches, final PropertyTree data )
+    private static void toNodeData( final BranchInfos branchInfos, final PropertyTree data )
     {
-        branches.forEach( branch -> data.addString( BRANCHES_KEY, branch.getValue() ) );
+        branchInfos.forEach( branchInfo -> toNodeData( branchInfo, data ) );
+    }
+
+    private static void toNodeData( final BranchInfo branchInfo, final PropertyTree data )
+    {
+        final PropertySet branchInfoSet = data.addSet( BRANCH_INFOS_KEY );
+        branchInfoSet.setString( BRANCH_NAME_KEY, branchInfo.getBranch().getValue() );
+        if ( branchInfo.getParentBranch() != null )
+        {
+            branchInfoSet.setString( PARENT_BRANCH_NAME_KEY, branchInfo.getParentBranch().getValue() );
+        }
     }
 
     private static void toNodeData( final IndexDefinitions indexDefinitions, final PropertyTree data )
@@ -118,17 +130,25 @@ public class RepositoryNodeTranslator
 
         return Repository.create().
             id( RepositoryId.from( node.id().toString() ) ).
-            branches( toBranches( nodeData ) ).
+            branchInfos( toBranchInfos( nodeData ) ).
             settings( repositorySettings ).
             build();
     }
 
-    private static Branches toBranches( final PropertyTree nodeData )
+    private static BranchInfos toBranchInfos( final PropertyTree nodeData )
     {
-        final ImmutableSet.Builder<Branch> branches = ImmutableSet.builder();
-        nodeData.getStrings( BRANCHES_KEY ).
-            forEach( branchValue -> branches.add( Branch.from( branchValue ) ) );
-        return Branches.from( branches.build() );
+        final LinkedList branchInfos = new LinkedList();
+        for ( PropertySet branchInfoSet: nodeData.getSets( BRANCH_INFOS_KEY ))
+        {
+            final String branch = branchInfoSet.getString( BRANCH_NAME_KEY );
+            final String parentBranch = branchInfoSet.getString( PARENT_BRANCH_NAME_KEY );
+            final BranchInfo branchInfo = BranchInfo.create().
+                branch( branch ).
+                parentBranch( parentBranch ).
+                build();
+            branchInfos.add( branchInfo );
+        }
+        return BranchInfos.from( branchInfos );
     }
 
     private static IndexDefinitions toIndexConfigs( final PropertyTree nodeData )

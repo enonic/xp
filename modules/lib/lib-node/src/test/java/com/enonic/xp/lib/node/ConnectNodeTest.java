@@ -3,6 +3,7 @@ package com.enonic.xp.lib.node;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.branch.BranchInfos;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
@@ -44,7 +45,7 @@ public class ConnectNodeTest
         Mockito.when( this.repositoryService.get( RepositoryId.from( "com.enonic.cms.default" ) ) ).
             thenReturn( Repository.create().
                 id( RepositoryId.from( "com.enonic.cms.default" ) ).
-                branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
+                branchInfos( BranchInfos.from( ContentConstants.BRANCH_INFO_DRAFT, ContentConstants.BRANCH_INFO_MASTER ) ).
                 build() );
 
         context.runWith( () -> runScript( "/lib/xp/examples/node/connect.js" ) );
