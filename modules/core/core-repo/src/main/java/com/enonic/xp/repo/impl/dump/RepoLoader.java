@@ -121,7 +121,7 @@ class RepoLoader
     {
         final Repository currentRepo = this.repositoryService.get( this.repositoryId );
 
-        if ( currentRepo.getBranches().contains( branch ) )
+        if ( currentRepo.getBranchInfos().getBranches().contains( branch ) )
         {
             return;
         }

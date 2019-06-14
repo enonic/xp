@@ -28,7 +28,11 @@ import com.enonic.xp.security.SystemConstants;
 
 public class RepositoryNodeTranslator
 {
-    private static final String BRANCHES_KEY = "branches";
+    private static final String BRANCH_INFOS_KEY = "branches";
+
+    private static final String BRANCH_NAME_KEY = "name";
+
+    private static final String PARENT_BRANCH_NAME_KEY = "parent";
 
     private static final String INDEX_CONFIG_KEY = "indexConfigs";
 

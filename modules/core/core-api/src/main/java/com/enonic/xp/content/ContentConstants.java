@@ -3,6 +3,8 @@ package com.enonic.xp.content;
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchInfo;
+import com.enonic.xp.branch.BranchInfos;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
@@ -33,13 +35,13 @@ public class ContentConstants
 
     public static final String DOCUMENT_INDEX_DEFAULT_ANALYZER = "document_index_default";
 
-    public static final Branch BRANCH_DRAFT = Branch.create().
-        value( "draft" ).
-        build();
+    public static final Branch BRANCH_DRAFT = Branch.from( "draft" );
 
-    public static final Branch BRANCH_MASTER = Branch.create().
-        value( "master" ).
-        build();
+    public static final Branch BRANCH_MASTER = Branch.from( "master" );
+
+    public static final BranchInfo BRANCH_INFO_DRAFT = BranchInfo.from( BRANCH_DRAFT );
+
+    public static final BranchInfo BRANCH_INFO_MASTER = BranchInfo.from( BRANCH_MASTER );
 
     public static final String CONTENT_REPO_ID_PREFIX = "com.enonic.cms.";
 
@@ -47,7 +49,7 @@ public class ContentConstants
 
     public static final Repository CONTENT_REPO = Repository.create().
         id( CONTENT_REPO_ID ).
-        branches( Branches.from( BRANCH_DRAFT, BRANCH_MASTER ) ).
+        branchInfos( BranchInfos.from( BRANCH_INFO_DRAFT, BRANCH_INFO_MASTER ) ).
         build();
 
     public static final Context CONTEXT_DRAFT = ContextBuilder.create().
