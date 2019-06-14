@@ -12,13 +12,17 @@ log.info(result.length + ' repositories found');
 var expected = [{
     "id": "test-repo",
     "branches": [
-        "master"
+        {
+            "name": "master"
+        }
     ],
     settings: {}
 }, {
     "id": "another-repo",
     "branches": [
-        "master"
+        {
+            "name": "master"
+        }
     ],
     settings: {}
 }];
