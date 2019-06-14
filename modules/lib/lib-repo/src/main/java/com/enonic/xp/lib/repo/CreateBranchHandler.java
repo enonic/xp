@@ -15,9 +15,11 @@ import com.enonic.xp.script.bean.ScriptBean;
 public class CreateBranchHandler
     implements ScriptBean
 {
+    private String repoId;
+
     private String branchId;
 
-    private String repoId;
+    private String parentBranchId;
 
     private Supplier<RepositoryService> repositoryServiceSupplier;
 
@@ -31,6 +33,11 @@ public class CreateBranchHandler
         this.branchId = branchId;
     }
 
+    public void setParentBranchId( final String parentBranchId )
+    {
+        this.parentBranchId = parentBranchId;
+    }
+
     public BranchMapper execute()
     {
         return createContext().callWith( this::doCreateBranch );
@@ -38,7 +45,7 @@ public class CreateBranchHandler
 
     private BranchMapper doCreateBranch()
     {
-        final CreateBranchParams createBranchParams = CreateBranchParams.from( branchId );
+        final CreateBranchParams createBranchParams = CreateBranchParams.from( branchId, parentBranchId );
         final Branch createdBranch = repositoryServiceSupplier.
             get().
             createBranch( createBranchParams );

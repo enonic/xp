@@ -31,8 +31,8 @@ function required(params, name) {
  *
  * @param {object?} params JSON with the parameters.
  * @param {string} [params.mode='all'] Index type to be refreshed. Possible values: 'all' | 'search' | 'storage'.
- * @param {string} [params.repo='com.enonic.cms.default'] Repository id: 'com.enonic.cms.default' | 'system-repo'. Default is the current repository set in portal.
- * @param {string} [params.repo='branch'=master] Branch. Default is the current repository set in portal.
+ * @param {string} [params.repo] Repository id: 'com.enonic.cms.default' | 'system-repo'. Default is the current repository set in portal.
+ * @param {string} [params.branch] Branch. Default is the current repository set in portal.
  *
  */
 exports.refresh = function (params) {
@@ -134,15 +134,17 @@ exports.get = function (id) {
  * @example-ref examples/repo/createBranch.js
  *
  * @param {object} params JSON with the parameters.
- * @param {string} params.branchId Branch ID.
  * @param {string} params.repoId Repository where the branch should be created.
+ * @param {string} params.branchId Branch ID.
+ * @param {string} [params.parentBranchId] PatentBranch ID.
  * @return {object} The branch (as JSON).
  *
  */
 exports.createBranch = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.repo.CreateBranchHandler');
-    bean.branchId = required(params, 'branchId');
     bean.repoId = required(params, 'repoId');
+    bean.branchId = required(params, 'branchId');
+    bean.parentBranchId = __.nullOrValue(params.parentBranchId);
     return __.toNativeObject(bean.execute());
 };
 

@@ -17,7 +17,9 @@ if (result) {
 var expected = {
     "id": "test-repo",
     "branches": [
-        "master"
+        {
+            "name": "master"
+        }
     ],
     settings: {}
 };

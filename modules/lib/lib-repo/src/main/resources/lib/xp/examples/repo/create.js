@@ -40,7 +40,9 @@ log.info('Repository created with id ' + result2.id);
 var expected1 = {
     "id": "test-repo",
     "branches": [
-        "master"
+        {
+            "name": "master"
+        }
     ],
     settings: {}
 };
@@ -51,7 +53,9 @@ var expected2 =
 {
     "id": "test-repo2",
     "branches": [
-        "master"
+        {
+            "name": "master"
+        }
     ],
     "settings": {}
 };
