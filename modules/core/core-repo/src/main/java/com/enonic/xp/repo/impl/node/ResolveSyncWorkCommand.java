@@ -180,16 +180,19 @@ public class ResolveSyncWorkCommand
             recursive( true ).
             recursionFilter( statusesToStopDependenciesSearch == null ? null : nodeIds -> {
                 final NodeIds.Builder filteredNodeIds = NodeIds.create();
+
                 final NodeComparisons currentLevelNodeComparisons = CompareNodesCommand.create().
                     nodeIds( nodeIds ).
                     target( target ).
                     storageService( this.nodeStorageService ).
                     build().
                     execute();
-                nodeIds.stream().
-                    filter( nodeId -> !statusesToStopDependenciesSearch.contains( currentLevelNodeComparisons.get( nodeId ).
-                        getCompareStatus() ) ).
+
+                currentLevelNodeComparisons.getComparisons().stream().
+                    filter( nodeComparison -> !statusesToStopDependenciesSearch.contains( nodeComparison.getCompareStatus() ) ).
+                    map( NodeComparison::getNodeId ).
                     forEach( filteredNodeIds::add );
+
                 return filteredNodeIds.build();
             } ).
             build().
