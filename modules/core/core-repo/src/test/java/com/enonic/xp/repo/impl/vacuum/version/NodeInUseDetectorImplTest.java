@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchInfo;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
@@ -40,7 +41,7 @@ public class NodeInUseDetectorImplTest
         detector.setRepositoryService( this.repositoryService );
 
         Mockito.when( this.repositoryService.list() ).thenReturn( Repositories.from( Repository.create().
-            branches( Branch.from( "master" ) ).
+            branchInfos( BranchInfo.from( "master" ) ).
             id( RepositoryId.from( "my-repo" ) ).
             build() ) );
 
@@ -59,7 +60,7 @@ public class NodeInUseDetectorImplTest
         detector.setRepositoryService( this.repositoryService );
 
         Mockito.when( this.repositoryService.list() ).thenReturn( Repositories.from( Repository.create().
-            branches( Branch.from( "master" ) ).
+            branchInfos( BranchInfo.from( "master" ) ).
             id( RepositoryId.from( "my-repo" ) ).
             build() ) );
 

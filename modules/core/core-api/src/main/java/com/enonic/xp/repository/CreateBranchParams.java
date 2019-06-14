@@ -1,14 +1,20 @@
 package com.enonic.xp.repository;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchInfo;
 
 public class CreateBranchParams
 {
-    private final Branch branch;
+    private final BranchInfo branchInfo;
 
     public CreateBranchParams( final Branch branch )
     {
-        this.branch = branch;
+        this.branchInfo = BranchInfo.from( branch );
+    }
+
+    public CreateBranchParams( final Branch branch, final Branch parentBranch )
+    {
+        this.branchInfo = BranchInfo.from( branch );
     }
 
     public static CreateBranchParams from( final String branchId )
@@ -21,10 +27,14 @@ public class CreateBranchParams
         return new CreateBranchParams( branch );
     }
 
+    public BranchInfo getBranchInfo()
+    {
+        return branchInfo;
+    }
 
     public Branch getBranch()
     {
-        return branch;
+        return branchInfo.getBranch();
     }
 }
 

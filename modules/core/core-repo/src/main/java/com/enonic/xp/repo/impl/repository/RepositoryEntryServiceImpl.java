@@ -6,6 +6,7 @@ import org.osgi.service.component.annotations.Reference;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchInfo;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -108,9 +109,9 @@ public class RepositoryEntryServiceImpl
     }
 
     @Override
-    public Repository addBranchToRepositoryEntry( final RepositoryId repositoryId, final Branch branch )
+    public Repository addBranchToRepositoryEntry( final RepositoryId repositoryId, final BranchInfo branchInfo )
     {
-        NodeEditor nodeEditor = RepositoryNodeTranslator.toCreateBranchNodeEditor( branch );
+        NodeEditor nodeEditor = RepositoryNodeTranslator.toCreateBranchNodeEditor( branchInfo );
         return updateRepositoryEntry( repositoryId, nodeEditor );
     }
 

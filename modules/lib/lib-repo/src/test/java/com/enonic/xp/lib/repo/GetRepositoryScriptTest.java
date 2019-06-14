@@ -26,7 +26,7 @@ public class GetRepositoryScriptTest
                 final RepositoryId repositoryId = (RepositoryId) invocation.getArguments()[0];
                 return Repository.create().
                     id( repositoryId ).
-                    branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) ).
+                    branchInfos( RepositoryConstants.MASTER_BRANCH_INFO  ).
                     build();
             } );
         addService( RepositoryService.class, repositoryService );

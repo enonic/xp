@@ -4,6 +4,8 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchInfo;
+import com.enonic.xp.branch.BranchInfos;
 import com.enonic.xp.branch.Branches;
 
 @Beta
@@ -11,14 +13,14 @@ public final class Repository
 {
     private final RepositoryId id;
 
-    private final Branches branches;
+    private final BranchInfos branchInfos;
 
     private final RepositorySettings settings;
 
     private Repository( Builder builder )
     {
         this.id = builder.id;
-        this.branches = builder.branches;
+        this.branchInfos = builder.branchInfos;
         this.settings = builder.settings == null ? RepositorySettings.create().build() : builder.settings;
     }
 
@@ -32,9 +34,14 @@ public final class Repository
         return settings;
     }
 
+    public BranchInfos getBranchInfos()
+    {
+        return branchInfos;
+    }
+
     public Branches getBranches()
     {
-        return branches;
+        return branchInfos.getBranches();
     }
 
     public static Builder create()
@@ -81,7 +88,7 @@ public final class Repository
 
         private RepositorySettings settings;
 
-        private Branches branches;
+        private BranchInfos branchInfos;
 
         private Builder()
         {
@@ -90,7 +97,7 @@ public final class Repository
         public Builder( final Repository source )
         {
             id = source.id;
-            branches = source.branches;
+            branchInfos = source.branchInfos;
             settings = source.settings;
         }
 
@@ -100,16 +107,16 @@ public final class Repository
             return this;
         }
 
-        public Builder branches( final Branches branches )
+        public Builder branchInfos( final BranchInfos branchInfos )
         {
-            this.branches = branches;
+            this.branchInfos = branchInfos;
             return this;
         }
 
 
-        public Builder branches( final Branch... branches )
+        public Builder branchInfos( final BranchInfo... branchInfos )
         {
-            this.branches = Branches.from( branches );
+            this.branchInfos = BranchInfos.from( branchInfos );
             return this;
         }
 
@@ -121,8 +128,8 @@ public final class Repository
 
         private void validate()
         {
-            Preconditions.checkNotNull( branches, "branches cannot be null" );
-            Preconditions.checkArgument( branches.contains( RepositoryConstants.MASTER_BRANCH ), "branches must contain master branch." );
+            Preconditions.checkNotNull( branchInfos, "branchInfos cannot be null" );
+            Preconditions.checkArgument( branchInfos.contains( RepositoryConstants.MASTER_BRANCH_INFO ), "branchInfos must contain master branch." );
         }
 
 

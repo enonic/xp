@@ -14,7 +14,7 @@ public class TestContext
 
     public static final Repository TEST_REPOSITORY = Repository.create().
         id( RepositoryId.from( "test" ) ).
-        branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) ).
+        branchInfos( RepositoryConstants.MASTER_BRANCH_INFO ).
         build();
 
     public static final Context TEST_CONTEXT = ContextBuilder.create().

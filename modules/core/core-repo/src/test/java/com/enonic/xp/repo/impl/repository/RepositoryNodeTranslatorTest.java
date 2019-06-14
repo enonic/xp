@@ -3,6 +3,7 @@ package com.enonic.xp.repo.impl.repository;
 import org.junit.Test;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchInfo;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.node.Node;
@@ -29,7 +30,7 @@ public class RepositoryNodeTranslatorTest
         indexSettings.addString( "mySetting", "mySettingValue" );
 
         final Repository repo = Repository.create().
-            branches( Branch.from( "master" ) ).
+            branchInfos( BranchInfo.from( "master" ) ).
             id( RepositoryId.from( "myrepoid" ) ).
             settings( RepositorySettings.create().
                 indexDefinitions( IndexDefinitions.create().

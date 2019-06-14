@@ -90,7 +90,7 @@ public class RepositoryResourceTest
         Repositories.Builder builder = Repositories.create();
         for ( int i = 0; i < 5; i++ )
         {
-            builder.add( Repository.create().id( RepositoryId.from( "repo-" + i ) ).branches( RepositoryConstants.MASTER_BRANCH ).build() );
+            builder.add( Repository.create().id( RepositoryId.from( "repo-" + i ) ).branchInfos( RepositoryConstants.MASTER_BRANCH_INFO ).build() );
         }
         Mockito.when( repoService.list() ).thenReturn( builder.build() );
 

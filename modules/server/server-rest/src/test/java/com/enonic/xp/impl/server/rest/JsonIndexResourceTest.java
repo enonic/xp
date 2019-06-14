@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchInfo;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.index.ReindexParams;
@@ -62,8 +63,8 @@ public class JsonIndexResourceTest
         Mockito.when( this.indexService.updateIndexSettings( isA( UpdateIndexSettingsParams.class ) ) ).
             thenReturn( indexSettingsResult );
 
-        Mockito.when( this.repositoryService.list() ).thenReturn(
-            Repositories.from( Repository.create().id( RepositoryId.from( "my-repo" ) ).branches( Branch.from( "master" ) ).build() ) );
+        Mockito.when( this.repositoryService.list() ).thenReturn( Repositories.from(
+            Repository.create().id( RepositoryId.from( "my-repo" ) ).branchInfos( BranchInfo.from( "master" ) ).build() ) );
 
         final String result = request().
             path( "/repo/index/updateSettings" ).

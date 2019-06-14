@@ -14,6 +14,7 @@ import org.mockito.Mockito;
 import com.google.common.io.Files;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchInfo;
 import com.enonic.xp.dump.BranchLoadResult;
 import com.enonic.xp.dump.DumpService;
 import com.enonic.xp.dump.LoadError;
@@ -109,7 +110,7 @@ public class LoadRunnableTaskTest
         Mockito.when( this.exportService.importNodes( Mockito.isA( ImportNodesParams.class ) ) ).thenReturn( importResult );
 
         Mockito.when( this.repositoryService.list() ).thenReturn( Repositories.from( Repository.create().
-            branches( Branch.from( "master" ) ).
+            branchInfos( BranchInfo.from( "master" ) ).
             id( RepositoryId.from( "my-repo" ) ).
             build() ) );
 

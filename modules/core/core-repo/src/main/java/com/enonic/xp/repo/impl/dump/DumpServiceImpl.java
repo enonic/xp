@@ -206,7 +206,7 @@ public class DumpServiceImpl
         {
             final long branchesCount = repositories.
                 stream().
-                flatMap( repository -> repository.getBranches().stream() ).
+                flatMap( repository -> repository.getBranchInfos().stream() ).
                 count();
 
             params.getListener().totalBranches( branchesCount );

@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.repository;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchInfo;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
@@ -13,7 +14,7 @@ public interface RepositoryEntryService
 
     Repository getRepositoryEntry( final RepositoryId repositoryId );
 
-    Repository addBranchToRepositoryEntry( final RepositoryId repositoryId, final Branch branch );
+    Repository addBranchToRepositoryEntry( final RepositoryId repositoryId, final BranchInfo branchInfo );
 
     Repository removeBranchFromRepositoryEntry( final RepositoryId repositoryId, final Branch branch );
 

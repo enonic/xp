@@ -13,7 +13,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.branch.Branches;
+import com.enonic.xp.branch.BranchInfo;
+import com.enonic.xp.branch.BranchInfos;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -131,7 +132,7 @@ public class RepositoryServiceImpl
         repositoryMap.compute( repositoryId,
                                ( key, previousRepository ) -> doCreateBranch( createBranchParams, repositoryId, previousRepository ) );
 
-        return createBranchParams.getBranch();
+        return createBranchParams.getBranchInfo().getBranch();
     }
 
     private Repository doCreateBranch( final CreateBranchParams createBranchParams, final RepositoryId repositoryId,
@@ -158,7 +159,8 @@ public class RepositoryServiceImpl
         }
 
         //Updates the repository entry
-        return repositoryEntryService.addBranchToRepositoryEntry( repositoryId, newBranch );
+        final BranchInfo newBranchInfo = BranchInfo.from( newBranch );
+        return repositoryEntryService.addBranchToRepositoryEntry( repositoryId, newBranchInfo );
     }
 
     @Override
@@ -275,7 +277,7 @@ public class RepositoryServiceImpl
     {
         return Repository.create().
             id( params.getRepositoryId() ).
-            branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) ).
+            branchInfos( BranchInfos.from( RepositoryConstants.MASTER_BRANCH_INFO ) ).
             settings( params.getRepositorySettings() ).
             build();
     }
