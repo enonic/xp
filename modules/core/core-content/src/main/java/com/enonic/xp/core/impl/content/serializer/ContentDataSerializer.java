@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Preconditions;
@@ -25,6 +26,7 @@ import com.enonic.xp.content.CreateContentTranslatorParams;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.UpdateContentTranslatorParams;
 import com.enonic.xp.content.WorkflowInfo;
+import com.enonic.xp.content.WorkflowCheckState;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.icon.Thumbnail;
@@ -321,9 +323,16 @@ public class ContentDataSerializer
         final PropertySet workflowInfo = contentAsSet.getSet( WORKFLOW_INFO );
 
         if(workflowInfo != null) {
+            final ImmutableMap.Builder<String, WorkflowCheckState> mapBuilder = ImmutableMap.builder();
+
+            PropertySet checkSet = contentAsSet.getSet( WORKFLOW_INFO_CHECKS );
+            for(String checks: checkSet.getPropertyNames()) {
+                mapBuilder.put( checks, WorkflowCheckState.valueOf(checkSet.getString( checks )) );
+            }
+
             builder.workflowInfo( WorkflowInfo.create()
                 .state( workflowInfo.getString( WORKFLOW_INFO_STATE ) )
-                .checks( workflowInfo.getSet( WORKFLOW_INFO_CHECKS ) )
+                .checks( mapBuilder.build() )
                 .build()
             );
         } else {

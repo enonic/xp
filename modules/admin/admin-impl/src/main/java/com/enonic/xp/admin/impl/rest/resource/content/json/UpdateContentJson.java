@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.admin.impl.json.content.ExtraDataJson;
+import com.enonic.xp.admin.impl.json.content.ContentWorkflowInfoJson;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentName;
@@ -19,6 +20,7 @@ import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.UpdateContentParams;
+import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.data.PropertyArrayJson;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.PropertyTreeJson;
@@ -48,7 +50,8 @@ public final class UpdateContentJson
                        @JsonProperty("publishFrom") final String publishFrom, @JsonProperty("publishTo") final String publishTo,
                        @JsonProperty("permissions") final List<AccessControlEntryJson> permissions,
                        @JsonProperty("inheritPermissions") final boolean inheritPermissions,
-                       @JsonProperty("overwriteChildPermissions") final boolean overwriteChildPermissions )
+                       @JsonProperty("overwriteChildPermissions") final boolean overwriteChildPermissions,
+                       @JsonProperty("workflow") final ContentWorkflowInfoJson workflowInfo)
     {
         this.contentName = ContentName.from( contentName );
         this.publishFromInstant = StringUtils.isNotEmpty( publishFrom ) ? Instant.parse( publishFrom ) : null;
@@ -76,6 +79,7 @@ public final class UpdateContentJson
                 edit.language = StringUtils.isNotEmpty( language ) ? Locale.forLanguageTag( language ) : null;
                 edit.inheritPermissions = inheritPermissions;
                 edit.permissions = parseAcl( permissions );
+                edit.workflowInfo = parseWorkflowInfo(workflowInfo);
             } );
 
         this.renameContentParams = RenameContentParams.create().
@@ -144,5 +148,17 @@ public final class UpdateContentJson
             builder.add( entryJson.getSourceEntry() );
         }
         return builder.build();
+    }
+
+    private WorkflowInfo parseWorkflowInfo( final ContentWorkflowInfoJson contentWorkflowInfoJson )
+    {
+        if(contentWorkflowInfoJson == null) {
+            return null;
+        }
+
+        return WorkflowInfo.create().
+            state( contentWorkflowInfoJson.getState() ).
+            checks( contentWorkflowInfoJson.getChecks() ).
+            build();
     }
 }

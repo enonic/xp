@@ -26,7 +26,11 @@
         "to": "2016-11-22T10:36:00Z"
       },
       "thumbnail": null,
-      "type": "myapplication:my_type"
+      "type": "myapplication:my_type",
+      "workflow" : {
+        "checks" : { },
+        "state" : "IN_PROGRESS"
+      }
     },
     {
       "childOrder": null,
@@ -54,7 +58,11 @@
         "to": "2016-11-22T10:36:00Z"
       },
       "thumbnail": null,
-      "type": "myapplication:my_type"
+      "type": "myapplication:my_type",
+      "workflow" : {
+        "checks" : { },
+        "state" : "IN_PROGRESS"
+      }
     }
   ],
   "metadata": {

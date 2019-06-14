@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -21,6 +22,9 @@ import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.UpdateContentParams;
+import com.enonic.xp.content.WorkflowInfo;
+import com.enonic.xp.content.WorkflowState;
+import com.enonic.xp.content.WorkflowCheckState;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Input;
@@ -464,5 +468,39 @@ public class ContentServiceImplTest_update
         assertNotNull( storedContent.getPublishInfo().getTo() );
         assertEquals( storedContent.getPublishInfo().getFrom(), Instant.parse( "2016-11-03T10:43:44Z" ) );
         assertEquals( storedContent.getPublishInfo().getTo(), Instant.parse( "2016-11-23T10:43:44Z" ) );
+    }
+
+    @Test
+    public void update_workflow_info()
+        throws Exception
+    {
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "This is my content" ).
+            parent( ContentPath.ROOT ).
+            type( ContentTypeName.folder() ).
+            workflowInfo( WorkflowInfo.inProgress() ).
+            build();
+
+        final Content content = this.contentService.create( createContentParams );
+
+        final UpdateContentParams updateContentParams = new UpdateContentParams();
+        updateContentParams.
+            contentId( content.getId() ).
+            editor( edit -> {
+                edit.workflowInfo = WorkflowInfo.create()
+                    .state( WorkflowState.PENDING_APPROVAL )
+                    .checks( ImmutableMap.of("Laywer review", WorkflowCheckState.PENDING) )
+                    .build();
+            } );
+
+        this.contentService.update( updateContentParams );
+
+        final Content storedContent = this.contentService.getById( content.getId() );
+        assertNotNull( storedContent.getWorkflowInfo() );
+        assertNotNull( storedContent.getWorkflowInfo().getState() );
+        assertNotNull( storedContent.getWorkflowInfo().getChecks() );
+        assertEquals( WorkflowState.PENDING_APPROVAL, storedContent.getWorkflowInfo().getState() );
+        assertEquals( ImmutableMap.of("Laywer review", WorkflowCheckState.PENDING), storedContent.getWorkflowInfo().getChecks() );
     }
 }

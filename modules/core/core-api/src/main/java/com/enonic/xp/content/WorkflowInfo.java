@@ -76,20 +76,8 @@ public class WorkflowInfo
             return this;
         }
 
-        public Builder checks( PropertySet set )
-        {
-            if (set == null) {
-                return this;
-            }
-
-            final ImmutableMap.Builder<String, WorkflowCheckState> builder = ImmutableMap.builder();
-
-            for (Map.Entry<String, Object> e : set.toMap().entrySet()) {
-                builder.put( e.getKey(), WorkflowCheckState.valueOf( e.getValue().toString() ) );
-            }
-
-            this.checks = builder.build();
-
+        public Builder checks( Map<String, WorkflowCheckState> checks) {
+            this.checks = ImmutableMap.copyOf( checks );
             return this;
         }
 
