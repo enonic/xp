@@ -22,16 +22,24 @@ import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeNotFoundException;
+import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.query.filter.BooleanFilter;
+import com.enonic.xp.query.filter.IdFilter;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.node.DeleteNodeByIdCommand;
+import com.enonic.xp.repo.impl.node.PushNodesCommand;
 import com.enonic.xp.repo.impl.node.RefreshCommand;
 import com.enonic.xp.repo.impl.repository.event.RepositoryEventListener;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
+import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.repository.BranchNotFoundException;
+import com.enonic.xp.repository.ChildBranchFoundException;
 import com.enonic.xp.repository.CreateBranchParams;
 import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.DeleteBranchParams;
@@ -51,6 +59,8 @@ public class RepositoryServiceImpl
     implements RepositoryService, EventListener
 {
     private static final Logger LOG = LoggerFactory.getLogger( RepositoryServiceImpl.class );
+
+    private static final int BATCH_SIZE = 5_000;
 
     private final ConcurrentMap<RepositoryId, Repository> repositoryMap = Maps.newConcurrentMap();
 
@@ -158,9 +168,56 @@ public class RepositoryServiceImpl
             pushRootNode( previousRepository, newBranch );
         }
 
+        //If the branch is a child branch, push all nodes
+        final Branch parentBranch = createBranchParams.getBranchInfo().getParentBranch();
+        if ( parentBranch != null )
+        {
+            pushAllNodes( previousRepository, parentBranch, newBranch );
+        }
+
         //Updates the repository entry
-        final BranchInfo newBranchInfo = BranchInfo.from( newBranch, createBranchParams.getBranchInfo().getParentBranch() );
+        final BranchInfo newBranchInfo = BranchInfo.from( newBranch, parentBranch );
         return repositoryEntryService.addBranchToRepositoryEntry( repositoryId, newBranchInfo );
+    }
+
+    private void pushAllNodes( final Repository repository, final Branch parentBranch, final Branch newBranch )
+    {
+        final Context context = ContextBuilder.from( ContextAccessor.current() ).
+            repositoryId( repository.getId() ).
+            branch( parentBranch ).
+            build();
+        final InternalContext internalContext = InternalContext.from( context );
+        final BooleanFilter filter = BooleanFilter.create().
+            mustNot( IdFilter.create().value( Node.ROOT_UUID.toString() ).build() ).
+            build();
+
+        int from = 0;
+        SearchResult searchResult;
+        do
+        {
+            final NodeQuery nodeQuery = NodeQuery.create().
+                addQueryFilter( filter ).
+                from( from ).
+                size( BATCH_SIZE ).
+                build();
+            searchResult = nodeSearchService.query( nodeQuery, SingleRepoSearchSource.from( internalContext ) );
+
+            if ( !searchResult.isEmpty() )
+            {
+                final NodeIds nodeIds = NodeIds.from( searchResult.getIds() );
+                context.callWith( () -> PushNodesCommand.create().
+                    indexServiceInternal( indexServiceInternal ).
+                    searchService( nodeSearchService ).
+                    storageService( nodeStorageService ).
+                    ids( nodeIds ).
+                    target( newBranch ).
+                    build().
+                    execute() );
+                //TODO Handle failures
+            }
+            from += BATCH_SIZE;
+        }
+        while ( !searchResult.isEmpty() );
     }
 
     @Override
@@ -240,6 +297,15 @@ public class RepositoryServiceImpl
         {
             throw new BranchNotFoundException( branch );
         }
+
+        //If the branch has a child branch, throws an exception
+        previousRepository.getBranchInfos().
+            stream().
+            filter( branchInfo -> branch.equals( branchInfo.getParentBranch() ) ).
+            findFirst().
+            ifPresent( childBranch -> {
+                throw new ChildBranchFoundException( childBranch.getBranch(), branch );
+            } );
 
         //If the root node exists, deletes it
         if ( getRootNode( previousRepository.getId(), branch ) != null )
