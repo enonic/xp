@@ -53,6 +53,11 @@
         "store": false,
         "index": "not_analyzed"
       },
+      "inherited": {
+        "type": "boolean",
+        "store": false,
+        "index": "not_analyzed"
+      },
       "branch": {
         "type": "string",
         "store": false,

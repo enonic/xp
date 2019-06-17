@@ -16,6 +16,7 @@ public class NodeBranchVersionFactory
     {
         final Object path = returnValues.getSingleValue( BranchIndexPath.PATH.getPath() );
         final Object state = returnValues.getSingleValue( BranchIndexPath.STATE.getPath() );
+        final Object inherited = returnValues.getSingleValue( BranchIndexPath.INHERITED.getPath() );
         final Object versionId = returnValues.getSingleValue( BranchIndexPath.VERSION_ID.getPath() );
         final Object nodeBlobKey = returnValues.getSingleValue( BranchIndexPath.NODE_BLOB_KEY.getPath() );
         final Object indexConfigBlobKey = returnValues.getSingleValue( BranchIndexPath.INDEX_CONFIG_BLOB_KEY.getPath() );
@@ -29,6 +30,7 @@ public class NodeBranchVersionFactory
         return NodeBranchEntry.create().
             nodePath( path != null ? NodePath.create( path.toString() ).build() : NodePath.ROOT ).
             nodeState( state != null ? NodeState.from( state.toString() ) : NodeState.DEFAULT ).
+            inherited( inherited != null ? Boolean.parseBoolean( inherited.toString() ): false ).
             nodeVersionId( NodeVersionId.from( versionId.toString() ) ).
             nodeVersionKey( nodeVersionKey ).
             timestamp( Instant.parse( timestamp.toString() ) ).

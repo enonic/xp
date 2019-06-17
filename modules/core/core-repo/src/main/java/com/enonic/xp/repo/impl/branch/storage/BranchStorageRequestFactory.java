@@ -25,6 +25,7 @@ class BranchStorageRequestFactory
             add( BranchIndexPath.BRANCH_NAME.getPath(), context.getBranch().getValue() ).
             add( BranchIndexPath.NODE_ID.getPath(), nodeBranchEntry.getNodeId().toString() ).
             add( BranchIndexPath.STATE.getPath(), nodeBranchEntry.getNodeState().value() ).
+            add( BranchIndexPath.INHERITED.getPath(), nodeBranchEntry.isInherited() ).
             add( BranchIndexPath.PATH.getPath(), nodeBranchEntry.getNodePath().toString() ).
             add( BranchIndexPath.TIMESTAMP.getPath(),
                  nodeBranchEntry.getTimestamp() != null ? nodeBranchEntry.getTimestamp() : Instant.now() ).

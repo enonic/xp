@@ -15,6 +15,7 @@ import com.google.common.collect.Maps;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.BranchInfo;
 import com.enonic.xp.branch.BranchInfos;
+import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -26,13 +27,14 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.query.filter.BooleanFilter;
-import com.enonic.xp.query.filter.IdFilter;
+import com.enonic.xp.query.expr.FieldExpr;
+import com.enonic.xp.query.expr.FieldOrderExpr;
+import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.node.DeleteNodeByIdCommand;
-import com.enonic.xp.repo.impl.node.PushNodesCommand;
+import com.enonic.xp.repo.impl.node.PushNodesToChildBranchCommand;
 import com.enonic.xp.repo.impl.node.RefreshCommand;
 import com.enonic.xp.repo.impl.repository.event.RepositoryEventListener;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
@@ -162,17 +164,15 @@ public class RepositoryServiceImpl
             throw new BranchAlreadyExistException( newBranch );
         }
 
-        //If the root node does not exist, creates it
-        if ( getRootNode( previousRepository.getId(), newBranch ) == null )
-        {
-            pushRootNode( previousRepository, newBranch );
-        }
-
         //If the branch is a child branch, push all nodes
         final Branch parentBranch = createBranchParams.getBranchInfo().getParentBranch();
         if ( parentBranch != null )
         {
             pushAllNodes( previousRepository, parentBranch, newBranch );
+        }
+        else
+        {
+            pushRootNode( previousRepository, newBranch );
         }
 
         //Updates the repository entry
@@ -187,30 +187,29 @@ public class RepositoryServiceImpl
             branch( parentBranch ).
             build();
         final InternalContext internalContext = InternalContext.from( context );
-        final BooleanFilter filter = BooleanFilter.create().
-            mustNot( IdFilter.create().value( Node.ROOT_UUID.toString() ).build() ).
-            build();
 
         int from = 0;
         SearchResult searchResult;
         do
         {
             final NodeQuery nodeQuery = NodeQuery.create().
-                addQueryFilter( filter ).
                 from( from ).
                 size( BATCH_SIZE ).
+                addOrderBy( new FieldOrderExpr( FieldExpr.from( "_path" ), OrderExpr.Direction.ASC ) ).
                 build();
             searchResult = nodeSearchService.query( nodeQuery, SingleRepoSearchSource.from( internalContext ) );
 
             if ( !searchResult.isEmpty() )
             {
                 final NodeIds nodeIds = NodeIds.from( searchResult.getIds() );
-                context.callWith( () -> PushNodesCommand.create().
+                context.callWith( () -> PushNodesToChildBranchCommand.create().
                     indexServiceInternal( indexServiceInternal ).
                     searchService( nodeSearchService ).
                     storageService( nodeStorageService ).
+                    repositoryService( this ).
                     ids( nodeIds ).
-                    target( newBranch ).
+                    parentBranch( parentBranch ).
+                    childBranches( Branches.from( newBranch ) ).
                     build().
                     execute() );
                 //TODO Handle failures
@@ -299,9 +298,8 @@ public class RepositoryServiceImpl
         }
 
         //If the branch has a child branch, throws an exception
-        previousRepository.getBranchInfos().
+        previousRepository.getChildBranchInfos( branch ).
             stream().
-            filter( branchInfo -> branch.equals( branchInfo.getParentBranch() ) ).
             findFirst().
             ifPresent( childBranch -> {
                 throw new ChildBranchFoundException( childBranch.getBranch(), branch );

@@ -1,5 +1,8 @@
 package com.enonic.xp.repository;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
@@ -42,6 +45,25 @@ public final class Repository
     public Branches getBranches()
     {
         return branchInfos.getBranches();
+    }
+
+    public BranchInfos getChildBranchInfos( Branch branch)
+    {
+        final List<BranchInfo> childBranchInfos = getBranchInfos().
+            stream().
+            filter( branchInfo -> branch.equals( branchInfo.getParentBranch() ) ).
+            collect( Collectors.toList() );
+        return BranchInfos.from( childBranchInfos );
+    }
+
+    public Branches getChildBranches( Branch branch)
+    {
+        final List<Branch> childBranches = getBranchInfos().
+            stream().
+            filter( branchInfo -> branch.equals( branchInfo.getParentBranch() ) ).
+            map( BranchInfo::getBranch ).
+            collect( Collectors.toList() );
+        return Branches.from( childBranches );
     }
 
     public static Builder create()

@@ -23,4 +23,6 @@ public class BranchIndexPath
     public static final IndexPath PATH = IndexPath.from( "path" );
 
     public static final IndexPath REFERENCES = IndexPath.from( "references" );
+
+    public static final IndexPath INHERITED = IndexPath.from( "inherited" );
 }
