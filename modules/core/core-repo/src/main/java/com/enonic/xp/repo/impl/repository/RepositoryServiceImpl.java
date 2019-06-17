@@ -159,7 +159,7 @@ public class RepositoryServiceImpl
         }
 
         //Updates the repository entry
-        final BranchInfo newBranchInfo = BranchInfo.from( newBranch );
+        final BranchInfo newBranchInfo = BranchInfo.from( newBranch, createBranchParams.getBranchInfo().getParentBranch() );
         return repositoryEntryService.addBranchToRepositoryEntry( repositoryId, newBranchInfo );
     }
 
