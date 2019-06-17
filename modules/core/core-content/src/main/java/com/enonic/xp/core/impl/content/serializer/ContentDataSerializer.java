@@ -325,9 +325,11 @@ public class ContentDataSerializer
         if(workflowInfo != null) {
             final ImmutableMap.Builder<String, WorkflowCheckState> mapBuilder = ImmutableMap.builder();
 
-            PropertySet checkSet = contentAsSet.getSet( WORKFLOW_INFO_CHECKS );
-            for(String checks: checkSet.getPropertyNames()) {
-                mapBuilder.put( checks, WorkflowCheckState.valueOf(checkSet.getString( checks )) );
+            PropertySet checkSet = workflowInfo.getSet( WORKFLOW_INFO_CHECKS );
+            if(checkSet != null) {
+                for(String checks: checkSet.getPropertyNames()) {
+                    mapBuilder.put( checks, WorkflowCheckState.valueOf(checkSet.getString( checks )) );
+                }
             }
 
             builder.workflowInfo( WorkflowInfo.create()
