@@ -29,7 +29,11 @@ var expected = {
     "x": {},
     "page": {},
     "attachments": {},
-    "publish": {}
+    "publish": {},
+    "workflow": {
+        "state": "IN_PROGRESS",
+        "checks": {}
+    }
 };
 // END
 

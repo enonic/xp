@@ -48,7 +48,11 @@ var expected = {
             "mimeType": "application/pdf"
         }
     },
-    "publish": {}
+    "publish": {},
+    "workflow": {
+        "state": "IN_PROGRESS",
+        "checks": {}
+    }
 };
 // END
 

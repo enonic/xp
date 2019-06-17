@@ -140,6 +140,12 @@ var expectedJson = {
         "from": "2018-11-03T10:00:01Z",
         "to": "2018-11-03T10:00:01Z",
     },
+    "workflow": {
+        "state": "READY",
+        "checks": {
+            "Review by marketing": "APPROVED"
+        }
+    }
 };
 
 function editor(c) {
@@ -161,6 +167,10 @@ function editor(c) {
 
     c.publish.from = '2018-11-03T10:00:01Z';
     c.publish.to = '2018-11-03T10:00:01Z';
+    c.workflow.state = "READY";
+    c.workflow.checks = {
+        "Review by marketing": "APPROVED"
+    }
 
     return c;
 }

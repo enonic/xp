@@ -117,7 +117,11 @@ var expectedJson = {
         }
     },
     "attachments": {},
-    "publish": {}
+    "publish": {},
+    "workflow": {
+        "state": "IN_PROGRESS",
+        "checks": {}
+    }
 };
 
 exports.currentContent = function () {

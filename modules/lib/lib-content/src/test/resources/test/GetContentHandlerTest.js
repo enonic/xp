@@ -178,6 +178,10 @@ var expectedJson = {
     "publish": {
         "from": "2016-11-03T10:00:00Z",
         "to": "2016-11-23T10:00:00Z"
+    },
+    "workflow": {
+        "state": "IN_PROGRESS",
+        "checks": {}
     }
 };
 

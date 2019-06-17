@@ -35,7 +35,11 @@ var expectedJson = {
     },
     "page": {},
     "attachments": {},
-    "publish": {}
+    "publish": {},
+    "workflow": {
+        "state": "IN_PROGRESS",
+        "checks": {}
+    }
 };
 
 exports.createContent = function () {
@@ -102,7 +106,11 @@ var expectedJsonAutoGenerateName = {
     "x": {},
     "page": {},
     "attachments": {},
-    "publish": {}
+    "publish": {},
+    "workflow": {
+        "state": "IN_PROGRESS",
+        "checks": {}
+    }
 };
 
 exports.createContentAutoGenerateName = function () {
@@ -130,7 +138,11 @@ var expectedJsonAutoGenerateName2 = {
     "x": {},
     "page": {},
     "attachments": {},
-    "publish": {}
+    "publish": {},
+    "workflow": {
+        "state": "IN_PROGRESS",
+        "checks": {}
+    }
 };
 
 exports.createContentWithChildOrder = function () {
@@ -160,7 +172,11 @@ var expectedJsonWithChildOrder = {
     "x": {},
     "page": {},
     "attachments": {},
-    "publish": {}
+    "publish": {},
+    "workflow": {
+        "state": "IN_PROGRESS",
+        "checks": {}
+    }
 };
 
 exports.createContentAutoGenerateNameWithExistingName = function () {
@@ -178,3 +194,42 @@ exports.createContentAutoGenerateNameWithExistingName = function () {
     assert.assertJsonEquals(expectedJsonAutoGenerateName2, result);
 };
 
+var expectedJsonWithWorkflow = {
+    "_id": "123456",
+    "_name": "my-content",
+    "_path": "/a/b/my-content",
+    "creator": "user:system:anonymous",
+    "createdTime": "1975-01-08T00:00:00Z",
+    "type": "test:myContentType",
+    "displayName": "My Content",
+    "hasChildren": false,
+    "valid": false,
+    "data": {},
+    "x": {},
+    "page": {},
+    "attachments": {},
+    "publish": {},
+    "workflow": {
+        "state": "PENDING_APPROVAL",
+        "checks": {
+            "Review by lawyer": "PENDING"
+        }
+    }
+};
+
+exports.createContentWithWorkflow = function () {
+    var result = content.create({
+        parentPath: '/a/b',
+        displayName: 'My Content',
+        contentType: 'test:myContentType',
+        data: {},
+        "workflow": {
+            "state": "PENDING_APPROVAL",
+            "checks": {
+                "Review by lawyer": "PENDING"
+            }
+        }
+    });
+
+    assert.assertJsonEquals(expectedJsonWithWorkflow, result);
+};
