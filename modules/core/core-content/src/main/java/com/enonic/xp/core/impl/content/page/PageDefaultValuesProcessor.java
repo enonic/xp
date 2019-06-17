@@ -86,15 +86,11 @@ final class PageDefaultValuesProcessor
             final DescriptorBasedComponent layoutOrPart = (DescriptorBasedComponent) cmp;
             final PropertyTree cmpData = layoutOrPart.getConfig();
 
-            if ( cmpData.getRoot().getPropertySize() > 0 )
-            {
-                continue; // skip if component data already modified
-            }
-
             final Component sourceCmp = sourceRegion != null
                 ? sourceRegion.getComponents().stream().filter( c -> c.equals( cmp ) ).findFirst().orElse( null )
                 : null;
-            if ( sourceCmp == null )
+
+            if ( sourceCmp == null && cmpData.getRoot().getPropertySize() == 0  )
             {
                 applyComponentDefaultValues( layoutOrPart );
             }
