@@ -19,6 +19,7 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.DeleteNodeListener;
 import com.enonic.xp.node.DuplicateNodeParams;
+import com.enonic.xp.node.DuplicateNodeResult;
 import com.enonic.xp.node.FindNodePathsByQueryResult;
 import com.enonic.xp.node.FindNodesByMultiRepoQueryResult;
 import com.enonic.xp.node.FindNodesByParentParams;
@@ -371,6 +372,7 @@ public class NodeServiceImpl
 
         if ( createdNode != null )
         {
+            pushNodeToChildBranches( createdNode );
             this.eventPublisher.publish( NodeEvents.created( createdNode ) );
         }
         return createdNode;
@@ -391,6 +393,7 @@ public class NodeServiceImpl
 
         if ( updatedNode != null )
         {
+            pushNodeToChildBranches( updatedNode );
             this.eventPublisher.publish( NodeEvents.updated( updatedNode ) );
         }
         return updatedNode;
@@ -410,6 +413,7 @@ public class NodeServiceImpl
 
         if ( moveNodeResult.getTargetNode() != null )
         {
+            pushNodeToChildBranches( moveNodeResult.getTargetNode() );
             this.eventPublisher.publish( NodeEvents.renamed( moveNodeResult.getSourceNode(), moveNodeResult.getTargetNode() ) );
             return moveNodeResult.getTargetNode();
         }
@@ -489,6 +493,7 @@ public class NodeServiceImpl
 
         if ( pushNodesResult.getPushNodeEntries().isNotEmpty() )
         {
+            pushNodesToChildBranches( pushNodesResult.getPushNodeEntries().getNodeIds(), target );
             this.eventPublisher.publish( NodeEvents.pushed( pushNodesResult.getPushNodeEntries() ) );
         }
 
@@ -499,7 +504,7 @@ public class NodeServiceImpl
     public Node duplicate( final DuplicateNodeParams params )
     {
         verifyContext();
-        final Node duplicatedNode = DuplicateNodeCommand.create().
+        final DuplicateNodeResult result = DuplicateNodeCommand.create().
             params( params ).
             indexServiceInternal( this.indexServiceInternal ).
             binaryService( this.binaryService ).
@@ -508,11 +513,13 @@ public class NodeServiceImpl
             build().
             execute();
 
-        if ( duplicatedNode != null )
+        if ( result.getDuplicatedNode() != null )
         {
-            this.eventPublisher.publish( NodeEvents.duplicated( duplicatedNode ) );
+            pushNodesToChildBranches( result.getDuplicatedNodeIds() );
+            this.eventPublisher.publish( NodeEvents.duplicated( result.getDuplicatedNode() ) );
         }
-        return duplicatedNode;
+        
+        return result.getDuplicatedNode();
     }
 
     @Override
@@ -531,6 +538,7 @@ public class NodeServiceImpl
 
         if ( moveNodeResult.getTargetNode() != null )
         {
+            pushNodeToChildBranches( moveNodeResult.getTargetNode() );
             this.eventPublisher.publish( NodeEvents.moved( moveNodeResult.getSourceNode(), moveNodeResult.getTargetNode() ) );
             return moveNodeResult.getTargetNode();
         }
@@ -663,6 +671,7 @@ public class NodeServiceImpl
 
         if ( node != null )
         {
+            pushNodesToChildBranches( NodeIds.from( nodeId ) );
             this.eventPublisher.publish( NodeEvents.updated( node ) );
         }
 
@@ -712,6 +721,7 @@ public class NodeServiceImpl
 
         if ( sortedNode != null )
         {
+            pushNodeToChildBranches( sortedNode );
             this.eventPublisher.publish( NodeEvents.sorted( sortedNode ) );
         }
         return sortedNode;
@@ -731,6 +741,7 @@ public class NodeServiceImpl
 
         for ( Node parentNode : reorderChildNodesResult.getParentNodes() )
         {
+            pushNodesToChildBranches( reorderChildNodesResult.getNodeIds() );
             this.eventPublisher.publish( NodeEvents.sorted( parentNode ) );
         }
 
@@ -763,6 +774,7 @@ public class NodeServiceImpl
 
         for ( final Node node : result.getSucceedNodes() )
         {
+            pushNodesToChildBranches( result.getSucceedNodes().getIds() );
             this.eventPublisher.publish( NodeEvents.permissionsUpdated( node ) );
         }
 
@@ -815,6 +827,7 @@ public class NodeServiceImpl
     }
 
     @Override
+    @Deprecated
     public Node createRootNode( final CreateRootNodeParams params )
     {
         verifyContext();
@@ -870,7 +883,7 @@ public class NodeServiceImpl
     @Override
     public Node setRootPermissions( final AccessControlList acl, final boolean inheritPermissions )
     {
-        return SetRootPermissionsCommand.create().
+        final Node rootNode = SetRootPermissionsCommand.create().
             permissions( acl ).
             inheritPermissions( inheritPermissions ).
             indexServiceInternal( indexServiceInternal ).
@@ -878,6 +891,10 @@ public class NodeServiceImpl
             storageService( this.nodeStorageService ).
             build().
             execute();
+
+        pushNodeToChildBranches( rootNode );
+
+        return rootNode;
     }
 
     @Override
@@ -897,6 +914,7 @@ public class NodeServiceImpl
             build().
             execute();
 
+        pushNodeToChildBranches( importNodeResult.getNode() );
         if ( importNodeResult.isPreExisting() )
         {
             this.eventPublisher.publish( NodeEvents.updated( importNodeResult.getNode() ) );
@@ -1068,6 +1086,29 @@ public class NodeServiceImpl
                 throw new BranchNotFoundException( branch );
             }
         } );
+    }
+
+    private InternalPushNodesResult pushNodeToChildBranches( Node node )
+    {
+        return pushNodesToChildBranches( NodeIds.from( node.id() ) );
+    }
+
+    private InternalPushNodesResult pushNodesToChildBranches( NodeIds nodeIds )
+    {
+        return pushNodesToChildBranches( nodeIds, ContextAccessor.current().getBranch() );
+    }
+
+    private InternalPushNodesResult pushNodesToChildBranches( NodeIds nodeIds, Branch parentBranch )
+    {
+        return PushNodesToChildBranchCommand.create().
+            indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
+            repositoryService( this.repositoryService ).
+            parentBranch( parentBranch ).
+            ids( nodeIds ).
+            build().
+            execute();
     }
 
     @Reference

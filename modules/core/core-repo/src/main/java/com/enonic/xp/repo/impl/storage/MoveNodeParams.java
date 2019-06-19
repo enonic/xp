@@ -8,10 +8,13 @@ public class MoveNodeParams
 
     private final boolean updateMetadataOnly;
 
+    private final boolean setInherited;
+
     private MoveNodeParams( Builder builder )
     {
         node = builder.node;
         updateMetadataOnly = builder.updateMetadataOnly;
+        setInherited = builder.setInherited;
     }
 
     public static Builder create()
@@ -30,11 +33,18 @@ public class MoveNodeParams
         return updateMetadataOnly;
     }
 
+    public boolean isSetInherited()
+    {
+        return setInherited;
+    }
+
     public static final class Builder
     {
         private Node node;
 
         private boolean updateMetadataOnly = false;
+
+        private boolean setInherited = false;
 
         private Builder()
         {
@@ -49,6 +59,12 @@ public class MoveNodeParams
         public Builder updateMetadataOnly( boolean updateMetadataOnly )
         {
             this.updateMetadataOnly = updateMetadataOnly;
+            return this;
+        }
+
+        public Builder setInherited( boolean setInherited )
+        {
+            this.setInherited = setInherited;
             return this;
         }
 

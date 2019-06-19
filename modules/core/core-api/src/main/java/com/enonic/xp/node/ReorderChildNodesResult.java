@@ -20,6 +20,11 @@ public class ReorderChildNodesResult
         return nodeIds.getSize();
     }
 
+    public NodeIds getNodeIds()
+    {
+        return nodeIds;
+    }
+
     public Nodes getParentNodes()
     {
         return parentNodes;

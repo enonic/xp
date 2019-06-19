@@ -59,8 +59,7 @@ public class PushNodesToChildBranchCommand
     public InternalPushNodesResult execute()
     {
         //If there is no child branch, return
-        final Branches childBranches = this.childBranches == null ? repositoryService.get( ContextAccessor.current().getRepositoryId() ).
-            getChildBranches( parentBranch ) : this.childBranches;
+        final Branches childBranches = getChildBranches();
         if ( childBranches.isEmpty() )
         {
             return null; //TODO
@@ -86,6 +85,17 @@ public class PushNodesToChildBranchCommand
             execute();
 
         return null; //TODO
+    }
+
+    private Branches getChildBranches()
+    {
+        if ( childBranches != null )
+        {
+            return childBranches;
+        }
+
+        return NodeHelper.runAsAdmin( () -> repositoryService.get( ContextAccessor.current().getRepositoryId() ).
+            getChildBranches( parentBranch ) );
     }
 
     private InternalPushNodesResult.Builder pushNodes( final NodeBranchEntries nodeBranchEntries, final NodeComparisons comparisons,

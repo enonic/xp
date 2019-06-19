@@ -9,6 +9,7 @@ import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DuplicateNodeParams;
+import com.enonic.xp.node.DuplicateNodeResult;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.InsertManualStrategy;
@@ -43,8 +44,10 @@ public final class DuplicateNodeCommand
         return new Builder();
     }
 
-    public Node execute()
+    public DuplicateNodeResult execute()
     {
+        final DuplicateNodeResult.Builder result = DuplicateNodeResult.create();
+
         final Node existingNode = doGetById( params.getNodeId() );
 
         if ( existingNode == null )
@@ -71,15 +74,15 @@ public final class DuplicateNodeCommand
             binaryService( binaryService ).
             build().
             execute();
-
-        nodeDuplicated( 1 );
+        result.duplicatedNode( duplicatedNode );
+        nodeDuplicated( duplicatedNode, result );
 
         final NodeReferenceUpdatesHolder.Builder builder = NodeReferenceUpdatesHolder.create().
             add( existingNode.id(), duplicatedNode.id() );
 
         if ( params.getIncludeChildren() )
         {
-            storeChildNodes( existingNode, duplicatedNode, builder );
+            storeChildNodes( existingNode, duplicatedNode, builder, result );
         }
 
         final NodeReferenceUpdatesHolder nodesToBeUpdated = builder.build();
@@ -93,7 +96,7 @@ public final class DuplicateNodeCommand
         updateNodeReferences( duplicatedNode, nodesToBeUpdated );
         updateChildReferences( duplicatedNode, nodesToBeUpdated );
 
-        return duplicatedNode;
+        return result.build();
     }
 
     private CreateNodeParams executeProcessors( final CreateNodeParams originalParams )
@@ -106,7 +109,8 @@ public final class DuplicateNodeCommand
         return originalParams;
     }
 
-    private void storeChildNodes( final Node originalParent, final Node newParent, final NodeReferenceUpdatesHolder.Builder builder )
+    private void storeChildNodes( final Node originalParent, final Node newParent, final NodeReferenceUpdatesHolder.Builder builder,
+                                  final DuplicateNodeResult.Builder result )
     {
         final FindNodesByParentResult findNodesByParentResult = doFindNodesByParent( FindNodesByParentParams.create().
             parentPath( originalParent.path() ).
@@ -140,9 +144,9 @@ public final class DuplicateNodeCommand
 
             builder.add( node.id(), newChildNode.id() );
 
-            storeChildNodes( node, newChildNode, builder );
+            nodeDuplicated( newChildNode, result );
 
-            nodeDuplicated( 1 );
+            storeChildNodes( node, newChildNode, builder, result );
         }
     }
 
@@ -244,11 +248,12 @@ public final class DuplicateNodeCommand
         return newNodeName;
     }
 
-    private void nodeDuplicated( final int count )
+    private void nodeDuplicated( final Node node, final DuplicateNodeResult.Builder result )
     {
+        result.addDuplicatedNodeId( node.id() );
         if ( params.getDuplicateListener() != null )
         {
-            params.getDuplicateListener().nodesDuplicated( count );
+            params.getDuplicateListener().nodesDuplicated( 1 );
         }
     }
 

@@ -161,7 +161,6 @@ public class NodeStorageServiceImpl
         {
             nodeVersionId = nodeBranchEntry.getVersionId();
             nodeVersionKey = nodeBranchEntry.getNodeVersionKey();
-
         }
         else
         {
@@ -171,7 +170,20 @@ public class NodeStorageServiceImpl
 
         storeVersionMetadata( params.getNode(), nodeVersionId, nodeVersionKey, context );
 
-        return moveInBranchAndReIndex( params.getNode(), nodeVersionId, nodeVersionKey, nodeBranchEntry.getNodePath(), context );
+
+        this.branchService.store( NodeBranchEntry.create().
+            nodeVersionId( nodeVersionId ).
+            nodeVersionKey( nodeVersionKey ).
+            nodeId( params.getNode().id() ).
+            nodeState( params.getNode().getNodeState() ).
+            inherited( params.isSetInherited() ? true : nodeBranchEntry.isInherited() ).
+            timestamp( params.getNode().getTimestamp() ).
+            nodePath( params.getNode().path() ).
+            build(), nodeBranchEntry.getNodePath(), context );
+
+        this.indexDataService.store( params.getNode(), context );
+
+        return params.getNode();
     }
 
     @Override
@@ -522,23 +534,6 @@ public class NodeStorageServiceImpl
             timestamp( node.getTimestamp() ).
             nodePath( node.path() ).
             build(), storeBranchMetadataParams.getContext() );
-    }
-
-    private Node moveInBranchAndReIndex( final Node node, final NodeVersionId nodeVersionId, final NodeVersionKey nodeVersionKey,
-                                         final NodePath previousPath, final InternalContext context )
-    {
-        this.branchService.store( NodeBranchEntry.create().
-            nodeVersionId( nodeVersionId ).
-            nodeVersionKey( nodeVersionKey ).
-            nodeId( node.id() ).
-            nodeState( node.getNodeState() ).
-            timestamp( node.getTimestamp() ).
-            nodePath( node.path() ).
-            build(), previousPath, context );
-
-        this.indexDataService.store( node, context );
-
-        return node;
     }
 
     private boolean canRead( final AccessControlList permissions )
