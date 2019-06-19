@@ -493,7 +493,8 @@ public class DuplicateNodeCommandTest
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
-            execute();
+            execute().
+            getDuplicatedNode();
     }
 
     private PropertyTree createDataWithReferences( final Reference... references )

@@ -55,7 +55,7 @@ public class DuplicateNodeCommandPerformanceTest
 
         final Stopwatch started = Stopwatch.createStarted();
 
-        final Node duplicate = DuplicateNodeCommand.create().
+        DuplicateNodeCommand.create().
             params( DuplicateNodeParams.create().nodeId( rootNode.id() ).build() ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
