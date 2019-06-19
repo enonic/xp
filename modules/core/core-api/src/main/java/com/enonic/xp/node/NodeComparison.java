@@ -1,5 +1,7 @@
 package com.enonic.xp.node;
 
+import java.util.Objects;
+
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.content.CompareStatus;
@@ -15,6 +17,8 @@ public class NodeComparison
 
     private final NodeId targetId;
 
+    private final boolean targetInherited;
+
     private final CompareStatus compareStatus;
 
     public NodeComparison( final NodeBranchEntry sourceEntry, final NodeBranchEntry targetEntry, final CompareStatus compareStatus )
@@ -23,6 +27,7 @@ public class NodeComparison
         this.targetId = targetEntry != null ? targetEntry.getNodeId() : null;
         this.sourcePath = sourceEntry != null ? sourceEntry.getNodePath() : null;
         this.targetPath = targetEntry != null ? targetEntry.getNodePath() : null;
+        this.targetInherited = targetEntry != null && targetEntry.isInherited();
 
         this.compareStatus = compareStatus;
     }
@@ -47,6 +52,11 @@ public class NodeComparison
         return targetPath;
     }
 
+    public boolean isTargetInherited()
+    {
+        return targetInherited;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -58,37 +68,15 @@ public class NodeComparison
         {
             return false;
         }
-
         final NodeComparison that = (NodeComparison) o;
-
-        if ( sourcePath != null ? !sourcePath.equals( that.sourcePath ) : that.sourcePath != null )
-        {
-            return false;
-        }
-        if ( targetPath != null ? !targetPath.equals( that.targetPath ) : that.targetPath != null )
-        {
-            return false;
-        }
-        if ( sourceId != null ? !sourceId.equals( that.sourceId ) : that.sourceId != null )
-        {
-            return false;
-        }
-        if ( targetId != null ? !targetId.equals( that.targetId ) : that.targetId != null )
-        {
-            return false;
-        }
-        return compareStatus == that.compareStatus;
-
+        return targetInherited == that.targetInherited && Objects.equals( sourcePath, that.sourcePath ) &&
+            Objects.equals( targetPath, that.targetPath ) && Objects.equals( sourceId, that.sourceId ) &&
+            Objects.equals( targetId, that.targetId ) && compareStatus == that.compareStatus;
     }
 
     @Override
     public int hashCode()
     {
-        int result = sourcePath != null ? sourcePath.hashCode() : 0;
-        result = 31 * result + ( targetPath != null ? targetPath.hashCode() : 0 );
-        result = 31 * result + ( sourceId != null ? sourceId.hashCode() : 0 );
-        result = 31 * result + ( targetId != null ? targetId.hashCode() : 0 );
-        result = 31 * result + ( compareStatus != null ? compareStatus.hashCode() : 0 );
-        return result;
+        return Objects.hash( sourcePath, targetPath, sourceId, targetId, targetInherited, compareStatus );
     }
 }

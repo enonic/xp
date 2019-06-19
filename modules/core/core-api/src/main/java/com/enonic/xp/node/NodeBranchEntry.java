@@ -1,6 +1,7 @@
 package com.enonic.xp.node;
 
 import java.time.Instant;
+import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
@@ -20,6 +21,8 @@ public class NodeBranchEntry
 
     private final NodeId nodeId;
 
+    private final boolean inherited;
+
     private NodeBranchEntry( Builder builder )
     {
         this.nodeVersionId = builder.nodeVersionId;
@@ -28,11 +31,7 @@ public class NodeBranchEntry
         this.nodePath = builder.nodePath;
         this.timestamp = builder.timestamp;
         this.nodeId = builder.nodeId;
-    }
-
-    public static Builder create()
-    {
-        return new Builder();
+        this.inherited = builder.inherited;
     }
 
     public NodeVersionId getVersionId()
@@ -65,6 +64,11 @@ public class NodeBranchEntry
         return nodeId;
     }
 
+    public boolean isInherited()
+    {
+        return inherited;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -76,43 +80,27 @@ public class NodeBranchEntry
         {
             return false;
         }
-
         final NodeBranchEntry that = (NodeBranchEntry) o;
-
-        if ( nodeVersionId != null ? !nodeVersionId.equals( that.nodeVersionId ) : that.nodeVersionId != null )
-        {
-            return false;
-        }
-        if ( nodeVersionKey != null ? !nodeVersionKey.equals( that.nodeVersionKey ) : that.nodeVersionKey != null )
-        {
-            return false;
-        }
-        if ( nodeState != that.nodeState )
-        {
-            return false;
-        }
-        if ( nodePath != null ? !nodePath.equals( that.nodePath ) : that.nodePath != null )
-        {
-            return false;
-        }
-        if ( timestamp != null ? !timestamp.equals( that.timestamp ) : that.timestamp != null )
-        {
-            return false;
-        }
-        return !( nodeId != null ? !nodeId.equals( that.nodeId ) : that.nodeId != null );
-
+        return inherited == that.inherited && Objects.equals( nodeVersionId, that.nodeVersionId ) &&
+            Objects.equals( nodeVersionKey, that.nodeVersionKey ) && nodeState == that.nodeState &&
+            Objects.equals( nodePath, that.nodePath ) && Objects.equals( timestamp, that.timestamp ) &&
+            Objects.equals( nodeId, that.nodeId );
     }
 
     @Override
     public int hashCode()
     {
-        int result = nodeVersionId != null ? nodeVersionId.hashCode() : 0;
-        result = 31 * result + ( nodeVersionKey != null ? nodeVersionKey.hashCode() : 0 );
-        result = 31 * result + ( nodeState != null ? nodeState.hashCode() : 0 );
-        result = 31 * result + ( nodePath != null ? nodePath.hashCode() : 0 );
-        result = 31 * result + ( timestamp != null ? timestamp.hashCode() : 0 );
-        result = 31 * result + ( nodeId != null ? nodeId.hashCode() : 0 );
-        return result;
+        return Objects.hash( nodeVersionId, nodeVersionKey, nodeState, nodePath, timestamp, nodeId, inherited );
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public static Builder create( NodeBranchEntry nodeBranchEntry )
+    {
+        return new Builder( nodeBranchEntry );
     }
 
     public static final class Builder
@@ -129,8 +117,21 @@ public class NodeBranchEntry
 
         private NodeId nodeId;
 
+        private boolean inherited;
+
         private Builder()
         {
+        }
+
+        private Builder( NodeBranchEntry nodeBranchEntry )
+        {
+            nodeVersionId = nodeBranchEntry.nodeVersionId;
+            nodeVersionKey = nodeBranchEntry.nodeVersionKey;
+            state = nodeBranchEntry.nodeState;
+            nodePath = nodeBranchEntry.nodePath;
+            timestamp = nodeBranchEntry.timestamp;
+            nodeId = nodeBranchEntry.nodeId;
+            inherited = nodeBranchEntry.inherited;
         }
 
         public Builder nodeVersionId( final NodeVersionId nodeVersionId )
@@ -166,6 +167,12 @@ public class NodeBranchEntry
         public Builder nodeId( final NodeId nodeId )
         {
             this.nodeId = nodeId;
+            return this;
+        }
+
+        public Builder inherited( final boolean inherited )
+        {
+            this.inherited = inherited;
             return this;
         }
 
