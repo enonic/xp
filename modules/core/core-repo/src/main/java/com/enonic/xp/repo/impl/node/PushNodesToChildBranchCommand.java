@@ -3,8 +3,6 @@ package com.enonic.xp.repo.impl.node;
 import java.util.ArrayList;
 import java.util.Comparator;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.CompareStatus;
@@ -26,76 +24,38 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.PushNodeEntries;
 import com.enonic.xp.node.PushNodeEntry;
 import com.enonic.xp.node.PushNodesResult;
-import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.storage.MoveNodeParams;
-import com.enonic.xp.repository.RepositoryService;
 
 public class PushNodesToChildBranchCommand
-    extends AbstractNodeCommand
+    extends AbstractToChildBranchCommand
 {
-    private final Branch parentBranch;
-
-    private final Branches childBranches;
-
-    private final NodeIds ids;
-
-    final RepositoryService repositoryService;
-
     private PushNodesToChildBranchCommand( final Builder builder )
     {
         super( builder );
-        this.parentBranch = builder.parentBranch;
-        this.childBranches = builder.childBranches;
-        this.ids = builder.ids;
-        this.repositoryService = builder.repositoryService;
     }
 
-    public static Builder create()
+    @Override
+    protected void execute( final Branch parentBranch, final Branches childBranches, final NodeIds nodeIds )
     {
-        return new Builder();
-    }
-
-    public InternalPushNodesResult execute()
-    {
-        //If there is no child branch, return
-        final Branches childBranches = getChildBranches();
-        if ( childBranches.isEmpty() )
+        if ( childBranches.isEmpty() || nodeIds.isEmpty() )
         {
-            return null; //TODO
+            return;
         }
-
-        RefreshCommand.create().
-            refreshMode( RefreshMode.ALL ).
-            indexServiceInternal( this.indexServiceInternal ).
-            build().
-            execute();
-
-        final NodeBranchEntries nodeBranchEntries = getNodeBranchEntries();
-        for ( Branch childBranch : childBranches )
-        {
-            final NodeComparisons comparisons = getNodeComparisons( nodeBranchEntries, childBranch );
-            pushNodes( nodeBranchEntries, comparisons, childBranch );
-        }
-
-        RefreshCommand.create().
-            refreshMode( RefreshMode.ALL ).
-            indexServiceInternal( this.indexServiceInternal ).
-            build().
-            execute();
-
-        return null; //TODO
-    }
-
-    private Branches getChildBranches()
-    {
-        if ( childBranches != null )
-        {
-            return childBranches;
-        }
-
-        return NodeHelper.runAsAdmin( () -> repositoryService.get( ContextAccessor.current().getRepositoryId() ).
-            getChildBranches( parentBranch ) );
+        refreshAll();
+        runInBranch( parentBranch, () -> {
+            final NodeBranchEntries nodeBranchEntries = getNodeBranchEntries( nodeIds );
+            for ( Branch childBranch : childBranches )
+            {
+                final NodeComparisons comparisons = getNodeComparisons( nodeBranchEntries, childBranch );
+                final NodeIds pushedNodeIds = pushNodes( nodeBranchEntries, comparisons, childBranch ).
+                    build().
+                    getPushNodeEntries().
+                    getNodeIds();
+                execute( childBranch, getChildBranches( childBranch ), pushedNodeIds );
+            }
+        } );
+        refreshAll();
     }
 
     private InternalPushNodesResult.Builder pushNodes( final NodeBranchEntries nodeBranchEntries, final NodeComparisons comparisons,
@@ -160,24 +120,6 @@ public class PushNodesToChildBranchCommand
         this.nodeStorageService.push( pushNodeEntries, null, pushContext );
 
         return builder;
-    }
-
-    private NodeComparisons getNodeComparisons( final NodeBranchEntries nodeBranchEntries, final Branch target )
-    {
-        return CompareNodesCommand.create().
-            nodeIds( NodeIds.from( nodeBranchEntries.getKeys() ) ).
-            storageService( this.nodeStorageService ).
-            target( target ).
-            build().
-            execute();
-    }
-
-    private NodeBranchEntries getNodeBranchEntries()
-    {
-        return FindNodeBranchEntriesByIdCommand.create( this ).
-            ids( ids ).
-            build().
-            execute();
     }
 
     private void updateTargetChildrenMetaData( final NodeBranchEntry nodeBranchEntry, final PushNodesResult.Builder resultBuilder,
@@ -267,73 +209,23 @@ public class PushNodesToChildBranchCommand
             execute() );
     }
 
-    private Context createTargetContext( final Context currentContext )
+    public static Builder create()
     {
-        final ContextBuilder targetContext = ContextBuilder.create().
-            repositoryId( currentContext.getRepositoryId() ).
-            branch( parentBranch );
-
-        if ( currentContext.getAuthInfo() != null )
-        {
-            targetContext.authInfo( currentContext.getAuthInfo() );
-        }
-
-        return targetContext.build();
+        return new Builder();
     }
 
     public static class Builder
-        extends AbstractNodeCommand.Builder<Builder>
+        extends AbstractToChildBranchCommand.Builder<Builder>
     {
-        private Branch parentBranch;
-
-        private Branches childBranches;
-
-        private NodeIds ids;
-
-        private RepositoryService repositoryService;
-
         Builder()
         {
             super();
-        }
-
-        public Builder parentBranch( final Branch parentBranch )
-        {
-            this.parentBranch = parentBranch;
-            return this;
-        }
-
-        public Builder childBranches( final Branches childBranches )
-        {
-            this.childBranches = childBranches;
-            return this;
-        }
-
-        public Builder ids( final NodeIds nodeIds )
-        {
-            this.ids = nodeIds;
-            return this;
-        }
-
-        public Builder repositoryService( final RepositoryService repositoryService )
-        {
-            this.repositoryService = repositoryService;
-            return this;
         }
 
         public PushNodesToChildBranchCommand build()
         {
             validate();
             return new PushNodesToChildBranchCommand( this );
-        }
-
-        @Override
-        void validate()
-        {
-            super.validate();
-            Preconditions.checkNotNull( parentBranch );
-            Preconditions.checkNotNull( ids );
-            Preconditions.checkNotNull( repositoryService );
         }
     }
 }

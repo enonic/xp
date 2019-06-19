@@ -202,7 +202,7 @@ public class RepositoryServiceImpl
             if ( !searchResult.isEmpty() )
             {
                 final NodeIds nodeIds = NodeIds.from( searchResult.getIds() );
-                context.callWith( () -> PushNodesToChildBranchCommand.create().
+                context.runWith( () -> PushNodesToChildBranchCommand.create().
                     indexServiceInternal( indexServiceInternal ).
                     searchService( nodeSearchService ).
                     storageService( nodeStorageService ).
