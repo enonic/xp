@@ -518,7 +518,7 @@ public class NodeServiceImpl
             pushNodesToChildBranches( result.getDuplicatedNodeIds() );
             this.eventPublisher.publish( NodeEvents.duplicated( result.getDuplicatedNode() ) );
         }
-        
+
         return result.getDuplicatedNode();
     }
 
@@ -1088,19 +1088,19 @@ public class NodeServiceImpl
         } );
     }
 
-    private InternalPushNodesResult pushNodeToChildBranches( Node node )
+    private void pushNodeToChildBranches( Node node )
     {
-        return pushNodesToChildBranches( NodeIds.from( node.id() ) );
+        pushNodesToChildBranches( NodeIds.from( node.id() ) );
     }
 
-    private InternalPushNodesResult pushNodesToChildBranches( NodeIds nodeIds )
+    private void pushNodesToChildBranches( NodeIds nodeIds )
     {
-        return pushNodesToChildBranches( nodeIds, ContextAccessor.current().getBranch() );
+        pushNodesToChildBranches( nodeIds, ContextAccessor.current().getBranch() );
     }
 
-    private InternalPushNodesResult pushNodesToChildBranches( NodeIds nodeIds, Branch parentBranch )
+    private void pushNodesToChildBranches( NodeIds nodeIds, Branch parentBranch )
     {
-        return PushNodesToChildBranchCommand.create().
+        PushNodesToChildBranchCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.nodeStorageService ).
             searchService( this.nodeSearchService ).
