@@ -3,6 +3,7 @@ package com.enonic.xp.admin.impl.json.content;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.content.WorkflowCheckState;
@@ -38,5 +39,14 @@ public class ContentWorkflowInfoJson
     public Map<String, WorkflowCheckState> getChecks()
     {
         return checks;
+    }
+
+    @JsonIgnore
+    public WorkflowInfo getWorkflowInfo()
+    {
+        return WorkflowInfo.create().
+            state( state ).
+            checks( checks ).
+            build();
     }
 }

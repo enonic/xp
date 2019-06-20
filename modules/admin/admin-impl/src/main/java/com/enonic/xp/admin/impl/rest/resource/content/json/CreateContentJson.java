@@ -14,7 +14,6 @@ import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.ExtraDatas;
-import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.data.PropertyArrayJson;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.PropertyTreeJson;
@@ -52,12 +51,7 @@ public final class CreateContentJson
         }
         paramsBuilder.extraDatas( extradatasBuilder.build() );
         paramsBuilder.inheritPermissions( true );
-
-        if ( workflowInfoJson != null )
-        {
-            paramsBuilder.workflowInfo(
-                WorkflowInfo.create().state( workflowInfoJson.getState() ).checks( workflowInfoJson.getChecks() ).build() );
-        }
+        paramsBuilder.workflowInfo( workflowInfoJson == null ? null : workflowInfoJson.getWorkflowInfo() );
 
         this.createContent = paramsBuilder.build();
     }

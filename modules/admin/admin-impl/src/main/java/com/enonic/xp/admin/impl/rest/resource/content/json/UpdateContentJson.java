@@ -79,7 +79,7 @@ public final class UpdateContentJson
                 edit.language = StringUtils.isNotEmpty( language ) ? Locale.forLanguageTag( language ) : null;
                 edit.inheritPermissions = inheritPermissions;
                 edit.permissions = parseAcl( permissions );
-                edit.workflowInfo = parseWorkflowInfo( workflowInfo );
+                edit.workflowInfo = workflowInfo == null ? null : workflowInfo.getWorkflowInfo();
             } );
 
         this.renameContentParams = RenameContentParams.create().
@@ -148,18 +148,5 @@ public final class UpdateContentJson
             builder.add( entryJson.getSourceEntry() );
         }
         return builder.build();
-    }
-
-    private WorkflowInfo parseWorkflowInfo( final ContentWorkflowInfoJson contentWorkflowInfoJson )
-    {
-        if ( contentWorkflowInfoJson == null )
-        {
-            return null;
-        }
-
-        return WorkflowInfo.create().
-            state( contentWorkflowInfoJson.getState() ).
-            checks( contentWorkflowInfoJson.getChecks() ).
-            build();
     }
 }
