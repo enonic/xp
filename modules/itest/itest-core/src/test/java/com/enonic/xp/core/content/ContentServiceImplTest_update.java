@@ -4,10 +4,10 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 
@@ -22,9 +22,9 @@ import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.UpdateContentParams;
+import com.enonic.xp.content.WorkflowCheckState;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
-import com.enonic.xp.content.WorkflowCheckState;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Input;
@@ -488,10 +488,8 @@ public class ContentServiceImplTest_update
         updateContentParams.
             contentId( content.getId() ).
             editor( edit -> {
-                edit.workflowInfo = WorkflowInfo.create()
-                    .state( WorkflowState.PENDING_APPROVAL )
-                    .checks( ImmutableMap.of("Laywer review", WorkflowCheckState.PENDING) )
-                    .build();
+                edit.workflowInfo = WorkflowInfo.create().state( WorkflowState.PENDING_APPROVAL ).checks(
+                    ImmutableMap.of( "Laywer review", WorkflowCheckState.PENDING ) ).build();
             } );
 
         this.contentService.update( updateContentParams );
@@ -501,6 +499,6 @@ public class ContentServiceImplTest_update
         assertNotNull( storedContent.getWorkflowInfo().getState() );
         assertNotNull( storedContent.getWorkflowInfo().getChecks() );
         assertEquals( WorkflowState.PENDING_APPROVAL, storedContent.getWorkflowInfo().getState() );
-        assertEquals( ImmutableMap.of("Laywer review", WorkflowCheckState.PENDING), storedContent.getWorkflowInfo().getChecks() );
+        assertEquals( ImmutableMap.of( "Laywer review", WorkflowCheckState.PENDING ), storedContent.getWorkflowInfo().getChecks() );
     }
 }

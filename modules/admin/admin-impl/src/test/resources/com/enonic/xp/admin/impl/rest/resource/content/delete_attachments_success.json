@@ -27,8 +27,8 @@
   "publish": null,
   "thumbnail": null,
   "type": "base:folder",
-  "workflow" : {
-    "checks" : { },
-    "state" : "IN_PROGRESS"
+  "workflow": {
+    "checks": {},
+    "state": "IN_PROGRESS"
   }
 }

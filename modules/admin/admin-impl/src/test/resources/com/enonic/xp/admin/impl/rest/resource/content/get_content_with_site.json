@@ -75,8 +75,8 @@
   "publish": null,
   "thumbnail": null,
   "type": "myapplication:my_type",
-  "workflow" : {
-    "checks" : { },
-    "state" : "IN_PROGRESS"
+  "workflow": {
+    "checks": {},
+    "state": "IN_PROGRESS"
   }
 }

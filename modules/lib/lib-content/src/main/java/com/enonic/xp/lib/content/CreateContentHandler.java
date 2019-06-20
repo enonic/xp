@@ -179,7 +179,8 @@ public final class CreateContentHandler
 
     public void setWorkflow( final ScriptValue workflow )
     {
-        if ( workflow != null) {
+        if ( workflow != null )
+        {
             this.workflow = workflow.getMap();
         }
     }

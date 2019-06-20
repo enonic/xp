@@ -1,12 +1,13 @@
 package com.enonic.xp.admin.impl.json.content;
 
-import com.enonic.xp.content.WorkflowCheckState;
-import com.enonic.xp.content.WorkflowInfo;
-import com.enonic.xp.content.WorkflowState;
+import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.Map;
+import com.enonic.xp.content.WorkflowCheckState;
+import com.enonic.xp.content.WorkflowInfo;
+import com.enonic.xp.content.WorkflowState;
 
 public class ContentWorkflowInfoJson
 {
@@ -15,10 +16,8 @@ public class ContentWorkflowInfoJson
     private Map<String, WorkflowCheckState> checks;
 
     @JsonCreator
-    public ContentWorkflowInfoJson(
-        @JsonProperty("state") WorkflowState state,
-        @JsonProperty("checks") Map<String, WorkflowCheckState> checks
-    )
+    public ContentWorkflowInfoJson( @JsonProperty("state") WorkflowState state,
+                                    @JsonProperty("checks") Map<String, WorkflowCheckState> checks )
     {
         this.state = state;
         this.checks = checks;

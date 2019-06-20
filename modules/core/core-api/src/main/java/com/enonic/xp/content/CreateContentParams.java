@@ -327,7 +327,8 @@ public final class CreateContentParams
             return this;
         }
 
-        public Builder workflowInfo( final WorkflowInfo workflowInfo ) {
+        public Builder workflowInfo( final WorkflowInfo workflowInfo )
+        {
             this.workflowInfo = workflowInfo;
             return this;
         }

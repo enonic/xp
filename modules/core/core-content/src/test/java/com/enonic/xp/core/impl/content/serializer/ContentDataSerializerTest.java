@@ -1,15 +1,25 @@
 package com.enonic.xp.core.impl.content.serializer;
 
-import com.enonic.xp.content.*;
-import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentPropertyNames;
+import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.CreateContentTranslatorParams;
+import com.enonic.xp.content.ExtraData;
+import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.UpdateContentTranslatorParams;
+import com.enonic.xp.content.WorkflowCheckState;
+import com.enonic.xp.content.WorkflowInfo;
+import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
@@ -246,10 +256,7 @@ public class ContentDataSerializerTest
 
         final WorkflowInfo workflowInfo = WorkflowInfo.create().
             state( WorkflowState.PENDING_APPROVAL ).
-            checks( ImmutableMap.of(
-                check1Name, check1State,
-                check2Name, check2State
-            ) ).
+            checks( ImmutableMap.of( check1Name, check1State, check2Name, check2State ) ).
             build();
 
         final ContentDataSerializer contentDataSerializer = createContentDataSerializer();
@@ -271,8 +278,8 @@ public class ContentDataSerializerTest
         assertEquals( workflowInfo.getState().toString(), workflowData.getString( ContentPropertyNames.WORKFLOW_INFO_STATE ) );
 
         final PropertySet workflowChecks = workflowData.getPropertySet( ContentPropertyNames.WORKFLOW_INFO_CHECKS );
-        assertEquals(check1State.toString(), workflowChecks.getString( check1Name ) );
-        assertEquals(check2State.toString(), workflowChecks.getString( check2Name ) );
+        assertEquals( check1State.toString(), workflowChecks.getString( check1Name ) );
+        assertEquals( check2State.toString(), workflowChecks.getString( check2Name ) );
     }
 
     @Test

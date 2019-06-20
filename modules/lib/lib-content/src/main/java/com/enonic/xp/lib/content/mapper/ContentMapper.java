@@ -78,13 +78,15 @@ public final class ContentMapper
         gen.end();
     }
 
-    private static void serializeWorkflowInfo( final MapGenerator gen, final WorkflowInfo info ) {
+    private static void serializeWorkflowInfo( final MapGenerator gen, final WorkflowInfo info )
+    {
         gen.map( "workflow" );
         if ( info != null )
         {
             gen.value( "state", info.getState().toString() );
-            gen.map( "checks");
-            for(Map.Entry<String, WorkflowCheckState> e: info.getChecks().entrySet()) {
+            gen.map( "checks" );
+            for ( Map.Entry<String, WorkflowCheckState> e : info.getChecks().entrySet() )
+            {
                 gen.value( e.getKey(), e.getValue().toString() );
             }
             gen.end();

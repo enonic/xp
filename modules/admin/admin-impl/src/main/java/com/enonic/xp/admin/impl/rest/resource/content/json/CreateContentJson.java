@@ -7,8 +7,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.xp.admin.impl.json.content.ExtraDataJson;
 import com.enonic.xp.admin.impl.json.content.ContentWorkflowInfoJson;
+import com.enonic.xp.admin.impl.json.content.ExtraDataJson;
 import com.enonic.xp.admin.impl.json.content.attachment.AttachmentJson;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
@@ -50,16 +50,13 @@ public final class CreateContentJson
         {
             extradatasBuilder.add( extraDataJson.getExtraData() );
         }
-        paramsBuilder.extraDatas( extradatasBuilder.build());
+        paramsBuilder.extraDatas( extradatasBuilder.build() );
         paramsBuilder.inheritPermissions( true );
 
-        if(workflowInfoJson != null) {
+        if ( workflowInfoJson != null )
+        {
             paramsBuilder.workflowInfo(
-                WorkflowInfo.create()
-                    .state( workflowInfoJson.getState() )
-                    .checks( workflowInfoJson.getChecks() )
-                    .build()
-            );
+                WorkflowInfo.create().state( workflowInfoJson.getState() ).checks( workflowInfoJson.getChecks() ).build() );
         }
 
         this.createContent = paramsBuilder.build();

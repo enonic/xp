@@ -1,9 +1,10 @@
 package com.enonic.xp.content;
 
-import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import com.google.common.collect.ImmutableMap;
+
+import static org.junit.Assert.*;
 
 public class WorkflowInfoTest
 {
@@ -16,9 +17,9 @@ public class WorkflowInfoTest
     @Test
     public void given_no_checks_then_check_should_be_empty_map()
     {
-        WorkflowInfo workflowInfo = WorkflowInfo.create()
-            .state( WorkflowState.READY )
-            .build();
+        WorkflowInfo workflowInfo = WorkflowInfo.create().
+            state( WorkflowState.READY ).
+            build();
         assertEquals( ImmutableMap.of(), workflowInfo.getChecks() );
     }
 }

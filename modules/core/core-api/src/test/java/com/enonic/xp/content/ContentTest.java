@@ -3,8 +3,9 @@ package com.enonic.xp.content;
 
 import java.time.LocalDate;
 
-import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
+
+import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.DescriptorKey;
@@ -75,7 +76,7 @@ public class ContentTest
     public void given_no_workflow_info_default_state_should_be_in_progress_with_no_checks()
     {
         Content content = Content.create().path( MY_CONTENT_PATH ).build();
-        assertEquals( WorkflowState.IN_PROGRESS , content.getWorkflowInfo().getState() );
+        assertEquals( WorkflowState.IN_PROGRESS, content.getWorkflowInfo().getState() );
         assertEquals( ImmutableMap.of(), content.getWorkflowInfo().getChecks() );
     }
 }

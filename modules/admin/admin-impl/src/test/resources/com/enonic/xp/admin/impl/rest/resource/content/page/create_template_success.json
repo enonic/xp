@@ -44,8 +44,8 @@
   "publish": null,
   "thumbnail": null,
   "type": "portal:page-template",
-  "workflow" : {
-    "checks" : { },
-    "state" : "IN_PROGRESS"
+  "workflow": {
+    "checks": {},
+    "state": "IN_PROGRESS"
   }
 }

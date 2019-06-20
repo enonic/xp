@@ -2,11 +2,11 @@ package com.enonic.xp.core.content;
 
 import java.time.Instant;
 
-import com.google.common.collect.ImmutableMap;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.attachment.Attachments;
@@ -15,9 +15,9 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.CreateContentParams;
+import com.enonic.xp.content.WorkflowCheckState;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
-import com.enonic.xp.content.WorkflowCheckState;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.site.CreateSiteParams;
@@ -192,25 +192,18 @@ public class ContentServiceImplTest_create
             type( ContentTypeName.folder() ).
             workflowInfo( WorkflowInfo.create().
                 state( WorkflowState.PENDING_APPROVAL ).
-                checks( ImmutableMap.of("My check", WorkflowCheckState.REJECTED) ).
-                build()
-            ).
+                checks( ImmutableMap.of( "My check", WorkflowCheckState.REJECTED ) ).
+                build() ).
             build();
 
         final Content content = this.contentService.create( createContentParams );
         assertNotNull( content.getWorkflowInfo() );
         assertEquals( WorkflowState.PENDING_APPROVAL, content.getWorkflowInfo().getState() );
-        assertEquals(
-            ImmutableMap.of("My check", WorkflowCheckState.REJECTED),
-            content.getWorkflowInfo().getChecks()
-        );
+        assertEquals( ImmutableMap.of( "My check", WorkflowCheckState.REJECTED ), content.getWorkflowInfo().getChecks() );
 
         final Content storedContent = this.contentService.getById( content.getId() );
         assertNotNull( storedContent.getWorkflowInfo() );
         assertEquals( WorkflowState.PENDING_APPROVAL, storedContent.getWorkflowInfo().getState() );
-        assertEquals(
-            ImmutableMap.of("My check", WorkflowCheckState.REJECTED),
-            storedContent.getWorkflowInfo().getChecks()
-        );
+        assertEquals( ImmutableMap.of( "My check", WorkflowCheckState.REJECTED ), storedContent.getWorkflowInfo().getChecks() );
     }
 }

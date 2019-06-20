@@ -11,8 +11,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.xp.admin.impl.json.content.ExtraDataJson;
 import com.enonic.xp.admin.impl.json.content.ContentWorkflowInfoJson;
+import com.enonic.xp.admin.impl.json.content.ExtraDataJson;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentName;
@@ -32,7 +32,7 @@ public final class UpdateContentJson
     final ContentName contentName;
 
     final Instant publishFromInstant;
-    
+
     final Instant publishToInstant;
 
     final UpdateContentParams updateContentParams;
@@ -51,7 +51,7 @@ public final class UpdateContentJson
                        @JsonProperty("permissions") final List<AccessControlEntryJson> permissions,
                        @JsonProperty("inheritPermissions") final boolean inheritPermissions,
                        @JsonProperty("overwriteChildPermissions") final boolean overwriteChildPermissions,
-                       @JsonProperty("workflow") final ContentWorkflowInfoJson workflowInfo)
+                       @JsonProperty("workflow") final ContentWorkflowInfoJson workflowInfo )
     {
         this.contentName = ContentName.from( contentName );
         this.publishFromInstant = StringUtils.isNotEmpty( publishFrom ) ? Instant.parse( publishFrom ) : null;
@@ -70,7 +70,7 @@ public final class UpdateContentJson
                 edit.displayName = displayName;
                 edit.owner = StringUtils.isNotEmpty( owner ) ? PrincipalKey.from( owner ) : null;
                 edit.language = StringUtils.isNotEmpty( language ) ? Locale.forLanguageTag( language ) : null;
-                                
+
                 edit.publishInfo = ContentPublishInfo.create().
                     first( edit.publishInfo == null ? null : edit.publishInfo.getFirst() ).
                     from( publishFromInstant ).
@@ -79,7 +79,7 @@ public final class UpdateContentJson
                 edit.language = StringUtils.isNotEmpty( language ) ? Locale.forLanguageTag( language ) : null;
                 edit.inheritPermissions = inheritPermissions;
                 edit.permissions = parseAcl( permissions );
-                edit.workflowInfo = parseWorkflowInfo(workflowInfo);
+                edit.workflowInfo = parseWorkflowInfo( workflowInfo );
             } );
 
         this.renameContentParams = RenameContentParams.create().
@@ -152,7 +152,8 @@ public final class UpdateContentJson
 
     private WorkflowInfo parseWorkflowInfo( final ContentWorkflowInfoJson contentWorkflowInfoJson )
     {
-        if(contentWorkflowInfoJson == null) {
+        if ( contentWorkflowInfoJson == null )
+        {
             return null;
         }
 

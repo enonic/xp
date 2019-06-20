@@ -1,19 +1,25 @@
 package com.enonic.xp.content;
 
-import com.enonic.xp.data.Property;
-import com.enonic.xp.data.PropertySet;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
-
 import java.util.Map;
 import java.util.Objects;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
+
+import com.enonic.xp.data.Property;
+
 public class WorkflowInfo
 {
-    private static final WorkflowInfo IN_PROGRESS = WorkflowInfo.create().state( WorkflowState.IN_PROGRESS ).build();
-    private static final WorkflowInfo READY = WorkflowInfo.create().state( WorkflowState.READY ).build();
+    private static final WorkflowInfo IN_PROGRESS = WorkflowInfo.create().
+        state( WorkflowState.IN_PROGRESS ).
+        build();
+
+    private static final WorkflowInfo READY = WorkflowInfo.create().
+        state( WorkflowState.READY ).
+        build();
 
     private WorkflowState state;
+
     private ImmutableMap<String, WorkflowCheckState> checks;
 
     private WorkflowInfo( Builder builder )
@@ -50,6 +56,7 @@ public class WorkflowInfo
     public static final class Builder
     {
         private WorkflowState state;
+
         private ImmutableMap<String, WorkflowCheckState> checks;
 
         private Builder()
@@ -65,18 +72,21 @@ public class WorkflowInfo
 
         public Builder state( String state )
         {
-            if (state != null) {
+            if ( state != null )
+            {
                 this.state = WorkflowState.valueOf( state );
             }
             return this;
         }
 
-        public Builder checks( ImmutableMap<String, WorkflowCheckState> checks) {
+        public Builder checks( ImmutableMap<String, WorkflowCheckState> checks )
+        {
             this.checks = checks;
             return this;
         }
 
-        public Builder checks( Map<String, WorkflowCheckState> checks) {
+        public Builder checks( Map<String, WorkflowCheckState> checks )
+        {
             this.checks = ImmutableMap.copyOf( checks );
             return this;
         }
@@ -84,7 +94,8 @@ public class WorkflowInfo
         private void validate()
         {
             Preconditions.checkNotNull( this.state, "state cannot be null" );
-            for (Map.Entry<String, WorkflowCheckState> e : this.checks.entrySet()) {
+            for ( Map.Entry<String, WorkflowCheckState> e : this.checks.entrySet() )
+            {
                 Property.checkName( e.getKey() );
                 Preconditions.checkNotNull( e.getValue(), "workflow check state cannot be null" );
             }
@@ -100,10 +111,12 @@ public class WorkflowInfo
     @Override
     public boolean equals( final Object o )
     {
-        if (this == o) {
+        if ( this == o )
+        {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if ( o == null || getClass() != o.getClass() )
+        {
             return false;
         }
 
