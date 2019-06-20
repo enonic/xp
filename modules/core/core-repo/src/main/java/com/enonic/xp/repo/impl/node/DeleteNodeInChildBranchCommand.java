@@ -24,6 +24,18 @@ public class DeleteNodeInChildBranchCommand
     @Override
     protected void execute( final Branch parentBranch, final Branches childBranches )
     {
+        if ( nodeId == null )
+        {
+            execute( childBranches, nodePath );
+        }
+        else
+        {
+            execute( childBranches, nodeId );
+        }
+    }
+
+    private void execute( final Branches childBranches, final NodeId nodeId )
+    {
         if ( childBranches.isEmpty() )
         {
             return;
@@ -31,26 +43,35 @@ public class DeleteNodeInChildBranchCommand
         for ( Branch childBranch : childBranches )
         {
             runInBranch( childBranch, () -> {
-                if ( nodeId == null )
-                {
-                    DeleteNodeByPathCommand.create().
-                        nodePath( nodePath ).
-                        indexServiceInternal( this.indexServiceInternal ).
-                        storageService( this.nodeStorageService ).
-                        searchService( this.nodeSearchService ).
-                        build().
-                        execute();
-                }
-                else
-                {
-                    DeleteNodeByIdCommand.create().
-                        nodeId( nodeId ).
-                        indexServiceInternal( this.indexServiceInternal ).
-                        storageService( this.nodeStorageService ).
-                        searchService( this.nodeSearchService ).
-                        build().
-                        execute();
-                }
+                DeleteNodeByIdCommand.create().
+                    nodeId( nodeId ).
+                    indexServiceInternal( this.indexServiceInternal ).
+                    storageService( this.nodeStorageService ).
+                    searchService( this.nodeSearchService ).
+                    build().
+                    execute();
+                execute( getChildBranches( childBranch ), nodeId );
+            } );
+        }
+    }
+
+    private void execute( final Branches childBranches, final NodePath nodePath )
+    {
+        if ( childBranches.isEmpty() )
+        {
+            return;
+        }
+        for ( Branch childBranch : childBranches )
+        {
+            runInBranch( childBranch, () -> {
+                DeleteNodeByPathCommand.create().
+                    nodePath( nodePath ).
+                    indexServiceInternal( this.indexServiceInternal ).
+                    storageService( this.nodeStorageService ).
+                    searchService( this.nodeSearchService ).
+                    build().
+                    execute();
+                execute( getChildBranches( childBranch ), nodePath );
             } );
         }
     }
