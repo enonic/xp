@@ -3,6 +3,8 @@ package com.enonic.xp.repo.impl.node;
 import java.util.ArrayList;
 import java.util.Comparator;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.CompareStatus;
@@ -28,14 +30,22 @@ import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.storage.MoveNodeParams;
 
 public class PushNodesToChildBranchCommand
-    extends AbstractToChildBranchCommand
+    extends AbstractChildBranchCommand
 {
+    private final NodeIds nodeIds;
+
     private PushNodesToChildBranchCommand( final Builder builder )
     {
         super( builder );
+        this.nodeIds = builder.nodeIds;
     }
 
     @Override
+    protected void execute( final Branch parentBranch, final Branches childBranches )
+    {
+        execute( parentBranch, childBranches, nodeIds );
+    }
+
     protected void execute( final Branch parentBranch, final Branches childBranches, final NodeIds nodeIds )
     {
         if ( childBranches.isEmpty() || nodeIds.isEmpty() )
@@ -215,11 +225,26 @@ public class PushNodesToChildBranchCommand
     }
 
     public static class Builder
-        extends AbstractToChildBranchCommand.Builder<Builder>
+        extends AbstractChildBranchCommand.Builder<Builder>
     {
+        private NodeIds nodeIds;
+
         Builder()
         {
             super();
+        }
+
+        public Builder nodeIds( final NodeIds nodeIds )
+        {
+            this.nodeIds = nodeIds;
+            return this;
+        }
+
+        @Override
+        void validate()
+        {
+            super.validate();
+            Preconditions.checkNotNull( nodeIds );
         }
 
         public PushNodesToChildBranchCommand build()

@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.concurrent.Callable;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
@@ -12,23 +14,20 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repository.RepositoryService;
 
-public abstract class AbstractToChildBranchCommand
+public abstract class AbstractChildBranchCommand
     extends AbstractNodeCommand
 {
     protected final Branch parentBranch;
 
     protected final Branches childBranches;
 
-    protected final NodeIds ids;
-
     protected final RepositoryService repositoryService;
 
-    protected AbstractToChildBranchCommand( final Builder builder )
+    protected AbstractChildBranchCommand( final Builder builder )
     {
         super( builder );
         parentBranch = builder.parentBranch;
         childBranches = builder.childBranches;
-        ids = builder.ids;
         repositoryService = builder.repositoryService;
     }
 
@@ -41,10 +40,10 @@ public abstract class AbstractToChildBranchCommand
     {
         //If there is no child branch, return
         final Branches childBranches = this.childBranches == null ? getChildBranches( parentBranch ) : this.childBranches;
-        execute( parentBranch, childBranches, ids );
+        execute( parentBranch, childBranches );
     }
 
-    protected abstract void execute( final Branch parentBranch, final Branches childBranches, final NodeIds nodeIds );
+    protected abstract void execute( final Branch parentBranch, final Branches childBranches );
 
     protected Branches getChildBranches( final Branch parentBranch )
     {
@@ -67,6 +66,14 @@ public abstract class AbstractToChildBranchCommand
             branch( branch ).
             build().
             runWith( runnable );
+    }
+
+    protected <T> T callInBranch( final Branch branch, final Callable<T> callable )
+    {
+        return ContextBuilder.from( ContextAccessor.current() ).
+            branch( branch ).
+            build().
+            callWith( callable );
     }
 
     protected NodeComparisons getNodeComparisons( final NodeBranchEntries nodeBranchEntries, final Branch target )
@@ -95,8 +102,6 @@ public abstract class AbstractToChildBranchCommand
 
         private Branches childBranches;
 
-        private NodeIds ids;
-
         private RepositoryService repositoryService;
 
         protected Builder()
@@ -116,12 +121,6 @@ public abstract class AbstractToChildBranchCommand
             return (T) this;
         }
 
-        public T ids( final NodeIds ids )
-        {
-            this.ids = ids;
-            return (T) this;
-        }
-
         public T repositoryService( final RepositoryService repositoryService )
         {
             this.repositoryService = repositoryService;
@@ -133,7 +132,6 @@ public abstract class AbstractToChildBranchCommand
         {
             super.validate();
             Preconditions.checkNotNull( parentBranch );
-            Preconditions.checkNotNull( ids );
             Preconditions.checkNotNull( repositoryService );
         }
     }
