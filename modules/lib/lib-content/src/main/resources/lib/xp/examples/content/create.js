@@ -28,7 +28,13 @@ var result1 = contentLib.create({
         }
     },
     "attachments": {},
-    "publish": {}
+    "publish": {},
+    "workflow": {
+        "state": "PENDING_APPROVAL",
+        "checks": {
+            "Review by lawyer": "PENDING"
+        }
+    }
 });
 
 log.info('Content created with id ' + result1._id);
@@ -92,7 +98,13 @@ var expected = {
     },
     "page": {},
     "attachments": {},
-    "publish": {}
+    "publish": {},
+    "workflow": {
+        "state": "PENDING_APPROVAL",
+        "checks": {
+            "Review by lawyer": "PENDING"
+        }
+    }
 };
 // END
 
@@ -112,5 +124,9 @@ assert.assertJsonEquals({
     "x": {},
     "page": {},
     "attachments": {},
-    "publish": {}
+    "publish": {},
+    "workflow": {
+        "state": "IN_PROGRESS",
+        "checks": {}
+    }
 }, result2);

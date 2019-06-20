@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.content.serializer;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -16,6 +17,9 @@ import com.enonic.xp.content.CreateContentTranslatorParams;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.UpdateContentTranslatorParams;
+import com.enonic.xp.content.WorkflowCheckState;
+import com.enonic.xp.content.WorkflowInfo;
+import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
@@ -241,5 +245,63 @@ public class ContentDataSerializerTest
         return contentDataSerializer;
     }
 
+    @Test
+    public void create_propertyTree_populated_with_workflowInfo()
+    {
+        final String check1Name = "myCheck1";
+        final WorkflowCheckState check1State = WorkflowCheckState.APPROVED;
+
+        final String check2Name = "myCheck2";
+        final WorkflowCheckState check2State = WorkflowCheckState.PENDING;
+
+        final WorkflowInfo workflowInfo = WorkflowInfo.create().
+            state( WorkflowState.PENDING_APPROVAL ).
+            checks( ImmutableMap.of( check1Name, check1State, check2Name, check2State ) ).
+            build();
+
+        final ContentDataSerializer contentDataSerializer = createContentDataSerializer();
+
+        final CreateContentTranslatorParams params = CreateContentTranslatorParams.create().
+            parent( ContentPath.ROOT ).
+            name( "myContentName" ).
+            contentData( new PropertyTree() ).
+            displayName( "myDisplayName" ).
+            type( ContentTypeName.codeMedia() ).
+            creator( PrincipalKey.ofAnonymous() ).
+            childOrder( ChildOrder.defaultOrder() ).
+            workflowInfo( workflowInfo ).
+            build();
+
+        final PropertyTree data = contentDataSerializer.toCreateNodeData( params );
+
+        final PropertySet workflowData = data.getSet( ContentPropertyNames.WORKFLOW_INFO );
+        assertEquals( workflowInfo.getState().toString(), workflowData.getString( ContentPropertyNames.WORKFLOW_INFO_STATE ) );
+
+        final PropertySet workflowChecks = workflowData.getPropertySet( ContentPropertyNames.WORKFLOW_INFO_CHECKS );
+        assertEquals( check1State.toString(), workflowChecks.getString( check1Name ) );
+        assertEquals( check2State.toString(), workflowChecks.getString( check2Name ) );
+    }
+
+    @Test
+    public void update_add_workflow_info()
+    {
+        final ContentDataSerializer contentDataSerializer = createContentDataSerializer();
+
+        final PropertyTree propertyTree = new PropertyTree();
+        propertyTree.setString( "myData", "myValue" );
+
+        final PropertyTree data = contentDataSerializer.toUpdateNodeData( UpdateContentTranslatorParams.create().
+            editedContent( Content.create().
+                name( "myContent" ).
+                parentPath( ContentPath.ROOT ).
+                creator( PrincipalKey.ofAnonymous() ).
+                data( propertyTree ).
+                build() ).
+            modifier( PrincipalKey.ofAnonymous() ).
+            build() );
+
+        final PropertySet workflowData = data.getSet( ContentPropertyNames.WORKFLOW_INFO );
+        assertEquals( WorkflowState.IN_PROGRESS.toString(), workflowData.getString( ContentPropertyNames.WORKFLOW_INFO_STATE ) );
+    }
 }
 

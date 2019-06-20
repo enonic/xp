@@ -9,6 +9,10 @@ function editor(c) {
     c.data.myCheckbox = false;
     c.data["myTime"] = "11:00";
     c.publish.from = "2016-11-03T10:01:34Z";
+    c.workflow.state = "READY";
+    c.workflow.checks = {
+        "Review by marketing": "APPROVED"
+    }
     return c;
 }
 
@@ -63,6 +67,12 @@ var expected = {
     },
     "publish": {
         "from": "2016-11-03T10:01:34Z"
+    },
+    "workflow": {
+        "state": "READY",
+        "checks": {
+            "Review by marketing": "APPROVED"
+        }
     }
 };
 // END

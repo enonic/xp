@@ -1,6 +1,7 @@
 package com.enonic.xp.lib.content.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
@@ -10,6 +11,8 @@ import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ExtraData;
+import com.enonic.xp.content.WorkflowCheckState;
+import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.lib.common.PropertyTreeMapper;
 import com.enonic.xp.page.Page;
@@ -53,6 +56,7 @@ public final class ContentMapper
         serializePage( gen, value.getPage() );
         serializeAttachments( gen, value.getAttachments() );
         serializePublishInfo( gen, value.getPublishInfo() );
+        serializeWorkflowInfo( gen, value.getWorkflowInfo() );
     }
 
     private static void serializeData( final MapGenerator gen, final PropertyTree value )
@@ -70,6 +74,22 @@ public final class ContentMapper
             gen.value( "from", info.getFrom() );
             gen.value( "to", info.getTo() );
             gen.value( "first", info.getFirst() );
+        }
+        gen.end();
+    }
+
+    private static void serializeWorkflowInfo( final MapGenerator gen, final WorkflowInfo info )
+    {
+        gen.map( "workflow" );
+        if ( info != null )
+        {
+            gen.value( "state", info.getState().toString() );
+            gen.map( "checks" );
+            for ( Map.Entry<String, WorkflowCheckState> e : info.getChecks().entrySet() )
+            {
+                gen.value( e.getKey(), e.getValue().toString() );
+            }
+            gen.end();
         }
         gen.end();
     }

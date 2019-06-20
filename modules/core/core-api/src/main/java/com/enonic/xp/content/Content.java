@@ -73,6 +73,8 @@ public class Content
 
     private final ContentIds processedReferences;
 
+    private final WorkflowInfo workflowInfo;
+
     protected Content( final Builder builder )
     {
         Preconditions.checkNotNull( builder.name, "name is required for a Content" );
@@ -115,6 +117,7 @@ public class Content
         this.language = builder.language;
         this.contentState = builder.contentState == null ? ContentState.DEFAULT : builder.contentState;
         this.processedReferences = builder.processedReferences.build();
+        this.workflowInfo = builder.workflowInfo == null ? WorkflowInfo.inProgress() : builder.workflowInfo;
     }
 
     public static Builder create( final ContentTypeName type )
@@ -325,6 +328,11 @@ public class Content
         return processedReferences;
     }
 
+    public WorkflowInfo getWorkflowInfo()
+    {
+        return workflowInfo;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -361,7 +369,8 @@ public class Content
             Objects.equals( page, other.page ) &&
             Objects.equals( language, other.language ) &&
             Objects.equals( contentState, other.contentState ) && Objects.equals( publishInfo, other.publishInfo ) &&
-            Objects.equals( processedReferences, other.processedReferences );
+            Objects.equals( processedReferences, other.processedReferences ) &&
+            Objects.equals( workflowInfo, other.workflowInfo );
     }
 
     @Override
@@ -369,7 +378,7 @@ public class Content
     {
         return Objects.hash( id, name, parentPath, displayName, type, valid, modifier, creator, owner, createdTime, modifiedTime,
                              hasChildren, inheritPermissions, childOrder, thumbnail, permissions, attachments, data, extraDatas, page,
-                             language, contentState, publishInfo, processedReferences );
+                             language, contentState, publishInfo, processedReferences, workflowInfo );
     }
 
     public static class Builder<BUILDER extends Builder>
@@ -422,6 +431,8 @@ public class Content
 
         protected ContentIds.Builder processedReferences;
 
+        protected WorkflowInfo workflowInfo;
+
         protected Builder()
         {
             this.data = new PropertyTree();
@@ -457,6 +468,7 @@ public class Content
             this.contentState = source.contentState;
             this.publishInfo = source.publishInfo;
             this.processedReferences = ContentIds.create().addAll( source.processedReferences );
+            this.workflowInfo = source.workflowInfo;
         }
 
         public BUILDER parentPath( final ContentPath path )
@@ -647,6 +659,12 @@ public class Content
         public BUILDER addProcessedReference( final ContentId reference )
         {
             this.processedReferences.add( reference );
+            return (BUILDER) this;
+        }
+
+        public BUILDER workflowInfo( final WorkflowInfo workflowInfo )
+        {
+            this.workflowInfo = workflowInfo;
             return (BUILDER) this;
         }
 

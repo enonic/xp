@@ -5,6 +5,8 @@ import java.time.LocalDate;
 
 import org.junit.Test;
 
+import com.google.common.collect.ImmutableMap;
+
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
@@ -68,5 +70,13 @@ public class ContentTest
                 config( new PropertyTree() ).
                 regions( PageRegions.create().build() ).
                 build() ).build();
+    }
+
+    @Test
+    public void given_no_workflow_info_default_state_should_be_in_progress_with_no_checks()
+    {
+        Content content = Content.create().path( MY_CONTENT_PATH ).build();
+        assertEquals( WorkflowState.IN_PROGRESS, content.getWorkflowInfo().getState() );
+        assertEquals( ImmutableMap.of(), content.getWorkflowInfo().getChecks() );
     }
 }

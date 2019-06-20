@@ -21,7 +21,11 @@ var expectedJson = {
             "x": {},
             "page": {},
             "attachments": {},
-            "publish": {}
+            "publish": {},
+            "workflow": {
+                "state": "IN_PROGRESS",
+                "checks": {}
+            }
         },
         {
             "_id": "id2",
@@ -39,7 +43,11 @@ var expectedJson = {
             "x": {},
             "page": {},
             "attachments": {},
-            "publish": {}
+            "publish": {},
+            "workflow": {
+                "state": "IN_PROGRESS",
+                "checks": {}
+            }
         },
         {
             "_id": "id3",
@@ -57,7 +65,11 @@ var expectedJson = {
             "x": {},
             "page": {},
             "attachments": {},
-            "publish": {}
+            "publish": {},
+            "workflow": {
+                "state": "IN_PROGRESS",
+                "checks": {}
+            }
         }
     ],
     "aggregations": {

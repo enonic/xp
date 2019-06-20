@@ -5,10 +5,6 @@ import java.time.format.DateTimeParseException;
 import java.util.Locale;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentEditor;
 import com.enonic.xp.content.ContentId;
@@ -16,18 +12,13 @@ import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.EditableContent;
-import com.enonic.xp.content.ExtraData;
-import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.convert.Converters;
-import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.lib.content.mapper.ContentMapper;
-import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.script.ScriptValue;
 
 public final class ModifyContentHandler
-    extends BaseContextHandler
+    extends BaseContentHandler
 {
     private String key;
 
@@ -115,6 +106,12 @@ public final class ModifyContentHandler
         {
             target.publishInfo = createContentPublishInfo( (Map) publishInfo );
         }
+
+        final Object workflowInfo = map.get( "workflow" );
+        if ( workflowInfo instanceof Map )
+        {
+            target.workflowInfo = createWorkflowInfo( (Map) workflowInfo );
+        }
     }
 
     private ContentPublishInfo createContentPublishInfo( final Map<String, Object> value )
@@ -144,81 +141,6 @@ public final class ModifyContentHandler
                 throw new IllegalArgumentException( key + " value could not be parsed to instant: [" + value + "]" );
             }
         }
-        return null;
-    }
-
-    private PropertyTree createPropertyTree( final Map<?, ?> value, final ContentTypeName contentTypeName )
-    {
-        if ( value == null )
-        {
-            return null;
-        }
-
-        return this.translateToPropertyTree( createJson( value ), contentTypeName );
-    }
-
-    private PropertyTree createPropertyTree( final Map<?, ?> value, final XDataName xDataName, final ContentTypeName contentTypeName )
-    {
-        if ( value == null )
-        {
-            return null;
-        }
-
-        return this.translateToPropertyTree( createJson( value ), xDataName, contentTypeName );
-    }
-
-    private JsonNode createJson( final Map<?, ?> value )
-    {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.valueToTree( value );
-    }
-
-    private ExtraDatas createExtraDatas( final Map<String, Object> value, final ContentTypeName contentTypeName )
-    {
-        if ( value == null )
-        {
-            return null;
-        }
-
-        final ExtraDatas.Builder extradatasBuilder = ExtraDatas.create();
-        for ( final String applicationPrefix : value.keySet() )
-        {
-            final ApplicationKey applicationKey = ExtraData.fromApplicationPrefix( applicationPrefix );
-            final Object metadatasObject = value.get( applicationPrefix );
-            if ( !( metadatasObject instanceof Map ) )
-            {
-                continue;
-            }
-
-            final Map<String, Object> metadatas = (Map<String, Object>) metadatasObject;
-
-            for ( final String metadataName : metadatas.keySet() )
-            {
-                final XDataName xDataName = XDataName.from( applicationKey, metadataName );
-                final ExtraData item = createExtraData( xDataName, contentTypeName, metadatas.get( metadataName ) );
-                if ( item != null )
-                {
-                    extradatasBuilder.add( item );
-                }
-            }
-        }
-
-        return extradatasBuilder.build();
-    }
-
-
-    private ExtraData createExtraData( final XDataName xDataName, final ContentTypeName contentTypeName, final Object value )
-    {
-        if ( value instanceof Map )
-        {
-            final PropertyTree propertyTree = createPropertyTree( (Map) value, xDataName, contentTypeName );
-
-            if ( propertyTree != null )
-            {
-                return new ExtraData( xDataName, propertyTree );
-            }
-        }
-
         return null;
     }
 
