@@ -444,6 +444,7 @@ public class NodeServiceImpl
 
         if ( deletedNodes.isNotEmpty() )
         {
+            deleteNodeInChildBranches( id );
             this.eventPublisher.publish( NodeEvents.deleted( deletedNodes ) );
         }
 
@@ -464,6 +465,7 @@ public class NodeServiceImpl
 
         if ( deletedNodes.isNotEmpty() )
         {
+            deleteNodeInChildBranches( path );
             this.eventPublisher.publish( NodeEvents.deleted( deletedNodes ) );
         }
         return NodeIds.from( deletedNodes.getKeys() );
@@ -1106,7 +1108,33 @@ public class NodeServiceImpl
             searchService( this.nodeSearchService ).
             repositoryService( this.repositoryService ).
             parentBranch( parentBranch ).
-            ids( nodeIds ).
+            nodeIds( nodeIds ).
+            build().
+            execute();
+    }
+
+    private void deleteNodeInChildBranches( NodeId nodeId )
+    {
+        DeleteNodeInChildBranchCommand.create().
+            indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
+            repositoryService( this.repositoryService ).
+            parentBranch( ContextAccessor.current().getBranch() ).
+            nodeId( nodeId ).
+            build().
+            execute();
+    }
+
+    private void deleteNodeInChildBranches( NodePath nodePath )
+    {
+        DeleteNodeInChildBranchCommand.create().
+            indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
+            repositoryService( this.repositoryService ).
+            parentBranch( ContextAccessor.current().getBranch() ).
+            nodePath( nodePath ).
             build().
             execute();
     }

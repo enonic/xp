@@ -207,7 +207,7 @@ public class RepositoryServiceImpl
                     searchService( nodeSearchService ).
                     storageService( nodeStorageService ).
                     repositoryService( this ).
-                    ids( nodeIds ).
+                    nodeIds( nodeIds ).
                     parentBranch( parentBranch ).
                     childBranches( Branches.from( newBranch ) ).
                     build().
