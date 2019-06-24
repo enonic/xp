@@ -180,7 +180,7 @@ var expectedJson = {
         "to": "2016-11-23T10:00:00Z"
     },
     "workflow": {
-        "state": "IN_PROGRESS",
+        "state": "READY",
         "checks": {}
     }
 };

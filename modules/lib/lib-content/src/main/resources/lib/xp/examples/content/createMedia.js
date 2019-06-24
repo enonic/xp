@@ -31,7 +31,7 @@ var expected = {
     "attachments": {},
     "publish": {},
     "workflow": {
-        "state": "IN_PROGRESS",
+        "state": "READY",
         "checks": {}
     }
 };

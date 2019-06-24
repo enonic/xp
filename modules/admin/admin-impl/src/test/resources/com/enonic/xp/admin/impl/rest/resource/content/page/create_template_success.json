@@ -46,6 +46,6 @@
   "type": "portal:page-template",
   "workflow": {
     "checks": {},
-    "state": "IN_PROGRESS"
+    "state": "READY"
   }
 }

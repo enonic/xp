@@ -48,6 +48,6 @@
   "type": "myapplication:content-type",
   "workflow": {
     "checks": {},
-    "state": "IN_PROGRESS"
+    "state": "READY"
   }
 }

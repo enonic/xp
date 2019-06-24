@@ -37,7 +37,7 @@ var expectedJson = {
     "attachments": {},
     "publish": {},
     "workflow": {
-        "state": "IN_PROGRESS",
+        "state": "READY",
         "checks": {}
     }
 };
@@ -108,7 +108,7 @@ var expectedJsonAutoGenerateName = {
     "attachments": {},
     "publish": {},
     "workflow": {
-        "state": "IN_PROGRESS",
+        "state": "READY",
         "checks": {}
     }
 };
@@ -140,7 +140,7 @@ var expectedJsonAutoGenerateName2 = {
     "attachments": {},
     "publish": {},
     "workflow": {
-        "state": "IN_PROGRESS",
+        "state": "READY",
         "checks": {}
     }
 };
@@ -174,7 +174,7 @@ var expectedJsonWithChildOrder = {
     "attachments": {},
     "publish": {},
     "workflow": {
-        "state": "IN_PROGRESS",
+        "state": "READY",
         "checks": {}
     }
 };

@@ -117,7 +117,7 @@ public class Content
         this.language = builder.language;
         this.contentState = builder.contentState == null ? ContentState.DEFAULT : builder.contentState;
         this.processedReferences = builder.processedReferences.build();
-        this.workflowInfo = builder.workflowInfo == null ? WorkflowInfo.inProgress() : builder.workflowInfo;
+        this.workflowInfo = builder.workflowInfo == null ? WorkflowInfo.ready() : builder.workflowInfo;
     }
 
     public static Builder create( final ContentTypeName type )

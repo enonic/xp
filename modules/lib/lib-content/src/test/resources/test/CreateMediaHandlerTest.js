@@ -18,7 +18,7 @@ var expectedJson = {
     "attachments": {},
     "publish": {},
     "workflow": {
-        "state": "IN_PROGRESS",
+        "state": "READY",
         "checks": {}
     }
 };
@@ -62,7 +62,7 @@ var expectedJsonAutoGenerateName = {
     "attachments": {},
     "publish": {},
     "workflow": {
-        "state": "IN_PROGRESS",
+        "state": "READY",
         "checks": {}
     }
 };
