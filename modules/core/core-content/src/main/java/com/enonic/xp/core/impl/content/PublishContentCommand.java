@@ -37,6 +37,10 @@ public class PublishContentCommand
     extends AbstractContentCommand
     implements PushNodesListener, DeleteNodeListener
 {
+    private static final String NODE_CONTENT_PUBLISH_MESSAGE = "COM_ENONIC_XP_CONTENT_PUBLISH";
+
+    private static final String NODE_CONTENT_PUBLISH_MESSAGE_DELIMITER = " ";
+
     private final ContentIds contentIds;
 
     private final ContentIds excludedContentIds;
@@ -181,10 +185,6 @@ public class PublishContentCommand
             stream().map( failed -> failed.getNodeBranchEntry().getNodeId() ).collect( Collectors.toList() ) ) ) );
         this.resultBuilder.setPushed( ContentNodeHelper.toContentIds( NodeIds.from( pushNodesResult.getSuccessful().getKeys() ) ) );
     }
-
-    private static final String NODE_CONTENT_PUBLISH_MESSAGE = "COM_ENONIC_XP_CONTENT_PUBLISH";
-
-    private static final String NODE_CONTENT_PUBLISH_MESSAGE_DELIMITER = " ";
 
     private void commitPushedNodes( final NodeBranchEntries branchEntries )
     {

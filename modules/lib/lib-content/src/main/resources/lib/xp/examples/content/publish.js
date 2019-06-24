@@ -12,7 +12,7 @@ var result = contentLib.publish({
         to: '2018-01-01T13:37:00.000Z'
     },
     includeDependencies: false,
-    message: "My first publish",
+    message: 'My first publish',
 });
 
 if (result) {
