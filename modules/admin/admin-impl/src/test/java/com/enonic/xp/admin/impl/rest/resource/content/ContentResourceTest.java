@@ -24,6 +24,7 @@ import org.junit.rules.ExpectedException;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
+import org.mockito.internal.util.reflection.Whitebox;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -811,6 +812,24 @@ public class ContentResourceTest
             post().
             getStatus();
         assertEquals( 422, status );
+    }
+
+    @Test
+    public void publish_content_with_message()
+        throws Exception
+    {
+        ArgumentCaptor<PublishRunnableTask> captor = ArgumentCaptor.forClass( PublishRunnableTask.class );
+        Mockito.when( taskService.submitTask( Mockito.any(), Mockito.anyString() ) ).thenReturn( TaskId.from( "1" ) );
+
+        final MockRestResponse res = request().path( "content/publish" ).
+            entity( readFromFile( "publish_content_with_message.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post();
+
+        Mockito.verify( taskService ).submitTask( captor.capture(), Mockito.anyString() );
+        PublishContentJson params = (PublishContentJson) Whitebox.getInternalState( captor.getValue(), "params" );
+
+        assertEquals( 200, res.getStatus() );
+        assertEquals( params.getMessage(), "my message" );
     }
 
     @Test
