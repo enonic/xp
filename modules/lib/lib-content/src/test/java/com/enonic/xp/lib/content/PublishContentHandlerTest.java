@@ -77,6 +77,7 @@ public class PublishContentHandlerTest
             contentIds( ids ).
             target( Branch.from( "master" ) ).
             includeDependencies( false ).
+            message( "My first publish" ).
             build();
 
         Mockito.when( this.contentService.publish( pushParams ) ).thenReturn( exampleResult() );
@@ -140,5 +141,21 @@ public class PublishContentHandlerTest
         Mockito.when( this.contentService.publish( pushParams ) ).thenReturn( exampleResult );
 
         runFunction( "/test/PublishContentHandlerTest.js", "publishWithoutChildrenOrDependencies" );
+    }
+
+    @Test
+    public void publishWithMessage()
+    {
+        ContentIds ids = ContentIds.from( PUB_ID_2, DEL_ID, FAIL_ID );
+
+        PushContentParams pushParams = PushContentParams.create().
+            contentIds( ids ).
+            target( Branch.from( "draft" ) ).
+            message( "My first publish" ).
+            build();
+
+        Mockito.when( this.contentService.publish( pushParams ) ).thenReturn( exampleResult() );
+
+        runFunction( "/test/PublishContentHandlerTest.js", "publishWithMessage" );
     }
 }

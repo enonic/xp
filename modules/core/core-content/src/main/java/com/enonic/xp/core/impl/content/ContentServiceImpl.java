@@ -418,6 +418,7 @@ public class ContentServiceImpl
             includeDependencies( params.isIncludeDependencies() ).
             pushListener( params.getPushContentListener() ).
             deleteListener( params.getDeleteContentListener() ).
+            message( params.getMessage() ).
             build().
             execute();
     }

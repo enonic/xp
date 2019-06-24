@@ -11,7 +11,8 @@ var result = contentLib.publish({
         from: new Date().toISOString(),
         to: '2018-01-01T13:37:00.000Z'
     },
-    includeDependencies: false
+    includeDependencies: false,
+    message: "My first publish",
 });
 
 if (result) {

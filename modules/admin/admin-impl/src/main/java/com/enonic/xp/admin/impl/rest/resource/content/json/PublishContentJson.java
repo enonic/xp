@@ -12,6 +12,8 @@ public class PublishContentJson
 
     private PublishScheduleJson schedule;
 
+    private String message;
+
     public Set<String> getExcludeChildrenIds()
     {
         return excludeChildrenIds;
@@ -50,5 +52,15 @@ public class PublishContentJson
     public void setExcludedIds( final Set<String> excludedIds )
     {
         this.excludedIds = excludedIds;
+    }
+
+    public String getMessage()
+    {
+        return message;
+    }
+
+    public void setMessage( final String message )
+    {
+        this.message = message;
     }
 }
