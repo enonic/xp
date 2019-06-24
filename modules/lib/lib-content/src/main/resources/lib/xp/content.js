@@ -311,6 +311,7 @@ exports.modify = function (params) {
  * @param {string} [params.schedule.to] Time until which the content is considered published.
  * @param {string[]} [params.excludeChildrenIds] List of all content keys which children should be excluded from publishing content.
  * @param {boolean} [params.includeDependencies=true] Whether all related content should be included when publishing content.
+ * @param {string} params.message Publish message.
  *
  * @returns {object} Status of the publish operation in JSON.
  */
@@ -330,6 +331,7 @@ exports.publish = function (params) {
     if (!nullOrValue(params.includeDependencies)) {
         bean.includeDependencies = params.includeDependencies;
     }
+    bean.message = nullOrValue(params.message);
     return __.toNativeObject(bean.execute());
 };
 

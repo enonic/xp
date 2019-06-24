@@ -37,6 +37,10 @@ public class PublishContentCommand
     extends AbstractContentCommand
     implements PushNodesListener, DeleteNodeListener
 {
+    private static final String NODE_CONTENT_PUBLISH_MESSAGE = "COM_ENONIC_XP_CONTENT_PUBLISH";
+
+    private static final String NODE_CONTENT_PUBLISH_MESSAGE_DELIMITER = " ";
+
     private final ContentIds contentIds;
 
     private final ContentIds excludedContentIds;
@@ -55,6 +59,8 @@ public class PublishContentCommand
 
     private final DeleteContentListener deleteNodeListener;
 
+    private final String message;
+
     private PublishContentCommand( final Builder builder )
     {
         super( builder );
@@ -67,6 +73,7 @@ public class PublishContentCommand
         this.resultBuilder = PublishContentResult.create();
         this.pushContentListener = builder.pushContentListener;
         this.deleteNodeListener = builder.deleteNodeListener;
+        this.message = builder.message;
     }
 
     public static Builder create()
@@ -181,8 +188,12 @@ public class PublishContentCommand
 
     private void commitPushedNodes( final NodeBranchEntries branchEntries )
     {
+        final String commitEntryMessage = message == null
+            ? NODE_CONTENT_PUBLISH_MESSAGE
+            : String.join( NODE_CONTENT_PUBLISH_MESSAGE_DELIMITER, NODE_CONTENT_PUBLISH_MESSAGE, message );
+
         final NodeCommitEntry commitEntry = NodeCommitEntry.create().
-            message( "COM_ENONIC_XP_CONTENT_PUBLISH" ).
+            message( commitEntryMessage ).
             build();
         final RoutableNodeVersionIds.Builder routableNodeVersionIds = RoutableNodeVersionIds.create();
         for ( NodeBranchEntry branchEntry : branchEntries )
@@ -282,6 +293,8 @@ public class PublishContentCommand
 
         private DeleteContentListener deleteNodeListener;
 
+        private String message;
+
         public Builder contentIds( final ContentIds contentIds )
         {
             this.contentIds = contentIds;
@@ -337,6 +350,12 @@ public class PublishContentCommand
         public Builder deleteListener( final DeleteContentListener deleteNodeListener )
         {
             this.deleteNodeListener = deleteNodeListener;
+            return this;
+        }
+
+        public Builder message( final String message )
+        {
+            this.message = message;
             return this;
         }
 
