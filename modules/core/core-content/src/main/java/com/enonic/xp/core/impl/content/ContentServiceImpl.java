@@ -468,12 +468,13 @@ public class ContentServiceImpl
     @Override
     public boolean isValidContent( ContentIds contentIds )
     {
-        final ContentIds result = CheckContentsValidCommand.create().
+        final ContentIds result = CheckContentValidityCommand.create().
             translator( this.translator ).
             nodeService( this.nodeService ).
             eventPublisher( this.eventPublisher ).
             contentTypeService( this.contentTypeService ).
             contentIds( contentIds ).
+            checkWorkflow( false ).
             build().
             execute();
 
@@ -483,12 +484,13 @@ public class ContentServiceImpl
     @Override
     public ContentIds getInvalidContent( ContentIds contentIds )
     {
-        return CheckContentsValidCommand.create().
+        return CheckContentValidityCommand.create().
             translator( this.translator ).
             nodeService( this.nodeService ).
             eventPublisher( this.eventPublisher ).
             contentTypeService( this.contentTypeService ).
             contentIds( contentIds ).
+            checkWorkflow( false ).
             build().
             execute();
     }

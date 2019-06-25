@@ -73,10 +73,10 @@ public class ContentTest
     }
 
     @Test
-    public void given_no_workflow_info_default_state_should_be_in_progress_with_no_checks()
+    public void given_no_workflow_info_default_state_should_be_ready_with_no_checks()
     {
         Content content = Content.create().path( MY_CONTENT_PATH ).build();
-        assertEquals( WorkflowState.IN_PROGRESS, content.getWorkflowInfo().getState() );
+        assertEquals( WorkflowState.READY, content.getWorkflowInfo().getState() );
         assertEquals( ImmutableMap.of(), content.getWorkflowInfo().getChecks() );
     }
 }

@@ -23,7 +23,7 @@ var expectedJson = {
             "attachments": {},
             "publish": {},
             "workflow": {
-                "state": "IN_PROGRESS",
+                "state": "READY",
                 "checks": {}
             }
         },
@@ -45,7 +45,7 @@ var expectedJson = {
             "attachments": {},
             "publish": {},
             "workflow": {
-                "state": "IN_PROGRESS",
+                "state": "READY",
                 "checks": {}
             }
         },
@@ -67,7 +67,7 @@ var expectedJson = {
             "attachments": {},
             "publish": {},
             "workflow": {
-                "state": "IN_PROGRESS",
+                "state": "READY",
                 "checks": {}
             }
         }

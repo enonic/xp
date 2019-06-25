@@ -50,7 +50,7 @@ var expected = {
     },
     "publish": {},
     "workflow": {
-        "state": "IN_PROGRESS",
+        "state": "READY",
         "checks": {}
     }
 };

@@ -29,6 +29,6 @@
   "type": "base:folder",
   "workflow": {
     "checks": {},
-    "state": "IN_PROGRESS"
+    "state": "READY"
   }
 }

@@ -27,6 +27,6 @@
     "type": "myapplication:my_type",
     "workflow" : {
         "checks" : { },
-        "state" : "IN_PROGRESS"
+        "state" : "READY"
     }
 }

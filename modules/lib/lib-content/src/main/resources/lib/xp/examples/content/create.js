@@ -126,7 +126,7 @@ assert.assertJsonEquals({
     "attachments": {},
     "publish": {},
     "workflow": {
-        "state": "IN_PROGRESS",
+        "state": "READY",
         "checks": {}
     }
 }, result2);

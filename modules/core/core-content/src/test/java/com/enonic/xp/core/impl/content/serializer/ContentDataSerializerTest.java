@@ -301,7 +301,7 @@ public class ContentDataSerializerTest
             build() );
 
         final PropertySet workflowData = data.getSet( ContentPropertyNames.WORKFLOW_INFO );
-        assertEquals( WorkflowState.IN_PROGRESS.toString(), workflowData.getString( ContentPropertyNames.WORKFLOW_INFO_STATE ) );
+        assertEquals( WorkflowState.READY.toString(), workflowData.getString( ContentPropertyNames.WORKFLOW_INFO_STATE ) );
     }
 }
 
