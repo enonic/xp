@@ -151,12 +151,13 @@ public class PublishContentCommand
 
     private boolean checkIfAllContentsValid( final ContentIds pushContentsIds )
     {
-        final ContentIds invalidContentIds = CheckContentsValidCommand.create().
+        final ContentIds invalidContentIds = CheckContentValidityCommand.create().
             translator( this.translator ).
             nodeService( this.nodeService ).
             eventPublisher( this.eventPublisher ).
             contentTypeService( this.contentTypeService ).
             contentIds( pushContentsIds ).
+            checkWorkflow( true ).
             build().
             execute();
 
