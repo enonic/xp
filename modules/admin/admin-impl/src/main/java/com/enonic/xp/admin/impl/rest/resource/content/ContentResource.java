@@ -131,6 +131,8 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.ContentValidityParams;
+import com.enonic.xp.content.ContentValidityResult;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.content.FindContentByParentParams;
@@ -591,22 +593,31 @@ public final class ContentResource
             filter( contentId -> !requestedContentIds.contains( contentId ) ).
             collect( Collectors.toList() ) );
 
-        final ContentIds invalidContentIds = getInvalidContent( compareResults );
+        // Check out content validity
+        final ContentValidityResult contentValidity =
+            this.contentService.getContentValidity( ContentValidityParams.create().contentIds( fullPublishList ).build() );
+
+        final ContentIds problematicContentIds = getNotPendingDeletion( contentValidity.getAllProblematicContentIds(), compareResults );
+        final ContentIds notValidContentIds = getNotPendingDeletion( contentValidity.getNotValidContentIds(), compareResults );
+        final ContentIds notReadyContentIds = getNotPendingDeletion( contentValidity.getNotReadyContentIds(), compareResults );
 
         //sort all dependant content ids
         final ContentIds sortedDependentContentIds =
             dependentContentIds.getSize() > 0 ? sortContentIds( dependentContentIds, "_path" ) : dependentContentIds;
 
-        final ContentIds sortedInvalidContentIds =
-            invalidContentIds.getSize() > 0 ? sortContentIds( invalidContentIds, "_path" ) : invalidContentIds;
+        // Sort all content ids with problems
+        final ContentIds sortedProblematicContentIds =
+            problematicContentIds.getSize() > 0 ? sortContentIds( problematicContentIds, "_path" ) : problematicContentIds;
 
         //Returns the JSON result
         return ResolvePublishContentResultJson.create().
             setRequestedContents( requestedContentIds ).
-            setDependentContents( this.invalidDependantsOnTop( sortedDependentContentIds, requestedContentIds, sortedInvalidContentIds ) ).
+            setDependentContents(
+                this.problematicDependantsOnTop( sortedDependentContentIds, requestedContentIds, sortedProblematicContentIds ) ).
             setRequiredContents( requiredDependantIds ).
             setAllPublishable( isAllPublishable ).
-            setContainsInvalid( !invalidContentIds.isEmpty() ).
+            setContainsInvalid( !notValidContentIds.isEmpty() ).
+            setContainsNotReady( !notReadyContentIds.isEmpty() ).
             build();
     }
 
@@ -624,21 +635,22 @@ public final class ContentResource
             build() ).getContentIds();
     }
 
-    private ContentIds invalidDependantsOnTop( final ContentIds dependentContentIdList, final ContentIds requestedContentIds,
-                                               final ContentIds invalidContentIds )
+    private ContentIds problematicDependantsOnTop( final ContentIds dependentContentIdList, final ContentIds requestedContentIds,
+                                                   final ContentIds problematicContentIds )
     {
-        return ContentIds.from( Stream.concat( invalidContentIds.stream().filter( ( e ) -> !requestedContentIds.contains( e ) ),
+        return ContentIds.from( Stream.concat( problematicContentIds.stream().filter( ( e ) -> !requestedContentIds.contains( e ) ),
                                                dependentContentIdList.stream().filter(
-                                                   ( e ) -> !invalidContentIds.contains( e ) && !requestedContentIds.contains( e ) ) ).
+                                                   ( e ) -> !problematicContentIds.contains( e ) && !requestedContentIds.contains( e ) ) ).
             collect( Collectors.toList() ) );
     }
 
-    private ContentIds getInvalidContent( final CompareContentResults compareResults )
+    private ContentIds getNotPendingDeletion( final ContentIds contentIds, final CompareContentResults compareResults )
     {
-        return contentService.getInvalidContent(
-            ContentIds.from( compareResults.stream().filter( ( result ) -> result.getCompareStatus() != CompareStatus.PENDING_DELETE ).
-                map( CompareContentResult::getContentId ).
-                collect( Collectors.toList() ) ) );
+        return ContentIds.from( compareResults.stream().
+            filter( result -> result.getCompareStatus() != CompareStatus.PENDING_DELETE ).
+            filter( result -> contentIds.contains( result.getContentId() ) ).
+            map( CompareContentResult::getContentId ).
+            collect( Collectors.toList() ) );
     }
 
     @POST

@@ -11,6 +11,7 @@ import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentValidityResult;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.PushContentListener;
@@ -133,17 +134,16 @@ public class PushContentCommand
 
     private boolean checkIfAllContentsValid( final ContentIds pushContentsIds )
     {
-        final ContentIds invalidContentIds = CheckContentValidityCommand.create().
+        final ContentValidityResult result = CheckContentValidityCommand.create().
             translator( this.translator ).
             nodeService( this.nodeService ).
             eventPublisher( this.eventPublisher ).
             contentTypeService( this.contentTypeService ).
             contentIds( pushContentsIds ).
-            checkWorkflow( true ).
             build().
             execute();
 
-        return invalidContentIds.isEmpty();
+        return result.allValid();
     }
 
 
