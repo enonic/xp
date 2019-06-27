@@ -5,10 +5,11 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 
-public final class Issue
+public class Issue
 {
     private final IssueId id;
 
@@ -34,7 +35,11 @@ public final class Issue
 
     private final PublishRequest publishRequest;
 
-    private Issue( Builder builder )
+    private final IssueType issueType;
+
+    private final PropertyTree data;
+
+    protected Issue( Builder builder )
     {
         this.id = builder.id == null ? IssueId.create() : builder.id;
         this.index = builder.index;
@@ -48,6 +53,8 @@ public final class Issue
         this.modifier = builder.modifier;
         this.approverIds = PrincipalKeys.from( builder.approverIds );
         this.publishRequest = builder.publishRequest;
+        this.issueType = builder.issueType;
+        this.data = builder.data;
     }
 
     public IssueId getId()
@@ -110,6 +117,16 @@ public final class Issue
         return publishRequest;
     }
 
+    public IssueType getIssueType()
+    {
+        return issueType;
+    }
+
+    public PropertyTree getData()
+    {
+        return data;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -120,7 +137,19 @@ public final class Issue
         return new Builder( source );
     }
 
-    public static class Builder
+    public static Builder create( final IssueType type )
+    {
+        if ( type == IssueType.PUBLISH_REQUEST_ISSUE )
+        {
+            return PublishRequestIssue.create();
+        }
+        else
+        {
+            return create();
+        }
+    }
+
+    public static class Builder<B extends Builder>
     {
         private IssueId id;
 
@@ -146,10 +175,15 @@ public final class Issue
 
         private PublishRequest publishRequest;
 
+        protected IssueType issueType;
+
+        protected PropertyTree data;
+
         public Builder()
         {
             this.approverIds = Sets.newLinkedHashSet();
             this.issueStatus = IssueStatus.OPEN;
+            this.issueType = IssueType.STANDARD;
         }
 
         protected Builder( final Issue source )
@@ -167,84 +201,92 @@ public final class Issue
             this.modifier = source.modifier;
             this.approverIds = source.approverIds != null ? source.approverIds.getSet() : Sets.newHashSet();
             this.publishRequest = source.publishRequest;
+            this.issueType = source.issueType;
+            this.data = source.data;
         }
 
-        public Builder id( final IssueId id )
+        public B id( final IssueId id )
         {
             this.id = id;
-            return this;
+            return (B) this;
         }
 
-        public Builder index( final long index )
+        public B index( final long index )
         {
             this.index = index;
-            return this;
+            return (B) this;
         }
 
-        public Builder name( final IssueName name )
+        public B name( final IssueName name )
         {
             this.name = name;
-            return this;
+            return (B) this;
         }
 
-        public Builder title( final String title )
+        public B title( final String title )
         {
             this.title = title;
-            return this;
+            return (B) this;
         }
 
-        public Builder description( final String description )
+        public B description( final String description )
         {
             this.description = description;
-            return this;
+            return (B) this;
         }
 
-        public Builder createdTime( final Instant createdTime )
+        public B createdTime( final Instant createdTime )
         {
             this.createdTime = createdTime;
-            return this;
+            return (B) this;
         }
 
-        public Builder modifiedTime( final Instant modifiedTime )
+        public B modifiedTime( final Instant modifiedTime )
         {
             this.modifiedTime = modifiedTime;
-            return this;
+            return (B) this;
         }
 
-        public Builder status( final IssueStatus issueStatus )
+        public B status( final IssueStatus issueStatus )
         {
             this.issueStatus = issueStatus;
-            return this;
+            return (B) this;
         }
 
-        public Builder creator( final PrincipalKey creator )
+        public B creator( final PrincipalKey creator )
         {
             this.creator = creator;
-            return this;
+            return (B) this;
         }
 
-        public Builder modifier( final PrincipalKey modifier )
+        public B modifier( final PrincipalKey modifier )
         {
             this.modifier = modifier;
-            return this;
+            return (B) this;
         }
 
-        public Builder addApproverId( final PrincipalKey approverId )
+        public B addApproverId( final PrincipalKey approverId )
         {
             this.approverIds.add( approverId );
-            return this;
+            return (B) this;
         }
 
-        public Builder addApproverIds( final PrincipalKeys approverIds )
+        public B addApproverIds( final PrincipalKeys approverIds )
         {
             this.approverIds.addAll( approverIds.getSet() );
-            return this;
+            return (B) this;
         }
 
-        public Builder setPublishRequest( final PublishRequest publishRequest )
+        public B setPublishRequest( final PublishRequest publishRequest )
         {
             this.publishRequest = publishRequest;
-            return this;
+            return (B) this;
+        }
+
+        public B data( final PropertyTree data )
+        {
+            this.data = data;
+            return (B) this;
         }
 
         public Issue build()
