@@ -64,7 +64,7 @@ public final class ContentImageResource
     @Path("{contentId}")
     public Response getContentImage( @PathParam("contentId") final String contentIdAsString,
                                      @QueryParam("size") @DefaultValue("0") final int size,
-                                     @QueryParam("scaleWidth") @DefaultValue("true") final boolean scaleWidth,
+                                     @QueryParam("scaleWidth") @DefaultValue("false") final boolean scaleWidth,
                                      @QueryParam("source") @DefaultValue("false") final boolean source,
                                      @QueryParam("scale") final String scale,
                                      @QueryParam("filter") final String filter,
