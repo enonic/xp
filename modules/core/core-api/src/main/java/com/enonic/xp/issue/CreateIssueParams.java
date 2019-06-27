@@ -3,7 +3,7 @@ package com.enonic.xp.issue;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.PrincipalKeys;
 
-public final class CreateIssueParams
+public class CreateIssueParams
 {
     private final IssueId id;
 
@@ -21,7 +21,7 @@ public final class CreateIssueParams
 
     private final PropertyTree data;
 
-    private CreateIssueParams( Builder builder )
+    protected CreateIssueParams( Builder builder )
     {
         this.id = IssueId.create();
         this.title = builder.title;
@@ -78,7 +78,12 @@ public final class CreateIssueParams
         return new Builder();
     }
 
-    public static class Builder
+    public static Builder create( CreateIssueParams params )
+    {
+        return new Builder( params );
+    }
+
+    public static class Builder<B extends Builder>
     {
 
         private String title;
@@ -91,51 +96,51 @@ public final class CreateIssueParams
 
         private PublishRequest publishRequest;
 
-        private IssueType issueType;
+        protected IssueType issueType;
 
-        private PropertyTree data;
+        protected PropertyTree data;
 
-        private Builder()
+        protected Builder()
         {
             this.issueStatus = IssueStatus.OPEN;
             this.approverIds = PrincipalKeys.empty();
             this.issueType = IssueType.STANDARD;
+            this.data = new PropertyTree();
         }
 
-        public Builder title( final String title )
+        public Builder( CreateIssueParams params )
+        {
+            this.title = params.title;
+            this.description = params.description;
+            this.issueStatus = params.issueStatus;
+            this.approverIds = params.approverIds;
+            this.publishRequest = params.publishRequest;
+            this.issueType = params.issueType;
+            this.data = params.data;
+        }
+
+        public B title( final String title )
         {
             this.title = title;
-            return this;
+            return (B) this;
         }
 
-        public Builder description( final String description )
+        public B description( final String description )
         {
             this.description = description;
-            return this;
+            return (B) this;
         }
 
-        public Builder setApproverIds( final PrincipalKeys approverIds )
+        public B setApproverIds( final PrincipalKeys approverIds )
         {
             this.approverIds = approverIds;
-            return this;
+            return (B) this;
         }
 
-        public Builder setPublishRequest( final PublishRequest publishRequest )
+        public B setPublishRequest( final PublishRequest publishRequest )
         {
             this.publishRequest = publishRequest;
-            return this;
-        }
-
-        public Builder type( final IssueType issueType )
-        {
-            this.issueType = issueType;
-            return this;
-        }
-
-        public Builder data( final PropertyTree data )
-        {
-            this.data = data;
-            return this;
+            return (B) this;
         }
 
         public CreateIssueParams build()

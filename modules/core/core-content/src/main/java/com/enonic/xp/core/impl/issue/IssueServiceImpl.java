@@ -8,6 +8,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.issue.CreateIssueCommentParams;
 import com.enonic.xp.issue.CreateIssueParams;
+import com.enonic.xp.issue.CreatePublishRequestIssueParams;
 import com.enonic.xp.issue.DeleteIssueCommentParams;
 import com.enonic.xp.issue.DeleteIssueCommentResult;
 import com.enonic.xp.issue.FindIssueCommentsResult;
@@ -18,6 +19,8 @@ import com.enonic.xp.issue.IssueCommentQuery;
 import com.enonic.xp.issue.IssueId;
 import com.enonic.xp.issue.IssueQuery;
 import com.enonic.xp.issue.IssueService;
+import com.enonic.xp.issue.PublishRequestIssue;
+import com.enonic.xp.issue.PublishRequestIssueScheduleSerializer;
 import com.enonic.xp.issue.UpdateIssueCommentParams;
 import com.enonic.xp.issue.UpdateIssueParams;
 import com.enonic.xp.node.NodeService;
@@ -29,6 +32,9 @@ public class IssueServiceImpl
     private NodeService nodeService;
 
     private IndexService indexService;
+
+    private static final PublishRequestIssueScheduleSerializer REQUEST_ISSUE_SCHEDULE_SERIALIZER =
+        new PublishRequestIssueScheduleSerializer();
 
     @SuppressWarnings("unused")
     // Just needed for now to ensure that the content-service is initialized first, since we need the content-repo initialized
@@ -49,6 +55,18 @@ public class IssueServiceImpl
     public Issue create( CreateIssueParams params )
     {
         return CreateIssueCommand.create().
+            params( params ).
+            nodeService( this.nodeService ).
+            build().
+            execute();
+    }
+
+    @Override
+    public PublishRequestIssue create( final CreatePublishRequestIssueParams params )
+    {
+        REQUEST_ISSUE_SCHEDULE_SERIALIZER.toData( params.getSchedule(), params.getData() );
+
+        return (PublishRequestIssue) CreateIssueCommand.create().
             params( params ).
             nodeService( this.nodeService ).
             build().

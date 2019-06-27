@@ -1,0 +1,47 @@
+package com.enonic.xp.issue;
+
+public class CreatePublishRequestIssueParams
+    extends CreateIssueParams
+{
+    private final PublishRequestIssueSchedule schedule;
+
+    protected CreatePublishRequestIssueParams( final Builder builder )
+    {
+        super( builder );
+        this.schedule = builder.schedule;
+    }
+
+    public PublishRequestIssueSchedule getSchedule()
+    {
+        return schedule;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    private static class Builder
+        extends CreateIssueParams.Builder<Builder>
+    {
+        private PublishRequestIssueSchedule schedule;
+
+        public Builder()
+        {
+            super();
+            this.issueType = IssueType.PUBLISH_REQUEST_ISSUE;
+        }
+
+        public Builder schedule( final PublishRequestIssueSchedule schedule )
+        {
+            this.schedule = schedule;
+            return this;
+        }
+
+        @Override
+        public CreateIssueParams build()
+        {
+            return new CreatePublishRequestIssueParams( this );
+        }
+    }
+}
