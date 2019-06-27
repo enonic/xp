@@ -13,6 +13,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.issue.CreateIssueParams;
 import com.enonic.xp.issue.Issue;
 import com.enonic.xp.issue.IssueStatus;
+import com.enonic.xp.issue.IssueType;
 import com.enonic.xp.issue.PublishRequest;
 import com.enonic.xp.issue.PublishRequestItem;
 import com.enonic.xp.node.NodeId;
@@ -22,6 +23,7 @@ import com.enonic.xp.util.Reference;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.APPROVERS;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.CREATED_TIME;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.CREATOR;
+import static com.enonic.xp.core.impl.issue.IssuePropertyNames.DATA;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.DESCRIPTION;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.INDEX;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.MODIFIED_TIME;
@@ -29,6 +31,7 @@ import static com.enonic.xp.core.impl.issue.IssuePropertyNames.MODIFIER;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.PUBLISH_REQUEST;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.STATUS;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.TITLE;
+import static com.enonic.xp.core.impl.issue.IssuePropertyNames.TYPE;
 
 public class IssueDataSerializer
 {
@@ -38,9 +41,15 @@ public class IssueDataSerializer
 
         final PropertySet issueAsData = propertyTree.getRoot();
 
+        issueAsData.ifNotNull().addEnum( TYPE, params.getIssueType() );
         issueAsData.ifNotNull().addString( TITLE, params.getTitle() );
         issueAsData.ifNotNull().addString( STATUS, params.getStatus().toString() );
         issueAsData.addString( DESCRIPTION, params.getDescription() );
+
+        if ( params.getData() != null )
+        {
+            issueAsData.addSet( DATA, params.getData().getRoot().copy( issueAsData.getTree() ) );
+        }
 
         if ( params.getApproverIds().getSize() > 0 )
         {
@@ -62,6 +71,7 @@ public class IssueDataSerializer
 
         final PropertySet issueAsData = propertyTree.getRoot();
 
+        issueAsData.ifNotNull().addEnum( TYPE, editedIssue.getIssueType() );
         issueAsData.ifNotNull().addLong( INDEX, editedIssue.getIndex() );
         issueAsData.ifNotNull().addString( TITLE, editedIssue.getTitle() );
         issueAsData.ifNotNull().addInstant( CREATED_TIME, editedIssue.getCreatedTime() );
@@ -70,6 +80,11 @@ public class IssueDataSerializer
         issueAsData.ifNotNull().addString( MODIFIER, editedIssue.getModifier().toString() );
         issueAsData.ifNotNull().addString( STATUS, editedIssue.getStatus().toString() );
         issueAsData.addString( DESCRIPTION, editedIssue.getDescription() );
+
+        if ( editedIssue.getData() != null )
+        {
+            issueAsData.addSet( DATA, editedIssue.getData().getRoot().copy( issueAsData.getTree() ) );
+        }
 
         issueAsData.addStrings( APPROVERS, editedIssue.getApproverIds().
             stream().map( PrincipalKey::toString ).collect( Collectors.toList() ) );
@@ -84,12 +99,19 @@ public class IssueDataSerializer
 
     public Issue.Builder fromData( final PropertySet issueProperties )
     {
-        final Issue.Builder builder = Issue.create();
+        final IssueType issueType = issueProperties.getEnum( TYPE, IssueType.class );
+        final Issue.Builder builder = Issue.create( issueType );
 
         builder.title( issueProperties.getString( TITLE ) );
         builder.description( issueProperties.getString( DESCRIPTION ) );
         builder.status( IssueStatus.valueOf( issueProperties.getString( STATUS ) ) );
         builder.index( issueProperties.getLong( INDEX ) );
+
+        final PropertySet data = issueProperties.getSet( DATA );
+        if ( data != null )
+        {
+            builder.data( data.toTree() );
+        }
 
         extractUserInfo( issueProperties, builder );
         extractApprovers( issueProperties, builder );

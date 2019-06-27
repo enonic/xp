@@ -1,5 +1,6 @@
 package com.enonic.xp.issue;
 
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.PrincipalKeys;
 
 public final class CreateIssueParams
@@ -16,6 +17,10 @@ public final class CreateIssueParams
 
     private final PublishRequest publishRequest;
 
+    private final IssueType issueType;
+
+    private final PropertyTree data;
+
     private CreateIssueParams( Builder builder )
     {
         this.id = IssueId.create();
@@ -24,6 +29,8 @@ public final class CreateIssueParams
         this.issueStatus = builder.issueStatus;
         this.approverIds = builder.approverIds;
         this.publishRequest = builder.publishRequest;
+        this.issueType = builder.issueType;
+        this.data = builder.data;
     }
 
     public IssueId getId()
@@ -56,6 +63,16 @@ public final class CreateIssueParams
         return publishRequest;
     }
 
+    public IssueType getIssueType()
+    {
+        return issueType;
+    }
+
+    public PropertyTree getData()
+    {
+        return data;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -74,10 +91,15 @@ public final class CreateIssueParams
 
         private PublishRequest publishRequest;
 
+        private IssueType issueType;
+
+        private PropertyTree data;
+
         private Builder()
         {
             this.issueStatus = IssueStatus.OPEN;
             this.approverIds = PrincipalKeys.empty();
+            this.issueType = IssueType.STANDARD;
         }
 
         public Builder title( final String title )
@@ -101,6 +123,18 @@ public final class CreateIssueParams
         public Builder setPublishRequest( final PublishRequest publishRequest )
         {
             this.publishRequest = publishRequest;
+            return this;
+        }
+
+        public Builder type( final IssueType issueType )
+        {
+            this.issueType = issueType;
+            return this;
+        }
+
+        public Builder data( final PropertyTree data )
+        {
+            this.data = data;
             return this;
         }
 
