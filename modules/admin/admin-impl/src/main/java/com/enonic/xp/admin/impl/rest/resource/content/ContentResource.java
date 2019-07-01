@@ -89,6 +89,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.GetDependenciesResult
 import com.enonic.xp.admin.impl.rest.resource.content.json.GetDescendantsOfContents;
 import com.enonic.xp.admin.impl.rest.resource.content.json.HasUnpublishedChildrenResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.LocaleListJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.MarkAsReadyJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ReorderChildJson;
@@ -156,6 +157,7 @@ import com.enonic.xp.content.SetContentChildOrderParams;
 import com.enonic.xp.content.UndoPendingDeleteContentParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
+import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.extractor.BinaryExtractor;
 import com.enonic.xp.extractor.ExtractedData;
@@ -528,6 +530,27 @@ public final class ContentResource
             contentService( contentService ).
             build().
             createTaskResult();
+    }
+
+    @POST
+    @Path("markAsReady")
+    public void markAsReady( final MarkAsReadyJson params )
+    {
+        ContentIds.from( params.getContentIds() ).stream().
+            filter( contentService::contentExists ).
+            forEach( this::markContentAsReady );
+    }
+
+    private void markContentAsReady( final ContentId contentId )
+    {
+        final UpdateContentParams updateParams = new UpdateContentParams().
+            contentId( contentId ).
+            modifier( PrincipalKey.ofAnonymous() ).
+            editor( edit -> {
+                edit.workflowInfo = WorkflowInfo.ready();
+            } );
+
+        contentService.update( updateParams );
     }
 
     @POST
