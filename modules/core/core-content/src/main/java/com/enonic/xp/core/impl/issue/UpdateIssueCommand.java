@@ -7,9 +7,11 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.issue.serializer.IssueDataSerializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.issue.EditableIssue;
+import com.enonic.xp.issue.EditablePublishRequestIssue;
 import com.enonic.xp.issue.Issue;
 import com.enonic.xp.issue.IssueEditor;
 import com.enonic.xp.issue.IssueId;
+import com.enonic.xp.issue.PublishRequestIssue;
 import com.enonic.xp.issue.UpdateIssueParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeEditor;
@@ -50,7 +52,9 @@ public class UpdateIssueCommand
 
     private Issue editIssue( final IssueEditor editor, final Issue original )
     {
-        final EditableIssue editableIssue = new EditableIssue( original );
+        final EditableIssue editableIssue = original instanceof PublishRequestIssue
+            ? new EditablePublishRequestIssue( (PublishRequestIssue) original )
+            : new EditableIssue( original );
         if ( editor != null )
         {
             editor.edit( editableIssue );
