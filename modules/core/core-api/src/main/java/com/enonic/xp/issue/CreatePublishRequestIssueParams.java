@@ -21,7 +21,7 @@ public class CreatePublishRequestIssueParams
         return new Builder();
     }
 
-    private static class Builder
+    public static class Builder
         extends CreateIssueParams.Builder<Builder>
     {
         private PublishRequestIssueSchedule schedule;
@@ -39,7 +39,7 @@ public class CreatePublishRequestIssueParams
         }
 
         @Override
-        public CreateIssueParams build()
+        public CreatePublishRequestIssueParams build()
         {
             return new CreatePublishRequestIssueParams( this );
         }

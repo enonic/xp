@@ -20,7 +20,7 @@ public class PublishRequestIssueScheduleSerializer
 
         final PropertySet scheduleSet = data.addSet( DATA_SCHEDULE );
         scheduleSet.addInstant( DATA_SCHEDULE_FROM, schedule.getFrom() );
-        scheduleSet.addInstant( DATA_SCHEDULE_TO, schedule.getFrom() );
+        scheduleSet.addInstant( DATA_SCHEDULE_TO, schedule.getTo() );
     }
 
     public PublishRequestIssueSchedule fromData( final PropertyTree data )
