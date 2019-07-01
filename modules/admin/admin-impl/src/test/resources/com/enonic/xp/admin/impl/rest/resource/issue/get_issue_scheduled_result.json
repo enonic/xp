@@ -22,6 +22,10 @@
       }
     ]
   },
+  "publishSchedule": {
+    "from": "2019-02-01T10:19:18Z",
+    "to": "2019-10-02T07:19:18Z"
+  },
   "title": "title",
-  "type": "STANDARD"
+  "type": "PUBLISH_REQUEST_ISSUE"
 }

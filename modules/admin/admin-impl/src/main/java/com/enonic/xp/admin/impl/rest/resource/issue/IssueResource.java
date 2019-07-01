@@ -45,8 +45,10 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.issue.CreateIssueCommentParams;
 import com.enonic.xp.issue.CreateIssueParams;
+import com.enonic.xp.issue.CreatePublishRequestIssueParams;
 import com.enonic.xp.issue.DeleteIssueCommentParams;
 import com.enonic.xp.issue.DeleteIssueCommentResult;
+import com.enonic.xp.issue.EditablePublishRequestIssue;
 import com.enonic.xp.issue.FindIssueCommentsResult;
 import com.enonic.xp.issue.FindIssuesParams;
 import com.enonic.xp.issue.FindIssuesResult;
@@ -396,7 +398,16 @@ public final class IssueResource
 
     private CreateIssueParams generateCreateIssueParams( final CreateIssueJson json )
     {
-        final CreateIssueParams.Builder builder = CreateIssueParams.create();
+        final CreateIssueParams.Builder builder;
+
+        if ( json.publishSchedule != null )
+        {
+            builder = CreatePublishRequestIssueParams.create().schedule( json.publishSchedule );
+        }
+        else
+        {
+            builder = CreateIssueParams.create();
+        }
 
         builder.title( json.title );
         builder.description( json.description );
@@ -430,6 +441,10 @@ public final class IssueResource
                 if ( json.publishRequest != null )
                 {
                     editMe.publishRequest = json.publishRequest;
+                }
+                if ( editMe instanceof EditablePublishRequestIssue )
+                {
+                    ( (EditablePublishRequestIssue) editMe ).schedule = json.publishSchedule;
                 }
             } ).
             build();
