@@ -63,6 +63,11 @@ class ContentVersionFactory
 
     private ContentVersionPublishInfo doCreateContentVersionPublishInfo( final NodeCommitId nodeCommitId )
     {
+        if ( nodeCommitId == null )
+        {
+            return null;
+        }
+
         NodeCommitEntry nodeCommitEntry = nodeService.getCommit( nodeCommitId );
         return ContentVersionPublishInfo.create().
             message( cleanUpMessage( nodeCommitEntry.getMessage() ) ).
