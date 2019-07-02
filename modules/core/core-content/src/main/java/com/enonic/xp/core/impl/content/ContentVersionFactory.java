@@ -85,7 +85,7 @@ class ContentVersionFactory
 
         String res = message.replace( NODE_CONTENT_PUBLISH_MESSAGE, "" ).trim();
 
-        return res.equals( "" ) ? null : res;
+        return "".equals( res ) ? null : res;
     }
 
     private NodeVersion getNodeVersion( final NodeVersionMetadata nodeVersionMetadata )
