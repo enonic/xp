@@ -17,6 +17,7 @@ import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.layer.ContentLayerName;
 import com.enonic.xp.task.AbstractRunnableTask;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskId;
@@ -50,7 +51,7 @@ public class DeleteRunnableTask
         if ( params.isDeleteOnline() )
         {
             final Context masterContext = ContextBuilder.from( ContextAccessor.current() ).
-                branch( ContentConstants.BRANCH_MASTER ).
+                branch( ContentLayerName.current().getMasterBranch() ).
                 build();
 
             final long parentsToDeleteInMaster =

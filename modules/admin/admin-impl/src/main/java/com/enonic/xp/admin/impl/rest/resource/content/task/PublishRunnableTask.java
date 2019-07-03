@@ -9,6 +9,7 @@ import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentParams;
+import com.enonic.xp.layer.ContentLayerName;
 import com.enonic.xp.task.AbstractRunnableTask;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskId;
@@ -42,7 +43,7 @@ public class PublishRunnableTask
         try
         {
             final PublishContentResult result = contentService.publish( PushContentParams.create().
-                target( ContentConstants.BRANCH_MASTER ).
+                target( ContentLayerName.current().getMasterBranch() ).
                 contentIds( contentIds ).
                 excludedContentIds( excludeContentIds ).
                 excludeChildrenIds( excludeChildrenIds ).

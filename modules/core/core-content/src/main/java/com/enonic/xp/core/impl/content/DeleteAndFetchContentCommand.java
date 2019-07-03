@@ -14,6 +14,7 @@ import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.layer.ContentLayerName;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.NodeAccessException;
@@ -68,8 +69,7 @@ final class DeleteAndFetchContentCommand
 
         this.nodeService.refresh( RefreshMode.ALL );
 
-        return nodesToDelete.build().getDeletedContents().contains( content.getId() ) ?
-            Contents.from(content) : null;
+        return nodesToDelete.build().getDeletedContents().contains( content.getId() ) ? Contents.from( content ) : null;
 
     }
 
@@ -98,7 +98,7 @@ final class DeleteAndFetchContentCommand
             final Context currentContext = ContextAccessor.current();
             deleteNodeInContext( nodeToDelete, currentContext );
             final NodeIds deletedNodeIds = deleteNodeInContext( nodeToDelete, ContextBuilder.from( currentContext ).
-                branch( ContentConstants.BRANCH_MASTER ).
+                branch( ContentLayerName.current().getMasterBranch() ).
                 build() );
             deletedNodes.addDeleted( ContentIds.from( deletedNodeIds.getAsStrings() ) );
             return;
@@ -118,13 +118,13 @@ final class DeleteAndFetchContentCommand
         final Branch currentBranch = context.getBranch();
 
         final NodeComparison compare;
-        if ( currentBranch.equals( ContentConstants.BRANCH_DRAFT ) )
+        if ( ContentLayerName.isDraftBranch( currentBranch ) )
         {
-            compare = this.nodeService.compare( nodeToDelete, ContentConstants.BRANCH_MASTER );
+            compare = this.nodeService.compare( nodeToDelete, ContentLayerName.current().getMasterBranch() );
         }
         else
         {
-            compare = this.nodeService.compare( nodeToDelete, ContentConstants.BRANCH_DRAFT );
+            compare = this.nodeService.compare( nodeToDelete, ContentLayerName.current().getDraftBranch() );
         }
         return compare.getCompareStatus();
     }

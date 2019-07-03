@@ -162,6 +162,7 @@ import com.enonic.xp.extractor.ExtractedData;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.jaxrs.JaxRsExceptions;
+import com.enonic.xp.layer.ContentLayerName;
 import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.repository.IndexException;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -463,7 +464,7 @@ public final class ContentResource
         UndoPendingDeleteContentResultJson result = new UndoPendingDeleteContentResultJson();
         int numberOfContents = this.contentService.undoPendingDelete( UndoPendingDeleteContentParams.create().
             contentIds( ContentIds.from( params.getContentIds() ) ).
-            target( ContentConstants.BRANCH_MASTER ).
+            target( ContentLayerName.current().getMasterBranch() ).
             build() );
         return result.setSuccess( numberOfContents );
     }
@@ -538,7 +539,7 @@ public final class ContentResource
 
         ids.getContentIds().forEach( contentId -> {
             final Boolean hasChildren =
-                this.contentService.hasUnpublishedChildren( new HasUnpublishedChildrenParams( contentId, ContentConstants.BRANCH_MASTER ) );
+                this.contentService.hasUnpublishedChildren( new HasUnpublishedChildrenParams( contentId, ContentLayerName.current().getMasterBranch() ) );
 
             result.addHasChildren( contentId, hasChildren );
         } );
@@ -574,7 +575,7 @@ public final class ContentResource
         //Resolve required ids
         final ContentIds requiredIds = this.contentService.resolveRequiredDependencies( ResolveRequiredDependenciesParams.create().
             contentIds( fullPublishList ).
-            target( ContentConstants.BRANCH_MASTER ).
+            target( ContentLayerName.current().getMasterBranch() ).
             build() );
 
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
@@ -1029,7 +1030,7 @@ public final class ContentResource
     private Stream<ContentId> filterIdsByStatus( final ContentIds ids, final Collection<CompareStatus> statuses )
     {
         final CompareContentResults compareResults =
-            contentService.compare( new CompareContentsParams( ids, ContentConstants.BRANCH_MASTER ) );
+            contentService.compare( new CompareContentsParams( ids, ContentLayerName.current().getMasterBranch()) );
         final Map<ContentId, CompareContentResult> compareResultMap = compareResults.getCompareContentResultsMap();
 
         return compareResultMap.entrySet().
@@ -1192,9 +1193,9 @@ public final class ContentResource
     {
         final ContentIds contentIds = ContentIds.from( params.getIds() );
         final CompareContentResults compareResults =
-            contentService.compare( new CompareContentsParams( contentIds, ContentConstants.BRANCH_MASTER ) );
+            contentService.compare( new CompareContentsParams( contentIds, ContentLayerName.current().getMasterBranch() ) );
         final GetPublishStatusesResult getPublishStatusesResult =
-            contentService.getPublishStatuses( new GetPublishStatusesParams( contentIds, ContentConstants.BRANCH_DRAFT ) );
+            contentService.getPublishStatuses( new GetPublishStatusesParams( contentIds, ContentLayerName.current().getDraftBranch() ) );
         return new CompareContentResultsJson( compareResults, getPublishStatusesResult );
     }
 
@@ -1218,7 +1219,7 @@ public final class ContentResource
     public GetActiveContentVersionsResultJson getActiveVersions( @QueryParam("id") final String id )
     {
         final GetActiveContentVersionsResult result = contentService.getActiveVersions( GetActiveContentVersionsParams.create().
-            branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
+            branches( Branches.from( ContentLayerName.current().getDraftBranch(), ContentLayerName.current().getMasterBranch() ) ).
             contentId( ContentId.from( id ) ).
             build() );
 
@@ -1238,7 +1239,7 @@ public final class ContentResource
             build() );
 
         final GetActiveContentVersionsResult activeVersions = contentService.getActiveVersions( GetActiveContentVersionsParams.create().
-            branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
+            branches( Branches.from( ContentLayerName.current().getDraftBranch(), ContentLayerName.current().getMasterBranch() ) ).
             contentId( contentId ).
             build() );
 

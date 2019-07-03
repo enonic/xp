@@ -22,6 +22,7 @@ import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.event.EventPublisher;
+import com.enonic.xp.layer.ContentLayerName;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.query.filter.BooleanFilter;
@@ -100,7 +101,7 @@ abstract class AbstractContentCommand
         //Returns true if the command is executed on master and the flag ignorePublishTimes has not been set on the context
         final Context currentContext = ContextAccessor.current();
         return !Boolean.TRUE.equals( currentContext.getAttribute( "ignorePublishTimes" ) ) &&
-            ContentConstants.BRANCH_MASTER.equals( currentContext.getBranch() );
+            ContentLayerName.isMasterBranch( currentContext.getBranch() );
     }
 
     protected boolean contentPendingOrExpired( final Content content, final Instant now )

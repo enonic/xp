@@ -6,7 +6,6 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.ContentAccessException;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentNotFoundException;
@@ -15,6 +14,7 @@ import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.layer.ContentLayerName;
 import com.enonic.xp.node.DeleteNodeListener;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
@@ -110,7 +110,6 @@ final class DeleteContentCommand
             result.addPending( ContentId.from( nodeToDelete.toString() ) );
             this.nodesDeleted( 1 );
 
-
             final NodeIds children = getAllChildren( nodeToDelete );
 
             for ( final NodeId child : children )
@@ -147,7 +146,7 @@ final class DeleteContentCommand
         final Context currentContext = ContextAccessor.current();
         final NodeIds draftNodes = deleteNodeInContext( nodeToDelete, currentContext );
         final NodeIds masterNodes = deleteNodeInContext( nodeToDelete, ContextBuilder.from( currentContext ).
-            branch( ContentConstants.BRANCH_MASTER ).
+            branch( ContentLayerName.current().getMasterBranch() ).
             build() );
         return masterNodes != null ? masterNodes : draftNodes;
     }
@@ -168,13 +167,13 @@ final class DeleteContentCommand
         final Branch currentBranch = context.getBranch();
 
         final NodeComparison compare;
-        if ( currentBranch.equals( ContentConstants.BRANCH_DRAFT ) )
+        if ( ContentLayerName.isDraftBranch( currentBranch ) )
         {
-            compare = this.nodeService.compare( nodeToDelete, ContentConstants.BRANCH_MASTER );
+            compare = this.nodeService.compare( nodeToDelete, ContentLayerName.current().getMasterBranch() );
         }
         else
         {
-            compare = this.nodeService.compare( nodeToDelete, ContentConstants.BRANCH_DRAFT );
+            compare = this.nodeService.compare( nodeToDelete, ContentLayerName.current().getDraftBranch() );
         }
         return compare.getCompareStatus();
     }

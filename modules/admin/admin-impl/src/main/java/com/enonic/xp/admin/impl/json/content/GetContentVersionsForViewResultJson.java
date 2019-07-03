@@ -14,6 +14,7 @@ import com.enonic.xp.content.ContentVersion;
 import com.enonic.xp.content.ContentVersions;
 import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.content.GetActiveContentVersionsResult;
+import com.enonic.xp.layer.ContentLayerName;
 
 public class GetContentVersionsForViewResultJson
 {
@@ -68,7 +69,7 @@ public class GetContentVersionsForViewResultJson
     private ActiveContentVersionEntry getActiveContentVersion( final GetActiveContentVersionsResult activeVersions )
     {
         return activeVersions.getActiveContentVersions().stream().filter(
-            activeVersion -> ContentConstants.BRANCH_DRAFT.equals( activeVersion.getBranch() ) ).findFirst().orElse( null );
+            activeVersion -> ContentLayerName.isDraftBranch( activeVersion.getBranch() ) ).findFirst().orElse( null );
     }
 
     private ContentVersions filterContentVersions( final FindContentVersionsResult allVersions )

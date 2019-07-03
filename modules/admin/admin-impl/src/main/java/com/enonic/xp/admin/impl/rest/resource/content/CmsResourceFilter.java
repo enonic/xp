@@ -6,16 +6,12 @@ import java.util.regex.Pattern;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.container.ContainerResponseContext;
-import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.ext.Provider;
 
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.layer.ContentLayerConstants;
 import com.enonic.xp.layer.ContentLayerName;
 
 
@@ -37,9 +33,7 @@ public class CmsResourceFilter
             final Context context = ContextBuilder.
                 from( ContextAccessor.current() ).
                 repositoryId( "com.enonic.cms." + project ).
-                branch( ContentLayerName.DEFAULT_LAYER_NAME.getValue().equals( layer )
-                            ? ContentConstants.BRANCH_DRAFT.getValue()
-                            : ContentLayerConstants.BRANCH_PREFIX_DRAFT + layer ).
+                branch( ContentLayerName.from( layer ).getDraftBranch() ).
                 build();
             ContextAccessor.INSTANCE.set( context );
             System.out.println( "project" + matcher.group( 1 ) );

@@ -17,6 +17,7 @@ import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.layer.ContentLayerName;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 
@@ -29,7 +30,7 @@ public final class UnpublishContentHandler
 
     public List<String> execute()
     {
-        final Branch targetBranch = ContentConstants.BRANCH_MASTER;
+        final Branch targetBranch = ContentLayerName.current().getMasterBranch();
 
         final Context context = ContextBuilder.
             from( ContextAccessor.current() ).

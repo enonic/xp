@@ -9,6 +9,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.layer.ContentLayerName;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.PortalHandlerWorker;
@@ -69,7 +70,7 @@ final class AttachmentHandlerWorker
         {
             final AccessControlEntry publicAccessControlEntry = content.getPermissions().getEntry( RoleKeys.EVERYONE );
             final boolean everyoneCanRead = publicAccessControlEntry != null && publicAccessControlEntry.isAllowed( Permission.READ );
-            final boolean masterBranch = ContentConstants.BRANCH_MASTER.equals( request.getBranch() );
+            final boolean masterBranch = ContentLayerName.isMasterBranch( request.getBranch() );
             setResponseCacheable( portalResponse, everyoneCanRead && masterBranch );
         }
 

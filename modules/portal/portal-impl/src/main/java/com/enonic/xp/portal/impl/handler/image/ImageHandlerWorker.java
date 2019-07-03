@@ -16,6 +16,7 @@ import com.enonic.xp.content.Media;
 import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.image.ScaleParams;
+import com.enonic.xp.layer.ContentLayerName;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.portal.PortalRequest;
@@ -130,7 +131,7 @@ final class ImageHandlerWorker
         {
             final AccessControlEntry publicAccessControlEntry = imageContent.getPermissions().getEntry( RoleKeys.EVERYONE );
             final boolean everyoneCanRead = publicAccessControlEntry != null && publicAccessControlEntry.isAllowed( Permission.READ );
-            final boolean masterBranch = ContentConstants.BRANCH_MASTER.equals( request.getBranch() );
+            final boolean masterBranch = ContentLayerName.isMasterBranch( request.getBranch() );
             setResponseCacheable( portalResponse, everyoneCanRead && masterBranch );
         }
 

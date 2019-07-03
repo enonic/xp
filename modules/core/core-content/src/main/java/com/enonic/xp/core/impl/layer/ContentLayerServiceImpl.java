@@ -115,9 +115,7 @@ public class ContentLayerServiceImpl
         final Branch draftBranch = Branch.from( ContentLayerConstants.BRANCH_PREFIX_DRAFT + params.getName() );
         final Branch masterBranch = Branch.from( ContentLayerConstants.BRANCH_PREFIX_MASTER + params.getName() );
         final ContentLayerName parentLayer = params.getParentName();
-        final Branch parentDraftBranch = ContentLayerName.DEFAULT_LAYER_NAME.equals( parentLayer )
-            ? ContentConstants.BRANCH_DRAFT
-            : Branch.from( ContentLayerConstants.BRANCH_PREFIX_DRAFT + parentLayer );
+        final Branch parentDraftBranch = parentLayer.getDraftBranch();
 
         final Repository contentRepository = repositoryService.get( ContentConstants.CONTENT_REPO_ID );
         if ( contentRepository == null || contentRepository.getChildBranchInfos( parentDraftBranch ) == null )

@@ -17,6 +17,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.PushContentListener;
 import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
+import com.enonic.xp.layer.ContentLayerName;
 import com.enonic.xp.task.AbstractRunnableTask;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskId;
@@ -37,7 +38,7 @@ public class UnpublishRunnableTask
     {
         final List<CompareStatus> statuses = Arrays.asList( CompareStatus.EQUAL, CompareStatus.PENDING_DELETE, CompareStatus.NEWER );
         final CompareContentResults compareResults =
-            contentService.compare( new CompareContentsParams( ids, ContentConstants.BRANCH_MASTER ) );
+            contentService.compare( new CompareContentsParams( ids, ContentLayerName.current().getMasterBranch() ) );
 
         return ContentIds.from( compareResults.getCompareContentResultsMap().entrySet().
             stream().
@@ -71,7 +72,7 @@ public class UnpublishRunnableTask
         try
         {
             final UnpublishContentsResult result = this.contentService.unpublishContent( UnpublishContentParams.create().
-                unpublishBranch( ContentConstants.BRANCH_MASTER ).
+                unpublishBranch( ContentLayerName.current().getMasterBranch() ).
                 contentIds( contentIds ).
                 includeChildren( params.isIncludeChildren() ).
                 pushListener( listener ).

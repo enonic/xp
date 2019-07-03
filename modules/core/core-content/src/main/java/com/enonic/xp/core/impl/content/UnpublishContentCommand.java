@@ -5,7 +5,6 @@ import java.time.Instant;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPropertyNames;
@@ -17,6 +16,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.layer.ContentLayerName;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
@@ -64,7 +64,7 @@ public class UnpublishContentCommand
 
         final ContentIds contentIds = contentBuilder.build();
         final Context draftContext = ContextBuilder.from( ContextAccessor.current() ).
-            branch( ContentConstants.BRANCH_DRAFT ).
+            branch( ContentLayerName.current().getDraftBranch() ).
             build();
 
         draftContext.callWith( () -> removePublishInfo( contentIds ) );
@@ -110,10 +110,10 @@ public class UnpublishContentCommand
     private void removePendingDeleteFromDraft( final UnpublishContentsResult result )
     {
         final Branch currentBranch = ContextAccessor.current().getBranch();
-        if ( !currentBranch.equals( ContentConstants.BRANCH_DRAFT ) )
+        if ( !ContentLayerName.isDraftBranch( currentBranch ) )
         {
             final Context draftContext = ContextBuilder.from( ContextAccessor.current() ).
-                branch( ContentConstants.BRANCH_DRAFT ).
+                branch( ContentLayerName.current().getDraftBranch() ).
                 build();
             draftContext.callWith( () -> {
                 final Nodes draftNodes = this.nodeService.getByIds( NodeIds.from( result.getUnpublishedContents().asStrings() ) );
@@ -137,21 +137,23 @@ public class UnpublishContentCommand
             this.nodeService.update( UpdateNodeParams.create().
                 editor( toBeEdited -> {
 
-                    if ( toBeEdited.data.getInstant( ContentPropertyNames.PUBLISH_INFO + PropertyPath.ELEMENT_DIVIDER + ContentPropertyNames.PUBLISH_FROM ) != null )
+                    if ( toBeEdited.data.getInstant(
+                        ContentPropertyNames.PUBLISH_INFO + PropertyPath.ELEMENT_DIVIDER + ContentPropertyNames.PUBLISH_FROM ) != null )
                     {
                         PropertySet publishInfo = toBeEdited.data.getSet( ContentPropertyNames.PUBLISH_INFO );
 
-                        if(publishInfo.hasProperty( ContentPropertyNames.PUBLISH_FROM ))
+                        if ( publishInfo.hasProperty( ContentPropertyNames.PUBLISH_FROM ) )
                         {
                             publishInfo.removeProperty( ContentPropertyNames.PUBLISH_FROM );
                         }
 
-                        if(publishInfo.hasProperty( ContentPropertyNames.PUBLISH_TO ))
+                        if ( publishInfo.hasProperty( ContentPropertyNames.PUBLISH_TO ) )
                         {
                             publishInfo.removeProperty( ContentPropertyNames.PUBLISH_TO );
                         }
-                        
-                        if (publishInfo.getInstant( ContentPropertyNames.PUBLISH_FIRST ).compareTo( Instant.now()) > 0 ) {
+
+                        if ( publishInfo.getInstant( ContentPropertyNames.PUBLISH_FIRST ).compareTo( Instant.now() ) > 0 )
+                        {
                             publishInfo.removeProperty( ContentPropertyNames.PUBLISH_FIRST );
                         }
                     }
