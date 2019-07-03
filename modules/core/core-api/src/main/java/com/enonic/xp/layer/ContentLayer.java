@@ -8,11 +8,11 @@ public class ContentLayer
 
     public static final String BRANCH_PREFIX_MASTER = ContentConstants.BRANCH_VALUE_MASTER + "-";
 
-    public static final ContentLayer DEFAULT_CONTENT_LAYER = ContentLayer.from( "default", null );
+    public static final ContentLayer DEFAULT_CONTENT_LAYER = ContentLayer.from( null, null );
 
-    private final String name;
+    private final ContentLayerName name;
 
-    private final String parentName;
+    private final ContentLayerName parentName;
 
     private ContentLayer( final Builder builder )
     {
@@ -20,17 +20,17 @@ public class ContentLayer
         parentName = builder.parentName;
     }
 
-    public String getName()
+    public ContentLayerName getName()
     {
         return name;
     }
 
-    public String getParentName()
+    public ContentLayerName getParentName()
     {
         return parentName;
     }
 
-    public static ContentLayer from( final String name, final String parentName )
+    public static ContentLayer from( final ContentLayerName name, final ContentLayerName parentName )
     {
         return create().
             name( name ).
@@ -45,21 +45,21 @@ public class ContentLayer
 
     public static final class Builder
     {
-        private String name;
+        private ContentLayerName name;
 
-        private String parentName;
+        private ContentLayerName parentName;
 
         private Builder()
         {
         }
 
-        public Builder name( final String name )
+        public Builder name( final ContentLayerName name )
         {
             this.name = name;
             return this;
         }
 
-        public Builder parentName( final String parentName )
+        public Builder parentName( final ContentLayerName parentName )
         {
             this.parentName = parentName;
             return this;

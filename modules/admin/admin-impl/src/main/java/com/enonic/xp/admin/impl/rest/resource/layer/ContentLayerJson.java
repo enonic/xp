@@ -10,8 +10,8 @@ public class ContentLayerJson
 
     public ContentLayerJson( final ContentLayer contentLayer )
     {
-        this.name = contentLayer.getName();
-        this.parentName = contentLayer.getParentName();
+        this.name = contentLayer.getName() == null ? null : contentLayer.getName().getValue();
+        this.parentName = contentLayer.getParentName() == null ? null : contentLayer.getParentName().getValue();
     }
 
     public String getName()

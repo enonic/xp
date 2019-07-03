@@ -1,28 +1,31 @@
 package com.enonic.xp.layer;
 
+import com.google.common.base.Preconditions;
+
 public class CreateContentLayerParams
 {
-    private String name;
+    private ContentLayerName name;
 
-    private String parentName;
+    private ContentLayerName parentName;
 
     private CreateContentLayerParams( final Builder builder )
     {
+        Preconditions.checkNotNull( builder.name, "name is required for a Layer" );
         name = builder.name;
         parentName = builder.parentName;
     }
 
-    public String getName()
+    public ContentLayerName getName()
     {
         return name;
     }
 
-    public String getParentName()
+    public ContentLayerName getParentName()
     {
         return parentName;
     }
 
-    public static CreateContentLayerParams from( final String name, final String parentName )
+    public static CreateContentLayerParams from( final ContentLayerName name, final ContentLayerName parentName )
     {
         return create().
             name( name ).
@@ -37,21 +40,21 @@ public class CreateContentLayerParams
 
     public static final class Builder
     {
-        private String name;
+        private ContentLayerName name;
 
-        private String parentName;
+        private ContentLayerName parentName;
 
         private Builder()
         {
         }
 
-        public Builder name( final String name )
+        public Builder name( final ContentLayerName name )
         {
             this.name = name;
             return this;
         }
 
-        public Builder parentName( final String parentName )
+        public Builder parentName( final ContentLayerName parentName )
         {
             this.parentName = parentName;
             return this;
