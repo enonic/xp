@@ -5,7 +5,6 @@ import com.google.common.annotations.Beta;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.BranchInfo;
 import com.enonic.xp.branch.BranchInfos;
-import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.index.ChildOrder;
@@ -35,9 +34,13 @@ public class ContentConstants
 
     public static final String DOCUMENT_INDEX_DEFAULT_ANALYZER = "document_index_default";
 
-    public static final Branch BRANCH_DRAFT = Branch.from( "draft" );
+    public static final String BRANCH_VALUE_DRAFT = "draft";
 
-    public static final Branch BRANCH_MASTER = Branch.from( "master" );
+    public static final String BRANCH_VALUE_MASTER = "master";
+
+    public static final Branch BRANCH_DRAFT = Branch.from( BRANCH_VALUE_DRAFT );
+
+    public static final Branch BRANCH_MASTER = Branch.from( BRANCH_VALUE_MASTER );
 
     public static final BranchInfo BRANCH_INFO_DRAFT = BranchInfo.from( BRANCH_DRAFT );
 
