@@ -1,8 +1,7 @@
-package com.enonic.xp.core.impl.layer;
+package com.enonic.xp.layer;
 
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.data.PropertyPath;
-import com.enonic.xp.layer.ContentLayerName;
 import com.enonic.xp.node.NodePath;
 
 public class ContentLayerConstants

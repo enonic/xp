@@ -28,7 +28,7 @@ public final class JaxRsServiceFactoryImpl
     public JaxRsService newService( final String group, final String path, final String connector )
     {
         final JaxRsService service = new JaxRsServiceImpl( this.context, group, path, connector );
-        service.add( new SecurityFeature() );
+        service.add( new  SecurityFeature() );
         service.add( new CommonFeature( this.multipartService ) );
         return service;
     }

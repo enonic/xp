@@ -18,6 +18,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.layer.ContentLayer;
+import com.enonic.xp.layer.ContentLayerConstants;
 import com.enonic.xp.layer.ContentLayerException;
 import com.enonic.xp.layer.ContentLayerName;
 import com.enonic.xp.layer.ContentLayerService;

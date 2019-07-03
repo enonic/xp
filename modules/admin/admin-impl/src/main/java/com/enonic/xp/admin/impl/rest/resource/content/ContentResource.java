@@ -189,7 +189,7 @@ import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
 import static org.apache.commons.lang.StringUtils.isBlank;
 
 @SuppressWarnings("UnusedDeclaration")
-@Path(ResourceConstants.REST_ROOT + "content")
+@Path(ResourceConstants.REST_ROOT + "{content:(content|cms/[^/]+/[^/]+)}")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed({RoleKeys.ADMIN_LOGIN_ID, RoleKeys.ADMIN_ID})
 @Component(immediate = true, property = "group=admin")

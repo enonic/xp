@@ -8,6 +8,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.init.ExternalInitializer;
+import com.enonic.xp.layer.ContentLayerConstants;
 import com.enonic.xp.layer.ContentLayerName;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.NodeService;
