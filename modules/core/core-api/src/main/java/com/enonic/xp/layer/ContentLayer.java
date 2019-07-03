@@ -1,23 +1,22 @@
 package com.enonic.xp.layer;
 
-import com.enonic.xp.content.ContentConstants;
+import com.google.common.base.Preconditions;
 
 public class ContentLayer
 {
-    public static final String BRANCH_PREFIX_DRAFT = ContentConstants.BRANCH_VALUE_DRAFT + "-";
-
-    public static final String BRANCH_PREFIX_MASTER = ContentConstants.BRANCH_VALUE_MASTER + "-";
-
-    public static final ContentLayer DEFAULT_CONTENT_LAYER = ContentLayer.from( null, null );
-
     private final ContentLayerName name;
 
     private final ContentLayerName parentName;
 
+    private final String displayName;
+
     private ContentLayer( final Builder builder )
     {
+        Preconditions.checkNotNull( builder.name, "Name cannot be null" );
+        Preconditions.checkNotNull( builder.displayName, "Display name cannot be null" );
         name = builder.name;
         parentName = builder.parentName;
+        displayName = builder.displayName;
     }
 
     public ContentLayerName getName()
@@ -30,12 +29,9 @@ public class ContentLayer
         return parentName;
     }
 
-    public static ContentLayer from( final ContentLayerName name, final ContentLayerName parentName )
+    public String getDisplayName()
     {
-        return create().
-            name( name ).
-            parentName( parentName ).
-            build();
+        return displayName;
     }
 
     public static Builder create()
@@ -48,6 +44,8 @@ public class ContentLayer
         private ContentLayerName name;
 
         private ContentLayerName parentName;
+
+        private String displayName;
 
         private Builder()
         {
@@ -62,6 +60,12 @@ public class ContentLayer
         public Builder parentName( final ContentLayerName parentName )
         {
             this.parentName = parentName;
+            return this;
+        }
+
+        public Builder displayName( final String displayName )
+        {
+            this.displayName = displayName;
             return this;
         }
 

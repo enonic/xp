@@ -245,8 +245,7 @@ public final class NodePath
         }
 
         final NodePath path = (NodePath) o;
-        return Objects.equals( absolute, path.absolute ) &&
-            Objects.equals( trailingDivider, path.trailingDivider ) &&
+        return Objects.equals( absolute, path.absolute ) && Objects.equals( trailingDivider, path.trailingDivider ) &&
             Objects.equals( elements, path.elements );
     }
 

@@ -8,11 +8,15 @@ public class CreateContentLayerParams
 
     private ContentLayerName parentName;
 
+    private String displayName;
+
     private CreateContentLayerParams( final Builder builder )
     {
-        Preconditions.checkNotNull( builder.name, "name is required for a Layer" );
+        Preconditions.checkNotNull( builder.name, "name cannot be null" );
+        Preconditions.checkNotNull( builder.displayName, "displayName cannot be null" );
         name = builder.name;
-        parentName = builder.parentName;
+        parentName = builder.parentName == null ? ContentLayerName.DEFAULT_LAYER_NAME : builder.parentName;
+        displayName = builder.displayName;
     }
 
     public ContentLayerName getName()
@@ -25,12 +29,9 @@ public class CreateContentLayerParams
         return parentName;
     }
 
-    public static CreateContentLayerParams from( final ContentLayerName name, final ContentLayerName parentName )
+    public String getDisplayName()
     {
-        return create().
-            name( name ).
-            parentName( parentName ).
-            build();
+        return displayName;
     }
 
     public static Builder create()
@@ -43,6 +44,7 @@ public class CreateContentLayerParams
         private ContentLayerName name;
 
         private ContentLayerName parentName;
+        private String displayName;
 
         private Builder()
         {
@@ -57,6 +59,12 @@ public class CreateContentLayerParams
         public Builder parentName( final ContentLayerName parentName )
         {
             this.parentName = parentName;
+            return this;
+        }
+
+        public Builder displayName( final String displayName )
+        {
+            this.displayName = displayName;
             return this;
         }
 

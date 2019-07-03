@@ -7,6 +7,8 @@ import com.google.common.base.Strings;
 @Beta
 public final class ContentLayerName
 {
+    public static final ContentLayerName DEFAULT_LAYER_NAME = ContentLayerName.from( "default" );
+
     private static final String VALID_REPOSITORY_ID_REGEX = "([a-zA-Z0-9\\-:])([a-zA-Z0-9_\\-\\.:])*";
 
     private final String value;
