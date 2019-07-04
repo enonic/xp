@@ -80,6 +80,7 @@ public class ContentNodeTranslator
             parentPath( parentContentPath ).
             name( node.name().toString() ).
             childOrder( node.getChildOrder() ).
+            inherited(node.getInherited()).
             permissions( node.getPermissions() ).
             inheritPermissions( node.inheritsPermissions() ).
             hasChildren( hasChildren ).

@@ -7,7 +7,6 @@ import java.util.Objects;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexConfig;
@@ -50,6 +49,8 @@ public final class Node
 
     private final NodeVersionId nodeVersionId;
 
+    private final Boolean inherited;
+
     protected Node( final Builder builder )
     {
         Preconditions.checkNotNull( builder.permissions, "permissions are required" );
@@ -67,6 +68,7 @@ public final class Node
         this.nodeState = builder.nodeState;
         this.timestamp = builder.timestamp;
         this.nodeVersionId = builder.nodeVersionId;
+        this.inherited = builder.inherited;
 
         if ( ROOT_UUID.equals( this.id ) )
         {
@@ -179,6 +181,11 @@ public final class Node
         return nodeVersionId;
     }
 
+    public Boolean getInherited()
+    {
+        return inherited;
+    }
+
     public void validateForIndexing()
     {
         Preconditions.checkNotNull( this.id, "Id must be set" );
@@ -255,6 +262,8 @@ public final class Node
 
         private NodeVersionId nodeVersionId;
 
+        private Boolean inherited;
+
         public Builder()
         {
             super();
@@ -281,6 +290,7 @@ public final class Node
             this.nodeState = node.nodeState;
             this.timestamp = node.timestamp;
             this.nodeVersionId = node.nodeVersionId;
+            this.inherited = node.inherited;
         }
 
         public Builder( final NodeId id, final NodeName name )
@@ -389,6 +399,12 @@ public final class Node
             return this;
         }
 
+        public Builder inherited( final Boolean inherited )
+        {
+            this.inherited = inherited;
+            return this;
+        }
+
         private void validate()
         {
             if ( ROOT_UUID.equals( this.id ) )
@@ -418,17 +434,11 @@ public final class Node
 
         final Node node = (Node) o;
 
-        return Objects.equals( id, node.id ) &&
-            Objects.equals( name, node.name ) &&
-            Objects.equals( nodeType, node.nodeType ) &&
-            Objects.equals( parentPath, node.parentPath ) &&
-            Objects.equals( inheritPermissions, node.inheritPermissions ) &&
-            Objects.equals( manualOrderValue, node.manualOrderValue ) &&
-            Objects.equals( childOrder, node.childOrder ) &&
-            Objects.equals( permissions, node.permissions ) &&
-            Objects.equals( data, node.data ) &&
-            Objects.equals( attachedBinaries, node.attachedBinaries ) &&
-            Objects.equals( nodeVersionId, node.nodeVersionId ) &&
+        return Objects.equals( id, node.id ) && Objects.equals( name, node.name ) && Objects.equals( nodeType, node.nodeType ) &&
+            Objects.equals( parentPath, node.parentPath ) && Objects.equals( inheritPermissions, node.inheritPermissions ) &&
+            Objects.equals( manualOrderValue, node.manualOrderValue ) && Objects.equals( childOrder, node.childOrder ) &&
+            Objects.equals( permissions, node.permissions ) && Objects.equals( data, node.data ) &&
+            Objects.equals( attachedBinaries, node.attachedBinaries ) && Objects.equals( nodeVersionId, node.nodeVersionId ) &&
             Objects.equals( indexConfigDocument, node.indexConfigDocument );
     }
 

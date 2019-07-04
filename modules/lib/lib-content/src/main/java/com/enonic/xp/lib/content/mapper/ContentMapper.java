@@ -41,6 +41,7 @@ public final class ContentMapper
         gen.value( "type", value.getType() );
         gen.value( "displayName", value.getDisplayName() );
         gen.value( "hasChildren", value.hasChildren() );
+        gen.value( "inherited", value.getInherited() );
         gen.value( "language", value.getLanguage() );
         gen.value( "valid", value.isValid() );
         if ( value.getChildOrder() != null )
