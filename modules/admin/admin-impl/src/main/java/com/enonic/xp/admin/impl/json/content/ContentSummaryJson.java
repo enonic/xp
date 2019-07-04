@@ -124,6 +124,11 @@ public class ContentSummaryJson
         return content.hasChildren();
     }
 
+    public Boolean getInherited()
+    {
+        return content.getInherited();
+    }
+
     public boolean getIsValid()
     {
         return content.isValid();

@@ -19,6 +19,7 @@ public class NodeFactory
                 nodeState( nodeBranchEntry.getNodeState() ).
                 childOrder( nodeVersion.getChildOrder() ).
                 manualOrderValue( nodeVersion.getManualOrderValue() ).
+                inherited( nodeBranchEntry.isInherited() ).
                 data( nodeVersion.getData() ).
                 attachedBinaries( nodeVersion.getAttachedBinaries() ).
                 indexConfigDocument( nodeVersion.getIndexConfigDocument() ).
@@ -30,6 +31,7 @@ public class NodeFactory
             name( nodeBranchEntry.getNodePath().getLastElement().toString() ).
             timestamp( nodeBranchEntry.getTimestamp() ).
             nodeState( nodeBranchEntry.getNodeState() ).
+            inherited( nodeBranchEntry.isInherited() ).
             nodeVersionId( nodeBranchEntry.getVersionId() ).
             build();
     }
