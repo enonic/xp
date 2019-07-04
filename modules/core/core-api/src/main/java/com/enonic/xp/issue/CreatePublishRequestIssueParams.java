@@ -29,7 +29,7 @@ public class CreatePublishRequestIssueParams
         public Builder()
         {
             super();
-            this.issueType = IssueType.PUBLISH_REQUEST_ISSUE;
+            this.issueType = IssueType.PUBLISH_REQUEST;
         }
 
         public Builder schedule( final PublishRequestIssueSchedule schedule )

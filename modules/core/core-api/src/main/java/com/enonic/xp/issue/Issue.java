@@ -5,7 +5,6 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 
@@ -37,8 +36,6 @@ public class Issue
 
     private final IssueType issueType;
 
-    private final PropertyTree data;
-
     protected Issue( Builder builder )
     {
         this.id = builder.id == null ? IssueId.create() : builder.id;
@@ -54,7 +51,6 @@ public class Issue
         this.approverIds = PrincipalKeys.from( builder.approverIds );
         this.publishRequest = builder.publishRequest;
         this.issueType = builder.issueType;
-        this.data = builder.data;
     }
 
     public IssueId getId()
@@ -122,11 +118,6 @@ public class Issue
         return issueType;
     }
 
-    public PropertyTree getData()
-    {
-        return data;
-    }
-
     public static Builder create()
     {
         return new Builder();
@@ -135,18 +126,6 @@ public class Issue
     public static Builder create( final Issue source )
     {
         return new Builder( source );
-    }
-
-    public static Builder create( final IssueType type )
-    {
-        if ( type == IssueType.PUBLISH_REQUEST_ISSUE )
-        {
-            return PublishRequestIssue.create();
-        }
-        else
-        {
-            return create();
-        }
     }
 
     public static class Builder<B extends Builder>
@@ -177,8 +156,6 @@ public class Issue
 
         protected IssueType issueType;
 
-        protected PropertyTree data;
-
         public Builder()
         {
             this.approverIds = Sets.newLinkedHashSet();
@@ -202,7 +179,6 @@ public class Issue
             this.approverIds = source.approverIds != null ? source.approverIds.getSet() : Sets.newHashSet();
             this.publishRequest = source.publishRequest;
             this.issueType = source.issueType;
-            this.data = source.data;
         }
 
         public B id( final IssueId id )
@@ -280,12 +256,6 @@ public class Issue
         public B setPublishRequest( final PublishRequest publishRequest )
         {
             this.publishRequest = publishRequest;
-            return (B) this;
-        }
-
-        public B data( final PropertyTree data )
-        {
-            this.data = data;
             return (B) this;
         }
 

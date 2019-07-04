@@ -59,6 +59,7 @@ import com.enonic.xp.issue.IssueId;
 import com.enonic.xp.issue.IssueQuery;
 import com.enonic.xp.issue.IssueService;
 import com.enonic.xp.issue.IssueStatus;
+import com.enonic.xp.issue.IssueType;
 import com.enonic.xp.issue.UpdateIssueCommentParams;
 import com.enonic.xp.issue.UpdateIssueParams;
 import com.enonic.xp.jaxrs.JaxRsComponent;
@@ -400,9 +401,10 @@ public final class IssueResource
     {
         final CreateIssueParams.Builder builder;
 
-        if ( json.publishSchedule != null )
+        if ( IssueType.PUBLISH_REQUEST == json.type )
         {
-            builder = CreatePublishRequestIssueParams.create().schedule( json.publishSchedule );
+            builder = CreatePublishRequestIssueParams.create().
+                schedule( json.schedule );
         }
         else
         {

@@ -11,10 +11,12 @@ import com.enonic.xp.core.impl.issue.PublishRequestPropertyNames;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.issue.CreateIssueParams;
+import com.enonic.xp.issue.CreatePublishRequestIssueParams;
 import com.enonic.xp.issue.Issue;
 import com.enonic.xp.issue.IssueStatus;
 import com.enonic.xp.issue.IssueType;
 import com.enonic.xp.issue.PublishRequest;
+import com.enonic.xp.issue.PublishRequestIssue;
 import com.enonic.xp.issue.PublishRequestItem;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.security.PrincipalKey;
@@ -23,7 +25,6 @@ import com.enonic.xp.util.Reference;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.APPROVERS;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.CREATED_TIME;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.CREATOR;
-import static com.enonic.xp.core.impl.issue.IssuePropertyNames.DATA;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.DESCRIPTION;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.INDEX;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.MODIFIED_TIME;
@@ -35,6 +36,8 @@ import static com.enonic.xp.core.impl.issue.IssuePropertyNames.TYPE;
 
 public class IssueDataSerializer
 {
+    PublishRequestIssueSerializer publishRequestIssueSerializer = new PublishRequestIssueSerializer();
+
     public PropertyTree toCreateNodeData( final CreateIssueParams params )
     {
         final PropertyTree propertyTree = new PropertyTree();
@@ -46,11 +49,6 @@ public class IssueDataSerializer
         issueAsData.ifNotNull().addString( STATUS, params.getStatus().toString() );
         issueAsData.addString( DESCRIPTION, params.getDescription() );
 
-        if ( params.getData() != null )
-        {
-            issueAsData.addSet( DATA, params.getData().getRoot().copy( issueAsData.getTree() ) );
-        }
-
         if ( params.getApproverIds().getSize() > 0 )
         {
             issueAsData.addStrings( APPROVERS, params.getApproverIds().
@@ -60,6 +58,11 @@ public class IssueDataSerializer
         if ( params.getPublishRequest() != null )
         {
             addPublishRequest( issueAsData, params.getPublishRequest() );
+        }
+
+        if ( params instanceof CreatePublishRequestIssueParams )
+        {
+            publishRequestIssueSerializer.toCreateNodeData( (CreatePublishRequestIssueParams) params, issueAsData );
         }
 
         return propertyTree;
@@ -81,11 +84,6 @@ public class IssueDataSerializer
         issueAsData.ifNotNull().addString( STATUS, editedIssue.getStatus().toString() );
         issueAsData.addString( DESCRIPTION, editedIssue.getDescription() );
 
-        if ( editedIssue.getData() != null )
-        {
-            issueAsData.addSet( DATA, editedIssue.getData().getRoot().copy( issueAsData.getTree() ) );
-        }
-
         issueAsData.addStrings( APPROVERS, editedIssue.getApproverIds().
             stream().map( PrincipalKey::toString ).collect( Collectors.toList() ) );
 
@@ -94,24 +92,32 @@ public class IssueDataSerializer
             addPublishRequest( issueAsData, editedIssue.getPublishRequest() );
         }
 
+        if ( editedIssue instanceof PublishRequestIssue )
+        {
+            publishRequestIssueSerializer.toUpdateNodeData( (PublishRequestIssue) editedIssue, issueAsData );
+        }
+
         return propertyTree;
     }
 
     public Issue.Builder fromData( final PropertySet issueProperties )
     {
         final IssueType issueType = issueProperties.getEnum( TYPE, IssueType.class );
-        final Issue.Builder builder = Issue.create( issueType );
+        final Issue.Builder builder;
+        if ( IssueType.PUBLISH_REQUEST == issueType )
+        {
+            builder = PublishRequestIssue.create();
+            publishRequestIssueSerializer.fromData( issueProperties, (PublishRequestIssue.Builder) builder );
+        }
+        else
+        {
+            builder = Issue.create();
+        }
 
         builder.title( issueProperties.getString( TITLE ) );
         builder.description( issueProperties.getString( DESCRIPTION ) );
         builder.status( IssueStatus.valueOf( issueProperties.getString( STATUS ) ) );
         builder.index( issueProperties.getLong( INDEX ) );
-
-        final PropertySet data = issueProperties.getSet( DATA );
-        if ( data != null )
-        {
-            builder.data( data.toTree() );
-        }
 
         extractUserInfo( issueProperties, builder );
         extractApprovers( issueProperties, builder );

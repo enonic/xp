@@ -19,8 +19,6 @@ public class CreateIssueParams
 
     private final IssueType issueType;
 
-    private final PropertyTree data;
-
     protected CreateIssueParams( Builder builder )
     {
         this.id = IssueId.create();
@@ -30,7 +28,6 @@ public class CreateIssueParams
         this.approverIds = builder.approverIds;
         this.publishRequest = builder.publishRequest;
         this.issueType = builder.issueType;
-        this.data = builder.data;
     }
 
     public IssueId getId()
@@ -66,11 +63,6 @@ public class CreateIssueParams
     public IssueType getIssueType()
     {
         return issueType;
-    }
-
-    public PropertyTree getData()
-    {
-        return data;
     }
 
     public static Builder create()
@@ -116,7 +108,6 @@ public class CreateIssueParams
             this.approverIds = params.approverIds;
             this.publishRequest = params.publishRequest;
             this.issueType = params.issueType;
-            this.data = params.data;
         }
 
         public B title( final String title )
