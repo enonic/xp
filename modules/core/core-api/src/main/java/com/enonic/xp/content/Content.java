@@ -352,11 +352,10 @@ public class Content
             Objects.equals( valid, other.valid ) && Objects.equals( modifier, other.modifier ) &&
             Objects.equals( creator, other.creator ) && Objects.equals( owner, other.owner ) &&
             Objects.equals( createdTime, other.createdTime ) && Objects.equals( modifiedTime, other.modifiedTime ) &&
-            Objects.equals( hasChildren, other.hasChildren ) && Objects.equals( inherited, other.inherited ) &&
-            Objects.equals( inheritPermissions, other.inheritPermissions ) && Objects.equals( childOrder, other.childOrder ) &&
-            Objects.equals( thumbnail, other.thumbnail ) && Objects.equals( permissions, other.permissions ) &&
-            Objects.equals( attachments, other.attachments ) && Objects.equals( data, other.data ) &&
-            Objects.equals( extraDatas, other.extraDatas ) && Objects.equals( page, other.page ) &&
+            Objects.equals( hasChildren, other.hasChildren ) && Objects.equals( inheritPermissions, other.inheritPermissions ) &&
+            Objects.equals( childOrder, other.childOrder ) && Objects.equals( thumbnail, other.thumbnail ) &&
+            Objects.equals( permissions, other.permissions ) && Objects.equals( attachments, other.attachments ) &&
+            Objects.equals( data, other.data ) && Objects.equals( extraDatas, other.extraDatas ) && Objects.equals( page, other.page ) &&
             Objects.equals( language, other.language ) && Objects.equals( contentState, other.contentState ) &&
             Objects.equals( publishInfo, other.publishInfo ) && Objects.equals( processedReferences, other.processedReferences );
     }
@@ -365,8 +364,8 @@ public class Content
     public int hashCode()
     {
         return Objects.hash( id, name, parentPath, displayName, type, valid, modifier, creator, owner, createdTime, modifiedTime,
-                             hasChildren, inherited, inheritPermissions, childOrder, thumbnail, permissions, attachments, data, extraDatas,
-                             page, language, contentState, publishInfo, processedReferences );
+                             hasChildren, inheritPermissions, childOrder, thumbnail, permissions, attachments, data, extraDatas, page,
+                             language, contentState, publishInfo, processedReferences );
     }
 
     public static class Builder<BUILDER extends Builder>

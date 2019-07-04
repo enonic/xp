@@ -22,6 +22,7 @@
   "iconUrl": "/admin/rest/schema/content/icon/portal:page-template",
   "id": "template-id",
   "inheritPermissions": true,
+  "inherited" : null,
   "isPage": true,
   "isRoot": false,
   "isValid": false,
