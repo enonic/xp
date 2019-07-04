@@ -1,11 +1,10 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.stream.Collectors;
-
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentIndexPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentQuery;
+import com.enonic.xp.content.ContentValidityResult;
 import com.enonic.xp.content.FindContentByQueryParams;
 import com.enonic.xp.content.FindContentByQueryResult;
 import com.enonic.xp.content.WorkflowState;
@@ -24,20 +23,17 @@ public class CheckContentValidityCommand
 
     private final ContentIds contentIds;
 
-    private final boolean checkWorkflow;
-
     private CheckContentValidityCommand( final Builder builder )
     {
         super( builder );
         contentIds = builder.contentIds;
-        checkWorkflow = builder.checkWorkflow;
     }
 
-    public ContentIds execute()
+    public ContentValidityResult execute()
     {
         if ( this.contentIds.getSize() == 0 )
         {
-            return ContentIds.empty();
+            return ContentValidityResult.empty();
         }
 
         // valid == false
@@ -46,24 +42,20 @@ public class CheckContentValidityCommand
             addValue( ValueFactory.newBoolean( false ) ).
             build();
 
-        Filter notOk;
+        // workflow != null && workflow != READY
+        final Filter notReady = BooleanFilter.create().
+            must( ExistsFilter.create().fieldName( WORKFLOW_STATE_FIELD ).build() ).
+            mustNot( ValueFilter.create().fieldName( WORKFLOW_STATE_FIELD ).addValues( WorkflowState.READY.toString() ).build() ).
+            build();
 
-        if ( !checkWorkflow )
-        {
-            // Query: valid == false
-            notOk = notValid;
-        }
-        else
-        {
-            // Query: valid == false OR (workflow != null && workflow != READY)
-            notOk = BooleanFilter.create().
-                should( notValid ).
-                should( notReady() ).
-                build();
-        }
+        // valid == false OR (workflow != null && workflow != READY)
+        final Filter filter = BooleanFilter.create().
+            should( notValid ).
+            should( notReady ).
+            build();
 
         final ContentQuery query = ContentQuery.create().
-            queryFilter( notOk ).
+            queryFilter( filter ).
             queryFilter( IdFilter.create().
                 fieldName( ContentIndexPath.ID.getPath() ).
                 values( contentIds.asStrings() ).
@@ -83,15 +75,26 @@ public class CheckContentValidityCommand
             build().
             execute();
 
-        return ContentIds.from( result.getContents().stream().map( content -> content.getId() ).collect( Collectors.toList() ) );
-    }
+        ContentIds.Builder invalidContentIds = ContentIds.create();
+        ContentIds.Builder notReadyContentIds = ContentIds.create();
 
-    private Filter notReady()
-    {
-        // workflow != null && workflow != READY
-        return BooleanFilter.create().
-            must( ExistsFilter.create().fieldName( WORKFLOW_STATE_FIELD ).build() ).
-            mustNot( ValueFilter.create().fieldName( WORKFLOW_STATE_FIELD ).addValues( WorkflowState.READY.toString() ).build() ).
+        result.getContents().forEach( content -> {
+
+            if ( !content.isValid() )
+            {
+                invalidContentIds.add( content.getId() );
+            }
+
+            if ( !content.getWorkflowInfo().getState().equals( WorkflowState.READY ) )
+            {
+                notReadyContentIds.add( content.getId() );
+            }
+
+        } );
+
+        return ContentValidityResult.create().
+            notValidContentIds( invalidContentIds.build() ).
+            notReadyContentIds( notReadyContentIds.build() ).
             build();
     }
 
@@ -106,22 +109,13 @@ public class CheckContentValidityCommand
     {
         private ContentIds contentIds;
 
-        private boolean checkWorkflow;
-
         private Builder()
         {
-            checkWorkflow = false;
         }
 
         public Builder contentIds( final ContentIds val )
         {
             contentIds = val;
-            return this;
-        }
-
-        public Builder checkWorkflow( final boolean checkWorkflow )
-        {
-            this.checkWorkflow = checkWorkflow;
             return this;
         }
 

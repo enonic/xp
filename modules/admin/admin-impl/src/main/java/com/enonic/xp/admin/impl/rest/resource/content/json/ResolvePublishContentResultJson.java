@@ -18,6 +18,8 @@ public class ResolvePublishContentResultJson
 
     private final Boolean allPublishable;
 
+    private final Boolean containsNotReady;
+
     private ResolvePublishContentResultJson( Builder builder )
     {
         requestedContents = builder.requestedContents.stream().map( item -> new ContentIdJson( item ) ).collect( Collectors.toList() );
@@ -25,6 +27,7 @@ public class ResolvePublishContentResultJson
         requiredContents = builder.requiredContents.stream().map( item -> new ContentIdJson( item ) ).collect( Collectors.toList() );
         containsInvalid = builder.containsInvalid;
         allPublishable = builder.allPublishable;
+        containsNotReady = builder.containsNotReady;
     }
 
     public static Builder create()
@@ -60,6 +63,11 @@ public class ResolvePublishContentResultJson
         return allPublishable;
     }
 
+    public Boolean getContainsNotReady()
+    {
+        return containsNotReady;
+    }
+
     public static final class Builder
     {
 
@@ -72,6 +80,8 @@ public class ResolvePublishContentResultJson
         private Boolean containsInvalid;
 
         private Boolean allPublishable;
+
+        private Boolean containsNotReady;
 
         private Builder()
         {
@@ -104,6 +114,12 @@ public class ResolvePublishContentResultJson
         public Builder setAllPublishable( final Boolean allPublishable )
         {
             this.allPublishable = allPublishable;
+            return this;
+        }
+
+        public Builder setContainsNotReady( final Boolean containsNotReady )
+        {
+            this.containsNotReady = containsNotReady;
             return this;
         }
 
