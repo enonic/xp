@@ -65,13 +65,25 @@ class ContentVersionFactory
         if ( nodeCommitId != null )
         {
             NodeCommitEntry nodeCommitEntry = nodeService.getCommit( nodeCommitId );
-            if (nodeCommitEntry != null && nodeCommitEntry.getMessage().startsWith( ContentConstants.PUBLISH_COMMIT_PREFIX )) {
+            if ( nodeCommitEntry != null && nodeCommitEntry.getMessage().startsWith( ContentConstants.PUBLISH_COMMIT_PREFIX ) )
+            {
                 return ContentVersionPublishInfo.create().
-                    message( nodeCommitEntry.getMessage().substring( ContentConstants.PUBLISH_COMMIT_PREFIX.length() ) ).
+                    message( getMessage( nodeCommitEntry ) ).
                     publisher( nodeCommitEntry.getCommitter() ).
                     timestamp( nodeCommitEntry.getTimestamp() ).
                     build();
             }
+        }
+        return null;
+    }
+
+    private String getMessage( final NodeCommitEntry nodeCommitEntry )
+    {
+        if ( nodeCommitEntry.getMessage().startsWith(
+            ContentConstants.PUBLISH_COMMIT_PREFIX + ContentConstants.PUBLISH_COMMIT_PREFIX_DELIMITER ) )
+        {
+            return nodeCommitEntry.getMessage().substring(
+                ContentConstants.PUBLISH_COMMIT_PREFIX.length() + ContentConstants.PUBLISH_COMMIT_PREFIX_DELIMITER.length() );
         }
         return null;
     }
