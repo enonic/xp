@@ -1361,4 +1361,60 @@ public final class PropertySet
     {
         return getFilteredValues( name, Property::getInstant );
     }
+
+    // getting / setting enums
+
+    public <T extends Enum<T>> T getEnum( final String name, final int index, Class<T> enumClass )
+    {
+        return stringToEnum( getString( name, index ), enumClass );
+    }
+
+    public <T extends Enum<T>> T getEnum( final PropertyPath path, Class<T> enumClass )
+    {
+        return stringToEnum( getString( path ), enumClass );
+    }
+
+    public <T extends Enum<T>> T getEnum( final String path, Class<T> enumClass )
+    {
+        return stringToEnum( getString( path ), enumClass );
+    }
+
+    public Property setEnum( final String path, final Enum value )
+    {
+        return this.setString( path, enumToString( value ) );
+    }
+
+    public Property setEnum( final PropertyPath path, final Enum value )
+    {
+        return this.setString( path, enumToString( value ) );
+    }
+
+    public Property setEnum( final String name, final int index, final Enum value )
+    {
+        return this.setString( name, index, enumToString( value ) );
+    }
+
+    public Property addEnum( final String name, final Enum value )
+    {
+        return this.addString( name, enumToString( value ) );
+    }
+
+    private <T extends Enum<T>> T stringToEnum( final String value, Class<T> enumClass )
+    {
+        if ( value == null )
+        {
+            return null;
+        }
+        return Enum.valueOf( enumClass, value );
+    }
+
+    private String enumToString( final Enum e )
+    {
+        if ( e == null )
+        {
+            return null;
+        }
+        return e.toString();
+    }
+
 }

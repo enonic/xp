@@ -26,6 +26,7 @@ import com.enonic.xp.admin.impl.json.issue.IssueStatsJson;
 import com.enonic.xp.admin.impl.json.issue.PublishRequestItemJson;
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishRequestJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.PublishRequestScheduleJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.CreateIssueCommentJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.CreateIssueJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.DeleteIssueCommentJson;
@@ -41,6 +42,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.LocalScope;
 import com.enonic.xp.issue.CreateIssueCommentParams;
 import com.enonic.xp.issue.CreateIssueParams;
+import com.enonic.xp.issue.CreatePublishRequestIssueParams;
 import com.enonic.xp.issue.DeleteIssueCommentParams;
 import com.enonic.xp.issue.DeleteIssueCommentResult;
 import com.enonic.xp.issue.FindIssueCommentsResult;
@@ -52,7 +54,9 @@ import com.enonic.xp.issue.IssueId;
 import com.enonic.xp.issue.IssueNotFoundException;
 import com.enonic.xp.issue.IssueQuery;
 import com.enonic.xp.issue.IssueService;
+import com.enonic.xp.issue.IssueType;
 import com.enonic.xp.issue.PublishRequest;
+import com.enonic.xp.issue.PublishRequestIssue;
 import com.enonic.xp.issue.PublishRequestItem;
 import com.enonic.xp.issue.UpdateIssueCommentParams;
 import com.enonic.xp.issue.UpdateIssueParams;
@@ -136,7 +140,7 @@ public class IssueResourceTest
         throws Exception
     {
         final CreateIssueJson params =
-            new CreateIssueJson( "title", "desc", Arrays.asList( User.ANONYMOUS.getKey().toString() ), createPublishRequest() );
+            new CreateIssueJson( null, "title", "desc", Arrays.asList( User.ANONYMOUS.getKey().toString() ), createPublishRequest(), null );
 
         final Issue issue = this.createIssue();
         final IssueComment comment = IssueComment.create().text( issue.getDescription() ).creator( issue.getCreator() ).build();
@@ -162,11 +166,46 @@ public class IssueResourceTest
     }
 
     @Test
+    public void test_create_with_publish_schedule()
+        throws Exception
+    {
+        final CreateIssueJson params =
+            new CreateIssueJson( IssueType.PUBLISH_REQUEST.toString(), "title", "desc", Arrays.asList( User.ANONYMOUS.getKey().toString() ), createPublishRequest(),
+                                 createPublishRequestSchedule() );
+
+        final Issue issue = this.createPublishRequestIssue();
+        final IssueComment comment = IssueComment.create().text( issue.getDescription() ).creator( issue.getCreator() ).build();
+        final Role role = Role.create().key( RoleKeys.CONTENT_MANAGER_APP ).displayName( "dname" ).build();
+        final HttpServletRequest request = Mockito.mock( HttpServletRequest.class );
+        final IssueResource issueResource = getResourceInstance();
+        final ArgumentCaptor<CreateIssueCommentParams> commentCaptor = ArgumentCaptor.forClass( CreateIssueCommentParams.class );
+        final ArgumentCaptor<CreateIssueParams> paramCaptor = ArgumentCaptor.forClass( CreateIssueParams.class );
+
+        Mockito.when( securityService.getPrincipals( Mockito.any( PrincipalKeys.class ) ) ).thenReturn( Principals.from( role ) );
+        Mockito.when( issueService.create( Mockito.any( CreateIssueParams.class ) ) ).thenReturn( issue );
+        Mockito.when( issueService.createComment( Mockito.any( CreateIssueCommentParams.class ) ) ).thenReturn( comment );
+
+        issueResource.create( params, request );
+
+        Mockito.verify( issueService ).createComment( commentCaptor.capture() );
+        Mockito.verify( issueService, Mockito.times( 1 ) ).create( paramCaptor.capture() );
+        Mockito.verify( issueService, Mockito.times( 1 ) ).createComment( Mockito.any( CreateIssueCommentParams.class ) );
+        Mockito.verify( issueNotificationsSender, Mockito.times( 1 ) ).notifyIssueCreated( Mockito.isA( IssueNotificationParams.class ) );
+
+        assertEquals( "desc", commentCaptor.getValue().getText() );
+        assertEquals( issue.getId(), commentCaptor.getValue().getIssue() );
+        assertEquals( issue.getCreator(), commentCaptor.getValue().getCreator() );
+        assertTrue( paramCaptor.getValue() instanceof CreatePublishRequestIssueParams );
+        assertEquals( params.schedule.getFrom(), ( (CreatePublishRequestIssueParams) paramCaptor.getValue() ).getSchedule().getFrom() );
+        assertEquals( params.schedule.getTo(), ( (CreatePublishRequestIssueParams) paramCaptor.getValue() ).getSchedule().getTo() );
+    }
+
+    @Test
     public void test_createNoDescription()
         throws Exception
     {
         final CreateIssueJson params =
-            new CreateIssueJson( "title", null, Arrays.asList( User.ANONYMOUS.getKey().toString() ), createPublishRequest() );
+            new CreateIssueJson( null, "title", null, Arrays.asList( User.ANONYMOUS.getKey().toString() ), createPublishRequest(), null );
 
         final Issue issue = this.createIssue();
 
@@ -189,7 +228,7 @@ public class IssueResourceTest
         throws Exception
     {
         final CreateIssueJson params =
-            new CreateIssueJson( "title", "", Arrays.asList( User.ANONYMOUS.getKey().toString() ), createPublishRequest() );
+            new CreateIssueJson( null, "title", "", Arrays.asList( User.ANONYMOUS.getKey().toString() ), createPublishRequest(), null );
 
         final HttpServletRequest request = Mockito.mock( HttpServletRequest.class );
         final IssueResource issueResource = getResourceInstance();
@@ -210,7 +249,7 @@ public class IssueResourceTest
         throws Exception
     {
         final CreateIssueJson params =
-            new CreateIssueJson( "title", "", Arrays.asList( User.ANONYMOUS.getKey().toString() ), createPublishRequest() );
+            new CreateIssueJson( null, "title", "", Arrays.asList( User.ANONYMOUS.getKey().toString() ), createPublishRequest(), null );
 
         final HttpServletRequest request = Mockito.mock( HttpServletRequest.class );
         final IssueResource issueResource = getResourceInstance();
@@ -231,8 +270,8 @@ public class IssueResourceTest
         throws Exception
     {
         final CreateIssueJson params =
-            new CreateIssueJson( "title", "", Arrays.asList( User.ANONYMOUS.getKey().toString(), User.ANONYMOUS.getKey().toString() ),
-                                 createPublishRequest() );
+            new CreateIssueJson( null, "title", "", Arrays.asList( User.ANONYMOUS.getKey().toString(), User.ANONYMOUS.getKey().toString() ),
+                                 createPublishRequest(), null );
 
         final HttpServletRequest request = Mockito.mock( HttpServletRequest.class );
         final IssueResource issueResource = getResourceInstance();
@@ -324,6 +363,31 @@ public class IssueResourceTest
     }
 
     @Test
+    public void test_get_publish_schedule_issue()
+        throws Exception
+    {
+        final Instant createdTime = Instant.now();
+        final Issue issue = createPublishRequestIssue();
+
+        Mockito.when( this.issueService.getIssue( issue.getId() ) ).thenReturn( issue );
+        List<IssueComment> comments = Lists.newArrayList( this.createIssueComment( createdTime ) );
+        FindIssueCommentsResult result = FindIssueCommentsResult.create().hits( 1 ).totalHits( 3 ).comments( comments ).build();
+        Mockito.when( this.issueService.findComments( Mockito.any( IssueCommentQuery.class ) ) ).thenReturn( result );
+
+        final Map params = Maps.newHashMap();
+        params.put( "id", issue.getId().toString() );
+        params.put( "createdTime", createdTime );
+
+        final String expected = new StrSubstitutor( params ).replace( readFromFile( "get_issue_scheduled_result.json" ) );
+
+        String jsonString = request().path( "issue/id" ).
+            queryParam( "id", issue.getId().toString() ).
+            get().getAsString();
+
+        assertStringJson( expected, jsonString );
+    }
+
+    @Test
     public void test_getIssues()
         throws Exception
     {
@@ -354,7 +418,30 @@ public class IssueResourceTest
         final User admin = User.create().login( "admin" ).displayName( "Admin" ).email( "admin@email.com" ).build();
         final UpdateIssueJson params =
             new UpdateIssueJson( issue.getId().toString(), "title", "desc", "Open", false, false, Arrays.asList( "user:system:admin" ),
-                                 createPublishRequest() );
+                                 createPublishRequest(), null );
+
+        IssueResource resource = getResourceInstance();
+        Mockito.when( issueService.getIssue( Mockito.isA( IssueId.class ) ) ).thenReturn( issue );
+        Mockito.when( issueService.update( Mockito.any( UpdateIssueParams.class ) ) ).thenReturn( issue );
+        Mockito.when( issueService.findComments( Mockito.any( IssueCommentQuery.class ) ) ).thenReturn(
+            FindIssueCommentsResult.create().build() );
+        Mockito.when( securityService.getUser( PrincipalKey.from( "user:system:admin" ) ) ).thenReturn( Optional.of( admin ) );
+
+        resource.update( params, Mockito.mock( HttpServletRequest.class ) );
+
+        Mockito.verify( issueService, Mockito.times( 1 ) ).update( Mockito.any( UpdateIssueParams.class ) );
+        Mockito.verify( issueNotificationsSender, Mockito.times( 1 ) ).notifyIssueUpdated(
+            Mockito.isA( IssueUpdatedNotificationParams.class ) );
+    }
+
+    @Test
+    public void test_update_with_publish_schedule()
+    {
+        final Issue issue = createPublishRequestIssue();
+        final User admin = User.create().login( "admin" ).displayName( "Admin" ).email( "admin@email.com" ).build();
+        final UpdateIssueJson params =
+            new UpdateIssueJson( issue.getId().toString(), "title", "desc", "Open", false, false, Arrays.asList( "user:system:admin" ),
+                                 createPublishRequest(), createPublishRequestSchedule() );
 
         IssueResource resource = getResourceInstance();
         Mockito.when( issueService.getIssue( Mockito.isA( IssueId.class ) ) ).thenReturn( issue );
@@ -376,7 +463,7 @@ public class IssueResourceTest
         final Issue issue = createIssue();
 
         final UpdateIssueJson params =
-            new UpdateIssueJson( issue.getId().toString(), "title", "desc", "Closed", true, false, null, createPublishRequest() );
+            new UpdateIssueJson( issue.getId().toString(), "title", "desc", "Closed", true, false, null, createPublishRequest(), null );
 
         IssueResource resource = getResourceInstance();
         Mockito.when( issueService.getIssue( Mockito.isA( IssueId.class ) ) ).thenReturn( issue );
@@ -398,7 +485,7 @@ public class IssueResourceTest
         final User admin = User.create().login( "admin" ).displayName( "Admin" ).email( "admin@email.com" ).build();
         final UpdateIssueJson params =
             new UpdateIssueJson( issue.getId().toString(), "title", "desc", "Closed", true, true, Arrays.asList( "user:system:admin" ),
-                                 createPublishRequest() );
+                                 createPublishRequest(), null );
 
         IssueResource resource = getResourceInstance();
         Mockito.when( issueService.getIssue( Mockito.isA( IssueId.class ) ) ).thenReturn( issue );
@@ -543,6 +630,12 @@ public class IssueResourceTest
         return publishRequestJson;
     }
 
+    private PublishRequestScheduleJson createPublishRequestSchedule()
+    {
+        return new PublishRequestScheduleJson( Instant.ofEpochSecond( 1549016358L ).toString(),
+                                               Instant.ofEpochSecond( 1570000758L ).toString() );
+    }
+
     private IssueComment createIssueComment( Instant createdTime )
     {
         return IssueComment.create().
@@ -570,6 +663,26 @@ public class IssueResourceTest
                     includeChildren( true ).
                     build() ).
                 build() ).
+            build();
+
+    }
+
+    private Issue createPublishRequestIssue()
+    {
+        return PublishRequestIssue.create().
+            addApproverId( PrincipalKey.from( "user:system:anonymous" ) ).
+            title( "title" ).
+            description( "desc" ).
+            creator( User.ANONYMOUS.getKey() ).
+            modifier( User.ANONYMOUS.getKey() ).
+            setPublishRequest( PublishRequest.create().
+                addExcludeId( ContentId.from( "exclude-id" ) ).
+                addItem( PublishRequestItem.create().
+                    id( ContentId.from( "content-id" ) ).
+                    includeChildren( true ).
+                    build() ).
+                build() ).
+            schedule( createPublishRequestSchedule().toSchedule() ).
             build();
 
     }

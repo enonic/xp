@@ -24,7 +24,8 @@
           }
         ]
       },
-      "title": "title"
+      "title": "title",
+      "type": "STANDARD"
     }
   ]
 }

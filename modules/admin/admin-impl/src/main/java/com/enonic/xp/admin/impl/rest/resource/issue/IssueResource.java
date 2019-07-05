@@ -45,8 +45,10 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.issue.CreateIssueCommentParams;
 import com.enonic.xp.issue.CreateIssueParams;
+import com.enonic.xp.issue.CreatePublishRequestIssueParams;
 import com.enonic.xp.issue.DeleteIssueCommentParams;
 import com.enonic.xp.issue.DeleteIssueCommentResult;
+import com.enonic.xp.issue.EditablePublishRequestIssue;
 import com.enonic.xp.issue.FindIssueCommentsResult;
 import com.enonic.xp.issue.FindIssuesParams;
 import com.enonic.xp.issue.FindIssuesResult;
@@ -57,6 +59,7 @@ import com.enonic.xp.issue.IssueId;
 import com.enonic.xp.issue.IssueQuery;
 import com.enonic.xp.issue.IssueService;
 import com.enonic.xp.issue.IssueStatus;
+import com.enonic.xp.issue.IssueType;
 import com.enonic.xp.issue.UpdateIssueCommentParams;
 import com.enonic.xp.issue.UpdateIssueParams;
 import com.enonic.xp.jaxrs.JaxRsComponent;
@@ -396,7 +399,17 @@ public final class IssueResource
 
     private CreateIssueParams generateCreateIssueParams( final CreateIssueJson json )
     {
-        final CreateIssueParams.Builder builder = CreateIssueParams.create();
+        final CreateIssueParams.Builder builder;
+
+        if ( IssueType.PUBLISH_REQUEST == json.type )
+        {
+            builder = CreatePublishRequestIssueParams.create().
+                schedule( json.schedule );
+        }
+        else
+        {
+            builder = CreateIssueParams.create();
+        }
 
         builder.title( json.title );
         builder.description( json.description );
@@ -430,6 +443,10 @@ public final class IssueResource
                 if ( json.publishRequest != null )
                 {
                     editMe.publishRequest = json.publishRequest;
+                }
+                if ( editMe instanceof EditablePublishRequestIssue )
+                {
+                    ( (EditablePublishRequestIssue) editMe ).schedule = json.publishSchedule;
                 }
             } ).
             build();

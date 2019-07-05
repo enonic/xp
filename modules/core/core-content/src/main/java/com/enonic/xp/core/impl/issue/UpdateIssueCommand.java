@@ -7,9 +7,11 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.issue.serializer.IssueDataSerializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.issue.EditableIssue;
+import com.enonic.xp.issue.EditablePublishRequestIssue;
 import com.enonic.xp.issue.Issue;
 import com.enonic.xp.issue.IssueEditor;
 import com.enonic.xp.issue.IssueId;
+import com.enonic.xp.issue.PublishRequestIssue;
 import com.enonic.xp.issue.UpdateIssueParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeEditor;
@@ -37,10 +39,6 @@ public class UpdateIssueCommand
     private Issue doExecute()
     {
         Issue editedIssue = editIssue( params.getEditor(), getIssue( params.getId() ) );
-
-        editedIssue = setModifiedTime( editedIssue );
-        editedIssue = setModifier( editedIssue );
-
         final UpdateNodeParams updateNodeParams = UpdateNodeParamsFactory.create( editedIssue );
         final Node updatedNode = this.nodeService.update( updateNodeParams );
 
@@ -50,12 +48,18 @@ public class UpdateIssueCommand
 
     private Issue editIssue( final IssueEditor editor, final Issue original )
     {
-        final EditableIssue editableIssue = new EditableIssue( original );
+        final EditableIssue editableIssue = original instanceof PublishRequestIssue
+            ? new EditablePublishRequestIssue( (PublishRequestIssue) original )
+            : new EditableIssue( original );
         if ( editor != null )
         {
             editor.edit( editableIssue );
         }
-        return editableIssue.build();
+
+        return editableIssue.builder().
+            modifiedTime( Instant.now() ).
+            modifier( getCurrentUser().getKey() ).
+            build();
     }
 
     private Issue getIssue( final IssueId issueId )
@@ -65,20 +69,6 @@ public class UpdateIssueCommand
             nodeService( this.nodeService ).
             build().
             execute();
-    }
-
-    private Issue setModifiedTime( final Issue issue )
-    {
-        return Issue.create( issue ).
-            modifiedTime( Instant.now() ).
-            build();
-    }
-
-    private Issue setModifier( final Issue issue )
-    {
-        return Issue.create( issue ).
-            modifier( getCurrentUser().getKey() ).
-            build();
     }
 
     User getCurrentUser()
