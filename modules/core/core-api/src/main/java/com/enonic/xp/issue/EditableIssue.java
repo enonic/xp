@@ -29,7 +29,7 @@ public class EditableIssue
         this.publishRequest = source.getPublishRequest();
     }
 
-    public Issue build()
+    public Issue.Builder builder()
     {
         return Issue.create().
             id( source.getId() ).
@@ -43,7 +43,6 @@ public class EditableIssue
             createdTime( source.getCreatedTime() ).
             creator( source.getCreator() ).
             addApproverIds( approverIds ).
-            setPublishRequest( publishRequest ).
-            build();
+            setPublishRequest( publishRequest );
     }
 }

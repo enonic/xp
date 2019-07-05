@@ -54,6 +54,7 @@ import com.enonic.xp.issue.IssueId;
 import com.enonic.xp.issue.IssueNotFoundException;
 import com.enonic.xp.issue.IssueQuery;
 import com.enonic.xp.issue.IssueService;
+import com.enonic.xp.issue.IssueType;
 import com.enonic.xp.issue.PublishRequest;
 import com.enonic.xp.issue.PublishRequestIssue;
 import com.enonic.xp.issue.PublishRequestItem;
@@ -139,7 +140,7 @@ public class IssueResourceTest
         throws Exception
     {
         final CreateIssueJson params =
-            new CreateIssueJson( "title", "desc", Arrays.asList( User.ANONYMOUS.getKey().toString() ), createPublishRequest(), null );
+            new CreateIssueJson( null, "title", "desc", Arrays.asList( User.ANONYMOUS.getKey().toString() ), createPublishRequest(), null );
 
         final Issue issue = this.createIssue();
         final IssueComment comment = IssueComment.create().text( issue.getDescription() ).creator( issue.getCreator() ).build();
@@ -169,7 +170,7 @@ public class IssueResourceTest
         throws Exception
     {
         final CreateIssueJson params =
-            new CreateIssueJson( "title", "desc", Arrays.asList( User.ANONYMOUS.getKey().toString() ), createPublishRequest(),
+            new CreateIssueJson( IssueType.PUBLISH_REQUEST.toString(), "title", "desc", Arrays.asList( User.ANONYMOUS.getKey().toString() ), createPublishRequest(),
                                  createPublishRequestSchedule() );
 
         final Issue issue = this.createPublishRequestIssue();
@@ -195,9 +196,8 @@ public class IssueResourceTest
         assertEquals( issue.getId(), commentCaptor.getValue().getIssue() );
         assertEquals( issue.getCreator(), commentCaptor.getValue().getCreator() );
         assertTrue( paramCaptor.getValue() instanceof CreatePublishRequestIssueParams );
-        assertEquals( params.publishSchedule.getFrom(),
-                      ( (CreatePublishRequestIssueParams) paramCaptor.getValue() ).getSchedule().getFrom() );
-        assertEquals( params.publishSchedule.getTo(), ( (CreatePublishRequestIssueParams) paramCaptor.getValue() ).getSchedule().getTo() );
+        assertEquals( params.schedule.getFrom(), ( (CreatePublishRequestIssueParams) paramCaptor.getValue() ).getSchedule().getFrom() );
+        assertEquals( params.schedule.getTo(), ( (CreatePublishRequestIssueParams) paramCaptor.getValue() ).getSchedule().getTo() );
     }
 
     @Test
@@ -205,7 +205,7 @@ public class IssueResourceTest
         throws Exception
     {
         final CreateIssueJson params =
-            new CreateIssueJson( "title", null, Arrays.asList( User.ANONYMOUS.getKey().toString() ), createPublishRequest(), null );
+            new CreateIssueJson( null, "title", null, Arrays.asList( User.ANONYMOUS.getKey().toString() ), createPublishRequest(), null );
 
         final Issue issue = this.createIssue();
 
@@ -228,7 +228,7 @@ public class IssueResourceTest
         throws Exception
     {
         final CreateIssueJson params =
-            new CreateIssueJson( "title", "", Arrays.asList( User.ANONYMOUS.getKey().toString() ), createPublishRequest(), null );
+            new CreateIssueJson( null, "title", "", Arrays.asList( User.ANONYMOUS.getKey().toString() ), createPublishRequest(), null );
 
         final HttpServletRequest request = Mockito.mock( HttpServletRequest.class );
         final IssueResource issueResource = getResourceInstance();
@@ -249,7 +249,7 @@ public class IssueResourceTest
         throws Exception
     {
         final CreateIssueJson params =
-            new CreateIssueJson( "title", "", Arrays.asList( User.ANONYMOUS.getKey().toString() ), createPublishRequest(), null );
+            new CreateIssueJson( null, "title", "", Arrays.asList( User.ANONYMOUS.getKey().toString() ), createPublishRequest(), null );
 
         final HttpServletRequest request = Mockito.mock( HttpServletRequest.class );
         final IssueResource issueResource = getResourceInstance();
@@ -270,7 +270,7 @@ public class IssueResourceTest
         throws Exception
     {
         final CreateIssueJson params =
-            new CreateIssueJson( "title", "", Arrays.asList( User.ANONYMOUS.getKey().toString(), User.ANONYMOUS.getKey().toString() ),
+            new CreateIssueJson( null, "title", "", Arrays.asList( User.ANONYMOUS.getKey().toString(), User.ANONYMOUS.getKey().toString() ),
                                  createPublishRequest(), null );
 
         final HttpServletRequest request = Mockito.mock( HttpServletRequest.class );

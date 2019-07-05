@@ -63,7 +63,7 @@ public class IssueServiceImplTest_create
             schedule( PublishRequestIssueSchedule.create().to( to ).from( from ).build() ).
             build();
 
-        final PublishRequestIssue issue = this.issueService.create( params );
+        final PublishRequestIssue issue = (PublishRequestIssue) this.issueService.create( params );
 
         assertNotNull( issue );
         assertEquals( "title", issue.getTitle() );

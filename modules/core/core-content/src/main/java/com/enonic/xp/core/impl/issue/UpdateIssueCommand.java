@@ -39,10 +39,6 @@ public class UpdateIssueCommand
     private Issue doExecute()
     {
         Issue editedIssue = editIssue( params.getEditor(), getIssue( params.getId() ) );
-
-        editedIssue = setModifiedTime( editedIssue );
-        editedIssue = setModifier( editedIssue );
-
         final UpdateNodeParams updateNodeParams = UpdateNodeParamsFactory.create( editedIssue );
         final Node updatedNode = this.nodeService.update( updateNodeParams );
 
@@ -59,7 +55,11 @@ public class UpdateIssueCommand
         {
             editor.edit( editableIssue );
         }
-        return editableIssue.build();
+
+        return editableIssue.builder().
+            modifiedTime( Instant.now() ).
+            modifier( getCurrentUser().getKey() ).
+            build();
     }
 
     private Issue getIssue( final IssueId issueId )
@@ -69,20 +69,6 @@ public class UpdateIssueCommand
             nodeService( this.nodeService ).
             build().
             execute();
-    }
-
-    private Issue setModifiedTime( final Issue issue )
-    {
-        return Issue.create( issue ).
-            modifiedTime( Instant.now() ).
-            build();
-    }
-
-    private Issue setModifier( final Issue issue )
-    {
-        return Issue.create( issue ).
-            modifier( getCurrentUser().getKey() ).
-            build();
     }
 
     User getCurrentUser()

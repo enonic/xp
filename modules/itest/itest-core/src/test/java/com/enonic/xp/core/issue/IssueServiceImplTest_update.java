@@ -69,7 +69,7 @@ public class IssueServiceImplTest_update
         Instant from = Instant.ofEpochSecond( 1561965725L );
         Instant to = Instant.ofEpochSecond( 1575184925L );
 
-        final PublishRequestIssue issue = this.issueService.create( CreatePublishRequestIssueParams.create().
+        final PublishRequestIssue issue = (PublishRequestIssue) this.issueService.create( CreatePublishRequestIssueParams.create().
             title( "title" ).
             description( "description" ).
             setApproverIds( PrincipalKeys.from( "user:myStore:approver-1" ) ).

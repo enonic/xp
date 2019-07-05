@@ -3,7 +3,6 @@ package com.enonic.xp.issue;
 public class EditablePublishRequestIssue
     extends EditableIssue
 {
-
     public PublishRequestIssueSchedule schedule;
 
     public EditablePublishRequestIssue( final PublishRequestIssue source )
@@ -13,7 +12,7 @@ public class EditablePublishRequestIssue
     }
 
     @Override
-    public Issue build()
+    public Issue.Builder builder()
     {
         return PublishRequestIssue.create().
             id( source.getId() ).
@@ -28,7 +27,6 @@ public class EditablePublishRequestIssue
             creator( source.getCreator() ).
             addApproverIds( approverIds ).
             setPublishRequest( publishRequest ).
-            schedule( schedule ).
-            build();
+            schedule( schedule );
     }
 }
