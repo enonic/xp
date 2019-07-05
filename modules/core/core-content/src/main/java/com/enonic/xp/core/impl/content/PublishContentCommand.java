@@ -9,6 +9,7 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareContentResult;
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareStatus;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
@@ -37,10 +38,6 @@ public class PublishContentCommand
     extends AbstractContentCommand
     implements PushNodesListener, DeleteNodeListener
 {
-    private static final String NODE_CONTENT_PUBLISH_MESSAGE = "COM_ENONIC_XP_CONTENT_PUBLISH";
-
-    private static final String NODE_CONTENT_PUBLISH_MESSAGE_DELIMITER = " ";
-
     private final ContentIds contentIds;
 
     private final ContentIds excludedContentIds;
@@ -189,8 +186,8 @@ public class PublishContentCommand
     private void commitPushedNodes( final NodeBranchEntries branchEntries )
     {
         final String commitEntryMessage = message == null
-            ? NODE_CONTENT_PUBLISH_MESSAGE
-            : String.join( NODE_CONTENT_PUBLISH_MESSAGE_DELIMITER, NODE_CONTENT_PUBLISH_MESSAGE, message );
+            ? ContentConstants.PUBLISH_COMMIT_PREFIX
+            : String.join( ContentConstants.PUBLISH_COMMIT_PREFIX_DELIMITER, ContentConstants.PUBLISH_COMMIT_PREFIX, message );
 
         final NodeCommitEntry commitEntry = NodeCommitEntry.create().
             message( commitEntryMessage ).

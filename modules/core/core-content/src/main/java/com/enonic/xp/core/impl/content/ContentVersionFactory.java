@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentVersion;
@@ -18,8 +19,6 @@ import com.enonic.xp.security.PrincipalKey;
 
 class ContentVersionFactory
 {
-    private static final String NODE_CONTENT_PUBLISH_MESSAGE = "COM_ENONIC_XP_CONTENT_PUBLISH";
-
     private final NodeService nodeService;
 
     public ContentVersionFactory( final NodeService nodeService )
@@ -63,29 +62,18 @@ class ContentVersionFactory
 
     private ContentVersionPublishInfo doCreateContentVersionPublishInfo( final NodeCommitId nodeCommitId )
     {
-        if ( nodeCommitId == null )
+        if ( nodeCommitId != null )
         {
-            return null;
+            NodeCommitEntry nodeCommitEntry = nodeService.getCommit( nodeCommitId );
+            if (nodeCommitEntry != null && nodeCommitEntry.getMessage().startsWith( ContentConstants.PUBLISH_COMMIT_PREFIX )) {
+                return ContentVersionPublishInfo.create().
+                    message( nodeCommitEntry.getMessage().substring( ContentConstants.PUBLISH_COMMIT_PREFIX.length() ) ).
+                    publisher( nodeCommitEntry.getCommitter() ).
+                    timestamp( nodeCommitEntry.getTimestamp() ).
+                    build();
+            }
         }
-
-        NodeCommitEntry nodeCommitEntry = nodeService.getCommit( nodeCommitId );
-        return ContentVersionPublishInfo.create().
-            message( cleanUpMessage( nodeCommitEntry.getMessage() ) ).
-            publisher( nodeCommitEntry.getCommitter() ).
-            timestamp( nodeCommitEntry.getTimestamp() ).
-            build();
-    }
-
-    private String cleanUpMessage( String message )
-    {
-        if ( message == null )
-        {
-            return null;
-        }
-
-        String res = message.replace( NODE_CONTENT_PUBLISH_MESSAGE, "" ).trim();
-
-        return "".equals( res ) ? null : res;
+        return null;
     }
 
     private NodeVersion getNodeVersion( final NodeVersionMetadata nodeVersionMetadata )
