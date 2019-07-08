@@ -1,15 +1,8 @@
 package com.enonic.xp.lib.node;
 
-import java.util.Arrays;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.branch.Branch;
-import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
@@ -123,6 +116,7 @@ public class NodeHandler
         return execute( FindNodesByQueryHandler.create().
             query( params.getQuery() ).
             aggregations( params.getAggregations() ).
+            suggestions( params.getSuggestions() ).
             count( params.getCount() ).
             start( params.getStart() ).
             sort( params.getSort() ).

@@ -141,6 +141,40 @@ var expected = {
                 }
             ]
         }
+    },
+    "suggestions": {
+        "termSuggestion": [
+            {
+                "text": "text1",
+                "length": 2,
+                "offset": 1,
+                "options": [
+                    {
+                        "text": "text1-1",
+                        "score": 1
+                    },
+                    {
+                        "text": "text1-2",
+                        "score": 4
+                    }
+                ]
+            },
+            {
+                "text": "text2",
+                "length": 2,
+                "offset": 2,
+                "options": [
+                    {
+                        "text": "text2-1",
+                        "score": 2.299999952316284
+                    },
+                    {
+                        "text": "text2-2",
+                        "score": 1
+                    }
+                ]
+            }
+        ]
     }
 };
 // END

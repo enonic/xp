@@ -16,6 +16,8 @@ import com.enonic.xp.query.expr.OrderExpressions;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.filter.Filter;
 import com.enonic.xp.query.filter.Filters;
+import com.enonic.xp.query.suggester.SuggestionQueries;
+import com.enonic.xp.query.suggester.SuggestionQuery;
 
 public class AbstractQuery
     implements Query
@@ -29,6 +31,8 @@ public class AbstractQuery
     private final Filters queryFilters;
 
     private final AggregationQueries aggregationQueries;
+
+    private final SuggestionQueries suggestionQueries;
 
     private final int from;
 
@@ -53,6 +57,7 @@ public class AbstractQuery
         this.batchSize = builder.batchSize;
         this.searchMode = builder.searchMode;
         this.aggregationQueries = AggregationQueries.fromCollection( ImmutableSet.copyOf( builder.aggregationQueries ) );
+        this.suggestionQueries = SuggestionQueries.fromCollection( ImmutableSet.copyOf( builder.suggestionQueries ) );
         this.orderBys = setOrderExpressions( builder );
         this.postFilters = builder.postFilters.build();
         this.queryFilters = builder.queryFilters.build();
@@ -99,6 +104,11 @@ public class AbstractQuery
         return aggregationQueries;
     }
 
+    public SuggestionQueries getSuggestionQueries()
+    {
+        return suggestionQueries;
+    }
+
     public int getFrom()
     {
         return from;
@@ -136,6 +146,8 @@ public class AbstractQuery
         private final Filters.Builder queryFilters = Filters.create();
 
         private Set<AggregationQuery> aggregationQueries = Sets.newHashSet();
+
+        private Set<SuggestionQuery> suggestionQueries = Sets.newHashSet();
 
         private QueryExpr query;
 
@@ -204,6 +216,27 @@ public class AbstractQuery
         public B addAggregationQuery( final AggregationQuery aggregationQuery )
         {
             this.aggregationQueries.add( aggregationQuery );
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B addSuggestionQueries( final SuggestionQueries suggestionQueries )
+        {
+            this.suggestionQueries.addAll( suggestionQueries.getSet() );
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B suggestionQueries( final Set<SuggestionQuery> suggestionQueries )
+        {
+            this.suggestionQueries = suggestionQueries;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B addSuggestionQuery( final SuggestionQuery suggestionQuery )
+        {
+            this.suggestionQueries.add( suggestionQuery );
             return (B) this;
         }
 

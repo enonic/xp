@@ -269,6 +269,7 @@ RepoConnection.prototype.query = function (params) {
     handlerParams.query = nullOrValue(params.query);
     handlerParams.sort = valueOrDefault(params.sort, "_score DESC");
     handlerParams.aggregations = __.toScriptValue(params.aggregations);
+    handlerParams.suggestions = __.toScriptValue(params.suggestions);
     handlerParams.filters = __.toScriptValue(params.filters);
     handlerParams.explain = valueOrDefault(params.explain, false);
     return __.toNativeObject(this.repoConnection.query(handlerParams));
@@ -297,6 +298,7 @@ MultiRepoConnection.prototype.query = function (params) {
     handlerParams.query = nullOrValue(params.query);
     handlerParams.sort = valueOrDefault(params.sort, "_score DESC");
     handlerParams.aggregations = __.toScriptValue(params.aggregations);
+    handlerParams.suggestions = __.toScriptValue(params.suggestions);
     handlerParams.filters = __.toScriptValue(params.filters);
     handlerParams.explain = valueOrDefault(params.explain, false);
     return __.toNativeObject(this.multiRepoConnection.query(handlerParams));

@@ -13,7 +13,8 @@ class FindNodesByQueryResultFactory
         final FindNodesByQueryResult.Builder resultBuilder = FindNodesByQueryResult.create().
             hits( result.getNumberOfHits() ).
             totalHits( result.getTotalHits() ).
-            aggregations( result.getAggregations() );
+            aggregations( result.getAggregations() ).
+            suggestions( result.getSuggestions() );
 
         for ( final SearchHit hit : result.getHits() )
         {
