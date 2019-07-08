@@ -151,11 +151,13 @@ var expected = {
                 "options": [
                     {
                         "text": "text1-1",
-                        "score": 1
+                        "score": 1,
+                        "freq": 2
                     },
                     {
                         "text": "text1-2",
-                        "score": 4
+                        "score": 4,
+                        "freq": 5
                     }
                 ]
             },
@@ -166,11 +168,13 @@ var expected = {
                 "options": [
                     {
                         "text": "text2-1",
-                        "score": 2.299999952316284
+                        "score": 2.299999952316284,
+                        "freq": 4
                     },
                     {
                         "text": "text2-2",
-                        "score": 1
+                        "score": 1,
+                        "freq": 2
                     }
                 ]
             }
