@@ -71,27 +71,25 @@ public class RepositoryEntryServiceImpl
     {
         final ImmutableList.Builder<RepositoryId> repositoryIds = ImmutableList.builder();
 
-        if ( this.nodeRepositoryService.isInitialized( SystemConstants.SYSTEM_REPO.getId() ) )
-        {
-            final FindNodesByParentParams findNodesByParentParams = FindNodesByParentParams.create().
-                parentPath( RepositoryConstants.REPOSITORY_STORAGE_PARENT_PATH ).
-                size( -1 ).
-                build();
+        final FindNodesByParentParams findNodesByParentParams = FindNodesByParentParams.create().
+            parentPath( RepositoryConstants.REPOSITORY_STORAGE_PARENT_PATH ).
+            size( -1 ).
+            build();
 
-            final FindNodesByParentResult findNodesByParentResult = createContext().
-                callWith( () -> FindNodesByParentCommand.create().
-                    params( findNodesByParentParams ).
-                    indexServiceInternal( this.indexServiceInternal ).
-                    storageService( this.nodeStorageService ).
-                    searchService( this.nodeSearchService ).
-                    build().
-                    execute() );
+        final FindNodesByParentResult findNodesByParentResult = createContext().
+            callWith( () -> FindNodesByParentCommand.create().
+                params( findNodesByParentParams ).
+                indexServiceInternal( this.indexServiceInternal ).
+                storageService( this.nodeStorageService ).
+                searchService( this.nodeSearchService ).
+                build().
+                execute() );
 
-            findNodesByParentResult.getNodeIds().
-                stream().
-                map( nodeId -> RepositoryId.from( nodeId.toString() ) ).
-                forEach( repositoryIds::add );
-        }
+        findNodesByParentResult.getNodeIds().
+            stream().
+            map( nodeId -> RepositoryId.from( nodeId.toString() ) ).
+            forEach( repositoryIds::add );
+
         return RepositoryIds.from( repositoryIds.build() );
     }
 
