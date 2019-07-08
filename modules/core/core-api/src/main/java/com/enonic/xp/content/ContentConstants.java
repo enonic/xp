@@ -74,4 +74,8 @@ public class ContentConstants
         add( FieldOrderExpr.create( ContentIndexPath.MODIFIED_TIME, OrderExpr.Direction.DESC ) ).
         build();
 
+    public static final String PUBLISH_COMMIT_PREFIX = "COM_ENONIC_XP_CONTENT_PUBLISH";
+
+    public static final String PUBLISH_COMMIT_PREFIX_DELIMITER = " ";
+
 }

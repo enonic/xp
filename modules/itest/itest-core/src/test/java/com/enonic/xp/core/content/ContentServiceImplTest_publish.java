@@ -1,6 +1,7 @@
 package com.enonic.xp.core.content;
 
 import java.time.Instant;
+import java.util.Iterator;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -15,8 +16,11 @@ import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
+import com.enonic.xp.content.ContentVersion;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.DeleteContentParams;
+import com.enonic.xp.content.FindContentVersionsParams;
+import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentParams;
@@ -383,6 +387,54 @@ public class ContentServiceImplTest_publish
         printContentTree( getByPath( ContentPath.ROOT ).getId(), CTX_OTHER );
 
         assertStatus( b.getId(), CompareStatus.EQUAL );
+    }
+
+    @Test
+    public void publish_with_message()
+    {
+        final Content content = createContent( ContentPath.ROOT, "a" );
+
+        this.contentService.publish( PushContentParams.create().
+            contentIds( ContentIds.from( content.getId() ) ).
+            target( WS_OTHER ).
+            message( "My message" ).
+            build() );
+
+        FindContentVersionsResult versions = this.contentService.getVersions( FindContentVersionsParams.create().
+            contentId( content.getId() ).
+            build() );
+
+        Iterator<ContentVersion> iterator = versions.getContentVersions().iterator();
+        assertTrue( iterator.hasNext() );
+
+        ContentVersion version = iterator.next();
+        assertNotNull( version.getPublishInfo().getTimestamp() );
+        assertEquals( "user:system:test-user", version.getPublishInfo().getPublisher().toString() );
+        assertEquals( "My message", version.getPublishInfo().getMessage() );
+    }
+
+    @Test
+    public void publish_with_message_no_message()
+    {
+        final Content content = createContent( ContentPath.ROOT, "a" );
+
+        this.contentService.publish( PushContentParams.create().
+            contentIds( ContentIds.from( content.getId() ) ).
+            target( WS_OTHER ).
+            message( null ).
+            build() );
+
+        FindContentVersionsResult versions = this.contentService.getVersions( FindContentVersionsParams.create().
+            contentId( content.getId() ).
+            build() );
+
+        Iterator<ContentVersion> iterator = versions.getContentVersions().iterator();
+        assertTrue( iterator.hasNext() );
+
+        ContentVersion version = iterator.next();
+        assertNotNull( version.getPublishInfo().getTimestamp() );
+        assertEquals( "user:system:test-user", version.getPublishInfo().getPublisher().toString() );
+        assertNull( version.getPublishInfo().getMessage() );
     }
 
     private Content doRename( final ContentId contentId, final String newName )

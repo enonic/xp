@@ -20,6 +20,8 @@ public class ContentVersion
 
     private final String comment;
 
+    private final ContentVersionPublishInfo publishInfo;
+
     private ContentVersion( Builder builder )
     {
         this.modifier = builder.modifier;
@@ -27,6 +29,7 @@ public class ContentVersion
         this.modified = builder.modified;
         this.comment = builder.comment;
         this.id = builder.id;
+        this.publishInfo = builder.publishInfo;
     }
 
     public PrincipalKey getModifier()
@@ -52,6 +55,11 @@ public class ContentVersion
     public ContentVersionId getId()
     {
         return id;
+    }
+
+    public ContentVersionPublishInfo getPublishInfo()
+    {
+        return publishInfo;
     }
 
     public static Builder create()
@@ -105,6 +113,10 @@ public class ContentVersion
         {
             return false;
         }
+        if ( publishInfo != null ? !publishInfo.equals( that.publishInfo ) : that.publishInfo != null )
+        {
+            return false;
+        }
 
         return true;
     }
@@ -116,6 +128,7 @@ public class ContentVersion
         result = 31 * result + ( displayName != null ? displayName.hashCode() : 0 );
         result = 31 * result + ( modified != null ? modified.hashCode() : 0 );
         result = 31 * result + ( comment != null ? comment.hashCode() : 0 );
+        result = 31 * result + ( publishInfo != null ? publishInfo.hashCode() : 0 );
         return result;
     }
 
@@ -130,6 +143,8 @@ public class ContentVersion
         private String comment;
 
         private ContentVersionId id;
+
+        private ContentVersionPublishInfo publishInfo;
 
         private Builder()
         {
@@ -162,6 +177,12 @@ public class ContentVersion
         public Builder comment( String comment )
         {
             this.comment = comment;
+            return this;
+        }
+
+        public Builder publishInfo( ContentVersionPublishInfo publishInfo )
+        {
+            this.publishInfo = publishInfo;
             return this;
         }
 
