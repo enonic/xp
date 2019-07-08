@@ -36,7 +36,6 @@ public class CmsResourceFilter
                 branch( ContentLayerName.from( layer ).getDraftBranch() ).
                 build();
             ContextAccessor.INSTANCE.set( context );
-            System.out.println( "project" + matcher.group( 1 ) );
         }
     }
 }
