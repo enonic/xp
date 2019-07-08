@@ -275,6 +275,8 @@ public class ContentTypeResourceTest
             displayNameI18nKey( "key.display-name" ).
             description( "My description" ).
             descriptionI18nKey( "key.description" ).
+            displayNameLabel( "My Display Name Label" ).
+            displayNameLabelI18nKey( "key.displayNameLabel" ).
             icon( Icon.from( new byte[]{123}, "image/gif", SOME_DATE ) ).
             addFormItem( Input.create().
                 name( "myTextLine" ).
@@ -293,6 +295,7 @@ public class ContentTypeResourceTest
         Mockito.when( messageBundle.localize( "key.help-text" ) ).thenReturn( "translated.helpText" );
         Mockito.when( messageBundle.localize( "key.display-name" ) ).thenReturn( "translated.displayName" );
         Mockito.when( messageBundle.localize( "key.description" ) ).thenReturn( "translated.description" );
+        Mockito.when( messageBundle.localize( "key.displayNameLabel" ) ).thenReturn( "translated.displayNameLabel" );
 
         Mockito.when( this.localeService.getBundle( Mockito.any(), Mockito.any() ) ).thenReturn( messageBundle );
         Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
