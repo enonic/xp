@@ -29,14 +29,14 @@ public abstract class Suggestion<ENTRY extends SuggestionEntry>
 
     public static abstract class Builder<T extends Builder, ENTRY extends SuggestionEntry>
     {
+        private final String name;
+
+        private final List<ENTRY> suggestionEntries = Lists.newArrayList();
+
         public Builder( final String name )
         {
             this.name = name;
         }
-
-        private final String name;
-
-        private final List<ENTRY> suggestionEntries = Lists.newArrayList();
 
         @SuppressWarnings("unchecked")
         public T addSuggestionEntry( final ENTRY suggestionEntry )

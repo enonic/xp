@@ -11,7 +11,6 @@ public final class TermSuggestionOption
         this.freq = builder.freq;
     }
 
-
     public Integer getFreq()
     {
         return freq;
@@ -27,11 +26,6 @@ public final class TermSuggestionOption
     {
         private Integer freq;
 
-        public Builder()
-        {
-            super();
-        }
-
         @SuppressWarnings("unchecked")
         public Builder freq( final Integer freq )
         {
@@ -43,6 +37,5 @@ public final class TermSuggestionOption
         {
             return new TermSuggestionOption( this );
         }
-
     }
 }

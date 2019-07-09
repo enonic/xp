@@ -24,10 +24,6 @@ public abstract class SuggestionOption
 
     public static abstract class Builder<T extends Builder>
     {
-        public Builder()
-        {
-        }
-
         private String text;
 
         private Float score;

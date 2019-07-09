@@ -52,10 +52,6 @@ public abstract class SuggestionEntry<OPTION extends SuggestionOption>
 
     public static abstract class Builder<T extends Builder, OPTION extends SuggestionOption>
     {
-        public Builder()
-        {
-        }
-
         private String text;
 
         private Integer offset;

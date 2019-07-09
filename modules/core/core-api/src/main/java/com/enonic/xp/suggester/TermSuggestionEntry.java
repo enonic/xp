@@ -16,15 +16,9 @@ public final class TermSuggestionEntry
     public static class Builder
         extends SuggestionEntry.Builder<Builder, TermSuggestionOption>
     {
-        public Builder()
-        {
-            super();
-        }
-
         public TermSuggestionEntry build()
         {
             return new TermSuggestionEntry( this );
         }
-
     }
 }
