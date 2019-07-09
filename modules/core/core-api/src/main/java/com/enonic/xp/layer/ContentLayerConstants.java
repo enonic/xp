@@ -20,6 +20,22 @@ public class ContentLayerConstants
 
     public static final PropertyPath DISPLAY_NAME_PROPERTY_PATH = PropertyPath.from( "displayName" );
 
+    public static final PropertyPath DESCRIPTION_PROPERTY_PATH = PropertyPath.from( "description" );
+
+    public static final PropertyPath LANGUAGE_PROPERTY_PATH = PropertyPath.from( "language" );
+
+    public static final PropertyPath ICON_PROPERTY_PATH = PropertyPath.from( "icon" );
+
+    public static final PropertyPath ICON_NAME_PROPERTY_PATH = PropertyPath.from( "name" );
+
+    public static final PropertyPath ICON_LABEL_PROPERTY_PATH = PropertyPath.from( "label" );
+
+    public static final PropertyPath ICON_MIMETYPE_PROPERTY_PATH = PropertyPath.from( "mimeType" );
+
+    public static final PropertyPath ICON_SIZE_PROPERTY_PATH = PropertyPath.from( "size" );
+
+    public static final String ICON_LABEL_VALUE = "icon";
+
     public static final String BRANCH_PREFIX_DRAFT = ContentConstants.BRANCH_VALUE_DRAFT + "-";
 
     public static final String BRANCH_PREFIX_MASTER = ContentConstants.BRANCH_VALUE_MASTER + "-";
