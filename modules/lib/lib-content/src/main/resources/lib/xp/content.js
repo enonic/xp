@@ -349,6 +349,24 @@ exports.unpublish = function (params) {
     return __.toNativeObject(bean.execute());
 };
 
+
+/**
+ * Check if content exists.
+ *
+ * @example-ref examples/content/exist.js
+ *
+ * @param {string} [params.key] content id.
+ *
+ * @returns {boolean} True if exist, false otherwise.
+ */
+exports.exist = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.content.ContentExistsHandler');
+
+    bean.key = required(params, 'key');
+
+    return __.toNativeObject(bean.execute());
+}
+
 /**
  * Creates a media content.
  *

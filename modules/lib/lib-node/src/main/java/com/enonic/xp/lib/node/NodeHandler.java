@@ -1,15 +1,8 @@
 package com.enonic.xp.lib.node;
 
-import java.util.Arrays;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.branch.Branch;
-import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
@@ -129,6 +122,15 @@ public class NodeHandler
             filters( params.getFilters() ).
             explain( params.isExplain() ).
             nodeService( this.nodeService ).
+            build() );
+    }
+
+    @SuppressWarnings("unused")
+    public Object exist( final String key )
+    {
+        return execute( NodeExistsHandler.create().
+            nodeService( this.nodeService ).
+            key( NodeKey.from( key ) ).
             build() );
     }
 

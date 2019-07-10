@@ -302,6 +302,24 @@ MultiRepoConnection.prototype.query = function (params) {
     return __.toNativeObject(this.multiRepoConnection.query(handlerParams));
 };
 
+
+/**
+ * Check if node exists.
+ *
+ * @example-ref examples/node/exists-1.js
+ * @example-ref examples/node/exists-2.js
+ *
+ * @example-ref examples/node/exist.js
+ *
+ * @param {string} [key] node path or id.
+ *
+ * @returns {boolean} True if exist, false otherwise.
+ */
+RepoConnection.prototype.exist = function (key) {
+    return __.toNativeObject(this.repoConnection.exist(/*required(*/key)/*)*/);
+}
+
+
 /**
  * This function returns node versions.
  *
