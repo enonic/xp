@@ -316,8 +316,8 @@ MultiRepoConnection.prototype.query = function (params) {
  * @returns {boolean} True if exist, false otherwise.
  */
 RepoConnection.prototype.exist = function (key) {
-    return __.toNativeObject(this.repoConnection.exist(/*required(*/key)/*)*/);
-}
+    return __.toNativeObject(this.repoConnection.exist(key));
+};
 
 
 /**

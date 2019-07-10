@@ -365,7 +365,7 @@ exports.exist = function (params) {
     bean.key = required(params, 'key');
 
     return __.toNativeObject(bean.execute());
-}
+};
 
 /**
  * Creates a media content.

@@ -10,7 +10,7 @@ var myRepo = nodeLib.connect({
 });
 
 var result = myRepo.exist(
-    "123"
+    '123'
 );
 
 // END
