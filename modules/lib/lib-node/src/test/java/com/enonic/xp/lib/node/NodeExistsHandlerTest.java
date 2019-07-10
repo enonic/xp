@@ -12,9 +12,9 @@ public class NodeExistsHandlerTest
     @Test
     public void testExistsByPath()
     {
-        Mockito.when( this.nodeService.nodeExists( NodePath.create( "/my-name" ).build() ) ).thenReturn( true );
+        Mockito.when( this.nodeService.nodeExists( NodePath.create( "/path/to/mynode" ).build() ) ).thenReturn( true );
 
-        runScript( "/lib/xp/examples/node/exists-1.js" );
+        runScript( "/lib/xp/examples/node/exists.js" );
     }
 
     @Test

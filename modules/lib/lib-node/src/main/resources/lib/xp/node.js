@@ -306,9 +306,6 @@ MultiRepoConnection.prototype.query = function (params) {
 /**
  * Check if node exists.
  *
- * @example-ref examples/node/exists-1.js
- * @example-ref examples/node/exists-2.js
- *
  * @example-ref examples/node/exist.js
  *
  * @param {string} [key] node path or id.

@@ -10,7 +10,7 @@ var myRepo = nodeLib.connect({
 });
 
 var result = myRepo.exist(
-    '/my-name'
+    '/path/to/mynode'
 );
 
 // END
