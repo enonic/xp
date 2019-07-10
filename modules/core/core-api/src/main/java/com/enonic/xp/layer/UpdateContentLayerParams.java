@@ -7,11 +7,9 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.attachment.CreateAttachment;
 
-public class CreateContentLayerParams
+public class UpdateContentLayerParams
 {
     private ContentLayerName name;
-
-    private ContentLayerName parentName;
 
     private String displayName;
 
@@ -21,7 +19,7 @@ public class CreateContentLayerParams
 
     private CreateAttachment icon;
 
-    private CreateContentLayerParams( final Builder builder )
+    private UpdateContentLayerParams( final Builder builder )
     {
         Preconditions.checkNotNull( builder.name, "name cannot be null" );
         Preconditions.checkNotNull( builder.displayName, "displayName cannot be null" );
@@ -32,7 +30,6 @@ public class CreateContentLayerParams
             Preconditions.checkNotNull( builder.iconMimeType, "iconMimeType cannot be null" );
         }
         name = builder.name;
-        parentName = builder.parentName == null ? ContentLayerName.DEFAULT_LAYER_NAME : builder.parentName;
         displayName = builder.displayName;
         description = builder.description;
         language = builder.language;
@@ -51,11 +48,6 @@ public class CreateContentLayerParams
     public ContentLayerName getName()
     {
         return name;
-    }
-
-    public ContentLayerName getParentName()
-    {
-        return parentName;
     }
 
     public String getDisplayName()
@@ -87,8 +79,6 @@ public class CreateContentLayerParams
     {
         private ContentLayerName name;
 
-        private ContentLayerName parentName;
-
         private String displayName;
 
         private String description;
@@ -108,12 +98,6 @@ public class CreateContentLayerParams
         public Builder name( final ContentLayerName name )
         {
             this.name = name;
-            return this;
-        }
-
-        public Builder parentName( final ContentLayerName parentName )
-        {
-            this.parentName = parentName;
             return this;
         }
 
@@ -153,9 +137,9 @@ public class CreateContentLayerParams
             return this;
         }
 
-        public CreateContentLayerParams build()
+        public UpdateContentLayerParams build()
         {
-            return new CreateContentLayerParams( this );
+            return new UpdateContentLayerParams( this );
         }
     }
 }
