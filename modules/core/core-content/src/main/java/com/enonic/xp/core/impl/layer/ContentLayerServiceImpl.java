@@ -204,6 +204,9 @@ public class ContentLayerServiceImpl
                 data.setString( ContentLayerConstants.DESCRIPTION_PROPERTY_PATH, params.getDescription() );
                 data.setString( ContentLayerConstants.LANGUAGE_PROPERTY_PATH,
                                 params.getLanguage() == null ? null : params.getLanguage().toLanguageTag() );
+
+                final CreateAttachment icon = params.getIcon();
+                setIcon( icon, data );
             } );
         if ( params.getIcon() != null )
         {
@@ -234,7 +237,9 @@ public class ContentLayerServiceImpl
     {
         if ( icon != null )
         {
-            final PropertySet iconSet = data.addSet( ContentLayerConstants.ICON_PROPERTY_PATH.toString() );
+
+            final PropertySet iconSet = data.newSet();
+            data.setSet( ContentLayerConstants.ICON_PROPERTY_PATH.toString(), iconSet );
             iconSet.setString( ContentLayerConstants.ICON_NAME_PROPERTY_PATH, icon.getName() );
             iconSet.setString( ContentLayerConstants.ICON_LABEL_PROPERTY_PATH, icon.getLabel() );
             iconSet.setBinaryReference( "binary", icon.getBinaryReference() );

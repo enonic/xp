@@ -80,7 +80,7 @@ public class ContentLayerResource
             description( description ).
             language( language == null ? null : Locale.forLanguageTag( language ) ).
             iconName( iconName ).
-            iconMimeType( iconItem == null ? null : iconItem.getContentType().toString() ).
+            iconMimeType( iconItem == null || iconItem.getContentType() == null ? null : iconItem.getContentType().toString() ).
             iconByteSource( iconItem == null ? null : iconItem.getBytes() ).
             build();
 
