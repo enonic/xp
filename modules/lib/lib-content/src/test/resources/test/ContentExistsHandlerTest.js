@@ -3,7 +3,7 @@ var contentLib = require('/lib/xp/content.js');
 
 exports.existsById = function () {
 
-    var result = contentLib.exist({
+    var result = contentLib.exists({
         key: '123456',
     });
 
@@ -13,7 +13,7 @@ exports.existsById = function () {
 exports.emptyKey = function () {
 
     try {
-        var result = contentLib.exist({
+        var result = contentLib.exists({
             key: '',
         });
     } catch (e) {

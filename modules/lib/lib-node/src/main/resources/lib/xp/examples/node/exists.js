@@ -9,7 +9,7 @@ var myRepo = nodeLib.connect({
     branch: 'master'
 });
 
-var result = myRepo.exist(
+var result = myRepo.exists(
     '/path/to/mynode'
 );
 

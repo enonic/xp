@@ -359,7 +359,7 @@ exports.unpublish = function (params) {
  *
  * @returns {boolean} True if exist, false otherwise.
  */
-exports.exist = function (params) {
+exports.exists = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.ContentExistsHandler');
 
     bean.key = required(params, 'key');
