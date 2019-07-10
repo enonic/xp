@@ -13,7 +13,7 @@ final class QuerySuggestionParams
     {
     }
 
-    public SuggestionQueries getSuggetions( final Map<String, Object> suggestionsMap )
+    public SuggestionQueries getSuggestions( final Map<String, Object> suggestionsMap )
     {
         if ( suggestionsMap == null )
         {
@@ -38,20 +38,17 @@ final class QuerySuggestionParams
     {
         if ( suggestionQueryMap.containsKey( "term" ) )
         {
+            final String text = (String) suggestionQueryMap.get( "text" );
             final Map<String, Object> termParamsMap = (Map<String, Object>) suggestionQueryMap.get( "term" );
-            return termsSuggestionFromParams( name, termParamsMap ).build();
+            final String field = (String) termParamsMap.get( "field" );
 
+            return TermSuggestionQuery.create( name ).
+                field( field ).
+                text( text ).
+                build();
         }
 
         return null;
-    }
-
-    private TermSuggestionQuery.Builder termsSuggestionFromParams( final String name, final Map<String, Object> paramsMap )
-    {
-        final String field = (String) paramsMap.get( "field" );
-
-        return TermSuggestionQuery.create( name ).
-            field( field );
     }
 }
 

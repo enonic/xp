@@ -58,7 +58,7 @@ abstract class AbstractFindNodesQueryHandler
         final Filters filters = JsonToFilterMapper.create( this.filters );
 
         final AggregationQueries aggregations = new QueryAggregationParams().getAggregations( this.aggregations );
-        final SuggestionQueries suggestions = new QuerySuggestionParams().getSuggetions( this.suggestions );
+        final SuggestionQueries suggestions = new QuerySuggestionParams().getSuggestions( this.suggestions );
 
         return NodeQuery.create().
             from( start ).
