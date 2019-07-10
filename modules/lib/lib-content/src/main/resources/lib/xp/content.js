@@ -353,7 +353,7 @@ exports.unpublish = function (params) {
 /**
  * Check if content exists.
  *
- * @example-ref examples/content/exist.js
+ * @example-ref examples/content/exists.js
  *
  * @param {string} [params.key] content id.
  *

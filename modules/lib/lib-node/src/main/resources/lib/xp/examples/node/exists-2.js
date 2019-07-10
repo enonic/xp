@@ -3,7 +3,7 @@ var assert = require('/lib/xp/testing');
 
 
 // BEGIN
-// Fetches a node.
+// Checks if a node exists
 var myRepo = nodeLib.connect({
     repoId: 'my-repo',
     branch: 'master'
