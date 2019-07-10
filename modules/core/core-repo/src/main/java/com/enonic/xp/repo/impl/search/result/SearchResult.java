@@ -4,12 +4,15 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 import com.enonic.xp.aggregation.Aggregations;
+import com.enonic.xp.suggester.Suggestions;
 
 public class SearchResult
 {
     private final SearchHits hits;
 
     private final Aggregations aggregations;
+
+    private final Suggestions suggestions;
 
     private final long totalHits;
 
@@ -19,6 +22,7 @@ public class SearchResult
     {
         this.hits = builder.searchHits;
         this.aggregations = builder.aggregations;
+        this.suggestions = builder.suggestions;
         this.totalHits = builder.totalHits;
         this.maxScore = builder.maxScore;
     }
@@ -58,6 +62,11 @@ public class SearchResult
         return aggregations;
     }
 
+    public Suggestions getSuggestions()
+    {
+        return suggestions;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -68,6 +77,8 @@ public class SearchResult
         private SearchHits searchHits;
 
         private Aggregations aggregations = Aggregations.empty();
+
+        private Suggestions suggestions = Suggestions.empty();
 
         private long totalHits = 0L;
 
@@ -82,6 +93,12 @@ public class SearchResult
         public Builder aggregations( final Aggregations aggregations )
         {
             this.aggregations = aggregations;
+            return this;
+        }
+
+        public Builder suggestions( final Suggestions suggestions )
+        {
+            this.suggestions = suggestions;
             return this;
         }
 

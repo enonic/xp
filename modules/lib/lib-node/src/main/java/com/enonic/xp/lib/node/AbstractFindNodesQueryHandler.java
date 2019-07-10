@@ -2,16 +2,16 @@ package com.enonic.xp.lib.node;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.enonic.xp.lib.common.JsonToFilterMapper;
 import com.enonic.xp.node.NodeQuery;
-import com.enonic.xp.query.aggregation.AggregationQuery;
+import com.enonic.xp.query.aggregation.AggregationQueries;
 import com.enonic.xp.query.expr.ConstraintExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.filter.Filters;
 import com.enonic.xp.query.parser.QueryParser;
+import com.enonic.xp.query.suggester.SuggestionQueries;
 
 abstract class AbstractFindNodesQueryHandler
     extends AbstractNodeHandler
@@ -28,6 +28,8 @@ abstract class AbstractFindNodesQueryHandler
 
     private final Map<String, Object> aggregations;
 
+    private final Map<String, Object> suggestions;
+
     private final boolean explain;
 
     AbstractFindNodesQueryHandler( final Builder builder )
@@ -39,6 +41,7 @@ abstract class AbstractFindNodesQueryHandler
         this.sort = builder.sort;
         this.filters = builder.filters;
         this.aggregations = builder.aggregations;
+        this.suggestions = builder.suggestions;
         this.explain = builder.explain;
     }
 
@@ -54,12 +57,14 @@ abstract class AbstractFindNodesQueryHandler
         final QueryExpr queryExpr = QueryExpr.from( constraintExpr, orderExpressions );
         final Filters filters = JsonToFilterMapper.create( this.filters );
 
-        final Set<AggregationQuery> aggregations = new QueryAggregationParams().getAggregations( this.aggregations );
+        final AggregationQueries aggregations = new QueryAggregationParams().getAggregations( this.aggregations );
+        final SuggestionQueries suggestions = new QuerySuggestionParams().getSuggetions( this.suggestions );
 
         return NodeQuery.create().
             from( start ).
             size( count ).
-            aggregationQueries( aggregations ).
+            addAggregationQueries( aggregations ).
+            addSuggestionQueries( suggestions ).
             query( queryExpr ).
             addQueryFilters( filters ).
             explain( this.explain ).
@@ -80,6 +85,8 @@ abstract class AbstractFindNodesQueryHandler
         private List<Map<String, Object>> filters;
 
         private Map<String, Object> aggregations;
+
+        private Map<String, Object> suggestions;
 
         private boolean explain = false;
 
@@ -126,6 +133,13 @@ abstract class AbstractFindNodesQueryHandler
         public B aggregations( final Map<String, Object> val )
         {
             aggregations = val;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B suggestions( final Map<String, Object> val )
+        {
+            suggestions = val;
             return (B) this;
         }
 

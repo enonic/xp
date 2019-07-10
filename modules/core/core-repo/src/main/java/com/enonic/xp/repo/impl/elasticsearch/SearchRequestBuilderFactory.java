@@ -46,6 +46,7 @@ public class SearchRequestBuilderFactory
         query.getSortBuilders().forEach( searchRequestBuilder::addSort );
 
         query.getAggregations().forEach( searchRequestBuilder::addAggregation );
+        query.getSuggestions().forEach( searchRequestBuilder::addSuggestion );
 
         if ( query.getReturnFields() != null && query.getReturnFields().isNotEmpty() )
         {

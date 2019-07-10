@@ -116,6 +116,7 @@ public class NodeHandler
         return execute( FindNodesByQueryHandler.create().
             query( params.getQuery() ).
             aggregations( params.getAggregations() ).
+            suggestions( params.getSuggestions() ).
             count( params.getCount() ).
             start( params.getStart() ).
             sort( params.getSort() ).

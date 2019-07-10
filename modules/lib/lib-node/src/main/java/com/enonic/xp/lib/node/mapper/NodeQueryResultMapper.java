@@ -6,6 +6,7 @@ import com.enonic.xp.node.NodeHit;
 import com.enonic.xp.node.NodeHits;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
+import com.enonic.xp.suggester.Suggestions;
 
 public final class NodeQueryResultMapper
     implements MapSerializable
@@ -16,11 +17,14 @@ public final class NodeQueryResultMapper
 
     private final Aggregations aggregations;
 
+    private final Suggestions suggestions;
+
     public NodeQueryResultMapper( final FindNodesByQueryResult result )
     {
         this.nodeHits = result.getNodeHits();
         this.total = result.getTotalHits();
         this.aggregations = result.getAggregations();
+        this.suggestions = result.getSuggestions();
     }
 
     @Override
@@ -30,6 +34,7 @@ public final class NodeQueryResultMapper
         gen.value( "count", this.nodeHits.getSize() );
         serialize( gen, this.nodeHits );
         serialize( gen, aggregations );
+        serialize( gen, suggestions );
     }
 
     private void serialize( final MapGenerator gen, final NodeHits nodeHits )
@@ -51,6 +56,16 @@ public final class NodeQueryResultMapper
         {
             gen.map( "aggregations" );
             new AggregationMapper( aggregations ).serialize( gen );
+            gen.end();
+        }
+    }
+
+    private void serialize( final MapGenerator gen, final Suggestions suggestions )
+    {
+        if ( suggestions != null )
+        {
+            gen.map( "suggestions" );
+            new SuggestionsMapper( suggestions ).serialize( gen );
             gen.end();
         }
     }
