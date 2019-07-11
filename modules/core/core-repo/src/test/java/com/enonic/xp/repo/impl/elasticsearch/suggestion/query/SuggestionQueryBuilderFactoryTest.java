@@ -28,6 +28,7 @@ public class SuggestionQueryBuilderFactoryTest
     {
         final TermSuggestionQuery query = TermSuggestionQuery.create( "query" ).
             field( "fieldName" ).
+            text( "textValue" ).
             build();
 
         final Set<SuggestBuilder.SuggestionBuilder> suggestionBuilder =

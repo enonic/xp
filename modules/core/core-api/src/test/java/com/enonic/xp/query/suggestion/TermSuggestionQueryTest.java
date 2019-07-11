@@ -13,6 +13,7 @@ public class TermSuggestionQueryTest
     {
         final TermSuggestionQuery query = TermSuggestionQuery.create( "queryName" ).
             field( "category" ).
+            text( "value" ).
             build();
 
         assertEquals( "queryName", query.getName() );

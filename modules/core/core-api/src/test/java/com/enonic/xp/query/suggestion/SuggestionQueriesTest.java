@@ -14,6 +14,7 @@ public class SuggestionQueriesTest
     {
         final TermSuggestionQuery query = TermSuggestionQuery.create( "query" ).
             field( "fieldName" ).
+            text( "textValue" ).
             build();
 
         final SuggestionQueries queries = SuggestionQueries.create().
