@@ -44,6 +44,7 @@ import com.enonic.xp.node.NodeType;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repository.CreateBranchParams;
+import com.enonic.xp.repository.DeleteBranchParams;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.util.Exceptions;
@@ -214,6 +215,43 @@ public class ContentLayerServiceImpl
         }
         final Node updatedNode = nodeService.update( updateNodeParams.build() );
         return toContentLayer( updatedNode );
+    }
+
+    @Override
+    public ContentLayer delete( final ContentLayerName name )
+    {
+        return createContext().callWith( () -> doDelete( name ) );
+    }
+
+    private ContentLayer doDelete( final ContentLayerName name )
+    {
+        //Performs checks
+        if ( ContentLayerName.DEFAULT_LAYER_NAME.equals( name ) )
+        {
+            throw new ContentLayerException( "Base layer cannot be delete" );
+        }
+        final NodePath nodePath = toNodePath( name );
+        final Node node = nodeService.getByPath( nodePath );
+        if ( node == null )
+        {
+            throw new ContentLayerException( MessageFormat.format( "Layer [{0}] does not exist", name ) );
+        }
+        final Repository repository = repositoryService.get( ContextAccessor.current().getRepositoryId() );
+        if ( repository.getChildBranchInfos( name.getDraftBranch() ).isNotEmpty() )
+        {
+            throw new ContentLayerException( MessageFormat.format( "Layer [{0}] has a child layer", name ) );
+        }
+
+        //Deletes node representation
+        nodeService.deleteById( node.id() );
+
+        //Deletes branch and master branches
+        final DeleteBranchParams draftParams = DeleteBranchParams.from( name.getDraftBranch() );
+        repositoryService.deleteBranch( draftParams );
+        final DeleteBranchParams masterParams = DeleteBranchParams.from( name.getMasterBranch() );
+        repositoryService.deleteBranch( masterParams );
+
+        return toContentLayer( node );
     }
 
     private PropertyTree toNodeData( final CreateContentLayerParams params )

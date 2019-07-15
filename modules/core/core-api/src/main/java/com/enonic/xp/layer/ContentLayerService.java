@@ -6,11 +6,13 @@ public interface ContentLayerService
 {
     ContentLayers list();
 
-    ContentLayer get( ContentLayerName name );
+    ContentLayer get( final ContentLayerName name );
 
-    GetContentLayerIconResult getIcon( ContentLayerName name );
+    GetContentLayerIconResult getIcon( final ContentLayerName name );
 
     ContentLayer create( final CreateContentLayerParams params );
 
     ContentLayer update( final UpdateContentLayerParams params );
+
+    ContentLayer delete( final ContentLayerName name );
 }

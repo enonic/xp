@@ -114,6 +114,14 @@ public class ContentLayerResource
         return new ContentLayerJson( contentLayer );
     }
 
+    @POST
+    @Path("delete")
+    public ContentLayerJson delete( final DeleteLayerJson params )
+    {
+        final ContentLayer contentLayer = contentLayerService.delete( params.getContentLayerName() );
+        return contentLayer == null ? null : new ContentLayerJson( contentLayer );
+    }
+
     @GET
     @Path("icon")
     public Response getIcon( @QueryParam("name") final String name )
@@ -125,7 +133,8 @@ public class ContentLayerResource
             try
             {
                 final ResolvedImage resolvedImage = new ResolvedImage( result.getByteSource().read(), result.getMimeType() );
-                if (resolvedImage.isOK()) {
+                if ( resolvedImage.isOK() )
+                {
                     return resolvedImage.toResponse();
                 }
             }
