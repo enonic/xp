@@ -20,6 +20,8 @@ public class ContentVersionJson
 
     private final String id;
 
+    private final ContentVersionPublishInfoJson publishInfo;
+
     public ContentVersionJson( final ContentVersion contentVersion, final Principal modifier )
     {
         this.modified = contentVersion.getModified();
@@ -28,6 +30,8 @@ public class ContentVersionJson
         this.modifier = contentVersion.getModifier().toString();
         this.modifierDisplayName = modifier == null ? "" : modifier.getDisplayName();
         this.id = contentVersion.getId().toString();
+        this.publishInfo =
+            contentVersion.getPublishInfo() != null ? new ContentVersionPublishInfoJson( contentVersion.getPublishInfo() ) : null;
     }
 
     @SuppressWarnings("UnusedDeclaration")
@@ -64,6 +68,12 @@ public class ContentVersionJson
     public String getModifierDisplayName()
     {
         return modifierDisplayName;
+    }
+
+    @SuppressWarnings("unused")
+    public ContentVersionPublishInfoJson getPublishInfo()
+    {
+        return publishInfo;
     }
 
     @Override

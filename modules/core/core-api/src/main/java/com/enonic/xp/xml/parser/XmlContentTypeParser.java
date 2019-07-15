@@ -48,6 +48,10 @@ public final class XmlContentTypeParser
 
         this.builder.xData( buildMetaData( root ) );
 
+        this.builder.displayNameLabel( root.getChildValue( "display-name-label" ) );
+        this.builder.displayNameLabelI18nKey(
+            root.getChild( "display-name-label" ) != null ? root.getChild( "display-name-label" ).getAttribute( "i18n" ) : null );
+
         final XmlFormMapper mapper = new XmlFormMapper( this.currentApplication );
         this.builder.form( mapper.buildForm( root.getChild( "form" ) ) );
     }

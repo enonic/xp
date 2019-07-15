@@ -111,6 +111,7 @@ import com.enonic.xp.content.ContentValidityParams;
 import com.enonic.xp.content.ContentValidityResult;
 import com.enonic.xp.content.ContentVersion;
 import com.enonic.xp.content.ContentVersionId;
+import com.enonic.xp.content.ContentVersionPublishInfo;
 import com.enonic.xp.content.ContentVersions;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.CreateContentParams;
@@ -1936,6 +1937,11 @@ public class ContentResourceTest
             id( ContentVersionId.from( "a" ) ).
             modified( Instant.now() ).
             modifier( PrincipalKey.ofAnonymous() ).
+            publishInfo( ContentVersionPublishInfo.create().
+                message( "My version" ).
+                publisher( PrincipalKey.ofAnonymous() ).
+                timestamp( Instant.ofEpochSecond( 1562056003L ) ).
+                build() ).
             build();
 
         Mockito.when( securityService.getPrincipal( PrincipalKey.ofAnonymous() ) ).thenReturn( (Optional) Optional.of( User.ANONYMOUS ) );
@@ -1964,6 +1970,11 @@ public class ContentResourceTest
             id( ContentVersionId.from( "a" ) ).
             modified( Instant.now() ).
             modifier( PrincipalKey.ofAnonymous() ).
+            publishInfo( ContentVersionPublishInfo.create().
+                message( "My version" ).
+                publisher( PrincipalKey.ofAnonymous() ).
+                timestamp( Instant.ofEpochSecond( 1562056003L ) ).
+                build() ).
             build();
 
         Mockito.when( securityService.getPrincipal( PrincipalKey.ofAnonymous() ) ).thenReturn( (Optional) Optional.of( User.ANONYMOUS ) );
@@ -1990,6 +2001,11 @@ public class ContentResourceTest
             id( ContentVersionId.from( "a" ) ).
             modified( Instant.now() ).
             modifier( PrincipalKey.ofAnonymous() ).
+            publishInfo( ContentVersionPublishInfo.create().
+                message( "My version" ).
+                publisher( PrincipalKey.ofAnonymous() ).
+                timestamp( Instant.ofEpochSecond( 1562056003L ) ).
+                build() ).
             build();
 
         Mockito.when( securityService.getPrincipal( PrincipalKey.ofAnonymous() ) ).thenReturn( (Optional) Optional.of( User.ANONYMOUS ) );

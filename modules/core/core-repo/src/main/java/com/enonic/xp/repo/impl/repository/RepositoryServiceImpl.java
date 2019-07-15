@@ -167,7 +167,7 @@ public class RepositoryServiceImpl
         requireAdminRole();
         final ImmutableList.Builder<Repository> repositories = ImmutableList.builder();
         repositoryEntryService.findRepositoryEntryIds().stream().
-            map( repositoryId -> repositoryEntryService.getRepositoryEntry( repositoryId ) ).
+            map( this::doGet ).
             filter( Objects::nonNull ).
             forEach( repositories::add );
         return Repositories.from( repositories.build() );
@@ -185,6 +185,11 @@ public class RepositoryServiceImpl
     public Repository get( final RepositoryId repositoryId )
     {
         requireAdminRole();
+        return doGet( repositoryId );
+    }
+
+    private Repository doGet( final RepositoryId repositoryId )
+    {
         return repositoryMap.computeIfAbsent( repositoryId, key -> repositoryEntryService.getRepositoryEntry( repositoryId ) );
     }
 

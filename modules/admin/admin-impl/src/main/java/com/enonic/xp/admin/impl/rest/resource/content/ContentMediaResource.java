@@ -1,6 +1,9 @@
 package com.enonic.xp.admin.impl.rest.resource.content;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -16,6 +19,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -93,6 +97,7 @@ public final class ContentMediaResource
     private Response doServeMedia( final ContentId contentId, final String identifier, final Boolean download )
         throws IOException
     {
+
         final Attachment attachment = resolveAttachment( identifier, contentId );
         if ( attachment == null )
         {
@@ -137,7 +142,18 @@ public final class ContentMediaResource
             throw JaxRsExceptions.notFound( String.format( "Content [%s] was not found", contentId ) );
         }
 
-        return resolveAttachment( identifier, content );
+        try
+        {
+            final String decodedIdentifier =
+                StringUtils.isNotBlank( identifier ) ? URLDecoder.decode( identifier, StandardCharsets.UTF_8.toString() ) : identifier;
+
+            return resolveAttachment( decodedIdentifier, content );
+        }
+        catch ( UnsupportedEncodingException e )
+        {
+            return resolveAttachment( identifier, content );
+        }
+
     }
 
     private Attachment resolveAttachment( final String identifier, final Content content )
