@@ -27,6 +27,7 @@ import com.enonic.xp.admin.impl.json.issue.PublishRequestItemJson;
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishRequestJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishRequestScheduleJson;
+import com.enonic.xp.admin.impl.rest.resource.issue.json.CountStatsJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.CreateIssueCommentJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.CreateIssueJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.DeleteIssueCommentJson;
@@ -297,6 +298,20 @@ public class IssueResourceTest
         final IssueResource issueResource = getResourceInstance();
         Mockito.when( issueService.findIssues( Mockito.any( IssueQuery.class ) ) ).thenReturn( findIssuesResult );
         final IssueStatsJson result = issueResource.getStats();
+
+        assertNotNull( result );
+        Mockito.verify( issueService, Mockito.times( 6 ) ).findIssues( Mockito.any( IssueQuery.class ) );
+    }
+
+    @Test
+    public void test_getStatsByType()
+        throws Exception
+    {
+        createLocalSession();
+        final FindIssuesResult findIssuesResult = FindIssuesResult.create().hits( 2 ).totalHits( 4 ).build();
+        final IssueResource issueResource = getResourceInstance();
+        Mockito.when( issueService.findIssues( Mockito.any( IssueQuery.class ) ) ).thenReturn( findIssuesResult );
+        final IssueStatsJson result = issueResource.getStatsByType( new CountStatsJson( "STANDARD" ) );
 
         assertNotNull( result );
         Mockito.verify( issueService, Mockito.times( 6 ) ).findIssues( Mockito.any( IssueQuery.class ) );
