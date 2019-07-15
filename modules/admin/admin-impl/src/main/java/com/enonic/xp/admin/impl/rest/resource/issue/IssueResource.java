@@ -32,6 +32,7 @@ import com.enonic.xp.admin.impl.json.issue.IssueListJson;
 import com.enonic.xp.admin.impl.json.issue.IssueStatsJson;
 import com.enonic.xp.admin.impl.json.issue.IssuesJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
+import com.enonic.xp.admin.impl.rest.resource.issue.json.CountStatsJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.CreateIssueCommentJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.CreateIssueJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.DeleteIssueCommentJson;
@@ -220,11 +221,11 @@ public final class IssueResource
         return new IssueJson( issue );
     }
 
-    @GET
+    @POST
     @Path("stats")
-    public IssueStatsJson getStats()
+    public IssueStatsJson getStats( final CountStatsJson json )
     {
-        return countIssues();
+        return countIssues( json.getIssueType() );
     }
 
     @POST
@@ -338,6 +339,7 @@ public final class IssueResource
         final IssueQuery.Builder builder = IssueQuery.create();
 
         builder.status( params.getStatus() );
+        builder.type( params.getType() );
         builder.from( params.getFrom() );
         builder.size( params.getSize() );
         builder.items( params.getItems() );
@@ -357,25 +359,28 @@ public final class IssueResource
         return builder.build();
     }
 
-    private IssueStatsJson countIssues()
+    private IssueStatsJson countIssues( final IssueType issueType )
     {
         final long open = this.issueService.findIssues(
-            createIssueQuery( FindIssuesParams.create().status( IssueStatus.OPEN ).size( 0 ).build() ) ).getTotalHits();
+            createIssueQuery( FindIssuesParams.create().status( IssueStatus.OPEN ).type( issueType ).size( 0 ).build() ) ).getTotalHits();
 
         final long openAssignedToMe = this.issueService.findIssues( createIssueQuery(
-            FindIssuesParams.create().status( IssueStatus.OPEN ).assignedToMe( true ).size( 0 ).build() ) ).getTotalHits();
+            FindIssuesParams.create().status( IssueStatus.OPEN ).assignedToMe( true ).type( issueType ).size(
+                0 ).build() ) ).getTotalHits();
 
-        final long openCreatedByMe = this.issueService.findIssues(
-            createIssueQuery( FindIssuesParams.create().status( IssueStatus.OPEN ).createdByMe( true ).size( 0 ).build() ) ).getTotalHits();
+        final long openCreatedByMe = this.issueService.findIssues( createIssueQuery(
+            FindIssuesParams.create().status( IssueStatus.OPEN ).type( issueType ).createdByMe( true ).size( 0 ).build() ) ).getTotalHits();
 
         final long closed = this.issueService.findIssues(
-            createIssueQuery( FindIssuesParams.create().status( IssueStatus.CLOSED ).size( 0 ).build() ) ).getTotalHits();
+            createIssueQuery( FindIssuesParams.create().status( IssueStatus.CLOSED ).type( issueType ).size( 0 ).build() ) ).getTotalHits();
 
         final long closedAssignedToMe = this.issueService.findIssues( createIssueQuery(
-            FindIssuesParams.create().status( IssueStatus.CLOSED ).size( 0 ).assignedToMe( true ).build() ) ).getTotalHits();
+            FindIssuesParams.create().status( IssueStatus.CLOSED ).type( issueType ).size( 0 ).assignedToMe(
+                true ).build() ) ).getTotalHits();
 
         final long closedCreatedByMe = this.issueService.findIssues( createIssueQuery(
-            FindIssuesParams.create().status( IssueStatus.CLOSED ).size( 0 ).createdByMe( true ).build() ) ).getTotalHits();
+            FindIssuesParams.create().status( IssueStatus.CLOSED ).type( issueType ).size( 0 ).createdByMe(
+                true ).build() ) ).getTotalHits();
 
         return IssueStatsJson.create().open( open ).openAssignedToMe( openAssignedToMe ).openCreatedByMe( openCreatedByMe ).closed(
             closed ).closedAssignedToMe( closedAssignedToMe ).closedCreatedByMe( closedCreatedByMe ).build();
