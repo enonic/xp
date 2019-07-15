@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.Iterables;
 
@@ -11,6 +12,7 @@ import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeBranchEntries;
+import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.OperationNotPermittedException;
@@ -24,12 +26,15 @@ abstract class AbstractDeleteNodeCommand
 {
     private final boolean allowDeleteRootNode;
 
+    private final boolean skipInheritedNodes;
+
     private static final int BATCH_SIZE = 20;
 
     AbstractDeleteNodeCommand( final Builder builder )
     {
         super( builder );
         this.allowDeleteRootNode = builder.allowDeleteRoot;
+        this.skipInheritedNodes = builder.skipInheritedNodes;
     }
 
     NodeBranchEntries deleteNodeWithChildren( final Node node, final Context context )
@@ -102,18 +107,30 @@ abstract class AbstractDeleteNodeCommand
             add( node.id() ).
             build();
 
-        return FindNodeBranchEntriesByIdCommand.
+        NodeBranchEntries nodeBranchEntries = FindNodeBranchEntriesByIdCommand.
             create( command ).
             ids( nodeIds ).
             orderExpressions( ChildOrder.reversePath().getOrderExpressions() ).
             build().
             execute();
+
+        if ( skipInheritedNodes )
+        {
+            final List<NodeBranchEntry> nodeBranchEntryList = nodeBranchEntries.stream().
+                filter( nodeBranchEntry -> !nodeBranchEntry.isInherited() ).
+                collect( Collectors.toList() );
+            nodeBranchEntries = NodeBranchEntries.from( nodeBranchEntryList );
+        }
+
+        return nodeBranchEntries;
     }
 
     public static class Builder<B extends Builder>
         extends AbstractNodeCommand.Builder<B>
     {
         boolean allowDeleteRoot = false;
+
+        boolean skipInheritedNodes = true;
 
         public Builder()
         {
@@ -129,6 +146,13 @@ abstract class AbstractDeleteNodeCommand
         public B allowDeleteRoot( final boolean allowDeleteRoot )
         {
             this.allowDeleteRoot = allowDeleteRoot;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B skipInheritedNodes( final boolean skipInheritedNodes )
+        {
+            this.skipInheritedNodes = skipInheritedNodes;
             return (B) this;
         }
 

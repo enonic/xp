@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.Collection;
 import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Activate;
@@ -10,6 +11,8 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.BranchInfo;
+import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.event.EventPublisher;
@@ -444,6 +447,8 @@ public class NodeServiceImpl
 
         if ( deletedNodes.isNotEmpty() )
         {
+            final NodeIds deletedNodeIds = NodeIds.from( deletedNodes.getKeys() );
+            inheritNodesFromParentBranch(deletedNodeIds);
             deleteNodeInChildBranches( id );
             this.eventPublisher.publish( NodeEvents.deleted( deletedNodes ) );
         }
@@ -1137,6 +1142,27 @@ public class NodeServiceImpl
             nodePath( nodePath ).
             build().
             execute();
+    }
+
+    private void inheritNodesFromParentBranch( final NodeIds nodeIds )
+    {
+        final RepositoryId repositoryId = ContextAccessor.current().getRepositoryId();
+        final Branch childBranch = ContextAccessor.current().getBranch();
+        final BranchInfo branchInfo = repositoryService.get( repositoryId ).
+            getBranchInfo( childBranch );
+        final Branch parentBranch = branchInfo.getParentBranch();
+        if (parentBranch != null) {
+            PushNodesToChildBranchCommand.create().
+                indexServiceInternal( this.indexServiceInternal ).
+                storageService( this.nodeStorageService ).
+                searchService( this.nodeSearchService ).
+                repositoryService( this.repositoryService ).
+                parentBranch( parentBranch ).
+                childBranches( Branches.from(childBranch) ).
+                nodeIds( nodeIds ).
+                build().
+                execute();
+        }
     }
 
     @Reference

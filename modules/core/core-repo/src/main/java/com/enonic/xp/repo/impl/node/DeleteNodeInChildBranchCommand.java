@@ -69,6 +69,7 @@ public class DeleteNodeInChildBranchCommand
                     indexServiceInternal( this.indexServiceInternal ).
                     storageService( this.nodeStorageService ).
                     searchService( this.nodeSearchService ).
+                    skipInheritedNodes( false ).
                     build().
                     execute();
                 execute( getChildBranches( childBranch ), nodePath );

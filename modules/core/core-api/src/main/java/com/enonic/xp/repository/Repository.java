@@ -47,7 +47,19 @@ public final class Repository
         return branchInfos.getBranches();
     }
 
-    public BranchInfos getChildBranchInfos( Branch branch)
+    public BranchInfo getBranchInfo( Branch branch )
+    {
+        for ( BranchInfo branchInfo : branchInfos )
+        {
+            if ( branchInfo.getBranch().equals( branch ) )
+            {
+                return branchInfo;
+            }
+        }
+        return null;
+    }
+
+    public BranchInfos getChildBranchInfos( Branch branch )
     {
         final List<BranchInfo> childBranchInfos = getBranchInfos().
             stream().
@@ -56,7 +68,7 @@ public final class Repository
         return BranchInfos.from( childBranchInfos );
     }
 
-    public Branches getChildBranches( Branch branch)
+    public Branches getChildBranches( Branch branch )
     {
         final List<Branch> childBranches = getBranchInfos().
             stream().
@@ -151,7 +163,8 @@ public final class Repository
         private void validate()
         {
             Preconditions.checkNotNull( branchInfos, "branchInfos cannot be null" );
-            Preconditions.checkArgument( branchInfos.contains( RepositoryConstants.MASTER_BRANCH_INFO ), "branchInfos must contain master branch." );
+            Preconditions.checkArgument( branchInfos.contains( RepositoryConstants.MASTER_BRANCH_INFO ),
+                                         "branchInfos must contain master branch." );
         }
 
 
