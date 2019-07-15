@@ -39,10 +39,6 @@ public class PublishContentCommand
     extends AbstractContentCommand
     implements PushNodesListener, DeleteNodeListener
 {
-    private static final String NODE_CONTENT_PUBLISH_MESSAGE = "COM_ENONIC_XP_CONTENT_PUBLISH";
-
-    private static final String NODE_CONTENT_PUBLISH_MESSAGE_DELIMITER = " ";
-
     private final ContentIds contentIds;
 
     private final ContentIds excludedContentIds;
