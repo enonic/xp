@@ -297,7 +297,21 @@ public class IssueResourceTest
         final FindIssuesResult findIssuesResult = FindIssuesResult.create().hits( 2 ).totalHits( 4 ).build();
         final IssueResource issueResource = getResourceInstance();
         Mockito.when( issueService.findIssues( Mockito.any( IssueQuery.class ) ) ).thenReturn( findIssuesResult );
-        final IssueStatsJson result = issueResource.getStats( new CountStatsJson( null ) );
+        final IssueStatsJson result = issueResource.getStats();
+
+        assertNotNull( result );
+        Mockito.verify( issueService, Mockito.times( 6 ) ).findIssues( Mockito.any( IssueQuery.class ) );
+    }
+
+    @Test
+    public void test_getStatsByType()
+        throws Exception
+    {
+        createLocalSession();
+        final FindIssuesResult findIssuesResult = FindIssuesResult.create().hits( 2 ).totalHits( 4 ).build();
+        final IssueResource issueResource = getResourceInstance();
+        Mockito.when( issueService.findIssues( Mockito.any( IssueQuery.class ) ) ).thenReturn( findIssuesResult );
+        final IssueStatsJson result = issueResource.getStatsByType( new CountStatsJson( "STANDARD" ) );
 
         assertNotNull( result );
         Mockito.verify( issueService, Mockito.times( 6 ) ).findIssues( Mockito.any( IssueQuery.class ) );

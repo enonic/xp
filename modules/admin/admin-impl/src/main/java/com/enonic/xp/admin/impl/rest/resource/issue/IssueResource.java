@@ -221,9 +221,17 @@ public final class IssueResource
         return new IssueJson( issue );
     }
 
+    @GET
+    @Path("stats")
+    @Deprecated
+    public IssueStatsJson getStats()
+    {
+        return countIssues( null );
+    }
+
     @POST
     @Path("stats")
-    public IssueStatsJson getStats( final CountStatsJson json )
+    public IssueStatsJson getStatsByType( final CountStatsJson json )
     {
         return countIssues( json.getIssueType() );
     }
