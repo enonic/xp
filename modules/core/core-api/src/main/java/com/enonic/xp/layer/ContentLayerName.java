@@ -11,17 +11,17 @@ import com.enonic.xp.context.ContextAccessor;
 @Beta
 public final class ContentLayerName
 {
-    public static final ContentLayerName DEFAULT_LAYER_NAME = ContentLayerName.from( "default" );
+    public static final ContentLayerName DEFAULT_LAYER_NAME = ContentLayerName.from( "base" );
 
-    private static final String VALID_REPOSITORY_ID_REGEX = "([a-zA-Z0-9\\-:])([a-zA-Z0-9_\\-\\.:])*";
+    private static final String VALID_BRANCH_REGEX = "[A-Za-z0-9\\-_]+";
 
     private final String value;
 
     private ContentLayerName( final Builder builder )
     {
-        Preconditions.checkArgument( !Strings.isNullOrEmpty( builder.value ), "name cannot be null or empty" );
-        Preconditions.checkArgument( builder.value.matches( "^" + VALID_REPOSITORY_ID_REGEX + "$" ),
-                                     "name format incorrect: " + builder.value );
+        Preconditions.checkArgument( !Strings.isNullOrEmpty( builder.value ), "Layer name cannot be null or empty" );
+        Preconditions.checkArgument( builder.value.matches( "^" + VALID_BRANCH_REGEX + "$" ),
+                                     "Layer name format incorrect: " + builder.value );
         this.value = builder.value;
     }
 
