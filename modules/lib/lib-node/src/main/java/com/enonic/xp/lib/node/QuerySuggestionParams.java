@@ -41,10 +41,32 @@ final class QuerySuggestionParams
             final String text = (String) suggestionQueryMap.get( "text" );
             final Map<String, Object> termParamsMap = (Map<String, Object>) suggestionQueryMap.get( "term" );
             final String field = (String) termParamsMap.get( "field" );
+            final String analyzer = (String) termParamsMap.get( "analyzer" );
+            final String sort = (String) termParamsMap.get( "sort" );
+            final String suggestMode = (String) termParamsMap.get( "suggestMode" );
+            final String stringDistance = (String) termParamsMap.get( "stringDistance" );
+            final Integer size = (Integer) termParamsMap.get( "size" );
+            final Integer maxEdits = (Integer) termParamsMap.get( "maxEdits" );
+            final Integer prefixLength = (Integer) termParamsMap.get( "prefixLength" );
+            final Integer minWordLength = (Integer) termParamsMap.get( "minWordLength" );
+            final Integer maxInspections = (Integer) termParamsMap.get( "maxInspections" );
+            final Float minDocFreq = (Float) termParamsMap.get( "minDocFreq" );
+            final Float maxTermFreq = (Float) termParamsMap.get( "maxTermFreq" );
 
             return TermSuggestionQuery.create( name ).
                 field( field ).
                 text( text ).
+                analyzer( analyzer ).
+                size( size ).
+                maxEdits( maxEdits ).
+                prefixLength( prefixLength ).
+                minWordLength( minWordLength ).
+                maxInspections( maxInspections ).
+                minDocFreq( minDocFreq ).
+                maxTermFreq( maxTermFreq ).
+                sort( TermSuggestionQuery.Sort.from( sort ) ).
+                suggestMode( TermSuggestionQuery.SuggestMode.from( suggestMode ) ).
+                stringDistance( TermSuggestionQuery.StringDistance.from( stringDistance ) ).
                 build();
         }
 

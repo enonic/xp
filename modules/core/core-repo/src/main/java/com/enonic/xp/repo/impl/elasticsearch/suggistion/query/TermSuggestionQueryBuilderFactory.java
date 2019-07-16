@@ -20,6 +20,17 @@ public class TermSuggestionQueryBuilderFactory
         final String field = fieldNameResolver.resolve( suggestionQuery.getField(), IndexValueType.STRING );
         return new TermSuggestionBuilder( suggestionQuery.getName() ).
             field( field ).
-            text( suggestionQuery.getText() );
+            text( suggestionQuery.getText() ).
+            size( suggestionQuery.getSize() ).
+            analyzer( suggestionQuery.getAnalyzer() ).
+            sort( suggestionQuery.getSort() != null ? suggestionQuery.getSort().value() : null ).
+            suggestMode( suggestionQuery.getSuggestMode() != null ? suggestionQuery.getSuggestMode().value() : null ).
+            maxEdits( suggestionQuery.getMaxEdits() ).
+            prefixLength( suggestionQuery.getPrefixLength() ).
+            minWordLength( suggestionQuery.getMinWordLength() ).
+            maxInspections( suggestionQuery.getMaxInspections() ).
+            minDocFreq( suggestionQuery.getMinDocFreq() ).
+            maxTermFreq( suggestionQuery.getMaxTermFreq() ).
+            stringDistance( suggestionQuery.getStringDistance() != null ? suggestionQuery.getStringDistance().value() : null );
     }
 }
