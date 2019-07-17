@@ -7,6 +7,9 @@ import com.enonic.xp.content.ContentVersion;
 import com.enonic.xp.content.ContentVersionId;
 import com.enonic.xp.content.ContentVersionPublishInfo;
 import com.enonic.xp.content.ContentVersions;
+import com.enonic.xp.content.WorkflowInfo;
+import com.enonic.xp.core.impl.content.serializer.WorkflowInfoSerializer;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeCommitId;
@@ -20,6 +23,8 @@ import com.enonic.xp.security.PrincipalKey;
 class ContentVersionFactory
 {
     private final NodeService nodeService;
+
+    private final WorkflowInfoSerializer workflowInfoSerializer = new WorkflowInfoSerializer();
 
     public ContentVersionFactory( final NodeService nodeService )
     {
@@ -57,6 +62,7 @@ class ContentVersionFactory
             modifier( PrincipalKey.from( data.getProperty( ContentPropertyNames.MODIFIER ).getString() ) ).
             id( ContentVersionId.from( nodeVersionMetadata.getNodeVersionId().toString() ) ).
             publishInfo( doCreateContentVersionPublishInfo( nodeVersionMetadata.getNodeCommitId() ) ).
+            workflowInfo( doCreateContentVersionWorkflowInfo( data.getRoot() ) ).
             build();
     }
 
@@ -75,6 +81,12 @@ class ContentVersionFactory
             }
         }
         return null;
+    }
+
+    private WorkflowInfo doCreateContentVersionWorkflowInfo( final PropertySet nodeVersionData )
+    {
+        final PropertySet workflowInfoSet = nodeVersionData.getPropertySet( ContentPropertyNames.WORKFLOW_INFO );
+        return workflowInfoSerializer.extract( workflowInfoSet );
     }
 
     private String getMessage( final NodeCommitEntry nodeCommitEntry )

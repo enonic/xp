@@ -531,7 +531,7 @@ public final class PropertySet
 
     }
 
-    public Iterable<PropertyArray> getPropertyArrays()
+    public Collection<PropertyArray> getPropertyArrays()
     {
         return this.propertyArrayByName.values();
     }

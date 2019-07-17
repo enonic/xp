@@ -43,9 +43,8 @@ public class GetContentVersionsForViewResultJson
 
         for ( final ContentVersion contentVersion : filteredVersions )
         {
-            this.contentVersions.add(
-                new ContentVersionViewJson( contentVersion, principalsResolver.findPrincipal( contentVersion.getModifier() ),
-                                            findWorkspaces( contentVersion, activeVersions ) ) );
+            this.contentVersions.add( new ContentVersionViewJson( contentVersion, principalsResolver,
+                                                                  findWorkspaces( contentVersion, activeVersions ) ) );
         }
 
         final ActiveContentVersionEntry activeVersion = getActiveContentVersion( activeVersions );

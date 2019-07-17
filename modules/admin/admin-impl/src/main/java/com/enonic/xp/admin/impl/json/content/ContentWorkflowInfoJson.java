@@ -1,6 +1,7 @@
 package com.enonic.xp.admin.impl.json.content;
 
 import java.util.Map;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -48,5 +49,26 @@ public class ContentWorkflowInfoJson
             state( state ).
             checks( checks ).
             build();
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+        final ContentWorkflowInfoJson that = (ContentWorkflowInfoJson) o;
+        return state == that.state && Objects.equals( checks, that.checks );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( state, checks );
     }
 }
