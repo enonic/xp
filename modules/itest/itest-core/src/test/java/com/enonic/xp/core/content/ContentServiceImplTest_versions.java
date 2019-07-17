@@ -1,7 +1,10 @@
 package com.enonic.xp.core.content;
 
+import java.util.Map;
+
 import org.junit.Test;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.UnmodifiableIterator;
 
@@ -115,23 +118,21 @@ public class ContentServiceImplTest_versions
     public void version_workflow_info()
         throws Exception
     {
-        final PropertyTree data = new PropertyTree();
-        final PropertySet workflowInfoSet = new PropertySet();
-        workflowInfoSet.addString( ContentPropertyNames.WORKFLOW_INFO_STATE, WorkflowState.READY.toString() );
+        final ImmutableMap<String, WorkflowCheckState> checks =
+            ImmutableMap.of( "checkName1", WorkflowCheckState.APPROVED, "checkName2", WorkflowCheckState.PENDING );
 
-        final PropertySet workflowChecksSet = new PropertySet();
-        workflowChecksSet.addString( "checkName1", WorkflowCheckState.APPROVED.toString() );
-        workflowChecksSet.addString( "checkName2", WorkflowCheckState.PENDING.toString() );
-
-        workflowInfoSet.addSet( ContentPropertyNames.WORKFLOW_INFO_CHECKS, workflowChecksSet );
-        data.addSet( ContentPropertyNames.WORKFLOW_INFO, workflowInfoSet );
+        final WorkflowInfo workflowInfo = WorkflowInfo.create().
+            state( WorkflowState.IN_PROGRESS ).
+            checks( checks ).
+            build();
 
         final Content content = this.contentService.create( CreateContentParams.create().
-            contentData( data ).
+            contentData( new PropertyTree() ).
             displayName( "This is my test content" ).
             parent( ContentPath.ROOT ).
             name( "myContent" ).
             type( ContentTypeName.folder() ).
+            workflowInfo( workflowInfo ).
             build() );
 
         final FindContentVersionsResult versions = this.contentService.getVersions( FindContentVersionsParams.create().
@@ -139,11 +140,11 @@ public class ContentServiceImplTest_versions
             build() );
 
         final ContentVersion contentVersion = versions.getContentVersions().iterator().next();
-        final WorkflowInfo workflowInfo = contentVersion.getWorkflowInfo();
+        final WorkflowInfo retrievedWorkflowInfo = contentVersion.getWorkflowInfo();
 
-        assertEquals( WorkflowState.READY, workflowInfo.getState() );
-        assertEquals( WorkflowCheckState.APPROVED, workflowInfo.getChecks().get( "checkName1" ) );
-        assertEquals( WorkflowCheckState.PENDING, workflowInfo.getChecks().get( "checkName2" ) );
+        assertEquals( WorkflowState.IN_PROGRESS, retrievedWorkflowInfo.getState() );
+        assertEquals( WorkflowCheckState.APPROVED, retrievedWorkflowInfo.getChecks().get( "checkName1" ) );
+        assertEquals( WorkflowCheckState.PENDING, retrievedWorkflowInfo.getChecks().get( "checkName2" ) );
     }
 }
 
