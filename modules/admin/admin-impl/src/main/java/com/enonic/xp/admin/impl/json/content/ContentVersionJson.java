@@ -23,7 +23,7 @@ public class ContentVersionJson
 
     private final ContentVersionPublishInfoJson publishInfo;
 
-    private final ContentWorkflowInfoJson workflowInfo;
+    private final ContentWorkflowInfoJson workflow;
 
     public ContentVersionJson( final ContentVersion contentVersion, final ContentPrincipalsResolver principalsResolver )
     {
@@ -39,9 +39,8 @@ public class ContentVersionJson
         this.publishInfo = contentVersion.getPublishInfo() != null ? new ContentVersionPublishInfoJson( contentVersion.getPublishInfo(),
                                                                                                         principalsResolver ) : null;
 
-        this.workflowInfo =
-            contentVersion.getWorkflowInfo() != null ? new ContentWorkflowInfoJson( contentVersion.getWorkflowInfo().getState(),
-                                                                                    contentVersion.getWorkflowInfo().getChecks() ) : null;
+        this.workflow =
+            contentVersion.getWorkflowInfo() != null ? new ContentWorkflowInfoJson( contentVersion.getWorkflowInfo() ) : null;
 
     }
 
@@ -87,9 +86,10 @@ public class ContentVersionJson
         return publishInfo;
     }
 
-    public ContentWorkflowInfoJson getWorkflowInfo()
+    @SuppressWarnings("UnusedDeclaration")
+    public ContentWorkflowInfoJson getWorkflow()
     {
-        return workflowInfo;
+        return workflow;
     }
 
     @Override
@@ -107,12 +107,12 @@ public class ContentVersionJson
         return Objects.equals( modifier, that.modifier ) && Objects.equals( modifierDisplayName, that.modifierDisplayName ) &&
             Objects.equals( displayName, that.displayName ) && Objects.equals( modified, that.modified ) &&
             Objects.equals( comment, that.comment ) && Objects.equals( id, that.id ) && Objects.equals( publishInfo, that.publishInfo ) &&
-            Objects.equals( workflowInfo, that.workflowInfo );
+            Objects.equals( workflow, that.workflow );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( modifier, modifierDisplayName, displayName, modified, comment, id, publishInfo, workflowInfo );
+        return Objects.hash( modifier, modifierDisplayName, displayName, modified, comment, id, publishInfo, workflow );
     }
 }

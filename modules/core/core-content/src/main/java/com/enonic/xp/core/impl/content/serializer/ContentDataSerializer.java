@@ -70,6 +70,8 @@ public class ContentDataSerializer
 
     private ExtraDataSerializer extraDataSerializer;
 
+    private WorkflowInfoSerializer workflowInfoSerializer;
+
     private ContentDataSerializer( final Builder builder )
     {
         this.pageDataSerializer = PageDataSerializer.create().
@@ -80,6 +82,7 @@ public class ContentDataSerializer
             build();
 
         this.extraDataSerializer = new ExtraDataSerializer();
+        this.workflowInfoSerializer = new WorkflowInfoSerializer();
     }
 
     public PropertyTree toCreateNodeData( final CreateContentTranslatorParams params )
@@ -321,28 +324,9 @@ public class ContentDataSerializer
 
     private void extractWorkflowInfo( final PropertySet contentAsSet, final Content.Builder builder )
     {
-        final PropertySet workflowInfo = contentAsSet.getSet( WORKFLOW_INFO );
-
-        if ( workflowInfo != null )
-        {
-            final ImmutableMap.Builder<String, WorkflowCheckState> mapBuilder = ImmutableMap.builder();
-
-            PropertySet checkSet = workflowInfo.getSet( WORKFLOW_INFO_CHECKS );
-            if ( checkSet != null )
-            {
-                for ( String checks : checkSet.getPropertyNames() )
-                {
-                    mapBuilder.put( checks, WorkflowCheckState.valueOf( checkSet.getString( checks ) ) );
-                }
-            }
-
-            builder.workflowInfo(
-                WorkflowInfo.create().state( workflowInfo.getString( WORKFLOW_INFO_STATE ) ).checks( mapBuilder.build() ).build() );
-        }
-        else
-        {
-            builder.workflowInfo( WorkflowInfo.ready() );
-        }
+        final PropertySet workflowInfoSet = contentAsSet.getSet( WORKFLOW_INFO );
+        final WorkflowInfo workflowInfo = workflowInfoSerializer.extract( workflowInfoSet );
+        builder.workflowInfo( workflowInfo );
     }
 
     private Attachments dataToAttachments( final Iterable<PropertySet> attachmentSets )

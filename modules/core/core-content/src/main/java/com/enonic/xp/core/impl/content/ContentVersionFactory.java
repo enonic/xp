@@ -1,8 +1,5 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPropertyNames;
@@ -10,10 +7,8 @@ import com.enonic.xp.content.ContentVersion;
 import com.enonic.xp.content.ContentVersionId;
 import com.enonic.xp.content.ContentVersionPublishInfo;
 import com.enonic.xp.content.ContentVersions;
-import com.enonic.xp.content.WorkflowCheckState;
 import com.enonic.xp.content.WorkflowInfo;
-import com.enonic.xp.data.Property;
-import com.enonic.xp.data.PropertyArray;
+import com.enonic.xp.core.impl.content.serializer.WorkflowInfoSerializer;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.NodeCommitEntry;
@@ -28,6 +23,8 @@ import com.enonic.xp.security.PrincipalKey;
 class ContentVersionFactory
 {
     private final NodeService nodeService;
+
+    private final WorkflowInfoSerializer workflowInfoSerializer = new WorkflowInfoSerializer();
 
     public ContentVersionFactory( final NodeService nodeService )
     {
@@ -65,7 +62,7 @@ class ContentVersionFactory
             modifier( PrincipalKey.from( data.getProperty( ContentPropertyNames.MODIFIER ).getString() ) ).
             id( ContentVersionId.from( nodeVersionMetadata.getNodeVersionId().toString() ) ).
             publishInfo( doCreateContentVersionPublishInfo( nodeVersionMetadata.getNodeCommitId() ) ).
-            workflowInfo( doCreateContentVersionWorkflowInfo( data.getSet( ContentPropertyNames.DATA ) ) ).
+            workflowInfo( doCreateContentVersionWorkflowInfo( data.getRoot() ) ).
             build();
     }
 
@@ -89,34 +86,7 @@ class ContentVersionFactory
     private WorkflowInfo doCreateContentVersionWorkflowInfo( final PropertySet nodeVersionData )
     {
         final PropertySet workflowInfoSet = nodeVersionData.getPropertySet( ContentPropertyNames.WORKFLOW_INFO );
-
-        if ( workflowInfoSet == null || workflowInfoSet.getPropertySize() == 0 )
-        {
-            return null;
-        }
-
-        final WorkflowInfo.Builder builder = WorkflowInfo.create();
-        final String state = workflowInfoSet.getString( ContentPropertyNames.WORKFLOW_INFO_STATE );
-        builder.state( state );
-
-        final PropertySet workflowInfoChecksSet = workflowInfoSet.getSet( ContentPropertyNames.WORKFLOW_INFO_CHECKS );
-
-        if ( workflowInfoChecksSet != null && workflowInfoChecksSet.getPropertySize() > 0 )
-        {
-            final Map<String, WorkflowCheckState> checks = workflowInfoChecksSet.getPropertyArrays().
-                stream().
-                filter( propertyArray -> !propertyArray.getProperties().isEmpty() ).
-                collect( Collectors.toMap( PropertyArray::getName, propertyArray -> propertyArray.getProperties().
-                    stream().
-                    map( Property::getString ).
-                    map( WorkflowCheckState::valueOf ).
-                    findFirst().
-                    get() ) );
-
-            builder.checks( checks );
-        }
-
-        return builder.build();
+        return workflowInfoSerializer.extract( workflowInfoSet );
     }
 
     private String getMessage( final NodeCommitEntry nodeCommitEntry )
