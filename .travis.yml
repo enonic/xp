@@ -16,3 +16,10 @@ cache:
 after_success:
   - bash <(curl -s https://codecov.io/bash)
   - ./misc/upload.sh
+
+notifications:
+  email:
+    recipients:
+      - gri@enonic.com
+    on_success: change
+    on_failure: always
