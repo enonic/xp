@@ -1,7 +1,5 @@
 package com.enonic.xp.query.suggester;
 
-import com.google.common.base.MoreObjects;
-
 public final class TermSuggestionQuery
     extends SuggestionQuery
 {
@@ -86,21 +84,9 @@ public final class TermSuggestionQuery
     @Override
     public String toString()
     {
-        return doToString().toString();
-    }
-
-    protected MoreObjects.ToStringHelper doToString()
-    {
-        return super.doToString().
-            add( "sort", getSort().value() ).
-            add( "suggest_mode", getSuggestMode().value() ).
-            add( "max_edits", getMaxEdits() ).
-            add( "prefix_length", getPrefixLength() ).
-            add( "min_word_length", getMinWordLength() ).
-            add( "max_inspections", getMaxInspections() ).
-            add( "min_doc_freq", getMinDocFreq() ).
-            add( "max_term_freq", getMaxTermFreq() ).
-            add( "string_distance", getStringDistance().value() );
+        return "TermSuggestionQuery{" + "sort=" + sort + ", suggestMode=" + suggestMode + ", maxEdits=" + maxEdits + ", prefixLength=" +
+            prefixLength + ", minWordLength=" + minWordLength + ", maxInspections=" + maxInspections + ", minDocFreq=" + minDocFreq +
+            ", maxTermFreq=" + maxTermFreq + ", stringDistance=" + stringDistance + '}';
     }
 
     public static Builder create( final String name )

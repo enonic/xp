@@ -18,19 +18,56 @@ public class TermSuggestionQueryBuilderFactory
     public TermSuggestionBuilder create( final TermSuggestionQuery suggestionQuery )
     {
         final String field = fieldNameResolver.resolve( suggestionQuery.getField(), IndexValueType.STRING );
-        return new TermSuggestionBuilder( suggestionQuery.getName() ).
+
+        final TermSuggestionBuilder builder = new TermSuggestionBuilder( suggestionQuery.getName() ).
             field( field ).
-            text( suggestionQuery.getText() ).
-            size( suggestionQuery.getSize() ).
-            analyzer( suggestionQuery.getAnalyzer() ).
-            sort( suggestionQuery.getSort() != null ? suggestionQuery.getSort().value() : null ).
-            suggestMode( suggestionQuery.getSuggestMode() != null ? suggestionQuery.getSuggestMode().value() : null ).
-            maxEdits( suggestionQuery.getMaxEdits() ).
-            prefixLength( suggestionQuery.getPrefixLength() ).
-            minWordLength( suggestionQuery.getMinWordLength() ).
-            maxInspections( suggestionQuery.getMaxInspections() ).
-            minDocFreq( suggestionQuery.getMinDocFreq() ).
-            maxTermFreq( suggestionQuery.getMaxTermFreq() ).
-            stringDistance( suggestionQuery.getStringDistance() != null ? suggestionQuery.getStringDistance().value() : null );
+            text( suggestionQuery.getText() );
+
+        final Integer size = suggestionQuery.getSize();
+        final String analyzer = suggestionQuery.getAnalyzer();
+        final TermSuggestionQuery.Sort sort = suggestionQuery.getSort();
+        final TermSuggestionQuery.SuggestMode suggestMode = suggestionQuery.getSuggestMode();
+        final Integer maxEdits = suggestionQuery.getMaxEdits();
+        final Integer prefixLength = suggestionQuery.getPrefixLength();
+        final Integer minWordLength = suggestionQuery.getMinWordLength();
+        final Integer maxInspections = suggestionQuery.getMaxInspections();
+        final Float minDocFreq = suggestionQuery.getMinDocFreq();
+        final Float maxTermFreq = suggestionQuery.getMaxTermFreq();
+        final TermSuggestionQuery.StringDistance stringDistance = suggestionQuery.getStringDistance();
+
+        if (size != null) {
+            builder.size( size );
+        }
+        if (analyzer != null) {
+            builder.analyzer( analyzer );
+        }
+        if (sort != null) {
+            builder.sort( sort.value() );
+        }
+        if (suggestMode != null) {
+            builder.suggestMode( suggestMode.value() );
+        }
+        if (maxEdits != null) {
+            builder.maxEdits( maxEdits );
+        }
+        if (prefixLength != null) {
+            builder.prefixLength( prefixLength );
+        }
+        if (minWordLength != null) {
+            builder.minWordLength( minWordLength );
+        }
+        if (maxInspections != null) {
+            builder.maxInspections( maxInspections );
+        }
+        if (minDocFreq != null) {
+            builder.minDocFreq( minDocFreq );
+        }
+        if (maxTermFreq != null) {
+            builder.maxTermFreq( maxTermFreq );
+        }
+        if (stringDistance != null) {
+            builder.stringDistance( stringDistance.value() );
+        }
+        return builder;
     }
 }
