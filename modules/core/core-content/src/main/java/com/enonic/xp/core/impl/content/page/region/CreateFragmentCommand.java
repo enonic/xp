@@ -10,6 +10,7 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.UpdateContentParams;
+import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertyTree;
@@ -56,6 +57,7 @@ final class CreateFragmentCommand
             name( name ).
             type( ContentTypeName.fragment() ).
             contentData( new PropertyTree() ).
+            workflowInfo( WorkflowInfo.inProgress() ).
             build();
         final Content content = contentService.create( createContent );
 
