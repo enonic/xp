@@ -62,7 +62,7 @@ public final class NodeQueryResultMapper
 
     private void serialize( final MapGenerator gen, final Suggestions suggestions )
     {
-        if ( suggestions != null )
+        if ( suggestions != null && suggestions.isNotEmpty() )
         {
             gen.map( "suggestions" );
             new SuggestionsMapper( suggestions ).serialize( gen );

@@ -17,7 +17,7 @@ public class TermSuggestionQueryBuilderFactory
 
     public TermSuggestionBuilder create( final TermSuggestionQuery suggestionQuery )
     {
-        final String field = fieldNameResolver.resolve( suggestionQuery.getField(), IndexValueType.STRING );
+        final String field = fieldNameResolver.resolve( suggestionQuery.getField(), IndexValueType.ANALYZED );
 
         final TermSuggestionBuilder builder = new TermSuggestionBuilder( suggestionQuery.getName() ).
             field( field ).
