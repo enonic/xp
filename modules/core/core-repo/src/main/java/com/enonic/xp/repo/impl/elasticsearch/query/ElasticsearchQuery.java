@@ -7,6 +7,7 @@ import java.util.Set;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
+import org.elasticsearch.search.suggest.SuggestBuilder;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;
@@ -41,6 +42,8 @@ public class ElasticsearchQuery
 
     private final ImmutableSet<AbstractAggregationBuilder> aggregations;
 
+    private final ImmutableSet<SuggestBuilder.SuggestionBuilder> suggestions;
+
     private final ReturnFields returnFields;
 
     private final SearchMode searchMode;
@@ -58,6 +61,7 @@ public class ElasticsearchQuery
         this.batchSize = builder.batchSize;
         this.from = builder.from;
         this.aggregations = ImmutableSet.copyOf( builder.aggregations );
+        this.suggestions = ImmutableSet.copyOf( builder.suggestions );
         this.returnFields = builder.returnFields;
         this.searchMode = builder.searchMode;
         this.searchOptimizer = builder.searchOptimizer;
@@ -72,6 +76,11 @@ public class ElasticsearchQuery
     public ImmutableSet<AbstractAggregationBuilder> getAggregations()
     {
         return aggregations;
+    }
+
+    public ImmutableSet<SuggestBuilder.SuggestionBuilder> getSuggestions()
+    {
+        return suggestions;
     }
 
     public QueryBuilder getQuery()
@@ -140,7 +149,8 @@ public class ElasticsearchQuery
         final String sortBuildersAsString = getSortBuildersAsString();
 
         return "ElasticsearchQuery{" + "query=" + query + ", size=" + size + ", from=" + from + ", filter=" + filter + ", indexType=" +
-            indexTypes + ", index=" + indexNames + ", sortBuilders=" + sortBuildersAsString + ", aggregations= " + aggregations + '}';
+            indexTypes + ", index=" + indexNames + ", sortBuilders=" + sortBuildersAsString + ", aggregations= " + aggregations +
+            ", suggestions= " + suggestions + '}';
     }
 
     private String getSortBuildersAsString()
@@ -174,6 +184,8 @@ public class ElasticsearchQuery
         private int batchSize = 15_000;
 
         private Set<AbstractAggregationBuilder> aggregations = Sets.newHashSet();
+
+        private Set<SuggestBuilder.SuggestionBuilder> suggestions = Sets.newHashSet();
 
         private ReturnFields returnFields = ReturnFields.empty();
 
@@ -254,6 +266,12 @@ public class ElasticsearchQuery
         public Builder setAggregations( final Set<AbstractAggregationBuilder> aggregations )
         {
             this.aggregations = aggregations;
+            return this;
+        }
+
+        public Builder setSuggestions( final Set<SuggestBuilder.SuggestionBuilder> suggestions )
+        {
+            this.suggestions = suggestions;
             return this;
         }
 

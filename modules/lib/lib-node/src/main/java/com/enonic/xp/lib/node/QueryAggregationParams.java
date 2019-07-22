@@ -1,14 +1,12 @@
 package com.enonic.xp.lib.node;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.enonic.xp.query.aggregation.AggregationQueries;
 import com.enonic.xp.query.aggregation.AggregationQuery;
 import com.enonic.xp.query.aggregation.BucketAggregationQuery;
 import com.enonic.xp.query.aggregation.DateHistogramAggregationQuery;
@@ -39,14 +37,14 @@ final class QueryAggregationParams
     {
     }
 
-    public Set<AggregationQuery> getAggregations( final Map<String, Object> aggregationsMap )
+    public AggregationQueries getAggregations( final Map<String, Object> aggregationsMap )
     {
         if ( aggregationsMap == null )
         {
-            return Collections.emptySet();
+            return AggregationQueries.empty();
         }
 
-        final Set<AggregationQuery> aggregations = new LinkedHashSet<>();
+        final AggregationQueries.Builder aggregations = AggregationQueries.create();
         for ( String name : aggregationsMap.keySet() )
         {
             final Map<String, Object> aggregationQueryMap = (Map<String, Object>) aggregationsMap.get( name );
@@ -57,7 +55,7 @@ final class QueryAggregationParams
             }
         }
 
-        return aggregations;
+        return aggregations.build();
     }
 
     private AggregationQuery aggregationQueryFromParams( final String name, final Map<String, Object> aggregationQueryMap )
@@ -122,7 +120,7 @@ final class QueryAggregationParams
         if ( aggregationQueryMap.containsKey( "aggregations" ) )
         {
             final Map<String, Object> aggregationsMap = (Map<String, Object>) aggregationQueryMap.get( "aggregations" );
-            final Set<AggregationQuery> aggregation = getAggregations( aggregationsMap );
+            final AggregationQueries aggregation = getAggregations( aggregationsMap );
             aggregationQuery.addSubQueries( aggregation );
         }
     }

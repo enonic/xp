@@ -21,6 +21,8 @@ public class QueryNodeHandlerParams
 
     private Map<String, Object> aggregations;
 
+    private Map<String, Object> suggestions;
+
     private List<Map<String, Object>> filters;
 
     private boolean explain = false;
@@ -122,6 +124,17 @@ public class QueryNodeHandlerParams
     public void setAggregations( final ScriptValue aggregations )
     {
         this.aggregations = aggregations != null ? aggregations.getMap() : Maps.newHashMap();
+    }
+
+    Map<String, Object> getSuggestions()
+    {
+        return suggestions;
+    }
+
+    @SuppressWarnings("unused")
+    public void setSuggestions( final ScriptValue suggestions )
+    {
+        this.suggestions = suggestions != null ? suggestions.getMap() : Maps.newHashMap();
     }
 
     public void setExplain( final boolean explain )

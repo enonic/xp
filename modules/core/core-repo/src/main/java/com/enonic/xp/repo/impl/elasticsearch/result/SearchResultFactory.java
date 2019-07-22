@@ -3,6 +3,7 @@ package com.enonic.xp.repo.impl.elasticsearch.result;
 import org.elasticsearch.action.search.SearchResponse;
 
 import com.enonic.xp.repo.impl.elasticsearch.aggregation.AggregationsFactory;
+import com.enonic.xp.repo.impl.elasticsearch.suggistion.SuggestionsFactory;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 
 public class SearchResultFactory
@@ -14,6 +15,7 @@ public class SearchResultFactory
             totalHits( searchResponse.getHits().getTotalHits() ).
             maxScore( searchResponse.getHits().maxScore() ).
             aggregations( AggregationsFactory.create( searchResponse.getAggregations() ) ).
+            suggestions( SuggestionsFactory.create( searchResponse.getSuggest() ) ).
             build();
     }
 }
