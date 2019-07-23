@@ -4,7 +4,9 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
+import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 
 public class DeleteNodeInChildBranchCommand
@@ -26,15 +28,15 @@ public class DeleteNodeInChildBranchCommand
     {
         if ( nodeId == null )
         {
-            execute( childBranches, nodePath );
+            execute( parentBranch, childBranches, nodePath );
         }
         else
         {
-            execute( childBranches, nodeId );
+            execute( parentBranch, childBranches, nodeId );
         }
     }
 
-    private void execute( final Branches childBranches, final NodeId nodeId )
+    private void execute( final Branch parentBranch, final Branches childBranches, final NodeId nodeId )
     {
         if ( childBranches.isEmpty() )
         {
@@ -43,19 +45,32 @@ public class DeleteNodeInChildBranchCommand
         for ( Branch childBranch : childBranches )
         {
             runInBranch( childBranch, () -> {
-                DeleteNodeByIdCommand.create().
+                final NodeBranchEntries deletedEntries = DeleteNodeByIdCommand.create().
                     nodeId( nodeId ).
                     indexServiceInternal( this.indexServiceInternal ).
                     storageService( this.nodeStorageService ).
                     searchService( this.nodeSearchService ).
                     build().
                     execute();
-                execute( getChildBranches( childBranch ), nodeId );
+                final NodeIds deletedNodeIds = NodeIds.from( deletedEntries.getKeys() );
+
+                PushNodesToChildBranchCommand.create().
+                    indexServiceInternal( this.indexServiceInternal ).
+                    storageService( this.nodeStorageService ).
+                    searchService( this.nodeSearchService ).
+                    repositoryService( this.repositoryService ).
+                    parentBranch( parentBranch ).
+                    childBranches( Branches.from(childBranch) ).
+                    nodeIds( deletedNodeIds ).
+                    build().
+                    execute();
+
+                execute( childBranch, getChildBranches( childBranch ), nodeId );
             } );
         }
     }
 
-    private void execute( final Branches childBranches, final NodePath nodePath )
+    private void execute( final Branch parentBranch, final Branches childBranches, final NodePath nodePath )
     {
         if ( childBranches.isEmpty() )
         {
@@ -64,7 +79,7 @@ public class DeleteNodeInChildBranchCommand
         for ( Branch childBranch : childBranches )
         {
             runInBranch( childBranch, () -> {
-                DeleteNodeByPathCommand.create().
+                final NodeBranchEntries deletedEntries = DeleteNodeByPathCommand.create().
                     nodePath( nodePath ).
                     indexServiceInternal( this.indexServiceInternal ).
                     storageService( this.nodeStorageService ).
@@ -72,7 +87,22 @@ public class DeleteNodeInChildBranchCommand
                     skipInheritedNodes( false ).
                     build().
                     execute();
-                execute( getChildBranches( childBranch ), nodePath );
+                final NodeIds deletedNodeIds = NodeIds.from( deletedEntries.getKeys() );
+
+                PushNodesToChildBranchCommand.create().
+                    indexServiceInternal( this.indexServiceInternal ).
+                    storageService( this.nodeStorageService ).
+                    searchService( this.nodeSearchService ).
+                    repositoryService( this.repositoryService ).
+                    parentBranch( parentBranch ).
+                    childBranches( Branches.from(childBranch) ).
+                    nodeIds( deletedNodeIds ).
+                    build().
+                    execute();
+
+                execute( childBranch, getChildBranches( childBranch ), nodePath );
+
+
             } );
         }
     }

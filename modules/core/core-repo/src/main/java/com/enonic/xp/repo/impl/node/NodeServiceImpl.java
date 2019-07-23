@@ -1,6 +1,5 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.Collection;
 import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Activate;
@@ -448,7 +447,7 @@ public class NodeServiceImpl
         if ( deletedNodes.isNotEmpty() )
         {
             final NodeIds deletedNodeIds = NodeIds.from( deletedNodes.getKeys() );
-            inheritNodesFromParentBranch(deletedNodeIds);
+            inheritNodesFromParentBranch( deletedNodeIds );
             deleteNodeInChildBranches( id );
             this.eventPublisher.publish( NodeEvents.deleted( deletedNodes ) );
         }
@@ -1148,17 +1147,18 @@ public class NodeServiceImpl
     {
         final RepositoryId repositoryId = ContextAccessor.current().getRepositoryId();
         final Branch childBranch = ContextAccessor.current().getBranch();
-        final BranchInfo branchInfo = repositoryService.get( repositoryId ).
-            getBranchInfo( childBranch );
+        final BranchInfo branchInfo = NodeHelper.runAsAdmin( () -> repositoryService.get( repositoryId ).
+            getBranchInfo( childBranch ) );
         final Branch parentBranch = branchInfo.getParentBranch();
-        if (parentBranch != null) {
+        if ( parentBranch != null )
+        {
             PushNodesToChildBranchCommand.create().
                 indexServiceInternal( this.indexServiceInternal ).
                 storageService( this.nodeStorageService ).
                 searchService( this.nodeSearchService ).
                 repositoryService( this.repositoryService ).
                 parentBranch( parentBranch ).
-                childBranches( Branches.from(childBranch) ).
+                childBranches( Branches.from( childBranch ) ).
                 nodeIds( nodeIds ).
                 build().
                 execute();
