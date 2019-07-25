@@ -71,6 +71,7 @@ public class LoadNodeCommand
         {
             DeleteNodeByPathCommand.create( this ).
                 nodePath( params.getNode().path() ).
+                skipInheritedNodes( false ).
                 build().
                 execute();
         }
