@@ -16,6 +16,7 @@ import com.enonic.xp.query.expr.OrderExpressions;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.filter.Filter;
 import com.enonic.xp.query.filter.Filters;
+import com.enonic.xp.query.highlight.HighlightQuery;
 import com.enonic.xp.query.suggester.SuggestionQueries;
 import com.enonic.xp.query.suggester.SuggestionQuery;
 
@@ -33,6 +34,8 @@ public class AbstractQuery
     private final AggregationQueries aggregationQueries;
 
     private final SuggestionQueries suggestionQueries;
+
+    private final HighlightQuery highlight;
 
     private final int from;
 
@@ -58,6 +61,7 @@ public class AbstractQuery
         this.searchMode = builder.searchMode;
         this.aggregationQueries = AggregationQueries.fromCollection( ImmutableSet.copyOf( builder.aggregationQueries ) );
         this.suggestionQueries = SuggestionQueries.fromCollection( ImmutableSet.copyOf( builder.suggestionQueries ) );
+        this.highlight = builder.highlight;
         this.orderBys = setOrderExpressions( builder );
         this.postFilters = builder.postFilters.build();
         this.queryFilters = builder.queryFilters.build();
@@ -109,6 +113,11 @@ public class AbstractQuery
         return suggestionQueries;
     }
 
+    public HighlightQuery getHighlight()
+    {
+        return highlight;
+    }
+
     public int getFrom()
     {
         return from;
@@ -148,6 +157,8 @@ public class AbstractQuery
         private Set<AggregationQuery> aggregationQueries = Sets.newHashSet();
 
         private Set<SuggestionQuery> suggestionQueries = Sets.newHashSet();
+
+        private HighlightQuery highlight;
 
         private QueryExpr query;
 
@@ -237,6 +248,12 @@ public class AbstractQuery
         public B addSuggestionQuery( final SuggestionQuery suggestionQuery )
         {
             this.suggestionQueries.add( suggestionQuery );
+            return (B) this;
+        }
+
+        public B highlight( final HighlightQuery highlight )
+        {
+            this.highlight = highlight;
             return (B) this;
         }
 
