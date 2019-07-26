@@ -10,6 +10,7 @@ import com.enonic.xp.query.expr.ConstraintExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.filter.Filters;
+import com.enonic.xp.query.highlight.HighlightQuery;
 import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.query.suggester.SuggestionQueries;
 
@@ -30,6 +31,8 @@ abstract class AbstractFindNodesQueryHandler
 
     private final Map<String, Object> suggestions;
 
+    private final Map<String, Object> highlight;
+
     private final boolean explain;
 
     AbstractFindNodesQueryHandler( final Builder builder )
@@ -42,6 +45,7 @@ abstract class AbstractFindNodesQueryHandler
         this.filters = builder.filters;
         this.aggregations = builder.aggregations;
         this.suggestions = builder.suggestions;
+        this.highlight = builder.highlight;
         this.explain = builder.explain;
     }
 
@@ -60,11 +64,14 @@ abstract class AbstractFindNodesQueryHandler
         final AggregationQueries aggregations = new QueryAggregationParams().getAggregations( this.aggregations );
         final SuggestionQueries suggestions = new QuerySuggestionParams().getSuggestions( this.suggestions );
 
+        final HighlightQuery highlightQuery = new QueryHighlightParams().getHighlightQuery( this.highlight );
+
         return NodeQuery.create().
             from( start ).
             size( count ).
             addAggregationQueries( aggregations ).
             addSuggestionQueries( suggestions ).
+            highlight( highlightQuery ).
             query( queryExpr ).
             addQueryFilters( filters ).
             explain( this.explain ).
@@ -87,6 +94,8 @@ abstract class AbstractFindNodesQueryHandler
         private Map<String, Object> aggregations;
 
         private Map<String, Object> suggestions;
+
+        private Map<String, Object> highlight;
 
         private boolean explain = false;
 
@@ -140,6 +149,13 @@ abstract class AbstractFindNodesQueryHandler
         public B suggestions( final Map<String, Object> val )
         {
             suggestions = val;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B highlight( final Map<String, Object> val )
+        {
+            highlight = val;
             return (B) this;
         }
 

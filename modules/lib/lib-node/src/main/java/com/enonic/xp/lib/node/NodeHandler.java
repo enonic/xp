@@ -117,6 +117,7 @@ public class NodeHandler
             query( params.getQuery() ).
             aggregations( params.getAggregations() ).
             suggestions( params.getSuggestions() ).
+            highlight( params.getHighlight() ).
             count( params.getCount() ).
             start( params.getStart() ).
             sort( params.getSort() ).
