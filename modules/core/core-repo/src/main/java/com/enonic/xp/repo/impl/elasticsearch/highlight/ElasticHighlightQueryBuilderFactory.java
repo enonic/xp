@@ -23,7 +23,7 @@ public class ElasticHighlightQueryBuilderFactory
         for ( HighlightQueryField highlightQueryField : highlightQuery.getFields() )
         {
             final String normalizedFieldName = IndexFieldNameNormalizer.normalize( highlightQueryField.getName() );
-            final String normalizedFieldNameWithPostFix = normalizedFieldName + IndexValueType.INDEX_VALUE_TYPE_SEPARATOR + "*";
+            final String normalizedFieldNameWithPostFix = normalizedFieldName + IndexValueType.INDEX_VALUE_TYPE_SEPARATOR + "_*";
             final HighlightBuilder.Field rawHighlightField = new HighlightBuilder.Field( normalizedFieldName );
             final HighlightBuilder.Field analyzedHighlightField = new HighlightBuilder.Field( normalizedFieldNameWithPostFix );
             result.addField( rawHighlightField );
