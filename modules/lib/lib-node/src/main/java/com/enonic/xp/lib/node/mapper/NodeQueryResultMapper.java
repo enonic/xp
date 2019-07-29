@@ -1,6 +1,8 @@
 package com.enonic.xp.lib.node.mapper;
 
 import com.enonic.xp.aggregation.Aggregations;
+import com.enonic.xp.highlight.HighlightedField;
+import com.enonic.xp.highlight.HighlightedFields;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeHit;
 import com.enonic.xp.node.NodeHits;
@@ -45,6 +47,7 @@ public final class NodeQueryResultMapper
             gen.map();
             gen.value( "id", nodeHit.getNodeId() );
             gen.value( "score", Float.isNaN( nodeHit.getScore() ) ? 0.0 : nodeHit.getScore() );
+            serialize( gen, nodeHit.getHighlight() );
             gen.end();
         }
         gen.end();
@@ -66,6 +69,24 @@ public final class NodeQueryResultMapper
         {
             gen.map( "suggestions" );
             new SuggestionsMapper( suggestions ).serialize( gen );
+            gen.end();
+        }
+    }
+
+    private void serialize( final MapGenerator gen, final HighlightedFields highlightedFields )
+    {
+        if ( highlightedFields != null && !highlightedFields.isEmpty() )
+        {
+            gen.map( "highlight" );
+            for ( HighlightedField highlightedField : highlightedFields )
+            {
+                gen.array( highlightedField.getName() );
+                for ( String fragment : highlightedField.getFragments() )
+                {
+                    gen.value( fragment );
+                }
+                gen.end();
+            }
             gen.end();
         }
     }

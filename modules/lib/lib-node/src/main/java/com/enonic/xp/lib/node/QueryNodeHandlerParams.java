@@ -23,6 +23,8 @@ public class QueryNodeHandlerParams
 
     private Map<String, Object> suggestions;
 
+    private Map<String, Object> highlight;
+
     private List<Map<String, Object>> filters;
 
     private boolean explain = false;
@@ -135,6 +137,17 @@ public class QueryNodeHandlerParams
     public void setSuggestions( final ScriptValue suggestions )
     {
         this.suggestions = suggestions != null ? suggestions.getMap() : Maps.newHashMap();
+    }
+
+    Map<String, Object> getHighlight()
+    {
+        return highlight;
+    }
+
+    @SuppressWarnings("unused")
+    public void setHighlight( final ScriptValue highlight )
+    {
+        this.highlight = highlight != null ? highlight.getMap() : Maps.newHashMap();
     }
 
     public void setExplain( final boolean explain )

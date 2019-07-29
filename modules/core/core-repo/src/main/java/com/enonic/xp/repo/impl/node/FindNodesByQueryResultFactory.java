@@ -22,6 +22,7 @@ class FindNodesByQueryResultFactory
                 nodeId( NodeId.from( hit.getId() ) ).
                 score( hit.getScore() ).
                 explanation( hit.getExplanation() ).
+                highlight( hit.getHighlightedFields() ).
                 build() );
         }
 

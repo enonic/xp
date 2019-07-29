@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.search.result;
 
+import com.enonic.xp.highlight.HighlightedFields;
 import com.enonic.xp.query.QueryExplanation;
 import com.enonic.xp.repo.impl.ReturnValue;
 import com.enonic.xp.repo.impl.ReturnValues;
@@ -19,6 +20,8 @@ public class SearchHit
 
     private final QueryExplanation explanation;
 
+    private final HighlightedFields highlightedFields;
+
     private SearchHit( final Builder builder )
     {
         this.score = builder.score;
@@ -27,6 +30,7 @@ public class SearchHit
         this.indexName = builder.indexName;
         this.indexType = builder.indexType;
         this.explanation = builder.explanation;
+        this.highlightedFields = builder.highlightedFields;
     }
 
     public static Builder create()
@@ -72,6 +76,11 @@ public class SearchHit
     public ReturnValues getReturnValues()
     {
         return returnValues;
+    }
+
+    public HighlightedFields getHighlightedFields()
+    {
+        return highlightedFields;
     }
 
     private ReturnValue doGetField( final String fieldName, final boolean failOnMissing )
@@ -130,6 +139,8 @@ public class SearchHit
 
         private QueryExplanation explanation;
 
+        private HighlightedFields highlightedFields;
+
         public Builder score( final float score )
         {
             this.score = score;
@@ -163,6 +174,12 @@ public class SearchHit
         public Builder explanation( final QueryExplanation explanation )
         {
             this.explanation = explanation;
+            return this;
+        }
+
+        public Builder highlightedFields( final HighlightedFields highlightedFields )
+        {
+            this.highlightedFields = highlightedFields;
             return this;
         }
 

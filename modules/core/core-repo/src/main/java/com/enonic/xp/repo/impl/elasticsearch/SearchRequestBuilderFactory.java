@@ -48,6 +48,11 @@ public class SearchRequestBuilderFactory
         query.getAggregations().forEach( searchRequestBuilder::addAggregation );
         query.getSuggestions().forEach( searchRequestBuilder::addSuggestion );
 
+        if ( query.getHighlight().getFields() != null )
+        {
+            query.getHighlight().getFields().forEach( searchRequestBuilder::addHighlightedField );
+        }
+
         if ( query.getReturnFields() != null && query.getReturnFields().isNotEmpty() )
         {
             searchRequestBuilder.addFields( query.getReturnFields().getReturnFieldNames() );
