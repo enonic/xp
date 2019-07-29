@@ -26,15 +26,15 @@ public class HighlightedFieldsFactoryTest
         final HighlightedFields highlightedFields = HighlightedFieldsFactory.create( paramsMap );
 
         Assert.assertNotNull( highlightedFields );
-        Assert.assertEquals( 2, highlightedFields.getHighlightedFields().size() );
+        Assert.assertEquals( 2, highlightedFields.size() );
 
-        Assert.assertEquals( 2, highlightedFields.getHighlightedFields().get( "name1" ).getFragments().size() );
-        Assert.assertTrue( highlightedFields.getHighlightedFields().get( "name1" ).getFragments().contains( "fragment1_1" ) );
-        Assert.assertTrue( highlightedFields.getHighlightedFields().get( "name1" ).getFragments().contains( "fragment1_2" ) );
+        Assert.assertEquals( 2, highlightedFields.get( "name1" ).getFragments().size() );
+        Assert.assertTrue( highlightedFields.get( "name1" ).getFragments().contains( "fragment1_1" ) );
+        Assert.assertTrue( highlightedFields.get( "name1" ).getFragments().contains( "fragment1_2" ) );
 
-        Assert.assertEquals( 2, highlightedFields.getHighlightedFields().get( "name2" ).getFragments().size() );
-        Assert.assertTrue( highlightedFields.getHighlightedFields().get( "name2" ).getFragments().contains( "fragment2_2" ) );
-        Assert.assertTrue( highlightedFields.getHighlightedFields().get( "name2" ).getFragments().contains( "fragment2_1" ) );
+        Assert.assertEquals( 2, highlightedFields.get( "name2" ).getFragments().size() );
+        Assert.assertTrue( highlightedFields.get( "name2" ).getFragments().contains( "fragment2_2" ) );
+        Assert.assertTrue( highlightedFields.get( "name2" ).getFragments().contains( "fragment2_1" ) );
     }
 
     @Test

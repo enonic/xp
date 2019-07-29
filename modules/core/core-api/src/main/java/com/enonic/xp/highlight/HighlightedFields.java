@@ -15,8 +15,19 @@ public class HighlightedFields
         this.highlightedFields = builder.highlightedFields.build();
     }
 
-    public boolean isEmpty() {
+    public int size()
+    {
+        return highlightedFields.size();
+    }
+
+    public boolean isEmpty()
+    {
         return highlightedFields.isEmpty();
+    }
+
+    public HighlightedField get( final String name )
+    {
+        return highlightedFields.get( name );
     }
 
     @Override
