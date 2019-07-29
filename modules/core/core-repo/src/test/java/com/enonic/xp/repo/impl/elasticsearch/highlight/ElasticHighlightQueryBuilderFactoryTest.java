@@ -28,8 +28,9 @@ public class ElasticHighlightQueryBuilderFactoryTest
         final ElasticHighlightQuery elasticHighlightQuery = highlightQueryBuilderFactory.create( query );
 
         Assert.assertNotNull( elasticHighlightQuery );
-        Assert.assertEquals( 1, elasticHighlightQuery.getFields().size() );
-        Assert.assertEquals( "fieldToHighlight", elasticHighlightQuery.getFields().asList().get( 0 ).name() );
+        Assert.assertEquals( 2, elasticHighlightQuery.getFields().size() );
+        Assert.assertEquals( "fieldtohighlight._*", elasticHighlightQuery.getFields().asList().get( 0 ).name() );
+        Assert.assertEquals( "fieldtohighlight", elasticHighlightQuery.getFields().asList().get( 1 ).name() );
     }
 
     @Test
