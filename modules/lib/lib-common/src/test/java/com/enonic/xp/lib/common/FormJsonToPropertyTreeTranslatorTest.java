@@ -78,6 +78,20 @@ public class FormJsonToPropertyTreeTranslatorTest
     }
 
     @Test
+    public void boolean_value()
+        throws Exception
+    {
+        final JsonNode node = loadJson( "allInputTypes" );
+
+        final PropertyTree data = new FormJsonToPropertyTreeTranslator( null, false ).translate( node );
+
+        final Property property = data.getProperty( "checkbox" );
+
+        assertTrue( property.getValue().isBoolean());
+        assertEquals( true, property.getBoolean());
+    }
+
+    @Test
     public void map_dateTime()
         throws Exception
     {
