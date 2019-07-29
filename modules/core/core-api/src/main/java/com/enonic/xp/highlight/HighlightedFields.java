@@ -1,42 +1,22 @@
 package com.enonic.xp.highlight;
 
-import java.util.Map;
+import java.util.Iterator;
 import java.util.Objects;
 
-import com.google.common.collect.Maps;
+import com.google.common.collect.ImmutableMap;
 
 public class HighlightedFields
+    implements Iterable<HighlightedField>
 {
-    private final Map<String, HighlightedField> highlightedFields;
+    private final ImmutableMap<String, HighlightedField> highlightedFields;
 
     private HighlightedFields( final Builder builder )
     {
-        this.highlightedFields = builder.highlightedFields;
+        this.highlightedFields = builder.highlightedFields.build();
     }
 
-    public static Builder create()
-    {
-        return new Builder();
-    }
-
-    public static Builder create( HighlightedFields source )
-    {
-        return new Builder( source );
-    }
-
-    public static HighlightedFields empty()
-    {
-        return HighlightedFields.create().build();
-    }
-
-    public Object get( final String key )
-    {
-        return highlightedFields.get( key );
-    }
-
-    public Map<String, HighlightedField> getHighlightedFields()
-    {
-        return highlightedFields;
+    public boolean isEmpty() {
+        return highlightedFields.isEmpty();
     }
 
     @Override
@@ -60,9 +40,30 @@ public class HighlightedFields
         return Objects.hash( highlightedFields );
     }
 
+    public static HighlightedFields empty()
+    {
+        return HighlightedFields.create().build();
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public static Builder create( HighlightedFields source )
+    {
+        return new Builder( source );
+    }
+
+    @Override
+    public Iterator<HighlightedField> iterator()
+    {
+        return highlightedFields.values().iterator();
+    }
+
     public static final class Builder
     {
-        final Map<String, HighlightedField> highlightedFields = Maps.newHashMap();
+        final ImmutableMap.Builder<String, HighlightedField> highlightedFields = ImmutableMap.builder();
 
         private Builder()
         {
@@ -77,9 +78,9 @@ public class HighlightedFields
             highlightedFields.putAll( source.highlightedFields );
         }
 
-        public Builder add( final String key, final HighlightedField value )
+        public Builder add( final HighlightedField highlightedField )
         {
-            highlightedFields.put( key, value );
+            highlightedFields.put( highlightedField.getName(), highlightedField );
             return this;
         }
 

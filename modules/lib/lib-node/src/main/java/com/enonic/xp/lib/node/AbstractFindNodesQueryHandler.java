@@ -64,14 +64,14 @@ abstract class AbstractFindNodesQueryHandler
         final AggregationQueries aggregations = new QueryAggregationParams().getAggregations( this.aggregations );
         final SuggestionQueries suggestions = new QuerySuggestionParams().getSuggestions( this.suggestions );
 
-        final HighlightQuery highlightQuery = new QueryHighlightParams().getHighlightQuery( this.highlight );
+        final HighlightQuery highlight = new QueryHighlightParams().getHighlightQuery( this.highlight );
 
         return NodeQuery.create().
             from( start ).
             size( count ).
             addAggregationQueries( aggregations ).
             addSuggestionQueries( suggestions ).
-            highlight( highlightQuery ).
+            highlight( highlight ).
             query( queryExpr ).
             addQueryFilters( filters ).
             explain( this.explain ).
