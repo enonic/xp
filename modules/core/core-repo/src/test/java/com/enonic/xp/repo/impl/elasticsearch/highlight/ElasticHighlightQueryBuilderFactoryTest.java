@@ -1,11 +1,21 @@
 package com.enonic.xp.repo.impl.elasticsearch.highlight;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.elasticsearch.search.highlight.HighlightBuilder;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.enonic.xp.query.highlight.HighlightFieldSettings;
 import com.enonic.xp.query.highlight.HighlightQuery;
 import com.enonic.xp.query.highlight.HighlightQueryField;
+import com.enonic.xp.query.highlight.HighlightQuerySettings;
+import com.enonic.xp.query.highlight.constants.Encoder;
+import com.enonic.xp.query.highlight.constants.Fragmenter;
+import com.enonic.xp.query.highlight.constants.Order;
+import com.enonic.xp.query.highlight.constants.TagsSchema;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticHighlightQuery;
 
 public class ElasticHighlightQueryBuilderFactoryTest
@@ -29,8 +39,43 @@ public class ElasticHighlightQueryBuilderFactoryTest
 
         Assert.assertNotNull( elasticHighlightQuery );
         Assert.assertEquals( 2, elasticHighlightQuery.getFields().size() );
-        Assert.assertEquals( "fieldtohighlight._*", elasticHighlightQuery.getFields().asList().get( 0 ).name() );
-        Assert.assertEquals( "fieldtohighlight", elasticHighlightQuery.getFields().asList().get( 1 ).name() );
+
+        final List<String> names =
+            elasticHighlightQuery.getFields().stream().map( HighlightBuilder.Field::name ).collect( Collectors.toList() );
+        Assert.assertTrue( names.containsAll( List.of( "fieldtohighlight._*", "fieldtohighlight" ) ) );
+    }
+
+    @Test
+    public void create_with_settings()
+    {
+        final HighlightQuery query = HighlightQuery.create().
+            field( HighlightQueryField.create( "fieldToHighlight" ).build() ).
+            settings( HighlightQuerySettings.create().
+                encoder( Encoder.HTML ).
+                fragmenter( Fragmenter.SIMPLE ).
+                fragmentSize( 1 ).
+                noMatchSize( 2 ).
+                numOfFragments( 3 ).
+                order( Order.SCORE ).
+                addPreTags( List.of( "<a>", "<b>" ) ).
+                addPostTags( List.of( "<c>", "<d>" ) ).
+                requireFieldMatch( true ).
+                tagsSchema( TagsSchema.STYLED ).
+                build() ).
+            build();
+
+        final ElasticHighlightQuery elasticHighlightQuery = highlightQueryBuilderFactory.create( query );
+
+        Assert.assertNotNull( elasticHighlightQuery );
+        Assert.assertEquals( 2, elasticHighlightQuery.getFields().size() );
+        Assert.assertEquals( Encoder.HTML, elasticHighlightQuery.getEncoder() );
+        Assert.assertEquals( 1, (int) elasticHighlightQuery.getFragmentSize() );
+        Assert.assertEquals( 2, (int) elasticHighlightQuery.getNoMatchSize() );
+        Assert.assertEquals( 3, (int) elasticHighlightQuery.getNumOfFragments() );
+        Assert.assertEquals( List.of( "<a>", "<b>" ), elasticHighlightQuery.getPreTags() );
+        Assert.assertEquals( List.of( "<c>", "<d>" ), elasticHighlightQuery.getPostTags() );
+        Assert.assertEquals( true, elasticHighlightQuery.getRequireFieldMatch() );
+        Assert.assertEquals( TagsSchema.STYLED, elasticHighlightQuery.getTagsSchema() );
     }
 
     @Test

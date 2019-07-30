@@ -1,0 +1,194 @@
+package com.enonic.xp.query.highlight;
+
+import java.util.List;
+import java.util.Objects;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+
+import com.enonic.xp.query.highlight.constants.Fragmenter;
+import com.enonic.xp.query.highlight.constants.Order;
+
+public class HighlightFieldSettings
+{
+    private final Fragmenter fragmenter;
+
+    private final Integer fragmentSize;
+
+    private final Integer noMatchSize;
+
+    private final Integer numOfFragments;
+
+    private final Order order;
+
+    private final ImmutableList<String> preTags;
+
+    private final ImmutableList<String> postTags;
+
+    private final Boolean requireFieldMatch;
+
+    protected HighlightFieldSettings( final Builder builder )
+    {
+        this.fragmenter = builder.fragmenter;
+        this.fragmentSize = builder.fragmentSize;
+        this.noMatchSize = builder.noMatchSize;
+        this.numOfFragments = builder.numOfFragments;
+        this.order = builder.order;
+        this.preTags = ImmutableList.copyOf( builder.preTags );
+        this.postTags = ImmutableList.copyOf( builder.postTags );
+        this.requireFieldMatch = builder.requireFieldMatch;
+    }
+
+    public Fragmenter getFragmenter()
+    {
+        return fragmenter;
+    }
+
+    public Integer getFragmentSize()
+    {
+        return fragmentSize;
+    }
+
+    public Integer getNoMatchSize()
+    {
+        return noMatchSize;
+    }
+
+    public Integer getNumOfFragments()
+    {
+        return numOfFragments;
+    }
+
+    public Order getOrder()
+    {
+        return order;
+    }
+
+    public ImmutableList<String> getPreTags()
+    {
+        return preTags;
+    }
+
+    public ImmutableList<String> getPostTags()
+    {
+        return postTags;
+    }
+
+    public Boolean getRequireFieldMatch()
+    {
+        return requireFieldMatch;
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+        final HighlightFieldSettings that = (HighlightFieldSettings) o;
+        return fragmenter == that.fragmenter && Objects.equals( fragmentSize, that.fragmentSize ) &&
+            Objects.equals( noMatchSize, that.noMatchSize ) && Objects.equals( numOfFragments, that.numOfFragments ) &&
+            order == that.order && Objects.equals( preTags, that.preTags ) && Objects.equals( postTags, that.postTags ) &&
+            Objects.equals( requireFieldMatch, that.requireFieldMatch );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( fragmenter, fragmentSize, noMatchSize, numOfFragments, order, preTags, postTags, requireFieldMatch );
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public static HighlightFieldSettings empty()
+    {
+        return create().build();
+    }
+
+
+    public static class Builder<T extends Builder>
+    {
+        private Fragmenter fragmenter;
+
+        private Integer fragmentSize = -1;
+
+        private Integer noMatchSize = -1;
+
+        private Integer numOfFragments = -1;
+
+        private Order order;
+
+        private List<String> preTags = Lists.newArrayList();
+
+        private List<String> postTags = Lists.newArrayList();
+
+        private Boolean requireFieldMatch = false;
+
+        public T fragmenter( final Fragmenter fragmenter )
+        {
+            this.fragmenter = fragmenter;
+            return (T)this;
+        }
+
+        public T fragmentSize( final Integer fragmentSize )
+        {
+            this.fragmentSize = fragmentSize;
+            return (T)this;
+        }
+
+        public T noMatchSize( final Integer noMatchSize )
+        {
+            this.noMatchSize = noMatchSize;
+            return (T)this;
+        }
+
+        public T numOfFragments( final Integer numOfFragments )
+        {
+            this.numOfFragments = numOfFragments;
+            return (T)this;
+        }
+
+        public T order( final Order order )
+        {
+            this.order = order;
+            return (T)this;
+        }
+
+        public T addPreTags( final List<String> preTags )
+        {
+            if(preTags != null)
+            {
+                this.preTags.addAll( preTags );
+            }
+            return (T)this;
+        }
+
+        public T addPostTags( final List<String> postTags )
+        {
+            if(postTags != null)
+            {
+                this.postTags.addAll( postTags );
+            }
+            return (T)this;
+        }
+
+        public T requireFieldMatch( final Boolean requireFieldMatch )
+        {
+            this.requireFieldMatch = requireFieldMatch;
+            return (T)this;
+        }
+
+        public HighlightFieldSettings build()
+        {
+            return new HighlightFieldSettings( this );
+        }
+    }
+}

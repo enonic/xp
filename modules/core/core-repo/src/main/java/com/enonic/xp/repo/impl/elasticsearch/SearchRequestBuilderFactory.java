@@ -6,6 +6,7 @@ import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
 
 import com.enonic.xp.node.SearchOptimizer;
+import com.enonic.xp.repo.impl.elasticsearch.query.ElasticHighlightQuery;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
 
 public class SearchRequestBuilderFactory
@@ -48,9 +49,9 @@ public class SearchRequestBuilderFactory
         query.getAggregations().forEach( searchRequestBuilder::addAggregation );
         query.getSuggestions().forEach( searchRequestBuilder::addSuggestion );
 
-        if ( query.getHighlight().getFields() != null )
+        if ( query.getHighlight() != null )
         {
-            query.getHighlight().getFields().forEach( searchRequestBuilder::addHighlightedField );
+            setHighlightSettings( searchRequestBuilder, query.getHighlight() );
         }
 
         if ( query.getReturnFields() != null && query.getReturnFields().isNotEmpty() )
@@ -59,6 +60,23 @@ public class SearchRequestBuilderFactory
         }
 
         return searchRequestBuilder;
+    }
+
+    private SearchRequestBuilder setHighlightSettings( final SearchRequestBuilder builder, final ElasticHighlightQuery highlight )
+    {
+        highlight.getFields().forEach( builder::addHighlightedField );
+
+        return builder.setHighlighterEncoder( highlight.getEncoder() != null ? highlight.getEncoder().value() : null ).
+            setHighlighterFragmenter( highlight.getFragmenter() != null ? highlight.getFragmenter().value() : null ).
+            setHighlighterFragmentSize( highlight.getFragmentSize() ).
+            setHighlighterNoMatchSize( highlight.getNoMatchSize() ).
+            setHighlighterNumOfFragments( highlight.getNumOfFragments() ).
+            setHighlighterOrder( highlight.getOrder() != null ? highlight.getOrder().value() : null ).
+            setHighlighterPreTags( (String[]) highlight.getPreTags().toArray((new String[highlight.getPreTags().size()])) ).
+            setHighlighterPostTags( (String[]) highlight.getPostTags().toArray((new String[highlight.getPostTags().size()])) ).
+            setHighlighterRequireFieldMatch(  highlight.getRequireFieldMatch() ).
+            setHighlighterTagsSchema( highlight.getTagsSchema() != null ? highlight.getTagsSchema().value() : null );
+
     }
 
 

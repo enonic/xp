@@ -1,9 +1,16 @@
 package com.enonic.xp.lib.node;
 
+import java.util.List;
 import java.util.Map;
 
+import com.enonic.xp.query.highlight.HighlightFieldSettings;
 import com.enonic.xp.query.highlight.HighlightQuery;
 import com.enonic.xp.query.highlight.HighlightQueryField;
+import com.enonic.xp.query.highlight.HighlightQuerySettings;
+import com.enonic.xp.query.highlight.constants.Encoder;
+import com.enonic.xp.query.highlight.constants.Fragmenter;
+import com.enonic.xp.query.highlight.constants.Order;
+import com.enonic.xp.query.highlight.constants.TagsSchema;
 
 @SuppressWarnings("unchecked")
 final class QueryHighlightParams
@@ -12,14 +19,16 @@ final class QueryHighlightParams
     {
     }
 
-    public HighlightQuery getHighlightQuery( final Map<String, Object> highlightMap )
+    HighlightQuery getHighlightQuery( final Map<String, Object> highlightMap )
     {
         if ( highlightMap == null )
         {
             return HighlightQuery.empty();
         }
 
-        final HighlightQuery.Builder highlightQuery = HighlightQuery.create();
+        final HighlightQuerySettings settings = fillQuerySettings( HighlightQuerySettings.create(), highlightMap ).build();
+        final HighlightQuery.Builder highlightQuery = HighlightQuery.create().settings( settings );
+
         final Map<String, Object> fieldsMap = (Map<String, Object>) highlightMap.get( "fields" );
 
         if ( fieldsMap == null )
@@ -40,7 +49,32 @@ final class QueryHighlightParams
 
     private HighlightQueryField highlightFieldFromParams( final String name, final Map<String, Object> fieldMap )
     {
-        return HighlightQueryField.create( name ).build();
+        final HighlightFieldSettings settings = fillFieldSettings( HighlightFieldSettings.create(), fieldMap ).build();
+        return HighlightQueryField.create( name ).settings( settings ).build();
     }
+
+    private HighlightQuerySettings.Builder fillQuerySettings( final HighlightQuerySettings.Builder builder,
+                                                              final Map<String, Object> fieldMap )
+    {
+        fillFieldSettings( builder, fieldMap );
+
+        return builder.encoder( Encoder.from( (String) fieldMap.get( "encoder" ) ) ).
+            tagsSchema( TagsSchema.from( (String) fieldMap.get( "tagsSchema" ) ) );
+
+    }
+
+    private HighlightFieldSettings.Builder fillFieldSettings( final HighlightFieldSettings.Builder builder,
+                                                              final Map<String, Object> fieldMap )
+    {
+        return builder.fragmenter( Fragmenter.from( (String) fieldMap.get( "fragmenter" ) ) ).
+            fragmentSize( (Integer) fieldMap.get( "fragmenterSize" ) ).
+            noMatchSize( (Integer) fieldMap.get( "noMatchSize" ) ).
+            numOfFragments( (Integer) fieldMap.get( "numberOfFragments" ) ).
+            order( Order.from( (String) fieldMap.get( "order" ) ) ).
+            addPreTags(  (List) fieldMap.get( "preTags" ) ).
+            addPostTags( (List) fieldMap.get( "postTags" ) ).
+            requireFieldMatch( (Boolean) fieldMap.get( "requireFieldMatch" ) );
+    }
+
 }
 
