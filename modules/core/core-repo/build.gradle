@@ -10,4 +10,7 @@ dependencies {
 
 jar {
     bnd( 'Bundle-Name': 'Enonic XP Core - Repo' )
+
+    //Temporary export until refactoring
+    bnd( 'Export-Package': 'com.enonic.xp.repo.impl.branch;-split-package:=first' )
 }
