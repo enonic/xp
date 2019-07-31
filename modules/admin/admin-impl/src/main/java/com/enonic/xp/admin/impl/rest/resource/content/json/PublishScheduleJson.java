@@ -15,7 +15,10 @@ public class PublishScheduleJson
     @JsonCreator
     public PublishScheduleJson( @JsonProperty("from") final String publishFrom, @JsonProperty("to") final String publishTo )
     {
-        this.publishFrom = Instant.parse( publishFrom );
+        if ( publishFrom != null )
+        {
+            this.publishFrom = Instant.parse( publishFrom );
+        }
         if ( publishTo != null )
         {
             this.publishTo = Instant.parse( publishTo );
