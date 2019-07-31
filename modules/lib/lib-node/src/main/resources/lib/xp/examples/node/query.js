@@ -70,6 +70,29 @@ var result = repo.query({
                 }
             }
         }
+    }, highlight: {
+        encoder: "html",
+        fragmenter: "simple",
+        fragmentSize: 5,
+        noMatchSize: 5,
+        numberOfFragments: 5,
+        order: "score",
+        preTags: ["<a>"],
+        postTags: ["<b>"],
+        requireFieldMatch: false,
+        tagsSchema: "styled",
+        fields: {
+            displayName: {
+                fragmenter: "span",
+                fragmentSize: 6,
+                noMatchSize: 6,
+                numberOfFragments: 6,
+                order: "none",
+                preTags: ["<a>"],
+                postTags: ["<b>"],
+                requireFieldMatch: true
+            }
+        }
     }
 });
 
@@ -89,7 +112,13 @@ var expected = {
     "hits": [
         {
             "id": "b186d24f-ac38-42ca-a6db-1c1bda6c6c26",
-            "score": 1.2300000190734863
+            "score": 1.2300000190734863,
+            "highlight": {
+                "field1": [
+                    "fragment1",
+                    "fragment2"
+                ]
+            }
         },
         {
             "id": "350ba4a6-589c-498b-8af0-f183850e1120",
