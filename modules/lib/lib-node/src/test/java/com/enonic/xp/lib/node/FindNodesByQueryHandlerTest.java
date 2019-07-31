@@ -12,6 +12,10 @@ import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeHit;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.suggester.Suggestions;
+import com.enonic.xp.suggester.TermSuggestion;
+import com.enonic.xp.suggester.TermSuggestionEntry;
+import com.enonic.xp.suggester.TermSuggestionOption;
 
 public class FindNodesByQueryHandlerTest
     extends BaseNodeHandlerTest
@@ -53,6 +57,41 @@ public class FindNodesByQueryHandlerTest
                 build() ).
             build();
 
+        final Suggestions suggestions = Suggestions.create().
+            add( TermSuggestion.create( "termSuggestion" ).
+                addSuggestionEntry( TermSuggestionEntry.create().
+                    text( "text1" ).
+                    length( 2 ).
+                    offset( 1 ).
+                    addSuggestionOption( TermSuggestionOption.create().
+                        text( "text1-1" ).
+                        score( 1.0f ).
+                        freq( 2 ).
+                        build() ).
+                    addSuggestionOption( TermSuggestionOption.create().
+                        text( "text1-2" ).
+                        score( 4.0f ).
+                        freq( 5 ).
+                        build() ).
+                    build() ).
+                addSuggestionEntry( TermSuggestionEntry.create().
+                    text( "text2" ).
+                    length( 2 ).
+                    offset( 2 ).
+                    addSuggestionOption( TermSuggestionOption.create().
+                        text( "text2-1" ).
+                        score( 2.3f ).
+                        freq( 4 ).
+                        build() ).
+                    addSuggestionOption( TermSuggestionOption.create().
+                        text( "text2-2" ).
+                        score( 1.0f ).
+                        freq( 2 ).
+                        build() ).
+                    build() ).
+                build() ).
+            build();
+
         Mockito.when( this.nodeService.findByQuery( Mockito.isA( NodeQuery.class ) ) ).
             thenReturn( FindNodesByQueryResult.create().
                 totalHits( 12902 ).
@@ -65,6 +104,7 @@ public class FindNodesByQueryHandlerTest
                     score( 1.40f ).
                     build() ).
                 aggregations( agg ).
+                suggestions( suggestions ).
                 build() );
 
         runScript( "/lib/xp/examples/node/query.js" );
