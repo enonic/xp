@@ -141,7 +141,8 @@ var expectedEmptyJson = {
     "total": 0,
     "count": 0,
     "hits": [],
-    "aggregations": {}
+    "aggregations": {},
+    "highlight" : {}
 };
 
 exports.query = function () {

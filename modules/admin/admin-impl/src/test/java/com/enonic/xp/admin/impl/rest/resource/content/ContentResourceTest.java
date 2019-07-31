@@ -1738,6 +1738,19 @@ public class ContentResourceTest
         assertEquals( 1, result.size() );
     }
 
+
+    @Test
+    public void query_highlight()
+        throws Exception
+    {
+      //  Mockito.when( contentService.create( Mockito.isA( CreateContentParams.class ) ) );
+
+        request().path( "content/query" ).
+            entity( readFromFile( "create_media_from_url.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+    }
+
     @Test
     public void query()
     {

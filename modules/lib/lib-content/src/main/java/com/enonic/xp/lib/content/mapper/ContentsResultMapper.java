@@ -1,8 +1,12 @@
 package com.enonic.xp.lib.content.mapper;
 
+import com.google.common.collect.ImmutableMap;
+
 import com.enonic.xp.aggregation.Aggregations;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.Contents;
+import com.enonic.xp.highlight.HighlightedFields;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 
@@ -15,18 +19,23 @@ public final class ContentsResultMapper
 
     private final Aggregations aggregations;
 
+    private final ImmutableMap<ContentId, HighlightedFields> highlight;
+
     public ContentsResultMapper( final Contents contents, final long total )
     {
         this.contents = contents;
         this.total = total;
         this.aggregations = null;
+        this.highlight = null;
     }
 
-    public ContentsResultMapper( final Contents contents, final long total, final Aggregations aggregations )
+    public ContentsResultMapper( final Contents contents, final long total, final Aggregations aggregations, final
+                                 ImmutableMap<ContentId, HighlightedFields> highlight )
     {
         this.contents = contents;
         this.total = total;
         this.aggregations = aggregations;
+        this.highlight = highlight;
     }
 
     @Override
@@ -36,6 +45,7 @@ public final class ContentsResultMapper
         gen.value( "count", this.contents.getSize() );
         serialize( gen, this.contents );
         serialize( gen, aggregations );
+        serialize( gen, highlight );
     }
 
     private void serialize( final MapGenerator gen, final Contents contents )
@@ -56,6 +66,16 @@ public final class ContentsResultMapper
         {
             gen.map( "aggregations" );
             new AggregationMapper( aggregations ).serialize( gen );
+            gen.end();
+        }
+    }
+
+    private void serialize( final MapGenerator gen, ImmutableMap<ContentId, HighlightedFields> highlight )
+    {
+        if ( highlight != null )
+        {
+            gen.map( "highlight" );
+            new HighlightMapper( highlight ).serialize( gen );
             gen.end();
         }
     }
