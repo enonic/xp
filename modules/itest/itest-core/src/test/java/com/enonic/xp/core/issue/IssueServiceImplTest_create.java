@@ -77,4 +77,30 @@ public class IssueServiceImplTest_create
         assertEquals( from, issue.getSchedule().getFrom() );
         assertEquals( to, issue.getSchedule().getTo() );
     }
+
+    @Test
+    public void create_publish_request_issue_without_schedule()
+        throws Exception
+    {
+        final CreatePublishRequestIssueParams params = CreatePublishRequestIssueParams.create().
+            title( "title" ).
+            description( "description" ).
+            setApproverIds( PrincipalKeys.from( "user:myStore:approver-1" ) ).
+            setPublishRequest( PublishRequest.create().addExcludeId( ContentId.from( "exclude-id" ) ).addItem(
+                PublishRequestItem.create().id( ContentId.from( "content-id" ) ).includeChildren( true ).build() ).build() ).
+            build();
+
+        final PublishRequestIssue issue = (PublishRequestIssue) this.issueService.create( params );
+
+        assertNotNull( issue );
+        assertEquals( "title", issue.getTitle() );
+        assertEquals( "description", issue.getDescription() );
+        assertEquals( IssueStatus.OPEN, issue.getStatus() );
+        assertEquals( PrincipalKey.from( "user:system:test-user" ), issue.getCreator() );
+        assertEquals( PrincipalKey.from( "user:myStore:approver-1" ), issue.getApproverIds().first() );
+        assertEquals( ContentId.from( "content-id" ), issue.getPublishRequest().getItems().first().getId() );
+        assertEquals( ContentId.from( "exclude-id" ), issue.getPublishRequest().getExcludeIds().first() );
+        assertEquals( IssueNameFactory.create( issue.getIndex() ), issue.getName() );
+        assertNull( issue.getSchedule() );
+    }
 }

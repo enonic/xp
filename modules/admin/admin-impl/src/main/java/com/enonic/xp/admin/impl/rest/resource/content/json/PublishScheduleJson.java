@@ -13,12 +13,10 @@ public class PublishScheduleJson
     private Instant publishTo;
 
     @JsonCreator
-    public PublishScheduleJson( @JsonProperty("from") final String publishFrom, @JsonProperty("to") final String publishTo )
+    public PublishScheduleJson( @JsonProperty(value = "from", required = true) final String publishFrom,
+                                @JsonProperty("to") final String publishTo )
     {
-        if ( publishFrom != null )
-        {
-            this.publishFrom = Instant.parse( publishFrom );
-        }
+        this.publishFrom = Instant.parse( publishFrom );
         if ( publishTo != null )
         {
             this.publishTo = Instant.parse( publishTo );
