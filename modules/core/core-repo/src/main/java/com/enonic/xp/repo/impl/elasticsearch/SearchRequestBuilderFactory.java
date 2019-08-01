@@ -17,6 +17,8 @@ import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
 
 public class SearchRequestBuilderFactory
 {
+    private static final String HIGHLIGHTER_TYPE = "plain";
+
     private final int resolvedSize;
 
     private final ElasticsearchQuery query;
@@ -84,6 +86,7 @@ public class SearchRequestBuilderFactory
         final ImmutableList<String> postTags = highlight.getPostTags();
         final Boolean requireFieldMatch = highlight.getRequireFieldMatch();
 
+        builder.setHighlighterType( HIGHLIGHTER_TYPE );
         if (encoder != null) {
             builder.setHighlighterEncoder( encoder.value() );
         }

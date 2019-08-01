@@ -67,7 +67,7 @@ final class QueryHighlightParams
                                                               final Map<String, Object> fieldMap )
     {
         return builder.fragmenter( Fragmenter.from( (String) fieldMap.get( "fragmenter" ) ) ).
-            fragmentSize( (Integer) fieldMap.get( "fragmenterSize" ) ).
+            fragmentSize( (Integer) fieldMap.get( "fragmentSize" ) ).
             noMatchSize( (Integer) fieldMap.get( "noMatchSize" ) ).
             numOfFragments( (Integer) fieldMap.get( "numberOfFragments" ) ).
             order( Order.from( (String) fieldMap.get( "order" ) ) ).
