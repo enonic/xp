@@ -188,7 +188,7 @@ public class ElasticsearchQuery
 
         private Set<SuggestBuilder.SuggestionBuilder> suggestions = Sets.newHashSet();
 
-        private ElasticHighlightQuery highlight = ElasticHighlightQuery.create().build();
+        private ElasticHighlightQuery highlight = ElasticHighlightQuery.empty();
 
         private ReturnFields returnFields = ReturnFields.empty();
 
