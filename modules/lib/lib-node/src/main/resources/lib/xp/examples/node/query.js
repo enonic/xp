@@ -70,15 +70,16 @@ var result = repo.query({
                 }
             }
         }
-    }, highlight: {
+    },
+    highlight: {
         encoder: "html",
         fragmenter: "simple",
         fragmenterSize: 5,
         noMatchSize: 5,
         numberOfFragments:5,
         order:"score",
-        preTags : ["<a>"],
-        postTags : ["<b>"],
+        preTag : "<a>",
+        postTag : "<b>",
         requireFieldMatch: false,
         tagsSchema: "styled",
         fields: {
@@ -88,8 +89,8 @@ var result = repo.query({
                 noMatchSize: 6,
                 numberOfFragments:6,
                 order:"none",
-                preTags : ["<a>"],
-                postTags : ["<b>"],
+                preTags : "<c>",
+                postTags : "<d>",
                 requireFieldMatch: true
             }
         }

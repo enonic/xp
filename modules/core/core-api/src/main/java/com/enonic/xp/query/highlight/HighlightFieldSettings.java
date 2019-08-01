@@ -34,8 +34,8 @@ public class HighlightFieldSettings
         this.noMatchSize = builder.noMatchSize;
         this.numOfFragments = builder.numOfFragments;
         this.order = builder.order;
-        this.preTags = ImmutableList.copyOf( builder.preTags );
-        this.postTags = ImmutableList.copyOf( builder.postTags );
+        this.preTags = builder.preTags.build();
+        this.postTags = builder.postTags.build();
         this.requireFieldMatch = builder.requireFieldMatch;
     }
 
@@ -118,17 +118,17 @@ public class HighlightFieldSettings
     {
         private Fragmenter fragmenter;
 
-        private Integer fragmentSize = -1;
+        private Integer fragmentSize;
 
-        private Integer noMatchSize = -1;
+        private Integer noMatchSize;
 
-        private Integer numOfFragments = -1;
+        private Integer numOfFragments;
 
         private Order order;
 
-        private List<String> preTags = Lists.newArrayList();
+        private ImmutableList.Builder<Object> preTags = ImmutableList.builder();
 
-        private List<String> postTags = Lists.newArrayList();
+        private ImmutableList.Builder<Object> postTags = ImmutableList.builder();
 
         private Boolean requireFieldMatch = false;
 
