@@ -120,8 +120,6 @@ public class IssueServiceImplTest_update
     public void update_publish_request_issue_without_schedule()
         throws Exception
     {
-        Instant from = Instant.ofEpochSecond( 1561965725L );
-        Instant to = Instant.ofEpochSecond( 1575184925L );
 
         final PublishRequestIssue issue = (PublishRequestIssue) this.issueService.create( CreatePublishRequestIssueParams.create().
             title( "title" ).
@@ -129,11 +127,7 @@ public class IssueServiceImplTest_update
             setApproverIds( PrincipalKeys.from( "user:myStore:approver-1" ) ).
             setPublishRequest( PublishRequest.create().addItem(
                 PublishRequestItem.create().id( ContentId.from( "content-id" ) ).includeChildren( true ).build() ).build() ).
-            schedule( PublishRequestIssueSchedule.create().from( from ).to( to ).build() ).
             build() );
-
-        Instant newFrom = from.plus( 4, ChronoUnit.DAYS );
-        Instant newTo = to.plus( 8, ChronoUnit.DAYS );
 
         final UpdateIssueParams updateIssueParams = UpdateIssueParams.create().
             id( issue.getId() ).
@@ -146,10 +140,6 @@ public class IssueServiceImplTest_update
                 edit.publishRequest = PublishRequest.create().addExcludeId( ContentId.from( "new-exclude-id" ) ).addItem(
                     PublishRequestItem.create().id( ContentId.from( "new-content-id" ) ).includeChildren( true ).build() ).build();
                 edit.issueStatus = IssueStatus.CLOSED;
-                edit.schedule = PublishRequestIssueSchedule.create().
-                    from( newFrom ).
-                    to( newTo ).
-                    build();
             } ).build();
 
         final PublishRequestIssue updatedIssue = (PublishRequestIssue) this.issueService.update( updateIssueParams );
