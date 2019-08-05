@@ -1,7 +1,5 @@
 package com.enonic.xp.issue;
 
-import com.google.common.base.Preconditions;
-
 public class PublishRequestIssue
     extends Issue
 {
@@ -43,7 +41,6 @@ public class PublishRequestIssue
         @Override
         public PublishRequestIssue build()
         {
-            Preconditions.checkNotNull( schedule, "Publish request issue schedule cannot be null" );
             return new PublishRequestIssue( this );
         }
     }

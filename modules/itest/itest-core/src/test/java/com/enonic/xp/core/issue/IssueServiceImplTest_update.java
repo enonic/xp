@@ -117,6 +117,49 @@ public class IssueServiceImplTest_update
     }
 
     @Test
+    public void update_publish_request_issue_without_schedule()
+        throws Exception
+    {
+
+        final PublishRequestIssue issue = (PublishRequestIssue) this.issueService.create( CreatePublishRequestIssueParams.create().
+            title( "title" ).
+            description( "description" ).
+            setApproverIds( PrincipalKeys.from( "user:myStore:approver-1" ) ).
+            setPublishRequest( PublishRequest.create().addItem(
+                PublishRequestItem.create().id( ContentId.from( "content-id" ) ).includeChildren( true ).build() ).build() ).
+            build() );
+
+        final UpdateIssueParams updateIssueParams = UpdateIssueParams.create().
+            id( issue.getId() ).
+            editor( editMe -> {
+                EditablePublishRequestIssue edit = (EditablePublishRequestIssue) editMe;
+                edit.title = "updated title";
+                edit.description = "updated description";
+                edit.approverIds =
+                    PrincipalKeys.from( PrincipalKey.from( "user:myStore:approver-1" ), PrincipalKey.from( "user:myStore:approver-2" ) );
+                edit.publishRequest = PublishRequest.create().addExcludeId( ContentId.from( "new-exclude-id" ) ).addItem(
+                    PublishRequestItem.create().id( ContentId.from( "new-content-id" ) ).includeChildren( true ).build() ).build();
+                edit.issueStatus = IssueStatus.CLOSED;
+            } ).build();
+
+        final PublishRequestIssue updatedIssue = (PublishRequestIssue) this.issueService.update( updateIssueParams );
+
+        assertNotNull( updatedIssue );
+        assertEquals( "updated title", updatedIssue.getTitle() );
+        assertEquals( "updated description", updatedIssue.getDescription() );
+        assertEquals( IssueStatus.CLOSED, updatedIssue.getStatus() );
+        assertEquals( PrincipalKey.from( "user:system:test-user" ), updatedIssue.getCreator() );
+        assertEquals( PrincipalKey.from( "user:system:test-user" ), updatedIssue.getModifier() );
+        assertEquals( PrincipalKey.from( "user:myStore:approver-1" ), updatedIssue.getApproverIds().first() );
+        assertEquals( ContentId.from( "new-exclude-id" ), updatedIssue.getPublishRequest().getExcludeIds().first() );
+        assertEquals( ContentId.from( "new-content-id" ), updatedIssue.getPublishRequest().getItems().first().getId() );
+        assertEquals( true, updatedIssue.getPublishRequest().getItems().first().getIncludeChildren() );
+        assertEquals( IssueNameFactory.create( updatedIssue.getIndex() ), updatedIssue.getName() );
+        assertNotEquals( updatedIssue.getCreatedTime(), updatedIssue.getModifiedTime() );
+        assertNull( updatedIssue.getSchedule() );
+    }
+
+    @Test
     public void nothing_updated()
         throws Exception
     {
