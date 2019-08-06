@@ -9,9 +9,12 @@ public class HighlightQuery
 {
     private final ImmutableSet<HighlightQueryField> fields;
 
+    private final HighlightQuerySettings settings;
+
     private HighlightQuery( final Builder builder )
     {
         this.fields = ImmutableSet.copyOf( builder.fields );
+        this.settings = builder.settings;
     }
 
     public static HighlightQuery empty()
@@ -24,6 +27,12 @@ public class HighlightQuery
         return new Builder();
     }
 
+
+    public HighlightQuerySettings getSettings()
+    {
+        return settings;
+    }
+
     public ImmutableSet<HighlightQueryField> getFields()
     {
         return fields;
@@ -32,6 +41,8 @@ public class HighlightQuery
     public static class Builder
     {
         private Set<HighlightQueryField> fields = Sets.newHashSet();
+
+        private HighlightQuerySettings settings = HighlightQuerySettings.empty();
 
         public Builder()
         {
@@ -44,10 +55,17 @@ public class HighlightQuery
             return this;
         }
 
+        public Builder settings( final HighlightQuerySettings settings )
+        {
+            this.settings = settings;
+            return this;
+        }
+
         public HighlightQuery build()
         {
             return new HighlightQuery( this );
         }
 
     }
+
 }

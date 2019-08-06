@@ -1,5 +1,6 @@
 package com.enonic.xp.lib.node;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -71,8 +72,10 @@ final class QueryHighlightParams
             noMatchSize( (Integer) fieldMap.get( "noMatchSize" ) ).
             numOfFragments( (Integer) fieldMap.get( "numberOfFragments" ) ).
             order( Order.from( (String) fieldMap.get( "order" ) ) ).
-            addPreTags( (List) fieldMap.get( "preTags" ) ).
-            addPostTags( (List) fieldMap.get( "postTags" ) ).
+            addPreTags(
+                fieldMap.get( "preTag" ) == null ? Collections.emptyList() : Collections.singletonList( fieldMap.get( "preTag" ) ) ).
+            addPostTags(
+                fieldMap.get( "postTag" ) == null ? Collections.emptyList() : Collections.singletonList( fieldMap.get( "postTag" ) ) ).
             requireFieldMatch( (Boolean) fieldMap.get( "requireFieldMatch" ) );
     }
 

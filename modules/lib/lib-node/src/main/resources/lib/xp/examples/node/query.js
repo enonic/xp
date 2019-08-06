@@ -70,26 +70,27 @@ var result = repo.query({
                 }
             }
         }
-    }, highlight: {
+    },
+    highlight: {
         encoder: "html",
         fragmenter: "simple",
-        fragmentSize: 5,
+        fragmenterSize: 5,
         noMatchSize: 5,
-        numberOfFragments: 5,
-        order: "score",
-        preTags: ["<a>"],
-        postTags: ["<b>"],
+        numberOfFragments:5,
+        order:"score",
+        preTag : "<a>",
+        postTag : "<b>",
         requireFieldMatch: false,
         tagsSchema: "styled",
         fields: {
             displayName: {
                 fragmenter: "span",
-                fragmentSize: 6,
+                fragmenterSize: 6,
                 noMatchSize: 6,
-                numberOfFragments: 6,
-                order: "none",
-                preTags: ["<a>"],
-                postTags: ["<b>"],
+                numberOfFragments:6,
+                order:"none",
+                preTags : "<c>",
+                postTags : "<d>",
                 requireFieldMatch: true
             }
         }

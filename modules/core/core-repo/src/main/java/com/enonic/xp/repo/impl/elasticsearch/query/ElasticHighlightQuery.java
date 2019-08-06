@@ -6,16 +6,86 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.search.highlight.HighlightBuilder;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+
+import com.enonic.xp.query.highlight.HighlightQuerySettings;
+import com.enonic.xp.query.highlight.constants.Encoder;
+import com.enonic.xp.query.highlight.constants.Fragmenter;
+import com.enonic.xp.query.highlight.constants.Order;
+import com.enonic.xp.query.highlight.constants.TagsSchema;
 
 public class ElasticHighlightQuery
 {
     private final ImmutableSet<HighlightBuilder.Field> fields;
 
+    private final HighlightQuerySettings settings;
+
     private ElasticHighlightQuery( final Builder builder )
     {
         this.fields = ImmutableSet.copyOf( builder.fields );
+        this.settings = builder.settings;
+    }
+
+    public ImmutableSet<HighlightBuilder.Field> getFields()
+    {
+        return fields;
+    }
+
+    public Encoder getEncoder()
+    {
+        return doGetSettings().getEncoder();
+    }
+
+    public Fragmenter getFragmenter()
+    {
+        return doGetSettings().getFragmenter();
+    }
+
+    public Integer getFragmentSize()
+    {
+        return doGetSettings().getFragmentSize();
+    }
+
+    public Integer getNoMatchSize()
+    {
+        return doGetSettings().getNoMatchSize();
+    }
+
+    public Integer getNumOfFragments()
+    {
+        return doGetSettings().getNumOfFragments();
+    }
+
+    public Order getOrder()
+    {
+        return doGetSettings().getOrder();
+    }
+
+    public ImmutableList<String> getPreTags()
+    {
+        return doGetSettings().getPreTags();
+    }
+
+    public ImmutableList<String> getPostTags()
+    {
+        return doGetSettings().getPostTags();
+    }
+
+    public Boolean getRequireFieldMatch()
+    {
+        return doGetSettings().getRequireFieldMatch();
+    }
+
+    public TagsSchema getTagsSchema()
+    {
+        return doGetSettings().getTagsSchema();
+    }
+
+    private HighlightQuerySettings doGetSettings()
+    {
+        return settings;
     }
 
     public static ElasticHighlightQuery empty()
@@ -26,11 +96,6 @@ public class ElasticHighlightQuery
     public static Builder create()
     {
         return new Builder();
-    }
-
-    public ImmutableSet<HighlightBuilder.Field> getFields()
-    {
-        return fields;
     }
 
     @Override
@@ -51,24 +116,31 @@ public class ElasticHighlightQuery
             return false;
         }
         final ElasticHighlightQuery that = (ElasticHighlightQuery) o;
-        return Objects.equals( fields, that.fields );
+        return Objects.equals( fields, that.fields ) && Objects.equals( settings, that.settings );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( fields );
+        return Objects.hash( fields, settings );
     }
 
     public static class Builder
     {
-
         private Set<HighlightBuilder.Field> fields = Sets.newHashSet();
+
+        private HighlightQuerySettings settings = HighlightQuerySettings.empty();
 
 
         public Builder addField( final HighlightBuilder.Field value )
         {
             this.fields.add( value );
+            return this;
+        }
+
+        public Builder settings( final HighlightQuerySettings settings )
+        {
+            this.settings = settings;
             return this;
         }
 
@@ -78,6 +150,5 @@ public class ElasticHighlightQuery
         }
 
     }
-
 
 }
