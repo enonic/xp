@@ -18,12 +18,25 @@ var result1 = contentLib.create({
                 f: 3.6,
                 g: true
             }
-        }
+        },
+        siteConfig: [
+            {
+                applicationKey: "appKey1",
+                config: {
+                    a: "a", b: true
+                }
+            }, {
+                applicationKey: "appKey2",
+                config: {
+                    c: 4, d: null
+                }
+            }]
     },
     x: {
         "com-enonic-myapplication": {
             myschema: {
-                a: 1
+                a: 1,
+                b: true
             }
         }
     },
@@ -81,12 +94,25 @@ var expected = {
                 "f": 3.6,
                 "g": true
             }
-        }
+        },
+        "siteConfig": [
+            {
+                "applicationKey": "appKey1",
+                "config": {
+                    "a": "a", "b": true
+                }
+            }, {
+                "applicationKey": "appKey2",
+                "config": {
+                    "c": 4
+                }
+            }]
     },
     "x": {
         "com-enonic-myapplication": {
             "myschema": {
-                "a": 1
+                "a": 1,
+                'b': true
             }
         }
     },

@@ -6,28 +6,20 @@ import java.util.Map;
 import java.util.Random;
 import java.util.function.Supplier;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.ExtraData;
-import com.enonic.xp.content.ExtraDatas;
-import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.lib.content.mapper.ContentMapper;
 import com.enonic.xp.name.NamePrettyfier;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.script.ScriptValue;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public final class CreateContentHandler
-    extends BaseContextHandler
+    extends BaseCreateOrModifyContextHandler
 {
     private final static Random RANDOM = new SecureRandom();
 
@@ -96,75 +88,6 @@ public final class CreateContentHandler
     private ContentTypeName contentTypeName( final String value )
     {
         return value != null ? ContentTypeName.from( value ) : null;
-    }
-
-    private PropertyTree createPropertyTree( final Map<?, ?> value, final ContentTypeName contentTypeName )
-    {
-        if ( value == null )
-        {
-            return null;
-        }
-
-        return this.translateToPropertyTree( createJson( value ), contentTypeName );
-    }
-
-    private PropertyTree createPropertyTree( final Map<?, ?> value, final XDataName xDataName, final ContentTypeName contentTypeName )
-    {
-        if ( value == null )
-        {
-            return null;
-        }
-
-        return this.translateToPropertyTree( createJson( value ), xDataName, contentTypeName );
-    }
-
-    private JsonNode createJson( final Map<?, ?> value )
-    {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.valueToTree( value );
-    }
-
-    private ExtraDatas createExtraDatas( final Map<String, Object> value, final ContentTypeName contentTypeName )
-    {
-        if ( value == null )
-        {
-            return null;
-        }
-
-        final ExtraDatas.Builder extradatasBuilder = ExtraDatas.create();
-        for ( final String applicationPrefix : value.keySet() )
-        {
-            final ApplicationKey applicationKey = ExtraData.fromApplicationPrefix( applicationPrefix );
-            final Object extradatasObject = value.get( applicationPrefix );
-            if ( !( extradatasObject instanceof Map ) )
-            {
-                continue;
-            }
-
-            final Map<?, ?> extradatas = (Map<?, ?>) extradatasObject;
-            for ( final Map.Entry<?, ?> entry : extradatas.entrySet() )
-            {
-                final XDataName xDataName = XDataName.from( applicationKey, entry.getKey().toString() );
-                final ExtraData item = createExtraData( xDataName, contentTypeName, entry.getValue() );
-                if ( item != null )
-                {
-                    extradatasBuilder.add( item );
-                }
-            }
-        }
-
-        return extradatasBuilder.build();
-    }
-
-    private ExtraData createExtraData( final XDataName xDataName, final ContentTypeName contentTypeName, final Object value )
-    {
-        if ( value instanceof Map )
-        {
-            final PropertyTree tree = createPropertyTree( (Map) value, xDataName, contentTypeName );
-            return tree != null ? new ExtraData( xDataName, tree ) : null;
-        }
-
-        return null;
     }
 
     private String generateUniqueContentName( final ContentPath parent, final String displayName )
