@@ -43,7 +43,7 @@ var expected = {
     "childOrder": "_ts DESC, _name ASC",
     "data": {
         "myfield": "Hello World",
-        "myCheckbox": "false",
+        "myCheckbox": false,
         "myTime": "11:00"
     },
     "x": {},
