@@ -11,18 +11,19 @@ import com.enonic.xp.node.NodeId;
 public class GetAuditLogCommand
     extends NodeServiceCommand<AuditLog>
 {
-    private final AuditLogId id;
+    private final AuditLogId auditLogId;
 
     private GetAuditLogCommand( final Builder builder )
     {
         super( builder );
-        id = builder.id;
+        auditLogId = builder.auditLogId;
     }
 
     @Override
     public AuditLog execute()
     {
-        Node node = AuditLogContext.createContext().callWith( () -> nodeService.getById( NodeId.from( id ) ) );
+        final NodeId nodeId = NodeId.from( auditLogId.toString() );
+        Node node = AuditLogContext.createContext().callWith( () -> nodeService.getById( nodeId ) );
         return AuditLogSerializer.fromNode( node );
     }
 
@@ -34,21 +35,21 @@ public class GetAuditLogCommand
     public static final class Builder
         extends NodeServiceCommand.Builder<Builder>
     {
-        private AuditLogId id;
+        private AuditLogId auditLogId;
 
         private Builder()
         {
         }
 
-        public Builder id( final AuditLogId val )
+        public Builder auditLogId( final AuditLogId val )
         {
-            id = val;
+            auditLogId = val;
             return this;
         }
 
         private void validate()
         {
-            Preconditions.checkNotNull( id, "AuditLogId cannot be null" );
+            Preconditions.checkNotNull( auditLogId, "AuditLogId cannot be null" );
         }
 
         public GetAuditLogCommand build()

@@ -21,11 +21,6 @@ public abstract class NodeServiceCommand<R>
         {
         }
 
-        public Builder( final NodeServiceCommand source )
-        {
-            this.nodeService = source.nodeService;
-        }
-
         public B nodeService( final NodeService nodeService )
         {
             this.nodeService = nodeService;

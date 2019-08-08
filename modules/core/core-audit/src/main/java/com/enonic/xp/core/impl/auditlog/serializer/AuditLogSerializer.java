@@ -60,7 +60,7 @@ public class AuditLogSerializer
             user( PrincipalKey.from( data.getString( AuditLogPropertyNames.USER ) ) ).
             message( data.getString( AuditLogPropertyNames.MESSAGE ) ).
             objectUris( ImmutableSet.copyOf( objectUris ) ).
-            data( data.getSet( AuditLogPropertyNames.DATA ).getTree() ).
+            data( data.getSet( AuditLogPropertyNames.DATA ).toTree() ).
             build();
     }
 }

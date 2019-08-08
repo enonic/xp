@@ -48,7 +48,7 @@ public class AuditLogServiceImpl
     {
         return GetAuditLogCommand.create().
             nodeService( nodeService ).
-            id( id ).
+            auditLogId( id ).
             build().
             execute();
     }
