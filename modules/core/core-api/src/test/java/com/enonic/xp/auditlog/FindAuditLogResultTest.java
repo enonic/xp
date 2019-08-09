@@ -1,0 +1,36 @@
+package com.enonic.xp.auditlog;
+
+import org.junit.Test;
+
+import static com.enonic.xp.auditlog.AuditLogTestBuilder.getBuilder;
+import static org.junit.Assert.*;
+
+public class FindAuditLogResultTest
+{
+
+    @Test(expected = NullPointerException.class)
+    public void no_hits_provided()
+    {
+        FindAuditLogResult.create().build();
+    }
+
+    @Test
+    public void empty_hits()
+    {
+        FindAuditLogResult result = FindAuditLogResult.create().
+            hits( AuditLogs.empty() ).
+            build();
+        assertEquals( 0, result.getTotal() );
+        assertEquals( AuditLogs.empty(), result.getHits() );
+    }
+
+    @Test
+    public void some_hits()
+    {
+        FindAuditLogResult result = FindAuditLogResult.create().
+            hits( AuditLogs.from( getBuilder().id( AuditLogId.from( 1 ) ).build(), getBuilder().id( AuditLogId.from( 2 ) ).build() ) ).
+            build();
+        assertEquals( 2, result.getTotal() );
+    }
+
+}

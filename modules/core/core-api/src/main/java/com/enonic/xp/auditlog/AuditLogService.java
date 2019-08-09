@@ -8,4 +8,6 @@ public interface AuditLogService
     AuditLog log( AuditLogParams params );
 
     AuditLog get( AuditLogId id );
+
+    FindAuditLogResult find( FindAuditLogParams params );
 }

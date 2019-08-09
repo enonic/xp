@@ -45,6 +45,6 @@ public class AuditLogId
     public static AuditLogId from( Object object )
     {
         Preconditions.checkNotNull( object, "object cannot be null" );
-        return new AuditLogId( object.toString() );
+        return AuditLogId.from( object.toString() );
     }
 }
