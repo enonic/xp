@@ -1,6 +1,6 @@
 package com.enonic.xp.lib.content;
 
-import java.util.List;
+import java.util.Collections;
 import java.util.Map;
 
 import com.enonic.xp.query.highlight.HighlightFieldSettings;
@@ -13,7 +13,7 @@ import com.enonic.xp.query.highlight.constants.Order;
 import com.enonic.xp.query.highlight.constants.TagsSchema;
 
 @SuppressWarnings("unchecked")
-final class QueryHighlightParams
+    final class QueryHighlightParams
 {
     QueryHighlightParams()
     {
@@ -71,8 +71,10 @@ final class QueryHighlightParams
             noMatchSize( (Integer) fieldMap.get( "noMatchSize" ) ).
             numOfFragments( (Integer) fieldMap.get( "numberOfFragments" ) ).
             order( Order.from( (String) fieldMap.get( "order" ) ) ).
-            addPreTags( (List) fieldMap.get( "preTags" ) ).
-            addPostTags( (List) fieldMap.get( "postTags" ) ).
+            addPreTags(
+                fieldMap.get( "preTag" ) == null ? Collections.emptyList() : Collections.singletonList( fieldMap.get( "preTag" ) ) ).
+            addPostTags(
+                fieldMap.get( "postTag" ) == null ? Collections.emptyList() : Collections.singletonList( fieldMap.get( "postTag" ) ) ).
             requireFieldMatch( (Boolean) fieldMap.get( "requireFieldMatch" ) );
     }
 
