@@ -46,7 +46,10 @@ public class AuditLogServiceImplTest
             data( data ).
             build();
 
-        CreateNodeParams createNodeParams = AuditLogSerializer.toCreateNodeParams( auditLogParams ).build();
+        CreateNodeParams createNodeParams = AuditLogSerializer.toCreateNodeParams( auditLogParams ).
+            setNodeId( new NodeId() ).
+            build();
+
         Node node = Node.create().
             id( createNodeParams.getNodeId() ).
             data( createNodeParams.getData() ).

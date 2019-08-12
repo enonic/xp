@@ -7,6 +7,7 @@ import com.enonic.xp.auditlog.AuditLogParams;
 import com.enonic.xp.core.impl.auditlog.serializer.AuditLogSerializer;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
 
@@ -24,18 +25,25 @@ public class CreateAuditLogCommand
     @Override
     public AuditLog execute()
     {
+        Node createdNode = AuditLogContext.createAdminContext().callWith( this::createNode );
+        return AuditLogSerializer.fromNode( createdNode );
+    }
+
+    private Node createNode()
+    {
+        NodeId id = new NodeId();
+
         CreateNodeParams createNodeParams = AuditLogSerializer.toCreateNodeParams( params ).
+            setNodeId( id ).
+            name( id.toString() ).
             parent( NodePath.ROOT ).
             childOrder( AuditLogConstants.AUDIT_LOG_REPO_DEFAULT_CHILD_ORDER ).
             build();
 
-        Node createdNode = AuditLogContext.createAdminContext().callWith( () -> {
-            Node n = nodeService.create( createNodeParams );
-            nodeService.refresh( RefreshMode.ALL );
-            return n;
-        } );
+        Node node = nodeService.create( createNodeParams );
+        nodeService.refresh( RefreshMode.ALL ); // TODO: Is this correct?
 
-        return AuditLogSerializer.fromNode( createdNode );
+        return node;
     }
 
     public static Builder create()
