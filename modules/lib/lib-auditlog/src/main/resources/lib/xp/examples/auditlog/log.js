@@ -27,7 +27,7 @@ var log2 = auditLib.log({
 // END
 
 var expected1 = {
-    '_id': '123',
+    '_id': '90b976f7-55ab-48ef-acb8-e7c6f0744442',
     'type': 'testlog',
     'time': '2019-08-12T08:44:02.767Z',
     'source': 'testbundle',
@@ -40,7 +40,7 @@ var expected1 = {
 assert.assertJsonEquals(expected1, log1);
 
 var expected2 = {
-    '_id': '123',
+    '_id': '90b976f7-55ab-48ef-acb8-e7c6f0744442',
     'type': 'testlog',
     'time': '2019-08-12T08:44:02.767Z',
     'source': 'testbundle',

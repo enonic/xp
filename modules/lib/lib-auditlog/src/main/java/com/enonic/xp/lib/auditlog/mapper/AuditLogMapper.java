@@ -13,7 +13,6 @@ import com.enonic.xp.script.serializer.MapSerializable;
 public class AuditLogMapper
     implements MapSerializable
 {
-
     private final AuditLog auditLog;
 
     public AuditLogMapper( final AuditLog auditLog )
@@ -23,6 +22,11 @@ public class AuditLogMapper
 
     @Override
     public void serialize( final MapGenerator gen )
+    {
+        serializeAuditLog( gen, auditLog );
+    }
+
+    static void serializeAuditLog( MapGenerator gen, AuditLog auditLog )
     {
         gen.value( "_id", auditLog.getId() ); // TODO: Should this be _id like content or just id
         gen.value( "type", auditLog.getType() );

@@ -54,3 +54,38 @@ exports.log = function (params) {
 
     return __.toNativeObject(bean.execute());
 };
+
+/**
+ * This function fetches an audit log.
+ *
+ * @example-ref examples/auditlog/get.js
+ *
+ * @param {object} params     JSON with the parameters.
+ * @param {string} params.id  Id of the audit log.
+ *
+ * @returns {object} Audit log as JSON.
+ */
+exports.get = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.auditlog.GetAuditLogHandler');
+    bean.id = required(params, 'id');
+    return __.toNativeObject(bean.execute());
+};
+
+/**
+ * This function searches for audit logs.
+ *
+ * All parameters are semi-optional, meaning that you should at least supply one
+ * of them. If no parameters are supplied you will get an empty result.
+ *
+ * @example-ref examples/auditlog/find.js
+ *
+ * @param {object} params     JSON with the parameters.
+ * @param {string} [params.ids]  Ids of audit logs.
+ *
+ * @returns {object} Audit log search results.
+ */
+exports.find = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.auditlog.FindAuditLogHandler');
+    bean.ids = __.toScriptValue(params.ids);
+    return __.toNativeObject(bean.execute());
+};
