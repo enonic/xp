@@ -34,7 +34,16 @@ public class FindAuditLogCommand
 
     private FindAuditLogResult runQuery()
     {
-        FindNodesByQueryResult result = nodeService.findByQuery( createQuery() );
+        final NodeQuery query = createQuery();
+
+        if ( query == null )
+        {
+            return FindAuditLogResult.create().
+                hits( AuditLogs.empty() ).
+                build();
+        }
+
+        FindNodesByQueryResult result = nodeService.findByQuery( query );
         Nodes nodes = nodeService.getByIds( result.getNodeIds() );
 
         List<AuditLog> logs = nodes.stream().map( AuditLogSerializer::fromNode ).collect( Collectors.toList() );
@@ -47,12 +56,22 @@ public class FindAuditLogCommand
     private NodeQuery createQuery()
     {
         NodeQuery.Builder builder = NodeQuery.create();
+
+        boolean filterAdded = false;
+
         if ( params.getIds() != null )
         {
+            filterAdded = true;
             builder.addQueryFilter( IdFilter.create().
                 values( params.getIds().asStrings() ).
                 build() );
         }
+
+        if ( !filterAdded )
+        {
+            return null;
+        }
+
         return builder.build();
     }
 
