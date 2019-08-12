@@ -20,7 +20,7 @@ import com.enonic.xp.schema.content.ContentTypeName;
 
 public final class CreateContentJson
 {
-    private final CreateContentParams createContent;
+    private final CreateContentParams.Builder createContent;
 
     private List<AttachmentJson> attachments;
 
@@ -50,11 +50,11 @@ public final class CreateContentJson
         paramsBuilder.extraDatas( extradatasBuilder.build());
         paramsBuilder.inheritPermissions( true );
 
-        this.createContent = paramsBuilder.build();
+        this.createContent = paramsBuilder;
     }
 
     @JsonIgnore
-    public CreateContentParams getCreateContent()
+    public CreateContentParams.Builder getCreateContent()
     {
         return createContent;
     }

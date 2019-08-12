@@ -132,6 +132,7 @@ import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
+import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
@@ -162,7 +163,9 @@ import com.enonic.xp.extractor.ExtractedData;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.jaxrs.JaxRsExceptions;
+import com.enonic.xp.layer.ContentLayer;
 import com.enonic.xp.layer.ContentLayerName;
+import com.enonic.xp.layer.ContentLayerService;
 import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.repository.IndexException;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -217,6 +220,8 @@ public final class ContentResource
 
     private ContentService contentService;
 
+    private ContentLayerService contentLayerService;
+
     private ContentPrincipalsResolver principalsResolver;
 
     private SecurityService securityService;
@@ -237,7 +242,10 @@ public final class ContentResource
     @Path("create")
     public ContentJson create( final CreateContentJson params )
     {
-        final Content persistedContent = contentService.create( params.getCreateContent() );
+        final CreateContentParams.Builder createParamsBuilder = params.getCreateContent();
+        final ContentLayer contentLayer = contentLayerService.get( ContentLayerName.current() );
+        createParamsBuilder.language( contentLayer.getLanguage() );
+        final Content persistedContent = contentService.create( createParamsBuilder.build() );
         return new ContentJson( persistedContent, contentIconUrlResolver, principalsResolver );
     }
 
@@ -1476,6 +1484,12 @@ public final class ContentResource
     public void setContentService( final ContentService contentService )
     {
         this.contentService = contentService;
+    }
+
+    @Reference
+    public void setContentLayerService( final ContentLayerService contentLayerService )
+    {
+        this.contentLayerService = contentLayerService;
     }
 
     @Reference
