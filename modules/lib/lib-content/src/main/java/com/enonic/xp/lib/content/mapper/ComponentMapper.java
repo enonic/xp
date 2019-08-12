@@ -4,6 +4,7 @@ import com.enonic.xp.lib.common.PropertyTreeMapper;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.DescriptorBasedComponent;
 import com.enonic.xp.region.FragmentComponent;
+import com.enonic.xp.region.ImageComponent;
 import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.region.TextComponent;
@@ -26,6 +27,8 @@ public final class ComponentMapper
     static final String REGIONS = "regions";
 
     static final String FRAGMENT = "fragment";
+
+    static final String IMAGE = "image";
 
     private final Component value;
 
@@ -62,6 +65,10 @@ public final class ComponentMapper
         {
             serialize( gen, (FragmentComponent) value );
         }
+        else if ( value instanceof ImageComponent )
+        {
+            serialize( gen, (ImageComponent) value );
+        }
     }
 
     private void serialize( final MapGenerator gen, final DescriptorBasedComponent comp )
@@ -96,5 +103,10 @@ public final class ComponentMapper
     private void serialize( final MapGenerator gen, final TextComponent comp )
     {
         gen.value( TEXT, comp.getText() );
+    }
+
+    private void serialize( final MapGenerator gen, final ImageComponent comp )
+    {
+        gen.value( IMAGE, comp.getImage() );
     }
 }
