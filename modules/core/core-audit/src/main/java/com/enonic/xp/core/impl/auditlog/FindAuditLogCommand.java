@@ -38,9 +38,7 @@ public class FindAuditLogCommand
 
         if ( query == null )
         {
-            return FindAuditLogResult.create().
-                hits( AuditLogs.empty() ).
-                build();
+            return FindAuditLogResult.empty();
         }
 
         FindNodesByQueryResult result = nodeService.findByQuery( query );
@@ -49,6 +47,7 @@ public class FindAuditLogCommand
         List<AuditLog> logs = nodes.stream().map( AuditLogSerializer::fromNode ).collect( Collectors.toList() );
 
         return FindAuditLogResult.create().
+            total( result.getTotalHits() ).
             hits( AuditLogs.from( logs ) ).
             build();
     }
@@ -72,7 +71,10 @@ public class FindAuditLogCommand
             return null;
         }
 
-        return builder.build();
+        return builder.
+            from( params.getStart() ).
+            size( params.getCount() ).
+            build();
     }
 
     public static Builder create()

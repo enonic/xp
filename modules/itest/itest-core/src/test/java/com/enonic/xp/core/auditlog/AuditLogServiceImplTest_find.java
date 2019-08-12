@@ -29,7 +29,7 @@ public class AuditLogServiceImplTest_find
         AuditLog log = auditLogService.log( params );
 
         FindAuditLogResult result = auditLogService.find( FindAuditLogParams.create().ids( AuditLogIds.from( log.getId() ) ).build() );
-        assertEquals( 0L, result.getTotal() );
+        assertEquals( 0L, result.getCount() );
     }
 
     @Test
@@ -39,7 +39,7 @@ public class AuditLogServiceImplTest_find
         AuditLog log = auditLogService.log( params );
         FindAuditLogResult result = AuditLogContext.createAdminContext().callWith(
             () -> auditLogService.find( FindAuditLogParams.create().ids( AuditLogIds.from( log.getId() ) ).build() ) );
-        assertEquals( 1L, result.getTotal() );
+        assertEquals( 1L, result.getCount() );
         assertEquals( log, result.getHits().first() );
     }
 
@@ -50,7 +50,7 @@ public class AuditLogServiceImplTest_find
         auditLogService.log( params );
         FindAuditLogResult result =
             AuditLogContext.createAdminContext().callWith( () -> auditLogService.find( FindAuditLogParams.create().build() ) );
-        assertEquals( 0L, result.getTotal() );
+        assertEquals( 0L, result.getCount() );
     }
 
 }

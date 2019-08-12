@@ -80,12 +80,16 @@ exports.get = function (params) {
  * @example-ref examples/auditlog/find.js
  *
  * @param {object} params     JSON with the parameters.
+ * @param {number} [params.start=0] Start index (used for paging).
+ * @param {number} [params.count=10] Number of contents to fetch.
  * @param {string} [params.ids]  Ids of audit logs.
  *
  * @returns {object} Audit log search results.
  */
 exports.find = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.auditlog.FindAuditLogHandler');
+    bean.start = params.start;
+    bean.count = params.count;
     bean.ids = __.toScriptValue(params.ids);
     return __.toNativeObject(bean.execute());
 };

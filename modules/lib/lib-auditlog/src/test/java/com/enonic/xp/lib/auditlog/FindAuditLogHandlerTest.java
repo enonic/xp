@@ -23,6 +23,7 @@ public class FindAuditLogHandlerTest
         Mockito.when( this.auditLogService.find( Mockito.any( FindAuditLogParams.class ) ) ).
             thenReturn( FindAuditLogResult.create().
                 hits( AuditLogs.from( mocklog ) ).
+                total( 2L ).
                 build() );
     }
 

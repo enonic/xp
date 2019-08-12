@@ -11,6 +11,10 @@ public class FindAuditLogHandler
     extends BaseAuditLogHandler
 {
 
+    private Integer start;
+
+    private Integer count;
+
     private AuditLogIds ids;
 
     @Override
@@ -20,6 +24,16 @@ public class FindAuditLogHandler
             create().
             ids( ids ).
             build() ) );
+    }
+
+    public void setStart( final Integer start )
+    {
+        this.start = start;
+    }
+
+    public void setCount( final Integer count )
+    {
+        this.count = count;
     }
 
     public void setIds( final ScriptValue ids )

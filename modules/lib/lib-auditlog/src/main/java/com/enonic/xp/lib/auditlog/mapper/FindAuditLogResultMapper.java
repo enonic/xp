@@ -18,6 +18,7 @@ public class FindAuditLogResultMapper
     public void serialize( final MapGenerator gen )
     {
         gen.value( "total", result.getTotal() );
+        gen.value( "count", result.getCount() );
         gen.array( "hits" );
         result.getHits().forEach( hit -> {
             gen.map();
