@@ -1,9 +1,9 @@
 package com.enonic.xp.core.auditlog;
 
 import org.junit.Before;
+import org.mockito.Mockito;
 
-import com.enonic.xp.auditlog.AuditLog;
-import com.enonic.xp.auditlog.AuditLogParams;
+import com.enonic.xp.core.impl.auditlog.AuditLogConfig;
 import com.enonic.xp.core.impl.auditlog.AuditLogRepoInitializer;
 import com.enonic.xp.core.impl.auditlog.AuditLogServiceImpl;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
@@ -132,12 +132,12 @@ public class AbstractAuditLogServiceTest
 
         this.auditLogService.setNodeService( this.nodeService );
 
-        initializeRepository();
-    }
+        AuditLogConfig config = Mockito.mock( AuditLogConfig.class );
+        Mockito.when( config.enabled() ).thenReturn( true );
+        Mockito.when( config.outputLogs() ).thenReturn( true );
+        this.auditLogService.setConfig( config );
 
-    protected AuditLog createLog( AuditLogParams.Builder builder )
-    {
-        return this.auditLogService.log( builder.build() );
+        initializeRepository();
     }
 
     private void initializeRepository()

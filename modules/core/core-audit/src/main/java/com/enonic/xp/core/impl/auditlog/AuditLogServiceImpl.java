@@ -1,9 +1,12 @@
 package com.enonic.xp.core.impl.auditlog;
 
-import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import com.enonic.xp.auditlog.AuditLog;
 import com.enonic.xp.auditlog.AuditLogId;
@@ -15,10 +18,16 @@ import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.repository.RepositoryService;
 
-@Component(immediate = true)
+@Component(immediate = true, configurationPid = "com.enonic.xp.audit")
 public class AuditLogServiceImpl
     implements AuditLogService
 {
+    private final static Logger LOG = LoggerFactory.getLogger( AuditLogService.class );
+
+    private final Marker AUDIT = MarkerFactory.getMarker( "AUDIT" );
+
+    private AuditLogConfig config;
+
     private IndexService indexService;
 
     private RepositoryService repositoryService;
@@ -26,8 +35,16 @@ public class AuditLogServiceImpl
     private NodeService nodeService;
 
     @Activate
-    public void initialize( final BundleContext context )
+    public void initialize( final AuditLogConfig cfg )
     {
+        setConfig( cfg );
+
+        if ( !config.enabled() )
+        {
+            LOG.info( "Audit logs are disabled" );
+            return;
+        }
+
         AuditLogRepoInitializer.create().
             setIndexService( indexService ).
             setRepositoryService( repositoryService ).
@@ -35,14 +52,37 @@ public class AuditLogServiceImpl
             initialize();
     }
 
+    public void setConfig( AuditLogConfig config )
+    {
+        this.config = config;
+    }
+
     @Override
     public AuditLog log( final AuditLogParams params )
     {
-        return CreateAuditLogCommand.create().
+        if ( !config.enabled() )
+        {
+            return null; // TODO: Is it ok to do this?
+        }
+
+        AuditLog result = CreateAuditLogCommand.create().
             nodeService( nodeService ).
             params( params ).
             build().
             execute();
+
+        if ( this.config.outputLogs() )
+        {
+            logAuditLog( result );
+        }
+
+        return result;
+    }
+
+    private void logAuditLog( final AuditLog auditLog )
+    {
+        LOG.info( AUDIT, // TODO: What do we want to log here
+                  String.format( "%s %s %s", auditLog.getId(), auditLog.getSource(), auditLog.getMessage() ) );
     }
 
     @Override

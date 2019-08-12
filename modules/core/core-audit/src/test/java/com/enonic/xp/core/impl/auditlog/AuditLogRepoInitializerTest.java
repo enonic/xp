@@ -37,7 +37,11 @@ public class AuditLogRepoInitializerTest
     @Test
     public void do_initialize()
     {
-        auditLogService.initialize( null );
+        AuditLogConfig config = Mockito.mock( AuditLogConfig.class );
+        Mockito.when( config.enabled() ).thenReturn( true );
+        Mockito.when( config.outputLogs() ).thenReturn( true );
+
+        auditLogService.initialize( config );
     }
 
     private static Answer<Boolean> initializationAnswer()

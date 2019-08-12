@@ -11,7 +11,6 @@ import com.google.common.collect.ImmutableSet;
 import com.enonic.xp.auditlog.AuditLog;
 import com.enonic.xp.auditlog.AuditLogId;
 import com.enonic.xp.auditlog.AuditLogParams;
-import com.enonic.xp.auditlog.AuditLogService;
 import com.enonic.xp.core.impl.auditlog.serializer.AuditLogSerializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
@@ -26,7 +25,7 @@ public class AuditLogServiceImplTest
 
     private NodeService nodeService;
 
-    private AuditLogService auditLogService;
+    private AuditLogServiceImpl auditLogService;
 
     private AuditLogParams auditLogParams;
 
@@ -60,7 +59,12 @@ public class AuditLogServiceImplTest
         Mockito.when( this.nodeService.getById( Mockito.any( NodeId.class ) ) ).thenReturn( node );
 
         auditLogService = new AuditLogServiceImpl();
-        ( (AuditLogServiceImpl) auditLogService ).setNodeService( nodeService );
+        auditLogService.setNodeService( nodeService );
+
+        AuditLogConfig config = Mockito.mock( AuditLogConfig.class );
+        Mockito.when( config.enabled() ).thenReturn( true );
+        Mockito.when( config.outputLogs() ).thenReturn( true );
+        auditLogService.setConfig( config );
     }
 
     @Test(expected = NullPointerException.class)
