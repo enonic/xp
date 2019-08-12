@@ -146,6 +146,9 @@ import com.enonic.xp.extractor.ExtractedData;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.jaxrs.impl.MockRestResponse;
+import com.enonic.xp.layer.ContentLayer;
+import com.enonic.xp.layer.ContentLayerName;
+import com.enonic.xp.layer.ContentLayerService;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
@@ -209,6 +212,8 @@ public class ContentResourceTest
 
     private ContentService contentService;
 
+    private ContentLayerService contentLayerService;
+
     private SecurityService securityService;
 
     private TaskService taskService;
@@ -224,16 +229,19 @@ public class ContentResourceTest
     protected ContentResource getResourceInstance()
     {
         contentTypeService = Mockito.mock( ContentTypeService.class );
+        contentLayerService = Mockito.mock( ContentLayerService.class );
 
         final ContentResource resource = new ContentResource();
 
         contentService = Mockito.mock( ContentService.class );
         resource.setContentService( contentService );
         resource.setContentTypeService( contentTypeService );
+        resource.setContentLayerService( contentLayerService );
 
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
             thenReturn( createContentType( "myapplication:my_type" ) );
 
+        Mockito.when( contentLayerService.get( Mockito.isA( ContentLayerName.class ) ) ).thenReturn( createContentLayer() );
         securityService = Mockito.mock( SecurityService.class );
         resource.setSecurityService( securityService );
 
@@ -2237,6 +2245,11 @@ public class ContentResourceTest
             name( name ).
             icon( Icon.from( new byte[]{123}, "image/gif", Instant.now() ) ).
             build();
+    }
+
+    private ContentLayer createContentLayer()
+    {
+        return ContentLayer.create().name( ContentLayerName.DEFAULT_LAYER_NAME ).displayName( "Base" ).build();
     }
 
     private AccessControlList getTestPermissions()
