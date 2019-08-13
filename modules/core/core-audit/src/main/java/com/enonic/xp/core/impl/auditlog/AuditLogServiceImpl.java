@@ -62,7 +62,19 @@ public class AuditLogServiceImpl
     {
         if ( !config.enabled() )
         {
-            return null; // TODO: Is it ok to do this?
+            // Audit logging is disabled, just return
+            // log object without actually saving it
+            // TODO: Is it ok to do this?
+            return AuditLog.create().
+                id( AuditLogId.from( "00000000-0000-0000-0000-000000000000" ) ).
+                type( params.getType() ).
+                time( params.getTime() ).
+                source( params.getSource() ).
+                user( params.getUser() ).
+                message( params.getMessage() ).
+                objectUris( params.getObjectUris() ).
+                data( params.getData() ).
+                build();
         }
 
         AuditLog result = CreateAuditLogCommand.create().
