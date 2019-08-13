@@ -30,8 +30,6 @@ import static org.junit.Assert.*;
 public class AuditLogServiceImplTest
 {
 
-    private NodeService nodeService;
-
     private AuditLogServiceImpl auditLogService;
 
     private AuditLogParams auditLogParams;
@@ -61,11 +59,11 @@ public class AuditLogServiceImplTest
             data( createNodeParams.getData() ).
             build();
 
-        nodeService = Mockito.mock( NodeService.class );
-        Mockito.when( this.nodeService.create( Mockito.any( CreateNodeParams.class ) ) ).thenReturn( node );
-        Mockito.when( this.nodeService.getById( Mockito.any( NodeId.class ) ) ).thenReturn( node );
-        Mockito.when( this.nodeService.getByIds( Mockito.any( NodeIds.class ) ) ).thenReturn( Nodes.from( node ) );
-        Mockito.when( this.nodeService.findByQuery( Mockito.any( NodeQuery.class ) ) ).
+        NodeService nodeService = Mockito.mock( NodeService.class );
+        Mockito.when( nodeService.create( Mockito.any( CreateNodeParams.class ) ) ).thenReturn( node );
+        Mockito.when( nodeService.getById( Mockito.any( NodeId.class ) ) ).thenReturn( node );
+        Mockito.when( nodeService.getByIds( Mockito.any( NodeIds.class ) ) ).thenReturn( Nodes.from( node ) );
+        Mockito.when( nodeService.findByQuery( Mockito.any( NodeQuery.class ) ) ).
             thenReturn( FindNodesByQueryResult.create().
                 addNodeHit( NodeHit.create().
                     nodeId( node.id() ).

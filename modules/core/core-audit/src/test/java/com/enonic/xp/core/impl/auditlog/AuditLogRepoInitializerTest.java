@@ -12,6 +12,8 @@ import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 
+import static org.junit.Assert.*;
+
 public class AuditLogRepoInitializerTest
 {
 
@@ -42,6 +44,7 @@ public class AuditLogRepoInitializerTest
         Mockito.when( config.outputLogs() ).thenReturn( true );
 
         auditLogService.initialize( config );
+        assertNotNull( auditLogService.getConfig() );
     }
 
     private static Answer<Boolean> initializationAnswer()

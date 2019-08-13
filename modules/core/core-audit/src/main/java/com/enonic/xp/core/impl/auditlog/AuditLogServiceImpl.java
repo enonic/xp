@@ -52,6 +52,11 @@ public class AuditLogServiceImpl
             initialize();
     }
 
+    public AuditLogConfig getConfig()
+    {
+        return config;
+    }
+
     public void setConfig( AuditLogConfig config )
     {
         this.config = config;

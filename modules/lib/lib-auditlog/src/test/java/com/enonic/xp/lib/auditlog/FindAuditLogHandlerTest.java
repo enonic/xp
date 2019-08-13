@@ -9,6 +9,8 @@ import com.enonic.xp.auditlog.AuditLogs;
 import com.enonic.xp.auditlog.FindAuditLogParams;
 import com.enonic.xp.auditlog.FindAuditLogResult;
 
+import static org.junit.Assert.*;
+
 public class FindAuditLogHandlerTest
     extends BaseAuditLogHandlerTest
 {
@@ -31,6 +33,6 @@ public class FindAuditLogHandlerTest
     public void testExample()
     {
         mockCreateLog();
-        runScript( "/lib/xp/examples/auditlog/find.js" );
+        assertNotNull( runScript( "/lib/xp/examples/auditlog/find.js" ) );
     }
 }

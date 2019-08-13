@@ -10,7 +10,7 @@
 function required(params, name) {
     var value = params[name];
     if (value === undefined) {
-        throw "Parameter '" + name + "' is required";
+        throw 'Parameter "' + name + '" is required';
     }
 
     return value;

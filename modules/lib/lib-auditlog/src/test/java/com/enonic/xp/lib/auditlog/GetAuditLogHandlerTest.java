@@ -7,6 +7,8 @@ import com.enonic.xp.auditlog.AuditLog;
 import com.enonic.xp.auditlog.AuditLogId;
 import com.enonic.xp.auditlog.AuditLogParams;
 
+import static org.junit.Assert.*;
+
 public class GetAuditLogHandlerTest
     extends BaseAuditLogHandlerTest
 {
@@ -25,6 +27,6 @@ public class GetAuditLogHandlerTest
     public void testExample()
     {
         mockCreateLog();
-        runScript( "/lib/xp/examples/auditlog/get.js" );
+        assertNotNull( runScript( "/lib/xp/examples/auditlog/get.js" ) );
     }
 }
