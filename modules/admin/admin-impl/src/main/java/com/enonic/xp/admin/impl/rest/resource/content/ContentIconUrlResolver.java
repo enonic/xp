@@ -6,6 +6,7 @@ import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.Media;
+import com.enonic.xp.layer.ContentLayerName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
@@ -23,8 +24,7 @@ public final class ContentIconUrlResolver
     {
         if ( content.hasThumbnail() )
         {
-            return ServletRequestUrlHelper.createUri(
-                "/admin/rest/content/icon/" + content.getId() + "?ts=" + content.getModifiedTime().toEpochMilli() );
+            return ServletRequestUrlHelper.createUri( makeIconUri( content ) );
         }
         else if ( content instanceof Media )
         {
@@ -34,8 +34,7 @@ public final class ContentIconUrlResolver
                 final Attachment attachment = ( (Media) content ).getMediaAttachment();
                 if ( attachment != null )
                 {
-                    return ServletRequestUrlHelper.createUri(
-                        "/admin/rest/content/icon/" + content.getId() + "?ts=" + content.getModifiedTime().toEpochMilli() );
+                    return ServletRequestUrlHelper.createUri( makeIconUri( content ) );
                 }
             }
         }
@@ -47,5 +46,16 @@ public final class ContentIconUrlResolver
         {
             return null;
         }
+    }
+
+    private String makeIconUri( final Content content )
+    {
+        return ServletRequestUrlHelper.createUri(
+            "/admin/rest/cms/default/" + getLayerName() + "/icon/" + content.getId() + "?ts=" + content.getModifiedTime().toEpochMilli() );
+    }
+
+    private String getLayerName()
+    {
+        return ContentLayerName.current().getValue();
     }
 }
