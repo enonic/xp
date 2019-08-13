@@ -5,6 +5,7 @@ import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.ext.Provider;
 
+import com.enonic.xp.admin.impl.rest.resource.content.page.PageResource;
 import com.enonic.xp.admin.impl.rest.resource.content.page.PageTemplateResource;
 import com.enonic.xp.admin.impl.rest.resource.schema.xdata.XDataResource;
 import com.enonic.xp.jaxrs.JaxRsComponent;
@@ -43,6 +44,11 @@ public class CmsResourceDynamicFeature
         }
 
         if ( ContentMediaResource.class.equals( resourceInfo.getResourceClass() ) )
+        {
+            context.register( new CmsResourceFilter() );
+        }
+
+        if ( PageResource.class.equals( resourceInfo.getResourceClass() ) )
         {
             context.register( new CmsResourceFilter() );
         }
