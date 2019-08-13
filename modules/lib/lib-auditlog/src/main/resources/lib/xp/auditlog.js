@@ -82,7 +82,11 @@ exports.get = function (params) {
  * @param {object} params     JSON with the parameters.
  * @param {number} [params.start=0] Start index (used for paging).
  * @param {number} [params.count=10] Number of contents to fetch.
- * @param {string} [params.ids]  Ids of audit logs.
+ * @param {string} [params.ids] Filter by ids of audit logs.
+ * @param {string} [params.from] Filter by logs younger than from.
+ * @param {string} [params.to] Filter by logs older than to.
+ * @param {string} [params.type] Filter by type.
+ * @param {string} [params.source] Filter by source.
  *
  * @returns {object} Audit log search results.
  */
@@ -91,5 +95,9 @@ exports.find = function (params) {
     bean.start = params.start;
     bean.count = params.count;
     bean.ids = __.toScriptValue(params.ids);
+    bean.from = nullOrValue(params.from);
+    bean.to = nullOrValue(params.to);
+    bean.type = nullOrValue(params.type);
+    bean.source = nullOrValue(params.source);
     return __.toNativeObject(bean.execute());
 };

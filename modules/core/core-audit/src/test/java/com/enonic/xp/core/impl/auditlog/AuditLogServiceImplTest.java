@@ -11,12 +11,19 @@ import com.google.common.collect.ImmutableSet;
 import com.enonic.xp.auditlog.AuditLog;
 import com.enonic.xp.auditlog.AuditLogId;
 import com.enonic.xp.auditlog.AuditLogParams;
+import com.enonic.xp.auditlog.FindAuditLogParams;
+import com.enonic.xp.auditlog.FindAuditLogResult;
 import com.enonic.xp.core.impl.auditlog.serializer.AuditLogSerializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeHit;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.Nodes;
 
 import static org.junit.Assert.*;
 
@@ -57,6 +64,15 @@ public class AuditLogServiceImplTest
         nodeService = Mockito.mock( NodeService.class );
         Mockito.when( this.nodeService.create( Mockito.any( CreateNodeParams.class ) ) ).thenReturn( node );
         Mockito.when( this.nodeService.getById( Mockito.any( NodeId.class ) ) ).thenReturn( node );
+        Mockito.when( this.nodeService.getByIds( Mockito.any( NodeIds.class ) ) ).thenReturn( Nodes.from( node ) );
+        Mockito.when( this.nodeService.findByQuery( Mockito.any( NodeQuery.class ) ) ).
+            thenReturn( FindNodesByQueryResult.create().
+                addNodeHit( NodeHit.create().
+                    nodeId( node.id() ).
+                    build() ).
+                totalHits( 1 ).
+                hits( 1 ).
+                build() );
 
         auditLogService = new AuditLogServiceImpl();
         auditLogService.setNodeService( nodeService );
@@ -85,6 +101,24 @@ public class AuditLogServiceImplTest
     {
         AuditLog log = auditLogService.get( new AuditLogId() );
         assertLog( log );
+    }
+
+    @Test
+    public void find_no_filter()
+    {
+        FindAuditLogResult result = auditLogService.find( FindAuditLogParams.create().build() );
+        assertEquals( 0, result.getCount() );
+    }
+
+    @Test
+    public void find()
+    {
+        FindAuditLogResult result = auditLogService.find( FindAuditLogParams.create().
+            type( auditLogParams.getType() ).
+            build() );
+        assertEquals( 1, result.getCount() );
+        assertEquals( 1, result.getTotal() );
+        assertLog( result.getHits().first() );
     }
 
     private void assertLog( AuditLog log )

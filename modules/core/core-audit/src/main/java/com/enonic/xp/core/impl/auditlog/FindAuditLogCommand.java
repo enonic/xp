@@ -1,6 +1,8 @@
 package com.enonic.xp.core.impl.auditlog;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
@@ -10,10 +12,14 @@ import com.enonic.xp.auditlog.AuditLogs;
 import com.enonic.xp.auditlog.FindAuditLogParams;
 import com.enonic.xp.auditlog.FindAuditLogResult;
 import com.enonic.xp.core.impl.auditlog.serializer.AuditLogSerializer;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.query.filter.Filter;
 import com.enonic.xp.query.filter.IdFilter;
+import com.enonic.xp.query.filter.RangeFilter;
+import com.enonic.xp.query.filter.ValueFilter;
 
 public class FindAuditLogCommand
     extends NodeServiceCommand<FindAuditLogResult>
@@ -54,19 +60,53 @@ public class FindAuditLogCommand
 
     private NodeQuery createQuery()
     {
-        NodeQuery.Builder builder = NodeQuery.create();
+        final NodeQuery.Builder builder = NodeQuery.create();
+        final AtomicBoolean filterAdded = new AtomicBoolean( false );
 
-        boolean filterAdded = false;
+        Consumer<Filter> addFilter = ( f ) -> {
+            builder.addQueryFilter( f );
+            filterAdded.set( true );
+        };
 
         if ( params.getIds() != null )
         {
-            filterAdded = true;
-            builder.addQueryFilter( IdFilter.create().
+            addFilter.accept( IdFilter.create().
                 values( params.getIds().asStrings() ).
                 build() );
         }
 
-        if ( !filterAdded )
+        if ( params.getFrom() != null || params.getTo() != null )
+        {
+            RangeFilter.Builder fb = RangeFilter.create();
+            fb.fieldName( "time" );
+            if ( params.getFrom() != null )
+            {
+                fb.from( ValueFactory.newDateTime( params.getFrom() ) );
+            }
+            if ( params.getTo() != null )
+            {
+                fb.to( ValueFactory.newDateTime( params.getTo() ) );
+            }
+            addFilter.accept( fb.build() );
+        }
+
+        if ( params.getSource() != null )
+        {
+            addFilter.accept( ValueFilter.create().
+                fieldName( "source" ).
+                addValue( ValueFactory.newString( params.getSource() ) ).
+                build() );
+        }
+
+        if ( params.getType() != null )
+        {
+            addFilter.accept( ValueFilter.create().
+                fieldName( "type" ).
+                addValue( ValueFactory.newString( params.getType() ) ).
+                build() );
+        }
+
+        if ( !filterAdded.get() )
         {
             return null;
         }

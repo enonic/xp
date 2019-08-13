@@ -1,5 +1,6 @@
 package com.enonic.xp.auditlog;
 
+import java.time.Instant;
 import java.util.Objects;
 
 public class FindAuditLogParams
@@ -12,11 +13,23 @@ public class FindAuditLogParams
 
     private final AuditLogIds ids;
 
+    private final Instant from;
+
+    private final Instant to;
+
+    private final String type;
+
+    private final String source;
+
     private FindAuditLogParams( final Builder builder )
     {
         start = Objects.requireNonNullElse( builder.start, 0 );
-        count = Objects.requireNonNullElse( builder.count, 10 );
+        count = Objects.requireNonNullElse( builder.count, DEFAULT_FETCH_SIZE );
         ids = builder.ids;
+        from = builder.from;
+        to = builder.to;
+        type = builder.type;
+        source = builder.source;
     }
 
     public static Builder newBuilder()
@@ -27,6 +40,26 @@ public class FindAuditLogParams
     public AuditLogIds getIds()
     {
         return ids;
+    }
+
+    public Instant getFrom()
+    {
+        return from;
+    }
+
+    public Instant getTo()
+    {
+        return to;
+    }
+
+    public String getType()
+    {
+        return type;
+    }
+
+    public String getSource()
+    {
+        return source;
     }
 
     public int getStart()
@@ -49,6 +82,14 @@ public class FindAuditLogParams
 
         private AuditLogIds ids;
 
+        private Instant from;
+
+        private Instant to;
+
+        private String type;
+
+        private String source;
+
         private Integer start;
 
         private Integer count;
@@ -63,18 +104,42 @@ public class FindAuditLogParams
             return this;
         }
 
+        public Builder from( final Instant val )
+        {
+            from = val;
+            return this;
+        }
+
+        public Builder to( final Instant val )
+        {
+            to = val;
+            return this;
+        }
+
+        public Builder type( final String val )
+        {
+            type = val;
+            return this;
+        }
+
+        public Builder source( final String val )
+        {
+            source = val;
+            return this;
+        }
+
         public FindAuditLogParams build()
         {
             return new FindAuditLogParams( this );
         }
 
-        public Builder start( final int val )
+        public Builder start( final Integer val )
         {
             start = val;
             return this;
         }
 
-        public Builder count( final int val )
+        public Builder count( final Integer val )
         {
             count = val;
             return this;
