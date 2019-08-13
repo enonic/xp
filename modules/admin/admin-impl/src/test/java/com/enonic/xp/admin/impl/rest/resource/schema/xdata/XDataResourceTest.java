@@ -156,7 +156,7 @@ public class XDataResourceTest
         Mockito.when( contentTypeService.getAll() ).thenReturn(
             ContentTypes.from( ContentType.create().superType( ContentTypeName.folder() ).name( contentTypeName.toString() ).build() ) );
 
-        String result = request().path( "schema/xdata/getApplicationXDataForContentType" ).
+        String result = request().path( "cms/default/base/schema/xdata/getApplicationXDataForContentType" ).
             queryParam( "contentTypeName", contentTypeName.toString() ).
             queryParam( "applicationKey", contentTypeName.getApplicationKey().toString() ).
             get().
@@ -228,7 +228,8 @@ public class XDataResourceTest
         Mockito.when( xDataService.getByNames( XDataNames.empty() ) ).thenReturn( XDatas.empty() );
         Mockito.when( xDataService.getByName( xdata1.getName() ) ).thenReturn( xdata1 );
 
-        String result = request().path( "schema/xdata/getContentXData" ).queryParam( "contentId", "contentId" ).get().getAsString();
+        String result =
+            request().path( "cms/default/base/schema/xdata/getContentXData" ).queryParam( "contentId", "contentId" ).get().getAsString();
 
         assertJson( "get_content_x_data_duplicated_config.json", result );
     }
@@ -310,7 +311,8 @@ public class XDataResourceTest
 
         Mockito.when( xDataService.getByApplication( Mockito.any() ) ).thenReturn( XDatas.from( xdata2 ) );
 
-        String result = request().path( "schema/xdata/getContentXData" ).queryParam( "contentId", "contentId" ).get().getAsString();
+        String result =
+            request().path( "cms/default/base/schema/xdata/getContentXData" ).queryParam( "contentId", "contentId" ).get().getAsString();
 
         assertJson( "get_content_x_data.json", result );
     }
