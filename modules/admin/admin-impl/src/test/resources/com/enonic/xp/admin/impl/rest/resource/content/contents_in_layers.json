@@ -1,0 +1,29 @@
+[
+  {
+    "displayName": "My Content",
+    "icon": {
+      "label": null,
+      "mimeType": "image/jpeg",
+      "name": "name",
+      "size": 666
+    },
+    "id": "aaa",
+    "inherited": false,
+    "layer": "base",
+    "layerDisplayName": "base",
+    "name": "my_a_content",
+    "parentLayer": null,
+    "path": "/my_a_content"
+  },
+  {
+    "displayName": "My Content",
+    "icon": null,
+    "id": "aaa",
+    "inherited": false,
+    "layer": "layer1",
+    "layerDisplayName": "layer 1",
+    "name": "my_a_content",
+    "parentLayer": null,
+    "path": "/my_a_content"
+  }
+]
