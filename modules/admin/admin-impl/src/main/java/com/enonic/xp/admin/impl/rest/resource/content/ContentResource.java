@@ -1306,6 +1306,20 @@ public final class ContentResource
     }
 
     @GET
+    @Path("updateInherited")
+    public ContentJson updateInherited( @QueryParam("id") final String id )
+    {
+        final ContentLayer contentLayer = contentLayerService.get( ContentLayerName.current() );
+        final UpdateContentParams params = new UpdateContentParams().contentId( ContentId.from( id ) ).editor( edit -> {
+            edit.language = contentLayer.getLanguage();
+        } );
+
+        final Content updatedContent = contentService.update( params );
+
+        return new ContentJson( updatedContent, contentIconUrlResolver, principalsResolver );
+    }
+
+    @GET
     @Path("effectivePermissions")
     public List<EffectivePermissionJson> getEffectivePermissions( @QueryParam("id") final String idParam )
     {
