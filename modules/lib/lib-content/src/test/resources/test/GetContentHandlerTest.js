@@ -118,7 +118,8 @@ var expectedJson = {
                                 "components": [
                                     {
                                         "path": "/top/1/right/0",
-                                        "type": "image"
+                                        "type": "image",
+                                        "image": "image-id"
                                     },
                                     {
                                         "path": "/top/1/right/1",
@@ -151,7 +152,8 @@ var expectedJson = {
                     },
                     {
                         "path": "/bottom/1",
-                        "type": "image"
+                        "type": "image",
+                        "image": "img-id-x"
                     },
                     {
                         "path": "/bottom/2",
@@ -211,7 +213,8 @@ var pageAsFragmentJson = {
                 "components": [
                     {
                         "path": "/right/0",
-                        "type": "image"
+                        "type": "image",
+                        "image": "image-id"
                     },
                     {
                         "path": "/right/1",
