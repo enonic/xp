@@ -1,7 +1,6 @@
-package com.enonic.xp.lib.node;
+package com.enonic.xp.lib.content;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import com.enonic.xp.query.highlight.HighlightFieldSettings;
@@ -14,7 +13,7 @@ import com.enonic.xp.query.highlight.constants.Order;
 import com.enonic.xp.query.highlight.constants.TagsSchema;
 
 @SuppressWarnings("unchecked")
-final class QueryHighlightParams
+    final class QueryHighlightParams
 {
     QueryHighlightParams()
     {
