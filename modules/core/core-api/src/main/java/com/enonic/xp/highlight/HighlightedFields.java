@@ -1,9 +1,11 @@
 package com.enonic.xp.highlight;
 
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Objects;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 public class HighlightedFields
     implements Iterable<HighlightedField>
@@ -12,7 +14,7 @@ public class HighlightedFields
 
     private HighlightedFields( final Builder builder )
     {
-        this.highlightedFields = builder.highlightedFields.build();
+        this.highlightedFields = ImmutableMap.copyOf( builder.highlightedFields );
     }
 
     public int size()
@@ -74,7 +76,7 @@ public class HighlightedFields
 
     public static final class Builder
     {
-        final ImmutableMap.Builder<String, HighlightedField> highlightedFields = ImmutableMap.builder();
+        final Map<String, HighlightedField> highlightedFields = Maps.newHashMap();
 
         private Builder()
         {
