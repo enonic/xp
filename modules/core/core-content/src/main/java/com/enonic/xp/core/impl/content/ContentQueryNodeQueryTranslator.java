@@ -29,7 +29,8 @@ class ContentQueryNodeQueryTranslator
             size( contentQuery.getSize() ).
             addAggregationQueries( contentQuery.getAggregationQueries() ).
             addQueryFilters( contentQuery.getQueryFilters() ).
-            addQueryFilter( contentCollectionFilter );
+            addQueryFilter( contentCollectionFilter ).
+            highlight( contentQuery.getHighlight() );
 
         processContentTypesNames( contentQuery, builder );
         processReferenceIds( contentQuery, builder );

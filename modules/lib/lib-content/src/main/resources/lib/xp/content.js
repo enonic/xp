@@ -271,6 +271,7 @@ exports.query = function (params) {
     bean.aggregations = __.toScriptValue(params.aggregations);
     bean.contentTypes = __.toScriptValue(params.contentTypes);
     bean.filters = __.toScriptValue(params.filters);
+    bean.highlight = __.toScriptValue(params.highlight);
     return __.toNativeObject(bean.execute());
 };
 
