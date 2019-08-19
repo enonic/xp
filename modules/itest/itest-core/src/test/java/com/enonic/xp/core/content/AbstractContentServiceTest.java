@@ -57,6 +57,7 @@ import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
+import com.enonic.xp.layer.ContentLayerService;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
@@ -177,6 +178,8 @@ public class AbstractContentServiceTest
 
     private LayoutDescriptorService layoutDescriptorService;
 
+    private ContentLayerService contentLayerService;
+
     private SearchDaoImpl searchDao;
 
     @Before
@@ -292,6 +295,7 @@ public class AbstractContentServiceTest
         this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
         this.partDescriptorService = Mockito.mock( PartDescriptorService.class );
         this.layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
+        this.contentLayerService = Mockito.mock( ContentLayerService.class );
 
         this.contentService.setNodeService( this.nodeService );
         this.contentService.setEventPublisher( eventPublisher );
@@ -302,6 +306,7 @@ public class AbstractContentServiceTest
         this.contentService.setPageDescriptorService( this.pageDescriptorService );
         this.contentService.setPartDescriptorService( this.partDescriptorService );
         this.contentService.setLayoutDescriptorService( this.layoutDescriptorService );
+        this.contentService.setContentLayerService( this.contentLayerService );
         this.contentService.setFormDefaultValuesProcessor( ( form, data ) -> {
         } );
         this.contentService.setIndexService( indexService );
