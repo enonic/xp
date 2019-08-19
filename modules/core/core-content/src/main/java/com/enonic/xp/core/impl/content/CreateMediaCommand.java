@@ -10,6 +10,7 @@ import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.FormDefaultValuesProcessor;
+import com.enonic.xp.layer.ContentLayerService;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.page.PageDescriptorService;
@@ -27,6 +28,8 @@ final class CreateMediaCommand
 
     private final FormDefaultValuesProcessor formDefaultValuesProcessor;
 
+    private final ContentLayerService contentLayerService;
+
     private final PageDescriptorService pageDescriptorService;
 
     private final PartDescriptorService partDescriptorService;
@@ -41,6 +44,7 @@ final class CreateMediaCommand
         this.params = builder.params;
         this.mediaInfoService = builder.mediaInfoService;
         this.formDefaultValuesProcessor = builder.formDefaultValuesProcessor;
+        this.contentLayerService = builder.contentLayerService;
         this.pageDescriptorService = builder.pageDescriptorService;
         this.partDescriptorService = builder.partDescriptorService;
         this.layoutDescriptorService = builder.layoutDescriptorService;
@@ -109,6 +113,7 @@ final class CreateMediaCommand
             siteService( this.siteService ).
             xDataService( this.xDataService ).
             formDefaultValuesProcessor( this.formDefaultValuesProcessor ).
+            contentLayerService( this.contentLayerService ).
             pageDescriptorService( this.pageDescriptorService ).
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
@@ -142,6 +147,8 @@ final class CreateMediaCommand
 
         private FormDefaultValuesProcessor formDefaultValuesProcessor;
 
+        private ContentLayerService contentLayerService;
+
         private PageDescriptorService pageDescriptorService;
 
         private PartDescriptorService partDescriptorService;
@@ -165,6 +172,12 @@ final class CreateMediaCommand
         public Builder formDefaultValuesProcessor( final FormDefaultValuesProcessor formDefaultValuesProcessor )
         {
             this.formDefaultValuesProcessor = formDefaultValuesProcessor;
+            return this;
+        }
+
+        Builder contentLayerService( final ContentLayerService value )
+        {
+            this.contentLayerService = value;
             return this;
         }
 
@@ -197,6 +210,7 @@ final class CreateMediaCommand
         void validate()
         {
             Preconditions.checkNotNull( params, "params must be given" );
+            Preconditions.checkNotNull( contentLayerService, "contentLayerService cannot be null" );
             Preconditions.checkNotNull( formDefaultValuesProcessor );
             super.validate();
         }
