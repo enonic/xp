@@ -236,7 +236,6 @@ public class ContentResourceTest
         contentService = Mockito.mock( ContentService.class );
         resource.setContentService( contentService );
         resource.setContentTypeService( contentTypeService );
-        resource.setContentLayerService( contentLayerService );
 
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
             thenReturn( createContentType( "myapplication:my_type" ) );
