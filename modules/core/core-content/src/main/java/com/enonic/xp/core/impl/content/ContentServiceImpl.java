@@ -87,6 +87,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.content.processor.ContentProcessors;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
+import com.enonic.xp.core.impl.layer.ContentLayerInitializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.form.FormDefaultValuesProcessor;
@@ -186,6 +187,12 @@ public class ContentServiceImpl
             setIndexService( indexService ).
             setNodeService( nodeService ).
             setRepositoryService( repositoryService ).
+            build().
+            initialize();
+
+        ContentLayerInitializer.create().
+            setIndexService( indexService ).
+            setNodeService( nodeService ).
             build().
             initialize();
 

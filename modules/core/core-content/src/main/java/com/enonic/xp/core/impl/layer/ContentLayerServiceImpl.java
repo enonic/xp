@@ -7,7 +7,6 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -23,7 +22,6 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
-import com.enonic.xp.index.IndexService;
 import com.enonic.xp.layer.ContentLayer;
 import com.enonic.xp.layer.ContentLayerConstants;
 import com.enonic.xp.layer.ContentLayerException;
@@ -53,21 +51,9 @@ import com.enonic.xp.util.Exceptions;
 public class ContentLayerServiceImpl
     implements ContentLayerService
 {
-    private IndexService indexService;
-
     private NodeService nodeService;
 
     private RepositoryService repositoryService;
-
-    @Activate
-    public void initialize()
-    {
-        ContentLayerInitializer.create().
-            setIndexService( indexService ).
-            setNodeService( nodeService ).
-            build().
-            initialize();
-    }
 
     @Override
     public ContentLayers list()
@@ -339,12 +325,6 @@ public class ContentLayerServiceImpl
                 build();
         }
         return null;
-    }
-
-    @Reference
-    public void setIndexService( final IndexService indexService )
-    {
-        this.indexService = indexService;
     }
 
     @Reference
