@@ -25,7 +25,7 @@ import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 
-@Path(ResourceConstants.REST_ROOT + "content/page/fragment")
+@Path(ResourceConstants.REST_ROOT + "{content:(content|cms/[^/]+/[^/]+)}/page/fragment")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed({RoleKeys.ADMIN_LOGIN_ID, RoleKeys.ADMIN_ID})
 @Component(immediate = true, property = "group=admin")
