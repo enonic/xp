@@ -47,6 +47,7 @@ import com.enonic.xp.admin.impl.json.content.AbstractContentListJson;
 import com.enonic.xp.admin.impl.json.content.CompareContentResultsJson;
 import com.enonic.xp.admin.impl.json.content.ContentIdJson;
 import com.enonic.xp.admin.impl.json.content.ContentIdListJson;
+import com.enonic.xp.admin.impl.json.content.ContentInLayerJson;
 import com.enonic.xp.admin.impl.json.content.ContentJson;
 import com.enonic.xp.admin.impl.json.content.ContentListJson;
 import com.enonic.xp.admin.impl.json.content.ContentPermissionsJson;
@@ -156,13 +157,17 @@ import com.enonic.xp.content.SetContentChildOrderParams;
 import com.enonic.xp.content.UndoPendingDeleteContentParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
+import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.extractor.BinaryExtractor;
 import com.enonic.xp.extractor.ExtractedData;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.jaxrs.JaxRsExceptions;
 import com.enonic.xp.layer.ContentLayerName;
+import com.enonic.xp.layer.ContentLayerService;
+import com.enonic.xp.layer.ContentLayers;
 import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.repository.IndexException;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -216,6 +221,8 @@ public final class ContentResource
     private final static Logger LOG = LoggerFactory.getLogger( ContentResource.class );
 
     private ContentService contentService;
+
+    private ContentLayerService contentLayerService;
 
     private ContentPrincipalsResolver principalsResolver;
 
@@ -1379,6 +1386,35 @@ public final class ContentResource
         return result.getContentIds().stream().map( contentId -> new ContentIdJson( contentId ) ).collect( Collectors.toList() );
     }
 
+    @GET
+    @Path("contentsInLayers")
+    public List<ContentInLayerJson> listContentsInLayers( @QueryParam("id") final String idParam,
+                                                          @QueryParam("skipInherited") @DefaultValue("true") final Boolean skipInherited )
+    {
+        final List<ContentInLayerJson> result = Lists.newArrayList();
+
+        final ContentLayers contentLayers = contentLayerService.list();
+
+        contentLayers.forEach( contentLayer -> {
+            final Context context = ContextBuilder.from( ContextAccessor.current() ).
+                branch( contentLayer.getName().getDraftBranch() ).
+                build();
+
+            final ContentInLayerJson contentInLayerJson = context.callWith( () -> {
+
+                final Content content = this.contentService.getById( ContentId.from( idParam ) );
+                return !( content.getInherited() && skipInherited ) ? new ContentInLayerJson( content, contentLayer ) : null;
+            } );
+
+            if ( contentInLayerJson != null )
+            {
+                result.add( contentInLayerJson );
+            }
+        } );
+
+        return result;
+    }
+
     private Content doCreateAttachment( final String attachmentName, final MultipartForm form )
     {
         final MultipartItem mediaFile = form.get( "file" );
@@ -1475,6 +1511,12 @@ public final class ContentResource
     public void setContentService( final ContentService contentService )
     {
         this.contentService = contentService;
+    }
+
+    @Reference
+    public void setContentLayerService( final ContentLayerService contentLayerService )
+    {
+        this.contentLayerService = contentLayerService;
     }
 
     @Reference

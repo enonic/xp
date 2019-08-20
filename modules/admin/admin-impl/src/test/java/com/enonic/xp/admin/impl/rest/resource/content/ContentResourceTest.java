@@ -149,6 +149,7 @@ import com.enonic.xp.jaxrs.impl.MockRestResponse;
 import com.enonic.xp.layer.ContentLayer;
 import com.enonic.xp.layer.ContentLayerName;
 import com.enonic.xp.layer.ContentLayerService;
+import com.enonic.xp.layer.ContentLayers;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
@@ -236,6 +237,7 @@ public class ContentResourceTest
         contentService = Mockito.mock( ContentService.class );
         resource.setContentService( contentService );
         resource.setContentTypeService( contentTypeService );
+        resource.setContentLayerService( contentLayerService );
 
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
             thenReturn( createContentType( "myapplication:my_type" ) );
@@ -2164,6 +2166,44 @@ public class ContentResourceTest
             entity( readFromFile( "create_media_from_url.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post().
             getAsString();
+    }
+
+    @Test
+    public void testContentsInLayers()
+        throws Exception
+    {
+        Attachment attachment = Attachment.create().
+            name( "name" ).
+            mimeType( "image/jpeg" ).
+            size( 666 ).
+            build();
+
+        Mockito.when( contentLayerService.list() ).thenReturn( ContentLayers.from( ContentLayer.create().
+            displayName( "base" ).
+            name( ContentLayerName.DEFAULT_LAYER_NAME ).
+            description( "base description" ).
+            language( Locale.ENGLISH ).
+            icon( attachment ).
+            build(), ContentLayer.create().
+            displayName( "layer 1" ).
+            name( ContentLayerName.from( "layer1" ) ).
+            description( "layer 1 description" ).
+            language( Locale.US ).
+            build() ) );
+
+        final Content content = Content.create( createContent( "aaa", "my_a_content", "myapplication:my_type" ) ).
+            inherited( false ).
+            build();
+
+        Mockito.when( contentService.getById( ContentId.from( "123" ) ) ).thenReturn( content );
+
+        final String result = request().
+            path( "content/contentsInLayers" ).
+            queryParam( "id", "123" ).
+            get().
+            getAsString();
+
+        assertJson( "contents_in_layers.json", result );
     }
 
     private ContentTreeSelectorQueryJson initContentTreeSelectorQueryJson( final ContentPath parentPath )
