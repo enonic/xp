@@ -43,7 +43,7 @@ import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteService;
 
-@javax.ws.rs.Path(ResourceConstants.REST_ROOT + "content/page/template")
+@javax.ws.rs.Path(ResourceConstants.REST_ROOT + "{content:(content|cms/[^/]+/[^/]+)}/page/template")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed({RoleKeys.ADMIN_LOGIN_ID, RoleKeys.ADMIN_ID})
 @Component(immediate = true, property = "group=admin")

@@ -43,7 +43,7 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.util.Exceptions;
 
 
-@Path(ResourceConstants.REST_ROOT + "content/image")
+@Path(ResourceConstants.REST_ROOT + "{content:(content|cms/[^/]+/[^/]+)}/image")
 @Produces("image/*")
 @RolesAllowed({RoleKeys.ADMIN_LOGIN_ID, RoleKeys.ADMIN_ID})
 @Component(immediate = true, property = "group=admin")

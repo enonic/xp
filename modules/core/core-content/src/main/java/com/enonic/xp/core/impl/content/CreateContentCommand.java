@@ -33,6 +33,9 @@ import com.enonic.xp.core.impl.content.validate.ValidationError;
 import com.enonic.xp.core.impl.content.validate.ValidationErrors;
 import com.enonic.xp.form.FormDefaultValuesProcessor;
 import com.enonic.xp.inputtype.InputTypes;
+import com.enonic.xp.layer.ContentLayer;
+import com.enonic.xp.layer.ContentLayerName;
+import com.enonic.xp.layer.ContentLayerService;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.name.NamePrettyfier;
 import com.enonic.xp.node.CreateNodeParams;
@@ -61,6 +64,8 @@ final class CreateContentCommand
 
     private final FormDefaultValuesProcessor formDefaultValuesProcessor;
 
+    private final ContentLayerService contentLayerService;
+
     private final PageDescriptorService pageDescriptorService;
 
     private final PartDescriptorService partDescriptorService;
@@ -75,6 +80,7 @@ final class CreateContentCommand
         this.params = builder.params;
         this.mediaInfo = builder.mediaInfo;
         this.formDefaultValuesProcessor = builder.formDefaultValuesProcessor;
+        this.contentLayerService = builder.contentLayerService;
         this.pageDescriptorService = builder.pageDescriptorService;
         this.partDescriptorService = builder.partDescriptorService;
         this.layoutDescriptorService = builder.layoutDescriptorService;
@@ -324,17 +330,25 @@ final class CreateContentCommand
 
     private Locale getDefaultLanguage( final CreateContentParams createContentParams )
     {
-        ContentPath parentPath = createContentParams.getParent();
-        if ( createContentParams.getLanguage() == null && !parentPath.isRoot() )
-        {
-            final Content parent = getContent( parentPath );
-
-            return parent != null ? parent.getLanguage() : null;
-        }
-        else
-        {
+        if (createContentParams.getLanguage() != null) {
             return createContentParams.getLanguage();
         }
+
+        ContentPath parentPath = createContentParams.getParent();
+        if ( !parentPath.isRoot() )
+        {
+            final Content parent = getContent( parentPath );
+            if (parent.getLanguage()  != null) {
+                return parent.getLanguage();
+            }
+        }
+
+        final ContentLayer contentLayer = contentLayerService.get( ContentLayerName.current() );
+        if (contentLayer != null) {
+            return contentLayer.getLanguage();
+        }
+
+        return null;
     }
 
     private PrincipalKey getDefaultOwner( final CreateContentParams createContentParams )
@@ -451,6 +465,8 @@ final class CreateContentCommand
 
         private FormDefaultValuesProcessor formDefaultValuesProcessor;
 
+        private ContentLayerService contentLayerService;
+
         private PageDescriptorService pageDescriptorService;
 
         private PartDescriptorService partDescriptorService;
@@ -486,6 +502,12 @@ final class CreateContentCommand
             return this;
         }
 
+        Builder contentLayerService( final ContentLayerService contentLayerService )
+        {
+            this.contentLayerService = contentLayerService;
+            return this;
+        }
+
         Builder pageDescriptorService( final PageDescriptorService value )
         {
             this.pageDescriptorService = value;
@@ -515,6 +537,7 @@ final class CreateContentCommand
         {
             super.validate();
             Preconditions.checkNotNull( params, "params must be given" );
+            Preconditions.checkNotNull( contentLayerService, "contentLayerService cannot be null" );
             Preconditions.checkNotNull( formDefaultValuesProcessor );
 
             final ContentPublishInfo publishInfo = params.getContentPublishInfo();

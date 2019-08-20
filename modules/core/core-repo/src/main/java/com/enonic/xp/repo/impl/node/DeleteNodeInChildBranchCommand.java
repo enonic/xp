@@ -50,6 +50,7 @@ public class DeleteNodeInChildBranchCommand
                     indexServiceInternal( this.indexServiceInternal ).
                     storageService( this.nodeStorageService ).
                     searchService( this.nodeSearchService ).
+                    skipInheritedNodes( false ).
                     build().
                     execute();
                 final NodeIds deletedNodeIds = NodeIds.from( deletedEntries.getKeys() );

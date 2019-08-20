@@ -87,10 +87,12 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.content.processor.ContentProcessors;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
+import com.enonic.xp.core.impl.layer.ContentLayerInitializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.form.FormDefaultValuesProcessor;
 import com.enonic.xp.index.IndexService;
+import com.enonic.xp.layer.ContentLayerService;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
@@ -137,6 +139,8 @@ public class ContentServiceImpl
     private final ExecutorService applyPermissionsExecutor;
 
     private ContentTypeService contentTypeService;
+
+    private ContentLayerService contentLayerService;
 
     private NodeService nodeService;
 
@@ -186,6 +190,12 @@ public class ContentServiceImpl
             build().
             initialize();
 
+        ContentLayerInitializer.create().
+            setIndexService( indexService ).
+            setNodeService( nodeService ).
+            build().
+            initialize();
+
         this.contentDataSerializer = ContentDataSerializer.create().
             contentService( this ).
             layoutDescriptorService( layoutDescriptorService ).
@@ -216,6 +226,7 @@ public class ContentServiceImpl
         final Site site = (Site) CreateContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
+            contentLayerService( this.contentLayerService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             siteService( this.siteService ).
@@ -250,6 +261,7 @@ public class ContentServiceImpl
         final Content content = CreateContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
+            contentLayerService( this.contentLayerService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             siteService( this.siteService ).
@@ -290,6 +302,7 @@ public class ContentServiceImpl
             params( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
+            contentLayerService( this.contentLayerService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             mediaInfoService( this.mediaInfoService ).
@@ -1103,6 +1116,12 @@ public class ContentServiceImpl
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
         this.contentTypeService = contentTypeService;
+    }
+
+    @Reference
+    public void setContentLayerService( final ContentLayerService contentLayerService )
+    {
+        this.contentLayerService = contentLayerService;
     }
 
     @Reference

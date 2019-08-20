@@ -22,6 +22,7 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.layer.ContentLayerService;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
@@ -55,6 +56,8 @@ public class CreateContentCommandTest
 
     private NodeService nodeService;
 
+    private ContentLayerService contentLayerService;
+
     private PageDescriptorService pageDescriptorService;
 
     private PartDescriptorService partDescriptorService;
@@ -75,6 +78,7 @@ public class CreateContentCommandTest
     {
         this.siteService = Mockito.mock( SiteService.class );
         this.nodeService = Mockito.mock( NodeService.class );
+        this.contentLayerService = Mockito.mock( ContentLayerService.class );
         this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
         this.eventPublisher = Mockito.mock( EventPublisher.class );
         this.xDataService = Mockito.mock( XDataService.class );
@@ -153,9 +157,8 @@ public class CreateContentCommandTest
                 allowChildContent( false ).
                 build() );
 
-        final NodePath sitePath = initContent( ContentTypeName.site(),"site", ContentConstants.CONTENT_ROOT_PATH );
-        final NodePath templatePath =
-            initContent( ContentTypeName.pageTemplate(),"template", sitePath );
+        final NodePath sitePath = initContent( ContentTypeName.site(), "site", ContentConstants.CONTENT_ROOT_PATH );
+        final NodePath templatePath = initContent( ContentTypeName.pageTemplate(), "template", sitePath );
 
         final CreateContentParams params = CreateContentParams.create().
             type( ContentTypeName.folder() ).
@@ -182,7 +185,7 @@ public class CreateContentCommandTest
                 allowChildContent( false ).
                 build() );
 
-        initContent( ContentTypeName.pageTemplate(),"template", ContentConstants.CONTENT_ROOT_PATH );
+        initContent( ContentTypeName.pageTemplate(), "template", ContentConstants.CONTENT_ROOT_PATH );
 
         final CreateContentParams params = CreateContentParams.create().
             type( ContentTypeName.folder() ).
@@ -207,7 +210,7 @@ public class CreateContentCommandTest
                 allowChildContent( false ).
                 build() );
 
-        initContent( ContentTypeName.folder(),"folder", ContentConstants.CONTENT_ROOT_PATH );
+        initContent( ContentTypeName.folder(), "folder", ContentConstants.CONTENT_ROOT_PATH );
 
         final CreateContentParams params = CreateContentParams.create().
             type( ContentTypeName.folder() ).
@@ -432,6 +435,7 @@ public class CreateContentCommandTest
         return CreateContentCommand.create().
             params( params ).
             contentTypeService( this.contentTypeService ).
+            contentLayerService( this.contentLayerService ).
             nodeService( this.nodeService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
@@ -482,7 +486,7 @@ public class CreateContentCommandTest
         final Node node = Node.create().
             id( NodeId.from( name ) ).
             name( name ).
-            parentPath(parentPath ).
+            parentPath( parentPath ).
             data( nodeData ).
             build();
 

@@ -133,7 +133,6 @@ import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
-import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
@@ -166,7 +165,6 @@ import com.enonic.xp.extractor.ExtractedData;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.jaxrs.JaxRsExceptions;
-import com.enonic.xp.layer.ContentLayer;
 import com.enonic.xp.layer.ContentLayerName;
 import com.enonic.xp.layer.ContentLayerService;
 import com.enonic.xp.layer.ContentLayers;
@@ -246,10 +244,7 @@ public final class ContentResource
     @Path("create")
     public ContentJson create( final CreateContentJson params )
     {
-        final CreateContentParams.Builder createParamsBuilder = params.getCreateContent();
-        final ContentLayer contentLayer = contentLayerService.get( ContentLayerName.current() );
-        createParamsBuilder.language( contentLayer.getLanguage() );
-        final Content persistedContent = contentService.create( createParamsBuilder.build() );
+        final Content persistedContent = contentService.create( params.getCreateContent() );
         return new ContentJson( persistedContent, contentIconUrlResolver, principalsResolver );
     }
 
@@ -550,8 +545,8 @@ public final class ContentResource
         final HasUnpublishedChildrenResultJson.Builder result = HasUnpublishedChildrenResultJson.create();
 
         ids.getContentIds().forEach( contentId -> {
-            final Boolean hasChildren =
-                this.contentService.hasUnpublishedChildren( new HasUnpublishedChildrenParams( contentId, ContentLayerName.current().getMasterBranch() ) );
+            final Boolean hasChildren = this.contentService.hasUnpublishedChildren(
+                new HasUnpublishedChildrenParams( contentId, ContentLayerName.current().getMasterBranch() ) );
 
             result.addHasChildren( contentId, hasChildren );
         } );
@@ -1042,7 +1037,7 @@ public final class ContentResource
     private Stream<ContentId> filterIdsByStatus( final ContentIds ids, final Collection<CompareStatus> statuses )
     {
         final CompareContentResults compareResults =
-            contentService.compare( new CompareContentsParams( ids, ContentLayerName.current().getMasterBranch()) );
+            contentService.compare( new CompareContentsParams( ids, ContentLayerName.current().getMasterBranch() ) );
         final Map<ContentId, CompareContentResult> compareResultMap = compareResults.getCompareContentResultsMap();
 
         return compareResultMap.entrySet().
@@ -1511,7 +1506,6 @@ public final class ContentResource
             }
         }
     }
-
 
     @Reference
     public void setContentService( final ContentService contentService )
