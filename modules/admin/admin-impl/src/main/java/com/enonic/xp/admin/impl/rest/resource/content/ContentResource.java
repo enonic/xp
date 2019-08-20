@@ -115,6 +115,7 @@ import com.enonic.xp.attachment.AttachmentNames;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.branch.Branches;
+import com.enonic.xp.content.CompareContentParams;
 import com.enonic.xp.content.CompareContentResult;
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareContentsParams;
@@ -143,6 +144,7 @@ import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.content.GetActiveContentVersionsParams;
 import com.enonic.xp.content.GetActiveContentVersionsResult;
 import com.enonic.xp.content.GetContentByIdsParams;
+import com.enonic.xp.content.GetPublishStatusResult;
 import com.enonic.xp.content.GetPublishStatusesParams;
 import com.enonic.xp.content.GetPublishStatusesResult;
 import com.enonic.xp.content.HasUnpublishedChildrenParams;
@@ -1402,8 +1404,22 @@ public final class ContentResource
 
             final ContentInLayerJson contentInLayerJson = context.callWith( () -> {
 
-                final Content content = this.contentService.getById( ContentId.from( idParam ) );
-                return !( content.getInherited() && skipInherited ) ? new ContentInLayerJson( content, contentLayer ) : null;
+                final ContentId id = ContentId.from( idParam );
+
+                final Content content = this.contentService.getById( id );
+
+                final CompareContentResult compareResult =
+                    contentService.compare( new CompareContentParams( id, contentLayer.getName().getMasterBranch() ) );
+
+                final GetPublishStatusResult getPublishStatusResult = contentService.getPublishStatuses(
+                    new GetPublishStatusesParams( ContentIds.from( id ), contentLayer.getName().getDraftBranch() ) ).get( id );
+
+                return !( content.getInherited() && skipInherited ) ? ContentInLayerJson.create().
+                    content( content ).
+                    layer( contentLayer ).
+                    compareResult( compareResult ).
+                    publishResult( getPublishStatusResult ).
+                    build() : null;
             } );
 
             if ( contentInLayerJson != null )

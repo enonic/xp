@@ -87,8 +87,10 @@ import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ActiveContentVersionEntry;
+import com.enonic.xp.content.CompareContentParams;
 import com.enonic.xp.content.CompareContentResult;
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareContentsParams;
@@ -2191,11 +2193,27 @@ public class ContentResourceTest
             language( Locale.US ).
             build() ) );
 
-        final Content content = Content.create( createContent( "aaa", "my_a_content", "myapplication:my_type" ) ).
+        final ContentId contentId = ContentId.from( "123" );
+
+        final Content content = Content.create( createContent( contentId.toString(), "my_a_content", "myapplication:my_type" ) ).
             inherited( false ).
             build();
 
-        Mockito.when( contentService.getById( ContentId.from( "123" ) ) ).thenReturn( content );
+        Mockito.when( contentService.getById( contentId ) ).thenReturn( content );
+
+        Mockito.when( contentService.compare( new CompareContentParams( contentId, ContentConstants.BRANCH_MASTER ) ) ).thenReturn(
+            new CompareContentResult( CompareStatus.EQUAL, contentId ) );
+
+        Mockito.when( contentService.compare( new CompareContentParams( contentId, Branch.from( "master-layer1" ) ) ) ).thenReturn(
+            new CompareContentResult( CompareStatus.NEW, contentId ) );
+
+        Mockito.when( contentService.getPublishStatuses(
+            new GetPublishStatusesParams( ContentIds.from( contentId ), ContentConstants.BRANCH_DRAFT ) ) ).thenReturn(
+            GetPublishStatusesResult.create().add( new GetPublishStatusResult( contentId, PublishStatus.ONLINE ) ).build() );
+
+        Mockito.when( contentService.getPublishStatuses(
+            new GetPublishStatusesParams( ContentIds.from( contentId ), Branch.from( "draft-layer1" ) ) ) ).thenReturn(
+            GetPublishStatusesResult.create().build() );
 
         final String result = request().
             path( "content/contentsInLayers" ).
