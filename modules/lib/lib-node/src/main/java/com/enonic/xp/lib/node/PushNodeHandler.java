@@ -20,9 +20,9 @@ public final class PushNodeHandler
 
     private Branch targetBranch;
 
-    private boolean resolve = false;
+    private boolean resolve;
 
-    private boolean includeChildren = true;
+    private boolean includeChildren;
 
     private NodeKeys exclude;
 
