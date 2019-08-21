@@ -36,13 +36,6 @@ public class AuditLogServiceImplDisabledTest
     public void log_when_disabled()
     {
         AuditLog log = auditLogService.log( LogAuditLogParams.create().type( "test" ).build() );
-        assertNotNull( log.getId() );
-        assertNotNull( log.getType() );
-        assertNotNull( log.getTime() );
-        assertNotNull( log.getSource() );
-        assertNotNull( log.getUser() );
-        assertNotNull( log.getMessage() );
-        assertNotNull( log.getObjectUris() );
-        assertNotNull( log.getData() );
+        assertNull( log );
     }
 }
