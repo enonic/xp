@@ -7,6 +7,7 @@ import com.enonic.xp.audit.AuditLogId;
 import com.enonic.xp.core.impl.audit.serializer.AuditLogSerializer;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeNotFoundException;
 
 public class GetAuditLogCommand
     extends NodeServiceCommand<AuditLog>
@@ -22,9 +23,21 @@ public class GetAuditLogCommand
     @Override
     public AuditLog execute()
     {
+        return AuditLogContext.createContext().callWith( this::doExecute );
+    }
+
+    private AuditLog doExecute()
+    {
         final NodeId nodeId = NodeId.from( auditLogId.toString() );
-        Node node = AuditLogContext.createContext().callWith( () -> nodeService.getById( nodeId ) );
-        return AuditLogSerializer.fromNode( node );
+        try
+        {
+            final Node node = nodeService.getById( nodeId );
+            return AuditLogSerializer.fromNode( node );
+        }
+        catch ( NodeNotFoundException e )
+        {
+            return null;
+        }
     }
 
     public static Builder create()

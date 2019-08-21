@@ -34,7 +34,7 @@ function nullOrValue(value) {
  * @param {object} params JSON with the parameters.
  * @param {string} params.type Type of log entry.
  * @param {string} [params.time] Log entry timestamp. Defaults to now.
- * @param {string} [params.source] Log entry source. Defaults to the bundle name calling.
+ * @param {string} [params.source] Log entry source. Defaults to the application ID.
  * @param {string} [params.user] Log entry user. Defaults to the user of current context.
  * @param {string} [params.message] Log entry message. Defaults to empty string.
  * @param {array}  [params.objectUris] Uris to objects that relate to this log entry. Defaults to empty array.
@@ -46,7 +46,7 @@ exports.log = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.audit.CreateAuditLogHandler');
     bean.type = required(params, 'type');
     bean.time = nullOrValue(params.time);
-    bean.source = nullOrValue(params.source);
+    bean.source = params.source === undefined ? app.name : params.source;
     bean.user = nullOrValue(params.user);
     bean.message = nullOrValue(params.message);
     bean.objectUris = __.toScriptValue(params.objectUris);
