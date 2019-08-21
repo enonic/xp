@@ -16,6 +16,9 @@ import com.enonic.xp.node.NodeType;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public class ContentLayerInitializer
@@ -56,9 +59,19 @@ public class ContentLayerInitializer
             nodeService.create( CreateNodeParams.create().
                 parent( ContentLayerConstants.LAYER_PARENT_PATH.getParentPath() ).
                 name( ContentLayerConstants.LAYER_PARENT_PATH.getLastElement().toString() ).
-                inheritPermissions( true ).
+                permissions( createDefaultLayerACL() ).
                 build() );
         }
+    }
+
+    private AccessControlList createDefaultLayerACL()
+    {
+        return AccessControlList.create().
+            add( AccessControlEntry.create().
+                principal( RoleKeys.CONTENT_MANAGER_APP ).
+                allow( Permission.READ ).
+                build() ).
+            build();
     }
 
     private void initializeDefaultLayer()
