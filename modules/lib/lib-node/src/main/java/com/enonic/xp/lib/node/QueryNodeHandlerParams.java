@@ -23,7 +23,7 @@ public class QueryNodeHandlerParams
 
     private List<Map<String, Object>> filters;
 
-    private boolean explain = false;
+    private boolean explain;
 
     List<Map<String, Object>> getFilters()
     {

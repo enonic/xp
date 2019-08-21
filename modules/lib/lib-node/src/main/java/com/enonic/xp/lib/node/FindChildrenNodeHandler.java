@@ -57,13 +57,13 @@ public class FindChildrenNodeHandler
 
         private ChildOrder childOrder;
 
-        private boolean recursive = false;
+        private boolean recursive;
 
-        private boolean countOnly = false;
+        private boolean countOnly;
 
-        private Integer count = 10;
+        private Integer count;
 
-        private Integer start = 0;
+        private Integer start;
 
         private Builder()
         {
