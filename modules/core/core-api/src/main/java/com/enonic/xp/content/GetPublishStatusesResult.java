@@ -45,6 +45,11 @@ public class GetPublishStatusesResult
         return ContentIds.from( getPublishStatusResultsMap.keySet() );
     }
 
+    public GetPublishStatusResult get( final ContentId contentId )
+    {
+        return getPublishStatusResultsMap.get( contentId );
+    }
+
     public int size()
     {
         return getPublishStatusResultsMap.size();
