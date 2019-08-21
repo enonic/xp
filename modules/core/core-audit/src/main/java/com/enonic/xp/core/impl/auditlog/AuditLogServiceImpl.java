@@ -9,6 +9,8 @@ import com.enonic.xp.auditlog.AuditLog;
 import com.enonic.xp.auditlog.AuditLogId;
 import com.enonic.xp.auditlog.AuditLogParams;
 import com.enonic.xp.auditlog.AuditLogService;
+import com.enonic.xp.auditlog.FindAuditLogParams;
+import com.enonic.xp.auditlog.FindAuditLogResult;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.repository.RepositoryService;
@@ -49,6 +51,16 @@ public class AuditLogServiceImpl
         return GetAuditLogCommand.create().
             nodeService( nodeService ).
             auditLogId( id ).
+            build().
+            execute();
+    }
+
+    @Override
+    public FindAuditLogResult find( final FindAuditLogParams params )
+    {
+        return FindAuditLogCommand.create().
+            nodeService( nodeService ).
+            params( params ).
             build().
             execute();
     }

@@ -16,15 +16,12 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeId;
 import com.enonic.xp.security.PrincipalKey;
 
 public class AuditLogSerializer
 {
     public static CreateNodeParams.Builder toCreateNodeParams( final AuditLogParams auditLogParams )
     {
-        NodeId id = NodeId.from( new AuditLogId() );
-
         List<String> objectUris = auditLogParams.getObjectUris().stream().map( e -> e.toString() ).collect( Collectors.toList() );
 
         final PropertyTree tree = new PropertyTree();
@@ -39,9 +36,7 @@ public class AuditLogSerializer
         data.addSet( AuditLogPropertyNames.DATA, auditLogParams.getData().getRoot().copy( data.getTree() ) );
 
         return CreateNodeParams.create().
-            data( tree ).
-            setNodeId( id ).
-            name( id.toString() );
+            data( tree );
     }
 
     public static AuditLog fromNode( final Node node )
