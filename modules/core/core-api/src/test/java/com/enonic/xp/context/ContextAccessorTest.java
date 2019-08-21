@@ -16,5 +16,6 @@ public class ContextAccessorTest
         final Context context = Mockito.mock( Context.class );
         ContextAccessor.INSTANCE.set( context );
         assertSame( context, ContextAccessor.current() );
+        ContextAccessor.INSTANCE.remove();
     }
 }
