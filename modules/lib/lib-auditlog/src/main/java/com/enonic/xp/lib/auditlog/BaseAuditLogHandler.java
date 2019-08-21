@@ -1,6 +1,6 @@
 package com.enonic.xp.lib.auditlog;
 
-import com.enonic.xp.auditlog.AuditLogService;
+import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 

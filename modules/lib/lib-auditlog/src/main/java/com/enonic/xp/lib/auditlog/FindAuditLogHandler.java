@@ -3,8 +3,8 @@ package com.enonic.xp.lib.auditlog;
 import java.time.Instant;
 import java.util.stream.Collectors;
 
-import com.enonic.xp.auditlog.AuditLogIds;
-import com.enonic.xp.auditlog.FindAuditLogParams;
+import com.enonic.xp.audit.AuditLogIds;
+import com.enonic.xp.audit.FindAuditLogParams;
 import com.enonic.xp.lib.auditlog.mapper.FindAuditLogResultMapper;
 import com.enonic.xp.script.ScriptValue;
 

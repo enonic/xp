@@ -3,11 +3,11 @@ package com.enonic.xp.lib.auditlog;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.auditlog.AuditLog;
-import com.enonic.xp.auditlog.AuditLogParams;
-import com.enonic.xp.auditlog.AuditLogs;
-import com.enonic.xp.auditlog.FindAuditLogParams;
-import com.enonic.xp.auditlog.FindAuditLogResult;
+import com.enonic.xp.audit.AuditLog;
+import com.enonic.xp.audit.LogAuditLogParams;
+import com.enonic.xp.audit.AuditLogs;
+import com.enonic.xp.audit.FindAuditLogParams;
+import com.enonic.xp.audit.FindAuditLogResult;
 
 import static org.junit.Assert.*;
 
@@ -16,7 +16,7 @@ public class FindAuditLogHandlerTest
 {
     public void mockCreateLog()
     {
-        AuditLog mocklog = auditLogBuilder( AuditLogParams.create().
+        AuditLog mocklog = auditLogBuilder( LogAuditLogParams.create().
             type( "testlog" ).build() ).
             source( "testbundle" ).
             message( "Fetched message" ).

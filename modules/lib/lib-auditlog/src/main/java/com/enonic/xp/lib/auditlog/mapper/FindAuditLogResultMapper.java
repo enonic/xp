@@ -1,6 +1,6 @@
 package com.enonic.xp.lib.auditlog.mapper;
 
-import com.enonic.xp.auditlog.FindAuditLogResult;
+import com.enonic.xp.audit.FindAuditLogResult;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 

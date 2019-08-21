@@ -4,7 +4,7 @@ import java.net.URI;
 
 import com.google.common.collect.ImmutableSet;
 
-import com.enonic.xp.auditlog.AuditLog;
+import com.enonic.xp.audit.AuditLog;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.lib.common.PropertyTreeMapper;
 import com.enonic.xp.script.serializer.MapGenerator;

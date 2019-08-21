@@ -7,8 +7,8 @@ import org.mockito.Mockito;
 
 import com.google.common.collect.ImmutableSet;
 
-import com.enonic.xp.auditlog.AuditLog;
-import com.enonic.xp.auditlog.AuditLogParams;
+import com.enonic.xp.audit.AuditLog;
+import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.PrincipalKey;
 
@@ -23,12 +23,12 @@ public class CreateAuditLogHandlerTest
         data.setString( "custom", "string" );
         data.addDouble( "somevalue", 2.5 );
 
-        AuditLog mocklog1 = auditLogBuilder( AuditLogParams.create().
+        AuditLog mocklog1 = auditLogBuilder( LogAuditLogParams.create().
             type( "testlog" ).build() ).
             source( "testbundle" ).
             build();
 
-        AuditLog mocklog2 = auditLogBuilder( AuditLogParams.create().
+        AuditLog mocklog2 = auditLogBuilder( LogAuditLogParams.create().
             type( "testlog" ).
             source( "testbundle" ).
             user( PrincipalKey.ofAnonymous() ).
@@ -37,7 +37,7 @@ public class CreateAuditLogHandlerTest
             data( data ).build() ).
             build();
 
-        Mockito.when( this.auditLogService.log( Mockito.any( AuditLogParams.class ) ) ).
+        Mockito.when( this.auditLogService.log( Mockito.any( LogAuditLogParams.class ) ) ).
             thenReturn( mocklog1 ).
             thenReturn( mocklog2 );
     }

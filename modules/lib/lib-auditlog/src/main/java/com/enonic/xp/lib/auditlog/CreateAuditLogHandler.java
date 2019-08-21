@@ -10,8 +10,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableSet;
 
-import com.enonic.xp.auditlog.AuditLog;
-import com.enonic.xp.auditlog.AuditLogParams;
+import com.enonic.xp.audit.AuditLog;
+import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.lib.auditlog.mapper.AuditLogMapper;
 import com.enonic.xp.lib.common.FormJsonToPropertyTreeTranslator;
@@ -38,7 +38,7 @@ public class CreateAuditLogHandler
     @Override
     protected Object doExecute()
     {
-        AuditLog log = this.auditLogService.log( AuditLogParams.create().
+        AuditLog log = this.auditLogService.log( LogAuditLogParams.create().
             type( this.type ).
             time( this.time ).
             source( this.source ).

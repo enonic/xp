@@ -4,10 +4,10 @@ import java.time.Instant;
 
 import org.mockito.Mockito;
 
-import com.enonic.xp.auditlog.AuditLog;
-import com.enonic.xp.auditlog.AuditLogId;
-import com.enonic.xp.auditlog.AuditLogParams;
-import com.enonic.xp.auditlog.AuditLogService;
+import com.enonic.xp.audit.AuditLog;
+import com.enonic.xp.audit.AuditLogId;
+import com.enonic.xp.audit.LogAuditLogParams;
+import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.testing.ScriptTestSupport;
 
 public abstract class BaseAuditLogHandlerTest
@@ -25,7 +25,7 @@ public abstract class BaseAuditLogHandlerTest
         addService( AuditLogService.class, this.auditLogService );
     }
 
-    protected AuditLog.Builder auditLogBuilder( AuditLogParams p )
+    protected AuditLog.Builder auditLogBuilder( LogAuditLogParams p )
     {
         return AuditLog.create().
             id( AuditLogId.from( "90b976f7-55ab-48ef-acb8-e7c6f0744442" ) ).
