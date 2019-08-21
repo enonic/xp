@@ -70,6 +70,7 @@ public class ContentLayerServiceImpl
 
         final NodeQuery nodeQuery = NodeQuery.create().
             addQueryFilter( valueFilter ).
+            size( 1024 ).
             build();
 
         final FindNodesByQueryResult result = nodeService.findByQuery( nodeQuery );
