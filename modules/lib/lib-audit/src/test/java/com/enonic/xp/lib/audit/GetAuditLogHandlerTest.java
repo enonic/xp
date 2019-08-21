@@ -1,17 +1,15 @@
-package com.enonic.xp.lib.auditlog;
+package com.enonic.xp.lib.audit;
 
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.audit.AuditLog;
+import com.enonic.xp.audit.AuditLogId;
 import com.enonic.xp.audit.LogAuditLogParams;
-import com.enonic.xp.audit.AuditLogs;
-import com.enonic.xp.audit.FindAuditLogParams;
-import com.enonic.xp.audit.FindAuditLogResult;
 
 import static org.junit.Assert.*;
 
-public class FindAuditLogHandlerTest
+public class GetAuditLogHandlerTest
     extends BaseAuditLogHandlerTest
 {
     public void mockCreateLog()
@@ -22,17 +20,13 @@ public class FindAuditLogHandlerTest
             message( "Fetched message" ).
             build();
 
-        Mockito.when( this.auditLogService.find( Mockito.any( FindAuditLogParams.class ) ) ).
-            thenReturn( FindAuditLogResult.create().
-                hits( AuditLogs.from( mocklog ) ).
-                total( 2L ).
-                build() );
+        Mockito.when( this.auditLogService.get( Mockito.any( AuditLogId.class ) ) ).thenReturn( mocklog );
     }
 
     @Test
     public void testExample()
     {
         mockCreateLog();
-        assertNotNull( runScript( "/lib/xp/examples/auditlog/find.js" ) );
+        assertNotNull( runScript( "/lib/xp/examples/audit/get.js" ) );
     }
 }

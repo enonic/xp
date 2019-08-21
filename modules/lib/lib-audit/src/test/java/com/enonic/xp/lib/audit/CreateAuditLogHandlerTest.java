@@ -1,4 +1,4 @@
-package com.enonic.xp.lib.auditlog;
+package com.enonic.xp.lib.audit;
 
 import java.net.URI;
 
@@ -46,6 +46,6 @@ public class CreateAuditLogHandlerTest
     public void testExample()
     {
         mockCreateLog();
-        assertNotNull( runScript( "/lib/xp/examples/auditlog/log.js" ) );
+        assertNotNull( runScript( "/lib/xp/examples/audit/log.js" ) );
     }
 }

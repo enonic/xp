@@ -1,4 +1,4 @@
-package com.enonic.xp.lib.auditlog;
+package com.enonic.xp.lib.audit;
 
 import java.time.Instant;
 
