@@ -68,6 +68,14 @@ public class ContentLayerInitializer
     {
         return AccessControlList.create().
             add( AccessControlEntry.create().
+                principal( RoleKeys.ADMIN ).
+                allowAll().
+                build() ).
+            add( AccessControlEntry.create().
+                principal( RoleKeys.CONTENT_MANAGER_ADMIN ).
+                allowAll().
+                build() ).
+            add( AccessControlEntry.create().
                 principal( RoleKeys.CONTENT_MANAGER_APP ).
                 allow( Permission.READ ).
                 build() ).
