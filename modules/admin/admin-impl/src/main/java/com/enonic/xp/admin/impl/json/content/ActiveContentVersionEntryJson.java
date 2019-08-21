@@ -13,8 +13,7 @@ public class ActiveContentVersionEntryJson
                                           final ContentPrincipalsResolver principalsResolver )
     {
         this.branch = activeContentVersion.getBranch().getValue();
-        this.contentVersion = new ContentVersionJson( activeContentVersion.getContentVersion(), principalsResolver.findPrincipal(
-            activeContentVersion.getContentVersion().getModifier() ) );
+        this.contentVersion = new ContentVersionJson( activeContentVersion.getContentVersion(), principalsResolver );
     }
 
     @SuppressWarnings("UnusedDeclaration")

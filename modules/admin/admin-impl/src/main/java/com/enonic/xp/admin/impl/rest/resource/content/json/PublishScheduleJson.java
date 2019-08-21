@@ -13,7 +13,8 @@ public class PublishScheduleJson
     private Instant publishTo;
 
     @JsonCreator
-    public PublishScheduleJson( @JsonProperty("from") final String publishFrom, @JsonProperty("to") final String publishTo )
+    public PublishScheduleJson( @JsonProperty(value = "from", required = true) final String publishFrom,
+                                @JsonProperty("to") final String publishTo )
     {
         this.publishFrom = Instant.parse( publishFrom );
         if ( publishTo != null )

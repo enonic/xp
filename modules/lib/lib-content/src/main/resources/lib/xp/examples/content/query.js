@@ -153,7 +153,11 @@ var expected = {
             "x": {},
             "page": {},
             "attachments": {},
-            "publish": {}
+            "publish": {},
+            "workflow": {
+                "state": "READY",
+                "checks": {}
+            }
         },
         {
             "_id": "id2",
@@ -171,7 +175,11 @@ var expected = {
             "x": {},
             "page": {},
             "attachments": {},
-            "publish": {}
+            "publish": {},
+            "workflow": {
+                "state": "READY",
+                "checks": {}
+            }
         }
     ],
     "aggregations": {

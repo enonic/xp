@@ -19,7 +19,11 @@ var expectedJson = {
     "x": {},
     "page": {},
     "attachments": {},
-    "publish": {}
+    "publish": {},
+    "workflow": {
+        "state": "READY",
+        "checks": {}
+    }
 };
 
 exports.currentSite = function () {

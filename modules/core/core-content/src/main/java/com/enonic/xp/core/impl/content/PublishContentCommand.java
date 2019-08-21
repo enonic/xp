@@ -14,6 +14,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
+import com.enonic.xp.content.ContentValidityResult;
 import com.enonic.xp.content.DeleteContentListener;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentListener;
@@ -148,7 +149,7 @@ public class PublishContentCommand
 
     private boolean checkIfAllContentsValid( final ContentIds pushContentsIds )
     {
-        final ContentIds invalidContentIds = CheckContentsValidCommand.create().
+        final ContentValidityResult result = CheckContentValidityCommand.create().
             translator( this.translator ).
             nodeService( this.nodeService ).
             eventPublisher( this.eventPublisher ).
@@ -157,7 +158,7 @@ public class PublishContentCommand
             build().
             execute();
 
-        return invalidContentIds.isEmpty();
+        return result.allValid();
     }
 
     private void doPushNodes( final NodeIds nodesToPush )

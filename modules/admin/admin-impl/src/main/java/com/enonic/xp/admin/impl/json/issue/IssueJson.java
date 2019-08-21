@@ -3,8 +3,14 @@ package com.enonic.xp.admin.impl.json.issue;
 import java.time.Instant;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishRequestJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.PublishRequestScheduleJson;
 import com.enonic.xp.issue.Issue;
+import com.enonic.xp.issue.IssueType;
+import com.enonic.xp.issue.PublishRequestIssue;
+import com.enonic.xp.issue.PublishRequestIssueSchedule;
 import com.enonic.xp.security.PrincipalKey;
 
 import static java.util.stream.Collectors.toList;
@@ -59,6 +65,11 @@ public class IssueJson
         return this.issue.getStatus().toString();
     }
 
+    public IssueType getType()
+    {
+        return this.issue.getIssueType();
+    }
+
     public String getCreator()
     {
         return this.issue.getCreator() != null ? this.issue.getCreator().toString() : null;
@@ -81,4 +92,19 @@ public class IssueJson
     {
         return this.issue.getPublishRequest() != null ? PublishRequestJson.from( this.issue.getPublishRequest() ) : null;
     }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public PublishRequestScheduleJson getPublishSchedule()
+    {
+        if ( this.issue instanceof PublishRequestIssue )
+        {
+            PublishRequestIssueSchedule schedule = ( (PublishRequestIssue) this.issue ).getSchedule();
+            if ( schedule != null )
+            {
+                return PublishRequestScheduleJson.from( schedule );
+            }
+        }
+        return null;
+    }
+
 }

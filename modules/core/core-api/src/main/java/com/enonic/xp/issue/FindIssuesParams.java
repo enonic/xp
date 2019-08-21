@@ -8,6 +8,8 @@ public final class FindIssuesParams
 {
     private final IssueStatus status;
 
+    private final IssueType type;
+
     private final boolean assignedToMe;
 
     private final boolean createdByMe;
@@ -21,6 +23,7 @@ public final class FindIssuesParams
     private FindIssuesParams( final Builder builder )
     {
         this.status = builder.status;
+        this.type = builder.type;
         this.assignedToMe = builder.assignedToMe;
         this.createdByMe = builder.createdByMe;
         this.from = builder.from;
@@ -31,6 +34,11 @@ public final class FindIssuesParams
     public IssueStatus getStatus()
     {
         return status;
+    }
+
+    public IssueType getType()
+    {
+        return type;
     }
 
     public boolean isAssignedToMe()
@@ -68,6 +76,8 @@ public final class FindIssuesParams
     {
         private IssueStatus status;
 
+        private IssueType type;
+
         private boolean assignedToMe = false;
 
         private boolean createdByMe = false;
@@ -85,6 +95,12 @@ public final class FindIssuesParams
         public Builder status( final IssueStatus value )
         {
             this.status = value;
+            return this;
+        }
+
+        public Builder type( final IssueType value )
+        {
+            this.type = value;
             return this;
         }
 
