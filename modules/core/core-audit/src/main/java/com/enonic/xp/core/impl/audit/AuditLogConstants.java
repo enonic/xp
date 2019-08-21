@@ -15,7 +15,7 @@ import com.enonic.xp.security.acl.AccessControlList;
 
 public class AuditLogConstants
 {
-    public static final RepositoryId AUDIT_LOG_REPO_ID = RepositoryId.from( "system.audit" );
+    public static final RepositoryId AUDIT_LOG_REPO_ID = RepositoryId.from( "system.auditlog" );
 
     public static final Branch AUDIT_LOG_BRANCH = Branch.create().
         value( "master" ).
