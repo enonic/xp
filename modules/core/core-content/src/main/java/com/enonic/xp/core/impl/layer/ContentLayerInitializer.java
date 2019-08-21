@@ -69,8 +69,8 @@ public class ContentLayerInitializer
 
             PropertyTree data = new PropertyTree();
             data.setString( "name", ContentLayerName.DEFAULT_LAYER_NAME.getValue() );
-            data.setString( "displayName", "Unnamed" );
-            data.setString( "description", "Base layer" );
+            data.setString( "displayName", "Base Layer" );
+            data.setString( "description", "Root content layer" );
 
             nodeService.create( CreateNodeParams.create().
                 parent( ContentLayerConstants.DEFAULT_LAYER_PATH.getParentPath() ).
