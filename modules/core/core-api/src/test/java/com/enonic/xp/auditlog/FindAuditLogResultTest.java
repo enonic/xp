@@ -19,8 +19,9 @@ public class FindAuditLogResultTest
     {
         FindAuditLogResult result = FindAuditLogResult.create().
             hits( AuditLogs.empty() ).
+            total( 0L ).
             build();
-        assertEquals( 0, result.getTotal() );
+        assertEquals( 0, result.getCount() );
         assertEquals( AuditLogs.empty(), result.getHits() );
     }
 
@@ -29,8 +30,9 @@ public class FindAuditLogResultTest
     {
         FindAuditLogResult result = FindAuditLogResult.create().
             hits( AuditLogs.from( getBuilder().id( AuditLogId.from( 1 ) ).build(), getBuilder().id( AuditLogId.from( 2 ) ).build() ) ).
+            total( 2L ).
             build();
-        assertEquals( 2, result.getTotal() );
+        assertEquals( 2, result.getCount() );
     }
 
 }

@@ -4,20 +4,24 @@ import com.google.common.base.Preconditions;
 
 public class FindAuditLogResult
 {
-    private long total;
+    private final long count;
 
-    private AuditLogs hits;
+    private final long total;
+
+    private final AuditLogs hits;
 
     private FindAuditLogResult( final Builder builder )
     {
         Preconditions.checkNotNull( builder.hits, "FindAuditLogResult hits cannot be null" );
-        total = builder.hits.getSize();
+        Preconditions.checkNotNull( builder.total, "FindAuditLogResult total cannot be null" );
+        count = builder.hits.getSize();
         hits = builder.hits;
+        total = builder.total;
     }
 
-    public long getTotal()
+    public long getCount()
     {
-        return total;
+        return count;
     }
 
     public AuditLogs getHits()
@@ -25,14 +29,29 @@ public class FindAuditLogResult
         return hits;
     }
 
+    public long getTotal()
+    {
+        return total;
+    }
+
     public static Builder create()
     {
         return new Builder();
     }
 
+    public static FindAuditLogResult empty()
+    {
+        return FindAuditLogResult.create().
+            total( 0L ).
+            hits( AuditLogs.empty() ).
+            build();
+    }
+
     public static final class Builder
     {
         private AuditLogs hits;
+
+        private Long total;
 
         private Builder()
         {
@@ -41,6 +60,12 @@ public class FindAuditLogResult
         public Builder hits( final AuditLogs val )
         {
             hits = val;
+            return this;
+        }
+
+        public Builder total( final Long val )
+        {
+            total = val;
             return this;
         }
 

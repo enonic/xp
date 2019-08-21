@@ -128,11 +128,6 @@ public class AuditLog
 
         private PropertyTree data;
 
-        public Builder()
-        {
-
-        }
-
         public Builder id( final AuditLogId val )
         {
             id = val;
