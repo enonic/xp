@@ -22,7 +22,9 @@ public class AuditLogSerializer
 {
     public static CreateNodeParams.Builder toCreateNodeParams( final LogAuditLogParams auditLogParams )
     {
-        List<String> objectUris = auditLogParams.getObjectUris().stream().map( e -> e.toString() ).collect( Collectors.toList() );
+        List<String> objectUris = auditLogParams.getObjectUris().
+            stream().map( e -> e.toString() ).
+            collect( Collectors.toList() );
 
         final PropertyTree tree = new PropertyTree();
         final PropertySet data = tree.getRoot();

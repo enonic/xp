@@ -24,8 +24,6 @@ public class AuditLogServiceImpl
 {
     private final static Logger LOG = LoggerFactory.getLogger( AuditLogService.class );
 
-    private final Marker AUDIT = MarkerFactory.getMarker( "AUDIT" );
-
     private AuditLogConfig config;
 
     private IndexService indexService;
@@ -56,19 +54,7 @@ public class AuditLogServiceImpl
     {
         if ( !config.enabled() )
         {
-            // Audit logging is disabled, just return
-            // log object without actually saving it
-            // TODO: Is it ok to do this?
-            return AuditLog.create().
-                id( AuditLogId.from( "00000000-0000-0000-0000-000000000000" ) ).
-                type( params.getType() ).
-                time( params.getTime() ).
-                source( params.getSource() ).
-                user( params.getUser() ).
-                message( params.getMessage() ).
-                objectUris( params.getObjectUris() ).
-                data( params.getData() ).
-                build();
+            return null;
         }
 
         AuditLog result = CreateAuditLogCommand.create().
@@ -87,8 +73,8 @@ public class AuditLogServiceImpl
 
     private void logAuditLog( final AuditLog auditLog )
     {
-        LOG.info( AUDIT, // TODO: What do we want to log here
-                  String.format( "%s %s %s", auditLog.getId(), auditLog.getSource(), auditLog.getMessage() ) );
+        final String message = String.format( "%s %s %s", auditLog.getType(), auditLog.getSource(), auditLog.getMessage() );
+        LOG.info( message );
     }
 
     @Override

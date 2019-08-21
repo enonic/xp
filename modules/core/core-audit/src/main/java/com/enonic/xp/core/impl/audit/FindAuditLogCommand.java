@@ -48,9 +48,12 @@ public class FindAuditLogCommand
         }
 
         FindNodesByQueryResult result = nodeService.findByQuery( query );
-        Nodes nodes = nodeService.getByIds( result.getNodeIds() );
 
-        List<AuditLog> logs = nodes.stream().map( AuditLogSerializer::fromNode ).collect( Collectors.toList() );
+        List<AuditLog> logs = result.getNodeIds().
+            stream().
+            map( nodeService::getById ).
+            map( AuditLogSerializer::fromNode ).
+            collect( Collectors.toList() );
 
         return FindAuditLogResult.create().
             total( result.getTotalHits() ).
