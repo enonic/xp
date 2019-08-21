@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableSet;
 import com.enonic.xp.audit.AuditLog;
 import com.enonic.xp.audit.AuditLogId;
 import com.enonic.xp.audit.LogAuditLogParams;
+import com.enonic.xp.core.impl.audit.AuditLogConstants;
 import com.enonic.xp.core.impl.audit.AuditLogPropertyNames;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -20,6 +21,7 @@ import com.enonic.xp.security.PrincipalKey;
 
 public class AuditLogSerializer
 {
+
     public static CreateNodeParams.Builder toCreateNodeParams( final LogAuditLogParams auditLogParams )
     {
         List<String> objectUris = auditLogParams.getObjectUris().
@@ -38,6 +40,8 @@ public class AuditLogSerializer
         data.addSet( AuditLogPropertyNames.DATA, auditLogParams.getData().getRoot().copy( data.getTree() ) );
 
         return CreateNodeParams.create().
+            nodeType( AuditLogConstants.NODE_TYPE ).
+            inheritPermissions( true ).
             data( tree );
     }
 
