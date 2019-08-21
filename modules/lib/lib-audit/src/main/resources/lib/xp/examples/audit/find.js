@@ -1,4 +1,4 @@
-var auditLib = require('/lib/xp/auditlog');
+var auditLib = require('/lib/xp/audit');
 var assert = require('/lib/xp/testing');
 
 // BEGIN

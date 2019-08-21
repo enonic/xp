@@ -2,9 +2,9 @@
  * Functions to log and find audit logs.
  *
  * @example
- * var auditLib = require('/lib/xp/auditlog');
+ * var auditLib = require('/lib/xp/audit');
  *
- * @module auditlog
+ * @module audit
  */
 
 function required(params, name) {
@@ -29,7 +29,7 @@ function nullOrValue(value) {
  *
  * The parameter 'type' is required and all other parameters are optional.
  *
- * @example-ref examples/auditlog/log.js
+ * @example-ref examples/audit/log.js
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.type Type of log entry.
@@ -43,7 +43,7 @@ function nullOrValue(value) {
  * @returns {object} Audit log created as JSON.
  */
 exports.log = function (params) {
-    var bean = __.newBean('com.enonic.xp.lib.auditlog.CreateAuditLogHandler');
+    var bean = __.newBean('com.enonic.xp.lib.audit.CreateAuditLogHandler');
     bean.type = required(params, 'type');
     bean.time = nullOrValue(params.time);
     bean.source = nullOrValue(params.source);
@@ -58,7 +58,7 @@ exports.log = function (params) {
 /**
  * This function fetches an audit log.
  *
- * @example-ref examples/auditlog/get.js
+ * @example-ref examples/audit/get.js
  *
  * @param {object} params     JSON with the parameters.
  * @param {string} params.id  Id of the audit log.
@@ -66,7 +66,7 @@ exports.log = function (params) {
  * @returns {object} Audit log as JSON.
  */
 exports.get = function (params) {
-    var bean = __.newBean('com.enonic.xp.lib.auditlog.GetAuditLogHandler');
+    var bean = __.newBean('com.enonic.xp.lib.audit.GetAuditLogHandler');
     bean.id = required(params, 'id');
     return __.toNativeObject(bean.execute());
 };
@@ -77,7 +77,7 @@ exports.get = function (params) {
  * All parameters are semi-optional, meaning that you should at least supply one
  * of them. If no parameters are supplied you will get an empty result.
  *
- * @example-ref examples/auditlog/find.js
+ * @example-ref examples/audit/find.js
  *
  * @param {object} params     JSON with the parameters.
  * @param {number} [params.start=0] Start index (used for paging).
@@ -91,7 +91,7 @@ exports.get = function (params) {
  * @returns {object} Audit log search results.
  */
 exports.find = function (params) {
-    var bean = __.newBean('com.enonic.xp.lib.auditlog.FindAuditLogHandler');
+    var bean = __.newBean('com.enonic.xp.lib.audit.FindAuditLogHandler');
     bean.start = params.start;
     bean.count = params.count;
     bean.ids = __.toScriptValue(params.ids);

@@ -1,4 +1,4 @@
-package com.enonic.xp.lib.auditlog.mapper;
+package com.enonic.xp.lib.audit.mapper;
 
 import java.net.URI;
 
@@ -28,7 +28,7 @@ public class AuditLogMapper
 
     static void serializeAuditLog( MapGenerator gen, AuditLog auditLog )
     {
-        gen.value( "_id", auditLog.getId() ); // TODO: Should this be _id like content or just id
+        gen.value( "_id", auditLog.getId() );
         gen.value( "type", auditLog.getType() );
         gen.value( "time", auditLog.getTime() );
         gen.value( "source", auditLog.getSource() );

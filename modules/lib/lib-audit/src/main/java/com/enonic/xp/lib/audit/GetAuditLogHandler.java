@@ -1,7 +1,7 @@
-package com.enonic.xp.lib.auditlog;
+package com.enonic.xp.lib.audit;
 
 import com.enonic.xp.audit.AuditLogId;
-import com.enonic.xp.lib.auditlog.mapper.AuditLogMapper;
+import com.enonic.xp.lib.audit.mapper.AuditLogMapper;
 
 public class GetAuditLogHandler
     extends BaseAuditLogHandler

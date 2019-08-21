@@ -1,4 +1,4 @@
-package com.enonic.xp.lib.auditlog.mapper;
+package com.enonic.xp.lib.audit.mapper;
 
 import com.enonic.xp.audit.FindAuditLogResult;
 import com.enonic.xp.script.serializer.MapGenerator;

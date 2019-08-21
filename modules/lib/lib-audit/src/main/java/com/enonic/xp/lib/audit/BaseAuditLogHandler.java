@@ -1,4 +1,4 @@
-package com.enonic.xp.lib.auditlog;
+package com.enonic.xp.lib.audit;
 
 import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.script.bean.BeanContext;

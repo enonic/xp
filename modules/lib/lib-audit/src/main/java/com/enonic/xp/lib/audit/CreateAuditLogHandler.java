@@ -1,4 +1,4 @@
-package com.enonic.xp.lib.auditlog;
+package com.enonic.xp.lib.audit;
 
 import java.net.URI;
 import java.time.Instant;
@@ -13,7 +13,7 @@ import com.google.common.collect.ImmutableSet;
 import com.enonic.xp.audit.AuditLog;
 import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.lib.auditlog.mapper.AuditLogMapper;
+import com.enonic.xp.lib.audit.mapper.AuditLogMapper;
 import com.enonic.xp.lib.common.FormJsonToPropertyTreeTranslator;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.security.PrincipalKey;
