@@ -53,7 +53,7 @@ public final class PushNodeHandler
             toBePushed.addAll( getNodeIds() );
         }
 
-        final PushNodesResult push = this.nodeService.push( nodeIds, targetBranch );
+        final PushNodesResult push = this.nodeService.push( toBePushed.build(), targetBranch );
 
         final NodeIds deletedNodes = doDelete( toBeDeleted );
 
