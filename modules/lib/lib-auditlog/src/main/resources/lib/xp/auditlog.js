@@ -37,7 +37,7 @@ function nullOrValue(value) {
  * @param {string} [params.source] Log entry source. Defaults to the application ID.
  * @param {string} [params.user] Log entry user. Defaults to the user of current context.
  * @param {string} [params.message] Log entry message. Defaults to empty string.
- * @param {array}  [params.objectUris] Uris to objects that relate to this log entry. Defaults to empty array.
+ * @param {array}  [params.objects] URIs to objects that relate to this log entry. Defaults to empty array.
  * @param {object} [params.data] Custom extra data for the this log entry. Defaults to empty object.
  *
  * @returns {object} Audit log created as JSON.
@@ -49,7 +49,7 @@ exports.log = function (params) {
     bean.source = params.source === undefined ? app.name : params.source;
     bean.user = nullOrValue(params.user);
     bean.message = nullOrValue(params.message);
-    bean.objectUris = __.toScriptValue(params.objectUris);
+    bean.objectUris = __.toScriptValue(params.objects);
     bean.data = __.toScriptValue(params.data);
 
     return __.toNativeObject(bean.execute());
@@ -82,11 +82,13 @@ exports.get = function (params) {
  * @param {object} params     JSON with the parameters.
  * @param {number} [params.start=0] Start index (used for paging).
  * @param {number} [params.count=10] Number of contents to fetch.
- * @param {string} [params.ids] Filter by ids of audit logs.
+ * @param {array} [params.ids] Filter by ids of audit logs.
  * @param {string} [params.from] Filter by logs younger than from.
  * @param {string} [params.to] Filter by logs older than to.
  * @param {string} [params.type] Filter by type.
  * @param {string} [params.source] Filter by source.
+ * @param {array} [params.users] Filter by user keys.
+ * @param {array} [params.objects] Filter by object URIs.
  *
  * @returns {object} Audit log search results.
  */
@@ -99,5 +101,7 @@ exports.find = function (params) {
     bean.to = nullOrValue(params.to);
     bean.type = nullOrValue(params.type);
     bean.source = nullOrValue(params.source);
+    bean.users = __.toScriptValue(params.users);
+    bean.objectUris = __.toScriptValue(params.objects);
     return __.toNativeObject(bean.execute());
 };

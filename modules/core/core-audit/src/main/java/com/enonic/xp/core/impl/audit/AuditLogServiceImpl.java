@@ -5,15 +5,13 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
 
 import com.enonic.xp.audit.AuditLog;
 import com.enonic.xp.audit.AuditLogId;
-import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.audit.FindAuditLogParams;
 import com.enonic.xp.audit.FindAuditLogResult;
+import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.repository.RepositoryService;

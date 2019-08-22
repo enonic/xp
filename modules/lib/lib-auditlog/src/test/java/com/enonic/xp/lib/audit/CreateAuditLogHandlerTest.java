@@ -1,13 +1,10 @@
 package com.enonic.xp.lib.audit;
 
-import java.net.URI;
-
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.google.common.collect.ImmutableSet;
-
 import com.enonic.xp.audit.AuditLog;
+import com.enonic.xp.audit.AuditLogUris;
 import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.PrincipalKey;
@@ -33,7 +30,7 @@ public class CreateAuditLogHandlerTest
             source( "testbundle" ).
             user( PrincipalKey.ofAnonymous() ).
             message( "Audit log message" ).
-            objectUris( ImmutableSet.of( URI.create( "some:resource:uri" ) ) ).
+            objectUris( AuditLogUris.from( "some:resource:uri" ) ).
             data( data ).build() ).
             build();
 

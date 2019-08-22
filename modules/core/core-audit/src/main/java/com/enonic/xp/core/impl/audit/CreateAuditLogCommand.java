@@ -41,7 +41,7 @@ public class CreateAuditLogCommand
             build();
 
         Node node = nodeService.create( createNodeParams );
-        nodeService.refresh( RefreshMode.ALL ); // TODO: Is this correct?
+        nodeService.refresh( RefreshMode.ALL );
 
         return node;
     }

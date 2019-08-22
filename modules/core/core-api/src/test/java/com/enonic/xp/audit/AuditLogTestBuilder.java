@@ -1,9 +1,6 @@
 package com.enonic.xp.audit;
 
-import java.net.URI;
 import java.time.Instant;
-
-import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.PrincipalKey;
@@ -22,7 +19,7 @@ public class AuditLogTestBuilder
 
     static String message = "testMessage";
 
-    static ImmutableSet<URI> objectUris = ImmutableSet.<URI>builder().add( URI.create( "a:b:c" ), URI.create( "d:e:f" ) ).build();
+    static AuditLogUris objectUris = AuditLogUris.from( "a:b:c", "d:e:f" );
 
     static PropertyTree data = new PropertyTree();
 

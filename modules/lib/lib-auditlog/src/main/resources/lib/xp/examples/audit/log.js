@@ -16,7 +16,7 @@ var log2 = auditLib.log({
     source: 'unittests',
     user: 'user:system:anonymous',
     message: 'Audit log message',
-    objectUris: [
+    objects: [
         'some:resource:uri'
     ],
     data: {
@@ -33,7 +33,7 @@ var expected1 = {
     'source': 'testbundle',
     'user': 'user:system:anonymous',
     'message': '',
-    'objectUris': [],
+    'objects': [],
     'data': {}
 };
 
@@ -46,7 +46,7 @@ var expected2 = {
     'source': 'testbundle',
     'user': 'user:system:anonymous',
     'message': 'Audit log message',
-    'objectUris': [
+    'objects': [
         'some:resource:uri'
     ],
     'data': {

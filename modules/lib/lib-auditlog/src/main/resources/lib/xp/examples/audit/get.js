@@ -15,7 +15,7 @@ var expected = {
     'source': 'testbundle',
     'user': 'user:system:anonymous',
     'message': 'Fetched message',
-    'objectUris': [],
+    'objects': [],
     'data': {}
 };
 

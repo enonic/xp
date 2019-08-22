@@ -11,6 +11,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.audit.AuditLog;
+import com.enonic.xp.audit.AuditLogUri;
+import com.enonic.xp.audit.AuditLogUris;
 import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.lib.audit.mapper.AuditLogMapper;
@@ -31,7 +33,7 @@ public class CreateAuditLogHandler
 
     private String message;
 
-    private ImmutableSet<URI> objectUris;
+    private AuditLogUris objectUris;
 
     private PropertyTree data;
 
@@ -81,9 +83,10 @@ public class CreateAuditLogHandler
         {
             return;
         }
-
-        List<URI> uris = objectUris.getList().stream().map( o -> URI.create( (String) o ) ).collect( Collectors.toList() );
-        this.objectUris = ImmutableSet.copyOf( uris );
+        final List<AuditLogUri> userList = objectUris.getList().
+            stream().map( o -> AuditLogUri.from( o.toString() ) ).
+            collect( Collectors.toList() );
+        this.objectUris = AuditLogUris.from( userList );
     }
 
     public void setData( final ScriptValue data )

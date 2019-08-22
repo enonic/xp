@@ -24,7 +24,7 @@ public class LogAuditLogParams
 
     private final String message;
 
-    private final ImmutableSet<URI> objectUris;
+    private final AuditLogUris objectUris;
 
     private final PropertyTree data;
 
@@ -35,7 +35,7 @@ public class LogAuditLogParams
         source = Objects.requireNonNullElse( builder.source, "" );
         user = Objects.requireNonNullElseGet( builder.user, () -> getUserKey() );
         message = Objects.requireNonNullElse( builder.message, "" );
-        objectUris = Objects.requireNonNullElse( builder.objectUris, ImmutableSet.of() );
+        objectUris = Objects.requireNonNullElse( builder.objectUris, AuditLogUris.empty() );
         data = Objects.requireNonNullElse( builder.data, new PropertyTree() );
     }
 
@@ -71,7 +71,7 @@ public class LogAuditLogParams
         return message;
     }
 
-    public ImmutableSet<URI> getObjectUris()
+    public AuditLogUris getObjectUris()
     {
         return objectUris;
     }
@@ -98,7 +98,7 @@ public class LogAuditLogParams
 
         private String message;
 
-        private ImmutableSet<URI> objectUris;
+        private AuditLogUris objectUris;
 
         private PropertyTree data;
 
@@ -136,7 +136,7 @@ public class LogAuditLogParams
             return this;
         }
 
-        public Builder objectUris( final ImmutableSet<URI> val )
+        public Builder objectUris( final AuditLogUris val )
         {
             objectUris = val;
             return this;

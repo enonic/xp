@@ -15,7 +15,7 @@ public class AuditLogPropertyNames
 
     public static final String MESSAGE = "message";
 
-    public static final String OBJECTURIS = "objectUris";
+    public static final String OBJECTURIS = "objects";
 
     public static final String DATA = "data";
 }

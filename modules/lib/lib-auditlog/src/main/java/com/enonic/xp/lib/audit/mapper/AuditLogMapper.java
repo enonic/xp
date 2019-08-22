@@ -1,10 +1,8 @@
 package com.enonic.xp.lib.audit.mapper;
 
-import java.net.URI;
-
-import com.google.common.collect.ImmutableSet;
-
 import com.enonic.xp.audit.AuditLog;
+import com.enonic.xp.audit.AuditLogUri;
+import com.enonic.xp.audit.AuditLogUris;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.lib.common.PropertyTreeMapper;
 import com.enonic.xp.script.serializer.MapGenerator;
@@ -38,12 +36,12 @@ public class AuditLogMapper
         serializeData( gen, auditLog.getData() );
     }
 
-    private static void serializeObjectUris( final MapGenerator gen, final ImmutableSet<URI> list )
+    private static void serializeObjectUris( final MapGenerator gen, final AuditLogUris uris )
     {
-        gen.array( "objectUris" );
-        for ( final URI value : list )
+        gen.array( "objects" );
+        for ( final AuditLogUri value : uris )
         {
-            gen.value( value );
+            gen.value( value.toString() );
         }
         gen.end();
     }

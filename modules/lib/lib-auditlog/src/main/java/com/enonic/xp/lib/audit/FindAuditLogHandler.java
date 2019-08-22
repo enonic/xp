@@ -1,12 +1,18 @@
 package com.enonic.xp.lib.audit;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import com.enonic.xp.audit.AuditLogIds;
+import com.enonic.xp.audit.AuditLogUri;
+import com.enonic.xp.audit.AuditLogUris;
 import com.enonic.xp.audit.FindAuditLogParams;
+import com.enonic.xp.audit.FindAuditLogResult;
 import com.enonic.xp.lib.audit.mapper.FindAuditLogResultMapper;
 import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalKeys;
 
 public class FindAuditLogHandler
     extends BaseAuditLogHandler
@@ -26,10 +32,14 @@ public class FindAuditLogHandler
 
     private String source;
 
+    private PrincipalKeys users;
+
+    private AuditLogUris objectUris;
+
     @Override
     protected Object doExecute()
     {
-        return new FindAuditLogResultMapper( this.auditLogService.find( FindAuditLogParams.
+        final FindAuditLogParams params = FindAuditLogParams.
             create().
             ids( ids ).
             from( from ).
@@ -38,7 +48,11 @@ public class FindAuditLogHandler
             source( source ).
             count( count ).
             start( start ).
-            build() ) );
+            users( users ).
+            objectUris( objectUris ).
+            build();
+        final FindAuditLogResult result = auditLogService.find( params );
+        return new FindAuditLogResultMapper( result );
     }
 
     public void setStart( final Integer start )
@@ -78,5 +92,29 @@ public class FindAuditLogHandler
     public void setSource( final String source )
     {
         this.source = source;
+    }
+
+    public void setUsers( final ScriptValue users )
+    {
+        if ( users == null || users.getList() == null )
+        {
+            return;
+        }
+        final List<PrincipalKey> userList = users.getList().
+            stream().map( o -> PrincipalKey.from( o.toString() ) ).
+            collect( Collectors.toList() );
+        this.users = PrincipalKeys.from( userList );
+    }
+
+    public void setObjectUris( final ScriptValue objectUris )
+    {
+        if ( objectUris == null || objectUris.getList() == null )
+        {
+            return;
+        }
+        final List<AuditLogUri> userList = objectUris.getList().
+            stream().map( o -> AuditLogUri.from( o.toString() ) ).
+            collect( Collectors.toList() );
+        this.objectUris = AuditLogUris.from( userList );
     }
 }
