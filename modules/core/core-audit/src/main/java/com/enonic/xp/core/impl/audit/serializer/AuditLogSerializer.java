@@ -1,16 +1,15 @@
 package com.enonic.xp.core.impl.audit.serializer;
 
-import java.net.URI;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import com.google.common.collect.ImmutableSet;
-
 import com.enonic.xp.audit.AuditLog;
 import com.enonic.xp.audit.AuditLogId;
+import com.enonic.xp.audit.AuditLogUri;
+import com.enonic.xp.audit.AuditLogUris;
 import com.enonic.xp.audit.LogAuditLogParams;
+import com.enonic.xp.core.impl.audit.AuditLogConstants;
 import com.enonic.xp.core.impl.audit.AuditLogPropertyNames;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -20,6 +19,7 @@ import com.enonic.xp.security.PrincipalKey;
 
 public class AuditLogSerializer
 {
+
     public static CreateNodeParams.Builder toCreateNodeParams( final LogAuditLogParams auditLogParams )
     {
         List<String> objectUris = auditLogParams.getObjectUris().
@@ -38,6 +38,8 @@ public class AuditLogSerializer
         data.addSet( AuditLogPropertyNames.DATA, auditLogParams.getData().getRoot().copy( data.getTree() ) );
 
         return CreateNodeParams.create().
+            nodeType( AuditLogConstants.NODE_TYPE ).
+            inheritPermissions( true ).
             data( tree );
     }
 
@@ -45,9 +47,10 @@ public class AuditLogSerializer
     {
         final PropertySet data = node.data().getRoot();
 
-        final Iterator<URI> objectUris = StreamSupport.stream( data.getStrings( AuditLogPropertyNames.OBJECTURIS ).spliterator(), false ).
-            map( URI::create ).
-            iterator();
+        final AuditLogUris.Builder objectUris = AuditLogUris.create();
+        StreamSupport.stream( data.getStrings( AuditLogPropertyNames.OBJECTURIS ).spliterator(), false ).
+            map( AuditLogUri::from ).
+            forEach( objectUris::add );
 
         return AuditLog.create().
             id( AuditLogId.from( node.id() ) ).
@@ -56,7 +59,7 @@ public class AuditLogSerializer
             source( data.getString( AuditLogPropertyNames.SOURCE ) ).
             user( PrincipalKey.from( data.getString( AuditLogPropertyNames.USER ) ) ).
             message( data.getString( AuditLogPropertyNames.MESSAGE ) ).
-            objectUris( ImmutableSet.copyOf( objectUris ) ).
+            objectUris( objectUris.build() ).
             data( data.getSet( AuditLogPropertyNames.DATA ).toTree() ).
             build();
     }

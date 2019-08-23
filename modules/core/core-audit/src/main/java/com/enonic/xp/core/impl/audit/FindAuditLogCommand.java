@@ -1,25 +1,24 @@
 package com.enonic.xp.core.impl.audit;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.audit.AuditLog;
+import com.enonic.xp.audit.AuditLogUri;
 import com.enonic.xp.audit.AuditLogs;
 import com.enonic.xp.audit.FindAuditLogParams;
 import com.enonic.xp.audit.FindAuditLogResult;
 import com.enonic.xp.core.impl.audit.serializer.AuditLogSerializer;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.FindNodesByQueryResult;
+import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeQuery;
-import com.enonic.xp.node.Nodes;
-import com.enonic.xp.query.filter.Filter;
 import com.enonic.xp.query.filter.IdFilter;
 import com.enonic.xp.query.filter.RangeFilter;
 import com.enonic.xp.query.filter.ValueFilter;
+import com.enonic.xp.security.PrincipalKey;
 
 public class FindAuditLogCommand
     extends NodeServiceCommand<FindAuditLogResult>
@@ -63,17 +62,15 @@ public class FindAuditLogCommand
 
     private NodeQuery createQuery()
     {
-        final NodeQuery.Builder builder = NodeQuery.create();
-        final AtomicBoolean filterAdded = new AtomicBoolean( false );
-
-        Consumer<Filter> addFilter = ( f ) -> {
-            builder.addQueryFilter( f );
-            filterAdded.set( true );
-        };
+        final NodeQuery.Builder builder = NodeQuery.create().
+            addQueryFilter( ValueFilter.create().
+                fieldName( NodeIndexPath.NODE_TYPE.toString() ).
+                addValue( ValueFactory.newString( AuditLogConstants.NODE_TYPE.toString() ) ).
+                build() );
 
         if ( params.getIds() != null )
         {
-            addFilter.accept( IdFilter.create().
+            builder.addQueryFilter( IdFilter.create().
                 values( params.getIds().asStrings() ).
                 build() );
         }
@@ -81,7 +78,7 @@ public class FindAuditLogCommand
         if ( params.getFrom() != null || params.getTo() != null )
         {
             RangeFilter.Builder fb = RangeFilter.create();
-            fb.fieldName( "time" );
+            fb.fieldName( AuditLogPropertyNames.TIME );
             if ( params.getFrom() != null )
             {
                 fb.from( ValueFactory.newDateTime( params.getFrom() ) );
@@ -90,28 +87,45 @@ public class FindAuditLogCommand
             {
                 fb.to( ValueFactory.newDateTime( params.getTo() ) );
             }
-            addFilter.accept( fb.build() );
+            builder.addQueryFilter( fb.build() );
         }
 
         if ( params.getSource() != null )
         {
-            addFilter.accept( ValueFilter.create().
-                fieldName( "source" ).
+            builder.addQueryFilter( ValueFilter.create().
+                fieldName( AuditLogPropertyNames.SOURCE ).
                 addValue( ValueFactory.newString( params.getSource() ) ).
                 build() );
         }
 
         if ( params.getType() != null )
         {
-            addFilter.accept( ValueFilter.create().
-                fieldName( "type" ).
+            builder.addQueryFilter( ValueFilter.create().
+                fieldName( AuditLogPropertyNames.TYPE ).
                 addValue( ValueFactory.newString( params.getType() ) ).
                 build() );
         }
 
-        if ( !filterAdded.get() )
+        if ( params.getUsers() != null )
         {
-            return null;
+            final ValueFilter.Builder filter = ValueFilter.create().
+                fieldName( AuditLogPropertyNames.USER );
+            params.getUsers().stream().
+                map( PrincipalKey::toString ).
+                map( ValueFactory::newString ).
+                forEach( filter::addValue );
+            builder.addQueryFilter( filter.build() );
+        }
+
+        if ( params.getObjectUris() != null )
+        {
+            final ValueFilter.Builder filter = ValueFilter.create().
+                fieldName( AuditLogPropertyNames.OBJECTURIS );
+            params.getObjectUris().stream().
+                map( AuditLogUri::toString ).
+                map( ValueFactory::newString ).
+                forEach( filter::addValue );
+            builder.addQueryFilter( filter.build() );
         }
 
         return builder.

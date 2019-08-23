@@ -25,7 +25,7 @@ public class AuditLog
 
     private final String message;
 
-    private final ImmutableSet<URI> objectUris;
+    private final AuditLogUris objectUris;
 
     private final PropertyTree data;
 
@@ -71,7 +71,7 @@ public class AuditLog
         return message;
     }
 
-    public ImmutableSet<URI> getObjectUris()
+    public AuditLogUris getObjectUris()
     {
         return objectUris;
     }
@@ -124,7 +124,7 @@ public class AuditLog
 
         private String message;
 
-        private ImmutableSet<URI> objectUris;
+        private AuditLogUris objectUris;
 
         private PropertyTree data;
 
@@ -164,7 +164,7 @@ public class AuditLog
             return this;
         }
 
-        public Builder objectUris( final ImmutableSet<URI> val )
+        public Builder objectUris( final AuditLogUris val )
         {
             objectUris = val;
             return this;

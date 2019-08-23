@@ -7,10 +7,11 @@ import org.junit.Test;
 
 import com.enonic.xp.audit.AuditLog;
 import com.enonic.xp.audit.AuditLogIds;
-import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.audit.FindAuditLogParams;
 import com.enonic.xp.audit.FindAuditLogResult;
+import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.core.impl.audit.AuditLogContext;
+import com.enonic.xp.repository.RepositoryNotFoundException;
 
 import static org.junit.Assert.*;
 
@@ -25,7 +26,7 @@ public class AuditLogServiceImplTest_find
         super.setUp();
     }
 
-    @Test
+    @Test(expected = RepositoryNotFoundException.class)
     public void find_anonymous()
     {
         LogAuditLogParams params = LogAuditLogParams.create().type( "test" ).build();
@@ -35,17 +36,22 @@ public class AuditLogServiceImplTest_find
         assertEquals( 0L, result.getCount() );
     }
 
-    private FindAuditLogResult find_helper( FindAuditLogParams params )
+    private FindAuditLogResult findAsAdmin( FindAuditLogParams params )
     {
         return AuditLogContext.createAdminContext().callWith( () -> auditLogService.find( params ) );
+    }
+
+    private AuditLog logAsAdmin( LogAuditLogParams params )
+    {
+        return AuditLogContext.createAdminContext().callWith( () -> auditLogService.log( params ) );
     }
 
     @Test
     public void find()
     {
         LogAuditLogParams params = LogAuditLogParams.create().type( "test" ).build();
-        AuditLog log = auditLogService.log( params );
-        FindAuditLogResult result = find_helper( FindAuditLogParams.create().
+        AuditLog log = logAsAdmin( params );
+        FindAuditLogResult result = findAsAdmin( FindAuditLogParams.create().
             ids( AuditLogIds.from( log.getId() ) ).
             build() );
         assertEquals( 1L, result.getCount() );
@@ -56,25 +62,25 @@ public class AuditLogServiceImplTest_find
     public void find_none()
     {
         LogAuditLogParams params = LogAuditLogParams.create().type( "test" ).build();
-        auditLogService.log( params );
-        FindAuditLogResult result = find_helper( FindAuditLogParams.create().build() );
-        assertEquals( 0L, result.getCount() );
+        logAsAdmin( params );
+        FindAuditLogResult result = findAsAdmin( FindAuditLogParams.create().build() );
+        assertEquals( 1L, result.getCount() );
     }
 
     @Test
     public void find_from()
     {
-        AuditLog log = auditLogService.log( LogAuditLogParams.create().
+        AuditLog log = logAsAdmin( LogAuditLogParams.create().
             type( "test" ).
             time( Instant.now().minus( 30, ChronoUnit.DAYS ) ).
             build() );
 
-        FindAuditLogResult result = find_helper( FindAuditLogParams.create().
+        FindAuditLogResult result = findAsAdmin( FindAuditLogParams.create().
             from( Instant.now() ).
             build() );
         assertEquals( 0L, result.getCount() );
 
-        result = find_helper( FindAuditLogParams.create().
+        result = findAsAdmin( FindAuditLogParams.create().
             from( Instant.now().minus( 31, ChronoUnit.DAYS ) ).
             build() );
         assertEquals( 1L, result.getCount() );
@@ -84,17 +90,17 @@ public class AuditLogServiceImplTest_find
     @Test
     public void find_to()
     {
-        AuditLog log = auditLogService.log( LogAuditLogParams.create().
+        AuditLog log = logAsAdmin( LogAuditLogParams.create().
             type( "test" ).
             time( Instant.now() ).
             build() );
 
-        FindAuditLogResult result = find_helper( FindAuditLogParams.create().
+        FindAuditLogResult result = findAsAdmin( FindAuditLogParams.create().
             to( Instant.now().minus( 30, ChronoUnit.DAYS ) ).
             build() );
         assertEquals( 0L, result.getCount() );
 
-        result = find_helper( FindAuditLogParams.create().
+        result = findAsAdmin( FindAuditLogParams.create().
             to( Instant.now() ).
             build() );
         assertEquals( 1L, result.getCount() );
@@ -105,21 +111,21 @@ public class AuditLogServiceImplTest_find
     @Test
     public void find_type()
     {
-        AuditLog log1 = auditLogService.log( LogAuditLogParams.create().
+        AuditLog log1 = logAsAdmin( LogAuditLogParams.create().
             type( "type1" ).
             build() );
 
-        AuditLog log2 = auditLogService.log( LogAuditLogParams.create().
+        AuditLog log2 = logAsAdmin( LogAuditLogParams.create().
             type( "type2" ).
             build() );
 
-        FindAuditLogResult result = find_helper( FindAuditLogParams.create().
+        FindAuditLogResult result = findAsAdmin( FindAuditLogParams.create().
             type( "type1" ).
             build() );
         assertEquals( 1L, result.getCount() );
         assertEquals( log1, result.getHits().first() );
 
-        result = find_helper( FindAuditLogParams.create().
+        result = findAsAdmin( FindAuditLogParams.create().
             type( "type2" ).
             build() );
         assertEquals( 1L, result.getCount() );
@@ -129,23 +135,23 @@ public class AuditLogServiceImplTest_find
     @Test
     public void find_source()
     {
-        AuditLog log1 = auditLogService.log( LogAuditLogParams.create().
+        AuditLog log1 = logAsAdmin( LogAuditLogParams.create().
             type( "test" ).
             source( "source1" ).
             build() );
 
-        AuditLog log2 = auditLogService.log( LogAuditLogParams.create().
+        AuditLog log2 = logAsAdmin( LogAuditLogParams.create().
             type( "test" ).
             source( "source2" ).
             build() );
 
-        FindAuditLogResult result = find_helper( FindAuditLogParams.create().
+        FindAuditLogResult result = findAsAdmin( FindAuditLogParams.create().
             source( "source1" ).
             build() );
         assertEquals( 1L, result.getCount() );
         assertEquals( log1, result.getHits().first() );
 
-        result = find_helper( FindAuditLogParams.create().
+        result = findAsAdmin( FindAuditLogParams.create().
             source( "source2" ).
             build() );
         assertEquals( 1L, result.getCount() );

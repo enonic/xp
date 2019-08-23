@@ -6,6 +6,7 @@ import com.enonic.xp.audit.AuditLog;
 import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.core.impl.audit.AuditLogContext;
 import com.enonic.xp.node.NodeNotFoundException;
+import com.enonic.xp.repository.RepositoryNotFoundException;
 
 import static org.junit.Assert.*;
 
@@ -20,22 +21,20 @@ public class AuditLogServiceImplTest_log
         super.setUp();
     }
 
-    @Test(expected = NodeNotFoundException.class)
-    public void get_anonymous()
+    @Test(expected = RepositoryNotFoundException.class)
+    public void log_anonymous()
     {
         LogAuditLogParams params = LogAuditLogParams.create().type( "test" ).build();
-
-        AuditLog log = auditLogService.log( params );
-        auditLogService.get( log.getId() );
+        auditLogService.log( params );
     }
 
     @Test
     public void get()
     {
-        LogAuditLogParams params = LogAuditLogParams.create().type( "test" ).build();
+        final LogAuditLogParams params = LogAuditLogParams.create().type( "test" ).build();
 
-        AuditLog log1 = auditLogService.log( params );
-        AuditLog log2 = AuditLogContext.createAdminContext().callWith( () -> auditLogService.get( log1.getId() ) );
+        final AuditLog log1 = AuditLogContext.createAdminContext().callWith( () -> auditLogService.log( params ) );
+        final AuditLog log2 = AuditLogContext.createAdminContext().callWith( () -> auditLogService.get( log1.getId() ) );
 
         assertEquals( log1, log2 );
     }

@@ -3,6 +3,8 @@ package com.enonic.xp.audit;
 import java.time.Instant;
 import java.util.Objects;
 
+import com.enonic.xp.security.PrincipalKeys;
+
 public class FindAuditLogParams
 {
     public static final int DEFAULT_FETCH_SIZE = 10;
@@ -21,6 +23,10 @@ public class FindAuditLogParams
 
     private final String source;
 
+    private final PrincipalKeys users;
+
+    private final AuditLogUris objectUris;
+
     private FindAuditLogParams( final Builder builder )
     {
         start = Objects.requireNonNullElse( builder.start, 0 );
@@ -30,6 +36,8 @@ public class FindAuditLogParams
         to = builder.to;
         type = builder.type;
         source = builder.source;
+        users = builder.users;
+        objectUris = builder.objectUris;
     }
 
     public static Builder newBuilder()
@@ -72,6 +80,16 @@ public class FindAuditLogParams
         return count;
     }
 
+    public PrincipalKeys getUsers()
+    {
+        return users;
+    }
+
+    public AuditLogUris getObjectUris()
+    {
+        return objectUris;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -93,6 +111,10 @@ public class FindAuditLogParams
         private Integer start;
 
         private Integer count;
+
+        private PrincipalKeys users;
+
+        private AuditLogUris objectUris;
 
         private Builder()
         {
@@ -128,11 +150,6 @@ public class FindAuditLogParams
             return this;
         }
 
-        public FindAuditLogParams build()
-        {
-            return new FindAuditLogParams( this );
-        }
-
         public Builder start( final Integer val )
         {
             start = val;
@@ -143,6 +160,23 @@ public class FindAuditLogParams
         {
             count = val;
             return this;
+        }
+
+        public Builder users( final PrincipalKeys val )
+        {
+            users = val;
+            return this;
+        }
+
+        public Builder objectUris( final AuditLogUris val )
+        {
+            objectUris = val;
+            return this;
+        }
+
+        public FindAuditLogParams build()
+        {
+            return new FindAuditLogParams( this );
         }
     }
 }

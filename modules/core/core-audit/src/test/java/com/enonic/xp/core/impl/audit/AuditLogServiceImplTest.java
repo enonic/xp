@@ -1,18 +1,15 @@
 package com.enonic.xp.core.impl.audit;
 
-import java.net.URI;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.google.common.collect.ImmutableSet;
-
 import com.enonic.xp.audit.AuditLog;
 import com.enonic.xp.audit.AuditLogId;
-import com.enonic.xp.audit.LogAuditLogParams;
+import com.enonic.xp.audit.AuditLogUris;
 import com.enonic.xp.audit.FindAuditLogParams;
 import com.enonic.xp.audit.FindAuditLogResult;
+import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.core.impl.audit.serializer.AuditLogSerializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexService;
@@ -48,7 +45,7 @@ public class AuditLogServiceImplTest
             type( "testType" ).
             source( "testSource" ).
             message( "testMessage" ).
-            objectUris( ImmutableSet.<URI>builder().add( URI.create( "a:b:c" ), URI.create( "d:e:f" ) ).build() ).
+            objectUris( AuditLogUris.from( "a:b:c", "d:e:f" ) ).
             data( data ).
             build();
 
@@ -112,7 +109,9 @@ public class AuditLogServiceImplTest
     public void find_no_filter()
     {
         FindAuditLogResult result = auditLogService.find( FindAuditLogParams.create().build() );
-        assertEquals( 0, result.getCount() );
+        assertEquals( 1, result.getCount() );
+        assertEquals( 1, result.getTotal() );
+        assertLog( result.getHits().first() );
     }
 
     @Test
@@ -140,7 +139,7 @@ public class AuditLogServiceImplTest
         assertNotNull( log.getMessage() );
         assertEquals( auditLogParams.getMessage(), log.getMessage() );
         assertNotNull( log.getObjectUris() );
-        assertEquals( 2, log.getObjectUris().size() );
+        assertEquals( 2, log.getObjectUris().getSize() );
         assertEquals( auditLogParams.getObjectUris(), log.getObjectUris() );
         assertNotNull( log.getData() );
         assertEquals( auditLogParams.getData(), log.getData() );
