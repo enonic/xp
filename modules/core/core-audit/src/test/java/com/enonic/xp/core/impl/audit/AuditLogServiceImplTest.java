@@ -109,7 +109,9 @@ public class AuditLogServiceImplTest
     public void find_no_filter()
     {
         FindAuditLogResult result = auditLogService.find( FindAuditLogParams.create().build() );
-        assertEquals( 0, result.getCount() );
+        assertEquals( 1, result.getCount() );
+        assertEquals( 1, result.getTotal() );
+        assertLog( result.getHits().first() );
     }
 
     @Test

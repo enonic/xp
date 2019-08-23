@@ -1,6 +1,7 @@
 package com.enonic.xp.audit;
 
 import java.net.URI;
+import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 
@@ -23,6 +24,27 @@ public class AuditLogUri
     public String toString()
     {
         return value.toString();
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+        final AuditLogUri that = (AuditLogUri) o;
+        return Objects.equals( value, that.value );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( value );
     }
 
     public static AuditLogUri from( final String value )

@@ -27,6 +27,6 @@ public class GetAuditLogHandlerTest
     public void testExample()
     {
         mockCreateLog();
-        assertNotNull( runScript( "/lib/xp/examples/audit/get.js" ) );
+        assertNotNull( runScript( "/lib/xp/examples/auditlog/get.js" ) );
     }
 }

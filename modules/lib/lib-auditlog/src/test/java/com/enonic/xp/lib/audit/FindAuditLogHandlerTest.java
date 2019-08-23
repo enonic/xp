@@ -33,6 +33,6 @@ public class FindAuditLogHandlerTest
     public void testExample()
     {
         mockCreateLog();
-        assertNotNull( runScript( "/lib/xp/examples/audit/find.js" ) );
+        assertNotNull( runScript( "/lib/xp/examples/auditlog/find.js" ) );
     }
 }

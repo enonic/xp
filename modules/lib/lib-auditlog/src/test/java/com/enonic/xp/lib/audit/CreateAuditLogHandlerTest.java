@@ -43,6 +43,6 @@ public class CreateAuditLogHandlerTest
     public void testExample()
     {
         mockCreateLog();
-        assertNotNull( runScript( "/lib/xp/examples/audit/log.js" ) );
+        assertNotNull( runScript( "/lib/xp/examples/auditlog/log.js" ) );
     }
 }

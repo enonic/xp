@@ -1,4 +1,4 @@
-var auditLib = require('/lib/xp/audit');
+var auditLib = require('/lib/xp/auditlog');
 var assert = require('/lib/xp/testing');
 
 // BEGIN
@@ -24,7 +24,7 @@ var expected = {
             'source': 'testbundle',
             'user': 'user:system:anonymous',
             'message': 'Fetched message',
-            'objectUris': [],
+            'objects': [],
             'data': {}
         }
     ]

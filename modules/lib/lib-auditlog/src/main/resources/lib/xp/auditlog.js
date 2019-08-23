@@ -2,7 +2,7 @@
  * Functions to log and find audit logs.
  *
  * @example
- * var auditLib = require('/lib/xp/audit');
+ * var auditLib = require('/lib/xp/auditlog');
  *
  * @module audit
  */
