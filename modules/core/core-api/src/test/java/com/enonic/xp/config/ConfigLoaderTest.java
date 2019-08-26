@@ -20,11 +20,11 @@ public class ConfigLoaderTest
         assertEquals( "value2", config.get( "key2" ) );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void loadConfig_notFound()
         throws Exception
     {
         final ConfigLoader loader = new ConfigLoader( getClass() );
-        loader.load( "unknown.properties" );
+        assertThrows(IllegalArgumentException.class, () ->  loader.load( "unknown.properties" ) );
     }
 }

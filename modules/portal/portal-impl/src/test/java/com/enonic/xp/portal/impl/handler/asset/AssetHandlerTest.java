@@ -3,9 +3,7 @@ package com.enonic.xp.portal.impl.handler.asset;
 import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 
@@ -76,9 +74,6 @@ public class AssetHandlerTest
         return res != null ? res : this.nullResource;
     }
 
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
-
     @Test
     public void testOrder()
     {
@@ -129,12 +124,12 @@ public class AssetHandlerTest
     public void testSiteResourceNotFound()
         throws Exception
     {
-        exception.expect( WebException.class );
-        exception.expectMessage( "Resource [demo:/assets/css/main.css] not found" );
-
         addResource( "demo:/site/assets/css/main.css" );
 
-        this.handler.handle( this.request, PortalResponse.create().build(), null );
+        final WebException ex = assertThrows(WebException.class, () -> {
+            this.handler.handle( this.request, PortalResponse.create().build(), null );
+        });
+        assertEquals( "Resource [demo:/assets/css/main.css] not found", ex.getMessage());
     }
 
     @Test

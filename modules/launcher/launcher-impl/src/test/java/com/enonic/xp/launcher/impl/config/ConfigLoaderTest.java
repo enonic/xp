@@ -2,21 +2,22 @@ package com.enonic.xp.launcher.impl.config;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 
 import com.enonic.xp.launcher.impl.env.Environment;
 
 public class ConfigLoaderTest
 {
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
+    @TempDir
+    public Path temporaryFolder;
 
     private File homeDir;
 
@@ -26,7 +27,7 @@ public class ConfigLoaderTest
     public void setUp()
         throws Exception
     {
-        this.homeDir = this.folder.newFolder( "home" );
+        this.homeDir = Files.createDirectory(this.temporaryFolder.resolve( "home" ) ).toFile();
 
         final Environment env = Mockito.mock( Environment.class );
         Mockito.when( env.getHomeDir() ).thenReturn( this.homeDir );

@@ -1,13 +1,13 @@
 package com.enonic.xp.internal.blobstore.readthrough;
 
+import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
@@ -21,8 +21,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ReadThroughBlobStoreTest
 {
-    @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
+    @TempDir
+    public Path temporaryFolder;
 
     private MemoryBlobStore readThroughStore;
 

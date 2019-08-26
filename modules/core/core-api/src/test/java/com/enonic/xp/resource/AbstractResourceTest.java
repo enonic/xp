@@ -2,18 +2,19 @@ package com.enonic.xp.resource;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
 
 public class AbstractResourceTest
 {
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    @TempDir
+    public Path temporaryFolder;
 
     protected File applicationsDir;
 
@@ -29,7 +30,7 @@ public class AbstractResourceTest
     public void setup()
         throws Exception
     {
-        applicationsDir = this.temporaryFolder.newFolder( "applications" );
+        applicationsDir = Files.createDirectory(this.temporaryFolder.resolve( "applications" ) ).toFile();
 
         writeFile( applicationsDir, "myapplication/a/b.txt", "a/b.txt" );
     }

@@ -8,8 +8,7 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,6 +17,8 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.repo.impl.elasticsearch.storage.StorageDaoImpl;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
+
+import java.nio.file.Path;
 
 public abstract class AbstractElasticsearchIntegrationTest
 {
@@ -28,8 +29,8 @@ public abstract class AbstractElasticsearchIntegrationTest
 
     private final static Logger LOG = LoggerFactory.getLogger( AbstractElasticsearchIntegrationTest.class );
 
-    @Rule
-    public TemporaryFolder xpHome = new TemporaryFolder();
+    @TempDir
+    public Path temporaryFolder;
 
     protected IndexServiceInternalImpl elasticsearchIndexService;
 
@@ -41,7 +42,7 @@ public abstract class AbstractElasticsearchIntegrationTest
     public void setUp()
         throws Exception
     {
-        server = new EmbeddedElasticsearchServer( xpHome.getRoot() );
+        server = new EmbeddedElasticsearchServer( temporaryFolder.getRoot().toFile() );
 
         this.client = server.getClient();
 

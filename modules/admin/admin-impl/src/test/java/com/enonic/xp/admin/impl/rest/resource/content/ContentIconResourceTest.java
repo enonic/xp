@@ -7,9 +7,7 @@ import java.util.Locale;
 
 import javax.ws.rs.core.CacheControl;
 
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
@@ -50,9 +48,6 @@ public class ContentIconResourceTest
     private ContentService contentService;
 
     private ImageService imageService;
-
-    @Rule
-    public ExpectedException ex = ExpectedException.none();
 
     @Override
     protected ContentIconResource getResourceInstance()
@@ -182,12 +177,12 @@ public class ContentIconResourceTest
 
         Mockito.when( imageService.readImage( Mockito.isA( ReadImageParams.class ) ) ).thenThrow( new IOException( "io error message" ) );
 
-        ex.expect( IOException.class );
-        ex.expectMessage( "io error message" );
-
-        request().path( "content/icon/content-id" ).
-            queryParam( "contentId", "content-id" ).
-            queryParam( "ts", "2" ).get();
+        final IOException ex = assertThrows(IOException.class, () -> {
+            request().path("content/icon/content-id").
+                    queryParam("contentId", "content-id").
+                    queryParam("ts", "2").get();
+        });
+        assertEquals( "io error message", ex.getMessage());
     }
 
     @Test

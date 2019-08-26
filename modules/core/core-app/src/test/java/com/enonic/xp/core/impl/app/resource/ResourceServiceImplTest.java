@@ -1,14 +1,14 @@
 package com.enonic.xp.core.impl.app.resource;
 
 import java.io.File;
+import java.nio.file.Path;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 
-import com.google.common.io.Files;
+import java.nio.file.Files;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
@@ -22,8 +22,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ResourceServiceImplTest
 {
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    @TempDir
+    public Path temporaryFolder;
 
     private ApplicationKey appKey;
 
@@ -35,7 +35,7 @@ public class ResourceServiceImplTest
     public void setup()
         throws Exception
     {
-        this.appDir = this.temporaryFolder.newFolder( "myapp" );
+        this.appDir = Files.createDirectory(this.temporaryFolder.resolve( "myapp" ) ).toFile();
 
         this.appKey = ApplicationKey.from( "myapp" );
         final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
@@ -55,8 +55,8 @@ public class ResourceServiceImplTest
     {
         final File file = new File( this.appDir, name );
 
-        Files.createParentDirs( file );
-        Files.touch( file );
+        com.google.common.io.Files.createParentDirs( file );
+        com.google.common.io.Files.touch( file );
     }
 
     @Test

@@ -1,13 +1,13 @@
 package com.enonic.xp.core.impl.export;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 
 import com.google.common.io.ByteSource;
 
@@ -32,8 +32,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class NodeExportIntegrationTest
     extends AbstractNodeTest
 {
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    @TempDir
+    public Path temporaryFolder;
 
     @BeforeEach
     public void setUp()
@@ -200,12 +200,12 @@ public class NodeExportIntegrationTest
 
     private void assertFileExists( final String path )
     {
-        assertTrue( "file " + path + " not found", new File( this.temporaryFolder.getRoot().getPath() + path ).exists() );
+        assertTrue( new File( this.temporaryFolder.getRoot().toFile().getPath() + path ).exists(), "file " + path + " not found" );
     }
 
     private void printPaths()
     {
-        final File file = this.temporaryFolder.getRoot();
+        final File file = this.temporaryFolder.getRoot().toFile();
 
         doPrintPaths( file );
     }

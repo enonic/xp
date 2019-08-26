@@ -1,11 +1,12 @@
 package com.enonic.xp.impl.server.rest;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 
 import com.enonic.xp.impl.server.rest.model.ExportNodesRequestJson;
@@ -33,14 +34,14 @@ public class RepositoryResourceTest
 
     private RepositoryResource resource;
 
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    @TempDir
+    public Path temporaryFolder;
 
     @BeforeEach
     public void setup()
         throws Exception
     {
-        final File homeDir = this.temporaryFolder.newFolder( "home" );
+        final File homeDir = Files.createDirectory(this.temporaryFolder.resolve( "home" ) ).toFile();
         System.setProperty( "xp.home", homeDir.getAbsolutePath() );
     }
 

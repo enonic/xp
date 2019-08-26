@@ -1,7 +1,7 @@
 package com.enonic.xp.repo.impl.repository;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;

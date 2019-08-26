@@ -1,13 +1,14 @@
 package com.enonic.xp.launcher.impl;
 
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
+
+import java.nio.file.Path;
 
 public class LauncherImplTest
 {
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    @TempDir
+    public Path temporaryFolder;
 
     @Test
     public void testLaunch()

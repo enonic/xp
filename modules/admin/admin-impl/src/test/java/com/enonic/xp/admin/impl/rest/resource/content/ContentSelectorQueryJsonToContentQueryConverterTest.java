@@ -144,7 +144,7 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
         assertEquals( "_path LIKE '/content/parent-path/child-path*'", contentQuery.getQueryExpr().toString() );
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void testNullSiteResolved()
     {
         final Content content = createContent( "content-id", "my-content", ContentTypeName.shortcut() );
@@ -166,7 +166,7 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
             relationshipTypeService( relationshipTypeService ).
             build();
 
-        processor.createQuery();
+        assertThrows(RuntimeException.class, () -> processor.createQuery() );
     }
 
     @Test

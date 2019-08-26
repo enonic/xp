@@ -1,11 +1,12 @@
 package com.enonic.xp.server.internal.deploy;
 
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.HashMap;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 
 import com.google.common.collect.Maps;
@@ -14,6 +15,9 @@ import com.enonic.xp.app.ApplicationService;
 
 public class ApplicationDeployerManagerTest
 {
+    @TempDir
+    public Path temporaryFolder;
+
     ApplicationDeployerManager applicationDeployerManager;
 
     private StoredApplicationsDeployer storedApplicationsDeployer;
@@ -39,9 +43,7 @@ public class ApplicationDeployerManagerTest
 
         deployDirectoryWatcher = new DeployDirectoryWatcher();
         final DeployConfig deployConfig = Mockito.mock( DeployConfig.class );
-        final TemporaryFolder temporaryFolder = new TemporaryFolder();
-        temporaryFolder.create();
-        System.setProperty( "xp.home", temporaryFolder.getRoot().getAbsolutePath() );
+        System.setProperty( "xp.home", temporaryFolder.getRoot().toFile().getAbsolutePath() );
         deployDirectoryWatcher.activate( deployConfig );
         applicationDeployerManager.setDeployDirectoryWatcher( deployDirectoryWatcher );
     }

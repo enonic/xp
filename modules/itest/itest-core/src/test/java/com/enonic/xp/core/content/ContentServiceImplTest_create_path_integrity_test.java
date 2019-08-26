@@ -6,9 +6,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.IntStream;
 
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 
 import com.google.common.collect.Lists;
 
@@ -28,9 +26,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ContentServiceImplTest_create_path_integrity_test
     extends AbstractContentServiceTest
 {
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
-
     @Override
     public void setUp()
         throws Exception

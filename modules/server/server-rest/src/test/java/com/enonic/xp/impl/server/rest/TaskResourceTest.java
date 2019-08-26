@@ -4,9 +4,7 @@ import java.time.Instant;
 
 import javax.ws.rs.WebApplicationException;
 
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -17,13 +15,12 @@ import com.enonic.xp.task.TaskProgress;
 import com.enonic.xp.task.TaskService;
 import com.enonic.xp.task.TaskState;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class TaskResourceTest
     extends ServerRestTestSupport
 {
     private TaskService taskService;
-
-    @Rule
-    public ExpectedException expectedEx = ExpectedException.none();
 
     private TaskResource taskResource;
 
@@ -64,10 +61,10 @@ public class TaskResourceTest
     public void getTaskNotFound()
         throws Exception
     {
-        expectedEx.expect( WebApplicationException.class );
-        expectedEx.expectMessage( "Task [123] was not found" );
-
-        taskResource.getTask( "123" );
+        final WebApplicationException ex = assertThrows(WebApplicationException.class, () -> {
+            taskResource.getTask( "123" );
+        });
+        assertEquals( "Task [123] was not found", ex.getMessage());
     }
 
 }

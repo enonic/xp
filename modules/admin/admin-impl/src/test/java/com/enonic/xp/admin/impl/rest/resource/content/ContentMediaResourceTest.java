@@ -5,9 +5,7 @@ import java.nio.charset.StandardCharsets;
 import javax.ws.rs.WebApplicationException;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
@@ -29,9 +27,6 @@ public class ContentMediaResourceTest
     private static final byte[] ATTACHMENT_DATA_1 = "data1".getBytes( StandardCharsets.UTF_8 );
 
     private static final byte[] ATTACHMENT_DATA_2 = "data2".getBytes( StandardCharsets.UTF_8 );
-
-    @Rule
-    public ExpectedException ex = ExpectedException.none();
 
     private ContentService contentService;
 
@@ -57,7 +52,7 @@ public class ContentMediaResourceTest
         MockRestResponse result = request().path( "content/media/" + content.getId().toString() ).get();
 
         assertTrue( result.getHeader( "Content-Disposition" ).startsWith( "attachment; filename=\"document.pdf\"" ) );
-        assertArrayEquals( ATTACHMENT_DATA_1, result.getData() );
+        Assertions.assertArrayEquals( ATTACHMENT_DATA_1, result.getData() );
     }
 
     @Test
@@ -69,7 +64,7 @@ public class ContentMediaResourceTest
         MockRestResponse result = request().path( "content/media/" + content.getId().toString() + "/byName" ).get();
 
         assertTrue( result.getHeader( "Content-Disposition" ).startsWith( "attachment; filename=\"byName.pdf\"" ) );
-        assertArrayEquals( ATTACHMENT_DATA_2, result.getData() );
+        Assertions.assertArrayEquals( ATTACHMENT_DATA_2, result.getData() );
     }
 
     @Test
@@ -148,10 +143,10 @@ public class ContentMediaResourceTest
     public void media_content_empty()
         throws Exception
     {
-        ex.expect( WebApplicationException.class );
-        ex.expectMessage( "Content [id] was not found" );
-
-        contentMediaResource.media( "id", true );
+        final WebApplicationException ex = assertThrows(WebApplicationException.class, () -> {
+            contentMediaResource.media( "id", true );
+        });
+        assertEquals( "Content [id] was not found", ex.getMessage());
     }
 
     @Test
@@ -160,10 +155,10 @@ public class ContentMediaResourceTest
     {
         Media media = createMedia();
 
-        ex.expect( WebApplicationException.class );
-        ex.expectMessage( "Content [" + media.getId().toString() + "] has no attachments" );
-
-        contentMediaResource.media( media.getId().toString(), true );
+        final WebApplicationException ex = assertThrows(WebApplicationException.class, () -> {
+            contentMediaResource.media( media.getId().toString(), true );
+        });
+        assertEquals( "Content [" + media.getId().toString() + "] has no attachments", ex.getMessage());
     }
 
     @Test
@@ -180,10 +175,10 @@ public class ContentMediaResourceTest
 
         Mockito.when( this.contentService.getById( media.getId() ) ).thenReturn( media );
 
-        ex.expect( WebApplicationException.class );
-        ex.expectMessage( "Preview for attachment [word.doc] is not supported" );
-
-        contentMediaResource.media( media.getId().toString(), "word", false );
+        final WebApplicationException ex = assertThrows(WebApplicationException.class, () -> {
+            contentMediaResource.media( media.getId().toString(), "word", false );
+        });
+        assertEquals( "Preview for attachment [word.doc] is not supported", ex.getMessage() );
     }
 
     private Media mockAttachmentBinary()

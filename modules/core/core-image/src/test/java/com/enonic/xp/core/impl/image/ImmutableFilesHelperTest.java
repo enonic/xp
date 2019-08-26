@@ -1,29 +1,21 @@
 package com.enonic.xp.core.impl.image;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 
 import com.google.common.io.ByteSource;
 
 public class ImmutableFilesHelperTest
 {
-    private TemporaryFolder temporaryFolder;
+    @TempDir
+    public Path temporaryFolder;
 
     private int supplierCall;
 
-    @BeforeEach
-    public void setUp()
-        throws IOException
-    {
-        temporaryFolder = new TemporaryFolder();
-        temporaryFolder.create();
-    }
 
     @Test
     public void test_computeIfAbsent()

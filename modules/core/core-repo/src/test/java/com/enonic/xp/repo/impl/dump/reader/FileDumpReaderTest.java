@@ -4,12 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.LinkOption;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 
 import com.google.common.io.Files;
 
@@ -21,8 +21,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class FileDumpReaderTest
 {
-    @Rule
-    public final TemporaryFolder root = new TemporaryFolder();
+    @TempDir
+    public Path temporaryFolder;
 
     private FileDumpReader fileDumpReader;
 
@@ -32,9 +32,9 @@ public class FileDumpReaderTest
     public void setUp()
         throws Exception
     {
-        this.dumpFolder = root.newFolder( "myDump" );
+        this.dumpFolder = java.nio.file.Files.createDirectory( this.temporaryFolder.resolve( "myDump" ) ).toFile();
         createMetaDataFile( dumpFolder );
-        this.fileDumpReader = new FileDumpReader( root.getRoot().toPath(), "myDump", null );
+        this.fileDumpReader = new FileDumpReader( temporaryFolder.getRoot().toFile().toPath(), "myDump", null );
     }
 
     @Test

@@ -1,11 +1,12 @@
 package com.enonic.xp.impl.server.rest.task;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 
 import com.enonic.xp.export.ExportNodesParams;
@@ -23,8 +24,8 @@ import static org.mockito.Matchers.isA;
 public class ExportRunnableTaskTest
     extends AbstractRunnableTaskTest
 {
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    @TempDir
+    public Path temporaryFolder;
 
     private ExportService exportService;
 
@@ -34,7 +35,7 @@ public class ExportRunnableTaskTest
         throws Exception
     {
         super.setUp();
-        final File homeDir = this.temporaryFolder.newFolder( "home" );
+        final File homeDir = Files.createDirectory(this.temporaryFolder.resolve( "home" ) ).toFile();
         System.setProperty( "xp.home", homeDir.getAbsolutePath() );
 
         this.exportService = Mockito.mock( ExportService.class );

@@ -140,27 +140,29 @@ public class WidgetHandlerTest
         }
     }
 
-    @Test(expected = WebException.class)
+    @Test
     public void executeFailsWithWrongMode()
         throws Exception
     {
-        this.request.setEndpointPath( "/_/widgets/demo/test" );
-        this.request.setMode( RenderMode.EDIT );
+        assertThrows(WebException.class, () -> {
+            this.request.setEndpointPath("/_/widgets/demo/test");
+            this.request.setMode(RenderMode.EDIT);
 
-        final WebResponse response = this.handler.handle( this.request, WebResponse.create().build(), null );
-        assertEquals( HttpStatus.OK, response.getStatus() );
+            final WebResponse response = this.handler.handle(this.request, WebResponse.create().build(), null);
+            assertEquals(HttpStatus.OK, response.getStatus());
 
-        Mockito.verify( this.controllerScript ).execute( this.request );
+            Mockito.verify(this.controllerScript).execute(this.request);
+        });
     }
 
-    @Test(expected = WebException.class)
+    @Test
     public void testForbidden()
         throws Exception
     {
         this.mockDescriptor( false );
         this.request.setEndpointPath( "/_/widgets/demo/test" );
         this.request.setMode( RenderMode.ADMIN );
-        this.handler.handle( this.request, WebResponse.create().build(), null );
+        assertThrows(WebException.class, () -> this.handler.handle( this.request, WebResponse.create().build(), null ) );
     }
 
     @Test

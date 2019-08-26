@@ -2,13 +2,14 @@ package com.enonic.xp.core.impl.app;
 
 import java.io.File;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Map;
 
 import org.apache.felix.framework.Felix;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 import org.ops4j.pax.tinybundles.core.TinyBundle;
 import org.ops4j.pax.tinybundles.core.TinyBundles;
 import org.osgi.framework.Bundle;
@@ -19,8 +20,8 @@ import com.google.common.collect.Maps;
 
 public abstract class BundleBasedTest
 {
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    @TempDir
+    public Path temporaryFolder;
 
     private Felix felix;
 
@@ -28,7 +29,7 @@ public abstract class BundleBasedTest
     public final void setup()
         throws Exception
     {
-        final File cacheDir = this.temporaryFolder.newFolder( "cache" );
+        final File cacheDir = Files.createDirectory(this.temporaryFolder.resolve( "cache" ) ).toFile();
 
         final Map<String, Object> config = Maps.newHashMap();
         config.put( Constants.FRAMEWORK_STORAGE, cacheDir.getAbsolutePath() );

@@ -11,6 +11,7 @@ import java.util.Set;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalAnswers;
 import org.mockito.Mockito;
@@ -498,7 +499,7 @@ public class ContentTypeResourceTest
 
         assertNotNull( response.getEntity() );
         assertEquals( schemaIcon.getMimeType(), response.getMediaType().toString() );
-        org.junit.Assert.assertArrayEquals( data, (byte[]) response.getEntity() );
+        Assertions.assertArrayEquals( data, (byte[]) response.getEntity() );
     }
 
     @Test
@@ -531,23 +532,22 @@ public class ContentTypeResourceTest
         assertImage( contentTypeIcon, 20 );
     }
 
-    @Test(expected = javax.ws.rs.WebApplicationException.class)
+    @Test
     public void testContentTypeIcon_notFound()
         throws Exception
     {
         Mockito.when( contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn( null );
 
-        try
-        {
-            // exercise
-            this.resource.getIcon( "myapplication:my_content_type", 10, null );
-        }
-        catch ( WebApplicationException e )
-        {
-            // verify
-            assertEquals( 404, e.getResponse().getStatus() ); // HTTP Not Found
-            throw e;
-        }
+        assertThrows(WebApplicationException.class, () -> {
+            try {
+                // exercise
+                this.resource.getIcon("myapplication:my_content_type", 10, null);
+            } catch (WebApplicationException e) {
+                // verify
+                assertEquals(404, e.getResponse().getStatus()); // HTTP Not Found
+                throw e;
+            }
+        } );
     }
 
     @Test

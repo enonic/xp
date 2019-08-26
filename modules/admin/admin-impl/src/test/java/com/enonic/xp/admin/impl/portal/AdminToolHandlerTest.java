@@ -89,31 +89,31 @@ public class AdminToolHandlerTest
         assertFalse( this.handler.canHandle( this.portalRequest ) );
     }
 
-    @Test(expected = WebException.class)
+    @Test
     public void testWithoutPermissions()
         throws Exception
     {
         this.portalRequest.setRawPath( "/admin/tool/webapp/tool/1" );
         Mockito.when( this.rawRequest.isUserInRole( Mockito.anyString() ) ).thenReturn( false );
-        this.handler.doHandle( this.portalRequest, this.webResponse, this.chain );
+        assertThrows(WebException.class, () -> this.handler.doHandle( this.portalRequest, this.webResponse, this.chain ) );
     }
 
-    @Test(expected = WebException.class)
+    @Test
     public void testWithNoDescriptor()
         throws Exception
     {
         Mockito.when( this.adminToolDescriptorService.getByKey( Mockito.any( DescriptorKey.class ) ) ).thenReturn( null );
         this.portalRequest.setRawPath( "/admin/tool/webapp/tool/1" );
-        this.handler.doHandle( this.portalRequest, this.webResponse, this.chain );
+        assertThrows(WebException.class, () -> this.handler.doHandle( this.portalRequest, this.webResponse, this.chain ) );
     }
 
-    @Test(expected = WebException.class)
+    @Test
     public void testWithNoAccessToApplication()
         throws Exception
     {
         this.mockDescriptor( DescriptorKey.from( "app:tool" ), false );
         this.portalRequest.setRawPath( "/admin/tool/webapp/tool/1" );
-        this.handler.doHandle( this.portalRequest, this.webResponse, this.chain );
+        assertThrows(WebException.class, () -> this.handler.doHandle( this.portalRequest, this.webResponse, this.chain ));
     }
 
     @Test

@@ -1,14 +1,13 @@
 package com.enonic.xp.impl.server.rest.task;
 
 import java.io.File;
+import java.nio.file.Path;
 
 import org.apache.commons.io.Charsets;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 
 import com.google.common.io.Files;
@@ -38,11 +37,8 @@ import com.enonic.xp.task.TaskId;
 public class LoadRunnableTaskTest
     extends AbstractRunnableTaskTest
 {
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
+    @TempDir
+    public Path temporaryFolder;
 
     private DumpService dumpService;
 
@@ -65,7 +61,7 @@ public class LoadRunnableTaskTest
         this.repositoryService = Mockito.mock( RepositoryService.class );
         this.nodeRepositoryService = Mockito.mock( NodeRepositoryService.class );
 
-        final File homeDir = this.temporaryFolder.newFolder( "home" );
+        final File homeDir = java.nio.file.Files.createDirectory(this.temporaryFolder.resolve( "home" ) ).toFile();
         System.setProperty( "xp.home", homeDir.getAbsolutePath() );
 
         this.dataDir = createDir( homeDir, "data" );
@@ -169,18 +165,16 @@ public class LoadRunnableTaskTest
     public void load_no_dump()
         throws Exception
     {
-        expectedException.expect( IllegalArgumentException.class );
-        expectedException.expectMessage( "No dump with name 'name' found in " + dataDir.getPath() );
-
         final LoadRunnableTask task = createAndRunTask( new SystemLoadRequestJson( "name", false ) );
 
-        task.createTaskResult();
+        final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> task.createTaskResult());
+        assertEquals( "No dump with name 'name' found in " + dataDir.getPath(), ex.getMessage());
     }
 
     private File createDir( final File dir, final String name )
     {
         final File file = new File( dir, name );
-        assertTrue( "Failed to create directory " + name + " under " + dir.getAbsolutePath(), file.mkdirs() );
+        assertTrue( file.mkdirs(), "Failed to create directory " + name + " under " + dir.getAbsolutePath() );
         return file;
     }
 }

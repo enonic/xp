@@ -1,10 +1,11 @@
 package com.enonic.xp.launcher.impl.env;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 
 import com.enonic.xp.launcher.impl.SharedConstants;
 
@@ -13,8 +14,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class EnvironmentResolverTest
     implements SharedConstants
 {
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    @TempDir
+    public Path temporaryFolder;
 
     @Test
     public void testInstallDir()
@@ -24,7 +25,7 @@ public class EnvironmentResolverTest
         assertNull( env1.getInstallDir() );
         assertNull( env1.getHomeDir() );
 
-        final File dir = this.temporaryFolder.newFolder();
+        final File dir = Files.createDirectory(this.temporaryFolder.resolve( "dir" ) ).toFile();
 
         final Environment env2 = resolve( XP_INSTALL_DIR, dir.getAbsolutePath() );
         assertEquals( dir, env2.getInstallDir() );
@@ -38,7 +39,7 @@ public class EnvironmentResolverTest
         final Environment env1 = resolve();
         assertNull( env1.getHomeDir() );
 
-        final File dir = this.temporaryFolder.newFolder();
+        final File dir = Files.createDirectory(this.temporaryFolder.resolve( "dir" ) ).toFile();
 
         final Environment env2 = resolve( XP_HOME_DIR, dir.getAbsolutePath() );
         assertEquals( dir, env2.getHomeDir() );

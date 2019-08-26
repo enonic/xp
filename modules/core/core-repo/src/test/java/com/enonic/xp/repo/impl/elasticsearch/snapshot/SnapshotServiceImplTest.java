@@ -1,9 +1,8 @@
 package com.enonic.xp.repo.impl.elasticsearch.snapshot;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 
 import com.enonic.xp.cluster.ClusterManager;
@@ -23,13 +22,15 @@ import com.enonic.xp.repository.DeleteRepositoryParams;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.SystemConstants;
 
+import java.nio.file.Path;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SnapshotServiceImplTest
     extends AbstractNodeTest
 {
-    @Rule
-    public TemporaryFolder snapshotRepo = new TemporaryFolder();
+    @TempDir
+    public Path temporaryFolder;
 
     private SnapshotServiceImpl snapshotService;
 
@@ -143,11 +144,11 @@ public class SnapshotServiceImplTest
         assertNotNull( this.repositoryService.get( ContentConstants.CONTENT_REPO.getId() ) );
     }
 
-    @Test(expected = SnapshotException.class)
+    @Test
     public void restore_invalid_snapshot()
         throws Exception
     {
-        NodeHelper.runAsAdmin( this::doRestoreInvalidSnapshot );
+        assertThrows(SnapshotException.class, () -> NodeHelper.runAsAdmin( this::doRestoreInvalidSnapshot ) );
     }
 
     private void doRestoreInvalidSnapshot()

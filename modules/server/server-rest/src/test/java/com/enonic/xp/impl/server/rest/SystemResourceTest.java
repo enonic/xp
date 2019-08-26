@@ -1,9 +1,7 @@
 package com.enonic.xp.impl.server.rest;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 
 import com.enonic.xp.impl.server.rest.model.SystemDumpRequestJson;
@@ -25,9 +23,6 @@ public class SystemResourceTest
     private TaskService taskService;
 
     private SystemResource resource;
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
 
     @BeforeEach
     public void setup()

@@ -4,9 +4,7 @@ import java.util.List;
 
 import org.elasticsearch.index.query.SimpleQueryStringBuilder;
 import static org.junit.jupiter.api.Assertions.*;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 
 import com.google.common.collect.Lists;
 
@@ -15,9 +13,6 @@ import com.enonic.xp.repo.impl.node.NodeConstants;
 
 public class FulltextFunctionArgumentsTest
 {
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
-
     @Test
     public void fullText3Arguments()
     {
@@ -47,11 +42,12 @@ public class FulltextFunctionArgumentsTest
     @Test
     public void fullText1Argument()
     {
-        this.exception.expect( FunctionQueryBuilderException.class );
-        this.exception.expectMessage( "Wrong number of arguments (1) for function 'fulltext' (expected 2 to 4)" );
-
         final List<ValueExpr> arguments = Lists.newArrayList( ValueExpr.string( "myField" ) );
-        new FulltextFunctionArguments( arguments );
+
+        final FunctionQueryBuilderException ex = assertThrows(FunctionQueryBuilderException.class, () -> {
+            new FulltextFunctionArguments( arguments );
+        });
+        assertEquals( "Wrong number of arguments (1) for function 'fulltext' (expected 2 to 4)", ex.getMessage());
     }
 
     @Test
@@ -73,11 +69,12 @@ public class FulltextFunctionArgumentsTest
     @Test
     public void fullIllegalOperatorArgument()
     {
-        this.exception.expect( FunctionQueryBuilderException.class );
-        this.exception.expectMessage( "Illegal argument 'DUMMY' in function 'fulltext', position 3" );
-
         final List<ValueExpr> arguments =
-            Lists.newArrayList( ValueExpr.string( "myField" ), ValueExpr.string( "SearchString" ), ValueExpr.string( "dummy" ) );
-        new FulltextFunctionArguments( arguments );
+                Lists.newArrayList( ValueExpr.string( "myField" ), ValueExpr.string( "SearchString" ), ValueExpr.string( "dummy" ) );
+
+        final FunctionQueryBuilderException ex = assertThrows(FunctionQueryBuilderException.class, () -> {
+            new FulltextFunctionArguments( arguments );
+        });
+        assertEquals( "Illegal argument 'DUMMY' in function 'fulltext', position 3", ex.getMessage());
     }
 }

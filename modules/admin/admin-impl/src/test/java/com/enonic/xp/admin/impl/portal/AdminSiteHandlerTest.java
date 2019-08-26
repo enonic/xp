@@ -59,11 +59,11 @@ public class AdminSiteHandlerTest
         assertFalse( this.handler.canHandle( this.request ) );
     }
 
-    @Test(expected = WebException.class)
+    @Test
     public void testCreatePortalRequestWithoutMode()
     {
         this.request.setRawPath( "/admin/site/repo/master/content/1" );
-        this.handler.createPortalRequest( this.request, this.response );
+        assertThrows(WebException.class, () -> this.handler.createPortalRequest( this.request, this.response ));
     }
 
     @Test

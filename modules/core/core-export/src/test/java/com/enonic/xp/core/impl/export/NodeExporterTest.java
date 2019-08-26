@@ -6,9 +6,8 @@ import java.nio.file.Paths;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
@@ -30,8 +29,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class NodeExporterTest
 {
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    @TempDir
+    public Path temporaryFolder;
 
     private NodeService nodeService;
 
@@ -292,17 +291,17 @@ public class NodeExporterTest
 
     private void assertFileExists( final String path )
     {
-        assertTrue( "file " + path + " not found", new File( this.temporaryFolder.getRoot().getPath() + path ).exists() );
+        assertTrue( new File( this.temporaryFolder.getRoot().toFile().getPath() + path ).exists(), "file " + path + " not found" );
     }
 
     private void assertFileDoesNotExist( final String path )
     {
-        assertFalse( "file " + path + " found", new File( this.temporaryFolder.getRoot().getPath() + path ).exists() );
+        assertFalse( new File( this.temporaryFolder.getRoot().toFile().getPath() + path ).exists(), "file " + path + " found" );
     }
 
     private void printPaths()
     {
-        final File file = this.temporaryFolder.getRoot();
+        final File file = this.temporaryFolder.getRoot().toFile();
 
         doPrintPaths( file );
     }

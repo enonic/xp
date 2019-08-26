@@ -3,6 +3,8 @@ package com.enonic.xp.elasticsearch.impl;
 import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Map;
 
 import org.elasticsearch.client.AdminClient;
@@ -11,9 +13,8 @@ import org.elasticsearch.cluster.ClusterService;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.transport.TransportService;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -31,8 +32,8 @@ public class ElasticsearchActivatorTest
 
     private ElasticsearchActivator activator;
 
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    @TempDir
+    public Path temporaryFolder;
 
     private ServiceRegistration<Node> nodeReg;
 
@@ -102,7 +103,7 @@ public class ElasticsearchActivatorTest
             }
         } );
 
-        final File homeDir = this.temporaryFolder.newFolder( "home" );
+        final File homeDir = Files.createDirectory(this.temporaryFolder.resolve( "home" ) ).toFile();
         System.setProperty( "xp.home", homeDir.getAbsolutePath() );
 
         this.nodeReg = mockRegisterService( Node.class );

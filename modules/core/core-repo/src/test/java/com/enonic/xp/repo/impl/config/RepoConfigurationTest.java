@@ -1,20 +1,20 @@
 package com.enonic.xp.repo.impl.config;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 
 import com.google.common.collect.Maps;
 
 public class RepoConfigurationTest
 {
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    @TempDir
+    public Path temporaryFolder;
 
     private Map<String, String> map;
 
@@ -22,7 +22,7 @@ public class RepoConfigurationTest
     public void setup()
     {
         this.map = Maps.newHashMap();
-        System.setProperty( "xp.home", this.temporaryFolder.getRoot().getAbsolutePath() );
+        System.setProperty( "xp.home", this.temporaryFolder.getRoot().toFile().getAbsolutePath() );
     }
 
     private RepoConfiguration createConfig()

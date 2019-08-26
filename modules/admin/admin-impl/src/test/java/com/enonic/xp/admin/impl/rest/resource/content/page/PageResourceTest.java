@@ -29,6 +29,8 @@ import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.SecurityService;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class PageResourceTest
     extends AdminResourceTestSupport
 {
@@ -68,20 +70,21 @@ public class PageResourceTest
         assertJson( "update_page_success.json", jsonString );
     }
 
-    @Test(expected = ContentNotFoundException.class)
+    @Test
     public void update_page_failure()
-        throws Exception
+            throws Exception
     {
         Content content = createPage( "content-id", "content-name", "myapplication:content-type" );
 
         Mockito.when( this.pageService.update( Mockito.isA( UpdatePageParams.class ) ) ).thenThrow(
-            new ContentNotFoundException( content.getId(), Branch.from( "branch" ) ) );
+                new ContentNotFoundException( content.getId(), Branch.from( "branch" ) ) );
 
-        String jsonString = request().path( "content/page/update" ).
-            entity( readFromFile( "update_page_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post().getAsString();
-
-        assertJson( "update_page_failure.json", jsonString );
+        assertThrows( ContentNotFoundException.class, () -> {
+            String jsonString = request().path("content/page/update").
+                    entity(readFromFile("update_page_params.json"), MediaType.APPLICATION_JSON_TYPE).
+                    post().getAsString();
+            assertJson( "update_page_failure.json", jsonString );
+        } );
     }
 
     @Test

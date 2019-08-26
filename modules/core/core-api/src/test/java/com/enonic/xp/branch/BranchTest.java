@@ -7,18 +7,18 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class BranchTest
 {
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void empty()
         throws Exception
     {
-        Branch.from( "" );
+        assertThrows(IllegalArgumentException.class, () ->  Branch.from( "" ) );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void starts_with_dot()
         throws Exception
     {
-        Branch.from( ".myBranch" );
+        assertThrows(IllegalArgumentException.class, () ->  Branch.from( ".myBranch" ) );
     }
 
     @Test

@@ -1,13 +1,13 @@
 package com.enonic.xp.internal.blobstore.file;
 
+import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
@@ -20,8 +20,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class FileBlobStoreTest
 {
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    @TempDir
+    public Path temporaryFolder;
+
 
     private FileBlobStore blobStore;
 
@@ -30,7 +31,7 @@ public class FileBlobStoreTest
     @BeforeEach
     public void setup()
     {
-        this.blobStore = new FileBlobStore( this.temporaryFolder.getRoot() );
+        this.blobStore = new FileBlobStore( this.temporaryFolder.toFile() );
     }
 
     @Test

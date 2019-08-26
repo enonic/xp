@@ -2,15 +2,16 @@ package com.enonic.xp.elasticsearch.impl;
 
 import java.io.File;
 import java.net.InetAddress;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Map;
 
 import org.elasticsearch.common.settings.Settings;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 import org.osgi.framework.BundleContext;
 
@@ -27,8 +28,8 @@ public class NodeSettingsBuilderTest
 {
     private NodeSettingsBuilder builder;
 
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    @TempDir
+    public Path temporaryFolder;
 
     @BeforeEach
     public void setup()
@@ -78,7 +79,7 @@ public class NodeSettingsBuilderTest
             }
         } );
 
-        final File homeDir = this.temporaryFolder.newFolder( "home" );
+        final File homeDir = Files.createDirectory(this.temporaryFolder.resolve( "home" ) ).toFile();
         System.setProperty( "xp.home", homeDir.getAbsolutePath() );
     }
 

@@ -1,21 +1,21 @@
 package com.enonic.xp.launcher.impl.provision;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 
-import com.google.common.io.Files;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class BundleInfoFinderTest
 {
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
+    @TempDir
+    public Path temporaryFolder;
 
     private BundleInfoFinder finder;
 
@@ -25,7 +25,7 @@ public class BundleInfoFinderTest
     public void setup()
         throws Exception
     {
-        this.systemDir = this.folder.newFolder( "system" );
+        this.systemDir = Files.createDirectory(this.temporaryFolder.resolve( "system" ) ).toFile();
         this.finder = new BundleInfoFinder( this.systemDir );
     }
 
@@ -60,6 +60,6 @@ public class BundleInfoFinderTest
         levelFolder.mkdirs();
 
         final File file = new File( levelFolder, name );
-        Files.touch( file );
+        com.google.common.io.Files.touch( file );
     }
 }

@@ -1,10 +1,10 @@
 package com.enonic.xp.script.impl.function;
 
 import java.io.File;
+import java.nio.file.Path;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 
@@ -17,8 +17,8 @@ import com.enonic.xp.resource.UrlResource;
 
 public class ResolverTestSupport
 {
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    @TempDir
+    public Path temporaryFolder;
 
     protected ResourceService resourceService;
 
@@ -38,14 +38,14 @@ public class ResolverTestSupport
     private Resource loadResource( final ResourceKey key )
         throws Exception
     {
-        final File file = new File( this.temporaryFolder.getRoot(), key.getPath() );
+        final File file = new File( this.temporaryFolder.getRoot().toFile(), key.getPath() );
         return new UrlResource( key, file.toURI().toURL() );
     }
 
     final void touchFile( final String path )
         throws Exception
     {
-        final File file = new File( this.temporaryFolder.getRoot(), path );
+        final File file = new File( this.temporaryFolder.getRoot().toFile(), path );
         file.getParentFile().mkdirs();
         Files.touch( file );
     }

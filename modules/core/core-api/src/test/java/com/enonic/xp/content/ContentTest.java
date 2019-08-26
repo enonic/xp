@@ -19,10 +19,10 @@ public class ContentTest
 {
     private static final ContentPath MY_CONTENT_PATH = ContentPath.from( "/mycontent" );
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void given_path_isRoot_then_IllegalArgumentException_is_thrown()
     {
-        Content.create().path( ContentPath.ROOT ).build();
+        assertThrows(IllegalArgumentException.class, () ->  Content.create().path( ContentPath.ROOT ).build() );
     }
 
     @Test
@@ -59,17 +59,19 @@ public class ContentTest
         }
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void given_a_controller_and_a_pageTemplate_when_build_then_IllegalArgumentException_is_thrown()
     {
-        Content.create().
-            path( MY_CONTENT_PATH ).
-            page( Page.create().
-                descriptor( DescriptorKey.from( "abc:abc" ) ).
-                template( PageTemplateKey.from( "123" ) ).
-                config( new PropertyTree() ).
-                regions( PageRegions.create().build() ).
-                build() ).build();
+        assertThrows(IllegalArgumentException.class, () -> {
+            Content.create().
+                    path(MY_CONTENT_PATH).
+                    page(Page.create().
+                            descriptor(DescriptorKey.from("abc:abc")).
+                            template(PageTemplateKey.from("123")).
+                            config(new PropertyTree()).
+                            regions(PageRegions.create().build()).
+                            build()).build();
+        } );
     }
 
     @Test

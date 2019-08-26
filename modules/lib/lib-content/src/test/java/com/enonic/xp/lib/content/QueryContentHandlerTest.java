@@ -2,9 +2,7 @@ package com.enonic.xp.lib.content;
 
 import java.time.Instant;
 
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 
 import com.google.common.collect.ImmutableMap;
@@ -28,9 +26,6 @@ import com.enonic.xp.highlight.HighlightedFields;
 public class QueryContentHandlerTest
     extends BaseContentHandlerTest
 {
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     @Test
     public void testExample()
     {
