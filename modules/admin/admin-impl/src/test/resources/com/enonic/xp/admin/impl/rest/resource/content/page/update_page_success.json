@@ -44,5 +44,9 @@
     "permissions": [],
     "publish": null,
     "thumbnail": null,
-    "type": "myapplication:content-type"
+    "type": "myapplication:content-type",
+    "workflow": {
+      "checks": {},
+      "state": "READY"
+    }
 }

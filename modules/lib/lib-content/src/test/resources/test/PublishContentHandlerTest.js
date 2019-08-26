@@ -54,3 +54,14 @@ exports.publishWithoutChildrenOrDependencies = function () {
 
     assert.assertJsonEquals(expectedLimitedJson, result);
 };
+
+exports.publishWithMessage = function () {
+    var result = content.publish({
+        keys: ['9f5b0db0-38f9-4e81-b92e-116f25476b1c', '45d67001-7f2b-4093-99ae-639be9fdd1f6', '79e21db0-5b43-45ce-b58c-6e1c420b22bd'],
+        sourceBranch: 'master',
+        targetBranch: 'draft',
+        message: 'My first publish',
+    });
+
+    assert.assertJsonEquals(expectedJson, result);
+};

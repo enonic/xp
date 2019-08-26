@@ -21,7 +21,11 @@ var expectedJson = {
             "x": {},
             "page": {},
             "attachments": {},
-            "publish": {}
+            "publish": {},
+            "workflow": {
+                "state": "READY",
+                "checks": {}
+            }
         },
         {
             "_id": "id2",
@@ -39,7 +43,11 @@ var expectedJson = {
             "x": {},
             "page": {},
             "attachments": {},
-            "publish": {}
+            "publish": {},
+            "workflow": {
+                "state": "READY",
+                "checks": {}
+            }
         },
         {
             "_id": "id3",
@@ -57,7 +65,11 @@ var expectedJson = {
             "x": {},
             "page": {},
             "attachments": {},
-            "publish": {}
+            "publish": {},
+            "workflow": {
+                "state": "READY",
+                "checks": {}
+            }
         }
     ],
     "aggregations": {
@@ -141,7 +153,8 @@ var expectedEmptyJson = {
     "total": 0,
     "count": 0,
     "hits": [],
-    "aggregations": {}
+    "aggregations": {},
+    "highlight": {}
 };
 
 exports.query = function () {

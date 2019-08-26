@@ -175,6 +175,24 @@ public class CreateContentHandlerTest
         runFunction( "/test/CreateContentHandlerTest.js", "createContentAutoGenerateNameWithExistingName" );
     }
 
+    @Test
+    public void createContentWithWorkflow()
+        throws Exception
+    {
+        when( this.contentService.create( any( CreateContentParams.class ) ) ).thenAnswer(
+            mock -> createContent( (CreateContentParams) mock.getArguments()[0] ) );
+
+        final ContentType contentType = ContentType.create().
+            name( "test:myContentType" ).
+            superType( ContentTypeName.structured() ).
+            build();
+
+        GetContentTypeParams getContentType = GetContentTypeParams.from( ContentTypeName.from( "test:myContentType" ) );
+        when( this.contentTypeService.getByName( Mockito.eq( getContentType ) ) ).thenReturn( contentType );
+
+        runFunction( "/test/CreateContentHandlerTest.js", "createContentWithWorkflow" );
+    }
+
     private Content createContent( final CreateContentParams params )
     {
         final Content.Builder builder = Content.create();
@@ -189,6 +207,7 @@ public class CreateContentHandlerTest
         builder.createdTime( Instant.parse( "1975-01-08T00:00:00Z" ) );
         builder.language( params.getLanguage() );
         builder.childOrder( params.getChildOrder() );
+        builder.workflowInfo( params.getWorkflowInfo() );
 
         if ( params.getExtraDatas() != null )
         {

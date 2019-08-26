@@ -27,5 +27,9 @@
   "permissions": [],
   "publish": null,
   "thumbnail": null,
-  "type": "base:folder"
+  "type": "base:folder",
+  "workflow": {
+    "checks": {},
+    "state": "READY"
+  }
 }

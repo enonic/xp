@@ -29,6 +29,10 @@ public final class ContentType
 
     private final XDataNames xData;
 
+    private final String displayNameLabel;
+
+    private final String displayNameLabelI18nKey;
+
     ContentType( final Builder builder )
     {
         super( builder );
@@ -48,6 +52,8 @@ public final class ContentType
         this.form = builder.formBuilder != null ? builder.formBuilder.build() : Form.create().build();
         this.displayNameExpression = builder.displayNameExpression;
         this.xData = builder.xData;
+        this.displayNameLabel = builder.displayNameLabel;
+        this.displayNameLabelI18nKey = builder.displayNameLabelI18nKey;
     }
 
     public static Builder create()
@@ -105,12 +111,23 @@ public final class ContentType
         return xData;
     }
 
+    public String getDisplayNameLabel()
+    {
+        return displayNameLabel;
+    }
+
+    public String getDisplayNameLabelI18nKey()
+    {
+        return displayNameLabelI18nKey;
+    }
+
     @Override
     public String toString()
     {
         final MoreObjects.ToStringHelper s = MoreObjects.toStringHelper( this );
         s.add( "name", getName() );
         s.add( "displayName", getDisplayName() );
+        s.add( "displayNameLabel", getDisplayNameLabel() );
         s.add( "description", getDescription() );
         s.add( "metadata", xData );
         s.add( "superType", superType );
@@ -143,6 +160,10 @@ public final class ContentType
 
         private XDataNames xData;
 
+        private String displayNameLabel;
+
+        private String displayNameLabelI18nKey;
+
         private Builder()
         {
             super();
@@ -168,6 +189,8 @@ public final class ContentType
             }
             this.displayNameExpression = source.getDisplayNameExpression();
             this.xData = source.xData;
+            this.displayNameLabel = source.displayNameLabel;
+            this.displayNameLabelI18nKey = source.displayNameLabelI18nKey;
         }
 
         @Override
@@ -251,6 +274,18 @@ public final class ContentType
         public Builder xData( final XDataNames xData )
         {
             this.xData = xData;
+            return this;
+        }
+
+        public Builder displayNameLabel( final String displayNameLabel )
+        {
+            this.displayNameLabel = displayNameLabel;
+            return this;
+        }
+
+        public Builder displayNameLabelI18nKey( final String displayNameLabelI18nKey )
+        {
+            this.displayNameLabelI18nKey = displayNameLabelI18nKey;
             return this;
         }
 

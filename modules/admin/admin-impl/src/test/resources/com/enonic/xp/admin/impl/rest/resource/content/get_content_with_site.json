@@ -75,5 +75,9 @@
   "permissions": [],
   "publish": null,
   "thumbnail": null,
-  "type": "myapplication:my_type"
+  "type": "myapplication:my_type",
+  "workflow": {
+    "checks": {},
+    "state": "READY"
+  }
 }

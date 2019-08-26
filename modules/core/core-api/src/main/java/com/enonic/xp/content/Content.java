@@ -75,6 +75,8 @@ public class Content
 
     private final ContentIds processedReferences;
 
+    private final WorkflowInfo workflowInfo;
+
     protected Content( final Builder builder )
     {
         Preconditions.checkNotNull( builder.name, "name is required for a Content" );
@@ -118,6 +120,7 @@ public class Content
         this.language = builder.language;
         this.contentState = builder.contentState == null ? ContentState.DEFAULT : builder.contentState;
         this.processedReferences = builder.processedReferences.build();
+        this.workflowInfo = builder.workflowInfo == null ? WorkflowInfo.ready() : builder.workflowInfo;
     }
 
     public static Builder create( final ContentTypeName type )
@@ -333,6 +336,11 @@ public class Content
         return processedReferences;
     }
 
+    public WorkflowInfo getWorkflowInfo()
+    {
+        return workflowInfo;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -347,25 +355,39 @@ public class Content
 
         final Content other = (Content) o;
 
-        return Objects.equals( id, other.id ) && Objects.equals( name, other.name ) && Objects.equals( parentPath, other.parentPath ) &&
-            Objects.equals( displayName, other.displayName ) && Objects.equals( type, other.type ) &&
-            Objects.equals( valid, other.valid ) && Objects.equals( modifier, other.modifier ) &&
-            Objects.equals( creator, other.creator ) && Objects.equals( owner, other.owner ) &&
-            Objects.equals( createdTime, other.createdTime ) && Objects.equals( modifiedTime, other.modifiedTime ) &&
-            Objects.equals( hasChildren, other.hasChildren ) && Objects.equals( inheritPermissions, other.inheritPermissions ) &&
-            Objects.equals( childOrder, other.childOrder ) && Objects.equals( thumbnail, other.thumbnail ) &&
-            Objects.equals( permissions, other.permissions ) && Objects.equals( attachments, other.attachments ) &&
-            Objects.equals( data, other.data ) && Objects.equals( extraDatas, other.extraDatas ) && Objects.equals( page, other.page ) &&
-            Objects.equals( language, other.language ) && Objects.equals( contentState, other.contentState ) &&
-            Objects.equals( publishInfo, other.publishInfo ) && Objects.equals( processedReferences, other.processedReferences );
+        return Objects.equals( id, other.id ) &&
+            Objects.equals( name, other.name ) &&
+            Objects.equals( parentPath, other.parentPath ) &&
+            Objects.equals( displayName, other.displayName ) &&
+            Objects.equals( type, other.type ) &&
+            Objects.equals( valid, other.valid ) &&
+            Objects.equals( modifier, other.modifier ) &&
+            Objects.equals( creator, other.creator ) &&
+            Objects.equals( owner, other.owner ) &&
+            Objects.equals( createdTime, other.createdTime ) &&
+            Objects.equals( modifiedTime, other.modifiedTime ) &&
+            Objects.equals( hasChildren, other.hasChildren ) &&
+            Objects.equals( inherited, other.inherited ) &&
+            Objects.equals( inheritPermissions, other.inheritPermissions ) &&
+            Objects.equals( childOrder, other.childOrder ) &&
+            Objects.equals( thumbnail, other.thumbnail ) &&
+            Objects.equals( permissions, other.permissions ) &&
+            Objects.equals( attachments, other.attachments ) &&
+            Objects.equals( data, other.data ) &&
+            Objects.equals( extraDatas, other.extraDatas ) &&
+            Objects.equals( page, other.page ) &&
+            Objects.equals( language, other.language ) &&
+            Objects.equals( contentState, other.contentState ) && Objects.equals( publishInfo, other.publishInfo ) &&
+            Objects.equals( processedReferences, other.processedReferences ) &&
+            Objects.equals( workflowInfo, other.workflowInfo );
     }
 
     @Override
     public int hashCode()
     {
         return Objects.hash( id, name, parentPath, displayName, type, valid, modifier, creator, owner, createdTime, modifiedTime,
-                             hasChildren, inheritPermissions, childOrder, thumbnail, permissions, attachments, data, extraDatas, page,
-                             language, contentState, publishInfo, processedReferences );
+                             hasChildren, inherited, inheritPermissions, childOrder, thumbnail, permissions, attachments, data, extraDatas, page,
+                             language, contentState, publishInfo, processedReferences, workflowInfo );
     }
 
     public static class Builder<BUILDER extends Builder>
@@ -420,6 +442,8 @@ public class Content
 
         protected ContentIds.Builder processedReferences;
 
+        protected WorkflowInfo workflowInfo;
+
         protected Builder()
         {
             this.data = new PropertyTree();
@@ -456,6 +480,7 @@ public class Content
             this.contentState = source.contentState;
             this.publishInfo = source.publishInfo;
             this.processedReferences = ContentIds.create().addAll( source.processedReferences );
+            this.workflowInfo = source.workflowInfo;
         }
 
         public BUILDER parentPath( final ContentPath path )
@@ -652,6 +677,12 @@ public class Content
         public BUILDER addProcessedReference( final ContentId reference )
         {
             this.processedReferences.add( reference );
+            return (BUILDER) this;
+        }
+
+        public BUILDER workflowInfo( final WorkflowInfo workflowInfo )
+        {
+            this.workflowInfo = workflowInfo;
             return (BUILDER) this;
         }
 

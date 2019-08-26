@@ -4,11 +4,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
+import org.elasticsearch.search.suggest.SuggestBuilder;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -41,6 +42,10 @@ public class ElasticsearchQuery
 
     private final ImmutableSet<AbstractAggregationBuilder> aggregations;
 
+    private final ImmutableSet<SuggestBuilder.SuggestionBuilder> suggestions;
+
+    private final ElasticHighlightQuery highlight;
+
     private final ReturnFields returnFields;
 
     private final SearchMode searchMode;
@@ -58,6 +63,8 @@ public class ElasticsearchQuery
         this.batchSize = builder.batchSize;
         this.from = builder.from;
         this.aggregations = ImmutableSet.copyOf( builder.aggregations );
+        this.suggestions = ImmutableSet.copyOf( builder.suggestions );
+        this.highlight = builder.highlight;
         this.returnFields = builder.returnFields;
         this.searchMode = builder.searchMode;
         this.searchOptimizer = builder.searchOptimizer;
@@ -72,6 +79,11 @@ public class ElasticsearchQuery
     public ImmutableSet<AbstractAggregationBuilder> getAggregations()
     {
         return aggregations;
+    }
+
+    public ImmutableSet<SuggestBuilder.SuggestionBuilder> getSuggestions()
+    {
+        return suggestions;
     }
 
     public QueryBuilder getQuery()
@@ -129,6 +141,11 @@ public class ElasticsearchQuery
         return searchOptimizer;
     }
 
+    public ElasticHighlightQuery getHighlight()
+    {
+        return highlight;
+    }
+
     public boolean isExplain()
     {
         return explain;
@@ -140,19 +157,13 @@ public class ElasticsearchQuery
         final String sortBuildersAsString = getSortBuildersAsString();
 
         return "ElasticsearchQuery{" + "query=" + query + ", size=" + size + ", from=" + from + ", filter=" + filter + ", indexType=" +
-            indexTypes + ", index=" + indexNames + ", sortBuilders=" + sortBuildersAsString + ", aggregations= " + aggregations + '}';
+            indexTypes + ", index=" + indexNames + ", sortBuilders=" + sortBuildersAsString + ", aggregations= " + aggregations +
+            ", suggestions= " + suggestions + ", highlight= " + highlight + "}";
     }
 
     private String getSortBuildersAsString()
     {
-        String sortBuildersAsString = "";
-
-        if ( sortBuilders != null && sortBuilders.size() > 0 )
-        {
-            Joiner joiner = Joiner.on( "," );
-            sortBuildersAsString = joiner.join( getSortBuilders() );
-        }
-        return sortBuildersAsString;
+        return StringUtils.join( sortBuilders, "," );
     }
 
     public static class Builder
@@ -174,6 +185,10 @@ public class ElasticsearchQuery
         private int batchSize = 15_000;
 
         private Set<AbstractAggregationBuilder> aggregations = Sets.newHashSet();
+
+        private Set<SuggestBuilder.SuggestionBuilder> suggestions = Sets.newHashSet();
+
+        private ElasticHighlightQuery highlight = ElasticHighlightQuery.empty();
 
         private ReturnFields returnFields = ReturnFields.empty();
 
@@ -254,6 +269,18 @@ public class ElasticsearchQuery
         public Builder setAggregations( final Set<AbstractAggregationBuilder> aggregations )
         {
             this.aggregations = aggregations;
+            return this;
+        }
+
+        public Builder setSuggestions( final Set<SuggestBuilder.SuggestionBuilder> suggestions )
+        {
+            this.suggestions = suggestions;
+            return this;
+        }
+
+        public Builder setHighlight( final ElasticHighlightQuery highlight )
+        {
+            this.highlight = highlight;
             return this;
         }
 

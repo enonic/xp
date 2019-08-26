@@ -1,6 +1,7 @@
 package com.enonic.xp.core.content;
 
 import java.time.Instant;
+import java.util.Iterator;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -15,12 +16,17 @@ import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
+import com.enonic.xp.content.ContentVersion;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.DeleteContentParams;
+import com.enonic.xp.content.FindContentVersionsParams;
+import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.RenameContentParams;
+import com.enonic.xp.content.WorkflowInfo;
+import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
@@ -69,6 +75,34 @@ public class ContentServiceImplTest_publish
         assertEquals( 0, push.getDeletedContents().getSize() );
         assertEquals( 0, push.getFailedContents().getSize() );
         assertEquals( 1, push.getPushedContents().getSize() );
+    }
+
+    @Test
+    public void publish_workflow_not_ready()
+        throws Exception
+    {
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "This is my content" ).
+            name( "myContent" ).
+            parent( ContentPath.ROOT ).
+            type( ContentTypeName.folder() ).
+            workflowInfo( WorkflowInfo.create().
+                state( WorkflowState.PENDING_APPROVAL ).
+                build() ).
+            build();
+
+        final Content content = this.contentService.create( createContentParams );
+
+        final PublishContentResult push = this.contentService.publish( PushContentParams.create().
+            contentIds( ContentIds.from( content.getId() ) ).
+            target( CTX_OTHER.getBranch() ).
+            includeDependencies( false ).
+            build() );
+
+        assertEquals( 0, push.getDeletedContents().getSize() );
+        assertEquals( 1, push.getFailedContents().getSize() );
+        assertEquals( 0, push.getPushedContents().getSize() );
     }
 
     @Ignore
@@ -383,6 +417,54 @@ public class ContentServiceImplTest_publish
         printContentTree( getByPath( ContentPath.ROOT ).getId(), CTX_OTHER );
 
         assertStatus( b.getId(), CompareStatus.EQUAL );
+    }
+
+    @Test
+    public void publish_with_message()
+    {
+        final Content content = createContent( ContentPath.ROOT, "a" );
+
+        this.contentService.publish( PushContentParams.create().
+            contentIds( ContentIds.from( content.getId() ) ).
+            target( WS_OTHER ).
+            message( "My message" ).
+            build() );
+
+        FindContentVersionsResult versions = this.contentService.getVersions( FindContentVersionsParams.create().
+            contentId( content.getId() ).
+            build() );
+
+        Iterator<ContentVersion> iterator = versions.getContentVersions().iterator();
+        assertTrue( iterator.hasNext() );
+
+        ContentVersion version = iterator.next();
+        assertNotNull( version.getPublishInfo().getTimestamp() );
+        assertEquals( "user:system:test-user", version.getPublishInfo().getPublisher().toString() );
+        assertEquals( "My message", version.getPublishInfo().getMessage() );
+    }
+
+    @Test
+    public void publish_with_message_no_message()
+    {
+        final Content content = createContent( ContentPath.ROOT, "a" );
+
+        this.contentService.publish( PushContentParams.create().
+            contentIds( ContentIds.from( content.getId() ) ).
+            target( WS_OTHER ).
+            message( null ).
+            build() );
+
+        FindContentVersionsResult versions = this.contentService.getVersions( FindContentVersionsParams.create().
+            contentId( content.getId() ).
+            build() );
+
+        Iterator<ContentVersion> iterator = versions.getContentVersions().iterator();
+        assertTrue( iterator.hasNext() );
+
+        ContentVersion version = iterator.next();
+        assertNotNull( version.getPublishInfo().getTimestamp() );
+        assertEquals( "user:system:test-user", version.getPublishInfo().getPublisher().toString() );
+        assertNull( version.getPublishInfo().getMessage() );
     }
 
     private Content doRename( final ContentId contentId, final String newName )

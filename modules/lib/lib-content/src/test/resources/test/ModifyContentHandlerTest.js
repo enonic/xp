@@ -91,7 +91,8 @@ var expectedJson = {
                                 "components": [
                                     {
                                         "path": "/top/1/right/0",
-                                        "type": "image"
+                                        "type": "image",
+                                        "image": "image-id"
                                     },
                                     {
                                         "path": "/top/1/right/1",
@@ -124,7 +125,8 @@ var expectedJson = {
                     },
                     {
                         "path": "/bottom/1",
-                        "type": "image"
+                        "type": "image",
+                        "image": "img-id-x"
                     },
                     {
                         "path": "/bottom/2",
@@ -140,6 +142,12 @@ var expectedJson = {
         "from": "2018-11-03T10:00:01Z",
         "to": "2018-11-03T10:00:01Z",
     },
+    "workflow": {
+        "state": "READY",
+        "checks": {
+            "Review by marketing": "APPROVED"
+        }
+    }
 };
 
 function editor(c) {
@@ -161,6 +169,10 @@ function editor(c) {
 
     c.publish.from = '2018-11-03T10:00:01Z';
     c.publish.to = '2018-11-03T10:00:01Z';
+    c.workflow.state = "READY";
+    c.workflow.checks = {
+        "Review by marketing": "APPROVED"
+    }
 
     return c;
 }

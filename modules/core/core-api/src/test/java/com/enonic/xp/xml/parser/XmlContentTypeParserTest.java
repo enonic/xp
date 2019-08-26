@@ -67,6 +67,7 @@ public class XmlContentTypeParserTest
         assertEquals( "All the Base Types", result.getDisplayName() );
         assertEquals( "description", result.getDescription() );
         assertEquals( "${firstName} ${lastName}", result.getDisplayNameExpression() );
+        assertEquals( "Display Name Label", result.getDisplayNameLabel() );
         assertEquals( "myapplication:content", result.getSuperType().toString() );
         assertEquals( false, result.isAbstract() );
         assertEquals( true, result.isFinal() );
@@ -139,6 +140,7 @@ public class XmlContentTypeParserTest
 
         assertEquals( "translated.display-name", result.getDisplayNameI18nKey() );
         assertEquals( "translated.description", result.getDescriptionI18nKey() );
+        assertEquals( "translated.displayNameLabel", result.getDisplayNameLabelI18nKey() );
 
     }
 

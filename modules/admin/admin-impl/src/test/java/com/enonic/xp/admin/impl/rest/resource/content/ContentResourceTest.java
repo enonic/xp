@@ -24,6 +24,7 @@ import org.junit.rules.ExpectedException;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
+import org.mockito.internal.util.reflection.Whitebox;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -108,8 +109,11 @@ import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.ContentValidityParams;
+import com.enonic.xp.content.ContentValidityResult;
 import com.enonic.xp.content.ContentVersion;
 import com.enonic.xp.content.ContentVersionId;
+import com.enonic.xp.content.ContentVersionPublishInfo;
 import com.enonic.xp.content.ContentVersions;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.CreateContentParams;
@@ -825,6 +829,24 @@ public class ContentResourceTest
     }
 
     @Test
+    public void publish_content_with_message()
+        throws Exception
+    {
+        ArgumentCaptor<PublishRunnableTask> captor = ArgumentCaptor.forClass( PublishRunnableTask.class );
+        Mockito.when( taskService.submitTask( Mockito.any(), Mockito.anyString() ) ).thenReturn( TaskId.from( "1" ) );
+
+        final MockRestResponse res = request().path( "content/publish" ).
+            entity( readFromFile( "publish_content_with_message.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post();
+
+        Mockito.verify( taskService ).submitTask( captor.capture(), Mockito.anyString() );
+        PublishContentJson params = (PublishContentJson) Whitebox.getInternalState( captor.getValue(), "params" );
+
+        assertEquals( 200, res.getStatus() );
+        assertEquals( params.getMessage(), "my message" );
+    }
+
+    @Test
     public void applyPermissions()
         throws Exception
     {
@@ -1090,8 +1112,8 @@ public class ContentResourceTest
         Mockito.when( contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn(
             FindContentIdsByQueryResult.create().contents( ContentIds.from( dependantId ) ).totalHits( 1L ).build() );
 
-        Mockito.doReturn( ContentIds.from( dependantId, requiredId ) ).when( this.contentService ).getInvalidContent(
-            Mockito.isA( ContentIds.class ) );
+        Mockito.doReturn( ContentValidityResult.create().notValidContentIds( ContentIds.from( dependantId, requiredId ) ).build() ).when(
+            this.contentService ).getContentValidity( Mockito.isA( ContentValidityParams.class ) );
 
         String jsonString = request().path( "content/resolvePublishContent" ).
             entity( readFromFile( "resolve_publish_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
@@ -1729,6 +1751,19 @@ public class ContentResourceTest
         assertEquals( 1, result.size() );
     }
 
+
+    @Test
+    public void query_highlight()
+        throws Exception
+    {
+        //  Mockito.when( contentService.create( Mockito.isA( CreateContentParams.class ) ) );
+
+        request().path( "content/query" ).
+            entity( readFromFile( "create_media_from_url.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+    }
+
     @Test
     public void query()
     {
@@ -1926,9 +1961,17 @@ public class ContentResourceTest
             id( ContentVersionId.from( "a" ) ).
             modified( Instant.now() ).
             modifier( PrincipalKey.ofAnonymous() ).
+            publishInfo( ContentVersionPublishInfo.create().
+                message( "My version" ).
+                publisher( PrincipalKey.ofAnonymous() ).
+                timestamp( Instant.ofEpochSecond( 1562056003L ) ).
+                build() ).
             build();
 
         Mockito.when( securityService.getPrincipal( PrincipalKey.ofAnonymous() ) ).thenReturn( (Optional) Optional.of( User.ANONYMOUS ) );
+
+        final ContentPrincipalsResolver contentPrincipalsResolver = new ContentPrincipalsResolver( securityService );
+        Mockito.when( securityService.getUser( PrincipalKey.ofAnonymous() ) ).thenReturn( Optional.of( User.ANONYMOUS ) );
 
         FindContentVersionsParams params = FindContentVersionsParams.create().contentId( content.getId() ).from( 0 ).size( 10 ).build();
         FindContentVersionsResult getVersionsResult = FindContentVersionsResult.create().contentVersions(
@@ -1939,7 +1982,7 @@ public class ContentResourceTest
         GetContentVersionsResultJson result =
             contentResource.getContentVersions( new GetContentVersionsJson( 0, 10, content.getId().toString() ) );
 
-        assertEquals( new ContentVersionJson( contentVersion, User.ANONYMOUS ), result.getContentVersions().toArray()[0] );
+        assertEquals( new ContentVersionJson( contentVersion, contentPrincipalsResolver ), result.getContentVersions().toArray()[0] );
 
     }
 
@@ -1954,9 +1997,17 @@ public class ContentResourceTest
             id( ContentVersionId.from( "a" ) ).
             modified( Instant.now() ).
             modifier( PrincipalKey.ofAnonymous() ).
+            publishInfo( ContentVersionPublishInfo.create().
+                message( "My version" ).
+                publisher( PrincipalKey.ofAnonymous() ).
+                timestamp( Instant.ofEpochSecond( 1562056003L ) ).
+                build() ).
             build();
 
         Mockito.when( securityService.getPrincipal( PrincipalKey.ofAnonymous() ) ).thenReturn( (Optional) Optional.of( User.ANONYMOUS ) );
+
+        final ContentPrincipalsResolver contentPrincipalsResolver = new ContentPrincipalsResolver( securityService );
+        Mockito.when( securityService.getUser( PrincipalKey.ofAnonymous() ) ).thenReturn( Optional.of( User.ANONYMOUS ) );
 
         Mockito.when( contentService.getActiveVersions( GetActiveContentVersionsParams.create().
             branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
@@ -1966,7 +2017,7 @@ public class ContentResourceTest
 
         GetActiveContentVersionsResultJson result = contentResource.getActiveVersions( content.getId().toString() );
 
-        assertEquals( new ContentVersionJson( contentVersion, User.ANONYMOUS ),
+        assertEquals( new ContentVersionJson( contentVersion, contentPrincipalsResolver ),
                       ( (ActiveContentVersionEntryJson) result.getActiveContentVersions().toArray()[0] ).getContentVersion() );
     }
 
@@ -1980,6 +2031,11 @@ public class ContentResourceTest
             id( ContentVersionId.from( "a" ) ).
             modified( Instant.now() ).
             modifier( PrincipalKey.ofAnonymous() ).
+            publishInfo( ContentVersionPublishInfo.create().
+                message( "My version" ).
+                publisher( PrincipalKey.ofAnonymous() ).
+                timestamp( Instant.ofEpochSecond( 1562056003L ) ).
+                build() ).
             build();
 
         Mockito.when( securityService.getPrincipal( PrincipalKey.ofAnonymous() ) ).thenReturn( (Optional) Optional.of( User.ANONYMOUS ) );
@@ -1987,6 +2043,9 @@ public class ContentResourceTest
         FindContentVersionsParams params = FindContentVersionsParams.create().contentId( content.getId() ).from( 0 ).size( 10 ).build();
         FindContentVersionsResult getVersionsResult = FindContentVersionsResult.create().contentVersions(
             ContentVersions.create().contentId( content.getId() ).add( contentVersion ).build() ).build();
+
+        final ContentPrincipalsResolver contentPrincipalsResolver = new ContentPrincipalsResolver( securityService );
+        Mockito.when( securityService.getUser( PrincipalKey.ofAnonymous() ) ).thenReturn( Optional.of( User.ANONYMOUS ) );
 
         Mockito.when( contentService.getVersions( params ) ).thenReturn( getVersionsResult );
 
@@ -1999,8 +2058,8 @@ public class ContentResourceTest
         GetContentVersionsForViewResultJson result =
             contentResource.getContentVersionsForView( new GetContentVersionsJson( 0, 10, content.getId().toString() ) );
 
-        assertEquals( new ContentVersionJson( contentVersion, User.ANONYMOUS ), result.getActiveVersion().getContentVersion() );
-        assertEquals( new ContentVersionViewJson( contentVersion, User.ANONYMOUS,
+        assertEquals( new ContentVersionJson( contentVersion, contentPrincipalsResolver ), result.getActiveVersion().getContentVersion() );
+        assertEquals( new ContentVersionViewJson( contentVersion, contentPrincipalsResolver,
                                                   Collections.singletonList( ContentConstants.BRANCH_DRAFT.toString() ) ),
                       result.getContentVersions().toArray()[0] );
     }

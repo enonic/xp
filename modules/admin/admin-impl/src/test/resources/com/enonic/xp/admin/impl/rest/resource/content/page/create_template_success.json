@@ -44,5 +44,9 @@
   "permissions": [],
   "publish": null,
   "thumbnail": null,
-  "type": "portal:page-template"
+  "type": "portal:page-template",
+  "workflow": {
+    "checks": {},
+    "state": "READY"
+  }
 }

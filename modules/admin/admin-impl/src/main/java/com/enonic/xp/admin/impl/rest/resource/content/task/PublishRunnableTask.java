@@ -36,6 +36,7 @@ public class PublishRunnableTask
             from( params.getSchedule().getPublishFrom() ).
             to( params.getSchedule().getPublishTo() ).
             build();
+        final String message = params.getMessage();
         progressReporter.info( "Publishing content" );
 
         PublishRunnableTaskResult.Builder resultBuilder = PublishRunnableTaskResult.create();
@@ -51,6 +52,7 @@ public class PublishRunnableTask
                 includeDependencies( true ).
                 pushListener( new PublishContentProgressListener( progressReporter ) ).
                 deleteContentListener( new DeleteContentProgressListener( progressReporter ) ).
+                message( message ).
                 build() );
 
             ContentIds pushed = result.getPushedContents();

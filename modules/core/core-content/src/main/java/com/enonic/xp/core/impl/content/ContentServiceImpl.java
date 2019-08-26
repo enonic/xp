@@ -37,6 +37,8 @@ import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.ContentValidityParams;
+import com.enonic.xp.content.ContentValidityResult;
 import com.enonic.xp.content.ContentVersionId;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.CreateContentParams;
@@ -431,6 +433,7 @@ public class ContentServiceImpl
             includeDependencies( params.isIncludeDependencies() ).
             pushListener( params.getPushContentListener() ).
             deleteListener( params.getDeleteContentListener() ).
+            message( params.getMessage() ).
             build().
             execute();
     }
@@ -480,27 +483,25 @@ public class ContentServiceImpl
     @Override
     public boolean isValidContent( ContentIds contentIds )
     {
-        final ContentIds result = CheckContentsValidCommand.create().
-            translator( this.translator ).
-            nodeService( this.nodeService ).
-            eventPublisher( this.eventPublisher ).
-            contentTypeService( this.contentTypeService ).
-            contentIds( contentIds ).
-            build().
-            execute();
-
-        return result.isEmpty();
+        return getInvalidContent( contentIds ).isEmpty();
     }
 
     @Override
     public ContentIds getInvalidContent( ContentIds contentIds )
     {
-        return CheckContentsValidCommand.create().
+        ContentValidityParams params = ContentValidityParams.create().contentIds( contentIds ).build();
+        return getContentValidity( params ).getNotValidContentIds();
+    }
+
+    @Override
+    public ContentValidityResult getContentValidity( final ContentValidityParams params )
+    {
+        return CheckContentValidityCommand.create().
             translator( this.translator ).
             nodeService( this.nodeService ).
             eventPublisher( this.eventPublisher ).
             contentTypeService( this.contentTypeService ).
-            contentIds( contentIds ).
+            contentIds( params.getContentIds() ).
             build().
             execute();
     }

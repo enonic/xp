@@ -34,11 +34,12 @@ public class ModifyNodeHandler
     public Object execute()
     {
         final Node node = getExistingNode();
-        final BinaryAttachments binaryAttachments = getBinaryAttachments( node );
+        final ScriptValue updatedNodeScriptValue = applyEditor( node );
+        final BinaryAttachments binaryAttachments = getBinaryAttachments( updatedNodeScriptValue );
 
         final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
             id( node.id() ).
-            editor( createEditor() ).
+            editor( createEditor(updatedNodeScriptValue) ).
             setBinaryAttachments( binaryAttachments ).
             build();
 
@@ -46,17 +47,20 @@ public class ModifyNodeHandler
         return new NodeMapper( updatedNode, false );
     }
 
-    private BinaryAttachments getBinaryAttachments( final Node node )
-    {
+    private ScriptValue applyEditor(final Node node) {
         final NodeMapper nodeMapper = new NodeMapper( node, true );
-        final ScriptValue value = this.editor.call( nodeMapper );
-        return new BinaryAttachmentsParser().parse( value );
+        return this.editor.call( nodeMapper );
     }
 
-    private NodeEditor createEditor()
+    private BinaryAttachments getBinaryAttachments( final ScriptValue node )
+    {
+        return new BinaryAttachmentsParser().parse( node );
+    }
+
+    private NodeEditor createEditor( final ScriptValue updatedNode )
     {
         return edit -> {
-            final ScriptValue value = this.editor.call( new NodeMapper( edit.source, true ) );
+            final ScriptValue value = updatedNode;
             if ( value != null )
             {
                 updateNode( edit, value );

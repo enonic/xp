@@ -96,6 +96,30 @@ var result = contentLib.query({
                 field: "data.price"
             }
         }
+    },
+    highlight: {
+        encoder: "html",
+        fragmenter: "simple",
+        fragmentSize: 5,
+        noMatchSize: 5,
+        numberOfFragments: 5,
+        order: "score",
+        preTags: ["<a>"],
+        postTags: ["<b>"],
+        requireFieldMatch: false,
+        tagsSchema: "styled",
+        fields: {
+            displayName: {
+                fragmenter: "span",
+                fragmentSize: 6,
+                noMatchSize: 6,
+                numberOfFragments: 6,
+                order: "none",
+                preTags: ["<a>"],
+                postTags: ["<b>"],
+                requireFieldMatch: true
+            }
+        }
     }
 });
 
@@ -129,7 +153,11 @@ var expected = {
             "x": {},
             "page": {},
             "attachments": {},
-            "publish": {}
+            "publish": {},
+            "workflow": {
+                "state": "READY",
+                "checks": {}
+            }
         },
         {
             "_id": "id2",
@@ -147,7 +175,11 @@ var expected = {
             "x": {},
             "page": {},
             "attachments": {},
-            "publish": {}
+            "publish": {},
+            "workflow": {
+                "state": "READY",
+                "checks": {}
+            }
         }
     ],
     "aggregations": {
@@ -224,8 +256,22 @@ var expected = {
             "avg": 3,
             "sum": 15
         }
+    },
+    "highlight": {
+        "123": {
+            "field1": [
+                "fragment1_2",
+                "fragment1_1"
+            ]
+        },
+        "456": {
+            "field2": [
+                "fragment2_2",
+                "fragment2_1"
+            ]
+        }
     }
-};
+}
 // END
 
 t.assertJsonEquals(expected, result);

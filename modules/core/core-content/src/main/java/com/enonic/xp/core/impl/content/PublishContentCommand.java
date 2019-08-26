@@ -9,10 +9,12 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareContentResult;
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareStatus;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
+import com.enonic.xp.content.ContentValidityResult;
 import com.enonic.xp.content.DeleteContentListener;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentListener;
@@ -55,6 +57,8 @@ public class PublishContentCommand
 
     private final DeleteContentListener deleteNodeListener;
 
+    private final String message;
+
     private PublishContentCommand( final Builder builder )
     {
         super( builder );
@@ -67,6 +71,7 @@ public class PublishContentCommand
         this.resultBuilder = PublishContentResult.create();
         this.pushContentListener = builder.pushContentListener;
         this.deleteNodeListener = builder.deleteNodeListener;
+        this.message = builder.message;
     }
 
     public static Builder create()
@@ -144,7 +149,7 @@ public class PublishContentCommand
 
     private boolean checkIfAllContentsValid( final ContentIds pushContentsIds )
     {
-        final ContentIds invalidContentIds = CheckContentsValidCommand.create().
+        final ContentValidityResult result = CheckContentValidityCommand.create().
             translator( this.translator ).
             nodeService( this.nodeService ).
             eventPublisher( this.eventPublisher ).
@@ -153,7 +158,7 @@ public class PublishContentCommand
             build().
             execute();
 
-        return invalidContentIds.isEmpty();
+        return result.allValid();
     }
 
     private void doPushNodes( final NodeIds nodesToPush )
@@ -181,8 +186,12 @@ public class PublishContentCommand
 
     private void commitPushedNodes( final NodeBranchEntries branchEntries )
     {
+        final String commitEntryMessage = message == null
+            ? ContentConstants.PUBLISH_COMMIT_PREFIX
+            : String.join( ContentConstants.PUBLISH_COMMIT_PREFIX_DELIMITER, ContentConstants.PUBLISH_COMMIT_PREFIX, message );
+
         final NodeCommitEntry commitEntry = NodeCommitEntry.create().
-            message( "COM_ENONIC_XP_CONTENT_PUBLISH" ).
+            message( commitEntryMessage ).
             build();
         final RoutableNodeVersionIds.Builder routableNodeVersionIds = RoutableNodeVersionIds.create();
         for ( NodeBranchEntry branchEntry : branchEntries )
@@ -282,6 +291,8 @@ public class PublishContentCommand
 
         private DeleteContentListener deleteNodeListener;
 
+        private String message;
+
         public Builder contentIds( final ContentIds contentIds )
         {
             this.contentIds = contentIds;
@@ -337,6 +348,12 @@ public class PublishContentCommand
         public Builder deleteListener( final DeleteContentListener deleteNodeListener )
         {
             this.deleteNodeListener = deleteNodeListener;
+            return this;
+        }
+
+        public Builder message( final String message )
+        {
+            this.message = message;
             return this;
         }
 

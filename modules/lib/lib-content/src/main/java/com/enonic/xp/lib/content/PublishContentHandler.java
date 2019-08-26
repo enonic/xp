@@ -42,6 +42,8 @@ public final class PublishContentHandler
 
     private ContentService contentService;
 
+    private String message;
+
     public PushContentResultMapper execute()
     {
         final Context context = ContextBuilder.
@@ -103,6 +105,8 @@ public final class PublishContentHandler
         {
             builder.includeDependencies( includeDependencies );
         }
+        builder.message( message );
+
         final PublishContentResult result = this.contentService.publish( builder.build() );
         return result != null ? new PushContentResultMapper( result, contentNotFound ) : null;
     }
@@ -152,6 +156,11 @@ public final class PublishContentHandler
     public void setContentPublishInfo( final ScriptValue contentPublishInfo )
     {
         this.contentPublishInfo = contentPublishInfo != null ? contentPublishInfo.getMap() : null;
+    }
+
+    public void setMessage( final String message )
+    {
+        this.message = message;
     }
 
     @Override

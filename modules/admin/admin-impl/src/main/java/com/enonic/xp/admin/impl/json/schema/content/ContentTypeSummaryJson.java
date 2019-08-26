@@ -73,6 +73,18 @@ public class ContentTypeSummaryJson
         }
     }
 
+    public String getDisplayNameLabel()
+    {
+        if ( StringUtils.isNotBlank( contentType.getDisplayNameLabelI18nKey() ) )
+        {
+            return localeMessageResolver.localizeMessage( contentType.getDisplayNameLabelI18nKey(), contentType.getDisplayNameLabel() );
+        }
+        else
+        {
+            return contentType.getDisplayNameLabel();
+        }
+    }
+
     @Override
     public Instant getCreatedTime()
     {

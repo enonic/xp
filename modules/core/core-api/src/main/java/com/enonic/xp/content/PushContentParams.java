@@ -27,6 +27,8 @@ public class PushContentParams
 
     private final DeleteContentListener deleteContentListener;
 
+    private final String message;
+
     private PushContentParams( Builder builder )
     {
         contentIds = builder.contentIds;
@@ -38,6 +40,7 @@ public class PushContentParams
         includeChildren = builder.includeChildren;
         pushContentListener = builder.pushContentListener;
         deleteContentListener = builder.deleteContentListener;
+        message = builder.message;
     }
 
     public static Builder create()
@@ -91,6 +94,11 @@ public class PushContentParams
         return deleteContentListener;
     }
 
+    public String getMessage()
+    {
+        return message;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -107,14 +115,14 @@ public class PushContentParams
             Objects.equals( excludeChildrenIds, that.excludeChildrenIds ) && Objects.equals( contentIds, that.contentIds ) &&
             Objects.equals( excludedContentIds, that.excludedContentIds ) && Objects.equals( target, that.target ) &&
             Objects.equals( pushContentListener, that.pushContentListener ) &&
-            Objects.equals( deleteContentListener, that.deleteContentListener );
+            Objects.equals( deleteContentListener, that.deleteContentListener ) && Objects.equals( message, that.message );
     }
 
     @Override
     public int hashCode()
     {
         return Objects.hash( contentIds, excludedContentIds, includeChildren, excludeChildrenIds, target, includeDependencies,
-                             pushContentListener, deleteContentListener );
+                             pushContentListener, deleteContentListener, message );
     }
 
     public static final class Builder
@@ -136,6 +144,8 @@ public class PushContentParams
         private PushContentListener pushContentListener;
 
         private DeleteContentListener deleteContentListener;
+
+        private String message;
 
         private Builder()
         {
@@ -194,6 +204,12 @@ public class PushContentParams
         public Builder deleteContentListener( final DeleteContentListener deleteContentListener )
         {
             this.deleteContentListener = deleteContentListener;
+            return this;
+        }
+
+        public Builder message( final String message )
+        {
+            this.message = message;
             return this;
         }
 

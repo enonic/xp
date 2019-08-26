@@ -32,6 +32,8 @@ public class ContentSummaryJson
 
     private final String contentState;
 
+    private final ContentWorkflowInfoJson workflow;
+
     public ContentSummaryJson( final Content content, final ContentIconUrlResolver iconUrlResolver )
     {
         super( content.getId() );
@@ -43,6 +45,7 @@ public class ContentSummaryJson
         this.childOrderJson = content.getChildOrder() != null ? new ChildOrderJson( content.getChildOrder() ) : null;
         this.contentState = content.getContentState().toString();
         this.publish = content.getPublishInfo() != null ? new ContentPublishInfoJson( content.getPublishInfo() ) : null;
+        this.workflow = content.getWorkflowInfo() != null ? new ContentWorkflowInfoJson( content.getWorkflowInfo() ) : null;
     }
 
     public String getIconUrl()
@@ -93,6 +96,11 @@ public class ContentSummaryJson
     public ContentPublishInfoJson getPublish()
     {
         return publish;
+    }
+
+    public ContentWorkflowInfoJson getWorkflow()
+    {
+        return workflow;
     }
 
     @Override

@@ -259,6 +259,7 @@ RepoConnection.prototype.setChildOrder = function (params) {
  * @param {object} [params.filters] Query filters
  * @param {string} [params.sort='_score DESC'] Sorting expression.
  * @param {string} [params.aggregations] Aggregations expression.
+ * @param {string} [params.highlight] Highlighting parameters.
  * @param {boolean} [params.explain=false] Return score calculation explanation.
  * @returns {object} Result of query.
  */
@@ -269,6 +270,8 @@ RepoConnection.prototype.query = function (params) {
     handlerParams.query = nullOrValue(params.query);
     handlerParams.sort = valueOrDefault(params.sort, "_score DESC");
     handlerParams.aggregations = __.toScriptValue(params.aggregations);
+    handlerParams.suggestions = __.toScriptValue(params.suggestions);
+    handlerParams.highlight = __.toScriptValue(params.highlight);
     handlerParams.filters = __.toScriptValue(params.filters);
     handlerParams.explain = valueOrDefault(params.explain, false);
     return __.toNativeObject(this.repoConnection.query(handlerParams));
@@ -297,10 +300,26 @@ MultiRepoConnection.prototype.query = function (params) {
     handlerParams.query = nullOrValue(params.query);
     handlerParams.sort = valueOrDefault(params.sort, "_score DESC");
     handlerParams.aggregations = __.toScriptValue(params.aggregations);
+    handlerParams.suggestions = __.toScriptValue(params.suggestions);
     handlerParams.filters = __.toScriptValue(params.filters);
     handlerParams.explain = valueOrDefault(params.explain, false);
     return __.toNativeObject(this.multiRepoConnection.query(handlerParams));
 };
+
+
+/**
+ * Check if node exists.
+ *
+ * @example-ref examples/node/exists.js
+ *
+ * @param {string} [key] node path or id.
+ *
+ * @returns {boolean} True if exist, false otherwise.
+ */
+RepoConnection.prototype.exists = function (key) {
+    return __.toNativeObject(this.repoConnection.exist(key));
+};
+
 
 /**
  * This function returns node versions.

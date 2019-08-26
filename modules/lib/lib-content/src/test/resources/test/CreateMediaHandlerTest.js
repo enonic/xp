@@ -16,7 +16,11 @@ var expectedJson = {
     "x": {},
     "page": {},
     "attachments": {},
-    "publish": {}
+    "publish": {},
+    "workflow": {
+        "state": "READY",
+        "checks": {}
+    }
 };
 
 exports.createMedia = function () {
@@ -56,7 +60,11 @@ var expectedJsonAutoGenerateName = {
     "x": {},
     "page": {},
     "attachments": {},
-    "publish": {}
+    "publish": {},
+    "workflow": {
+        "state": "READY",
+        "checks": {}
+    }
 };
 
 exports.createMediaAutoGenerateName = function () {
