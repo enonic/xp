@@ -367,7 +367,6 @@ public class Content
             Objects.equals( createdTime, other.createdTime ) &&
             Objects.equals( modifiedTime, other.modifiedTime ) &&
             Objects.equals( hasChildren, other.hasChildren ) &&
-            Objects.equals( inherited, other.inherited ) &&
             Objects.equals( inheritPermissions, other.inheritPermissions ) &&
             Objects.equals( childOrder, other.childOrder ) &&
             Objects.equals( thumbnail, other.thumbnail ) &&
@@ -386,7 +385,7 @@ public class Content
     public int hashCode()
     {
         return Objects.hash( id, name, parentPath, displayName, type, valid, modifier, creator, owner, createdTime, modifiedTime,
-                             hasChildren, inherited, inheritPermissions, childOrder, thumbnail, permissions, attachments, data, extraDatas, page,
+                             hasChildren, inheritPermissions, childOrder, thumbnail, permissions, attachments, data, extraDatas, page,
                              language, contentState, publishInfo, processedReferences, workflowInfo );
     }
 
