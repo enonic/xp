@@ -3,7 +3,7 @@ package com.enonic.xp.core.content;
 import java.time.Instant;
 
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 
 import com.google.common.io.ByteSource;
@@ -19,7 +19,7 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.site.CreateSiteParams;
 import com.enonic.xp.site.SiteConfigs;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ContentServiceImplTest_create
     extends AbstractContentServiceTest

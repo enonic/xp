@@ -2,7 +2,7 @@ package com.enonic.xp.core.impl.export.xml;
 
 import java.net.URL;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 
 import com.google.common.base.Charsets;
@@ -17,7 +17,7 @@ import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.xml.DomElement;
 import com.enonic.xp.xml.DomHelper;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class XmlPermissionsParserTest
     extends BaseXmlSerializerTest

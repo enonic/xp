@@ -1,8 +1,8 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory;
 
 import org.elasticsearch.index.query.QueryBuilder;
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.query.filter.BooleanFilter;
@@ -28,7 +28,7 @@ public class FilterBuilderFactoryTest
         final QueryBuilder filterBuilder =
             new FilterBuilderFactory( new SearchQueryFieldNameResolver() ).create( Filters.from( queryFilter ) );
 
-        Assert.assertEquals( cleanString( expected ), cleanString( filterBuilder.toString() ) );
+        assertEquals( cleanString( expected ), cleanString( filterBuilder.toString() ) );
     }
 
     @Test
@@ -45,7 +45,7 @@ public class FilterBuilderFactoryTest
         final QueryBuilder filterBuilder =
             new FilterBuilderFactory( new SearchQueryFieldNameResolver() ).create( Filters.from( queryFilter ) );
 
-        Assert.assertEquals( cleanString( expected ), cleanString( filterBuilder.toString() ) );
+        assertEquals( cleanString( expected ), cleanString( filterBuilder.toString() ) );
     }
 
     @Test
@@ -60,7 +60,7 @@ public class FilterBuilderFactoryTest
         final QueryBuilder filterBuilder =
             new FilterBuilderFactory( new SearchQueryFieldNameResolver() ).create( Filters.from( queryFilter ) );
 
-        Assert.assertEquals( cleanString( expected ), cleanString( filterBuilder.toString() ) );
+        assertEquals( cleanString( expected ), cleanString( filterBuilder.toString() ) );
     }
 
     @Test
@@ -80,6 +80,6 @@ public class FilterBuilderFactoryTest
         final QueryBuilder filterBuilder =
             new FilterBuilderFactory( new SearchQueryFieldNameResolver() ).create( Filters.from( builder.build() ) );
 
-        Assert.assertEquals( cleanString( expected ), cleanString( filterBuilder.toString() ) );
+        assertEquals( cleanString( expected ), cleanString( filterBuilder.toString() ) );
     }
 }

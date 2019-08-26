@@ -2,9 +2,9 @@ package com.enonic.xp.repo.impl.node;
 
 import java.util.Objects;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
@@ -23,12 +23,12 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SetNodeChildOrderCommandTest
     extends AbstractNodeTest
 {
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
@@ -182,7 +182,7 @@ public class SetNodeChildOrderCommandTest
         {
             createRightChecked = true;
         }
-        Assert.assertTrue( createRightChecked );
+        assertTrue( createRightChecked );
 
         // Tests the correct behaviour if the right is granted
         setChildOrder( createGrantedNode, ChildOrder.create().add(

@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 
 import com.enonic.xp.util.BinaryReference;
@@ -14,7 +14,7 @@ import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Link;
 import com.enonic.xp.util.Reference;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ValueTest
 {

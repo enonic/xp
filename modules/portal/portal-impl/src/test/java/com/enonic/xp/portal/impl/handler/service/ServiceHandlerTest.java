@@ -3,8 +3,8 @@ package com.enonic.xp.portal.impl.handler.service;
 import java.util.Collections;
 import java.util.Set;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -39,7 +39,7 @@ import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.BaseHandlerTest;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ServiceHandlerTest
     extends BaseHandlerTest
@@ -56,7 +56,7 @@ public class ServiceHandlerTest
 
     private ControllerScript controllerScript;
 
-    @Before
+    @BeforeEach
     public final void setup()
         throws Exception
     {

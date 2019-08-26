@@ -1,7 +1,7 @@
 package com.enonic.xp.xml.parser;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
@@ -10,7 +10,7 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.RegionDescriptors;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class XmlLayoutDescriptorParserTest
     extends XmlModelParserTest
@@ -19,7 +19,7 @@ public class XmlLayoutDescriptorParserTest
 
     private LayoutDescriptor.Builder builder;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.parser = new XmlLayoutDescriptorParser();

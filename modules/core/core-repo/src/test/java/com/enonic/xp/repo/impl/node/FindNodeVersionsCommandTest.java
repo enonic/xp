@@ -3,8 +3,8 @@ package com.enonic.xp.repo.impl.node;
 import java.time.Instant;
 import java.util.Random;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
@@ -19,14 +19,14 @@ import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.repo.impl.version.VersionIndexPath;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FindNodeVersionsCommandTest
     extends AbstractNodeTest
 {
     private final Random random = new Random();
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

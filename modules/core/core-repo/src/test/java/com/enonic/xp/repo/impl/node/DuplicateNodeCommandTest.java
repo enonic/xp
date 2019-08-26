@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.ByteSource;
@@ -30,12 +30,12 @@ import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.Reference;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DuplicateNodeCommandTest
     extends AbstractNodeTest
 {
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

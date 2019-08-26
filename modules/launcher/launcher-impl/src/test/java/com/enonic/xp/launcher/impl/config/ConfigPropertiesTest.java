@@ -2,8 +2,8 @@ package com.enonic.xp.launcher.impl.config;
 
 import java.util.Map;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Maps;
 
@@ -16,8 +16,8 @@ public class ConfigPropertiesTest
         props.put( "key1", "value1" );
         props.put( " key2 ", " value2 " );
 
-        Assert.assertEquals( "value1", props.get( "key1" ) );
-        Assert.assertEquals( " value2 ", props.get( " key2 " ) );
+        assertEquals( "value1", props.get( "key1" ) );
+        assertEquals( " value2 ", props.get( " key2 " ) );
     }
 
     @Test
@@ -30,8 +30,8 @@ public class ConfigPropertiesTest
         final ConfigProperties props = new ConfigProperties();
         props.putAll( map );
 
-        Assert.assertEquals( "value1", props.get( "key1" ) );
-        Assert.assertEquals( " value2 ", props.get( " key2 " ) );
+        assertEquals( "value1", props.get( "key1" ) );
+        assertEquals( " value2 ", props.get( " key2 " ) );
     }
 
     @Test
@@ -43,9 +43,9 @@ public class ConfigPropertiesTest
         props.put( "key3", "${key1} value3 ${key2}" );
 
         props.interpolate();
-        Assert.assertEquals( "value1", props.get( "key1" ) );
-        Assert.assertEquals( "value2 value1", props.get( "key2" ) );
-        Assert.assertEquals( "value1 value3 value2 value1", props.get( "key3" ) );
+        assertEquals( "value1", props.get( "key1" ) );
+        assertEquals( "value2 value1", props.get( "key2" ) );
+        assertEquals( "value1 value3 value2 value1", props.get( "key3" ) );
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -53,9 +53,9 @@ public class ConfigPropertiesTest
     {
         final ConfigProperties props = new ConfigProperties();
         props.put( "key1", "value1 ${key1}" );
-        Assert.assertEquals( 1, props.size() );
+        assertEquals( 1, props.size() );
 
         props.interpolate();
-        Assert.fail( "Should throw exception" );
+        fail( "Should throw exception" );
     }
 }

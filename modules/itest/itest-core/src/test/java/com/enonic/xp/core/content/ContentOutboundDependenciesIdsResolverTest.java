@@ -2,9 +2,9 @@ package com.enonic.xp.core.content;
 
 import java.util.Locale;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.content.Content;
@@ -33,7 +33,7 @@ public class ContentOutboundDependenciesIdsResolverTest
 
     private ContentDataSerializer contentDataSerializer;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
@@ -91,10 +91,10 @@ public class ContentOutboundDependenciesIdsResolverTest
 
         final ContentIds result = resolver.resolve( content.getId() );
 
-        Assert.assertEquals( result.getSize(), 3 );
-        Assert.assertTrue( result.contains( folderRefContent1.getId() ) );
-        Assert.assertTrue( result.contains( folderRefContent2.getId() ) );
-        Assert.assertTrue( result.contains( siteRefContent1.getId() ) );
+        assertEquals( result.getSize(), 3 );
+        assertTrue( result.contains( folderRefContent1.getId() ) );
+        assertTrue( result.contains( folderRefContent2.getId() ) );
+        assertTrue( result.contains( siteRefContent1.getId() ) );
 
     }
 
@@ -117,8 +117,8 @@ public class ContentOutboundDependenciesIdsResolverTest
 
         final ContentIds result = resolver.resolve( content.getId() );
 
-        Assert.assertEquals( result.getSize(), 3 );
-        Assert.assertTrue( result.contains( ContentId.from( "some-id" ) ) );
+        assertEquals( result.getSize(), 3 );
+        assertTrue( result.contains( ContentId.from( "some-id" ) ) );
     }
 
     @Test
@@ -147,10 +147,10 @@ public class ContentOutboundDependenciesIdsResolverTest
 
         final ContentIds result = resolver.resolve( content.getId() );
 
-        Assert.assertEquals( result.getSize(), 3 );
-        Assert.assertTrue( result.contains( folderRefContent1.getId() ) );
-        Assert.assertTrue( result.contains( folderRefContent2.getId() ) );
-        Assert.assertTrue( result.contains( siteRefContent1.getId() ) );
+        assertEquals( result.getSize(), 3 );
+        assertTrue( result.contains( folderRefContent1.getId() ) );
+        assertTrue( result.contains( folderRefContent2.getId() ) );
+        assertTrue( result.contains( siteRefContent1.getId() ) );
     }
 
     @Test
@@ -166,7 +166,7 @@ public class ContentOutboundDependenciesIdsResolverTest
 
         final ContentIds result = resolver.resolve( content.getId() );
 
-        Assert.assertEquals( result.getSize(), 1 );
-        Assert.assertEquals( result.first(), ref );
+        assertEquals( result.getSize(), 1 );
+        assertEquals( result.first(), ref );
     }
 }

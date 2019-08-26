@@ -2,8 +2,8 @@ package com.enonic.xp.core.impl.issue;
 
 import java.time.Instant;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 
@@ -20,14 +20,14 @@ import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.security.PrincipalKey;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CreateIssueCommentCommandTest
 {
 
     private NodeService nodeService;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

@@ -11,14 +11,14 @@ import org.apache.ignite.lang.IgniteFuture;
 import org.eclipse.jetty.server.session.SessionContext;
 import org.eclipse.jetty.server.session.SessionData;
 import org.eclipse.jetty.server.session.UnreadableSessionDataException;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.collect.Sets;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
@@ -36,7 +36,7 @@ public class IgniteSessionDataStoreTest
 
     private Ignite ignite;
 
-    @Before
+    @BeforeEach
     public void setup()
         throws Exception
     {
@@ -61,7 +61,7 @@ public class IgniteSessionDataStoreTest
         final SessionData sessionData = new SessionData( "123", null, null, 0, 0, 0, 0 );
         when( cache.get( anyString() ) ).thenReturn( new SessionDataWrapper( sessionData ) );
 
-        Assert.assertEquals( sessionData, store.load( "123" ) );
+        assertEquals( sessionData, store.load( "123" ) );
     }
 
     @Test
@@ -74,11 +74,11 @@ public class IgniteSessionDataStoreTest
         try
         {
             store.load( "123" );
-            Assert.fail( "Expected exception" );
+            fail( "Expected exception" );
         }
         catch ( UnreadableSessionDataException e )
         {
-            Assert.assertEquals( "123", e.getId() );
+            assertEquals( "123", e.getId() );
             // Expected exception here
         }
     }
@@ -190,15 +190,15 @@ public class IgniteSessionDataStoreTest
         when( cache.putAsync( anyString(), any( SessionDataWrapper.class ) ) ).thenReturn( putFuture );
 
         store.removeIgnite( ignite );
-        Assert.assertNull( store.load( "123" ) );
-        Assert.assertFalse( store.delete( "123" ) );
+        assertNull( store.load( "123" ) );
+        assertFalse( store.delete( "123" ) );
         store.doStore( "123", sessionData, 0 );
-        Assert.assertEquals( sessionData, store.load( "123" ) );
-        Assert.assertTrue( store.delete( "123" ) );
+        assertEquals( sessionData, store.load( "123" ) );
+        assertTrue( store.delete( "123" ) );
 
         store.addIgnite( ignite );
-        Assert.assertEquals( sessionData, store.load( "123" ) );
-        Assert.assertTrue( store.delete( "123" ) );
+        assertEquals( sessionData, store.load( "123" ) );
+        assertTrue( store.delete( "123" ) );
         store.store( "123", sessionData );
         verify( cache, Mockito.times( 1 ) ).putAsync( eq( "cpath_vhost_123" ), any( SessionDataWrapper.class ) );
     }

@@ -1,7 +1,7 @@
 package com.enonic.xp.init;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.index.IndexService;
@@ -15,10 +15,10 @@ public class ExternalInitializerTest
         final ExternalInitializer initializer = createExternalInitializer( indexService );
 
         Mockito.when( indexService.isMaster() ).thenReturn( true );
-        Assert.assertEquals( true, initializer.isMaster() );
+        assertEquals( true, initializer.isMaster() );
 
         Mockito.when( indexService.isMaster() ).thenReturn( false );
-        Assert.assertEquals( false, initializer.isMaster() );
+        assertEquals( false, initializer.isMaster() );
     }
 
     private ExternalInitializer createExternalInitializer( final IndexService indexService )

@@ -2,14 +2,14 @@ package com.enonic.xp.site;
 
 import java.util.Iterator;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.schema.content.ContentTypeFilter;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ContentTypeFilterTypeTest
 {
@@ -63,10 +63,10 @@ public class ContentTypeFilterTypeTest
             build();
 
         final Iterator<ContentTypeName> iterator = filter.iterator();
-        Assert.assertEquals( ContentTypeName.from( "myapplication:com.enonic.tweet" ), iterator.next() );
-        Assert.assertEquals( ContentTypeName.from( "myapplication:system.folder" ), iterator.next() );
-        Assert.assertEquals( ContentTypeName.from( "myapplication:com.enonic.article" ), iterator.next() );
-        Assert.assertEquals( ContentTypeName.from( "myapplication:com.enonic.employee" ), iterator.next() );
+        assertEquals( ContentTypeName.from( "myapplication:com.enonic.tweet" ), iterator.next() );
+        assertEquals( ContentTypeName.from( "myapplication:system.folder" ), iterator.next() );
+        assertEquals( ContentTypeName.from( "myapplication:com.enonic.article" ), iterator.next() );
+        assertEquals( ContentTypeName.from( "myapplication:com.enonic.employee" ), iterator.next() );
         assertFalse( iterator.hasNext() );
     }
 }

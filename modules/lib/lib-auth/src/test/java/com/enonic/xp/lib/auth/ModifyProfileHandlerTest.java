@@ -2,8 +2,8 @@ package com.enonic.xp.lib.auth;
 
 import java.util.Optional;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.data.PropertySet;
@@ -15,7 +15,7 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserEditor;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ModifyProfileHandlerTest
     extends ScriptTestSupport
@@ -80,7 +80,7 @@ public class ModifyProfileHandlerTest
     private User invokeUpdate( final UpdateUserParams params, final User user )
     {
         final UserEditor editor = params.getEditor();
-        Assert.assertNotNull( editor );
+        assertNotNull( editor );
 
         final EditableUser editable = new EditableUser( user );
 

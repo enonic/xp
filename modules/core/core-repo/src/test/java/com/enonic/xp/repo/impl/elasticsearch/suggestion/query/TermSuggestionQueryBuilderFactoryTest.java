@@ -1,9 +1,9 @@
 package com.enonic.xp.repo.impl.elasticsearch.suggestion.query;
 
 import org.elasticsearch.search.suggest.term.TermSuggestionBuilder;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.query.suggester.TermSuggestionQuery;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQueryFieldNameResolver;
@@ -13,7 +13,7 @@ public class TermSuggestionQueryBuilderFactoryTest
 {
     private TermSuggestionQueryBuilderFactory termSuggestionQueryBuilderFactory;
 
-    @Before
+    @BeforeEach
     public void init()
     {
         termSuggestionQueryBuilderFactory = new TermSuggestionQueryBuilderFactory( new SearchQueryFieldNameResolver() );
@@ -40,6 +40,6 @@ public class TermSuggestionQueryBuilderFactoryTest
 
         final TermSuggestionBuilder suggestionBuilder = termSuggestionQueryBuilderFactory.create( query );
 
-        Assert.assertNotNull( suggestionBuilder );
+        assertNotNull( suggestionBuilder );
     }
 }

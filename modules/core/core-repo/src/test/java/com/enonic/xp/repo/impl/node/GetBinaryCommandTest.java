@@ -1,7 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.io.ByteSource;
 
@@ -12,12 +12,12 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.util.BinaryReference;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GetBinaryCommandTest
     extends AbstractNodeTest
 {
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

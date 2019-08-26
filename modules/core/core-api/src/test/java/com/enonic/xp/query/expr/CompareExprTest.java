@@ -2,8 +2,8 @@ package com.enonic.xp.query.expr;
 
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
 
@@ -16,13 +16,13 @@ public class CompareExprTest
         final ValueExpr value = ValueExpr.number( 2 );
         final CompareExpr expr = CompareExpr.eq( field, value );
 
-        Assert.assertNotNull( expr );
-        Assert.assertSame( field, expr.getField() );
-        Assert.assertSame( value, expr.getFirstValue() );
-        Assert.assertSame( value, expr.getValues().get( 0 ) );
-        Assert.assertEquals( CompareExpr.Operator.EQ, expr.getOperator() );
-        Assert.assertFalse( expr.getOperator().allowMultipleValues() );
-        Assert.assertEquals( "a = 2.0", expr.toString() );
+        assertNotNull( expr );
+        assertSame( field, expr.getField() );
+        assertSame( value, expr.getFirstValue() );
+        assertSame( value, expr.getValues().get( 0 ) );
+        assertEquals( CompareExpr.Operator.EQ, expr.getOperator() );
+        assertFalse( expr.getOperator().allowMultipleValues() );
+        assertEquals( "a = 2.0", expr.toString() );
     }
 
     @Test
@@ -32,13 +32,13 @@ public class CompareExprTest
         final ValueExpr value = ValueExpr.number( 2 );
         final CompareExpr expr = CompareExpr.neq( field, value );
 
-        Assert.assertNotNull( expr );
-        Assert.assertSame( field, expr.getField() );
-        Assert.assertSame( value, expr.getFirstValue() );
-        Assert.assertSame( value, expr.getValues().get( 0 ) );
-        Assert.assertEquals( CompareExpr.Operator.NEQ, expr.getOperator() );
-        Assert.assertFalse( expr.getOperator().allowMultipleValues() );
-        Assert.assertEquals( "a != 2.0", expr.toString() );
+        assertNotNull( expr );
+        assertSame( field, expr.getField() );
+        assertSame( value, expr.getFirstValue() );
+        assertSame( value, expr.getValues().get( 0 ) );
+        assertEquals( CompareExpr.Operator.NEQ, expr.getOperator() );
+        assertFalse( expr.getOperator().allowMultipleValues() );
+        assertEquals( "a != 2.0", expr.toString() );
     }
 
     @Test
@@ -48,13 +48,13 @@ public class CompareExprTest
         final ValueExpr value = ValueExpr.number( 2 );
         final CompareExpr expr = CompareExpr.gt( field, value );
 
-        Assert.assertNotNull( expr );
-        Assert.assertSame( field, expr.getField() );
-        Assert.assertSame( value, expr.getFirstValue() );
-        Assert.assertSame( value, expr.getValues().get( 0 ) );
-        Assert.assertEquals( CompareExpr.Operator.GT, expr.getOperator() );
-        Assert.assertFalse( expr.getOperator().allowMultipleValues() );
-        Assert.assertEquals( "a > 2.0", expr.toString() );
+        assertNotNull( expr );
+        assertSame( field, expr.getField() );
+        assertSame( value, expr.getFirstValue() );
+        assertSame( value, expr.getValues().get( 0 ) );
+        assertEquals( CompareExpr.Operator.GT, expr.getOperator() );
+        assertFalse( expr.getOperator().allowMultipleValues() );
+        assertEquals( "a > 2.0", expr.toString() );
     }
 
     @Test
@@ -64,13 +64,13 @@ public class CompareExprTest
         final ValueExpr value = ValueExpr.number( 2 );
         final CompareExpr expr = CompareExpr.gte( field, value );
 
-        Assert.assertNotNull( expr );
-        Assert.assertSame( field, expr.getField() );
-        Assert.assertSame( value, expr.getFirstValue() );
-        Assert.assertSame( value, expr.getValues().get( 0 ) );
-        Assert.assertEquals( CompareExpr.Operator.GTE, expr.getOperator() );
-        Assert.assertFalse( expr.getOperator().allowMultipleValues() );
-        Assert.assertEquals( "a >= 2.0", expr.toString() );
+        assertNotNull( expr );
+        assertSame( field, expr.getField() );
+        assertSame( value, expr.getFirstValue() );
+        assertSame( value, expr.getValues().get( 0 ) );
+        assertEquals( CompareExpr.Operator.GTE, expr.getOperator() );
+        assertFalse( expr.getOperator().allowMultipleValues() );
+        assertEquals( "a >= 2.0", expr.toString() );
     }
 
     @Test
@@ -80,13 +80,13 @@ public class CompareExprTest
         final ValueExpr value = ValueExpr.number( 2 );
         final CompareExpr expr = CompareExpr.lt( field, value );
 
-        Assert.assertNotNull( expr );
-        Assert.assertSame( field, expr.getField() );
-        Assert.assertSame( value, expr.getFirstValue() );
-        Assert.assertSame( value, expr.getValues().get( 0 ) );
-        Assert.assertEquals( CompareExpr.Operator.LT, expr.getOperator() );
-        Assert.assertFalse( expr.getOperator().allowMultipleValues() );
-        Assert.assertEquals( "a < 2.0", expr.toString() );
+        assertNotNull( expr );
+        assertSame( field, expr.getField() );
+        assertSame( value, expr.getFirstValue() );
+        assertSame( value, expr.getValues().get( 0 ) );
+        assertEquals( CompareExpr.Operator.LT, expr.getOperator() );
+        assertFalse( expr.getOperator().allowMultipleValues() );
+        assertEquals( "a < 2.0", expr.toString() );
     }
 
     @Test
@@ -96,13 +96,13 @@ public class CompareExprTest
         final ValueExpr value = ValueExpr.number( 2 );
         final CompareExpr expr = CompareExpr.lte( field, value );
 
-        Assert.assertNotNull( expr );
-        Assert.assertSame( field, expr.getField() );
-        Assert.assertSame( value, expr.getFirstValue() );
-        Assert.assertSame( value, expr.getValues().get( 0 ) );
-        Assert.assertEquals( CompareExpr.Operator.LTE, expr.getOperator() );
-        Assert.assertFalse( expr.getOperator().allowMultipleValues() );
-        Assert.assertEquals( "a <= 2.0", expr.toString() );
+        assertNotNull( expr );
+        assertSame( field, expr.getField() );
+        assertSame( value, expr.getFirstValue() );
+        assertSame( value, expr.getValues().get( 0 ) );
+        assertEquals( CompareExpr.Operator.LTE, expr.getOperator() );
+        assertFalse( expr.getOperator().allowMultipleValues() );
+        assertEquals( "a <= 2.0", expr.toString() );
     }
 
     @Test
@@ -112,13 +112,13 @@ public class CompareExprTest
         final ValueExpr value = ValueExpr.string( "2" );
         final CompareExpr expr = CompareExpr.like( field, value );
 
-        Assert.assertNotNull( expr );
-        Assert.assertSame( field, expr.getField() );
-        Assert.assertSame( value, expr.getFirstValue() );
-        Assert.assertSame( value, expr.getValues().get( 0 ) );
-        Assert.assertEquals( CompareExpr.Operator.LIKE, expr.getOperator() );
-        Assert.assertFalse( expr.getOperator().allowMultipleValues() );
-        Assert.assertEquals( "a LIKE '2'", expr.toString() );
+        assertNotNull( expr );
+        assertSame( field, expr.getField() );
+        assertSame( value, expr.getFirstValue() );
+        assertSame( value, expr.getValues().get( 0 ) );
+        assertEquals( CompareExpr.Operator.LIKE, expr.getOperator() );
+        assertFalse( expr.getOperator().allowMultipleValues() );
+        assertEquals( "a LIKE '2'", expr.toString() );
     }
 
     @Test
@@ -128,13 +128,13 @@ public class CompareExprTest
         final ValueExpr value = ValueExpr.string( "2" );
         final CompareExpr expr = CompareExpr.notLike( field, value );
 
-        Assert.assertNotNull( expr );
-        Assert.assertSame( field, expr.getField() );
-        Assert.assertSame( value, expr.getFirstValue() );
-        Assert.assertSame( value, expr.getValues().get( 0 ) );
-        Assert.assertEquals( CompareExpr.Operator.NOT_LIKE, expr.getOperator() );
-        Assert.assertFalse( expr.getOperator().allowMultipleValues() );
-        Assert.assertEquals( "a NOT LIKE '2'", expr.toString() );
+        assertNotNull( expr );
+        assertSame( field, expr.getField() );
+        assertSame( value, expr.getFirstValue() );
+        assertSame( value, expr.getValues().get( 0 ) );
+        assertEquals( CompareExpr.Operator.NOT_LIKE, expr.getOperator() );
+        assertFalse( expr.getOperator().allowMultipleValues() );
+        assertEquals( "a NOT LIKE '2'", expr.toString() );
     }
 
     @Test
@@ -144,13 +144,13 @@ public class CompareExprTest
         final List<ValueExpr> values = Lists.newArrayList( ValueExpr.string( "1" ), ValueExpr.string( "2" ) );
         final CompareExpr expr = CompareExpr.in( field, values );
 
-        Assert.assertNotNull( expr );
-        Assert.assertSame( field, expr.getField() );
-        Assert.assertSame( values.get( 0 ), expr.getFirstValue() );
-        Assert.assertEquals( 2, expr.getValues().size() );
-        Assert.assertEquals( CompareExpr.Operator.IN, expr.getOperator() );
-        Assert.assertTrue( expr.getOperator().allowMultipleValues() );
-        Assert.assertEquals( "a IN ('1', '2')", expr.toString() );
+        assertNotNull( expr );
+        assertSame( field, expr.getField() );
+        assertSame( values.get( 0 ), expr.getFirstValue() );
+        assertEquals( 2, expr.getValues().size() );
+        assertEquals( CompareExpr.Operator.IN, expr.getOperator() );
+        assertTrue( expr.getOperator().allowMultipleValues() );
+        assertEquals( "a IN ('1', '2')", expr.toString() );
     }
 
     @Test
@@ -160,12 +160,12 @@ public class CompareExprTest
         final List<ValueExpr> values = Lists.newArrayList( ValueExpr.string( "1" ), ValueExpr.string( "2" ) );
         final CompareExpr expr = CompareExpr.notIn( field, values );
 
-        Assert.assertNotNull( expr );
-        Assert.assertSame( field, expr.getField() );
-        Assert.assertSame( values.get( 0 ), expr.getFirstValue() );
-        Assert.assertEquals( 2, expr.getValues().size() );
-        Assert.assertEquals( CompareExpr.Operator.NOT_IN, expr.getOperator() );
-        Assert.assertTrue( expr.getOperator().allowMultipleValues() );
-        Assert.assertEquals( "a NOT IN ('1', '2')", expr.toString() );
+        assertNotNull( expr );
+        assertSame( field, expr.getField() );
+        assertSame( values.get( 0 ), expr.getFirstValue() );
+        assertEquals( 2, expr.getValues().size() );
+        assertEquals( CompareExpr.Operator.NOT_IN, expr.getOperator() );
+        assertTrue( expr.getOperator().allowMultipleValues() );
+        assertEquals( "a NOT IN ('1', '2')", expr.toString() );
     }
 }

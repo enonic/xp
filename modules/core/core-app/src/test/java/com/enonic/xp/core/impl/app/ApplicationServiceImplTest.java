@@ -3,8 +3,8 @@ package com.enonic.xp.core.impl.app;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 import org.mockito.verification.VerificationMode;
@@ -28,7 +28,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.Nodes;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ApplicationServiceImplTest
     extends BundleBasedTest
@@ -39,7 +39,7 @@ public class ApplicationServiceImplTest
 
     private EventPublisher eventPublisher;
 
-    @Before
+    @BeforeEach
     public void initService()
     {
         this.service = new ApplicationServiceImpl();

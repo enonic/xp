@@ -2,8 +2,8 @@ package com.enonic.xp.portal.impl.view;
 
 import java.util.Locale;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 
@@ -15,7 +15,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.site.Site;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class LocalizeFunctionTest
     extends AbstractUrlViewFunctionTest
@@ -24,7 +24,7 @@ public class LocalizeFunctionTest
 
     private final MessageBundle messageBundle = Mockito.mock( MessageBundle.class );
 
-    @Before
+    @BeforeEach
     public final void setupTest()
     {
         Site site = Site.create().

@@ -1,11 +1,11 @@
 package com.enonic.xp.support;
 
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableList;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AbstractImmutableEntityListTest
 {

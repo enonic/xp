@@ -3,9 +3,9 @@ package com.enonic.xp.admin.impl.rest.resource.content.task;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishContentJson;
@@ -22,7 +22,7 @@ public class PublishRunnableTaskTest
 {
     private PublishContentJson params;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp()
         throws Exception
@@ -76,7 +76,7 @@ public class PublishRunnableTaskTest
 
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
 
-        Assert.assertEquals(
+        assertEquals(
             "{\"state\":\"WARNING\",\"message\":\"2 items are published ( \\\"content2\\\" deleted ). Item \\\"content3\\\" could not be published.\"}",
             resultMessage );
     }
@@ -103,7 +103,7 @@ public class PublishRunnableTaskTest
             setPushed( ContentIds.from( contents.get( 0 ).getId() ) ).
             build();
 
-        Assert.assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"Item \\\"content1\\\" is published.\"}", runTask( result ) );
+        assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"Item \\\"content1\\\" is published.\"}", runTask( result ) );
     }
 
     @Test
@@ -115,7 +115,7 @@ public class PublishRunnableTaskTest
             setDeletedPath( contents.get( 0 ).getPath() ).
             build();
 
-        Assert.assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"Item \\\"content1\\\" is deleted.\"}", runTask( result ) );
+        assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"Item \\\"content1\\\" is deleted.\"}", runTask( result ) );
     }
 
     @Test
@@ -126,7 +126,7 @@ public class PublishRunnableTaskTest
             setFailed( ContentIds.from( contents.get( 0 ).getId(), contents.get( 1 ).getId() ) ).
             build();
 
-        Assert.assertEquals( "{\"state\":\"ERROR\",\"message\":\"Failed to publish 2 items. \"}", runTask( result ) );
+        assertEquals( "{\"state\":\"ERROR\",\"message\":\"Failed to publish 2 items. \"}", runTask( result ) );
     }
 
     @Test
@@ -135,6 +135,6 @@ public class PublishRunnableTaskTest
     {
         final PublishContentResult result = PublishContentResult.create().build();
 
-        Assert.assertEquals( "{\"state\":\"WARNING\",\"message\":\"Nothing to publish.\"}", runTask( result ) );
+        assertEquals( "{\"state\":\"WARNING\",\"message\":\"Nothing to publish.\"}", runTask( result ) );
     }
 }

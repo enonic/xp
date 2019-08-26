@@ -3,8 +3,8 @@ package com.enonic.xp.core.impl.content.validate;
 
 import java.util.Iterator;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
@@ -18,7 +18,7 @@ import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class OccurrenceValidatorTest
 {
@@ -26,7 +26,7 @@ public class OccurrenceValidatorTest
 
     private ContentType contentType;
 
-    @Before
+    @BeforeEach
     public void before()
     {
         contentType = ContentType.create().

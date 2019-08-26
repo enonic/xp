@@ -1,7 +1,7 @@
 package com.enonic.xp.repo.impl.elasticsearch.xcontent;
 
 import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.index.IndexConfig;

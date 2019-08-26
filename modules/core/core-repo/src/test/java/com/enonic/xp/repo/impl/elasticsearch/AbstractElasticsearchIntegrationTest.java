@@ -6,8 +6,8 @@ import org.elasticsearch.action.search.SearchAction;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 import org.slf4j.Logger;
@@ -37,7 +37,7 @@ public abstract class AbstractElasticsearchIntegrationTest
 
     private EmbeddedElasticsearchServer server;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
@@ -96,7 +96,7 @@ public abstract class AbstractElasticsearchIntegrationTest
         return server;
     }
 
-    @After
+    @AfterEach
     public void cleanUp()
     {
         LOG.info( "Shutting down" );

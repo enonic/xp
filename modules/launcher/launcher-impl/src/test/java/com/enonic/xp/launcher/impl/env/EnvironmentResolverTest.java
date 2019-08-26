@@ -3,12 +3,12 @@ package com.enonic.xp.launcher.impl.env;
 import java.io.File;
 
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.TemporaryFolder;
 
 import com.enonic.xp.launcher.impl.SharedConstants;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EnvironmentResolverTest
     implements SharedConstants

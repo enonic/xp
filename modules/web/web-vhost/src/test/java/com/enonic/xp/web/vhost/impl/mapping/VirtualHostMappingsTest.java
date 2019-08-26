@@ -2,16 +2,16 @@ package com.enonic.xp.web.vhost.impl.mapping;
 
 import java.util.Iterator;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 public class VirtualHostMappingsTest
 {
     private VirtualHostMappings mappings;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.mappings = new VirtualHostMappings();
@@ -26,10 +26,10 @@ public class VirtualHostMappingsTest
         addMapping( "d", "enonic.com", "/d", "/other/d" );
 
         final Iterator<VirtualHostMapping> it = this.mappings.iterator();
-        Assert.assertEquals( "d", it.next().getName() );
-        Assert.assertEquals( "c", it.next().getName() );
-        Assert.assertEquals( "a", it.next().getName() );
-        Assert.assertEquals( "b", it.next().getName() );
+        assertEquals( "d", it.next().getName() );
+        assertEquals( "c", it.next().getName() );
+        assertEquals( "a", it.next().getName() );
+        assertEquals( "b", it.next().getName() );
     }
 
     @Test
@@ -42,8 +42,8 @@ public class VirtualHostMappingsTest
         req.setServerName( "enonic.com" );
 
         final VirtualHostMapping mapping = this.mappings.resolve( req );
-        Assert.assertNotNull( mapping );
-        Assert.assertEquals( "b", mapping.getName() );
+        assertNotNull( mapping );
+        assertEquals( "b", mapping.getName() );
     }
 
     @Test
@@ -56,7 +56,7 @@ public class VirtualHostMappingsTest
         req.setServerName( "foo.no" );
 
         final VirtualHostMapping mapping = this.mappings.resolve( req );
-        Assert.assertNull( mapping );
+        assertNull( mapping );
     }
 
     private void addMapping( final String name, final String host, final String source, final String target )

@@ -3,10 +3,10 @@ package com.enonic.xp.core.impl.image;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class OperationImageFilterTest
 {

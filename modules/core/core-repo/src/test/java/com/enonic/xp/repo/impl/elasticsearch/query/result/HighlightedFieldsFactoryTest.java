@@ -4,8 +4,8 @@ import java.util.Map;
 
 import org.elasticsearch.common.text.Text;
 import org.elasticsearch.search.highlight.HighlightField;
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.highlight.HighlightedFields;
 import com.enonic.xp.repo.impl.elasticsearch.result.HighlightedFieldsFactory;
@@ -25,22 +25,22 @@ public class HighlightedFieldsFactoryTest
 
         final HighlightedFields highlightedFields = HighlightedFieldsFactory.create( paramsMap );
 
-        Assert.assertNotNull( highlightedFields );
-        Assert.assertEquals( 2, highlightedFields.size() );
+        assertNotNull( highlightedFields );
+        assertEquals( 2, highlightedFields.size() );
 
-        Assert.assertEquals( 2, highlightedFields.get( "name1" ).getFragments().size() );
-        Assert.assertTrue( highlightedFields.get( "name1" ).getFragments().contains( "fragment1_1" ) );
-        Assert.assertTrue( highlightedFields.get( "name1" ).getFragments().contains( "fragment1_2" ) );
+        assertEquals( 2, highlightedFields.get( "name1" ).getFragments().size() );
+        assertTrue( highlightedFields.get( "name1" ).getFragments().contains( "fragment1_1" ) );
+        assertTrue( highlightedFields.get( "name1" ).getFragments().contains( "fragment1_2" ) );
 
-        Assert.assertEquals( 2, highlightedFields.get( "name2" ).getFragments().size() );
-        Assert.assertTrue( highlightedFields.get( "name2" ).getFragments().contains( "fragment2_2" ) );
-        Assert.assertTrue( highlightedFields.get( "name2" ).getFragments().contains( "fragment2_1" ) );
+        assertEquals( 2, highlightedFields.get( "name2" ).getFragments().size() );
+        assertTrue( highlightedFields.get( "name2" ).getFragments().contains( "fragment2_2" ) );
+        assertTrue( highlightedFields.get( "name2" ).getFragments().contains( "fragment2_1" ) );
     }
 
     @Test
     public void create_null()
     {
         final HighlightedFields highlightedFields = HighlightedFieldsFactory.create( null );
-        Assert.assertNull( highlightedFields );
+        assertNull( highlightedFields );
     }
 }

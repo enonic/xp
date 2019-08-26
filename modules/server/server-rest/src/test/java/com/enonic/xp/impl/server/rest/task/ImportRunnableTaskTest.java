@@ -2,9 +2,9 @@ package com.enonic.xp.impl.server.rest.task;
 
 import java.io.File;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
@@ -40,7 +40,7 @@ public class ImportRunnableTaskTest
 
     private NodeRepositoryService nodeRepositoryService;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp()
         throws Exception

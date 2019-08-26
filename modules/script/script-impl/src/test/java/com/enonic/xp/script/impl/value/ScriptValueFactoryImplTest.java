@@ -5,7 +5,7 @@ import java.util.Map;
 
 import javax.script.ScriptEngine;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -17,7 +17,7 @@ import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.impl.util.JavascriptHelperFactory;
 import com.enonic.xp.script.impl.util.NashornHelper;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ScriptValueFactoryImplTest
 {
@@ -25,7 +25,7 @@ public class ScriptValueFactoryImplTest
 
     private ScriptEngine engine;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.engine = NashornHelper.getScriptEngine( getClass().getClassLoader() );

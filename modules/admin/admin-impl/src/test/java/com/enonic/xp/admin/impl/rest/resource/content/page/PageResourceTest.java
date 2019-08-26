@@ -5,7 +5,7 @@ import java.util.Locale;
 
 import javax.ws.rs.core.MediaType;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;

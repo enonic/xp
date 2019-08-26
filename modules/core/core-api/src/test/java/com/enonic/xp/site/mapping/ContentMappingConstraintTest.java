@@ -3,7 +3,7 @@ package com.enonic.xp.site.mapping;
 import java.time.Instant;
 import java.util.Locale;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
@@ -24,7 +24,7 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.PrincipalKey;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ContentMappingConstraintTest
 {

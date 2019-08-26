@@ -3,8 +3,8 @@ package com.enonic.xp.repo.impl.dump;
 
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.io.ByteSource;
 
@@ -19,13 +19,13 @@ import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 import com.enonic.xp.repo.impl.node.NodeHelper;
 import com.enonic.xp.util.BinaryReference;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RepoDumperTest
     extends AbstractNodeTest
 {
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

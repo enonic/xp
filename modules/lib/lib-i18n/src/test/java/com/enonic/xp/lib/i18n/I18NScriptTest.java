@@ -6,7 +6,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -24,7 +24,7 @@ import com.enonic.xp.testing.ScriptRunnerSupport;
 
 import static org.mockito.Matchers.any;
 
-@Ignore("Concourse issue")
+@Disabled("Concourse issue")
 public class I18NScriptTest
     extends ScriptRunnerSupport
 {

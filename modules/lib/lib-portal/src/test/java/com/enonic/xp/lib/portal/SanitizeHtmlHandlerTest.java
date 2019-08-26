@@ -1,6 +1,6 @@
 package com.enonic.xp.lib.portal;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 

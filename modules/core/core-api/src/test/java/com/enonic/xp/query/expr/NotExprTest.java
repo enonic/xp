@@ -1,7 +1,7 @@
 package com.enonic.xp.query.expr;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 public class NotExprTest
 {
@@ -11,7 +11,7 @@ public class NotExprTest
         final CompareExpr inner = CompareExpr.eq( FieldExpr.from( "a" ), ValueExpr.number( 2 ) );
         final NotExpr expr = new NotExpr( inner );
 
-        Assert.assertSame( inner, expr.getExpression() );
-        Assert.assertEquals( "NOT (a = 2.0)", expr.toString() );
+        assertSame( inner, expr.getExpression() );
+        assertEquals( "NOT (a = 2.0)", expr.toString() );
     }
 }

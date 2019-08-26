@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.content.serializer;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -9,7 +9,7 @@ import com.enonic.xp.region.TextComponentType;
 
 import static com.enonic.xp.core.impl.content.serializer.ComponentDataSerializer.COMPONENTS;
 import static com.enonic.xp.core.impl.content.serializer.ComponentDataSerializer.TYPE;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TextComponentDataSerializerTest
 {

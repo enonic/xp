@@ -1,8 +1,8 @@
 package com.enonic.xp.repo.impl.elasticsearch.snapshot;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
@@ -23,7 +23,7 @@ import com.enonic.xp.repository.DeleteRepositoryParams;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.SystemConstants;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SnapshotServiceImplTest
     extends AbstractNodeTest
@@ -39,7 +39,7 @@ public class SnapshotServiceImplTest
 
     private ClusterManager clusterManager;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

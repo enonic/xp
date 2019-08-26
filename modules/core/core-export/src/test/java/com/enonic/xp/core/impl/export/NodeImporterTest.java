@@ -5,10 +5,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.junit.Before;
-import org.junit.Ignore;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
@@ -28,7 +28,7 @@ import com.enonic.xp.node.NodeService;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.vfs.VirtualFiles;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class NodeImporterTest
 {
@@ -37,7 +37,7 @@ public class NodeImporterTest
 
     private NodeService importNodeService;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
@@ -374,7 +374,7 @@ public class NodeImporterTest
         assertNotNull( attachedBinary.getBlobKey() );
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void import_special_characters()
         throws Exception

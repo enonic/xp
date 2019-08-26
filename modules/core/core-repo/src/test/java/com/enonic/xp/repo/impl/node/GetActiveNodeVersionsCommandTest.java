@@ -1,7 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
@@ -14,12 +14,12 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.UpdateNodeParams;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GetActiveNodeVersionsCommandTest
     extends AbstractNodeTest
 {
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

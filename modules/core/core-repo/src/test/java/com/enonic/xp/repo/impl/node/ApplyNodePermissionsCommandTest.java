@@ -2,8 +2,8 @@ package com.enonic.xp.repo.impl.node;
 
 import java.util.Iterator;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.content.ApplyPermissionsListener;
@@ -34,7 +34,7 @@ import static com.enonic.xp.security.acl.Permission.MODIFY;
 import static com.enonic.xp.security.acl.Permission.PUBLISH;
 import static com.enonic.xp.security.acl.Permission.READ;
 import static com.enonic.xp.security.acl.Permission.WRITE_PERMISSIONS;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class ApplyNodePermissionsCommandTest
@@ -42,7 +42,7 @@ public class ApplyNodePermissionsCommandTest
 {
     private static final IdProviderKey USK = IdProviderKey.system();
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

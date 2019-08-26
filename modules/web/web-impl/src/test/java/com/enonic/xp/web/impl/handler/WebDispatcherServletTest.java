@@ -1,7 +1,7 @@
 package com.enonic.xp.web.impl.handler;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.base.Joiner;
@@ -20,7 +20,7 @@ import com.enonic.xp.web.impl.serializer.ResponseSerializationServiceImpl;
 import com.enonic.xp.web.jetty.impl.JettyTestSupport;
 import com.enonic.xp.web.websocket.WebSocketContextFactory;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class WebDispatcherServletTest
     extends JettyTestSupport
@@ -65,12 +65,12 @@ public class WebDispatcherServletTest
             build();
 
         this.handler.verifier = req -> {
-            Assert.assertEquals( this.server.getPort(), req.getPort() );
-            Assert.assertEquals( "localhost", req.getHost() );
-            Assert.assertEquals( "/site/master/a/b", req.getPath() );
-            Assert.assertEquals( "http", req.getScheme() );
-            Assert.assertEquals( "http://localhost:" + this.server.getPort() + "/site/master/a/b", req.getUrl() );
-            Assert.assertEquals( HttpMethod.GET, req.getMethod() );
+            assertEquals( this.server.getPort(), req.getPort() );
+            assertEquals( "localhost", req.getHost() );
+            assertEquals( "/site/master/a/b", req.getPath() );
+            assertEquals( "http", req.getScheme() );
+            assertEquals( "http://localhost:" + this.server.getPort() + "/site/master/a/b", req.getUrl() );
+            assertEquals( HttpMethod.GET, req.getMethod() );
         };
 
         final Response response = callRequest( request );
@@ -109,8 +109,8 @@ public class WebDispatcherServletTest
             build();
 
         this.handler.verifier = req -> {
-            Assert.assertEquals( 5, req.getHeaders().size() );
-            Assert.assertEquals( "Value", req.getHeaders().get( "X-Header" ) );
+            assertEquals( 5, req.getHeaders().size() );
+            assertEquals( "Value", req.getHeaders().get( "X-Header" ) );
         };
 
         final Response response = callRequest( request );
@@ -127,8 +127,8 @@ public class WebDispatcherServletTest
             build();
 
         this.handler.verifier = req -> {
-            Assert.assertEquals( "light", req.getCookies().get( "theme" ) );
-            Assert.assertEquals( "abc123", req.getCookies().get( "sessionToken" ) );
+            assertEquals( "light", req.getCookies().get( "theme" ) );
+            assertEquals( "abc123", req.getCookies().get( "sessionToken" ) );
         };
 
         final Response response = callRequest( request );
@@ -166,8 +166,8 @@ public class WebDispatcherServletTest
             build();
 
         this.handler.verifier = req -> {
-            Assert.assertEquals( HttpMethod.POST, req.getMethod() );
-            Assert.assertEquals( "application/x-www-form-urlencoded", req.getContentType() );
+            assertEquals( HttpMethod.POST, req.getMethod() );
+            assertEquals( "application/x-www-form-urlencoded", req.getContentType() );
             assertEquals( "Jurassic Park", Joiner.on( "," ).join( req.getParams().get( "search" ) ) );
             assertEquals( "true", Joiner.on( "," ).join( req.getParams().get( "expand" ) ) );
         };
@@ -187,9 +187,9 @@ public class WebDispatcherServletTest
             build();
 
         this.handler.verifier = req -> {
-            Assert.assertEquals( HttpMethod.POST, req.getMethod() );
-            Assert.assertEquals( "text/plain; charset=UTF-8", req.getContentType() );
-            Assert.assertEquals( "Hello World", req.getBodyAsString() );
+            assertEquals( HttpMethod.POST, req.getMethod() );
+            assertEquals( "text/plain; charset=UTF-8", req.getContentType() );
+            assertEquals( "Hello World", req.getBodyAsString() );
         };
 
         final Response response = callRequest( request );
@@ -207,9 +207,9 @@ public class WebDispatcherServletTest
             build();
 
         this.handler.verifier = req -> {
-            Assert.assertEquals( HttpMethod.POST, req.getMethod() );
-            Assert.assertEquals( "application/json; charset=utf-8", req.getContentType().toLowerCase() );
-            Assert.assertEquals( "{}", req.getBodyAsString() );
+            assertEquals( HttpMethod.POST, req.getMethod() );
+            assertEquals( "application/json; charset=utf-8", req.getContentType().toLowerCase() );
+            assertEquals( "{}", req.getBodyAsString() );
         };
 
         final Response response = callRequest( request );

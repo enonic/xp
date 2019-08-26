@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.text.StrSubstitutor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
@@ -73,7 +73,7 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.session.SessionKey;
 import com.enonic.xp.session.SimpleSession;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class IssueResourceTest
     extends AdminResourceTestSupport

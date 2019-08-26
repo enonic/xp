@@ -1,6 +1,6 @@
 package com.enonic.xp.core.content;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentIds;
@@ -14,7 +14,7 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ContentServiceImplTest_push_update_publishedTime
     extends AbstractContentServiceTest

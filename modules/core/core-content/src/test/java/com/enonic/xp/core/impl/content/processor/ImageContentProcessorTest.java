@@ -3,8 +3,8 @@ package com.enonic.xp.core.impl.content.processor;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
@@ -43,7 +43,7 @@ import com.enonic.xp.util.GeoPoint;
 
 import static com.enonic.xp.media.MediaInfo.GPS_INFO_GEO_POINT;
 import static com.enonic.xp.media.MediaInfo.GPS_INFO_METADATA_NAME;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ImageContentProcessorTest
 {
@@ -56,7 +56,7 @@ public class ImageContentProcessorTest
 
     private XDataService xDataService;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

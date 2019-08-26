@@ -3,14 +3,14 @@ package com.enonic.xp.launcher.impl.provision;
 import java.io.File;
 import java.util.List;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.TemporaryFolder;
 
 import com.google.common.io.Files;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BundleInfoFinderTest
 {
@@ -21,7 +21,7 @@ public class BundleInfoFinderTest
 
     private File systemDir;
 
-    @Before
+    @BeforeEach
     public void setup()
         throws Exception
     {

@@ -6,10 +6,10 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.elasticsearch.common.settings.Settings;
-import org.junit.Before;
-import org.junit.Ignore;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 import org.osgi.framework.BundleContext;
@@ -20,9 +20,9 @@ import com.enonic.xp.cluster.ClusterConfig;
 import com.enonic.xp.cluster.ClusterNodeId;
 import com.enonic.xp.cluster.NodeDiscovery;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@Ignore
+@Disabled
 public class NodeSettingsBuilderTest
 {
     private NodeSettingsBuilder builder;
@@ -30,7 +30,7 @@ public class NodeSettingsBuilderTest
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-    @Before
+    @BeforeEach
     public void setup()
         throws Exception
     {

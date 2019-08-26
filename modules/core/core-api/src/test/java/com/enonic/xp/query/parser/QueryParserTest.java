@@ -2,8 +2,8 @@ package com.enonic.xp.query.parser;
 
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.query.QueryException;
 import com.enonic.xp.query.expr.ConstraintExpr;
@@ -27,8 +27,8 @@ public class QueryParserTest
     {
         final QueryExpr expr = QueryParser.parse( query );
 
-        Assert.assertNotNull( expr );
-        Assert.assertEquals( expected, expr.toString() );
+        assertNotNull( expr );
+        assertEquals( expected, expr.toString() );
     }
 
     @Test(expected = QueryException.class)

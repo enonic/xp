@@ -3,8 +3,8 @@ package com.enonic.xp.impl.server.rest;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
@@ -15,7 +15,7 @@ public class StatusResourceTest
 {
     private StatusReporter serverReporter;
 
-    @Before
+    @BeforeEach
     public void setup()
         throws Exception
     {

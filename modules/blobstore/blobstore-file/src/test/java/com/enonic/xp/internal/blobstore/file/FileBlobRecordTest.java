@@ -3,12 +3,12 @@ package com.enonic.xp.internal.blobstore.file;
 import java.io.File;
 
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.TemporaryFolder;
 
 import com.enonic.xp.blob.BlobKey;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FileBlobRecordTest
 {

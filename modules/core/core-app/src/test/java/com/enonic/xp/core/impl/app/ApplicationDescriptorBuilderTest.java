@@ -2,9 +2,9 @@ package com.enonic.xp.core.impl.app;
 
 import java.net.URL;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 
@@ -19,7 +19,7 @@ public class ApplicationDescriptorBuilderTest
 
     private static final String APP_ICON_FILENAME = "application.svg";
 
-    @Before
+    @BeforeEach
     public void setup()
         throws Exception
     {
@@ -41,6 +41,6 @@ public class ApplicationDescriptorBuilderTest
         final ApplicationDescriptor appDescriptor = new ApplicationDescriptorBuilder().
             bundle( bundle ).build();
 
-        Assert.assertEquals( "My app description", appDescriptor.getDescription() );
+        assertEquals( "My app description", appDescriptor.getDescription() );
     }
 }

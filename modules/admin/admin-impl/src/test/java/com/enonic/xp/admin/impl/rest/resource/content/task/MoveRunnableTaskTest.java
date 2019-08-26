@@ -4,9 +4,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
@@ -35,7 +35,7 @@ public class MoveRunnableTaskTest
 {
     private MoveContentJson params;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp()
         throws Exception
@@ -82,7 +82,7 @@ public class MoveRunnableTaskTest
 
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
 
-        Assert.assertEquals(
+        assertEquals(
             "{\"state\":\"WARNING\",\"message\":\"2 items were moved ( Already moved: \\\"content1\\\" ). Item \\\"content2\\\" was not found.\"}",
             resultMessage );
     }
@@ -106,7 +106,7 @@ public class MoveRunnableTaskTest
 
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
 
-        Assert.assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"Item \\\"Content 2\\\" is moved.\"}", resultMessage );
+        assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"Item \\\"Content 2\\\" is moved.\"}", resultMessage );
     }
 
     @Test
@@ -124,7 +124,7 @@ public class MoveRunnableTaskTest
 
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
 
-        Assert.assertEquals( "{\"state\":\"WARNING\",\"message\":\"Nothing was moved.\"}", resultMessage );
+        assertEquals( "{\"state\":\"WARNING\",\"message\":\"Nothing was moved.\"}", resultMessage );
     }
 
     @Test
@@ -148,7 +148,7 @@ public class MoveRunnableTaskTest
 
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
 
-        Assert.assertEquals(
+        assertEquals(
             "{\"state\":\"WARNING\",\"message\":\"Item \\\"Content 2\\\" is moved. Failed to move 2 items ( Exist at destination: \\\"content3\\\", Access denied: \\\"content1\\\" ).\"}",
             resultMessage );
     }
@@ -174,7 +174,7 @@ public class MoveRunnableTaskTest
 
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
 
-        Assert.assertEquals(
+        assertEquals(
             "{\"state\":\"WARNING\",\"message\":\"Item \\\"content1\\\" is already moved. You don't have permissions to move to \\\"path\\\".\"}",
             resultMessage );
     }
@@ -214,7 +214,7 @@ public class MoveRunnableTaskTest
 
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
 
-        Assert.assertEquals(
+        assertEquals(
             "{\"state\":\"WARNING\",\"message\":\"3 items were moved ( Already moved: 2 ). Failed to move 6 items ( Exist at destination: 2, Not found: 2, Access denied: 2 ).\"}",
             resultMessage );
     }

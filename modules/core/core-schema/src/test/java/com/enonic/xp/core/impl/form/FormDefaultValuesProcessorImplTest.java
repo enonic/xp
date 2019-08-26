@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.form;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
@@ -12,7 +12,7 @@ import com.enonic.xp.inputtype.InputTypeDefault;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FormDefaultValuesProcessorImplTest
 {

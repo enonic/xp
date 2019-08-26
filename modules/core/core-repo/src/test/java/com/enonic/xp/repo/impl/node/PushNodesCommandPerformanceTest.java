@@ -2,9 +2,9 @@ package com.enonic.xp.repo.impl.node;
 
 import java.util.concurrent.TimeUnit;
 
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.base.Stopwatch;
 
@@ -17,7 +17,7 @@ import com.enonic.xp.node.ResolveSyncWorkResult;
 public class PushNodesCommandPerformanceTest
     extends AbstractNodeTest
 {
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
@@ -25,7 +25,7 @@ public class PushNodesCommandPerformanceTest
         this.createDefaultRootNode();
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void testReferencePerformance()
         throws Exception

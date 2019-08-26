@@ -2,9 +2,9 @@ package com.enonic.xp.core.impl.app.resource;
 
 import java.io.File;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
@@ -18,7 +18,7 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceKeys;
 import com.enonic.xp.resource.ResourceProcessor;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ResourceServiceImplTest
 {
@@ -31,7 +31,7 @@ public class ResourceServiceImplTest
 
     private File appDir;
 
-    @Before
+    @BeforeEach
     public void setup()
         throws Exception
     {

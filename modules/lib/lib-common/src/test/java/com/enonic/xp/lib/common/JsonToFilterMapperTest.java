@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 
 import com.google.common.collect.ImmutableSet;
@@ -20,7 +20,7 @@ import com.enonic.xp.query.filter.IdFilter;
 import com.enonic.xp.query.filter.ValueFilter;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class JsonToFilterMapperTest
 {

@@ -4,13 +4,13 @@ import java.io.File;
 import java.util.Properties;
 
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.TemporaryFolder;
 
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ConfigPathsTest
 {

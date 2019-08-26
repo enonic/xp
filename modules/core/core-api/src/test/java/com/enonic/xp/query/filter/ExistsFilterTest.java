@@ -1,8 +1,8 @@
 package com.enonic.xp.query.filter;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ExistsFilterTest
 {

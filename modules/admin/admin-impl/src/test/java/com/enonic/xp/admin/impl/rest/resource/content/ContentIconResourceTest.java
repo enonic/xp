@@ -8,7 +8,7 @@ import java.util.Locale;
 import javax.ws.rs.core.CacheControl;
 
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 
@@ -41,7 +41,7 @@ import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_HEIGHT;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_WIDTH;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_PIXEL_SIZE;
 import static com.enonic.xp.media.MediaInfo.MEDIA_INFO_BYTE_SIZE;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Matchers.eq;
 
 public class ContentIconResourceTest

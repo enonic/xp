@@ -2,7 +2,7 @@ package com.enonic.xp.core.impl.app;
 
 import java.io.IOException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ops4j.pax.tinybundles.core.TinyBundle;
 import org.ops4j.pax.tinybundles.core.TinyBundles;
 import org.osgi.framework.Constants;
@@ -10,7 +10,7 @@ import org.osgi.framework.Constants;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ApplicationNameResolverTest
     extends BundleBasedTest

@@ -2,7 +2,7 @@ package com.enonic.xp.repo.impl.elasticsearch.query.source;
 
 import java.util.Arrays;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -17,7 +17,7 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MultiRepoSearchSourceAdaptorTest
 {

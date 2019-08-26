@@ -1,7 +1,7 @@
 package com.enonic.xp.core.impl.idprovider;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.ApplicationTestSupport;
@@ -32,15 +32,15 @@ public class IdProviderDescriptorServiceTest
     {
         final IdProviderDescriptor idProviderDescriptor = this.service.getDescriptor( ApplicationKey.from( "myapp1" ) );
 
-        Assert.assertNotNull( idProviderDescriptor );
-        Assert.assertEquals( ApplicationKey.from( "myapp1" ), idProviderDescriptor.getKey() );
-        Assert.assertEquals( IdProviderDescriptorMode.MIXED, idProviderDescriptor.getMode() );
+        assertNotNull( idProviderDescriptor );
+        assertEquals( ApplicationKey.from( "myapp1" ), idProviderDescriptor.getKey() );
+        assertEquals( IdProviderDescriptorMode.MIXED, idProviderDescriptor.getMode() );
 
         final Input titleInput = Input.create().
             name( "title" ).
             label( "Title" ).
             inputType( InputTypeName.TEXT_LINE ).
             build();
-        Assert.assertEquals( Form.create().addFormItem( titleInput ).build(), idProviderDescriptor.getConfig() );
+        assertEquals( Form.create().addFormItem( titleInput ).build(), idProviderDescriptor.getConfig() );
     }
 }

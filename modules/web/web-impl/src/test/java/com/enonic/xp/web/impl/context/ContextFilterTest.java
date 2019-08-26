@@ -3,8 +3,8 @@ package com.enonic.xp.web.impl.context;
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -20,7 +20,7 @@ public class ContextFilterTest
     {
         final ContextFilter filter = new ContextFilter();
 
-        Assert.assertNull( ContextAccessor.current().getLocalScope().getSession() );
+        assertNull( ContextAccessor.current().getLocalScope().getSession() );
 
         final MockHttpServletRequest req = new MockHttpServletRequest();
         final MockHttpServletResponse res = new MockHttpServletResponse();
@@ -30,6 +30,6 @@ public class ContextFilterTest
 
         final ArgumentCaptor<HttpServletRequest> reqArg = ArgumentCaptor.forClass( HttpServletRequest.class );
         Mockito.verify( chain, Mockito.times( 1 ) ).doFilter( reqArg.capture(), Mockito.eq( res ) );
-        Assert.assertEquals( HttpRequestDelegate.class, reqArg.getValue().getClass() );
+        assertEquals( HttpRequestDelegate.class, reqArg.getValue().getClass() );
     }
 }

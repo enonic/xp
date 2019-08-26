@@ -3,7 +3,7 @@ package com.enonic.xp.jaxrs.impl.security;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.FeatureContext;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 public class SecurityFeatureTest

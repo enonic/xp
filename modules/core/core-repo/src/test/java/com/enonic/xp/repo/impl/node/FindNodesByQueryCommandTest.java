@@ -3,8 +3,8 @@ package com.enonic.xp.repo.impl.node;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.Value;
@@ -21,12 +21,12 @@ import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.query.filter.RangeFilter;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FindNodesByQueryCommandTest
     extends AbstractNodeTest
 {
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

@@ -1,18 +1,18 @@
 package com.enonic.xp.launcher.impl.logging;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.service.log.LogService;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class LogServiceFactoryTest
 {
     private LogServiceFactory factory;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.factory = LogServiceFactory.INSTANCE;

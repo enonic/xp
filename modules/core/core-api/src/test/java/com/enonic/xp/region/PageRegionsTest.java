@@ -3,13 +3,13 @@ package com.enonic.xp.region;
 
 import java.util.Iterator;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.UnmodifiableIterator;
 
 import com.enonic.xp.page.PageRegions;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PageRegionsTest
 {

@@ -1,8 +1,8 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory;
 
 import org.elasticsearch.index.query.QueryBuilder;
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.query.expr.QueryExpr;
@@ -37,7 +37,7 @@ public class QueryBuilderFactoryTest
         final String expectedJson = cleanString( expected );
         final String actualJson = cleanString( expression );
 
-        Assert.assertEquals( expectedJson, actualJson );
+        assertEquals( expectedJson, actualJson );
     }
 
     @Test
@@ -64,6 +64,6 @@ public class QueryBuilderFactoryTest
         final String expectedJson = cleanString( expected );
         final String actualJson = cleanString( builtQuery.toString() );
 
-        Assert.assertEquals( expectedJson, actualJson );
+        assertEquals( expectedJson, actualJson );
     }
 }

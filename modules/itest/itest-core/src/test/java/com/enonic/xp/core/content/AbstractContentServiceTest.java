@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.AdditionalAnswers;
 import org.mockito.Mockito;
 
@@ -91,7 +91,7 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Reference;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AbstractContentServiceTest
     extends AbstractElasticsearchIntegrationTest
@@ -179,7 +179,7 @@ public class AbstractContentServiceTest
 
     private SearchDaoImpl searchDao;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

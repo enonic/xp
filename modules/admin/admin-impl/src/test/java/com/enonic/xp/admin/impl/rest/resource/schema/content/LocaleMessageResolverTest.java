@@ -2,15 +2,15 @@ package com.enonic.xp.admin.impl.rest.resource.schema.content;
 
 import java.util.Locale;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class LocaleMessageResolverTest
 {
@@ -18,7 +18,7 @@ public class LocaleMessageResolverTest
 
     private LocaleService localeService;
 
-    @Before
+    @BeforeEach
     public void init()
     {
 

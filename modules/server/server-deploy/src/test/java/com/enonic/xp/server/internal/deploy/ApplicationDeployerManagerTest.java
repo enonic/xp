@@ -3,8 +3,8 @@ package com.enonic.xp.server.internal.deploy;
 import java.net.URL;
 import java.util.HashMap;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
@@ -22,7 +22,7 @@ public class ApplicationDeployerManagerTest
 
     private DeployDirectoryWatcher deployDirectoryWatcher;
 
-    @Before
+    @BeforeEach
     public void setup()
         throws Exception
     {

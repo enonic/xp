@@ -4,8 +4,8 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.jparsec.internal.util.Strings;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Sets;
 
@@ -25,7 +25,7 @@ import com.enonic.xp.node.SetNodeStateParams;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.util.Reference;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ResolveSyncWorkCommandTest
     extends AbstractNodeTest
@@ -35,7 +35,7 @@ public class ResolveSyncWorkCommandTest
 
     private final static NodeId ROOT_UUID = NodeId.from( "000-000-000-000" );
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

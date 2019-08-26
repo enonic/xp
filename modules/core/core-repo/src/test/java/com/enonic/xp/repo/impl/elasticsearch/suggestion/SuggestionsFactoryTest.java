@@ -7,9 +7,9 @@ import org.elasticsearch.search.suggest.Suggest;
 import org.elasticsearch.search.suggest.term.TermSuggestion;
 import org.elasticsearch.search.suggest.term.TermSuggestion.Entry;
 import org.elasticsearch.search.suggest.term.TermSuggestion.Entry.Option;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.repo.impl.elasticsearch.suggistion.SuggestionsFactory;
@@ -21,7 +21,7 @@ public class SuggestionsFactoryTest
 {
     private SuggestionsFactory suggestionsFactory;
 
-    @Before
+    @BeforeEach
     public void init()
     {
         suggestionsFactory = new SuggestionsFactory();
@@ -33,8 +33,8 @@ public class SuggestionsFactoryTest
         final Suggest suggest = new Suggest();
         final Suggestions suggestions = SuggestionsFactory.create( suggest );
 
-        Assert.assertNotNull( suggestions );
-        Assert.assertTrue( suggestions.isEmpty() );
+        assertNotNull( suggestions );
+        assertTrue( suggestions.isEmpty() );
     }
 
     @Test
@@ -58,21 +58,21 @@ public class SuggestionsFactoryTest
         final Suggest suggest = new Suggest( List.of( termSuggestion1 ) );
         final Suggestions suggestions = SuggestionsFactory.create( suggest );
 
-        Assert.assertNotNull( suggestions );
-        Assert.assertFalse( suggestions.isEmpty() );
+        assertNotNull( suggestions );
+        assertFalse( suggestions.isEmpty() );
 
         final com.enonic.xp.suggester.TermSuggestion resultSuggestion =
             (com.enonic.xp.suggester.TermSuggestion) suggestions.get( "suggestion1" );
-        Assert.assertFalse( resultSuggestion.getEntries().isEmpty() );
+        assertFalse( resultSuggestion.getEntries().isEmpty() );
 
         final TermSuggestionEntry resultEntry = resultSuggestion.getEntries().get( 0 );
-        Assert.assertEquals( "entry1", resultEntry.getText() );
-        Assert.assertEquals( 2L, resultEntry.getLength().longValue() );
-        Assert.assertEquals( 1L, resultEntry.getOffset().longValue() );
+        assertEquals( "entry1", resultEntry.getText() );
+        assertEquals( 2L, resultEntry.getLength().longValue() );
+        assertEquals( 1L, resultEntry.getOffset().longValue() );
 
         final TermSuggestionOption resultOption = resultEntry.getOptions().get( 0 );
-        Assert.assertEquals( "option1", resultOption.getText() );
-        Assert.assertEquals( 3L, resultOption.getFreq().longValue() );
-        Assert.assertEquals( 1.0f, resultOption.getScore(), 1e-14 );
+        assertEquals( "option1", resultOption.getText() );
+        assertEquals( 3L, resultOption.getFreq().longValue() );
+        assertEquals( 1.0f, resultOption.getScore(), 1e-14 );
     }
 }

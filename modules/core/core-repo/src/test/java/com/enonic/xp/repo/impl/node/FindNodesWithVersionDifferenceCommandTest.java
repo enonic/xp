@@ -1,7 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.CreateNodeParams;
@@ -13,14 +13,14 @@ import com.enonic.xp.node.NodeVersionDiffResult;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.UpdateNodeParams;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FindNodesWithVersionDifferenceCommandTest
     extends AbstractNodeTest
 {
     private Node rootNode;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

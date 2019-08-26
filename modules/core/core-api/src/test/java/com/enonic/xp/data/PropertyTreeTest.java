@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.SerializationUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableList;
 
@@ -20,7 +20,7 @@ import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Link;
 import com.enonic.xp.util.Reference;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PropertyTreeTest
 {

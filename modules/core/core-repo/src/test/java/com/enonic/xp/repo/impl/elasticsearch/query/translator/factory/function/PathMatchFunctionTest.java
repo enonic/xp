@@ -1,8 +1,8 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.function;
 
 import org.elasticsearch.index.query.QueryBuilder;
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.query.expr.FunctionExpr;
 import com.enonic.xp.query.expr.ValueExpr;
@@ -21,7 +21,7 @@ public class PathMatchFunctionTest
         final QueryBuilder query =
             PathMatchFunction.create( FunctionExpr.from( "pathMatch", ValueExpr.string( "myPath" ), ValueExpr.string( "/fisk" ) ) );
 
-        Assert.assertEquals( cleanString( expected ), cleanString( query.toString() ) );
+        assertEquals( cleanString( expected ), cleanString( query.toString() ) );
 
     }
 
@@ -34,7 +34,7 @@ public class PathMatchFunctionTest
         final QueryBuilder query = PathMatchFunction.create(
             FunctionExpr.from( "pathMatch", ValueExpr.string( "myPath" ), ValueExpr.string( "/fisk" ), ValueExpr.number( 3 ) ) );
 
-        Assert.assertEquals( cleanString( expected ), cleanString( query.toString() ) );
+        assertEquals( cleanString( expected ), cleanString( query.toString() ) );
 
     }
 }

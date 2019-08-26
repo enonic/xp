@@ -3,11 +3,11 @@ package com.enonic.xp.core.impl.export.writer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.node.NodePath;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class NodeExportPathResolverTest
 {

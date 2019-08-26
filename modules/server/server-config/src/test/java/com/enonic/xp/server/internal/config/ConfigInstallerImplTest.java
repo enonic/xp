@@ -3,9 +3,9 @@ package com.enonic.xp.server.internal.config;
 import java.io.File;
 import java.util.Hashtable;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 import org.osgi.framework.BundleContext;
@@ -21,7 +21,7 @@ public class ConfigInstallerImplTest
 
     private ConfigurationAdmin configurationAdmin;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         final BundleContext context = Mockito.mock( BundleContext.class );

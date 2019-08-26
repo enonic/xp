@@ -8,8 +8,8 @@ import java.util.Arrays;
 import org.elasticsearch.common.io.stream.ByteBufferStreamInput;
 import org.elasticsearch.common.io.stream.BytesStreamOutput;
 import org.elasticsearch.common.io.stream.StreamInput;
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.security.PrincipalKey;
@@ -51,6 +51,6 @@ public class TaskTransportResponseTest
         final StreamInput bytesStreamInput = new ByteBufferStreamInput( ByteBuffer.wrap( streamOutput.bytes().array() ) );
         newResponse.readFrom( bytesStreamInput );
 
-        Assert.assertEquals( oldResponse.getTaskInfos(), newResponse.getTaskInfos() );
+        assertEquals( oldResponse.getTaskInfos(), newResponse.getTaskInfos() );
     }
 }

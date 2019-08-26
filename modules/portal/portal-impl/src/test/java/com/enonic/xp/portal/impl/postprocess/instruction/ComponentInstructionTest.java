@@ -1,6 +1,6 @@
 package com.enonic.xp.portal.impl.postprocess.instruction;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -26,7 +26,7 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.Site;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;

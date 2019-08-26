@@ -2,7 +2,7 @@ package com.enonic.xp.testing.helper;
 
 import java.net.URL;
 
-import org.junit.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,7 +21,7 @@ public final class JsonAssert
         final String resource = "/" + context.getName().replace( '.', '/' ) + "-" + name + ".json";
         final URL url = context.getResource( resource );
 
-        Assert.assertNotNull( "File [" + resource + "] not found", url );
+        assertNotNull( "File [" + resource + "] not found", url );
         final JsonNode expectedJson = mapper.readTree( url );
 
         final JsonMapGenerator generator = new JsonMapGenerator();
@@ -31,6 +31,6 @@ public final class JsonAssert
         final String expectedStr = mapper.writeValueAsString( expectedJson );
         final String actualStr = mapper.writeValueAsString( actualJson );
 
-        Assert.assertEquals( expectedStr, actualStr );
+        assertEquals( expectedStr, actualStr );
     }
 }

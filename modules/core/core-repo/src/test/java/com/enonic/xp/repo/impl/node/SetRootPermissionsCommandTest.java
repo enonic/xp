@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -13,7 +13,7 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SetRootPermissionsCommandTest
     extends AbstractNodeTest

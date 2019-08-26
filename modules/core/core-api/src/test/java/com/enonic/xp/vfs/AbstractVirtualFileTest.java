@@ -2,8 +2,8 @@ package com.enonic.xp.vfs;
 
 import java.io.File;
 
-import org.junit.Assert;
-import org.junit.Before;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 
@@ -17,7 +17,7 @@ public abstract class AbstractVirtualFileTest
 
     protected File rootDir;
 
-    @Before
+    @BeforeEach
     public final void setup()
         throws Exception
     {
@@ -49,7 +49,7 @@ public abstract class AbstractVirtualFileTest
     private File createDir( final File dir, final String name )
     {
         final File file = new File( dir, name );
-        Assert.assertTrue( "Failed to create directory " + name + " under " + dir.getAbsolutePath(), file.mkdirs() );
+        assertTrue( "Failed to create directory " + name + " under " + dir.getAbsolutePath(), file.mkdirs() );
         return file;
     }
 

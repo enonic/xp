@@ -2,9 +2,9 @@ package com.enonic.xp.portal.impl.handler.asset;
 
 import java.util.Map;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -24,7 +24,7 @@ import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.BaseHandlerTest;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AssetHandlerTest
     extends BaseHandlerTest
@@ -37,7 +37,7 @@ public class AssetHandlerTest
 
     private Resource nullResource;
 
-    @Before
+    @BeforeEach
     public final void setup()
         throws Exception
     {

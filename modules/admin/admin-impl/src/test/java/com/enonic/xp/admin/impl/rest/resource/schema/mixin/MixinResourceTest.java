@@ -8,8 +8,8 @@ import java.time.ZoneOffset;
 
 import javax.ws.rs.core.Response;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalAnswers;
 import org.mockito.Mockito;
 
@@ -29,7 +29,7 @@ import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.schema.mixin.Mixins;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Matchers.any;
 
 public class MixinResourceTest
@@ -116,7 +116,7 @@ public class MixinResourceTest
         Mockito.when( mixinService.getByName( any( MixinName.class ) ) ).thenReturn( null );
 
         final MockRestResponse response = request().path( "schema/mixin" ).queryParam( "name", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get();
-        Assert.assertEquals( 404, response.getStatus() );
+        assertEquals( 404, response.getStatus() );
     }
 
     @Test

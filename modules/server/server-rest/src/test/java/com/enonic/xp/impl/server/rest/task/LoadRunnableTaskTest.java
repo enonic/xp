@@ -3,10 +3,10 @@ package com.enonic.xp.impl.server.rest.task;
 import java.io.File;
 
 import org.apache.commons.io.Charsets;
-import org.junit.Assert;
-import org.junit.Before;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
@@ -54,7 +54,7 @@ public class LoadRunnableTaskTest
 
     private File nameDir, dumpDir, dataDir;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp()
         throws Exception
@@ -180,7 +180,7 @@ public class LoadRunnableTaskTest
     private File createDir( final File dir, final String name )
     {
         final File file = new File( dir, name );
-        Assert.assertTrue( "Failed to create directory " + name + " under " + dir.getAbsolutePath(), file.mkdirs() );
+        assertTrue( "Failed to create directory " + name + " under " + dir.getAbsolutePath(), file.mkdirs() );
         return file;
     }
 }

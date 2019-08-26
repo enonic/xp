@@ -3,10 +3,10 @@ package com.enonic.xp.repo.impl.config;
 import java.io.File;
 import java.util.Map;
 
-import org.junit.Assert;
-import org.junit.Before;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.TemporaryFolder;
 
 import com.google.common.collect.Maps;
@@ -18,7 +18,7 @@ public class RepoConfigurationTest
 
     private Map<String, String> map;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.map = Maps.newHashMap();
@@ -38,7 +38,7 @@ public class RepoConfigurationTest
         this.map.put( "snapshots.dir", "/a/b" );
 
         final RepoConfiguration config = createConfig();
-        Assert.assertEquals( new File( "/a/b" ), config.getSnapshotsDir() );
+        assertEquals( new File( "/a/b" ), config.getSnapshotsDir() );
     }
 
 }

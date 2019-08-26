@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 
 import com.enonic.xp.blob.Segment;
@@ -69,7 +69,7 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.Reference;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class AbstractNodeTest
     extends AbstractElasticsearchIntegrationTest
@@ -134,7 +134,7 @@ public abstract class AbstractNodeTest
 
     protected StorageDaoImpl storageDao;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

@@ -7,8 +7,8 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
@@ -18,7 +18,7 @@ import com.enonic.xp.node.NodePath;
 public class FindNodesByQueryCommandTest_dateTime
     extends AbstractNodeTest
 {
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

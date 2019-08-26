@@ -4,7 +4,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
@@ -34,7 +34,7 @@ import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.acl.AccessControlList;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ContentServiceImplTest_update
     extends AbstractContentServiceTest

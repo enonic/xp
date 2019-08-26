@@ -1,8 +1,8 @@
 package com.enonic.xp.portal.impl.view;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.portal.view.ViewFunctionParams;
 
@@ -10,7 +10,7 @@ public class ViewFunctionServiceImplTest
 {
     private ViewFunctionServiceImpl service;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.service = new ViewFunctionServiceImpl();
@@ -24,7 +24,7 @@ public class ViewFunctionServiceImplTest
         final ViewFunctionParams params = new ViewFunctionParams().name( "dummy" );
         final Object result = this.service.execute( params );
 
-        Assert.assertEquals( "Hello Dummy", result );
+        assertEquals( "Hello Dummy", result );
     }
 
     @Test(expected = IllegalArgumentException.class)

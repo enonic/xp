@@ -2,9 +2,9 @@ package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 
@@ -43,7 +43,7 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.site.SiteService;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CreateContentCommandTest
 {
@@ -69,7 +69,7 @@ public class CreateContentCommandTest
 
     private ContentDataSerializer contentDataSerializer;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
@@ -295,7 +295,7 @@ public class CreateContentCommandTest
         try
         {
             command.execute();
-            Assert.fail( "Expected exception" );
+            fail( "Expected exception" );
         }
         catch ( IllegalArgumentException e )
         {
@@ -405,7 +405,7 @@ public class CreateContentCommandTest
         try
         {
             command.execute();
-            Assert.fail( "Expected exception" );
+            fail( "Expected exception" );
         }
         catch ( RuntimeException e )
         {

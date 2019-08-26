@@ -5,7 +5,7 @@ import java.time.Instant;
 
 import javax.ws.rs.core.MediaType;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.branch.Branch;

@@ -1,6 +1,6 @@
 package com.enonic.xp.lib.task;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.data.PropertyTree;

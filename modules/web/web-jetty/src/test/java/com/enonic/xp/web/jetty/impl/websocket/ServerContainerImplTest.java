@@ -9,17 +9,17 @@ import javax.websocket.Endpoint;
 import javax.websocket.server.ServerEndpointConfig;
 
 import org.eclipse.jetty.websocket.server.WebSocketServerFactory;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ServerContainerImplTest
 {
     private ServerContainerImpl container;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         final ServletContext context = Mockito.mock( ServletContext.class );

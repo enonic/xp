@@ -4,11 +4,11 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ops4j.pax.tinybundles.core.TinyBundle;
 import org.osgi.framework.Bundle;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BundleClassLoaderTest
     extends BundleBasedTest

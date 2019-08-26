@@ -8,9 +8,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.io.Resources;
 
@@ -28,7 +28,7 @@ public class HtmlAreaNodeDataUpgraderTest
 {
     private HtmlAreaNodeDataUpgrader htmlAreaNodeDataUpgrader;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.htmlAreaNodeDataUpgrader = new HtmlAreaNodeDataUpgrader();
@@ -40,7 +40,7 @@ public class HtmlAreaNodeDataUpgraderTest
         final NodeVersion nodeVersion = NodeVersion.create().build();
         final DumpUpgradeStepResult.Builder result = DumpUpgradeStepResult.create();
         final boolean upgraded = htmlAreaNodeDataUpgrader.upgrade( nodeVersion, null, result );
-        Assert.assertFalse( upgraded );
+        assertFalse( upgraded );
     }
 
     @Test
@@ -57,21 +57,21 @@ public class HtmlAreaNodeDataUpgraderTest
 
         final DumpUpgradeStepResult.Builder result = DumpUpgradeStepResult.create();
         final boolean upgraded = htmlAreaNodeDataUpgrader.upgrade( nodeVersion, indexConfigDocument, result );
-        Assert.assertTrue( upgraded );
+        assertTrue( upgraded );
 
         final PropertyTree upgradedData = nodeVersion.getData();
         final Collection<Reference> upgradedProcessedReferences =
             (Collection<Reference>) upgradedData.getReferences( "processedReferences" );
-        Assert.assertEquals( 5, upgradedProcessedReferences.size() );
+        assertEquals( 5, upgradedProcessedReferences.size() );
 
         final List<Reference> expectedReferences = Arrays.stream(
             new String[]{"e1f57280-d672-4cd8-b674-98e26e5b69ae", "be1ca151-cf61-4a54-9ea4-c8d01ce83e0e",
                 "81b1e3cd-575f-4565-a618-3c85d56224f6", "43d54e23-d8ce-4058-befb-777abe1a0d9f", "32169e70-49e1-444c-a6ac-d38f22438134"} ).
             map( Reference::from ).
             collect( Collectors.toList() );
-        Assert.assertTrue( expectedReferences.containsAll( upgradedProcessedReferences ) );
+        assertTrue( expectedReferences.containsAll( upgradedProcessedReferences ) );
 
-        Assert.assertEquals( readTestResource( "htmlarea-expected.xml" ), upgradedData.getString( "data.htmlarea" ) );
+        assertEquals( readTestResource( "htmlarea-expected.xml" ), upgradedData.getString( "data.htmlarea" ) );
     }
 
     private PatternIndexConfigDocument createIndexConfigDocument()

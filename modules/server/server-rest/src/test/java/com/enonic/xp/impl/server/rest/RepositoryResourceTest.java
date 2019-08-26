@@ -2,9 +2,9 @@ package com.enonic.xp.impl.server.rest;
 
 import java.io.File;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
@@ -36,7 +36,7 @@ public class RepositoryResourceTest
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-    @Before
+    @BeforeEach
     public void setup()
         throws Exception
     {

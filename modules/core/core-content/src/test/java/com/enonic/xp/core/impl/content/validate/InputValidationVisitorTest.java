@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.content.validate;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;

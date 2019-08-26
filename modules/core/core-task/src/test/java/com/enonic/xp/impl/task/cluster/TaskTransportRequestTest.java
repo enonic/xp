@@ -6,8 +6,8 @@ import java.nio.ByteBuffer;
 import org.elasticsearch.common.io.stream.ByteBufferStreamInput;
 import org.elasticsearch.common.io.stream.BytesStreamOutput;
 import org.elasticsearch.common.io.stream.StreamInput;
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.task.TaskId;
 
@@ -26,7 +26,7 @@ public class TaskTransportRequestTest
         final StreamInput bytesStreamInput = new ByteBufferStreamInput( ByteBuffer.wrap( streamOutput.bytes().array() ) );
         newRequest.readFrom( bytesStreamInput );
 
-        Assert.assertEquals( oldRequest.getType(), newRequest.getType() );
-        Assert.assertEquals( oldRequest.getTaskId(), newRequest.getTaskId() );
+        assertEquals( oldRequest.getType(), newRequest.getType() );
+        assertEquals( oldRequest.getTaskId(), newRequest.getTaskId() );
     }
 }

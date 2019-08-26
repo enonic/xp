@@ -2,8 +2,8 @@ package com.enonic.xp.repo.impl.node;
 
 import java.util.Iterator;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.ContextAccessor;
@@ -28,13 +28,13 @@ import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.util.GeoPoint;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class NodeOrderTest
     extends AbstractNodeTest
 {
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

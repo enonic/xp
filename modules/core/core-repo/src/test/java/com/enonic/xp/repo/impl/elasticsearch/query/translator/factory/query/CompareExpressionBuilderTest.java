@@ -1,7 +1,7 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.query;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
 
@@ -38,6 +38,6 @@ public class CompareExpressionBuilderTest
         final String expected = load( fileName );
         final String expression = CompareExpressionBuilder.build( expr, new SearchQueryFieldNameResolver() ).toString();
 
-        Assert.assertEquals( cleanString( expected ), cleanString( expression ) );
+        assertEquals( cleanString( expected ), cleanString( expression ) );
     }
 }

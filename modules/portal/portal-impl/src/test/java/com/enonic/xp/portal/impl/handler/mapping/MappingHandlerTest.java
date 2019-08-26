@@ -1,7 +1,7 @@
 package com.enonic.xp.portal.impl.handler.mapping;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -41,7 +41,7 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.BaseHandlerTest;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.when;
@@ -67,7 +67,7 @@ public class MappingHandlerTest
 
     private SiteService siteService;
 
-    @Before
+    @BeforeEach
     public final void setup()
         throws Exception
     {

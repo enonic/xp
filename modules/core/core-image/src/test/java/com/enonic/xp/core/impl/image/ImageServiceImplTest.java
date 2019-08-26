@@ -2,9 +2,9 @@ package com.enonic.xp.core.impl.image;
 
 import java.io.IOException;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
@@ -32,7 +32,7 @@ public class ImageServiceImplTest
 
     private byte[] imageDataOriginal;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws IOException
     {
@@ -62,7 +62,7 @@ public class ImageServiceImplTest
         throws IOException
     {
         final String format = imageService.getFormatByMimeType( "image/jpeg" );
-        Assert.assertEquals( "JPEG", format );
+        assertEquals( "JPEG", format );
 
         boolean ioExceptionCaught = false;
         try
@@ -73,7 +73,7 @@ public class ImageServiceImplTest
         {
             ioExceptionCaught = true;
         }
-        Assert.assertTrue( ioExceptionCaught );
+        assertTrue( ioExceptionCaught );
     }
 
     @Test

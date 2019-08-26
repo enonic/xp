@@ -4,8 +4,8 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.ContextBuilder;
@@ -32,7 +32,7 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 import static com.enonic.xp.repository.RepositoryConstants.MASTER_BRANCH;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FindNodesByMultiRepoQueryCommandTest
     extends AbstractNodeTest
@@ -47,7 +47,7 @@ public class FindNodesByMultiRepoQueryCommandTest
         User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "repo-user-3" ) ).login( "repo-user-3" ).build();
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

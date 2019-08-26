@@ -3,8 +3,8 @@ package com.enonic.xp.repo.impl.index;
 import java.util.Collection;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
@@ -54,6 +54,6 @@ public class IndexNodeIndexPathResolverTest
     public void testResolve()
     {
         final String result = new SearchQueryFieldNameResolver().resolve( CompareExpr.eq( FieldExpr.from( this.field ), this.valueExpr ) );
-        Assert.assertEquals( this.resolvedFieldName, result );
+        assertEquals( this.resolvedFieldName, result );
     }
 }

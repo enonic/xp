@@ -3,7 +3,7 @@ package com.enonic.xp.lib.common;
 import java.net.URL;
 
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -23,7 +23,7 @@ import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FormJsonToPropertyTreeTranslatorTest
 {

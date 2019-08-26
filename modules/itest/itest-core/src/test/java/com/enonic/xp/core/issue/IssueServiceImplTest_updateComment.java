@@ -4,7 +4,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.issue.CreateIssueCommentParams;
 import com.enonic.xp.issue.CreateIssueParams;
@@ -15,7 +15,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.security.PrincipalKey;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class IssueServiceImplTest_updateComment
     extends AbstractIssueServiceTest

@@ -2,8 +2,8 @@ package com.enonic.xp.admin.impl.portal;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.portal.PortalRequest;
@@ -14,7 +14,7 @@ import com.enonic.xp.web.exception.ExceptionMapper;
 import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.handler.BaseHandlerTest;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AdminSiteHandlerTest
     extends BaseHandlerTest
@@ -26,7 +26,7 @@ public class AdminSiteHandlerTest
 
     private WebResponse response;
 
-    @Before
+    @BeforeEach
     public final void setup()
         throws Exception
     {

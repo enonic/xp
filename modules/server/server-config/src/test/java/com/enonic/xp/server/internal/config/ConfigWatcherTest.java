@@ -2,9 +2,9 @@ package com.enonic.xp.server.internal.config;
 
 import java.io.File;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
@@ -23,7 +23,7 @@ public class ConfigWatcherTest
 
     private File dir2;
 
-    @Before
+    @BeforeEach
     public void setup()
         throws Exception
     {

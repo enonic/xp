@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.Iterator;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
@@ -51,14 +51,14 @@ import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.BinaryReference;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class NodeServiceImplTest
     extends AbstractNodeTest
 {
     private NodeServiceImpl nodeService;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

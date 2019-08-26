@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -20,7 +20,7 @@ public class VirtualHostConfigImplTest
 {
     private VirtualHostConfigImpl config;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.config = new VirtualHostConfigImpl();
@@ -29,11 +29,11 @@ public class VirtualHostConfigImplTest
     @Test
     public void testNoConfig()
     {
-        Assert.assertEquals( false, this.config.isEnabled() );
-        Assert.assertNotNull( this.config.getMappings() );
+        assertEquals( false, this.config.isEnabled() );
+        assertNotNull( this.config.getMappings() );
 
         final List<VirtualHostMapping> mappings = Lists.newArrayList( this.config.getMappings() );
-        Assert.assertEquals( 0, mappings.size() );
+        assertEquals( 0, mappings.size() );
     }
 
     @Test
@@ -42,11 +42,11 @@ public class VirtualHostConfigImplTest
     {
         loadConfig( "none" );
 
-        Assert.assertEquals( false, this.config.isEnabled() );
-        Assert.assertNotNull( this.config.getMappings() );
+        assertEquals( false, this.config.isEnabled() );
+        assertNotNull( this.config.getMappings() );
 
         final List<VirtualHostMapping> mappings = Lists.newArrayList( this.config.getMappings() );
-        Assert.assertEquals( 0, mappings.size() );
+        assertEquals( 0, mappings.size() );
     }
 
     @Test
@@ -55,12 +55,12 @@ public class VirtualHostConfigImplTest
     {
         loadConfig( "simple" );
 
-        Assert.assertEquals( true, this.config.isEnabled() );
+        assertEquals( true, this.config.isEnabled() );
 
         final List<VirtualHostMapping> mappings = Lists.newArrayList( this.config.getMappings() );
 
-        Assert.assertNotNull( mappings );
-        Assert.assertEquals( 1, mappings.size() );
+        assertNotNull( mappings );
+        assertEquals( 1, mappings.size() );
 
         assertMapping( mappings.get( 0 ), "a", "localhost", "/status", "/full/path/status", null, null );
     }
@@ -71,7 +71,7 @@ public class VirtualHostConfigImplTest
     {
         loadConfig( "disable" );
 
-        Assert.assertFalse( this.config.isEnabled() );
+        assertFalse( this.config.isEnabled() );
     }
 
     @Test
@@ -80,12 +80,12 @@ public class VirtualHostConfigImplTest
     {
         loadConfig( "complete" );
 
-        Assert.assertEquals( true, this.config.isEnabled() );
+        assertEquals( true, this.config.isEnabled() );
 
         final List<VirtualHostMapping> mappings = Lists.newArrayList( this.config.getMappings() );
 
-        Assert.assertNotNull( mappings );
-        Assert.assertEquals( 4, mappings.size() );
+        assertNotNull( mappings );
+        assertEquals( 4, mappings.size() );
 
         assertMapping( mappings.get( 1 ), "a", "localhost", "/status/a", "/full/path/status/a",
                        IdProviderKeys.from( IdProviderKey.system() ), null );
@@ -104,7 +104,7 @@ public class VirtualHostConfigImplTest
         final String path = "vhost-" + name + ".properties";
         final InputStream in = getClass().getResourceAsStream( path );
 
-        Assert.assertNotNull( "Properties file [" + path + "] not found", in );
+        assertNotNull( "Properties file [" + path + "] not found", in );
 
         final Properties props = new Properties();
         props.load( in );
@@ -117,20 +117,20 @@ public class VirtualHostConfigImplTest
                                 final String target, final IdProviderKeys enabledProviderKeys,
                                 final IdProviderKeys notEnabledIdProviderKeys )
     {
-        Assert.assertEquals( name, mapping.getName() );
-        Assert.assertEquals( host, mapping.getHost() );
-        Assert.assertEquals( source, mapping.getSource() );
-        Assert.assertEquals( target, mapping.getTarget() );
+        assertEquals( name, mapping.getName() );
+        assertEquals( host, mapping.getHost() );
+        assertEquals( source, mapping.getSource() );
+        assertEquals( target, mapping.getTarget() );
         if ( enabledProviderKeys != null )
         {
 
-            enabledProviderKeys.forEach( idProviderKey -> Assert.assertTrue( mapping.getIdProviderKeys().contains( idProviderKey ) ) );
+            enabledProviderKeys.forEach( idProviderKey -> assertTrue( mapping.getIdProviderKeys().contains( idProviderKey ) ) );
         }
         if ( notEnabledIdProviderKeys != null )
         {
 
             notEnabledIdProviderKeys.forEach(
-                idProviderKey -> Assert.assertFalse( mapping.getIdProviderKeys().contains( idProviderKey ) ) );
+                idProviderKey -> assertFalse( mapping.getIdProviderKeys().contains( idProviderKey ) ) );
         }
     }
 }

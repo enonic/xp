@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.TemporaryFolder;
 
 import com.google.common.io.ByteSource;
@@ -17,7 +17,7 @@ public class ImmutableFilesHelperTest
 
     private int supplierCall;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws IOException
     {
@@ -41,12 +41,12 @@ public class ImmutableFilesHelperTest
         };
 
         ByteSource byteSource = ImmutableFilesHelper.computeIfAbsent( path, supplier );
-        Assert.assertTrue( supplierCall == 1 );
-        Assert.assertTrue( source.contentEquals( byteSource ) );
+        assertTrue( supplierCall == 1 );
+        assertTrue( source.contentEquals( byteSource ) );
 
         byteSource = ImmutableFilesHelper.computeIfAbsent( path, supplier );
-        Assert.assertTrue( supplierCall == 1 );
-        Assert.assertTrue( source.contentEquals( byteSource ) );
+        assertTrue( supplierCall == 1 );
+        assertTrue( source.contentEquals( byteSource ) );
     }
 
     @Test
@@ -57,6 +57,6 @@ public class ImmutableFilesHelperTest
         SupplierWithException<ByteSource, Exception> supplier = () -> null;
 
         ByteSource byteSource = ImmutableFilesHelper.computeIfAbsent( path, supplier );
-        Assert.assertNull( byteSource );
+        assertNull( byteSource );
     }
 }

@@ -11,7 +11,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Matchers;
@@ -59,7 +59,7 @@ import com.enonic.xp.web.HttpStatus;
 import static com.enonic.xp.security.PrincipalRelationship.from;
 import static com.enonic.xp.security.acl.IdProviderAccess.ADMINISTRATOR;
 import static com.enonic.xp.security.acl.IdProviderAccess.READ;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SecurityResourceTest
     extends AdminResourceTestSupport

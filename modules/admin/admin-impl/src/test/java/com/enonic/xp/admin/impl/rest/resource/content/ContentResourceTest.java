@@ -19,7 +19,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatcher;
@@ -192,7 +192,7 @@ import static com.enonic.xp.security.acl.Permission.DELETE;
 import static com.enonic.xp.security.acl.Permission.MODIFY;
 import static com.enonic.xp.security.acl.Permission.READ;
 import static java.util.Arrays.asList;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;

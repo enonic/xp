@@ -1,7 +1,7 @@
 package com.enonic.xp.portal.impl.rendering;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.net.MediaType;
@@ -24,7 +24,7 @@ import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.websocket.WebSocketEvent;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
@@ -51,7 +51,7 @@ public class PartRendererTest
         return portalResponse.getAsString();
     }
 
-    @Before
+    @BeforeEach
     public void before()
     {
         this.portalRequest = new PortalRequest();
@@ -200,7 +200,7 @@ public class PartRendererTest
         portalResponse = renderer.render( partComponent, portalRequest );
 
         // verify
-        String expected = "<div data-portal-component-type=\"part\" data-portal-placeholder=\"true\" data-portal-placeholder-error=\"true\"><span class=\"data-portal-placeholder-error\">No method provided to handle request</span></div>";;
+        String expected = "<div data-portal-component-type=\"part\" data-portal-placeholder=\"true\" data-portal-placeholder-error=\"true\"><span class=\"data-portal-placeholder-error\">No method provided to handle request</span></div>";
         assertEquals( expected, portalResponse.getAsString() );
     }
 

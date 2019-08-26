@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.TemporaryFolder;
 
 import com.google.common.io.ByteSource;
@@ -17,7 +17,7 @@ import com.enonic.xp.blob.Segment;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.util.ByteSizeParser;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ReadThroughBlobStoreTest
 {
@@ -28,7 +28,7 @@ public class ReadThroughBlobStoreTest
 
     private MemoryBlobStore finalStore;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

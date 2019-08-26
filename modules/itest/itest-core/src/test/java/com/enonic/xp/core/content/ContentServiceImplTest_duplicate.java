@@ -1,6 +1,6 @@
 package com.enonic.xp.core.content;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
@@ -20,7 +20,7 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ContentServiceImplTest_duplicate
     extends AbstractContentServiceTest

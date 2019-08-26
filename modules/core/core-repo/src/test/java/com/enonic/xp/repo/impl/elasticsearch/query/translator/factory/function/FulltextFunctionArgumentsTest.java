@@ -3,9 +3,9 @@ package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.function;
 import java.util.List;
 
 import org.elasticsearch.index.query.SimpleQueryStringBuilder;
-import org.junit.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 
 import com.google.common.collect.Lists;
@@ -26,9 +26,9 @@ public class FulltextFunctionArgumentsTest
 
         final FulltextFunctionArguments functionArguments = new FulltextFunctionArguments( arguments );
 
-        Assert.assertEquals( "myField", functionArguments.getWeightedQueryFieldName().iterator().next().getBaseFieldName() );
-        Assert.assertEquals( "SearchString", functionArguments.getSearchString() );
-        Assert.assertEquals( SimpleQueryStringBuilder.Operator.AND, functionArguments.getOperator() );
+        assertEquals( "myField", functionArguments.getWeightedQueryFieldName().iterator().next().getBaseFieldName() );
+        assertEquals( "SearchString", functionArguments.getSearchString() );
+        assertEquals( SimpleQueryStringBuilder.Operator.AND, functionArguments.getOperator() );
     }
 
     @Test
@@ -38,10 +38,10 @@ public class FulltextFunctionArgumentsTest
 
         final FulltextFunctionArguments functionArguments = new FulltextFunctionArguments( arguments );
 
-        Assert.assertEquals( "myField", functionArguments.getWeightedQueryFieldName().iterator().next().getBaseFieldName() );
-        Assert.assertEquals( "SearchString", functionArguments.getSearchString() );
-        Assert.assertEquals( SimpleQueryStringBuilder.Operator.OR, functionArguments.getOperator() );
-        Assert.assertEquals( NodeConstants.DEFAULT_FULLTEXT_SEARCH_ANALYZER, functionArguments.getAnalyzer() );
+        assertEquals( "myField", functionArguments.getWeightedQueryFieldName().iterator().next().getBaseFieldName() );
+        assertEquals( "SearchString", functionArguments.getSearchString() );
+        assertEquals( SimpleQueryStringBuilder.Operator.OR, functionArguments.getOperator() );
+        assertEquals( NodeConstants.DEFAULT_FULLTEXT_SEARCH_ANALYZER, functionArguments.getAnalyzer() );
     }
 
     @Test
@@ -63,10 +63,10 @@ public class FulltextFunctionArgumentsTest
 
         final FulltextFunctionArguments functionArguments = new FulltextFunctionArguments( arguments );
 
-        Assert.assertEquals( "myField", functionArguments.getWeightedQueryFieldName().iterator().next().getBaseFieldName() );
-        Assert.assertEquals( "SearchString", functionArguments.getSearchString() );
-        Assert.assertEquals( SimpleQueryStringBuilder.Operator.OR, functionArguments.getOperator() );
-        Assert.assertEquals( "myAnalyzer", functionArguments.getAnalyzer() );
+        assertEquals( "myField", functionArguments.getWeightedQueryFieldName().iterator().next().getBaseFieldName() );
+        assertEquals( "SearchString", functionArguments.getSearchString() );
+        assertEquals( SimpleQueryStringBuilder.Operator.OR, functionArguments.getOperator() );
+        assertEquals( "myAnalyzer", functionArguments.getAnalyzer() );
     }
 
 

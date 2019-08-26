@@ -2,8 +2,8 @@ package com.enonic.xp.core.impl.content.index.processor;
 
 import java.util.Set;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.content.ContentConstants;
@@ -20,7 +20,7 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import static com.enonic.xp.content.ContentPropertyNames.APPLICATION_KEY;
 import static com.enonic.xp.content.ContentPropertyNames.ATTACHMENT;
@@ -41,7 +41,7 @@ public class BaseConfigProcessorTest
 
     private ContentTypeService contentTypeService;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

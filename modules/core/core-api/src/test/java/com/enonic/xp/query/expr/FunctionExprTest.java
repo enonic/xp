@@ -1,7 +1,7 @@
 package com.enonic.xp.query.expr;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
 
@@ -13,10 +13,10 @@ public class FunctionExprTest
         final ValueExpr arg = ValueExpr.string( "arg1" );
         final FunctionExpr expr = new FunctionExpr( "name", Lists.newArrayList( arg ) );
 
-        Assert.assertEquals( "name", expr.getName() );
-        Assert.assertNotNull( expr.getArguments() );
-        Assert.assertEquals( 1, expr.getArguments().size() );
-        Assert.assertSame( arg, expr.getArguments().get( 0 ) );
-        Assert.assertEquals( "name('arg1')", expr.toString() );
+        assertEquals( "name", expr.getName() );
+        assertNotNull( expr.getArguments() );
+        assertEquals( 1, expr.getArguments().size() );
+        assertSame( arg, expr.getArguments().get( 0 ) );
+        assertEquals( "name('arg1')", expr.toString() );
     }
 }

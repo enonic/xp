@@ -10,9 +10,9 @@ import org.elasticsearch.client.ClusterAdminClient;
 import org.elasticsearch.cluster.ClusterService;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.transport.TransportService;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 import org.osgi.framework.BundleContext;
@@ -44,7 +44,7 @@ public class ElasticsearchActivatorTest
 
     private ServiceRegistration<TransportService> transportServiceReg;
 
-    @Before
+    @BeforeEach
     public void setup()
         throws Exception
     {

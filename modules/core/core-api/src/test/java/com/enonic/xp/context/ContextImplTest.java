@@ -2,7 +2,7 @@ package com.enonic.xp.context;
 
 import java.io.IOException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -10,7 +10,7 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ContextImplTest
 {

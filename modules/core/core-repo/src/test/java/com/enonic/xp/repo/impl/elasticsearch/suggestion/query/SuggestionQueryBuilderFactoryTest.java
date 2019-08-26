@@ -4,9 +4,9 @@ import java.util.Set;
 
 import org.elasticsearch.search.suggest.SuggestBuilder;
 import org.elasticsearch.search.suggest.term.TermSuggestionBuilder;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.query.suggester.SuggestionQueries;
 import com.enonic.xp.query.suggester.TermSuggestionQuery;
@@ -17,7 +17,7 @@ public class SuggestionQueryBuilderFactoryTest
 {
     private SuggestionQueryBuilderFactory suggestionQueryBuilderFactory;
 
-    @Before
+    @BeforeEach
     public void init()
     {
         suggestionQueryBuilderFactory = new SuggestionQueryBuilderFactory( new SearchQueryFieldNameResolver() );
@@ -45,9 +45,9 @@ public class SuggestionQueryBuilderFactoryTest
         final Set<SuggestBuilder.SuggestionBuilder> suggestionBuilder =
             suggestionQueryBuilderFactory.create( SuggestionQueries.create().add( query ).build() );
 
-        Assert.assertNotNull( suggestionBuilder );
-        Assert.assertEquals( 1, suggestionBuilder.size() );
-        Assert.assertEquals( TermSuggestionBuilder.class, suggestionBuilder.toArray()[0].getClass() );
+        assertNotNull( suggestionBuilder );
+        assertEquals( 1, suggestionBuilder.size() );
+        assertEquals( TermSuggestionBuilder.class, suggestionBuilder.toArray()[0].getClass() );
 
     }
 

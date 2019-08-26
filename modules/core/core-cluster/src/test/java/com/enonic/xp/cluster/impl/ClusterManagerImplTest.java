@@ -2,9 +2,9 @@ package com.enonic.xp.cluster.impl;
 
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
 
@@ -23,7 +23,7 @@ public class ClusterManagerImplTest
 
     private ClusterManagerImpl clusterManager;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
@@ -164,12 +164,12 @@ public class ClusterManagerImplTest
 
     private void assertClusterError()
     {
-        Assert.assertEquals( ClusterState.ERROR, this.clusterManager.getClusterState() );
+        assertEquals( ClusterState.ERROR, this.clusterManager.getClusterState() );
     }
 
     private void assertClusterOk()
     {
-        Assert.assertEquals( ClusterState.OK, this.clusterManager.getClusterState() );
+        assertEquals( ClusterState.OK, this.clusterManager.getClusterState() );
     }
 
     private void createManager( final String... required )
@@ -200,7 +200,7 @@ public class ClusterManagerImplTest
     {
         for ( final TestCluster provider : providers )
         {
-            Assert.assertFalse( String.format( "Provider '%s' not deactivated", provider.getId() ), provider.isEnabled() );
+            assertFalse( String.format( "Provider '%s' not deactivated", provider.getId() ), provider.isEnabled() );
         }
     }
 }

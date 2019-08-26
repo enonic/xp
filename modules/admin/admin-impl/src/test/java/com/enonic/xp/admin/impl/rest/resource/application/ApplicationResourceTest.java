@@ -10,8 +10,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalAnswers;
 import org.mockito.Mockito;
 import org.osgi.framework.Version;
@@ -63,6 +62,8 @@ import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ApplicationResourceTest
     extends AdminResourceTestSupport
@@ -454,7 +455,7 @@ public class ApplicationResourceTest
 
         byte[] expected = icon.toByteArray();
 
-        Assert.assertTrue( Arrays.equals( expected, response ) );
+        assertTrue( Arrays.equals( expected, response ) );
     }
 
     @Test

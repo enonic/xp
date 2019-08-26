@@ -1,7 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
@@ -9,12 +9,12 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.NodesHasChildrenResult;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class NodeHasChildResolverTest
     extends AbstractNodeTest
 {
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

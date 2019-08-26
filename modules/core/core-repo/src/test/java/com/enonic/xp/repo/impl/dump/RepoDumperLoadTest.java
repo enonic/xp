@@ -1,8 +1,8 @@
 package com.enonic.xp.repo.impl.dump;
 
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.NodePath;
@@ -12,7 +12,7 @@ import com.enonic.xp.repo.impl.node.NodeHelper;
 public class RepoDumperLoadTest
     extends AbstractNodeTest
 {
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
@@ -21,7 +21,7 @@ public class RepoDumperLoadTest
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void name()
         throws Exception
     {

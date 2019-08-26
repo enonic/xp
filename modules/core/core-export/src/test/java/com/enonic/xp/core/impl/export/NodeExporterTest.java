@@ -4,10 +4,10 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.junit.Before;
-import org.junit.Ignore;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
@@ -26,7 +26,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.util.BinaryReference;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class NodeExporterTest
 {
@@ -35,7 +35,7 @@ public class NodeExporterTest
 
     private NodeService nodeService;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
@@ -194,7 +194,7 @@ public class NodeExporterTest
         assertFileExists( "/myExport/child1/child1_1/child1_1_2/_/node.xml" );
     }
 
-    @Ignore // Wait with this until decided how to handle versions. Only in dump, or in export too?
+    @Disabled // Wait with this until decided how to handle versions. Only in dump, or in export too?
     @Test
     public void create_binary_files()
         throws Exception

@@ -2,12 +2,12 @@ package com.enonic.xp.schema.relationship;
 
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RelationshipTypesTest
 {
@@ -59,7 +59,7 @@ public class RelationshipTypesTest
         }
         catch ( Exception e )
         {
-            Assert.assertTrue( e instanceof UnsupportedOperationException );
+            assertTrue( e instanceof UnsupportedOperationException );
         }
         relTypes = RelationshipTypes.from( RelationshipType.create().name( "myapplication:like" ).build() );
         try
@@ -68,7 +68,7 @@ public class RelationshipTypesTest
         }
         catch ( Exception e )
         {
-            Assert.assertTrue( e instanceof UnsupportedOperationException );
+            assertTrue( e instanceof UnsupportedOperationException );
         }
         try
         {
@@ -76,7 +76,7 @@ public class RelationshipTypesTest
         }
         catch ( Exception e )
         {
-            Assert.assertTrue( e instanceof UnsupportedOperationException );
+            assertTrue( e instanceof UnsupportedOperationException );
         }
     }
 

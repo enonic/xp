@@ -2,8 +2,8 @@ package com.enonic.xp.lib.auth;
 
 import java.util.Optional;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.security.EditableUser;
@@ -57,7 +57,7 @@ public class ModifyUserHandlerTest
     private User invokeUpdate( final UpdateUserParams params )
     {
         final UserEditor editor = params.getEditor();
-        Assert.assertNotNull( editor );
+        assertNotNull( editor );
 
         final User user = TestDataFixtures.getTestUser();
         final EditableUser editable = new EditableUser( user );

@@ -1,14 +1,14 @@
 package com.enonic.xp.admin.impl.app;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.TemporaryFolder;
 
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MainWebHandlerTest
 {
@@ -17,7 +17,7 @@ public class MainWebHandlerTest
 
     private MainWebHandler handler;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.handler = new MainWebHandler();

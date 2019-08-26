@@ -2,7 +2,7 @@ package com.enonic.xp.repo.impl.dump.serializer.json;
 
 import java.time.Instant;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
 
@@ -15,7 +15,7 @@ import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.VersionMeta;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BranchDumpEntryJsonDumpSerializerTest
 {

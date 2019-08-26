@@ -1,8 +1,8 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.function;
 
-import org.junit.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 
 import com.google.common.collect.Lists;
@@ -20,10 +20,10 @@ public class GeoDistanceSortFunctionArgumentsTest
         final GeoDistanceSortFunctionArguments arguments =
             new GeoDistanceSortFunctionArguments( Lists.newArrayList( ValueExpr.string( "myField" ), ValueExpr.string( "79,80" ) ) );
 
-        Assert.assertEquals( "myField", arguments.getFieldName() );
-        Assert.assertEquals( "geoDistance", arguments.getFunctionName() );
-        Assert.assertEquals( 79, arguments.getLatitude(), 0 );
-        Assert.assertEquals( 80, arguments.getLongitude(), 0 );
+        assertEquals( "myField", arguments.getFieldName() );
+        assertEquals( "geoDistance", arguments.getFunctionName() );
+        assertEquals( 79, arguments.getLatitude(), 0 );
+        assertEquals( 80, arguments.getLongitude(), 0 );
     }
 
     @Test

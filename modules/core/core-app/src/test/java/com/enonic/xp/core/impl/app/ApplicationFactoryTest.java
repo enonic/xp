@@ -3,7 +3,7 @@ package com.enonic.xp.core.impl.app;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.ops4j.pax.tinybundles.core.TinyBundle;
 import org.osgi.framework.Bundle;
@@ -18,7 +18,7 @@ import com.enonic.xp.core.impl.app.resolver.MultiApplicationUrlResolver;
 import com.enonic.xp.server.RunMode;
 
 import static com.enonic.xp.core.impl.app.ApplicationHelper.X_BUNDLE_TYPE;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 

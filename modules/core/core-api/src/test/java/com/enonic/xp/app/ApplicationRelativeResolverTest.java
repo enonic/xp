@@ -1,13 +1,13 @@
 package com.enonic.xp.app;
 
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ApplicationRelativeResolverTest
 {

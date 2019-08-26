@@ -3,8 +3,8 @@ package com.enonic.xp.core.impl.content.serializer;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.core.impl.content.page.AbstractDataSerializerTest;
@@ -20,14 +20,14 @@ import com.enonic.xp.region.Region;
 import com.enonic.xp.region.RegionDescriptor;
 import com.enonic.xp.region.RegionDescriptors;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RegionDataSerializerTest
     extends AbstractDataSerializerTest
 {
     private RegionDataSerializer regionSerializer;
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         super.setUp();

@@ -2,8 +2,8 @@ package com.enonic.xp.repo.impl.node.executor;
 
 import java.util.Iterator;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.Node;
@@ -12,14 +12,14 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BatchedGetChildrenExecutorTest
     extends AbstractNodeTest
 {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

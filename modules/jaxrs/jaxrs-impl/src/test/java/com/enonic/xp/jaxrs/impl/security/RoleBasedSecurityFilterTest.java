@@ -4,15 +4,15 @@ import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.SecurityContext;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 public class RoleBasedSecurityFilterTest
 {
     private ContainerRequestContext request;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.request = Mockito.mock( ContainerRequestContext.class );

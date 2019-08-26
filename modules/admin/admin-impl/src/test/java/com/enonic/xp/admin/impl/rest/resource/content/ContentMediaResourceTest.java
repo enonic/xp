@@ -4,9 +4,9 @@ import java.nio.charset.StandardCharsets;
 
 import javax.ws.rs.WebApplicationException;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 
@@ -21,7 +21,7 @@ import com.enonic.xp.content.Media;
 import com.enonic.xp.jaxrs.impl.MockRestResponse;
 import com.enonic.xp.schema.content.ContentTypeName;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ContentMediaResourceTest
     extends AdminResourceTestSupport
@@ -57,7 +57,7 @@ public class ContentMediaResourceTest
         MockRestResponse result = request().path( "content/media/" + content.getId().toString() ).get();
 
         assertTrue( result.getHeader( "Content-Disposition" ).startsWith( "attachment; filename=\"document.pdf\"" ) );
-        Assert.assertArrayEquals( ATTACHMENT_DATA_1, result.getData() );
+        assertArrayEquals( ATTACHMENT_DATA_1, result.getData() );
     }
 
     @Test
@@ -69,7 +69,7 @@ public class ContentMediaResourceTest
         MockRestResponse result = request().path( "content/media/" + content.getId().toString() + "/byName" ).get();
 
         assertTrue( result.getHeader( "Content-Disposition" ).startsWith( "attachment; filename=\"byName.pdf\"" ) );
-        Assert.assertArrayEquals( ATTACHMENT_DATA_2, result.getData() );
+        assertArrayEquals( ATTACHMENT_DATA_2, result.getData() );
     }
 
     @Test
@@ -82,7 +82,7 @@ public class ContentMediaResourceTest
             queryParam( "download", "false" ).get();
 
         assertNull( result.getHeader( "Content-Disposition" ) );
-        Assert.assertArrayEquals( ATTACHMENT_DATA_1, result.getData() );
+        Assertions.assertArrayEquals( ATTACHMENT_DATA_1, result.getData() );
     }
 
     @Test
@@ -95,7 +95,7 @@ public class ContentMediaResourceTest
             queryParam( "download", content.getId().toString() ).get();
 
         assertNull( result.getHeader( "Content-Disposition" ) );
-        Assert.assertArrayEquals( ATTACHMENT_DATA_2, result.getData() );
+        Assertions.assertArrayEquals( ATTACHMENT_DATA_2, result.getData() );
     }
 
     @Test

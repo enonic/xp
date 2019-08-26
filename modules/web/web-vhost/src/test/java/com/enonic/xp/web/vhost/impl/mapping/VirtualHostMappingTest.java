@@ -1,18 +1,18 @@
 package com.enonic.xp.web.vhost.impl.mapping;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.enonic.xp.security.IdProviderKey;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class VirtualHostMappingTest
 {
     private VirtualHostMapping mapping;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.mapping = new VirtualHostMapping( "mymapping" );

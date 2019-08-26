@@ -3,7 +3,7 @@ package com.enonic.xp.core.content;
 import java.time.Duration;
 import java.time.Instant;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentNotFoundException;
@@ -13,7 +13,7 @@ import com.enonic.xp.site.CreateSiteParams;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigs;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ContentServiceImplTest_getNearestSite
     extends AbstractContentServiceTest

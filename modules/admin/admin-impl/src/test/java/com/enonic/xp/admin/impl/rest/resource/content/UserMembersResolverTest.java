@@ -1,7 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.content;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.security.IdProviderKey;
@@ -11,7 +11,7 @@ import com.enonic.xp.security.PrincipalRelationship;
 import com.enonic.xp.security.PrincipalRelationships;
 import com.enonic.xp.security.SecurityService;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 
@@ -34,7 +34,7 @@ public class UserMembersResolverTest
 
     private SecurityService securityService;
 
-    @Before
+    @BeforeEach
     public final void setUp()
         throws Exception
     {

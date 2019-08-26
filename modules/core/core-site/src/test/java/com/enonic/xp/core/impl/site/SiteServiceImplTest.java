@@ -1,7 +1,7 @@
 package com.enonic.xp.core.impl.site;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -9,7 +9,7 @@ import com.enonic.xp.core.impl.app.ApplicationTestSupport;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.site.SiteDescriptor;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SiteServiceImplTest
     extends ApplicationTestSupport
@@ -38,11 +38,11 @@ public class SiteServiceImplTest
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
         final SiteDescriptor siteDescriptor = this.service.getDescriptor( applicationKey );
-        Assert.assertEquals( 1, siteDescriptor.getForm().getFormItems().size() );
-        Assert.assertEquals( 2, siteDescriptor.getXDataMappings().getSize() );
-        Assert.assertEquals( 2, siteDescriptor.getResponseProcessors().getSize() );
-        Assert.assertEquals( "filter1", siteDescriptor.getResponseProcessors().get( 0 ).getName() );
-        Assert.assertEquals( 20, siteDescriptor.getResponseProcessors().get( 1 ).getOrder() );
+        assertEquals( 1, siteDescriptor.getForm().getFormItems().size() );
+        assertEquals( 2, siteDescriptor.getXDataMappings().getSize() );
+        assertEquals( 2, siteDescriptor.getResponseProcessors().getSize() );
+        assertEquals( "filter1", siteDescriptor.getResponseProcessors().get( 0 ).getName() );
+        assertEquals( 20, siteDescriptor.getResponseProcessors().get( 1 ).getOrder() );
     }
 
     @Test

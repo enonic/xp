@@ -1,7 +1,7 @@
 package com.enonic.xp.lib.auth;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.security.PrincipalKey;
@@ -47,12 +47,12 @@ public class RemoveMembersHandlerTest
         try
         {
             runFunction( "/test/removeMembers-test.js", "removeMembersFromUser" );
-            Assert.fail( "Expected exception" );
+            fail( "Expected exception" );
         }
         catch ( Exception e )
         {
-            Assert.assertTrue( e.getCause() instanceof IllegalArgumentException );
-            Assert.assertEquals( "Principal relationship from User to another Principal is not allowed", e.getMessage() );
+            assertTrue( e.getCause() instanceof IllegalArgumentException );
+            assertEquals( "Principal relationship from User to another Principal is not allowed", e.getMessage() );
         }
     }
 

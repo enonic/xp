@@ -5,8 +5,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Hashtable;
 
-import org.junit.Assert;
-import org.junit.Before;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -78,7 +78,7 @@ public abstract class ScriptTestSupport
         this.appVersion = value;
     }
 
-    @Before
+    @BeforeEach
     public final void setup()
         throws Exception
     {
@@ -181,8 +181,8 @@ public abstract class ScriptTestSupport
     {
         final ScriptExports exports = runScript( path );
 
-        Assert.assertNotNull( "No exports in [" + path + "]", exports );
-        Assert.assertTrue( "No functions exported named [" + funcName + "] in [" + path + "]", exports.hasMethod( funcName ) );
+        assertNotNull( "No exports in [" + path + "]", exports );
+        assertTrue( "No functions exported named [" + funcName + "] in [" + path + "]", exports.hasMethod( funcName ) );
         return exports.executeMethod( funcName, funcParams );
     }
 

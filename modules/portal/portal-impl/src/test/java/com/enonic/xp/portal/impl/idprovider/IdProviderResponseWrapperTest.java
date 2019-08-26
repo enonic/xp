@@ -6,9 +6,9 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.portal.PortalResponse;
@@ -21,7 +21,7 @@ public class IdProviderResponseWrapperTest
 
     private IdProviderResponseWrapper idProviderResponseWrapper;
 
-    @Before
+    @BeforeEach
     public void setup()
         throws IOException
     {
@@ -74,9 +74,9 @@ public class IdProviderResponseWrapperTest
     public void testGetWriter()
         throws IOException
     {
-        Assert.assertNull( idProviderResponseWrapper.getWriter() );
+        assertNull( idProviderResponseWrapper.getWriter() );
         idProviderResponseWrapper.setStatus( 403 );
-        Assert.assertNotNull( idProviderResponseWrapper.getWriter() );
+        assertNotNull( idProviderResponseWrapper.getWriter() );
     }
 
     @Test
@@ -84,13 +84,13 @@ public class IdProviderResponseWrapperTest
         throws IOException
     {
         ServletOutputStream outputStream = idProviderResponseWrapper.getOutputStream();
-        Assert.assertNull( outputStream );
+        assertNull( outputStream );
 
         idProviderResponseWrapper.setStatus( 403 );
 
         outputStream = idProviderResponseWrapper.getOutputStream();
-        Assert.assertNotNull( outputStream );
-        Assert.assertTrue( outputStream.isReady() );
+        assertNotNull( outputStream );
+        assertTrue( outputStream.isReady() );
         outputStream.setWriteListener( null );
         outputStream.write( 0 );
     }

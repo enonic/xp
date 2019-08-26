@@ -1,8 +1,8 @@
 package com.enonic.xp.repo.impl.vacuum.segment;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
@@ -34,7 +34,7 @@ public class SegmentCleanerTaskTest
 
     private RepositoryService repositoryService;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
@@ -57,10 +57,10 @@ public class SegmentCleanerTaskTest
     {
         final BlobRecord record = blobStore.addRecord( segment, ByteSource.wrap( "hello".getBytes() ) );
         final BlobRecord record2 = blobStore.addRecord( segment2, ByteSource.wrap( "hello".getBytes() ) );
-        Assert.assertEquals( 2, blobStore.listSegments().count() );
+        assertEquals( 2, blobStore.listSegments().count() );
 
         blobStore.removeRecord( segment, record2.getKey() );
-        Assert.assertEquals( 2, blobStore.listSegments().count() );
+        assertEquals( 2, blobStore.listSegments().count() );
 
         final SegmentCleanerTask task = new SegmentCleanerTask();
         task.setBlobStore( blobStore );
@@ -70,10 +70,10 @@ public class SegmentCleanerTaskTest
             build();
         final VacuumTaskResult result = task.execute( vacuumParameters );
 
-        Assert.assertEquals( 2, result.getProcessed() );
-        Assert.assertEquals( 1, result.getDeleted() );
-        Assert.assertEquals( 1, result.getInUse() );
-        Assert.assertEquals( 1, blobStore.listSegments().count() );
-        Assert.assertEquals( segment, blobStore.listSegments().findFirst().get() );
+        assertEquals( 2, result.getProcessed() );
+        assertEquals( 1, result.getDeleted() );
+        assertEquals( 1, result.getInUse() );
+        assertEquals( 1, blobStore.listSegments().count() );
+        assertEquals( segment, blobStore.listSegments().findFirst().get() );
     }
 }

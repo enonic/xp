@@ -2,8 +2,8 @@ package com.enonic.xp.core.impl.security;
 
 import java.util.concurrent.Callable;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.context.Context;
@@ -62,7 +62,7 @@ import com.enonic.xp.security.auth.VerifiedUsernameAuthToken;
 import static com.enonic.xp.security.acl.IdProviderAccess.ADMINISTRATOR;
 import static com.enonic.xp.security.acl.IdProviderAccess.CREATE_USERS;
 import static com.enonic.xp.security.acl.IdProviderAccess.WRITE_USERS;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SecurityServiceImplTest
     extends AbstractElasticsearchIntegrationTest
@@ -80,7 +80,7 @@ public class SecurityServiceImplTest
     private RepositoryServiceImpl repositoryService;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

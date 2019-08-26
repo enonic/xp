@@ -10,8 +10,8 @@ import com.enonic.xp.schema.relationship.RelationshipTypeService;
 import com.enonic.xp.schema.relationship.RelationshipTypes;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Resources;
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import javax.ws.rs.core.Response;
@@ -19,7 +19,7 @@ import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.time.Instant;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RelationshipTypeResourceTest
     extends AdminResourceTestSupport
@@ -66,7 +66,7 @@ public class RelationshipTypeResourceTest
 
         final MockRestResponse response =
             request().path( "schema/relationship" ).queryParam( "name", "myapplication:relationship_type" ).get();
-        Assert.assertEquals( 404, response.getStatus() );
+        assertEquals( 404, response.getStatus() );
     }
 
     @Test

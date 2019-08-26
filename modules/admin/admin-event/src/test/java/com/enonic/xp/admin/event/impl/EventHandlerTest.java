@@ -4,8 +4,8 @@ import javax.websocket.Endpoint;
 import javax.websocket.RemoteEndpoint;
 import javax.websocket.Session;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -13,7 +13,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.web.websocket.WebSocketService;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EventHandlerTest
 {
@@ -25,7 +25,7 @@ public class EventHandlerTest
 
     private MockHttpServletResponse res;
 
-    @Before
+    @BeforeEach
     public void setup()
         throws Exception
     {

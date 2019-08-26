@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.content.serializer;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
@@ -26,7 +26,7 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.PrincipalKey;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ContentDataSerializerTest
 {

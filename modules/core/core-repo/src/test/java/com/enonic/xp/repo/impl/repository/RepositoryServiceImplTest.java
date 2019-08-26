@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.repository;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.Test;
 
 import com.enonic.xp.branch.Branch;
@@ -27,7 +27,7 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RepositoryServiceImplTest
     extends AbstractNodeTest
@@ -36,7 +36,7 @@ public class RepositoryServiceImplTest
     private NodeServiceImpl nodeService;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

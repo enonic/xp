@@ -7,8 +7,8 @@ import org.elasticsearch.action.ActionFuture;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.client.Client;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
 
@@ -21,12 +21,12 @@ import com.enonic.xp.node.NodeStorageException;
 import com.enonic.xp.repo.impl.branch.storage.BranchDocumentId;
 import com.enonic.xp.repo.impl.elasticsearch.ClientProxy;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DeleteNodeByIdCommandTest_error_handling
     extends AbstractNodeTest
 {
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

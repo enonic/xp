@@ -6,9 +6,9 @@ import java.nio.charset.Charset;
 import java.nio.file.LinkOption;
 import java.nio.file.Paths;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.TemporaryFolder;
 
 import com.google.common.io.Files;
@@ -17,7 +17,7 @@ import com.enonic.xp.branch.Branches;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FileDumpReaderTest
 {
@@ -28,7 +28,7 @@ public class FileDumpReaderTest
 
     private File dumpFolder;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

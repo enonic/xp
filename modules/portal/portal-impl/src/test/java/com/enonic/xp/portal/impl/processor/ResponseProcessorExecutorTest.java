@@ -2,7 +2,7 @@ package com.enonic.xp.portal.impl.processor;
 
 import java.nio.charset.StandardCharsets;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
@@ -18,7 +18,7 @@ import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.site.processor.ResponseProcessorDescriptor;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;

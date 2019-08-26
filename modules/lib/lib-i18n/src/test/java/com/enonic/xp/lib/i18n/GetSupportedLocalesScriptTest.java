@@ -4,7 +4,7 @@ import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Set;
 
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -16,7 +16,7 @@ import com.enonic.xp.testing.ScriptRunnerSupport;
 
 import static org.mockito.Matchers.any;
 
-@Ignore("Concourse issue")
+@Disabled("Concourse issue")
 public class GetSupportedLocalesScriptTest
     extends ScriptRunnerSupport
 {

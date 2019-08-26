@@ -3,7 +3,7 @@ package com.enonic.xp.core.issue;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -90,7 +90,7 @@ public class AbstractIssueServiceTest
 
     private SearchDaoImpl searchDao;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

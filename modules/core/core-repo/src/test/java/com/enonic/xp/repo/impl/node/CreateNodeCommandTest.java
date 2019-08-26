@@ -1,7 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.io.ByteSource;
 
@@ -24,12 +24,12 @@ import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.Reference;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CreateNodeCommandTest
     extends AbstractNodeTest
 {
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

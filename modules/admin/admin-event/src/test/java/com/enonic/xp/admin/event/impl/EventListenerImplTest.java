@@ -1,7 +1,7 @@
 package com.enonic.xp.admin.event.impl;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.BundleEvent;
 
 import com.enonic.xp.event.Event;
@@ -17,7 +17,7 @@ public class EventListenerImplTest
 
     private WebSocketManager webSocketManager;
 
-    @Before
+    @BeforeEach
     public final void setUp()
         throws Exception
     {

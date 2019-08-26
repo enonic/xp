@@ -1,13 +1,13 @@
 package com.enonic.xp.core.content;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ResolveRequiredDependenciesParams;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ContentServiceImplTest_resolveRequiredDependencies
     extends AbstractContentServiceTest

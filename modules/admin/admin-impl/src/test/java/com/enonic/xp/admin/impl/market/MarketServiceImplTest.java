@@ -1,7 +1,7 @@
 package com.enonic.xp.admin.impl.market;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
@@ -12,7 +12,7 @@ public class MarketServiceImplTest
 
     private MarketDataHttpProvider provider;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

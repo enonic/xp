@@ -1,8 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.content.task;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.admin.impl.rest.resource.content.json.ApplyContentPermissionsJson;
@@ -24,13 +23,14 @@ import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
 
 import static com.enonic.xp.security.acl.Permission.READ;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ApplyPermissionsRunnableTaskTest
     extends AbstractRunnableTaskTest
 {
     private ApplyContentPermissionsJson params;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp()
         throws Exception
@@ -87,7 +87,7 @@ public class ApplyPermissionsRunnableTaskTest
 
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 0 );
 
-        Assert.assertEquals( "{\"state\":\"WARNING\",\"message\":\"Nothing to edit.\"}", resultMessage );
+        assertEquals( "{\"state\":\"WARNING\",\"message\":\"Nothing to edit.\"}", resultMessage );
     }
 
     @Test
@@ -108,7 +108,7 @@ public class ApplyPermissionsRunnableTaskTest
 
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 0 );
 
-        Assert.assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"Permissions for 2 items are applied.\"}", resultMessage );
+        assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"Permissions for 2 items are applied.\"}", resultMessage );
     }
 
     @Test
@@ -129,7 +129,7 @@ public class ApplyPermissionsRunnableTaskTest
 
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 0 );
 
-        Assert.assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"Permissions for \\\"content-id1\\\" are applied.\"}", resultMessage );
+        assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"Permissions for \\\"content-id1\\\" are applied.\"}", resultMessage );
     }
 
     @Test
@@ -149,7 +149,7 @@ public class ApplyPermissionsRunnableTaskTest
 
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 0 );
 
-        Assert.assertEquals( "{\"state\":\"ERROR\",\"message\":\"Permissions for \\\"content1\\\" could not be applied.\"}",
+        assertEquals( "{\"state\":\"ERROR\",\"message\":\"Permissions for \\\"content1\\\" could not be applied.\"}",
                              resultMessage );
     }
 
@@ -174,7 +174,7 @@ public class ApplyPermissionsRunnableTaskTest
 
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 0 );
 
-        Assert.assertEquals(
+        assertEquals(
             "{\"state\":\"WARNING\",\"message\":\"Permissions for \\\"content1\\\" are applied. Failed to apply permissions for 2 items. \"}",
             resultMessage );
     }

@@ -2,8 +2,8 @@ package com.enonic.xp.portal.impl.exception;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 
@@ -30,7 +30,7 @@ import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.AdditionalMatchers.not;
 import static org.mockito.Mockito.when;
 
@@ -48,7 +48,7 @@ public class ExceptionRendererImplTest
 
     private MockPostProcessor postProcessor;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.resourceService = Mockito.mock( ResourceService.class );

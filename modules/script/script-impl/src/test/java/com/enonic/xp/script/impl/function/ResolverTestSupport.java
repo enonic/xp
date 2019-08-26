@@ -2,7 +2,7 @@ package com.enonic.xp.script.impl.function;
 
 import java.io.File;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
@@ -22,7 +22,7 @@ public class ResolverTestSupport
 
     protected ResourceService resourceService;
 
-    @Before
+    @BeforeEach
     public final void setup()
     {
         this.resourceService = Mockito.mock( ResourceService.class );

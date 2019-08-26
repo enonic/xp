@@ -5,8 +5,8 @@ import java.io.InputStream;
 import java.util.Map;
 
 import org.apache.felix.framework.Felix;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 import org.ops4j.pax.tinybundles.core.TinyBundle;
@@ -24,7 +24,7 @@ public abstract class BundleBasedTest
 
     private Felix felix;
 
-    @Before
+    @BeforeEach
     public final void setup()
         throws Exception
     {
@@ -43,7 +43,7 @@ public abstract class BundleBasedTest
         return this.felix.getBundleContext();
     }
 
-    @After
+    @AfterEach
     public final void destory()
         throws Exception
     {

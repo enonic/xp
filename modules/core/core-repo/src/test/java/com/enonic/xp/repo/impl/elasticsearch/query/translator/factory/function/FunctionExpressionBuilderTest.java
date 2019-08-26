@@ -6,14 +6,14 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.index.query.SimpleQueryStringBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.query.expr.FunctionExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FunctionExpressionBuilderTest
 {

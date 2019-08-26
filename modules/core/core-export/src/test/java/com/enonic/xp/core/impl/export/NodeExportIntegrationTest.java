@@ -4,9 +4,9 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.time.Instant;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.TemporaryFolder;
 
 import com.google.common.io.ByteSource;
@@ -27,7 +27,7 @@ import static com.enonic.xp.core.impl.export.writer.NodeExportPathResolver.BINAR
 import static com.enonic.xp.core.impl.export.writer.NodeExportPathResolver.NODE_XML_EXPORT_NAME;
 import static com.enonic.xp.core.impl.export.writer.NodeExportPathResolver.SYSTEM_FOLDER_NAME;
 import static com.enonic.xp.core.impl.export.writer.NodeExportPathResolver.VERSION_FOLDER;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class NodeExportIntegrationTest
     extends AbstractNodeTest
@@ -35,7 +35,7 @@ public class NodeExportIntegrationTest
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

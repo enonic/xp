@@ -1,6 +1,6 @@
 package com.enonic.xp.launcher.impl.env;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.launcher.LauncherException;
 

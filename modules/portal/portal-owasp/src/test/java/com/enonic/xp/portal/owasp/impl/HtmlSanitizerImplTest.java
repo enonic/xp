@@ -2,8 +2,8 @@ package com.enonic.xp.portal.owasp.impl;
 
 import java.nio.charset.StandardCharsets;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.io.Resources;
 
@@ -104,7 +104,7 @@ public class HtmlSanitizerImplTest
         throws Exception
     {
         final String resource = readHtml( name + "_sanitized" );
-        Assert.assertEquals( resource, html );
+        assertEquals( resource, html );
     }
 
     private String readHtml( final String name )

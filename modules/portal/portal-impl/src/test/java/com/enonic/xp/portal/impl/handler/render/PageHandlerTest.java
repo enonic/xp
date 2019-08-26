@@ -1,7 +1,7 @@
 package com.enonic.xp.portal.impl.handler.render;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.net.MediaType;
@@ -22,14 +22,14 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebResponse;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PageHandlerTest
     extends RenderBaseHandlerTest
 {
     private PageHandler handler;
 
-    @Before
+    @BeforeEach
     public final void setup()
         throws Exception
     {

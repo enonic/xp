@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
@@ -14,7 +14,7 @@ import static com.enonic.xp.security.acl.Permission.CREATE;
 import static com.enonic.xp.security.acl.Permission.MODIFY;
 import static com.enonic.xp.security.acl.Permission.PUBLISH;
 import static com.enonic.xp.security.acl.Permission.READ;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class NodePermissionsResolverTest
 {

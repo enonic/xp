@@ -1,8 +1,8 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.query;
 
 import org.elasticsearch.index.query.QueryBuilder;
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.FieldExpr;
@@ -24,6 +24,6 @@ public class NotQueryBuilderTest
         final QueryBuilder query =
             NotQueryBuilder.build( CompareExpressionBuilder.build( compareExpr, new SearchQueryFieldNameResolver() ) );
 
-        Assert.assertEquals( cleanString( expected ), cleanString( query.toString() ) );
+        assertEquals( cleanString( expected ), cleanString( query.toString() ) );
     }
 }

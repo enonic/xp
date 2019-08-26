@@ -2,8 +2,8 @@ package com.enonic.xp.web.jetty.impl.websocket;
 
 import java.util.List;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -16,7 +16,7 @@ import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.jetty.impl.JettyController;
 import com.enonic.xp.web.jetty.impl.JettyTestSupport;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class WebSocketServiceImplTest
     extends JettyTestSupport
@@ -82,7 +82,7 @@ public class WebSocketServiceImplTest
     }
 
     @Test
-    @Ignore("failing on travis-ci all the time")
+    @Disabled("failing on travis-ci all the time")
     public void sendFromServer()
         throws Exception
     {

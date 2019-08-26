@@ -4,9 +4,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Maps;
 
@@ -37,7 +37,7 @@ public class FindNodesByQueryCommandTest_order
 
     private static final String ORDER_ASC = "ASC";
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
@@ -60,9 +60,9 @@ public class FindNodesByQueryCommandTest_order
         FindNodesByQueryResult result = sort( orders );
 
         Iterator<Node> iterator = getNodes( result.getNodeIds() ).iterator();
-        Assert.assertEquals( "node2", iterator.next().name().toString() );
-        Assert.assertEquals( "node3", iterator.next().name().toString() );
-        Assert.assertEquals( "node1", iterator.next().name().toString() );
+        assertEquals( "node2", iterator.next().name().toString() );
+        assertEquals( "node3", iterator.next().name().toString() );
+        assertEquals( "node1", iterator.next().name().toString() );
 
     }
 
@@ -73,9 +73,9 @@ public class FindNodesByQueryCommandTest_order
         FindNodesByQueryResult result = sort( orders );
 
         Iterator<Node> iterator = getNodes( result.getNodeIds() ).iterator();
-        Assert.assertEquals( "node3", iterator.next().name().toString() );
-        Assert.assertEquals( "node1", iterator.next().name().toString() );
-        Assert.assertEquals( "node2", iterator.next().name().toString() );
+        assertEquals( "node3", iterator.next().name().toString() );
+        assertEquals( "node1", iterator.next().name().toString() );
+        assertEquals( "node2", iterator.next().name().toString() );
 
     }
 
@@ -86,9 +86,9 @@ public class FindNodesByQueryCommandTest_order
         FindNodesByQueryResult result = sort( orders );
 
         Iterator<Node> iterator = getNodes( result.getNodeIds() ).iterator();
-        Assert.assertEquals( "node2", iterator.next().name().toString() );
-        Assert.assertEquals( "node1", iterator.next().name().toString() );
-        Assert.assertEquals( "node3", iterator.next().name().toString() );
+        assertEquals( "node2", iterator.next().name().toString() );
+        assertEquals( "node1", iterator.next().name().toString() );
+        assertEquals( "node3", iterator.next().name().toString() );
     }
 
     @Test
@@ -98,9 +98,9 @@ public class FindNodesByQueryCommandTest_order
         FindNodesByQueryResult result = sort( orders );
 
         Iterator<Node> iterator = getNodes( result.getNodeIds() ).iterator();
-        Assert.assertEquals( "node2", iterator.next().name().toString() );
-        Assert.assertEquals( "node3", iterator.next().name().toString() );
-        Assert.assertEquals( "node1", iterator.next().name().toString() );
+        assertEquals( "node2", iterator.next().name().toString() );
+        assertEquals( "node3", iterator.next().name().toString() );
+        assertEquals( "node1", iterator.next().name().toString() );
     }
 
     @Test
@@ -110,9 +110,9 @@ public class FindNodesByQueryCommandTest_order
         FindNodesByQueryResult result = sort( orders );
 
         Iterator<Node> iterator = getNodes( result.getNodeIds() ).iterator();
-        Assert.assertEquals( "node2", iterator.next().name().toString() );
-        Assert.assertEquals( "node1", iterator.next().name().toString() );
-        Assert.assertEquals( "node3", iterator.next().name().toString() );
+        assertEquals( "node2", iterator.next().name().toString() );
+        assertEquals( "node1", iterator.next().name().toString() );
+        assertEquals( "node3", iterator.next().name().toString() );
 
     }
 
@@ -123,9 +123,9 @@ public class FindNodesByQueryCommandTest_order
         FindNodesByQueryResult result = sort( orders );
 
         Iterator<Node> iterator = getNodes( result.getNodeIds() ).iterator();
-        Assert.assertEquals( "node1", iterator.next().name().toString() );
-        Assert.assertEquals( "node3", iterator.next().name().toString() );
-        Assert.assertEquals( "node2", iterator.next().name().toString() );
+        assertEquals( "node1", iterator.next().name().toString() );
+        assertEquals( "node3", iterator.next().name().toString() );
+        assertEquals( "node2", iterator.next().name().toString() );
     }
 
     @Test
@@ -135,9 +135,9 @@ public class FindNodesByQueryCommandTest_order
         FindNodesByQueryResult result = sort( orders );
 
         Iterator<Node> iterator = getNodes( result.getNodeIds() ).iterator();
-        Assert.assertEquals( "node2", iterator.next().name().toString() );
-        Assert.assertEquals( "node3", iterator.next().name().toString() );
-        Assert.assertEquals( "node1", iterator.next().name().toString() );
+        assertEquals( "node2", iterator.next().name().toString() );
+        assertEquals( "node3", iterator.next().name().toString() );
+        assertEquals( "node1", iterator.next().name().toString() );
     }
 
     @Test
@@ -147,9 +147,9 @@ public class FindNodesByQueryCommandTest_order
         FindNodesByQueryResult result = sort( orders );
 
         Iterator<Node> iterator = getNodes( result.getNodeIds() ).iterator();
-        Assert.assertEquals( "node2", iterator.next().name().toString() );
-        Assert.assertEquals( "node1", iterator.next().name().toString() );
-        Assert.assertEquals( "node3", iterator.next().name().toString() );
+        assertEquals( "node2", iterator.next().name().toString() );
+        assertEquals( "node1", iterator.next().name().toString() );
+        assertEquals( "node3", iterator.next().name().toString() );
     }
 
     private Map<String, Object> createPropertyMap( Long longValue, String stringValue, Boolean booleanValue )

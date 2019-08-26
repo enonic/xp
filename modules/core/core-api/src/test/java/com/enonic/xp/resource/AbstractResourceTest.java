@@ -3,7 +3,7 @@ package com.enonic.xp.resource;
 import java.io.File;
 import java.io.FileOutputStream;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 
@@ -25,7 +25,7 @@ public class AbstractResourceTest
         ByteSource.wrap( value.getBytes( Charsets.UTF_8 ) ).copyTo( new FileOutputStream( file ) );
     }
 
-    @Before
+    @BeforeEach
     public void setup()
         throws Exception
     {

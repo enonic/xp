@@ -2,9 +2,9 @@ package com.enonic.xp.repo.impl.node.query.aggregation;
 
 import java.util.Iterator;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.aggregation.Aggregation;
 import com.enonic.xp.aggregation.Bucket;
@@ -20,12 +20,12 @@ import com.enonic.xp.query.aggregation.TermsAggregationQuery;
 import com.enonic.xp.query.aggregation.metric.StatsAggregationQuery;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class StatsAggregationTest
     extends AbstractNodeTest
 {
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
@@ -76,7 +76,7 @@ public class StatsAggregationTest
     private void verifyStatsAggregation( final Bucket parentBucket, String parentBucketKey, double min, double max, double avg, double sum,
                                          double count )
     {
-        Assert.assertEquals( "Wrong parent bucket key", parentBucketKey, parentBucket.getKey() );
+        assertEquals( "Wrong parent bucket key", parentBucketKey, parentBucket.getKey() );
 
         assertEquals( 1, parentBucket.getSubAggregations().getSize() );
         final Aggregation subAgg = parentBucket.getSubAggregations().get( "subquery" );

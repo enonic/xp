@@ -1,7 +1,7 @@
 package com.enonic.xp.impl.server.rest.task;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.branch.Branch;
@@ -23,7 +23,7 @@ public class DumpRunnableTaskTest
 {
     private DumpService dumpService;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp()
         throws Exception

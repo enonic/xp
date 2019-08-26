@@ -12,16 +12,16 @@ import org.elasticsearch.cluster.metadata.IndexMetaData;
 import org.elasticsearch.cluster.metadata.MetaData;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
 import org.elasticsearch.node.Node;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
 import com.enonic.xp.cluster.ClusterHealth;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ElasticsearchClusterTest
 {
@@ -33,7 +33,7 @@ public class ElasticsearchClusterTest
 
     private ClusterAdminClient clusterAdminClient;
 
-    @Before
+    @BeforeEach
     public void setup()
         throws Exception
     {
@@ -84,11 +84,11 @@ public class ElasticsearchClusterTest
         setClusterHealth( ClusterHealthStatus.GREEN );
 
         this.activator.activate( this.context );
-        Assert.assertNull( this.activator.reg );
+        assertNull( this.activator.reg );
 
         this.activator.enable();
-        Assert.assertNotNull( this.activator.reg );
-        Assert.assertSame( this.clientReg, this.activator.reg );
+        assertNotNull( this.activator.reg );
+        assertSame( this.clientReg, this.activator.reg );
 
         this.activator.disable();
         Mockito.verify( this.clientReg, Mockito.times( 1 ) ).unregister();

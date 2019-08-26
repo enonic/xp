@@ -2,7 +2,7 @@ package com.enonic.xp.lib.content;
 
 import java.time.Instant;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.content.Content;

@@ -1,14 +1,14 @@
 package com.enonic.xp.internal.blobstore.file;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
 import com.enonic.xp.internal.blobstore.file.config.FileBlobStoreConfig;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FileBlobStoreProviderTest
 {
@@ -19,7 +19,7 @@ public class FileBlobStoreProviderTest
 
     private FileBlobStoreConfig config;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.provider = new FileBlobStoreProvider();

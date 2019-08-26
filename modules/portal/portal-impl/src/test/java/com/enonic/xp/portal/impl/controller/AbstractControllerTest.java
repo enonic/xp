@@ -5,8 +5,8 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.junit.Assert;
-import org.junit.Before;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -53,7 +53,7 @@ public abstract class AbstractControllerTest
         this.mapper.enable( SerializationFeature.WRITE_NULL_MAP_VALUES );
     }
 
-    @Before
+    @BeforeEach
     public void setup()
         throws Exception
     {
@@ -114,14 +114,14 @@ public abstract class AbstractControllerTest
         final String resource = "/" + getClass().getName().replace( '.', '/' ) + "-" + name + ".json";
         final URL url = getClass().getResource( resource );
 
-        Assert.assertNotNull( "File [" + resource + "] not found", url );
+        assertNotNull( "File [" + resource + "] not found", url );
         final JsonNode expectedJson = this.mapper.readTree( url );
         final JsonNode actualJson = this.mapper.readTree( actual );
 
         final String expectedStr = this.mapper.writeValueAsString( expectedJson );
         final String actualStr = this.mapper.writeValueAsString( actualJson );
 
-        Assert.assertEquals( expectedStr, actualStr );
+        assertEquals( expectedStr, actualStr );
     }
 
     private String normalizeHTMLString( final String text )

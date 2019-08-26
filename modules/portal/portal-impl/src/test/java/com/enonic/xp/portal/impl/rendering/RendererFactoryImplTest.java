@@ -1,6 +1,6 @@
 package com.enonic.xp.portal.impl.rendering;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
@@ -8,7 +8,7 @@ import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RendererFactoryImplTest
 {

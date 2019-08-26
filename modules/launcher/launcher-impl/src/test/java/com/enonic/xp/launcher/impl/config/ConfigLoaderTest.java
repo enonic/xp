@@ -4,10 +4,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Properties;
 
-import org.junit.Assert;
-import org.junit.Before;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
@@ -22,7 +22,7 @@ public class ConfigLoaderTest
 
     private ConfigLoader configLoader;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
@@ -54,8 +54,8 @@ public class ConfigLoaderTest
         throws Exception
     {
         final ConfigProperties props = this.configLoader.load();
-        Assert.assertNotNull( props );
-        Assert.assertTrue( !props.isEmpty() );
+        assertNotNull( props );
+        assertTrue( !props.isEmpty() );
     }
 
     @Test
@@ -65,9 +65,9 @@ public class ConfigLoaderTest
         setupHomeProperties();
 
         final ConfigProperties props = this.configLoader.load();
-        Assert.assertNotNull( props );
-        Assert.assertTrue( props.size() > 2 );
-        Assert.assertEquals( "home.value", props.get( "home.param" ) );
-        Assert.assertEquals( "home.other.value", props.get( "home.other.param" ) );
+        assertNotNull( props );
+        assertTrue( props.size() > 2 );
+        assertEquals( "home.value", props.get( "home.param" ) );
+        assertEquals( "home.other.value", props.get( "home.other.param" ) );
     }
 }

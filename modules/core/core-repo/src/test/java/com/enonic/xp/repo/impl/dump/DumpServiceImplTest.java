@@ -8,10 +8,9 @@ import java.util.List;
 import java.util.TreeSet;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.Assert;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
@@ -91,7 +90,7 @@ import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.Reference;
 import com.enonic.xp.util.Version;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DumpServiceImplTest
     extends AbstractNodeTest
@@ -102,7 +101,7 @@ public class DumpServiceImplTest
     private DumpServiceImpl dumpService;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
@@ -913,9 +912,9 @@ public class DumpServiceImplTest
         assertEquals( 2, Iterables.size( postProcessedReferences ) );
 
         final String postValue = postNode.data().getString( "data.post" );
-        Assert.assertTrue( postValue.contains( "<figure class=\"editor-align-justify\">" ) );
-        Assert.assertTrue( postValue.contains( "<figure class=\"editor-align-justify editor-style-original\">" ) );
-        Assert.assertTrue( postValue.contains( "src=\"media://cf09fe7a-1be9-46bb-ad84-87ba69630cb7\"" ) );
+        assertTrue( postValue.contains( "<figure class=\"editor-align-justify\">" ) );
+        assertTrue( postValue.contains( "<figure class=\"editor-align-justify editor-style-original\">" ) );
+        assertTrue( postValue.contains( "src=\"media://cf09fe7a-1be9-46bb-ad84-87ba69630cb7\"" ) );
     }
 
     private void checkLanguageUpgrade( final Node draftNode )

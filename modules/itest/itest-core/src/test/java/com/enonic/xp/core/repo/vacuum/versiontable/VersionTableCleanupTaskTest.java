@@ -3,8 +3,8 @@ package com.enonic.xp.core.repo.vacuum.versiontable;
 import java.security.SecureRandom;
 import java.time.Instant;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
@@ -19,7 +19,7 @@ import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
 import com.enonic.xp.repo.impl.vacuum.versiontable.VersionTableCleanupTask;
 import com.enonic.xp.vacuum.VacuumTaskResult;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class VersionTableCleanupTaskTest
     extends AbstractNodeTest
@@ -29,7 +29,7 @@ public class VersionTableCleanupTaskTest
     private VersionTableCleanupTask task;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

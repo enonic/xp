@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
@@ -9,7 +9,7 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ContentNodeHelperTest
 {

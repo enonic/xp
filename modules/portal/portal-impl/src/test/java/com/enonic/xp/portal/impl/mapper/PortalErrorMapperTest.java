@@ -2,9 +2,9 @@ package com.enonic.xp.portal.impl.mapper;
 
 import java.net.URL;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,7 +40,7 @@ public class PortalErrorMapperTest
         final String resource = "/" + getClass().getName().replace( '.', '/' ) + "-" + name + ".json";
         final URL url = getClass().getResource( resource );
 
-        Assert.assertNotNull( "File [" + resource + "] not found", url );
+        assertNotNull( "File [" + resource + "] not found", url );
         final JsonNode expectedJson = this.mapper.readTree( url );
 
         final JsonMapGenerator generator = new JsonMapGenerator();
@@ -50,10 +50,10 @@ public class PortalErrorMapperTest
         final String expectedStr = this.mapper.writeValueAsString( expectedJson );
         final String actualStr = this.mapper.writeValueAsString( actualJson );
 
-        Assert.assertEquals( expectedStr, actualStr );
+        assertEquals( expectedStr, actualStr );
     }
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         final PortalRequest portalRequest = new PortalRequest();

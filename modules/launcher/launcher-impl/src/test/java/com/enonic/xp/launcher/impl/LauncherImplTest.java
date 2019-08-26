@@ -1,7 +1,7 @@
 package com.enonic.xp.launcher.impl;
 
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.TemporaryFolder;
 
 public class LauncherImplTest

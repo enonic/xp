@@ -3,12 +3,12 @@ package com.enonic.xp.xml.parser;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.io.CharSource;
 import com.google.common.io.CharStreams;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ByteOrderMarkHelperTest
 {

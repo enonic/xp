@@ -1,13 +1,13 @@
 package com.enonic.xp.inputtype;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.Input;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GeoPointTypeTest
     extends BaseInputTypeTest

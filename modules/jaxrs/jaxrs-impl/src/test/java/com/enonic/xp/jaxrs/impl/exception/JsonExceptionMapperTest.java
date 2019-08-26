@@ -5,8 +5,8 @@ import java.io.IOException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -15,13 +15,13 @@ import com.enonic.xp.market.MarketException;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceNotFoundException;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class JsonExceptionMapperTest
 {
     private JsonExceptionMapper mapper;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.mapper = new JsonExceptionMapper();

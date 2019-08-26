@@ -2,9 +2,9 @@ package com.enonic.xp.admin.impl.rest.resource.content.task;
 
 import java.util.stream.Collectors;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.admin.impl.rest.resource.content.json.DuplicateContentJson;
@@ -31,7 +31,7 @@ public class DuplicateRunnableTaskTest
 {
     private DuplicateContentsJson params;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp()
         throws Exception
@@ -90,7 +90,7 @@ public class DuplicateRunnableTaskTest
 
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
 
-        Assert.assertEquals(
+        assertEquals(
             "{\"state\":\"WARNING\",\"message\":\"4 items are duplicated ( Already duplicated: \\\"content3\\\" ). Item \\\"id2\\\" could not be duplicated.\"}",
             resultMessage );
     }
@@ -116,7 +116,7 @@ public class DuplicateRunnableTaskTest
 
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
 
-        Assert.assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"Item \\\"content1\\\" is duplicated.\"}", resultMessage );
+        assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"Item \\\"content1\\\" is duplicated.\"}", resultMessage );
     }
 
     @Test
@@ -140,6 +140,6 @@ public class DuplicateRunnableTaskTest
 
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
 
-        Assert.assertEquals( "{\"state\":\"ERROR\",\"message\":\"Failed to duplicate 2 items.\"}", resultMessage );
+        assertEquals( "{\"state\":\"ERROR\",\"message\":\"Failed to duplicate 2 items.\"}", resultMessage );
     }
 }

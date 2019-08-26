@@ -1,7 +1,7 @@
 package com.enonic.xp.impl.task;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -11,7 +11,7 @@ import com.enonic.xp.descriptor.Descriptors;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.task.TaskDescriptor;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TaskDescriptorServiceImplTest
 {
@@ -19,7 +19,7 @@ public class TaskDescriptorServiceImplTest
 
     private TaskDescriptorServiceImpl service;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.descriptorService = Mockito.mock( DescriptorService.class );

@@ -1,6 +1,6 @@
 package com.enonic.xp.core.content;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.UnmodifiableIterator;
@@ -20,7 +20,7 @@ import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ContentServiceImplTest_versions
     extends AbstractContentServiceTest

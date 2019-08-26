@@ -2,9 +2,9 @@ package com.enonic.xp.portal.impl.view;
 
 import java.util.Locale;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
 
@@ -22,7 +22,7 @@ public class LocalizeParamsTest
 
     private PortalRequest request;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

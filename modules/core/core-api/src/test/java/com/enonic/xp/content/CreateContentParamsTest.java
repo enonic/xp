@@ -2,8 +2,8 @@ package com.enonic.xp.content;
 
 import java.util.Locale;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.data.PropertyTree;
@@ -14,7 +14,7 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 
 import static com.enonic.xp.security.acl.Permission.READ;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CreateContentParamsTest
 {
@@ -115,7 +115,7 @@ public class CreateContentParamsTest
                 contentData( new PropertyTree() ).
                 displayName( "displayName" ).
                 build();
-            Assert.fail( "Expected exception" );
+            fail( "Expected exception" );
         }
         catch ( Exception e )
         {
@@ -133,7 +133,7 @@ public class CreateContentParamsTest
                 contentData( new PropertyTree() ).
                 displayName( "displayName" ).
                 build();
-            Assert.fail( "Expected exception" );
+            fail( "Expected exception" );
         }
         catch ( Exception e )
         {
@@ -151,7 +151,7 @@ public class CreateContentParamsTest
                 type( ContentTypeName.site() ).
                 displayName( "displayName" ).
                 build();
-            Assert.fail( "Expected exception" );
+            fail( "Expected exception" );
         }
         catch ( Exception e )
         {

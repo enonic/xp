@@ -1,7 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexPath;
@@ -16,12 +16,12 @@ import com.enonic.xp.query.expr.FieldExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FindNodesByQueryCommandTest_compare
     extends AbstractNodeTest
 {
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

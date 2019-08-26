@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.TemporaryFolder;
 
 import com.google.common.collect.Lists;
@@ -16,7 +16,7 @@ import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.Segment;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FileBlobStoreTest
 {
@@ -27,7 +27,7 @@ public class FileBlobStoreTest
 
     private final Segment segment = Segment.from( "test", "blob" );
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.blobStore = new FileBlobStore( this.temporaryFolder.getRoot() );
