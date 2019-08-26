@@ -2,6 +2,7 @@ package com.enonic.xp.lib.content;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -151,50 +152,56 @@ public abstract class BaseCreateOrModifyContextHandler
             root.remove( ContentPropertyNames.SITECONFIG );
 
             final PropertyTree result = this.translateToPropertyTree( root, contentTypeName );
-            final List<PropertySet> siteConfigs = createSiteConfigSets( value, contentTypeName );
+            final List<PropertySet> siteConfigs = createSiteConfigSets( value.get( ContentPropertyNames.SITECONFIG ), contentTypeName );
 
-            siteConfigs.forEach( propertySet -> {
-                final PropertySet newSet = propertySet.copy( result );
-                result.addSet( ContentPropertyNames.SITECONFIG, newSet );
-            } );
-
+            if ( siteConfigs != null )
+            {
+                siteConfigs.forEach( propertySet -> {
+                    final PropertySet newSet = propertySet.copy( result );
+                    result.addSet( ContentPropertyNames.SITECONFIG, newSet );
+                } );
+            }
             return result;
         }
 
         return this.translateToPropertyTree( createJson( value ), contentTypeName );
     }
 
-    List<PropertySet> createSiteConfigSets( final Map<String, Object> value, final ContentTypeName contentTypeName )
+    List<PropertySet> createSiteConfigSets( final Object siteConfig, final ContentTypeName contentTypeName )
     {
-        if ( value == null || !( value.get( ContentPropertyNames.SITECONFIG ) instanceof List ) )
+        if ( siteConfig instanceof Map )
         {
-            return null;
+            return List.of( createSitePropertySet( (Map) siteConfig, contentTypeName ) );
         }
 
-        final List<PropertySet> siteConfigsData = Lists.newArrayList();
-
-        final List<Map<String, Object>> siteConfigList = (List) value.get( ContentPropertyNames.SITECONFIG );
-
-        if ( siteConfigList == null )
+        if ( siteConfig instanceof List )
         {
-            return null;
+            return createSitePropertySets( (List) siteConfig, contentTypeName );
         }
 
-        for ( final Map<String, Object> appConfig : siteConfigList )
-        {
-            final ObjectNode appConfigNode = createJson( appConfig );
-            final PropertySet config = createSiteConfigSet( contentTypeName, appConfigNode );
-
-            if ( config != null )
-            {
-                siteConfigsData.add( config );
-            }
-        }
-        return siteConfigsData;
+        return null;
     }
 
-    private PropertySet createSiteConfigSet( final ContentTypeName contentTypeName, final ObjectNode appConfigNode )
+    private List<PropertySet> createSitePropertySets( final List<Map<String, Object>> siteConfigs, final ContentTypeName contentTypeName )
     {
+        if ( siteConfigs == null )
+        {
+            return null;
+        }
+
+        return siteConfigs.stream().
+            map( siteConfig -> createSitePropertySet( siteConfig, contentTypeName ) ).
+            collect( Collectors.toList() );
+    }
+
+    private PropertySet createSitePropertySet( final Map siteConfig, final ContentTypeName contentTypeName )
+    {
+        if ( siteConfig == null )
+        {
+            return null;
+        }
+
+        final ObjectNode appConfigNode = createJson( siteConfig );
         final ApplicationKey applicationKey = ApplicationKey.from( appConfigNode.get( "applicationKey" ).asText() );
         final ObjectNode appConfigData = (ObjectNode) appConfigNode.get( "config" );
 

@@ -231,6 +231,34 @@ exports.modifySiteConfig = function () {
     assert.assertJsonEquals(expect, result.data.siteConfig);
 };
 
+exports.modifySiteSingleDescriptor = function () {
+
+    var result = content.modify({
+        key: '/a/b/mycontent',
+        editor: function (c) {
+            c.data.siteConfig = {};
+            c.data.siteConfig.applicationKey = 'appKey1';
+            c.data.siteConfig.config = {};
+            c.data.siteConfig.config.a = 'a';
+            c.data.siteConfig.config.b = true;
+
+            return c;
+        }
+    });
+
+    var expect =
+        {
+            "applicationKey": "appKey1",
+            "config": {
+                "a": "a",
+                "b": true
+            }
+        }
+    ;
+
+    assert.assertJsonEquals(expect, result.data.siteConfig);
+};
+
 exports.modifySiteConfig_strict = function () {
 
     try {

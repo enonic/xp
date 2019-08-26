@@ -90,6 +90,38 @@ public class ModifyContentHandlerTest
     }
 
     @Test
+    public void modifySiteSingleDescriptor()
+    {
+        final Content content = TestDataFixtures.newSmallContent();
+        when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
+
+        when( this.contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenAnswer(
+            invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0],
+                                              TestDataFixtures.newSmallContent() ) );
+
+        mockXData();
+
+        final SiteDescriptor siteDescriptor1 = SiteDescriptor.create().
+            form( Form.create().
+                addFormItem( Input.create().
+                    label( "a" ).
+                    name( "a" ).
+                    inputType( InputTypeName.TEXT_LINE ).
+                    build() ).
+                addFormItem( Input.create().
+                    label( "b" ).
+                    name( "b" ).
+                    inputType( InputTypeName.CHECK_BOX ).
+                    build() ).
+                build() ).
+            build();
+
+        when( this.siteService.getDescriptor( ApplicationKey.from( "appKey1" ) ) ).thenReturn( siteDescriptor1 );
+        runFunction( "/test/ModifyContentHandlerTest.js", "modifySiteSingleDescriptor" );
+    }
+
+
+    @Test
     public void modifyById()
         throws Exception
     {
