@@ -1,7 +1,10 @@
 package com.enonic.xp.core.content;
 
-import org.junit.jupiter.api.Test;
+import java.util.Map;
 
+import org.junit.Test;
+
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.UnmodifiableIterator;
 
@@ -10,6 +13,8 @@ import com.enonic.xp.content.ActiveContentVersionEntry;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentPropertyNames;
+import com.enonic.xp.content.ContentVersion;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.FindContentVersionsParams;
 import com.enonic.xp.content.FindContentVersionsResult;
@@ -17,10 +22,14 @@ import com.enonic.xp.content.GetActiveContentVersionsParams;
 import com.enonic.xp.content.GetActiveContentVersionsResult;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.UpdateContentParams;
+import com.enonic.xp.content.WorkflowCheckState;
+import com.enonic.xp.content.WorkflowInfo;
+import com.enonic.xp.content.WorkflowState;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 
 public class ContentServiceImplTest_versions
     extends AbstractContentServiceTest
@@ -103,6 +112,39 @@ public class ContentServiceImplTest_versions
         final UnmodifiableIterator<ActiveContentVersionEntry> iterator = activeContentVersions.iterator();
 
         assertTrue( iterator.next().getContentVersion() != iterator.next().getContentVersion() );
+    }
+
+    @Test
+    public void version_workflow_info()
+        throws Exception
+    {
+        final ImmutableMap<String, WorkflowCheckState> checks =
+            ImmutableMap.of( "checkName1", WorkflowCheckState.APPROVED, "checkName2", WorkflowCheckState.PENDING );
+
+        final WorkflowInfo workflowInfo = WorkflowInfo.create().
+            state( WorkflowState.IN_PROGRESS ).
+            checks( checks ).
+            build();
+
+        final Content content = this.contentService.create( CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "This is my test content" ).
+            parent( ContentPath.ROOT ).
+            name( "myContent" ).
+            type( ContentTypeName.folder() ).
+            workflowInfo( workflowInfo ).
+            build() );
+
+        final FindContentVersionsResult versions = this.contentService.getVersions( FindContentVersionsParams.create().
+            contentId( content.getId() ).
+            build() );
+
+        final ContentVersion contentVersion = versions.getContentVersions().iterator().next();
+        final WorkflowInfo retrievedWorkflowInfo = contentVersion.getWorkflowInfo();
+
+        assertEquals( WorkflowState.IN_PROGRESS, retrievedWorkflowInfo.getState() );
+        assertEquals( WorkflowCheckState.APPROVED, retrievedWorkflowInfo.getChecks().get( "checkName1" ) );
+        assertEquals( WorkflowCheckState.PENDING, retrievedWorkflowInfo.getChecks().get( "checkName2" ) );
     }
 }
 

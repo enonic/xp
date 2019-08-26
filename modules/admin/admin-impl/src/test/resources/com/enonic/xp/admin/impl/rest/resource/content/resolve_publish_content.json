@@ -1,6 +1,7 @@
 {
   "allPublishable" : false,
   "containsInvalid": true,
+  "containsNotReady" : false,
   "dependentContents": [
     {
       "id": "dependant-contentId"

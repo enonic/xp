@@ -3,8 +3,8 @@ package com.enonic.xp.core.content;
 import java.time.Instant;
 import java.util.Iterator;
 
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.content.CompareContentParams;
@@ -25,6 +25,8 @@ import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.RenameContentParams;
+import com.enonic.xp.content.WorkflowInfo;
+import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
@@ -33,7 +35,7 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.util.Reference;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 
 public class ContentServiceImplTest_publish
     extends AbstractContentServiceTest
@@ -75,7 +77,35 @@ public class ContentServiceImplTest_publish
         assertEquals( 1, push.getPushedContents().getSize() );
     }
 
-    @Disabled
+    @Test
+    public void publish_workflow_not_ready()
+        throws Exception
+    {
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "This is my content" ).
+            name( "myContent" ).
+            parent( ContentPath.ROOT ).
+            type( ContentTypeName.folder() ).
+            workflowInfo( WorkflowInfo.create().
+                state( WorkflowState.PENDING_APPROVAL ).
+                build() ).
+            build();
+
+        final Content content = this.contentService.create( createContentParams );
+
+        final PublishContentResult push = this.contentService.publish( PushContentParams.create().
+            contentIds( ContentIds.from( content.getId() ) ).
+            target( CTX_OTHER.getBranch() ).
+            includeDependencies( false ).
+            build() );
+
+        assertEquals( 0, push.getDeletedContents().getSize() );
+        assertEquals( 1, push.getFailedContents().getSize() );
+        assertEquals( 0, push.getPushedContents().getSize() );
+    }
+
+    @Ignore
     @Test
     public void push_one_content_not_valid()
         throws Exception
@@ -193,7 +223,7 @@ public class ContentServiceImplTest_publish
     }
 
 
-    @Disabled("This test is not correct; it should not be allowed to exclude parent if new")
+    @Ignore("This test is not correct; it should not be allowed to exclude parent if new")
     @Test
     public void push_exclude_empty()
         throws Exception
@@ -233,7 +263,7 @@ public class ContentServiceImplTest_publish
         assertEquals( 1, result.getPushedContents().getSize() );
     }
 
-    @Disabled("This test is not correct; it should not be allowed to exclude parent if new")
+    @Ignore("This test is not correct; it should not be allowed to exclude parent if new")
     @Test
     public void push_exclude_with_children()
         throws Exception

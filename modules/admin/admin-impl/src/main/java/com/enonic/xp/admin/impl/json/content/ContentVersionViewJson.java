@@ -5,8 +5,8 @@ import java.util.Objects;
 
 import com.google.common.collect.ImmutableList;
 
+import com.enonic.xp.admin.impl.rest.resource.content.ContentPrincipalsResolver;
 import com.enonic.xp.content.ContentVersion;
-import com.enonic.xp.security.Principal;
 
 public class ContentVersionViewJson
     extends ContentVersionJson
@@ -14,9 +14,10 @@ public class ContentVersionViewJson
 
     private ImmutableList<String> workspaces;
 
-    public ContentVersionViewJson( final ContentVersion contentVersion, final Principal modifier, final List<String> workspaces )
+    public ContentVersionViewJson( final ContentVersion contentVersion, final ContentPrincipalsResolver resolver,
+                                   final List<String> workspaces )
     {
-        super( contentVersion, modifier );
+        super( contentVersion, resolver );
         this.workspaces = ImmutableList.copyOf( workspaces );
     }
 
