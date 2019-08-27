@@ -48,14 +48,13 @@ public class ConfigPropertiesTest
         assertEquals( "value1 value3 value2 value1", props.get( "key3" ) );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testInterpolate_errorLoop()
     {
         final ConfigProperties props = new ConfigProperties();
         props.put( "key1", "value1 ${key1}" );
         assertEquals( 1, props.size() );
 
-        props.interpolate();
-        fail( "Should throw exception" );
+        assertThrows(IllegalArgumentException.class, () -> props.interpolate());
     }
 }

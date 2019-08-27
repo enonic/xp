@@ -65,7 +65,7 @@ public class UpdateIssueCommentCommandTest
         assertEquals( "Creator One", comment.getCreatorDisplayName() );
     }
 
-    @Test(expected = NodeNotFoundException.class)
+    @Test
     public void updateCommentNotExists()
     {
         final UpdateIssueCommentParams params = UpdateIssueCommentParams.create().
@@ -78,23 +78,23 @@ public class UpdateIssueCommentCommandTest
         Mockito.when( this.nodeService.update( Mockito.any( UpdateNodeParams.class ) ) ).thenThrow(
             new NodeNotFoundException( "Node not found" ) );
 
-        final IssueComment comment = command.execute();
+        assertThrows(NodeNotFoundException.class, () ->  command.execute());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void updateNoText()
     {
         final UpdateIssueCommentParams params = UpdateIssueCommentParams.create().comment( NodeId.from( UUID.randomUUID() ) ).build();
         final UpdateIssueCommentCommand command = updateIssueCommentCommand( params );
-        command.execute();
+        assertThrows(IllegalArgumentException.class, () -> command.execute());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void updateNoCommentId()
     {
         final UpdateIssueCommentParams params = UpdateIssueCommentParams.create().text( "text" ).build();
         final UpdateIssueCommentCommand command = updateIssueCommentCommand( params );
-        command.execute();
+        assertThrows(IllegalArgumentException.class, () -> command.execute());
     }
 
     private UpdateIssueCommentCommand updateIssueCommentCommand( UpdateIssueCommentParams params )

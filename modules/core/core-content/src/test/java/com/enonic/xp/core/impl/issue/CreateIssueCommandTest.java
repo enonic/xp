@@ -50,12 +50,12 @@ public class CreateIssueCommandTest
         assertEquals( IssueNameFactory.create( issue.getIndex() ), issue.getName() );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testNoTitle()
     {
         final CreateIssueParams params = CreateIssueParams.create().build();
         final CreateIssueCommand command = createIssueCommand( params );
-        command.execute();
+        assertThrows(IllegalArgumentException.class, () -> command.execute() );
     }
 
 

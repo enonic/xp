@@ -7,10 +7,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ComponentPathTest
 {
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void from_throws_IllegalArgumentException_when_odd_number_of_path_elements()
     {
-        ComponentPath.from( "region[0]" );
+        assertThrows(IllegalArgumentException.class, () -> ComponentPath.from( "region[0]" ));
     }
 
     @Test

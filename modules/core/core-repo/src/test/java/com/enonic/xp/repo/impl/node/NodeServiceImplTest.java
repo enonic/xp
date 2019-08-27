@@ -89,31 +89,33 @@ public class NodeServiceImplTest
         assertEquals( createdNode, fetchedNode );
     }
 
-    @Test(expected = NodeNotFoundException.class)
+    @Test
     public void get_by_id_non_existing()
         throws Exception
     {
-        this.nodeService.getById( NodeId.from( "a" ) );
+        assertThrows(NodeNotFoundException.class, () -> this.nodeService.getById( NodeId.from( "a" ) ));
     }
 
-    @Test(expected = RepositoryNotFoundException.class)
+    @Test
     public void get_by_id_repo_non_existing()
         throws Exception
     {
-        ContextBuilder.from( ContextAccessor.current() ).
-            repositoryId( "missing-repo" ).
-            build().
-            callWith( () -> this.nodeService.getById( NodeId.from( "a" ) ) );
+        assertThrows(RepositoryNotFoundException.class, () ->
+            ContextBuilder.from(ContextAccessor.current()).
+                    repositoryId("missing-repo").
+                    build().
+                    callWith(() -> this.nodeService.getById(NodeId.from("a")))
+        );
     }
 
-    @Test(expected = BranchNotFoundException.class)
+    @Test
     public void get_by_id_branch_non_existing()
         throws Exception
     {
-        ContextBuilder.from( ContextAccessor.current() ).
+        assertThrows(BranchNotFoundException.class, () -> ContextBuilder.from( ContextAccessor.current() ).
             branch( "missing-branch" ).
             build().
-            callWith( () -> this.nodeService.getById( NodeId.from( "a" ) ) );
+            callWith( () -> this.nodeService.getById( NodeId.from( "a" ) ) ));
     }
 
     @Test

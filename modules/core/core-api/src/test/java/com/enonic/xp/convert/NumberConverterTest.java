@@ -22,10 +22,10 @@ public abstract class NumberConverterTest<T extends Number>
         assertEquals( this.num, Converters.convert( this.num.toString(), this.type ) );
     }
 
-    @Test(expected = ConvertException.class)
+    @Test
     public void testParseError()
     {
-        Converters.convert( "abc", this.type );
+        assertThrows(ConvertException.class, () -> Converters.convert( "abc", this.type ) );
     }
 
     @Test

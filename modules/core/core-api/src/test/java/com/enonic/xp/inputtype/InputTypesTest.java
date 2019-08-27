@@ -37,9 +37,9 @@ public class InputTypesTest
         assertEquals( InputTypeName.TEXT_LINE.toString(), type.getName().toString() );
     }
 
-    @Test(expected = InputTypeNotFoundException.class)
+    @Test
     public void resolveType_unknown()
     {
-        this.types.resolve( InputTypeName.from( "unknown" ) );
+        assertThrows(InputTypeNotFoundException.class, () -> this.types.resolve( InputTypeName.from( "unknown" ) ));
     }
 }

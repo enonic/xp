@@ -4,9 +4,11 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.repo.impl.SearchSource;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class ESSourceFactoryTest
 {
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void unknown_impl()
         throws Exception
     {
@@ -15,6 +17,6 @@ public class ESSourceFactoryTest
         {
         };
 
-        ESSourceFactory.create( unknown );
+        assertThrows(IllegalArgumentException.class, () -> ESSourceFactory.create( unknown ));
     }
 }

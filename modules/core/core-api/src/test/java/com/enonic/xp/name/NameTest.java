@@ -62,18 +62,18 @@ public class NameTest
         create( "test ÑñçÇàèìòùáéíóú" );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void linebreak()
         throws Exception
     {
-        create( "Hepp\nHapp" );
+        assertThrows(IllegalArgumentException.class, () -> create( "Hepp\nHapp" ));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void tab()
         throws Exception
     {
-        create( "Hepp\tHapp" );
+        assertThrows(IllegalArgumentException.class, () -> create( "Hepp\tHapp" ));
     }
 
     @Test
@@ -138,18 +138,18 @@ public class NameTest
         create( "^:;#$%&(),@[]!{}=_.-" );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void slash_not_valid()
         throws Exception
     {
-        create( "test/me" );
+        assertThrows(IllegalArgumentException.class, () -> create( "test/me" ));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void backslash_not_valid()
         throws Exception
     {
-        create( "test\\me" );
+        assertThrows(IllegalArgumentException.class, () -> create( "test\\me" ));
     }
 
     private Name create( final String name )

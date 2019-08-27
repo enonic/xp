@@ -4,11 +4,13 @@ import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class ExceptionsTest
 {
-    @Test(expected = IOException.class)
+    @Test
     public void throwUnchecked()
     {
-        throw Exceptions.unchecked( new IOException() );
+        assertThrows(IOException.class, () -> {throw Exceptions.unchecked( new IOException() ); } );
     }
 }

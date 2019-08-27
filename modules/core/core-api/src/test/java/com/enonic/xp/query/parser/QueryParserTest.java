@@ -31,10 +31,10 @@ public class QueryParserTest
         assertEquals( expected, expr.toString() );
     }
 
-    @Test(expected = QueryException.class)
+    @Test
     public void invalid_query()
     {
-        QueryParser.parse( "a - 3" );
+        assertThrows(QueryException.class, () -> QueryParser.parse( "a - 3" ) );
     }
 
     @Test
@@ -106,10 +106,10 @@ public class QueryParserTest
         testQuery( "a > 3 ORDER BY a DESC", "a > 3.0 ORDER BY a DESC" );
     }
 
-    @Test(expected = QueryException.class)
+    @Test
     public void illegal_value_function()
     {
-        QueryParser.parse( "a = badFunc()" );
+        assertThrows(QueryException.class, () -> QueryParser.parse( "a = badFunc()" ) );
     }
 
     @Test
@@ -130,15 +130,15 @@ public class QueryParserTest
         testQuery( "order by score() DESC, a", "ORDER BY score() DESC, a ASC" );
     }
 
-    @Test(expected = QueryException.class)
+    @Test
     public void invalid_order_expression()
     {
-        ConstraintExpr expr = QueryParser.parseCostraintExpression( "AND" );
+        assertThrows(QueryException.class, () ->  QueryParser.parseCostraintExpression( "AND" ));
     }
 
-    @Test(expected = QueryException.class)
+    @Test
     public void invalid_constraint_expression()
     {
-        List<OrderExpr> expr = QueryParser.parseOrderExpressions( "AND < 3" );
+        assertThrows(QueryException.class, () -> QueryParser.parseOrderExpressions( "AND < 3" ));
     }
 }

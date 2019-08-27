@@ -79,13 +79,13 @@ public class RoleContentProcessorTest
         assertNull( result );
     }
 
-    @Test(expected = RoleRequiredException.class)
+    @Test
     public void testProcessUpdateWithNoRights()
         throws RoleRequiredException
     {
         ProcessUpdateParams params = createProcessUpdateParams( PrincipalKeys.empty(), "white", "blue" );
 
-        this.roleContentProcessor.processUpdate( params );
+        assertThrows(RoleRequiredException.class, () -> this.roleContentProcessor.processUpdate( params ));
     }
 
     @Test

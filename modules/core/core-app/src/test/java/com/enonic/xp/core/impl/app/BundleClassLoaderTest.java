@@ -26,7 +26,7 @@ public class BundleClassLoaderTest
         assertNotNull( clz );
     }
 
-    @Test(expected = ClassNotFoundException.class)
+    @Test
     public void testLoadClass_failed()
         throws Exception
     {
@@ -34,7 +34,7 @@ public class BundleClassLoaderTest
 
         final Bundle bundle = deploy( "bundle", builder );
         final BundleClassLoader loader = new BundleClassLoader( bundle );
-        loader.loadClass( "no.class.found" );
+        assertThrows(ClassNotFoundException.class, () -> loader.loadClass( "no.class.found" ));
     }
 
     @Test

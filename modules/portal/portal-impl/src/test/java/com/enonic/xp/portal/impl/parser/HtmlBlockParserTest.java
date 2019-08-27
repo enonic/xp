@@ -122,14 +122,14 @@ public class HtmlBlockParserTest
         assertEquals( StaticHtml.class, blocks.get( 6 ).getClass() );
     }
 
-    @Test(expected = RenderException.class)
+    @Test
     public void testParseInvalidHtml()
         throws Exception
     {
         final String html = readResource( "htmlBlockInvalid.html" );
 
         final HtmlBlockParser parser = new HtmlBlockParser();
-        parser.parse( html );
+        assertThrows(RenderException.class, () -> parser.parse( html ));
     }
 
     private String readResource( final String resourceName )

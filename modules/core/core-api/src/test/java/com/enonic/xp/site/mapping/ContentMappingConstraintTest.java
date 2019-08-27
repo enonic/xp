@@ -29,11 +29,11 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ContentMappingConstraintTest
 {
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testInvalidExpression()
         throws Exception
     {
-        ContentMappingConstraint.parse( "_path='/'" );
+        assertThrows(IllegalArgumentException.class, () -> ContentMappingConstraint.parse( "_path='/'" ));
     }
 
     @Test

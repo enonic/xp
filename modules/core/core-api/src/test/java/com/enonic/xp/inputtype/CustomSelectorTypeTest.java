@@ -57,11 +57,11 @@ public class CustomSelectorTypeTest
         this.type.validate( stringProperty( "name" ), config );
     }
 
-    @Test(expected = InputTypeValidationException.class)
+    @Test
     public void testValidate_invalidType()
     {
         final InputTypeConfig config = newEmptyConfig();
-        this.type.validate( booleanProperty( true ), config );
+        assertThrows(InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), config ));
     }
 
     private InputTypeConfig newEmptyConfig()

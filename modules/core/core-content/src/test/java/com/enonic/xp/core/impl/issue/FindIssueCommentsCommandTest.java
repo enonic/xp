@@ -66,7 +66,7 @@ public class FindIssueCommentsCommandTest
         assertEquals( 1, result.getIssueComments().size() );
     }
 
-    @Test(expected = NodeNotFoundException.class)
+    @Test
     public void testFindIssuesIssueNotExists()
         throws Exception
     {
@@ -83,10 +83,10 @@ public class FindIssueCommentsCommandTest
 
         Mockito.when( this.nodeService.getById( Mockito.any( NodeId.class ) ) ).thenThrow( new NodeNotFoundException( "Node not found" ) );
 
-        FindIssueCommentsResult result = command.execute();
+        assertThrows(NodeNotFoundException.class, () -> command.execute());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testFindIssuesNoIssue()
         throws Exception
     {
@@ -98,7 +98,7 @@ public class FindIssueCommentsCommandTest
             build();
         final FindIssueCommentsCommand command = createCommand( commentQuery );
 
-        FindIssueCommentsResult result = command.execute();
+        assertThrows(IllegalArgumentException.class, () -> command.execute());
     }
 
     private FindIssueCommentsCommand createCommand( final IssueCommentQuery query )

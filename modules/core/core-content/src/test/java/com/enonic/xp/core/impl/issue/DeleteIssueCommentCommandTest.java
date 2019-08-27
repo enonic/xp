@@ -43,12 +43,12 @@ public class DeleteIssueCommentCommandTest
         assertEquals( params.getComment(), result.getIds().first() );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testNoCommentId()
     {
         final DeleteIssueCommentParams params = DeleteIssueCommentParams.create().build();
         final DeleteIssueCommentCommand command = createDeleteIssueCommentCommand( params );
-        command.execute();
+        assertThrows(IllegalArgumentException.class, () -> command.execute());
     }
 
     private DeleteIssueCommentCommand createDeleteIssueCommentCommand( DeleteIssueCommentParams params )

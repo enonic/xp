@@ -79,11 +79,11 @@ public class ContentServiceImplTest_getNearestSite
         assertEquals( site.getId(), fetchedSite.getId() );
     }
 
-    @Test(expected = ContentNotFoundException.class)
+    @Test
     public void child_of_site_pending_publish_master()
         throws Exception
     {
-        AUTHORIZED_MASTER_CONTEXT.callWith( () -> {
+        assertThrows(ContentNotFoundException.class, () -> AUTHORIZED_MASTER_CONTEXT.callWith( () -> {
             final Content site = createSite();
 
             final Content child = createContent( site.getPath(), ContentPublishInfo.create().
@@ -91,14 +91,14 @@ public class ContentServiceImplTest_getNearestSite
                 build() );
 
             return this.contentService.getNearestSite( child.getId() );
-        } );
+        } ));
     }
 
-    @Test(expected = ContentNotFoundException.class)
+    @Test
     public void deep_child_of_site_pending_publish_master()
         throws Exception
     {
-        AUTHORIZED_MASTER_CONTEXT.callWith( () -> {
+        assertThrows(ContentNotFoundException.class, () -> AUTHORIZED_MASTER_CONTEXT.callWith( () -> {
             final Content site = createSite();
 
             final Content childLevel1 = createContent( site.getPath() );
@@ -110,14 +110,14 @@ public class ContentServiceImplTest_getNearestSite
 
             return this.contentService.getNearestSite( childLevel3.getId() );
 
-        } );
+        } ));
     }
 
-    @Test(expected = ContentNotFoundException.class)
+    @Test
     public void child_of_site_published_master()
         throws Exception
     {
-        AUTHORIZED_MASTER_CONTEXT.callWith( () -> {
+        assertThrows(ContentNotFoundException.class, () -> AUTHORIZED_MASTER_CONTEXT.callWith( () -> {
             final Content site = createSite();
 
             final Content child = createContent( site.getPath(), ContentPublishInfo.create().
@@ -130,7 +130,7 @@ public class ContentServiceImplTest_getNearestSite
             assertEquals( site, nearestSite );
 
             return null;
-        } );
+        } ));
     }
 
     private Content createSite()

@@ -51,32 +51,32 @@ public class IdProviderTest
         assertEquals( "myIdProvider", idProviderKey.toString() );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testInvalidIdProviderKeyCharacter1()
         throws Exception
     {
-        IdProviderKey.from( "my<IdProvider" );
+        assertThrows(IllegalArgumentException.class, () -> IdProviderKey.from( "my<IdProvider" ));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testInvalidIdProviderKeyCharacter2()
         throws Exception
     {
-        IdProviderKey.from( "myUser>Store" );
+        assertThrows(IllegalArgumentException.class, () -> IdProviderKey.from( "myUser>Store" ));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testInvalidIdProviderKeyCharacter3()
         throws Exception
     {
-        IdProviderKey.from( "myUser\"Store" );
+        assertThrows(IllegalArgumentException.class, () -> IdProviderKey.from( "myUser\"Store" ));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testInvalidIdProviderKeyCharacter4()
         throws Exception
     {
-        IdProviderKey.from( "myUserSt'ore" );
+        assertThrows(IllegalArgumentException.class, () -> IdProviderKey.from( "myUserSt'ore" ));
     }
 
 }

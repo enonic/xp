@@ -85,15 +85,15 @@ public class MappingBuilderTest
         builder.urlPatterns( "/", "/*" );
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testFilter_null()
     {
-        MappingBuilder.newBuilder().filter( null );
+        assertThrows(NullPointerException.class, () -> MappingBuilder.newBuilder().filter( null ));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testServlet_null()
     {
-        MappingBuilder.newBuilder().servlet( null );
+        assertThrows(NullPointerException.class, () -> MappingBuilder.newBuilder().servlet( null ));
     }
 }

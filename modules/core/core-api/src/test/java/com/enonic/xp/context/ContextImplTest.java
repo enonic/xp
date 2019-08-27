@@ -89,22 +89,26 @@ public class ContextImplTest
         assertTrue( result );
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void testRunWith_runtimeException()
     {
         final ContextImpl context = createContext();
+
+        assertThrows(RuntimeException.class, () ->
         context.callWith( () -> {
             throw new RuntimeException();
-        } );
+        } ) );
     }
 
-    @Test(expected = IOException.class)
+    @Test
     public void testRunWith_checkedException()
     {
         final ContextImpl context = createContext();
+
+        assertThrows(IOException.class, () ->
         context.callWith( () -> {
             throw new IOException();
-        } );
+        } ) );
     }
 
     @Test

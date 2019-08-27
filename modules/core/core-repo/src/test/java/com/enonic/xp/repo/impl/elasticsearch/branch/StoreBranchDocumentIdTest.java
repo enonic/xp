@@ -28,25 +28,25 @@ public class StoreBranchDocumentIdTest
         assertEquals( "myBranch", branchDocumentId.getBranch().getValue() );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void from_missing_ws()
         throws Exception
     {
-        BranchDocumentId.from( "myBlobKey_" );
+        assertThrows(IllegalArgumentException.class, () -> BranchDocumentId.from( "myBlobKey_" ));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void from_missing_nodeId()
         throws Exception
     {
-        BranchDocumentId.from( "_myBranch" );
+        assertThrows(IllegalArgumentException.class, () -> BranchDocumentId.from( "_myBranch" ));
     }
 
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void from_missing_separator()
         throws Exception
     {
-        BranchDocumentId.from( "myBlobKeymyBranch" );
+        assertThrows(IllegalArgumentException.class, () -> BranchDocumentId.from( "myBlobKeymyBranch" ));
     }
 }

@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.support.AbstractEqualsTest;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class IssueNameTest
 {
 
@@ -39,21 +41,21 @@ public class IssueNameTest
         equalsTest.assertEqualsAndHashCodeContract();
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testIllegalName1()
     {
-        IssueName.from( null );
+        assertThrows(NullPointerException.class, () -> IssueName.from( null ));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testIllegalName2()
     {
-        IssueName.from( "" );
+        assertThrows(IllegalArgumentException.class, () -> IssueName.from( "" ) );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testIllegalName3()
     {
-        IssueName.from( "a/" );
+        assertThrows(IllegalArgumentException.class, () -> IssueName.from( "a/" ) );
     }
 }

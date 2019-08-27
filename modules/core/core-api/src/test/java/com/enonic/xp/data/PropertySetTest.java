@@ -9,13 +9,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class PropertySetTest
 {
-    @Test(expected = IndexOutOfBoundsException.class)
+    @Test
     public void setProperty_given_unsuccessive_index_then_IndexOutOfBoundsException_is_thrown()
     {
         PropertySet set = new PropertySet( new PropertyTree() );
 
         // exercise & verify
-        set.setProperty( "myProp", 1, ValueFactory.newString( "myValue" ) );
+        assertThrows(IndexOutOfBoundsException.class, () -> set.setProperty( "myProp", 1, ValueFactory.newString( "myValue" ) ));
     }
 
     @Test

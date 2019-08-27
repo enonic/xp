@@ -138,7 +138,7 @@ public class DateTimeTypeTest
     }
 
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testCreateDefaultValue_invalid()
     {
         final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "2014-18-16T05:03:45" ).
@@ -148,7 +148,7 @@ public class DateTimeTypeTest
                 build() ).
             build();
 
-        this.type.createDefaultValue( input );
+        assertThrows(IllegalArgumentException.class, () ->  this.type.createDefaultValue( input ));
     }
 
     @Test
@@ -195,12 +195,12 @@ public class DateTimeTypeTest
         assertSame( ValueTypes.DATE_TIME, value.getType() );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testRelativeDefaultValue_date_time_invalid()
     {
         final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "+1year -5months -36d +2minutes -1haaur" ).build();
 
-        final Value value = this.type.createDefaultValue( input );
+        assertThrows(IllegalArgumentException.class, () -> this.type.createDefaultValue( input ) );
     }
 
     @Test
@@ -217,11 +217,11 @@ public class DateTimeTypeTest
         this.type.validate( localDateTimeProperty(), config );
     }
 
-    @Test(expected = InputTypeValidationException.class)
+    @Test
     public void testValidate_invalidType()
     {
         final InputTypeConfig config = newEmptyConfig();
-        this.type.validate( booleanProperty( true ), config );
+        assertThrows(InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), config ));
     }
 
     private InputTypeConfig newEmptyConfig()

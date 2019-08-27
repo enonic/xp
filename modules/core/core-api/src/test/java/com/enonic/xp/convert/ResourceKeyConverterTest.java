@@ -24,9 +24,9 @@ public class ResourceKeyConverterTest
 
     }
 
-    @Test(expected = ConvertException.class)
+    @Test
     public void testFailure()
     {
-        Converters.convert( "/some/path", ResourceKey.class );
+        assertThrows(ConvertException.class, () -> Converters.convert( "/some/path", ResourceKey.class ));
     }
 }

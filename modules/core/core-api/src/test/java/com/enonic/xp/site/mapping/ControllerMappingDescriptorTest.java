@@ -49,18 +49,18 @@ public class ControllerMappingDescriptorTest
         assertTrue( descriptor.isFilter() );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testCreateFilterOrController()
         throws Exception
     {
-        final ControllerMappingDescriptor descriptor = ControllerMappingDescriptor.create().
+        assertThrows(IllegalArgumentException.class, () ->  ControllerMappingDescriptor.create().
             controller( ResourceKey.from( ApplicationKey.from( "com.enonic.test.app" ), "/site/controllers/mycontroller.js" ) ).
             filter( ResourceKey.from( ApplicationKey.from( "com.enonic.test.app" ), "/site/controllers/myfilter.js" ) ).
             pattern( "/people/.*" ).
             invertPattern( true ).
             contentConstraint( "type:'com.enonic.test.app:people'" ).
             order( 5 ).
-            build();
+            build() );
     }
 
     @Test
@@ -114,7 +114,7 @@ public class ControllerMappingDescriptorTest
         assertEquals( descriptor, copy );
         assertEquals( descriptor.hashCode(), copy.hashCode() );
         assertEquals( descriptor, descriptor );
-        Assert.assertNotEquals( descriptor, descriptor.toString() );
+        assertNotEquals( descriptor, descriptor.toString() );
     }
 
     @Test

@@ -26,24 +26,25 @@ public class ApplicationNameResolverTest
         assertEquals( "myBundle", bundleName );
     }
 
-    @Test(expected = IOException.class)
+    @Test
     public void invalid_bundle()
         throws Exception
     {
         final ByteSource source = ByteSource.wrap( "abc".getBytes() );
-        final String appName = ApplicationNameResolver.resolve( source );
+        assertThrows(IOException.class, () -> {
+                final String appName = ApplicationNameResolver.resolve( source );
+                assertNull( appName );
+        } );
 
-        assertNull( appName );
     }
 
-    @Test(expected = ApplicationInvalidException.class)
+    @Test
     public void not_application()
         throws Exception
     {
         final ByteSource source = wrapBundle( newBundle( "myBundle", false ) );
-        final String appName = ApplicationNameResolver.resolve( source );
-
-        assertNull( appName );
+        assertThrows(ApplicationInvalidException.class, () -> {final String appName = ApplicationNameResolver.resolve( source );
+            assertNull( appName );});
     }
 
 

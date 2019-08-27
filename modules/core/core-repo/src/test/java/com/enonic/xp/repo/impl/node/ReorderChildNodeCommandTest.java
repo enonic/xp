@@ -151,7 +151,7 @@ public class ReorderChildNodeCommandTest
         assertEquals( "c", iterator.next().toString() );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void move_last_missing_order_values()
         throws Exception
     {
@@ -181,7 +181,7 @@ public class ReorderChildNodeCommandTest
             searchService( this.searchService ).
             build().
             execute();
-        refresh();
+        assertThrows(IllegalArgumentException.class, () -> refresh());
     }
 
     private void setManualOrderValueToNull( final NodeId nodeId )

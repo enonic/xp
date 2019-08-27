@@ -62,10 +62,10 @@ public class ResourceKeyTest
         assertEquals( root, key.isRoot() );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void invalidUri()
     {
-        ResourceKey.from( "test" );
+        assertThrows(IllegalArgumentException.class, () -> ResourceKey.from( "test" ));
     }
 
     @Test
@@ -111,6 +111,6 @@ public class ResourceKeyTest
         final ResourceKey key3 = ResourceKey.from( "myapplication-1.0.0:/a" );
 
         assertEquals( key1.hashCode(), key2.hashCode() );
-        Assert.assertNotEquals( key1.hashCode(), key3.hashCode() );
+        assertNotEquals( key1.hashCode(), key3.hashCode() );
     }
 }

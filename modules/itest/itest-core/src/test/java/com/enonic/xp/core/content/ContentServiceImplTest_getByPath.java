@@ -33,17 +33,17 @@ public class ContentServiceImplTest_getByPath
         assertNotNull( this.contentService.getByPath( content.getPath() ) );
     }
 
-    @Test(expected = ContentNotFoundException.class)
+    @Test
     public void test_pending_publish_master()
         throws Exception
     {
-        AUTHORIZED_MASTER_CONTEXT.callWith( () -> {
+        assertThrows(ContentNotFoundException.class, () -> AUTHORIZED_MASTER_CONTEXT.callWith( () -> {
             final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create().
                 from( Instant.now().plus( Duration.ofDays( 1 ) ) ).
                 build() );
 
             return this.contentService.getByPath( content.getPath() );
-        } );
+        } ));
     }
 
     @Test
@@ -58,18 +58,18 @@ public class ContentServiceImplTest_getByPath
         assertNotNull( this.contentService.getByPath( content.getPath() ) );
     }
 
-    @Test(expected = ContentNotFoundException.class)
+    @Test
     public void test_publish_expired_master()
         throws Exception
     {
-        AUTHORIZED_MASTER_CONTEXT.callWith( () -> {
+        assertThrows(ContentNotFoundException.class, () -> AUTHORIZED_MASTER_CONTEXT.callWith( () -> {
             final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create().
                 from( Instant.now().minus( Duration.ofDays( 1 ) ) ).
                 to( Instant.now().minus( Duration.ofDays( 1 ) ) ).
                 build() );
 
             return this.contentService.getByPath( content.getPath() );
-        } );
+        } ));
     }
 
     @Test

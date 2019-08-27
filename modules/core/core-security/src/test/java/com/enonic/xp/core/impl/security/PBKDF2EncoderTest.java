@@ -28,17 +28,17 @@ public class PBKDF2EncoderTest
         assertFalse( encoder.validate( "fiskepudding ", encodedPwd ) );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void unknown_format()
         throws Exception
     {
-        assertTrue( encoder.validate( "fiskepudding", this.encoder.getType() + ":fisk" ) );
+        assertThrows(IllegalArgumentException.class, () -> assertTrue( encoder.validate( "fiskepudding", this.encoder.getType() + ":fisk" ) ));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void unknown_type()
         throws Exception
     {
-        assertTrue( encoder.validate( "fiskepudding", "fisk" + ":ost:bolle" ) );
+        assertThrows(IllegalArgumentException.class, () -> assertTrue( encoder.validate( "fiskepudding", "fisk" + ":ost:bolle" ) ));
     }
 }

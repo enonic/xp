@@ -63,10 +63,10 @@ public class StringTemplateTest
         assertEquals( "This is a file test.\n" + "1, {{two}}, 3\n", normalizeString( value ) );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void loadFromResource_notFound()
     {
-        StringTemplate.load( getClass(), "unknown.txt" );
+        assertThrows(IllegalArgumentException.class, () -> StringTemplate.load( getClass(), "unknown.txt" ) );
     }
 
     private String normalizeString( final String text )

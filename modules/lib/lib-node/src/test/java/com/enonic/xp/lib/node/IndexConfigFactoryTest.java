@@ -96,11 +96,11 @@ public class IndexConfigFactoryTest
         assertEquals( IndexConfig.BY_TYPE, config.getConfigForPath( PropertyPath.from( "my.random.path" ) ) );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void unknown_alias()
         throws Exception
     {
-        create( "{ \"default\" : \"fisk\" }" );
+        assertThrows(IllegalArgumentException.class, () -> create( "{ \"default\" : \"fisk\" }" ));
     }
 
     private IndexConfigDocument create( final String json )

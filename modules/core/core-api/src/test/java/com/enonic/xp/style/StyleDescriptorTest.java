@@ -31,7 +31,7 @@ public class StyleDescriptorTest
         assertEquals( 1, styleDescriptor.getElements().size() );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testDuplicateStyles()
     {
         ElementStyle element = ImageStyle.create().

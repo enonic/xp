@@ -19,10 +19,10 @@ public class ConvertersTest
         assertNull( value3 );
     }
 
-    @Test(expected = ConvertException.class)
+    @Test
     public void testConvertError()
     {
-        Converters.convert( "abc", Integer.class );
+        assertThrows(ConvertException.class, () -> Converters.convert( "abc", Integer.class ));
     }
 
     @Test

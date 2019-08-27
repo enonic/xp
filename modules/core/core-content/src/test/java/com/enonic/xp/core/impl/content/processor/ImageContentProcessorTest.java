@@ -82,7 +82,7 @@ public class ImageContentProcessorTest
         assertFalse( imageContentProcessor.supports( contentType ) );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testCreateMoreThanOneAttachmentFails()
     {
         final CreateAttachments createAttachments = CreateAttachments.create().
@@ -103,7 +103,7 @@ public class ImageContentProcessorTest
         final ProcessCreateParams processCreateParams = new ProcessCreateParams( params, MediaInfo.create().
             build() );
 
-        this.imageContentProcessor.processCreate( processCreateParams );
+        assertThrows(IllegalArgumentException.class, () -> this.imageContentProcessor.processCreate( processCreateParams ) );
     }
 
     @Test

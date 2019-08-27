@@ -65,12 +65,12 @@ public class DateTypeTest
         assertEquals( value.getObject(), LocalDate.now().plusYears( 1 ).plusMonths( -5 ).plusDays( -36 ) );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testCreateDefaultValue_invalid()
     {
         final Input input = getDefaultInputBuilder( InputTypeName.DATE, "2014-18-16" ).build();
 
-        this.type.createDefaultValue( input );
+        assertThrows(IllegalArgumentException.class, () -> this.type.createDefaultValue( input ) );
     }
 
     @Test
@@ -80,11 +80,11 @@ public class DateTypeTest
         this.type.validate( localDateProperty(), config );
     }
 
-    @Test(expected = InputTypeValidationException.class)
+    @Test
     public void testValidate_invalidType()
     {
         final InputTypeConfig config = newEmptyConfig();
-        this.type.validate( booleanProperty( true ), config );
+        assertThrows(InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), config ) );
     }
 
     private InputTypeConfig newEmptyConfig()

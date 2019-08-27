@@ -52,12 +52,12 @@ public class TimeTypeTest
 
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testCreateDefaultValue_invalid()
     {
         final Input input = getDefaultInputBuilder( InputTypeName.TIME, "25:08:08" ).build();
 
-        this.type.createDefaultValue( input );
+        assertThrows(IllegalArgumentException.class, () -> this.type.createDefaultValue( input ) );
     }
 
     @Test
@@ -67,10 +67,10 @@ public class TimeTypeTest
         this.type.validate( localTimeProperty(), config );
     }
 
-    @Test(expected = InputTypeValidationException.class)
+    @Test
     public void testValidate_invalidType()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
-        this.type.validate( booleanProperty( true ), config );
+        assertThrows(InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), config ));
     }
 }

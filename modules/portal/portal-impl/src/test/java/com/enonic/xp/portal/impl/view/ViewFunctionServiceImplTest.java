@@ -27,14 +27,14 @@ public class ViewFunctionServiceImplTest
         assertEquals( "Hello Dummy", result );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testNotFound()
     {
         final ViewFunctionParams params = new ViewFunctionParams().name( "dummy" );
-        this.service.execute( params );
+        assertThrows(IllegalArgumentException.class, () -> this.service.execute( params ));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testAddRemove_notFound()
     {
         final DummyViewFunction function = new DummyViewFunction();
@@ -42,6 +42,6 @@ public class ViewFunctionServiceImplTest
         this.service.removeFunction( function );
 
         final ViewFunctionParams params = new ViewFunctionParams().name( "dummy" );
-        this.service.execute( params );
+        assertThrows(IllegalArgumentException.class, () -> this.service.execute( params ));
     }
 }

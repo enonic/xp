@@ -96,16 +96,16 @@ public class CreateContentCommandTest
         Mockito.when( this.nodeService.create( Mockito.any( CreateNodeParams.class ) ) ).thenAnswer( this::mockNodeServiceCreate );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void contentTypeNull()
     {
         CreateContentCommand command = createContentCommand( createContentParams().build() );
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( null );
         // exercise
-        command.execute();
+        assertThrows(IllegalArgumentException.class, () -> command.execute());
     }
 
-    @Test(expected = ContentNotFoundException.class)
+    @Test
     public void badParentContentPath()
     {
         PropertyTree existingContentData = new PropertyTree();
@@ -123,7 +123,7 @@ public class CreateContentCommandTest
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn(
             ContentType.create().superType( ContentTypeName.documentMedia() ).name( ContentTypeName.dataMedia() ).build() );
 
-        command.execute();
+        assertThrows(ContentNotFoundException.class, () -> command.execute());
     }
 
     @Test
@@ -172,7 +172,7 @@ public class CreateContentCommandTest
         assertEquals( content.getParentPath(), ContentPath.from( ContentPath.ROOT, "site" ) );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createContentInInvalidPageTemplate()
     {
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
@@ -194,10 +194,10 @@ public class CreateContentCommandTest
 
         CreateContentCommand command = createContentCommand( params );
 
-        command.execute();
+        assertThrows(IllegalArgumentException.class, () -> command.execute());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createContentForDisallowedContentType()
     {
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
@@ -218,7 +218,7 @@ public class CreateContentCommandTest
             build();
 
         CreateContentCommand command = createContentCommand( params );
-        command.execute();
+        assertThrows(IllegalArgumentException.class, () -> command.execute());
     }
 
     @Test

@@ -25,6 +25,8 @@ import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.SiteService;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class UpdateContentCommandTest
 {
     private static final Instant CREATED_TIME = LocalDateTime.of( 2013, 1, 1, 12, 0, 0, 0 ).toInstant( ZoneOffset.UTC );
@@ -43,7 +45,7 @@ public class UpdateContentCommandTest
 
     private final MediaInfo mediaInfo = MediaInfo.create().mediaType( "image/jpg" ).build();
 
-    @Test(expected = ContentNotFoundException.class)
+    @Test
     public void given_content_not_found_when_handle_then_NOT_FOUND_is_returned()
         throws Exception
     {
@@ -71,7 +73,7 @@ public class UpdateContentCommandTest
         Mockito.when( nodeService.getById( Mockito.isA( NodeId.class ) ) ).thenThrow( new NodeNotFoundException( "Node not found" ) );
 
         // exercise
-        command.execute();
+        assertThrows(ContentNotFoundException.class, () -> command.execute());
     }
 
 

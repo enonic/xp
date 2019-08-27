@@ -22,9 +22,9 @@ public class ImagePlaceholderFunctionTest
                       result );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testExecute_widthRequired()
     {
-        execute( "imagePlaceholder", "height=2" );
+        assertThrows(IllegalArgumentException.class, () -> execute( "imagePlaceholder", "height=2" ));
     }
 }

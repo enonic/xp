@@ -60,24 +60,24 @@ public class DoubleTypeTest
         this.type.validate( doubleProperty( 1.3 ), config );
     }
 
-    @Test(expected = InputTypeValidationException.class)
+    @Test
     public void testValidate_invalidType()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
-        this.type.validate( booleanProperty( true ), config );
+        assertThrows(InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), config ));
     }
 
-    @Test(expected = InputTypeValidationException.class)
+    @Test
     public void testValidate_invalidMin()
     {
         final InputTypeConfig config = InputTypeConfig.create().property( InputTypeProperty.create( "min", "5" ).build( )).build();
-        this.type.validate( doubleProperty( 2 ), config );
+        assertThrows(InputTypeValidationException.class, () -> this.type.validate( doubleProperty( 2 ), config ));
     }
 
-    @Test(expected = InputTypeValidationException.class)
+    @Test
     public void testValidate_invalidMax()
     {
         final InputTypeConfig config = InputTypeConfig.create().property( InputTypeProperty.create( "max", "5" ).build( )).build();
-        this.type.validate( doubleProperty( 7 ), config );
+        assertThrows(InputTypeValidationException.class, () -> this.type.validate( doubleProperty( 7 ), config ));
     }
 }

@@ -6,10 +6,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ComponentNameTest
 {
-    @Test(expected = NullPointerException.class)
+    @Test
     public void constructor_throws_NullPointerException_when_given_value_is_null()
     {
-        new ComponentName( null );
+        assertThrows(NullPointerException.class, () -> new ComponentName( null ));
     }
 
     @Test

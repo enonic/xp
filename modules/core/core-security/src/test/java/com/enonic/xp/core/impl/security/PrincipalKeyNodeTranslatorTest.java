@@ -60,7 +60,7 @@ public class PrincipalKeyNodeTranslatorTest
         assertEquals( IdProviderKey.system(), principalKey.getIdProviderKey() );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void unknown_type()
         throws Exception
     {
@@ -72,7 +72,7 @@ public class PrincipalKeyNodeTranslatorTest
             name( NodeName.from( "rmy" ) ).
             build();
 
-        PrincipalKeyNodeTranslator.toKey( userNode );
+        assertThrows(IllegalArgumentException.class, () -> PrincipalKeyNodeTranslator.toKey( userNode ));
     }
 
 }

@@ -121,10 +121,10 @@ public class NodePathTest
         assertEquals( "/", new NodePath( "/one" ).removeFromBeginning( new NodePath( "/one" ) ).toString() );
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void removeFromBeginning_throws_IllegalStateException()
     {
-        assertEquals( "/", new NodePath( "/" ).removeFromBeginning( new NodePath( "/one" ) ).toString() );
+        assertThrows(IllegalStateException.class, () -> assertEquals( "/", new NodePath( "/" ).removeFromBeginning( new NodePath( "/one" ) ).toString() ));
     }
 
 }
