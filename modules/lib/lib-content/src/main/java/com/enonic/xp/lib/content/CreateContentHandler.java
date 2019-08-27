@@ -19,7 +19,7 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public final class CreateContentHandler
-    extends BaseCreateOrModifyContextHandler
+    extends BaseContentHandler
 {
     private final static Random RANDOM = new SecureRandom();
 

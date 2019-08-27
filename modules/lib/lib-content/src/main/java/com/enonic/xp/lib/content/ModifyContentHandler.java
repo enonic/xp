@@ -18,7 +18,7 @@ import com.enonic.xp.lib.content.mapper.ContentMapper;
 import com.enonic.xp.script.ScriptValue;
 
 public final class ModifyContentHandler
-    extends BaseCreateOrModifyContextHandler
+    extends BaseContentHandler
 {
     private String key;
 

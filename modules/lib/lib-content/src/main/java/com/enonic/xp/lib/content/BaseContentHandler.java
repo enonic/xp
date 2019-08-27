@@ -28,7 +28,7 @@ import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 
-public abstract class BaseCreateOrModifyContextHandler
+public abstract class BaseContentHandler
     extends BaseContextHandler
 {
     private ContentTypeService contentTypeService;
