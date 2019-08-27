@@ -24,7 +24,6 @@ public class DateHistogramAggregationsTest
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 

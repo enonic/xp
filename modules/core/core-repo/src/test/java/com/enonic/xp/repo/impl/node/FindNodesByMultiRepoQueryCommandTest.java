@@ -46,12 +46,10 @@ public class FindNodesByMultiRepoQueryCommandTest
     private static final User REPO_USER_3 =
         User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "repo-user-3" ) ).login( "repo-user-3" ).build();
 
-    @Override
     @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 

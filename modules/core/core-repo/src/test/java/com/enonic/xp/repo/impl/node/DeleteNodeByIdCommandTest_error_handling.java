@@ -30,7 +30,6 @@ public class DeleteNodeByIdCommandTest_error_handling
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 

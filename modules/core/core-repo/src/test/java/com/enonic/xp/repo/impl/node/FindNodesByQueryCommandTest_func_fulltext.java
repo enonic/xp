@@ -31,7 +31,6 @@ public class FindNodesByQueryCommandTest_func_fulltext
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 

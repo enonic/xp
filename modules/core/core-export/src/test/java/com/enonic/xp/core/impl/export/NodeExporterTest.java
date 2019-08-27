@@ -52,7 +52,7 @@ public class NodeExporterTest
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.ROOT ).
-            targetDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myExport" ) ).
+            targetDirectory( Paths.get( this.temporaryFolder.toString(), "myExport" ) ).
             build().
             execute();
 
@@ -81,7 +81,7 @@ public class NodeExporterTest
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.ROOT ).
-            targetDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myExport" ) ).
+            targetDirectory( Paths.get( this.temporaryFolder.toString(), "myExport" ) ).
             nodeExportListener( nodeExportListener ).
             build().
             execute();
@@ -126,7 +126,7 @@ public class NodeExporterTest
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.ROOT ).
-            targetDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myExport" ) ).
+            targetDirectory( Paths.get( this.temporaryFolder.toString(), "myExport" ) ).
             build().
             execute();
 
@@ -153,7 +153,7 @@ public class NodeExporterTest
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.create( "/mynode/child1/child1_1" ).build() ).
-            targetDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myExport" ) ).
+            targetDirectory( Paths.get( this.temporaryFolder.toString(), "myExport" ) ).
             build().
             execute();
 
@@ -181,7 +181,7 @@ public class NodeExporterTest
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.create( "/mynode/child1" ).build() ).
-            targetDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myExport" ) ).
+            targetDirectory( Paths.get( this.temporaryFolder.toString(), "myExport" ) ).
             build().
             execute();
 
@@ -216,7 +216,7 @@ public class NodeExporterTest
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.ROOT ).
-            targetDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myExport" ) ).
+            targetDirectory( Paths.get( this.temporaryFolder.toString(), "myExport" ) ).
             build().
             execute();
 
@@ -237,7 +237,7 @@ public class NodeExporterTest
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.ROOT ).
-            targetDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myExport" ) ).
+            targetDirectory( Paths.get( this.temporaryFolder.toString(), "myExport" ) ).
             build().
             execute();
 
@@ -248,8 +248,8 @@ public class NodeExporterTest
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.ROOT ).
             xpVersion( "X.Y.Z-SNAPSHOT" ).
-            rootDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myRoot" ) ).
-            targetDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myRoot/myExport" ) ).
+            rootDirectory( Paths.get( this.temporaryFolder.toString(), "myRoot" ) ).
+            targetDirectory( Paths.get( this.temporaryFolder.toString(), "myRoot/myExport" ) ).
             build().
             execute();
 
@@ -270,7 +270,7 @@ public class NodeExporterTest
             nodeService( this.nodeService ).
             nodeExportWriter( exportWriter ).
             sourceNodePath( NodePath.ROOT ).
-            targetDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myExport" ) ).
+            targetDirectory( Paths.get( this.temporaryFolder.toString(), "myExport" ) ).
             build().
             execute();
 
@@ -291,17 +291,17 @@ public class NodeExporterTest
 
     private void assertFileExists( final String path )
     {
-        assertTrue( new File( this.temporaryFolder.getRoot().toFile().getPath() + path ).exists(), "file " + path + " not found" );
+        assertTrue( new File( this.temporaryFolder.toFile().getPath() + path ).exists(), "file " + path + " not found" );
     }
 
     private void assertFileDoesNotExist( final String path )
     {
-        assertFalse( new File( this.temporaryFolder.getRoot().toFile().getPath() + path ).exists(), "file " + path + " found" );
+        assertFalse( new File( this.temporaryFolder.toFile().getPath() + path ).exists(), "file " + path + " found" );
     }
 
     private void printPaths()
     {
-        final File file = this.temporaryFolder.getRoot().toFile();
+        final File file = this.temporaryFolder.toFile();
 
         doPrintPaths( file );
     }

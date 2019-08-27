@@ -33,8 +33,6 @@ public class PageHandlerTest
     public final void setup()
         throws Exception
     {
-        super.setup();
-
         this.handler = new PageHandler();
         this.handler.setContentService( this.contentService );
         this.handler.setPageDescriptorService( this.pageDescriptorService );

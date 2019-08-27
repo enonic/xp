@@ -15,12 +15,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ContentServiceImplTest_getByPath
     extends AbstractContentServiceTest
 {
-    @Override
-    public void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
 
     @Test
     public void test_pending_publish_draft()

@@ -38,7 +38,6 @@ public class FindNodesByQueryCommandTest_order_geoDistance
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 

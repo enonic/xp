@@ -31,11 +31,9 @@ public class DeleteRunnableTaskTest
     private DeleteContentJson params;
 
     @BeforeEach
-    @Override
     public void setUp()
         throws Exception
     {
-        super.setUp();
         final Content child = Content.create().
             id( ContentId.from( "id4" ) ).
             path( "/content/content1/content4" ).

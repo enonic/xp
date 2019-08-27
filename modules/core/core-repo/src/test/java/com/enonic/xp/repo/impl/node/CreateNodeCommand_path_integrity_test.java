@@ -33,7 +33,6 @@ public class CreateNodeCommand_path_integrity_test
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 

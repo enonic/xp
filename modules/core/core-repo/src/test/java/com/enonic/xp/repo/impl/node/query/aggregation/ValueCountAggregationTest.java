@@ -29,7 +29,6 @@ public class ValueCountAggregationTest
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 
@@ -75,7 +74,7 @@ public class ValueCountAggregationTest
 
     private void verifyValueCount( final Bucket parentBucket, String parentBucketKey, double value )
     {
-        assertEquals( "Wrong parent bucket key", parentBucketKey, parentBucket.getKey() );
+        assertEquals( parentBucketKey, parentBucket.getKey(), "Wrong parent bucket key" );
 
         assertEquals( 1, parentBucket.getSubAggregations().getSize() );
         final Aggregation subAgg = parentBucket.getSubAggregations().get( "subquery" );

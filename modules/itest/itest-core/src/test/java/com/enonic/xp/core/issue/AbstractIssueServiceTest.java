@@ -94,8 +94,6 @@ public class AbstractIssueServiceTest
     public void setUp()
         throws Exception
     {
-        super.setUp();
-
         ContextAccessor.INSTANCE.set( CTX_DEFAULT );
 
         final MemoryBlobStore blobStore = new MemoryBlobStore();

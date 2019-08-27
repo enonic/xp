@@ -24,7 +24,7 @@ public class LogConfiguratorTest
     public void setup()
     {
         this.env = Mockito.mock( Environment.class );
-        Mockito.when( this.env.getHomeDir() ).thenReturn( this.temporaryFolder.getRoot().toFile() );
+        Mockito.when( this.env.getHomeDir() ).thenReturn( this.temporaryFolder.toFile() );
     }
 
     private void writeLogbackFile( final String xml )

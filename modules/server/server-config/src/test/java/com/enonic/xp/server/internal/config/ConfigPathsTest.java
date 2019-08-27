@@ -36,7 +36,7 @@ public class ConfigPathsTest
     public void testSingle()
         throws Exception
     {
-        final ConfigPaths paths = create( this.temporaryFolder.getRoot().toFile().getAbsolutePath() );
+        final ConfigPaths paths = create( this.temporaryFolder.toFile().getAbsolutePath() );
         assertEquals( 1, Lists.newArrayList( paths ).size() );
 
         final File file = Files.createFile(this.temporaryFolder.resolve( "test.txt" ) ).toFile();

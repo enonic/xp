@@ -18,12 +18,10 @@ public class BatchedGetChildrenExecutorTest
     extends AbstractNodeTest
 {
 
-    @Override
     @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
         createDefaultRootNode();
     }
 

@@ -15,7 +15,6 @@ public class FindNodesByQueryCommandTest_paths
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 

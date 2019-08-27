@@ -38,14 +38,14 @@ public class ResolverTestSupport
     private Resource loadResource( final ResourceKey key )
         throws Exception
     {
-        final File file = new File( this.temporaryFolder.getRoot().toFile(), key.getPath() );
+        final File file = new File( this.temporaryFolder.toFile(), key.getPath() );
         return new UrlResource( key, file.toURI().toURL() );
     }
 
     final void touchFile( final String path )
         throws Exception
     {
-        final File file = new File( this.temporaryFolder.getRoot().toFile(), path );
+        final File file = new File( this.temporaryFolder.toFile(), path );
         file.getParentFile().mkdirs();
         Files.touch( file );
     }

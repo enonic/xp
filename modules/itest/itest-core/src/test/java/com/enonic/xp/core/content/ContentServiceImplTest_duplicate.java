@@ -25,12 +25,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ContentServiceImplTest_duplicate
     extends AbstractContentServiceTest
 {
-    @Override
-    public void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
 
     @Test
     public void root_content()

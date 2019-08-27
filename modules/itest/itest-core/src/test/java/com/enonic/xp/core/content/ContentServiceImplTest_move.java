@@ -19,13 +19,6 @@ public class ContentServiceImplTest_move
     extends AbstractContentServiceTest
 {
 
-    @Override
-    public void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
-
     @Test
     public void move_to_folder_starting_with_same_name()
         throws Exception

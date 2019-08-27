@@ -29,7 +29,6 @@ public class RepoDumperTest
     public void setUp()
         throws Exception
     {
-        super.setUp();
         createDefaultRootNode();
     }
 

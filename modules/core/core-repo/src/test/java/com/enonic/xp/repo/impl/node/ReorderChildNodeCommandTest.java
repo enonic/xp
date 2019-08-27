@@ -28,7 +28,6 @@ public class ReorderChildNodeCommandTest
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 
@@ -172,7 +171,7 @@ public class ReorderChildNodeCommandTest
         setManualOrderValueToNull( NodeId.from( "e" ) );
         setManualOrderValueToNull( NodeId.from( "f" ) );
 
-        ReorderChildNodeCommand.create().
+        assertThrows(IllegalArgumentException.class, () -> ReorderChildNodeCommand.create().
             parentNode( getNodeById( parentNode.id() ) ).
             nodeToMove( getNodeById( NodeId.from( "c" ) ) ).
             nodeToMoveBefore( getNode( NodeId.from( "f" ) ) ).
@@ -180,8 +179,7 @@ public class ReorderChildNodeCommandTest
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
-            execute();
-        assertThrows(IllegalArgumentException.class, () -> refresh());
+            execute() );
     }
 
     private void setManualOrderValueToNull( final NodeId nodeId )

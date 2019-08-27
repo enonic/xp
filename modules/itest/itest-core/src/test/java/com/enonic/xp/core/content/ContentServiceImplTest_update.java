@@ -44,13 +44,6 @@ public class ContentServiceImplTest_update
     extends AbstractContentServiceTest
 {
 
-    @Override
-    public void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
-
     @Test
     public void update_content_modified_time_updated()
         throws Exception

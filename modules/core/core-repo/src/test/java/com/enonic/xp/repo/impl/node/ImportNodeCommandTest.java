@@ -22,12 +22,10 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ImportNodeCommandTest
     extends AbstractNodeTest
 {
-    @Override
     @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
         CTX_DEFAULT.callWith( this::createDefaultRootNode );
         CTX_OTHER.callWith( this::createDefaultRootNode );
     }

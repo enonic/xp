@@ -31,7 +31,6 @@ public class FindNodesByQueryCommandTest_acl
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 

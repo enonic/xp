@@ -8,12 +8,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import com.enonic.xp.launcher.LauncherException;
-import com.enonic.xp.launcher.impl.SharedConstants;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static com.enonic.xp.launcher.impl.SharedConstants.*;
 
 public class EnvironmentImplTest
-    implements SharedConstants
 {
     @TempDir
     public Path temporaryFolder;

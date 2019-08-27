@@ -24,7 +24,6 @@ public class FindNodesWithVersionDifferenceCommandTest
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.rootNode = this.createDefaultRootNode();
     }
 

@@ -32,7 +32,7 @@ public abstract class AbstractRunnableTaskTest
     protected JsonTestHelper jsonTestHelper;
 
     @BeforeEach
-    public void setUp()
+    void setUpAbstractRunnableTaskTest()
         throws Exception
     {
         this.authInfo = AuthenticationInfo.create().user( User.ANONYMOUS ).build();

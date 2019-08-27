@@ -40,7 +40,7 @@ public class ImageServiceImplTest
     public void setUp()
         throws IOException
     {
-        System.setProperty( "xp.home", temporaryFolder.getRoot().toFile().getPath() );
+        System.setProperty( "xp.home", temporaryFolder.toFile().getPath() );
 
         contentId = ContentId.from( "contentId" );
         binaryReference = BinaryReference.from( "binaryRef" );

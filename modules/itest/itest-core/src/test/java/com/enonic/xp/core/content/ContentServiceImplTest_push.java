@@ -18,12 +18,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ContentServiceImplTest_push
     extends AbstractContentServiceTest
 {
-    @Override
-    public void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
 
     @Test
     public void push_workflow_not_ready()

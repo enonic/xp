@@ -37,7 +37,6 @@ public class ComponentHandlerTest
     public final void setup()
         throws Exception
     {
-        super.setup();
 
         this.handler = new ComponentHandler();
         this.handler.setContentService( this.contentService );

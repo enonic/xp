@@ -32,11 +32,9 @@ public class DuplicateRunnableTaskTest
     private DuplicateContentsJson params;
 
     @BeforeEach
-    @Override
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.params = Mockito.mock( DuplicateContentsJson.class );
     }
 

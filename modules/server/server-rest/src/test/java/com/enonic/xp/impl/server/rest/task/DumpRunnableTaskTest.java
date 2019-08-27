@@ -24,11 +24,9 @@ public class DumpRunnableTaskTest
     private DumpService dumpService;
 
     @BeforeEach
-    @Override
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.dumpService = Mockito.mock( DumpService.class );
     }
 

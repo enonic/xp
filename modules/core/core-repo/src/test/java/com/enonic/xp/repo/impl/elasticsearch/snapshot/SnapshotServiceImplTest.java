@@ -29,8 +29,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class SnapshotServiceImplTest
     extends AbstractNodeTest
 {
-    @TempDir
-    public Path temporaryFolder;
 
     private SnapshotServiceImpl snapshotService;
 
@@ -44,8 +42,6 @@ public class SnapshotServiceImplTest
     public void setUp()
         throws Exception
     {
-        super.setUp();
-
         this.snapshotService = new SnapshotServiceImpl();
 
         final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl();

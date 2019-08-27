@@ -48,7 +48,7 @@ public class NodeImporterTest
     public void import_node()
         throws Exception
     {
-        final Path nodeFileDir = Files.createDirectories( Paths.get( temporaryFolder.getRoot().toFile().getPath(), "myExport", "mynode", "_" ) );
+        final Path nodeFileDir = Files.createDirectories( Paths.get( temporaryFolder.toFile().getPath(), "myExport", "mynode", "_" ) );
         assert nodeFileDir != null;
 
         final byte[] nodeXmlFile = readFromFile( "node_unordered.xml" ).getBytes();
@@ -58,7 +58,7 @@ public class NodeImporterTest
         final NodeImportResult result = NodeImporter.create().
             nodeService( importNodeService ).
             targetNodePath( NodePath.ROOT ).
-            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toFile().toPath().toString(), "myExport" ) ) ).
+            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.toFile().toPath().toString(), "myExport" ) ) ).
             build().
             execute();
 
@@ -70,7 +70,7 @@ public class NodeImporterTest
     public void import_node_with_timestamp()
         throws Exception
     {
-        final Path nodeFileDir = Files.createDirectories( Paths.get( temporaryFolder.getRoot().toFile().getPath(), "myExport", "mynode", "_" ) );
+        final Path nodeFileDir = Files.createDirectories( Paths.get( temporaryFolder.toFile().getPath(), "myExport", "mynode", "_" ) );
         assert nodeFileDir != null;
 
         final byte[] nodeXmlFile = readFromFile( "node_timestamp.xml" ).getBytes();
@@ -80,7 +80,7 @@ public class NodeImporterTest
         final NodeImportResult result = NodeImporter.create().
             nodeService( importNodeService ).
             targetNodePath( NodePath.ROOT ).
-            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toFile().toPath().toString(), "myExport" ) ) ).
+            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.toFile().toPath().toString(), "myExport" ) ) ).
             build().
             execute();
 
@@ -92,7 +92,7 @@ public class NodeImporterTest
     public void import_node_with_id()
         throws Exception
     {
-        final Path nodeFileDir = Files.createDirectories( Paths.get( temporaryFolder.getRoot().toFile().getPath(), "myExport", "mynode", "_" ) );
+        final Path nodeFileDir = Files.createDirectories( Paths.get( temporaryFolder.toFile().getPath(), "myExport", "mynode", "_" ) );
         assert nodeFileDir != null;
 
         final byte[] nodeXmlFile = readFromFile( "node_with_id_1234.xml" ).getBytes();
@@ -102,7 +102,7 @@ public class NodeImporterTest
         final NodeImportResult result = NodeImporter.create().
             nodeService( importNodeService ).
             targetNodePath( NodePath.ROOT ).
-            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toFile().toPath().toString(), "myExport" ) ) ).
+            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.toFile().toPath().toString(), "myExport" ) ) ).
             build().
             execute();
 
@@ -117,7 +117,7 @@ public class NodeImporterTest
     public void import_update_node()
         throws Exception
     {
-        final Path nodeFileDir = Files.createDirectories( Paths.get( temporaryFolder.getRoot().toFile().getPath(), "myExport", "mynode", "_" ) );
+        final Path nodeFileDir = Files.createDirectories( Paths.get( temporaryFolder.toFile().getPath(), "myExport", "mynode", "_" ) );
         assert nodeFileDir != null;
 
         final byte[] nodeXmlFile = readFromFile( "node_unordered.xml" ).getBytes();
@@ -128,7 +128,7 @@ public class NodeImporterTest
         final NodeImportResult result = NodeImporter.create().
             nodeService( importNodeService ).
             targetNodePath( NodePath.ROOT ).
-            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toFile().toPath().toString(), "myExport" ) ) ).
+            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.toFile().toPath().toString(), "myExport" ) ) ).
             build().
             execute();
 
@@ -138,7 +138,7 @@ public class NodeImporterTest
         final NodeImportResult updateResult = NodeImporter.create().
             nodeService( importNodeService ).
             targetNodePath( NodePath.ROOT ).
-            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toFile().toPath().toString(), "myExport" ) ) ).
+            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.toFile().toPath().toString(), "myExport" ) ) ).
             build().
             execute();
 
@@ -162,7 +162,7 @@ public class NodeImporterTest
         final NodeImportResult result = NodeImporter.create().
             nodeService( this.importNodeService ).
             targetNodePath( NodePath.ROOT ).
-            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toFile().toPath().toString(), "myExport" ) ) ).
+            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.toFile().toPath().toString(), "myExport" ) ) ).
             nodeImportListener( nodeImportListener ).
             build().
             execute();
@@ -198,7 +198,7 @@ public class NodeImporterTest
         final NodeImportResult result = NodeImporter.create().
             nodeService( this.importNodeService ).
             targetNodePath( importRoot ).
-            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toFile().toPath().toString(), "myExport" ) ) ).
+            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.toFile().toPath().toString(), "myExport" ) ) ).
             build().
             execute();
 
@@ -222,7 +222,7 @@ public class NodeImporterTest
             NodeImporter.create().
                     nodeService(this.importNodeService).
                     targetNodePath(importRoot).
-                    sourceDirectory(VirtualFiles.from(Paths.get(this.temporaryFolder.getRoot().toFile().toPath().toString(), "myExport"))).
+                    sourceDirectory(VirtualFiles.from(Paths.get(this.temporaryFolder.toFile().toPath().toString(), "myExport"))).
                     build().
                     execute();
         } );
@@ -237,7 +237,7 @@ public class NodeImporterTest
         final NodeImportResult result = NodeImporter.create().
             nodeService( this.importNodeService ).
             targetNodePath( NodePath.ROOT ).
-            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toFile().toPath().toString(), "myExport" ) ) ).
+            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.toFile().toPath().toString(), "myExport" ) ) ).
             build().
             execute();
 
@@ -258,7 +258,7 @@ public class NodeImporterTest
         final NodeImportResult result = NodeImporter.create().
             nodeService( this.importNodeService ).
             targetNodePath( NodePath.ROOT ).
-            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toFile().toPath().toString(), "myExport" ) ) ).
+            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.toFile().toPath().toString(), "myExport" ) ) ).
             build().
             execute();
 
@@ -285,7 +285,7 @@ public class NodeImporterTest
         final NodeImportResult result = NodeImporter.create().
             nodeService( this.importNodeService ).
             targetNodePath( NodePath.ROOT ).
-            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toFile().toPath().toString(), "myExport" ) ) ).
+            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.toFile().toPath().toString(), "myExport" ) ) ).
             build().
             execute();
 
@@ -320,7 +320,7 @@ public class NodeImporterTest
         final NodeImportResult result = NodeImporter.create().
             nodeService( this.importNodeService ).
             targetNodePath( NodePath.ROOT ).
-            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toFile().toPath().toString(), "myExport" ) ) ).
+            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.toFile().toPath().toString(), "myExport" ) ) ).
             build().
             execute();
 
@@ -344,7 +344,7 @@ public class NodeImporterTest
         final NodeImportResult result = NodeImporter.create().
             nodeService( this.importNodeService ).
             targetNodePath( NodePath.ROOT ).
-            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toFile().toPath().toString(), "myExport" ) ) ).
+            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.toFile().toPath().toString(), "myExport" ) ) ).
             build().
             execute();
 
@@ -362,7 +362,7 @@ public class NodeImporterTest
         final NodeImportResult result = NodeImporter.create().
             nodeService( this.importNodeService ).
             targetNodePath( NodePath.ROOT ).
-            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toFile().toPath().toString(), "myExport" ) ) ).
+            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.toFile().toPath().toString(), "myExport" ) ) ).
             build().
             execute();
 
@@ -392,7 +392,7 @@ public class NodeImporterTest
         final NodeImportResult result = NodeImporter.create().
             nodeService( this.importNodeService ).
             targetNodePath( NodePath.ROOT ).
-            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toFile().toPath().toString(), "myExport" ) ) ).
+            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.toFile().toPath().toString(), "myExport" ) ) ).
             build().
             execute();
 
@@ -413,7 +413,7 @@ public class NodeImporterTest
         throws Exception
     {
 
-        final Path nodeFileDir = Files.createDirectories( Paths.get( temporaryFolder.getRoot().toFile().getPath(), "myExport", "mynode", "_" ) );
+        final Path nodeFileDir = Files.createDirectories( Paths.get( temporaryFolder.toFile().getPath(), "myExport", "mynode", "_" ) );
         final Path xsltFilePath = nodeFileDir.resolve( "transform.xsl" );
 
         final byte[] nodeXmlFile = readFromFile( "node_with_appref.xml" ).getBytes();
@@ -425,7 +425,7 @@ public class NodeImporterTest
         final NodeImportResult result = NodeImporter.create().
             nodeService( importNodeService ).
             targetNodePath( NodePath.ROOT ).
-            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toFile().toPath().toString(), "myExport" ) ) ).
+            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.toFile().toPath().toString(), "myExport" ) ) ).
             xslt( VirtualFiles.from( xsltFilePath ) ).
             xsltParam( "applicationId", "com.enonic.starter.bootstrap" ).
             build().
@@ -443,7 +443,7 @@ public class NodeImporterTest
         final String lineSeparator = System.getProperty( "line.separator" );
 
         final Path nodeFileDir = Files.createDirectories(
-            Paths.get( temporaryFolder.getRoot().toFile().getPath(), exportPath.toString(), NodeExportPathResolver.SYSTEM_FOLDER_NAME ) );
+            Paths.get( temporaryFolder.toFile().getPath(), exportPath.toString(), NodeExportPathResolver.SYSTEM_FOLDER_NAME ) );
 
         StringBuilder builder = new StringBuilder();
 
@@ -461,7 +461,7 @@ public class NodeImporterTest
         throws Exception
     {
         final Path nodeFileDir = Files.createDirectories(
-            Paths.get( temporaryFolder.getRoot().toFile().getPath(), exportPath.toString(), NodeExportPathResolver.SYSTEM_FOLDER_NAME,
+            Paths.get( temporaryFolder.toFile().getPath(), exportPath.toString(), NodeExportPathResolver.SYSTEM_FOLDER_NAME,
                        NodeExportPathResolver.BINARY_FOLDER ) );
 
         assert nodeFileDir != null;
@@ -472,7 +472,7 @@ public class NodeImporterTest
         throws Exception
     {
         final Path nodeFileDir = Files.createDirectories(
-            Paths.get( temporaryFolder.getRoot().toFile().getPath(), exportPath.toString(), NodeExportPathResolver.SYSTEM_FOLDER_NAME ) );
+            Paths.get( temporaryFolder.toFile().getPath(), exportPath.toString(), NodeExportPathResolver.SYSTEM_FOLDER_NAME ) );
 
         assert nodeFileDir != null;
         Files.write( Paths.get( nodeFileDir.toString(), NodeExportPathResolver.NODE_XML_EXPORT_NAME ),
@@ -483,7 +483,7 @@ public class NodeImporterTest
         throws Exception
     {
         final Path nodeFileDir = Files.createDirectories(
-            Paths.get( temporaryFolder.getRoot().toFile().getPath(), exportPath.toString(), NodeExportPathResolver.SYSTEM_FOLDER_NAME ) );
+            Paths.get( temporaryFolder.toFile().getPath(), exportPath.toString(), NodeExportPathResolver.SYSTEM_FOLDER_NAME ) );
 
         assert nodeFileDir != null;
         Files.write( Paths.get( nodeFileDir.toString(), NodeExportPathResolver.NODE_XML_EXPORT_NAME ),
@@ -494,7 +494,7 @@ public class NodeImporterTest
         throws Exception
     {
         final Path nodeFileDir = Files.createDirectories(
-            Paths.get( temporaryFolder.getRoot().toFile().getPath(), path.toString(), NodeExportPathResolver.SYSTEM_FOLDER_NAME ) );
+            Paths.get( temporaryFolder.toFile().getPath(), path.toString(), NodeExportPathResolver.SYSTEM_FOLDER_NAME ) );
 
         assert nodeFileDir != null;
         Files.write( Paths.get( nodeFileDir.toString(), NodeExportPathResolver.NODE_XML_EXPORT_NAME ),

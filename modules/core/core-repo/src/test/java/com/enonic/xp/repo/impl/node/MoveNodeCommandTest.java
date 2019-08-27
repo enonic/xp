@@ -33,7 +33,6 @@ public class MoveNodeCommandTest
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 

@@ -14,7 +14,7 @@ public class LauncherImplTest
     public void testLaunch()
         throws Exception
     {
-        final LauncherImpl launcher = new LauncherImpl( "-Dxp.install=" + this.temporaryFolder.getRoot().toString() );
+        final LauncherImpl launcher = new LauncherImpl( "-Dxp.install=" + this.temporaryFolder.toString() );
         launcher.start();
         launcher.stop();
     }

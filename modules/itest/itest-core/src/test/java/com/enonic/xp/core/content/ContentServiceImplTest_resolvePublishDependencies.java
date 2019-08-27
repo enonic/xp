@@ -24,13 +24,6 @@ public class ContentServiceImplTest_resolvePublishDependencies
 
     private Content content1, content2, child1, child2;
 
-    @Override
-    public void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
-
     @Test
     public void resolve_single()
         throws Exception

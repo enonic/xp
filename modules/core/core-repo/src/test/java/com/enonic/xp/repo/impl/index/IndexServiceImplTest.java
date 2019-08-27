@@ -37,12 +37,10 @@ public class IndexServiceImplTest
 
     private Node rootNode;
 
-    @Override
     @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.indexService = new IndexServiceImpl();
         this.indexService.setNodeSearchService( this.searchService );
         this.indexService.setIndexServiceInternal( this.indexServiceInternal );

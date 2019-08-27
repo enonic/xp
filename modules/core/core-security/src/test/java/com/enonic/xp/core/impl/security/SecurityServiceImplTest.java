@@ -79,13 +79,10 @@ public class SecurityServiceImplTest
 
     private RepositoryServiceImpl repositoryService;
 
-    @Override
     @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
-
         final MemoryBlobStore blobStore = new MemoryBlobStore();
 
         final BinaryServiceImpl binaryService = new BinaryServiceImpl();

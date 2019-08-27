@@ -21,7 +21,6 @@ public class GetBinaryCommandTest
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 

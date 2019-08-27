@@ -27,7 +27,6 @@ public class TermsAggregationsTest
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 
@@ -228,7 +227,7 @@ public class TermsAggregationsTest
 
     private void verifySubAggregation( final Bucket parentBucket, String parentBucketKey, int first, int second, int third )
     {
-        assertEquals( "Wrong parent bucket key", parentBucketKey, parentBucket.getKey() );
+        assertEquals( parentBucketKey, parentBucket.getKey(), "Wrong parent bucket key" );
 
         assertEquals( 1, parentBucket.getSubAggregations().getSize() );
         final Aggregation subAgg = parentBucket.getSubAggregations().get( "subquery" );

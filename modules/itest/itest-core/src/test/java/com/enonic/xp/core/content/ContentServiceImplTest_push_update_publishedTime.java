@@ -19,12 +19,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ContentServiceImplTest_push_update_publishedTime
     extends AbstractContentServiceTest
 {
-    @Override
-    public void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
 
     @Test
     public void set_published_time()

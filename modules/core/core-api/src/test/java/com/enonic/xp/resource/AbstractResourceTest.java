@@ -23,7 +23,9 @@ public class AbstractResourceTest
     {
         final File file = new File( dir, path );
         file.getParentFile().mkdirs();
-        ByteSource.wrap( value.getBytes( Charsets.UTF_8 ) ).copyTo( new FileOutputStream( file ) );
+        try (final FileOutputStream fileOutputStream = new FileOutputStream(file)) {
+            ByteSource.wrap(value.getBytes(Charsets.UTF_8)).copyTo(fileOutputStream);
+        }
     }
 
     @BeforeEach

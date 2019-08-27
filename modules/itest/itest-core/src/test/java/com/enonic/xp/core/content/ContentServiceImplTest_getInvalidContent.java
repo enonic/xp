@@ -23,12 +23,6 @@ import static org.mockito.Mockito.times;
 public class ContentServiceImplTest_getInvalidContent
     extends AbstractContentServiceTest
 {
-    @Override
-    public void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
 
     @Test
     public void test_simple_content_is_valid()

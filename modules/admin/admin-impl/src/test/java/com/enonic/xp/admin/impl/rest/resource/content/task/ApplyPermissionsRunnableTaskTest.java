@@ -31,11 +31,9 @@ public class ApplyPermissionsRunnableTaskTest
     private ApplyContentPermissionsJson params;
 
     @BeforeEach
-    @Override
     public void setUp()
         throws Exception
     {
-        super.setUp();
         final Content child = Content.create().
             id( ContentId.from( "content-id" ) ).
             path( "/content/content1/content4" ).

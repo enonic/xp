@@ -23,12 +23,10 @@ public class SetActiveVersionCommandTest
     extends AbstractNodeTest
 {
 
-    @Override
     @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 

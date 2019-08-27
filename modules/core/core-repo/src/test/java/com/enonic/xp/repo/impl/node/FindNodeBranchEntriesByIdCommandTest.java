@@ -27,7 +27,6 @@ public class FindNodeBranchEntriesByIdCommandTest
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 

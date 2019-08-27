@@ -39,10 +39,10 @@ public abstract class AbstractElasticsearchIntegrationTest
     private EmbeddedElasticsearchServer server;
 
     @BeforeEach
-    public void setUp()
+    void setUpEmbeddedElasticsearchServer()
         throws Exception
     {
-        server = new EmbeddedElasticsearchServer( temporaryFolder.getRoot().toFile() );
+        server = new EmbeddedElasticsearchServer( temporaryFolder.toFile() );
 
         this.client = server.getClient();
 
@@ -101,7 +101,11 @@ public abstract class AbstractElasticsearchIntegrationTest
     public void cleanUp()
     {
         LOG.info( "Shutting down" );
-        this.client.close();
-        server.shutdown();
+        if (client != null) {
+            client.close();
+        }
+        if (server != null) {
+            server.shutdown();
+        }
     }
 }

@@ -22,7 +22,6 @@ public class FindNodesByQueryCommandTest_dateTime
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 

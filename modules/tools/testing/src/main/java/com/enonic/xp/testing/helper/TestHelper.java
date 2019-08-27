@@ -11,12 +11,12 @@ public final class TestHelper
 {
     public static void assertFalse( final boolean flag, final String message )
     {
-        assertFalse( flag, message );
+        Assertions.assertFalse( flag, message );
     }
 
     public static void assertTrue( final boolean flag, final String message )
     {
-        assertTrue( flag, message );
+        Assertions.assertTrue( flag, message );
     }
 
     public static void assertEquals( final Object expected, final Object actual, final String message )

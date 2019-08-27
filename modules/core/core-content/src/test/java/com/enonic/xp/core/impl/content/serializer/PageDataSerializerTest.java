@@ -42,8 +42,6 @@ public class PageDataSerializerTest
     @BeforeEach
     public void setUp()
     {
-        super.setUp();
-
         this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
 
         this.pageDataSerializer = PageDataSerializer.create().

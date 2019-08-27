@@ -23,7 +23,6 @@ public class DuplicateNodeCommandPerformanceTest
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 

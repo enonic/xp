@@ -82,7 +82,7 @@ public abstract class JaxRsResourceTestSupport
         final String expectedStr = toJson( expectedNode );
         final String actualStr = toJson( actualNode );
 
-        assertEquals( expectedStr, actualStr );
+        Assertions.assertEquals( expectedStr, actualStr );
     }
 
     protected JsonNode parseJson( final String json )
@@ -116,10 +116,6 @@ public abstract class JaxRsResourceTestSupport
         Assertions.assertEquals( arrayToString( a1 ), arrayToString( a2 ) );
     }
 
-    protected final void assertEquals( Object a1, Object a2 )
-    {
-        Assertions.assertEquals( a1, a2 );
-    }
 
     protected final String arrayToString( Object[] a )
     {

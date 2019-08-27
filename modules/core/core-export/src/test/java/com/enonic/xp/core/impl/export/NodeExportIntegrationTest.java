@@ -32,14 +32,10 @@ import static org.junit.jupiter.api.Assertions.*;
 public class NodeExportIntegrationTest
     extends AbstractNodeTest
 {
-    @TempDir
-    public Path temporaryFolder;
-
     @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 
@@ -159,7 +155,7 @@ public class NodeExportIntegrationTest
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.ROOT ).
-            targetDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myExport" ) ).
+            targetDirectory( Paths.get( this.temporaryFolder.toString(), "myExport" ) ).
             exportVersions( exportVersions ).
             build().
             execute();
@@ -200,12 +196,12 @@ public class NodeExportIntegrationTest
 
     private void assertFileExists( final String path )
     {
-        assertTrue( new File( this.temporaryFolder.getRoot().toFile().getPath() + path ).exists(), "file " + path + " not found" );
+        assertTrue( new File( this.temporaryFolder.toFile().getPath() + path ).exists(), "file " + path + " not found" );
     }
 
     private void printPaths()
     {
-        final File file = this.temporaryFolder.getRoot().toFile();
+        final File file = this.temporaryFolder.toFile();
 
         doPrintPaths( file );
     }

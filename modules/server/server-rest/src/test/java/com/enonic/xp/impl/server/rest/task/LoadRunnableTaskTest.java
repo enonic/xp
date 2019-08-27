@@ -51,11 +51,9 @@ public class LoadRunnableTaskTest
     private File nameDir, dumpDir, dataDir;
 
     @BeforeEach
-    @Override
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.dumpService = Mockito.mock( DumpService.class );
         this.exportService = Mockito.mock( ExportService.class );
         this.repositoryService = Mockito.mock( RepositoryService.class );

@@ -24,7 +24,6 @@ public class DeleteNodeByIdCommandTest
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 

@@ -28,12 +28,10 @@ public class VersionTableCleanupTaskTest
 
     private VersionTableCleanupTask task;
 
-    @Override
     @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
         createDefaultRootNode();
 
         this.task = new VersionTableCleanupTask();

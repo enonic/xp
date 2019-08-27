@@ -96,22 +96,17 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DumpServiceImplTest
     extends AbstractNodeTest
 {
-    @TempDir
-    public Path temporaryFolder;
-
     private DumpServiceImpl dumpService;
 
-    @Override
     @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.dumpService = new DumpServiceImpl();
         this.dumpService.setBlobStore( this.blobStore );
         this.dumpService.setNodeService( this.nodeService );
         this.dumpService.setRepositoryService( this.repositoryService );
-        this.dumpService.setBasePath( temporaryFolder.getRoot().toFile().toPath() );
+        this.dumpService.setBasePath( temporaryFolder.toFile().toPath() );
         final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
         Mockito.when( applicationService.getInstalledApplications() ).thenReturn( Applications.empty() );
         this.dumpService.setApplicationService( applicationService );
@@ -735,7 +730,7 @@ public class DumpServiceImplTest
             Mockito.verify( upgradeListener, Mockito.times( 8 ) ).upgraded();
             Mockito.verify( upgradeListener, Mockito.times( 1 ) ).total( 8 );
 
-            FileDumpReader reader = new FileDumpReader( temporaryFolder.getRoot().toFile().toPath(), dumpName, null );
+            FileDumpReader reader = new FileDumpReader( temporaryFolder.toFile().toPath(), dumpName, null );
             final DumpMeta updatedMeta = reader.getDumpMeta();
             assertEquals( DumpConstants.MODEL_VERSION, updatedMeta.getModelVersion() );
         } );
@@ -755,7 +750,7 @@ public class DumpServiceImplTest
                 includeVersions( true ).
                 build() );
 
-            FileDumpReader reader = new FileDumpReader( temporaryFolder.getRoot().toFile().toPath(), dumpName, null );
+            FileDumpReader reader = new FileDumpReader( temporaryFolder.toFile().toPath(), dumpName, null );
             final DumpMeta updatedMeta = reader.getDumpMeta();
             assertEquals( DumpConstants.MODEL_VERSION, updatedMeta.getModelVersion() );
 

@@ -27,7 +27,6 @@ public class FindNodesByQueryCommandTest_arrays
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 

@@ -224,10 +224,5 @@ public class ElasticsearchClusterReporterTest
         return mapper;
     }
 
-    private final void assertEquals( Object a1, Object a2 )
-    {
-        assertEquals( a1, a2 );
-    }
-
 
 }

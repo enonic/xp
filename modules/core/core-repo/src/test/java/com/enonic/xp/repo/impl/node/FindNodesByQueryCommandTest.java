@@ -30,7 +30,6 @@ public class FindNodesByQueryCommandTest
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 

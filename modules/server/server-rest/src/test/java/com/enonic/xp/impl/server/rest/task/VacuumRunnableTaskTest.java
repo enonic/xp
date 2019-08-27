@@ -18,11 +18,9 @@ public class VacuumRunnableTaskTest
     private VacuumService vacuumService;
 
     @BeforeEach
-    @Override
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.vacuumService = Mockito.mock( VacuumService.class );
     }
 

@@ -26,12 +26,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ContentServiceImplTest_create_path_integrity_test
     extends AbstractContentServiceTest
 {
-    @Override
-    public void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
 
     @Test
     public void create()

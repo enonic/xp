@@ -36,11 +36,9 @@ public class MoveRunnableTaskTest
     private MoveContentJson params;
 
     @BeforeEach
-    @Override
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.params = Mockito.mock( MoveContentJson.class );
     }
 

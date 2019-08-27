@@ -21,13 +21,6 @@ public class ContentServiceImplTest_unpublish
     extends AbstractContentServiceTest
 {
 
-    @Override
-    public void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
-
     @Test
     public void unpublish()
         throws Exception

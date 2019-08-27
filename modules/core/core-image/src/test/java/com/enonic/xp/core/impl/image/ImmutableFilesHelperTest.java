@@ -25,7 +25,7 @@ public class ImmutableFilesHelperTest
 
         final byte[] bytes = new byte[]{2, 3, 5, 7, 13};
         final ByteSource source = ByteSource.wrap( bytes );
-        Path path = Paths.get( temporaryFolder.getRoot().toString(), "file.txt" );
+        Path path = Paths.get( temporaryFolder.toString(), "file.txt" );
 
         SupplierWithException<ByteSource, Exception> supplier = () -> {
             supplierCall++;
@@ -45,7 +45,7 @@ public class ImmutableFilesHelperTest
     public void test_incorrect_computeIfAbsent()
         throws Exception
     {
-        Path path = Paths.get( temporaryFolder.getRoot().toString(), "unknown_file.txt" );
+        Path path = Paths.get( temporaryFolder.toString(), "unknown_file.txt" );
         SupplierWithException<ByteSource, Exception> supplier = () -> null;
 
         ByteSource byteSource = ImmutableFilesHelper.computeIfAbsent( path, supplier );

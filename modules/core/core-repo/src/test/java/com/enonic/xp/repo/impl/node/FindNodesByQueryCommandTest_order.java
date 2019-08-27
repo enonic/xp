@@ -41,7 +41,6 @@ public class FindNodesByQueryCommandTest_order
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
         this.nodeInitializing();
     }

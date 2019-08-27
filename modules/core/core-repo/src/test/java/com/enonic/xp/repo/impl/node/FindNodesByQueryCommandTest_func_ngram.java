@@ -22,7 +22,6 @@ public class FindNodesByQueryCommandTest_func_ngram
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 

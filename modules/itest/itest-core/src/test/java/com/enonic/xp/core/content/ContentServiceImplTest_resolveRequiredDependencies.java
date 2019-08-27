@@ -14,13 +14,6 @@ public class ContentServiceImplTest_resolveRequiredDependencies
 {
     private Content content1, content2, content3;
 
-    @Override
-    public void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
-
     @Test
     public void resolve_empty()
         throws Exception

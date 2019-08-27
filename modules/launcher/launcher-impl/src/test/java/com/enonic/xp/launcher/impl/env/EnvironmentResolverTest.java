@@ -7,12 +7,10 @@ import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import com.enonic.xp.launcher.impl.SharedConstants;
-
 import static org.junit.jupiter.api.Assertions.*;
+import static com.enonic.xp.launcher.impl.SharedConstants.*;
 
 public class EnvironmentResolverTest
-    implements SharedConstants
 {
     @TempDir
     public Path temporaryFolder;

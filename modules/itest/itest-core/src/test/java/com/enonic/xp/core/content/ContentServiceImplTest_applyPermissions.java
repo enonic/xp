@@ -19,13 +19,6 @@ public class ContentServiceImplTest_applyPermissions
     extends AbstractContentServiceTest
 {
 
-    @Override
-    public void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
-
     @Test
     public void content_not_found()
         throws Exception

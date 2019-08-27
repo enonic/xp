@@ -180,11 +180,9 @@ public class AbstractContentServiceTest
     private SearchDaoImpl searchDao;
 
     @BeforeEach
-    public void setUp()
+    public void setUpAbstractContentServiceTest()
         throws Exception
     {
-        super.setUp();
-
         ContextAccessor.INSTANCE.set( CTX_DEFAULT );
 
         final MemoryBlobStore blobStore = new MemoryBlobStore();

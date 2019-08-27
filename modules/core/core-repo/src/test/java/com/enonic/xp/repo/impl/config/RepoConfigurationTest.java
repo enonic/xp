@@ -22,7 +22,7 @@ public class RepoConfigurationTest
     public void setup()
     {
         this.map = Maps.newHashMap();
-        System.setProperty( "xp.home", this.temporaryFolder.getRoot().toFile().getAbsolutePath() );
+        System.setProperty( "xp.home", this.temporaryFolder.toFile().getAbsolutePath() );
     }
 
     private RepoConfiguration createConfig()

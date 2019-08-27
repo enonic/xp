@@ -45,13 +45,6 @@ public class ContentServiceImplTest_publish
 
     private Content content1, content2, content1_1, content1_2_offline, content2_1;
 
-    @Override
-    public void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
-
     @Test
     public void push_one_content()
         throws Exception

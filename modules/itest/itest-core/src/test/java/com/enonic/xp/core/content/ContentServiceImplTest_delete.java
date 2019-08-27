@@ -25,12 +25,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ContentServiceImplTest_delete
     extends AbstractContentServiceTest
 {
-    @Override
-    public void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
 
     @Test
     public void create_delete_content()

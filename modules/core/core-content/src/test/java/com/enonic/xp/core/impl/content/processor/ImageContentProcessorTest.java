@@ -128,7 +128,7 @@ public class ImageContentProcessorTest
         throws IOException
     {
         final XData gpsInfo = createXData( GPS_INFO_METADATA_NAME, "Gps Info", createGpsInfoMixinForm() );
-        Mockito.when( this.xDataService.getFromContentType( Mockito.any( ContentType.class ) ) ).thenReturn( XDatas.from( gpsInfo ) );
+        Mockito.when( this.xDataService.getFromContentType( Mockito.any( ) ) ).thenReturn( XDatas.from( gpsInfo ) );
         final CreateContentParams params = createContentParams( createAttachments() );
         final ProcessCreateParams processCreateParams = new ProcessCreateParams( params, MediaInfo.create().
             addMetadata( "geo lat", "1" ).addMetadata( "geo long", "2" ).build() );
@@ -147,7 +147,7 @@ public class ImageContentProcessorTest
         form.addFormItem( createTextLine( "shutterTime", "Exposure Time" ).occurrences( 0, 1 ).build() );
         form.addFormItem( createTextLine( "altitude", "Gps Altitude" ).occurrences( 0, 1 ).build() );
         final XData xDataInfo = createXData( MediaInfo.IMAGE_INFO_METADATA_NAME, "Extra Info", form.build() );
-        Mockito.when( this.xDataService.getFromContentType( Mockito.any( ContentType.class ) ) ).thenReturn( XDatas.from( xDataInfo ) );
+        Mockito.when( this.xDataService.getFromContentType( Mockito.any() ) ).thenReturn( XDatas.from( xDataInfo ) );
         final CreateContentParams params = createContentParams( createAttachments() );
         final ProcessCreateParams processCreateParams = new ProcessCreateParams( params, MediaInfo.create().
             addMetadata( "exposure time", "1" ).addMetadata( "gps altitude ", "2" ).build() );
@@ -205,7 +205,7 @@ public class ImageContentProcessorTest
         form.addFormItem( createTextLine( "shutterTime", "Exposure Time" ).occurrences( 0, 1 ).build() );
         form.addFormItem( createTextLine( "altitude", "Gps Altitude" ).occurrences( 0, 1 ).build() );
         final XData xDataInfo = createXData( MediaInfo.IMAGE_INFO_METADATA_NAME, "Extra Info", form.build() );
-        Mockito.when( this.xDataService.getFromContentType( Mockito.any( ContentType.class ) ) ).thenReturn( XDatas.from( xDataInfo ) );
+        Mockito.when( this.xDataService.getFromContentType( Mockito.any( ) ) ).thenReturn( XDatas.from( xDataInfo ) );
         final CreateAttachments createAttachments = createAttachments();
         final ProcessUpdateParams processUpdateParams = ProcessUpdateParams.create().
             contentType( ContentType.create().

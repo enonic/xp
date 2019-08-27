@@ -30,8 +30,6 @@ public class RegionDataSerializerTest
     @BeforeEach
     public void setUp()
     {
-        super.setUp();
-
         this.regionSerializer = new RegionDataSerializer( ComponentDataSerializerProvider.create().
             contentService( contentService ).
             layoutDescriptorService( layoutDescriptorService ).

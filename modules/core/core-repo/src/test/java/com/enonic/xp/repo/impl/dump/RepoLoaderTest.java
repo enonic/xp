@@ -14,7 +14,6 @@ public class RepoLoaderTest
     public void setUp()
         throws Exception
     {
-        super.setUp();
         createDefaultRootNode();
     }
 

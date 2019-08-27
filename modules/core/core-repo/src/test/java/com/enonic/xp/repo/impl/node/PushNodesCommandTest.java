@@ -28,7 +28,6 @@ public class PushNodesCommandTest
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
         CTX_OTHER.callWith( this::createDefaultRootNode );
     }

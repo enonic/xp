@@ -23,11 +23,9 @@ public class PublishRunnableTaskTest
     private PublishContentJson params;
 
     @BeforeEach
-    @Override
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.params = Mockito.mock( PublishContentJson.class );
     }
 

@@ -43,7 +43,7 @@ public class ApplicationDeployerManagerTest
 
         deployDirectoryWatcher = new DeployDirectoryWatcher();
         final DeployConfig deployConfig = Mockito.mock( DeployConfig.class );
-        System.setProperty( "xp.home", temporaryFolder.getRoot().toFile().getAbsolutePath() );
+        System.setProperty( "xp.home", temporaryFolder.toFile().getAbsolutePath() );
         deployDirectoryWatcher.activate( deployConfig );
         applicationDeployerManager.setDeployDirectoryWatcher( deployDirectoryWatcher );
     }

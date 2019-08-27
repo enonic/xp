@@ -30,7 +30,6 @@ public class FindNodesByQueryCommandTest_geoPoint
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 

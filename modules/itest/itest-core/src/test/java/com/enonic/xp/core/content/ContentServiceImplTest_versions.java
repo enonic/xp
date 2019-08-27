@@ -34,12 +34,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ContentServiceImplTest_versions
     extends AbstractContentServiceTest
 {
-    @Override
-    public void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
 
     @Test
     public void get_versions()

@@ -32,7 +32,6 @@ public class SetNodeChildOrderCommandTest
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 

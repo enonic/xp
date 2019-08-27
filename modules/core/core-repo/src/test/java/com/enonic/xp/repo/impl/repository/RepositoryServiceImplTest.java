@@ -35,13 +35,10 @@ public class RepositoryServiceImplTest
 
     private NodeServiceImpl nodeService;
 
-    @Override
     @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
-
         this.nodeService = new NodeServiceImpl();
         this.nodeService.setIndexServiceInternal( this.indexServiceInternal );
         this.nodeService.setBinaryService( this.binaryService );

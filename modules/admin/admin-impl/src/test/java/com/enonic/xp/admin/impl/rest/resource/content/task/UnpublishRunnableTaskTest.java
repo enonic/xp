@@ -33,11 +33,9 @@ public class UnpublishRunnableTaskTest
     private UnpublishContentJson params;
 
     @BeforeEach
-    @Override
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.params = Mockito.mock( UnpublishContentJson.class );
     }
 

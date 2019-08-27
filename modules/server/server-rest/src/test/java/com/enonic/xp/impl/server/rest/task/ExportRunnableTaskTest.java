@@ -30,11 +30,9 @@ public class ExportRunnableTaskTest
     private ExportService exportService;
 
     @BeforeEach
-    @Override
     public void setUp()
         throws Exception
     {
-        super.setUp();
         final File homeDir = Files.createDirectory(this.temporaryFolder.resolve( "home" ) ).toFile();
         System.setProperty( "xp.home", homeDir.getAbsolutePath() );
 

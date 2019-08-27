@@ -34,7 +34,7 @@ public class FileDumpReaderTest
     {
         this.dumpFolder = java.nio.file.Files.createDirectory( this.temporaryFolder.resolve( "myDump" ) ).toFile();
         createMetaDataFile( dumpFolder );
-        this.fileDumpReader = new FileDumpReader( temporaryFolder.getRoot().toFile().toPath(), "myDump", null );
+        this.fileDumpReader = new FileDumpReader( temporaryFolder.toFile().toPath(), "myDump", null );
     }
 
     @Test

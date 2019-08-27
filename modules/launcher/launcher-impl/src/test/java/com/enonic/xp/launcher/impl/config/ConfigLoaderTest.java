@@ -45,9 +45,9 @@ public class ConfigLoaderTest
         final File file = new File( this.homeDir, "config/system.properties" );
         file.getParentFile().mkdirs();
 
-        final FileOutputStream out = new FileOutputStream( file );
-        props.store( out, "" );
-        out.close();
+        try (final FileOutputStream out = new FileOutputStream( file )) {
+            props.store(out, "");
+        }
     }
 
     @Test

@@ -29,7 +29,6 @@ public class AccessControlTest
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.nodeService = new NodeServiceImpl();
         this.nodeService.setIndexServiceInternal( indexServiceInternal );
         this.nodeService.setNodeStorageService( storageService );
