@@ -46,12 +46,13 @@ public class StyleDescriptorTest
             displayName( "Cinema" ).
             build();
 
+        assertThrows(IllegalArgumentException.class, () ->
         StyleDescriptor.create().
             application( ApplicationKey.from( "myapp" ) ).
             cssPath( "assets/styles.css" ).
             addStyleElement( element ).
             addStyleElement( element2 ).
-            build();
+            build() );
     }
 
     @Test

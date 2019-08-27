@@ -946,7 +946,7 @@ public class ContentResourceTest
             contentResource.reorderChildContents(
                     new ReorderChildrenJson( false, false, content.getId().toString(), null, Lists.newArrayList() ) );
         });
-        assertEquals( "Not allowed to reorder children manually, current parentOrder = [_ts DESC]", ex.getMessage() );
+        assertEquals( "Not allowed to reorder children manually, current parentOrder = [_ts DESC].", ex.getMessage() );
 
     }
 

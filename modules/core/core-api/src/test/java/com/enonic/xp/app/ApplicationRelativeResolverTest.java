@@ -44,7 +44,6 @@ public class ApplicationRelativeResolverTest
     public void toMixinNameEmpty()
     {
         final ApplicationRelativeResolver resolver = new ApplicationRelativeResolver( null );
-        resolver.toMixinName( "aaa" );
         assertThrows(IllegalArgumentException.class, () -> resolver.toMixinName( "aaa" ) );
     }
 

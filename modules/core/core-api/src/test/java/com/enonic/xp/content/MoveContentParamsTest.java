@@ -40,8 +40,7 @@ public class MoveContentParamsTest
     @Test
     public void testValidate()
     {
-        MoveContentParams invalidParams = new MoveContentParams( null );
-        assertThrows(NullPointerException.class, () ->   invalidParams.validate() );
+        assertThrows(NullPointerException.class, () -> new MoveContentParams( null ));
     }
 
 }
