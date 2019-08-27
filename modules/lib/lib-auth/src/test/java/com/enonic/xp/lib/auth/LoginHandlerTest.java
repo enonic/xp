@@ -148,7 +148,7 @@ public class LoginHandlerTest
     }
 
     private class AuthTokenMatcher
-        extends ArgumentMatcher<AuthenticationToken>
+        implements ArgumentMatcher<AuthenticationToken>
     {
         EmailPasswordAuthToken thisObject;
 
@@ -160,7 +160,7 @@ public class LoginHandlerTest
         List<IdProviderKey> loginIdProviderAttempts = new ArrayList<>();
 
         @Override
-        public boolean matches( Object argument )
+        public boolean matches( AuthenticationToken argument )
         {
             if ( !( argument instanceof EmailPasswordAuthToken ) )
             {

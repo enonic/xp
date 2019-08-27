@@ -45,7 +45,7 @@ public class IssueServiceImplTest_comment
         assertEquals( created, comment.getCreated() );
     }
 
-    @Test(expected = NodeNotFoundException.class)
+    @Test
     public void comment_noIssue()
         throws Exception
     {
@@ -61,6 +61,6 @@ public class IssueServiceImplTest_comment
             created( created ).
             build();
 
-        final IssueComment comment = this.issueService.createComment( params );
+        assertThrows(NodeNotFoundException.class, () -> this.issueService.createComment( params ));
     }
 }

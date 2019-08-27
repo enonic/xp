@@ -15,8 +15,6 @@ import com.enonic.xp.cluster.ClusterNodes;
 import com.enonic.xp.cluster.ClusterState;
 import com.enonic.xp.cluster.Clusters;
 
-import static junit.framework.TestCase.assertTrue;
-
 public class ClusterManagerImplTest
 {
     private static final long CHECK_INTERVAL_MS = 200l;
@@ -192,7 +190,7 @@ public class ClusterManagerImplTest
     {
         for ( final TestCluster provider : providers )
         {
-            assertTrue( String.format( "Provider '%s' not active", provider.getId() ), provider.isEnabled() );
+            assertTrue( provider.isEnabled(), String.format( "Provider '%s' not active", provider.getId() ) );
         }
     }
 
@@ -200,7 +198,7 @@ public class ClusterManagerImplTest
     {
         for ( final TestCluster provider : providers )
         {
-            assertFalse( String.format( "Provider '%s' not deactivated", provider.getId() ), provider.isEnabled() );
+            assertFalse( provider.isEnabled(), String.format( "Provider '%s' not deactivated", provider.getId() ) );
         }
     }
 }

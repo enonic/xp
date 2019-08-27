@@ -215,13 +215,13 @@ public class ServiceHandlerTest
         assertEquals( "/site/draft/site/somepath/content/_/service/demo/test", this.request.getContextPath() );
     }
 
-    @Test(expected = com.enonic.xp.web.WebException.class)
+    @Test
     public void executeScript_invalidSite()
         throws Exception
     {
         setupContentAndSite();
         this.request.setEndpointPath( "/_/service/forbidden/test" );
-        final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        assertThrows(WebException.class, () ->  this.handler.handle( this.request, PortalResponse.create().build(), null ));
     }
 
     @Test
@@ -237,17 +237,19 @@ public class ServiceHandlerTest
         assertNotNull( this.request.getApplicationKey() );
     }
 
-    @Test(expected = com.enonic.xp.web.WebException.class)
+    @Test
     public void executeScript_invalidApplication()
         throws Exception
     {
         this.request.setRawPath( "/webapp/forbidden/_/service/demo/test" );
         this.request.setEndpointPath( "/_/service/demo/test" );
 
-        final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), null );
-        assertEquals( HttpStatus.OK, response.getStatus() );
-        Mockito.verify( this.controllerScript ).execute( this.request );
-        assertNotNull( this.request.getApplicationKey() );
+        assertThrows(WebException.class, () ->  {
+            final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), null );
+            assertEquals( HttpStatus.OK, response.getStatus() );
+            Mockito.verify( this.controllerScript ).execute( this.request );
+            assertNotNull( this.request.getApplicationKey() );
+        });
     }
 
     private void setupContentAndSite()

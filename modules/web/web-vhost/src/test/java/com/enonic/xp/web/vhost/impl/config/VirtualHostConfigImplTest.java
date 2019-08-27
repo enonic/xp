@@ -104,7 +104,7 @@ public class VirtualHostConfigImplTest
         final String path = "vhost-" + name + ".properties";
         final InputStream in = getClass().getResourceAsStream( path );
 
-        assertNotNull( "Properties file [" + path + "] not found", in );
+        assertNotNull( in, "Properties file [" + path + "] not found" );
 
         final Properties props = new Properties();
         props.load( in );

@@ -143,7 +143,7 @@ public class VersionTableCleanupTaskTest
             size( 0 ).
             build() );
 
-        assertEquals( "Wrong number of versions found", versions, result.getTotalHits() );
+        assertEquals( versions, result.getTotalHits(), "Wrong number of versions found" );
     }
 
     private void updateNode( final NodeId nodeId, final int updates )

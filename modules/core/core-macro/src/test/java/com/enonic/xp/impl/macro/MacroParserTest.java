@@ -18,7 +18,7 @@ public class MacroParserTest
         try
         {
             final boolean isValid = new MacroParser().debugMode().parse( text ) != null;
-            assertTrue( "Expected invalid macro: " + text, isValid && expectedValid );
+            assertTrue( isValid && expectedValid, "Expected invalid macro: " + text );
         }
         catch ( ParseException e )
         {

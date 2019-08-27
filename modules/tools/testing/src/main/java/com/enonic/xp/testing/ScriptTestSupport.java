@@ -181,8 +181,8 @@ public abstract class ScriptTestSupport
     {
         final ScriptExports exports = runScript( path );
 
-        assertNotNull( "No exports in [" + path + "]", exports );
-        assertTrue( "No functions exported named [" + funcName + "] in [" + path + "]", exports.hasMethod( funcName ) );
+        assertNotNull( exports, "No exports in [" + path + "]" );
+        assertTrue( exports.hasMethod( funcName ), "No functions exported named [" + funcName + "] in [" + path + "]" );
         return exports.executeMethod( funcName, funcParams );
     }
 

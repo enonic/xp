@@ -44,9 +44,8 @@ import com.enonic.xp.task.TaskNotFoundException;
 import com.enonic.xp.task.TaskProgress;
 import com.enonic.xp.task.TaskState;
 
-import static junit.framework.TestCase.assertEquals;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 
 public class TaskServiceImplTest
 {
@@ -265,7 +264,7 @@ public class TaskServiceImplTest
         assertEquals( "123", taskId.toString() );
     }
 
-    @Test(expected = TaskNotFoundException.class)
+    @Test
     public void submitTaskMissing()
     {
         // set up descriptor
@@ -273,10 +272,10 @@ public class TaskServiceImplTest
         Mockito.when( taskDescriptorService.getTasks( app ) ).thenReturn( Descriptors.empty() );
 
         // submit task by name
-        taskService.submitTask( DescriptorKey.from( "myapplication:task1" ), new PropertyTree() );
+        assertThrows(TaskNotFoundException.class, () -> taskService.submitTask( DescriptorKey.from( "myapplication:task1" ), new PropertyTree() ));
     }
 
-    @Test(expected = TaskNotFoundException.class)
+    @Test
     public void submitTaskNoRunExported()
     {
         // set up descriptor
@@ -290,7 +289,7 @@ public class TaskServiceImplTest
         Mockito.when( namedTaskScriptFactory.create( Mockito.eq( descriptor ), Mockito.any() ) ).thenReturn( null );
 
         // submit task by name
-        taskService.submitTask( DescriptorKey.from( "myapplication:task1" ), new PropertyTree() );
+        assertThrows(TaskNotFoundException.class, () -> taskService.submitTask( DescriptorKey.from( "myapplication:task1" ), new PropertyTree() ));
     }
 
     private Thread callServiceMethod( Supplier<List<TaskInfo>> serviceMethod )

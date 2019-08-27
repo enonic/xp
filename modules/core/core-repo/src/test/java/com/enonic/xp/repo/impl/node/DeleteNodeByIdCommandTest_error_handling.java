@@ -34,7 +34,7 @@ public class DeleteNodeByIdCommandTest_error_handling
         this.createDefaultRootNode();
     }
 
-    @Test(expected = NodeStorageException.class)
+    @Test
     public void delete_fails()
         throws Exception
     {
@@ -46,7 +46,7 @@ public class DeleteNodeByIdCommandTest_error_handling
 
         this.storageDao.setClient( new FailDeleteOnIdsProxy( this.client, NodeIds.from( createdNode.id() ) ) );
 
-        doDeleteNode( createdNode.id() );
+        assertThrows(NodeStorageException.class, () -> doDeleteNode( createdNode.id() ));
     }
 
     @Test

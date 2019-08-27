@@ -12,7 +12,7 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Matchers;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
 import com.google.common.collect.Iterables;
@@ -835,14 +835,14 @@ public class SecurityResourceTest
             login( "user1" ).
             build();
 
-        Mockito.doReturn( user ).when( this.securityService ).setPassword( Mockito.any(), Matchers.eq( "myPassword" ) );
+        Mockito.doReturn( user ).when( this.securityService ).setPassword( Mockito.any(), ArgumentMatchers.eq( "myPassword" ) );
 
         request().
             path( "security/principals/setPassword" ).
             entity( readFromFile( "setPasswordParams.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
 
-        Mockito.verify( this.securityService, Mockito.times( 1 ) ).setPassword( Mockito.any(), Matchers.eq( "myPassword" ) );
+        Mockito.verify( this.securityService, Mockito.times( 1 ) ).setPassword( Mockito.any(), ArgumentMatchers.eq( "myPassword" ) );
     }
 
     @Test

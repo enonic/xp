@@ -48,14 +48,15 @@ public class MailServiceImplTest
         assertEquals( 1, inbox.size() );
     }
 
-    @Test(expected = MailException.class)
+    @Test
     public void sessionNotActivatedTest()
         throws Exception
     {
 
         MailServiceImpl mailService = new MailServiceImpl();
 
-        mailService.send( createMockMessage() );
+        MailMessage mockMessage = createMockMessage();
+        assertThrows(MailException.class, () -> mailService.send(mockMessage));
     }
 
     private MailMessage createMockMessage()

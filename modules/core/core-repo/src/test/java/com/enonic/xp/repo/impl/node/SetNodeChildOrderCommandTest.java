@@ -108,8 +108,8 @@ public class SetNodeChildOrderCommandTest
         {
             final Node currentNode = getNode( n );
 
-            assertTrue( "Wrong orderValue, previousOrderValue = " + previousOrderValue + ", current = " + currentNode.getManualOrderValue(),
-                        previousOrderValue == null || currentNode.getManualOrderValue() > previousOrderValue );
+            assertTrue( previousOrderValue == null || currentNode.getManualOrderValue() > previousOrderValue ,
+                    "Wrong orderValue, previousOrderValue = " + previousOrderValue + ", current = " + currentNode.getManualOrderValue());
 
             previousOrderValue = currentNode.getManualOrderValue();
         }
@@ -142,11 +142,11 @@ public class SetNodeChildOrderCommandTest
             final Node currentNode = getNode( n );
 
             final boolean largerThanPreviousName = previousName.compareTo( currentNode.name().toString() ) < 0;
-            assertTrue( "Wrong value, previousValue = " + previousName + ", current = " + currentNode.name(),
-                        Objects.equals( previousName, "" ) || largerThanPreviousName );
+            assertTrue( Objects.equals( previousName, "" ) || largerThanPreviousName ,
+                    "Wrong value, previousValue = " + previousName + ", current = " + currentNode.name());
 
-            assertTrue( "Wrong orderValue, previousOrderValue = " + previousOrderValue + ", current = " + currentNode.getManualOrderValue(),
-                        previousOrderValue == null || currentNode.getManualOrderValue() < previousOrderValue );
+            assertTrue( previousOrderValue == null || currentNode.getManualOrderValue() < previousOrderValue,
+                    "Wrong orderValue, previousOrderValue = " + previousOrderValue + ", current = " + currentNode.getManualOrderValue());
 
             previousOrderValue = currentNode.getManualOrderValue();
 

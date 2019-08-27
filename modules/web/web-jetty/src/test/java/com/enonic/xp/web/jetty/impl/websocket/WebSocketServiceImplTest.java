@@ -110,7 +110,7 @@ public class WebSocketServiceImplTest
     }
 
     @Test
-    @Ignore("failing on travis-ci all the time")
+    @Disabled("failing on travis-ci all the time")
     public void sendFromClient()
         throws Exception
     {

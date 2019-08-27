@@ -4,7 +4,7 @@ import java.util.Locale;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Matchers;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -81,7 +81,7 @@ public class LocalizeFunctionTest
             localeService.getBundle( Mockito.eq( this.portalRequest.getApplicationKey() ), Mockito.eq( new Locale( "en", "US" ) ) ) ).
             thenReturn( messageBundle );
 
-        Mockito.when( messageBundle.localize( Mockito.eq( "myPhrase" ), Matchers.<String>anyVararg() ) ).thenReturn( "localizedString" );
+        Mockito.when( messageBundle.localize( Mockito.eq( "myPhrase" ), ArgumentMatchers.<String>any() ) ).thenReturn( "localizedString" );
 
         final Object result = execute( "i18n.localize", "_key=myPhrase", "_locale=en-US  ", "a=5", "b=2" );
         assertEquals( "localizedString", result );
@@ -94,7 +94,7 @@ public class LocalizeFunctionTest
         Mockito.when( localeService.getBundle( Mockito.eq( this.portalRequest.getApplicationKey() ), Mockito.eq( new Locale( "en" ) ) ) ).
             thenReturn( messageBundle );
 
-        Mockito.when( messageBundle.localize( Mockito.eq( "myPhrase" ), Matchers.<String>anyVararg() ) ).thenReturn( "localizedString" );
+        Mockito.when( messageBundle.localize( Mockito.eq( "myPhrase" ), ArgumentMatchers.<String>any() ) ).thenReturn( "localizedString" );
 
         final Object result = execute( "i18n.localize", "_key=myPhrase", "a=5", "b=2" );
         assertEquals( "localizedString", result );
@@ -107,7 +107,7 @@ public class LocalizeFunctionTest
         Mockito.when( localeService.getBundle( Mockito.eq( this.portalRequest.getApplicationKey() ), Mockito.eq( new Locale( "en" ) ) ) ).
             thenReturn( messageBundle );
 
-        Mockito.when( messageBundle.localize( Mockito.eq( "myPhrase" ), Matchers.<String>anyVararg() ) ).thenReturn( "localizedString" );
+        Mockito.when( messageBundle.localize( Mockito.eq( "myPhrase" ), ArgumentMatchers.<String>any() ) ).thenReturn( "localizedString" );
 
         final Object result = execute( "i18n.localize", "_key=myPhrase" );
         assertEquals( "localizedString", result );
@@ -126,7 +126,7 @@ public class LocalizeFunctionTest
                                                    Mockito.eq( new Locale( "en", "US" ) ) ) ).
                 thenReturn( messageBundle );
 
-            Mockito.when( messageBundle.localize( Mockito.eq( "myPhrase" ), Matchers.<String>anyVararg() ) ).thenReturn(
+            Mockito.when( messageBundle.localize( Mockito.eq( "myPhrase" ), ArgumentMatchers.<String>any() ) ).thenReturn(
                 "localizedString" );
 
             final Object result =

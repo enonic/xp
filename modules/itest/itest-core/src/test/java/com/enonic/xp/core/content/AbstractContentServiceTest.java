@@ -565,16 +565,17 @@ public class AbstractContentServiceTest
 
     private void doAssertOrder( final ContentIds contentIds, final Content[] expectedOrder )
     {
-        assertEquals( "Expected [" + expectedOrder.length + "] number of hits in result", expectedOrder.length, contentIds.getSize() );
+        assertEquals( expectedOrder.length, contentIds.getSize(), "Expected [" + expectedOrder.length + "] number of hits in result" );
 
         final Iterator<ContentId> iterator = contentIds.iterator();
 
         for ( final Content content : expectedOrder )
         {
-            assertTrue( "Expected more content, iterator empty", iterator.hasNext() );
+            assertTrue( iterator.hasNext(), "Expected more content, iterator empty" );
             final ContentId next = iterator.next();
-            assertEquals( "Expected content with path [" + content.getPath() + "] in this position, found [" +
-                              this.contentService.getById( next ).getPath() + "]", content.getId(), next );
+            assertEquals( content.getId(), next,
+                    "Expected content with path [" + content.getPath() + "] in this position, found [" +
+                            this.contentService.getById( next ).getPath() + "]");
         }
     }
 

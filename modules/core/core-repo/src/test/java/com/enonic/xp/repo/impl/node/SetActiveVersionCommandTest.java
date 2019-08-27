@@ -111,7 +111,7 @@ public class SetActiveVersionCommandTest
     }
 
 
-    @Test(expected = NodeAccessException.class)
+    @Test
     public void require_modify_access()
         throws Exception
     {
@@ -130,17 +130,17 @@ public class SetActiveVersionCommandTest
                 build() ) ).
             build() );
 
-        SetActiveVersionCommand.create().
+        assertThrows(NodeAccessException.class, () -> SetActiveVersionCommand.create().
             nodeId( node1.id() ).
             nodeVersionId( node1.getNodeVersionId() ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             indexServiceInternal( this.indexServiceInternal ).
             build().
-            execute();
+            execute());
     }
 
-    @Test(expected = NodeNotFoundException.class)
+    @Test
     public void must_be_version_of_node()
         throws Exception
     {
@@ -156,14 +156,14 @@ public class SetActiveVersionCommandTest
             name( "node2" ).
             build() );
 
-        SetActiveVersionCommand.create().
+        assertThrows(NodeNotFoundException.class, () -> SetActiveVersionCommand.create().
             nodeId( node1.id() ).
             nodeVersionId( node2.getNodeVersionId() ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             indexServiceInternal( this.indexServiceInternal ).
             build().
-            execute();
+            execute());
     }
 
 

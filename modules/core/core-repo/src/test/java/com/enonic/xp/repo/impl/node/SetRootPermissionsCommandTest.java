@@ -42,11 +42,11 @@ public class SetRootPermissionsCommandTest
         assertNotNull( anonymousContext().callWith( () -> getNode( Node.ROOT_UUID ) ) );
     }
 
-    @Test(expected = NodeAccessException.class)
+    @Test
     public void update_without_permission()
         throws Exception
     {
-        anonymousContext().callWith( () -> SetRootPermissionsCommand.create().
+        assertThrows(NodeAccessException.class, () -> anonymousContext().callWith( () -> SetRootPermissionsCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
             searchService( this.searchService ).
             storageService( this.storageService ).
@@ -57,7 +57,7 @@ public class SetRootPermissionsCommandTest
                     build() ).
                 build() ).
             build().
-            execute() );
+            execute() ));
     }
 
     private Context anonymousContext()

@@ -8,7 +8,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 public class FilterExprParserTest
-    extends Assert
 {
     @Test
     public void testEmpty()

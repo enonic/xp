@@ -1573,9 +1573,10 @@ public class ResolveSyncWorkCommandTest
             fail( builder.toString() );
         }
 
-        assertEquals( createAssertFailMessage( result, expectedNodes ), expectedNodes
+        assertEquals( expectedNodes
 
-            .nodes.size(), result.getSize() );
+            .nodes.size(), result.getSize() ,
+                createAssertFailMessage( result, expectedNodes ));
     }
 
     private enum Reason

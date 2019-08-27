@@ -7,6 +7,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalAnswers;
 import org.mockito.Mockito;
@@ -42,7 +43,7 @@ import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 
 public class MacroResourceTest
     extends AdminResourceTestSupport
@@ -115,7 +116,7 @@ public class MacroResourceTest
 
         assertNotNull( response.getEntity() );
         assertEquals( icon.getMimeType(), response.getMediaType().toString() );
-        org.junit.Assert.assertArrayEquals( data, (byte[]) response.getEntity() );
+        Assertions.assertArrayEquals( data, (byte[]) response.getEntity() );
     }
 
     @Test

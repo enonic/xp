@@ -45,7 +45,7 @@ public class FindNodesDependenciesCommandTest
             build().
             execute();
 
-        assertEquals( "Should contain [node1_1(r),node1_1_1(r), contains " + dependants.getAsStrings(), 2, dependants.getSize() );
+        assertEquals( 2, dependants.getSize(), "Should contain [node1_1(r),node1_1_1(r), contains " + dependants.getAsStrings() );
     }
 
     @Test
@@ -78,7 +78,7 @@ public class FindNodesDependenciesCommandTest
             build().
             execute();
 
-        assertEquals( "Should contain 'node1_1', contains " + dependants.getAsStrings(), 1, dependants.getSize() );
+        assertEquals( 1, dependants.getSize(), "Should contain 'node1_1', contains " + dependants.getAsStrings() );
     }
 
     @Test
@@ -99,7 +99,7 @@ public class FindNodesDependenciesCommandTest
             build().
             execute();
 
-        assertEquals( "Should contain [node1_1(r)], contains " + dependants.getAsStrings(), 1, dependants.getSize() );
+        assertEquals( 1, dependants.getSize() , "Should contain [node1_1(r)], contains " + dependants.getAsStrings());
     }
 
     @Test
@@ -120,7 +120,7 @@ public class FindNodesDependenciesCommandTest
             build().
             execute();
 
-        assertEquals( "Should contain [node1_1(r),node1_1_1(r), contains " + dependants.getAsStrings(), 2, dependants.getSize() );
+        assertEquals( 2, dependants.getSize() , "Should contain [node1_1(r),node1_1_1(r), contains " + dependants.getAsStrings());
     }
 
     @Test
@@ -145,8 +145,8 @@ public class FindNodesDependenciesCommandTest
             execute();
 
         assertEquals( 2, dependants.getSize() );
-        assertTrue( "Should contain node1_2", dependants.contains( node1_2.id() ) );
-        assertTrue( "Should contain node1_2_1", dependants.contains( NodeId.from( "n1_2_1" ) ) );
+        assertTrue( dependants.contains( node1_2.id() ) , "Should contain node1_2");
+        assertTrue( dependants.contains( NodeId.from( "n1_2_1" ) ) , "Should contain node1_2_1");
     }
 
 

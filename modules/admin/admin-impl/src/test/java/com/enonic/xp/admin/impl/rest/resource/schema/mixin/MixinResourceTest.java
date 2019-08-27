@@ -9,6 +9,8 @@ import java.time.ZoneOffset;
 import javax.ws.rs.core.Response;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalAnswers;
 import org.mockito.Mockito;
@@ -30,7 +32,7 @@ import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.schema.mixin.Mixins;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 
 public class MixinResourceTest
     extends AdminResourceTestSupport
@@ -173,7 +175,7 @@ public class MixinResourceTest
         final Response response = this.resource.getIcon( "myapplication:icon_svg_test", 20, null );
 
         assertNotNull( response.getEntity() );
-        org.junit.Assert.assertArrayEquals( ByteStreams.toByteArray( in ), (byte[]) response.getEntity() );
+        Assertions.assertArrayEquals( ByteStreams.toByteArray( in ), (byte[]) response.getEntity() );
     }
 
     @Test
@@ -195,7 +197,7 @@ public class MixinResourceTest
 
         assertNotNull( response.getEntity() );
         assertEquals( icon.getMimeType(), response.getMediaType().toString() );
-        org.junit.Assert.assertArrayEquals( data, (byte[]) response.getEntity() );
+        Assertions.assertArrayEquals( data, (byte[]) response.getEntity() );
     }
 
     private void setupMixin( final Mixin mixin )

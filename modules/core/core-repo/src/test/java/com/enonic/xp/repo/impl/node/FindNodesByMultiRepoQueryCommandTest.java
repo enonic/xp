@@ -209,10 +209,10 @@ public class FindNodesByMultiRepoQueryCommandTest
     {
         final MultiRepoNodeHits nodeHits = result.getNodeHits();
         final Set<RepositoryId> repositories = nodeHits.stream().map( MultiRepoNodeHit::getRepositoryId ).collect( Collectors.toSet() );
-        assertEquals( "Wrong number of repositories", repositoryIds.length, repositories.size() );
+        assertEquals( repositoryIds.length, repositories.size(), "Wrong number of repositories" );
         for ( final RepositoryId repoId : repositoryIds )
         {
-            assertTrue( "missing repo '" + repoId + "' in result set", repositories.contains( repoId ) );
+            assertTrue( repositories.contains( repoId ), "missing repo '" + repoId + "' in result set" );
         }
     }
 
@@ -220,10 +220,10 @@ public class FindNodesByMultiRepoQueryCommandTest
     {
         final MultiRepoNodeHits nodeHits = result.getNodeHits();
         final Set<Branch> resultBranches = nodeHits.stream().map( MultiRepoNodeHit::getBranch ).collect( Collectors.toSet() );
-        assertEquals( "Wrong number of branches in result", branches.length, resultBranches.size() );
+        assertEquals( branches.length, resultBranches.size(), "Wrong number of branches in result" );
         for ( final Branch branch : resultBranches )
         {
-            assertTrue( "missing repo '" + branch + "' in result set", resultBranches.contains( branch ) );
+            assertTrue( resultBranches.contains( branch ) , "missing repo '" + branch + "' in result set");
         }
     }
 

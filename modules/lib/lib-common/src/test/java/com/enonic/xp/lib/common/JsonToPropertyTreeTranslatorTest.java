@@ -57,7 +57,7 @@ public class JsonToPropertyTreeTranslatorTest
         final String resource = "/" + getClass().getName().replace( '.', '/' ) + "-" + name + ".json";
         final URL url = getClass().getResource( resource );
 
-        assertNotNull( "File [" + resource + "] not found", url );
+        assertNotNull( url, "File [" + resource + "] not found");
         return this.mapper.readTree( url );
     }
 }

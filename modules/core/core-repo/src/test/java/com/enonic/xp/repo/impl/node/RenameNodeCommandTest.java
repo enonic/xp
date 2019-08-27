@@ -169,11 +169,11 @@ public class RenameNodeCommandTest
         createNode( createNodeNamedMyNodeParams );
     }
 
-    @Test(expected = OperationNotPermittedException.class)
+    @Test
     public void cannot_rename_root_node()
         throws Exception
     {
-        RenameNodeCommand.create().
+        assertThrows(OperationNotPermittedException.class, () -> RenameNodeCommand.create().
             params( RenameNodeParams.create().
                 nodeId( Node.ROOT_UUID ).
                 nodeName( NodeName.from( "my-node-edited" ) ).
@@ -182,6 +182,6 @@ public class RenameNodeCommandTest
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
-            execute();
+            execute() );
     }
 }

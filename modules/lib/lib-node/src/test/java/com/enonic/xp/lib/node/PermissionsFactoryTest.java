@@ -92,7 +92,7 @@ public class PermissionsFactoryTest
             fail( "Missing entry for principal [" + principalKey + "]" );
         }
 
-        Arrays.stream( allowed ).forEach( ( entry ) -> assertTrue( "Should allow [" + entry + "]", principal.isAllowed( entry ) ) );
+        Arrays.stream( allowed ).forEach( ( entry ) -> assertTrue( principal.isAllowed( entry ) , "Should allow [" + entry + "]") );
     }
 
     private void checkDenied( final AccessControlList acl, final String principalKey, final Permission... denied )
@@ -102,7 +102,7 @@ public class PermissionsFactoryTest
         {
             fail( "Missing entry for principal [" + principalKey + "]" );
         }
-        Arrays.stream( denied ).forEach( ( entry ) -> assertTrue( "Should deny [" + entry + "]", principal.isDenied( entry ) ) );
+        Arrays.stream( denied ).forEach( ( entry ) -> assertTrue( principal.isDenied( entry ), "Should deny [" + entry + "]" ) );
     }
 
 

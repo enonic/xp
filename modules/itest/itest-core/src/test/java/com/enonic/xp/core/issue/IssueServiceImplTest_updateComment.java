@@ -50,7 +50,7 @@ public class IssueServiceImplTest_updateComment
         assertEquals( created, updatedComment.getCreated() );
     }
 
-    @Test(expected = NodeNotFoundException.class)
+    @Test
     public void udpateComment_noComment()
         throws Exception
     {
@@ -59,6 +59,6 @@ public class IssueServiceImplTest_updateComment
             comment( NodeId.from( UUID.randomUUID() ) ).
             build();
 
-        final IssueComment comment = this.issueService.updateComment( params );
+        assertThrows(NodeNotFoundException.class, () ->  this.issueService.updateComment( params ));
     }
 }

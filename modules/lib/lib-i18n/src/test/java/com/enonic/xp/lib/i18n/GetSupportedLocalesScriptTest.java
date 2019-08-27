@@ -14,7 +14,7 @@ import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.testing.ScriptRunnerSupport;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 
 @Disabled("Concourse issue")
 public class GetSupportedLocalesScriptTest

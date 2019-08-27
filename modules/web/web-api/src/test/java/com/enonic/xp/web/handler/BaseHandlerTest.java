@@ -20,7 +20,7 @@ public abstract class BaseHandlerTest
         }
         catch ( final WebException e )
         {
-            assertEquals( "Method " + method + " should not be allowed", e.getStatus(), HttpStatus.METHOD_NOT_ALLOWED );
+            assertEquals( e.getStatus(), HttpStatus.METHOD_NOT_ALLOWED, "Method " + method + " should not be allowed" );
             return;
         }
 

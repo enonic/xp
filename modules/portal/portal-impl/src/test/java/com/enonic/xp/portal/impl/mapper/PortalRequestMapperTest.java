@@ -37,7 +37,7 @@ public class PortalRequestMapperTest
         final String resource = "/" + getClass().getName().replace( '.', '/' ) + "-" + name + ".json";
         final URL url = getClass().getResource( resource );
 
-        assertNotNull( "File [" + resource + "] not found", url );
+        assertNotNull( url, "File [" + resource + "] not found" );
         final JsonNode expectedJson = this.mapper.readTree( url );
 
         final JsonMapGenerator generator = new JsonMapGenerator();

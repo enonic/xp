@@ -65,11 +65,11 @@ public class FunctionExpressionBuilderTest
         assertTrue( stemmed instanceof SimpleQueryStringBuilder );
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void test_unsupported()
     {
-        final QueryBuilder stemmed = FunctionExpressionBuilder.build(
+        assertThrows(UnsupportedOperationException.class, () -> FunctionExpressionBuilder.build(
             FunctionExpr.from( "unsupported", ValueExpr.string( "field" ), ValueExpr.string( "organize" ), ValueExpr.string( "OR" ),
-                               ValueExpr.string( "en" ) ) );
+                               ValueExpr.string( "en" ) ) ));
     }
 }

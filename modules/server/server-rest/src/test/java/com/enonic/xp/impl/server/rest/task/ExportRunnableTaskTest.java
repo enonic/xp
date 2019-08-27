@@ -19,7 +19,7 @@ import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.util.BinaryReference;
 
-import static org.mockito.Matchers.isA;
+import static org.mockito.ArgumentMatchers.isA;
 
 public class ExportRunnableTaskTest
     extends AbstractRunnableTaskTest

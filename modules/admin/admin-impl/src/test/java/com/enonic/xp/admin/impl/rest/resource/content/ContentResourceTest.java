@@ -23,7 +23,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
-import org.mockito.internal.util.reflection.Whitebox;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -194,9 +193,9 @@ import static com.enonic.xp.security.acl.Permission.MODIFY;
 import static com.enonic.xp.security.acl.Permission.READ;
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 
 public class ContentResourceTest
     extends AdminResourceTestSupport
@@ -828,7 +827,7 @@ public class ContentResourceTest
             post();
 
         Mockito.verify( taskService ).submitTask( captor.capture(), Mockito.anyString() );
-        PublishContentJson params = (PublishContentJson) Whitebox.getInternalState( captor.getValue(), "params" );
+        PublishContentJson params = captor.getValue().getParams();
 
         assertEquals( 200, res.getStatus() );
         assertEquals( params.getMessage(), "my message" );
@@ -1172,12 +1171,11 @@ public class ContentResourceTest
 
         final BinaryReferences attachmentNames = BinaryReferences.from( "file1.jpg", "file2.txt" );
         class UpdateContentParamsMatcher
-            extends ArgumentMatcher<UpdateContentParams>
+            implements ArgumentMatcher<UpdateContentParams>
         {
-            public boolean matches( Object param )
+            public boolean matches( UpdateContentParams param )
             {
-                final UpdateContentParams upc = (UpdateContentParams) param;
-                return upc.getContentId().equals( content.getId() ) && upc.getRemoveAttachments().equals( attachmentNames );
+                return param.getContentId().equals( content.getId() ) && param.getRemoveAttachments().equals( attachmentNames );
             }
         }
         Mockito.when( contentService.update( argThat( new UpdateContentParamsMatcher() ) ) ).thenReturn( content );

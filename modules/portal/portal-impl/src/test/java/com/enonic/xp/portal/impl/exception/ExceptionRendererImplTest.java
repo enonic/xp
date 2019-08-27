@@ -4,7 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Matchers;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
 import com.google.common.net.HttpHeaders;
@@ -157,7 +157,7 @@ public class ExceptionRendererImplTest
 
         final Site site = newSite();
         when( contentService.getByPath( ContentPath.from( "/mysite" ) ) ).thenReturn( site );
-        when( contentService.getByPath( not( Matchers.eq( ContentPath.from( "/mysite" ) ) ) ) ).thenThrow(
+        when( contentService.getByPath( not( ArgumentMatchers.eq( ContentPath.from( "/mysite" ) ) ) ) ).thenThrow(
             new ContentNotFoundException( ContentPath.from( "/" ), Branch.from( "draft" ) ) );
 
         final ResourceKey errorResource = ResourceKey.from( ApplicationKey.from( "myapplication" ), "site/error/error.js" );

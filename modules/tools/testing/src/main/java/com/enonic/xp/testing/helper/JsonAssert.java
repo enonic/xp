@@ -21,7 +21,7 @@ public final class JsonAssert
         final String resource = "/" + context.getName().replace( '.', '/' ) + "-" + name + ".json";
         final URL url = context.getResource( resource );
 
-        assertNotNull( "File [" + resource + "] not found", url );
+        assertNotNull( url, "File [" + resource + "] not found" );
         final JsonNode expectedJson = mapper.readTree( url );
 
         final JsonMapGenerator generator = new JsonMapGenerator();

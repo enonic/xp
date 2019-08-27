@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.launcher.LauncherException;
 
 import static com.google.common.base.StandardSystemProperty.JAVA_VERSION;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RequirementCheckerTest
 {
@@ -35,12 +36,13 @@ public class RequirementCheckerTest
         new RequirementChecker( props ).check();
     }
 
-    @Test(expected = LauncherException.class)
+    @Test
     public void wrongJavaVersion()
     {
         final SystemProperties props = new SystemProperties();
         props.put( JAVA_VERSION.key(), "1.7.0" );
 
-        new RequirementChecker( props ).check();
+        RequirementChecker requirementChecker = new RequirementChecker(props);
+        assertThrows(LauncherException.class, () -> requirementChecker.check());
     }
 }

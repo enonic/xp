@@ -298,11 +298,11 @@ public class DuplicateNodeCommandTest
         assertDuplicatedTree( a.path(), a, duplicatedNode );
     }
 
-    @Test(expected = OperationNotPermittedException.class)
+    @Test
     public void cannot_duplicate_root_node()
         throws Exception
     {
-        duplicateNode( getNode( Node.ROOT_UUID ) );
+        assertThrows(OperationNotPermittedException.class, () -> duplicateNode( getNode( Node.ROOT_UUID ) ));
     }
 
     @Test
@@ -400,7 +400,7 @@ public class DuplicateNodeCommandTest
     {
         if ( duplicateReferences.size() > 0 )
         {
-            assertTrue( "Ref outside duplicate-tree updated", duplicateReferences.containsAll( referencesOutsideTree ) );
+            assertTrue( duplicateReferences.containsAll( referencesOutsideTree ), "Ref outside duplicate-tree updated" );
         }
     }
 
@@ -416,8 +416,9 @@ public class DuplicateNodeCommandTest
                 if ( ref.getName().equals( dup.getName() ) )
                 {
                     found = true;
-                    assertNotEquals( "Reference within duplicated tree should be moved to duplicated child", ref.getReference().getNodeId(),
-                                     dup.getReference().getNodeId() );
+                    assertNotEquals( ref.getReference().getNodeId(),
+                                     dup.getReference().getNodeId() ,
+                            "Reference within duplicated tree should be moved to duplicated child");
                 }
             }
 

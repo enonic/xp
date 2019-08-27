@@ -85,7 +85,7 @@ public class LoadNodeCommandTest
         assertNotEquals( originalNode.id(), storedNode.id() );
     }
 
-    @Test(expected = NodeLoadException.class)
+    @Test
     public void parent_does_not_exist()
         throws Exception
     {
@@ -99,7 +99,7 @@ public class LoadNodeCommandTest
                 build() ).
             build();
 
-        doLoadNode( loadParams );
+        assertThrows(NodeLoadException.class, () -> doLoadNode( loadParams ));
     }
 
     private LoadNodeResult doLoadNode( final LoadNodeParams loadParams )

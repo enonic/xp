@@ -19,8 +19,8 @@ import com.enonic.xp.server.RunMode;
 
 import static com.enonic.xp.core.impl.app.ApplicationHelper.X_BUNDLE_TYPE;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 
 public class ApplicationFactoryTest
     extends BundleBasedTest

@@ -8,7 +8,7 @@ import com.enonic.xp.security.PrincipalRelationship;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.eq;
 
 public class AddMembersHandlerTest
     extends ScriptTestSupport

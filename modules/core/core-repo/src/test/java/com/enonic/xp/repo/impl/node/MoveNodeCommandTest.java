@@ -92,7 +92,7 @@ public class MoveNodeCommandTest
     }
 
 
-    @Test(expected = MoveNodeException.class)
+    @Test
     public void move_to_child_as_self_not_allowed()
         throws Exception
     {
@@ -102,7 +102,7 @@ public class MoveNodeCommandTest
             setNodeId( NodeId.from( "mynode" ) ).
             build() );
 
-        MoveNodeCommand.create().
+        assertThrows(MoveNodeException.class, () -> MoveNodeCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -110,10 +110,10 @@ public class MoveNodeCommandTest
             newNodeName( NodeName.from( "mynode2" ) ).
             newParent( node.path() ).
             build().
-            execute();
+            execute());
     }
 
-    @Test(expected = MoveNodeException.class)
+    @Test
     public void move_to_child_of_own_child_not_allowed()
         throws Exception
     {
@@ -129,7 +129,7 @@ public class MoveNodeCommandTest
             setNodeId( NodeId.from( "child" ) ).
             build() );
 
-        MoveNodeCommand.create().
+        assertThrows(MoveNodeException.class, () -> MoveNodeCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -137,11 +137,11 @@ public class MoveNodeCommandTest
             newNodeName( NodeName.from( "mynode2" ) ).
             newParent( child.path() ).
             build().
-            execute();
+            execute());
     }
 
 
-    @Test(expected = NodeAlreadyExistAtPathException.class)
+    @Test
     public void move_node_already_exists()
         throws Exception
     {
@@ -162,7 +162,7 @@ public class MoveNodeCommandTest
             parent( newParent.path() ).
             build() );
 
-        MoveNodeCommand.create().
+        assertThrows(NodeAlreadyExistAtPathException.class, () -> MoveNodeCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -170,7 +170,7 @@ public class MoveNodeCommandTest
             newNodeName( NodeName.from( "mynode" ) ).
             newParent( newParent.path() ).
             build().
-            execute();
+            execute());
     }
 
     @Test
@@ -406,11 +406,11 @@ public class MoveNodeCommandTest
         assertEquals( a2_1.id(), iterator.next() );
     }
 
-    @Test(expected = OperationNotPermittedException.class)
+    @Test
     public void cannot_move_root_node()
         throws Exception
     {
-        doMoveNode( NodePath.create( "/fisk" ).build(), Node.ROOT_UUID );
+        assertThrows(OperationNotPermittedException.class, () -> doMoveNode( NodePath.create( "/fisk" ).build(), Node.ROOT_UUID ));
     }
 
     private void doMoveNode( final NodePath newParent, final NodeId nodeId )

@@ -16,7 +16,6 @@ import com.enonic.xp.portal.view.ViewFunctionParams;
 import com.enonic.xp.site.Site;
 
 public class LocalizeParamsTest
-    extends Assert
 {
     private static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
 

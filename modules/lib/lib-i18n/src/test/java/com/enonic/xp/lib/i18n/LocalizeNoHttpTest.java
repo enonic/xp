@@ -7,7 +7,7 @@ import java.util.Set;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
-import org.mockito.Matchers;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -21,8 +21,8 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.testing.ScriptRunnerSupport;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 
 @Disabled("Concourse issue")
 public class LocalizeNoHttpTest
@@ -51,7 +51,7 @@ public class LocalizeNoHttpTest
 
         final MessageBundle bundle = Mockito.mock( MessageBundle.class, (Answer) this::answer );
         Mockito.when( localeService.getBundle( eq( ApplicationKey.from( "com.enonic.myapplication" ) ), Mockito.any( Locale.class ),
-                                               Matchers.<String>anyVararg() ) ).
+                ArgumentMatchers.<String>any() ) ).
             thenReturn( bundle );
 
         addService( LocaleService.class, localeService );

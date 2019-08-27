@@ -206,11 +206,11 @@ public class SecurityServiceImplTest
         } );
     }
 
-    @Test(expected = PrincipalAlreadyExistsException.class)
+    @Test
     public void testCreateUserThrowsExceptionWhenNameIsOccupied()
         throws Exception
     {
-        runAsAdmin( () -> {
+        assertThrows(PrincipalAlreadyExistsException.class, () -> runAsAdmin( () -> {
             final PrincipalKey userKey1 = PrincipalKey.ofUser( SYSTEM, "User1" );
             final CreateUserParams createUser1 = CreateUserParams.create().
                 userKey( userKey1 ).
@@ -222,7 +222,7 @@ public class SecurityServiceImplTest
 
             securityService.createUser( createUser1 );
             securityService.createUser( createUser1 );
-        } );
+        } ));
     }
 
     @Test
@@ -411,11 +411,11 @@ public class SecurityServiceImplTest
         } );
     }
 
-    @Test(expected = PrincipalAlreadyExistsException.class)
+    @Test
     public void testCreateGroupThrowsExceptionWhenNameIsOccupied()
         throws Exception
     {
-        runAsAdmin( () -> {
+        assertThrows(PrincipalAlreadyExistsException.class, () -> runAsAdmin( () -> {
             final PrincipalKey groupKey1 = PrincipalKey.ofGroup( SYSTEM, "Group-a" );
             final CreateGroupParams createGroup = CreateGroupParams.create().
                 groupKey( groupKey1 ).
@@ -425,7 +425,7 @@ public class SecurityServiceImplTest
 
             securityService.createGroup( createGroup );
             securityService.createGroup( createGroup );
-        } );
+        } ) );
     }
 
     @Test
@@ -492,11 +492,11 @@ public class SecurityServiceImplTest
         } );
     }
 
-    @Test(expected = PrincipalAlreadyExistsException.class)
+    @Test
     public void testCreateRoleThrowsExceptionWhenNameIsOccupied()
         throws Exception
     {
-        runAsAdmin( () -> {
+        assertThrows(PrincipalAlreadyExistsException.class, () -> runAsAdmin( () -> {
             final PrincipalKey roleKey1 = PrincipalKey.ofRole( "Role-a" );
             final CreateRoleParams createRole = CreateRoleParams.create().
                 roleKey( roleKey1 ).
@@ -506,7 +506,7 @@ public class SecurityServiceImplTest
 
             securityService.createRole( createRole );
             securityService.createRole( createRole );
-        } );
+        } ) );
     }
 
     @Test
@@ -815,11 +815,11 @@ public class SecurityServiceImplTest
         } );
     }
 
-    @Test(expected = AuthenticationException.class)
+    @Test
     public void testAuthenticateUnsupportedToken()
         throws Exception
     {
-        runAsAdmin( () -> {
+        assertThrows(AuthenticationException.class, () -> runAsAdmin( () -> {
             final CreateUserParams createUser = CreateUserParams.create().
                 userKey( PrincipalKey.ofUser( SYSTEM, "User1" ) ).
                 displayName( "User 1" ).
@@ -835,7 +835,7 @@ public class SecurityServiceImplTest
 
             final AuthenticationInfo authInfo = securityService.authenticate( authToken );
             assertEquals( user.getKey(), authInfo.getUser().getKey() );
-        } );
+        } ) );
     }
 
     @Test
@@ -969,11 +969,11 @@ public class SecurityServiceImplTest
         } );
     }
 
-    @Test(expected = IdProviderAlreadyExistsException.class)
+    @Test
     public void testCreateIdProviderThrowsExceptionWhenNameIsOccupied()
         throws Exception
     {
-        runAsAdmin( () -> {
+        assertThrows(IdProviderAlreadyExistsException.class, () -> runAsAdmin( () -> {
             final PrincipalKey userKey = PrincipalKey.ofUser( SYSTEM, "User1" );
 
             final IdProviderAccessControlList permissions =
@@ -989,7 +989,7 @@ public class SecurityServiceImplTest
             securityService.createIdProvider( createIdProvider );
             securityService.createIdProvider( createIdProvider );
 
-        } );
+        } ) );
     }
 
     @Test

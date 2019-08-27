@@ -172,7 +172,7 @@ public class UpdateNodeCommandTest
         assertEquals( 1, updatedNode.getAttachedBinaries().getSize() );
     }
 
-    @Test(expected = NodeBinaryReferenceException.class)
+    @Test
     public void try_add_new_without_source()
         throws Exception
     {
@@ -197,10 +197,10 @@ public class UpdateNodeCommandTest
             id( node.id() ).
             build();
 
-        updateNode( updateNodeParams );
+        assertThrows(NodeBinaryReferenceException.class, () -> updateNode( updateNodeParams ));
     }
 
-    @Test(expected = NodeBinaryReferenceException.class)
+    @Test
     public void try_setting_new_binary_into_existing_property()
         throws Exception
     {
@@ -225,7 +225,7 @@ public class UpdateNodeCommandTest
             id( node.id() ).
             build();
 
-        updateNode( updateNodeParams );
+        assertThrows(NodeBinaryReferenceException.class, () -> updateNode( updateNodeParams ));
     }
 
     @Test
