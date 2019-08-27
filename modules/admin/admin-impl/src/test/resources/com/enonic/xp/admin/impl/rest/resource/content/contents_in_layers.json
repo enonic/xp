@@ -21,6 +21,10 @@
       "compareStatus": "EQUAL",
       "id": "123",
       "publishStatus": "ONLINE"
+    },
+    "workflowInfo" : {
+      "checks" : { },
+      "state" : "READY"
     }
   },
   {
@@ -40,6 +44,10 @@
       "compareStatus": "NEW",
       "id": "123",
       "publishStatus": null
+    },
+    "workflowInfo" : {
+      "checks" : { },
+      "state" : "READY"
     }
   }
 ]

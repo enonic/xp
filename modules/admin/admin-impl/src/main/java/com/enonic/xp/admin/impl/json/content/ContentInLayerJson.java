@@ -6,6 +6,7 @@ import com.enonic.xp.admin.impl.json.content.attachment.AttachmentJson;
 import com.enonic.xp.content.CompareContentResult;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.GetPublishStatusResult;
+import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.layer.ContentLayer;
 
 @SuppressWarnings("UnusedDeclaration")
@@ -90,6 +91,7 @@ public class ContentInLayerJson
         return layer.getIcon() != null ? new AttachmentJson( layer.getIcon() ) : null;
     }
 
+    public WorkflowInfo getWorkflowInfo() { return content.getWorkflowInfo(); }
 
     public static Builder create()
     {
