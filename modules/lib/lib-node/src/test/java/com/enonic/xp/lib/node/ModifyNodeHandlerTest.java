@@ -108,12 +108,6 @@ public class ModifyNodeHandlerTest
         mockGetNode( node );
         mockUpdateNode( node );
 
-        Mockito.when( this.repositoryService.get( RepositoryId.from( "com.enonic.cms.default" ) ) ).
-            thenReturn( Repository.create().
-                id( RepositoryId.from( "com.enonic.cms.default" ) ).
-                branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
-                build() );
-
         runScript( "/lib/xp/examples/node/modify.js" );
 
         Mockito.verify( this.nodeService ).update( updateCaptor.capture() );
@@ -163,12 +157,6 @@ public class ModifyNodeHandlerTest
 
         mockGetNode( node );
         mockUpdateNode( node );
-
-        Mockito.when( this.repositoryService.get( RepositoryId.from( "com.enonic.cms.default" ) ) ).
-            thenReturn( Repository.create().
-                id( RepositoryId.from( "com.enonic.cms.default" ) ).
-                branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
-                build() );
 
         runScript( "/lib/xp/examples/node/modify-keep-types.js" );
 

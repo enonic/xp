@@ -217,10 +217,10 @@ public abstract class ScriptTestSupport
     {
         final Bundle bundle = Mockito.mock( Bundle.class );
 
-        Mockito.when( bundle.getBundleContext() ).thenReturn( this.bundleContext );
+        Mockito.lenient().when( bundle.getBundleContext() ).thenReturn( this.bundleContext );
         Mockito.when( bundle.getSymbolicName() ).thenReturn( this.appKey.getName() );
         Mockito.when( bundle.getVersion() ).thenReturn( Version.valueOf( this.appVersion ) );
-        Mockito.when( bundle.getState() ).thenReturn( Bundle.ACTIVE );
+        Mockito.lenient().when( bundle.getState() ).thenReturn( Bundle.ACTIVE );
 
         final Hashtable<String, String> headers = new Hashtable<>();
         Mockito.when( bundle.getHeaders() ).thenReturn( headers );
