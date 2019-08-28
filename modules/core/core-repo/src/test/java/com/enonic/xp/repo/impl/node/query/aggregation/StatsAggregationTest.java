@@ -75,7 +75,7 @@ public class StatsAggregationTest
     private void verifyStatsAggregation( final Bucket parentBucket, String parentBucketKey, double min, double max, double avg, double sum,
                                          double count )
     {
-        assertEquals( "Wrong parent bucket key", parentBucketKey, parentBucket.getKey() );
+        assertEquals( parentBucketKey, parentBucket.getKey(), "Wrong parent bucket key" );
 
         assertEquals( 1, parentBucket.getSubAggregations().getSize() );
         final Aggregation subAgg = parentBucket.getSubAggregations().get( "subquery" );

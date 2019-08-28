@@ -27,7 +27,7 @@ public abstract class AbstractVirtualFileTest
     private void populateTestData()
         throws Exception
     {
-        this.rootDir = Files.createFile( this.temporaryFolder.resolve( "root" ) ).toFile();
+        this.rootDir = Files.createDirectory( this.temporaryFolder.resolve( "root" ) ).toFile();
 
         final File dir1 = createDir( this.rootDir, "dir1" );
         final File dir2 = createDir( this.rootDir, "dir2" );
