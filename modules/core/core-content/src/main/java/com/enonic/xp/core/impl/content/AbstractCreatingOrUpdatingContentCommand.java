@@ -1,9 +1,12 @@
 package com.enonic.xp.core.impl.content;
 
+import java.time.Instant;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.net.MediaType;
 
+import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.content.processor.ContentProcessors;
@@ -104,10 +107,22 @@ class AbstractCreatingOrUpdatingContentCommand
         return EXECUTABLE_CONTENT_TYPES.stream().anyMatch( mediaType::is ) && isExecutableFileName( fileName );
     }
 
+    protected void validatePublishInfo( final ContentPublishInfo publishInfo )
+    {
+        final Instant publishToInstant = publishInfo.getTo();
+        if ( publishToInstant != null )
+        {
+            final Instant publishFromInstant = publishInfo.getFrom();
+            Preconditions.checkArgument( publishFromInstant != null, "'Publish from' must be set if 'Publish from' is set." );
+            Preconditions.checkArgument( publishToInstant.compareTo( publishFromInstant ) >= 0,
+                                         "'Publish to' must be set after 'Publish from'." );
+        }
+    }
+
     private boolean isExecutableFileName( final String fileName )
     {
-        return fileName.endsWith( ".exe" ) || fileName.endsWith( ".msi" ) || fileName.endsWith( ".dmg" ) ||
-            fileName.endsWith( ".bat" ) || fileName.endsWith( ".sh" );
+        return fileName.endsWith( ".exe" ) || fileName.endsWith( ".msi" ) || fileName.endsWith( ".dmg" ) || fileName.endsWith( ".bat" ) ||
+            fileName.endsWith( ".sh" );
     }
 }
 

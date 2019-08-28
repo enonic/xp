@@ -790,7 +790,7 @@ public class ContentResourceTest
     }*/
 
     @Test
-    public void update_content_without_publish_from()
+    public void update_require_valid_content_without_publish_from()
         throws Exception
     {
         Content content = createContent( "content-id", "content-name", "myapplication:content-type" );
@@ -798,6 +798,20 @@ public class ContentResourceTest
         Mockito.when( contentService.getById( Mockito.any() ) ).thenReturn( content );
         final int status = request().path( "content/update" ).
             entity( readFromFile( "update_content_params_without_publish_from.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().
+            getStatus();
+        assertEquals( 422, status );
+    }
+
+    @Test
+    public void update_require_valid_content_with_invalid_publish_info()
+        throws Exception
+    {
+        Content content = createContent( "content-id", "content-name", "myapplication:content-type" );
+        Mockito.when( contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenReturn( content );
+        Mockito.when( contentService.getById( Mockito.any() ) ).thenReturn( content );
+        final int status = request().path( "content/update" ).
+            entity( readFromFile( "update_require_valid_content_params_with_invalid_publish_info.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post().
             getStatus();
         assertEquals( 422, status );
@@ -814,7 +828,7 @@ public class ContentResourceTest
             entity( readFromFile( "update_content_params_with_invalid_publish_info.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post().
             getStatus();
-        assertEquals( 422, status );
+        assertEquals( 200, status );
     }
 
     @Test

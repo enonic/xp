@@ -211,16 +211,9 @@ final class UpdateContentCommand
         validatePropertyTree( editedContent );
 
         final ContentPublishInfo publishInfo = editedContent.getPublishInfo();
-        if ( publishInfo != null )
+        if ( publishInfo != null && this.params.isRequireValid() )
         {
-            final Instant publishToInstant = publishInfo.getTo();
-            if ( publishToInstant != null )
-            {
-                final Instant publishFromInstant = publishInfo.getFrom();
-                Preconditions.checkArgument( publishFromInstant != null, "'Publish from' must be set if 'Publish from' is set." );
-                Preconditions.checkArgument( publishToInstant.compareTo( publishFromInstant ) >= 0,
-                                             "'Publish to' must be set after 'Publish from'." );
-            }
+            validatePublishInfo( publishInfo );
         }
 
         if ( editedContent.getType().isImageMedia() )

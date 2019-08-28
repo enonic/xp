@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.content;
 
-import java.time.Instant;
 import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
@@ -150,6 +149,11 @@ final class CreateContentCommand
         validateSpecificChecks( params );
         validateContentType( params );
         validatePropertyTree( params );
+        final ContentPublishInfo publishInfo = params.getContentPublishInfo();
+        if ( publishInfo != null )
+        {
+            validatePublishInfo( publishInfo );
+        }
     }
 
     private void validateSpecificChecks( final CreateContentParams params )
@@ -516,19 +520,6 @@ final class CreateContentCommand
             super.validate();
             Preconditions.checkNotNull( params, "params must be given" );
             Preconditions.checkNotNull( formDefaultValuesProcessor );
-
-            final ContentPublishInfo publishInfo = params.getContentPublishInfo();
-            if ( publishInfo != null )
-            {
-                final Instant publishToInstant = publishInfo.getTo();
-                if ( publishToInstant != null )
-                {
-                    final Instant publishFromInstant = publishInfo.getFrom();
-                    Preconditions.checkArgument( publishFromInstant != null, "'Publish from' must be set if 'Publish from' is set." );
-                    Preconditions.checkArgument( publishToInstant.compareTo( publishFromInstant ) >= 0,
-                                                 "'Publish to' must be set after 'Publish from'." );
-                }
-            }
         }
 
         public CreateContentCommand build()

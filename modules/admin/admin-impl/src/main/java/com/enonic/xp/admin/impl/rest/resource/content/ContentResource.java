@@ -416,9 +416,12 @@ public final class ContentResource
                                                 "Content [%s] could not be updated. A content with that name already exists",
                                                 json.getRenameContentParams().getNewName().toString() );
         }
-        validatePublishInfo( json );
-
         final UpdateContentParams updateParams = json.getUpdateContentParams();
+
+        if ( updateParams.isRequireValid() )
+        {
+            validatePublishInfo( json );
+        }
 
         final AccessControlList permissionsBeforeSave = contentService.getPermissionsById( updateParams.getContentId() );
 
