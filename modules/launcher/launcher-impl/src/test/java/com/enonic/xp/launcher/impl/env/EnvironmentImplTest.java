@@ -54,7 +54,7 @@ public class EnvironmentImplTest
         final EnvironmentImpl env = new EnvironmentImpl();
         env.installDir = Files.createDirectory(this.temporaryFolder.resolve( "install" ) ).toFile();
         env.homeDir = Files.createDirectory(this.temporaryFolder.resolve( "home" ) ).toFile();
-        assertThrows( LauncherException.class, () -> env.validate() );
+        env.validate();
     }
 
     @Test

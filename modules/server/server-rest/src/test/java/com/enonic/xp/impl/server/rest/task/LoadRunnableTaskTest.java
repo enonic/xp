@@ -163,9 +163,7 @@ public class LoadRunnableTaskTest
     public void load_no_dump()
         throws Exception
     {
-        final LoadRunnableTask task = createAndRunTask( new SystemLoadRequestJson( "name", false ) );
-
-        final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> task.createTaskResult());
+        final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> createAndRunTask( new SystemLoadRequestJson( "name", false ) ) );
         assertEquals( "No dump with name 'name' found in " + dataDir.getPath(), ex.getMessage());
     }
 
