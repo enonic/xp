@@ -6,14 +6,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.io.TempDir;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
 
 public class AbstractResourceTest
 {
-    @TempDir
     public Path temporaryFolder;
 
     protected File applicationsDir;
@@ -32,6 +30,9 @@ public class AbstractResourceTest
     public void setup()
         throws Exception
     {
+        //TODO @TempDir JUnit5 suits better, but tests fail due to https://bugs.openjdk.java.net/browse/JDK-6956385
+        temporaryFolder = Files.createTempDirectory("abstractResourceTest");
+
         applicationsDir = Files.createDirectory(this.temporaryFolder.resolve( "applications" ) ).toFile();
 
         writeFile( applicationsDir, "myapplication/a/b.txt", "a/b.txt" );
