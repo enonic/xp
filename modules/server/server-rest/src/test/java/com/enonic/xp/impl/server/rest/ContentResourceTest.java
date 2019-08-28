@@ -15,6 +15,8 @@ import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.jaxrs.impl.MockRestResponse;
 import com.enonic.xp.schema.content.ContentTypeName;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class ContentResourceTest
     extends ServerRestTestSupport
 {
