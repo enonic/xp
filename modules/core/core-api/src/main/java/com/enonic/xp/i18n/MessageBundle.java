@@ -9,5 +9,7 @@ public interface MessageBundle
 
     String localize( String key, Object... args );
 
+    String getMessage( String key );
+
     Map<String, String> asMap();
 }
