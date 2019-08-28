@@ -11,6 +11,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.mapper.PortalRequestMapper;
+import com.enonic.xp.portal.impl.mapper.PortalResponseMapper;
 import com.enonic.xp.portal.impl.rendering.RenderException;
 import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.resource.ResourceKey;
@@ -93,7 +94,7 @@ public class ResponseProcessorExecutorTest
         when( body.getValue() ).thenReturn( data.toString() );
         when( result.isObject() ).thenReturn( true );
         when( result.getMember( "body" ) ).thenReturn( body );
-        when( scriptExports.executeMethod( anyString(), any( PortalRequestMapper.class ), any( PortalRequestMapper.class ) ) ).thenReturn(
+        when( scriptExports.executeMethod( anyString(), any( PortalRequestMapper.class ), any( PortalResponseMapper.class ) ) ).thenReturn(
             result );
 
         final ResponseProcessorExecutor filterExecutor = new ResponseProcessorExecutor( scriptService );
