@@ -20,6 +20,8 @@ import com.google.common.collect.Maps;
 
 public abstract class BundleBasedTest
 {
+    private static final int FELIX_STOP_WAIT_TIMEOUT_MS = 10000;
+
     @TempDir
     public Path temporaryFolder;
 
@@ -49,6 +51,7 @@ public abstract class BundleBasedTest
         throws Exception
     {
         this.felix.stop();
+        this.felix.waitForStop(FELIX_STOP_WAIT_TIMEOUT_MS);
     }
 
     protected final Bundle deploy( final String name, final InputStream in )
