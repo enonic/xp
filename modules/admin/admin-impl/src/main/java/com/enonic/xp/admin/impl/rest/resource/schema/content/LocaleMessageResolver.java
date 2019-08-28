@@ -6,6 +6,9 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
@@ -15,6 +18,8 @@ import static java.util.stream.Collectors.toList;
 
 public final class LocaleMessageResolver
 {
+    private final static Logger LOG = LoggerFactory.getLogger( LocaleMessageResolver.class );
+
     private LocaleService localeService;
 
     private ApplicationKey applicationKey;
@@ -38,7 +43,17 @@ public final class LocaleMessageResolver
         {
             return defaultValue;
         }
-        final String localizedValue = bundle.localize( key );
+        final String localizedValue;
+        try
+        {
+            localizedValue = bundle.localize( key );
+        }
+        catch ( IllegalArgumentException e )
+        {
+            LOG.error( "Can't localize message with key - '{}' to '{}' locale.", key, getLocale(), e );
+            return bundle.getMessage( key );
+        }
+
         return localizedValue != null ? localizedValue : defaultValue;
     }
 
