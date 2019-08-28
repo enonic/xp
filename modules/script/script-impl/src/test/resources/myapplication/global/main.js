@@ -1,4 +1,4 @@
-var assert = Java.type('org.junit.Assert');
+var assert = Java.type('org.junit.jupiter.api.Assertions');
 
 var array = [1, 2, 3];
 assert.assertEquals(true, array instanceof Array);

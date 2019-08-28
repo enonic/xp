@@ -1,4 +1,4 @@
-var assert = Java.type('org.junit.Assert');
+var assert = Java.type('org.junit.jupiter.api.Assertions');
 
 var moment = require('./moment.js');
 assert.assertEquals(true, moment != undefined);
