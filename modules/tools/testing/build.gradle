@@ -4,7 +4,7 @@ dependencies {
     compile project( ':web:web-api' )
     compile project( ':portal:portal-api' )
     compile project( ':script:script-impl' )
-    implementation 'junit:junit:4.12'
+    compile 'junit:junit:4.12'
     implementation 'org.junit.jupiter:junit-jupiter-api:5.5.1'
     implementation 'org.junit.jupiter:junit-jupiter-params:5.5.1'
     runtimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.1'

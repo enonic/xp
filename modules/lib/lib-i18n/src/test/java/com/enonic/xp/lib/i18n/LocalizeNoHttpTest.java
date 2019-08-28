@@ -5,9 +5,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Disabled;
-import org.mockito.ArgumentMatchers;
+import org.junit.After;
+import org.junit.Ignore;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -24,7 +23,7 @@ import com.enonic.xp.testing.ScriptRunnerSupport;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 
-@Disabled("Concourse issue")
+@Ignore("Concourse issue")
 public class LocalizeNoHttpTest
     extends ScriptRunnerSupport
 {
@@ -51,13 +50,13 @@ public class LocalizeNoHttpTest
 
         final MessageBundle bundle = Mockito.mock( MessageBundle.class, (Answer) this::answer );
         Mockito.when( localeService.getBundle( eq( ApplicationKey.from( "com.enonic.myapplication" ) ), Mockito.any( Locale.class ),
-                ArgumentMatchers.<String>any() ) ).
+                                               any() ) ).
             thenReturn( bundle );
 
         addService( LocaleService.class, localeService );
     }
 
-    @AfterEach
+    @After
     public void tearDown()
     {
         if ( this.portalRequest != null )

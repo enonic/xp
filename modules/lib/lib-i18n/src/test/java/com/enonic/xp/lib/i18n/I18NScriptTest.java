@@ -6,8 +6,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.jupiter.api.Disabled;
-import org.mockito.ArgumentMatchers;
+import org.junit.Ignore;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -24,7 +23,7 @@ import com.enonic.xp.testing.ScriptRunnerSupport;
 
 import static org.mockito.ArgumentMatchers.any;
 
-@Disabled("Concourse issue")
+@Ignore("Concourse issue")
 public class I18NScriptTest
     extends ScriptRunnerSupport
 {
@@ -50,7 +49,7 @@ public class I18NScriptTest
 
         final MessageBundle bundle = Mockito.mock( MessageBundle.class, (Answer) this::answer );
         Mockito.when(
-            localeService.getBundle( Mockito.any( ApplicationKey.class ), Mockito.any( Locale.class ), ArgumentMatchers.<String>any() ) ).
+            localeService.getBundle( Mockito.any( ApplicationKey.class ), Mockito.any( Locale.class ), any() ) ).
             thenReturn( bundle );
 
         addService( LocaleService.class, localeService );
