@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.export.xml;
 
+import java.io.Reader;
 import java.net.URL;
 
 import org.junit.jupiter.api.Test;
@@ -32,7 +33,10 @@ public class XmlPermissionsParserTest
         final XmlPermissionsParser parser = new XmlPermissionsParser();
         final URL resource = getClass().getResource( "permissions.xml" );
         final CharSource charSource = Resources.asCharSource( resource, Charsets.UTF_8 );
-        final Document doc = DomHelper.parse( charSource.openStream() );
+        final Document doc;
+        try (Reader reader = charSource.openStream()) {
+            doc = DomHelper.parse(reader);
+        }
 
         final AccessControlList accessControlList = XmlPermissionsParser.parse( DomElement.from( doc.getDocumentElement() ) );
 
