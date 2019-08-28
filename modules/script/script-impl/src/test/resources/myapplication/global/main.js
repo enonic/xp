@@ -1,7 +1,7 @@
 var assert = Java.type('org.junit.jupiter.api.Assertions');
 
 var array = [1, 2, 3];
-assert.assertEquals(true, array instanceof Array);
+assert.assertTrue(array instanceof Array);
 
 var arrayJson = JSON.stringify(array);
 assert.assertEquals('[1,2,3]', arrayJson);
