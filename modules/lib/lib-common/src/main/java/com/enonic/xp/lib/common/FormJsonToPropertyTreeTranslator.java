@@ -121,6 +121,11 @@ public final class FormJsonToPropertyTreeTranslator
             return ValueFactory.newLong( value.longValue() );
         }
 
+        if ( value.isBoolean() )
+        {
+            return ValueFactory.newBoolean( value.booleanValue() );
+        }
+
         if ( value.isObject() )
         {
             PropertySet propertySet = new PropertySet();
