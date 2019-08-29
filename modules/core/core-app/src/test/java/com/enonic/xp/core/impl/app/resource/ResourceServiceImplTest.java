@@ -22,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ResourceServiceImplTest
 {
-    @TempDir
     public Path temporaryFolder;
 
     private ApplicationKey appKey;
@@ -35,6 +34,9 @@ public class ResourceServiceImplTest
     public void setup()
         throws Exception
     {
+        //TODO @TempDir JUnit5 suits better, but tests fail due to https://bugs.openjdk.java.net/browse/JDK-6956385
+        temporaryFolder = Files.createTempDirectory("resourceServiceImplTest");
+
         this.appDir = Files.createDirectory(this.temporaryFolder.resolve( "myapp" ) ).toFile();
 
         this.appKey = ApplicationKey.from( "myapp" );
