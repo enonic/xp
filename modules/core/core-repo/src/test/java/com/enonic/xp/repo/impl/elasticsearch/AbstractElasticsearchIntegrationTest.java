@@ -6,9 +6,11 @@ import org.elasticsearch.action.search.SearchAction;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,9 +21,12 @@ import com.enonic.xp.repo.impl.elasticsearch.storage.StorageDaoImpl;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 @Tag("elasticsearch")
+@ExtendWith(AbstractElasticsearchIntegrationTest.EmbeddedElasticsearchExtension.class)
 public abstract class AbstractElasticsearchIntegrationTest
 {
     protected static final Repository TEST_REPO = Repository.create().
@@ -34,30 +39,21 @@ public abstract class AbstractElasticsearchIntegrationTest
     @TempDir
     public Path temporaryFolder;
 
-    protected IndexServiceInternalImpl elasticsearchIndexService;
+    protected static IndexServiceInternalImpl elasticsearchIndexService;
 
-    protected Client client;
+    protected static Client client;
 
-    private EmbeddedElasticsearchServer server;
+    private static EmbeddedElasticsearchServer server;
 
     @BeforeEach
-    void setUpEmbeddedElasticsearchServer()
-        throws Exception
+    void cleanupEmbeddedElasticsearchServer()
     {
-        server = new EmbeddedElasticsearchServer( temporaryFolder.toFile() );
-
-        this.client = server.getClient();
-
-        final StorageDaoImpl storageDao = new StorageDaoImpl();
-        storageDao.setClient( this.client );
-
-        this.elasticsearchIndexService = new IndexServiceInternalImpl();
-        elasticsearchIndexService.setClient( client );
+        client.admin().indices().prepareDelete("_all").execute().actionGet();
     }
 
     protected boolean indexExists( String index )
     {
-        IndicesExistsResponse actionGet = this.client.admin().indices().prepareExists( index ).execute().actionGet();
+        IndicesExistsResponse actionGet = client.admin().indices().prepareExists( index ).execute().actionGet();
         return actionGet.isExists();
     }
 
@@ -98,15 +94,47 @@ public abstract class AbstractElasticsearchIntegrationTest
         return server;
     }
 
-    @AfterEach
-    public void cleanUp()
+    static class EmbeddedElasticsearchExtension implements BeforeAllCallback
     {
-        LOG.info( "Shutting down" );
-        if (client != null) {
-            client.close();
-        }
-        if (server != null) {
-            server.shutdown();
+        @Override
+        public void beforeAll(ExtensionContext context)
+        {
+            context.getRoot().getStore(ExtensionContext.Namespace.GLOBAL).getOrComputeIfAbsent(ElasticsearchFixture.class);
         }
     }
+
+    static class ElasticsearchFixture implements ExtensionContext.Store.CloseableResource
+    {
+
+        public ElasticsearchFixture()
+            throws IOException
+        {
+            LOG.info( "Starting up Elasticsearch" );
+
+            Path elasticsearchTemporaryFolder = Files.createTempDirectory("elasticsearchFixture");
+
+            server = new EmbeddedElasticsearchServer( elasticsearchTemporaryFolder.toFile() );
+
+            client = server.getClient();
+
+            final StorageDaoImpl storageDao = new StorageDaoImpl();
+            storageDao.setClient( client );
+
+            elasticsearchIndexService = new IndexServiceInternalImpl();
+            elasticsearchIndexService.setClient( client );
+        }
+
+        @Override
+        public void close()
+        {
+            LOG.info( "Shutting down Elasticsearch" );
+            if (client != null) {
+                client.close();
+            }
+            if (server != null) {
+                server.shutdown();
+            }
+        }
+    }
+
 }

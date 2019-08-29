@@ -51,9 +51,7 @@ sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = sourceCompatibility
 
 test {
-    useJUnitPlatform {
-        excludeTags project.hasProperty('runIntegrationTests') ? '' : 'elasticsearch'
-    }
+    useJUnitPlatform()
     systemProperty 'java.awt.headless', 'true'
     jvmArgs '-Xmx2048m'
 }
