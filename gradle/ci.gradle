@@ -1,4 +1,5 @@
 task ci {
     description = 'Builds and generates coverage report.'
+    project.ext.runIntegrationTests = true
     dependsOn = ['build', 'jacocoMergedReport']
 }
