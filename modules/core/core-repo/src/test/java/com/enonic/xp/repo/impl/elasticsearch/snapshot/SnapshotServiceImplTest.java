@@ -1,8 +1,9 @@
 package com.enonic.xp.repo.impl.elasticsearch.snapshot;
 
+import org.elasticsearch.cluster.metadata.RepositoryMetaData;
+import org.elasticsearch.snapshots.SnapshotInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 
 import com.enonic.xp.cluster.ClusterManager;
@@ -22,7 +23,7 @@ import com.enonic.xp.repository.DeleteRepositoryParams;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.SystemConstants;
 
-import java.nio.file.Path;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -42,6 +43,13 @@ public class SnapshotServiceImplTest
     public void setUp()
         throws Exception
     {
+        for (String repository : client.admin().cluster().prepareGetRepositories().execute().actionGet().repositories().stream().map(RepositoryMetaData::name).collect(Collectors.toList())) {
+            for (String snapshot : client.admin().cluster().prepareGetSnapshots(repository).execute().actionGet().getSnapshots().stream().map(SnapshotInfo::name).collect(Collectors.toList())) {
+                client.admin().cluster().prepareDeleteSnapshot(repository, snapshot).execute().actionGet();
+            }
+            client.admin().cluster().prepareDeleteRepository(repository).execute().actionGet();
+        }
+
         this.snapshotService = new SnapshotServiceImpl();
 
         final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl();
@@ -64,7 +72,7 @@ public class SnapshotServiceImplTest
         Mockito.when( configuration.getSnapshotsDir() ).thenReturn( getServer().getSnapshotsDir() );
 
         this.snapshotService.setConfiguration( configuration );
-        this.snapshotService.setClient( this.client );
+        this.snapshotService.setClient( client );
         this.snapshotService.setEventPublisher( eventPublisher );
         this.snapshotService.setClusterManager( clusterManager );
     }
