@@ -6,7 +6,7 @@ jdk:
 
 install: true
 script:
-  - ./gradlew ci --stacktrace --no-daemon -PrunIntegrationTests
+  - ./gradlew ci --stacktrace --no-daemon
 cache:
   directories:
     - $HOME/.gradle/caches/
