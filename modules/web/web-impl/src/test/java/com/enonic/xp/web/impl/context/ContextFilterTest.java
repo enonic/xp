@@ -3,7 +3,6 @@ package com.enonic.xp.web.impl.context;
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -11,6 +10,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.enonic.xp.context.ContextAccessor;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ContextFilterTest
 {

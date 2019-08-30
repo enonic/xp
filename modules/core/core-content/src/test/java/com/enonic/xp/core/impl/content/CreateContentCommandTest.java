@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

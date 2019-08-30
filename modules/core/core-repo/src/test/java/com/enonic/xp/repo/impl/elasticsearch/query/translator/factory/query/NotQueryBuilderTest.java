@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.query;
 
 import org.elasticsearch.index.query.QueryBuilder;
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.query.expr.CompareExpr;
@@ -9,6 +8,8 @@ import com.enonic.xp.query.expr.FieldExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQueryFieldNameResolver;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.BaseTestBuilderFactory;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class NotQueryBuilderTest
     extends BaseTestBuilderFactory

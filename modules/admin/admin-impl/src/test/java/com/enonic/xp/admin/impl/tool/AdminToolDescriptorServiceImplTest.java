@@ -1,6 +1,5 @@
 package com.enonic.xp.admin.impl.tool;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.admin.tool.AdminToolDescriptor;

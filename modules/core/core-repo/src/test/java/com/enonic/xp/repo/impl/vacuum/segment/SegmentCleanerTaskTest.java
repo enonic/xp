@@ -1,6 +1,5 @@
 package com.enonic.xp.repo.impl.vacuum.segment;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -19,6 +18,8 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositorySegmentUtils;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.vacuum.VacuumTaskResult;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SegmentCleanerTaskTest
 {

@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.site;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 

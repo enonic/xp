@@ -2,13 +2,14 @@ package com.enonic.xp.query.parser;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.query.QueryException;
 import com.enonic.xp.query.expr.ConstraintExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class QueryParserTest
 {

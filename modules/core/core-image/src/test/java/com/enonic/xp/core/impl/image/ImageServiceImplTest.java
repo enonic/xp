@@ -3,7 +3,6 @@ package com.enonic.xp.core.impl.image;
 import java.io.IOException;
 import java.nio.file.Path;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -18,6 +17,8 @@ import com.enonic.xp.image.Cropping;
 import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.util.BinaryReference;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ImageServiceImplTest
 {

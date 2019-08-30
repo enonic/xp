@@ -3,7 +3,6 @@ package com.enonic.xp.lib.auth;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
@@ -21,6 +20,8 @@ import com.enonic.xp.session.Session;
 import com.enonic.xp.session.SessionKey;
 import com.enonic.xp.session.SimpleSession;
 import com.enonic.xp.testing.ScriptTestSupport;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class LoginHandlerTest
     extends ScriptTestSupport

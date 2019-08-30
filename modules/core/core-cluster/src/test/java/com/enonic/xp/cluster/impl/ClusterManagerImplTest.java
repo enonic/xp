@@ -2,7 +2,6 @@ package com.enonic.xp.cluster.impl;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -14,6 +13,8 @@ import com.enonic.xp.cluster.ClusterNode;
 import com.enonic.xp.cluster.ClusterNodes;
 import com.enonic.xp.cluster.ClusterState;
 import com.enonic.xp.cluster.Clusters;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ClusterManagerImplTest
 {

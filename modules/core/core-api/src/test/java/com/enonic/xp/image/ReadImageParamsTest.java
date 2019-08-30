@@ -1,11 +1,12 @@
 package com.enonic.xp.image;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.util.BinaryReference;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ReadImageParamsTest
 {

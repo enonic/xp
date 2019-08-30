@@ -2,7 +2,6 @@ package com.enonic.xp.lib.auth;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -14,6 +13,8 @@ import com.enonic.xp.security.RoleEditor;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.UpdateRoleParams;
 import com.enonic.xp.testing.ScriptTestSupport;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ModifyRoleHandlerTest
     extends ScriptTestSupport

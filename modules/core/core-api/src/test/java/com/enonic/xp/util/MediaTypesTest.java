@@ -3,7 +3,6 @@ package com.enonic.xp.util;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;

@@ -1,9 +1,10 @@
 package com.enonic.xp;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.server.VersionInfo;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class VersionInfoTest
 {

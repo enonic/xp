@@ -2,7 +2,6 @@ package com.enonic.xp.site;
 
 import java.util.Iterator;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.schema.content.ContentTypeFilter;

@@ -1,13 +1,14 @@
 package com.enonic.xp.repo.impl.elasticsearch.suggestion.query;
 
 import org.elasticsearch.search.suggest.term.TermSuggestionBuilder;
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.query.suggester.TermSuggestionQuery;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQueryFieldNameResolver;
 import com.enonic.xp.repo.impl.elasticsearch.suggistion.query.TermSuggestionQueryBuilderFactory;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TermSuggestionQueryBuilderFactoryTest
 {

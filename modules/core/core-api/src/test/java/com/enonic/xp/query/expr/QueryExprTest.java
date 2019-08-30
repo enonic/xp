@@ -2,10 +2,11 @@ package com.enonic.xp.query.expr;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class QueryExprTest
 {

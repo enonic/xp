@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.elasticsearch.search.highlight.HighlightBuilder;
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -17,6 +16,8 @@ import com.enonic.xp.query.highlight.constants.Fragmenter;
 import com.enonic.xp.query.highlight.constants.Order;
 import com.enonic.xp.query.highlight.constants.TagsSchema;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticHighlightQuery;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ElasticHighlightQueryBuilderFactoryTest
 {

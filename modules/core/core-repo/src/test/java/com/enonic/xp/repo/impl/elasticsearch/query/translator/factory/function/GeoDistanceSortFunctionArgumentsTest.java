@@ -1,11 +1,12 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.function;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.query.expr.ValueExpr;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GeoDistanceSortFunctionArgumentsTest
 {

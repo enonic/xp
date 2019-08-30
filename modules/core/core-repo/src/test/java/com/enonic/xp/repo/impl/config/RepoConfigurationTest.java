@@ -4,12 +4,13 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import com.google.common.collect.Maps;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RepoConfigurationTest
 {

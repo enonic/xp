@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.app;
 
 import java.net.URL;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -13,6 +12,8 @@ import org.osgi.service.component.ComponentContext;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.support.ResourceTestHelper;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ApplicationDescriptorServiceImplTest
 {

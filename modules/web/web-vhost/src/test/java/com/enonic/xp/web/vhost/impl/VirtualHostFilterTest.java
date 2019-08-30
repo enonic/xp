@@ -2,7 +2,6 @@ package com.enonic.xp.web.vhost.impl;
 
 import javax.servlet.FilterChain;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -14,6 +13,8 @@ import com.enonic.xp.web.vhost.VirtualHostHelper;
 import com.enonic.xp.web.vhost.impl.config.VirtualHostConfig;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMappings;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class VirtualHostFilterTest
 {

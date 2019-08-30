@@ -2,10 +2,11 @@ package com.enonic.xp.web.vhost.impl.mapping;
 
 import java.util.Iterator;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class VirtualHostMappingsTest
 {

@@ -2,7 +2,6 @@ package com.enonic.xp.repo.impl.node.query.aggregation;
 
 import java.util.Iterator;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

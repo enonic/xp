@@ -1,12 +1,13 @@
 package com.enonic.xp.portal.handler;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.WebHandlerChain;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EndpointHandlerTest
 {

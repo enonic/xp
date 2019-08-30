@@ -18,7 +18,6 @@ import org.elasticsearch.transport.TransportRequestOptions;
 import org.elasticsearch.transport.TransportResponse;
 import org.elasticsearch.transport.TransportResponseHandler;
 import org.elasticsearch.transport.TransportService;
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -44,12 +43,13 @@ import com.enonic.xp.task.TaskNotFoundException;
 import com.enonic.xp.task.TaskProgress;
 import com.enonic.xp.task.TaskState;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 
 public class TaskServiceImplTest
-{
-    private final static Logger LOGGER = LoggerFactory.getLogger( TaskServiceImplTest.class );
+        {
+            private final static Logger LOGGER = LoggerFactory.getLogger( TaskServiceImplTest.class );
 
     private TaskServiceImpl taskService;
 

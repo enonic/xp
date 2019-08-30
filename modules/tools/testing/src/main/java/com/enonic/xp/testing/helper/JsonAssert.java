@@ -2,14 +2,14 @@ package com.enonic.xp.testing.helper;
 
 import java.net.URL;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.enonic.xp.json.ObjectMapperHelper;
 import com.enonic.xp.script.serializer.JsonMapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public final class JsonAssert
 {

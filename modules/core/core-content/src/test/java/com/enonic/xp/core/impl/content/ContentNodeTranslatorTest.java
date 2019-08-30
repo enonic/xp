@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.content;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -23,6 +22,8 @@ import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeName;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ContentNodeTranslatorTest
 {

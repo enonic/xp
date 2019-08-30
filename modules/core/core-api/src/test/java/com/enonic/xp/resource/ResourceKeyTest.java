@@ -1,9 +1,10 @@
 package com.enonic.xp.resource;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ResourceKeyTest
 {

@@ -1,6 +1,5 @@
 package com.enonic.xp.web.impl.handler;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 

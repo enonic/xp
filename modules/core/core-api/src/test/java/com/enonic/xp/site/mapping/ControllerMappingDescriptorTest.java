@@ -2,11 +2,12 @@ package com.enonic.xp.site.mapping;
 
 import java.util.regex.Pattern;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.resource.ResourceKey;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ControllerMappingDescriptorTest
 {

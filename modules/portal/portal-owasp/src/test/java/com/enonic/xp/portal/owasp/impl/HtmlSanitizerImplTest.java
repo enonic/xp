@@ -2,10 +2,11 @@ package com.enonic.xp.portal.owasp.impl;
 
 import java.nio.charset.StandardCharsets;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import com.google.common.io.Resources;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class HtmlSanitizerImplTest
 {

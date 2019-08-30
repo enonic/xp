@@ -3,11 +3,12 @@ package com.enonic.xp.core.impl.image;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import com.google.common.io.ByteSource;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ImmutableFilesHelperTest
 {

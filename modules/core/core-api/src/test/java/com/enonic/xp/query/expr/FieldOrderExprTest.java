@@ -1,10 +1,11 @@
 package com.enonic.xp.query.expr;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.support.AbstractEqualsTest;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FieldOrderExprTest
 {

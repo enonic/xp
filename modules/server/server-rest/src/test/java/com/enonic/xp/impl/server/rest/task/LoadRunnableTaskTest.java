@@ -4,7 +4,6 @@ import java.io.File;
 import java.nio.file.Path;
 
 import org.apache.commons.io.Charsets;
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -33,6 +32,8 @@ import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.task.AbstractRunnableTaskTest;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class LoadRunnableTaskTest
     extends AbstractRunnableTaskTest

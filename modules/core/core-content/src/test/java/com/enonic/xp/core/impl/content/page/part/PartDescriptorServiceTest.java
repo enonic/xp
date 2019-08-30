@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.content.page.part;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -10,6 +9,8 @@ import com.enonic.xp.core.impl.content.page.region.PartDescriptorServiceImpl;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.region.PartDescriptors;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PartDescriptorServiceTest
     extends AbstractDescriptorServiceTest

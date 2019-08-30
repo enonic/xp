@@ -2,7 +2,6 @@ package com.enonic.xp.core.content;
 
 import java.util.Locale;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -23,6 +22,7 @@ import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.util.Reference;
 
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ContentOutboundDependenciesIdsResolverTest
 {

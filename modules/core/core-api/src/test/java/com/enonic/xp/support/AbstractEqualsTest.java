@@ -1,8 +1,9 @@
 package com.enonic.xp.support;
 
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class AbstractEqualsTest
 {

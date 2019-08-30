@@ -5,7 +5,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Hashtable;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
@@ -41,6 +40,8 @@ import com.enonic.xp.testing.mock.MockBeanContext;
 import com.enonic.xp.testing.mock.MockServiceRegistry;
 import com.enonic.xp.testing.mock.MockViewFunctionService;
 import com.enonic.xp.testing.resource.ClassLoaderResourceService;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class ScriptTestSupport
 {

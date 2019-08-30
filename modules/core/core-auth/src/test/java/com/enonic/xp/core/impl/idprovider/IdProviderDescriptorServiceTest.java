@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.idprovider;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -10,6 +9,8 @@ import com.enonic.xp.form.Input;
 import com.enonic.xp.idprovider.IdProviderDescriptor;
 import com.enonic.xp.idprovider.IdProviderDescriptorMode;
 import com.enonic.xp.inputtype.InputTypeName;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class IdProviderDescriptorServiceTest
     extends ApplicationTestSupport

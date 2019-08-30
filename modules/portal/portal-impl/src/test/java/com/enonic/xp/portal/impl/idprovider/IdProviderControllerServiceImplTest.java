@@ -6,7 +6,6 @@ import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -35,6 +34,8 @@ import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class IdProviderControllerServiceImplTest
 {

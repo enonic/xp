@@ -2,7 +2,6 @@ package com.enonic.xp.content;
 
 import java.util.Locale;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.attachment.CreateAttachments;

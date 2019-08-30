@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.content.page.layout;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -10,6 +9,8 @@ import com.enonic.xp.core.impl.content.page.region.LayoutDescriptorServiceImpl;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.LayoutDescriptors;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class LayoutDescriptorServiceTest
     extends AbstractDescriptorServiceTest

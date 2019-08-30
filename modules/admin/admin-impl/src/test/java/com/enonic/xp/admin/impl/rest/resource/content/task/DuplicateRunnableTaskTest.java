@@ -2,7 +2,6 @@ package com.enonic.xp.admin.impl.rest.resource.content.task;
 
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -25,6 +24,8 @@ import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.task.AbstractRunnableTaskTest;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DuplicateRunnableTaskTest
     extends AbstractRunnableTaskTest

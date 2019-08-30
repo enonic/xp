@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -15,6 +14,8 @@ import com.google.common.collect.Maps;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.IdProviderKeys;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class VirtualHostConfigImplTest
 {

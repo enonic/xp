@@ -2,7 +2,6 @@ package com.enonic.xp.repo.impl.node;
 
 import java.util.Iterator;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -27,9 +26,9 @@ import com.enonic.xp.security.acl.Permission;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MoveNodeCommandTest
-    extends AbstractNodeTest
-{
-    @BeforeEach
+        extends AbstractNodeTest
+        {
+            @BeforeEach
     public void setUp()
         throws Exception
     {

@@ -2,7 +2,6 @@ package com.enonic.xp.schema.relationship;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;

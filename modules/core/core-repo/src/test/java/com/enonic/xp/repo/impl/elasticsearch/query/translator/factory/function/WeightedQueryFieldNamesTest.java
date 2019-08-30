@@ -1,9 +1,10 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.function;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableList;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class WeightedQueryFieldNamesTest
 {

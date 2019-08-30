@@ -2,10 +2,11 @@ package com.enonic.xp.launcher.impl.config;
 
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Maps;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ConfigPropertiesTest
 {

@@ -1,9 +1,10 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.function.WeightedQueryFieldName;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class WeightedNodeIndexPathTest
 {

@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -23,6 +22,8 @@ import com.enonic.xp.index.IndexValueProcessor;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.util.Reference;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class HtmlAreaNodeDataUpgraderTest
 {

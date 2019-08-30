@@ -1,10 +1,11 @@
 package com.enonic.xp.portal.impl.view;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.portal.view.ViewFunctionParams;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ViewFunctionServiceImplTest
 {

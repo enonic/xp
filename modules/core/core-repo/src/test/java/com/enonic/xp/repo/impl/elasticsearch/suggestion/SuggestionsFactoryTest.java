@@ -7,7 +7,6 @@ import org.elasticsearch.search.suggest.Suggest;
 import org.elasticsearch.search.suggest.term.TermSuggestion;
 import org.elasticsearch.search.suggest.term.TermSuggestion.Entry;
 import org.elasticsearch.search.suggest.term.TermSuggestion.Entry.Option;
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -16,6 +15,8 @@ import com.enonic.xp.repo.impl.elasticsearch.suggistion.SuggestionsFactory;
 import com.enonic.xp.suggester.Suggestions;
 import com.enonic.xp.suggester.TermSuggestionEntry;
 import com.enonic.xp.suggester.TermSuggestionOption;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SuggestionsFactoryTest
 {

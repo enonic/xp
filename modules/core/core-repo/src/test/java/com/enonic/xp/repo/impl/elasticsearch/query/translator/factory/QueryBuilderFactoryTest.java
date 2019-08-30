@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory;
 
 import org.elasticsearch.index.query.QueryBuilder;
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.ValueFactory;
@@ -9,6 +8,8 @@ import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQueryFieldNameResolver;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class QueryBuilderFactoryTest
     extends BaseTestBuilderFactory

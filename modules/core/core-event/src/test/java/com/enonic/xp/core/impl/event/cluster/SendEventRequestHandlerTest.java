@@ -9,7 +9,6 @@ import org.elasticsearch.common.io.stream.StreamInput;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportChannel;
 import org.elasticsearch.transport.TransportService;
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -17,6 +16,8 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventPublisher;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SendEventRequestHandlerTest
 {

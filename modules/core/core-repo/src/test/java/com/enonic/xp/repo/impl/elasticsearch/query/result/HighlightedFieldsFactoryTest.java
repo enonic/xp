@@ -4,11 +4,12 @@ import java.util.Map;
 
 import org.elasticsearch.common.text.Text;
 import org.elasticsearch.search.highlight.HighlightField;
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.highlight.HighlightedFields;
 import com.enonic.xp.repo.impl.elasticsearch.result.HighlightedFieldsFactory;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class HighlightedFieldsFactoryTest
 {

@@ -1,10 +1,11 @@
 package com.enonic.xp.init;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.index.IndexService;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ExternalInitializerTest
 {

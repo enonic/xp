@@ -6,7 +6,6 @@ import java.util.Set;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.GeoDistanceSortBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
@@ -19,6 +18,8 @@ import com.enonic.xp.query.expr.FunctionExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQueryFieldNameResolver;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SortBuilderFactoryTest
     extends BaseTestBuilderFactory
