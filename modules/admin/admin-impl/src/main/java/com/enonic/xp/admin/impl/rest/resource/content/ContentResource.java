@@ -1441,6 +1441,11 @@ public final class ContentResource
 
                 final ContentId id = ContentId.from( idParam );
 
+                if ( !this.contentService.contentExists( id ) )
+                {
+                    return null;
+                }
+
                 final Content content = this.contentService.getById( id );
 
                 final CompareContentResult compareResult =
