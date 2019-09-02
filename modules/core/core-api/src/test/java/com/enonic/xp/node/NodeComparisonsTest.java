@@ -2,10 +2,12 @@ package com.enonic.xp.node;
 
 import java.time.Instant;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.CompareStatus;
 
+@Disabled("This test does not verify anything")
 public class NodeComparisonsTest
 {
 
