@@ -2,12 +2,14 @@ package com.enonic.xp.repo.impl.branch.storage;
 
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntry;
+import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.node.NodeVersionMetadata;
 
 
 public class NodeFactory
 {
-    public static final Node create( final NodeVersion nodeVersion, final NodeBranchEntry nodeBranchEntry )
+    public static Node create( final NodeVersion nodeVersion, final NodeBranchEntry nodeBranchEntry )
     {
         if ( nodeBranchEntry.getNodeId().equals( Node.ROOT_UUID ) )
         {
@@ -33,4 +35,23 @@ public class NodeFactory
             nodeVersionId( nodeBranchEntry.getVersionId() ).
             build();
     }
+
+    public static Node create( final NodeVersion nodeVersion, final NodeVersionMetadata nodeVersionMetadata )
+    {
+        final Node.Builder builder = Node.create( nodeVersion ).
+            nodeState( NodeState.DEFAULT ).
+            path( nodeVersionMetadata.getNodePath().toString() ).
+            nodeVersionId( nodeVersionMetadata.getNodeVersionId() ).
+            parentPath( nodeVersionMetadata.getNodePath().getParentPath() ).
+            name( nodeVersionMetadata.getNodePath().getName() ).
+            timestamp( nodeVersionMetadata.getTimestamp() );
+
+        if ( Node.ROOT_UUID.equals( nodeVersionMetadata.getNodeId() ) )
+        {
+            builder.inheritPermissions( false );
+        }
+
+        return builder.build();
+    }
+
 }
