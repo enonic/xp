@@ -87,7 +87,9 @@ public class PushNodesCommand
         {
             final NodeComparison comparison = comparisons.get( branchEntry.getNodeId() );
 
-            final NodeBranchEntry nodeBranchEntry = nodeBranchEntries.get( comparison.getNodeId() );
+            final NodeBranchEntry nodeBranchEntry = NodeBranchEntry.create( nodeBranchEntries.get( comparison.getNodeId() ) ).
+                inherited( false ).
+                build();
 
             final boolean hasPublishPermission = NodesHasPermissionResolver.create( this ).
                 nodeIds( NodeIds.from( nodeBranchEntry.getNodeId() ) ).
