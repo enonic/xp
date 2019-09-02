@@ -1,6 +1,6 @@
 package com.enonic.xp.core.repo.vacuum.versiontable;
 
-import java.security.SecureRandom;
+import java.util.concurrent.ThreadLocalRandom;
 import java.time.Instant;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -24,8 +24,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class VersionTableCleanupTaskTest
     extends AbstractNodeTest
 {
-    private final SecureRandom random = new SecureRandom();
-
     private VersionTableCleanupTask task;
 
     @BeforeEach
@@ -152,7 +150,7 @@ public class VersionTableCleanupTaskTest
                 id( nodeId ).
                 editor( node -> {
                     node.data.setInstant( "now", Instant.now() );
-                    node.data.setLong( "random", random.nextLong() );
+                    node.data.setLong( "random", ThreadLocalRandom.current().nextLong() );
                 } ).
                 build() );
         }
