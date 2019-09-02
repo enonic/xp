@@ -71,7 +71,7 @@ task integrationTest(type: Test) {
 check.dependsOn integrationTest
 
 jacocoTestReport {
-    executionData([test, integrationTest])
+   executionData = files('build/jacoco/test.exec', 'build/jacoco/integrationTest.exec')
 }
 
 jar {
