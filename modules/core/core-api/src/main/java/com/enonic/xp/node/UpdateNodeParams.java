@@ -23,6 +23,8 @@ public class UpdateNodeParams
 
     private final boolean dryRun;
 
+    private final boolean forceUpdate;
+
     private UpdateNodeParams( final Builder builder )
     {
         this.id = builder.id;
@@ -30,6 +32,7 @@ public class UpdateNodeParams
         this.editor = builder.editor;
         this.binaryAttachments = new BinaryAttachments( ImmutableSet.copyOf( builder.binaryAttachments ) );
         this.dryRun = builder.dryRun;
+        this.forceUpdate = builder.forceUpdate;
     }
 
     public BinaryAttachments getBinaryAttachments()
@@ -62,6 +65,11 @@ public class UpdateNodeParams
         return dryRun;
     }
 
+    public boolean isForceUpdate()
+    {
+        return forceUpdate;
+    }
+
     public static final class Builder
     {
         private NodeId id;
@@ -73,6 +81,8 @@ public class UpdateNodeParams
         private Set<BinaryAttachment> binaryAttachments = Sets.newHashSet();
 
         private boolean dryRun = false;
+
+        private boolean forceUpdate = false;
 
         private Builder()
         {
@@ -111,6 +121,12 @@ public class UpdateNodeParams
         public Builder dryRun( final boolean dryRun )
         {
             this.dryRun = dryRun;
+            return this;
+        }
+
+        public Builder forceUpdate( final boolean forceUpdate )
+        {
+            this.forceUpdate = forceUpdate;
             return this;
         }
 

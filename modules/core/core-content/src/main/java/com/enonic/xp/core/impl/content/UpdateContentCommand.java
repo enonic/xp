@@ -95,7 +95,8 @@ final class UpdateContentCommand
 
         Content editedContent = editContent( params.getEditor(), contentBeforeChange );
 
-        if ( contentBeforeChange.equals( editedContent ) && params.getCreateAttachments() == null && params.getRemoveAttachments() == null )
+        if ( !contentBeforeChange.getInherited() && contentBeforeChange.equals( editedContent ) && params.getCreateAttachments() == null &&
+            params.getRemoveAttachments() == null )
         {
             return contentBeforeChange;
         }
