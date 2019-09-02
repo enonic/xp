@@ -45,12 +45,12 @@ task testJar( type: Jar ) {
     group 'build'
     description 'Creates a jar file with all test sources.'
     from sourceSets.test.output
-    classifier = 'test'
+    archiveClassifier.set('test')
 }
 
 task sourcesJar( type: Jar ) {
     from sourceSets.main.allJava
-    classifier = 'sources'
+    archiveClassifier.set('sources')
 }
 
 sourceCompatibility = JavaVersion.VERSION_11
