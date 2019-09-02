@@ -8,7 +8,7 @@ task jacocoMergedReport( type: JacocoReport ) {
 
     def projects = subprojects.findAll { it.plugins.hasPlugin( JacocoPlugin ) && it.file( "src/test" ).exists() }
 
-    dependsOn projects*.test, projects*.integrationTest
+    dependsOn projects*.check
 
     sourceDirectories = files( projects*.sourceSets*.main*.allSource )
     classDirectories = files( projects*.sourceSets*.main*.output )
