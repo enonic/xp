@@ -69,7 +69,7 @@ public class SnapshotServiceImplTest
 
         this.snapshotService.setRepositoryService( repositoryService );
         final RepoConfiguration configuration = Mockito.mock( RepoConfiguration.class );
-        Mockito.when( configuration.getSnapshotsDir() ).thenReturn( getServer().getSnapshotsDir() );
+        Mockito.when( configuration.getSnapshotsDir() ).thenReturn( getSnapshotsDir() );
 
         this.snapshotService.setConfiguration( configuration );
         this.snapshotService.setClient( client );

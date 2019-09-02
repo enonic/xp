@@ -3,6 +3,10 @@ package com.enonic.xp.core.issue;
 import java.util.List;
 import java.util.Map;
 
+import com.enonic.xp.branch.Branches;
+import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repository.RepositoryId;
 import org.junit.jupiter.api.BeforeEach;
 
 import com.google.common.collect.Lists;
@@ -45,6 +49,12 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 public class AbstractIssueServiceTest
     extends AbstractElasticsearchIntegrationTest
 {
+
+    protected static final Repository TEST_REPO = Repository.create().
+            id( RepositoryId.from( "com.enonic.cms.default" ) ).
+            branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
+            build();
+
     public static final User TEST_DEFAULT_USER =
         User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "test-user" ) ).login( "test-user" ).build();
 
@@ -70,106 +80,95 @@ public class AbstractIssueServiceTest
 
     protected BinaryServiceImpl binaryService;
 
-    private NodeVersionServiceImpl nodeDao;
-
-    private VersionServiceImpl versionService;
-
-    private BranchServiceImpl branchService;
-
-    private IndexServiceInternalImpl indexServiceInternal;
-
-    private NodeStorageServiceImpl storageService;
-
-    private NodeSearchServiceImpl searchService;
-
-    private IndexDataServiceImpl indexedDataService;
-
     private IndexServiceImpl indexService;
 
     private RepositoryServiceImpl repositoryService;
-
-    private SearchDaoImpl searchDao;
 
     @BeforeEach
     public void setUp()
         throws Exception
     {
+        deleteAllIndices();
+
         ContextAccessor.INSTANCE.set( CTX_DEFAULT );
 
         final MemoryBlobStore blobStore = new MemoryBlobStore();
 
-        this.binaryService = new BinaryServiceImpl();
-        this.binaryService.setBlobStore( blobStore );
+        binaryService = new BinaryServiceImpl();
+        binaryService.setBlobStore( blobStore );
 
         final StorageDaoImpl storageDao = new StorageDaoImpl();
-        storageDao.setClient( this.client );
+        storageDao.setClient( client );
 
         final EventPublisherImpl eventPublisher = new EventPublisherImpl();
 
-        this.searchDao = new SearchDaoImpl();
-        this.searchDao.setClient( this.client );
+        SearchDaoImpl searchDao = new SearchDaoImpl();
+        searchDao.setClient( client );
 
-        this.branchService = new BranchServiceImpl();
-        this.branchService.setStorageDao( storageDao );
-        this.branchService.setSearchDao( this.searchDao );
+        BranchServiceImpl branchService = new BranchServiceImpl();
+        branchService.setStorageDao( storageDao );
+        branchService.setSearchDao(searchDao);
 
-        this.versionService = new VersionServiceImpl();
-        this.versionService.setStorageDao( storageDao );
+        VersionServiceImpl versionService = new VersionServiceImpl();
+        versionService.setStorageDao( storageDao );
 
-        this.indexServiceInternal = new IndexServiceInternalImpl();
-        this.indexServiceInternal.setClient( client );
+        IndexServiceInternalImpl indexServiceInternal = new IndexServiceInternalImpl();
+        indexServiceInternal.setClient( client );
 
-        this.nodeDao = new NodeVersionServiceImpl();
-        this.nodeDao.setBlobStore( blobStore );
+        NodeVersionServiceImpl nodeDao = new NodeVersionServiceImpl();
+        nodeDao.setBlobStore( blobStore );
 
-        this.issueService = new IssueServiceImpl();
+        issueService = new IssueServiceImpl();
 
-        this.indexedDataService = new IndexDataServiceImpl();
-        this.indexedDataService.setStorageDao( storageDao );
+        IndexDataServiceImpl indexedDataService = new IndexDataServiceImpl();
+        indexedDataService.setStorageDao( storageDao );
 
-        this.indexService = new IndexServiceImpl();
-        this.indexService.setIndexServiceInternal( this.indexServiceInternal );
+        indexService = new IndexServiceImpl();
+        indexService.setIndexServiceInternal(indexServiceInternal);
 
-        this.storageService = new NodeStorageServiceImpl();
-        this.storageService.setBranchService( this.branchService );
-        this.storageService.setVersionService( this.versionService );
-        this.storageService.setNodeVersionService( this.nodeDao );
-        this.storageService.setIndexDataService( this.indexedDataService );
+        NodeStorageServiceImpl storageService = new NodeStorageServiceImpl();
+        storageService.setBranchService(branchService);
+        storageService.setVersionService(versionService);
+        storageService.setNodeVersionService(nodeDao);
+        storageService.setIndexDataService(indexedDataService);
 
-        this.searchService = new NodeSearchServiceImpl();
-        this.searchService.setSearchDao( this.searchDao );
+        NodeSearchServiceImpl searchService = new NodeSearchServiceImpl();
+        searchService.setSearchDao(searchDao);
 
         final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl();
-        nodeRepositoryService.setIndexServiceInternal( this.indexServiceInternal );
+        nodeRepositoryService.setIndexServiceInternal(indexServiceInternal);
+
+        final IndexServiceInternalImpl elasticsearchIndexService = new IndexServiceInternalImpl();
+        elasticsearchIndexService.setClient( client );
 
         final RepositoryEntryServiceImpl repositoryEntryService = new RepositoryEntryServiceImpl();
         repositoryEntryService.setIndexServiceInternal( elasticsearchIndexService );
         repositoryEntryService.setNodeRepositoryService( nodeRepositoryService );
-        repositoryEntryService.setNodeStorageService( this.storageService );
-        repositoryEntryService.setNodeSearchService( this.searchService );
+        repositoryEntryService.setNodeStorageService(storageService);
+        repositoryEntryService.setNodeSearchService(searchService);
         repositoryEntryService.setEventPublisher( eventPublisher );
-        repositoryEntryService.setBinaryService( this.binaryService );
+        repositoryEntryService.setBinaryService( binaryService );
 
-        this.repositoryService = new RepositoryServiceImpl();
-        this.repositoryService.setRepositoryEntryService( repositoryEntryService );
-        this.repositoryService.setIndexServiceInternal( elasticsearchIndexService );
-        this.repositoryService.setNodeRepositoryService( nodeRepositoryService );
-        this.repositoryService.setNodeStorageService( this.storageService );
-        this.repositoryService.initialize();
+        repositoryService = new RepositoryServiceImpl();
+        repositoryService.setRepositoryEntryService( repositoryEntryService );
+        repositoryService.setIndexServiceInternal( elasticsearchIndexService );
+        repositoryService.setNodeRepositoryService( nodeRepositoryService );
+        repositoryService.setNodeStorageService(storageService);
+        repositoryService.initialize();
 
-        this.nodeService = new NodeServiceImpl();
-        this.nodeService.setIndexServiceInternal( indexServiceInternal );
-        this.nodeService.setNodeStorageService( storageService );
-        this.nodeService.setNodeSearchService( searchService );
-        this.nodeService.setEventPublisher( eventPublisher );
-        this.nodeService.setBinaryService( this.binaryService );
-        this.nodeService.setRepositoryService( this.repositoryService );
-        this.nodeService.initialize();
+        nodeService = new NodeServiceImpl();
+        nodeService.setIndexServiceInternal(indexServiceInternal);
+        nodeService.setNodeStorageService(storageService);
+        nodeService.setNodeSearchService(searchService);
+        nodeService.setEventPublisher( eventPublisher );
+        nodeService.setBinaryService( binaryService );
+        nodeService.setRepositoryService( repositoryService );
+        nodeService.initialize();
 
         Map<String, List<String>> metadata = Maps.newHashMap();
         metadata.put( HttpHeaders.CONTENT_TYPE, Lists.newArrayList( "image/jpg" ) );
 
-        this.issueService.setNodeService( this.nodeService );
+        issueService.setNodeService( nodeService );
 
         initializeRepository();
     }

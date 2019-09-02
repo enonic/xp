@@ -1,26 +1,20 @@
 package com.enonic.xp.repo.impl.elasticsearch;
 
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.admin.indices.refresh.RefreshResponse;
 import org.elasticsearch.action.search.SearchAction;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.branch.Branches;
-import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.repo.impl.elasticsearch.storage.StorageDaoImpl;
-import com.enonic.xp.repository.Repository;
-import com.enonic.xp.repository.RepositoryId;
-
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -29,27 +23,9 @@ import java.nio.file.Path;
 @ExtendWith(AbstractElasticsearchIntegrationTest.EmbeddedElasticsearchExtension.class)
 public abstract class AbstractElasticsearchIntegrationTest
 {
-    protected static final Repository TEST_REPO = Repository.create().
-        id( RepositoryId.from( "com.enonic.cms.default" ) ).
-        branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
-        build();
-
     private final static Logger LOG = LoggerFactory.getLogger( AbstractElasticsearchIntegrationTest.class );
 
-    @TempDir
-    public Path temporaryFolder;
-
-    protected static IndexServiceInternalImpl elasticsearchIndexService;
-
     protected static Client client;
-
-    private static EmbeddedElasticsearchServer server;
-
-    @BeforeEach
-    void cleanupEmbeddedElasticsearchServer()
-    {
-        client.admin().indices().prepareDelete("_all").execute().actionGet();
-    }
 
     protected boolean indexExists( String index )
     {
@@ -57,6 +33,9 @@ public abstract class AbstractElasticsearchIntegrationTest
         return actionGet.isExists();
     }
 
+    protected File getSnapshotsDir() {
+        return ElasticsearchFixture.server.getSnapshotsDir();
+    }
 
     protected void printAllIndexContent( final String indexName, final String indexType )
     {
@@ -78,20 +57,21 @@ public abstract class AbstractElasticsearchIntegrationTest
         System.out.println( "\n\n" );
     }
 
-    public void waitForClusterHealth()
+    public static void waitForClusterHealth()
     {
-        elasticsearchIndexService.getClusterHealth( "10s" );
+        ElasticsearchFixture.elasticsearchIndexService.getClusterHealth( "10s" );
     }
 
-    protected final RefreshResponse refresh()
+    protected static final RefreshResponse refresh()
     {
         RefreshResponse actionGet = client.admin().indices().prepareRefresh().execute().actionGet();
         return actionGet;
     }
 
-    public EmbeddedElasticsearchServer getServer()
+    protected static final DeleteIndexResponse deleteAllIndices()
     {
-        return server;
+        DeleteIndexResponse actionGet = client.admin().indices().prepareDelete("_all").execute().actionGet();
+        return actionGet;
     }
 
     static class EmbeddedElasticsearchExtension implements BeforeAllCallback
@@ -106,6 +86,10 @@ public abstract class AbstractElasticsearchIntegrationTest
     static class ElasticsearchFixture implements ExtensionContext.Store.CloseableResource
     {
 
+        static IndexServiceInternalImpl elasticsearchIndexService;
+
+        static EmbeddedElasticsearchServer server;
+
         public ElasticsearchFixture()
             throws IOException
         {
@@ -116,9 +100,6 @@ public abstract class AbstractElasticsearchIntegrationTest
             server = new EmbeddedElasticsearchServer( elasticsearchTemporaryFolder.toFile() );
 
             client = server.getClient();
-
-            final StorageDaoImpl storageDao = new StorageDaoImpl();
-            storageDao.setClient( client );
 
             elasticsearchIndexService = new IndexServiceInternalImpl();
             elasticsearchIndexService.setClient( client );

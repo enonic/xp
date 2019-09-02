@@ -83,6 +83,8 @@ public class SecurityServiceImplTest
     public void setUp()
         throws Exception
     {
+        deleteAllIndices();
+
         final MemoryBlobStore blobStore = new MemoryBlobStore();
 
         final BinaryServiceImpl binaryService = new BinaryServiceImpl();
