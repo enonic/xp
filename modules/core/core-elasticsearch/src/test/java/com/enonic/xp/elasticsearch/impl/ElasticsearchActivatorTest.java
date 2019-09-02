@@ -13,6 +13,7 @@ import org.elasticsearch.cluster.ClusterService;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.transport.TransportService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
@@ -26,6 +27,7 @@ import com.enonic.xp.cluster.ClusterConfig;
 import com.enonic.xp.cluster.ClusterNodeId;
 import com.enonic.xp.cluster.NodeDiscovery;
 
+@Tag("elasticsearch")
 public class ElasticsearchActivatorTest
 {
     private BundleContext context;
