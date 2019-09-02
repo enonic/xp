@@ -5,7 +5,13 @@ apply plugin: 'optional-base'
 apply plugin: 'provided-base'
 
 jacoco {
-    toolVersion = "0.8.2"
+    toolVersion = "0.8.4"
+}
+
+jacocoTestReport {
+    doLast {
+        executionData([test, integrationTest].findAll { it.state.executed })
+    }
 }
 
 def defaultEncoding = 'UTF-8'
