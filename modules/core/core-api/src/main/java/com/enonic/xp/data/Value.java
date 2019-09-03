@@ -73,6 +73,11 @@ public abstract class Value
         return type == ValueTypes.STRING || type == ValueTypes.XML;
     }
 
+    public boolean isBoolean()
+    {
+        return type == ValueTypes.BOOLEAN;
+    }
+
     public boolean isJavaType( final Class javaType )
     {
         return javaType.isInstance( this.object );

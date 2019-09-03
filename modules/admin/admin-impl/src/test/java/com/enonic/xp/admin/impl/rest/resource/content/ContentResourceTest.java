@@ -827,7 +827,7 @@ public class ContentResourceTest
             post();
 
         Mockito.verify( taskService ).submitTask( captor.capture(), Mockito.anyString() );
-        PublishContentJson params = captor.getValue().getParams();
+        PublishContentJson params = (PublishContentJson) captor.getValue().getParams();
 
         assertEquals( 200, res.getStatus() );
         assertEquals( params.getMessage(), "my message" );

@@ -6,7 +6,6 @@ import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexConfig;
@@ -51,10 +50,15 @@ public class BaseNodeHandlerTest
 
     protected NodeBranchEntry createEntry( final String id )
     {
+        return createEntry( id, id );
+    }
+
+    protected NodeBranchEntry createEntry( final String id, final String path )
+    {
         return NodeBranchEntry.create().
             nodeId( NodeId.from( id ) ).
             nodeState( NodeState.DEFAULT ).
-            nodePath( NodePath.create( NodePath.ROOT + id ).
+            nodePath( NodePath.create( NodePath.ROOT + path ).
                 build() ).
             build();
     }

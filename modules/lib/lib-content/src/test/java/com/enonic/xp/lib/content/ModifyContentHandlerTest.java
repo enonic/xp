@@ -3,6 +3,7 @@ package com.enonic.xp.lib.content;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentEditor;
 import com.enonic.xp.content.ContentId;
@@ -17,6 +18,7 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.site.SiteDescriptor;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
@@ -42,6 +44,82 @@ public class ModifyContentHandlerTest
         mockXData();
         runScript( "/lib/xp/examples/content/modify.js" );
     }
+
+    @Test
+    public void modifySiteConfig()
+    {
+        final Content content = TestDataFixtures.newSmallContent();
+        when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
+
+        when( this.contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenAnswer(
+            invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0],
+                                              TestDataFixtures.newSmallContent() ) );
+
+        mockXData();
+
+        final SiteDescriptor siteDescriptor1 = SiteDescriptor.create().
+            form( Form.create().
+                addFormItem( Input.create().
+                    label( "a" ).
+                    name( "a" ).
+                    inputType( InputTypeName.TEXT_LINE ).
+                    build() ).
+                addFormItem( Input.create().
+                    label( "b" ).
+                    name( "b" ).
+                    inputType( InputTypeName.CHECK_BOX ).
+                    build() ).
+                build() ).
+            build();
+
+        final SiteDescriptor siteDescriptor2 = SiteDescriptor.create().
+            form( Form.create().
+                addFormItem( Input.create().
+                    label( "c" ).
+                    name( "c" ).
+                    inputType( InputTypeName.LONG ).
+                    build() ).
+                build() ).
+            build();
+
+        when( this.siteService.getDescriptor( ApplicationKey.from( "appKey1" ) ) ).thenReturn( siteDescriptor1 );
+        when( this.siteService.getDescriptor( ApplicationKey.from( "appKey2" ) ) ).thenReturn( siteDescriptor2 );
+
+        runFunction( "/test/ModifyContentHandlerTest.js", "modifySiteConfig" );
+        runFunction( "/test/ModifyContentHandlerTest.js", "modifySiteConfig_strict" );
+    }
+
+    @Test
+    public void modifySiteSingleDescriptor()
+    {
+        final Content content = TestDataFixtures.newSmallContent();
+        when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
+
+        when( this.contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenAnswer(
+            invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0],
+                                              TestDataFixtures.newSmallContent() ) );
+
+        mockXData();
+
+        final SiteDescriptor siteDescriptor1 = SiteDescriptor.create().
+            form( Form.create().
+                addFormItem( Input.create().
+                    label( "a" ).
+                    name( "a" ).
+                    inputType( InputTypeName.TEXT_LINE ).
+                    build() ).
+                addFormItem( Input.create().
+                    label( "b" ).
+                    name( "b" ).
+                    inputType( InputTypeName.CHECK_BOX ).
+                    build() ).
+                build() ).
+            build();
+
+        when( this.siteService.getDescriptor( ApplicationKey.from( "appKey1" ) ) ).thenReturn( siteDescriptor1 );
+        runFunction( "/test/ModifyContentHandlerTest.js", "modifySiteSingleDescriptor" );
+    }
+
 
     @Test
     public void modifyById()
