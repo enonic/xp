@@ -93,8 +93,6 @@ include 'docs'
 
 rootProject.name = 'xp'
 
-enableFeaturePreview( 'STABLE_PUBLISHING' )
-
 configureProjects( rootProject )
 
 def configureProjects( root )
