@@ -17,7 +17,6 @@ ext {
     bundleCopySpecs = []
 }
 
-addBundle( 'com.sun.activation:javax.activation:1.2.0', 4)
 addBundle( 'javax.xml.bind:jaxb-api:2.2.11', 4 )
 addBundle( 'com.sun.xml.bind:jaxb-core:2.2.11', 4 )
 addBundle( 'com.sun.xml.bind:jaxb-impl:2.2.11', 4 )
