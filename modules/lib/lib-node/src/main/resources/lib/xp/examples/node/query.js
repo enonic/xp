@@ -89,8 +89,8 @@ var result = repo.query({
                 noMatchSize: 6,
                 numberOfFragments:6,
                 order:"none",
-                preTags : "<c>",
-                postTags : "<d>",
+                preTag : "<c>",
+                postTag : "<d>",
                 requireFieldMatch: true
             }
         }
