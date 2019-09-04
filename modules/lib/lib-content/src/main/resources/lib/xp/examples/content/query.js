@@ -104,8 +104,8 @@ var result = contentLib.query({
         noMatchSize: 5,
         numberOfFragments: 5,
         order: "score",
-        preTags: ["<a>"],
-        postTags: ["<b>"],
+        preTag: "<a>",
+        postTag: "<b>",
         requireFieldMatch: false,
         tagsSchema: "styled",
         fields: {
@@ -115,8 +115,8 @@ var result = contentLib.query({
                 noMatchSize: 6,
                 numberOfFragments: 6,
                 order: "none",
-                preTags: ["<a>"],
-                postTags: ["<b>"],
+                preTag: "<a>",
+                postTag: "<b>",
                 requireFieldMatch: true
             }
         }
