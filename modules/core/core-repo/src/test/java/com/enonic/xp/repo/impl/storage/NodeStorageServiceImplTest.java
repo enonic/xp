@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import com.enonic.xp.blob.NodeVersionKey;
@@ -58,6 +59,8 @@ public class NodeStorageServiceImplTest
 
     private InternalContext context;
 
+    private NodeVersionKey versionKey;
+
     @Before
     public void setUp()
     {
@@ -66,6 +69,8 @@ public class NodeStorageServiceImplTest
         nodePath = NodePath.create( "/path/to/node" ).build();
 
         nodeVersionId = NodeVersionId.from( "000-000-000-000" );
+
+        versionKey = Mockito.mock( NodeVersionKey.class );
 
         context = InternalContext.create().
             repositoryId( RepositoryId.from( "repository-id" ) ).
@@ -80,6 +85,7 @@ public class NodeStorageServiceImplTest
 
         final NodeVersionMetadata nodeVersionMetadata = NodeVersionMetadata.create().
             nodeVersionId( nodeVersionId ).
+            nodeVersionKey( versionKey ).
             nodePath( nodePath ).
             build();
 
@@ -152,6 +158,7 @@ public class NodeStorageServiceImplTest
 
         final NodeVersionMetadata nodeVersionMetadata = NodeVersionMetadata.create().
             nodeVersionId( nodeVersionId ).
+            nodeVersionKey( versionKey ).
             nodePath( nodePath ).
             build();
 
