@@ -448,6 +448,19 @@ public class NodeStorageServiceImpl
         return constructNode( nodeVersion, nodeVersionMetadata );
     }
 
+    @Override
+    public Node getNode( final NodePath nodePath, final NodeVersionId nodeVersionId, final InternalContext context )
+    {
+        final NodeId nodeId = getIdForPath( nodePath, context );
+
+        if ( nodeId == null )
+        {
+            return null;
+        }
+
+        return getNode( nodeId, nodeVersionId, context );
+    }
+
     private Node doGetNode( final NodeBranchEntry nodeBranchEntry, final InternalContext context )
     {
         if ( nodeBranchEntry == null )

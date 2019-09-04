@@ -408,6 +408,32 @@ public class NodeServiceImplTest
         assertEquals( returnedCommitEntry2.getNodeCommitId(), firstVersionMetadata3.getNodeCommitId() );
     }
 
+    @Test
+    public void testGetByIdAndVersionId()
+    {
+        final Node createdNode = createNode( CreateNodeParams.create().
+            name( "my-node" ).
+            parent( NodePath.ROOT ).
+            build() );
+
+        final Node fetchedNode = this.nodeService.getByIdAndVersionId( createdNode.id(), createdNode.getNodeVersionId());
+
+        assertEquals( createdNode, fetchedNode );
+    }
+
+    @Test
+    public void testGetByPathAndVersionId()
+    {
+        final Node createdNode = createNode( CreateNodeParams.create().
+            name( "my-node" ).
+            parent( NodePath.ROOT ).
+            build() );
+
+        final Node fetchedNode = this.nodeService.getByPathAndVersionId( createdNode.path(), createdNode.getNodeVersionId());
+
+        assertEquals( createdNode, fetchedNode );
+    }
+
     private NodeVersionsMetadata getVersionsMetadata( NodeId nodeId )
     {
         final GetNodeVersionsParams params = GetNodeVersionsParams.create().
