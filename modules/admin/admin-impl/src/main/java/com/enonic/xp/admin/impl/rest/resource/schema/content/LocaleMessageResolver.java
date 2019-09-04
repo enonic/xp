@@ -50,7 +50,7 @@ public final class LocaleMessageResolver
         }
         catch ( IllegalArgumentException e )
         {
-            LOG.error( "Can't localize message with key - '{}' to '{}' locale.", key, getLocale(), e );
+            LOG.error( "Error on localization of message with key [{}].", key, e );
             return bundle.getMessage( key );
         }
 
