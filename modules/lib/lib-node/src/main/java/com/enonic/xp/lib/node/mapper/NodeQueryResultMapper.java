@@ -7,11 +7,10 @@ import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeHit;
 import com.enonic.xp.node.NodeHits;
 import com.enonic.xp.script.serializer.MapGenerator;
-import com.enonic.xp.script.serializer.MapSerializable;
 import com.enonic.xp.suggester.Suggestions;
 
 public final class NodeQueryResultMapper
-    implements MapSerializable
+    extends AbstractQueryResultMapper
 {
     private final NodeHits nodeHits;
 
@@ -47,6 +46,7 @@ public final class NodeQueryResultMapper
             gen.map();
             gen.value( "id", nodeHit.getNodeId() );
             gen.value( "score", Float.isNaN( nodeHit.getScore() ) ? 0.0 : nodeHit.getScore() );
+            serialize( gen, nodeHit.getExplanation() );
             serialize( gen, nodeHit.getHighlight() );
             gen.end();
         }
