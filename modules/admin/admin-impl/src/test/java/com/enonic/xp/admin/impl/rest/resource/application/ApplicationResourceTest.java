@@ -10,8 +10,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalAnswers;
 import org.mockito.Mockito;
 import org.osgi.framework.Version;
@@ -63,6 +62,8 @@ import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ApplicationResourceTest
     extends AdminResourceTestSupport
@@ -454,7 +455,7 @@ public class ApplicationResourceTest
 
         byte[] expected = icon.toByteArray();
 
-        Assert.assertTrue( Arrays.equals( expected, response ) );
+        assertTrue( Arrays.equals( expected, response ) );
     }
 
     @Test
@@ -505,18 +506,19 @@ public class ApplicationResourceTest
         assertJson( "install_url.json", response );
     }
 
-    @Test(expected = ApplicationInstallException.class)
+    @Test
     public void test_uninstall_failed()
         throws Exception
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "testapplication" );
         Mockito.doThrow( new ApplicationInstallException( "" ) ).when( this.applicationService ).uninstallApplication( applicationKey,
                                                                                                                        true );
-
-        request().
-            path( "application/uninstall" ).
-            entity( "{\"key\":[\"" + applicationKey.toString() + "\"]}", MediaType.APPLICATION_JSON_TYPE ).
-            post().getAsString();
+        assertThrows(ApplicationInstallException.class, () -> {
+            request().
+                    path("application/uninstall").
+                    entity("{\"key\":[\"" + applicationKey.toString() + "\"]}", MediaType.APPLICATION_JSON_TYPE).
+                    post().getAsString();
+        } );
     }
 
     @Test
@@ -533,7 +535,7 @@ public class ApplicationResourceTest
         assertEquals( "{}", response );
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void test_install_empty()
         throws Exception
     {
@@ -542,8 +544,10 @@ public class ApplicationResourceTest
 
         Mockito.when( this.multipartService.parse( Mockito.any() ) ).thenReturn( form );
 
-        request().path( "application/install" ).multipart( "file", "file.jar", new byte[]{0, 1, 2}, MediaType.MULTIPART_FORM_DATA_TYPE ).
-            post();
+        assertThrows(RuntimeException.class, () -> {
+            request().path("application/install").multipart("file", "file.jar", new byte[]{0, 1, 2}, MediaType.MULTIPART_FORM_DATA_TYPE).
+                    post();
+        } );
     }
 
     @Test

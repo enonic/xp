@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,7 +20,7 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageIndexUpgrader;
 import com.enonic.xp.repo.impl.node.json.IndexConfigDocumentJson;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FlattenedPageIndexUpgraderTest
 {
@@ -87,7 +87,7 @@ public class FlattenedPageIndexUpgraderTest
         final String resource = "/" + getClass().getName().replace( '.', '/' ) + "-" + name + ".json";
         final URL url = getClass().getResource( resource );
 
-        assertNotNull( "File [" + resource + "] not found", url );
+        assertNotNull( url, "File [" + resource + "] not found" );
         return this.mapper.readTree( url );
     }
 }

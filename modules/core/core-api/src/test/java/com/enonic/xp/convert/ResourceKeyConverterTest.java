@@ -1,10 +1,10 @@
 package com.enonic.xp.convert;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.resource.ResourceKey;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ResourceKeyConverterTest
 {
@@ -24,9 +24,9 @@ public class ResourceKeyConverterTest
 
     }
 
-    @Test(expected = ConvertException.class)
+    @Test
     public void testFailure()
     {
-        Converters.convert( "/some/path", ResourceKey.class );
+        assertThrows(ConvertException.class, () -> Converters.convert( "/some/path", ResourceKey.class ));
     }
 }

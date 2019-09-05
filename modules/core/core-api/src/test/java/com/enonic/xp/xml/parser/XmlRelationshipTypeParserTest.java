@@ -1,12 +1,12 @@
 package com.enonic.xp.xml.parser;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.schema.relationship.RelationshipType;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class XmlRelationshipTypeParserTest
     extends XmlModelParserTest
@@ -15,7 +15,7 @@ public class XmlRelationshipTypeParserTest
 
     private RelationshipType.Builder builder;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.parser = new XmlRelationshipTypeParser();

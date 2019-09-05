@@ -2,7 +2,7 @@ package com.enonic.xp.site;
 
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
 
@@ -12,7 +12,7 @@ import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.xdata.XDataName;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SiteDescriptorTest
 {

@@ -5,8 +5,8 @@ import java.util.Map;
 
 import org.apache.tika.detect.DefaultDetector;
 import org.apache.tika.parser.DefaultParser;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.base.Strings;
 import com.google.common.io.Resources;
@@ -14,13 +14,13 @@ import com.google.common.net.HttpHeaders;
 
 import com.enonic.xp.extractor.ExtractedData;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BinaryExtractorImplTest
 {
     private BinaryExtractorImpl extractor;
 
-    @Before
+    @BeforeEach
     public void setup()
         throws Exception
     {

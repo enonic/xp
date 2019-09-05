@@ -1,6 +1,6 @@
 package com.enonic.xp.portal.url;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
@@ -11,7 +11,7 @@ public abstract class AbstractUrlParamsTest
 {
     protected PortalRequest portalRequest;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.portalRequest = new PortalRequest();

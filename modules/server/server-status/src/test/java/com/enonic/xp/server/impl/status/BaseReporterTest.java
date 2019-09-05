@@ -5,8 +5,8 @@ import java.io.OutputStream;
 import java.util.Map;
 import java.util.Optional;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Maps;
@@ -16,7 +16,7 @@ import com.enonic.xp.status.StatusContext;
 import com.enonic.xp.status.StatusReporter;
 import com.enonic.xp.support.JsonTestHelper;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class BaseReporterTest<T extends StatusReporter>
 {
@@ -37,7 +37,7 @@ public abstract class BaseReporterTest<T extends StatusReporter>
         this.helper = new JsonTestHelper( this );
     }
 
-    @Before
+    @BeforeEach
     public final void setup()
         throws Exception
     {

@@ -8,8 +8,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.jboss.resteasy.core.Dispatcher;
 import org.jboss.resteasy.mock.MockDispatcherFactory;
-import org.junit.Assert;
-import org.junit.Before;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -34,7 +35,7 @@ public abstract class JaxRsResourceTestSupport
 
     protected MultipartService multipartService;
 
-    @Before
+    @BeforeEach
     public final void setUp()
         throws Exception
     {
@@ -81,7 +82,7 @@ public abstract class JaxRsResourceTestSupport
         final String expectedStr = toJson( expectedNode );
         final String actualStr = toJson( actualNode );
 
-        assertEquals( expectedStr, actualStr );
+        Assertions.assertEquals( expectedStr, actualStr );
     }
 
     protected JsonNode parseJson( final String json )
@@ -112,13 +113,9 @@ public abstract class JaxRsResourceTestSupport
 
     protected final void assertArrayEquals( Object[] a1, Object[] a2 )
     {
-        Assert.assertEquals( arrayToString( a1 ), arrayToString( a2 ) );
+        Assertions.assertEquals( arrayToString( a1 ), arrayToString( a2 ) );
     }
 
-    protected final void assertEquals( Object a1, Object a2 )
-    {
-        Assert.assertEquals( a1, a2 );
-    }
 
     protected final String arrayToString( Object[] a )
     {

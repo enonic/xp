@@ -1,14 +1,15 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.query;
 
 import org.elasticsearch.index.query.QueryBuilder;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.FieldExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQueryFieldNameResolver;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.BaseTestBuilderFactory;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RangeExpressionBuilderTest
     extends BaseTestBuilderFactory
@@ -23,7 +24,7 @@ public class RangeExpressionBuilderTest
         final QueryBuilder query = RangeExpressionBuilder.build( CompareExpr.gt( FieldExpr.from( "myField" ), ValueExpr.number( 3L ) ),
                                                                  new SearchQueryFieldNameResolver() );
 
-        Assert.assertEquals( cleanString( expected ), cleanString( query.toString() ) );
+        assertEquals( cleanString( expected ), cleanString( query.toString() ) );
     }
 
 
@@ -36,7 +37,7 @@ public class RangeExpressionBuilderTest
         final QueryBuilder query = RangeExpressionBuilder.build( CompareExpr.lt( FieldExpr.from( "myField" ), ValueExpr.number( 3L ) ),
                                                                  new SearchQueryFieldNameResolver() );
 
-        Assert.assertEquals( cleanString( expected ), cleanString( query.toString() ) );
+        assertEquals( cleanString( expected ), cleanString( query.toString() ) );
     }
 
     @Test
@@ -48,7 +49,7 @@ public class RangeExpressionBuilderTest
         final QueryBuilder query = RangeExpressionBuilder.build( CompareExpr.gte( FieldExpr.from( "myField" ), ValueExpr.number( 3L ) ),
                                                                  new SearchQueryFieldNameResolver() );
 
-        Assert.assertEquals( cleanString( expected ), cleanString( query.toString() ) );
+        assertEquals( cleanString( expected ), cleanString( query.toString() ) );
     }
 
     @Test
@@ -61,7 +62,7 @@ public class RangeExpressionBuilderTest
             RangeExpressionBuilder.build( CompareExpr.gt( FieldExpr.from( "myField" ), ValueExpr.instant( "2013-11-29T11:00:00.000Z" ) ),
                                           new SearchQueryFieldNameResolver() );
 
-        Assert.assertEquals( cleanString( expected ), cleanString( query.toString() ) );
+        assertEquals( cleanString( expected ), cleanString( query.toString() ) );
     }
 
     @Test
@@ -74,7 +75,7 @@ public class RangeExpressionBuilderTest
             RangeExpressionBuilder.build( CompareExpr.gt( FieldExpr.from( "myField" ), ValueExpr.string( "myString" ) ),
                                           new SearchQueryFieldNameResolver() );
 
-        Assert.assertEquals( cleanString( expected ), cleanString( query.toString() ) );
+        assertEquals( cleanString( expected ), cleanString( query.toString() ) );
     }
 }
 

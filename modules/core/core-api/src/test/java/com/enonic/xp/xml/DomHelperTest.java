@@ -5,14 +5,14 @@ import java.io.StringReader;
 import java.net.URL;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DomHelperTest
 {

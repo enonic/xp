@@ -4,8 +4,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.ServiceReference;
@@ -15,7 +15,7 @@ import com.google.common.collect.Maps;
 
 import com.enonic.xp.web.impl.dispatch.mapping.ResourceDefinition;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class ResourcePipelineImplTest<D extends ResourceDefinition<?>, P extends ResourcePipelineImpl<D>>
 {
@@ -27,7 +27,7 @@ public abstract class ResourcePipelineImplTest<D extends ResourceDefinition<?>, 
 
     HttpServletResponse response;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.pipeline = newPipeline();

@@ -1,7 +1,7 @@
 package com.enonic.xp.core.impl.content.index.processor;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.index.IndexConfig;
@@ -10,7 +10,7 @@ import com.enonic.xp.schema.content.ContentTypeName;
 
 import static com.enonic.xp.content.ContentPropertyNames.ATTACHMENT_TEXT_COMPONENT;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AttachmentConfigProcessorTest
 {
@@ -20,7 +20,7 @@ public class AttachmentConfigProcessorTest
 
     private PatternIndexConfigDocument.Builder builder;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

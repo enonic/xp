@@ -2,13 +2,13 @@ package com.enonic.xp.lib.io;
 
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class IOHandlerBeanTest
     extends ScriptTestSupport

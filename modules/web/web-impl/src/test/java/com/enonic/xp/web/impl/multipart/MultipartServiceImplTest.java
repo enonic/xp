@@ -3,8 +3,8 @@ package com.enonic.xp.web.impl.multipart;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
@@ -12,7 +12,7 @@ import com.google.common.collect.Lists;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartService;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MultipartServiceImplTest
 {
@@ -20,7 +20,7 @@ public class MultipartServiceImplTest
 
     private HttpServletRequest req;
 
-    @Before
+    @BeforeEach
     public void setup()
         throws Exception
     {

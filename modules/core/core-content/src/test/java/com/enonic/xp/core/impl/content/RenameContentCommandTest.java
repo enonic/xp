@@ -2,8 +2,8 @@ package com.enonic.xp.core.impl.content;
 
 import java.util.Iterator;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.content.Content;
@@ -60,7 +60,7 @@ public class RenameContentCommandTest
 
     private ContentDataSerializer contentDataSerializer;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

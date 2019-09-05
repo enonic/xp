@@ -1,7 +1,8 @@
 package com.enonic.xp.repo.impl.elasticsearch;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class LexiSortableTest
 {
@@ -12,14 +13,14 @@ public class LexiSortableTest
         final String s2 = LexiSortable.toLexiSortable( -1111L );
         final String s3 = LexiSortable.toLexiSortable( 1111L );
 
-        Assert.assertEquals( "l8000000000000000", s1 );
-        Assert.assertEquals( "l7FFFFFFFFFFFFBA9", s2 );
-        Assert.assertEquals( "l8000000000000457", s3 );
+        assertEquals( "l8000000000000000", s1 );
+        assertEquals( "l7FFFFFFFFFFFFBA9", s2 );
+        assertEquals( "l8000000000000457", s3 );
 
-        Assert.assertTrue( s2.compareTo( s1 ) < 0 );
-        Assert.assertTrue( s2.compareTo( s3 ) < 0 );
-        Assert.assertTrue( s3.compareTo( s1 ) > 0 );
-        Assert.assertTrue( s3.compareTo( s2 ) > 0 );
+        assertTrue( s2.compareTo( s1 ) < 0 );
+        assertTrue( s2.compareTo( s3 ) < 0 );
+        assertTrue( s3.compareTo( s1 ) > 0 );
+        assertTrue( s3.compareTo( s2 ) > 0 );
     }
 
     @Test
@@ -29,13 +30,13 @@ public class LexiSortableTest
         final String s2 = LexiSortable.toLexiSortable( -0.00001d );
         final String s3 = LexiSortable.toLexiSortable( 0.00001d );
 
-        Assert.assertEquals( "d8000000000000000", s1 );
-        Assert.assertEquals( "d411B074A771C970E", s2 );
-        Assert.assertEquals( "dBEE4F8B588E368F1", s3 );
+        assertEquals( "d8000000000000000", s1 );
+        assertEquals( "d411B074A771C970E", s2 );
+        assertEquals( "dBEE4F8B588E368F1", s3 );
 
-        Assert.assertTrue( s2.compareTo( s1 ) < 0 );
-        Assert.assertTrue( s2.compareTo( s3 ) < 0 );
-        Assert.assertTrue( s3.compareTo( s1 ) > 0 );
-        Assert.assertTrue( s3.compareTo( s2 ) > 0 );
+        assertTrue( s2.compareTo( s1 ) < 0 );
+        assertTrue( s2.compareTo( s3 ) < 0 );
+        assertTrue( s3.compareTo( s1 ) > 0 );
+        assertTrue( s3.compareTo( s2 ) > 0 );
     }
 }

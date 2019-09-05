@@ -1,7 +1,7 @@
 package com.enonic.xp.repo.impl.repository.event;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.event.Event;
@@ -17,7 +17,7 @@ public class RepositoryEventListenerTest
 
     private RepositoryService repositoryService;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

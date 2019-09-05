@@ -1,7 +1,7 @@
 package com.enonic.xp.launcher.impl.logging;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.log.LogService;
@@ -10,7 +10,7 @@ public class LogActivatorTest
 {
     private LogActivator activator;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.activator = new LogActivator();

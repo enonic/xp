@@ -1,13 +1,13 @@
 package com.enonic.xp.xml.parser;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class XmlMixinParserTest
     extends XmlModelParserTest
@@ -16,7 +16,7 @@ public class XmlMixinParserTest
 
     private Mixin.Builder builder;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.parser = new XmlMixinParser();

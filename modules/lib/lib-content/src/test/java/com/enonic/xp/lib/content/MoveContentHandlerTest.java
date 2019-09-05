@@ -4,8 +4,8 @@ import java.time.Instant;
 import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.content.Content;
@@ -20,7 +20,7 @@ import com.enonic.xp.security.PrincipalKey;
 
 import static org.mockito.Mockito.when;
 
-@Ignore
+@Disabled
 public class MoveContentHandlerTest
     extends BaseContentHandlerTest
 {

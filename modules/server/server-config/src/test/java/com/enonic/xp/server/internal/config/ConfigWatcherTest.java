@@ -1,19 +1,18 @@
 package com.enonic.xp.server.internal.config;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
-
-import com.google.common.io.Files;
 
 public class ConfigWatcherTest
 {
-    @Rule
-    public final TemporaryFolder temporaryFolder = new TemporaryFolder();
+    @TempDir
+    public Path temporaryFolder;
 
     private ConfigInstaller installer;
 
@@ -23,7 +22,7 @@ public class ConfigWatcherTest
 
     private File dir2;
 
-    @Before
+    @BeforeEach
     public void setup()
         throws Exception
     {
@@ -31,8 +30,8 @@ public class ConfigWatcherTest
         this.watcher = new ConfigWatcher();
         this.watcher.setInstaller( this.installer );
 
-        this.dir1 = this.temporaryFolder.newFolder( "dir1" );
-        this.dir2 = this.temporaryFolder.newFolder( "dir2" );
+        this.dir1 = Files.createDirectory(this.temporaryFolder.resolve( "dir1" ) ).toFile();
+        this.dir2 = Files.createDirectory(this.temporaryFolder.resolve( "dir2" ) ).toFile();
 
         this.watcher.configPaths = new ConfigPaths( this.dir1.getAbsolutePath() + "," + this.dir2.getAbsolutePath() );
     }
@@ -41,7 +40,7 @@ public class ConfigWatcherTest
         throws Exception
     {
         final File file = new File( dir, name );
-        Files.touch( file );
+        com.google.common.io.Files.touch( file );
         return file;
     }
 
@@ -72,7 +71,7 @@ public class ConfigWatcherTest
         Thread.sleep( 600 );
         Mockito.verify( this.installer, Mockito.times( 2 ) ).updateConfig( file1 );
 
-        Files.touch( file1 );
+        com.google.common.io.Files.touch( file1 );
         Thread.sleep( 600 );
         Mockito.verify( this.installer, Mockito.times( 3 ) ).updateConfig( file1 );
 

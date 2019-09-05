@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.CreateRootNodeParams;
@@ -9,7 +9,7 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CreateRootNodeCommandTest
     extends AbstractNodeTest

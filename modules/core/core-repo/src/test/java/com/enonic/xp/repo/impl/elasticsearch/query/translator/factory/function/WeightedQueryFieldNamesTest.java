@@ -1,9 +1,10 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.function;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableList;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class WeightedQueryFieldNamesTest
 {
@@ -21,7 +22,7 @@ public class WeightedQueryFieldNamesTest
         final WeightedQueryFieldNames weightedQueryFieldNames = WeightedQueryFieldNames.from( value );
         final ImmutableList<WeightedQueryFieldName> entries = weightedQueryFieldNames.getWeightedQueryFieldNames();
 
-        Assert.assertNotNull( entries );
-        Assert.assertEquals( numEntries, entries.size() );
+        assertNotNull( entries );
+        assertEquals( numEntries, entries.size() );
     }
 }

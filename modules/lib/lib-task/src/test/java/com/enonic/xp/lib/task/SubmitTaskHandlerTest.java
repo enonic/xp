@@ -1,6 +1,6 @@
 package com.enonic.xp.lib.task;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.resource.ResourceProblemException;
@@ -9,8 +9,9 @@ import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 
 public class SubmitTaskHandlerTest
     extends ScriptTestSupport
@@ -44,7 +45,7 @@ public class SubmitTaskHandlerTest
         runFunction( "/test/submit-test.js", "submitTask" );
     }
 
-    @Test(expected = ResourceProblemException.class)
+    @Test
     public void testSubmitTaskThrowingError()
         throws Exception
     {
@@ -53,6 +54,6 @@ public class SubmitTaskHandlerTest
         this.taskService = mockTaskMan;
         addService( TaskService.class, taskService );
 
-        runFunction( "/test/submit-test.js", "submitTaskThrowingError" );
+        assertThrows(ResourceProblemException.class, () -> runFunction( "/test/submit-test.js", "submitTaskThrowingError" ));
     }
 }

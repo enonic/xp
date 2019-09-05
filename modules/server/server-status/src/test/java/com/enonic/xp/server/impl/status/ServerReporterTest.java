@@ -2,7 +2,7 @@ package com.enonic.xp.server.impl.status;
 
 import java.util.Properties;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.net.MediaType;

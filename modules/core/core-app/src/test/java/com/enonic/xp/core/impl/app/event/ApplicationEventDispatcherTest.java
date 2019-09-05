@@ -2,8 +2,8 @@ package com.enonic.xp.core.impl.app.event;
 
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ops4j.pax.tinybundles.core.TinyBundle;
 import org.osgi.framework.Bundle;
 
@@ -13,7 +13,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.BundleBasedTest;
 import com.enonic.xp.event.Event;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ApplicationEventDispatcherTest
     extends BundleBasedTest
@@ -22,7 +22,7 @@ public class ApplicationEventDispatcherTest
 
     private List<Event> events;
 
-    @Before
+    @BeforeEach
     public void initialize()
     {
         this.events = Lists.newArrayList();

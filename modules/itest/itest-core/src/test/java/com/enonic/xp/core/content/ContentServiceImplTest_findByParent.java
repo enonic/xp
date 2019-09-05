@@ -3,7 +3,7 @@ package com.enonic.xp.core.content;
 import java.time.Duration;
 import java.time.Instant;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
@@ -12,17 +12,11 @@ import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.node.RefreshMode;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ContentServiceImplTest_findByParent
     extends AbstractContentServiceTest
 {
-    @Override
-    public void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
 
     @Test
     public void root_content()

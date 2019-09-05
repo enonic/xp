@@ -1,9 +1,7 @@
 package com.enonic.xp.impl.server.rest;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.impl.server.rest.model.SystemDumpRequestJson;
@@ -17,7 +15,8 @@ import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskResultJson;
 import com.enonic.xp.task.TaskService;
 
-import static org.mockito.Matchers.eq;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.eq;
 
 public class SystemResourceTest
     extends ServerRestTestSupport
@@ -26,10 +25,7 @@ public class SystemResourceTest
 
     private SystemResource resource;
 
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
-
-    @Before
+    @BeforeEach
     public void setup()
         throws Exception
     {

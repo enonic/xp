@@ -5,8 +5,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Hashtable;
 
-import org.junit.Assert;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -41,6 +40,8 @@ import com.enonic.xp.testing.mock.MockBeanContext;
 import com.enonic.xp.testing.mock.MockServiceRegistry;
 import com.enonic.xp.testing.mock.MockViewFunctionService;
 import com.enonic.xp.testing.resource.ClassLoaderResourceService;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class ScriptTestSupport
 {
@@ -78,7 +79,7 @@ public abstract class ScriptTestSupport
         this.appVersion = value;
     }
 
-    @Before
+    @BeforeEach
     public final void setup()
         throws Exception
     {
@@ -181,8 +182,8 @@ public abstract class ScriptTestSupport
     {
         final ScriptExports exports = runScript( path );
 
-        Assert.assertNotNull( "No exports in [" + path + "]", exports );
-        Assert.assertTrue( "No functions exported named [" + funcName + "] in [" + path + "]", exports.hasMethod( funcName ) );
+        assertNotNull( exports, "No exports in [" + path + "]" );
+        assertTrue( exports.hasMethod( funcName ), "No functions exported named [" + funcName + "] in [" + path + "]" );
         return exports.executeMethod( funcName, funcParams );
     }
 
@@ -217,10 +218,10 @@ public abstract class ScriptTestSupport
     {
         final Bundle bundle = Mockito.mock( Bundle.class );
 
-        Mockito.when( bundle.getBundleContext() ).thenReturn( this.bundleContext );
+        Mockito.lenient().when( bundle.getBundleContext() ).thenReturn( this.bundleContext );
         Mockito.when( bundle.getSymbolicName() ).thenReturn( this.appKey.getName() );
         Mockito.when( bundle.getVersion() ).thenReturn( Version.valueOf( this.appVersion ) );
-        Mockito.when( bundle.getState() ).thenReturn( Bundle.ACTIVE );
+        Mockito.lenient().when( bundle.getState() ).thenReturn( Bundle.ACTIVE );
 
         final Hashtable<String, String> headers = new Hashtable<>();
         Mockito.when( bundle.getHeaders() ).thenReturn( headers );

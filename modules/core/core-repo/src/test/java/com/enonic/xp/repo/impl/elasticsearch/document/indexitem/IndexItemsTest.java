@@ -2,7 +2,7 @@ package com.enonic.xp.repo.impl.elasticsearch.document.indexitem;
 
 import java.util.Collection;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.index.IndexConfig;
@@ -11,7 +11,7 @@ import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.repo.impl.index.IndexValueType;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class IndexItemsTest
 {

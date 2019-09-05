@@ -3,8 +3,8 @@ package com.enonic.xp.portal.impl.handler.service;
 import java.util.Collections;
 import java.util.Set;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -39,7 +39,7 @@ import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.BaseHandlerTest;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ServiceHandlerTest
     extends BaseHandlerTest
@@ -56,7 +56,7 @@ public class ServiceHandlerTest
 
     private ControllerScript controllerScript;
 
-    @Before
+    @BeforeEach
     public final void setup()
         throws Exception
     {
@@ -215,13 +215,13 @@ public class ServiceHandlerTest
         assertEquals( "/site/draft/site/somepath/content/_/service/demo/test", this.request.getContextPath() );
     }
 
-    @Test(expected = com.enonic.xp.web.WebException.class)
+    @Test
     public void executeScript_invalidSite()
         throws Exception
     {
         setupContentAndSite();
         this.request.setEndpointPath( "/_/service/forbidden/test" );
-        final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        assertThrows(WebException.class, () ->  this.handler.handle( this.request, PortalResponse.create().build(), null ));
     }
 
     @Test
@@ -237,17 +237,19 @@ public class ServiceHandlerTest
         assertNotNull( this.request.getApplicationKey() );
     }
 
-    @Test(expected = com.enonic.xp.web.WebException.class)
+    @Test
     public void executeScript_invalidApplication()
         throws Exception
     {
         this.request.setRawPath( "/webapp/forbidden/_/service/demo/test" );
         this.request.setEndpointPath( "/_/service/demo/test" );
 
-        final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), null );
-        assertEquals( HttpStatus.OK, response.getStatus() );
-        Mockito.verify( this.controllerScript ).execute( this.request );
-        assertNotNull( this.request.getApplicationKey() );
+        assertThrows(WebException.class, () ->  {
+            final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), null );
+            assertEquals( HttpStatus.OK, response.getStatus() );
+            Mockito.verify( this.controllerScript ).execute( this.request );
+            assertNotNull( this.request.getApplicationKey() );
+        });
     }
 
     private void setupContentAndSite()

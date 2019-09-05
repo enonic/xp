@@ -4,18 +4,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.inputtype.InputTypeName;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FormOptionSetTest
 {
     private FormOptionSet set;
 
-    @Before
+    @BeforeEach
     public void before()
     {
         this.set = FormOptionSet.create().

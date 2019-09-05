@@ -1,9 +1,9 @@
 package com.enonic.xp.repo.impl.elasticsearch.snapshot;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.elasticsearch.cluster.metadata.RepositoryMetaData;
+import org.elasticsearch.snapshots.SnapshotInfo;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.cluster.ClusterManager;
@@ -23,13 +23,13 @@ import com.enonic.xp.repository.DeleteRepositoryParams;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.SystemConstants;
 
-import static org.junit.Assert.*;
+import java.util.stream.Collectors;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SnapshotServiceImplTest
     extends AbstractNodeTest
 {
-    @Rule
-    public TemporaryFolder snapshotRepo = new TemporaryFolder();
 
     private SnapshotServiceImpl snapshotService;
 
@@ -39,11 +39,16 @@ public class SnapshotServiceImplTest
 
     private ClusterManager clusterManager;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
+        for (String repository : client.admin().cluster().prepareGetRepositories().execute().actionGet().repositories().stream().map(RepositoryMetaData::name).collect(Collectors.toList())) {
+            for (String snapshot : client.admin().cluster().prepareGetSnapshots(repository).execute().actionGet().getSnapshots().stream().map(SnapshotInfo::name).collect(Collectors.toList())) {
+                client.admin().cluster().prepareDeleteSnapshot(repository, snapshot).execute().actionGet();
+            }
+            client.admin().cluster().prepareDeleteRepository(repository).execute().actionGet();
+        }
 
         this.snapshotService = new SnapshotServiceImpl();
 
@@ -64,10 +69,10 @@ public class SnapshotServiceImplTest
 
         this.snapshotService.setRepositoryService( repositoryService );
         final RepoConfiguration configuration = Mockito.mock( RepoConfiguration.class );
-        Mockito.when( configuration.getSnapshotsDir() ).thenReturn( getServer().getSnapshotsDir() );
+        Mockito.when( configuration.getSnapshotsDir() ).thenReturn( getSnapshotsDir() );
 
         this.snapshotService.setConfiguration( configuration );
-        this.snapshotService.setClient( this.client );
+        this.snapshotService.setClient( client );
         this.snapshotService.setEventPublisher( eventPublisher );
         this.snapshotService.setClusterManager( clusterManager );
     }
@@ -143,11 +148,11 @@ public class SnapshotServiceImplTest
         assertNotNull( this.repositoryService.get( ContentConstants.CONTENT_REPO.getId() ) );
     }
 
-    @Test(expected = SnapshotException.class)
+    @Test
     public void restore_invalid_snapshot()
         throws Exception
     {
-        NodeHelper.runAsAdmin( this::doRestoreInvalidSnapshot );
+        assertThrows(SnapshotException.class, () -> NodeHelper.runAsAdmin( this::doRestoreInvalidSnapshot ) );
     }
 
     private void doRestoreInvalidSnapshot()

@@ -1,10 +1,10 @@
 package com.enonic.xp.node;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.support.AbstractEqualsTest;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class NodeNameTest
 {
@@ -29,18 +29,18 @@ public class NodeNameTest
         assertEquals( "your_name.is-okay", NodeName.from( "your_name.is-okay" ).toString() );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testAsteriskName()
         throws Exception
     {
-        NodeName.from( "name*value" );
+        assertThrows(IllegalArgumentException.class, () -> NodeName.from( "name*value" ));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testUnderscoreOnlyNotAllowed()
         throws Exception
     {
-        NodeName.from( "_" );
+        assertThrows(IllegalArgumentException.class, () -> NodeName.from( "_" ));
     }
 
     @Test

@@ -1,6 +1,6 @@
 package com.enonic.xp.lib.auth;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.security.PrincipalKey;

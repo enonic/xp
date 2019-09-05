@@ -1,6 +1,6 @@
 package com.enonic.xp.impl.macro;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
@@ -9,7 +9,7 @@ import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroDescriptors;
 import com.enonic.xp.macro.MacroKey;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MacroDescriptorServiceTest
     extends ApplicationTestSupport

@@ -11,8 +11,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.util.concurrent.Uninterruptibles;
 
@@ -22,7 +22,7 @@ import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
 import com.enonic.xp.task.TaskState;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TaskManagerImplTest
 {
@@ -30,7 +30,7 @@ public class TaskManagerImplTest
 
     private List<Event> eventsPublished;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         taskMan = new TaskManagerImpl();

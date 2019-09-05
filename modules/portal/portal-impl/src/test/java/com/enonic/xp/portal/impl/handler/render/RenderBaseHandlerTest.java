@@ -2,6 +2,7 @@ package com.enonic.xp.portal.impl.handler.render;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -58,7 +59,8 @@ public abstract class RenderBaseHandlerTest
 
     private HttpServletRequest rawRequest;
 
-    protected void setup()
+    @BeforeEach
+    void setupRenderBaseHandlerTest()
         throws Exception
     {
         this.request = new PortalRequest();

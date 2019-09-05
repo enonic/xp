@@ -7,8 +7,8 @@ import org.elasticsearch.cluster.node.DiscoveryNodes;
 import org.elasticsearch.transport.TransportRequest;
 import org.elasticsearch.transport.TransportResponseHandler;
 import org.elasticsearch.transport.TransportService;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.collect.ImmutableList;
@@ -29,7 +29,7 @@ public class ClusterEventSenderTest
 
     private DiscoveryNode node2;
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         //Mocks the Elasticsearch nodes

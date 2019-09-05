@@ -1,17 +1,17 @@
 package com.enonic.xp.admin.impl.rest.resource.content.task;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.ContentPath;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MoveTaskMessageGeneratorTest
 {
     private MoveTaskMessageGenerator generator;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

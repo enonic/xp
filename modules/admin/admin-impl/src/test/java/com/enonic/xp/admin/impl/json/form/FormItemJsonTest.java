@@ -3,7 +3,7 @@ package com.enonic.xp.admin.impl.json.form;
 
 import java.io.IOException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.fasterxml.jackson.databind.JsonNode;

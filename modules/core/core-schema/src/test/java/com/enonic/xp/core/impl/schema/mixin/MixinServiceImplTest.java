@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.schema.mixin;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.schema.AbstractSchemaTest;
@@ -16,7 +16,7 @@ import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.Mixins;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MixinServiceImplTest
     extends AbstractSchemaTest

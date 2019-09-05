@@ -1,6 +1,6 @@
 package com.enonic.xp.lib.node.mapper;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexConfigDocument;

@@ -1,10 +1,10 @@
 package com.enonic.xp.inputtype;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class InputTypesTest
 {
@@ -37,9 +37,9 @@ public class InputTypesTest
         assertEquals( InputTypeName.TEXT_LINE.toString(), type.getName().toString() );
     }
 
-    @Test(expected = InputTypeNotFoundException.class)
+    @Test
     public void resolveType_unknown()
     {
-        this.types.resolve( InputTypeName.from( "unknown" ) );
+        assertThrows(InputTypeNotFoundException.class, () -> this.types.resolve( InputTypeName.from( "unknown" ) ));
     }
 }

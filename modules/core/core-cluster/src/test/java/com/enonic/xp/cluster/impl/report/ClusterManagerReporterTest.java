@@ -1,7 +1,7 @@
 package com.enonic.xp.cluster.impl.report;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -18,13 +18,13 @@ import com.enonic.xp.cluster.Clusters;
 import com.enonic.xp.cluster.impl.TestCluster;
 import com.enonic.xp.support.JsonTestHelper;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ClusterManagerReporterTest
 {
     private ClusterManager clusterManager;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

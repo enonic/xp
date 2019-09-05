@@ -5,7 +5,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 
 import org.apache.commons.lang.SerializationUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -14,7 +14,7 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.User;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AuthenticationInfoTest
 {

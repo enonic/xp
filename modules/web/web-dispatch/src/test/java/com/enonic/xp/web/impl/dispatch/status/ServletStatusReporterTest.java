@@ -5,13 +5,13 @@ import javax.servlet.annotation.WebInitParam;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.ServiceReference;
 
 import com.enonic.xp.annotation.Order;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ServletStatusReporterTest
     extends ResourceReporterTest

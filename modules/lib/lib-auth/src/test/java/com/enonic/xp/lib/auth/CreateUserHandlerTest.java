@@ -1,11 +1,13 @@
 package com.enonic.xp.lib.auth;
 
-import org.junit.Test;
 import org.mockito.Mockito;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.resource.ResourceProblemException;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.testing.ScriptTestSupport;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CreateUserHandlerTest
     extends ScriptTestSupport
@@ -44,9 +46,9 @@ public class CreateUserHandlerTest
         runFunction( "/test/createUser-test.js", "createUserNoEmail" );
     }
 
-    @Test(expected = ResourceProblemException.class)
+    @Test
     public void testCreateUserWithMissingArg()
     {
-        runFunction( "/test/createUser-test.js", "createUserWithMissingArg" );
+        assertThrows(ResourceProblemException.class, () -> runFunction( "/test/createUser-test.js", "createUserWithMissingArg" ));
     }
 }

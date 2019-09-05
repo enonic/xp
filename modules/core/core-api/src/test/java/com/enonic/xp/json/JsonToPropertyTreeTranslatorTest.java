@@ -2,7 +2,7 @@ package com.enonic.xp.json;
 
 import java.net.URL;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,7 +20,7 @@ import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class JsonToPropertyTreeTranslatorTest
 {
@@ -83,7 +83,7 @@ public class JsonToPropertyTreeTranslatorTest
         final String resource = "/" + getClass().getName().replace( '.', '/' ) + "-" + name + ".json";
         final URL url = getClass().getResource( resource );
 
-        assertNotNull( "File [" + resource + "] not found", url );
+        assertNotNull( url, "File [" + resource + "] not found" );
         return this.mapper.readTree( url );
     }
 

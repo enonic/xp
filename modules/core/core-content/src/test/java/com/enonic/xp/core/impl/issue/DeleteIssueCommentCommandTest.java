@@ -2,8 +2,8 @@ package com.enonic.xp.core.impl.issue;
 
 import java.util.UUID;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.issue.DeleteIssueCommentParams;
@@ -12,14 +12,14 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeService;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DeleteIssueCommentCommandTest
 {
 
     private NodeService nodeService;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
@@ -43,12 +43,12 @@ public class DeleteIssueCommentCommandTest
         assertEquals( params.getComment(), result.getIds().first() );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testNoCommentId()
     {
         final DeleteIssueCommentParams params = DeleteIssueCommentParams.create().build();
         final DeleteIssueCommentCommand command = createDeleteIssueCommentCommand( params );
-        command.execute();
+        assertThrows(IllegalArgumentException.class, () -> command.execute());
     }
 
     private DeleteIssueCommentCommand createDeleteIssueCommentCommand( DeleteIssueCommentParams params )

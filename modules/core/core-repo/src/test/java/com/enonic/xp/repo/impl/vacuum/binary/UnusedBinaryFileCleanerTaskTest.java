@@ -2,8 +2,8 @@ package com.enonic.xp.repo.impl.vacuum.binary;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.base.Strings;
 import com.google.common.io.ByteSource;
@@ -20,7 +20,7 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.vacuum.VacuumListener;
 import com.enonic.xp.vacuum.VacuumTaskResult;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class UnusedBinaryFileCleanerTaskTest
@@ -32,7 +32,7 @@ public class UnusedBinaryFileCleanerTaskTest
 
     private Segment nodeSegment;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

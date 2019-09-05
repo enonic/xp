@@ -1,6 +1,6 @@
 package com.enonic.xp.lib.portal.current;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.lib.portal.TestDataFixtures;
 import com.enonic.xp.region.Component;

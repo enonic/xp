@@ -2,9 +2,8 @@ package com.enonic.xp.impl.task.script;
 
 import java.net.URL;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -17,13 +16,13 @@ import com.enonic.xp.script.serializer.JsonMapGenerator;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.util.GeoPoint;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PropertyTreeMapperTest
 {
     private ObjectMapper mapper;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
@@ -124,7 +123,7 @@ public class PropertyTreeMapperTest
         final String resource = name + ".json";
         final URL url = getClass().getResource( resource );
 
-        assertNotNull( "File [" + resource + "] not found", url );
+        assertNotNull( url, "File [" + resource + "] not found" );
         final JsonNode expectedJson = this.mapper.readTree( url );
 
         final JsonMapGenerator generator = new JsonMapGenerator();
@@ -134,7 +133,7 @@ public class PropertyTreeMapperTest
         final String expectedStr = this.mapper.writeValueAsString( expectedJson );
         final String actualStr = this.mapper.writeValueAsString( actualJson );
 
-        Assert.assertEquals( expectedStr, actualStr );
+        assertEquals( expectedStr, actualStr );
     }
 
 

@@ -2,7 +2,7 @@ package com.enonic.xp.lib.content;
 
 import java.time.Instant;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -26,7 +26,7 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.SiteDescriptor;
 
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 public class CreateContentHandlerTest
