@@ -51,6 +51,21 @@ public class JsonToPropertyTreeTranslatorTest
         assertNotNull( myArray2 );
     }
 
+    @Test
+    public void boolean_value()
+        throws Exception
+    {
+        final JsonNode node = loadJson( "allInputTypes" );
+
+        final PropertyTree data = new FormJsonToPropertyTreeTranslator( null, false ).translate( node );
+
+        final Property property = data.getProperty( "checkbox" );
+
+        assertTrue( property.getValue().isBoolean());
+        assertEquals( true, property.getBoolean());
+    }
+
+
     private JsonNode loadJson( final String name )
         throws Exception
     {

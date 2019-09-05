@@ -8,7 +8,7 @@ public class DiffBranchesHandlerParams
 
     private Branch targetBranch;
 
-    private boolean includeChildren = true;
+    private boolean includeChildren;
 
     public void setKey( final String key )
     {

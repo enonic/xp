@@ -611,6 +611,9 @@ public final class ContentResource
         final Boolean isAllPublishable =
             authInfo.hasRole( RoleKeys.ADMIN ) ? true : fullPublishList.stream().allMatch( publishAllowedCondition );
 
+        //check that not all contents are pending delete
+        final Boolean isAllPendingDelete = getNotPendingDeletion( fullPublishList, compareResults ).getSize() == 0;
+
         //filter required dependant ids
         final ContentIds requiredDependantIds = ContentIds.from( requiredIds.stream().
             filter( contentId -> !requestedContentIds.contains( contentId ) ).
@@ -639,6 +642,7 @@ public final class ContentResource
                 this.problematicDependantsOnTop( sortedDependentContentIds, requestedContentIds, sortedProblematicContentIds ) ).
             setRequiredContents( requiredDependantIds ).
             setAllPublishable( isAllPublishable ).
+            setAllPendingDelete( isAllPendingDelete ).
             setContainsInvalid( !notValidContentIds.isEmpty() ).
             setContainsNotReady( !notReadyContentIds.isEmpty() ).
             build();

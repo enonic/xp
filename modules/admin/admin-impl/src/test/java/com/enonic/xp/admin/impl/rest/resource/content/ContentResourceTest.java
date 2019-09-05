@@ -24,7 +24,6 @@ import org.junit.rules.ExpectedException;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
-import org.mockito.internal.util.reflection.Whitebox;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -829,7 +828,7 @@ public class ContentResourceTest
             post();
 
         Mockito.verify( taskService ).submitTask( captor.capture(), Mockito.anyString() );
-        PublishContentJson params = (PublishContentJson) Whitebox.getInternalState( captor.getValue(), "params" );
+        PublishContentJson params = (PublishContentJson) captor.getValue().getParams();
 
         assertEquals( 200, res.getStatus() );
         assertEquals( params.getMessage(), "my message" );
