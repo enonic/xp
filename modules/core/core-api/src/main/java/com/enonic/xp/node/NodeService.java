@@ -29,9 +29,13 @@ public interface NodeService
 
     Node getById( NodeId id );
 
+    Node getByIdAndVersionId( final NodeId id, final NodeVersionId versionId );
+
     Nodes getByIds( NodeIds ids );
 
     Node getByPath( NodePath path );
+
+    Node getByPathAndVersionId( final NodePath path, final NodeVersionId versionId );
 
     Nodes getByPaths( NodePaths paths );
 

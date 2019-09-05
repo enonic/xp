@@ -43,12 +43,13 @@ public class NodeFactory
             path( nodeVersionMetadata.getNodePath().toString() ).
             nodeVersionId( nodeVersionMetadata.getNodeVersionId() ).
             parentPath( nodeVersionMetadata.getNodePath().getParentPath() ).
-            name( nodeVersionMetadata.getNodePath().getName() ).
             timestamp( nodeVersionMetadata.getTimestamp() );
 
         if ( Node.ROOT_UUID.equals( nodeVersionMetadata.getNodeId() ) )
         {
             builder.inheritPermissions( false );
+        } else {
+            builder.name( nodeVersionMetadata.getNodePath().getName() );
         }
 
         return builder.build();

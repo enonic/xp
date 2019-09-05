@@ -80,4 +80,6 @@ public interface NodeStorageService
 
     Node getNode(final NodeId nodeId, final NodeVersionId nodeVersionId, final InternalContext context);
 
+    Node getNode(final NodePath nodePath, final NodeVersionId nodeVersionId, final InternalContext context);
+
 }
