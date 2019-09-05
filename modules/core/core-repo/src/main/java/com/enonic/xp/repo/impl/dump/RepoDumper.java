@@ -226,11 +226,18 @@ class RepoDumper
 
     private void doStoreVersion( final VersionsDumpEntry.Builder builder, final NodeVersionMetadata metaData )
     {
-        final NodeVersion nodeVersion = this.nodeService.getByNodeVersionKey( metaData.getNodeVersionKey() );
-        builder.addVersion( VersionMetaFactory.create( metaData ) );
+        try
+        {
+            final NodeVersion nodeVersion = this.nodeService.getByNodeVersionKey( metaData.getNodeVersionKey() );
+            builder.addVersion( VersionMetaFactory.create( metaData ) );
 
-        storeVersionBlob( metaData );
-        storeVersionBinaries( metaData, nodeVersion );
+            storeVersionBlob( metaData );
+            storeVersionBinaries( metaData, nodeVersion );
+        }
+        catch ( Exception e )
+        {
+            LOG.warn( e.getMessage() );
+        }
     }
 
     private void storeVersionBlob( final NodeVersionMetadata metaData )
