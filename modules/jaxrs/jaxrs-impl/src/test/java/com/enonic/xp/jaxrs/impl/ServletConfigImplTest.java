@@ -4,20 +4,20 @@ import java.util.List;
 
 import javax.servlet.ServletContext;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.internal.util.collections.Iterables;
 
 import com.google.common.collect.Lists;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ServletConfigImplTest
 {
     private ServletConfigImpl context;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.context = new ServletConfigImpl( "test", Mockito.mock( ServletContext.class ) );

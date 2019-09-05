@@ -3,7 +3,7 @@ package com.enonic.xp.repo.impl.elasticsearch.document.indexitem;
 import java.time.Instant;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.index.IndexConfig;
@@ -14,7 +14,7 @@ import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.repo.impl.index.IndexValueType;
 import com.enonic.xp.util.GeoPoint;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class IndexItemFactoryTest
 {

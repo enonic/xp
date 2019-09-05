@@ -1,7 +1,7 @@
 package com.enonic.xp.script.impl.event;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
@@ -10,13 +10,13 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.script.event.ScriptEventListener;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ScriptEventManagerImplTest
 {
     private ScriptEventManagerImpl manager;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.manager = new ScriptEventManagerImpl();

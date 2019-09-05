@@ -2,8 +2,8 @@ package com.enonic.xp.core.impl.app.event;
 
 import java.util.Hashtable;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleEvent;
@@ -22,7 +22,7 @@ public class ApplicationInvalidatorListenerTest
 
     private Event event;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.service = Mockito.mock( ApplicationService.class );

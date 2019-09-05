@@ -2,13 +2,13 @@ package com.enonic.xp.server.internal.trace;
 
 import java.time.Duration;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.trace.TraceLocation;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TraceImplTest
 {
@@ -16,7 +16,7 @@ public class TraceImplTest
 
     private TraceLocation location;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.location = Mockito.mock( TraceLocation.class );

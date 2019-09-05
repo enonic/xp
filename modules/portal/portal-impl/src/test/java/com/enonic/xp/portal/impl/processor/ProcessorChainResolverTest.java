@@ -1,7 +1,7 @@
 package com.enonic.xp.portal.impl.processor;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -16,7 +16,7 @@ import com.enonic.xp.site.SiteService;
 import com.enonic.xp.site.processor.ResponseProcessorDescriptor;
 import com.enonic.xp.site.processor.ResponseProcessorDescriptors;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ProcessorChainResolverTest
 {
@@ -26,7 +26,7 @@ public class ProcessorChainResolverTest
 
     private ProcessorChainResolver resolver;
 
-    @Before
+    @BeforeEach
     public void before()
     {
         portalRequest = new PortalRequest();

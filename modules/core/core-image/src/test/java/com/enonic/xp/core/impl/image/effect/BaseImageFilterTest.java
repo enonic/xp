@@ -8,7 +8,7 @@ import java.awt.image.BufferedImage;
 
 import javax.imageio.ImageIO;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 public abstract class BaseImageFilterTest
 {
@@ -16,7 +16,7 @@ public abstract class BaseImageFilterTest
 
     private BufferedImage transparent;
 
-    @Before
+    @BeforeEach
     public final void setUp()
         throws Exception
     {

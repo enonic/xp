@@ -13,8 +13,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.io.ByteSource;
 import com.google.common.io.CharStreams;
@@ -24,7 +23,7 @@ import com.enonic.xp.mail.MailService;
 import com.enonic.xp.resource.ResourceProblemException;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SendMailScriptTest
     extends ScriptTestSupport
@@ -54,15 +53,15 @@ public class SendMailScriptTest
 
         final MimeMessage message = mockCompose( this.actualMessage );
 
-        Assert.assertEquals( "test subject", message.getSubject() );
-        Assert.assertEquals( "test body", message.getContent() );
+        assertEquals( "test subject", message.getSubject() );
+        assertEquals( "test body", message.getContent() );
         assertArrayEquals( toAddresses( "from@bar.com" ), message.getFrom() );
         assertArrayEquals( toAddresses( "to@bar.com" ), message.getRecipients( Message.RecipientType.TO ) );
         assertArrayEquals( toAddresses( "cc@bar.com" ), message.getRecipients( Message.RecipientType.CC ) );
         assertArrayEquals( toAddresses( "bcc@bar.com" ), message.getRecipients( Message.RecipientType.BCC ) );
         assertArrayEquals( toAddresses( "replyTo@bar.com" ), message.getReplyTo() );
-        Assert.assertEquals( "Value", message.getHeader( "X-Custom" )[0] );
-        Assert.assertEquals( "2", message.getHeader( "X-Other" )[0] );
+        assertEquals( "Value", message.getHeader( "X-Custom" )[0] );
+        assertEquals( "2", message.getHeader( "X-Other" )[0] );
     }
 
     @Test
@@ -73,8 +72,8 @@ public class SendMailScriptTest
 
         final MimeMessage message = mockCompose( this.actualMessage );
 
-        Assert.assertEquals( "test subject", message.getSubject() );
-        Assert.assertEquals( "test body", message.getContent() );
+        assertEquals( "test subject", message.getSubject() );
+        assertEquals( "test body", message.getContent() );
         assertArrayEquals( toAddresses( "from@bar.com", "from@foo.com" ), message.getFrom() );
         assertArrayEquals( toAddresses( "to@bar.com", "to@foo.com" ), message.getRecipients( Message.RecipientType.TO ) );
         assertArrayEquals( toAddresses( "cc@bar.com", "cc@foo.com" ), message.getRecipients( Message.RecipientType.CC ) );
@@ -90,8 +89,8 @@ public class SendMailScriptTest
 
         final MimeMessage message = mockCompose( this.actualMessage );
 
-        Assert.assertEquals( "test subject", message.getSubject() );
-        Assert.assertEquals( "test body", message.getContent() );
+        assertEquals( "test subject", message.getSubject() );
+        assertEquals( "test body", message.getContent() );
         assertArrayEquals( toAddresses( "From Bar <from@bar.com>", "From Foo <from@foo.com>" ), message.getFrom() );
         assertArrayEquals( toAddresses( "To Bar <to@bar.com>", "To Foo <to@foo.com>" ), message.getRecipients( Message.RecipientType.TO ) );
     }
@@ -108,7 +107,7 @@ public class SendMailScriptTest
 
         runFunction( "/test/send-test.js", "failSendMail" );
 
-        Assert.assertNull( this.actualMessage );
+        assertNull( this.actualMessage );
     }
 
     @Test
@@ -119,11 +118,11 @@ public class SendMailScriptTest
 
         final MimeMessage message = mockCompose( this.actualMessage );
 
-        Assert.assertEquals( "test subject", message.getSubject() );
-        Assert.assertEquals( "test body", message.getContent() );
+        assertEquals( "test subject", message.getSubject() );
+        assertEquals( "test body", message.getContent() );
         assertArrayEquals( toAddresses( "from@bar.com" ), message.getFrom() );
         assertArrayEquals( toAddresses( "to@bar.com" ), message.getRecipients( Message.RecipientType.TO ) );
-        Assert.assertEquals( "text/html", message.getContentType() );
+        assertEquals( "text/html", message.getContentType() );
     }
 
     @Test
@@ -139,14 +138,14 @@ public class SendMailScriptTest
         try
         {
             runFunction( "/test/send-test.js", "sendWithoutRequiredFrom" );
-            Assert.fail( "Expected exception" );
+            fail( "Expected exception" );
         }
         catch ( ResourceProblemException e )
         {
             assertEquals( "Parameter 'from' is required", e.getMessage() );
         }
 
-        Assert.assertNull( this.actualMessage );
+        assertNull( this.actualMessage );
     }
 
     @Test
@@ -162,14 +161,14 @@ public class SendMailScriptTest
         try
         {
             runFunction( "/test/send-test.js", "sendWithoutRequiredTo" );
-            Assert.fail( "Expected exception" );
+            fail( "Expected exception" );
         }
         catch ( ResourceProblemException e )
         {
             assertEquals( "Parameter 'to' is required", e.getMessage() );
         }
 
-        Assert.assertNull( this.actualMessage );
+        assertNull( this.actualMessage );
     }
 
     @Test

@@ -1,7 +1,7 @@
 package com.enonic.xp.core.content;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
@@ -44,7 +44,7 @@ public class ContentServiceImplTest_selectorSearch
         assertOrder( result, first, second, third );
     }
 
-    @Ignore // Implement path search match first
+    @Disabled // Implement path search match first
     @Test
     public void same_site_first()
         throws Exception

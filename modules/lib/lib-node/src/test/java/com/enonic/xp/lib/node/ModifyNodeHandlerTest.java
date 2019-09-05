@@ -4,13 +4,13 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 
 import com.google.common.collect.Lists;
@@ -43,9 +43,9 @@ import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Link;
 import com.enonic.xp.util.Reference;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ModifyNodeHandlerTest
     extends BaseNodeHandlerTest
 {
@@ -108,12 +108,6 @@ public class ModifyNodeHandlerTest
         mockGetNode( node );
         mockUpdateNode( node );
 
-        Mockito.when( this.repositoryService.get( RepositoryId.from( "com.enonic.cms.default" ) ) ).
-            thenReturn( Repository.create().
-                id( RepositoryId.from( "com.enonic.cms.default" ) ).
-                branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
-                build() );
-
         runScript( "/lib/xp/examples/node/modify.js" );
 
         Mockito.verify( this.nodeService ).update( updateCaptor.capture() );
@@ -163,12 +157,6 @@ public class ModifyNodeHandlerTest
 
         mockGetNode( node );
         mockUpdateNode( node );
-
-        Mockito.when( this.repositoryService.get( RepositoryId.from( "com.enonic.cms.default" ) ) ).
-            thenReturn( Repository.create().
-                id( RepositoryId.from( "com.enonic.cms.default" ) ).
-                branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
-                build() );
 
         runScript( "/lib/xp/examples/node/modify-keep-types.js" );
 

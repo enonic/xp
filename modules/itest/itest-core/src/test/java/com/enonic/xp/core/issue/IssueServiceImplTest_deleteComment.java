@@ -2,8 +2,8 @@ package com.enonic.xp.core.issue;
 
 import java.util.UUID;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.issue.CreateIssueCommentParams;
 import com.enonic.xp.issue.CreateIssueParams;
@@ -14,7 +14,7 @@ import com.enonic.xp.issue.IssueComment;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.security.User;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class IssueServiceImplTest_deleteComment
     extends AbstractIssueServiceTest
@@ -23,7 +23,7 @@ public class IssueServiceImplTest_deleteComment
 
     private IssueComment comment;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.issue = this.createIssue( CreateIssueParams.create().title( "issue-1" ) );

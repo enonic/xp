@@ -1,7 +1,6 @@
 package com.enonic.xp.core.impl.content.page.layout;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
@@ -10,6 +9,8 @@ import com.enonic.xp.core.impl.content.page.region.LayoutDescriptorServiceImpl;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.LayoutDescriptors;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class LayoutDescriptorServiceTest
     extends AbstractDescriptorServiceTest
@@ -33,7 +34,7 @@ public class LayoutDescriptorServiceTest
     {
         final DescriptorKey key = DescriptorKey.from( "myapp1:mylayout" );
         final LayoutDescriptor descriptor = this.service.getByKey( key );
-        Assert.assertNotNull( descriptor );
+        assertNotNull( descriptor );
     }
 
     @Test
@@ -42,8 +43,8 @@ public class LayoutDescriptorServiceTest
     {
         final LayoutDescriptors result = this.service.getByApplication( ApplicationKey.from( "myapp1" ) );
 
-        Assert.assertNotNull( result );
-        Assert.assertEquals( 1, result.getSize() );
+        assertNotNull( result );
+        assertEquals( 1, result.getSize() );
     }
 
     @Test
@@ -52,7 +53,7 @@ public class LayoutDescriptorServiceTest
     {
         final LayoutDescriptors result = this.service.getByApplications( ApplicationKeys.from( "myapp1", "myapp2" ) );
 
-        Assert.assertNotNull( result );
-        Assert.assertEquals( 2, result.getSize() );
+        assertNotNull( result );
+        assertEquals( 2, result.getSize() );
     }
 }

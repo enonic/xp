@@ -1,6 +1,6 @@
 package com.enonic.xp.lib.common;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.testing.ScriptTestSupport;
 

@@ -1,7 +1,7 @@
 package com.enonic.xp.repo.impl.index;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
@@ -28,7 +28,7 @@ import com.enonic.xp.repo.impl.node.PushNodesCommand;
 import com.enonic.xp.repository.IndexSettings;
 import com.enonic.xp.security.SystemConstants;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class IndexServiceImplTest
     extends AbstractNodeTest
@@ -37,12 +37,10 @@ public class IndexServiceImplTest
 
     private Node rootNode;
 
-    @Override
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.indexService = new IndexServiceImpl();
         this.indexService.setNodeSearchService( this.searchService );
         this.indexService.setIndexServiceInternal( this.indexServiceInternal );

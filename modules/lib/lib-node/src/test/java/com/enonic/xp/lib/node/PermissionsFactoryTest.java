@@ -2,7 +2,7 @@ package com.enonic.xp.lib.node;
 
 import java.util.Arrays;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -15,7 +15,7 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.util.JsonHelper;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PermissionsFactoryTest
 {
@@ -92,7 +92,7 @@ public class PermissionsFactoryTest
             fail( "Missing entry for principal [" + principalKey + "]" );
         }
 
-        Arrays.stream( allowed ).forEach( ( entry ) -> assertTrue( "Should allow [" + entry + "]", principal.isAllowed( entry ) ) );
+        Arrays.stream( allowed ).forEach( ( entry ) -> assertTrue( principal.isAllowed( entry ) , "Should allow [" + entry + "]") );
     }
 
     private void checkDenied( final AccessControlList acl, final String principalKey, final Permission... denied )
@@ -102,7 +102,7 @@ public class PermissionsFactoryTest
         {
             fail( "Missing entry for principal [" + principalKey + "]" );
         }
-        Arrays.stream( denied ).forEach( ( entry ) -> assertTrue( "Should deny [" + entry + "]", principal.isDenied( entry ) ) );
+        Arrays.stream( denied ).forEach( ( entry ) -> assertTrue( principal.isDenied( entry ), "Should deny [" + entry + "]" ) );
     }
 
 

@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.junit.Ignore;
-import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -22,7 +21,7 @@ import com.enonic.xp.i18n.MessageBundle;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.testing.ScriptRunnerSupport;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 
 @Ignore("Concourse issue")
 public class I18NScriptTest
@@ -50,7 +49,7 @@ public class I18NScriptTest
 
         final MessageBundle bundle = Mockito.mock( MessageBundle.class, (Answer) this::answer );
         Mockito.when(
-            localeService.getBundle( Mockito.any( ApplicationKey.class ), Mockito.any( Locale.class ), Matchers.<String>anyVararg() ) ).
+            localeService.getBundle( Mockito.any( ApplicationKey.class ), Mockito.any( Locale.class ), any() ) ).
             thenReturn( bundle );
 
         addService( LocaleService.class, localeService );

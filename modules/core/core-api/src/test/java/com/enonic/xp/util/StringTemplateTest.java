@@ -3,13 +3,13 @@ package com.enonic.xp.util;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Maps;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class StringTemplateTest
 {
@@ -63,10 +63,10 @@ public class StringTemplateTest
         assertEquals( "This is a file test.\n" + "1, {{two}}, 3\n", normalizeString( value ) );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void loadFromResource_notFound()
     {
-        StringTemplate.load( getClass(), "unknown.txt" );
+        assertThrows(IllegalArgumentException.class, () -> StringTemplate.load( getClass(), "unknown.txt" ) );
     }
 
     private String normalizeString( final String text )

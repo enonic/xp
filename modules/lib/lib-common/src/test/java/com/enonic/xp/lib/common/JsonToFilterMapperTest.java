@@ -4,9 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -19,13 +17,10 @@ import com.enonic.xp.query.filter.Filters;
 import com.enonic.xp.query.filter.IdFilter;
 import com.enonic.xp.query.filter.ValueFilter;
 
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class JsonToFilterMapperTest
 {
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     @Test
     public void exists_filter()
@@ -136,10 +131,10 @@ public class JsonToFilterMapperTest
         Map<String, Object> value = Maps.newHashMap();
         value.put( "dummy", "ost" );
 
-        thrown.expect( IllegalArgumentException.class );
-        thrown.expectMessage( "Unknown filter type [dummy]" );
-
-        com.enonic.xp.lib.common.JsonToFilterMapper.create( value );
+        final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {
+            com.enonic.xp.lib.common.JsonToFilterMapper.create( value );
+        });
+        assertEquals( "Unknown filter type [dummy]", ex.getMessage());
     }
 
     @Test

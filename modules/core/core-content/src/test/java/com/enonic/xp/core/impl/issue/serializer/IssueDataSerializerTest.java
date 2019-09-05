@@ -2,7 +2,7 @@ package com.enonic.xp.core.impl.issue.serializer;
 
 import java.util.ArrayList;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
 
@@ -20,7 +20,7 @@ import static com.enonic.xp.core.impl.issue.IssuePropertyNames.DESCRIPTION;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.PUBLISH_REQUEST;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.STATUS;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.TITLE;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class IssueDataSerializerTest
 {

@@ -4,7 +4,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.data.PropertySet;
@@ -19,7 +19,7 @@ import static com.enonic.xp.core.impl.issue.IssueCommentPropertyNames.CREATED_TI
 import static com.enonic.xp.core.impl.issue.IssueCommentPropertyNames.CREATOR;
 import static com.enonic.xp.core.impl.issue.IssueCommentPropertyNames.CREATOR_DISPLAY_NAME;
 import static com.enonic.xp.core.impl.issue.IssueCommentPropertyNames.TEXT;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class IssueCommentNodeTranslatorTest
 {

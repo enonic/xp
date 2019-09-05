@@ -1,6 +1,6 @@
 package com.enonic.xp.lib.node.mapper;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.PushNodesResult;

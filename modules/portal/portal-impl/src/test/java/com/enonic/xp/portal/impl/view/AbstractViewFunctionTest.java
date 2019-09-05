@@ -2,7 +2,7 @@ package com.enonic.xp.portal.impl.view;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -18,7 +18,7 @@ public abstract class AbstractViewFunctionTest
 
     protected PortalRequest portalRequest;
 
-    @Before
+    @BeforeEach
     public final void setup()
         throws Exception
     {

@@ -1,7 +1,6 @@
 package com.enonic.xp.lib.content;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -21,8 +20,9 @@ import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.site.SiteDescriptor;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 public class ModifyContentHandlerTest
@@ -265,10 +265,10 @@ public class ModifyContentHandlerTest
 
     private Content invokeUpdate( final UpdateContentParams params, final Content content )
     {
-        Assert.assertEquals( ContentId.from( "123456" ), params.getContentId() );
+        assertEquals( ContentId.from( "123456" ), params.getContentId() );
 
         final ContentEditor editor = params.getEditor();
-        Assert.assertNotNull( editor );
+        assertNotNull( editor );
 
         final EditableContent editable = new EditableContent( content );
 

@@ -1,23 +1,23 @@
 package com.enonic.xp.vfs;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Files;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.io.TempDir;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
+import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class AbstractVirtualFileTest
 {
-    @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
+    @TempDir
+    public Path temporaryFolder;
 
     protected File rootDir;
 
-    @Before
+    @BeforeEach
     public final void setup()
         throws Exception
     {
@@ -27,7 +27,7 @@ public abstract class AbstractVirtualFileTest
     private void populateTestData()
         throws Exception
     {
-        this.rootDir = this.tempFolder.newFolder( "root" );
+        this.rootDir = Files.createDirectory( this.temporaryFolder.resolve( "root" ) ).toFile();
 
         final File dir1 = createDir( this.rootDir, "dir1" );
         final File dir2 = createDir( this.rootDir, "dir2" );
@@ -49,7 +49,7 @@ public abstract class AbstractVirtualFileTest
     private File createDir( final File dir, final String name )
     {
         final File file = new File( dir, name );
-        Assert.assertTrue( "Failed to create directory " + name + " under " + dir.getAbsolutePath(), file.mkdirs() );
+        assertTrue( file.mkdirs(), "Failed to create directory " + name + " under " + dir.getAbsolutePath() );
         return file;
     }
 
@@ -57,6 +57,6 @@ public abstract class AbstractVirtualFileTest
         throws Exception
     {
         final File file = new File( dir, name );
-        Files.write( contents, file, Charsets.UTF_8 );
+        com.google.common.io.Files.write( contents, file, StandardCharsets.UTF_8 );
     }
 }

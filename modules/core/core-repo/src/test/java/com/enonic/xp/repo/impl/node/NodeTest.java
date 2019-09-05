@@ -1,11 +1,11 @@
 package com.enonic.xp.repo.impl.node;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.support.AbstractEqualsTest;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class NodeTest
 {

@@ -1,15 +1,10 @@
 package com.enonic.xp.init;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 public class InitializerTest
 {
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
-
     @Test
     public void testNonMaster()
     {
@@ -62,8 +57,8 @@ public class InitializerTest
     private TestInitializer createInitializer( final boolean isMaster, final boolean isInitialized, final Runnable initialization )
     {
         return TestInitializer.create().
-            setInitializationCheckMaxCount( 2l ).
-            setInitializationCheckPeriod( 1l ).
+            setInitializationCheckMaxCount( 2L ).
+            setInitializationCheckPeriod( 1L ).
             setMaster( isMaster ).
             setInitialized( isInitialized ).setInitialization( initialization ).
             build();

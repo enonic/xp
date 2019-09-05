@@ -1,8 +1,7 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory;
 
 import org.elasticsearch.index.query.QueryBuilder;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.query.filter.BooleanFilter;
@@ -10,6 +9,8 @@ import com.enonic.xp.query.filter.ExistsFilter;
 import com.enonic.xp.query.filter.Filters;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQueryFieldNameResolver;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FilterBuilderFactoryTest
     extends BaseTestBuilderFactory
@@ -28,7 +29,7 @@ public class FilterBuilderFactoryTest
         final QueryBuilder filterBuilder =
             new FilterBuilderFactory( new SearchQueryFieldNameResolver() ).create( Filters.from( queryFilter ) );
 
-        Assert.assertEquals( cleanString( expected ), cleanString( filterBuilder.toString() ) );
+        assertEquals( cleanString( expected ), cleanString( filterBuilder.toString() ) );
     }
 
     @Test
@@ -45,7 +46,7 @@ public class FilterBuilderFactoryTest
         final QueryBuilder filterBuilder =
             new FilterBuilderFactory( new SearchQueryFieldNameResolver() ).create( Filters.from( queryFilter ) );
 
-        Assert.assertEquals( cleanString( expected ), cleanString( filterBuilder.toString() ) );
+        assertEquals( cleanString( expected ), cleanString( filterBuilder.toString() ) );
     }
 
     @Test
@@ -60,7 +61,7 @@ public class FilterBuilderFactoryTest
         final QueryBuilder filterBuilder =
             new FilterBuilderFactory( new SearchQueryFieldNameResolver() ).create( Filters.from( queryFilter ) );
 
-        Assert.assertEquals( cleanString( expected ), cleanString( filterBuilder.toString() ) );
+        assertEquals( cleanString( expected ), cleanString( filterBuilder.toString() ) );
     }
 
     @Test
@@ -80,6 +81,6 @@ public class FilterBuilderFactoryTest
         final QueryBuilder filterBuilder =
             new FilterBuilderFactory( new SearchQueryFieldNameResolver() ).create( Filters.from( builder.build() ) );
 
-        Assert.assertEquals( cleanString( expected ), cleanString( filterBuilder.toString() ) );
+        assertEquals( cleanString( expected ), cleanString( filterBuilder.toString() ) );
     }
 }

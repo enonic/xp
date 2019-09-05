@@ -2,8 +2,8 @@ package com.enonic.xp.core.impl.issue;
 
 import java.util.UUID;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.core.impl.issue.serializer.IssueCommentDataSerializer;
@@ -20,13 +20,13 @@ import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.security.PrincipalKey;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class UpdateIssueCommentCommandTest
 {
     private NodeService nodeService;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
@@ -65,7 +65,7 @@ public class UpdateIssueCommentCommandTest
         assertEquals( "Creator One", comment.getCreatorDisplayName() );
     }
 
-    @Test(expected = NodeNotFoundException.class)
+    @Test
     public void updateCommentNotExists()
     {
         final UpdateIssueCommentParams params = UpdateIssueCommentParams.create().
@@ -78,23 +78,23 @@ public class UpdateIssueCommentCommandTest
         Mockito.when( this.nodeService.update( Mockito.any( UpdateNodeParams.class ) ) ).thenThrow(
             new NodeNotFoundException( "Node not found" ) );
 
-        final IssueComment comment = command.execute();
+        assertThrows(NodeNotFoundException.class, () ->  command.execute());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void updateNoText()
     {
         final UpdateIssueCommentParams params = UpdateIssueCommentParams.create().comment( NodeId.from( UUID.randomUUID() ) ).build();
         final UpdateIssueCommentCommand command = updateIssueCommentCommand( params );
-        command.execute();
+        assertThrows(IllegalArgumentException.class, () -> command.execute());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void updateNoCommentId()
     {
         final UpdateIssueCommentParams params = UpdateIssueCommentParams.create().text( "text" ).build();
         final UpdateIssueCommentCommand command = updateIssueCommentCommand( params );
-        command.execute();
+        assertThrows(IllegalArgumentException.class, () -> command.execute());
     }
 
     private UpdateIssueCommentCommand updateIssueCommentCommand( UpdateIssueCommentParams params )

@@ -1,7 +1,7 @@
 package com.enonic.xp.lib.value;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -16,14 +16,14 @@ import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ScriptValueTranslatorTest
     extends ScriptTestSupport
 {
     private ObjectMapper mapper;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

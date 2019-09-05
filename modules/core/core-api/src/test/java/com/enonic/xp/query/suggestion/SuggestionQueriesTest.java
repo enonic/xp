@@ -1,11 +1,11 @@
 package com.enonic.xp.query.suggestion;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.query.suggester.SuggestionQueries;
 import com.enonic.xp.query.suggester.TermSuggestionQuery;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SuggestionQueriesTest
 {

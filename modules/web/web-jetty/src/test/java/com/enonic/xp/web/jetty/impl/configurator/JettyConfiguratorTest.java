@@ -1,6 +1,6 @@
 package com.enonic.xp.web.jetty.impl.configurator;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 import com.enonic.xp.web.jetty.impl.JettyConfig;
 import com.enonic.xp.web.jetty.impl.JettyConfigMockFactory;
@@ -13,7 +13,7 @@ public abstract class JettyConfiguratorTest<T>
 
     protected T object;
 
-    @Before
+    @BeforeEach
     public final void setup()
     {
         this.config = new JettyConfigMockFactory().newConfig();

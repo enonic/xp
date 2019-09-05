@@ -1,9 +1,11 @@
 package com.enonic.xp.repository;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RepositoryIdTest
 {
@@ -25,31 +27,31 @@ public class RepositoryIdTest
         RepositoryId.from( allowedCharacters );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void firstCharacterUnderscoreCheck()
         throws Exception
     {
-        RepositoryId.from( "_abc" );
+        assertThrows(IllegalArgumentException.class, () -> RepositoryId.from( "_abc" ));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void firstCharacterPointCheck()
         throws Exception
     {
-        RepositoryId.from( ".abc" );
+        assertThrows(IllegalArgumentException.class, () -> RepositoryId.from( ".abc" ));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void emptyCheck()
         throws Exception
     {
-        RepositoryId.from( "" );
+        assertThrows(IllegalArgumentException.class, () -> RepositoryId.from( "" ));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void nullCheck()
         throws Exception
     {
-        RepositoryId.from( null );
+        assertThrows(NullPointerException.class, () -> RepositoryId.from( null ));
     }
 }

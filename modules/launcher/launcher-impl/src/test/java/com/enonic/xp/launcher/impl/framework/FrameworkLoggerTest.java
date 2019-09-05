@@ -1,7 +1,7 @@
 package com.enonic.xp.launcher.impl.framework;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 
@@ -9,7 +9,7 @@ public class FrameworkLoggerTest
 {
     private FrameworkLogger logger;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.logger = new FrameworkLogger();

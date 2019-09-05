@@ -2,9 +2,7 @@ package com.enonic.xp.core.content;
 
 import java.time.Instant;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteSource;
@@ -23,20 +21,11 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.site.CreateSiteParams;
 import com.enonic.xp.site.SiteConfigs;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ContentServiceImplTest_create
     extends AbstractContentServiceTest
 {
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
-
-    @Override
-    public void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
 
     @Test
     public void create_content_generated_properties()
@@ -153,8 +142,9 @@ public class ContentServiceImplTest_create
             type( ContentTypeName.shortcut() ).
             build();
 
-        exception.expect( IllegalArgumentException.class );
-        this.contentService.create( createContentParams );
+        assertThrows(IllegalArgumentException.class, () -> {
+            this.contentService.create( createContentParams );
+        });
     }
 
     @Test

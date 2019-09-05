@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 import javax.ws.rs.core.MediaType;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.node.DeleteSnapshotParams;
@@ -18,7 +18,7 @@ import com.enonic.xp.node.SnapshotResults;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.snapshot.SnapshotService;
 
-import static org.mockito.Matchers.isA;
+import static org.mockito.ArgumentMatchers.isA;
 
 public class SnapshotResourceTest
     extends ServerRestTestSupport

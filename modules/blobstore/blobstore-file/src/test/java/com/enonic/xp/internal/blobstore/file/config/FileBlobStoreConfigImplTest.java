@@ -4,13 +4,13 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.blob.Segment;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FileBlobStoreConfigImplTest
 {

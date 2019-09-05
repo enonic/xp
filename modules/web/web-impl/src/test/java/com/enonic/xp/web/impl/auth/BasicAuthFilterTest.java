@@ -3,8 +3,8 @@ package com.enonic.xp.web.impl.auth;
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletResponse;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -31,7 +31,7 @@ public class BasicAuthFilterTest
 
     private SecurityService securityService;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.request = new MockHttpServletRequest();

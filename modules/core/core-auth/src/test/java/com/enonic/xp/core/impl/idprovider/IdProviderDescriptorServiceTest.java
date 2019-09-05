@@ -1,7 +1,6 @@
 package com.enonic.xp.core.impl.idprovider;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.ApplicationTestSupport;
@@ -10,6 +9,8 @@ import com.enonic.xp.form.Input;
 import com.enonic.xp.idprovider.IdProviderDescriptor;
 import com.enonic.xp.idprovider.IdProviderDescriptorMode;
 import com.enonic.xp.inputtype.InputTypeName;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class IdProviderDescriptorServiceTest
     extends ApplicationTestSupport
@@ -32,15 +33,15 @@ public class IdProviderDescriptorServiceTest
     {
         final IdProviderDescriptor idProviderDescriptor = this.service.getDescriptor( ApplicationKey.from( "myapp1" ) );
 
-        Assert.assertNotNull( idProviderDescriptor );
-        Assert.assertEquals( ApplicationKey.from( "myapp1" ), idProviderDescriptor.getKey() );
-        Assert.assertEquals( IdProviderDescriptorMode.MIXED, idProviderDescriptor.getMode() );
+        assertNotNull( idProviderDescriptor );
+        assertEquals( ApplicationKey.from( "myapp1" ), idProviderDescriptor.getKey() );
+        assertEquals( IdProviderDescriptorMode.MIXED, idProviderDescriptor.getMode() );
 
         final Input titleInput = Input.create().
             name( "title" ).
             label( "Title" ).
             inputType( InputTypeName.TEXT_LINE ).
             build();
-        Assert.assertEquals( Form.create().addFormItem( titleInput ).build(), idProviderDescriptor.getConfig() );
+        assertEquals( Form.create().addFormItem( titleInput ).build(), idProviderDescriptor.getConfig() );
     }
 }

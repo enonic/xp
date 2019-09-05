@@ -2,10 +2,10 @@ package com.enonic.xp.resource;
 
 import java.util.ArrayList;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ResourceKeysTest
 {
@@ -18,7 +18,7 @@ public class ResourceKeysTest
 
     private static ArrayList<ResourceKey> list = new ArrayList();
 
-    @BeforeClass
+    @BeforeAll
     public static void initResourceKeys()
     {
         ResourceKeysTest.list.add( ResourceKey.from( RESOURCE_URI_1 ) );

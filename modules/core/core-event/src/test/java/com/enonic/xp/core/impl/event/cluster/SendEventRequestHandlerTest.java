@@ -9,14 +9,15 @@ import org.elasticsearch.common.io.stream.StreamInput;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportChannel;
 import org.elasticsearch.transport.TransportService;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventPublisher;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SendEventRequestHandlerTest
 {
@@ -26,7 +27,7 @@ public class SendEventRequestHandlerTest
 
     private TransportService transportService;
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         this.eventPublisher = Mockito.mock( EventPublisher.class );
@@ -77,9 +78,9 @@ public class SendEventRequestHandlerTest
         ArgumentCaptor<Event> argumentCaptor = ArgumentCaptor.forClass( Event.class );
         Mockito.verify( this.eventPublisher ).publish( argumentCaptor.capture() );
         final Event eventForwarded = argumentCaptor.getValue();
-        Assert.assertEquals( eventForwarded.getType(), event.getType() );
-        Assert.assertEquals( eventForwarded.getTimestamp(), event.getTimestamp() );
-        Assert.assertEquals( eventForwarded.isDistributed(), false );
-        Assert.assertEquals( eventForwarded.getData(), event.getData() );
+        assertEquals( eventForwarded.getType(), event.getType() );
+        assertEquals( eventForwarded.getTimestamp(), event.getTimestamp() );
+        assertEquals( eventForwarded.isDistributed(), false );
+        assertEquals( eventForwarded.getData(), event.getData() );
     }
 }

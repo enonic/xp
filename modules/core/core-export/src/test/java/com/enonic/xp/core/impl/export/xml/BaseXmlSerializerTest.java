@@ -9,7 +9,7 @@ import com.google.common.io.Resources;
 
 import com.enonic.xp.xml.DomHelper;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class BaseXmlSerializerTest
 {
