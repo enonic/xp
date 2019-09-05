@@ -3,6 +3,7 @@ package com.enonic.xp.repo.impl.repository;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentMap;
 
+import com.enonic.xp.repository.*;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -30,18 +31,6 @@ import com.enonic.xp.repo.impl.node.RefreshCommand;
 import com.enonic.xp.repo.impl.repository.event.RepositoryEventListener;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
-import com.enonic.xp.repository.BranchNotFoundException;
-import com.enonic.xp.repository.CreateBranchParams;
-import com.enonic.xp.repository.CreateRepositoryParams;
-import com.enonic.xp.repository.DeleteBranchParams;
-import com.enonic.xp.repository.DeleteRepositoryParams;
-import com.enonic.xp.repository.NodeRepositoryService;
-import com.enonic.xp.repository.Repositories;
-import com.enonic.xp.repository.Repository;
-import com.enonic.xp.repository.RepositoryConstants;
-import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.repository.RepositoryNotFoundException;
-import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
@@ -119,6 +108,32 @@ public class RepositoryServiceImpl
         final Repository repository = createRepositoryObject( params );
         repositoryEntryService.createRepositoryEntry( repository );
         return repository;
+    }
+
+    @Override
+    public Repository updateRepositoryData(final UpdateRepositoryDataParams params)
+    {
+        requireAdminRole();
+        final RepositoryId repositoryId = ContextAccessor.current().getRepositoryId();
+
+        Repository repository = repositoryMap.compute( repositoryId,
+                ( key, previousRepository ) -> doUpdateRepositoryData( params, repositoryId, previousRepository ) );
+
+        invalidatePathCache();
+
+        return repository;
+    }
+
+    private Repository doUpdateRepositoryData( final UpdateRepositoryDataParams updateRepositoryDataParams, final RepositoryId repositoryId,
+                                       Repository previousRepository )
+    {
+        previousRepository = previousRepository == null ? repositoryEntryService.getRepositoryEntry( repositoryId ) : previousRepository;
+        if ( previousRepository == null )
+        {
+            throw new RepositoryNotFoundException( repositoryId );
+        }
+
+        return repositoryEntryService.updateRepositoryData( repositoryId, updateRepositoryDataParams.getData()  );
     }
 
     @Override
@@ -282,6 +297,7 @@ public class RepositoryServiceImpl
             id( params.getRepositoryId() ).
             branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) ).
             settings( params.getRepositorySettings() ).
+            data( params.getData() ).
             build();
     }
 

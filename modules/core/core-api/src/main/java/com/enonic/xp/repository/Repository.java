@@ -1,10 +1,13 @@
 package com.enonic.xp.repository;
 
+import com.enonic.xp.data.PropertyTree;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
+
+import java.util.Optional;
 
 @Beta
 public final class Repository
@@ -15,11 +18,14 @@ public final class Repository
 
     private final RepositorySettings settings;
 
+    private final RepositoryData data;
+
     private Repository( Builder builder )
     {
         this.id = builder.id;
         this.branches = builder.branches;
         this.settings = builder.settings == null ? RepositorySettings.create().build() : builder.settings;
+        this.data = Optional.ofNullable( builder.data ).orElse( RepositoryData.create( new PropertyTree() ) );
     }
 
     public RepositoryId getId()
@@ -83,6 +89,8 @@ public final class Repository
 
         private Branches branches;
 
+        private RepositoryData data;
+
         private Builder()
         {
         }
@@ -92,6 +100,7 @@ public final class Repository
             id = source.id;
             branches = source.branches;
             settings = source.settings;
+            data = source.data;
         }
 
         public Builder id( final RepositoryId id )
@@ -116,6 +125,12 @@ public final class Repository
         public Builder settings( final RepositorySettings settings )
         {
             this.settings = settings;
+            return this;
+        }
+
+        public Builder data( final RepositoryData data )
+        {
+            this.data = data;
             return this;
         }
 

@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.repository;
 
 import java.util.Iterator;
 
+import com.enonic.xp.repository.*;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.branch.Branch;
@@ -13,14 +14,6 @@ import com.enonic.xp.index.IndexType;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeEditor;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.repository.IndexDefinition;
-import com.enonic.xp.repository.IndexDefinitions;
-import com.enonic.xp.repository.IndexMapping;
-import com.enonic.xp.repository.IndexSettings;
-import com.enonic.xp.repository.Repository;
-import com.enonic.xp.repository.RepositoryConstants;
-import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.repository.RepositorySettings;
 import com.enonic.xp.security.SystemConstants;
 
 public class RepositoryNodeTranslator
@@ -32,6 +25,8 @@ public class RepositoryNodeTranslator
     private static final String MAPPING_KEY = "mapping";
 
     private static final String SETTINGS_KEY = "settings";
+
+    private static final String DATA_KEY = "data";
 
     public static Node toNode( final Repository repository )
     {
@@ -53,6 +48,10 @@ public class RepositoryNodeTranslator
     public static NodeEditor toCreateBranchNodeEditor( final Branch branch )
     {
         return toBeEdited -> toBeEdited.data.addString( BRANCHES_KEY, branch.getValue() );
+    }
+
+    public static NodeEditor toUpdateDataNodeEditor( RepositoryData data ) {
+        return toBeEdited -> toBeEdited.data.addSet( DATA_KEY, data.getValue().getRoot() );
     }
 
     public static NodeEditor toDeleteBranchNodeEditor( final Branch branch )
