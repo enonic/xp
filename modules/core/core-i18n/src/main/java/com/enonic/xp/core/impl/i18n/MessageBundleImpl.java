@@ -36,13 +36,24 @@ final class MessageBundleImpl
     @Override
     public String localize( final String key, final Object... args )
     {
-        final String message = (String) handleGetObject( key );
+        final String message = doGetMessage( key );
         return StringUtils.isNotEmpty( message ) ? format( message, args ) : null;
+    }
+
+    @Override
+    public String getMessage( final String key )
+    {
+        return doGetMessage( key );
     }
 
     private String format( final String message, final Object[] args )
     {
         return MessageFormat.format( message, args );
+    }
+
+    private String doGetMessage( final String key )
+    {
+        return handleGetObject( key ).toString();
     }
 
     private Object handleGetObject( String key )
@@ -73,7 +84,7 @@ final class MessageBundleImpl
         final Map<String, String> map = Maps.newHashMap();
         for ( final Object key : this.properties.keySet() )
         {
-            map.put( key.toString(), handleGetObject( key.toString() ).toString() );
+            map.put( key.toString(), doGetMessage( key.toString() ) );
         }
 
         return map;
