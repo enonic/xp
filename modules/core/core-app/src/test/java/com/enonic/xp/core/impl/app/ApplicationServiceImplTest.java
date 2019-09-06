@@ -114,7 +114,7 @@ public class ApplicationServiceImplTest
     }
 
     @Test
-    public void start_app_exact_version()
+    public void start_app_atleast_version()
         throws Exception
     {
         activateWithNoStoredApplications();
@@ -132,7 +132,7 @@ public class ApplicationServiceImplTest
     {
         activateWithNoStoredApplications();
 
-        final Bundle bundle = deployBundle( "app1", true, VersionRange.valueOf( "(5.1,5.2]" ) );
+        final Bundle bundle = deployBundle( "app1", true, VersionRange.valueOf( "(6.0,7.2]" ) );
 
         assertEquals( Bundle.INSTALLED, bundle.getState() );
         this.service.startApplication( ApplicationKey.from( "app1" ), false );
