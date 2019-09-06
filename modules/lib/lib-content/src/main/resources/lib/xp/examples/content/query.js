@@ -259,13 +259,13 @@ var expected = {
     },
     "highlight": {
         "123": {
-            "field1": [
+            "property1": [
                 "fragment1_2",
                 "fragment1_1"
             ]
         },
         "456": {
-            "field2": [
+            "property2": [
                 "fragment2_2",
                 "fragment2_1"
             ]
