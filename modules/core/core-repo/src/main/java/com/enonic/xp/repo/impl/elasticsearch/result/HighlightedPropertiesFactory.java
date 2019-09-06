@@ -7,32 +7,32 @@ import java.util.regex.Pattern;
 import org.elasticsearch.common.text.Text;
 import org.elasticsearch.search.highlight.HighlightField;
 
-import com.enonic.xp.highlight.HighlightedField;
-import com.enonic.xp.highlight.HighlightedFields;
+import com.enonic.xp.highlight.HighlightedProperty;
+import com.enonic.xp.highlight.HighlightedProperties;
 import com.enonic.xp.repo.impl.index.IndexValueType;
 
-public class HighlightedFieldsFactory
+public class HighlightedPropertiesFactory
 {
     private static final Pattern POSTFIX_PATTERN = Pattern.compile(
         "\\.(?:" + IndexValueType.DATETIME.getPostfix() + "|" + IndexValueType.NUMBER.getPostfix() + "|" +
             IndexValueType.NGRAM.getPostfix() + "|" + IndexValueType.ANALYZED.getPostfix() + "|" + IndexValueType.ORDERBY.getPostfix() +
             "|" + IndexValueType.GEO_POINT.getPostfix() + "|" + IndexValueType.PATH.getPostfix() + ")$" );
 
-    public static HighlightedFields create( final Map<String, HighlightField> highlightFieldMap )
+    public static HighlightedProperties create( final Map<String, HighlightField> highlightPropertyMap )
     {
-        if ( highlightFieldMap == null )
+        if ( highlightPropertyMap == null )
         {
             return null;
         }
 
-        final HighlightedFields.Builder result = HighlightedFields.create();
+        final HighlightedProperties.Builder result = HighlightedProperties.create();
 
-        for ( final Map.Entry<String, HighlightField> fieldEntry : highlightFieldMap.entrySet() )
+        for ( final Map.Entry<String, HighlightField> propertyEntry : highlightPropertyMap.entrySet() )
         {
-            final String fieldName = removePostfix( fieldEntry.getKey() );
-            final HighlightedField.Builder builder = HighlightedField.create().
-                name( fieldName );
-            for ( Text fragment : fieldEntry.getValue().fragments() )
+            final String propertyName = removePostfix( propertyEntry.getKey() );
+            final HighlightedProperty.Builder builder = HighlightedProperty.create().
+                name( propertyName );
+            for ( Text fragment : propertyEntry.getValue().fragments() )
             {
                 builder.addFragment( fragment.string() );
             }
@@ -42,13 +42,13 @@ public class HighlightedFieldsFactory
         return result.build();
     }
 
-    private static String removePostfix( final String fieldName )
+    private static String removePostfix( final String propertyName )
     {
-        final Matcher matcher = POSTFIX_PATTERN.matcher( fieldName );
+        final Matcher matcher = POSTFIX_PATTERN.matcher( propertyName );
         if ( matcher.find() )
         {
-            return fieldName.substring( 0, matcher.start() );
+            return propertyName.substring( 0, matcher.start() );
         }
-        return fieldName;
+        return propertyName;
     }
 }

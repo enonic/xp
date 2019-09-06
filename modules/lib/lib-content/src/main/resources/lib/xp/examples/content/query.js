@@ -108,7 +108,7 @@ var result = contentLib.query({
         postTag: "<b>",
         requireFieldMatch: false,
         tagsSchema: "styled",
-        fields: {
+        properties: {
             displayName: {
                 fragmenter: "span",
                 fragmentSize: 6,

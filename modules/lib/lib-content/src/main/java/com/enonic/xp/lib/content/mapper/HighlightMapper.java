@@ -3,16 +3,16 @@ package com.enonic.xp.lib.content.mapper;
 import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.highlight.HighlightedFields;
+import com.enonic.xp.highlight.HighlightedProperties;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 
 public final class HighlightMapper
     implements MapSerializable
 {
-    private final ImmutableMap<ContentId, HighlightedFields> value;
+    private final ImmutableMap<ContentId, HighlightedProperties> value;
 
-    public HighlightMapper( final ImmutableMap<ContentId, HighlightedFields> value )
+    public HighlightMapper( final ImmutableMap<ContentId, HighlightedProperties> value )
     {
         this.value = value;
     }
@@ -23,7 +23,7 @@ public final class HighlightMapper
         serializeHighlight( gen, this.value );
     }
 
-    private static void serializeHighlight( final MapGenerator gen, final ImmutableMap<ContentId, HighlightedFields> value )
+    private static void serializeHighlight( final MapGenerator gen, final ImmutableMap<ContentId, HighlightedProperties> value )
     {
         for ( ContentId id : value.keySet() )
         {

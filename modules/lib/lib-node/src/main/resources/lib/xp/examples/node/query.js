@@ -82,7 +82,7 @@ var result = repo.query({
         postTag : "<b>",
         requireFieldMatch: false,
         tagsSchema: "styled",
-        fields: {
+        properties: {
             displayName: {
                 fragmenter: "span",
                 fragmenterSize: 6,
