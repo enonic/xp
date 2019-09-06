@@ -122,4 +122,8 @@ public interface ContentService
 
     Content reprocess( ContentId contentId );
 
+    Content getByIdAndVersionId( final ContentId contentId, final ContentVersionId versionId );
+
+    Content getByPathAndVersionId( final ContentPath contentPath, final ContentVersionId versionId );
+
 }
