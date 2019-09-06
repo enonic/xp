@@ -8,6 +8,7 @@ import javax.ws.rs.ext.Provider;
 import com.enonic.xp.admin.impl.rest.resource.content.page.PageResource;
 import com.enonic.xp.admin.impl.rest.resource.content.page.PageTemplateResource;
 import com.enonic.xp.admin.impl.rest.resource.content.page.fragment.FragmentResource;
+import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeResource;
 import com.enonic.xp.admin.impl.rest.resource.schema.xdata.XDataResource;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 
@@ -55,6 +56,11 @@ public class CmsResourceDynamicFeature
         }
 
         if ( FragmentResource.class.equals( resourceInfo.getResourceClass() ) )
+        {
+            context.register( new CmsResourceFilter() );
+        }
+
+        if ( ContentTypeResource.class.equals( resourceInfo.getResourceClass() ) )
         {
             context.register( new CmsResourceFilter() );
         }
