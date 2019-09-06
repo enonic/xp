@@ -1,7 +1,5 @@
 package com.enonic.xp.content;
 
-
-import java.util.LinkedList;
 import java.util.List;
 
 import com.google.common.annotations.Beta;
@@ -28,20 +26,8 @@ public final class ContentPath
     {
         Preconditions.checkNotNull( builder.elements );
         this.absolute = builder.absolute;
-
-        if ( builder.elements.isEmpty() )
-        {
-            refString = this.absolute ? ELEMENT_DIVIDER : "";
-            this.elements = ImmutableList.of();
-        }
-        else
-        {
-            final ImmutableList.Builder<String> elementsBuilder = ImmutableList.builder();
-            elementsBuilder.addAll( builder.elements );
-            this.elements = elementsBuilder.build();
-            this.refString = ( this.absolute ? ELEMENT_DIVIDER : "" ) + Joiner.on( ELEMENT_DIVIDER ).join( elements );
-        }
-
+        this.elements = builder.elements.build();
+        this.refString = ( this.absolute ? ELEMENT_DIVIDER : "" ) + Joiner.on( ELEMENT_DIVIDER ).join( elements );
     }
 
     public String getElement( final int index )
@@ -71,7 +57,7 @@ public final class ContentPath
             return null;
         }
 
-        final LinkedList<String> parentElements = newListOfParentElements( deep );
+        final List<String> parentElements = newListOfParentElements( deep );
 
         return parentElements != null ? create().absolute( absolute ).elements( parentElements ).build() : null;
     }
@@ -168,14 +154,14 @@ public final class ContentPath
         return refString;
     }
 
-    private LinkedList<String> newListOfParentElements( final Integer deep )
+    private List<String> newListOfParentElements( final Integer deep )
     {
-        final LinkedList<String> newElements = Lists.newLinkedList( this.elements );
+        final List<String> newElements = Lists.newArrayList( this.elements );
         for ( int count = 0; count < deep; count++ )
         {
             if ( !newElements.isEmpty() )
             {
-                newElements.removeLast();
+                newElements.remove(newElements.size() - 1);
             } else {
                 return null;
             }
@@ -211,18 +197,19 @@ public final class ContentPath
 
     public final static class Builder
     {
-        private LinkedList<String> elements;
+        private ImmutableList.Builder<String> elements;
 
         private boolean absolute = true;
 
         private Builder()
         {
-            this.elements = Lists.newLinkedList();
+            this.elements = ImmutableList.builder();
         }
 
         private Builder( ContentPath source )
         {
-            this.elements = Lists.newLinkedList( source.elements );
+            this.elements = ImmutableList.builder();
+            this.elements.addAll(source.elements);
             this.absolute = source.absolute;
         }
 
@@ -234,7 +221,7 @@ public final class ContentPath
 
         public Builder elements( final String... pathElements )
         {
-            this.elements.clear();
+            this.elements = ImmutableList.builder();
             for ( String pathElement : pathElements )
             {
                 validatePathElement( pathElement );
@@ -245,7 +232,7 @@ public final class ContentPath
 
         public Builder elements( final Iterable<String> pathElements )
         {
-            this.elements.clear();
+            this.elements = ImmutableList.builder();
             for ( String pathElement : pathElements )
             {
                 validatePathElement( pathElement );

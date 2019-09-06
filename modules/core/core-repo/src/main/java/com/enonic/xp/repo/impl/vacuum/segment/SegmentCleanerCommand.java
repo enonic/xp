@@ -43,7 +43,7 @@ public class SegmentCleanerCommand
         LOG.info( "Traversing segments....." );
 
         final RepositoryIds repositoryIds = getRepositoryIds();
-        List<Segment> toBeRemoved = Lists.newLinkedList();
+        List<Segment> toBeRemoved = Lists.newArrayList();
         blobStore.listSegments().
             forEach( segment -> {
                 final RepositoryId repositoryId = RepositorySegmentUtils.toRepositoryId( segment );

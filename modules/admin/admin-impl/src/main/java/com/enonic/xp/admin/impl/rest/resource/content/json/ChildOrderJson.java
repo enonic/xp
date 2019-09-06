@@ -16,7 +16,7 @@ public class ChildOrderJson
 {
     private ChildOrder childOrder;
 
-    private List<OrderExprJson> orderExpressions = Lists.newLinkedList();
+    private List<OrderExprJson> orderExpressions = Lists.newArrayList();
 
     public ChildOrderJson( final ChildOrder childOrder )
     {
