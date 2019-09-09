@@ -1,12 +1,8 @@
 package com.enonic.xp.repo.impl.storage;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
@@ -28,27 +24,23 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class NodeStorageServiceImplTest
+class NodeStorageServiceImplTest
 {
 
-    @InjectMocks
     private NodeStorageServiceImpl instance;
 
-    @Mock
     private VersionService versionService;
 
-    @Mock
     private NodeVersionService nodeVersionService;
 
-    @Mock
     private BranchService branchService;
 
     private NodeId nodeId;
@@ -61,9 +53,18 @@ public class NodeStorageServiceImplTest
 
     private NodeVersionKey versionKey;
 
-    @Before
-    public void setUp()
+    @BeforeEach
+    void setUp()
     {
+        versionService = Mockito.mock( VersionService.class );
+        nodeVersionService = Mockito.mock( NodeVersionService.class );
+        branchService = Mockito.mock( BranchService.class );
+
+        instance = new NodeStorageServiceImpl();
+        instance.setNodeVersionService( nodeVersionService );
+        instance.setVersionService( versionService );
+        instance.setBranchService( branchService );
+
         nodeId = NodeId.from( "000-000-000-000" );
 
         nodePath = NodePath.create( "/path/to/node" ).build();
@@ -131,7 +132,9 @@ public class NodeStorageServiceImplTest
     public void testGetNode_NodeVersionNotFound()
     {
         when( versionService.getVersion( any( NodeId.class ), any( NodeVersionId.class ), any( InternalContext.class ) ) ).
-            thenReturn( NodeVersionMetadata.create().build() );
+            thenReturn( NodeVersionMetadata.create().
+                nodeVersionKey( versionKey ).
+                build() );
 
         when( nodeVersionService.get( any( NodeVersionKey.class ), any( InternalContext.class ) ) ).thenReturn( null );
 
