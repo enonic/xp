@@ -1,13 +1,12 @@
 package com.enonic.xp.repository;
 
-import com.enonic.xp.data.PropertyTree;
+import java.util.Optional;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
-
-import java.util.Optional;
 
 @Beta
 public final class Repository
@@ -25,7 +24,7 @@ public final class Repository
         this.id = builder.id;
         this.branches = builder.branches;
         this.settings = builder.settings == null ? RepositorySettings.create().build() : builder.settings;
-        this.data = Optional.ofNullable( builder.data ).orElse( RepositoryData.create( new PropertyTree() ) );
+        this.data = Optional.ofNullable( builder.data ).orElse( RepositoryData.empty() );
     }
 
     public RepositoryId getId()
@@ -41,6 +40,10 @@ public final class Repository
     public Branches getBranches()
     {
         return branches;
+    }
+
+    public RepositoryData getData() {
+        return data;
     }
 
     public static Builder create()

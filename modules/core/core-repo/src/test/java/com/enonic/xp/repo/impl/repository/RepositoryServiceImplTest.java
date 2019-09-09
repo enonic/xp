@@ -7,6 +7,7 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
@@ -17,6 +18,7 @@ import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.DeleteBranchParams;
 import com.enonic.xp.repository.DeleteRepositoryParams;
 import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repository.RepositoryData;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
@@ -70,6 +72,23 @@ public class RepositoryServiceImplTest
         final Repository repo = doCreateRepo( "fisk" );
         assertNotNull( repo );
         assertEquals( RepositoryId.from( "fisk" ), repo.getId() );
+    }
+
+    @Test
+    public void create_with_data()
+            throws Exception
+    {
+        PropertyTree data = new PropertyTree();
+        data.setString( "myProp", "a" );
+        final Repository repo = doCreateRepo( "fisk" , data);
+
+        final Repository persistedRepo = ADMIN_CONTEXT.callWith( () ->
+        {
+            repositoryService.invalidateAll();
+            return this.repositoryService.get( repo.getId() );
+        } );
+
+        assertEquals( persistedRepo.getData().getValue().getString( "myProp" ), "a" );
     }
 
     @Test
@@ -129,7 +148,11 @@ public class RepositoryServiceImplTest
             runWith( () -> createNode( NodePath.ROOT, "fisk" ) );
     }
 
-    private Repository doCreateRepo( final String id )
+    private Repository doCreateRepo( final String id ) {
+        return doCreateRepo( id, null );
+    }
+
+    private Repository doCreateRepo( final String id, PropertyTree data )
     {
         return ADMIN_CONTEXT.callWith( () -> this.repositoryService.createRepository( CreateRepositoryParams.create().
             repositoryId( RepositoryId.from( id ) ).
@@ -139,6 +162,7 @@ public class RepositoryServiceImplTest
                     allowAll().
                     build() ).
                 build() ).
+            data( RepositoryData.from( data ) ).
             build() ) );
     }
 }

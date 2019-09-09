@@ -3,7 +3,6 @@ package com.enonic.xp.repository;
 import java.util.Objects;
 import java.util.Optional;
 
-import com.enonic.xp.data.PropertyTree;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.index.ChildOrder;
@@ -27,7 +26,7 @@ public class CreateRepositoryParams
         repositorySettings = builder.repositorySettings == null ? RepositorySettings.create().build() : builder.repositorySettings;
         rootPermissions = builder.rootPermissions;
         rootChildOrder = builder.rootChildOrder;
-        this.data = Optional.ofNullable( builder.data ).orElse( RepositoryData.create( new PropertyTree() ) );
+        this.data = Optional.ofNullable( builder.data ).orElse( RepositoryData.empty() );
     }
 
     public RepositoryId getRepositoryId()

@@ -1,10 +1,10 @@
 package com.enonic.xp.repository;
 
-import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.index.IndexType;
+import java.util.Objects;
+
 import com.google.common.annotations.Beta;
 
-import java.util.Objects;
+import com.enonic.xp.data.PropertyTree;
 
 @Beta
 public class RepositoryData
@@ -13,7 +13,7 @@ public class RepositoryData
 
     private RepositoryData( PropertyTree value )
     {
-        this.value = value.copy();
+        this.value = value;
     }
 
     public PropertyTree getValue()
@@ -21,7 +21,28 @@ public class RepositoryData
         return value;
     }
 
-    public static RepositoryData create( PropertyTree value) {
-        return new RepositoryData(value);
+    @Override
+    public boolean equals( Object o ) {
+        if ( this == o ) {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() ) {
+            return false;
+        }
+        RepositoryData that = (RepositoryData) o;
+        return Objects.equals( value, that.value );
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash( value );
+    }
+
+    public static RepositoryData from( PropertyTree value ) {
+        return new RepositoryData( value.copy() );
+    }
+
+    public static RepositoryData empty() {
+        return new RepositoryData( new PropertyTree() );
     }
 }

@@ -124,7 +124,8 @@ public class RepositoryServiceImpl
         return repository;
     }
 
-    private Repository doUpdateRepositoryData( final UpdateRepositoryDataParams updateRepositoryDataParams, final RepositoryId repositoryId,
+    private Repository doUpdateRepositoryData( final UpdateRepositoryDataParams updateRepositoryDataParams,
+                                               final RepositoryId repositoryId,
                                        Repository previousRepository )
     {
         previousRepository = previousRepository == null ? repositoryEntryService.getRepositoryEntry( repositoryId ) : previousRepository;
