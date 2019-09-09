@@ -253,6 +253,12 @@ class NodeServiceMock
     }
 
     @Override
+    public Node getByIdAndVersionId( final NodeId id, final NodeVersionId versionId )
+    {
+        return nodeIdMap.get( id );
+    }
+
+    @Override
     public Nodes getByIds( final NodeIds ids )
     {
         final Nodes.Builder builder = Nodes.create();
@@ -264,6 +270,12 @@ class NodeServiceMock
 
     @Override
     public Node getByPath( final NodePath path )
+    {
+        return nodePathMap.get( path );
+    }
+
+    @Override
+    public Node getByPathAndVersionId( final NodePath path, final NodeVersionId versionId )
     {
         return nodePathMap.get( path );
     }

@@ -24,20 +24,29 @@ public final class ContentNotFoundException
     {
         super( MessageFormat.format( "Contents with paths [{0}] were not found in branch [{1}]", Joiner.on( ", " ).join( contentPaths ),
                                      branch ) );
-        this.path = path;
     }
 
     public ContentNotFoundException( final ContentId contentId, final Branch branch )
     {
         super( MessageFormat.format( "Content with id [{0}] was not found in branch [{1}]", contentId.toString(), branch ) );
-        this.path = path;
     }
 
     public ContentNotFoundException( final ContentIds contentIds, final Branch branch )
     {
         super( MessageFormat.format( "Contents with ids [{0}] were not found in branch [{1}]", Joiner.on( ", " ).join( contentIds ),
                                      branch ) );
-        this.path = path;
+    }
+
+    public ContentNotFoundException( final ContentId contentId, final ContentVersionId versionId, final Branch branch )
+    {
+        super( MessageFormat.format( "Content with id [{0}] and versionId [{1}] was not found in branch [{2}]", contentId, versionId,
+                                     branch ) );
+    }
+
+    public ContentNotFoundException( final ContentPath contentPath, final ContentVersionId versionId, final Branch branch )
+    {
+        super( MessageFormat.format( "Content with path [{0}] and versionId [{1}] was not found in branch [{2}]", contentPath, versionId,
+                                     branch ) );
     }
 
     public ContentPath getPath()
