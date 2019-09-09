@@ -45,7 +45,7 @@ import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
-@Path(ResourceConstants.REST_ROOT + "schema/content")
+@Path(ResourceConstants.REST_ROOT + "{content:(schema|cms/[^/]+/[^/]+/schema)}/content")
 @Produces("application/json")
 @RolesAllowed({RoleKeys.ADMIN_LOGIN_ID, RoleKeys.ADMIN_ID})
 @Component(immediate = true, property = "group=admin")
