@@ -2,15 +2,15 @@ package com.enonic.xp.admin.impl.rest.resource.schema.content;
 
 import java.util.Locale;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class LocaleMessageResolverTest
 {
@@ -18,13 +18,15 @@ public class LocaleMessageResolverTest
 
     private LocaleService localeService;
 
-    @Before
+    private MessageBundle messageBundle;
+
+    @BeforeEach
     public void init()
     {
 
         Locale.setDefault( new Locale( "es", "ES" ) );
 
-        final MessageBundle messageBundle = Mockito.mock( MessageBundle.class );
+        messageBundle = Mockito.mock( MessageBundle.class );
         Mockito.when( messageBundle.localize( "key.valid" ) ).thenReturn( "translated" );
 
         this.localeService = Mockito.mock( LocaleService.class );
@@ -55,5 +57,16 @@ public class LocaleMessageResolverTest
         Locale.setDefault( new Locale( "es", "ES" ) );
         final String result = localeMessageResolver.localizeMessage( "key.valid", "defaultValue" );
         assertEquals( "translated", result );
+    }
+
+    @Test
+    public void test_valid_key_with_invalid_value()
+    {
+        Mockito.when( messageBundle.localize( "key.valid" ) ).thenThrow(new IllegalArgumentException() );
+        Mockito.when( messageBundle.getMessage( "key.valid" ) ).thenReturn( "invalid value" );
+
+        Locale.setDefault( new Locale( "es", "ES" ) );
+        final String result = localeMessageResolver.localizeMessage( "key.valid", "defaultValue" );
+        assertEquals( "invalid value", result );
     }
 }

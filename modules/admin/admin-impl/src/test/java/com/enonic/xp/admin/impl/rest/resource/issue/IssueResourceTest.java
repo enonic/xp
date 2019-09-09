@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.text.StrSubstitutor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
@@ -78,7 +78,7 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.session.SessionKey;
 import com.enonic.xp.session.SimpleSession;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class IssueResourceTest
     extends AdminResourceTestSupport
@@ -542,7 +542,7 @@ public class IssueResourceTest
             Mockito.isA( IssueCommentedNotificationParams.class ) );
     }
 
-    @Test(expected = PrincipalNotFoundException.class)
+    @Test
     public void test_commentNoUser()
     {
         final Issue issue = createIssue();
@@ -555,10 +555,10 @@ public class IssueResourceTest
         Mockito.when( issueService.getIssue( params.issueId ) ).thenReturn( issue );
         Mockito.when( securityService.getUser( params.creator ) ).thenReturn( Optional.empty() );
 
-        resource.comment( params, Mockito.mock( HttpServletRequest.class ) );
+        assertThrows(PrincipalNotFoundException.class, () -> resource.comment( params, Mockito.mock( HttpServletRequest.class ) ) );
     }
 
-    @Test(expected = IssueNotFoundException.class)
+    @Test
     public void test_commentNoIssue()
     {
         final Issue issue = createIssue();
@@ -571,7 +571,7 @@ public class IssueResourceTest
         Mockito.when( issueService.getIssue( params.issueId ) ).thenThrow( new IssueNotFoundException( issue.getId() ) );
         Mockito.when( securityService.getUser( params.creator ) ).thenReturn( Optional.of( User.ANONYMOUS ) );
 
-        resource.comment( params, Mockito.mock( HttpServletRequest.class ) );
+        assertThrows(IssueNotFoundException.class, () -> resource.comment( params, Mockito.mock( HttpServletRequest.class ) ) );
     }
 
     @Test

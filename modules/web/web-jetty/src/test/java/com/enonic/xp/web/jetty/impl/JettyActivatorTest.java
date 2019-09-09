@@ -3,9 +3,9 @@ package com.enonic.xp.web.jetty.impl;
 import java.util.Hashtable;
 
 import org.eclipse.jetty.server.session.SessionDataStore;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -19,7 +19,7 @@ import com.enonic.xp.cluster.ClusterConfig;
 import com.enonic.xp.cluster.ClusterNodeId;
 import com.enonic.xp.web.dispatch.DispatchServlet;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class JettyActivatorTest
 {
@@ -33,7 +33,7 @@ public class JettyActivatorTest
 
     private SessionDataStore sessionDataStore;
 
-    @Before
+    @BeforeEach
     public void setup()
         throws Exception
     {
@@ -62,7 +62,7 @@ public class JettyActivatorTest
         Mockito.when( this.config.http_xp_port() ).thenReturn( 0 );
     }
 
-    @After
+    @AfterEach
     public void after()
         throws Exception
     {

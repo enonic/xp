@@ -1,11 +1,11 @@
 package com.enonic.xp.style;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.resource.ResourceKey;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class StyleDescriptorTest
 {
@@ -31,7 +31,7 @@ public class StyleDescriptorTest
         assertEquals( 1, styleDescriptor.getElements().size() );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testDuplicateStyles()
     {
         ElementStyle element = ImageStyle.create().
@@ -46,12 +46,13 @@ public class StyleDescriptorTest
             displayName( "Cinema" ).
             build();
 
+        assertThrows(IllegalArgumentException.class, () ->
         StyleDescriptor.create().
             application( ApplicationKey.from( "myapp" ) ).
             cssPath( "assets/styles.css" ).
             addStyleElement( element ).
             addStyleElement( element2 ).
-            build();
+            build() );
     }
 
     @Test

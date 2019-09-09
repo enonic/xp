@@ -2,8 +2,8 @@ package com.enonic.xp.repo.impl.node;
 
 import java.nio.charset.Charset;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
@@ -16,16 +16,15 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.util.BinaryReference;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class UpdateNodeCommandTest
     extends AbstractNodeTest
 {
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 
@@ -172,7 +171,7 @@ public class UpdateNodeCommandTest
         assertEquals( 1, updatedNode.getAttachedBinaries().getSize() );
     }
 
-    @Test(expected = NodeBinaryReferenceException.class)
+    @Test
     public void try_add_new_without_source()
         throws Exception
     {
@@ -197,10 +196,10 @@ public class UpdateNodeCommandTest
             id( node.id() ).
             build();
 
-        updateNode( updateNodeParams );
+        assertThrows(NodeBinaryReferenceException.class, () -> updateNode( updateNodeParams ));
     }
 
-    @Test(expected = NodeBinaryReferenceException.class)
+    @Test
     public void try_setting_new_binary_into_existing_property()
         throws Exception
     {
@@ -225,7 +224,7 @@ public class UpdateNodeCommandTest
             id( node.id() ).
             build();
 
-        updateNode( updateNodeParams );
+        assertThrows(NodeBinaryReferenceException.class, () -> updateNode( updateNodeParams ));
     }
 
     @Test

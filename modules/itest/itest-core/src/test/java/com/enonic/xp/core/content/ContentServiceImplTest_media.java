@@ -1,6 +1,6 @@
 package com.enonic.xp.core.content;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.attachment.Attachment;
@@ -13,17 +13,11 @@ import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.xdata.XDatas;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ContentServiceImplTest_media
     extends AbstractContentServiceTest
 {
-    @Override
-    public void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
 
     @Test
     public void create_media_image()

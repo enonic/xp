@@ -1,10 +1,13 @@
 package com.enonic.xp.repo.impl.node;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import org.junit.Before;
+import com.enonic.xp.branch.Branches;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 
 import com.enonic.xp.blob.Segment;
@@ -69,11 +72,16 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.Reference;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class AbstractNodeTest
     extends AbstractElasticsearchIntegrationTest
 {
+    protected static final Repository TEST_REPO = Repository.create().
+            id( RepositoryId.from( "com.enonic.cms.default" ) ).
+            branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
+            build();
+
     public static final User TEST_DEFAULT_USER =
         User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "test-user" ) ).login( "test-user" ).build();
 
@@ -101,6 +109,9 @@ public abstract class AbstractNodeTest
         repositoryId( TEST_REPO.getId() ).
         authInfo( TEST_DEFAULT_USER_AUTHINFO ).
         build();
+
+    @TempDir
+    public Path temporaryFolder;
 
     public BinaryServiceImpl binaryService;
 
@@ -134,16 +145,16 @@ public abstract class AbstractNodeTest
 
     protected StorageDaoImpl storageDao;
 
-    @Before
-    public void setUp()
+    @BeforeEach
+    void setUpNode()
         throws Exception
     {
-        super.setUp();
+        deleteAllIndices();
 
         final RepoConfiguration repoConfig = Mockito.mock( RepoConfiguration.class );
-        Mockito.when( repoConfig.getSnapshotsDir() ).thenReturn( new File( this.xpHome.getRoot(), "repo/snapshots" ) );
+        Mockito.when( repoConfig.getSnapshotsDir() ).thenReturn( new File( this.temporaryFolder.toFile(), "repo/snapshots" ) );
 
-        System.setProperty( "xp.home", xpHome.getRoot().getPath() );
+        System.setProperty( "xp.home", temporaryFolder.toFile().getPath() );
         System.setProperty( "mapper.allow_dots_in_name", "true" );
 
         ContextAccessor.INSTANCE.set( CTX_DEFAULT );

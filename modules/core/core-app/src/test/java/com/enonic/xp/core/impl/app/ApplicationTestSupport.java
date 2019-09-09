@@ -4,7 +4,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.Map;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 
 import com.google.common.collect.Maps;
@@ -27,7 +27,7 @@ public abstract class ApplicationTestSupport
 
     private URL rootTestUrl;
 
-    @Before
+    @BeforeEach
     public final void setup()
         throws Exception
     {

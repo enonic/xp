@@ -2,7 +2,7 @@ package com.enonic.xp.lib.portal.current;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.lib.portal.TestDataFixtures;

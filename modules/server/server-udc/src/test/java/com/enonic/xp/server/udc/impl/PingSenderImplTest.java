@@ -1,14 +1,14 @@
 package com.enonic.xp.server.udc.impl;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 import com.squareup.okhttp.mockwebserver.RecordedRequest;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PingSenderImplTest
 {
@@ -16,7 +16,7 @@ public class PingSenderImplTest
 
     private MockWebServer server;
 
-    @Before
+    @BeforeEach
     public void setup()
         throws Exception
     {
@@ -27,7 +27,7 @@ public class PingSenderImplTest
         this.sender = new PingSenderImpl( generator, "http://localhost:" + this.server.getPort() );
     }
 
-    @After
+    @AfterEach
     public void shutdown()
         throws Exception
     {

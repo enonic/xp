@@ -6,10 +6,11 @@ import java.nio.ByteBuffer;
 import org.elasticsearch.common.io.stream.ByteBufferStreamInput;
 import org.elasticsearch.common.io.stream.BytesStreamOutput;
 import org.elasticsearch.common.io.stream.StreamInput;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.event.Event;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SendEventRequestTest
 {
@@ -34,6 +35,6 @@ public class SendEventRequestTest
         final SendEventRequest sendEventRequestIn = new SendEventRequest();
         sendEventRequestIn.readFrom( bytesStreamInput );
 
-        Assert.assertTrue( event.equals( sendEventRequestIn.getEvent() ) );
+        assertTrue( event.equals( sendEventRequestIn.getEvent() ) );
     }
 }

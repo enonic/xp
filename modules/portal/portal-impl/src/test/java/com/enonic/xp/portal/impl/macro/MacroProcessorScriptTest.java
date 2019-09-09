@@ -4,8 +4,8 @@ import java.net.URL;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -28,7 +28,7 @@ import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.script.impl.standard.ScriptRuntimeFactoryImpl;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MacroProcessorScriptTest
 {
@@ -48,7 +48,7 @@ public class MacroProcessorScriptTest
         this.mapper.enable( SerializationFeature.WRITE_NULL_MAP_VALUES );
     }
 
-    @Before
+    @BeforeEach
     public void setup()
         throws Exception
     {

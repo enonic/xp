@@ -1,7 +1,7 @@
 package com.enonic.xp.server.internal.deploy;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationService;
@@ -12,7 +12,7 @@ public class StoredApplicationsDeployerTest
 
     private StoredApplicationsDeployer deployer;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.deployer = new StoredApplicationsDeployer();

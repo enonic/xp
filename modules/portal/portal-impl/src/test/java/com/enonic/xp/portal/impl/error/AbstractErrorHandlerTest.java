@@ -4,7 +4,7 @@ import java.net.URL;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -40,7 +40,7 @@ public abstract class AbstractErrorHandlerTest
     {
     }
 
-    @Before
+    @BeforeEach
     public void setup()
         throws Exception
     {

@@ -1,13 +1,13 @@
 package com.enonic.xp.repo.impl.cache;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repo.impl.branch.storage.BranchDocumentId;
 import com.enonic.xp.repository.RepositoryId;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BranchCachePathTest
 {

@@ -1,8 +1,8 @@
 package com.enonic.xp.portal.impl.view;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ImagePlaceholderFunctionTest
     extends AbstractViewFunctionTest
@@ -22,9 +22,9 @@ public class ImagePlaceholderFunctionTest
                       result );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testExecute_widthRequired()
     {
-        execute( "imagePlaceholder", "height=2" );
+        assertThrows(IllegalArgumentException.class, () -> execute( "imagePlaceholder", "height=2" ));
     }
 }

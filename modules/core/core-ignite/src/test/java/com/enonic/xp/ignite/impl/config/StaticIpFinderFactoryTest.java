@@ -6,15 +6,15 @@ import java.net.UnknownHostException;
 import java.util.Collection;
 
 import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.cluster.ClusterConfig;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class StaticIpFinderFactoryTest
 {
@@ -23,7 +23,7 @@ public class StaticIpFinderFactoryTest
 
     private ClusterConfig clusterConfig;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

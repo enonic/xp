@@ -5,16 +5,16 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Set;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ClassLoaderApplicationUrlResolverTest
 {
     private ClassLoaderApplicationUrlResolver resolver;
 
-    @Before
+    @BeforeEach
     public void setup()
         throws Exception
     {

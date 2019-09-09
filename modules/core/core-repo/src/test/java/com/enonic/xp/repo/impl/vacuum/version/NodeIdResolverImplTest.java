@@ -2,7 +2,7 @@ package com.enonic.xp.repo.impl.vacuum.version;
 
 import java.nio.charset.StandardCharsets;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.io.ByteSource;
 
@@ -10,7 +10,7 @@ import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.internal.blobstore.MemoryBlobRecord;
 import com.enonic.xp.node.NodeId;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class NodeIdResolverImplTest
 {

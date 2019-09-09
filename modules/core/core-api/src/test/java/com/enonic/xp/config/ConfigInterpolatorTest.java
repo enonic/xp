@@ -3,13 +3,13 @@ package com.enonic.xp.config;
 import java.util.Map;
 import java.util.Properties;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.BundleContext;
 
 import com.google.common.collect.Maps;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ConfigInterpolatorTest
 {

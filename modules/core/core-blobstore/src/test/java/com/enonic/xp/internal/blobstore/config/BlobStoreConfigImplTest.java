@@ -2,11 +2,11 @@ package com.enonic.xp.internal.blobstore.config;
 
 import java.util.HashMap;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Maps;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BlobStoreConfigImplTest
 {

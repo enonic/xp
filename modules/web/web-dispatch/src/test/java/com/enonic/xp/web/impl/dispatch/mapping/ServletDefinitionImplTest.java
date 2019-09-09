@@ -4,7 +4,7 @@ import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -12,7 +12,7 @@ import com.google.common.collect.Lists;
 
 import com.enonic.xp.web.dispatch.MappingBuilder;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ServletDefinitionImplTest
     extends ResourceDefinitionImplTest<Servlet, ServletDefinition>

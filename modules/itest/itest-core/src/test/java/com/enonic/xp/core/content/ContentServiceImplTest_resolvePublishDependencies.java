@@ -1,7 +1,7 @@
 package com.enonic.xp.core.content;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.Content;
@@ -15,7 +15,7 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.util.Reference;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ContentServiceImplTest_resolvePublishDependencies
     extends AbstractContentServiceTest
@@ -23,13 +23,6 @@ public class ContentServiceImplTest_resolvePublishDependencies
     private final static NodeId ROOT_UUID = NodeId.from( "000-000-000-000" );
 
     private Content content1, content2, child1, child2;
-
-    @Override
-    public void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
 
     @Test
     public void resolve_single()
@@ -75,7 +68,7 @@ public class ContentServiceImplTest_resolvePublishDependencies
         assertFalse( result.contentIds().contains( child1.getId() ) );
     }
 
-    @Ignore("This test is not correct; it should not be allowed to exclude parent if new")
+    @Disabled("This test is not correct; it should not be allowed to exclude parent if new")
     @Test
     public void resolve_children_in_the_middle_excluded()
         throws Exception

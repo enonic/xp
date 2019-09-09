@@ -2,8 +2,8 @@ package com.enonic.xp.repo.impl.vacuum.version;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
@@ -19,7 +19,7 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.vacuum.VacuumListener;
 import com.enonic.xp.vacuum.VacuumTaskResult;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class VersionFileCleanerTaskTest
 {
@@ -29,7 +29,7 @@ public class VersionFileCleanerTaskTest
 
     private Segment nodeSegment;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

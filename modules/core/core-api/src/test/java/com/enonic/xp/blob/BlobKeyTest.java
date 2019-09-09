@@ -1,11 +1,11 @@
 package com.enonic.xp.blob;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.hash.HashCode;
 import com.google.common.io.ByteSource;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BlobKeyTest
 {

@@ -3,11 +3,11 @@ package com.enonic.xp.web.dispatch;
 import javax.servlet.Filter;
 import javax.servlet.Servlet;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MappingBuilderTest
 {
@@ -15,7 +15,7 @@ public class MappingBuilderTest
 
     private Servlet servlet;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.filter = Mockito.mock( Filter.class );
@@ -85,15 +85,15 @@ public class MappingBuilderTest
         builder.urlPatterns( "/", "/*" );
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testFilter_null()
     {
-        MappingBuilder.newBuilder().filter( null );
+        assertThrows(NullPointerException.class, () -> MappingBuilder.newBuilder().filter( null ));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testServlet_null()
     {
-        MappingBuilder.newBuilder().servlet( null );
+        assertThrows(NullPointerException.class, () -> MappingBuilder.newBuilder().servlet( null ));
     }
 }

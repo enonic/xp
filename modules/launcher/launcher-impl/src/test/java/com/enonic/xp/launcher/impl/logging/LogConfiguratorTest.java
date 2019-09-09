@@ -1,38 +1,38 @@
 package com.enonic.xp.launcher.impl.logging;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
 
 import com.enonic.xp.launcher.impl.env.Environment;
 
 public class LogConfiguratorTest
 {
-    @Rule
-    public final TemporaryFolder temporaryFolder = new TemporaryFolder();
+    @TempDir
+    public Path temporaryFolder;
 
     private Environment env;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.env = Mockito.mock( Environment.class );
-        Mockito.when( this.env.getHomeDir() ).thenReturn( this.temporaryFolder.getRoot() );
+        Mockito.when( this.env.getHomeDir() ).thenReturn( this.temporaryFolder.toFile() );
     }
 
     private void writeLogbackFile( final String xml )
         throws Exception
     {
-        final File configDir = this.temporaryFolder.newFolder( "config" );
+        final File configDir = Files.createDirectory(this.temporaryFolder.resolve( "config" ) ).toFile();
         final File logbackFile = new File( configDir, "logback.xml" );
-        Files.write( xml, logbackFile, Charsets.UTF_8 );
+        com.google.common.io.Files.write( xml, logbackFile, StandardCharsets.UTF_8 );
     }
 
     @Test

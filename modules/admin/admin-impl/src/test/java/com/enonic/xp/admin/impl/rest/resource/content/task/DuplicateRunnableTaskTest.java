@@ -2,9 +2,8 @@ package com.enonic.xp.admin.impl.rest.resource.content.task;
 
 import java.util.stream.Collectors;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.admin.impl.rest.resource.content.json.DuplicateContentJson;
@@ -26,17 +25,17 @@ import com.enonic.xp.task.AbstractRunnableTaskTest;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class DuplicateRunnableTaskTest
     extends AbstractRunnableTaskTest
 {
     private DuplicateContentsJson params;
 
-    @Before
-    @Override
+    @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.params = Mockito.mock( DuplicateContentsJson.class );
     }
 
@@ -90,7 +89,7 @@ public class DuplicateRunnableTaskTest
 
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
 
-        Assert.assertEquals(
+        assertEquals(
             "{\"state\":\"WARNING\",\"message\":\"4 items are duplicated ( Already duplicated: \\\"content3\\\" ). Item \\\"id2\\\" could not be duplicated.\"}",
             resultMessage );
     }
@@ -116,7 +115,7 @@ public class DuplicateRunnableTaskTest
 
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
 
-        Assert.assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"Item \\\"content1\\\" is duplicated.\"}", resultMessage );
+        assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"Item \\\"content1\\\" is duplicated.\"}", resultMessage );
     }
 
     @Test
@@ -140,6 +139,6 @@ public class DuplicateRunnableTaskTest
 
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
 
-        Assert.assertEquals( "{\"state\":\"ERROR\",\"message\":\"Failed to duplicate 2 items.\"}", resultMessage );
+        assertEquals( "{\"state\":\"ERROR\",\"message\":\"Failed to duplicate 2 items.\"}", resultMessage );
     }
 }

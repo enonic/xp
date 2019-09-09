@@ -6,7 +6,7 @@ import java.util.Arrays;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
@@ -19,7 +19,7 @@ import com.enonic.xp.descriptor.Descriptors;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.page.DescriptorKey;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class WidgetResourceTest

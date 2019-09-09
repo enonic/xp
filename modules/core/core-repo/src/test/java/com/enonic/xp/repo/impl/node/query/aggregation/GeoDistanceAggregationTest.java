@@ -2,8 +2,8 @@ package com.enonic.xp.repo.impl.node.query.aggregation;
 
 import java.util.Iterator;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.base.Strings;
 
@@ -22,7 +22,7 @@ import com.enonic.xp.query.aggregation.GeoDistanceAggregationQuery;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 import com.enonic.xp.util.GeoPoint;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GeoDistanceAggregationTest
     extends AbstractNodeTest
@@ -41,11 +41,10 @@ public class GeoDistanceAggregationTest
 
     private static final GeoPoint TRONDHEIM = GeoPoint.from( "63.4304900,10.3950600" );
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 

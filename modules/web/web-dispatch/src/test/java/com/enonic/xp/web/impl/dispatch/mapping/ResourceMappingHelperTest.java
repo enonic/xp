@@ -14,8 +14,8 @@ import javax.servlet.annotation.WebInitParam;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
@@ -26,7 +26,7 @@ import com.enonic.xp.web.dispatch.MappingBuilder;
 import com.enonic.xp.web.dispatch.ResourceMapping;
 import com.enonic.xp.web.dispatch.ServletMapping;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ResourceMappingHelperTest
 {
@@ -67,7 +67,7 @@ public class ResourceMappingHelperTest
 
     private Servlet mockServlet;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.mockFilter = Mockito.mock( Filter.class );

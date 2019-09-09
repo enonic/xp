@@ -1,13 +1,13 @@
 package com.enonic.xp.server.impl.status;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class OsgiBundleReporterTest
     extends BaseOsgiReporterTest<OsgiBundleReporter>

@@ -4,8 +4,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -25,13 +25,13 @@ import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.schema.content.ContentTypeName;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MediaInfoServiceTest
 {
     private MediaInfoServiceImpl service;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.service = new MediaInfoServiceImpl();

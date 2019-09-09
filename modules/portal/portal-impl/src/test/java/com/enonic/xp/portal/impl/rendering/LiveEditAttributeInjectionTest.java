@@ -1,6 +1,6 @@
 package com.enonic.xp.portal.impl.rendering;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
@@ -8,7 +8,7 @@ import com.google.common.io.Resources;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.region.TextComponentType;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class LiveEditAttributeInjectionTest
 {

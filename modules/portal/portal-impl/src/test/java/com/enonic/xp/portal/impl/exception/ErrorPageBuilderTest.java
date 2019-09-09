@@ -1,7 +1,7 @@
 package com.enonic.xp.portal.impl.exception;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.base.Charsets;
@@ -9,14 +9,14 @@ import com.google.common.io.Resources;
 
 import com.enonic.xp.resource.ResourceService;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ErrorPageBuilderTest
 {
     private ResourceService resourceService;
 
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         resourceService = Mockito.mock( ResourceService.class );

@@ -1,6 +1,6 @@
 package com.enonic.xp.web.impl.dispatch.mapping;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ResourceDefinitionFactoryTest
 {

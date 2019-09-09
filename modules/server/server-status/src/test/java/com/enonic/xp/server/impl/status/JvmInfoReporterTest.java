@@ -1,11 +1,11 @@
 package com.enonic.xp.server.impl.status;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.net.MediaType;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class JvmInfoReporterTest
     extends BaseReporterTest<JvmInfoReporter>

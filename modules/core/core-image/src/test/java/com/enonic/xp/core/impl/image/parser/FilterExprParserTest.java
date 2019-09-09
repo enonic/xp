@@ -4,11 +4,11 @@
  */
 package com.enonic.xp.core.impl.image.parser;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FilterExprParserTest
-    extends Assert
 {
     @Test
     public void testEmpty()

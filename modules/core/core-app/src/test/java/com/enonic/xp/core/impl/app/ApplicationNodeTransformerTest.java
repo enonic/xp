@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.app;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.Version;
 
@@ -21,7 +21,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.util.BinaryReference;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ApplicationNodeTransformerTest
     extends BundleBasedTest

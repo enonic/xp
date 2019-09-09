@@ -10,7 +10,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
@@ -19,7 +19,7 @@ import com.google.common.collect.Maps;
 import com.enonic.xp.web.dispatch.FilterMapping;
 import com.enonic.xp.web.impl.dispatch.mapping.FilterDefinition;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FilterPipelineImplTest
     extends ResourcePipelineImplTest<FilterDefinition, FilterPipelineImpl>

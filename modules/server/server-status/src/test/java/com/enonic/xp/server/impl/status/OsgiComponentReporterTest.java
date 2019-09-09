@@ -1,6 +1,6 @@
 package com.enonic.xp.server.impl.status;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.Constants;
 import org.osgi.framework.dto.BundleDTO;

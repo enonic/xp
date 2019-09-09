@@ -14,7 +14,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;
 import com.enonic.xp.script.serializer.JsonMapGenerator;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class BaseMapperTest
 {

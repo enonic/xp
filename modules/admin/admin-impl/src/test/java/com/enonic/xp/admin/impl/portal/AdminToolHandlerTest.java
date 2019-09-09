@@ -2,8 +2,8 @@ package com.enonic.xp.admin.impl.portal;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.admin.tool.AdminToolDescriptor;
@@ -21,7 +21,7 @@ import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.BaseHandlerTest;
 import com.enonic.xp.web.handler.WebHandlerChain;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AdminToolHandlerTest
     extends BaseHandlerTest
@@ -41,7 +41,7 @@ public class AdminToolHandlerTest
 
     private AdminToolDescriptorService adminToolDescriptorService;
 
-    @Before
+    @BeforeEach
     public final void setup()
         throws Exception
     {
@@ -89,31 +89,31 @@ public class AdminToolHandlerTest
         assertFalse( this.handler.canHandle( this.portalRequest ) );
     }
 
-    @Test(expected = WebException.class)
+    @Test
     public void testWithoutPermissions()
         throws Exception
     {
         this.portalRequest.setRawPath( "/admin/tool/webapp/tool/1" );
         Mockito.when( this.rawRequest.isUserInRole( Mockito.anyString() ) ).thenReturn( false );
-        this.handler.doHandle( this.portalRequest, this.webResponse, this.chain );
+        assertThrows(WebException.class, () -> this.handler.doHandle( this.portalRequest, this.webResponse, this.chain ) );
     }
 
-    @Test(expected = WebException.class)
+    @Test
     public void testWithNoDescriptor()
         throws Exception
     {
         Mockito.when( this.adminToolDescriptorService.getByKey( Mockito.any( DescriptorKey.class ) ) ).thenReturn( null );
         this.portalRequest.setRawPath( "/admin/tool/webapp/tool/1" );
-        this.handler.doHandle( this.portalRequest, this.webResponse, this.chain );
+        assertThrows(WebException.class, () -> this.handler.doHandle( this.portalRequest, this.webResponse, this.chain ) );
     }
 
-    @Test(expected = WebException.class)
+    @Test
     public void testWithNoAccessToApplication()
         throws Exception
     {
         this.mockDescriptor( DescriptorKey.from( "app:tool" ), false );
         this.portalRequest.setRawPath( "/admin/tool/webapp/tool/1" );
-        this.handler.doHandle( this.portalRequest, this.webResponse, this.chain );
+        assertThrows(WebException.class, () -> this.handler.doHandle( this.portalRequest, this.webResponse, this.chain ));
     }
 
     @Test
