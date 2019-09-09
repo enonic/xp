@@ -20,6 +20,7 @@ import com.enonic.xp.repository.DeleteRepositoryParams;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryData;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.UpdateRepositoryDataParams;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
@@ -88,7 +89,31 @@ public class RepositoryServiceImplTest
             return this.repositoryService.get( repo.getId() );
         } );
 
-        assertEquals( persistedRepo.getData().getValue().getString( "myProp" ), "a" );
+        assertEquals( "a", persistedRepo.getData().getValue().getString( "myProp" )  );
+    }
+
+    @Test
+    public void update_data()
+            throws Exception
+    {
+        PropertyTree data = new PropertyTree();
+        data.setString( "myProp", "a" );
+
+        final Repository repo = doCreateRepo( "fisk" );
+
+        ADMIN_CONTEXT.callWith( () ->
+                repositoryService.updateRepositoryData( UpdateRepositoryDataParams.create().
+                        repositoryId( RepositoryId.from( "fisk" ) ).
+                        data( RepositoryData.from( data ) ).
+                        build() ) );
+
+        final Repository persistedRepo = ADMIN_CONTEXT.callWith( () ->
+        {
+            repositoryService.invalidateAll();
+            return this.repositoryService.get( repo.getId() );
+        } );
+
+        assertEquals( "a", persistedRepo.getData().getValue().getString( "myProp" ) );
     }
 
     @Test

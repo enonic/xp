@@ -134,7 +134,7 @@ public class RepositoryServiceImpl
             throw new RepositoryNotFoundException( repositoryId );
         }
 
-        return repositoryEntryService.updateRepositoryData( repositoryId, updateRepositoryDataParams.getData()  );
+        return repositoryEntryService.updateRepositoryData( repositoryId, updateRepositoryDataParams.getData() );
     }
 
     @Override

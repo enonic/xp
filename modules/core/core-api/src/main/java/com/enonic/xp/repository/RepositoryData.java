@@ -39,7 +39,7 @@ public class RepositoryData
     }
 
     public static RepositoryData from( PropertyTree value ) {
-        return new RepositoryData( value.copy() );
+        return value == null ? empty() : new RepositoryData( value.copy() );
     }
 
     public static RepositoryData empty() {

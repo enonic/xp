@@ -60,7 +60,7 @@ public class RepositoryNodeTranslator
     }
 
     public static NodeEditor toUpdateDataNodeEditor( RepositoryData data ) {
-        return toBeEdited -> toBeEdited.data.addSet( DATA_KEY, data.getValue().getRoot() );
+        return toBeEdited -> toBeEdited.data.setSet( DATA_KEY, data.getValue().getRoot() );
     }
 
     public static NodeEditor toDeleteBranchNodeEditor( final Branch branch )
