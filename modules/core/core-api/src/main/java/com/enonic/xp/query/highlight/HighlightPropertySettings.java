@@ -4,12 +4,11 @@ import java.util.List;
 import java.util.Objects;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.query.highlight.constants.Fragmenter;
 import com.enonic.xp.query.highlight.constants.Order;
 
-public class HighlightFieldSettings
+public class HighlightPropertySettings
 {
     private final Fragmenter fragmenter;
 
@@ -27,7 +26,7 @@ public class HighlightFieldSettings
 
     private final Boolean requireFieldMatch;
 
-    protected HighlightFieldSettings( final Builder builder )
+    protected HighlightPropertySettings( final Builder builder )
     {
         this.fragmenter = builder.fragmenter;
         this.fragmentSize = builder.fragmentSize;
@@ -90,7 +89,7 @@ public class HighlightFieldSettings
         {
             return false;
         }
-        final HighlightFieldSettings that = (HighlightFieldSettings) o;
+        final HighlightPropertySettings that = (HighlightPropertySettings) o;
         return fragmenter == that.fragmenter && Objects.equals( fragmentSize, that.fragmentSize ) &&
             Objects.equals( noMatchSize, that.noMatchSize ) && Objects.equals( numOfFragments, that.numOfFragments ) &&
             order == that.order && Objects.equals( preTags, that.preTags ) && Objects.equals( postTags, that.postTags ) &&
@@ -108,7 +107,7 @@ public class HighlightFieldSettings
         return new Builder();
     }
 
-    public static HighlightFieldSettings empty()
+    public static HighlightPropertySettings empty()
     {
         return create().build();
     }
@@ -186,9 +185,9 @@ public class HighlightFieldSettings
             return (T)this;
         }
 
-        public HighlightFieldSettings build()
+        public HighlightPropertySettings build()
         {
-            return new HighlightFieldSettings( this );
+            return new HighlightPropertySettings( this );
         }
     }
 }

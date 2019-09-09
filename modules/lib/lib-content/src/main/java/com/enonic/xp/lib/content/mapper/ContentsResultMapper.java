@@ -6,7 +6,7 @@ import com.enonic.xp.aggregation.Aggregations;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.Contents;
-import com.enonic.xp.highlight.HighlightedFields;
+import com.enonic.xp.highlight.HighlightedProperties;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 
@@ -19,7 +19,7 @@ public final class ContentsResultMapper
 
     private final Aggregations aggregations;
 
-    private final ImmutableMap<ContentId, HighlightedFields> highlight;
+    private final ImmutableMap<ContentId, HighlightedProperties> highlight;
 
     public ContentsResultMapper( final Contents contents, final long total )
     {
@@ -30,7 +30,7 @@ public final class ContentsResultMapper
     }
 
     public ContentsResultMapper( final Contents contents, final long total, final Aggregations aggregations,
-                                 final ImmutableMap<ContentId, HighlightedFields> highlight )
+                                 final ImmutableMap<ContentId, HighlightedProperties> highlight )
     {
         this.contents = contents;
         this.total = total;
@@ -70,7 +70,7 @@ public final class ContentsResultMapper
         }
     }
 
-    private void serialize( final MapGenerator gen, ImmutableMap<ContentId, HighlightedFields> highlight )
+    private void serialize( final MapGenerator gen, ImmutableMap<ContentId, HighlightedProperties> highlight )
     {
         if ( highlight != null )
         {
