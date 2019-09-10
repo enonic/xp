@@ -13,14 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class AuditLogServiceImplTest_log
     extends AbstractAuditLogServiceTest
 {
-
-    @Override
-    public void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
-
     @Test
     public void log_anonymous()
     {

@@ -19,14 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class AuditLogServiceImplTest_find
     extends AbstractAuditLogServiceTest
 {
-
-    @Override
-    public void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
-
     @Test
     public void find_anonymous()
     {
