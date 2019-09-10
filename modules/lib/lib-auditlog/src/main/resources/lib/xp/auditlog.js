@@ -29,7 +29,7 @@ function nullOrValue(value) {
  *
  * The parameter 'type' is required and all other parameters are optional.
  *
- * @example-ref examples/audit/log.js
+ * @example-ref examples/auditlog/log.js
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.type Type of log entry.
@@ -58,7 +58,7 @@ exports.log = function (params) {
 /**
  * This function fetches an audit log.
  *
- * @example-ref examples/audit/get.js
+ * @example-ref examples/auditlog/get.js
  *
  * @param {object} params     JSON with the parameters.
  * @param {string} params.id  Id of the audit log.
@@ -77,7 +77,7 @@ exports.get = function (params) {
  * All parameters are semi-optional, meaning that you should at least supply one
  * of them. If no parameters are supplied you will get an empty result.
  *
- * @example-ref examples/audit/find.js
+ * @example-ref examples/auditlog/find.js
  *
  * @param {object} params     JSON with the parameters.
  * @param {number} [params.start=0] Start index (used for paging).
