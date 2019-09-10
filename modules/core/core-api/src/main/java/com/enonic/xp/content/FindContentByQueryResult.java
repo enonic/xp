@@ -7,7 +7,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.aggregation.Aggregations;
-import com.enonic.xp.highlight.HighlightedFields;
+import com.enonic.xp.highlight.HighlightedProperties;
 
 @Beta
 public final class FindContentByQueryResult
@@ -16,7 +16,7 @@ public final class FindContentByQueryResult
 
     private Contents contents;
 
-    private final ImmutableMap<ContentId, HighlightedFields> highlight;
+    private final ImmutableMap<ContentId, HighlightedProperties> highlight;
 
     private long totalHits;
 
@@ -46,7 +46,7 @@ public final class FindContentByQueryResult
         return aggregations;
     }
 
-    public ImmutableMap<ContentId, HighlightedFields> getHighlight()
+    public ImmutableMap<ContentId, HighlightedProperties> getHighlight()
     {
         return highlight;
     }
@@ -67,7 +67,7 @@ public final class FindContentByQueryResult
 
         private Aggregations aggregations;
 
-        private Map<ContentId, HighlightedFields> highlight = Maps.newHashMap();
+        private Map<ContentId, HighlightedProperties> highlight = Maps.newHashMap();
 
         private long totalHits;
 
@@ -101,7 +101,7 @@ public final class FindContentByQueryResult
             return this;
         }
 
-        public Builder highlight( final Map<ContentId, HighlightedFields> highlight )
+        public Builder highlight( final Map<ContentId, HighlightedProperties> highlight )
         {
             this.highlight = highlight;
             return this;
