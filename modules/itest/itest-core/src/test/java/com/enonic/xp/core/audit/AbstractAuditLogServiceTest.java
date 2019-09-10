@@ -1,6 +1,6 @@
 package com.enonic.xp.core.audit;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 
 import com.enonic.xp.core.impl.audit.AuditLogConfig;
@@ -54,11 +54,11 @@ public class AbstractAuditLogServiceTest
 
     private SearchDaoImpl searchDao;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
+        deleteAllIndices();
 
         final MemoryBlobStore blobStore = new MemoryBlobStore();
 
@@ -105,6 +105,9 @@ public class AbstractAuditLogServiceTest
 
         final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl();
         nodeRepositoryService.setIndexServiceInternal( this.indexServiceInternal );
+
+        final IndexServiceInternalImpl elasticsearchIndexService = new IndexServiceInternalImpl();
+        elasticsearchIndexService.setClient( client );
 
         final RepositoryEntryServiceImpl repositoryEntryService = new RepositoryEntryServiceImpl();
         repositoryEntryService.setIndexServiceInternal( elasticsearchIndexService );

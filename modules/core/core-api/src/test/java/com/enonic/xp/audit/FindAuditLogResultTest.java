@@ -1,17 +1,20 @@
 package com.enonic.xp.audit;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.enonic.xp.audit.AuditLogTestBuilder.getBuilder;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FindAuditLogResultTest
 {
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void no_hits_provided()
     {
-        FindAuditLogResult.create().build();
+        assertThrows( NullPointerException.class, () -> {
+            FindAuditLogResult.create().build();
+        } );
     }
 
     @Test

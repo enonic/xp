@@ -3,7 +3,7 @@ package com.enonic.xp.core.audit;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.audit.AuditLog;
 import com.enonic.xp.audit.AuditLogIds;
@@ -13,7 +13,8 @@ import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.core.impl.audit.AuditLogContext;
 import com.enonic.xp.repository.RepositoryNotFoundException;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AuditLogServiceImplTest_find
     extends AbstractAuditLogServiceTest
@@ -26,14 +27,17 @@ public class AuditLogServiceImplTest_find
         super.setUp();
     }
 
-    @Test(expected = RepositoryNotFoundException.class)
+    @Test
     public void find_anonymous()
     {
-        LogAuditLogParams params = LogAuditLogParams.create().type( "test" ).build();
-        AuditLog log = auditLogService.log( params );
+        assertThrows(RepositoryNotFoundException.class, () -> {
+            LogAuditLogParams params = LogAuditLogParams.create().type( "test" ).build();
+            AuditLog log = auditLogService.log( params );
 
-        FindAuditLogResult result = auditLogService.find( FindAuditLogParams.create().ids( AuditLogIds.from( log.getId() ) ).build() );
-        assertEquals( 0L, result.getCount() );
+            FindAuditLogResult result = auditLogService.find( FindAuditLogParams.create().ids( AuditLogIds.from( log.getId() ) ).build() );
+            assertEquals( 0L, result.getCount() );
+        });
+
     }
 
     private FindAuditLogResult findAsAdmin( FindAuditLogParams params )

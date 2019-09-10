@@ -2,8 +2,8 @@ package com.enonic.xp.core.impl.audit;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 
@@ -12,14 +12,14 @@ import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class AuditLogRepoInitializerTest
 {
 
     AuditLogServiceImpl auditLogService;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

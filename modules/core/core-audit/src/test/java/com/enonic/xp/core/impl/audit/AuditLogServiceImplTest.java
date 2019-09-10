@@ -1,7 +1,7 @@
 package com.enonic.xp.core.impl.audit;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.audit.AuditLog;
@@ -24,7 +24,9 @@ import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.repository.RepositoryService;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AuditLogServiceImplTest
 {
@@ -33,7 +35,7 @@ public class AuditLogServiceImplTest
 
     private LogAuditLogParams auditLogParams;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
@@ -85,10 +87,12 @@ public class AuditLogServiceImplTest
         auditLogService.initialize( config );
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void log_no_parameters()
     {
-        auditLogService.log( LogAuditLogParams.create().build() );
+        assertThrows( NullPointerException.class, () -> {
+            auditLogService.log( LogAuditLogParams.create().build() );
+        } );
     }
 
     @Test

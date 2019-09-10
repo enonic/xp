@@ -1,16 +1,22 @@
 package com.enonic.xp.audit;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.enonic.xp.audit.AuditLogTestBuilder.getBuilder;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AuditLogTest
 {
-    @Test(expected = NullPointerException.class)
+    @Test
     public void create_no_params()
     {
-        AuditLog.create().build();
+        assertThrows( NullPointerException.class, () -> {
+            AuditLog.create().build();
+        } );
     }
 
     @Test

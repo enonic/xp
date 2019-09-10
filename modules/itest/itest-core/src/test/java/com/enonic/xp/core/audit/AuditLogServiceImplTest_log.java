@@ -1,14 +1,14 @@
 package com.enonic.xp.core.audit;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.audit.AuditLog;
 import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.core.impl.audit.AuditLogContext;
-import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.repository.RepositoryNotFoundException;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AuditLogServiceImplTest_log
     extends AbstractAuditLogServiceTest
@@ -21,11 +21,13 @@ public class AuditLogServiceImplTest_log
         super.setUp();
     }
 
-    @Test(expected = RepositoryNotFoundException.class)
+    @Test
     public void log_anonymous()
     {
-        LogAuditLogParams params = LogAuditLogParams.create().type( "test" ).build();
-        auditLogService.log( params );
+        assertThrows(RepositoryNotFoundException.class, () -> {
+            LogAuditLogParams params = LogAuditLogParams.create().type( "test" ).build();
+            auditLogService.log( params );
+        });
     }
 
     @Test
