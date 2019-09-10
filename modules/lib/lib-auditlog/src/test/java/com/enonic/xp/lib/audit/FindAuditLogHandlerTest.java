@@ -1,13 +1,13 @@
 package com.enonic.xp.lib.audit;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.audit.AuditLog;
-import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.audit.AuditLogs;
 import com.enonic.xp.audit.FindAuditLogParams;
 import com.enonic.xp.audit.FindAuditLogResult;
+import com.enonic.xp.audit.LogAuditLogParams;
 
 import static org.junit.Assert.*;
 
