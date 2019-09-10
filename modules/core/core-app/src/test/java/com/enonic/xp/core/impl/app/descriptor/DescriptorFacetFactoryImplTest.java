@@ -1,13 +1,13 @@
 package com.enonic.xp.core.impl.app.descriptor;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.resource.ResourceService;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DescriptorFacetFactoryImplTest
 {
@@ -19,7 +19,7 @@ public class DescriptorFacetFactoryImplTest
 
     private DescriptorFacetFactoryImpl facetFactory;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.resourceService = Mockito.mock( ResourceService.class );

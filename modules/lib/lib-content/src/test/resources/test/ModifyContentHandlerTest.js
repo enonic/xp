@@ -91,7 +91,8 @@ var expectedJson = {
                                 "components": [
                                     {
                                         "path": "/top/1/right/0",
-                                        "type": "image"
+                                        "type": "image",
+                                        "image": "image-id"
                                     },
                                     {
                                         "path": "/top/1/right/1",
@@ -124,7 +125,8 @@ var expectedJson = {
                     },
                     {
                         "path": "/bottom/1",
-                        "type": "image"
+                        "type": "image",
+                        "image": "img-id-x"
                     },
                     {
                         "path": "/bottom/2",
@@ -140,6 +142,12 @@ var expectedJson = {
         "from": "2018-11-03T10:00:01Z",
         "to": "2018-11-03T10:00:01Z",
     },
+    "workflow": {
+        "state": "READY",
+        "checks": {
+            "Review by marketing": "APPROVED"
+        }
+    }
 };
 
 function editor(c) {
@@ -161,6 +169,10 @@ function editor(c) {
 
     c.publish.from = '2018-11-03T10:00:01Z';
     c.publish.to = '2018-11-03T10:00:01Z';
+    c.workflow.state = "READY";
+    c.workflow.checks = {
+        "Review by marketing": "APPROVED"
+    }
 
     return c;
 }
@@ -190,6 +202,94 @@ exports.modifyByPath = function () {
     });
 
     assert.assertJsonEquals(expectedJson, result);
+};
+
+exports.modifySiteConfig = function () {
+
+    var result = content.modify({
+        key: '/a/b/mycontent',
+        editor: function (c) {
+            c.data.siteConfig = [];
+            c.data.siteConfig[0] = {};
+            c.data.siteConfig[0].applicationKey = 'appKey1';
+            c.data.siteConfig[0].config = {};
+            c.data.siteConfig[0].config.a = 'a';
+            c.data.siteConfig[0].config.b = true;
+            c.data.siteConfig[1] = {};
+            c.data.siteConfig[1].applicationKey = 'appKey2';
+            c.data.siteConfig[1].config = {};
+            c.data.siteConfig[1].config.c = '4';
+
+            return c;
+        }
+    });
+
+    var expect = [
+        {
+            "applicationKey": "appKey1",
+            "config": {
+                "a": "a",
+                "b": true
+            }
+        },
+        {
+            "applicationKey": "appKey2",
+            "config": {
+                "c": 4
+            }
+        }
+    ];
+
+    assert.assertJsonEquals(expect, result.data.siteConfig);
+};
+
+exports.modifySiteSingleDescriptor = function () {
+
+    var result = content.modify({
+        key: '/a/b/mycontent',
+        editor: function (c) {
+            c.data.siteConfig = {};
+            c.data.siteConfig.applicationKey = 'appKey1';
+            c.data.siteConfig.config = {};
+            c.data.siteConfig.config.a = 'a';
+            c.data.siteConfig.config.b = true;
+
+            return c;
+        }
+    });
+
+    var expect =
+        {
+            "applicationKey": "appKey1",
+            "config": {
+                "a": "a",
+                "b": true
+            }
+        }
+    ;
+
+    assert.assertJsonEquals(expect, result.data.siteConfig);
+};
+
+exports.modifySiteConfig_strict = function () {
+
+    try {
+        content.modify({
+            key: '/a/b/mycontent',
+            editor: function (c) {
+                c.data.siteConfig = [];
+                c.data.siteConfig[0] = {};
+                c.data.siteConfig[0].applicationKey = 'appKey1';
+                c.data.siteConfig[0].config = {};
+                c.data.siteConfig[0].config.invalidField = 'a';
+
+                return c;
+            }
+        });
+        throw new Error();
+    } catch (e) {
+        assert.assertEquals("No mapping defined for property invalidField with value a", e.message);
+    }
 };
 
 exports.modifyNotMappedXDataFieldName_stricted = function () {

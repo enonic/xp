@@ -56,11 +56,11 @@ public class NodeHandler
     }
 
     @SuppressWarnings("unused")
-    public Object get( final String[] keys )
+    public Object get( final GetNodeHandlerParams params )
     {
         return execute( GetNodeHandler.create().
             nodeService( this.nodeService ).
-            keys( NodeKeys.from( keys ) ).
+            keys( NodeKeys.from( params.getKeys() ) ).
             build() );
     }
 
@@ -116,6 +116,8 @@ public class NodeHandler
         return execute( FindNodesByQueryHandler.create().
             query( params.getQuery() ).
             aggregations( params.getAggregations() ).
+            suggestions( params.getSuggestions() ).
+            highlight( params.getHighlight() ).
             count( params.getCount() ).
             start( params.getStart() ).
             sort( params.getSort() ).

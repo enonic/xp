@@ -27,7 +27,11 @@ var expected = {
     "x": {},
     "page": {},
     "attachments": {},
-    "publish": {}
+    "publish": {},
+    "workflow": {
+        "state": "READY",
+        "checks": {}
+    }
 };
 // END
 

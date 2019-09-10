@@ -1,11 +1,11 @@
 package com.enonic.xp.xml.parser;
 
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.inputtype.InputTypeName;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class InputTypeAliasConvertersTest
 {

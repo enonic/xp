@@ -1,7 +1,7 @@
 package com.enonic.xp.core.impl.app;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.app.Application;
@@ -23,7 +23,7 @@ public class ApplicationClusterEventListenerTest
 
     private ApplicationService applicationService;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

@@ -2,13 +2,13 @@ package com.enonic.xp.web.impl.dispatch.mapping;
 
 import javax.servlet.ServletContext;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.web.dispatch.MappingBuilder;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class ResourceDefinitionImplTest<T, D extends ResourceDefinition<T>>
 {
@@ -16,7 +16,7 @@ public abstract class ResourceDefinitionImplTest<T, D extends ResourceDefinition
 
     ServletContext context;
 
-    @Before
+    @BeforeEach
     public final void setup()
     {
         this.resource = newResource();

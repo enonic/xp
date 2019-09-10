@@ -1,7 +1,7 @@
 package com.enonic.xp.portal.impl.rendering;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.net.MediaType;
@@ -26,8 +26,8 @@ import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.websocket.WebSocketEvent;
 
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 public class LayoutRendererTest
@@ -53,7 +53,7 @@ public class LayoutRendererTest
         return portalResponse.getAsString();
     }
 
-    @Before
+    @BeforeEach
     public void before()
     {
         this.portalRequest = new PortalRequest();
@@ -101,10 +101,10 @@ public class LayoutRendererTest
         assertEquals( result, response );
     }
 
-    @Test(expected = DescriptorNotFoundException.class)
+    @Test
     public void emptyComponentNoMode()
     {
-        this.configureEmptyComponent( RenderMode.ADMIN );
+        assertThrows(DescriptorNotFoundException.class, () -> this.configureEmptyComponent( RenderMode.ADMIN ));
     }
 
     @Test

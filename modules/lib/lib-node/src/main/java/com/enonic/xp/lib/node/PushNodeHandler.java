@@ -20,9 +20,9 @@ public final class PushNodeHandler
 
     private Branch targetBranch;
 
-    private boolean resolve = false;
+    private boolean resolve;
 
-    private boolean includeChildren = true;
+    private boolean includeChildren;
 
     private NodeKeys exclude;
 
@@ -53,7 +53,7 @@ public final class PushNodeHandler
             toBePushed.addAll( getNodeIds() );
         }
 
-        final PushNodesResult push = this.nodeService.push( nodeIds, targetBranch );
+        final PushNodesResult push = this.nodeService.push( toBePushed.build(), targetBranch );
 
         final NodeIds deletedNodes = doDelete( toBeDeleted );
 

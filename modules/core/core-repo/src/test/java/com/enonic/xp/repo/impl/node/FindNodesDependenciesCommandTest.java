@@ -1,7 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.ContextAccessor;
@@ -14,16 +14,15 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.util.Reference;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FindNodesDependenciesCommandTest
     extends AbstractNodeTest
 {
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 
@@ -45,7 +44,7 @@ public class FindNodesDependenciesCommandTest
             build().
             execute();
 
-        assertEquals( "Should contain [node1_1(r),node1_1_1(r), contains " + dependants.getAsStrings(), 2, dependants.getSize() );
+        assertEquals( 2, dependants.getSize(), "Should contain [node1_1(r),node1_1_1(r), contains " + dependants.getAsStrings() );
     }
 
     @Test
@@ -78,7 +77,7 @@ public class FindNodesDependenciesCommandTest
             build().
             execute();
 
-        assertEquals( "Should contain 'node1_1', contains " + dependants.getAsStrings(), 1, dependants.getSize() );
+        assertEquals( 1, dependants.getSize(), "Should contain 'node1_1', contains " + dependants.getAsStrings() );
     }
 
     @Test
@@ -99,7 +98,7 @@ public class FindNodesDependenciesCommandTest
             build().
             execute();
 
-        assertEquals( "Should contain [node1_1(r)], contains " + dependants.getAsStrings(), 1, dependants.getSize() );
+        assertEquals( 1, dependants.getSize() , "Should contain [node1_1(r)], contains " + dependants.getAsStrings());
     }
 
     @Test
@@ -120,7 +119,7 @@ public class FindNodesDependenciesCommandTest
             build().
             execute();
 
-        assertEquals( "Should contain [node1_1(r),node1_1_1(r), contains " + dependants.getAsStrings(), 2, dependants.getSize() );
+        assertEquals( 2, dependants.getSize() , "Should contain [node1_1(r),node1_1_1(r), contains " + dependants.getAsStrings());
     }
 
     @Test
@@ -145,8 +144,8 @@ public class FindNodesDependenciesCommandTest
             execute();
 
         assertEquals( 2, dependants.getSize() );
-        assertTrue( "Should contain node1_2", dependants.contains( node1_2.id() ) );
-        assertTrue( "Should contain node1_2_1", dependants.contains( NodeId.from( "n1_2_1" ) ) );
+        assertTrue( dependants.contains( node1_2.id() ) , "Should contain node1_2");
+        assertTrue( dependants.contains( NodeId.from( "n1_2_1" ) ) , "Should contain node1_2_1");
     }
 
 

@@ -2,8 +2,8 @@ package com.enonic.xp.script.impl.bean;
 
 import java.util.function.Supplier;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.resource.ResourceKey;
@@ -12,7 +12,7 @@ import com.enonic.xp.script.impl.service.ServiceRef;
 import com.enonic.xp.script.impl.service.ServiceRegistry;
 import com.enonic.xp.script.runtime.ScriptSettings;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BeanContextImplTest
 {
@@ -24,7 +24,7 @@ public class BeanContextImplTest
 
     private ScriptExecutor executor;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.resourceKey = ResourceKey.from( "myapp:/a/b" );

@@ -1,9 +1,9 @@
 package com.enonic.xp.session;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SimpleSessionTest
 {
@@ -13,7 +13,7 @@ public class SimpleSessionTest
 
     private Session session;
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         this.session = new SimpleSession( SessionKey.from( "123" ) );

@@ -1,8 +1,8 @@
 package com.enonic.xp.server.internal.trace.event;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.trace.TraceEvent;
@@ -12,14 +12,14 @@ public class TraceEventDispatcherImplTest
 {
     private TraceEventDispatcherImpl dispatcher;
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         this.dispatcher = new TraceEventDispatcherImpl();
         this.dispatcher.activate();
     }
 
-    @After
+    @AfterEach
     public void tearDown()
     {
         this.dispatcher.deactivate();

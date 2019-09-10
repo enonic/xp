@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.content.index;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.form.Form;
@@ -11,7 +11,7 @@ import com.enonic.xp.form.Input;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.inputtype.InputTypeName;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class IndexConfigVisitorTest
 {

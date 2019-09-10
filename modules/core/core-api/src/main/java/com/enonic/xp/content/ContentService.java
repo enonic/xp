@@ -45,9 +45,13 @@ public interface ContentService
 
     ContentIds resolveRequiredDependencies( ResolveRequiredDependenciesParams params );
 
+    @Deprecated
     boolean isValidContent( ContentIds contentIds );
 
+    @Deprecated
     ContentIds getInvalidContent( ContentIds contentIds );
+
+    ContentValidityResult getContentValidity( ContentValidityParams params );
 
     DuplicateContentsResult duplicate( DuplicateContentParams params );
 
@@ -117,5 +121,9 @@ public interface ContentService
     boolean contentExists( ContentPath contentPath );
 
     Content reprocess( ContentId contentId );
+
+    Content getByIdAndVersionId( final ContentId contentId, final ContentVersionId versionId );
+
+    Content getByPathAndVersionId( final ContentPath contentPath, final ContentVersionId versionId );
 
 }

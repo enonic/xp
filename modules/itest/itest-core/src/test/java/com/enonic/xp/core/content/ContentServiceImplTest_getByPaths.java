@@ -3,7 +3,7 @@ package com.enonic.xp.core.content;
 import java.time.Duration;
 import java.time.Instant;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
@@ -11,17 +11,11 @@ import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.Contents;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ContentServiceImplTest_getByPaths
     extends AbstractContentServiceTest
 {
-    @Override
-    public void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
 
     @Test
     public void empty()

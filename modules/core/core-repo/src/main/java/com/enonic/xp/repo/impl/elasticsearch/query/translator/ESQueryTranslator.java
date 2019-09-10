@@ -6,6 +6,7 @@ import java.util.Set;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
+import org.elasticsearch.search.suggest.SuggestBuilder;
 
 import com.enonic.xp.node.NodeCommitQuery;
 import com.enonic.xp.node.NodeQuery;
@@ -13,11 +14,14 @@ import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.query.Query;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
 import com.enonic.xp.repo.impl.elasticsearch.aggregation.query.AggregationQueryBuilderFactory;
+import com.enonic.xp.repo.impl.elasticsearch.highlight.ElasticHighlightQueryBuilderFactory;
+import com.enonic.xp.repo.impl.elasticsearch.query.ElasticHighlightQuery;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.xp.repo.impl.elasticsearch.query.source.ESSource;
 import com.enonic.xp.repo.impl.elasticsearch.query.source.ESSourceFactory;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.FilterBuilderFactory;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.SortQueryBuilderFactory;
+import com.enonic.xp.repo.impl.elasticsearch.suggistion.query.SuggestionQueryBuilderFactory;
 import com.enonic.xp.repo.impl.search.SearchRequest;
 import com.enonic.xp.repo.impl.version.search.NodeVersionDiffQuery;
 
@@ -65,6 +69,11 @@ public class ESQueryTranslator
         final Set<AbstractAggregationBuilder> aggregations =
             new AggregationQueryBuilderFactory( queryTypeTranslator.getFieldNameResolver() ).create( query.getAggregationQueries() );
 
+        final Set<SuggestBuilder.SuggestionBuilder> suggestions =
+            new SuggestionQueryBuilderFactory( queryTypeTranslator.getFieldNameResolver() ).create( query.getSuggestionQueries() );
+
+        final ElasticHighlightQuery highlight = new ElasticHighlightQueryBuilderFactory().create( query.getHighlight() );
+
         final List<SortBuilder> sortBuilders =
             new SortQueryBuilderFactory( queryTypeTranslator.getFieldNameResolver() ).create( query.getOrderBys() );
 
@@ -80,6 +89,8 @@ public class ESQueryTranslator
             explain( query.isExplain() ).
             setReturnFields( request.getReturnFields() ).
             setAggregations( aggregations ).
+            setSuggestions( suggestions ).
+            setHighlight( highlight ).
             sortBuilders( sortBuilders ).
             filter( filterBuilder ).
             batchSize( queryTypeTranslator.getBatchSize() ).

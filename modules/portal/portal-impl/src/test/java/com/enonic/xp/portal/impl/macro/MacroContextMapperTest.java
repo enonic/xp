@@ -2,9 +2,8 @@ package com.enonic.xp.portal.impl.macro;
 
 import java.net.URL;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,6 +16,8 @@ import com.enonic.xp.portal.macro.MacroContext;
 import com.enonic.xp.script.serializer.JsonMapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 import com.enonic.xp.web.HttpMethod;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MacroContextMapperTest
 {
@@ -38,7 +39,7 @@ public class MacroContextMapperTest
         final String resource = "/" + getClass().getName().replace( '.', '/' ) + "-" + name + ".json";
         final URL url = getClass().getResource( resource );
 
-        Assert.assertNotNull( "File [" + resource + "] not found", url );
+        assertNotNull( url, "File [" + resource + "] not found" );
         final JsonNode expectedJson = this.mapper.readTree( url );
 
         final JsonMapGenerator generator = new JsonMapGenerator();
@@ -48,10 +49,10 @@ public class MacroContextMapperTest
         final String expectedStr = this.mapper.writeValueAsString( expectedJson );
         final String actualStr = this.mapper.writeValueAsString( actualJson );
 
-        Assert.assertEquals( expectedStr, actualStr );
+        assertEquals( expectedStr, actualStr );
     }
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         PortalRequest portalRequest = new PortalRequest();

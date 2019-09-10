@@ -1,12 +1,13 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.function;
 
 import org.elasticsearch.index.query.QueryBuilder;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.query.expr.FunctionExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.BaseTestBuilderFactory;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class NGramFunctionTest
     extends BaseTestBuilderFactory
@@ -20,7 +21,7 @@ public class NGramFunctionTest
         final QueryBuilder query = NGramFunction.create(
             FunctionExpr.from( "nGram", ValueExpr.string( "fiskebolle" ), ValueExpr.string( "Her er teksten min" ) ) );
 
-        Assert.assertEquals( cleanString( expected ), cleanString( query.toString() ) );
+        assertEquals( cleanString( expected ), cleanString( query.toString() ) );
     }
 
 
@@ -34,7 +35,7 @@ public class NGramFunctionTest
             FunctionExpr.from( "nGram", ValueExpr.string( "fiskebolle" ), ValueExpr.string( "Her er teksten min" ),
                                ValueExpr.string( "AND" ) ) );
 
-        Assert.assertEquals( cleanString( expected ), cleanString( query.toString() ) );
+        assertEquals( cleanString( expected ), cleanString( query.toString() ) );
     }
 
     @Test
@@ -49,6 +50,6 @@ public class NGramFunctionTest
 
         System.out.println( query );
 
-        Assert.assertEquals( cleanString( expected ), cleanString( query.toString() ) );
+        assertEquals( cleanString( expected ), cleanString( query.toString() ) );
     }
 }

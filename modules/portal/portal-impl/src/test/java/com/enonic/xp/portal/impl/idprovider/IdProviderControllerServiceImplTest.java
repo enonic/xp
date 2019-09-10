@@ -6,9 +6,8 @@ import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -36,11 +35,13 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class IdProviderControllerServiceImplTest
 {
     private IdProviderControllerServiceImpl idProviderControllerService;
 
-    @Before
+    @BeforeEach
     public void setup()
         throws Exception
     {
@@ -120,7 +121,7 @@ public class IdProviderControllerServiceImplTest
             functionName( "missingfunction" ).
             build();
         final PortalResponse portalResponse = idProviderControllerService.execute( executionParams );
-        Assert.assertNull( portalResponse );
+        assertNull( portalResponse );
     }
 
     @Test
@@ -133,7 +134,7 @@ public class IdProviderControllerServiceImplTest
             functionName( "missingfunction" ).
             build();
         final PortalResponse portalResponse = idProviderControllerService.execute( executionParams );
-        Assert.assertNull( portalResponse );
+        assertNull( portalResponse );
     }
 
     @Test
@@ -146,7 +147,7 @@ public class IdProviderControllerServiceImplTest
             functionName( "myfunction" ).
             build();
         final PortalResponse portalResponse = idProviderControllerService.execute( executionParams );
-        Assert.assertNull( portalResponse );
+        assertNull( portalResponse );
     }
 
     @Test
@@ -159,9 +160,9 @@ public class IdProviderControllerServiceImplTest
             functionName( "myfunction" ).
             build();
         final PortalResponse portalResponse = idProviderControllerService.execute( executionParams );
-        Assert.assertNotNull( portalResponse );
-        Assert.assertEquals( HttpStatus.OK, portalResponse.getStatus() );
-        Assert.assertEquals( "myapplication/myfunction", portalResponse.getBody() );
+        assertNotNull( portalResponse );
+        assertEquals( HttpStatus.OK, portalResponse.getStatus() );
+        assertEquals( "myapplication/myfunction", portalResponse.getBody() );
     }
 
 
@@ -175,7 +176,7 @@ public class IdProviderControllerServiceImplTest
             functionName( "myfunction" ).
             build();
         final PortalResponse portalResponse = idProviderControllerService.execute( executionParams );
-        Assert.assertNull( portalResponse );
+        assertNull( portalResponse );
     }
 
 
@@ -196,9 +197,9 @@ public class IdProviderControllerServiceImplTest
             functionName( "myfunction" ).
             build();
         final PortalResponse portalResponse = idProviderControllerService.execute( executionParams );
-        Assert.assertNotNull( portalResponse );
-        Assert.assertEquals( HttpStatus.OK, portalResponse.getStatus() );
-        Assert.assertEquals( "myapplication/myfunction", portalResponse.getBody() );
+        assertNotNull( portalResponse );
+        assertEquals( HttpStatus.OK, portalResponse.getStatus() );
+        assertEquals( "myapplication/myfunction", portalResponse.getBody() );
     }
 
     private HttpServletRequest createHttpServletRequest()

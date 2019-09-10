@@ -3,8 +3,8 @@ package com.enonic.xp.admin.impl.rest.resource.schema.mixin;
 import java.time.Instant;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
@@ -15,13 +15,13 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.ContentTypes;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ContentTypeNameWildcardResolverTest
 {
     private ContentTypeNameWildcardResolver resolver;
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         ContentTypeService service = Mockito.mock( ContentTypeService.class );

@@ -6,7 +6,7 @@ import org.elasticsearch.common.xcontent.ToXContent;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
@@ -17,13 +17,13 @@ public abstract class BaseTestBuilderFactory
 
     private static final TimeZone ORIG_DEFAULT = TimeZone.getDefault();
 
-    @Before
+    @BeforeEach
     public final void setup()
     {
         TimeZone.setDefault( TimeZone.getTimeZone( "UTC" ) );
     }
 
-    @Before
+    @BeforeEach
     public final void cleanup()
     {
         TimeZone.setDefault( ORIG_DEFAULT );

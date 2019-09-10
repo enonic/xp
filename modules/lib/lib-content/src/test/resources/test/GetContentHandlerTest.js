@@ -118,7 +118,8 @@ var expectedJson = {
                                 "components": [
                                     {
                                         "path": "/top/1/right/0",
-                                        "type": "image"
+                                        "type": "image",
+                                        "image": "image-id"
                                     },
                                     {
                                         "path": "/top/1/right/1",
@@ -151,7 +152,8 @@ var expectedJson = {
                     },
                     {
                         "path": "/bottom/1",
-                        "type": "image"
+                        "type": "image",
+                        "image": "img-id-x"
                     },
                     {
                         "path": "/bottom/2",
@@ -178,6 +180,10 @@ var expectedJson = {
     "publish": {
         "from": "2016-11-03T10:00:00Z",
         "to": "2016-11-23T10:00:00Z"
+    },
+    "workflow": {
+        "state": "READY",
+        "checks": {}
     }
 };
 
@@ -211,7 +217,8 @@ var pageAsFragmentJson = {
                 "components": [
                     {
                         "path": "/right/0",
-                        "type": "image"
+                        "type": "image",
+                        "image": "image-id"
                     },
                     {
                         "path": "/right/1",

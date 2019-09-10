@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
@@ -28,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.io.ByteSource;
+import com.google.common.util.concurrent.Striped;
 
 import com.enonic.xp.admin.impl.market.MarketService;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
@@ -82,6 +86,7 @@ import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
+import com.enonic.xp.util.Exceptions;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
 
@@ -97,6 +102,8 @@ public final class ApplicationResource
     private final static String[] ALLOWED_PROTOCOLS = {"http", "https"};
 
     private final static Logger LOG = LoggerFactory.getLogger( ApplicationResource.class );
+
+    private final static Striped<Lock> lockStriped = Striped.lazyWeakLock( 100 );
 
     private ApplicationService applicationService;
 
@@ -271,7 +278,10 @@ public final class ApplicationResource
     public ApplicationSuccessJson start( final ApplicationListParams params )
         throws Exception
     {
-        params.getKeys().forEach( ( key ) -> this.applicationService.startApplication( key, true ) );
+        params.getKeys().forEach( ( key ) -> lock( key, () -> {
+            this.applicationService.startApplication( key, true );
+            return null;
+        } ) );
         return new ApplicationSuccessJson();
     }
 
@@ -282,7 +292,10 @@ public final class ApplicationResource
     public ApplicationSuccessJson stop( final ApplicationListParams params )
         throws Exception
     {
-        params.getKeys().forEach( ( key ) -> this.applicationService.stopApplication( key, true ) );
+        params.getKeys().forEach( ( key ) -> lock( key, () -> {
+            this.applicationService.stopApplication( key, true );
+            return null;
+        } ) );
         return new ApplicationSuccessJson();
     }
 
@@ -299,10 +312,13 @@ public final class ApplicationResource
         {
             throw new RuntimeException( "Missing file item" );
         }
-
+        if ( appFile.getFileName() == null )
+        {
+            throw new RuntimeException( "Missing file name" );
+        }
         final ByteSource byteSource = appFile.getBytes();
 
-        return installApplication( byteSource, appFile.getFileName() );
+        return lock( appFile.getFileName(), () -> installApplication( byteSource, appFile.getFileName() ) );
     }
 
     @POST
@@ -312,7 +328,10 @@ public final class ApplicationResource
     public ApplicationSuccessJson uninstall( final ApplicationListParams params )
         throws Exception
     {
-        params.getKeys().forEach( applicationKey -> this.applicationService.uninstallApplication( applicationKey, true ) );
+        params.getKeys().forEach( ( key ) -> lock( key, () -> {
+            this.applicationService.uninstallApplication( key, true );
+            return null;
+        } ) );
         return new ApplicationSuccessJson();
     }
 
@@ -332,9 +351,7 @@ public final class ApplicationResource
 
             if ( ArrayUtils.contains( ALLOWED_PROTOCOLS, url.getProtocol() ) )
             {
-                ApplicationInstallResultJson json = installApplication( url );
-
-                return json;
+                return lock( url, () -> installApplication( url ) );
             }
             else
             {
@@ -566,6 +583,37 @@ public final class ApplicationResource
         }
 
         return applications;
+    }
+
+    private <V> V lock( Object key, Callable<V> callable )
+    {
+        final Lock lock = lockStriped.get( key );
+        try
+        {
+            if ( lock.tryLock( 30, TimeUnit.MINUTES ) )
+            {
+                try
+                {
+                    return callable.call();
+                }
+                catch ( Exception e )
+                {
+                    throw Exceptions.unchecked( e );
+                }
+                finally
+                {
+                    lock.unlock();
+                }
+            }
+            else
+            {
+                throw new RuntimeException( "Failed to acquire application service lock for application [" + key + "]" );
+            }
+        }
+        catch ( InterruptedException e )
+        {
+            throw new RuntimeException( "Failed to acquire application service lock for application [" + key + "]", e );
+        }
     }
 
     @Reference

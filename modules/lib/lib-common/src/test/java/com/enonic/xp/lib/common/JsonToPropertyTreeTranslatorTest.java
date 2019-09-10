@@ -2,7 +2,7 @@ package com.enonic.xp.lib.common;
 
 import java.net.URL;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,7 +11,7 @@ import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class JsonToPropertyTreeTranslatorTest
 {
@@ -51,13 +51,28 @@ public class JsonToPropertyTreeTranslatorTest
         assertNotNull( myArray2 );
     }
 
+    @Test
+    public void boolean_value()
+        throws Exception
+    {
+        final JsonNode node = loadJson( "allInputTypes" );
+
+        final PropertyTree data = new FormJsonToPropertyTreeTranslator( null, false ).translate( node );
+
+        final Property property = data.getProperty( "checkbox" );
+
+        assertTrue( property.getValue().isBoolean());
+        assertEquals( true, property.getBoolean());
+    }
+
+
     private JsonNode loadJson( final String name )
         throws Exception
     {
         final String resource = "/" + getClass().getName().replace( '.', '/' ) + "-" + name + ".json";
         final URL url = getClass().getResource( resource );
 
-        assertNotNull( "File [" + resource + "] not found", url );
+        assertNotNull( url, "File [" + resource + "] not found");
         return this.mapper.readTree( url );
     }
 }

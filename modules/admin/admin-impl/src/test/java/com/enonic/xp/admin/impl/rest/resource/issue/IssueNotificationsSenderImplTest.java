@@ -7,8 +7,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
@@ -58,7 +58,7 @@ public class IssueNotificationsSenderImplTest
 
     IssueNotificationParamsFactory.Builder notificationFactoryBuilder;
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         mailService = Mockito.mock( MailService.class );

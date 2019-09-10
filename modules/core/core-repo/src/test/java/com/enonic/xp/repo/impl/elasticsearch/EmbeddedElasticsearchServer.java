@@ -52,6 +52,8 @@ public class EmbeddedElasticsearchServer
             put( "path.repo", this.snaphotsDir.getPath() ).
             put( "cluster.name", "repo-test-cluster-" + this.now ).
             put( "http.enabled", "false" ).
+            put( "index.translog.durability", "async" ).
+            put( "index.translog.sync_interval", "15m" ).
             put( "discovery.zen.ping.multicast.enabled", "false" );
 
         node = nodeBuilder().

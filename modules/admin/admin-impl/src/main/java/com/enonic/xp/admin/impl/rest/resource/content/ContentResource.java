@@ -89,6 +89,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.GetDependenciesResult
 import com.enonic.xp.admin.impl.rest.resource.content.json.GetDescendantsOfContents;
 import com.enonic.xp.admin.impl.rest.resource.content.json.HasUnpublishedChildrenResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.LocaleListJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.MarkAsReadyJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ReorderChildJson;
@@ -131,6 +132,8 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.ContentValidityParams;
+import com.enonic.xp.content.ContentValidityResult;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.content.FindContentByParentParams;
@@ -156,6 +159,7 @@ import com.enonic.xp.content.SetContentChildOrderParams;
 import com.enonic.xp.content.UndoPendingDeleteContentParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
+import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.extractor.BinaryExtractor;
 import com.enonic.xp.extractor.ExtractedData;
@@ -531,6 +535,27 @@ public final class ContentResource
     }
 
     @POST
+    @Path("markAsReady")
+    public void markAsReady( final MarkAsReadyJson params )
+    {
+        ContentIds.from( params.getContentIds() ).stream().
+            filter( contentService::contentExists ).
+            forEach( this::markContentAsReady );
+    }
+
+    private void markContentAsReady( final ContentId contentId )
+    {
+        final UpdateContentParams updateParams = new UpdateContentParams().
+            contentId( contentId ).
+            modifier( PrincipalKey.ofAnonymous() ).
+            editor( edit -> {
+                edit.workflowInfo = WorkflowInfo.ready();
+            } );
+
+        contentService.update( updateParams );
+    }
+
+    @POST
     @Path("hasUnpublishedChildren")
     public HasUnpublishedChildrenResultJson hasUnpublishedChildren( final ContentIdsJson ids )
     {
@@ -586,27 +611,40 @@ public final class ContentResource
         final Boolean isAllPublishable =
             authInfo.hasRole( RoleKeys.ADMIN ) ? true : fullPublishList.stream().allMatch( publishAllowedCondition );
 
+        //check that not all contents are pending delete
+        final Boolean isAllPendingDelete = getNotPendingDeletion( fullPublishList, compareResults ).getSize() == 0;
+
         //filter required dependant ids
         final ContentIds requiredDependantIds = ContentIds.from( requiredIds.stream().
             filter( contentId -> !requestedContentIds.contains( contentId ) ).
             collect( Collectors.toList() ) );
 
-        final ContentIds invalidContentIds = getInvalidContent( compareResults );
+        // Check out content validity
+        final ContentValidityResult contentValidity =
+            this.contentService.getContentValidity( ContentValidityParams.create().contentIds( fullPublishList ).build() );
+
+        final ContentIds problematicContentIds = getNotPendingDeletion( contentValidity.getAllProblematicContentIds(), compareResults );
+        final ContentIds notValidContentIds = getNotPendingDeletion( contentValidity.getNotValidContentIds(), compareResults );
+        final ContentIds notReadyContentIds = getNotPendingDeletion( contentValidity.getNotReadyContentIds(), compareResults );
 
         //sort all dependant content ids
         final ContentIds sortedDependentContentIds =
             dependentContentIds.getSize() > 0 ? sortContentIds( dependentContentIds, "_path" ) : dependentContentIds;
 
-        final ContentIds sortedInvalidContentIds =
-            invalidContentIds.getSize() > 0 ? sortContentIds( invalidContentIds, "_path" ) : invalidContentIds;
+        // Sort all content ids with problems
+        final ContentIds sortedProblematicContentIds =
+            problematicContentIds.getSize() > 0 ? sortContentIds( problematicContentIds, "_path" ) : problematicContentIds;
 
         //Returns the JSON result
         return ResolvePublishContentResultJson.create().
             setRequestedContents( requestedContentIds ).
-            setDependentContents( this.invalidDependantsOnTop( sortedDependentContentIds, requestedContentIds, sortedInvalidContentIds ) ).
+            setDependentContents(
+                this.problematicDependantsOnTop( sortedDependentContentIds, requestedContentIds, sortedProblematicContentIds ) ).
             setRequiredContents( requiredDependantIds ).
             setAllPublishable( isAllPublishable ).
-            setContainsInvalid( !invalidContentIds.isEmpty() ).
+            setAllPendingDelete( isAllPendingDelete ).
+            setContainsInvalid( !notValidContentIds.isEmpty() ).
+            setContainsNotReady( !notReadyContentIds.isEmpty() ).
             build();
     }
 
@@ -624,21 +662,22 @@ public final class ContentResource
             build() ).getContentIds();
     }
 
-    private ContentIds invalidDependantsOnTop( final ContentIds dependentContentIdList, final ContentIds requestedContentIds,
-                                               final ContentIds invalidContentIds )
+    private ContentIds problematicDependantsOnTop( final ContentIds dependentContentIdList, final ContentIds requestedContentIds,
+                                                   final ContentIds problematicContentIds )
     {
-        return ContentIds.from( Stream.concat( invalidContentIds.stream().filter( ( e ) -> !requestedContentIds.contains( e ) ),
+        return ContentIds.from( Stream.concat( problematicContentIds.stream().filter( ( e ) -> !requestedContentIds.contains( e ) ),
                                                dependentContentIdList.stream().filter(
-                                                   ( e ) -> !invalidContentIds.contains( e ) && !requestedContentIds.contains( e ) ) ).
+                                                   ( e ) -> !problematicContentIds.contains( e ) && !requestedContentIds.contains( e ) ) ).
             collect( Collectors.toList() ) );
     }
 
-    private ContentIds getInvalidContent( final CompareContentResults compareResults )
+    private ContentIds getNotPendingDeletion( final ContentIds contentIds, final CompareContentResults compareResults )
     {
-        return contentService.getInvalidContent(
-            ContentIds.from( compareResults.stream().filter( ( result ) -> result.getCompareStatus() != CompareStatus.PENDING_DELETE ).
-                map( CompareContentResult::getContentId ).
-                collect( Collectors.toList() ) ) );
+        return ContentIds.from( compareResults.stream().
+            filter( result -> result.getCompareStatus() != CompareStatus.PENDING_DELETE ).
+            filter( result -> contentIds.contains( result.getContentId() ) ).
+            map( CompareContentResult::getContentId ).
+            collect( Collectors.toList() ) );
     }
 
     @POST

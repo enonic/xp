@@ -14,7 +14,7 @@ please read our docs here: http://xp.readthedocs.org.
 Before trying to build the project, you need to verify that the following software are installed:
 
 * Java 11 for building and running.
-* Gradle 4.x build system.
+* Gradle 5.x build system.
 * Git installed on system.
 
 Build all code and run all tests including integration tests:
@@ -23,7 +23,11 @@ Build all code and run all tests including integration tests:
 
 Build all code skipping all tests:
 
-    gradle build -x test
+    gradle build -x check
+
+Build all code skipping integration tests:
+
+    gradle build -x integrationTest
 
 ## Running
 

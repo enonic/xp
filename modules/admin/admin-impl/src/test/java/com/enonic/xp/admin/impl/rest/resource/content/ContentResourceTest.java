@@ -1,6 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.content;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -18,13 +19,10 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
-import org.mockito.internal.util.reflection.Whitebox;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -107,6 +105,8 @@ import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.ContentValidityParams;
+import com.enonic.xp.content.ContentValidityResult;
 import com.enonic.xp.content.ContentVersion;
 import com.enonic.xp.content.ContentVersionId;
 import com.enonic.xp.content.ContentVersionPublishInfo;
@@ -192,10 +192,10 @@ import static com.enonic.xp.security.acl.Permission.DELETE;
 import static com.enonic.xp.security.acl.Permission.MODIFY;
 import static com.enonic.xp.security.acl.Permission.READ;
 import static java.util.Arrays.asList;
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Matchers.eq;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 
 public class ContentResourceTest
     extends AdminResourceTestSupport
@@ -218,9 +218,6 @@ public class ContentResourceTest
     private RelationshipTypeService relationshipTypeService;
 
     private BinaryExtractor binaryExtractor;
-
-    @Rule
-    public ExpectedException expectedEx = ExpectedException.none();
 
     @Override
     protected ContentResource getResourceInstance()
@@ -618,7 +615,7 @@ public class ContentResourceTest
         assertJson( "batch_content_summary.json", jsonString );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void create_content_exception()
         throws Exception
     {
@@ -626,10 +623,11 @@ public class ContentResourceTest
 
         Mockito.when( contentService.create( Mockito.isA( CreateContentParams.class ) ) ).thenThrow( e );
 
+        assertThrows(IllegalArgumentException.class, () -> {
         request().path( "content/create" ).
             entity( readFromFile( "create_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
-
+        } );
     }
 
     @Test
@@ -661,7 +659,7 @@ public class ContentResourceTest
     }
 
 
-    @Test(expected = ContentNotFoundException.class)
+    @Test
     public void update_content_failure()
         throws Exception
     {
@@ -672,9 +670,11 @@ public class ContentResourceTest
 
         Mockito.when( contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenThrow( e );
 
+        assertThrows(ContentNotFoundException.class, () -> {
         request().path( "content/update" ).
             entity( readFromFile( "update_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
+        } );
     }
 
     @Test
@@ -827,7 +827,7 @@ public class ContentResourceTest
             post();
 
         Mockito.verify( taskService ).submitTask( captor.capture(), Mockito.anyString() );
-        PublishContentJson params = (PublishContentJson) Whitebox.getInternalState( captor.getValue(), "params" );
+        PublishContentJson params = (PublishContentJson) captor.getValue().getParams();
 
         assertEquals( 200, res.getStatus() );
         assertEquals( params.getMessage(), "my message" );
@@ -937,16 +937,17 @@ public class ContentResourceTest
     {
         ContentResource contentResource = getResourceInstance();
 
-        Content content = createContent( "content-id", "content-name", "myapplication:content-type" );
-        content = Content.create( content ).childOrder( ChildOrder.defaultOrder() ).build();
+        Content rootContent = createContent( "content-id", "content-name", "myapplication:content-type" );
+        Content content = Content.create( rootContent ).childOrder( ChildOrder.defaultOrder() ).build();
         Mockito.when( contentService.getById( Mockito.isA( ContentId.class ) ) ).thenReturn( content );
         Mockito.when( contentService.setChildOrder( Mockito.isA( SetContentChildOrderParams.class ) ) ).thenReturn( content );
 
-        expectedEx.expect( WebApplicationException.class );
-        expectedEx.expectMessage( "Not allowed to reorder children manually, current parentOrder = [_ts DESC]" );
+        final WebApplicationException ex = assertThrows(WebApplicationException.class, () -> {
+            contentResource.reorderChildContents(
+                    new ReorderChildrenJson( false, false, content.getId().toString(), null, Lists.newArrayList() ) );
+        });
+        assertEquals( "Not allowed to reorder children manually, current parentOrder = [_ts DESC].", ex.getMessage() );
 
-        contentResource.reorderChildContents(
-            new ReorderChildrenJson( false, false, content.getId().toString(), null, Lists.newArrayList() ) );
     }
 
     @Test
@@ -1099,8 +1100,8 @@ public class ContentResourceTest
         Mockito.when( contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn(
             FindContentIdsByQueryResult.create().contents( ContentIds.from( dependantId ) ).totalHits( 1L ).build() );
 
-        Mockito.doReturn( ContentIds.from( dependantId, requiredId ) ).when( this.contentService ).getInvalidContent(
-            Mockito.isA( ContentIds.class ) );
+        Mockito.doReturn( ContentValidityResult.create().notValidContentIds( ContentIds.from( dependantId, requiredId ) ).build() ).when(
+            this.contentService ).getContentValidity( Mockito.isA( ContentValidityParams.class ) );
 
         String jsonString = request().path( "content/resolvePublishContent" ).
             entity( readFromFile( "resolve_publish_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
@@ -1170,12 +1171,11 @@ public class ContentResourceTest
 
         final BinaryReferences attachmentNames = BinaryReferences.from( "file1.jpg", "file2.txt" );
         class UpdateContentParamsMatcher
-            extends ArgumentMatcher<UpdateContentParams>
+            implements ArgumentMatcher<UpdateContentParams>
         {
-            public boolean matches( Object param )
+            public boolean matches( UpdateContentParams param )
             {
-                final UpdateContentParams upc = (UpdateContentParams) param;
-                return upc.getContentId().equals( content.getId() ) && upc.getRemoveAttachments().equals( attachmentNames );
+                return param.getContentId().equals( content.getId() ) && param.getRemoveAttachments().equals( attachmentNames );
             }
         }
         Mockito.when( contentService.update( argThat( new UpdateContentParamsMatcher() ) ) ).thenReturn( content );
@@ -1550,14 +1550,14 @@ public class ContentResourceTest
     public void getByIds_null()
         throws Exception
     {
-        expectedEx.expect( WebApplicationException.class );
-        expectedEx.expectMessage( "Contents [[content-id1, content-id2]] was not found" );
-
         ContentResource contentResource = getResourceInstance();
 
-        ContentSummaryListJson result =
-            contentResource.getByIds( new ContentIdsJson( Lists.asList( "content-id1", "content-id2", new String[]{} ) ) );
 
+        final WebApplicationException ex = assertThrows(WebApplicationException.class, () -> {
+            ContentSummaryListJson result =
+                    contentResource.getByIds( new ContentIdsJson( Lists.asList( "content-id1", "content-id2", new String[]{} ) ) );
+        });
+        assertEquals("Contents [[content-id1, content-id2]] was not found", ex.getMessage() );
     }
 
     @Test
@@ -1736,6 +1736,19 @@ public class ContentResourceTest
 
         assertTrue( result.contains( new ContentIdJson( content1.getId() ) ) );
         assertEquals( 1, result.size() );
+    }
+
+
+    @Test
+    public void query_highlight()
+        throws Exception
+    {
+        //  Mockito.when( contentService.create( Mockito.isA( CreateContentParams.class ) ) );
+
+        request().path( "content/query" ).
+            entity( readFromFile( "create_media_from_url.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
     }
 
     @Test
@@ -1944,6 +1957,9 @@ public class ContentResourceTest
 
         Mockito.when( securityService.getPrincipal( PrincipalKey.ofAnonymous() ) ).thenReturn( (Optional) Optional.of( User.ANONYMOUS ) );
 
+        final ContentPrincipalsResolver contentPrincipalsResolver = new ContentPrincipalsResolver( securityService );
+        Mockito.when( securityService.getUser( PrincipalKey.ofAnonymous() ) ).thenReturn( Optional.of( User.ANONYMOUS ) );
+
         FindContentVersionsParams params = FindContentVersionsParams.create().contentId( content.getId() ).from( 0 ).size( 10 ).build();
         FindContentVersionsResult getVersionsResult = FindContentVersionsResult.create().contentVersions(
             ContentVersions.create().contentId( content.getId() ).add( contentVersion ).build() ).build();
@@ -1953,7 +1969,7 @@ public class ContentResourceTest
         GetContentVersionsResultJson result =
             contentResource.getContentVersions( new GetContentVersionsJson( 0, 10, content.getId().toString() ) );
 
-        assertEquals( new ContentVersionJson( contentVersion, User.ANONYMOUS ), result.getContentVersions().toArray()[0] );
+        assertEquals( new ContentVersionJson( contentVersion, contentPrincipalsResolver ), result.getContentVersions().toArray()[0] );
 
     }
 
@@ -1977,6 +1993,9 @@ public class ContentResourceTest
 
         Mockito.when( securityService.getPrincipal( PrincipalKey.ofAnonymous() ) ).thenReturn( (Optional) Optional.of( User.ANONYMOUS ) );
 
+        final ContentPrincipalsResolver contentPrincipalsResolver = new ContentPrincipalsResolver( securityService );
+        Mockito.when( securityService.getUser( PrincipalKey.ofAnonymous() ) ).thenReturn( Optional.of( User.ANONYMOUS ) );
+
         Mockito.when( contentService.getActiveVersions( GetActiveContentVersionsParams.create().
             branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
             contentId( content.getId() ).
@@ -1985,7 +2004,7 @@ public class ContentResourceTest
 
         GetActiveContentVersionsResultJson result = contentResource.getActiveVersions( content.getId().toString() );
 
-        assertEquals( new ContentVersionJson( contentVersion, User.ANONYMOUS ),
+        assertEquals( new ContentVersionJson( contentVersion, contentPrincipalsResolver ),
                       ( (ActiveContentVersionEntryJson) result.getActiveContentVersions().toArray()[0] ).getContentVersion() );
     }
 
@@ -2012,6 +2031,9 @@ public class ContentResourceTest
         FindContentVersionsResult getVersionsResult = FindContentVersionsResult.create().contentVersions(
             ContentVersions.create().contentId( content.getId() ).add( contentVersion ).build() ).build();
 
+        final ContentPrincipalsResolver contentPrincipalsResolver = new ContentPrincipalsResolver( securityService );
+        Mockito.when( securityService.getUser( PrincipalKey.ofAnonymous() ) ).thenReturn( Optional.of( User.ANONYMOUS ) );
+
         Mockito.when( contentService.getVersions( params ) ).thenReturn( getVersionsResult );
 
         Mockito.when( contentService.getActiveVersions( GetActiveContentVersionsParams.create().
@@ -2023,8 +2045,8 @@ public class ContentResourceTest
         GetContentVersionsForViewResultJson result =
             contentResource.getContentVersionsForView( new GetContentVersionsJson( 0, 10, content.getId().toString() ) );
 
-        assertEquals( new ContentVersionJson( contentVersion, User.ANONYMOUS ), result.getActiveVersion().getContentVersion() );
-        assertEquals( new ContentVersionViewJson( contentVersion, User.ANONYMOUS,
+        assertEquals( new ContentVersionJson( contentVersion, contentPrincipalsResolver ), result.getActiveVersion().getContentVersion() );
+        assertEquals( new ContentVersionViewJson( contentVersion, contentPrincipalsResolver,
                                                   Collections.singletonList( ContentConstants.BRANCH_DRAFT.toString() ) ),
                       result.getContentVersions().toArray()[0] );
     }
@@ -2183,15 +2205,17 @@ public class ContentResourceTest
         Mockito.verify( contentService ).create( Mockito.isA( CreateMediaParams.class ) );
     }
 
-    @Test(expected = java.net.MalformedURLException.class)
+    @Test
     public void testLoadImageWithMalformedUrl()
         throws Exception
     {
-        final String result = request().
+        assertThrows(MalformedURLException.class, () -> {
+            final String result = request().
             path( "content/createMediaFromUrl" ).
             entity( readFromFile( "create_media_from_url.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post().
             getAsString();
+        } );
     }
 
     private ContentTreeSelectorQueryJson initContentTreeSelectorQueryJson( final ContentPath parentPath )

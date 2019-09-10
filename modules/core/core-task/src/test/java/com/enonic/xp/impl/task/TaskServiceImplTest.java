@@ -18,9 +18,8 @@ import org.elasticsearch.transport.TransportRequestOptions;
 import org.elasticsearch.transport.TransportResponse;
 import org.elasticsearch.transport.TransportResponseHandler;
 import org.elasticsearch.transport.TransportService;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,13 +43,13 @@ import com.enonic.xp.task.TaskNotFoundException;
 import com.enonic.xp.task.TaskProgress;
 import com.enonic.xp.task.TaskState;
 
-import static junit.framework.TestCase.assertEquals;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 
 public class TaskServiceImplTest
-{
-    private final static Logger LOGGER = LoggerFactory.getLogger( TaskServiceImplTest.class );
+        {
+            private final static Logger LOGGER = LoggerFactory.getLogger( TaskServiceImplTest.class );
 
     private TaskServiceImpl taskService;
 
@@ -74,7 +73,7 @@ public class TaskServiceImplTest
 
     private TaskManager taskManager;
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         allTasks = null;
@@ -163,8 +162,8 @@ public class TaskServiceImplTest
         final Thread senderThread = callServiceMethod( () -> taskService.getAllTasks() );
 
         //Checks request sent by TaskService
-        Assert.assertEquals( TaskTransportRequest.Type.ALL, transportRequest.getType() );
-        Assert.assertNull( transportRequest.getTaskId() );
+        assertEquals( TaskTransportRequest.Type.ALL, transportRequest.getType() );
+        assertNull( transportRequest.getTaskId() );
 
         //Mocks the request reception by node1 and node2
         mockReception( taskTransportRequestHandler1, "node1" );
@@ -172,11 +171,11 @@ public class TaskServiceImplTest
 
         //Checks that the service received back the 3 tasks
         senderThread.join( 2000 );
-        Assert.assertNull( transportException );
-        Assert.assertEquals( 3, allTasks.size() );
-        Assert.assertEquals( "task1", allTasks.get( 0 ).getId().toString() );
-        Assert.assertEquals( "Task1 on node1", allTasks.get( 0 ).getDescription() );
-        Assert.assertEquals( TaskState.WAITING, allTasks.get( 0 ).getState() );
+        assertNull( transportException );
+        assertEquals( 3, allTasks.size() );
+        assertEquals( "task1", allTasks.get( 0 ).getId().toString() );
+        assertEquals( "Task1 on node1", allTasks.get( 0 ).getDescription() );
+        assertEquals( TaskState.WAITING, allTasks.get( 0 ).getState() );
     }
 
     @Test
@@ -191,7 +190,7 @@ public class TaskServiceImplTest
 
         //Checks that the service received back the 3 tasks
         senderThread.join( 2000 );
-        Assert.assertNotNull( transportException );
+        assertNotNull( transportException );
     }
 
     @Test
@@ -202,8 +201,8 @@ public class TaskServiceImplTest
         final Thread senderThread = callServiceMethod( () -> taskService.getRunningTasks() );
 
         //Checks request sent by TaskService
-        Assert.assertEquals( TaskTransportRequest.Type.RUNNING, transportRequest.getType() );
-        Assert.assertNull( transportRequest.getTaskId() );
+        assertEquals( TaskTransportRequest.Type.RUNNING, transportRequest.getType() );
+        assertNull( transportRequest.getTaskId() );
 
         //Mocks the request reception by node1 and node2
         mockReception( taskTransportRequestHandler1, "node1" );
@@ -211,11 +210,11 @@ public class TaskServiceImplTest
 
         //Checks that the service received back the 3 tasks
         senderThread.join( 2000 );
-        Assert.assertNull( transportException );
-        Assert.assertEquals( 1, allTasks.size() );
-        Assert.assertEquals( "task3", allTasks.get( 0 ).getId().toString() );
-        Assert.assertEquals( "Task3 on node2", allTasks.get( 0 ).getDescription() );
-        Assert.assertEquals( TaskState.RUNNING, allTasks.get( 0 ).getState() );
+        assertNull( transportException );
+        assertEquals( 1, allTasks.size() );
+        assertEquals( "task3", allTasks.get( 0 ).getId().toString() );
+        assertEquals( "Task3 on node2", allTasks.get( 0 ).getDescription() );
+        assertEquals( TaskState.RUNNING, allTasks.get( 0 ).getState() );
     }
 
     @Test
@@ -226,8 +225,8 @@ public class TaskServiceImplTest
         final Thread senderThread = callServiceMethod( () -> Arrays.asList( taskService.getTaskInfo( TaskId.from( "task2" ) ) ) );
 
         //Checks request sent by TaskService
-        Assert.assertEquals( TaskTransportRequest.Type.BY_ID, transportRequest.getType() );
-        Assert.assertEquals( "task2", transportRequest.getTaskId().toString() );
+        assertEquals( TaskTransportRequest.Type.BY_ID, transportRequest.getType() );
+        assertEquals( "task2", transportRequest.getTaskId().toString() );
 
         //Mocks the request reception by node1 and node2
         mockReception( taskTransportRequestHandler1, "node1" );
@@ -235,11 +234,11 @@ public class TaskServiceImplTest
 
         //Checks that the service received back the 3 tasks
         senderThread.join( 2000 );
-        Assert.assertNull( transportException );
-        Assert.assertEquals( 1, allTasks.size() );
-        Assert.assertEquals( "task2", allTasks.get( 0 ).getId().toString() );
-        Assert.assertEquals( "Task2 on node1", allTasks.get( 0 ).getDescription() );
-        Assert.assertEquals( TaskState.FINISHED, allTasks.get( 0 ).getState() );
+        assertNull( transportException );
+        assertEquals( 1, allTasks.size() );
+        assertEquals( "task2", allTasks.get( 0 ).getId().toString() );
+        assertEquals( "Task2 on node1", allTasks.get( 0 ).getDescription() );
+        assertEquals( TaskState.FINISHED, allTasks.get( 0 ).getState() );
     }
 
     @Test
@@ -265,7 +264,7 @@ public class TaskServiceImplTest
         assertEquals( "123", taskId.toString() );
     }
 
-    @Test(expected = TaskNotFoundException.class)
+    @Test
     public void submitTaskMissing()
     {
         // set up descriptor
@@ -273,10 +272,10 @@ public class TaskServiceImplTest
         Mockito.when( taskDescriptorService.getTasks( app ) ).thenReturn( Descriptors.empty() );
 
         // submit task by name
-        taskService.submitTask( DescriptorKey.from( "myapplication:task1" ), new PropertyTree() );
+        assertThrows(TaskNotFoundException.class, () -> taskService.submitTask( DescriptorKey.from( "myapplication:task1" ), new PropertyTree() ));
     }
 
-    @Test(expected = TaskNotFoundException.class)
+    @Test
     public void submitTaskNoRunExported()
     {
         // set up descriptor
@@ -290,7 +289,7 @@ public class TaskServiceImplTest
         Mockito.when( namedTaskScriptFactory.create( Mockito.eq( descriptor ), Mockito.any() ) ).thenReturn( null );
 
         // submit task by name
-        taskService.submitTask( DescriptorKey.from( "myapplication:task1" ), new PropertyTree() );
+        assertThrows(TaskNotFoundException.class, () -> taskService.submitTask( DescriptorKey.from( "myapplication:task1" ), new PropertyTree() ));
     }
 
     private Thread callServiceMethod( Supplier<List<TaskInfo>> serviceMethod )

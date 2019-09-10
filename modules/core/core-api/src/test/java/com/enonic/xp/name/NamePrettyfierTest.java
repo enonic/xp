@@ -1,8 +1,8 @@
 package com.enonic.xp.name;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class NamePrettyfierTest
 {
@@ -43,22 +43,22 @@ public class NamePrettyfierTest
         assertEquals( "teststuffhere", NamePrettyfier.create( "Test\u0081Stuff\u0082Here\u0083" ) );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void test_ensure_valid_name_empty()
     {
-        assertEquals( "", NamePrettyfier.create( "" ) );
+        assertThrows(IllegalArgumentException.class, () -> assertEquals( "", NamePrettyfier.create( "" ) ));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void test_ensure_valid_name_space()
     {
-        assertEquals( "", NamePrettyfier.create( " " ) );
+        assertThrows(IllegalArgumentException.class, () -> assertEquals( "", NamePrettyfier.create( " " ) ) );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void test_ensure_valid_name_null()
     {
-        assertEquals( "", NamePrettyfier.create( null ) );
+        assertThrows(IllegalArgumentException.class, () -> assertEquals( "", NamePrettyfier.create( null )) );
     }
 
 }

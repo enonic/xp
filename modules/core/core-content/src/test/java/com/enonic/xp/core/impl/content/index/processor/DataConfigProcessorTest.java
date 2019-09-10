@@ -1,7 +1,7 @@
 package com.enonic.xp.core.impl.content.index.processor;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.data.PropertyPath;
@@ -16,7 +16,7 @@ import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 
 import static com.enonic.xp.content.ContentPropertyNames.DATA;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DataConfigProcessorTest
 {
@@ -24,7 +24,7 @@ public class DataConfigProcessorTest
 
     private ContentTypeName contentTypeName;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

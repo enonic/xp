@@ -51,6 +51,29 @@ function argsToStringArray(argsArray) {
     return array;
 }
 
+function isString(value) {
+    return typeof value === 'string' || value instanceof String;
+}
+
+function isObject(value) {
+    return value && typeof value === 'object' && value.constructor === Object;
+}
+
+function prepareGetParams(params, bean) {
+    for (let i = 0; i < params.length; i++) {
+        let param = params[i];
+        if (isString(param)) {
+            bean.add(param);
+        } else if (isObject(param)) {
+            bean.add(required(param, 'key'), nullOrValue(param.versionId));
+        } else if (Array.isArray(param)) {
+            prepareGetParams(param, bean);
+        } else {
+            throw 'Unsupported type';
+        }
+    }
+}
+
 /**
  * Creates a new repo-connection.
  *
@@ -120,12 +143,14 @@ RepoConnection.prototype.modify = function (params) {
  * @example-ref examples/node/get-1.js
  * @example-ref examples/node/get-2.js
  *
- * @param {...(string|string[])} keys to fetch. Each argument could be an id, a path or an array of the two.
+ * @param {...(string|string[]|object|object[])} keys to fetch. Each argument could be an id, a path, an object with key and versionId properties or an array of them.
  *
  * @returns {object} The node or node array (as JSON) fetched from the repository.
  */
 RepoConnection.prototype.get = function (keys) {
-    return __.toNativeObject(this.repoConnection.get(argsToStringArray(arguments)));
+    let handlerParams = __.newBean('com.enonic.xp.lib.node.GetNodeHandlerParams');
+    prepareGetParams(arguments, handlerParams);
+    return __.toNativeObject(this.repoConnection.get(handlerParams));
 };
 
 /**
@@ -259,6 +284,7 @@ RepoConnection.prototype.setChildOrder = function (params) {
  * @param {object} [params.filters] Query filters
  * @param {string} [params.sort='_score DESC'] Sorting expression.
  * @param {string} [params.aggregations] Aggregations expression.
+ * @param {string} [params.highlight] Highlighting parameters.
  * @param {boolean} [params.explain=false] Return score calculation explanation.
  * @returns {object} Result of query.
  */
@@ -269,6 +295,8 @@ RepoConnection.prototype.query = function (params) {
     handlerParams.query = nullOrValue(params.query);
     handlerParams.sort = valueOrDefault(params.sort, "_score DESC");
     handlerParams.aggregations = __.toScriptValue(params.aggregations);
+    handlerParams.suggestions = __.toScriptValue(params.suggestions);
+    handlerParams.highlight = __.toScriptValue(params.highlight);
     handlerParams.filters = __.toScriptValue(params.filters);
     handlerParams.explain = valueOrDefault(params.explain, false);
     return __.toNativeObject(this.repoConnection.query(handlerParams));
@@ -297,6 +325,7 @@ MultiRepoConnection.prototype.query = function (params) {
     handlerParams.query = nullOrValue(params.query);
     handlerParams.sort = valueOrDefault(params.sort, "_score DESC");
     handlerParams.aggregations = __.toScriptValue(params.aggregations);
+    handlerParams.suggestions = __.toScriptValue(params.suggestions);
     handlerParams.filters = __.toScriptValue(params.filters);
     handlerParams.explain = valueOrDefault(params.explain, false);
     return __.toNativeObject(this.multiRepoConnection.query(handlerParams));

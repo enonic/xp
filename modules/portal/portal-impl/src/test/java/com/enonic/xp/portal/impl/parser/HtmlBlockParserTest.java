@@ -1,6 +1,6 @@
 package com.enonic.xp.portal.impl.parser;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
@@ -8,7 +8,7 @@ import com.google.common.io.Resources;
 import com.enonic.xp.portal.impl.rendering.RenderException;
 import com.enonic.xp.portal.postprocess.HtmlTag;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class HtmlBlockParserTest
 {
@@ -122,14 +122,14 @@ public class HtmlBlockParserTest
         assertEquals( StaticHtml.class, blocks.get( 6 ).getClass() );
     }
 
-    @Test(expected = RenderException.class)
+    @Test
     public void testParseInvalidHtml()
         throws Exception
     {
         final String html = readResource( "htmlBlockInvalid.html" );
 
         final HtmlBlockParser parser = new HtmlBlockParser();
-        parser.parse( html );
+        assertThrows(RenderException.class, () -> parser.parse( html ));
     }
 
     private String readResource( final String resourceName )

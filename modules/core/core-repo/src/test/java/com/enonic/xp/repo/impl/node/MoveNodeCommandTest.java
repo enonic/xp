@@ -2,9 +2,8 @@ package com.enonic.xp.repo.impl.node;
 
 import java.util.Iterator;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.CreateNodeParams;
@@ -24,16 +23,15 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MoveNodeCommandTest
-    extends AbstractNodeTest
-{
-    @Before
+        extends AbstractNodeTest
+        {
+            @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 
@@ -92,7 +90,7 @@ public class MoveNodeCommandTest
     }
 
 
-    @Test(expected = MoveNodeException.class)
+    @Test
     public void move_to_child_as_self_not_allowed()
         throws Exception
     {
@@ -102,7 +100,7 @@ public class MoveNodeCommandTest
             setNodeId( NodeId.from( "mynode" ) ).
             build() );
 
-        MoveNodeCommand.create().
+        assertThrows(MoveNodeException.class, () -> MoveNodeCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -110,10 +108,10 @@ public class MoveNodeCommandTest
             newNodeName( NodeName.from( "mynode2" ) ).
             newParent( node.path() ).
             build().
-            execute();
+            execute());
     }
 
-    @Test(expected = MoveNodeException.class)
+    @Test
     public void move_to_child_of_own_child_not_allowed()
         throws Exception
     {
@@ -129,7 +127,7 @@ public class MoveNodeCommandTest
             setNodeId( NodeId.from( "child" ) ).
             build() );
 
-        MoveNodeCommand.create().
+        assertThrows(MoveNodeException.class, () -> MoveNodeCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -137,11 +135,11 @@ public class MoveNodeCommandTest
             newNodeName( NodeName.from( "mynode2" ) ).
             newParent( child.path() ).
             build().
-            execute();
+            execute());
     }
 
 
-    @Test(expected = NodeAlreadyExistAtPathException.class)
+    @Test
     public void move_node_already_exists()
         throws Exception
     {
@@ -162,7 +160,7 @@ public class MoveNodeCommandTest
             parent( newParent.path() ).
             build() );
 
-        MoveNodeCommand.create().
+        assertThrows(NodeAlreadyExistAtPathException.class, () -> MoveNodeCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -170,7 +168,7 @@ public class MoveNodeCommandTest
             newNodeName( NodeName.from( "mynode" ) ).
             newParent( newParent.path() ).
             build().
-            execute();
+            execute());
     }
 
     @Test
@@ -338,7 +336,7 @@ public class MoveNodeCommandTest
         {
             deleteRightChecked = true;
         }
-        Assert.assertTrue( deleteRightChecked );
+        assertTrue( deleteRightChecked );
 
         // Tests the check of the CREATE right on the new parent
         boolean createRightChecked = false;
@@ -357,7 +355,7 @@ public class MoveNodeCommandTest
         {
             createRightChecked = true;
         }
-        Assert.assertTrue( createRightChecked );
+        assertTrue( createRightChecked );
 
         // Tests the correct behaviour if both rights are granted
         MoveNodeCommand.create().
@@ -406,11 +404,11 @@ public class MoveNodeCommandTest
         assertEquals( a2_1.id(), iterator.next() );
     }
 
-    @Test(expected = OperationNotPermittedException.class)
+    @Test
     public void cannot_move_root_node()
         throws Exception
     {
-        doMoveNode( NodePath.create( "/fisk" ).build(), Node.ROOT_UUID );
+        assertThrows(OperationNotPermittedException.class, () -> doMoveNode( NodePath.create( "/fisk" ).build(), Node.ROOT_UUID ));
     }
 
     private void doMoveNode( final NodePath newParent, final NodeId nodeId )

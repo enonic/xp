@@ -18,17 +18,36 @@ var result1 = contentLib.create({
                 f: 3.6,
                 g: true
             }
-        }
+        },
+        siteConfig: [
+            {
+                applicationKey: "appKey1",
+                config: {
+                    a: "a", b: true
+                }
+            }, {
+                applicationKey: "appKey2",
+                config: {
+                    c: 4, d: null
+                }
+            }]
     },
     x: {
         "com-enonic-myapplication": {
             myschema: {
-                a: 1
+                a: 1,
+                b: true
             }
         }
     },
     "attachments": {},
-    "publish": {}
+    "publish": {},
+    "workflow": {
+        "state": "PENDING_APPROVAL",
+        "checks": {
+            "Review by lawyer": "PENDING"
+        }
+    }
 });
 
 log.info('Content created with id ' + result1._id);
@@ -81,18 +100,37 @@ var expected = {
                 "f": 3.6,
                 "g": true
             }
-        }
+        },
+        "siteConfig": [
+            {
+                "applicationKey": "appKey1",
+                "config": {
+                    "a": "a", "b": true
+                }
+            }, {
+                "applicationKey": "appKey2",
+                "config": {
+                    "c": 4
+                }
+            }]
     },
     "x": {
         "com-enonic-myapplication": {
             "myschema": {
-                "a": 1
+                "a": 1,
+                'b': true
             }
         }
     },
     "page": {},
     "attachments": {},
-    "publish": {}
+    "publish": {},
+    "workflow": {
+        "state": "PENDING_APPROVAL",
+        "checks": {
+            "Review by lawyer": "PENDING"
+        }
+    }
 };
 // END
 
@@ -112,5 +150,9 @@ assert.assertJsonEquals({
     "x": {},
     "page": {},
     "attachments": {},
-    "publish": {}
+    "publish": {},
+    "workflow": {
+        "state": "READY",
+        "checks": {}
+    }
 }, result2);

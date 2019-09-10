@@ -7,9 +7,7 @@ import java.util.Locale;
 
 import javax.ws.rs.core.CacheControl;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
@@ -41,8 +39,8 @@ import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_HEIGHT;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_WIDTH;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_PIXEL_SIZE;
 import static com.enonic.xp.media.MediaInfo.MEDIA_INFO_BYTE_SIZE;
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.eq;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.eq;
 
 public class ContentIconResourceTest
     extends AdminResourceTestSupport
@@ -50,9 +48,6 @@ public class ContentIconResourceTest
     private ContentService contentService;
 
     private ImageService imageService;
-
-    @Rule
-    public ExpectedException ex = ExpectedException.none();
 
     @Override
     protected ContentIconResource getResourceInstance()
@@ -182,12 +177,12 @@ public class ContentIconResourceTest
 
         Mockito.when( imageService.readImage( Mockito.isA( ReadImageParams.class ) ) ).thenThrow( new IOException( "io error message" ) );
 
-        ex.expect( IOException.class );
-        ex.expectMessage( "io error message" );
-
-        request().path( "content/icon/content-id" ).
-            queryParam( "contentId", "content-id" ).
-            queryParam( "ts", "2" ).get();
+        final IOException ex = assertThrows(IOException.class, () -> {
+            request().path("content/icon/content-id").
+                    queryParam("contentId", "content-id").
+                    queryParam("ts", "2").get();
+        });
+        assertEquals( "io error message", ex.getMessage());
     }
 
     @Test

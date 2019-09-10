@@ -1,7 +1,7 @@
 package com.enonic.xp.core.impl.media;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
@@ -9,13 +9,13 @@ import com.google.common.collect.Lists;
 import com.enonic.xp.media.MediaTypeProvider;
 import com.enonic.xp.util.MediaTypes;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MediaTypeProviderRegisterTest
 {
     private MediaTypeProviderRegister register;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.register = new MediaTypeProviderRegister();

@@ -3,7 +3,7 @@ package com.enonic.xp.repo.impl.dump.upgrade;
 import java.net.URL;
 import java.util.HashMap;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,7 +13,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.json.JsonToPropertyTreeTranslator;
 import com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageDataUpgrader;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FlattenedPageDataUpgraderTest
 {
@@ -73,7 +73,7 @@ public class FlattenedPageDataUpgraderTest
         final String resource = "/" + getClass().getName().replace( '.', '/' ) + "-" + name + ".json";
         final URL url = getClass().getResource( resource );
 
-        assertNotNull( "File [" + resource + "] not found", url );
+        assertNotNull( url, "File [" + resource + "] not found" );
         return this.mapper.readTree( url );
     }
 }

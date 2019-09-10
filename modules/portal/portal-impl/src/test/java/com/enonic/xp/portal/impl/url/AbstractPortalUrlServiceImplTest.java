@@ -2,7 +2,7 @@ package com.enonic.xp.portal.impl.url;
 
 import java.time.Instant;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 
 import com.enonic.xp.app.Application;
@@ -28,7 +28,7 @@ public abstract class AbstractPortalUrlServiceImplTest
 
     protected StyleDescriptorService styleDescriptorService;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );

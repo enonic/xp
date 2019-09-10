@@ -2,7 +2,7 @@ package com.enonic.xp.repo.impl.elasticsearch;
 
 import java.util.Collection;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
@@ -15,7 +15,7 @@ import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 
 import static com.enonic.xp.repo.impl.TestContext.TEST_BRANCH;
 import static com.enonic.xp.repo.impl.TestContext.TEST_REPOSITORY;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class NodeIndexDocumentFactoryTest
 {

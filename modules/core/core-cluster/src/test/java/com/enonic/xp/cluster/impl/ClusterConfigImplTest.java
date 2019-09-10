@@ -3,13 +3,13 @@ package com.enonic.xp.cluster.impl;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.cluster.NodeDiscovery;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ClusterConfigImplTest
 {

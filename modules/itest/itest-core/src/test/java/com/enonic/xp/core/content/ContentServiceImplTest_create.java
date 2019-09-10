@@ -2,10 +2,9 @@ package com.enonic.xp.core.content;
 
 import java.time.Instant;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.attachment.Attachments;
@@ -14,25 +13,19 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.CreateContentParams;
+import com.enonic.xp.content.WorkflowCheckState;
+import com.enonic.xp.content.WorkflowInfo;
+import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.site.CreateSiteParams;
 import com.enonic.xp.site.SiteConfigs;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ContentServiceImplTest_create
     extends AbstractContentServiceTest
 {
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
-
-    @Override
-    public void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
 
     @Test
     public void create_content_generated_properties()
@@ -149,8 +142,9 @@ public class ContentServiceImplTest_create
             type( ContentTypeName.shortcut() ).
             build();
 
-        exception.expect( IllegalArgumentException.class );
-        this.contentService.create( createContentParams );
+        assertThrows(IllegalArgumentException.class, () -> {
+            this.contentService.create( createContentParams );
+        });
     }
 
     @Test
@@ -175,5 +169,31 @@ public class ContentServiceImplTest_create
         final Content storedContent = this.contentService.getById( content.getId() );
         assertNotNull( storedContent.getPublishInfo() );
         assertNotNull( storedContent.getPublishInfo().getFrom() );
+    }
+
+    @Test
+    public void create_with_workflow_info()
+        throws Exception
+    {
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "This is my content" ).
+            parent( ContentPath.ROOT ).
+            type( ContentTypeName.folder() ).
+            workflowInfo( WorkflowInfo.create().
+                state( WorkflowState.PENDING_APPROVAL ).
+                checks( ImmutableMap.of( "My check", WorkflowCheckState.REJECTED ) ).
+                build() ).
+            build();
+
+        final Content content = this.contentService.create( createContentParams );
+        assertNotNull( content.getWorkflowInfo() );
+        assertEquals( WorkflowState.PENDING_APPROVAL, content.getWorkflowInfo().getState() );
+        assertEquals( ImmutableMap.of( "My check", WorkflowCheckState.REJECTED ), content.getWorkflowInfo().getChecks() );
+
+        final Content storedContent = this.contentService.getById( content.getId() );
+        assertNotNull( storedContent.getWorkflowInfo() );
+        assertEquals( WorkflowState.PENDING_APPROVAL, storedContent.getWorkflowInfo().getState() );
+        assertEquals( ImmutableMap.of( "My check", WorkflowCheckState.REJECTED ), storedContent.getWorkflowInfo().getChecks() );
     }
 }

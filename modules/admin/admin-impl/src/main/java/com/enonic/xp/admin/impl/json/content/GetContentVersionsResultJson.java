@@ -29,8 +29,7 @@ public class GetContentVersionsResultJson
 
         for ( final ContentVersion contentVersion : result.getContentVersions() )
         {
-            this.contentVersions.add(
-                new ContentVersionJson( contentVersion, principalsResolver.findPrincipal( contentVersion.getModifier() ) ) );
+            this.contentVersions.add( new ContentVersionJson( contentVersion, principalsResolver ) );
         }
     }
 

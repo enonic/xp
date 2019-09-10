@@ -1,26 +1,28 @@
 package com.enonic.xp.lib.repo;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.repository.RepositoryExeption;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class DeleteRepositoryHandlerTest
 {
-    @Test(expected = RepositoryExeption.class)
+    @Test
     public void protected_system_repo()
         throws Exception
     {
         final DeleteRepositoryHandler handler = new DeleteRepositoryHandler();
         handler.setRepositoryId( "system-repo" );
-        handler.execute();
+        assertThrows(RepositoryExeption.class, () -> handler.execute());
     }
 
-    @Test(expected = RepositoryExeption.class)
+    @Test
     public void protected_cms_repo()
         throws Exception
     {
         final DeleteRepositoryHandler handler = new DeleteRepositoryHandler();
         handler.setRepositoryId( "com.enonic.cms.default" );
-        handler.execute();
+        assertThrows(RepositoryExeption.class, () -> handler.execute());
     }
 }

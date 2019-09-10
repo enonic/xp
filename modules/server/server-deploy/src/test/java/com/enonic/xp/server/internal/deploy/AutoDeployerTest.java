@@ -2,8 +2,8 @@ package com.enonic.xp.server.internal.deploy;
 
 import java.util.HashMap;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.collect.Maps;
@@ -16,7 +16,7 @@ public class AutoDeployerTest
 
     private ApplicationService service;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.deployer = new AutoDeployer();

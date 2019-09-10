@@ -3,7 +3,7 @@ package com.enonic.xp.admin.impl.rest.resource.schema.xdata;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalAnswers;
 import org.mockito.Mockito;
 

@@ -3,8 +3,8 @@ package com.enonic.xp.portal.impl.url;
 import java.io.IOException;
 import java.net.URL;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -25,12 +25,12 @@ import com.enonic.xp.style.StyleDescriptor;
 import com.enonic.xp.style.StyleDescriptors;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PortalUrlServiceImpl_processHtmlTest
     extends AbstractPortalUrlServiceImplTest
 {
-    @Before
+    @BeforeEach
     public void before()
     {
 

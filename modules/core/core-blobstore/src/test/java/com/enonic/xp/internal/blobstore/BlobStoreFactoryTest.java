@@ -1,6 +1,6 @@
 package com.enonic.xp.internal.blobstore;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.io.ByteSource;
 
@@ -10,7 +10,7 @@ import com.enonic.xp.blob.ProviderConfig;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.internal.blobstore.config.BlobStoreConfig;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BlobStoreFactoryTest
 {

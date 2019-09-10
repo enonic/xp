@@ -2,8 +2,8 @@ package com.enonic.xp.util;
 
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.Gauge;
@@ -14,11 +14,11 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import com.google.common.collect.Maps;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MetricsTest
 {
-    @Before
+    @BeforeEach
     public void setup()
     {
         Metrics.removeAll( MetricsTest.class );

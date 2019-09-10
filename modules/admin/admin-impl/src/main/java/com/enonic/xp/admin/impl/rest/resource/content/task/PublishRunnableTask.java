@@ -25,6 +25,11 @@ public class PublishRunnableTask
         this.params = builder.params;
     }
 
+
+    public PublishContentJson getParams() {
+        return params;
+    }
+
     @Override
     public void run( final TaskId id, final ProgressReporter progressReporter )
     {

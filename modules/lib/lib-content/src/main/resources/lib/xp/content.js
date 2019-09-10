@@ -224,6 +224,7 @@ exports.getChildren = function (params) {
  * @param {string} [params.childOrder] Default ordering of children when doing getChildren if no order is given in query
  * @param {object} params.data Actual content data.
  * @param {object} [params.x] eXtra data to use.
+ * @param {object} [params.workflow] Workflow information to use. Default has state READY and empty check list.
  *
  * @returns {object} Content created as JSON.
  */
@@ -242,6 +243,7 @@ exports.create = function (params) {
     bean.x = __.toScriptValue(params.x);
 
     bean.idGenerator = nullOrValue(params.idGenerator);
+    bean.workflow = __.toScriptValue(params.workflow);
 
     return __.toNativeObject(bean.execute());
 };
@@ -271,6 +273,7 @@ exports.query = function (params) {
     bean.aggregations = __.toScriptValue(params.aggregations);
     bean.contentTypes = __.toScriptValue(params.contentTypes);
     bean.filters = __.toScriptValue(params.filters);
+    bean.highlight = __.toScriptValue(params.highlight);
     return __.toNativeObject(bean.execute());
 };
 

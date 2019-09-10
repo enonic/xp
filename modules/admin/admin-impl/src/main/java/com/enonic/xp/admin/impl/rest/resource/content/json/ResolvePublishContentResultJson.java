@@ -18,6 +18,10 @@ public class ResolvePublishContentResultJson
 
     private final Boolean allPublishable;
 
+    private final Boolean allPendingDelete;
+
+    private final Boolean containsNotReady;
+
     private ResolvePublishContentResultJson( Builder builder )
     {
         requestedContents = builder.requestedContents.stream().map( item -> new ContentIdJson( item ) ).collect( Collectors.toList() );
@@ -25,6 +29,8 @@ public class ResolvePublishContentResultJson
         requiredContents = builder.requiredContents.stream().map( item -> new ContentIdJson( item ) ).collect( Collectors.toList() );
         containsInvalid = builder.containsInvalid;
         allPublishable = builder.allPublishable;
+        allPendingDelete = builder.allPendingDelete;
+        containsNotReady = builder.containsNotReady;
     }
 
     public static Builder create()
@@ -60,6 +66,16 @@ public class ResolvePublishContentResultJson
         return allPublishable;
     }
 
+    public Boolean isAllPendingDelete()
+    {
+        return allPendingDelete;
+    }
+
+    public Boolean getContainsNotReady()
+    {
+        return containsNotReady;
+    }
+
     public static final class Builder
     {
 
@@ -72,6 +88,10 @@ public class ResolvePublishContentResultJson
         private Boolean containsInvalid;
 
         private Boolean allPublishable;
+
+        private Boolean allPendingDelete;
+
+        private Boolean containsNotReady;
 
         private Builder()
         {
@@ -104,6 +124,18 @@ public class ResolvePublishContentResultJson
         public Builder setAllPublishable( final Boolean allPublishable )
         {
             this.allPublishable = allPublishable;
+            return this;
+        }
+
+        public Builder setAllPendingDelete( final Boolean allPendingDelete )
+        {
+            this.allPendingDelete = allPendingDelete;
+            return this;
+        }
+
+        public Builder setContainsNotReady( final Boolean containsNotReady )
+        {
+            this.containsNotReady = containsNotReady;
             return this;
         }
 

@@ -2,8 +2,8 @@ package com.enonic.xp.xml.parser;
 
 import java.util.Iterator;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.FieldSet;
@@ -23,7 +23,7 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.schema.xdata.XDataNames;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class XmlContentTypeParserTest
     extends XmlModelParserTest
@@ -32,7 +32,7 @@ public class XmlContentTypeParserTest
 
     private ContentType.Builder builder;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.parser = new XmlContentTypeParser();

@@ -27,7 +27,9 @@ final class ConfigLoader
         throws Exception
     {
         final Properties props = new Properties();
-        props.load( new FileReader( file ) );
+        try (FileReader reader = new FileReader(file)) {
+            props.load(reader);
+        }
 
         final ConfigBuilder builder = ConfigBuilder.create();
         builder.addAll( props );

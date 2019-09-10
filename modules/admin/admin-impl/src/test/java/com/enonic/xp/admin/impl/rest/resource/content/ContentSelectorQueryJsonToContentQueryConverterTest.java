@@ -7,8 +7,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentSelectorQueryJson;
@@ -29,7 +29,7 @@ import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.Site;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ContentSelectorQueryJsonToContentQueryConverterTest
 {
@@ -40,7 +40,7 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
 
     private final String currentTime = "2013-08-23T12:55:09.162Z";
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         contentService = Mockito.mock( ContentService.class );
@@ -144,7 +144,7 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
         assertEquals( "_path LIKE '/content/parent-path/child-path*'", contentQuery.getQueryExpr().toString() );
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void testNullSiteResolved()
     {
         final Content content = createContent( "content-id", "my-content", ContentTypeName.shortcut() );
@@ -166,7 +166,7 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
             relationshipTypeService( relationshipTypeService ).
             build();
 
-        processor.createQuery();
+        assertThrows(RuntimeException.class, () -> processor.createQuery() );
     }
 
     @Test

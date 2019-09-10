@@ -1,26 +1,26 @@
 package com.enonic.xp.util;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ByteSizeParserTest
 {
     private final long factor = 1024L;
 
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void invalid()
         throws Exception
     {
-        assertTrue( ByteSizeParser.parse( "1xp" ) == 1 );
+        assertThrows(IllegalArgumentException.class, () -> assertTrue( ByteSizeParser.parse( "1xp" ) == 1 ));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void invalid2()
         throws Exception
     {
-        assertTrue( ByteSizeParser.parse( "mb" ) == 1 );
+        assertThrows(IllegalArgumentException.class, () -> assertTrue( ByteSizeParser.parse( "mb" ) == 1 ));
     }
 
     @Test

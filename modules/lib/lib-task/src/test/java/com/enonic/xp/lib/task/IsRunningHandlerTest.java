@@ -3,7 +3,7 @@ package com.enonic.xp.lib.task;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.task.TaskId;
