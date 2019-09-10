@@ -96,10 +96,14 @@ public class RepositoryServiceImplTest
     public void update_data()
             throws Exception
     {
-        PropertyTree data = new PropertyTree();
-        data.setString( "myProp", "a" );
+        PropertyTree initialData = new PropertyTree();
+        initialData.setString( "myProp", "a" );
 
-        final Repository repo = doCreateRepo( "fisk" );
+
+        final Repository repo = doCreateRepo( "fisk", initialData );
+
+        PropertyTree data = new PropertyTree();
+        data.setString( "myProp", "b" );
 
         ADMIN_CONTEXT.callWith( () ->
                 repositoryService.updateRepositoryData( UpdateRepositoryDataParams.create().
@@ -113,7 +117,7 @@ public class RepositoryServiceImplTest
             return this.repositoryService.get( repo.getId() );
         } );
 
-        assertEquals( "a", persistedRepo.getData().getValue().getString( "myProp" ) );
+        assertEquals( "b", persistedRepo.getData().getValue().getString( "myProp" ) );
     }
 
     @Test
@@ -149,6 +153,42 @@ public class RepositoryServiceImplTest
         NodeHelper.runAsAdmin( () -> this.repositoryService.createBranch( CreateBranchParams.from( CTX_DEFAULT.getBranch().toString() ) ) );
         assertNull( getNode( myNode.id() ) );
     }
+
+    @Test
+    public void create_branch_creates_in_repo()
+            throws Exception
+    {
+        doCreateRepo( "fisk" );
+
+        Branch branch = Branch.from( "myBranch" );
+        ADMIN_CONTEXT.callWith( () -> repositoryService.createBranch( CreateBranchParams.from( branch ) ) );
+
+        final Repository persistedRepo = ADMIN_CONTEXT.callWith( () ->
+        {
+            return this.repositoryService.get( RepositoryId.from( "fisk" ) );
+        } );
+        assertTrue( persistedRepo.getBranches().contains( branch ) );
+    }
+
+
+    @Test
+    public void delete_branch_deletes_from_repo()
+            throws Exception
+    {
+        final Repository repo = doCreateRepo( "fisk" );
+
+        Branch branch = Branch.from( "myBranch" );
+        NodeHelper.runAsAdmin( () -> repositoryService.createBranch( CreateBranchParams.from( branch ) ) );
+        NodeHelper.runAsAdmin( () -> repositoryService.deleteBranch( DeleteBranchParams.from( branch ) ) );
+        
+        final Repository persistedRepo = ADMIN_CONTEXT.callWith( () ->
+        {
+            repositoryService.invalidateAll();
+            return this.repositoryService.get( repo.getId() );
+        } );
+        assertFalse( persistedRepo.getBranches().contains( branch ) );
+    }
+
 
     @Test
     public void deleting_repo_invalidates_path_cache()
