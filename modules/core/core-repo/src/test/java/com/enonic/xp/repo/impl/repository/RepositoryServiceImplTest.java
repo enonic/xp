@@ -76,27 +76,10 @@ public class RepositoryServiceImplTest
     }
 
     @Test
-    public void create_with_data()
-        throws Exception
-    {
-        PropertyTree data = new PropertyTree();
-        data.setString( "myProp", "a" );
-        final Repository repo = doCreateRepo( "fisk", data );
-
-        final Repository persistedRepo = getPersistedRepoWithoutCache( "fisk" );
-
-        assertEquals( "a", persistedRepo.getData().getValue().getString( "myProp" ) );
-    }
-
-    @Test
     public void update_data()
         throws Exception
     {
-        PropertyTree initialData = new PropertyTree();
-        initialData.setString( "myProp", "a" );
-
-
-        final Repository repo = doCreateRepo( "fisk", initialData );
+        final Repository repo = doCreateRepo( "fisk" );
 
         Context mockCurrentContext = ContextBuilder.create().
             branch( "master" ).
@@ -218,11 +201,6 @@ public class RepositoryServiceImplTest
 
     private Repository doCreateRepo( final String id )
     {
-        return doCreateRepo( id, null );
-    }
-
-    private Repository doCreateRepo( final String id, PropertyTree data )
-    {
         return ADMIN_CONTEXT.callWith( () -> this.repositoryService.createRepository( CreateRepositoryParams.create().
             repositoryId( RepositoryId.from( id ) ).
             rootPermissions( AccessControlList.create().
@@ -231,16 +209,15 @@ public class RepositoryServiceImplTest
                     allowAll().
                     build() ).
                 build() ).
-            data( RepositoryData.from( data ) ).
             build() ) );
     }
 
-    private Repository getPersistedRepoWithoutCache( String repositoryId )
+    private Repository getPersistedRepoWithoutCache( String id )
     {
         return ADMIN_CONTEXT.callWith( () ->
         {
             repositoryService.invalidateAll();
-            return this.repositoryService.get( RepositoryId.from( repositoryId ) );
+            return this.repositoryService.get( RepositoryId.from( id ) );
         } );
     }
 }

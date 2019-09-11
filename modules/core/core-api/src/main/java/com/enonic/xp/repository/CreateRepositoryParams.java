@@ -1,7 +1,6 @@
 package com.enonic.xp.repository;
 
 import java.util.Objects;
-import java.util.Optional;
 
 import com.google.common.base.Preconditions;
 
@@ -14,8 +13,6 @@ public class CreateRepositoryParams
 
     private final RepositorySettings repositorySettings;
 
-    private final RepositoryData data;
-
     private final AccessControlList rootPermissions;
 
     private final ChildOrder rootChildOrder;
@@ -26,7 +23,6 @@ public class CreateRepositoryParams
         repositorySettings = builder.repositorySettings == null ? RepositorySettings.create().build() : builder.repositorySettings;
         rootPermissions = builder.rootPermissions;
         rootChildOrder = builder.rootChildOrder;
-        this.data = Optional.ofNullable( builder.data ).orElse( RepositoryData.empty() );
     }
 
     public RepositoryId getRepositoryId()
@@ -49,11 +45,6 @@ public class CreateRepositoryParams
         return rootChildOrder;
     }
 
-    public RepositoryData getData()
-    {
-        return data;
-    }
-
     public static Builder create()
     {
         return new Builder();
@@ -72,14 +63,13 @@ public class CreateRepositoryParams
         }
         final CreateRepositoryParams that = (CreateRepositoryParams) o;
         return Objects.equals( repositoryId, that.repositoryId ) && Objects.equals( repositorySettings, that.repositorySettings ) &&
-            Objects.equals( rootPermissions, that.rootPermissions ) && Objects.equals( rootChildOrder, that.rootChildOrder ) &&
-            Objects.equals( data, that.data );
+            Objects.equals( rootPermissions, that.rootPermissions ) && Objects.equals( rootChildOrder, that.rootChildOrder );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( repositoryId, repositorySettings, rootPermissions, rootChildOrder, data );
+        return Objects.hash( repositoryId, repositorySettings, rootPermissions, rootChildOrder );
     }
 
     public static final class Builder
@@ -91,8 +81,6 @@ public class CreateRepositoryParams
         private AccessControlList rootPermissions = RepositoryConstants.DEFAULT_REPO_PERMISSIONS;
 
         private ChildOrder rootChildOrder = RepositoryConstants.DEFAULT_CHILD_ORDER;
-
-        private RepositoryData data;
 
         private Builder()
         {
@@ -125,12 +113,6 @@ public class CreateRepositoryParams
             {
                 this.rootChildOrder = rootChildOrder;
             }
-            return this;
-        }
-
-        public Builder data( final RepositoryData data )
-        {
-            this.data = data;
             return this;
         }
 
