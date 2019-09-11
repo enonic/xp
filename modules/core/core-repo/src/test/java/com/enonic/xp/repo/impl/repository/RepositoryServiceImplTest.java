@@ -83,11 +83,7 @@ public class RepositoryServiceImplTest
         data.setString( "myProp", "a" );
         final Repository repo = doCreateRepo( "fisk" , data);
 
-        final Repository persistedRepo = ADMIN_CONTEXT.callWith( () ->
-        {
-            repositoryService.invalidateAll();
-            return this.repositoryService.get( repo.getId() );
-        } );
+        final Repository persistedRepo = getPersistedRepoWithoutCache( "fisk" );
 
         assertEquals( "a", persistedRepo.getData().getValue().getString( "myProp" )  );
     }
@@ -102,20 +98,22 @@ public class RepositoryServiceImplTest
 
         final Repository repo = doCreateRepo( "fisk", initialData );
 
+        Context mockCurrentContext = ContextBuilder.create().
+            branch( "master" ).
+            repositoryId( "fisk" ).
+            authInfo( REPO_TEST_DEFAULT_USER_AUTHINFO ).
+            build();
+
         PropertyTree data = new PropertyTree();
         data.setString( "myProp", "b" );
 
-        ADMIN_CONTEXT.callWith( () ->
+        mockCurrentContext.callWith( () ->
                 repositoryService.updateRepositoryData( UpdateRepositoryDataParams.create().
                         repositoryId( RepositoryId.from( "fisk" ) ).
                         data( RepositoryData.from( data ) ).
                         build() ) );
 
-        final Repository persistedRepo = ADMIN_CONTEXT.callWith( () ->
-        {
-            repositoryService.invalidateAll();
-            return this.repositoryService.get( repo.getId() );
-        } );
+        final Repository persistedRepo = getPersistedRepoWithoutCache( "fisk" );
 
         assertEquals( "b", persistedRepo.getData().getValue().getString( "myProp" ) );
     }
@@ -161,12 +159,16 @@ public class RepositoryServiceImplTest
         doCreateRepo( "fisk" );
 
         Branch branch = Branch.from( "myBranch" );
-        ADMIN_CONTEXT.callWith( () -> repositoryService.createBranch( CreateBranchParams.from( branch ) ) );
 
-        final Repository persistedRepo = ADMIN_CONTEXT.callWith( () ->
-        {
-            return this.repositoryService.get( RepositoryId.from( "fisk" ) );
-        } );
+        Context mockCurrentContext = ContextBuilder.create().
+            branch( "master" ).
+            repositoryId( "fisk" ).
+            authInfo( REPO_TEST_DEFAULT_USER_AUTHINFO ).
+            build();
+
+        mockCurrentContext.callWith( () -> repositoryService.createBranch( CreateBranchParams.from( branch ) ) );
+
+        final Repository persistedRepo = getPersistedRepoWithoutCache( "fisk" );
         assertTrue( persistedRepo.getBranches().contains( branch ) );
     }
 
@@ -177,15 +179,17 @@ public class RepositoryServiceImplTest
     {
         final Repository repo = doCreateRepo( "fisk" );
 
+        Context mockCurrentContext = ContextBuilder.create().
+            branch( "master" ).
+            repositoryId( "fisk" ).
+            authInfo( REPO_TEST_DEFAULT_USER_AUTHINFO ).
+            build();
+
         Branch branch = Branch.from( "myBranch" );
         NodeHelper.runAsAdmin( () -> repositoryService.createBranch( CreateBranchParams.from( branch ) ) );
         NodeHelper.runAsAdmin( () -> repositoryService.deleteBranch( DeleteBranchParams.from( branch ) ) );
         
-        final Repository persistedRepo = ADMIN_CONTEXT.callWith( () ->
-        {
-            repositoryService.invalidateAll();
-            return this.repositoryService.get( repo.getId() );
-        } );
+        final Repository persistedRepo = getPersistedRepoWithoutCache( "fisk" );
         assertFalse( persistedRepo.getBranches().contains( branch ) );
     }
 
@@ -229,5 +233,13 @@ public class RepositoryServiceImplTest
                 build() ).
             data( RepositoryData.from( data ) ).
             build() ) );
+    }
+
+    private Repository getPersistedRepoWithoutCache( String repositoryId ) {
+        return ADMIN_CONTEXT.callWith( () ->
+        {
+            repositoryService.invalidateAll();
+            return this.repositoryService.get( RepositoryId.from( repositoryId ) );
+        } );
     }
 }
