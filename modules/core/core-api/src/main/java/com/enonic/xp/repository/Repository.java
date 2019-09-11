@@ -42,7 +42,8 @@ public final class Repository
         return branches;
     }
 
-    public RepositoryData getData() {
+    public RepositoryData getData()
+    {
         return data;
     }
 

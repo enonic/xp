@@ -59,7 +59,8 @@ public class RepositoryNodeTranslator
         return toBeEdited -> toBeEdited.data.addString( BRANCHES_KEY, branch.getValue() );
     }
 
-    public static NodeEditor toUpdateDataNodeEditor( RepositoryData data ) {
+    public static NodeEditor toUpdateDataNodeEditor( RepositoryData data )
+    {
         return toBeEdited -> toBeEdited.data.setSet( DATA_KEY, data.getValue().getRoot() );
     }
 
@@ -174,9 +175,10 @@ public class RepositoryNodeTranslator
         return null;
     }
 
-    private static RepositoryData toRepositoryData( final PropertyTree nodeData ) {
+    private static RepositoryData toRepositoryData( final PropertyTree nodeData )
+    {
         PropertySet dataSet = nodeData.getSet( DATA_KEY );
-        if (dataSet != null)
+        if ( dataSet != null )
         {
             return RepositoryData.from( dataSet.toTree() );
         }

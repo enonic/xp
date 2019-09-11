@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.repository;
 
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryData;
 import com.enonic.xp.repository.RepositoryId;

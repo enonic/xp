@@ -77,20 +77,20 @@ public class RepositoryServiceImplTest
 
     @Test
     public void create_with_data()
-            throws Exception
+        throws Exception
     {
         PropertyTree data = new PropertyTree();
         data.setString( "myProp", "a" );
-        final Repository repo = doCreateRepo( "fisk" , data);
+        final Repository repo = doCreateRepo( "fisk", data );
 
         final Repository persistedRepo = getPersistedRepoWithoutCache( "fisk" );
 
-        assertEquals( "a", persistedRepo.getData().getValue().getString( "myProp" )  );
+        assertEquals( "a", persistedRepo.getData().getValue().getString( "myProp" ) );
     }
 
     @Test
     public void update_data()
-            throws Exception
+        throws Exception
     {
         PropertyTree initialData = new PropertyTree();
         initialData.setString( "myProp", "a" );
@@ -108,10 +108,10 @@ public class RepositoryServiceImplTest
         data.setString( "myProp", "b" );
 
         mockCurrentContext.callWith( () ->
-                repositoryService.updateRepositoryData( UpdateRepositoryDataParams.create().
-                        repositoryId( RepositoryId.from( "fisk" ) ).
-                        data( RepositoryData.from( data ) ).
-                        build() ) );
+            repositoryService.updateRepositoryData( UpdateRepositoryDataParams.create().
+                repositoryId( RepositoryId.from( "fisk" ) ).
+                data( RepositoryData.from( data ) ).
+                build() ) );
 
         final Repository persistedRepo = getPersistedRepoWithoutCache( "fisk" );
 
@@ -154,7 +154,7 @@ public class RepositoryServiceImplTest
 
     @Test
     public void create_branch_creates_in_repo()
-            throws Exception
+        throws Exception
     {
         doCreateRepo( "fisk" );
 
@@ -175,7 +175,7 @@ public class RepositoryServiceImplTest
 
     @Test
     public void delete_branch_deletes_from_repo()
-            throws Exception
+        throws Exception
     {
         final Repository repo = doCreateRepo( "fisk" );
 
@@ -188,11 +188,10 @@ public class RepositoryServiceImplTest
         Branch branch = Branch.from( "myBranch" );
         NodeHelper.runAsAdmin( () -> repositoryService.createBranch( CreateBranchParams.from( branch ) ) );
         NodeHelper.runAsAdmin( () -> repositoryService.deleteBranch( DeleteBranchParams.from( branch ) ) );
-        
+
         final Repository persistedRepo = getPersistedRepoWithoutCache( "fisk" );
         assertFalse( persistedRepo.getBranches().contains( branch ) );
     }
-
 
     @Test
     public void deleting_repo_invalidates_path_cache()
@@ -217,7 +216,8 @@ public class RepositoryServiceImplTest
             runWith( () -> createNode( NodePath.ROOT, "fisk" ) );
     }
 
-    private Repository doCreateRepo( final String id ) {
+    private Repository doCreateRepo( final String id )
+    {
         return doCreateRepo( id, null );
     }
 
@@ -235,7 +235,8 @@ public class RepositoryServiceImplTest
             build() ) );
     }
 
-    private Repository getPersistedRepoWithoutCache( String repositoryId ) {
+    private Repository getPersistedRepoWithoutCache( String repositoryId )
+    {
         return ADMIN_CONTEXT.callWith( () ->
         {
             repositoryService.invalidateAll();

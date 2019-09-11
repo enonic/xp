@@ -22,11 +22,14 @@ public class RepositoryData
     }
 
     @Override
-    public boolean equals( Object o ) {
-        if ( this == o ) {
+    public boolean equals( Object o )
+    {
+        if ( this == o )
+        {
             return true;
         }
-        if ( o == null || getClass() != o.getClass() ) {
+        if ( o == null || getClass() != o.getClass() )
+        {
             return false;
         }
         RepositoryData that = (RepositoryData) o;
@@ -34,15 +37,18 @@ public class RepositoryData
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         return Objects.hash( value );
     }
 
-    public static RepositoryData from( PropertyTree value ) {
+    public static RepositoryData from( PropertyTree value )
+    {
         return value == null ? empty() : new RepositoryData( value.copy() );
     }
 
-    public static RepositoryData empty() {
+    public static RepositoryData empty()
+    {
         return new RepositoryData( new PropertyTree() );
     }
 }

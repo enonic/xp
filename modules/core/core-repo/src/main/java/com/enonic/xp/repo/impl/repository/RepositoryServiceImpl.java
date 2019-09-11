@@ -3,7 +3,6 @@ package com.enonic.xp.repo.impl.repository;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentMap;
 
-import com.enonic.xp.repository.*;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -31,6 +30,19 @@ import com.enonic.xp.repo.impl.node.RefreshCommand;
 import com.enonic.xp.repo.impl.repository.event.RepositoryEventListener;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
+import com.enonic.xp.repository.BranchNotFoundException;
+import com.enonic.xp.repository.CreateBranchParams;
+import com.enonic.xp.repository.CreateRepositoryParams;
+import com.enonic.xp.repository.DeleteBranchParams;
+import com.enonic.xp.repository.DeleteRepositoryParams;
+import com.enonic.xp.repository.NodeRepositoryService;
+import com.enonic.xp.repository.Repositories;
+import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repository.RepositoryConstants;
+import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.RepositoryNotFoundException;
+import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.repository.UpdateRepositoryDataParams;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
@@ -111,13 +123,13 @@ public class RepositoryServiceImpl
     }
 
     @Override
-    public Repository updateRepositoryData(final UpdateRepositoryDataParams params)
+    public Repository updateRepositoryData( final UpdateRepositoryDataParams params )
     {
         requireAdminRole();
         final RepositoryId repositoryId = ContextAccessor.current().getRepositoryId();
 
         Repository repository = repositoryMap.compute( repositoryId,
-                ( key, previousRepository ) -> doUpdateRepositoryData( params, repositoryId, previousRepository ) );
+            ( key, previousRepository ) -> doUpdateRepositoryData( params, repositoryId, previousRepository ) );
 
         invalidatePathCache();
 
@@ -126,7 +138,7 @@ public class RepositoryServiceImpl
 
     private Repository doUpdateRepositoryData( final UpdateRepositoryDataParams updateRepositoryDataParams,
                                                final RepositoryId repositoryId,
-                                       Repository previousRepository )
+                                               Repository previousRepository )
     {
         previousRepository = previousRepository == null ? repositoryEntryService.getRepositoryEntry( repositoryId ) : previousRepository;
         if ( previousRepository == null )

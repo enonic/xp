@@ -24,22 +24,26 @@ public final class UpdateRepositoryDataParams
 
 
     @Override
-    public boolean equals( Object o ) {
-        if ( this == o ) {
+    public boolean equals( Object o )
+    {
+        if ( this == o )
+        {
             return true;
         }
 
-        if ( o == null || getClass() != o.getClass() ) {
+        if ( o == null || getClass() != o.getClass() )
+        {
             return false;
         }
 
         UpdateRepositoryDataParams that = (UpdateRepositoryDataParams) o;
         return Objects.equals( repositoryId, that.repositoryId ) &&
-                Objects.equals( data, that.data );
+            Objects.equals( data, that.data );
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         return Objects.hash( repositoryId, data );
     }
 
