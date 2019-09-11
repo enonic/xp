@@ -169,7 +169,7 @@ class RepoDumper
         {
             writer.openVersionsMeta( this.repositoryId );
 
-            dumpedNodes.stream().forEach( ( nodeId ) -> {
+            dumpedNodes.forEach( ( nodeId ) -> {
 
                 final VersionsDumpEntry.Builder builder = VersionsDumpEntry.create( nodeId );
 
@@ -177,7 +177,7 @@ class RepoDumper
 
                 for ( final NodeVersionMetadata metaData : versions.getNodeVersionsMetadata() )
                 {
-                    doStoreVersion( builder, metaData );
+                    doStoreVersion( builder, metaData, this.dumpResult );
                     this.dumpResult.addedVersion();
                 }
 
@@ -224,7 +224,8 @@ class RepoDumper
         }
     }
 
-    private void doStoreVersion( final VersionsDumpEntry.Builder builder, final NodeVersionMetadata metaData )
+    private void doStoreVersion( final VersionsDumpEntry.Builder builder, final NodeVersionMetadata metaData,
+                                 final RepoDumpResult.Builder dumpResult )
     {
         try
         {
@@ -236,7 +237,7 @@ class RepoDumper
         }
         catch ( Exception e )
         {
-            LOG.warn( e.getMessage() );
+            dumpResult.error( DumpError.error( e.getMessage() ) );
         }
     }
 
