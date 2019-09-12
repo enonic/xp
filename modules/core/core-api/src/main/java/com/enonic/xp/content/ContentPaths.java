@@ -2,7 +2,6 @@ package com.enonic.xp.content;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
@@ -52,7 +51,7 @@ public final class ContentPaths
 
     private static ImmutableSet<ContentPath> parsePaths( final Collection<String> paths )
     {
-        return ImmutableSet.copyOf( paths.stream().map( ContentPath::from ).collect( Collectors.toList() ) );
+        return paths.stream().map( ContentPath::from ).collect( ImmutableSet.toImmutableSet() );
     }
 
     public static class Builder
