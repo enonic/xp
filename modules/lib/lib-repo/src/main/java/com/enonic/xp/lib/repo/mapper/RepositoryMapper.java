@@ -14,7 +14,6 @@ import com.enonic.xp.repository.RepositoryData;
 import com.enonic.xp.repository.RepositorySettings;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
-import com.enonic.xp.util.JsonHelper;
 
 public class RepositoryMapper
     implements MapSerializable
@@ -52,7 +51,7 @@ public class RepositoryMapper
     private void serialize( final MapGenerator gen, final RepositoryData repositoryData )
     {
         gen.map( "data" );
-        serialize( gen, JsonHelper.from( repositoryData.getValue() ) );
+        new PropertyTreeMapper( repositoryData.getValue() ).serialize( gen );
         gen.end();
     }
 
