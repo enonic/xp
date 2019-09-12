@@ -50,12 +50,14 @@ final class CreateFragmentCommand
         }
 
         final String name = generateUniqueContentName( params.getParent(), "fragment-" + componentName );
+        final Content parentContent = contentService.getByPath( params.getParent() );
         final CreateContentParams createContent = CreateContentParams.create().
             parent( params.getParent() ).
             displayName( displayName ).
             name( name ).
             type( ContentTypeName.fragment() ).
             contentData( new PropertyTree() ).
+            workflowInfo( parentContent.getWorkflowInfo() ).
             build();
         final Content content = contentService.create( createContent );
 
