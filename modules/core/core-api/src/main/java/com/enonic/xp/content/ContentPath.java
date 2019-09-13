@@ -7,7 +7,6 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 @Beta
 public final class ContentPath
@@ -50,16 +49,19 @@ public final class ContentPath
         return getAncestorPath(1);
     }
 
-    public ContentPath getAncestorPath( final Integer deep )
+    public ContentPath getAncestorPath( final int deep )
     {
-        if ( this.elements.size() < 1 )
+        final int size = this.elements.size();
+
+        if ( size < deep )
         {
             return null;
         }
 
-        final List<String> parentElements = newListOfParentElements( deep );
+        final int subIndex = size - deep;
+        final List<String> parentElements = this.elements.subList( 0, subIndex );
 
-        return parentElements != null ? create().absolute( absolute ).elements( parentElements ).build() : null;
+        return create().absolute( absolute ).elements( parentElements ).build();
     }
 
     public boolean isAbsolute()
@@ -152,21 +154,6 @@ public final class ContentPath
     public String toString()
     {
         return refString;
-    }
-
-    private List<String> newListOfParentElements( final Integer deep )
-    {
-        final List<String> newElements = Lists.newArrayList( this.elements );
-        for ( int count = 0; count < deep; count++ )
-        {
-            if ( !newElements.isEmpty() )
-            {
-                newElements.remove(newElements.size() - 1);
-            } else {
-                return null;
-            }
-        }
-        return newElements;
     }
 
     public static ContentPath from( final String path )
