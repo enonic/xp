@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.Iterator;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
@@ -51,19 +51,18 @@ import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.BinaryReference;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class NodeServiceImplTest
     extends AbstractNodeTest
 {
     private NodeServiceImpl nodeService;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
 
-        super.setUp();
         this.nodeService = new NodeServiceImpl();
         this.nodeService.setIndexServiceInternal( indexServiceInternal );
         this.nodeService.setNodeStorageService( this.storageService );
@@ -89,31 +88,33 @@ public class NodeServiceImplTest
         assertEquals( createdNode, fetchedNode );
     }
 
-    @Test(expected = NodeNotFoundException.class)
+    @Test
     public void get_by_id_non_existing()
         throws Exception
     {
-        this.nodeService.getById( NodeId.from( "a" ) );
+        assertThrows(NodeNotFoundException.class, () -> this.nodeService.getById( NodeId.from( "a" ) ));
     }
 
-    @Test(expected = RepositoryNotFoundException.class)
+    @Test
     public void get_by_id_repo_non_existing()
         throws Exception
     {
-        ContextBuilder.from( ContextAccessor.current() ).
-            repositoryId( "missing-repo" ).
-            build().
-            callWith( () -> this.nodeService.getById( NodeId.from( "a" ) ) );
+        assertThrows(RepositoryNotFoundException.class, () ->
+            ContextBuilder.from(ContextAccessor.current()).
+                    repositoryId("missing-repo").
+                    build().
+                    callWith(() -> this.nodeService.getById(NodeId.from("a")))
+        );
     }
 
-    @Test(expected = BranchNotFoundException.class)
+    @Test
     public void get_by_id_branch_non_existing()
         throws Exception
     {
-        ContextBuilder.from( ContextAccessor.current() ).
+        assertThrows(BranchNotFoundException.class, () -> ContextBuilder.from( ContextAccessor.current() ).
             branch( "missing-branch" ).
             build().
-            callWith( () -> this.nodeService.getById( NodeId.from( "a" ) ) );
+            callWith( () -> this.nodeService.getById( NodeId.from( "a" ) ) ));
     }
 
     @Test
@@ -406,6 +407,32 @@ public class NodeServiceImplTest
         final NodeVersionMetadata firstVersionMetadata3 = versionMetadataIterator3.next();
         assertEquals( nodeCommitId, latestVersionMetadata3.getNodeCommitId() );
         assertEquals( returnedCommitEntry2.getNodeCommitId(), firstVersionMetadata3.getNodeCommitId() );
+    }
+
+    @Test
+    public void testGetByIdAndVersionId()
+    {
+        final Node createdNode = createNode( CreateNodeParams.create().
+            name( "my-node" ).
+            parent( NodePath.ROOT ).
+            build() );
+
+        final Node fetchedNode = this.nodeService.getByIdAndVersionId( createdNode.id(), createdNode.getNodeVersionId());
+
+        assertEquals( createdNode, fetchedNode );
+    }
+
+    @Test
+    public void testGetByPathAndVersionId()
+    {
+        final Node createdNode = createNode( CreateNodeParams.create().
+            name( "my-node" ).
+            parent( NodePath.ROOT ).
+            build() );
+
+        final Node fetchedNode = this.nodeService.getByPathAndVersionId( createdNode.path(), createdNode.getNodeVersionId());
+
+        assertEquals( createdNode, fetchedNode );
     }
 
     private NodeVersionsMetadata getVersionsMetadata( NodeId nodeId )

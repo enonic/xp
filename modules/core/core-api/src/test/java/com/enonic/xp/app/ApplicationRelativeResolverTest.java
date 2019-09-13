@@ -1,13 +1,13 @@
 package com.enonic.xp.app;
 
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ApplicationRelativeResolverTest
 {
@@ -22,11 +22,11 @@ public class ApplicationRelativeResolverTest
         assertEquals( contentTypeName.getLocalName(), "ddd" );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void toContentTypeNameEmpty()
     {
         final ApplicationRelativeResolver resolver = new ApplicationRelativeResolver( null );
-        resolver.toContentTypeName( "aaa" );
+        assertThrows(IllegalArgumentException.class, () -> resolver.toContentTypeName( "aaa" ) );
     }
 
     @Test
@@ -40,11 +40,11 @@ public class ApplicationRelativeResolverTest
         assertEquals( mixinName.getLocalName(), "ddd" );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void toMixinNameEmpty()
     {
         final ApplicationRelativeResolver resolver = new ApplicationRelativeResolver( null );
-        resolver.toMixinName( "aaa" );
+        assertThrows(IllegalArgumentException.class, () -> resolver.toMixinName( "aaa" ) );
     }
 
     @Test
@@ -58,10 +58,10 @@ public class ApplicationRelativeResolverTest
         assertEquals( relationshipTypeName.getLocalName(), "ddd" );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void toRelationshipTypeNameEmpty()
     {
         final ApplicationRelativeResolver resolver = new ApplicationRelativeResolver( null );
-        resolver.toRelationshipTypeName( "aaa" );
+        assertThrows(IllegalArgumentException.class, () ->  resolver.toRelationshipTypeName( "aaa" ) );
     }
 }

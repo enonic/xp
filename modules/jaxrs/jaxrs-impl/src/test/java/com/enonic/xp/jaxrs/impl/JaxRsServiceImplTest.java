@@ -1,7 +1,7 @@
 package com.enonic.xp.jaxrs.impl;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -12,7 +12,7 @@ import com.google.common.collect.Lists;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.web.dispatch.ServletMapping;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class JaxRsServiceImplTest
 {
@@ -20,7 +20,7 @@ public class JaxRsServiceImplTest
 
     private JaxRsServiceImpl service;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.context = Mockito.mock( BundleContext.class );

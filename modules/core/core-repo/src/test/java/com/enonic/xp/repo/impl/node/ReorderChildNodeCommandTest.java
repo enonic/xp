@@ -2,8 +2,8 @@ package com.enonic.xp.repo.impl.node;
 
 import java.util.Iterator;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
@@ -19,16 +19,15 @@ import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ReorderChildNodeCommandTest
     extends AbstractNodeTest
 {
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 
@@ -151,7 +150,7 @@ public class ReorderChildNodeCommandTest
         assertEquals( "c", iterator.next().toString() );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void move_last_missing_order_values()
         throws Exception
     {
@@ -172,7 +171,7 @@ public class ReorderChildNodeCommandTest
         setManualOrderValueToNull( NodeId.from( "e" ) );
         setManualOrderValueToNull( NodeId.from( "f" ) );
 
-        ReorderChildNodeCommand.create().
+        assertThrows(IllegalArgumentException.class, () -> ReorderChildNodeCommand.create().
             parentNode( getNodeById( parentNode.id() ) ).
             nodeToMove( getNodeById( NodeId.from( "c" ) ) ).
             nodeToMoveBefore( getNode( NodeId.from( "f" ) ) ).
@@ -180,8 +179,7 @@ public class ReorderChildNodeCommandTest
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
-            execute();
-        refresh();
+            execute() );
     }
 
     private void setManualOrderValueToNull( final NodeId nodeId )

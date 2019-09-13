@@ -6,9 +6,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.IntStream;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
 
@@ -23,20 +21,11 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.schema.content.ContentTypeName;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ContentServiceImplTest_create_path_integrity_test
     extends AbstractContentServiceTest
 {
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
-
-    @Override
-    public void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
 
     @Test
     public void create()

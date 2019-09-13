@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.SerializationUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableList;
 
@@ -20,7 +20,7 @@ import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Link;
 import com.enonic.xp.util.Reference;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PropertyTreeTest
 {
@@ -143,12 +143,13 @@ public class PropertyTreeTest
         assertSame( myValue, myProp.getValue() );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void given_set_with_existing_property_when_addProperty_with_same_name_but_different_ValueType_then_exception_is_thrown()
     {
         PropertyTree tree = new PropertyTree();
         tree.addProperty( "myProp", ValueFactory.newString( "otherType" ) );
-        tree.addProperty( "myProp", ValueFactory.newBoolean( true ) );
+
+        assertThrows(IllegalArgumentException.class, () -> tree.addProperty( "myProp", ValueFactory.newBoolean( true ) ) );
     }
 
     @Test
@@ -204,18 +205,18 @@ public class PropertyTreeTest
         assertEquals( "myString", newTree.getString( "mySet.myProp" ) );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void adding_root_PropertySet_must_throw_IllegalArgumentException()
     {
         PropertyTree tree = new PropertyTree();
-        tree.addSet( "myProp", tree.getRoot() );
+        assertThrows(IllegalArgumentException.class, () -> tree.addSet( "myProp", tree.getRoot() ) );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void setting_root_PropertySet_must_throw_IllegalArgumentException()
     {
         PropertyTree tree = new PropertyTree();
-        tree.setSet( "myProp", tree.getRoot() );
+        assertThrows(IllegalArgumentException.class, () -> tree.setSet( "myProp", tree.getRoot() ) );
     }
 
     @Test

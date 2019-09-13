@@ -428,6 +428,39 @@ public class NodeStorageServiceImpl
         }
     }
 
+    @Override
+    public Node getNode( final NodeId nodeId, final NodeVersionId nodeVersionId, final InternalContext context )
+    {
+        final NodeVersionMetadata nodeVersionMetadata = versionService.getVersion( nodeId, nodeVersionId, context );
+
+        if ( nodeVersionMetadata == null )
+        {
+            return null;
+        }
+
+        final NodeVersion nodeVersion = nodeVersionService.get( nodeVersionMetadata.getNodeVersionKey(), context );
+
+        if ( nodeVersion == null )
+        {
+            return null;
+        }
+
+        return constructNode( nodeVersion, nodeVersionMetadata );
+    }
+
+    @Override
+    public Node getNode( final NodePath nodePath, final NodeVersionId nodeVersionId, final InternalContext context )
+    {
+        final NodeId nodeId = getIdForPath( nodePath, context );
+
+        if ( nodeId == null )
+        {
+            return null;
+        }
+
+        return getNode( nodeId, nodeVersionId, context );
+    }
+
     private Node doGetNode( final NodeBranchEntry nodeBranchEntry, final InternalContext context )
     {
         if ( nodeBranchEntry == null )
@@ -443,6 +476,13 @@ public class NodeStorageServiceImpl
     private Node constructNode( final NodeBranchEntry nodeBranchEntry, final NodeVersion nodeVersion )
     {
         final Node node = NodeFactory.create( nodeVersion, nodeBranchEntry );
+
+        return canRead( node.getPermissions() ) ? node : null;
+    }
+
+    private Node constructNode( final NodeVersion nodeVersion, final NodeVersionMetadata nodeVersionMetadata )
+    {
+        final Node node = NodeFactory.create( nodeVersion, nodeVersionMetadata );
 
         return canRead( node.getPermissions() ) ? node : null;
     }

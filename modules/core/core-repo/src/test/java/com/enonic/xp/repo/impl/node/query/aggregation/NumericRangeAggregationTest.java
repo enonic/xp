@@ -2,8 +2,8 @@ package com.enonic.xp.repo.impl.node.query.aggregation;
 
 import java.util.Iterator;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.base.Strings;
 
@@ -21,16 +21,15 @@ import com.enonic.xp.query.aggregation.NumericRange;
 import com.enonic.xp.query.aggregation.NumericRangeAggregationQuery;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class NumericRangeAggregationTest
     extends AbstractNodeTest
 {
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 

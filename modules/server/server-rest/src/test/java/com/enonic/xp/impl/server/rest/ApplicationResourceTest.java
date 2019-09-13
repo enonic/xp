@@ -6,9 +6,8 @@ import java.time.Instant;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import com.enonic.xp.web.WebException;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.Version;
 
@@ -23,15 +22,13 @@ import com.enonic.xp.impl.server.rest.model.ApplicationInstalledJson;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
 
-import static org.mockito.Matchers.eq;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.eq;
 
 public class ApplicationResourceTest
     extends ServerRestTestSupport
 {
     private ApplicationService applicationService;
-
-    @Rule
-    public ExpectedException expectedEx = ExpectedException.none();
 
     @Test
     public void install()
@@ -95,10 +92,10 @@ public class ApplicationResourceTest
 
         MultipartForm multipartForm = Mockito.mock( MultipartForm.class );
 
-        expectedEx.expect( RuntimeException.class );
-        expectedEx.expectMessage( "Missing file item" );
-
-        resource.install( multipartForm );
+        final RuntimeException ex = assertThrows(RuntimeException.class, () -> {
+            resource.install( multipartForm );
+        });
+        assertEquals( "Missing file item", ex.getMessage());
     }
 
     @Override

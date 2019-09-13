@@ -1,27 +1,28 @@
 package com.enonic.xp.repo.impl.node;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionDeleteException;
 import com.enonic.xp.node.UpdateNodeParams;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class DeleteVersionCommandTest
     extends AbstractNodeTest
 {
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 
 
-    @Test(expected = NodeVersionDeleteException.class)
+    @Test
     public void not_allowed_to_delete_version_of_node_in_use()
         throws Exception
     {
@@ -29,7 +30,7 @@ public class DeleteVersionCommandTest
 
         refresh();
 
-        doDeleteVersion( node1 );
+        assertThrows(NodeVersionDeleteException.class, () -> doDeleteVersion( node1 ));
     }
 
     @Test

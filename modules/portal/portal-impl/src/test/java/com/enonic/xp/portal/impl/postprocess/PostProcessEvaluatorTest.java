@@ -7,7 +7,7 @@ import java.util.stream.Stream;
 import javax.servlet.http.Cookie;
 
 import org.apache.commons.lang.StringUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
@@ -19,7 +19,7 @@ import com.enonic.xp.portal.postprocess.PostProcessInjection;
 import com.enonic.xp.portal.postprocess.PostProcessInstruction;
 
 import static java.util.stream.Collectors.joining;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PostProcessEvaluatorTest
 {

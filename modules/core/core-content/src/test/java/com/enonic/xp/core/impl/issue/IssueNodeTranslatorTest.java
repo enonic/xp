@@ -3,7 +3,7 @@ package com.enonic.xp.core.impl.issue;
 import java.util.List;
 import java.util.UUID;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
 
@@ -27,7 +27,7 @@ import static com.enonic.xp.core.impl.issue.IssuePropertyNames.INDEX;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.PUBLISH_REQUEST;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.STATUS;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.TITLE;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class IssueNodeTranslatorTest
 {

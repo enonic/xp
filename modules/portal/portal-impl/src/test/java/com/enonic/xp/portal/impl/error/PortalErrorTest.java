@@ -1,11 +1,11 @@
 package com.enonic.xp.portal.impl.error;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.web.HttpStatus;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PortalErrorTest
 {

@@ -3,8 +3,8 @@ package com.enonic.xp.core.impl.content.index.processor;
 import java.util.Arrays;
 import java.util.ListIterator;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.content.ContentId;
@@ -40,7 +40,7 @@ import static com.enonic.xp.core.impl.content.index.processor.PageRegionsConfigP
 import static com.enonic.xp.core.impl.content.index.processor.PageRegionsConfigProcessor.TEXT_COMPONENT_INDEX_CONFIG;
 import static com.enonic.xp.core.impl.content.index.processor.PageRegionsConfigProcessor.VALUE;
 import static java.util.Collections.singletonList;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PageRegionsConfigProcessorTest
 {
@@ -50,7 +50,7 @@ public class PageRegionsConfigProcessorTest
 
     private Form configFormWithHtmlArea;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

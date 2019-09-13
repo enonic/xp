@@ -3,8 +3,8 @@ package com.enonic.xp.core.content;
 import java.time.Instant;
 import java.util.Iterator;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.content.CompareContentParams;
@@ -35,7 +35,7 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.util.Reference;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ContentServiceImplTest_publish
     extends AbstractContentServiceTest
@@ -44,13 +44,6 @@ public class ContentServiceImplTest_publish
     private static final String LINE_SEPARATOR = System.getProperty( "line.separator" );
 
     private Content content1, content2, content1_1, content1_2_offline, content2_1;
-
-    @Override
-    public void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
 
     @Test
     public void push_one_content()
@@ -105,7 +98,7 @@ public class ContentServiceImplTest_publish
         assertEquals( 0, push.getPushedContents().getSize() );
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void push_one_content_not_valid()
         throws Exception
@@ -223,7 +216,7 @@ public class ContentServiceImplTest_publish
     }
 
 
-    @Ignore("This test is not correct; it should not be allowed to exclude parent if new")
+    @Disabled("This test is not correct; it should not be allowed to exclude parent if new")
     @Test
     public void push_exclude_empty()
         throws Exception
@@ -263,7 +256,7 @@ public class ContentServiceImplTest_publish
         assertEquals( 1, result.getPushedContents().getSize() );
     }
 
-    @Ignore("This test is not correct; it should not be allowed to exclude parent if new")
+    @Disabled("This test is not correct; it should not be allowed to exclude parent if new")
     @Test
     public void push_exclude_with_children()
         throws Exception

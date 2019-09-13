@@ -3,8 +3,8 @@ package com.enonic.xp.core.impl.content.index.processor;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.data.PropertyPath;
@@ -24,7 +24,7 @@ import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.schema.xdata.XDatas;
 
 import static com.enonic.xp.content.ContentPropertyNames.EXTRA_DATA;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class XDataConfigProcessorTest
 {
@@ -34,7 +34,7 @@ public class XDataConfigProcessorTest
 
     private ContentTypeName contentTypeName;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

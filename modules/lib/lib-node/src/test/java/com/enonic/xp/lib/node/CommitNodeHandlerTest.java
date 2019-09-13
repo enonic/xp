@@ -2,7 +2,7 @@ package com.enonic.xp.lib.node;
 
 import java.time.Instant;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 
@@ -20,7 +20,7 @@ public class CommitNodeHandlerTest
         Mockito.when( nodeService.getByPaths( Mockito.any() ) ).thenReturn( Nodes.empty() );
 
         final Answer<NodeCommitEntry> answer = invocation -> {
-            final NodeCommitEntry commitEntry = invocation.getArgumentAt( 0, NodeCommitEntry.class );
+            final NodeCommitEntry commitEntry = invocation.getArgument( 0, NodeCommitEntry.class );
             return NodeCommitEntry.create( commitEntry ).
                 nodeCommitId( NodeCommitId.from( "aa1f76bf-4bb9-41be-b166-03561c1555b2" ) ).
                 committer( PrincipalKey.from( "user:system:anonymous" ) ).

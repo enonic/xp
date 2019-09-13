@@ -5,9 +5,7 @@ import java.util.Arrays;
 
 import javax.ws.rs.WebApplicationException;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
@@ -19,15 +17,14 @@ import com.enonic.xp.task.TaskProgress;
 import com.enonic.xp.task.TaskService;
 import com.enonic.xp.task.TaskState;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class TaskResourceTest
     extends AdminResourceTestSupport
 {
     private TaskService taskService;
 
     private TaskResource taskResource;
-
-    @Rule
-    public ExpectedException expectedEx = ExpectedException.none();
 
     @Override
     protected Object getResourceInstance()
@@ -99,10 +96,10 @@ public class TaskResourceTest
     public void getTaskNotFound()
         throws Exception
     {
-        expectedEx.expect( WebApplicationException.class );
-        expectedEx.expectMessage( "Task [123] was not found" );
-
-        taskResource.getTask( "123" );
+        final WebApplicationException ex = assertThrows(WebApplicationException.class, () -> {
+            taskResource.getTask( "123" );
+        });
+        assertEquals( "Task [123] was not found", ex.getMessage());
     }
 
 }

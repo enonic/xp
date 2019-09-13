@@ -2,8 +2,7 @@ package com.enonic.xp.lib.auth;
 
 import java.util.Optional;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.security.EditableGroup;
@@ -14,6 +13,8 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.UpdateGroupParams;
 import com.enonic.xp.testing.ScriptTestSupport;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ModifyGroupHandlerTest
     extends ScriptTestSupport
@@ -57,7 +58,7 @@ public class ModifyGroupHandlerTest
     private Group invokeUpdate( final UpdateGroupParams params )
     {
         final GroupEditor editor = params.getEditor();
-        Assert.assertNotNull( editor );
+        assertNotNull( editor );
 
         final Group group = TestDataFixtures.getTestGroup();
         final EditableGroup editable = new EditableGroup( group );

@@ -6,11 +6,11 @@ import java.util.List;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FilterConfigImplTest
 {
@@ -18,7 +18,7 @@ public class FilterConfigImplTest
 
     private ServletContext servletContext;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         final FilterConfig delegate = Mockito.mock( FilterConfig.class );

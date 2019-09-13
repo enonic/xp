@@ -7,8 +7,8 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 
@@ -20,7 +20,7 @@ import com.enonic.xp.resource.ResourceKeys;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class LocaleServiceImplTest
 {
@@ -28,7 +28,7 @@ public class LocaleServiceImplTest
 
     private ResourceService resourceService;
 
-    @Before
+    @BeforeEach
     public void before()
         throws Exception
     {

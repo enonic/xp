@@ -1086,6 +1086,48 @@ public class ContentServiceImpl
     }
 
     @Override
+    public Content getByIdAndVersionId( final ContentId contentId, final ContentVersionId versionId )
+    {
+        final Trace trace = Tracer.newTrace( "content.getByIdAndVersionId" );
+        if ( trace == null )
+        {
+            return doGetByIdAndVersionId( contentId, versionId );
+        }
+
+        return Tracer.trace( trace, () -> {
+            trace.put( "contentId", contentId );
+            trace.put( "versionId", versionId );
+            final Content content = doGetByIdAndVersionId( contentId, versionId );
+            if ( content != null )
+            {
+                trace.put( "path", content.getPath() );
+            }
+            return content;
+        } );
+    }
+
+    @Override
+    public Content getByPathAndVersionId( final ContentPath contentPath, final ContentVersionId versionId )
+    {
+        final Trace trace = Tracer.newTrace( "content.getByPathAndVersionId" );
+        if ( trace == null )
+        {
+            return doGetByPathAndVersionId( contentPath, versionId );
+        }
+
+        return Tracer.trace( trace, () -> {
+            trace.put( "path", contentPath );
+            trace.put( "versionId", versionId );
+            final Content content = doGetByPathAndVersionId( contentPath, versionId );
+            if ( content != null )
+            {
+                trace.put( "contentId", content.getId() );
+            }
+            return content;
+        } );
+    }
+
+    @Override
     @Deprecated
     public InputStream getBinaryInputStream( final ContentId contentId, final BinaryReference binaryReference )
     {
@@ -1098,6 +1140,32 @@ public class ContentServiceImpl
             e.printStackTrace();
         }
         return null;
+    }
+
+    private Content doGetByIdAndVersionId( final ContentId contentId, final ContentVersionId versionId )
+    {
+        return GetContentByIdAndVersionIdCommand.create().
+            contentId( contentId ).
+            versionId( versionId ).
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            translator( this.translator ).
+            eventPublisher( this.eventPublisher ).
+            build().
+            execute();
+    }
+
+    private Content doGetByPathAndVersionId( final ContentPath contentPath, final ContentVersionId versionId )
+    {
+        return GetContentByPathAndVersionIdCommand.create().
+            contentPath( contentPath ).
+            versionId( versionId ).
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            translator( this.translator ).
+            eventPublisher( this.eventPublisher ).
+            build().
+            execute();
     }
 
     @Reference

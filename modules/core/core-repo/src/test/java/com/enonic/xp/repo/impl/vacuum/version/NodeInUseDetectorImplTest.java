@@ -1,7 +1,7 @@
 package com.enonic.xp.repo.impl.vacuum.version;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.branch.Branch;
@@ -15,7 +15,7 @@ import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class NodeInUseDetectorImplTest
 {
@@ -23,7 +23,7 @@ public class NodeInUseDetectorImplTest
 
     private RepositoryService repositoryService;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

@@ -1,8 +1,9 @@
 package com.enonic.xp.support;
 
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class AbstractEqualsTest
 {
@@ -28,7 +29,7 @@ public abstract class AbstractEqualsTest
 
         for ( Object unequal : getObjectsThatNotEqualsX() )
         {
-            Assert.assertTrue( "expected to be unequal", !x.equals( unequal ) );
+            assertTrue( !x.equals( unequal ), "expected to be unequal" );
         }
     }
 
@@ -40,7 +41,7 @@ public abstract class AbstractEqualsTest
     {
         // positive test
         Object x = getObjectX();
-        Assert.assertTrue( "reflexive equals", x.equals( x ) );
+        assertTrue( x.equals( x ), "reflexive equals" );
     }
 
     /**
@@ -51,11 +52,11 @@ public abstract class AbstractEqualsTest
         Object x = getObjectX();
         Object y = getObjectThatEqualsXButNotTheSame();
 
-        Assert.assertTrue( "symmetric equals", ( x.equals( y ) && y.equals( x ) ) );
+        assertTrue( ( x.equals( y ) && y.equals( x ) ), "symmetric equals" );
 
         // negative test
         Object unequalToX = getObjectsThatNotEqualsX()[0];
-        Assert.assertTrue( "reflexive equals", !x.equals( unequalToX ) && !unequalToX.equals( x ) );
+        assertTrue( !x.equals( unequalToX ) && !unequalToX.equals( x ), "reflexive equals" );
     }
 
     /**
@@ -68,7 +69,7 @@ public abstract class AbstractEqualsTest
         Object y = getObjectThatEqualsXButNotTheSame();
         Object z = getObjectThatEqualsXButNotTheSame2();
 
-        Assert.assertTrue( "symmetric equals", ( x.equals( y ) && y.equals( z ) ) && x.equals( z ) );
+        assertTrue( ( x.equals( y ) && y.equals( z ) ) && x.equals( z ), "symmetric equals" );
     }
 
     /**
@@ -83,13 +84,13 @@ public abstract class AbstractEqualsTest
         boolean firstCheck = x.equals( y );
         boolean secondCheck = x.equals( y );
 
-        Assert.assertTrue( "consistent equals", firstCheck && secondCheck );
+        assertTrue( firstCheck && secondCheck , "consistent equals");
 
         Object unequalToX = getObjectsThatNotEqualsX()[0];
         firstCheck = x.equals( unequalToX );
         secondCheck = x.equals( unequalToX );
 
-        Assert.assertTrue( "consistent equals", !firstCheck && !secondCheck );
+        assertTrue( !firstCheck && !secondCheck, "consistent equals" );
     }
 
     private void assertHashCodeContract()
@@ -102,13 +103,13 @@ public abstract class AbstractEqualsTest
         Object x = getObjectX();
         Object y = getObjectThatEqualsXButNotTheSame();
 
-        Assert.assertTrue( "consistent hashCode", x.hashCode() == x.hashCode() );
-        Assert.assertTrue( "hashCode produces same hash when objects are equal", x.hashCode() == y.hashCode() );
+        assertTrue( x.hashCode() == x.hashCode(), "consistent hashCode" );
+        assertTrue( x.hashCode() == y.hashCode(), "hashCode produces same hash when objects are equal" );
 
         boolean firstCheck = x.hashCode() == y.hashCode();
         boolean secondCheck = x.hashCode() == y.hashCode();
 
-        Assert.assertTrue( "hashCode produces same hash when objects are equal consistently", firstCheck && secondCheck );
+        assertTrue( firstCheck && secondCheck, "hashCode produces same hash when objects are equal consistently" );
     }
 
 

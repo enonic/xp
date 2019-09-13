@@ -2,7 +2,7 @@ package com.enonic.xp.core.impl.schema.content;
 
 import java.util.ArrayList;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.schema.content.ContentType;
@@ -12,7 +12,7 @@ import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.content.validator.ContentTypeValidationError;
 import com.enonic.xp.schema.content.validator.ContentTypeValidationResult;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SuperTypeValidatorTest
 {

@@ -1,4 +1,4 @@
-var assert = Java.type('org.junit.Assert');
+var assert = Java.type('org.junit.jupiter.api.Assertions');
 
 require('other/resolve-in-require').test();
 require('other/resolve-in-require').test();

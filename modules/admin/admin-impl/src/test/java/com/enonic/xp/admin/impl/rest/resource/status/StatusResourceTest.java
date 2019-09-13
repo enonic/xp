@@ -3,7 +3,7 @@ package com.enonic.xp.admin.impl.rest.resource.status;
 import java.util.Map;
 import java.util.Properties;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.collect.Maps;

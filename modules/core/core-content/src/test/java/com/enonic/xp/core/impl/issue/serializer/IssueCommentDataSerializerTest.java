@@ -3,8 +3,8 @@ package com.enonic.xp.core.impl.issue.serializer;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.issue.CreateIssueCommentParams;
@@ -17,7 +17,7 @@ import static com.enonic.xp.core.impl.issue.IssueCommentPropertyNames.CREATED_TI
 import static com.enonic.xp.core.impl.issue.IssueCommentPropertyNames.CREATOR;
 import static com.enonic.xp.core.impl.issue.IssueCommentPropertyNames.CREATOR_DISPLAY_NAME;
 import static com.enonic.xp.core.impl.issue.IssueCommentPropertyNames.TEXT;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class IssueCommentDataSerializerTest
 {
@@ -28,7 +28,7 @@ public class IssueCommentDataSerializerTest
 
     private Instant createdTime;
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         serializer = new IssueCommentDataSerializer();

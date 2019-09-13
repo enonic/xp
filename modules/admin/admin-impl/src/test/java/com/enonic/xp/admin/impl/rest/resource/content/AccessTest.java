@@ -1,6 +1,6 @@
 package com.enonic.xp.admin.impl.rest.resource.content;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.enonic.xp.security.acl.Permission.CREATE;
 import static com.enonic.xp.security.acl.Permission.DELETE;
@@ -10,7 +10,7 @@ import static com.enonic.xp.security.acl.Permission.READ;
 import static com.enonic.xp.security.acl.Permission.READ_PERMISSIONS;
 import static com.enonic.xp.security.acl.Permission.WRITE_PERMISSIONS;
 import static java.util.Arrays.asList;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AccessTest
 {

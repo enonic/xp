@@ -3,8 +3,8 @@ package com.enonic.xp.web.jetty.impl;
 import javax.servlet.Filter;
 import javax.servlet.http.HttpServlet;
 
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -18,7 +18,7 @@ public abstract class JettyTestSupport
 
     protected String baseUrl;
 
-    @Before
+    @BeforeEach
     public final void startServer()
         throws Exception
     {
@@ -39,7 +39,7 @@ public abstract class JettyTestSupport
         // Do nothing
     }
 
-    @After
+    @AfterEach
     public final void stopServer()
         throws Exception
     {

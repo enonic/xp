@@ -9,8 +9,8 @@ import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.FeatureContext;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 public class RoleBasedSecurityFeatureTest
@@ -69,7 +69,7 @@ public class RoleBasedSecurityFeatureTest
 
     private RoleBasedSecurityFeature feature;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.info = Mockito.mock( ResourceInfo.class );

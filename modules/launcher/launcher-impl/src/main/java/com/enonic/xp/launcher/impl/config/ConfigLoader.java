@@ -1,6 +1,7 @@
 package com.enonic.xp.launcher.impl.config;
 
 import java.io.File;
+import java.io.Reader;
 import java.net.URL;
 import java.util.Map;
 import java.util.Properties;
@@ -65,7 +66,9 @@ public final class ConfigLoader
         throws Exception
     {
         final Properties props = new Properties();
-        props.load( source.openStream() );
+        try (Reader reader = source.openStream()) {
+            props.load(reader);
+        }
 
         ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
         for ( String propertyName : props.stringPropertyNames() )

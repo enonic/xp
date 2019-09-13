@@ -2,9 +2,8 @@ package com.enonic.xp.repo.impl.node;
 
 import java.util.Objects;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
@@ -23,16 +22,15 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SetNodeChildOrderCommandTest
     extends AbstractNodeTest
 {
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 
@@ -108,8 +106,8 @@ public class SetNodeChildOrderCommandTest
         {
             final Node currentNode = getNode( n );
 
-            assertTrue( "Wrong orderValue, previousOrderValue = " + previousOrderValue + ", current = " + currentNode.getManualOrderValue(),
-                        previousOrderValue == null || currentNode.getManualOrderValue() > previousOrderValue );
+            assertTrue( previousOrderValue == null || currentNode.getManualOrderValue() > previousOrderValue ,
+                    "Wrong orderValue, previousOrderValue = " + previousOrderValue + ", current = " + currentNode.getManualOrderValue());
 
             previousOrderValue = currentNode.getManualOrderValue();
         }
@@ -142,11 +140,11 @@ public class SetNodeChildOrderCommandTest
             final Node currentNode = getNode( n );
 
             final boolean largerThanPreviousName = previousName.compareTo( currentNode.name().toString() ) < 0;
-            assertTrue( "Wrong value, previousValue = " + previousName + ", current = " + currentNode.name(),
-                        Objects.equals( previousName, "" ) || largerThanPreviousName );
+            assertTrue( Objects.equals( previousName, "" ) || largerThanPreviousName ,
+                    "Wrong value, previousValue = " + previousName + ", current = " + currentNode.name());
 
-            assertTrue( "Wrong orderValue, previousOrderValue = " + previousOrderValue + ", current = " + currentNode.getManualOrderValue(),
-                        previousOrderValue == null || currentNode.getManualOrderValue() < previousOrderValue );
+            assertTrue( previousOrderValue == null || currentNode.getManualOrderValue() < previousOrderValue,
+                    "Wrong orderValue, previousOrderValue = " + previousOrderValue + ", current = " + currentNode.getManualOrderValue());
 
             previousOrderValue = currentNode.getManualOrderValue();
 
@@ -182,7 +180,7 @@ public class SetNodeChildOrderCommandTest
         {
             createRightChecked = true;
         }
-        Assert.assertTrue( createRightChecked );
+        assertTrue( createRightChecked );
 
         // Tests the correct behaviour if the right is granted
         setChildOrder( createGrantedNode, ChildOrder.create().add(

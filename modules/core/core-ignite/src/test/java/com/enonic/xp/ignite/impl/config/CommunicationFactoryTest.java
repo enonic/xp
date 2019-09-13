@@ -1,18 +1,18 @@
 package com.enonic.xp.ignite.impl.config;
 
 import org.apache.ignite.spi.communication.tcp.TcpCommunicationSpi;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CommunicationFactoryTest
 {
 
     private IgniteSettings igniteSettings;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

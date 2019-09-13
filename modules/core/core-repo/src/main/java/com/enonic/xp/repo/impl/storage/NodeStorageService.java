@@ -77,4 +77,9 @@ public interface NodeStorageService
     void handleNodeMoved( final NodeMovedParams params, final InternalContext context );
 
     void handleNodePushed( final NodeId nodeId, final NodePath nodePath, final NodePath currentTargetPath, InternalContext nodeContext );
+
+    Node getNode(final NodeId nodeId, final NodeVersionId nodeVersionId, final InternalContext context);
+
+    Node getNode(final NodePath nodePath, final NodeVersionId nodeVersionId, final InternalContext context);
+
 }

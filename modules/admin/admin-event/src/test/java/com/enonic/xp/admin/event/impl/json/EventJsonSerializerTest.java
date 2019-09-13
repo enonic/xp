@@ -2,8 +2,8 @@ package com.enonic.xp.admin.event.impl.json;
 
 import java.net.URL;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleEvent;
@@ -17,7 +17,7 @@ import com.google.common.io.Resources;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.json.ObjectMapperHelper;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EventJsonSerializerTest
 {
@@ -25,7 +25,7 @@ public class EventJsonSerializerTest
 
     private BundleEvent bundleEvent;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.serializer = new EventJsonSerializer();

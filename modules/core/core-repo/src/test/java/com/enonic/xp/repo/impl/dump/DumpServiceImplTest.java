@@ -2,17 +2,17 @@ package com.enonic.xp.repo.impl.dump;
 
 import java.io.File;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Instant;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 
 import com.google.common.collect.ImmutableMap;
@@ -91,39 +91,37 @@ import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.Reference;
 import com.enonic.xp.util.Version;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DumpServiceImplTest
     extends AbstractNodeTest
 {
-    @Rule
-    public final TemporaryFolder tempFolder = new TemporaryFolder();
-
     private DumpServiceImpl dumpService;
 
-    @Override
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.dumpService = new DumpServiceImpl();
         this.dumpService.setBlobStore( this.blobStore );
         this.dumpService.setNodeService( this.nodeService );
         this.dumpService.setRepositoryService( this.repositoryService );
-        this.dumpService.setBasePath( tempFolder.getRoot().toPath() );
+        this.dumpService.setBasePath( temporaryFolder.toFile().toPath() );
         final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
         Mockito.when( applicationService.getInstalledApplications() ).thenReturn( Applications.empty() );
         this.dumpService.setApplicationService( applicationService );
     }
 
-    @Test(expected = RepoDumpException.class)
+    @Test
     public void admin_role_required()
         throws Exception
     {
-        doDump( SystemDumpParams.create().
-            dumpName( "testDump" ).
-            build() );
+        assertThrows(RepoDumpException.class, () -> {
+            doDump(SystemDumpParams.create().
+                    dumpName("testDump").
+                    build());
+
+        } );
     }
 
     @Test
@@ -732,7 +730,7 @@ public class DumpServiceImplTest
             Mockito.verify( upgradeListener, Mockito.times( 8 ) ).upgraded();
             Mockito.verify( upgradeListener, Mockito.times( 1 ) ).total( 8 );
 
-            FileDumpReader reader = new FileDumpReader( tempFolder.getRoot().toPath(), dumpName, null );
+            FileDumpReader reader = new FileDumpReader( temporaryFolder.toFile().toPath(), dumpName, null );
             final DumpMeta updatedMeta = reader.getDumpMeta();
             assertEquals( DumpConstants.MODEL_VERSION, updatedMeta.getModelVersion() );
         } );
@@ -752,7 +750,7 @@ public class DumpServiceImplTest
                 includeVersions( true ).
                 build() );
 
-            FileDumpReader reader = new FileDumpReader( tempFolder.getRoot().toPath(), dumpName, null );
+            FileDumpReader reader = new FileDumpReader( temporaryFolder.toFile().toPath(), dumpName, null );
             final DumpMeta updatedMeta = reader.getDumpMeta();
             assertEquals( DumpConstants.MODEL_VERSION, updatedMeta.getModelVersion() );
 
@@ -913,9 +911,9 @@ public class DumpServiceImplTest
         assertEquals( 2, Iterables.size( postProcessedReferences ) );
 
         final String postValue = postNode.data().getString( "data.post" );
-        Assert.assertTrue( postValue.contains( "<figure class=\"editor-align-justify\">" ) );
-        Assert.assertTrue( postValue.contains( "<figure class=\"editor-align-justify editor-style-original\">" ) );
-        Assert.assertTrue( postValue.contains( "src=\"media://cf09fe7a-1be9-46bb-ad84-87ba69630cb7\"" ) );
+        assertTrue( postValue.contains( "<figure class=\"editor-align-justify\">" ) );
+        assertTrue( postValue.contains( "<figure class=\"editor-align-justify editor-style-original\">" ) );
+        assertTrue( postValue.contains( "src=\"media://cf09fe7a-1be9-46bb-ad84-87ba69630cb7\"" ) );
     }
 
     private void checkLanguageUpgrade( final Node draftNode )
@@ -951,7 +949,7 @@ public class DumpServiceImplTest
             getResource( "/dumps/dump-6-15-5" ).
             toURI();
         final File oldDumpFile = new File( oldDumpUri );
-        final File tmpDumpFile = tempFolder.newFolder( dumpName );
+        final File tmpDumpFile = Files.createDirectory( this.temporaryFolder.resolve( dumpName ) ).toFile();
         FileUtils.copyDirectory( oldDumpFile, tmpDumpFile );
         return tmpDumpFile;
     }

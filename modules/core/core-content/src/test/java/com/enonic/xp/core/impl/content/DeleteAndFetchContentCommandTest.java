@@ -1,7 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.branch.Branch;
@@ -28,7 +28,7 @@ import com.enonic.xp.node.SetNodeStateParams;
 import com.enonic.xp.node.SetNodeStateResult;
 import com.enonic.xp.schema.content.ContentTypeService;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DeleteAndFetchContentCommandTest
 {
@@ -40,7 +40,7 @@ public class DeleteAndFetchContentCommandTest
 
     private ContentTypeService contentTypeService;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
