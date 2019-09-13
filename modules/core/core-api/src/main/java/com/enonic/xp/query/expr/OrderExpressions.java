@@ -1,11 +1,9 @@
 package com.enonic.xp.query.expr;
 
 import java.util.Collection;
-import java.util.List;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
@@ -40,7 +38,7 @@ public class OrderExpressions
 
     public static class Builder
     {
-        final List<OrderExpr> orderExprs = Lists.newLinkedList();
+        final ImmutableList.Builder<OrderExpr> orderExprs = ImmutableList.builder();
 
         public Builder add( final OrderExpr orderExpr )
         {
@@ -50,7 +48,7 @@ public class OrderExpressions
 
         public OrderExpressions build()
         {
-            return new OrderExpressions( ImmutableList.copyOf( this.orderExprs ) );
+            return new OrderExpressions( this.orderExprs.build() );
         }
 
     }

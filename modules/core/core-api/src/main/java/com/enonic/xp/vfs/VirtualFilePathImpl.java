@@ -2,13 +2,13 @@ package com.enonic.xp.vfs;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 
 class VirtualFilePathImpl
     implements VirtualFilePath
@@ -17,7 +17,7 @@ class VirtualFilePathImpl
 
     final boolean absolute;
 
-    final LinkedList<String> elements;
+    final List<String> elements;
 
     private VirtualFilePathImpl( final Builder builder )
     {
@@ -37,15 +37,15 @@ class VirtualFilePathImpl
         this.elements = resolvePathElements( path.toString(), path.getFileSystem().getSeparator() );
     }
 
-    VirtualFilePathImpl( final LinkedList<String> elements, final boolean absolute )
+    VirtualFilePathImpl( final List<String> elements, final boolean absolute )
     {
         this.absolute = absolute;
         this.elements = elements;
     }
 
-    static LinkedList<String> resolvePathElements( final String path, final String separator )
+    static List<String> resolvePathElements( final String path, final String separator )
     {
-        final LinkedList<String> elements = Lists.newLinkedList();
+        final List<String> elements = new ArrayList<>();
 
         final String[] elementArray = path.split( Pattern.quote( separator ) );
 
@@ -102,7 +102,7 @@ class VirtualFilePathImpl
     }
 
     @Override
-    public LinkedList<String> getElements()
+    public List<String> getElements()
     {
         return elements;
     }
@@ -110,7 +110,7 @@ class VirtualFilePathImpl
     @Override
     public String getName()
     {
-        return this.elements.getLast();
+        return this.elements.get(this.elements.size() - 1);
     }
 
     @Override
@@ -170,7 +170,7 @@ class VirtualFilePathImpl
 
     private static class Builder
     {
-        private final LinkedList<String> elements = Lists.newLinkedList();
+        private final List<String> elements = new ArrayList<>();
 
         private boolean absolute;
 
@@ -180,7 +180,7 @@ class VirtualFilePathImpl
             return this;
         }
 
-        public Builder addAll( final LinkedList<String> elements )
+        public Builder addAll( final List<String> elements )
         {
             this.elements.addAll( elements );
             return this;

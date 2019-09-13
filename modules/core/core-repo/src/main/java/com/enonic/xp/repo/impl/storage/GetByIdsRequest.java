@@ -1,12 +1,11 @@
 package com.enonic.xp.repo.impl.storage;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 public class GetByIdsRequest
 {
-    private final List<GetByIdRequest> requests = Lists.newLinkedList();
+    private final List<GetByIdRequest> requests = new ArrayList<>();
 
     public GetByIdsRequest add( final GetByIdRequest request )
     {

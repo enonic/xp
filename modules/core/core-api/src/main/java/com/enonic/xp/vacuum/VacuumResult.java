@@ -2,7 +2,7 @@ package com.enonic.xp.vacuum;
 
 import java.util.List;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableList;
 
 public class VacuumResult
 {
@@ -10,7 +10,7 @@ public class VacuumResult
 
     private VacuumResult( final Builder builder )
     {
-        results = builder.results;
+        results = builder.results.build();
     }
 
     public List<VacuumTaskResult> getResults()
@@ -25,7 +25,7 @@ public class VacuumResult
 
     public static final class Builder
     {
-        private final List<VacuumTaskResult> results = Lists.newLinkedList();
+        private final ImmutableList.Builder<VacuumTaskResult> results = ImmutableList.builder();
 
         private Builder()
         {
