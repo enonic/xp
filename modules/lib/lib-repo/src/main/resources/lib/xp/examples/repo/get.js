@@ -19,7 +19,8 @@ var expected = {
     "branches": [
         "master"
     ],
-    settings: {}
+    settings: {},
+    data: {}
 };
 // END
 assert.assertJsonEquals(expected, result);

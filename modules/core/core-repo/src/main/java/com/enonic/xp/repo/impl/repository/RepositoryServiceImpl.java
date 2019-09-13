@@ -42,6 +42,7 @@ import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryNotFoundException;
 import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.repository.UpdateRepositoryDataParams;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
@@ -119,6 +120,33 @@ public class RepositoryServiceImpl
         final Repository repository = createRepositoryObject( params );
         repositoryEntryService.createRepositoryEntry( repository );
         return repository;
+    }
+
+    @Override
+    public Repository updateRepositoryData( final UpdateRepositoryDataParams params )
+    {
+        requireAdminRole();
+        final RepositoryId repositoryId = ContextAccessor.current().getRepositoryId();
+
+        Repository repository = repositoryMap.compute( repositoryId,
+            ( key, previousRepository ) -> doUpdateRepositoryData( params, repositoryId, previousRepository ) );
+
+        invalidatePathCache();
+
+        return repository;
+    }
+
+    private Repository doUpdateRepositoryData( final UpdateRepositoryDataParams updateRepositoryDataParams,
+                                               final RepositoryId repositoryId,
+                                               Repository previousRepository )
+    {
+        previousRepository = previousRepository == null ? repositoryEntryService.getRepositoryEntry( repositoryId ) : previousRepository;
+        if ( previousRepository == null )
+        {
+            throw new RepositoryNotFoundException( repositoryId );
+        }
+
+        return repositoryEntryService.updateRepositoryData( repositoryId, updateRepositoryDataParams.getData() );
     }
 
     @Override

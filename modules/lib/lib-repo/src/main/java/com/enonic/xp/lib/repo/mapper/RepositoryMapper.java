@@ -10,6 +10,7 @@ import com.enonic.xp.lib.common.PropertyTreeMapper;
 import com.enonic.xp.repository.IndexDefinition;
 import com.enonic.xp.repository.IndexDefinitions;
 import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repository.RepositoryData;
 import com.enonic.xp.repository.RepositorySettings;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
@@ -30,6 +31,7 @@ public class RepositoryMapper
         gen.value( "id", repository.getId() );
         serialize( gen, repository.getBranches() );
         serialize( gen, repository.getSettings() );
+        serialize( gen, repository.getData() );
     }
 
     private void serialize( final MapGenerator gen, final Branches branches )
@@ -43,6 +45,13 @@ public class RepositoryMapper
     {
         gen.map( "settings" );
         serialize( gen, settings.getIndexDefinitions() );
+        gen.end();
+    }
+
+    private void serialize( final MapGenerator gen, final RepositoryData repositoryData )
+    {
+        gen.map( "data" );
+        new PropertyTreeMapper( repositoryData.getValue() ).serialize( gen );
         gen.end();
     }
 
