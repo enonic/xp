@@ -46,7 +46,7 @@ public abstract class DescriptorJson
 
     public String getName()
     {
-        return descriptor.getName() != null ? descriptor.getName() : null;
+        return descriptor.getName();
     }
 
     public String getDisplayName()
