@@ -406,12 +406,9 @@ public final class SecurityServiceImpl
         if ( this.suPasswordValue != null && token instanceof UsernamePasswordAuthToken )
         {
             UsernamePasswordAuthToken usernamePasswordAuthToken = (UsernamePasswordAuthToken) token;
-            if ( ( usernamePasswordAuthToken.getIdProvider() == null ||
-                IdProviderKey.system().equals( usernamePasswordAuthToken.getIdProvider() ) ) &&
-                SecurityInitializer.SUPER_USER.getId().equals( usernamePasswordAuthToken.getUsername() ) )
-            {
-                return true;
-            }
+            return (usernamePasswordAuthToken.getIdProvider() == null ||
+                IdProviderKey.system().equals( usernamePasswordAuthToken.getIdProvider() )) &&
+                SecurityInitializer.SUPER_USER.getId().equals( usernamePasswordAuthToken.getUsername() );
         }
         return false;
     }

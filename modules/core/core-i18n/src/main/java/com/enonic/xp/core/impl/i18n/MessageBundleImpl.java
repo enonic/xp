@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.i18n;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.Map;
 import java.util.Properties;
@@ -70,7 +71,7 @@ final class MessageBundleImpl
 
         try
         {
-            return new String( localizedPhrase.getBytes( LATIN_1_ENCODING ), UTF_8_ENCODING );
+            return new String( localizedPhrase.getBytes( LATIN_1_ENCODING ), StandardCharsets.UTF_8 );
         }
         catch ( final UnsupportedEncodingException e )
         {

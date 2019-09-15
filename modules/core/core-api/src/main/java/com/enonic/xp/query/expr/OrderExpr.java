@@ -40,12 +40,7 @@ public abstract class OrderExpr
 
         final OrderExpr orderExpr = (OrderExpr) o;
 
-        if ( direction != orderExpr.direction )
-        {
-            return false;
-        }
-
-        return true;
+        return direction == orderExpr.direction;
     }
 
     @Override

@@ -116,11 +116,7 @@ public final class AccessControlEntry
         {
             return false;
         }
-        if ( !deniedPermissions.equals( that.deniedPermissions ) )
-        {
-            return false;
-        }
-        return true;
+        return deniedPermissions.equals( that.deniedPermissions );
     }
 
     @Override

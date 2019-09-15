@@ -11,7 +11,7 @@ public abstract class AbstractUrlViewFunctionTest
 {
     protected final PortalUrlService createUrlService()
     {
-        return Mockito.mock( PortalUrlService.class, (Answer) this::urlAnswer );
+        return Mockito.mock( PortalUrlService.class, this::urlAnswer );
     }
 
     private Object urlAnswer( final InvocationOnMock invocation )

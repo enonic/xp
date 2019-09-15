@@ -54,11 +54,7 @@ public final class HasUnpublishedChildrenParams
             return false;
         }
 
-        if( !target.equals( that.target )) {
-            return false;
-        }
-
-        return true;
+        return target.equals( that.target );
     }
 
     @Override

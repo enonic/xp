@@ -59,12 +59,7 @@ public final class DeleteContentParams
 
         final DeleteContentParams that = (DeleteContentParams) o;
 
-        if ( !contentPath.equals( that.contentPath ) )
-        {
-            return false;
-        }
-
-        return true;
+        return contentPath.equals( that.contentPath );
     }
 
     @Override

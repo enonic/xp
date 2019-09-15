@@ -47,7 +47,7 @@ public final class PrincipalKeys
 
     public static PrincipalKeys empty()
     {
-        return new PrincipalKeys( ImmutableSet.<PrincipalKey>of() );
+        return new PrincipalKeys( ImmutableSet.of() );
     }
 
     private static ImmutableSet<PrincipalKey> parsePrincipalKeys( final String... principalKeys )

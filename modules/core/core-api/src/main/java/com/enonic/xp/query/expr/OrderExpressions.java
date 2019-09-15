@@ -20,7 +20,7 @@ public class OrderExpressions
 
     public static OrderExpressions empty()
     {
-        return new OrderExpressions( ImmutableList.<OrderExpr>of() );
+        return new OrderExpressions( ImmutableList.of() );
     }
 
     public static OrderExpressions from( final OrderExpr... orderExprs )

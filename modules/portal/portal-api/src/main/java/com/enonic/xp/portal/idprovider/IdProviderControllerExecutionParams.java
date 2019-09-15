@@ -136,7 +136,7 @@ public class IdProviderControllerExecutionParams
             Preconditions.checkNotNull( functionName, "functionName cannot be null" );
             if ( servletRequest == null && portalRequest == null )
             {
-                throw new NullPointerException( String.valueOf( "servletRequest and portalRequest cannot be both null" ) );
+                throw new NullPointerException( "servletRequest and portalRequest cannot be both null" );
             }
         }
 

@@ -121,11 +121,7 @@ public class Media
 
         final ImageOrientation fromMetaData = getOrientationFromMetaData();
 
-        if ( fromMetaData != null ) {
-            return fromMetaData;
-        }
-
-        return null;
+        return fromMetaData;
     }
 
     public FocalPoint getFocalPoint()

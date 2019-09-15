@@ -52,7 +52,7 @@ public abstract class Exceptions
      */
     public static RuntimeException unchecked( final Throwable e )
     {
-        Exceptions.<RuntimeException>adapt( e );
+        Exceptions.adapt( e );
         return null;
     }
 

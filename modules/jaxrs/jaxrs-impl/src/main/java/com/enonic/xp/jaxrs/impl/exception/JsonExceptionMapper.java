@@ -117,11 +117,6 @@ public final class JsonExceptionMapper
             return true;
         }
 
-        if ( status == 400 )
-        {
-            return true;
-        }
-
-        return false;
+        return status == 400;
     }
 }

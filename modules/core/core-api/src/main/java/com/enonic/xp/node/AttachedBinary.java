@@ -45,12 +45,7 @@ public class AttachedBinary
         {
             return false;
         }
-        if ( !blobKey.equals( that.blobKey ) )
-        {
-            return false;
-        }
-
-        return true;
+        return blobKey.equals( that.blobKey );
     }
 
     @Override

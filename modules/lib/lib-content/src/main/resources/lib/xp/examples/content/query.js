@@ -271,7 +271,7 @@ var expected = {
             ]
         }
     }
-}
+};
 // END
 
 t.assertJsonEquals(expected, result);

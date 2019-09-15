@@ -49,7 +49,7 @@ public class ResourceKeysTest
     @Test
     public void fromIterable()
     {
-        ResourceKeys resourceKeys = ResourceKeys.from( (Iterable) ResourceKeysTest.list );
+        ResourceKeys resourceKeys = ResourceKeys.from( ResourceKeysTest.list );
 
         assertEquals( 3, resourceKeys.getSize() );
         assertTrue( resourceKeys.contains( ResourceKeysTest.list.get( 0 ) ) );

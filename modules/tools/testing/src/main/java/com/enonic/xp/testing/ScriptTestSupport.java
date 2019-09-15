@@ -206,7 +206,7 @@ public abstract class ScriptTestSupport
     {
         final ApplicationBuilder builder = new ApplicationBuilder();
         builder.classLoader( getClass().getClassLoader() );
-        URL resourcesPath[] = {new File( "src/test/resources" ).toURI().toURL()};
+        URL[] resourcesPath = {new File( "src/test/resources" ).toURI().toURL()};
         URLClassLoader loader = new URLClassLoader( resourcesPath, ClassLoader.getPlatformClassLoader() );
         builder.urlResolver( new ClassLoaderApplicationUrlResolver( loader ) );
         builder.config( ConfigBuilder.create().build() );

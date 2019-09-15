@@ -404,7 +404,7 @@ public class ContentServiceImplTest_publish
 
         doPublish( ContentIds.empty(), b.getId() );
 
-        System.out.println( "" );
+        System.out.println();
         System.out.println( "After second push:" );
         printContentTree( getByPath( ContentPath.ROOT ).getId() );
         printContentTree( getByPath( ContentPath.ROOT ).getId(), CTX_OTHER );

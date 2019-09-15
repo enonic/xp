@@ -72,12 +72,8 @@ public final class MoveContentParams
         {
             return false;
         }
-        else if ( !parentContentPath.equals( that.parentContentPath ) )
-        {
-            return false;
-        }
+        else return parentContentPath.equals( that.parentContentPath );
 
-        return true;
     }
 
     @Override

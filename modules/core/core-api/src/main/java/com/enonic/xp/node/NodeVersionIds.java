@@ -20,7 +20,7 @@ public class NodeVersionIds
 
     public static NodeVersionIds empty()
     {
-        return new NodeVersionIds( ImmutableSet.<NodeVersionId>of() );
+        return new NodeVersionIds( ImmutableSet.of() );
     }
 
     public static NodeVersionIds from( final NodeVersionId... nodeVersionIds )

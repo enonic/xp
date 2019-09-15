@@ -323,7 +323,7 @@ public class AttachmentHandlerTest
         final byte[] responseBody = ( (ByteSource) res.getBody() ).read();
 
         final String responseMultipartString = new String( responseBody, StandardCharsets.UTF_8 );
-        String responseMultipartLines[] = responseMultipartString.split( "\\r?\\n" );
+        String[] responseMultipartLines = responseMultipartString.split( "\\r?\\n" );
 
         assertEquals( "Content-Type: image/png", responseMultipartLines[2] );
         assertEquals( "Content-Range: bytes 0-1/7", responseMultipartLines[3] );

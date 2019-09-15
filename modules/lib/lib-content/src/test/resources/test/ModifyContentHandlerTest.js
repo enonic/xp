@@ -172,7 +172,7 @@ function editor(c) {
     c.workflow.state = "READY";
     c.workflow.checks = {
         "Review by marketing": "APPROVED"
-    }
+    };
 
     return c;
 }

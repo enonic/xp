@@ -18,7 +18,7 @@ public class ClassLoaderApplicationUrlResolverTest
     public void setup()
         throws Exception
     {
-        URL resourcesPath[] = {new File( "src/test/resources" ).toURI().toURL()};
+        URL[] resourcesPath = {new File( "src/test/resources" ).toURI().toURL()};
         URLClassLoader loader = new URLClassLoader( resourcesPath, ClassLoader.getSystemClassLoader() );
         this.resolver = new ClassLoaderApplicationUrlResolver( loader );
     }
