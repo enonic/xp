@@ -119,7 +119,8 @@ public class ApplicationServiceImplTest
     {
         activateWithNoStoredApplications();
 
-        final Bundle bundle = deployBundle( "app1", true, VersionRange.valueOf( "5.2" ) );
+        // Test should pass. At a time of writing Felix version is 6.0.1. All greater versions should work as well.
+        final Bundle bundle = deployBundle( "app1", true, VersionRange.valueOf( "6.0" ) );
 
         assertEquals( Bundle.INSTALLED, bundle.getState() );
         this.service.startApplication( ApplicationKey.from( "app1" ), false );
@@ -132,7 +133,8 @@ public class ApplicationServiceImplTest
     {
         activateWithNoStoredApplications();
 
-        final Bundle bundle = deployBundle( "app1", true, VersionRange.valueOf( "(6.0,7.2]" ) );
+        // Test should pas for all versions starting from Felix 6.0.
+        final Bundle bundle = deployBundle( "app1", true, VersionRange.valueOf( "(6.0,9999.0]" ) );
 
         assertEquals( Bundle.INSTALLED, bundle.getState() );
         this.service.startApplication( ApplicationKey.from( "app1" ), false );
@@ -145,6 +147,7 @@ public class ApplicationServiceImplTest
     {
         activateWithNoStoredApplications();
 
+        // Version upper bound is too low for current and future Felix version (at a time of writing 6.0.1)
         final Bundle bundle = deployBundle( "app1", true, VersionRange.valueOf( "[5.1,5.2)" ) );
 
         assertEquals( Bundle.INSTALLED, bundle.getState() );
@@ -157,7 +160,8 @@ public class ApplicationServiceImplTest
     {
         activateWithNoStoredApplications();
 
-        final Bundle bundle = deployBundle( "app1", true, VersionRange.valueOf( "[5.1,5.1]" ) );
+        // Test should fail on all versions of Felix
+        final Bundle bundle = deployBundle( "app1", true, VersionRange.valueOf( "[0.0,0.0]" ) );
 
         assertEquals( Bundle.INSTALLED, bundle.getState() );
         assertThrows(ApplicationInvalidVersionException.class, () -> this.service.startApplication( ApplicationKey.from( "app1" ), false ));
