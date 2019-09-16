@@ -14,7 +14,7 @@ import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.query.filter.RangeFilter;
 import com.enonic.xp.query.highlight.HighlightQuery;
-import com.enonic.xp.query.highlight.HighlightQueryField;
+import com.enonic.xp.query.highlight.HighlightQueryProperty;
 import com.enonic.xp.query.highlight.HighlightQuerySettings;
 import com.enonic.xp.query.highlight.constants.Encoder;
 import com.enonic.xp.query.highlight.constants.Fragmenter;
@@ -72,7 +72,7 @@ public class ContentQueryTest
             build();
 
         final HighlightQuery highlightQuery = HighlightQuery.create().
-            field( HighlightQueryField.create( "fieldToHighlight" ).build() ).
+            property( HighlightQueryProperty.create( "propertyToHighlight" ).build() ).
             settings( HighlightQuerySettings.create().
                 encoder( Encoder.HTML ).
                 fragmenter( Fragmenter.SIMPLE ).

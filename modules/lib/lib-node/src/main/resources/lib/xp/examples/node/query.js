@@ -82,7 +82,7 @@ var result = repo.query({
         postTag : "<b>",
         requireFieldMatch: false,
         tagsSchema: "styled",
-        fields: {
+        properties: {
             displayName: {
                 fragmenter: "span",
                 fragmenterSize: 6,
@@ -115,7 +115,7 @@ var expected = {
             "id": "b186d24f-ac38-42ca-a6db-1c1bda6c6c26",
             "score": 1.2300000190734863,
             "highlight": {
-                "field1": [
+                "property1": [
                     "fragment1",
                     "fragment2"
                 ]
