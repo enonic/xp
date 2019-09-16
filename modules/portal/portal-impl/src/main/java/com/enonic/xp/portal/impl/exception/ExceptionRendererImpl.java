@@ -2,6 +2,7 @@ package com.enonic.xp.portal.impl.exception;
 
 import java.io.IOException;
 import java.util.concurrent.Callable;
+import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -24,7 +25,6 @@ import com.enonic.xp.portal.impl.error.ErrorHandlerScript;
 import com.enonic.xp.portal.impl.error.ErrorHandlerScriptFactory;
 import com.enonic.xp.portal.impl.error.PortalError;
 import com.enonic.xp.portal.postprocess.PostProcessor;
-import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.RoleKeys;
@@ -36,9 +36,7 @@ import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.exception.ExceptionRenderer;
 
-import static com.enonic.xp.portal.RenderMode.INLINE;
-import static com.enonic.xp.portal.RenderMode.LIVE;
-import static com.enonic.xp.portal.RenderMode.PREVIEW;
+import static com.enonic.xp.portal.RenderMode.EDIT;
 
 @Component
 public final class ExceptionRendererImpl
@@ -102,7 +100,7 @@ public final class ExceptionRendererImpl
 
     private PortalResponse renderCustomError( final PortalRequest req, final WebException cause, final String handlerMethod )
     {
-        if ( LIVE == req.getMode() || PREVIEW == req.getMode() || INLINE == req.getMode() )
+        if ( EDIT != req.getMode() )
         {
             try
             {
@@ -130,18 +128,18 @@ public final class ExceptionRendererImpl
             site = resolveSiteFromPath( req );
         }
 
+        final PortalError portalError = PortalError.create().
+            status( cause.getStatus() ).
+            message( cause.getMessage() ).
+            exception( cause ).
+            request( req ).build();
+
         if ( site != null )
         {
             final Site prevSite = req.getSite();
             req.setSite( site );
             try
             {
-                final PortalError portalError = PortalError.create().
-                    status( cause.getStatus() ).
-                    message( cause.getMessage() ).
-                    exception( cause ).
-                    request( req ).build();
-
                 for ( SiteConfig siteConfig : site.getSiteConfigs() )
                 {
                     final PortalResponse response =
@@ -159,6 +157,18 @@ public final class ExceptionRendererImpl
             finally
             {
                 req.setSite( prevSite );
+            }
+        }
+        else if ( req.getApplicationKey() != null )
+        {
+            final PortalResponse response = renderApplicationCustomError( req.getApplicationKey(), portalError, handlerMethod );
+            if ( response != null )
+            {
+                if ( response.isPostProcess() )
+                {
+                    req.setApplicationKey( req.getApplicationKey() );
+                }
+                return response;
             }
         }
 
@@ -201,9 +211,8 @@ public final class ExceptionRendererImpl
     private PortalResponse renderApplicationCustomError( final ApplicationKey appKey, final PortalError portalError,
                                                          final String handlerMethod )
     {
-        final ResourceKey script = ResourceKey.from( appKey, "site/error/error.js" );
-        final Resource scriptResource = this.resourceService.getResource( script );
-        if ( !scriptResource.exists() )
+        final ResourceKey script = getScript( appKey );
+        if ( script == null )
         {
             return null;
         }
@@ -222,6 +231,14 @@ public final class ExceptionRendererImpl
         {
             request.setApplicationKey( previousApp );
         }
+    }
+
+    private ResourceKey getScript( final ApplicationKey applicationKey )
+    {
+        return Stream.of( ResourceKey.from( applicationKey, "site/error/error.js" ), ResourceKey.from( applicationKey, "error/error.js" ) ).
+            filter( script -> this.resourceService.getResource( script ).exists() ).
+            findFirst().
+            orElse( null );
     }
 
     private PortalResponse renderIdProviderError( final PortalRequest req, final WebException cause )
