@@ -10,6 +10,7 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexType;
+import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeEditor;
 import com.enonic.xp.node.NodeId;
@@ -36,6 +37,8 @@ public class RepositoryNodeTranslator
 
     private static final String DATA_KEY = "data";
 
+    private static final String BINARIES_KEY = "binaries";
+
     public static Node toNode( final Repository repository )
     {
         final PropertyTree repositoryNodeData = new PropertyTree();
@@ -59,9 +62,15 @@ public class RepositoryNodeTranslator
         return toBeEdited -> toBeEdited.data.addString( BRANCHES_KEY, branch.getValue() );
     }
 
-    public static NodeEditor toUpdateDataNodeEditor( RepositoryData data )
+    public static NodeEditor toUpdateRepositoryNodeEditor( UpdateRepositoryEntryParams params )
     {
-        return toBeEdited -> toBeEdited.data.setSet( DATA_KEY, data.getValue().getRoot() );
+        return toBeEdited -> {
+            toBeEdited.data.setSet( DATA_KEY, params.getRepositoryData().getValue().getRoot() );
+            for ( BinaryAttachment attachment : params.getAttachments() )
+            {
+                toBeEdited.data.setBinaryReference( BINARIES_KEY, attachment.getReference() );
+            }
+        };
     }
 
     public static NodeEditor toDeleteBranchNodeEditor( final Branch branch )

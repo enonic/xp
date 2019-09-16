@@ -61,7 +61,7 @@ public final class UpdateRepositoryParams
             return this;
         }
 
-        public Builder data( final RepositoryAttachments attachments )
+        public Builder attachments( final RepositoryAttachments attachments )
         {
             this.attachments = attachments;
             return this;
