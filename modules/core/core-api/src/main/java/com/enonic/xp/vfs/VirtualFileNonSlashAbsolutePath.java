@@ -2,7 +2,7 @@ package com.enonic.xp.vfs;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 
@@ -60,7 +60,7 @@ final class VirtualFileNonSlashAbsolutePath
 
     private static class Builder
     {
-        private final List<String> elements = new ArrayList<>();
+        private final LinkedList<String> elements = new LinkedList<>();
 
         private boolean absolute;
 
