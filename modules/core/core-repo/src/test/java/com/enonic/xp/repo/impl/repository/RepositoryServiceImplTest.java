@@ -20,7 +20,7 @@ import com.enonic.xp.repository.DeleteRepositoryParams;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryData;
 import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.repository.UpdateRepositoryDataParams;
+import com.enonic.xp.repository.UpdateRepositoryParams;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
@@ -91,7 +91,7 @@ public class RepositoryServiceImplTest
         data.setString( "myProp", "b" );
 
         mockCurrentContext.callWith( () ->
-            repositoryService.updateRepositoryData( UpdateRepositoryDataParams.create().
+            repositoryService.updateRepository( UpdateRepositoryParams.create().
                 repositoryId( RepositoryId.from( "fisk" ) ).
                 data( RepositoryData.from( data ) ).
                 build() ) );

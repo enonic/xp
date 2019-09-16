@@ -10,6 +10,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.event.EventPublisher;
+import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
@@ -32,7 +33,6 @@ import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.repository.NodeRepositoryService;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
-import com.enonic.xp.repository.RepositoryData;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
 import com.enonic.xp.security.SystemConstants;
@@ -110,21 +110,21 @@ public class RepositoryEntryServiceImpl
     public Repository addBranchToRepositoryEntry( final RepositoryId repositoryId, final Branch branch )
     {
         NodeEditor nodeEditor = RepositoryNodeTranslator.toCreateBranchNodeEditor( branch );
-        return updateRepositoryEntry( repositoryId, nodeEditor );
+        return updateRepositoryEntry( repositoryId, nodeEditor, null );
     }
 
     @Override
     public Repository removeBranchFromRepositoryEntry( final RepositoryId repositoryId, final Branch branch )
     {
         NodeEditor nodeEditor = RepositoryNodeTranslator.toDeleteBranchNodeEditor( branch );
-        return updateRepositoryEntry( repositoryId, nodeEditor );
+        return updateRepositoryEntry( repositoryId, nodeEditor, null );
     }
 
     @Override
-    public Repository updateRepositoryData( RepositoryId repositoryId, RepositoryData data )
+    public Repository updateRepositoryEntry( UpdateRepositoryEntryParams params )
     {
-        NodeEditor nodeEditor = RepositoryNodeTranslator.toUpdateDataNodeEditor( data );
-        return updateRepositoryEntry( repositoryId, nodeEditor );
+        NodeEditor nodeEditor = RepositoryNodeTranslator.toUpdateDataNodeEditor( params.getRepositoryData() );
+        return updateRepositoryEntry( params.getRepositoryId(), nodeEditor, params.getAttachments() );
     }
 
     @Override
@@ -158,12 +158,14 @@ public class RepositoryEntryServiceImpl
         } );
     }
 
-    private Repository updateRepositoryEntry( final RepositoryId repositoryId, final NodeEditor nodeEditor )
+    private Repository updateRepositoryEntry( final RepositoryId repositoryId, final NodeEditor nodeEditor,
+                                              final BinaryAttachments binaryAttachments )
     {
         final NodeId nodeId = NodeId.from( repositoryId.toString() );
         final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
             id( nodeId ).
             editor( nodeEditor ).
+            setBinaryAttachments( binaryAttachments ).
             build();
 
         final Node updatedNode = createContext().callWith( () -> UpdateNodeCommand.create().

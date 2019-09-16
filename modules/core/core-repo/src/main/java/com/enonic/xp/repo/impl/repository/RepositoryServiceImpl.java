@@ -42,7 +42,7 @@ import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryNotFoundException;
 import com.enonic.xp.repository.RepositoryService;
-import com.enonic.xp.repository.UpdateRepositoryDataParams;
+import com.enonic.xp.repository.UpdateRepositoryParams;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
@@ -123,30 +123,39 @@ public class RepositoryServiceImpl
     }
 
     @Override
-    public Repository updateRepositoryData( final UpdateRepositoryDataParams params )
+    public Repository updateRepository( final UpdateRepositoryParams params )
     {
         requireAdminRole();
-        final RepositoryId repositoryId = ContextAccessor.current().getRepositoryId();
 
-        Repository repository = repositoryMap.compute( repositoryId,
-            ( key, previousRepository ) -> doUpdateRepositoryData( params, repositoryId, previousRepository ) );
+        Repository repository = repositoryMap.compute( params.getRepositoryId(),
+            ( key, previousRepository ) -> doUpdateRepository( params, previousRepository ) );
 
         invalidatePathCache();
 
         return repository;
     }
 
-    private Repository doUpdateRepositoryData( final UpdateRepositoryDataParams updateRepositoryDataParams,
-                                               final RepositoryId repositoryId,
-                                               Repository previousRepository )
+    private Repository doUpdateRepository( final UpdateRepositoryParams updateRepositoryParams,
+                                           Repository previousRepository )
     {
-        previousRepository = previousRepository == null ? repositoryEntryService.getRepositoryEntry( repositoryId ) : previousRepository;
+        RepositoryId repositoryId = updateRepositoryParams.getRepositoryId();
+
+        previousRepository = previousRepository == null ?
+            repositoryEntryService.getRepositoryEntry( repositoryId ) :
+            previousRepository;
+
         if ( previousRepository == null )
         {
             throw new RepositoryNotFoundException( repositoryId );
         }
 
-        return repositoryEntryService.updateRepositoryData( repositoryId, updateRepositoryDataParams.getData() );
+        UpdateRepositoryEntryParams params = UpdateRepositoryEntryParams.create().
+            repositoryId( repositoryId ).
+            repositoryData( updateRepositoryParams.getData() ).
+            attachments( updateRepositoryParams.getAttachments().getBinaryAttachments() ).
+            build();
+
+        return repositoryEntryService.updateRepositoryEntry( params );
     }
 
     @Override
