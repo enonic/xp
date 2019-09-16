@@ -1,7 +1,8 @@
 package com.enonic.xp.core.issue;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
@@ -12,13 +13,13 @@ import com.enonic.xp.issue.IssueQuery;
 import com.enonic.xp.issue.PublishRequest;
 import com.enonic.xp.issue.PublishRequestItem;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class IssueServiceImplTest_findIssues
     extends AbstractIssueServiceTest
 {
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         createIssue( 1, 1, 2 );

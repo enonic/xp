@@ -5,16 +5,14 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Link;
 import com.enonic.xp.util.Reference;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ValueTest
 {
@@ -75,16 +73,13 @@ public class ValueTest
         assertNull( value.asString() );
     }
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     @Test
     public void check_conversion_throws_exception_when_supposed_to()
     {
-        thrown.expect( ValueTypeException.class );
-        Value value = ValueFactory.newString( "asda" );
-        value.asLong();
-
+        final ValueTypeException ex = assertThrows(ValueTypeException.class, () -> {
+            Value value = ValueFactory.newString( "asda" );
+            value.asLong();
+        });
     }
 
     @Test

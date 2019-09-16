@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.branch.storage;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
@@ -13,7 +13,7 @@ import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.storage.StoreRequest;
 import com.enonic.xp.repository.RepositoryId;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BranchStorageRequestFactoryTest
 {

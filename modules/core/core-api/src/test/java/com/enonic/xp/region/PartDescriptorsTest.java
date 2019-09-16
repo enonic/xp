@@ -3,20 +3,20 @@ package com.enonic.xp.region;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.form.Form;
 import com.enonic.xp.page.DescriptorKey;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PartDescriptorsTest
 {
 
     private static final List<PartDescriptor> partDescriptorsList = new ArrayList<PartDescriptor>();
 
-    @BeforeClass
+    @BeforeAll
     public static void initRegionDescriptors()
     {
         final PartDescriptor partDescriptor1 = PartDescriptor.create().

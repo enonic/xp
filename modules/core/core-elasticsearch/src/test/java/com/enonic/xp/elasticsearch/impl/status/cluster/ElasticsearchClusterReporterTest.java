@@ -16,9 +16,8 @@ import org.elasticsearch.cluster.health.ClusterHealthStatus;
 import org.elasticsearch.cluster.node.DiscoveryNode;
 import org.elasticsearch.cluster.node.DiscoveryNodes;
 import org.elasticsearch.common.transport.LocalTransportAddress;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -31,6 +30,7 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Iterables;
 import com.google.common.io.Resources;
 
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ElasticsearchClusterReporterTest
 {
@@ -45,7 +45,7 @@ public class ElasticsearchClusterReporterTest
     private ActionFuture<ClusterHealthResponse> clusterHealthInfo;
 
     @SuppressWarnings("unchecked")
-    @Before
+    @BeforeEach
     public void setup()
         throws Exception
     {
@@ -170,9 +170,9 @@ public class ElasticsearchClusterReporterTest
 
         final ArrayNode expectedMembers = (ArrayNode) expectedReport.get( "members" );
         final ArrayNode members = (ArrayNode) report.get( "members" );
-        Assert.assertEquals( 2, members.size() );
-        Assert.assertTrue( Iterables.contains( expectedMembers, members.get( 0 ) ) );
-        Assert.assertTrue( Iterables.contains( expectedMembers, members.get( 1 ) ) );
+        assertEquals( 2, members.size() );
+        assertTrue( Iterables.contains( expectedMembers, members.get( 0 ) ) );
+        assertTrue( Iterables.contains( expectedMembers, members.get( 1 ) ) );
     }
 
 
@@ -222,11 +222,6 @@ public class ElasticsearchClusterReporterTest
         mapper.enable( SerializationFeature.WRITE_NULL_MAP_VALUES );
         mapper.setSerializationInclusion( JsonInclude.Include.ALWAYS );
         return mapper;
-    }
-
-    private final void assertEquals( Object a1, Object a2 )
-    {
-        Assert.assertEquals( a1, a2 );
     }
 
 

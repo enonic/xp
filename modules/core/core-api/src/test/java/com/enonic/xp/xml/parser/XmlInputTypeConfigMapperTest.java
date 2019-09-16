@@ -2,7 +2,7 @@ package com.enonic.xp.xml.parser;
 
 import java.io.InputStream;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 
 import com.google.common.base.CaseFormat;
@@ -15,7 +15,7 @@ import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.xml.DomElement;
 import com.enonic.xp.xml.DomHelper;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class XmlInputTypeConfigMapperTest
 {

@@ -5,8 +5,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.ServiceReference;
@@ -22,7 +22,7 @@ public class DispatchServletImplTest
 
     private DispatchServletImpl servlet;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.filterPipeline = Mockito.mock( FilterPipeline.class );

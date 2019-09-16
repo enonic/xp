@@ -7,7 +7,6 @@ jdk:
 install: true
 script:
   - ./gradlew ci --stacktrace --no-daemon
-
 cache:
   directories:
     - $HOME/.gradle/caches/

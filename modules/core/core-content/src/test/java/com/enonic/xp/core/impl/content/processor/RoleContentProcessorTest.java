@@ -1,7 +1,7 @@
 package com.enonic.xp.core.impl.content.processor;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.collect.ImmutableList;
@@ -22,7 +22,7 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RoleContentProcessorTest
 {
@@ -31,7 +31,7 @@ public class RoleContentProcessorTest
 
     private SecurityService securityService;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
@@ -79,13 +79,13 @@ public class RoleContentProcessorTest
         assertNull( result );
     }
 
-    @Test(expected = RoleRequiredException.class)
+    @Test
     public void testProcessUpdateWithNoRights()
         throws RoleRequiredException
     {
         ProcessUpdateParams params = createProcessUpdateParams( PrincipalKeys.empty(), "white", "blue" );
 
-        this.roleContentProcessor.processUpdate( params );
+        assertThrows(RoleRequiredException.class, () -> this.roleContentProcessor.processUpdate( params ));
     }
 
     @Test

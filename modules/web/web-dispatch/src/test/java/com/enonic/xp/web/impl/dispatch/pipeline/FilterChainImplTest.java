@@ -5,8 +5,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
@@ -25,7 +25,7 @@ public class FilterChainImplTest
 
     private FilterChainImpl chain;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.servletPipeline = Mockito.mock( ServletPipeline.class );

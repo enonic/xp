@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
@@ -17,7 +17,7 @@ import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CachedBlobStoreTest
 {
@@ -27,7 +27,7 @@ public class CachedBlobStoreTest
 
     private final Segment segment = Segment.from( "test", "blob" );
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.blobStore = Mockito.mock( BlobStore.class );

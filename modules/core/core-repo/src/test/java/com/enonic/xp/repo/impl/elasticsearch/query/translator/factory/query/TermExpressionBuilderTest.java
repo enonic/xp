@@ -1,14 +1,15 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.query;
 
 import org.elasticsearch.index.query.QueryBuilder;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.FieldExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQueryFieldNameResolver;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.BaseTestBuilderFactory;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TermExpressionBuilderTest
     extends BaseTestBuilderFactory
@@ -23,7 +24,7 @@ public class TermExpressionBuilderTest
             TermExpressionBuilder.build( CompareExpr.eq( FieldExpr.from( "myField" ), ValueExpr.string( "myValue" ) ),
                                          new SearchQueryFieldNameResolver() );
 
-        Assert.assertEquals( cleanString( expected ), cleanString( query.toString() ) );
+        assertEquals( cleanString( expected ), cleanString( query.toString() ) );
     }
 
     @Test
@@ -35,7 +36,7 @@ public class TermExpressionBuilderTest
         final QueryBuilder query = TermExpressionBuilder.build( CompareExpr.eq( FieldExpr.from( "myField" ), ValueExpr.number( 1 ) ),
                                                                 new SearchQueryFieldNameResolver() );
 
-        Assert.assertEquals( cleanString( expected ), cleanString( query.toString() ) );
+        assertEquals( cleanString( expected ), cleanString( query.toString() ) );
     }
 
     @Test
@@ -48,7 +49,7 @@ public class TermExpressionBuilderTest
             TermExpressionBuilder.build( CompareExpr.eq( FieldExpr.from( "myField" ), ValueExpr.instant( "2013-11-29T09:42:00Z" ) ),
                                          new SearchQueryFieldNameResolver() );
 
-        Assert.assertEquals( cleanString( expected ), cleanString( query.toString() ) );
+        assertEquals( cleanString( expected ), cleanString( query.toString() ) );
     }
 
     @Test
@@ -61,6 +62,6 @@ public class TermExpressionBuilderTest
             TermExpressionBuilder.build( CompareExpr.eq( FieldExpr.from( "myField" ), ValueExpr.geoPoint( "59.9127300,10.746090" ) ),
                                          new SearchQueryFieldNameResolver() );
 
-        Assert.assertEquals( cleanString( expected ), cleanString( query.toString() ) );
+        assertEquals( cleanString( expected ), cleanString( query.toString() ) );
     }
 }

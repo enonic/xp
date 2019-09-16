@@ -2,7 +2,7 @@ package com.enonic.xp.impl.server.rest;
 
 import javax.ws.rs.core.MediaType;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.content.Content;
@@ -14,6 +14,8 @@ import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.jaxrs.impl.MockRestResponse;
 import com.enonic.xp.schema.content.ContentTypeName;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ContentResourceTest
     extends ServerRestTestSupport

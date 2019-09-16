@@ -1,6 +1,6 @@
 package com.enonic.xp.core.content;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
@@ -8,7 +8,7 @@ import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.query.parser.QueryParser;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Deprecated
 public class ContentServiceImplTest_findContentPaths

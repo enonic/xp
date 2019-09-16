@@ -2,10 +2,8 @@ package com.enonic.xp.portal.impl.handler.asset;
 
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 
@@ -24,7 +22,7 @@ import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.BaseHandlerTest;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AssetHandlerTest
     extends BaseHandlerTest
@@ -37,7 +35,7 @@ public class AssetHandlerTest
 
     private Resource nullResource;
 
-    @Before
+    @BeforeEach
     public final void setup()
         throws Exception
     {
@@ -75,9 +73,6 @@ public class AssetHandlerTest
         final Resource res = this.resources.get( invocation.getArguments()[0] );
         return res != null ? res : this.nullResource;
     }
-
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
 
     @Test
     public void testOrder()
@@ -129,12 +124,12 @@ public class AssetHandlerTest
     public void testSiteResourceNotFound()
         throws Exception
     {
-        exception.expect( WebException.class );
-        exception.expectMessage( "Resource [demo:/assets/css/main.css] not found" );
-
         addResource( "demo:/site/assets/css/main.css" );
 
-        this.handler.handle( this.request, PortalResponse.create().build(), null );
+        final WebException ex = assertThrows(WebException.class, () -> {
+            this.handler.handle( this.request, PortalResponse.create().build(), null );
+        });
+        assertEquals( "Resource [demo:/assets/css/main.css] not found", ex.getMessage());
     }
 
     @Test

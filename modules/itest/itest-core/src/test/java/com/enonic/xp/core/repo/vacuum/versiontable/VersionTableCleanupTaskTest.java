@@ -1,10 +1,10 @@
 package com.enonic.xp.core.repo.vacuum.versiontable;
 
-import java.security.SecureRandom;
+import java.util.concurrent.ThreadLocalRandom;
 import java.time.Instant;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
@@ -19,21 +19,17 @@ import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
 import com.enonic.xp.repo.impl.vacuum.versiontable.VersionTableCleanupTask;
 import com.enonic.xp.vacuum.VacuumTaskResult;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class VersionTableCleanupTaskTest
     extends AbstractNodeTest
 {
-    private final SecureRandom random = new SecureRandom();
-
     private VersionTableCleanupTask task;
 
-    @Override
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
         createDefaultRootNode();
 
         this.task = new VersionTableCleanupTask();
@@ -143,7 +139,7 @@ public class VersionTableCleanupTaskTest
             size( 0 ).
             build() );
 
-        assertEquals( "Wrong number of versions found", versions, result.getTotalHits() );
+        assertEquals( versions, result.getTotalHits(), "Wrong number of versions found" );
     }
 
     private void updateNode( final NodeId nodeId, final int updates )
@@ -154,7 +150,7 @@ public class VersionTableCleanupTaskTest
                 id( nodeId ).
                 editor( node -> {
                     node.data.setInstant( "now", Instant.now() );
-                    node.data.setLong( "random", random.nextLong() );
+                    node.data.setLong( "random", ThreadLocalRandom.current().nextLong() );
                 } ).
                 build() );
         }

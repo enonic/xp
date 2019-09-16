@@ -1,20 +1,20 @@
 package com.enonic.xp.launcher.impl.util;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Sets;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class OsgiExportsBuilderTest
 {
     private OsgiExportsBuilder builder;
 
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.builder = new OsgiExportsBuilder( getClass().getClassLoader() );

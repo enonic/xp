@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
@@ -36,7 +36,7 @@ import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -50,7 +50,7 @@ public class IssueNotificationParamsFactoryTest
 
     IssueNotificationParamsFactory.Builder notificationFactoryBuilder;
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         securityService = Mockito.mock( SecurityService.class );

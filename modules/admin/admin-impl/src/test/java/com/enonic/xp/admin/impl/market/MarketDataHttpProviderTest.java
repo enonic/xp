@@ -1,7 +1,7 @@
 package com.enonic.xp.admin.impl.market;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.Protocol;
@@ -11,7 +11,7 @@ import com.squareup.okhttp.ResponseBody;
 
 import com.enonic.xp.market.MarketException;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MarketDataHttpProviderTest
 {
@@ -19,7 +19,7 @@ public class MarketDataHttpProviderTest
 
     private String marketUrl = "https://market.enonic.com/applications";
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

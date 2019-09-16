@@ -1,7 +1,7 @@
 package com.enonic.xp.portal.impl.main;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.event.Event;
@@ -14,7 +14,7 @@ public class MainExecutorTest
 
     private PortalScriptService scriptService;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.scriptService = Mockito.mock( PortalScriptService.class );

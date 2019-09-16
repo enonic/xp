@@ -2,7 +2,7 @@ package com.enonic.xp.core.issue;
 
 import java.time.Instant;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.core.impl.issue.IssueNameFactory;
@@ -17,7 +17,7 @@ import com.enonic.xp.issue.PublishRequestItem;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class IssueServiceImplTest_create
     extends AbstractIssueServiceTest

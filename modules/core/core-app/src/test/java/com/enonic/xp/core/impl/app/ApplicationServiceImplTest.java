@@ -3,8 +3,8 @@ package com.enonic.xp.core.impl.app;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 import org.mockito.verification.VerificationMode;
@@ -28,7 +28,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.Nodes;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ApplicationServiceImplTest
     extends BundleBasedTest
@@ -39,7 +39,7 @@ public class ApplicationServiceImplTest
 
     private EventPublisher eventPublisher;
 
-    @Before
+    @BeforeEach
     public void initService()
     {
         this.service = new ApplicationServiceImpl();
@@ -139,7 +139,7 @@ public class ApplicationServiceImplTest
         assertEquals( Bundle.ACTIVE, bundle.getState() );
     }
 
-    @Test(expected = ApplicationInvalidVersionException.class)
+    @Test
     public void start_app_invalid_version_range()
         throws Exception
     {
@@ -148,10 +148,10 @@ public class ApplicationServiceImplTest
         final Bundle bundle = deployBundle( "app1", true, VersionRange.valueOf( "[5.1,5.2)" ) );
 
         assertEquals( Bundle.INSTALLED, bundle.getState() );
-        this.service.startApplication( ApplicationKey.from( "app1" ), false );
+        assertThrows(ApplicationInvalidVersionException.class, () -> this.service.startApplication( ApplicationKey.from( "app1" ), false ));
     }
 
-    @Test(expected = ApplicationInvalidVersionException.class)
+    @Test
     public void start_ex()
         throws Exception
     {
@@ -160,7 +160,7 @@ public class ApplicationServiceImplTest
         final Bundle bundle = deployBundle( "app1", true, VersionRange.valueOf( "[5.1,5.1]" ) );
 
         assertEquals( Bundle.INSTALLED, bundle.getState() );
-        this.service.startApplication( ApplicationKey.from( "app1" ), false );
+        assertThrows(ApplicationInvalidVersionException.class, () -> this.service.startApplication( ApplicationKey.from( "app1" ), false ));
     }
 
     @Test
@@ -207,7 +207,7 @@ public class ApplicationServiceImplTest
         verifyStartedEvent( application, Mockito.times( 1 ) );
     }
 
-    @Test(expected = GlobalApplicationInstallException.class)
+    @Test
     public void install_global_invalid()
         throws Exception
     {
@@ -226,7 +226,7 @@ public class ApplicationServiceImplTest
 
         final ByteSource byteSource = createBundleSource( bundleName, false );
 
-        this.service.installGlobalApplication( byteSource, bundleName );
+        assertThrows(GlobalApplicationInstallException.class, () -> this.service.installGlobalApplication( byteSource, bundleName ));
     }
 
     @Test
@@ -258,7 +258,7 @@ public class ApplicationServiceImplTest
         verifyStartedEvent( application, Mockito.never() );
     }
 
-    @Test(expected = LocalApplicationInstallException.class)
+    @Test
     public void install_local_invalid()
         throws Exception
     {
@@ -277,7 +277,7 @@ public class ApplicationServiceImplTest
 
         final ByteSource source = createBundleSource( bundleName, false );
 
-        this.service.installLocalApplication( source, bundleName );
+        assertThrows(LocalApplicationInstallException.class, () -> this.service.installLocalApplication( source, bundleName ));
     }
 
     @Test
@@ -354,11 +354,11 @@ public class ApplicationServiceImplTest
         verifyStartedEvent( updatedApplication, Mockito.never() );
     }
 
-    @Test(expected = ApplicationInstallException.class)
+    @Test
     public void install_stored_application_not_found()
         throws Exception
     {
-        this.service.installStoredApplication( NodeId.from( "dummy" ) );
+        assertThrows(ApplicationInstallException.class, () -> this.service.installStoredApplication( NodeId.from( "dummy" ) ));
     }
 
     @Test
@@ -659,7 +659,7 @@ public class ApplicationServiceImplTest
     }
 
     private class ApplicationEventMatcher
-        extends ArgumentMatcher<Event>
+        implements ArgumentMatcher<Event>
     {
         Event thisObject;
 
@@ -669,16 +669,14 @@ public class ApplicationServiceImplTest
         }
 
         @Override
-        public boolean matches( Object argument )
+        public boolean matches( Event argument )
         {
             if ( argument == null || thisObject.getClass() != argument.getClass() )
             {
                 return false;
             }
 
-            final Event event = (Event) argument;
-
-            return thisObject.getType().equals( event.getType() ) && this.thisObject.getData().equals( event.getData() );
+            return thisObject.getType().equals( argument.getType() ) && this.thisObject.getData().equals( argument.getData() );
         }
     }
 }

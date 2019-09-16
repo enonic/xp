@@ -4,7 +4,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.Node;
@@ -14,7 +14,7 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalType;
 import com.enonic.xp.security.User;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PrincipalKeyNodeTranslatorTest
 {
@@ -60,7 +60,7 @@ public class PrincipalKeyNodeTranslatorTest
         assertEquals( IdProviderKey.system(), principalKey.getIdProviderKey() );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void unknown_type()
         throws Exception
     {
@@ -72,7 +72,7 @@ public class PrincipalKeyNodeTranslatorTest
             name( NodeName.from( "rmy" ) ).
             build();
 
-        PrincipalKeyNodeTranslator.toKey( userNode );
+        assertThrows(IllegalArgumentException.class, () -> PrincipalKeyNodeTranslator.toKey( userNode ));
     }
 
 }

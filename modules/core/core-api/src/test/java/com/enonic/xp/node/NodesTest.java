@@ -3,11 +3,11 @@ package com.enonic.xp.node;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Sets;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class NodesTest
 {

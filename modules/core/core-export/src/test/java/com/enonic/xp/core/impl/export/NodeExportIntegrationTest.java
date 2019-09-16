@@ -1,13 +1,13 @@
 package com.enonic.xp.core.impl.export;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import com.google.common.io.ByteSource;
 
@@ -27,19 +27,15 @@ import static com.enonic.xp.core.impl.export.writer.NodeExportPathResolver.BINAR
 import static com.enonic.xp.core.impl.export.writer.NodeExportPathResolver.NODE_XML_EXPORT_NAME;
 import static com.enonic.xp.core.impl.export.writer.NodeExportPathResolver.SYSTEM_FOLDER_NAME;
 import static com.enonic.xp.core.impl.export.writer.NodeExportPathResolver.VERSION_FOLDER;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class NodeExportIntegrationTest
     extends AbstractNodeTest
 {
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
-
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 
@@ -159,7 +155,7 @@ public class NodeExportIntegrationTest
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.ROOT ).
-            targetDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myExport" ) ).
+            targetDirectory( Paths.get( this.temporaryFolder.toString(), "myExport" ) ).
             exportVersions( exportVersions ).
             build().
             execute();
@@ -200,12 +196,12 @@ public class NodeExportIntegrationTest
 
     private void assertFileExists( final String path )
     {
-        assertTrue( "file " + path + " not found", new File( this.temporaryFolder.getRoot().getPath() + path ).exists() );
+        assertTrue( new File( this.temporaryFolder.toFile().getPath() + path ).exists(), "file " + path + " not found" );
     }
 
     private void printPaths()
     {
-        final File file = this.temporaryFolder.getRoot();
+        final File file = this.temporaryFolder.toFile();
 
         doPrintPaths( file );
     }

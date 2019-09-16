@@ -3,9 +3,8 @@ package com.enonic.xp.core.content;
 import java.time.Instant;
 import java.util.Locale;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.aggregation.Aggregations;
@@ -31,6 +30,7 @@ import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.util.Reference;
 
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ContentDependenciesResolverTest
 {
@@ -41,7 +41,7 @@ public class ContentDependenciesResolverTest
 
     private ContentDependenciesResolver resolver;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
@@ -93,15 +93,15 @@ public class ContentDependenciesResolverTest
 
         final ContentDependencies result = resolver.resolve( content.getId() );
 
-        Assert.assertEquals( result.getInbound().size(), 2 );
+        assertEquals( result.getInbound().size(), 2 );
 
         final ContentDependenciesAggregation siteAggregation = (ContentDependenciesAggregation) result.getInbound().toArray()[0];
-        Assert.assertEquals( siteAggregation.getType(), ContentTypeName.site() );
-        Assert.assertEquals( siteAggregation.getCount(), 2 );
+        assertEquals( siteAggregation.getType(), ContentTypeName.site() );
+        assertEquals( siteAggregation.getCount(), 2 );
 
         final ContentDependenciesAggregation folderAggregation = (ContentDependenciesAggregation) result.getInbound().toArray()[1];
-        Assert.assertEquals( folderAggregation.getType(), ContentTypeName.folder() );
-        Assert.assertEquals( folderAggregation.getCount(), 1 );
+        assertEquals( folderAggregation.getType(), ContentTypeName.folder() );
+        assertEquals( folderAggregation.getCount(), 1 );
 
     }
 
@@ -141,15 +141,15 @@ public class ContentDependenciesResolverTest
 
         final ContentDependencies result = resolver.resolve( content.getId() );
 
-        Assert.assertEquals( result.getOutbound().size(), 2 );
+        assertEquals( result.getOutbound().size(), 2 );
 
         final ContentDependenciesAggregation siteAggregation = (ContentDependenciesAggregation) result.getOutbound().toArray()[0];
-        Assert.assertEquals( siteAggregation.getType(), ContentTypeName.site() );
-        Assert.assertEquals( siteAggregation.getCount(), 1 );
+        assertEquals( siteAggregation.getType(), ContentTypeName.site() );
+        assertEquals( siteAggregation.getCount(), 1 );
 
         final ContentDependenciesAggregation folderAggregation = (ContentDependenciesAggregation) result.getOutbound().toArray()[1];
-        Assert.assertEquals( folderAggregation.getType(), ContentTypeName.folder() );
-        Assert.assertEquals( folderAggregation.getCount(), 2 );
+        assertEquals( folderAggregation.getType(), ContentTypeName.folder() );
+        assertEquals( folderAggregation.getCount(), 2 );
     }
 
     @Test
@@ -180,10 +180,10 @@ public class ContentDependenciesResolverTest
 
         final ContentDependencies result = resolver.resolve( content.getId() );
 
-        Assert.assertEquals( result.getOutbound().size(), 1 );
+        assertEquals( result.getOutbound().size(), 1 );
 
         final ContentDependenciesAggregation folderAggregation = (ContentDependenciesAggregation) result.getOutbound().toArray()[0];
-        Assert.assertEquals( folderAggregation.getType(), ContentTypeName.folder() );
-        Assert.assertEquals( folderAggregation.getCount(), 2 );
+        assertEquals( folderAggregation.getType(), ContentTypeName.folder() );
+        assertEquals( folderAggregation.getCount(), 2 );
     }
 }

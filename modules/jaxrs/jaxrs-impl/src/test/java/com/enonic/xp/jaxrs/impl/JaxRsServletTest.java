@@ -4,7 +4,7 @@ import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
@@ -13,7 +13,7 @@ import com.enonic.xp.web.filter.BaseWebFilter;
 import com.enonic.xp.web.jetty.impl.JettyTestSupport;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class JaxRsServletTest
     extends JettyTestSupport

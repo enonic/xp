@@ -6,8 +6,8 @@ import java.util.Map;
 
 import javax.script.ScriptEngine;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
@@ -24,7 +24,7 @@ import com.enonic.xp.script.impl.value.ScriptValueFactoryImpl;
 import com.enonic.xp.web.HttpMethod;
 
 import static com.google.common.collect.ImmutableMap.of;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PortalRequestSerializerTest
 {
@@ -33,7 +33,7 @@ public class PortalRequestSerializerTest
     private ScriptEngine engine;
 
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.engine = NashornHelper.getScriptEngine( getClass().getClassLoader() );

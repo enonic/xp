@@ -2,7 +2,7 @@ package com.enonic.xp.query.aggregation;
 
 import java.util.Arrays;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.query.aggregation.metric.MaxAggregationQuery;
 import com.enonic.xp.query.aggregation.metric.MinAggregationQuery;
@@ -10,7 +10,7 @@ import com.enonic.xp.query.aggregation.metric.StatsAggregationQuery;
 import com.enonic.xp.query.aggregation.metric.ValueCountAggregationQuery;
 import com.enonic.xp.util.GeoPoint;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BucketAggregationQueryTest
 {

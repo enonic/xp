@@ -1,7 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
@@ -10,16 +10,15 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.node.RenameNodeParams;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RenameNodeCommandTest
     extends AbstractNodeTest
 {
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 
@@ -169,11 +168,11 @@ public class RenameNodeCommandTest
         createNode( createNodeNamedMyNodeParams );
     }
 
-    @Test(expected = OperationNotPermittedException.class)
+    @Test
     public void cannot_rename_root_node()
         throws Exception
     {
-        RenameNodeCommand.create().
+        assertThrows(OperationNotPermittedException.class, () -> RenameNodeCommand.create().
             params( RenameNodeParams.create().
                 nodeId( Node.ROOT_UUID ).
                 nodeName( NodeName.from( "my-node-edited" ) ).
@@ -182,6 +181,6 @@ public class RenameNodeCommandTest
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
-            execute();
+            execute() );
     }
 }

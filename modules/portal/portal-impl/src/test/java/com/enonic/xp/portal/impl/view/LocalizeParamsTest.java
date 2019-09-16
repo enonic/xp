@@ -2,9 +2,8 @@ package com.enonic.xp.portal.impl.view;
 
 import java.util.Locale;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
 
@@ -16,13 +15,12 @@ import com.enonic.xp.portal.view.ViewFunctionParams;
 import com.enonic.xp.site.Site;
 
 public class LocalizeParamsTest
-    extends Assert
 {
     private static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
 
     private PortalRequest request;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

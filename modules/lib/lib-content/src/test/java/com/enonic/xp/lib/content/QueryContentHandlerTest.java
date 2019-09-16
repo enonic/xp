@@ -2,9 +2,7 @@ package com.enonic.xp.lib.content;
 
 import java.time.Instant;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.collect.ImmutableMap;
@@ -22,15 +20,12 @@ import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.GetContentByIdsParams;
-import com.enonic.xp.highlight.HighlightedField;
-import com.enonic.xp.highlight.HighlightedFields;
+import com.enonic.xp.highlight.HighlightedProperty;
+import com.enonic.xp.highlight.HighlightedProperties;
 
 public class QueryContentHandlerTest
     extends BaseContentHandlerTest
 {
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     @Test
     public void testExample()
     {
@@ -88,15 +83,15 @@ public class QueryContentHandlerTest
 
         final Aggregations aggregations = Aggregations.from( aggr1, aggr2, aggr3, aggr4, aggr5 );
 
-        final ImmutableMap highlight = ImmutableMap.of( ContentId.from( "123" ), HighlightedFields.create().
-            add( HighlightedField.create().
-                name( "field1" ).
+        final ImmutableMap highlight = ImmutableMap.of( ContentId.from( "123" ), HighlightedProperties.create().
+            add( HighlightedProperty.create().
+                name( "property1" ).
                 addFragment( "fragment1_1" ).
                 addFragment( "fragment1_2" ).
                 build() ).
-            build(), ContentId.from( "456" ), HighlightedFields.create().
-            add( HighlightedField.create().
-                name( "field2" ).
+            build(), ContentId.from( "456" ), HighlightedProperties.create().
+            add( HighlightedProperty.create().
+                name( "property2" ).
                 addFragment( "fragment2_1" ).
                 addFragment( "fragment2_2" ).
                 build() ).

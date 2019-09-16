@@ -1,12 +1,12 @@
 package com.enonic.xp.node;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.query.expr.OrderExpr;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class NodeVersionQueryTest
 {

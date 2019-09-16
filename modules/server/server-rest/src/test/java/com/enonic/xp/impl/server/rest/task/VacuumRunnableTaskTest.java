@@ -1,7 +1,7 @@
 package com.enonic.xp.impl.server.rest.task;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.task.AbstractRunnableTaskTest;
@@ -17,12 +17,10 @@ public class VacuumRunnableTaskTest
 {
     private VacuumService vacuumService;
 
-    @Before
-    @Override
+    @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.vacuumService = Mockito.mock( VacuumService.class );
     }
 

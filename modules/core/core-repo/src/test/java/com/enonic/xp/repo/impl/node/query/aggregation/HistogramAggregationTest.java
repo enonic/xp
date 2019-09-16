@@ -2,8 +2,8 @@ package com.enonic.xp.repo.impl.node.query.aggregation;
 
 import java.util.Iterator;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.aggregation.Bucket;
 import com.enonic.xp.aggregation.BucketAggregation;
@@ -16,16 +16,15 @@ import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.query.aggregation.HistogramAggregationQuery;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class HistogramAggregationTest
     extends AbstractNodeTest
 {
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 

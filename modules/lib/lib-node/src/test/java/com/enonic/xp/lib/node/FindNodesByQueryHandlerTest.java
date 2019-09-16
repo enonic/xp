@@ -1,6 +1,6 @@
 package com.enonic.xp.lib.node;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.aggregation.Aggregation;
@@ -8,8 +8,8 @@ import com.enonic.xp.aggregation.Aggregations;
 import com.enonic.xp.aggregation.Bucket;
 import com.enonic.xp.aggregation.BucketAggregation;
 import com.enonic.xp.aggregation.Buckets;
-import com.enonic.xp.highlight.HighlightedField;
-import com.enonic.xp.highlight.HighlightedFields;
+import com.enonic.xp.highlight.HighlightedProperty;
+import com.enonic.xp.highlight.HighlightedProperties;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeHit;
 import com.enonic.xp.node.NodeId;
@@ -99,9 +99,9 @@ public class FindNodesByQueryHandlerTest
             addNodeHit( NodeHit.create().
                 nodeId( NodeId.from( "b186d24f-ac38-42ca-a6db-1c1bda6c6c26" ) ).
                 score( 1.23f ).
-                highlight( HighlightedFields.create().
-                    add( HighlightedField.create().
-                        name( "field1" ).
+                highlight( HighlightedProperties.create().
+                    add( HighlightedProperty.create().
+                        name( "property1" ).
                         addFragment( "fragment1" ).
                         addFragment( "fragment2" ).
                         build() ).

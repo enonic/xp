@@ -5,8 +5,8 @@ import java.util.UUID;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCluster;
 import org.apache.ignite.cluster.ClusterNode;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -21,7 +21,7 @@ public class IgniteClusterReporterTest
 
     private IgniteCluster igniteCluster;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

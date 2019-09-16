@@ -2,7 +2,7 @@ package com.enonic.xp.admin.impl.rest.resource.content.page.layout;
 
 import javax.ws.rs.core.MediaType;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalAnswers;
 import org.mockito.Mockito;
 

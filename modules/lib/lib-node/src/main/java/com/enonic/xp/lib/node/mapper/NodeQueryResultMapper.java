@@ -1,8 +1,8 @@
 package com.enonic.xp.lib.node.mapper;
 
 import com.enonic.xp.aggregation.Aggregations;
-import com.enonic.xp.highlight.HighlightedField;
-import com.enonic.xp.highlight.HighlightedFields;
+import com.enonic.xp.highlight.HighlightedProperty;
+import com.enonic.xp.highlight.HighlightedProperties;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeHit;
 import com.enonic.xp.node.NodeHits;
@@ -73,15 +73,15 @@ public final class NodeQueryResultMapper
         }
     }
 
-    private void serialize( final MapGenerator gen, final HighlightedFields highlightedFields )
+    private void serialize( final MapGenerator gen, final HighlightedProperties highlightedProperties )
     {
-        if ( highlightedFields != null && !highlightedFields.isEmpty() )
+        if ( highlightedProperties != null && !highlightedProperties.isEmpty() )
         {
             gen.map( "highlight" );
-            for ( HighlightedField highlightedField : highlightedFields )
+            for ( HighlightedProperty highlightedProperty : highlightedProperties )
             {
-                gen.array( highlightedField.getName() );
-                for ( String fragment : highlightedField.getFragments() )
+                gen.array( highlightedProperty.getName() );
+                for ( String fragment : highlightedProperty.getFragments() )
                 {
                     gen.value( fragment );
                 }

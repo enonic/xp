@@ -11,6 +11,8 @@ public class NodeKey
 
     private final String value;
 
+    private String versionId;
+
     public static NodeKey from( final String value )
     {
         if ( Strings.isNullOrEmpty( value ) )
@@ -21,10 +23,26 @@ public class NodeKey
         return new NodeKey( !value.startsWith( "/" ), value );
     }
 
+    public static NodeKey from( final String value, final String versionId)
+    {
+        if ( Strings.isNullOrEmpty( value ) )
+        {
+            return null;
+        }
+
+        return new NodeKey( !value.startsWith( "/" ), value, versionId);
+    }
+
     private NodeKey( final boolean isId, final String value )
     {
         this.isId = isId;
         this.value = value;
+    }
+
+    private NodeKey( final boolean isId, final String value, final String versionId )
+    {
+        this( isId, value );
+        this.versionId = versionId;
     }
 
     NodeId getAsNodeId()
@@ -62,10 +80,19 @@ public class NodeKey
         return value;
     }
 
+    public String getVersionId()
+    {
+        return versionId;
+    }
+
     @Override
     public String toString()
     {
-        return value;
+        if ( Strings.isNullOrEmpty( versionId ) )
+        {
+            return value;
+        }
+        return "key=" + value + ", versionId=" + versionId;
     }
 }
 

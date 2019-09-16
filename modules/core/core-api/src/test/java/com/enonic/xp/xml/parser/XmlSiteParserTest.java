@@ -3,7 +3,7 @@ package com.enonic.xp.xml.parser;
 import java.net.URL;
 import java.nio.charset.Charset;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
@@ -14,7 +14,7 @@ import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
 import com.enonic.xp.support.ResourceTestHelper;
 import com.enonic.xp.support.XmlTestHelper;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class XmlSiteParserTest
 {

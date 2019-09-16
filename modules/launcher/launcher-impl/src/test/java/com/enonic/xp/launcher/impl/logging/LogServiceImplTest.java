@@ -1,7 +1,7 @@
 package com.enonic.xp.launcher.impl.logging;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.service.log.LogService;
@@ -10,7 +10,7 @@ public class LogServiceImplTest
 {
     private LogServiceImpl service;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         final Bundle bundle = Mockito.mock( Bundle.class );

@@ -7,7 +7,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.aggregation.Aggregations;
-import com.enonic.xp.highlight.HighlightedFields;
+import com.enonic.xp.highlight.HighlightedProperties;
 
 @Beta
 public final class FindContentIdsByQueryResult
@@ -16,7 +16,7 @@ public final class FindContentIdsByQueryResult
 
     private final ContentIds contentIds;
 
-    private final ImmutableMap<ContentId, HighlightedFields> highlight;
+    private final ImmutableMap<ContentId, HighlightedProperties> highlight;
 
     private final long totalHits;
 
@@ -52,7 +52,7 @@ public final class FindContentIdsByQueryResult
         return aggregations;
     }
 
-    public ImmutableMap<ContentId, HighlightedFields> getHighlight()
+    public ImmutableMap<ContentId, HighlightedProperties> getHighlight()
     {
         return highlight;
     }
@@ -97,7 +97,7 @@ public final class FindContentIdsByQueryResult
 
         private Aggregations aggregations;
 
-        private Map<ContentId, HighlightedFields> highlight;
+        private Map<ContentId, HighlightedProperties> highlight;
 
         private long totalHits;
 
@@ -131,7 +131,7 @@ public final class FindContentIdsByQueryResult
             return this;
         }
 
-        public Builder highlight( final Map<ContentId, HighlightedFields> highlight )
+        public Builder highlight( final Map<ContentId, HighlightedProperties> highlight )
         {
             this.highlight = highlight;
             return this;

@@ -2,7 +2,7 @@ package com.enonic.xp.task;
 
 import java.util.List;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
@@ -31,8 +31,8 @@ public abstract class AbstractRunnableTaskTest
 
     protected JsonTestHelper jsonTestHelper;
 
-    @Before
-    public void setUp()
+    @BeforeEach
+    void setUpAbstractRunnableTaskTest()
         throws Exception
     {
         this.authInfo = AuthenticationInfo.create().user( User.ANONYMOUS ).build();

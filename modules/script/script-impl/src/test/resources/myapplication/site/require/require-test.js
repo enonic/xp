@@ -1,4 +1,4 @@
-var assert = Java.type('org.junit.Assert');
+var assert = Java.type('org.junit.jupiter.api.Assertions');
 
 var other = require('other');
 assert.assertEquals('Hello World!', other.hello('World'));

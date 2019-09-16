@@ -1,13 +1,13 @@
 package com.enonic.xp.core.impl.event;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -17,7 +17,7 @@ public class EventMulticasterTest
 {
     private EventMulticaster multicaster;
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         this.multicaster = new EventMulticaster();

@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.node.query;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class NodeQueryTest
 {
