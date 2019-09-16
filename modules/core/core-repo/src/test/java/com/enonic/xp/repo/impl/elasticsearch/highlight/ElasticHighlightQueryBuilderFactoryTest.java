@@ -7,9 +7,8 @@ import org.elasticsearch.search.highlight.HighlightBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.query.highlight.HighlightFieldSettings;
 import com.enonic.xp.query.highlight.HighlightQuery;
-import com.enonic.xp.query.highlight.HighlightQueryField;
+import com.enonic.xp.query.highlight.HighlightQueryProperty;
 import com.enonic.xp.query.highlight.HighlightQuerySettings;
 import com.enonic.xp.query.highlight.constants.Encoder;
 import com.enonic.xp.query.highlight.constants.Fragmenter;
@@ -33,7 +32,7 @@ public class ElasticHighlightQueryBuilderFactoryTest
     public void create()
     {
         final HighlightQuery query = HighlightQuery.create().
-            field( HighlightQueryField.create( "fieldToHighlight" ).build() ).
+            property( HighlightQueryProperty.create( "propertyToHighlight" ).build() ).
             build();
 
         final ElasticHighlightQuery elasticHighlightQuery = highlightQueryBuilderFactory.create( query );
@@ -43,14 +42,14 @@ public class ElasticHighlightQueryBuilderFactoryTest
 
         final List<String> names =
             elasticHighlightQuery.getFields().stream().map( HighlightBuilder.Field::name ).collect( Collectors.toList() );
-        assertTrue( names.containsAll( List.of( "fieldtohighlight._*", "fieldtohighlight" ) ) );
+        assertTrue( names.containsAll( List.of( "propertytohighlight._*", "propertytohighlight" ) ) );
     }
 
     @Test
     public void create_with_settings()
     {
         final HighlightQuery query = HighlightQuery.create().
-            field( HighlightQueryField.create( "fieldToHighlight" ).build() ).
+            property( HighlightQueryProperty.create( "propertyToHighlight" ).build() ).
             settings( HighlightQuerySettings.create().
                 encoder( Encoder.HTML ).
                 fragmenter( Fragmenter.SIMPLE ).

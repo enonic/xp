@@ -17,7 +17,7 @@ public class SearchHitsFactory
                 indexName( hit.getIndex() ).
                 indexType( hit.getType() ).
                 returnValues( ReturnValuesFactory.create( hit ) ).
-                highlightedFields( HighlightedFieldsFactory.create( hit.highlightFields() ) );
+                highlightedFields( HighlightedPropertiesFactory.create( hit.highlightFields() ) );
 
             if ( hit.getExplanation() != null )
             {

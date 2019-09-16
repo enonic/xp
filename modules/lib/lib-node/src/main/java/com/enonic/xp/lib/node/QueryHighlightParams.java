@@ -1,12 +1,11 @@
 package com.enonic.xp.lib.node;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
-import com.enonic.xp.query.highlight.HighlightFieldSettings;
+import com.enonic.xp.query.highlight.HighlightPropertySettings;
 import com.enonic.xp.query.highlight.HighlightQuery;
-import com.enonic.xp.query.highlight.HighlightQueryField;
+import com.enonic.xp.query.highlight.HighlightQueryProperty;
 import com.enonic.xp.query.highlight.HighlightQuerySettings;
 import com.enonic.xp.query.highlight.constants.Encoder;
 import com.enonic.xp.query.highlight.constants.Fragmenter;
@@ -30,53 +29,53 @@ final class QueryHighlightParams
         final HighlightQuerySettings settings = fillQuerySettings( HighlightQuerySettings.create(), highlightMap ).build();
         final HighlightQuery.Builder highlightQuery = HighlightQuery.create().settings( settings );
 
-        final Map<String, Object> fieldsMap = (Map<String, Object>) highlightMap.get( "fields" );
+        final Map<String, Object> propertiesMap = (Map<String, Object>) highlightMap.get( "properties" );
 
-        if ( fieldsMap == null )
+        if ( propertiesMap == null )
         {
             return HighlightQuery.empty();
         }
 
-        for ( String name : fieldsMap.keySet() )
+        for ( String name : propertiesMap.keySet() )
         {
-            final Map<String, Object> fieldMap = (Map<String, Object>) fieldsMap.get( name );
-            final HighlightQueryField highlightQueryField = highlightFieldFromParams( name, fieldMap );
+            final Map<String, Object> propertyMap = (Map<String, Object>) propertiesMap.get( name );
+            final HighlightQueryProperty highlightQueryProperty = highlightPropertyFromParams( name, propertyMap );
 
-            highlightQuery.field( highlightQueryField );
+            highlightQuery.property( highlightQueryProperty );
         }
 
         return highlightQuery.build();
     }
 
-    private HighlightQueryField highlightFieldFromParams( final String name, final Map<String, Object> fieldMap )
+    private HighlightQueryProperty highlightPropertyFromParams( final String name, final Map<String, Object> propertyMap )
     {
-        final HighlightFieldSettings settings = fillFieldSettings( HighlightFieldSettings.create(), fieldMap ).build();
-        return HighlightQueryField.create( name ).settings( settings ).build();
+        final HighlightPropertySettings settings = fillPropertySettings( HighlightPropertySettings.create(), propertyMap ).build();
+        return HighlightQueryProperty.create( name ).settings( settings ).build();
     }
 
     private HighlightQuerySettings.Builder fillQuerySettings( final HighlightQuerySettings.Builder builder,
-                                                              final Map<String, Object> fieldMap )
+                                                              final Map<String, Object> propertyMap )
     {
-        fillFieldSettings( builder, fieldMap );
+        fillPropertySettings( builder, propertyMap );
 
-        return builder.encoder( Encoder.from( (String) fieldMap.get( "encoder" ) ) ).
-            tagsSchema( TagsSchema.from( (String) fieldMap.get( "tagsSchema" ) ) );
+        return builder.encoder( Encoder.from( (String) propertyMap.get( "encoder" ) ) ).
+            tagsSchema( TagsSchema.from( (String) propertyMap.get( "tagsSchema" ) ) );
 
     }
 
-    private HighlightFieldSettings.Builder fillFieldSettings( final HighlightFieldSettings.Builder builder,
-                                                              final Map<String, Object> fieldMap )
+    private HighlightPropertySettings.Builder fillPropertySettings( final HighlightPropertySettings.Builder builder,
+                                                                    final Map<String, Object> propertyMap )
     {
-        return builder.fragmenter( Fragmenter.from( (String) fieldMap.get( "fragmenter" ) ) ).
-            fragmentSize( (Integer) fieldMap.get( "fragmentSize" ) ).
-            noMatchSize( (Integer) fieldMap.get( "noMatchSize" ) ).
-            numOfFragments( (Integer) fieldMap.get( "numberOfFragments" ) ).
-            order( Order.from( (String) fieldMap.get( "order" ) ) ).
+        return builder.fragmenter( Fragmenter.from( (String) propertyMap.get( "fragmenter" ) ) ).
+            fragmentSize( (Integer) propertyMap.get( "fragmentSize" ) ).
+            noMatchSize( (Integer) propertyMap.get( "noMatchSize" ) ).
+            numOfFragments( (Integer) propertyMap.get( "numberOfFragments" ) ).
+            order( Order.from( (String) propertyMap.get( "order" ) ) ).
             addPreTags(
-                fieldMap.get( "preTag" ) == null ? Collections.emptyList() : Collections.singletonList( fieldMap.get( "preTag" ) ) ).
+                propertyMap.get( "preTag" ) == null ? Collections.emptyList() : Collections.singletonList( propertyMap.get( "preTag" ) ) ).
             addPostTags(
-                fieldMap.get( "postTag" ) == null ? Collections.emptyList() : Collections.singletonList( fieldMap.get( "postTag" ) ) ).
-            requireFieldMatch( (Boolean) fieldMap.get( "requireFieldMatch" ) );
+                propertyMap.get( "postTag" ) == null ? Collections.emptyList() : Collections.singletonList( propertyMap.get( "postTag" ) ) ).
+            requireFieldMatch( (Boolean) propertyMap.get( "requireFieldMatch" ) );
     }
 
 }

@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.search.result;
 
-import com.enonic.xp.highlight.HighlightedFields;
+import com.enonic.xp.highlight.HighlightedProperties;
 import com.enonic.xp.query.QueryExplanation;
 import com.enonic.xp.repo.impl.ReturnValue;
 import com.enonic.xp.repo.impl.ReturnValues;
@@ -20,7 +20,7 @@ public class SearchHit
 
     private final QueryExplanation explanation;
 
-    private final HighlightedFields highlightedFields;
+    private final HighlightedProperties highlightedProperties;
 
     private SearchHit( final Builder builder )
     {
@@ -30,7 +30,7 @@ public class SearchHit
         this.indexName = builder.indexName;
         this.indexType = builder.indexType;
         this.explanation = builder.explanation;
-        this.highlightedFields = builder.highlightedFields;
+        this.highlightedProperties = builder.highlightedProperties;
     }
 
     public static Builder create()
@@ -78,9 +78,9 @@ public class SearchHit
         return returnValues;
     }
 
-    public HighlightedFields getHighlightedFields()
+    public HighlightedProperties getHighlightedProperties()
     {
-        return highlightedFields;
+        return highlightedProperties;
     }
 
     private ReturnValue doGetField( final String fieldName, final boolean failOnMissing )
@@ -139,7 +139,7 @@ public class SearchHit
 
         private QueryExplanation explanation;
 
-        private HighlightedFields highlightedFields;
+        private HighlightedProperties highlightedProperties;
 
         public Builder score( final float score )
         {
@@ -177,9 +177,9 @@ public class SearchHit
             return this;
         }
 
-        public Builder highlightedFields( final HighlightedFields highlightedFields )
+        public Builder highlightedFields( final HighlightedProperties highlightedProperties )
         {
-            this.highlightedFields = highlightedFields;
+            this.highlightedProperties = highlightedProperties;
             return this;
         }
 
