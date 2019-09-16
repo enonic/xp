@@ -96,6 +96,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.ReorderChildJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ReorderChildrenJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ResolvePublishContentResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ResolvePublishDependenciesJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.RevertContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.SetActiveVersionJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.SetChildOrderJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.UndoPendingDeleteContentJson;
@@ -134,6 +135,7 @@ import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.ContentValidityParams;
 import com.enonic.xp.content.ContentValidityResult;
+import com.enonic.xp.content.ContentVersionId;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.content.FindContentByParentParams;
@@ -1415,6 +1417,39 @@ public final class ContentResource
 
         final FindContentIdsByParentResult result = this.contentService.findIdsByParent( params );
         return result.getContentIds().stream().map( contentId -> new ContentIdJson( contentId ) ).collect( Collectors.toList() );
+    }
+
+    @POST
+    @Path("revert")
+    public ContentJson revert( final RevertContentJson params )
+    {
+        final ContentVersionId contentVersionId = ContentVersionId.from( params.getVersionId() );
+
+        final Content content =
+            params.getContentKey().startsWith( "/" )
+                ? contentService.getByPathAndVersionId( ContentPath.from( params.getContentKey() ), contentVersionId )
+                : contentService.getByIdAndVersionId( ContentId.from( params.getContentKey() ), contentVersionId );
+
+        if ( content == null )
+        {
+            throw JaxRsExceptions.notFound( "Content with contentKey [%s] and versionId [%s] not found", params.getContentKey(),
+                                            params.getVersionId() );
+        }
+
+        final UpdateContentParams updateParams = new UpdateContentParams().
+            contentId( content.getId() ).
+            editor( edit -> {
+                edit.data = content.getData();
+                edit.extraDatas = content.getAllExtraData();
+                edit.displayName = content.getDisplayName();
+                edit.owner = content.getOwner();
+                edit.language = content.getLanguage();
+                edit.workflowInfo = WorkflowInfo.inProgress();
+            } );
+
+        final Content updatedContent = contentService.update( updateParams );
+
+        return new ContentJson( updatedContent, contentIconUrlResolver, principalsResolver );
     }
 
     private Content doCreateAttachment( final String attachmentName, final MultipartForm form )

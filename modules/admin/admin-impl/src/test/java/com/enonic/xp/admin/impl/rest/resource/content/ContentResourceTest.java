@@ -66,6 +66,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.LocaleListJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ReorderChildrenJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.RevertContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.SetActiveVersionJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.UndoPendingDeleteContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.UndoPendingDeleteContentResultJson;
@@ -192,7 +193,11 @@ import static com.enonic.xp.security.acl.Permission.DELETE;
 import static com.enonic.xp.security.acl.Permission.MODIFY;
 import static com.enonic.xp.security.acl.Permission.READ;
 import static java.util.Arrays.asList;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
@@ -2216,6 +2221,84 @@ public class ContentResourceTest
             post().
             getAsString();
         } );
+    }
+
+    @Test
+    public void testRevert_by_id()
+    {
+        // prepare
+        final ContentResource instance = getResourceInstance();
+        final RevertContentJson params = new RevertContentJson( "content-id", "versionKey" );
+        final Content updatedContent = createContent( "content-id", "content-name", "myapplication:content-type" );
+
+        // mock
+        final Content content = Mockito.mock( Content.class );
+        Mockito.when( contentService.getByIdAndVersionId( any( ContentId.class ), any( ContentVersionId.class ) ) ).thenReturn( content );
+        Mockito.when( contentService.update( any( UpdateContentParams.class ) ) ).thenReturn( updatedContent );
+
+        // test
+        final ContentJson result = instance.revert( params );
+
+        // assert
+        assertNotNull( result );
+        assertEquals( "content-id", result.getId() );
+
+        // verify
+        Mockito.verify( this.contentService, Mockito.times( 1 ) ).
+            getByIdAndVersionId( any( ContentId.class ), any( ContentVersionId.class ) );
+        Mockito.verify( this.contentService, Mockito.times( 1 ) ).
+            update( any( UpdateContentParams.class ) );
+        Mockito.verifyNoMoreInteractions( contentService );
+    }
+
+    @Test
+    public void testRevert_by_path()
+    {
+        // prepare
+        final ContentResource instance = getResourceInstance();
+        final RevertContentJson params = new RevertContentJson( "/content-name", "versionKey" );
+        final Content updatedContent = createContent( "content-id", "content-name", "myapplication:content-type" );
+
+        // mock
+        final Content content = Mockito.mock( Content.class );
+        Mockito.when( contentService.getByPathAndVersionId( any( ContentPath.class ), any( ContentVersionId.class ) ) ).thenReturn( content );
+        Mockito.when( contentService.update( any( UpdateContentParams.class ) ) ).thenReturn( updatedContent );
+
+        // test
+        final ContentJson result = instance.revert( params );
+
+        // assert
+        assertNotNull( result );
+        assertEquals( "content-id", result.getId() );
+        assertEquals( "/content-name", result.getPath() );
+
+        // verify
+        Mockito.verify( this.contentService, Mockito.times( 1 ) ).
+            getByPathAndVersionId( any( ContentPath.class ), any( ContentVersionId.class ) );
+        Mockito.verify( this.contentService, Mockito.times( 1 ) ).
+            update( any( UpdateContentParams.class ) );
+        Mockito.verifyNoMoreInteractions( contentService );
+    }
+
+    @Test
+    public void testRevert_not_found()
+    {
+        // prepare
+        final ContentResource instance = getResourceInstance();
+        final RevertContentJson params = new RevertContentJson( "/content-name", "versionKey" );
+
+        // mock
+        Mockito.when( contentService.getByPathAndVersionId( any( ContentPath.class ), any( ContentVersionId.class ) ) ).thenReturn( null );
+
+        // test & assert
+        final WebApplicationException exception = assertThrows(WebApplicationException.class, () -> instance.revert( params ));
+
+        assertEquals( "Content with contentKey [/content-name] and versionId [versionKey] not found", exception.getMessage() );
+
+        // verify
+        Mockito.verify( this.contentService, Mockito.times( 1 ) ).
+            getByPathAndVersionId( any( ContentPath.class ), any( ContentVersionId.class ) );
+        Mockito.verifyNoMoreInteractions( contentService );
     }
 
     private ContentTreeSelectorQueryJson initContentTreeSelectorQueryJson( final ContentPath parentPath )
