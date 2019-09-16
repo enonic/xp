@@ -1,19 +1,16 @@
 package com.enonic.xp.query.highlight;
 
-import java.util.Set;
-
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 public class HighlightQuery
 {
-    private final ImmutableSet<HighlightQueryField> fields;
+    private final ImmutableSet<HighlightQueryProperty> properties;
 
     private final HighlightQuerySettings settings;
 
     private HighlightQuery( final Builder builder )
     {
-        this.fields = ImmutableSet.copyOf( builder.fields );
+        this.properties = builder.properties.build();
         this.settings = builder.settings;
     }
 
@@ -33,14 +30,14 @@ public class HighlightQuery
         return settings;
     }
 
-    public ImmutableSet<HighlightQueryField> getFields()
+    public ImmutableSet<HighlightQueryProperty> getProperties()
     {
-        return fields;
+        return properties;
     }
 
     public static class Builder
     {
-        private Set<HighlightQueryField> fields = Sets.newHashSet();
+        private ImmutableSet.Builder<HighlightQueryProperty> properties = ImmutableSet.builder();
 
         private HighlightQuerySettings settings = HighlightQuerySettings.empty();
 
@@ -49,9 +46,9 @@ public class HighlightQuery
         }
 
         @SuppressWarnings("unchecked")
-        public Builder field( final HighlightQueryField value )
+        public Builder property( final HighlightQueryProperty value )
         {
-            this.fields.add( value );
+            this.properties.add( value );
             return this;
         }
 
