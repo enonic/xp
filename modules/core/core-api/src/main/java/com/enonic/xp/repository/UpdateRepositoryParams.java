@@ -1,20 +1,22 @@
 package com.enonic.xp.repository;
 
-import java.util.Objects;
 import java.util.Optional;
 
 import com.google.common.base.Preconditions;
 
-public final class UpdateRepositoryDataParams
+public final class UpdateRepositoryParams
 {
     private final RepositoryId repositoryId;
 
     private final RepositoryData data;
 
-    private UpdateRepositoryDataParams( final Builder builder )
+    private final RepositoryAttachments attachments;
+
+    private UpdateRepositoryParams( final Builder builder )
     {
-        repositoryId = builder.repositoryId;
+        this.repositoryId = builder.repositoryId;
         this.data = Optional.ofNullable( builder.data ).orElse( RepositoryData.empty() );
+        this.attachments = Optional.ofNullable( builder.attachments ).orElse( RepositoryAttachments.empty() );
     }
 
     public RepositoryData getData()
@@ -22,29 +24,14 @@ public final class UpdateRepositoryDataParams
         return data;
     }
 
-
-    @Override
-    public boolean equals( Object o )
+    public RepositoryId getRepositoryId()
     {
-        if ( this == o )
-        {
-            return true;
-        }
-
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-
-        UpdateRepositoryDataParams that = (UpdateRepositoryDataParams) o;
-        return Objects.equals( repositoryId, that.repositoryId ) &&
-            Objects.equals( data, that.data );
+        return repositoryId;
     }
 
-    @Override
-    public int hashCode()
+    public RepositoryAttachments getAttachments()
     {
-        return Objects.hash( repositoryId, data );
+        return attachments;
     }
 
     public static Builder create()
@@ -56,6 +43,7 @@ public final class UpdateRepositoryDataParams
     {
         private RepositoryId repositoryId;
         private RepositoryData data;
+        private RepositoryAttachments attachments;
 
         private Builder()
         {
@@ -73,16 +61,22 @@ public final class UpdateRepositoryDataParams
             return this;
         }
 
+        public Builder data( final RepositoryAttachments attachments )
+        {
+            this.attachments = attachments;
+            return this;
+        }
+
         private void validate()
         {
             Preconditions.checkNotNull( repositoryId, "repositoryId cannot be null" );
         }
 
 
-        public UpdateRepositoryDataParams build()
+        public UpdateRepositoryParams build()
         {
             validate();
-            return new UpdateRepositoryDataParams( this );
+            return new UpdateRepositoryParams( this );
         }
     }
 }

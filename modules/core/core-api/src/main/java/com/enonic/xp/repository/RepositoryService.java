@@ -9,7 +9,7 @@ public interface RepositoryService
 {
     Repository createRepository( final CreateRepositoryParams params );
 
-    Repository updateRepositoryData( final UpdateRepositoryDataParams params );
+    Repository updateRepository( final UpdateRepositoryParams params );
 
     Branch createBranch( final CreateBranchParams params );
 
