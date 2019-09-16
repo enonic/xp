@@ -1,7 +1,7 @@
 package com.enonic.xp.vfs;
 
 import java.nio.file.Path;
-import java.util.List;
+import java.util.LinkedList;
 
 import com.google.common.annotations.Beta;
 
@@ -12,7 +12,7 @@ public interface VirtualFilePath
 
     String getPath();
 
-    List<String> getElements();
+    LinkedList<String> getElements();
 
     String getName();
 

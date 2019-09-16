@@ -3,6 +3,7 @@ package com.enonic.xp.vfs;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -17,7 +18,7 @@ class VirtualFilePathImpl
 
     final boolean absolute;
 
-    final List<String> elements;
+    final LinkedList<String> elements;
 
     private VirtualFilePathImpl( final Builder builder )
     {
@@ -37,15 +38,15 @@ class VirtualFilePathImpl
         this.elements = resolvePathElements( path.toString(), path.getFileSystem().getSeparator() );
     }
 
-    VirtualFilePathImpl( final List<String> elements, final boolean absolute )
+    VirtualFilePathImpl( final LinkedList<String> elements, final boolean absolute )
     {
         this.absolute = absolute;
         this.elements = elements;
     }
 
-    static List<String> resolvePathElements( final String path, final String separator )
+    static LinkedList<String> resolvePathElements( final String path, final String separator )
     {
-        final List<String> elements = new ArrayList<>();
+        final LinkedList<String> elements = new LinkedList<>();
 
         final String[] elementArray = path.split( Pattern.quote( separator ) );
 
@@ -102,7 +103,7 @@ class VirtualFilePathImpl
     }
 
     @Override
-    public List<String> getElements()
+    public LinkedList<String> getElements()
     {
         return elements;
     }
@@ -170,7 +171,7 @@ class VirtualFilePathImpl
 
     private static class Builder
     {
-        private final List<String> elements = new ArrayList<>();
+        private final LinkedList<String> elements = new LinkedList<>();
 
         private boolean absolute;
 
