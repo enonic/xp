@@ -119,7 +119,7 @@ public class ApplicationServiceImplTest
     {
         activateWithNoStoredApplications();
 
-        // Test should pass. At a time of writing Felix version is 6.0.1. All greater versions should work as well.
+        // At a time of writing Felix version is 6.0.1. All greater versions should work as well.
         final Bundle bundle = deployBundle( "app1", true, VersionRange.valueOf( "6.0" ) );
 
         assertEquals( Bundle.INSTALLED, bundle.getState() );
@@ -133,7 +133,7 @@ public class ApplicationServiceImplTest
     {
         activateWithNoStoredApplications();
 
-        // Test should pas for all versions starting from Felix 6.0.
+        // At a time of writing Felix version is 6.0.1. Range covers all future versions as well.
         final Bundle bundle = deployBundle( "app1", true, VersionRange.valueOf( "(6.0,9999.0]" ) );
 
         assertEquals( Bundle.INSTALLED, bundle.getState() );
@@ -160,7 +160,7 @@ public class ApplicationServiceImplTest
     {
         activateWithNoStoredApplications();
 
-        // Test should fail on all versions of Felix
+        // There is no version 0.0 of Felix.
         final Bundle bundle = deployBundle( "app1", true, VersionRange.valueOf( "[0.0,0.0]" ) );
 
         assertEquals( Bundle.INSTALLED, bundle.getState() );
