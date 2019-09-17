@@ -27,7 +27,9 @@ public class BinaryExtractorImpl
 {
     private final static Logger LOG = LoggerFactory.getLogger( BinaryExtractorImpl.class );
 
-    private final static int WRITE_LIMIT = 100 * 1000;
+    private final static String WRITE_LIMIT_PROPERTY = "xp.config.extractor.writeLimit";
+
+    private final static int WRITE_LIMIT_DEFAULT = 500_000;
 
     private Detector detector;
 
@@ -37,7 +39,7 @@ public class BinaryExtractorImpl
     public ExtractedData extract( final ByteSource source )
     {
         final ParseContext context = new ParseContext();
-        final BodyContentHandler handler = new BodyContentHandler( WRITE_LIMIT );
+        final BodyContentHandler handler = new BodyContentHandler( getWriteLimit() );
         final Metadata metadata = new Metadata();
 
         try (final InputStream stream = source.openStream())
@@ -52,6 +54,18 @@ public class BinaryExtractorImpl
         }
 
         return ExtractorResultFactory.create( metadata, handler );
+    }
+
+    private int getWriteLimit()
+    {
+        final String property = System.getProperty( WRITE_LIMIT_PROPERTY );
+
+        if ( property != null && property.matches( "\\d+" ) )
+        {
+            return Integer.parseInt( property );
+        }
+
+        return WRITE_LIMIT_DEFAULT;
     }
 
     @Reference
