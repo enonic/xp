@@ -3,7 +3,6 @@ package com.enonic.xp.vfs;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.regex.Pattern;
 
 import com.google.common.base.Joiner;
@@ -180,7 +179,7 @@ class VirtualFilePathImpl
             return this;
         }
 
-        public Builder addAll( final List<String> elements )
+        public Builder addAll( final LinkedList<String> elements )
         {
             this.elements.addAll( elements );
             return this;
