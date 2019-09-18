@@ -2,6 +2,7 @@ var taskLib = require('/lib/xp/task.js');
 var assert = require('/lib/xp/testing');
 
 var count = 0;
+
 function fetchRemoteData() {
     count++;
     return count < 2 ? null : [];

@@ -1,3 +1,3 @@
-exports.run =function (){
+exports.run = function () {
 
 };

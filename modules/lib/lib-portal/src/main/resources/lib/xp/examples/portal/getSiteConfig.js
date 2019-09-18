@@ -9,7 +9,7 @@ log.info('Field value for the current site config = %s', result.Field);
 // BEGIN
 // Site config returned.
 var expected = {
-    "Field": 42
+    'Field': 42
 };
 // END
 

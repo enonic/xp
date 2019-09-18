@@ -9,101 +9,101 @@ var contentType = contentLib.getType('com.enonic.myapp:person');
 // BEGIN
 // Content type returned:
 var expected = {
-    "name": "com.enonic.myapp:person",
-    "displayName": "Person",
-    "description": "Person content type",
-    "superType": "base:structured",
-    "abstract": false,
-    "final": true,
-    "allowChildContent": true,
-    "displayNameExpression": "${name}",
-    "icon": {
-        "mimeType": "image/png",
-        "modifiedTime": "2016-01-01T12:00:00Z"
+    'name': 'com.enonic.myapp:person',
+    'displayName': 'Person',
+    'description': 'Person content type',
+    'superType': 'base:structured',
+    'abstract': false,
+    'final': true,
+    'allowChildContent': true,
+    'displayNameExpression': '${name}',
+    'icon': {
+        'mimeType': 'image/png',
+        'modifiedTime': '2016-01-01T12:00:00Z'
     },
-    "form": [
+    'form': [
         {
-            "formItemType": "Input",
-            "name": "name",
-            "label": "Full name",
-            "maximize": true,
-            "inputType": "TextLine",
-            "occurrences": {
-                "maximum": 1,
-                "minimum": 1
+            'formItemType': 'Input',
+            'name': 'name',
+            'label': 'Full name',
+            'maximize': true,
+            'inputType': 'TextLine',
+            'occurrences': {
+                'maximum': 1,
+                'minimum': 1
             },
-            "config": {}
+            'config': {}
         },
         {
-            "formItemType": "Input",
-            "name": "title",
-            "label": "Photo",
-            "helpText": "Person photo",
-            "maximize": true,
-            "inputType": "ImageSelector",
-            "occurrences": {
-                "maximum": 1,
-                "minimum": 1
+            'formItemType': 'Input',
+            'name': 'title',
+            'label': 'Photo',
+            'helpText': 'Person photo',
+            'maximize': true,
+            'inputType': 'ImageSelector',
+            'occurrences': {
+                'maximum': 1,
+                'minimum': 1
             },
-            "config": {}
+            'config': {}
         },
         {
-            "formItemType": "Input",
-            "name": "bio",
-            "label": "Bio",
-            "maximize": true,
-            "inputType": "HtmlArea",
-            "occurrences": {
-                "maximum": 1,
-                "minimum": 1
+            'formItemType': 'Input',
+            'name': 'bio',
+            'label': 'Bio',
+            'maximize': true,
+            'inputType': 'HtmlArea',
+            'occurrences': {
+                'maximum': 1,
+                'minimum': 1
             },
-            "config": {}
+            'config': {}
         },
         {
-            "formItemType": "Input",
-            "name": "birthdate",
-            "label": "Birth date",
-            "maximize": true,
-            "inputType": "Date",
-            "occurrences": {
-                "maximum": 1,
-                "minimum": 0
+            'formItemType': 'Input',
+            'name': 'birthdate',
+            'label': 'Birth date',
+            'maximize': true,
+            'inputType': 'Date',
+            'occurrences': {
+                'maximum': 1,
+                'minimum': 0
             },
-            "config": {}
+            'config': {}
         },
         {
-            "formItemType": "Input",
-            "name": "email",
-            "label": "Email",
-            "helpText": "Email address",
-            "maximize": true,
-            "inputType": "TextLine",
-            "occurrences": {
-                "maximum": 1,
-                "minimum": 1
+            'formItemType': 'Input',
+            'name': 'email',
+            'label': 'Email',
+            'helpText': 'Email address',
+            'maximize': true,
+            'inputType': 'TextLine',
+            'occurrences': {
+                'maximum': 1,
+                'minimum': 1
             },
-            "config": {
-                "regexp": [
+            'config': {
+                'regexp': [
                     {
-                        "value": "^[^@]+@[^@]+\\.[^@]+$"
+                        'value': '^[^@]+@[^@]+\\.[^@]+$'
                     }
                 ]
             }
         },
         {
-            "formItemType": "Input",
-            "name": "nationality",
-            "label": "Nationality",
-            "maximize": true,
-            "inputType": "ContentSelector",
-            "occurrences": {
-                "maximum": 1,
-                "minimum": 0
+            'formItemType': 'Input',
+            'name': 'nationality',
+            'label': 'Nationality',
+            'maximize': true,
+            'inputType': 'ContentSelector',
+            'occurrences': {
+                'maximum': 1,
+                'minimum': 0
             },
-            "config": {
-                "allowedContentType": [
+            'config': {
+                'allowedContentType': [
                     {
-                        "value": "com.enonic.myapp:country"
+                        'value': 'com.enonic.myapp:country'
                     }
                 ]
             }

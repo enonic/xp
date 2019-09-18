@@ -2,8 +2,8 @@ var nodeLib = require('/lib/xp/node');
 var t = require('/lib/xp/testing');
 
 var repo = nodeLib.connect({
-    repoId: "com.enonic.cms.default",
-    branch: "master"
+    repoId: 'com.enonic.cms.default',
+    branch: 'master'
 });
 
 // BEGIN
@@ -19,18 +19,18 @@ var result = repo.push({
 // BEGIN
 // Node created.
 var expected = {
-    "success": [
-        "a",
-        "b",
-        "c"
+    'success': [
+        'a',
+        'b',
+        'c'
     ],
-    "failed": [
+    'failed': [
         {
-            "id": "d",
-            "reason": "ACCESS_DENIED"
+            'id': 'd',
+            'reason': 'ACCESS_DENIED'
         }
     ],
-    "deleted": []
+    'deleted': []
 };
 // END
 

@@ -9,7 +9,7 @@
 
 function checkRequired(params, name) {
     if (params[name] === undefined) {
-        throw "Parameter '" + name + "' is required";
+        throw 'Parameter \'' + name + '\' is required';
     }
 }
 
@@ -113,7 +113,7 @@ exports.get = function (taskId) {
 
     var bean = __.newBean('com.enonic.xp.lib.task.GetTaskHandler');
     if (taskId === undefined) {
-        throw "Parameter taskId is required";
+        throw 'Parameter taskId is required';
     }
 
     bean.taskId = __.nullOrValue(taskId);
@@ -175,7 +175,7 @@ exports.isRunning = function (task) {
 
     var bean = __.newBean('com.enonic.xp.lib.task.IsRunningHandler');
     if (task === undefined) {
-        throw "Parameter task is required";
+        throw 'Parameter task is required';
     }
 
     return __.toNativeObject(bean.isRunning(task));
