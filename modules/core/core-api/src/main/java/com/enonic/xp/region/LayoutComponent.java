@@ -93,12 +93,7 @@ public final class LayoutComponent
 
         final LayoutComponent that = (LayoutComponent) o;
 
-        if ( !regions.equals( that.regions ) )
-        {
-            return false;
-        }
-
-        return true;
+        return regions.equals( that.regions );
     }
 
     @Override

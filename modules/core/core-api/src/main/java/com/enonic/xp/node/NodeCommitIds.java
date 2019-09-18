@@ -20,7 +20,7 @@ public class NodeCommitIds
 
     public static NodeCommitIds empty()
     {
-        return new NodeCommitIds( ImmutableSet.<NodeCommitId>of() );
+        return new NodeCommitIds( ImmutableSet.of() );
     }
 
     public static NodeCommitIds from( final NodeCommitId... nodeCommitIds )

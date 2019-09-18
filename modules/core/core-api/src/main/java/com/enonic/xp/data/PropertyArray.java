@@ -1,6 +1,7 @@
 package com.enonic.xp.data;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
@@ -20,7 +21,7 @@ public final class PropertyArray
 
     private final ValueType valueType;
 
-    private final LinkedList<Property> array = new LinkedList<>();
+    private final List<Property> array = new ArrayList<>();
 
     PropertyArray( final PropertyTree tree, final PropertySet parent, final String name, final ValueType valueType )
     {
@@ -179,7 +180,7 @@ public final class PropertyArray
     void addProperty( final Property property )
     {
         checkType( property.getType() );
-        this.array.addLast( property );
+        this.array.add( property );
 
         if ( tree != null )
         {
@@ -198,7 +199,7 @@ public final class PropertyArray
     {
         checkType( value.getType() );
         final Property property = new Property( name, this.array.size(), value, parent );
-        this.array.addLast( property );
+        this.array.add( property );
         if ( tree != null )
         {
             if ( value.getObject() instanceof PropertySet )

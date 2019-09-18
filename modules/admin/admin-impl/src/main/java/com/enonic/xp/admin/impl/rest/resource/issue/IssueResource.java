@@ -514,12 +514,7 @@ public final class IssueResource
             return true;
         }
 
-        if ( principal.getKey().equals( RoleKeys.CONTENT_MANAGER_APP ) )
-        {
-            return true;
-        }
-
-        return false;
+        return principal.getKey().equals( RoleKeys.CONTENT_MANAGER_APP );
     }
 
     @Reference

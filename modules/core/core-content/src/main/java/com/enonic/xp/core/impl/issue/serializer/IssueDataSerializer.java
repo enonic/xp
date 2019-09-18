@@ -185,6 +185,6 @@ public class IssueDataSerializer
         builder.createdTime( issueProperties.getInstant( CREATED_TIME ) );
         builder.modifier(
             issueProperties.getString( MODIFIER ) != null ? PrincipalKey.from( issueProperties.getString( MODIFIER ) ) : null );
-        builder.modifiedTime( issueProperties.getInstant( MODIFIED_TIME ) != null ? issueProperties.getInstant( MODIFIED_TIME ) : null );
+        builder.modifiedTime( issueProperties.getInstant( MODIFIED_TIME ) );
     }
 }

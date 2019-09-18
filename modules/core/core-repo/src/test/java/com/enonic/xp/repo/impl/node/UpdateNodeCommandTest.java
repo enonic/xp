@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -104,7 +105,7 @@ public class UpdateNodeCommandTest
 
         final byte[] bytes = ByteStreams.toByteArray( binary.openStream() );
 
-        assertEquals( "my-car-image-updated-source", new String( bytes, Charset.forName( "UTF-8" ) ) );
+        assertEquals( "my-car-image-updated-source", new String( bytes, StandardCharsets.UTF_8 ) );
     }
 
     private ByteSource originalBinaryData()

@@ -18,6 +18,10 @@ configurations {
     testOutput.extendsFrom testRuntime
 }
 
+ext {
+    felixVersion = '6.0.1'
+}
+
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.1'
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.5.1'

@@ -37,7 +37,7 @@ public abstract class ApplicationTestSupport
 
         this.applicationService = Mockito.mock( ApplicationService.class );
         Mockito.when( this.applicationService.getInstalledApplication( Mockito.any() ) ).then(
-            invocationOnMock -> apps.get( (ApplicationKey) invocationOnMock.getArguments()[0] ) );
+            invocationOnMock -> apps.get( invocationOnMock.getArguments()[0] ) );
         Mockito.when( this.applicationService.getInstalledApplications() ).then( invocationOnMock -> Applications.from( apps.values() ) );
         Mockito.when( this.applicationService.getInstalledApplicationKeys() ).then(
             invocationOnMock -> ApplicationKeys.from( apps.keySet() ) );

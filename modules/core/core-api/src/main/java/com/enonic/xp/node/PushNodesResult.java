@@ -1,11 +1,10 @@
 package com.enonic.xp.node;
 
-import java.util.List;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 @Beta
@@ -15,10 +14,10 @@ public class PushNodesResult
 
     private final ImmutableSet<Failed> failed;
 
-    protected PushNodesResult( Builder builder )
+    protected PushNodesResult( Builder<?> builder )
     {
-        successful = NodeBranchEntries.from( builder.successful );
-        failed = ImmutableSet.copyOf( builder.failed );
+        successful = builder.successful.build();
+        failed = builder.failed.build();
     }
 
     public NodeBranchEntries getSuccessful()
@@ -38,9 +37,9 @@ public class PushNodesResult
 
     public static class Builder<T extends Builder>
     {
-        private final List<NodeBranchEntry> successful = Lists.newLinkedList();
+        private final NodeBranchEntries.Builder successful = NodeBranchEntries.create();
 
-        private final List<Failed> failed = Lists.newLinkedList();
+        private final ImmutableSet.Builder<Failed> failed = ImmutableSet.builder();
 
         private final Set<NodePath> addedParentPaths = Sets.newHashSet();
 

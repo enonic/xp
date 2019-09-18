@@ -20,7 +20,7 @@ public class UrlServiceScriptTest
         throws Exception
     {
         super.initialize();
-        addService( PortalUrlService.class, Mockito.mock( PortalUrlService.class, (Answer) this::urlAnswer ) );
+        addService( PortalUrlService.class, Mockito.mock( PortalUrlService.class, this::urlAnswer ) );
     }
 
     private Object urlAnswer( final InvocationOnMock invocation )

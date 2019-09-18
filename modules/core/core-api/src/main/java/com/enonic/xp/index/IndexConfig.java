@@ -195,11 +195,7 @@ public class IndexConfig
         {
             return false;
         }
-        if ( !Objects.equal( languages, that.languages ) )
-        {
-            return false;
-        }
-        return true;
+        return Objects.equal( languages, that.languages );
     }
 
     @Override

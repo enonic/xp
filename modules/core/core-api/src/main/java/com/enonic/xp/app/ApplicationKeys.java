@@ -41,7 +41,7 @@ public final class ApplicationKeys
 
     public static ApplicationKeys empty()
     {
-        return new ApplicationKeys( ImmutableList.<ApplicationKey>of() );
+        return new ApplicationKeys( ImmutableList.of() );
     }
 
     private static ImmutableList<ApplicationKey> parseApplicationKeys( final String... applicationKeys )

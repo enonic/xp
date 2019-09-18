@@ -140,7 +140,7 @@ class NodeServiceMock
             id( params.getNodeId() != null ? params.getNodeId() : NodeId.from( System.nanoTime() ) ).
             name( NodeName.from( params.getName() ) ).
             parentPath( params.getParent() ).
-            timestamp( timestamp != null ? timestamp : null ).
+            timestamp( timestamp ).
             manualOrderValue( params.getManualOrderValue() ).
             childOrder( params.getChildOrder() );
 

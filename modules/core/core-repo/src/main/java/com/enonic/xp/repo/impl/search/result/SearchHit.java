@@ -111,12 +111,7 @@ public class SearchHit
 
         final SearchHit that = (SearchHit) o;
 
-        if ( id != null ? !id.equals( that.id ) : that.id != null )
-        {
-            return false;
-        }
-
-        return true;
+        return id != null ? id.equals( that.id ) : that.id == null;
     }
 
     @Override

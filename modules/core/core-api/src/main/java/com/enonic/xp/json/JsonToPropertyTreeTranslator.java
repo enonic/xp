@@ -178,7 +178,7 @@ public final class JsonToPropertyTreeTranslator
 
     private boolean hasInput( final Property parentProperty, final String key )
     {
-        return Input.class.isInstance( this.form.getFormItem( resolveInputPath( key, parentProperty ) ) );
+        return this.form.getFormItem( resolveInputPath( key, parentProperty ) ) instanceof Input;
     }
 
     private Input getInput( final Property parentProperty, final String key )

@@ -78,12 +78,7 @@ public final class ExtraData
             return false;
         }
 
-        if ( !data.equals( extraData.data ) )
-        {
-            return false;
-        }
-
-        return true;
+        return data.equals( extraData.data );
     }
 
     @Override
