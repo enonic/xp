@@ -4,12 +4,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.support.AbstractImmutableEntitySet;
@@ -104,7 +104,7 @@ public final class ContentPaths
 
     private ContentPaths addPaths( final Collection<ContentPath> paths )
     {
-        return new ContentPaths( ImmutableSet.copyOf( Iterables.concat( set, paths ) ) );
+        return new ContentPaths( Stream.concat( set.stream(), paths.stream() ).collect( ImmutableSet.toImmutableSet() ) );
     }
 
     private ContentPaths removePaths( final Collection<ContentPath> paths )
