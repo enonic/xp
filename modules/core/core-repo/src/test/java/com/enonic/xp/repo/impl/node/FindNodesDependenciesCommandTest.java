@@ -33,7 +33,7 @@ public class FindNodesDependenciesCommandTest
 
         final Node node1 = createNodeWithReference( "n1", NodePath.ROOT, "n1_1" );
         final Node node1_1 = createNodeWithReference( "n1_1", node1.path(), "n1_1_1" );
-        createNodeWithReference( "n1_1_1", node1_1.path(), null );
+        createNodeWithReference( "n1_1_1", node1_1.path() );
 
         final NodeIds dependants = FindNodesDependenciesCommand.create().
             recursive( true ).
@@ -53,7 +53,7 @@ public class FindNodesDependenciesCommandTest
     {
         final Node node1 = createNodeWithReference( "n1", NodePath.ROOT, "n1_1" );
         final Node node1_1 = createNodeWithReference( "n1_1", node1.path(), "n1_1_1" );
-        createNodeWithReference( "n1_1_1", node1_1.path(), null );
+        createNodeWithReference( "n1_1_1", node1_1.path() );
 
         final NodeIds dependants = FindNodesDependenciesCommand.create().
             recursive( true ).
@@ -87,7 +87,7 @@ public class FindNodesDependenciesCommandTest
 
         final Node node1 = createNodeWithReference( "n1", NodePath.ROOT, "n1_1" );
         final Node node1_1 = createNodeWithReference( "n1_1", node1.path(), "n1_1_1" );
-        createNodeWithReference( "n1_1_1", node1_1.path(), null );
+        createNodeWithReference( "n1_1_1", node1_1.path() );
 
         final NodeIds dependants = FindNodesDependenciesCommand.create().
             recursive( false ).
@@ -130,8 +130,8 @@ public class FindNodesDependenciesCommandTest
         final Node node1 = createNodeWithReference( "n1", NodePath.ROOT, "n1_1", "n1_2" );
         final Node node1_1 = createNodeWithReference( "n1_1", node1.path(), "n1_1_1" );
         final Node node1_2 = createNodeWithReference( "n1_2", node1.path(), "n1_2_1" );
-        createNodeWithReference( "n1_1_1", node1_1.path(), null );
-        createNodeWithReference( "n1_2_1", node1_2.path(), null );
+        createNodeWithReference( "n1_1_1", node1_1.path() );
+        createNodeWithReference( "n1_2_1", node1_2.path() );
 
         final NodeIds dependants = FindNodesDependenciesCommand.create().
             recursive( true ).
