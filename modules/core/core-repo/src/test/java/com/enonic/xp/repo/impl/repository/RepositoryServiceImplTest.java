@@ -9,7 +9,9 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.BinaryAttachment;
+import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
@@ -19,7 +21,6 @@ import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.DeleteBranchParams;
 import com.enonic.xp.repository.DeleteRepositoryParams;
 import com.enonic.xp.repository.Repository;
-import com.enonic.xp.repository.RepositoryAttachments;
 import com.enonic.xp.repository.RepositoryData;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.UpdateRepositoryParams;
@@ -95,7 +96,7 @@ public class RepositoryServiceImplTest
         final Repository repo = doCreateRepo( "fisk" );
 
         final BinaryReference binaryRef = BinaryReference.from( "image1.jpg" );
-        byte[] binarySource = "this-is-the-binary-data-for-image1".getBytes();
+        ByteSource binarySource = ByteSource.wrap( "this-is-the-binary-data-for-image1".getBytes() );
 
         Context mockCurrentContext = ContextBuilder.create().
             branch( "master" ).
@@ -103,21 +104,27 @@ public class RepositoryServiceImplTest
             authInfo( REPO_TEST_DEFAULT_USER_AUTHINFO ).
             build();
 
+        PropertyTree data = new PropertyTree();
+        data.setBinaryReference( "someIcon", binaryRef );
+
         mockCurrentContext.runWith( () -> {
             repositoryService.updateRepository( UpdateRepositoryParams.create().
                 repositoryId( RepositoryId.from( "fisk" ) ).
-                attachments( RepositoryAttachments.create().
-                    addBinaryAttachment( new BinaryAttachment( binaryRef, ByteSource.wrap( binarySource ) ) ).
+                data( RepositoryData.from( data ) ).
+                attachments( BinaryAttachments.create().
+                    add( new BinaryAttachment( binaryRef, binarySource ) ).
                     build() ).
                 build() );
         } );
 
         final Repository persistedRepo = getPersistedRepoWithoutCache( "fisk" );
 
-        byte[] persistedAttachment =
-            persistedRepo.getAttachments().getBinaryAttachments().get( BinaryReference.from( "image1.jpg" ) ).getByteSource().read();
+        AttachedBinary attachedBinary =
+            persistedRepo.getAttachments().getAttachedBinaries().getByBinaryReference( BinaryReference.from( "image1.jpg" ) );
 
-        assertEquals( binarySource, persistedAttachment );
+        ByteSource persistedAttachment = binaryService.get( SystemConstants.SYSTEM_REPO_ID, attachedBinary );
+
+        assertTrue( binarySource.contentEquals( persistedAttachment ) );
     }
 
     @Test

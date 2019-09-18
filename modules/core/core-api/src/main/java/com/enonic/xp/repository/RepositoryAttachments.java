@@ -4,22 +4,21 @@ import java.util.Objects;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.node.BinaryAttachment;
-import com.enonic.xp.node.BinaryAttachments;
+import com.enonic.xp.node.AttachedBinaries;
 
 @Beta
-public class RepositoryAttachments
+public final class RepositoryAttachments
 {
-    private final BinaryAttachments binaryAttachments;
+    private final AttachedBinaries attachedBinaries;
 
-    private RepositoryAttachments( BinaryAttachments binaryAttachments )
+    private RepositoryAttachments( AttachedBinaries attachedBinaries )
     {
-        this.binaryAttachments = binaryAttachments;
+        this.attachedBinaries = attachedBinaries;
     }
 
-    public BinaryAttachments getBinaryAttachments()
+    public AttachedBinaries getAttachedBinaries()
     {
-        return binaryAttachments;
+        return attachedBinaries;
     }
 
     @Override
@@ -34,43 +33,22 @@ public class RepositoryAttachments
             return false;
         }
         RepositoryAttachments that = (RepositoryAttachments) o;
-        return Objects.equals( binaryAttachments, that.binaryAttachments );
+        return Objects.equals( attachedBinaries, that.attachedBinaries );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( binaryAttachments );
+        return Objects.hash( attachedBinaries );
     }
 
-    public static RepositoryAttachments from( BinaryAttachments attachments )
+    public static RepositoryAttachments from( AttachedBinaries attachedBinaries )
     {
-        return new RepositoryAttachments( attachments );
+        return new RepositoryAttachments( attachedBinaries );
     }
 
     public static RepositoryAttachments empty()
     {
-        return new RepositoryAttachments( BinaryAttachments.empty() );
-    }
-
-    public static Builder create()
-    {
-        return new Builder();
-    }
-
-    public static class Builder
-    {
-        private BinaryAttachments.Builder binaryAttachments = BinaryAttachments.create();
-
-        public Builder addBinaryAttachment( BinaryAttachment binaryAttachment )
-        {
-            binaryAttachments.add( binaryAttachment );
-            return this;
-        }
-
-        public RepositoryAttachments build()
-        {
-            return new RepositoryAttachments( binaryAttachments.build() );
-        }
+        return new RepositoryAttachments( AttachedBinaries.empty() );
     }
 }

@@ -4,19 +4,21 @@ import java.util.Optional;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.node.BinaryAttachments;
+
 public final class UpdateRepositoryParams
 {
     private final RepositoryId repositoryId;
 
     private final RepositoryData data;
 
-    private final RepositoryAttachments attachments;
+    private final BinaryAttachments attachments;
 
     private UpdateRepositoryParams( final Builder builder )
     {
         this.repositoryId = builder.repositoryId;
         this.data = Optional.ofNullable( builder.data ).orElse( RepositoryData.empty() );
-        this.attachments = Optional.ofNullable( builder.attachments ).orElse( RepositoryAttachments.empty() );
+        this.attachments = Optional.ofNullable( builder.attachments ).orElse( BinaryAttachments.empty() );
     }
 
     public RepositoryData getData()
@@ -29,7 +31,7 @@ public final class UpdateRepositoryParams
         return repositoryId;
     }
 
-    public RepositoryAttachments getAttachments()
+    public BinaryAttachments getAttachments()
     {
         return attachments;
     }
@@ -43,7 +45,8 @@ public final class UpdateRepositoryParams
     {
         private RepositoryId repositoryId;
         private RepositoryData data;
-        private RepositoryAttachments attachments;
+
+        private BinaryAttachments attachments;
 
         private Builder()
         {
@@ -61,7 +64,7 @@ public final class UpdateRepositoryParams
             return this;
         }
 
-        public Builder attachments( final RepositoryAttachments attachments )
+        public Builder attachments( final BinaryAttachments attachments )
         {
             this.attachments = attachments;
             return this;

@@ -152,7 +152,7 @@ public class RepositoryServiceImpl
         UpdateRepositoryEntryParams params = UpdateRepositoryEntryParams.create().
             repositoryId( repositoryId ).
             repositoryData( updateRepositoryParams.getData() ).
-            attachments( updateRepositoryParams.getAttachments().getBinaryAttachments() ).
+            attachments( updateRepositoryParams.getAttachments() ).
             build();
 
         return repositoryEntryService.updateRepositoryEntry( params );

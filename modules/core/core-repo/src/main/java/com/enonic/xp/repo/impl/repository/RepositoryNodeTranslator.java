@@ -10,7 +10,6 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexType;
-import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeEditor;
 import com.enonic.xp.node.NodeId;
@@ -19,6 +18,7 @@ import com.enonic.xp.repository.IndexDefinitions;
 import com.enonic.xp.repository.IndexMapping;
 import com.enonic.xp.repository.IndexSettings;
 import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repository.RepositoryAttachments;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryData;
 import com.enonic.xp.repository.RepositoryId;
@@ -36,8 +36,6 @@ public class RepositoryNodeTranslator
     private static final String SETTINGS_KEY = "settings";
 
     private static final String DATA_KEY = "data";
-
-    private static final String BINARIES_KEY = "binaries";
 
     public static Node toNode( final Repository repository )
     {
@@ -64,13 +62,7 @@ public class RepositoryNodeTranslator
 
     public static NodeEditor toUpdateRepositoryNodeEditor( UpdateRepositoryEntryParams params )
     {
-        return toBeEdited -> {
-            toBeEdited.data.setSet( DATA_KEY, params.getRepositoryData().getValue().getRoot() );
-            for ( BinaryAttachment attachment : params.getAttachments() )
-            {
-                toBeEdited.data.setBinaryReference( BINARIES_KEY, attachment.getReference() );
-            }
-        };
+        return toBeEdited -> toBeEdited.data.setSet( DATA_KEY, params.getRepositoryData().getValue().getRoot() );
     }
 
     public static NodeEditor toDeleteBranchNodeEditor( final Branch branch )
@@ -146,6 +138,7 @@ public class RepositoryNodeTranslator
             branches( toBranches( nodeData ) ).
             settings( repositorySettings ).
             data( repositoryData ).
+            attachments( RepositoryAttachments.from( node.getAttachedBinaries() ) ).
             build();
     }
 
