@@ -30,7 +30,7 @@ var expected = {
         }
     ],
     "deleted": []
-}
+};
 // END
 
 assert.assertJsonEquals(expected, result);

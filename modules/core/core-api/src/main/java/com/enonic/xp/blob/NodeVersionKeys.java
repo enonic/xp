@@ -20,7 +20,7 @@ public class NodeVersionKeys
 
     public static NodeVersionKeys empty()
     {
-        return new NodeVersionKeys( ImmutableSet.<NodeVersionKey>of() );
+        return new NodeVersionKeys( ImmutableSet.of() );
     }
 
     public static NodeVersionKeys from( final NodeVersionKey... keys )

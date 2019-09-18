@@ -42,12 +42,7 @@ public class Link
 
         final Link link = (Link) o;
 
-        if ( path != null ? !path.equals( link.path ) : link.path != null )
-        {
-            return false;
-        }
-
-        return true;
+        return path != null ? path.equals( link.path ) : link.path == null;
     }
 
     @Override

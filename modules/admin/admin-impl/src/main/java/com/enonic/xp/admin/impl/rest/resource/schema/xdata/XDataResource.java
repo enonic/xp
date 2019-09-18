@@ -204,12 +204,7 @@ public final class XDataResource
         }
 
         final List<String> validContentTypes = contentTypeNameWildcardResolver.resolveContentTypeName( allowContentType );
-        if ( validContentTypes.contains( contentTypeName.toString() ) )
-        {
-            return true;
-        }
-
-        return false;
+        return validContentTypes.contains( contentTypeName.toString() );
     }
 
     private XDataMappings filterXDataMappingsByContentType( final XDataMappings xDataMappings, final ContentTypeName contentTypeName )

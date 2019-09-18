@@ -36,7 +36,7 @@ public final class GeneratePasswordHandler
             maxLowercase = length - maxSpecials - maxDigits - maxUppercase,
             lowercase = 0;
 
-        StringBuilder result = new StringBuilder( "" );
+        StringBuilder result = new StringBuilder();
 
         List<CharType> types = new ArrayList<>();
         for ( CharType charType : CharType.values() )

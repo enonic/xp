@@ -44,7 +44,7 @@ public class JettyActivatorTest
         headers.put( "X-Jetty-Version", "9.x" );
         Mockito.when( bundle.getHeaders() ).thenReturn( headers );
 
-        this.bundleContext = Mockito.mock( BundleContext.class, (Answer) this::defaultAnswer );
+        this.bundleContext = Mockito.mock( BundleContext.class, this::defaultAnswer );
         Mockito.when( this.bundleContext.createFilter( Mockito.anyString() ) ).thenReturn( Mockito.mock( Filter.class ) );
         Mockito.when( this.bundleContext.getBundle() ).thenReturn( bundle );
 

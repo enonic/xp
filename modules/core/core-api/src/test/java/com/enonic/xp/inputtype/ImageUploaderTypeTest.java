@@ -20,7 +20,7 @@ public class ImageUploaderTypeTest
     @Test
     public void testName()
     {
-        assertEquals( "ImageUploader", this.type.getName().toString().toString() );
+        assertEquals( "ImageUploader", this.type.getName().toString() );
     }
 
     @Test

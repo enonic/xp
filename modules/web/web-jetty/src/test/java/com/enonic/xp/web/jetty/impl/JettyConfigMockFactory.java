@@ -8,7 +8,7 @@ public class JettyConfigMockFactory
 {
     public JettyConfig newConfig()
     {
-        return Mockito.mock( JettyConfig.class, (Answer) this::defaultAnswer );
+        return Mockito.mock( JettyConfig.class, this::defaultAnswer );
     }
 
     private Object defaultAnswer( final InvocationOnMock invocation )

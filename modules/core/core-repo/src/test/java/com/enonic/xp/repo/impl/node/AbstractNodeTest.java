@@ -165,13 +165,13 @@ public abstract class AbstractNodeTest
         this.binaryService.setBlobStore( blobStore );
 
         storageDao = new StorageDaoImpl();
-        storageDao.setClient( this.client );
+        storageDao.setClient( client );
 
         this.searchDao = new SearchDaoImpl();
-        this.searchDao.setClient( this.client );
+        this.searchDao.setClient( client );
 
         this.indexServiceInternal = new IndexServiceInternalImpl();
-        this.indexServiceInternal.setClient( this.client );
+        this.indexServiceInternal.setClient( client );
 
         // Branch and version-services
 
@@ -205,7 +205,7 @@ public abstract class AbstractNodeTest
         this.searchService.setSearchDao( this.searchDao );
 
         this.snapshotService = new SnapshotServiceImpl();
-        this.snapshotService.setClient( this.client );
+        this.snapshotService.setClient( client );
         this.snapshotService.setConfiguration( repoConfig );
 
         setUpRepositoryServices();

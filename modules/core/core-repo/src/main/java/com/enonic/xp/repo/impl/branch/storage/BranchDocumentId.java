@@ -47,7 +47,7 @@ public class BranchDocumentId
 
         final int separator = value.lastIndexOf( SEPARATOR );
         final String nodeIdAsString = value.substring( 0, separator );
-        final String branchName = value.substring( separator + 1, value.length() );
+        final String branchName = value.substring( separator + 1 );
 
         Preconditions.checkArgument( !Strings.isNullOrEmpty( nodeIdAsString ) );
         Preconditions.checkArgument( !Strings.isNullOrEmpty( branchName ) );

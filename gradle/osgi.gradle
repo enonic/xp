@@ -13,4 +13,4 @@ jar {
          'Implementation-Version': project.version )
 }
 
-OsgiConfigurator.configure( project );
+OsgiConfigurator.configure( project )

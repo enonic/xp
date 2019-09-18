@@ -20,7 +20,7 @@ public class RoutableNodeVersionIds
 
     public static RoutableNodeVersionIds empty()
     {
-        return new RoutableNodeVersionIds( ImmutableSet.<RoutableNodeVersionId>of() );
+        return new RoutableNodeVersionIds( ImmutableSet.of() );
     }
 
     public static RoutableNodeVersionIds from( final RoutableNodeVersionId... routableNodeVersionIds )

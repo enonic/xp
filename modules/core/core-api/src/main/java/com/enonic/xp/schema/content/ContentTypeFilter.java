@@ -16,7 +16,7 @@ public final class ContentTypeFilter
 
         private final boolean allowed;
 
-        private AccessType( final boolean allowed )
+        AccessType( final boolean allowed )
         {
             this.allowed = allowed;
         }
