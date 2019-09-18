@@ -1,6 +1,22 @@
 
 Licenses used by Enonic XP
 
+    Apache Commons
+    Apache License 2.0
+    https://commons.apache.org/proper/commons-daemon/license.html
+
+    Apache Felix Framework
+    Apache License 2.0
+    https://felix.apache.org/license.html
+
+    Apache Ignite
+    Apache License 2.0
+    https://apacheignite.readme.io/v2.3/docs/license
+
+    Apache Tika
+    Apache License 2.0
+    https://tika.apache.org/license.html
+
     Java Activation Framework
     Common Development and Distribution License (CDDL) v.1.0
     http://www.oracle.com/technetwork/java/jaf11-139815.html
@@ -21,10 +37,6 @@ Licenses used by Enonic XP
     MIT License
     https://github.com/typetools/checker-framework/blob/master/LICENSE.txt
 
-    Apache Commons
-    Apache License 2.0
-    https://commons.apache.org/proper/commons-daemon/license.html
-
     ElasticSearch
     Apache License 2.0
     https://github.com/elastic/elasticsearch/blob/master/LICENSE.txt
@@ -33,10 +45,6 @@ Licenses used by Enonic XP
     Apache License 2.0
     https://github.com/google/error-prone
 
-    Apache Felix Framework
-    Apache License 2.0
-    https://felix.apache.org/license.html
-
     GraphQL
     MIT License
     https://github.com/graphql-java/graphql-java/blob/master/LICENSE.md
@@ -44,10 +52,6 @@ Licenses used by Enonic XP
     Google Guava
     Apache License 2.0
     https://github.com/google/guava/blob/master/COPYING
-
-    Apache Ignite
-    Apache License 2.0
-    https://apacheignite.readme.io/v2.3/docs/license
 
     J2ObjC
     Apache License 2.0
@@ -117,7 +121,3 @@ Licenses used by Enonic XP
     SLF4J Libraries
     MIT License
     http://slf4j.org/license.html
-
-    Apache Tika
-    Apache License 2.0
-    https://tika.apache.org/license.html
