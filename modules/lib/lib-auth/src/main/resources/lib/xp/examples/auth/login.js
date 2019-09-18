@@ -43,16 +43,16 @@ var result4 = authLib.login({
 // BEGIN
 // Result of a successful login operation.
 var expected = {
-    "authenticated": true,
-    "user": {
-        "type": "user",
-        "key": "user:enonic:user1",
-        "displayName": "User 1",
-        "modifiedTime": "1970-01-01T00:00:00Z",
-        "disabled": false,
-        "email": "user1@enonic.com",
-        "login": "user1",
-        "idProvider": "enonic"
+    'authenticated': true,
+    'user': {
+        'type': 'user',
+        'key': 'user:enonic:user1',
+        'displayName': 'User 1',
+        'modifiedTime': '1970-01-01T00:00:00Z',
+        'disabled': false,
+        'email': 'user1@enonic.com',
+        'login': 'user1',
+        'idProvider': 'enonic'
     }
 };
 // END

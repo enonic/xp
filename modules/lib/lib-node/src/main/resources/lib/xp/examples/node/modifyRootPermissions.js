@@ -5,8 +5,8 @@ var nodeLib = require('/lib/xp/node');
 
 // Connect to repo
 var repo = nodeLib.connect({
-    repoId: "com.enonic.cms.default",
-    branch: "master"
+    repoId: 'com.enonic.cms.default',
+    branch: 'master'
 });
 
 
@@ -14,23 +14,23 @@ var repo = nodeLib.connect({
 var result1 = repo.setRootPermissions({
     _permissions: [
         {
-            "principal": "role:system.admin",
-            "allow": [
-                "READ",
-                "CREATE",
-                "MODIFY",
-                "DELETE",
-                "PUBLISH",
-                "READ_PERMISSIONS",
-                "WRITE_PERMISSIONS"
+            'principal': 'role:system.admin',
+            'allow': [
+                'READ',
+                'CREATE',
+                'MODIFY',
+                'DELETE',
+                'PUBLISH',
+                'READ_PERMISSIONS',
+                'WRITE_PERMISSIONS'
             ],
-            "deny": []
+            'deny': []
         }
     ],
     _inheritsPermissions: true
 });
 
-log.info("Modified root node with inheritsPermissions = [%s], permissions: %s", result1._inheritsPermissions,
+log.info('Modified root node with inheritsPermissions = [%s], permissions: %s', result1._inheritsPermissions,
     JSON.stringify(result1._permissions, null, 4));
 // END
 

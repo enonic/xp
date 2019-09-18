@@ -18,7 +18,7 @@ function valueOrDefault(value, defaultValue) {
 function required(params, name) {
     var value = params[name];
     if (value === undefined) {
-        throw "Parameter '" + name + "' is required";
+        throw 'Parameter \'' + name + '\' is required';
     }
 
     return value;
@@ -90,7 +90,7 @@ exports.create = function (params) {
  */
 exports.delete = function (id) {
     if (!id) {
-        throw "Parameter '" + id + "' is required";
+        throw 'Parameter \'' + id + '\' is required';
     }
     var bean = __.newBean('com.enonic.xp.lib.repo.DeleteRepositoryHandler');
     bean.repositoryId = id;
@@ -121,7 +121,7 @@ exports.list = function () {
  */
 exports.get = function (id) {
     if (!id) {
-        throw "Parameter '" + id + "' is required";
+        throw 'Parameter \'' + id + '\' is required';
     }
     var bean = __.newBean('com.enonic.xp.lib.repo.GetRepositoryHandler');
     bean.repositoryId = id;
