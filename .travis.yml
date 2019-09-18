@@ -6,7 +6,7 @@ jdk:
 
 install: true
 script:
-  - ./gradlew ci --stacktrace --no-daemon --warning-mode all
+  - ./gradlew ci --stacktrace --no-daemon
 cache:
   directories:
     - $HOME/.gradle/caches/
