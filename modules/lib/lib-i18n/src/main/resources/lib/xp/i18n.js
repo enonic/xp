@@ -7,6 +7,8 @@
  * @module i18n
  */
 
+/* global __ */
+
 /**
  * This function localizes a phrase.
  *
