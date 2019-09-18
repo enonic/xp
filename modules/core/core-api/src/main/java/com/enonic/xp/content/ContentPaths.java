@@ -2,10 +2,15 @@ package com.enonic.xp.content;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
@@ -17,6 +22,54 @@ public final class ContentPaths
     private ContentPaths( final ImmutableSet<ContentPath> set )
     {
         super( set );
+    }
+
+    public ContentPaths add( final String... paths )
+    {
+        return addPaths( parsePaths( Arrays.asList( paths ) ) );
+    }
+
+    public ContentPaths add( final ContentPath... paths )
+    {
+        return addPaths( Arrays.asList( paths ) );
+    }
+
+    public ContentPaths add( final Iterable<?> paths )
+    {
+        return addPaths( adaptPaths( paths ) );
+    }
+
+    public ContentPaths remove( final String... paths )
+    {
+        return removePaths( parsePaths( Arrays.asList( paths ) ) );
+    }
+
+    public ContentPaths remove( final ContentPath... paths )
+    {
+        return removePaths( Arrays.asList( paths ) );
+    }
+
+    public ContentPaths remove( final Iterable<?> paths )
+    {
+        return removePaths( adaptPaths( paths ) );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        return super.equals( o );
+    }
+
+    @Override
+    public String toString()
+    {
+        return super.toString();
     }
 
     public static ContentPaths empty()
@@ -47,6 +100,35 @@ public final class ContentPaths
     public static Builder create()
     {
         return new Builder();
+    }
+
+    private ContentPaths addPaths( final Collection<ContentPath> paths )
+    {
+        return new ContentPaths( ImmutableSet.copyOf( Iterables.concat( set, paths ) ) );
+    }
+
+    private ContentPaths removePaths( final Collection<ContentPath> paths )
+    {
+        return new ContentPaths( ImmutableSet.copyOf( Sets.difference( set, ImmutableSet.copyOf( paths ) ) ) );
+    }
+
+    private static List<ContentPath> adaptPaths( final Iterable<?> paths )
+    {
+        return StreamSupport.stream( paths.spliterator(), false ).
+            map( ContentPaths::adapt ).
+            collect( Collectors.toList() );
+    }
+
+    private static ContentPath adapt( Object item )
+    {
+        if ( item instanceof String )
+        {
+            return ContentPath.from( (String) item );
+        }
+        else
+        {
+            return (ContentPath) item;
+        }
     }
 
     private static ImmutableSet<ContentPath> parsePaths( final Collection<String> paths )
