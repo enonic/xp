@@ -1,7 +1,7 @@
 package com.enonic.xp.repo.impl.dump.serializer.json;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -90,7 +90,7 @@ public class VersionsDumpEntryJson
     {
         private String nodeId;
 
-        private Collection<VersionDumpEntryJson> versions = new LinkedList<>();
+        private Collection<VersionDumpEntryJson> versions = new ArrayList<>();
 
         private Builder()
         {

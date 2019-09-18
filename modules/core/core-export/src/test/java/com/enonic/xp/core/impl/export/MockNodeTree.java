@@ -1,8 +1,8 @@
 package com.enonic.xp.core.impl.export;
 
 
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import com.enonic.xp.node.NodePath;
@@ -51,7 +51,7 @@ public class MockNodeTree<T>
     public MockNodeTree( T data )
     {
         this.data = data;
-        this.children = new LinkedList<>();
+        this.children = new ArrayList<>();
     }
 
     public MockNodeTree<T> addChild( T child )

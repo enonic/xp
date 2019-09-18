@@ -1,9 +1,6 @@
 package com.enonic.xp.node;
 
-import java.util.List;
-
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
@@ -12,7 +9,7 @@ public class NodeVersions
 {
     private NodeVersions( final Builder builder )
     {
-        super( ImmutableList.copyOf( builder.nodeVersions ) );
+        super( builder.nodeVersions.build() );
     }
 
     public static Builder create()
@@ -22,7 +19,7 @@ public class NodeVersions
 
     public static class Builder
     {
-        final List<NodeVersion> nodeVersions = Lists.newLinkedList();
+        private final ImmutableList.Builder<NodeVersion> nodeVersions = ImmutableList.builder();
 
         public Builder add( final NodeVersion nodeVersion )
         {

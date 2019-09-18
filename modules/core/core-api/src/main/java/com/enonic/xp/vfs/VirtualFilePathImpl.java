@@ -8,7 +8,6 @@ import java.util.regex.Pattern;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 
 class VirtualFilePathImpl
     implements VirtualFilePath
@@ -45,7 +44,7 @@ class VirtualFilePathImpl
 
     static LinkedList<String> resolvePathElements( final String path, final String separator )
     {
-        final LinkedList<String> elements = Lists.newLinkedList();
+        final LinkedList<String> elements = new LinkedList<>();
 
         final String[] elementArray = path.split( Pattern.quote( separator ) );
 
@@ -170,7 +169,7 @@ class VirtualFilePathImpl
 
     private static class Builder
     {
-        private final LinkedList<String> elements = Lists.newLinkedList();
+        private final LinkedList<String> elements = new LinkedList<>();
 
         private boolean absolute;
 

@@ -1,11 +1,10 @@
 package com.enonic.xp.repo.impl.vacuum.segment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.Segment;
@@ -43,7 +42,7 @@ public class SegmentCleanerCommand
         LOG.info( "Traversing segments....." );
 
         final RepositoryIds repositoryIds = getRepositoryIds();
-        List<Segment> toBeRemoved = Lists.newLinkedList();
+        List<Segment> toBeRemoved = new ArrayList<>();
         blobStore.listSegments().
             forEach( segment -> {
                 final RepositoryId repositoryId = RepositorySegmentUtils.toRepositoryId( segment );
