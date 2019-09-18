@@ -28,7 +28,7 @@ exports.localize = function (params) {
     params = params || {};
     params.locale = [].concat(params.locale || []);
     bean.application = __.nullOrValue(params.application);
-    return bean.localize(params.key, __.nullOrValue(params.locale), __.toScriptValue(params.values), __.nullOrValue(params.bundles));
+    return bean.localize(params.key, params.locale, __.toScriptValue(params.values), __.nullOrValue(params.bundles));
 };
 
 /**
