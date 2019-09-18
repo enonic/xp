@@ -24,7 +24,7 @@
 exports.localize = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.i18n.LocaleScriptBean');
     params = params || {};
-    params.locale = forceArray(params.locale);
+    params.locale = [].concat(params.locale || []);
     bean.application = __.nullOrValue(params.application);
     return bean.localize(params.key, __.nullOrValue(params.locale), __.toScriptValue(params.values), __.nullOrValue(params.bundles));
 };
@@ -42,8 +42,8 @@ exports.localize = function (params) {
  */
 exports.getPhrases = function (locale, bundles) {
     var bean = __.newBean('com.enonic.xp.lib.i18n.LocaleScriptBean');
-    locale = forceArray(locale);
-    return __.toNativeObject(bean.getPhrases(__.nullOrValue(locale), bundles));
+    locale = [].concat(locale || []);
+    return __.toNativeObject(bean.getPhrases(locale, bundles));
 };
 
 /**
@@ -56,11 +56,4 @@ exports.getPhrases = function (locale, bundles) {
 exports.getSupportedLocales = function (bundles) {
     var bean = __.newBean('com.enonic.xp.lib.i18n.LocaleScriptBean');
     return __.toNativeObject(bean.getSupportedLocales(bundles));
-};
-
-var forceArray = function (value) {
-    if (value == null) {
-        return value;
-    }
-    return Array.isArray(value) ? value : [value];
 };
