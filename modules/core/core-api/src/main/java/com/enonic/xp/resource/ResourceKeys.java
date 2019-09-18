@@ -42,7 +42,7 @@ public final class ResourceKeys
 
     public static ResourceKeys empty()
     {
-        return new ResourceKeys( ImmutableList.<ResourceKey>of() );
+        return new ResourceKeys( ImmutableList.of() );
     }
 
     private static ImmutableList<ResourceKey> parseResourceKeys( final String... resourceKeys )

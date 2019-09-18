@@ -7,12 +7,12 @@ var assert = require('/lib/xp/testing');
 var myRepo = nodeLib.connect({
     repoId: 'my-repo',
     branch: 'master',
-    principals: ["role:system.admin"]
+    principals: ['role:system.admin']
 });
 
 myRepo.create({
-    _name: "myName",
-    displayName: "This is brand new node"
+    _name: 'myName',
+    displayName: 'This is brand new node'
 });
 // END
 

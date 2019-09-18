@@ -4,22 +4,22 @@ var content = require('/lib/xp/content.js');
 var TestClass = Java.type('com.enonic.xp.lib.content.CreateMediaHandlerTest');
 
 var expectedJson = {
-    "_id": "123456",
-    "_name": "mycontent",
-    "_path": "/a/b/mycontent",
-    "creator": "user:system:anonymous",
-    "createdTime": "1975-01-08T00:00:00Z",
-    "type": "base:unstructured",
-    "hasChildren": false,
-    "valid": false,
-    "data": {},
-    "x": {},
-    "page": {},
-    "attachments": {},
-    "publish": {},
-    "workflow": {
-        "state": "READY",
-        "checks": {}
+    '_id': '123456',
+    '_name': 'mycontent',
+    '_path': '/a/b/mycontent',
+    'creator': 'user:system:anonymous',
+    'createdTime': '1975-01-08T00:00:00Z',
+    'type': 'base:unstructured',
+    'hasChildren': false,
+    'valid': false,
+    'data': {},
+    'x': {},
+    'page': {},
+    'attachments': {},
+    'publish': {},
+    'workflow': {
+        'state': 'READY',
+        'checks': {}
     }
 };
 
@@ -48,22 +48,22 @@ exports.createMediaWithFocalPoints = function () {
 };
 
 var expectedJsonAutoGenerateName = {
-    "_id": "123456",
-    "_name": "my-content-3.jpg",
-    "_path": "/a/b/my-content-3.jpg",
-    "creator": "user:system:anonymous",
-    "createdTime": "1975-01-08T00:00:00Z",
-    "type": "base:unstructured",
-    "hasChildren": false,
-    "valid": false,
-    "data": {},
-    "x": {},
-    "page": {},
-    "attachments": {},
-    "publish": {},
-    "workflow": {
-        "state": "READY",
-        "checks": {}
+    '_id': '123456',
+    '_name': 'my-content-3.jpg',
+    '_path': '/a/b/my-content-3.jpg',
+    'creator': 'user:system:anonymous',
+    'createdTime': '1975-01-08T00:00:00Z',
+    'type': 'base:unstructured',
+    'hasChildren': false,
+    'valid': false,
+    'data': {},
+    'x': {},
+    'page': {},
+    'attachments': {},
+    'publish': {},
+    'workflow': {
+        'state': 'READY',
+        'checks': {}
     }
 };
 

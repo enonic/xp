@@ -3,6 +3,7 @@ package com.enonic.xp.web.impl.handler;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Map;
 
@@ -166,14 +167,7 @@ public final class WebDispatcherServlet
 
     private static String decodeUrl( final String url )
     {
-        try
-        {
-            return URLDecoder.decode( url, "UTF-8" );
-        }
-        catch ( UnsupportedEncodingException e )
-        {
-            throw WebException.internalServerError( "Error while decoding URL: " + url );
-        }
+        return URLDecoder.decode( url, StandardCharsets.UTF_8 );
     }
 
 

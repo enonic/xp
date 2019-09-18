@@ -36,7 +36,7 @@ public final class IdProviderKeys
 
     public static IdProviderKeys empty()
     {
-        return new IdProviderKeys( ImmutableList.<IdProviderKey>of() );
+        return new IdProviderKeys( ImmutableList.of() );
     }
 
     private static ImmutableList<IdProviderKey> parseIdProviderKeys( final String... idProviderKeys )

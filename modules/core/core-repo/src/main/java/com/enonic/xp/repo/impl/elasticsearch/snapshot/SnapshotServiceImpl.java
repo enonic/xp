@@ -173,12 +173,7 @@ public class SnapshotServiceImpl
 
         final boolean sameAsConfiguredLocation = snapshotRepo.settings().get( "location" ).equals( getSnapshotsDir().getPath() );
 
-        if ( !sameAsConfiguredLocation )
-        {
-            return false;
-        }
-
-        return true;
+        return sameAsConfiguredLocation;
     }
 
     private RepositoryMetaData getSnapshotRepo()

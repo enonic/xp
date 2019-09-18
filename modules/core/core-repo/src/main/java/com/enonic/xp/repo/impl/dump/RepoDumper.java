@@ -169,7 +169,7 @@ class RepoDumper
         {
             writer.openVersionsMeta( this.repositoryId );
 
-            dumpedNodes.stream().forEach( ( nodeId ) -> {
+            dumpedNodes.forEach( ( nodeId ) -> {
 
                 final VersionsDumpEntry.Builder builder = VersionsDumpEntry.create( nodeId );
 
@@ -177,7 +177,7 @@ class RepoDumper
 
                 for ( final NodeVersionMetadata metaData : versions.getNodeVersionsMetadata() )
                 {
-                    doStoreVersion( builder, metaData );
+                    doStoreVersion( builder, metaData, this.dumpResult );
                     this.dumpResult.addedVersion();
                 }
 
@@ -224,13 +224,21 @@ class RepoDumper
         }
     }
 
-    private void doStoreVersion( final VersionsDumpEntry.Builder builder, final NodeVersionMetadata metaData )
+    private void doStoreVersion( final VersionsDumpEntry.Builder builder, final NodeVersionMetadata metaData,
+                                 final RepoDumpResult.Builder dumpResult )
     {
-        final NodeVersion nodeVersion = this.nodeService.getByNodeVersionKey( metaData.getNodeVersionKey() );
-        builder.addVersion( VersionMetaFactory.create( metaData ) );
+        try
+        {
+            final NodeVersion nodeVersion = this.nodeService.getByNodeVersionKey( metaData.getNodeVersionKey() );
+            builder.addVersion( VersionMetaFactory.create( metaData ) );
 
-        storeVersionBlob( metaData );
-        storeVersionBinaries( metaData, nodeVersion );
+            storeVersionBlob( metaData );
+            storeVersionBinaries( metaData, nodeVersion );
+        }
+        catch ( Exception e )
+        {
+            dumpResult.error( DumpError.error( e.getMessage() ) );
+        }
     }
 
     private void storeVersionBlob( final NodeVersionMetadata metaData )
@@ -297,7 +305,7 @@ class RepoDumper
         }
         catch ( Exception e )
         {
-            dumpResult.error( DumpError.error( "Cannot dump node with id [" + nodeId + "]: " + e.getMessage() ) );
+            dumpResult.error( DumpError.error( "Cannot dump node with id [" + nodeId + "]: " + e.getMessage() ) );
         }
     }
 

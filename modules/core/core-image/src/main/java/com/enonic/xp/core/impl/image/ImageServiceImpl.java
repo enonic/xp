@@ -166,7 +166,7 @@ public class ImageServiceImpl
         final String orientation = "orientation-" + readImageParams.getOrientation().toString();
 
         //Serialization string value
-        final String quality = "quality-" + Integer.toString( readImageParams.getQuality() );
+        final String quality = "quality-" + readImageParams.getQuality();
         //Source binary key
         final String binaryKey = contentService.getBinaryKey( readImageParams.getContentId(), readImageParams.getBinaryReference() );
 

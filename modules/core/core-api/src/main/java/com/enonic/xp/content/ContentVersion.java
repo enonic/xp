@@ -127,12 +127,7 @@ public class ContentVersion
             return false;
         }
 
-        if ( !Objects.equals( workflowInfo, that.workflowInfo ) )
-        {
-            return false;
-        }
-
-        return true;
+        return Objects.equals( workflowInfo, that.workflowInfo );
     }
 
     @Override

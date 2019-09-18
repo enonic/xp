@@ -1,9 +1,29 @@
 
 Licenses used by Enonic XP
 
+    Apache Commons
+    Apache License 2.0
+    https://commons.apache.org/proper/commons-daemon/license.html
+
+    Apache Felix Framework
+    Apache License 2.0
+    https://felix.apache.org/license.html
+
+    Apache Ignite
+    Apache License 2.0
+    https://apacheignite.readme.io/v2.3/docs/license
+
+    Apache Tika
+    Apache License 2.0
+    https://tika.apache.org/license.html
+
     Java Activation Framework
     Common Development and Distribution License (CDDL) v.1.0
     http://www.oracle.com/technetwork/java/jaf11-139815.html
+
+    Animal Sniffer Annotations
+    MIT License
+    https://www.mojohaus.org/animal-sniffer/animal-sniffer-annotations/license.html
 
     ATTO Parser
     MIT License
@@ -13,29 +33,33 @@ Licenses used by Enonic XP
     MIT License
     https://bouncycastle.org/licence.html
 
-    Apache Commons
-    Apache License 2.0
-    https://commons.apache.org/proper/commons-daemon/license.html
+    Checker Framework
+    MIT License
+    https://github.com/typetools/checker-framework/blob/master/LICENSE.txt
 
     ElasticSearch
     Apache License 2.0
     https://github.com/elastic/elasticsearch/blob/master/LICENSE.txt
 
-    Apache Felix Framework
+    Google Error Prone
     Apache License 2.0
-    https://felix.apache.org/license.html
-
-    Google Guava
-    Apache License 2.0
-    https://github.com/google/guava/blob/master/COPYING
+    https://github.com/google/error-prone
 
     GraphQL
     MIT License
     https://github.com/graphql-java/graphql-java/blob/master/LICENSE.md
 
-    Apache Ignite
+    Google Guava
     Apache License 2.0
-    https://apacheignite.readme.io/v2.3/docs/license
+    https://github.com/google/guava/blob/master/COPYING
+
+    J2ObjC
+    Apache License 2.0
+    https://github.com/google/j2objc/blob/master/LICENSE
+
+    JAXB
+    Common Development and Distribution License (CDDL) v.1.1
+    https://github.com/javaee/jaxb-v2
 
     Jackson Annotations
     Apache License 2.0
@@ -56,6 +80,10 @@ Licenses used by Enonic XP
     Jackson JAX-RS (Base and JSON)
     Apache License 2.0
     https://github.com/FasterXML/jackson-jaxrs-providers
+
+    Jansi
+    Apache License 2.0
+    https://github.com/fusesource/jansi/blob/master/license.txt
 
     JavaMail
     Common Development and Distribution License (CDDL) v.1.0
@@ -93,7 +121,3 @@ Licenses used by Enonic XP
     SLF4J Libraries
     MIT License
     http://slf4j.org/license.html
-
-    Apache Tika
-    Apache License 2.0
-    https://tika.apache.org/license.html

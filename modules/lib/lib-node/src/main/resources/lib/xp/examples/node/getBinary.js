@@ -10,8 +10,8 @@ var myRepo = nodeLib.connect({
 });
 
 var binaryStream = myRepo.getBinary({
-    key: "/myNode",
-    binaryReference: "myBinaryReference"
+    key: '/myNode',
+    binaryReference: 'myBinaryReference'
 });
 
 // END

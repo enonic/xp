@@ -1,6 +1,7 @@
 package com.enonic.xp.impl.server.rest.model;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
 
@@ -15,18 +16,22 @@ public class RepoDumpResultJson
 
     private final Long versions;
 
+    private final List<DumpErrorJson> versionsErrors;
+
     private RepoDumpResultJson( final Builder builder )
     {
         this.branches = builder.branches;
         this.repository = builder.repository;
         this.versions = builder.versions;
+        this.versionsErrors = builder.versionsErrors;
     }
 
     public static RepoDumpResultJson from( final RepoDumpResult repoDumpResult )
     {
         final Builder builder = RepoDumpResultJson.create().
             repository( repoDumpResult.getRepositoryId().toString() ).
-            versions( repoDumpResult.getVersions() );
+            versions( repoDumpResult.getVersions() ).
+            versionsErrors(repoDumpResult.getVersionsErrors().stream().map( DumpErrorJson::from ).collect( Collectors.toList() ) );
 
         for ( final BranchDumpResult result : repoDumpResult )
         {
@@ -54,6 +59,12 @@ public class RepoDumpResultJson
         return versions;
     }
 
+    @SuppressWarnings("unused")
+    public List<DumpErrorJson> getVersionsErrors()
+    {
+        return versionsErrors;
+    }
+
     private static Builder create()
     {
         return new Builder();
@@ -62,6 +73,8 @@ public class RepoDumpResultJson
     public static final class Builder
     {
         private final List<BranchDumpResultJson> branches = Lists.newArrayList();
+
+        private List<DumpErrorJson> versionsErrors = Lists.newArrayList();
 
         private String repository;
 
@@ -86,6 +99,12 @@ public class RepoDumpResultJson
         public Builder versions( final Long versions )
         {
             this.versions = versions;
+            return this;
+        }
+
+        public Builder versionsErrors( final List<DumpErrorJson> versionsErrors )
+        {
+            this.versionsErrors = versionsErrors;
             return this;
         }
 

@@ -121,12 +121,7 @@ public class PatternIndexConfigDocument
         {
             return false;
         }
-        if ( !Objects.equals( this.allTextConfig, that.allTextConfig ) )
-        {
-            return false;
-        }
-
-        return true;
+        return Objects.equals( this.allTextConfig, that.allTextConfig );
     }
 
     public static final class Builder

@@ -20,7 +20,7 @@ public class NodeCommitEntries
 
     public static NodeCommitEntries empty()
     {
-        return new NodeCommitEntries( ImmutableSet.<NodeCommitEntry>of() );
+        return new NodeCommitEntries( ImmutableSet.of() );
     }
 
     public static NodeCommitEntries from( final NodeCommitEntry... nodeCommitEntries )

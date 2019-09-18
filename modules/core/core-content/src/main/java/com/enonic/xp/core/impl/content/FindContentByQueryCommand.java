@@ -9,7 +9,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.FindContentByQueryParams;
 import com.enonic.xp.content.FindContentByQueryResult;
-import com.enonic.xp.highlight.HighlightedFields;
+import com.enonic.xp.highlight.HighlightedProperties;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeHit;
 import com.enonic.xp.node.NodeIds;
@@ -42,7 +42,7 @@ final class FindContentByQueryCommand
 
         final NodeIds nodeIds = result.getNodeIds();
 
-        final Map<ContentId, HighlightedFields> highlight = result.getNodeHits().stream().
+        final Map<ContentId, HighlightedProperties> highlight = result.getNodeHits().stream().
             filter( nodeHit -> nodeHit.getHighlight() != null && nodeHit.getHighlight().size() > 0 ).
             collect( Collectors.toMap( hit -> ContentId.from( hit.getNodeId().toString() ), NodeHit::getHighlight ) );
 

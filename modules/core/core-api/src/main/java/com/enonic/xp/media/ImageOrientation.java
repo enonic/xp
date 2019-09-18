@@ -30,7 +30,7 @@ public enum ImageOrientation
 
     private final int value;
 
-    private ImageOrientation( final int value )
+    ImageOrientation( final int value )
     {
         this.value = value;
     }
