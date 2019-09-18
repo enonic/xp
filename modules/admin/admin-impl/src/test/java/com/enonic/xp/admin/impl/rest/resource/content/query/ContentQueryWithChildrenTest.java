@@ -2,8 +2,8 @@ package com.enonic.xp.admin.impl.rest.resource.content.query;
 
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
@@ -18,13 +18,13 @@ import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.index.ChildOrder;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ContentQueryWithChildrenTest
 {
     private ContentService contentService;
 
-    @Before
+    @BeforeEach
     public final void setUp()
         throws Exception
     {

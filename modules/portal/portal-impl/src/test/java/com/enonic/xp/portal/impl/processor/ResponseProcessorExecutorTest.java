@@ -2,7 +2,7 @@ package com.enonic.xp.portal.impl.processor;
 
 import java.nio.charset.StandardCharsets;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
@@ -11,6 +11,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.mapper.PortalRequestMapper;
+import com.enonic.xp.portal.impl.mapper.PortalResponseMapper;
 import com.enonic.xp.portal.impl.rendering.RenderException;
 import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.resource.ResourceKey;
@@ -18,9 +19,9 @@ import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.site.processor.ResponseProcessorDescriptor;
 
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 public class ResponseProcessorExecutorTest
@@ -93,7 +94,7 @@ public class ResponseProcessorExecutorTest
         when( body.getValue() ).thenReturn( data.toString() );
         when( result.isObject() ).thenReturn( true );
         when( result.getMember( "body" ) ).thenReturn( body );
-        when( scriptExports.executeMethod( anyString(), any( PortalRequestMapper.class ), any( PortalRequestMapper.class ) ) ).thenReturn(
+        when( scriptExports.executeMethod( anyString(), any( PortalRequestMapper.class ), any( PortalResponseMapper.class ) ) ).thenReturn(
             result );
 
         final ResponseProcessorExecutor filterExecutor = new ResponseProcessorExecutor( scriptService );

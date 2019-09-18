@@ -38,9 +38,10 @@ final class ContextImpl
     @Override
     public final AuthenticationInfo getAuthInfo()
     {
-        return getAttribute( AuthenticationInfo.class ) == null
+        final AuthenticationInfo attribute = getAttribute( AuthenticationInfo.class );
+        return attribute == null
             ? AuthenticationInfo.unAuthenticated()
-            : getAttribute( AuthenticationInfo.class );
+            : attribute;
     }
 
     @Override

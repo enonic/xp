@@ -1,7 +1,7 @@
 package com.enonic.xp.lib.node;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.branch.Branches;
@@ -20,7 +20,7 @@ public class MoveNodeHandlerTest
 
     private String name;
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         parentPath = NodePath.ROOT;

@@ -1,6 +1,6 @@
 package com.enonic.xp.script.impl;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.resource.ResourceKey;
@@ -8,7 +8,7 @@ import com.enonic.xp.resource.ResourceProblemException;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.serializer.MapSerializable;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ScriptRuntimeTest
     extends AbstractScriptTest

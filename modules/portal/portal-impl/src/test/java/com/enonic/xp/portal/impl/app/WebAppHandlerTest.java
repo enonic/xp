@@ -2,9 +2,9 @@ package com.enonic.xp.portal.impl.app;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -26,7 +26,7 @@ import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.handler.WebHandlerChain;
 import com.enonic.xp.web.impl.exception.ExceptionMapperImpl;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class WebAppHandlerTest
 {
@@ -42,7 +42,7 @@ public class WebAppHandlerTest
 
     private WebHandlerChain chain;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.resourceService = Mockito.mock( ResourceService.class );
@@ -71,7 +71,7 @@ public class WebAppHandlerTest
         Tracer.setManager( manager );
     }
 
-    @After
+    @AfterEach
     public void tearDown()
     {
         Tracer.setManager( null );

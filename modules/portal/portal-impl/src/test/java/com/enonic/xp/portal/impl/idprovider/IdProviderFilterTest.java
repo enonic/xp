@@ -4,8 +4,8 @@ import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.context.ContextBuilder;
@@ -22,7 +22,7 @@ public class IdProviderFilterTest
 
     private IdProviderControllerService idProviderControllerService;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         idProviderControllerService = Mockito.mock( IdProviderControllerService.class );

@@ -1,6 +1,6 @@
 package com.enonic.xp.lib.node;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;

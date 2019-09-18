@@ -3,13 +3,13 @@ package com.enonic.xp.impl.macro;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableMultimap;
 
 import com.enonic.xp.macro.Macro;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class HtmlMacroEvaluatorTest
 {

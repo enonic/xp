@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.content.page;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 
 import com.enonic.xp.content.Content;
@@ -24,7 +25,8 @@ public class AbstractDataSerializerTest
 
     protected ContentService contentService;
 
-    public void setUp()
+    @BeforeEach
+    void setUpAbstractDataSerializerTest()
     {
         this.partDescriptorService = Mockito.mock( PartDescriptorService.class );
         this.layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );

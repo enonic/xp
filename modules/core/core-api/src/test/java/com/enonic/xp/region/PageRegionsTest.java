@@ -3,13 +3,13 @@ package com.enonic.xp.region;
 
 import java.util.Iterator;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.UnmodifiableIterator;
 
 import com.enonic.xp.page.PageRegions;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PageRegionsTest
 {
@@ -126,7 +126,7 @@ public class PageRegionsTest
         assertNull( regions.getComponent( ComponentPath.from( "a-region/1" ) ) );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void getComponent_throws_exception()
     {
         final PageRegions regions = PageRegions.create().
@@ -137,6 +137,6 @@ public class PageRegionsTest
                 build() ).
             build();
 
-        regions.getComponent( ComponentPath.from( "a-region/1/2/3" ) );
+        assertThrows(IllegalArgumentException.class, () -> regions.getComponent( ComponentPath.from( "a-region/1/2/3" ) ));
     }
 }

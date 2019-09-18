@@ -4,11 +4,11 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.stream.Collectors;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.macro.Macro;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MacroParserTest
 {
@@ -18,7 +18,7 @@ public class MacroParserTest
         try
         {
             final boolean isValid = new MacroParser().debugMode().parse( text ) != null;
-            assertTrue( "Expected invalid macro: " + text, isValid && expectedValid );
+            assertTrue( isValid && expectedValid, "Expected invalid macro: " + text );
         }
         catch ( ParseException e )
         {

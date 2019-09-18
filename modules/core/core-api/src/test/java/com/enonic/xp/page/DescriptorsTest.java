@@ -1,6 +1,6 @@
 package com.enonic.xp.page;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
@@ -9,7 +9,7 @@ import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.region.RegionDescriptors;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DescriptorsTest
 {

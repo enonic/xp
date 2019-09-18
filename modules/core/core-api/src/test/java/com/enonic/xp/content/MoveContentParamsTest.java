@@ -1,10 +1,10 @@
 package com.enonic.xp.content;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.security.PrincipalKey;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MoveContentParamsTest
 {
@@ -37,11 +37,10 @@ public class MoveContentParamsTest
 
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testValidate()
     {
-        MoveContentParams invalidParams = new MoveContentParams( null );
-        invalidParams.validate();
+        assertThrows(NullPointerException.class, () -> new MoveContentParams( null ));
     }
 
 }

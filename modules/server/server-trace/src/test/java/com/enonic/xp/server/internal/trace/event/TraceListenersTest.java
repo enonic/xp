@@ -1,6 +1,6 @@
 package com.enonic.xp.server.internal.trace.event;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.trace.TraceEvent;

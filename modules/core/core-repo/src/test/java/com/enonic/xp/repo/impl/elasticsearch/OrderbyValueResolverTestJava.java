@@ -4,14 +4,14 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.repo.impl.node.NodeManualOrderValueResolver;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class OrderbyValueResolverTestJava
 {

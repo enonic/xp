@@ -3,8 +3,8 @@ package com.enonic.xp.portal.impl.handler.attachment;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
@@ -28,7 +28,7 @@ import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.BaseHandlerTest;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AttachmentHandlerTest
     extends BaseHandlerTest
@@ -41,7 +41,7 @@ public class AttachmentHandlerTest
 
     private ByteSource mediaBytes;
 
-    @Before
+    @BeforeEach
     public final void setup()
         throws Exception
     {

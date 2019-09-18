@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
@@ -14,7 +14,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.UpdateNodeParams;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CompareNodeCommandTest
     extends AbstractNodeTest

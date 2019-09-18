@@ -1,8 +1,8 @@
 package com.enonic.xp.convert;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ConvertersTest
 {
@@ -19,10 +19,10 @@ public class ConvertersTest
         assertNull( value3 );
     }
 
-    @Test(expected = ConvertException.class)
+    @Test
     public void testConvertError()
     {
-        Converters.convert( "abc", Integer.class );
+        assertThrows(ConvertException.class, () -> Converters.convert( "abc", Integer.class ));
     }
 
     @Test

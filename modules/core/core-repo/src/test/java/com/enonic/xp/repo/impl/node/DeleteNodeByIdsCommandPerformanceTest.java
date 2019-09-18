@@ -1,8 +1,8 @@
 package com.enonic.xp.repo.impl.node;
 
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.base.Stopwatch;
 
@@ -16,15 +16,14 @@ import com.enonic.xp.node.SearchMode;
 public class DeleteNodeByIdsCommandPerformanceTest
     extends AbstractNodeTest
 {
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void deleteNodeByIds()
         throws Exception

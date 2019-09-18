@@ -1,13 +1,13 @@
 package com.enonic.xp.inputtype;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.Input;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CustomSelectorTypeTest
     extends BaseInputTypeTest
@@ -57,11 +57,11 @@ public class CustomSelectorTypeTest
         this.type.validate( stringProperty( "name" ), config );
     }
 
-    @Test(expected = InputTypeValidationException.class)
+    @Test
     public void testValidate_invalidType()
     {
         final InputTypeConfig config = newEmptyConfig();
-        this.type.validate( booleanProperty( true ), config );
+        assertThrows(InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), config ));
     }
 
     private InputTypeConfig newEmptyConfig()

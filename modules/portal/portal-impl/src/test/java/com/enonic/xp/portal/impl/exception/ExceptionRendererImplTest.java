@@ -2,9 +2,9 @@ package com.enonic.xp.portal.impl.exception;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Matchers;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
 import com.google.common.net.HttpHeaders;
@@ -30,7 +30,7 @@ import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.AdditionalMatchers.not;
 import static org.mockito.Mockito.when;
 
@@ -48,7 +48,7 @@ public class ExceptionRendererImplTest
 
     private MockPostProcessor postProcessor;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.resourceService = Mockito.mock( ResourceService.class );
@@ -157,7 +157,7 @@ public class ExceptionRendererImplTest
 
         final Site site = newSite();
         when( contentService.getByPath( ContentPath.from( "/mysite" ) ) ).thenReturn( site );
-        when( contentService.getByPath( not( Matchers.eq( ContentPath.from( "/mysite" ) ) ) ) ).thenThrow(
+        when( contentService.getByPath( not( ArgumentMatchers.eq( ContentPath.from( "/mysite" ) ) ) ) ).thenThrow(
             new ContentNotFoundException( ContentPath.from( "/" ), Branch.from( "draft" ) ) );
 
         final ResourceKey errorResource = ResourceKey.from( ApplicationKey.from( "myapplication" ), "site/error/error.js" );

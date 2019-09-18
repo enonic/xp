@@ -1,17 +1,17 @@
 package com.enonic.xp.content;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableMap;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class WorkflowInfoTest
 {
-    @Test(expected = NullPointerException.class)
+    @Test
     public void given_no_state_then_NullPointerException_is_thrown()
     {
-        WorkflowInfo.create().build();
+        assertThrows(NullPointerException.class, () -> WorkflowInfo.create().build() );
     }
 
     @Test
@@ -20,6 +20,6 @@ public class WorkflowInfoTest
         WorkflowInfo workflowInfo = WorkflowInfo.create().
             state( WorkflowState.READY ).
             build();
-        assertEquals( ImmutableMap.of(), workflowInfo.getChecks() );
+        assertEquals( ImmutableMap.<String, WorkflowCheckState>of(), workflowInfo.getChecks() );
     }
 }

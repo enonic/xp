@@ -1,7 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.io.ByteSource;
 
@@ -24,20 +24,19 @@ import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.Reference;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CreateNodeCommandTest
     extends AbstractNodeTest
 {
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 
-    @Test(expected = NodeAlreadyExistAtPathException.class)
+    @Test
     public void path_is_case_insensitive()
         throws Exception
     {
@@ -46,23 +45,23 @@ public class CreateNodeCommandTest
             parent( NodePath.ROOT ).
             build() );
 
-        createNode( CreateNodeParams.create().
+        assertThrows(NodeAlreadyExistAtPathException.class, () -> createNode( CreateNodeParams.create().
             name( "MYNODE" ).
             parent( NodePath.ROOT ).
-            build() );
+            build() ) );
     }
 
-    @Test(expected = NodeNotFoundException.class)
+    @Test
     public void parent_must_exist()
         throws Exception
     {
-        createNode( CreateNodeParams.create().
+        assertThrows(NodeNotFoundException.class, () -> createNode( CreateNodeParams.create().
             name( "myNode" ).
             parent( NodePath.create( "/fisk" ).build() ).
-            build() );
+            build() ) );
     }
 
-    @Test(expected = NodeAlreadyExistAtPathException.class)
+    @Test
     public void case_insensitive_path()
         throws Exception
     {
@@ -71,10 +70,10 @@ public class CreateNodeCommandTest
             parent( NodePath.ROOT ).
             build() );
 
-        createNode( CreateNodeParams.create().
+        assertThrows(NodeAlreadyExistAtPathException.class, () -> createNode( CreateNodeParams.create().
             name( "mynode" ).
             parent( NodePath.ROOT ).
-            build() );
+            build() ) );
     }
 
     @Test
@@ -206,18 +205,18 @@ public class CreateNodeCommandTest
         assertEquals( 2, attachedBinaries.getSize() );
     }
 
-    @Test(expected = NodeBinaryReferenceException.class)
+    @Test
     public void attached_binary_not_given()
         throws Exception
     {
         PropertyTree data = new PropertyTree();
         data.setBinaryReference( "myCar", BinaryReference.from( "myImage" ) );
 
-        createNode( CreateNodeParams.create().
+        assertThrows(NodeBinaryReferenceException.class, () -> createNode( CreateNodeParams.create().
             name( "test" ).
             parent( NodePath.ROOT ).
             data( data ).
-            build() );
+            build() ) );
     }
 
     @Test

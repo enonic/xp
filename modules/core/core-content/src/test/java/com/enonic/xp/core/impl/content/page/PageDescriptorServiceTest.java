@@ -1,13 +1,14 @@
 package com.enonic.xp.core.impl.content.page;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptors;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PageDescriptorServiceTest
     extends AbstractDescriptorServiceTest
@@ -31,7 +32,7 @@ public class PageDescriptorServiceTest
     {
         final DescriptorKey key = DescriptorKey.from( "myapp1:mypage" );
         final PageDescriptor descriptor = this.service.getByKey( key );
-        Assert.assertNotNull( descriptor );
+        assertNotNull( descriptor );
     }
 
     @Test
@@ -40,8 +41,8 @@ public class PageDescriptorServiceTest
     {
         final PageDescriptors result = this.service.getByApplication( ApplicationKey.from( "myapp1" ) );
 
-        Assert.assertNotNull( result );
-        Assert.assertEquals( 1, result.getSize() );
+        assertNotNull( result );
+        assertEquals( 1, result.getSize() );
     }
 
     @Test
@@ -50,7 +51,7 @@ public class PageDescriptorServiceTest
     {
         final PageDescriptors result = this.service.getByApplications( ApplicationKeys.from( "myapp1", "myapp2" ) );
 
-        Assert.assertNotNull( result );
-        Assert.assertEquals( 2, result.getSize() );
+        assertNotNull( result );
+        assertEquals( 2, result.getSize() );
     }
 }

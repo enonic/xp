@@ -3,7 +3,7 @@ package com.enonic.xp.web.jetty.impl;
 import java.net.URL;
 
 import org.eclipse.jetty.util.thread.ThreadPool;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class HttpThreadPoolStatusReporterTest
 {

@@ -3,8 +3,8 @@ package com.enonic.xp.core.impl.content.index.processor;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -21,7 +21,7 @@ import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 
 import static com.enonic.xp.content.ContentPropertyNames.SITECONFIG;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SiteConfigProcessorTest
 {
@@ -31,7 +31,7 @@ public class SiteConfigProcessorTest
 
     private ApplicationKey applicationKey2;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

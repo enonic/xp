@@ -4,13 +4,13 @@ import java.io.File;
 import java.net.URL;
 import java.util.Set;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.collect.Sets;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PrefixApplicationUrlResolverTest
 {
@@ -18,7 +18,7 @@ public class PrefixApplicationUrlResolverTest
 
     private PrefixApplicationUrlResolver resolver;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.delegate = Mockito.mock( ApplicationUrlResolver.class );

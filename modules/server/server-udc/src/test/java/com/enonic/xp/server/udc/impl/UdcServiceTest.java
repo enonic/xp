@@ -1,7 +1,7 @@
 package com.enonic.xp.server.udc.impl;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 public class UdcServiceTest
@@ -10,7 +10,7 @@ public class UdcServiceTest
 
     private UdcConfig config;
 
-    @Before
+    @BeforeEach
     public void setup()
         throws Exception
     {

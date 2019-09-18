@@ -1,7 +1,7 @@
 package com.enonic.xp.core.impl.issue;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.content.ContentIds;
@@ -14,13 +14,13 @@ import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.Nodes;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FindIssuesCommandTest
 {
     private NodeService nodeService;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

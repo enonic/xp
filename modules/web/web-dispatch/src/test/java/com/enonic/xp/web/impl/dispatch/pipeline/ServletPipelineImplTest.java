@@ -4,7 +4,7 @@ import javax.servlet.Servlet;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
@@ -13,7 +13,7 @@ import com.google.common.collect.Maps;
 import com.enonic.xp.web.dispatch.ServletMapping;
 import com.enonic.xp.web.impl.dispatch.mapping.ServletDefinition;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ServletPipelineImplTest
     extends ResourcePipelineImplTest<ServletDefinition, ServletPipelineImpl>

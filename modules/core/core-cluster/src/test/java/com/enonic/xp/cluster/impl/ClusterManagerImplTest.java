@@ -2,9 +2,8 @@ package com.enonic.xp.cluster.impl;
 
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
 
@@ -15,7 +14,7 @@ import com.enonic.xp.cluster.ClusterNodes;
 import com.enonic.xp.cluster.ClusterState;
 import com.enonic.xp.cluster.Clusters;
 
-import static junit.framework.TestCase.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ClusterManagerImplTest
 {
@@ -23,7 +22,7 @@ public class ClusterManagerImplTest
 
     private ClusterManagerImpl clusterManager;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
@@ -164,12 +163,12 @@ public class ClusterManagerImplTest
 
     private void assertClusterError()
     {
-        Assert.assertEquals( ClusterState.ERROR, this.clusterManager.getClusterState() );
+        assertEquals( ClusterState.ERROR, this.clusterManager.getClusterState() );
     }
 
     private void assertClusterOk()
     {
-        Assert.assertEquals( ClusterState.OK, this.clusterManager.getClusterState() );
+        assertEquals( ClusterState.OK, this.clusterManager.getClusterState() );
     }
 
     private void createManager( final String... required )
@@ -192,7 +191,7 @@ public class ClusterManagerImplTest
     {
         for ( final TestCluster provider : providers )
         {
-            assertTrue( String.format( "Provider '%s' not active", provider.getId() ), provider.isEnabled() );
+            assertTrue( provider.isEnabled(), String.format( "Provider '%s' not active", provider.getId() ) );
         }
     }
 
@@ -200,7 +199,7 @@ public class ClusterManagerImplTest
     {
         for ( final TestCluster provider : providers )
         {
-            Assert.assertFalse( String.format( "Provider '%s' not deactivated", provider.getId() ), provider.isEnabled() );
+            assertFalse( provider.isEnabled(), String.format( "Provider '%s' not deactivated", provider.getId() ) );
         }
     }
 }

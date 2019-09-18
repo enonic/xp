@@ -1,6 +1,6 @@
 package com.enonic.xp.portal.impl.rendering;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
@@ -8,7 +8,7 @@ import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RendererFactoryImplTest
 {
@@ -40,14 +40,14 @@ public class RendererFactoryImplTest
         assertEquals( Content.class, renderer.getType() );
     }
 
-    @Test(expected = RendererNotFoundException.class)
+    @Test
     public void given_Renderable_matching_no_given_type_when_getRenderer_then_Renderer_for_that_type_is_returned()
     {
         RendererFactoryImpl factory = new RendererFactoryImpl();
         factory.addRenderer( createRenderer( RendererFactoryImplTest.class ) );
 
         // exercise
-        factory.getRenderer( createContent() );
+        assertThrows(RendererNotFoundException.class, () -> factory.getRenderer( createContent() ));
     }
 
     private PageTemplate createPageTemplate()
