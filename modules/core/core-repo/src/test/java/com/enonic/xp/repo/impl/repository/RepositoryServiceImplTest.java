@@ -10,8 +10,6 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.AttachedBinary;
-import com.enonic.xp.node.BinaryAttachment;
-import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
@@ -21,6 +19,8 @@ import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.DeleteBranchParams;
 import com.enonic.xp.repository.DeleteRepositoryParams;
 import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repository.RepositoryBinaryAttachment;
+import com.enonic.xp.repository.RepositoryBinaryAttachments;
 import com.enonic.xp.repository.RepositoryData;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.UpdateRepositoryParams;
@@ -111,16 +111,15 @@ public class RepositoryServiceImplTest
             repositoryService.updateRepository( UpdateRepositoryParams.create().
                 repositoryId( RepositoryId.from( "fisk" ) ).
                 data( RepositoryData.from( data ) ).
-                attachments( BinaryAttachments.create().
-                    add( new BinaryAttachment( binaryRef, binarySource ) ).
+                attachments( RepositoryBinaryAttachments.create().
+                    add( new RepositoryBinaryAttachment( binaryRef, binarySource ) ).
                     build() ).
                 build() );
         } );
 
         final Repository persistedRepo = getPersistedRepoWithoutCache( "fisk" );
 
-        AttachedBinary attachedBinary =
-            persistedRepo.getAttachments().getAttachedBinaries().getByBinaryReference( BinaryReference.from( "image1.jpg" ) );
+        AttachedBinary attachedBinary = persistedRepo.getAttachments().getByBinaryReference( BinaryReference.from( "image1.jpg" ) );
 
         ByteSource persistedAttachment = binaryService.get( SystemConstants.SYSTEM_REPO_ID, attachedBinary );
 

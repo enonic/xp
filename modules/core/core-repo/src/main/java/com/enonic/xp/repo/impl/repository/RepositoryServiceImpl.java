@@ -20,6 +20,8 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 import com.enonic.xp.exception.ForbiddenAccessException;
+import com.enonic.xp.node.BinaryAttachment;
+import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.RefreshMode;
@@ -38,6 +40,7 @@ import com.enonic.xp.repository.DeleteRepositoryParams;
 import com.enonic.xp.repository.NodeRepositoryService;
 import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repository.RepositoryBinaryAttachments;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryNotFoundException;
@@ -149,13 +152,24 @@ public class RepositoryServiceImpl
             throw new RepositoryNotFoundException( repositoryId );
         }
 
+        BinaryAttachments binaryAttachments = toBinaryAttachments( updateRepositoryParams.getAttachments() );
+
         UpdateRepositoryEntryParams params = UpdateRepositoryEntryParams.create().
             repositoryId( repositoryId ).
             repositoryData( updateRepositoryParams.getData() ).
-            attachments( updateRepositoryParams.getAttachments() ).
+            attachments( binaryAttachments ).
             build();
 
         return repositoryEntryService.updateRepositoryEntry( params );
+    }
+
+    private BinaryAttachments toBinaryAttachments( final RepositoryBinaryAttachments repositoryBinaryAttachments )
+    {
+        BinaryAttachments.Builder binaryAttachmentsBuilder = BinaryAttachments.create();
+        repositoryBinaryAttachments.stream().
+            map( a -> new BinaryAttachment( a.getReference(), a.getByteSource() ) ).
+            forEach( binaryAttachmentsBuilder::add );
+        return binaryAttachmentsBuilder.build();
     }
 
     @Override

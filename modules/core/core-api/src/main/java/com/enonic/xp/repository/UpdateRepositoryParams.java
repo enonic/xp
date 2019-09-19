@@ -2,23 +2,23 @@ package com.enonic.xp.repository;
 
 import java.util.Optional;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.node.BinaryAttachments;
-
+@Beta
 public final class UpdateRepositoryParams
 {
     private final RepositoryId repositoryId;
 
     private final RepositoryData data;
 
-    private final BinaryAttachments attachments;
+    private final RepositoryBinaryAttachments attachments;
 
     private UpdateRepositoryParams( final Builder builder )
     {
         this.repositoryId = builder.repositoryId;
         this.data = Optional.ofNullable( builder.data ).orElse( RepositoryData.empty() );
-        this.attachments = Optional.ofNullable( builder.attachments ).orElse( BinaryAttachments.empty() );
+        this.attachments = Optional.ofNullable( builder.attachments ).orElse( RepositoryBinaryAttachments.empty() );
     }
 
     public RepositoryData getData()
@@ -31,7 +31,7 @@ public final class UpdateRepositoryParams
         return repositoryId;
     }
 
-    public BinaryAttachments getAttachments()
+    public RepositoryBinaryAttachments getAttachments()
     {
         return attachments;
     }
@@ -46,7 +46,7 @@ public final class UpdateRepositoryParams
         private RepositoryId repositoryId;
         private RepositoryData data;
 
-        private BinaryAttachments attachments;
+        private RepositoryBinaryAttachments attachments;
 
         private Builder()
         {
@@ -64,7 +64,7 @@ public final class UpdateRepositoryParams
             return this;
         }
 
-        public Builder attachments( final BinaryAttachments attachments )
+        public Builder attachments( final RepositoryBinaryAttachments attachments )
         {
             this.attachments = attachments;
             return this;
