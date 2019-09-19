@@ -13,6 +13,7 @@ import com.google.common.io.Resources;
 import com.google.common.net.HttpHeaders;
 
 import com.enonic.xp.extractor.ExtractedData;
+import com.enonic.xp.extractor.impl.config.ExtractorConfigImpl;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,6 +28,7 @@ public class BinaryExtractorImplTest
         this.extractor = new BinaryExtractorImpl();
         extractor.setParser( new DefaultParser() );
         extractor.setDetector( new DefaultDetector() );
+        extractor.setExtractorConfig( new ExtractorConfigImpl() );
     }
 
     @Test
