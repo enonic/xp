@@ -2,15 +2,13 @@ package com.enonic.xp.content;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
@@ -46,7 +44,7 @@ public final class ContentPaths
 
     public ContentPaths remove( final ContentPath... paths )
     {
-        return removePaths( Arrays.asList( paths ) );
+        return removePaths( ImmutableSet.copyOf( paths ) );
     }
 
     public ContentPaths remove( final Iterable<?> paths )
@@ -104,22 +102,17 @@ public final class ContentPaths
 
     private ContentPaths addPaths( final Collection<ContentPath> paths )
     {
-        return new ContentPaths( Stream.concat( set.stream(), paths.stream() ).collect( ImmutableSet.toImmutableSet() ) );
+        return new ContentPaths( Stream.concat( set.stream(), paths.stream() ).
+            collect( ImmutableSet.toImmutableSet() ) );
     }
 
-    private ContentPaths removePaths( final Collection<ContentPath> paths )
+    private ContentPaths removePaths( final Set<ContentPath> paths )
     {
-        return new ContentPaths( ImmutableSet.copyOf( Sets.difference( set, ImmutableSet.copyOf( paths ) ) ) );
+        return new ContentPaths( set.stream().filter( Predicate.not( paths::contains ) ).
+            collect( ImmutableSet.toImmutableSet() ) );
     }
 
-    private static List<ContentPath> adaptPaths( final Iterable<?> paths )
-    {
-        return StreamSupport.stream( paths.spliterator(), false ).
-            map( ContentPaths::adapt ).
-            collect( Collectors.toList() );
-    }
-
-    private static ContentPath adapt( Object item )
+    private static ContentPath adaptPath( Object item )
     {
         if ( item instanceof String )
         {
@@ -131,14 +124,23 @@ public final class ContentPaths
         }
     }
 
+    private static ImmutableSet<ContentPath> adaptPaths( final Iterable<?> paths )
+    {
+        return StreamSupport.stream( paths.spliterator(), false ).
+            map( ContentPaths::adaptPath ).
+            collect( ImmutableSet.toImmutableSet() );
+    }
+
     private static ImmutableSet<ContentPath> parsePaths( final Collection<String> paths )
     {
-        return paths.stream().map( ContentPath::from ).collect( ImmutableSet.toImmutableSet() );
+        return paths.stream().
+            map( ContentPath::from ).
+            collect( ImmutableSet.toImmutableSet() );
     }
 
     public static class Builder
     {
-        private ImmutableList.Builder<ContentPath> paths = ImmutableList.builder();
+        private ImmutableSet.Builder<ContentPath> paths = ImmutableSet.builder();
 
         public Builder add( final ContentPath contentPath )
         {
@@ -154,7 +156,7 @@ public final class ContentPaths
 
         public ContentPaths build()
         {
-            return ContentPaths.from( paths.build() );
+            return new ContentPaths( paths.build() );
         }
     }
 }
