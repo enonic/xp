@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.content;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Instant;
+import java.util.Collections;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -20,6 +21,8 @@ import com.google.common.io.ByteSource;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.audit.AuditLogService;
+import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.ApplyContentPermissionsResult;
 import com.enonic.xp.content.CompareContentParams;
@@ -124,6 +127,9 @@ import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
 
+import static com.enonic.xp.audit.AuditLogHelper.SOURCE_CORE_CONTENT;
+import static com.enonic.xp.audit.AuditLogHelper.createAuditLogParams;
+
 @Component(immediate = true)
 public class ContentServiceImpl
     implements ContentService
@@ -168,6 +174,8 @@ public class ContentServiceImpl
 
     private ContentDataSerializer contentDataSerializer;
 
+    private AuditLogService auditLogService;
+
     public ContentServiceImpl()
     {
         final ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().
@@ -198,6 +206,7 @@ public class ContentServiceImpl
         this.translator = new ContentNodeTranslator( nodeService, contentDataSerializer );
     }
 
+    // TODO
     @Override
     public Site create( final CreateSiteParams params )
     {
@@ -266,6 +275,12 @@ public class ContentServiceImpl
             build().
             execute();
 
+        final LogAuditLogParams logParams =
+            createAuditLogParams( "system.content.create", SOURCE_CORE_CONTENT, "Create a new content", params.getData(),
+                                  Collections.singletonList( content.getId() ) );
+
+        auditLogService.log( logParams );
+
         if ( content instanceof Site )
         {
             this.create( CreateContentParams.create().
@@ -285,6 +300,7 @@ public class ContentServiceImpl
         return content;
     }
 
+    // TODO
     @Override
     public Content create( final CreateMediaParams params )
     {
@@ -307,6 +323,7 @@ public class ContentServiceImpl
             execute();
     }
 
+    // TODO
     @Override
     public Content update( final UpdateContentParams params )
     {
@@ -326,6 +343,7 @@ public class ContentServiceImpl
             execute();
     }
 
+    // TODO
     @Override
     public Content update( final UpdateMediaParams params )
     {
@@ -346,6 +364,7 @@ public class ContentServiceImpl
             execute();
     }
 
+    // TODO
     @Override
     public Contents delete( final DeleteContentParams params )
     {
@@ -359,6 +378,7 @@ public class ContentServiceImpl
             execute();
     }
 
+    // TODO
     @Override
     public DeleteContentsResult deleteWithoutFetch( final DeleteContentParams params )
     {
@@ -372,6 +392,7 @@ public class ContentServiceImpl
             execute();
     }
 
+    // TODO
     @Override
     public int undoPendingDelete( UndoPendingDeleteContentParams params )
     {
@@ -404,6 +425,7 @@ public class ContentServiceImpl
     }
 
 
+    // TODO
     @Override
     public PublishContentResult publish( final PushContentParams params )
     {
@@ -493,6 +515,7 @@ public class ContentServiceImpl
             execute();
     }
 
+    // TODO
     @Override
     public UnpublishContentsResult unpublishContent( final UnpublishContentParams params )
     {
@@ -705,6 +728,7 @@ public class ContentServiceImpl
             execute();
     }
 
+    // TODO
     @Override
     public DuplicateContentsResult duplicate( final DuplicateContentParams params )
     {
@@ -718,6 +742,7 @@ public class ContentServiceImpl
             execute();
     }
 
+    // TODO
     @Override
     public MoveContentsResult move( final MoveContentParams params )
     {
@@ -732,6 +757,7 @@ public class ContentServiceImpl
             execute();
     }
 
+    // TODO
     @Override
     public Content rename( final RenameContentParams params )
     {
@@ -913,6 +939,7 @@ public class ContentServiceImpl
             execute();
     }
 
+    // TODO
     @Override
     public SetActiveContentVersionResult setActiveContentVersion( final ContentId contentId, final ContentVersionId versionId )
     {
@@ -921,6 +948,7 @@ public class ContentServiceImpl
         return new SetActiveContentVersionResult( contentId, versionId );
     }
 
+    // TODO
     @Override
     public Content setChildOrder( final SetContentChildOrderParams params )
     {
@@ -940,6 +968,7 @@ public class ContentServiceImpl
 
     }
 
+    // TODO
     @Override
     public ReorderChildContentsResult reorderChildren( final ReorderChildContentsParams params )
     {
@@ -964,6 +993,7 @@ public class ContentServiceImpl
         return nodeService.hasUnpublishedChildren( NodeId.from( params.getContentId() ), params.getTarget() );
     }
 
+    // TODO
     @Override
     public ApplyContentPermissionsResult applyPermissions( final ApplyContentPermissionsParams params )
     {
@@ -1065,6 +1095,7 @@ public class ContentServiceImpl
             execute();
     }
 
+    // TODO
     @Override
     public Content reprocess( final ContentId contentId )
     {
@@ -1252,4 +1283,11 @@ public class ContentServiceImpl
     {
         this.layoutDescriptorService = layoutDescriptorService;
     }
+
+    @Reference
+    public void setAuditLogService( final AuditLogService auditLogService )
+    {
+        this.auditLogService = auditLogService;
+    }
+
 }
