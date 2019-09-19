@@ -56,6 +56,7 @@ final class CreateFragmentCommand
             name( name ).
             type( ContentTypeName.fragment() ).
             contentData( new PropertyTree() ).
+            workflowInfo( params.getWorkflowInfo() ).
             build();
         final Content content = contentService.create( createContent );
 
