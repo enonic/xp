@@ -1,7 +1,6 @@
 package com.enonic.xp.portal.impl.exception;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.concurrent.Callable;
 
 import org.osgi.service.component.annotations.Component;
@@ -145,7 +144,8 @@ public final class ExceptionRendererImpl
                 for ( SiteConfig siteConfig : site.getSiteConfigs() )
                 {
                     final ApplicationKey applicationKey = siteConfig.getApplicationKey();
-                    for (final String scriptPath : SITE_ERROR_SCRIPT_PATHS) {
+                    for ( final String scriptPath : SITE_ERROR_SCRIPT_PATHS )
+                    {
                         final PortalResponse response =
                             renderApplicationCustomError( applicationKey, scriptPath, portalError, handlerMethod );
                         if ( response != null )
@@ -253,7 +253,8 @@ public final class ExceptionRendererImpl
     private ResourceKey getScript( final ApplicationKey applicationKey, final String scriptPath )
     {
         final ResourceKey resourceKey = ResourceKey.from( applicationKey, scriptPath );
-        if (this.resourceService.getResource( resourceKey ).exists()) {
+        if ( this.resourceService.getResource( resourceKey ).exists() )
+        {
             return resourceKey;
         }
         return null;
