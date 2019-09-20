@@ -15,8 +15,9 @@ import com.enonic.xp.support.AbstractImmutableEntitySet;
 @Beta
 public final class ContentPaths
     extends AbstractImmutableEntitySet<ContentPath>
-    implements Iterable<ContentPath>
 {
+    private static final ContentPaths EMPTY = new ContentPaths( ImmutableSet.of() );
+
     private ContentPaths( final ImmutableSet<ContentPath> set )
     {
         super( set );
@@ -72,7 +73,7 @@ public final class ContentPaths
 
     public static ContentPaths empty()
     {
-        return new ContentPaths( ImmutableSet.of() );
+        return EMPTY;
     }
 
     public static ContentPaths from( final String... paths )
