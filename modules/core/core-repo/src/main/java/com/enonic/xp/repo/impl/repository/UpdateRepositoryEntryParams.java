@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.repository;
 
-import com.enonic.xp.node.BinaryAttachments;
+import com.enonic.xp.repository.RepositoryBinaryAttachments;
 import com.enonic.xp.repository.RepositoryData;
 import com.enonic.xp.repository.RepositoryId;
 
@@ -8,7 +8,7 @@ public class UpdateRepositoryEntryParams
 {
     private final RepositoryId repositoryId;
     private final RepositoryData repositoryData;
-    private final BinaryAttachments attachments;
+    private final RepositoryBinaryAttachments attachments;
 
     private UpdateRepositoryEntryParams( Builder builder )
     {
@@ -27,7 +27,7 @@ public class UpdateRepositoryEntryParams
         return repositoryData;
     }
 
-    public BinaryAttachments getAttachments()
+    public RepositoryBinaryAttachments getAttachments()
     {
         return attachments;
     }
@@ -41,7 +41,7 @@ public class UpdateRepositoryEntryParams
     {
         private RepositoryId repositoryId;
         private RepositoryData repositoryData;
-        private BinaryAttachments attachments;
+        private RepositoryBinaryAttachments attachments;
 
         public Builder repositoryId( RepositoryId repositoryId )
         {
@@ -55,7 +55,7 @@ public class UpdateRepositoryEntryParams
             return this;
         }
 
-        public Builder attachments( BinaryAttachments attachments )
+        public Builder attachments( RepositoryBinaryAttachments attachments )
         {
             this.attachments = attachments;
             return this;

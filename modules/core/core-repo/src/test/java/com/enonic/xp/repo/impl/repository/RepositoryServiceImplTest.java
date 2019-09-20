@@ -36,14 +36,14 @@ import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class RepositoryServiceImplTest
+class RepositoryServiceImplTest
     extends AbstractNodeTest
 {
 
-    public static final User REPO_TEST_DEFAULT_USER =
+    private static final User REPO_TEST_DEFAULT_USER =
         User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "repo-test-user" ) ).login( "repo-test-user" ).build();
 
-    public static final AuthenticationInfo REPO_TEST_DEFAULT_USER_AUTHINFO = AuthenticationInfo.create().
+    private static final AuthenticationInfo REPO_TEST_DEFAULT_USER_AUTHINFO = AuthenticationInfo.create().
         principals( RoleKeys.AUTHENTICATED ).
         principals( RoleKeys.ADMIN ).
         user( REPO_TEST_DEFAULT_USER ).
@@ -56,8 +56,7 @@ public class RepositoryServiceImplTest
         build();
 
     @Test
-    public void create()
-        throws Exception
+    void create()
     {
         final Repository repo = doCreateRepo( "fisk" );
         assertNotNull( repo );
@@ -65,14 +64,15 @@ public class RepositoryServiceImplTest
     }
 
     @Test
-    public void update_data()
-        throws Exception
+    void update_data()
     {
-        final Repository repo = doCreateRepo( "fisk" );
+        final String repoId = "repo-with-data";
+
+        doCreateRepo( repoId );
 
         Context mockCurrentContext = ContextBuilder.create().
             branch( "master" ).
-            repositoryId( "fisk" ).
+            repositoryId( repoId ).
             authInfo( REPO_TEST_DEFAULT_USER_AUTHINFO ).
             build();
 
@@ -80,46 +80,48 @@ public class RepositoryServiceImplTest
         data.setString( "myProp", "b" );
 
         mockCurrentContext.callWith( () -> repositoryService.updateRepository( UpdateRepositoryParams.create().
-            repositoryId( RepositoryId.from( "fisk" ) ).
+            repositoryId( RepositoryId.from( repoId ) ).
             data( RepositoryData.from( data ) ).
             build() ) );
 
-        final Repository persistedRepo = getPersistedRepoWithoutCache( "fisk" );
+        final Repository persistedRepo = getPersistedRepoWithoutCache( repoId );
 
         assertEquals( "b", persistedRepo.getData().getValue().getString( "myProp" ) );
     }
 
     @Test
-    public void update_attachment()
+    void update_attachment()
         throws Exception
     {
-        final Repository repo = doCreateRepo( "fisk" );
+        final String repoId = "repo-with-attachment";
+
+        doCreateRepo( repoId );
 
         final BinaryReference binaryRef = BinaryReference.from( "image1.jpg" );
         ByteSource binarySource = ByteSource.wrap( "this-is-the-binary-data-for-image1".getBytes() );
 
         Context mockCurrentContext = ContextBuilder.create().
             branch( "master" ).
-            repositoryId( "fisk" ).
+            repositoryId( repoId ).
             authInfo( REPO_TEST_DEFAULT_USER_AUTHINFO ).
             build();
 
         PropertyTree data = new PropertyTree();
         data.setBinaryReference( "someIcon", binaryRef );
 
-        mockCurrentContext.runWith( () -> {
-            repositoryService.updateRepository( UpdateRepositoryParams.create().
-                repositoryId( RepositoryId.from( "fisk" ) ).
-                data( RepositoryData.from( data ) ).
-                attachments( RepositoryBinaryAttachments.create().
-                    add( new RepositoryBinaryAttachment( binaryRef, binarySource ) ).
-                    build() ).
-                build() );
-        } );
+        mockCurrentContext.runWith( () -> repositoryService.updateRepository( UpdateRepositoryParams.create().
+            repositoryId( RepositoryId.from( repoId ) ).
+            data( RepositoryData.from( data ) ).
+            attachments( RepositoryBinaryAttachments.create().
+                add( new RepositoryBinaryAttachment( binaryRef, binarySource ) ).
+                build() ).
+            build() ) );
 
-        final Repository persistedRepo = getPersistedRepoWithoutCache( "fisk" );
+        final Repository persistedRepo = getPersistedRepoWithoutCache( repoId );
 
-        AttachedBinary attachedBinary = persistedRepo.getAttachments().getByBinaryReference( BinaryReference.from( "image1.jpg" ) );
+        AttachedBinary attachedBinary =
+            RepositoryAttachmentsTranslator.toAttachedBinaries(persistedRepo.getAttachments())
+            .getByBinaryReference( BinaryReference.from( "image1.jpg" ) );
 
         ByteSource persistedAttachment = binaryService.get( SystemConstants.SYSTEM_REPO_ID, attachedBinary );
 
@@ -127,8 +129,7 @@ public class RepositoryServiceImplTest
     }
 
     @Test
-    public void create_default_acl()
-        throws Exception
+    void create_default_acl()
     {
         final Repository repo = doCreateRepo( "fisk" );
         assertNotNull( repo );
@@ -141,8 +142,7 @@ public class RepositoryServiceImplTest
     }
 
     @Test
-    public void get()
-        throws Exception
+    void get()
     {
         final Repository repo = doCreateRepo( "fisk" );
 
@@ -151,8 +151,7 @@ public class RepositoryServiceImplTest
     }
 
     @Test
-    public void delete_branch()
-        throws Exception
+    void delete_branch()
     {
         final Node myNode = createNode( NodePath.ROOT, "myNode" );
         NodeHelper.runAsAdmin( () -> this.repositoryService.deleteBranch( DeleteBranchParams.from( CTX_DEFAULT.getBranch() ) ) );
@@ -161,8 +160,7 @@ public class RepositoryServiceImplTest
     }
 
     @Test
-    public void create_branch_creates_in_repo()
-        throws Exception
+    void create_branch_creates_in_repo()
     {
         doCreateRepo( "fisk" );
 
@@ -182,16 +180,9 @@ public class RepositoryServiceImplTest
 
 
     @Test
-    public void delete_branch_deletes_from_repo()
-        throws Exception
+    void delete_branch_deletes_from_repo()
     {
-        final Repository repo = doCreateRepo( "fisk" );
-
-        Context mockCurrentContext = ContextBuilder.create().
-            branch( "master" ).
-            repositoryId( "fisk" ).
-            authInfo( REPO_TEST_DEFAULT_USER_AUTHINFO ).
-            build();
+        doCreateRepo( "fisk" );
 
         Branch branch = Branch.from( "myBranch" );
         NodeHelper.runAsAdmin( () -> repositoryService.createBranch( CreateBranchParams.from( branch ) ) );
@@ -202,8 +193,7 @@ public class RepositoryServiceImplTest
     }
 
     @Test
-    public void deleting_repo_invalidates_path_cache()
-        throws Exception
+    void deleting_repo_invalidates_path_cache()
     {
         final Repository repo = doCreateRepo( "fisk" );
 

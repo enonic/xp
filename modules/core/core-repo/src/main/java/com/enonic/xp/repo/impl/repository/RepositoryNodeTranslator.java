@@ -10,7 +10,6 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexType;
-import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeEditor;
 import com.enonic.xp.node.NodeId;
@@ -19,8 +18,6 @@ import com.enonic.xp.repository.IndexDefinitions;
 import com.enonic.xp.repository.IndexMapping;
 import com.enonic.xp.repository.IndexSettings;
 import com.enonic.xp.repository.Repository;
-import com.enonic.xp.repository.RepositoryAttachment;
-import com.enonic.xp.repository.RepositoryAttachments;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryData;
 import com.enonic.xp.repository.RepositoryId;
@@ -140,16 +137,8 @@ public class RepositoryNodeTranslator
             branches( toBranches( nodeData ) ).
             settings( repositorySettings ).
             data( repositoryData ).
-            attachments( toRepositoryAttachments( node.getAttachedBinaries() ) ).
+            attachments( RepositoryAttachmentsTranslator.toRepositoryAttachments( node.getAttachedBinaries() ) ).
             build();
-    }
-
-    private static RepositoryAttachments toRepositoryAttachments( final AttachedBinaries attachedBinaries )
-    {
-        ImmutableSet<RepositoryAttachment> repositoryAttachments = attachedBinaries.stream().
-            map( ab -> new RepositoryAttachment( ab.getBinaryReference(), ab.getBlobKey() ) ).
-            collect( ImmutableSet.toImmutableSet() );
-        return RepositoryAttachments.from( repositoryAttachments );
     }
 
     private static Branches toBranches( final PropertyTree nodeData )
