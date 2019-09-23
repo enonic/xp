@@ -1,6 +1,7 @@
 package com.enonic.xp.extractor.impl.config;
 
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -9,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Maps;
 
-import static com.enonic.xp.extractor.impl.config.ExtractorConfigImpl.BODY_SIZE_LIMIT_DEFAULT;
+import static com.enonic.xp.extractor.impl.config.ExtractorConfigMap.BODY_SIZE_LIMIT_DEFAULT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -28,7 +29,9 @@ public class ExtractorConfigImplTest
     @Test
     public void testNoConfig()
     {
-        assertFalse( instance.isEnabled() );
+        instance.configure( new HashMap<>(  ) );
+
+        assertTrue( instance.isEnabled() );
         assertEquals( BODY_SIZE_LIMIT_DEFAULT, instance.getBodySizeLimit() );
     }
 
@@ -38,7 +41,7 @@ public class ExtractorConfigImplTest
     {
         loadConfig( "empty" );
 
-        assertFalse( instance.isEnabled() );
+        assertTrue( instance.isEnabled() );
         assertEquals( BODY_SIZE_LIMIT_DEFAULT, instance.getBodySizeLimit() );
     }
 

@@ -14,19 +14,9 @@ public class ExtractorConfigImpl
 
     private final static Logger LOG = LoggerFactory.getLogger( ExtractorConfigImpl.class );
 
-    private final static String ENABLED_PROPERTY = "enabled";
-
-    private final static String BODY_SIZE_LIMIT_PROPERTY = "body.size.limit";
-
-    protected final static int BODY_SIZE_LIMIT_DEFAULT = 500_000;
-
     private boolean enabled;
 
-    private int bodySizeLimit = BODY_SIZE_LIMIT_DEFAULT;
-
-    public ExtractorConfigImpl()
-    {
-    }
+    private int bodySizeLimit;
 
     @Override
     public boolean isEnabled()
@@ -43,23 +33,15 @@ public class ExtractorConfigImpl
     @Activate
     public void configure( final Map<String, String> config )
     {
-        setEnabled( config.get( ENABLED_PROPERTY ) );
-        if ( isEnabled() )
-        {
-            setBodySizeLimit( config.get( BODY_SIZE_LIMIT_PROPERTY ) );
+        final ExtractorConfigMap configMap = new ExtractorConfigMap( config );
 
+        this.enabled = configMap.isEnabled();
+        this.bodySizeLimit = configMap.getBodySizeLimit();
+
+        if ( this.enabled )
+        {
             LOG.info( "Binary extractor is enabled and mappings updated." );
         }
-    }
-
-    private void setEnabled( final String value )
-    {
-        this.enabled = "true".equals( value );
-    }
-
-    private void setBodySizeLimit( final String value )
-    {
-        this.bodySizeLimit = value != null && value.matches( "\\d+" ) ? Integer.parseInt( value ) : BODY_SIZE_LIMIT_DEFAULT;
     }
 
 }
