@@ -1,9 +1,9 @@
 package com.enonic.xp.lib.repo;
 
-import java.util.Map;
 import java.util.function.Supplier;
 
 import com.enonic.xp.lib.repo.mapper.RepositoryMapper;
+import com.enonic.xp.lib.value.ScriptValueTranslator;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryBinaryAttachments;
 import com.enonic.xp.repository.RepositoryData;
@@ -19,7 +19,7 @@ import com.enonic.xp.script.bean.ScriptBean;
 public class UpdateRepositoryHandler
     implements ScriptBean
 {
-    private RepositoryId repositoryId;
+    private RepositoryId id;
 
     private RepositoryData data;
 
@@ -27,26 +27,31 @@ public class UpdateRepositoryHandler
 
     private Supplier<RepositoryService> repositoryServiceSupplier;
 
-    public void setRepositoryId( final String repositoryId )
+    public void setId( final String id )
     {
-        this.repositoryId = RepositoryId.from( repositoryId );
+        this.id = RepositoryId.from( id );
     }
 
     public void setData( final ScriptValue value )
     {
-        final Map<String, Object> map = value.getMap();
-        data = data;
+        if ( value != null )
+        {
+            data = RepositoryData.from( new ScriptValueTranslator().create( value ).getPropertyTree() );
+        }
     }
 
     public void setAttachments( final ScriptValue value )
     {
-        attachments = new RepositoryBinaryAttachmentsParser().parse( value );
+        if ( value != null )
+        {
+            attachments = new RepositoryBinaryAttachmentsParser().parse( value );
+        }
     }
 
     public RepositoryMapper execute()
     {
         final UpdateRepositoryParams updateRepositoryParams = UpdateRepositoryParams.create().
-            repositoryId( repositoryId ).
+            repositoryId( id ).
             data( data ).
             attachments( attachments ).
             build();
