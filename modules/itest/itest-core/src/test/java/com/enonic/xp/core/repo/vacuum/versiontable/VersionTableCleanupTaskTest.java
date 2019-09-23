@@ -1,8 +1,5 @@
 package com.enonic.xp.core.repo.vacuum.versiontable;
 
-import java.util.concurrent.ThreadLocalRandom;
-import java.time.Instant;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +16,7 @@ import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
 import com.enonic.xp.repo.impl.vacuum.versiontable.VersionTableCleanupTask;
 import com.enonic.xp.vacuum.VacuumTaskResult;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class VersionTableCleanupTaskTest
     extends AbstractNodeTest
@@ -146,12 +143,11 @@ public class VersionTableCleanupTaskTest
     {
         for ( int i = 0; i < updates; i++ )
         {
+            // Every update should introduce a change into the node
+            final long value = i;
             updateNode( UpdateNodeParams.create().
                 id( nodeId ).
-                editor( node -> {
-                    node.data.setInstant( "now", Instant.now() );
-                    node.data.setLong( "random", ThreadLocalRandom.current().nextLong() );
-                } ).
+                editor( node -> node.data.setLong( "someValue", value ) ).
                 build() );
         }
     }
