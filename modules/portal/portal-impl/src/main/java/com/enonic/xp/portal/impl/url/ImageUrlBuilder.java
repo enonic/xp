@@ -1,8 +1,9 @@
 package com.enonic.xp.portal.impl.url;
 
+import java.nio.charset.StandardCharsets;
+
 import org.apache.commons.lang.StringUtils;
 
-import com.google.common.base.Charsets;
 import com.google.common.collect.Multimap;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
@@ -60,7 +61,7 @@ final class ImageUrlBuilder
         String key = binaryKey + media.getFocalPoint() + media.getCropping() + media.getOrientation();
         return Hashing.sha1().
             newHasher().
-            putString( key, Charsets.UTF_8 ).
+            putString( key, StandardCharsets.UTF_8 ).
             hash().
             toString();
     }

@@ -2,11 +2,11 @@ package com.enonic.xp.core.impl.export.xml;
 
 import java.io.Reader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.CharSource;
 import com.google.common.io.Resources;
 
@@ -32,7 +32,7 @@ public class XmlPermissionsParserTest
 
         final XmlPermissionsParser parser = new XmlPermissionsParser();
         final URL resource = getClass().getResource( "permissions.xml" );
-        final CharSource charSource = Resources.asCharSource( resource, Charsets.UTF_8 );
+        final CharSource charSource = Resources.asCharSource( resource, StandardCharsets.UTF_8 );
         final Document doc;
         try (Reader reader = charSource.openStream()) {
             doc = DomHelper.parse(reader);

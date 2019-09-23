@@ -2,11 +2,11 @@ package com.enonic.xp.core.impl.app;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 
 import org.osgi.framework.Bundle;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
 import com.enonic.xp.app.ApplicationDescriptor;
@@ -62,7 +62,7 @@ final class ApplicationDescriptorBuilder
     {
         try
         {
-            return Resources.toString( siteXmlURL, Charsets.UTF_8 );
+            return Resources.toString( siteXmlURL, StandardCharsets.UTF_8 );
         }
         catch ( final Exception e )
         {

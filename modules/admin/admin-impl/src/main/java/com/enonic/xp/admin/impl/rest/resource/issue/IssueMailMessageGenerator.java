@@ -1,5 +1,6 @@
 package com.enonic.xp.admin.impl.rest.resource.issue;
 
+import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -13,7 +14,6 @@ import javax.mail.internet.InternetAddress;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.text.StrSubstitutor;
 
-import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
 
@@ -112,7 +112,7 @@ public abstract class IssueMailMessageGenerator<P extends IssueNotificationParam
     {
         try
         {
-            return Resources.toString( IssueMailMessageGenerator.class.getResource( name ), Charsets.UTF_8 );
+            return Resources.toString( IssueMailMessageGenerator.class.getResource( name ), StandardCharsets.UTF_8 );
         }
         catch ( Exception e )
         {

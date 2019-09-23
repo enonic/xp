@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.export;
 
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -11,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
 import com.enonic.xp.core.impl.export.writer.NodeExportPathResolver;
@@ -518,7 +518,7 @@ public class NodeImporterTest
             throw new IllegalArgumentException( "Resource file [" + fileName + "] not found" );
         }
 
-        return Resources.toString( url, Charsets.UTF_8 );
+        return Resources.toString( url, StandardCharsets.UTF_8 );
 
     }
 

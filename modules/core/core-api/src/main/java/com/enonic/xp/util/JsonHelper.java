@@ -2,6 +2,7 @@ package com.enonic.xp.util;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -9,7 +10,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
 import com.enonic.xp.data.PropertyTree;
@@ -54,7 +54,7 @@ public class JsonHelper
 
         try
         {
-            return mapper.readTree( Resources.toString( url, Charsets.UTF_8 ) );
+            return mapper.readTree( Resources.toString( url, StandardCharsets.UTF_8 ) );
         }
         catch ( IOException e )
         {
