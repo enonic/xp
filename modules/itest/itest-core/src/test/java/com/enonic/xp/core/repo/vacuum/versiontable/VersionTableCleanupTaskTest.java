@@ -18,14 +18,13 @@ import com.enonic.xp.vacuum.VacuumTaskResult;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class VersionTableCleanupTaskTest
+class VersionTableCleanupTaskTest
     extends AbstractNodeTest
 {
     private VersionTableCleanupTask task;
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         createDefaultRootNode();
 
@@ -36,8 +35,7 @@ public class VersionTableCleanupTaskTest
     }
 
     @Test
-    public void delete_node_deletes_versions()
-        throws Exception
+    void delete_node_deletes_versions()
     {
         // Do enough updates to go over the default batch-size
         final int updates = 1000;
@@ -60,8 +58,7 @@ public class VersionTableCleanupTaskTest
     }
 
     @Test
-    public void version_deleted_in_all_branches()
-        throws Exception
+    void version_deleted_in_all_branches()
     {
         final Node node1 = createNode( NodePath.ROOT, "node1" );
         pushNodes( NodeIds.from( node1.id() ), CTX_OTHER.getBranch() );
@@ -84,8 +81,7 @@ public class VersionTableCleanupTaskTest
     }
 
     @Test
-    public void version_not_deleted_in_all_branches()
-        throws Exception
+    void version_not_deleted_in_all_branches()
     {
         final Node node1 = createNode( NodePath.ROOT, "node1" );
         pushNodes( NodeIds.from( node1.id() ), CTX_OTHER.getBranch() );
@@ -108,8 +104,7 @@ public class VersionTableCleanupTaskTest
     }
 
     @Test
-    public void age_threshold()
-        throws Exception
+    void age_threshold()
     {
         final Node node1 = createNode( NodePath.ROOT, "node1" );
         updateNode( node1.id(), 2 );
