@@ -1,7 +1,9 @@
 package com.enonic.xp.extractor.impl;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.tika.detect.DefaultDetector;
 import org.apache.tika.parser.DefaultParser;
@@ -9,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
 import com.google.common.net.HttpHeaders;
 
@@ -28,7 +31,11 @@ public class BinaryExtractorImplTest
         this.extractor = new BinaryExtractorImpl();
         extractor.setParser( new DefaultParser() );
         extractor.setDetector( new DefaultDetector() );
-        extractor.setExtractorConfig( new ExtractorConfigImpl() );
+
+        final ExtractorConfigImpl extractorConfig = new ExtractorConfigImpl();
+        loadConfig( extractorConfig );
+
+        extractor.setExtractorConfig( extractorConfig );
     }
 
     @Test
@@ -57,4 +64,18 @@ public class BinaryExtractorImplTest
         assertFalse( Strings.isNullOrEmpty( extractedText ) );
         assertTrue( extractedText.contains( "Velkommen" ) );
     }
+
+    private void loadConfig( final ExtractorConfigImpl extractorConfig )
+        throws Exception
+    {
+        try (InputStream in = getClass().getResourceAsStream( "./config/extractor-complete.properties" ))
+        {
+            Properties props = new Properties();
+            props.load( in );
+
+            Map<String, String> map = Maps.fromProperties( props );
+            extractorConfig.configure( map );
+        }
+    }
+
 }
