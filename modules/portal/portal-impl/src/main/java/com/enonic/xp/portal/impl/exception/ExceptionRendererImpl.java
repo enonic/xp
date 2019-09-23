@@ -24,7 +24,6 @@ import com.enonic.xp.portal.impl.error.ErrorHandlerScript;
 import com.enonic.xp.portal.impl.error.ErrorHandlerScriptFactory;
 import com.enonic.xp.portal.impl.error.PortalError;
 import com.enonic.xp.portal.postprocess.PostProcessor;
-import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.RoleKeys;
@@ -36,19 +35,24 @@ import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.exception.ExceptionRenderer;
 
-import static com.enonic.xp.portal.RenderMode.INLINE;
-import static com.enonic.xp.portal.RenderMode.LIVE;
-import static com.enonic.xp.portal.RenderMode.PREVIEW;
+import static com.enonic.xp.portal.RenderMode.EDIT;
 
 @Component
 public final class ExceptionRendererImpl
     implements ExceptionRenderer
 {
+
     private final static Logger LOG = LoggerFactory.getLogger( ExceptionRendererImpl.class );
 
     private static final String DEFAULT_HANDLER = "handleError";
 
     private static final String STATUS_HANDLER = "handle%d";
+
+    private static final String SITE_ERROR_SCRIPT_PATH = "site/error/error.js";
+
+    private static final String GENERIC_ERROR_SCRIPT_PATH = "error/error.js";
+
+    private static final String[] SITE_ERROR_SCRIPT_PATHS = {SITE_ERROR_SCRIPT_PATH, GENERIC_ERROR_SCRIPT_PATH};
 
     private ResourceService resourceService;
 
@@ -102,7 +106,7 @@ public final class ExceptionRendererImpl
 
     private PortalResponse renderCustomError( final PortalRequest req, final WebException cause, final String handlerMethod )
     {
-        if ( LIVE == req.getMode() || PREVIEW == req.getMode() || INLINE == req.getMode() )
+        if ( EDIT != req.getMode() )
         {
             try
             {
@@ -124,35 +128,34 @@ public final class ExceptionRendererImpl
 
     private PortalResponse doRenderCustomError( final PortalRequest req, final WebException cause, final String handlerMethod )
     {
-        Site site = req.getSite();
-        if ( site == null )
-        {
-            site = resolveSiteFromPath( req );
-        }
+        final PortalError portalError = PortalError.create().
+            status( cause.getStatus() ).
+            message( cause.getMessage() ).
+            exception( cause ).
+            request( req ).build();
 
+        final Site site = resolveSite( req );
         if ( site != null )
         {
             final Site prevSite = req.getSite();
             req.setSite( site );
             try
             {
-                final PortalError portalError = PortalError.create().
-                    status( cause.getStatus() ).
-                    message( cause.getMessage() ).
-                    exception( cause ).
-                    request( req ).build();
-
                 for ( SiteConfig siteConfig : site.getSiteConfigs() )
                 {
-                    final PortalResponse response =
-                        renderApplicationCustomError( siteConfig.getApplicationKey(), portalError, handlerMethod );
-                    if ( response != null )
+                    final ApplicationKey applicationKey = siteConfig.getApplicationKey();
+                    for ( final String scriptPath : SITE_ERROR_SCRIPT_PATHS )
                     {
-                        if ( response.isPostProcess() )
+                        final PortalResponse response =
+                            renderApplicationCustomError( applicationKey, scriptPath, portalError, handlerMethod );
+                        if ( response != null )
                         {
-                            req.setApplicationKey( siteConfig.getApplicationKey() );
+                            if ( response.isPostProcess() )
+                            {
+                                req.setApplicationKey( applicationKey );
+                            }
+                            return response;
                         }
-                        return response;
                     }
                 }
             }
@@ -161,8 +164,32 @@ public final class ExceptionRendererImpl
                 req.setSite( prevSite );
             }
         }
+        else if ( req.getApplicationKey() != null )
+        {
+            final ApplicationKey applicationKey = req.getApplicationKey();
+            final PortalResponse response =
+                renderApplicationCustomError( applicationKey, GENERIC_ERROR_SCRIPT_PATH, portalError, handlerMethod );
+            if ( response != null )
+            {
+                if ( response.isPostProcess() )
+                {
+                    req.setApplicationKey( applicationKey );
+                }
+                return response;
+            }
+        }
 
         return null;
+    }
+
+    private Site resolveSite( final PortalRequest req )
+    {
+        Site site = req.getSite();
+        if ( site == null )
+        {
+            site = resolveSiteFromPath( req );
+        }
+        return site;
     }
 
     private Site resolveSiteFromPath( final PortalRequest req )
@@ -198,12 +225,11 @@ public final class ExceptionRendererImpl
             callWith( callable );
     }
 
-    private PortalResponse renderApplicationCustomError( final ApplicationKey appKey, final PortalError portalError,
-                                                         final String handlerMethod )
+    private PortalResponse renderApplicationCustomError( final ApplicationKey appKey, final String errorScriptPath,
+                                                         final PortalError portalError, final String handlerMethod )
     {
-        final ResourceKey script = ResourceKey.from( appKey, "site/error/error.js" );
-        final Resource scriptResource = this.resourceService.getResource( script );
-        if ( !scriptResource.exists() )
+        final ResourceKey script = getScript( appKey, errorScriptPath );
+        if ( script == null )
         {
             return null;
         }
@@ -223,6 +249,27 @@ public final class ExceptionRendererImpl
             request.setApplicationKey( previousApp );
         }
     }
+
+    private ResourceKey getScript( final ApplicationKey applicationKey, final String scriptPath )
+    {
+        final ResourceKey resourceKey = ResourceKey.from( applicationKey, scriptPath );
+        if ( this.resourceService.getResource( resourceKey ).exists() )
+        {
+            return resourceKey;
+        }
+        return null;
+    }
+
+    private String[] getSiteErrorScriptPaths()
+    {
+        return new String[]{SITE_ERROR_SCRIPT_PATH, GENERIC_ERROR_SCRIPT_PATH};
+    }
+
+    private String[] getApplicationErrorScriptPaths()
+    {
+        return new String[]{GENERIC_ERROR_SCRIPT_PATH};
+    }
+
 
     private PortalResponse renderIdProviderError( final PortalRequest req, final WebException cause )
     {
