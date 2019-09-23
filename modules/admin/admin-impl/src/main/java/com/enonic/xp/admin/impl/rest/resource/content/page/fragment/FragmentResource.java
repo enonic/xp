@@ -49,6 +49,7 @@ public final class FragmentResource
             parent( getContentPath( params.getParent() ) ).
             component( params.getComponent() ).
             config( params.getConfig() ).
+            workflowInfo( params.getWorkflowInfo() ).
             build();
         final Content fragmentContent = this.fragmentService.create( command );
 
