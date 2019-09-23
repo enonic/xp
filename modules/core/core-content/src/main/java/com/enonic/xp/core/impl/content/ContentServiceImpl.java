@@ -3,7 +3,6 @@ package com.enonic.xp.core.impl.content;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Instant;
-import java.util.Collections;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -22,7 +21,6 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.audit.AuditLogService;
-import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.ApplyContentPermissionsResult;
 import com.enonic.xp.content.CompareContentParams;
@@ -127,9 +125,6 @@ import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
 
-import static com.enonic.xp.audit.AuditLogHelper.SOURCE_CORE_CONTENT;
-import static com.enonic.xp.audit.AuditLogHelper.createAuditLogParams;
-
 @Component(immediate = true)
 public class ContentServiceImpl
     implements ContentService
@@ -176,6 +171,8 @@ public class ContentServiceImpl
 
     private AuditLogService auditLogService;
 
+    private ContentAuditLogSupport contentAuditLogSupport;
+
     public ContentServiceImpl()
     {
         final ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().
@@ -204,9 +201,12 @@ public class ContentServiceImpl
             build();
 
         this.translator = new ContentNodeTranslator( nodeService, contentDataSerializer );
+
+        this.contentAuditLogSupport = ContentAuditLogSupport.create().
+            auditLogService( auditLogService ).
+            build();
     }
 
-    // TODO
     @Override
     public Site create( final CreateSiteParams params )
     {
@@ -240,6 +240,8 @@ public class ContentServiceImpl
             params( createContentParams ).
             build().
             execute();
+
+        contentAuditLogSupport.createSite( params, site );
 
         this.create( CreateContentParams.create().
             owner( site.getOwner() ).
@@ -275,11 +277,7 @@ public class ContentServiceImpl
             build().
             execute();
 
-        final LogAuditLogParams logParams =
-            createAuditLogParams( "system.content.create", SOURCE_CORE_CONTENT, "Create a new content", params.getData(),
-                                  Collections.singletonList( content.getId() ) );
-
-        auditLogService.log( logParams );
+        contentAuditLogSupport.createContent( params, content );
 
         if ( content instanceof Site )
         {
@@ -300,11 +298,10 @@ public class ContentServiceImpl
         return content;
     }
 
-    // TODO
     @Override
     public Content create( final CreateMediaParams params )
     {
-        return CreateMediaCommand.create().
+        final Content content = CreateMediaCommand.create().
             params( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
@@ -321,13 +318,16 @@ public class ContentServiceImpl
             contentDataSerializer( this.contentDataSerializer ).
             build().
             execute();
+
+        contentAuditLogSupport.createMedia( params, content );
+
+        return content;
     }
 
-    // TODO
     @Override
     public Content update( final UpdateContentParams params )
     {
-        return UpdateContentCommand.create( params ).
+        final Content content = UpdateContentCommand.create( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
@@ -341,13 +341,16 @@ public class ContentServiceImpl
             contentDataSerializer( this.contentDataSerializer ).
             build().
             execute();
+
+        contentAuditLogSupport.update( params, content );
+
+        return content;
     }
 
-    // TODO
     @Override
     public Content update( final UpdateMediaParams params )
     {
-        return UpdateMediaCommand.create( params ).
+        final Content content = UpdateMediaCommand.create( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
@@ -362,13 +365,16 @@ public class ContentServiceImpl
             contentDataSerializer( this.contentDataSerializer ).
             build().
             execute();
+
+        contentAuditLogSupport.update( params, content );
+
+        return content;
     }
 
-    // TODO
     @Override
     public Contents delete( final DeleteContentParams params )
     {
-        return DeleteAndFetchContentCommand.create().
+        final Contents contents = DeleteAndFetchContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
@@ -376,13 +382,16 @@ public class ContentServiceImpl
             params( params ).
             build().
             execute();
+
+        contentAuditLogSupport.delete( params, contents );
+
+        return contents;
     }
 
-    // TODO
     @Override
     public DeleteContentsResult deleteWithoutFetch( final DeleteContentParams params )
     {
-        return DeleteContentCommand.create().
+        final DeleteContentsResult result = DeleteContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
@@ -390,6 +399,10 @@ public class ContentServiceImpl
             params( params ).
             build().
             execute();
+
+        contentAuditLogSupport.deleteWithoutFetch( params );
+
+        return result;
     }
 
     // TODO

@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
@@ -275,6 +276,7 @@ public class AbstractContentServiceTest
         PageDescriptorService pageDescriptorService = Mockito.mock(PageDescriptorService.class);
         PartDescriptorService partDescriptorService = Mockito.mock(PartDescriptorService.class);
         LayoutDescriptorService layoutDescriptorService = Mockito.mock(LayoutDescriptorService.class);
+        AuditLogService auditLogService = Mockito.mock( AuditLogService.class );
 
         contentService.setNodeService( nodeService );
         contentService.setEventPublisher( eventPublisher );
@@ -285,6 +287,7 @@ public class AbstractContentServiceTest
         contentService.setPageDescriptorService(pageDescriptorService);
         contentService.setPartDescriptorService(partDescriptorService);
         contentService.setLayoutDescriptorService(layoutDescriptorService);
+        contentService.setAuditLogService( auditLogService );
         contentService.setFormDefaultValuesProcessor( ( form, data ) -> {
         } );
         contentService.setIndexService(indexService);

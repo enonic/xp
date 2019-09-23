@@ -3,7 +3,7 @@ package com.enonic.xp.core.audit;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 
-import com.enonic.xp.core.impl.audit.AuditLogConfig;
+import com.enonic.xp.core.impl.audit.config.AuditLogConfig;
 import com.enonic.xp.core.impl.audit.AuditLogRepoInitializer;
 import com.enonic.xp.core.impl.audit.AuditLogServiceImpl;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
@@ -138,9 +138,10 @@ public class AbstractAuditLogServiceTest
         this.auditLogService.setRepositoryService( this.repositoryService );
 
         AuditLogConfig config = Mockito.mock( AuditLogConfig.class );
-        Mockito.when( config.enabled() ).thenReturn( true );
-        Mockito.when( config.outputLogs() ).thenReturn( true );
-        this.auditLogService.initialize( config );
+        Mockito.when( config.isEnabled() ).thenReturn( true );
+        Mockito.when( config.isOutputLogs() ).thenReturn( true );
+        this.auditLogService.setConfig( config );
+        this.auditLogService.initialize();
 
         initializeRepository();
     }
