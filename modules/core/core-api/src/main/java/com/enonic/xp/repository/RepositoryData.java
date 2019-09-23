@@ -7,7 +7,7 @@ import com.google.common.annotations.Beta;
 import com.enonic.xp.data.PropertyTree;
 
 @Beta
-public class RepositoryData
+public final class RepositoryData
 {
     private final PropertyTree value;
 
@@ -22,7 +22,7 @@ public class RepositoryData
     }
 
     @Override
-    public boolean equals( Object o )
+    public boolean equals( final Object o )
     {
         if ( this == o )
         {
@@ -32,7 +32,7 @@ public class RepositoryData
         {
             return false;
         }
-        RepositoryData that = (RepositoryData) o;
+        final RepositoryData that = (RepositoryData) o;
         return Objects.equals( value, that.value );
     }
 

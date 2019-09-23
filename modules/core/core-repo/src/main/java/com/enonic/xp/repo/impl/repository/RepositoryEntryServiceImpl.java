@@ -10,12 +10,10 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.event.EventPublisher;
-import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
-import com.enonic.xp.node.NodeEditor;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
@@ -109,22 +107,34 @@ public class RepositoryEntryServiceImpl
     @Override
     public Repository addBranchToRepositoryEntry( final RepositoryId repositoryId, final Branch branch )
     {
-        NodeEditor nodeEditor = RepositoryNodeTranslator.toCreateBranchNodeEditor( branch );
-        return updateRepositoryEntry( repositoryId, nodeEditor, null );
+        final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
+            id( NodeId.from( repositoryId ) ).
+            editor( RepositoryNodeTranslator.toCreateBranchNodeEditor( branch ) ).
+            build();
+
+        return updateRepositoryNode( updateNodeParams );
     }
 
     @Override
     public Repository removeBranchFromRepositoryEntry( final RepositoryId repositoryId, final Branch branch )
     {
-        NodeEditor nodeEditor = RepositoryNodeTranslator.toDeleteBranchNodeEditor( branch );
-        return updateRepositoryEntry( repositoryId, nodeEditor, null );
+        final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
+            id( NodeId.from( repositoryId ) ).
+            editor( RepositoryNodeTranslator.toDeleteBranchNodeEditor( branch ) ).
+            build();
+
+        return updateRepositoryNode( updateNodeParams );
     }
 
     @Override
     public Repository updateRepositoryEntry( UpdateRepositoryEntryParams params )
     {
-        NodeEditor nodeEditor = RepositoryNodeTranslator.toUpdateDataNodeEditor( params.getRepositoryData() );
-        return updateRepositoryEntry( params.getRepositoryId(), nodeEditor, params.getAttachments() );
+        final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
+            id( NodeId.from( params.getRepositoryId() ) ).
+            editor( RepositoryNodeTranslator.toUpdateRepositoryNodeEditor( params ) ).
+            setBinaryAttachments( RepositoryAttachmentsTranslator.toBinaryAttachments( params.getAttachments() ) ).
+            build();
+        return updateRepositoryNode( updateNodeParams );
     }
 
     @Override
@@ -158,16 +168,8 @@ public class RepositoryEntryServiceImpl
         } );
     }
 
-    private Repository updateRepositoryEntry( final RepositoryId repositoryId, final NodeEditor nodeEditor,
-                                              final BinaryAttachments binaryAttachments )
+    private Repository updateRepositoryNode( final UpdateNodeParams updateNodeParams )
     {
-        final NodeId nodeId = NodeId.from( repositoryId.toString() );
-        final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
-            id( nodeId ).
-            editor( nodeEditor ).
-            setBinaryAttachments( binaryAttachments ).
-            build();
-
         final Node updatedNode = createContext().callWith( () -> UpdateNodeCommand.create().
             params( updateNodeParams ).
             indexServiceInternal( this.indexServiceInternal ).
@@ -177,14 +179,15 @@ public class RepositoryEntryServiceImpl
             build().
             execute() );
 
-        if ( updatedNode != null )
-        {
-            eventPublisher.publish( NodeEvents.updated( updatedNode ) );
-            refresh();
-            eventPublisher.publish( RepositoryEvents.updated( repositoryId ) );
-        }
+        eventPublisher.publish( NodeEvents.updated( updatedNode ) );
 
-        return RepositoryNodeTranslator.toRepository( updatedNode );
+        refresh();
+
+        Repository repository = RepositoryNodeTranslator.toRepository( updatedNode );
+
+        eventPublisher.publish( RepositoryEvents.updated( repository.getId() ) );
+
+        return repository;
     }
 
     private Context createContext()

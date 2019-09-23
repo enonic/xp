@@ -59,9 +59,9 @@ public class RepositoryNodeTranslator
         return toBeEdited -> toBeEdited.data.addString( BRANCHES_KEY, branch.getValue() );
     }
 
-    public static NodeEditor toUpdateDataNodeEditor( RepositoryData data )
+    public static NodeEditor toUpdateRepositoryNodeEditor( UpdateRepositoryEntryParams params )
     {
-        return toBeEdited -> toBeEdited.data.setSet( DATA_KEY, data.getValue().getRoot() );
+        return toBeEdited -> toBeEdited.data.setSet( DATA_KEY, params.getRepositoryData().getValue().getRoot() );
     }
 
     public static NodeEditor toDeleteBranchNodeEditor( final Branch branch )
@@ -137,6 +137,7 @@ public class RepositoryNodeTranslator
             branches( toBranches( nodeData ) ).
             settings( repositorySettings ).
             data( repositoryData ).
+            attachments( RepositoryAttachmentsTranslator.toRepositoryAttachments( node.getAttachedBinaries() ) ).
             build();
     }
 

@@ -1,54 +1,28 @@
 package com.enonic.xp.repository;
 
-import java.util.Objects;
-
 import com.google.common.annotations.Beta;
+import com.google.common.collect.ImmutableSet;
 
-import com.enonic.xp.node.BinaryAttachments;
+import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 @Beta
-public class RepositoryAttachments
+public final class RepositoryAttachments
+    extends AbstractImmutableEntitySet<RepositoryAttachment>
 {
-    private final BinaryAttachments binaryAttachments;
+    private static final RepositoryAttachments EMPTY = new RepositoryAttachments( ImmutableSet.of() );
 
-    private RepositoryAttachments( BinaryAttachments binaryAttachments )
+    private RepositoryAttachments( final ImmutableSet<RepositoryAttachment> set )
     {
-        this.binaryAttachments = binaryAttachments;
-    }
-
-    public BinaryAttachments getBinaryAttachments()
-    {
-        return binaryAttachments;
-    }
-
-    @Override
-    public boolean equals( Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-        RepositoryAttachments that = (RepositoryAttachments) o;
-        return Objects.equals( binaryAttachments, that.binaryAttachments );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash( binaryAttachments );
-    }
-
-    public static RepositoryAttachments from( BinaryAttachments attachments )
-    {
-        return new RepositoryAttachments( attachments );
+        super( set );
     }
 
     public static RepositoryAttachments empty()
     {
-        return new RepositoryAttachments( BinaryAttachments.empty() );
+        return EMPTY;
+    }
+
+    public static RepositoryAttachments from( final Iterable<RepositoryAttachment> repositoryAttachments )
+    {
+        return new RepositoryAttachments( ImmutableSet.copyOf( repositoryAttachments ) );
     }
 }

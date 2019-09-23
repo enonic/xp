@@ -1,23 +1,26 @@
 package com.enonic.xp.repo.impl.repository;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import com.google.common.io.ByteSource;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 import com.enonic.xp.repo.impl.node.NodeHelper;
-import com.enonic.xp.repo.impl.node.NodeServiceImpl;
 import com.enonic.xp.repository.CreateBranchParams;
 import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.DeleteBranchParams;
 import com.enonic.xp.repository.DeleteRepositoryParams;
 import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repository.RepositoryBinaryAttachment;
+import com.enonic.xp.repository.RepositoryBinaryAttachments;
 import com.enonic.xp.repository.RepositoryData;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.UpdateRepositoryParams;
@@ -29,32 +32,18 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class RepositoryServiceImplTest
+class RepositoryServiceImplTest
     extends AbstractNodeTest
 {
 
-    private NodeServiceImpl nodeService;
-
-    @BeforeEach
-    public void setUp()
-        throws Exception
-    {
-        this.nodeService = new NodeServiceImpl();
-        this.nodeService.setIndexServiceInternal( this.indexServiceInternal );
-        this.nodeService.setBinaryService( this.binaryService );
-        this.nodeService.setNodeSearchService( this.searchService );
-        this.nodeService.setNodeStorageService( this.storageService );
-        this.nodeService.setRepositoryService( this.repositoryService );
-
-    }
-
-    public static final User REPO_TEST_DEFAULT_USER =
+    private static final User REPO_TEST_DEFAULT_USER =
         User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "repo-test-user" ) ).login( "repo-test-user" ).build();
 
-    public static final AuthenticationInfo REPO_TEST_DEFAULT_USER_AUTHINFO = AuthenticationInfo.create().
+    private static final AuthenticationInfo REPO_TEST_DEFAULT_USER_AUTHINFO = AuthenticationInfo.create().
         principals( RoleKeys.AUTHENTICATED ).
         principals( RoleKeys.ADMIN ).
         user( REPO_TEST_DEFAULT_USER ).
@@ -67,8 +56,7 @@ public class RepositoryServiceImplTest
         build();
 
     @Test
-    public void create()
-        throws Exception
+    void create()
     {
         final Repository repo = doCreateRepo( "fisk" );
         assertNotNull( repo );
@@ -76,34 +64,72 @@ public class RepositoryServiceImplTest
     }
 
     @Test
-    public void update_data()
-        throws Exception
+    void update_data()
     {
-        final Repository repo = doCreateRepo( "fisk" );
+        final String repoId = "repo-with-data";
+
+        doCreateRepo( repoId );
 
         Context mockCurrentContext = ContextBuilder.create().
             branch( "master" ).
-            repositoryId( "fisk" ).
+            repositoryId( repoId ).
             authInfo( REPO_TEST_DEFAULT_USER_AUTHINFO ).
             build();
 
         PropertyTree data = new PropertyTree();
         data.setString( "myProp", "b" );
 
-        mockCurrentContext.callWith( () ->
-            repositoryService.updateRepository( UpdateRepositoryParams.create().
-                repositoryId( RepositoryId.from( "fisk" ) ).
-                data( RepositoryData.from( data ) ).
-                build() ) );
+        mockCurrentContext.callWith( () -> repositoryService.updateRepository( UpdateRepositoryParams.create().
+            repositoryId( RepositoryId.from( repoId ) ).
+            data( RepositoryData.from( data ) ).
+            build() ) );
 
-        final Repository persistedRepo = getPersistedRepoWithoutCache( "fisk" );
+        final Repository persistedRepo = getPersistedRepoWithoutCache( repoId );
 
         assertEquals( "b", persistedRepo.getData().getValue().getString( "myProp" ) );
     }
 
     @Test
-    public void create_default_acl()
+    void update_attachment()
         throws Exception
+    {
+        final String repoId = "repo-with-attachment";
+
+        doCreateRepo( repoId );
+
+        final BinaryReference binaryRef = BinaryReference.from( "image1.jpg" );
+        ByteSource binarySource = ByteSource.wrap( "this-is-the-binary-data-for-image1".getBytes() );
+
+        Context mockCurrentContext = ContextBuilder.create().
+            branch( "master" ).
+            repositoryId( repoId ).
+            authInfo( REPO_TEST_DEFAULT_USER_AUTHINFO ).
+            build();
+
+        PropertyTree data = new PropertyTree();
+        data.setBinaryReference( "someIcon", binaryRef );
+
+        mockCurrentContext.runWith( () -> repositoryService.updateRepository( UpdateRepositoryParams.create().
+            repositoryId( RepositoryId.from( repoId ) ).
+            data( RepositoryData.from( data ) ).
+            attachments( RepositoryBinaryAttachments.create().
+                add( new RepositoryBinaryAttachment( binaryRef, binarySource ) ).
+                build() ).
+            build() ) );
+
+        final Repository persistedRepo = getPersistedRepoWithoutCache( repoId );
+
+        AttachedBinary attachedBinary =
+            RepositoryAttachmentsTranslator.toAttachedBinaries(persistedRepo.getAttachments())
+            .getByBinaryReference( BinaryReference.from( "image1.jpg" ) );
+
+        ByteSource persistedAttachment = binaryService.get( SystemConstants.SYSTEM_REPO_ID, attachedBinary );
+
+        assertTrue( binarySource.contentEquals( persistedAttachment ) );
+    }
+
+    @Test
+    void create_default_acl()
     {
         final Repository repo = doCreateRepo( "fisk" );
         assertNotNull( repo );
@@ -116,8 +142,7 @@ public class RepositoryServiceImplTest
     }
 
     @Test
-    public void get()
-        throws Exception
+    void get()
     {
         final Repository repo = doCreateRepo( "fisk" );
 
@@ -126,8 +151,7 @@ public class RepositoryServiceImplTest
     }
 
     @Test
-    public void delete_branch()
-        throws Exception
+    void delete_branch()
     {
         final Node myNode = createNode( NodePath.ROOT, "myNode" );
         NodeHelper.runAsAdmin( () -> this.repositoryService.deleteBranch( DeleteBranchParams.from( CTX_DEFAULT.getBranch() ) ) );
@@ -136,8 +160,7 @@ public class RepositoryServiceImplTest
     }
 
     @Test
-    public void create_branch_creates_in_repo()
-        throws Exception
+    void create_branch_creates_in_repo()
     {
         doCreateRepo( "fisk" );
 
@@ -157,16 +180,9 @@ public class RepositoryServiceImplTest
 
 
     @Test
-    public void delete_branch_deletes_from_repo()
-        throws Exception
+    void delete_branch_deletes_from_repo()
     {
-        final Repository repo = doCreateRepo( "fisk" );
-
-        Context mockCurrentContext = ContextBuilder.create().
-            branch( "master" ).
-            repositoryId( "fisk" ).
-            authInfo( REPO_TEST_DEFAULT_USER_AUTHINFO ).
-            build();
+        doCreateRepo( "fisk" );
 
         Branch branch = Branch.from( "myBranch" );
         NodeHelper.runAsAdmin( () -> repositoryService.createBranch( CreateBranchParams.from( branch ) ) );
@@ -177,8 +193,7 @@ public class RepositoryServiceImplTest
     }
 
     @Test
-    public void deleting_repo_invalidates_path_cache()
-        throws Exception
+    void deleting_repo_invalidates_path_cache()
     {
         final Repository repo = doCreateRepo( "fisk" );
 
@@ -214,8 +229,7 @@ public class RepositoryServiceImplTest
 
     private Repository getPersistedRepoWithoutCache( String id )
     {
-        return ADMIN_CONTEXT.callWith( () ->
-        {
+        return ADMIN_CONTEXT.callWith( () -> {
             repositoryService.invalidateAll();
             return this.repositoryService.get( RepositoryId.from( id ) );
         } );
