@@ -55,12 +55,7 @@ public final class FieldOrderExpr
 
         final FieldOrderExpr that = (FieldOrderExpr) o;
 
-        if ( field != null ? !field.equals( that.field ) : that.field != null )
-        {
-            return false;
-        }
-
-        return true;
+        return field != null ? field.equals( that.field ) : that.field == null;
     }
 
     @Override

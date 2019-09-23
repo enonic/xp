@@ -62,12 +62,7 @@ public class TextComponent
 
         final TextComponent that = (TextComponent) o;
 
-        if ( text != null ? !text.equals( that.text ) : that.text != null )
-        {
-            return false;
-        }
-
-        return true;
+        return text != null ? text.equals( that.text ) : that.text == null;
     }
 
     @Override

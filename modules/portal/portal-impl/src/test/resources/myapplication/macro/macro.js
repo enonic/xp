@@ -1,7 +1,7 @@
 exports.macro = function (context) {
 
     return {
-        body: "Macro context: " + JSON.stringify(context, null, 0),
+        body: 'Macro context: ' + JSON.stringify(context, null, 0),
         pageContributions: {
             headEnd: [
                 '<link rel="stylesheet" href="http://enonic.com/css/styles.css" type="text/css" />'

@@ -1,6 +1,6 @@
 package com.enonic.xp.xml.parser;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.annotations.Beta;
@@ -30,7 +30,7 @@ public final class XmlServiceDescriptorParser
         final DomElement allowedPrincipals = root.getChild( "allow" );
         if ( allowedPrincipals != null )
         {
-            final LinkedList<PrincipalKey> allowedPrincipalKeys = new LinkedList<>();
+            final List<PrincipalKey> allowedPrincipalKeys = new ArrayList<>();
             final List<DomElement> allowedPrincipalList = allowedPrincipals.getChildren( "principal" );
             for ( DomElement allowedPrincipal : allowedPrincipalList )
             {

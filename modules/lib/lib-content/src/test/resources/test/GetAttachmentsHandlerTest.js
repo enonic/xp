@@ -2,16 +2,16 @@ var t = require('/lib/xp/testing');
 var content = require('/lib/xp/content');
 
 var expectedJson = {
-    "logo.png": {
-        "name": "logo.png",
-        "label": "small",
-        "size": 6789,
-        "mimeType": "image/png"
+    'logo.png': {
+        'name': 'logo.png',
+        'label': 'small',
+        'size': 6789,
+        'mimeType': 'image/png'
     },
-    "document.pdf": {
-        "name": "document.pdf",
-        "size": 12345,
-        "mimeType": "application/pdf"
+    'document.pdf': {
+        'name': 'document.pdf',
+        'size': 12345,
+        'mimeType': 'application/pdf'
     }
 };
 

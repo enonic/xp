@@ -16,12 +16,12 @@ exports.testListener = function () {
     event.timestamp = 1;
     assert.assertJsonEquals(
         {
-            "type": "application",
-            "timestamp": 1,
-            "localOrigin": true,
-            "distributed": false,
-            "data": {
-                "a": 1
+            'type': 'application',
+            'timestamp': 1,
+            'localOrigin': true,
+            'distributed': false,
+            'data': {
+                'a': 1
             }
         }, event);
 };

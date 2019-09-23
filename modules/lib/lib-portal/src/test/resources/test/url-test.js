@@ -44,7 +44,7 @@ exports.assetUrlTest_invalidProperty = function () {
 
 exports.attachmentUrlTest = function () {
     var result = portal.attachmentUrl({
-        name: "myattachment.pdf",
+        name: 'myattachment.pdf',
         params: {
             a: 1,
             b: [1, 2]
@@ -58,8 +58,8 @@ exports.attachmentUrlTest = function () {
 
 exports.attachmentUrlTest_unknownProperty = function () {
     var result = portal.attachmentUrl({
-        name: "myattachment.pdf",
-        unknownProperty: "value",
+        name: 'myattachment.pdf',
+        unknownProperty: 'value',
         params: {
             a: 1,
             b: [1, 2]
@@ -87,7 +87,7 @@ exports.componentUrlTest = function () {
 exports.componentUrlTest_unknownProperty = function () {
     var result = portal.componentUrl({
         component: 'mycomp',
-        unknownProperty: "value",
+        unknownProperty: 'value',
         params: {
             a: 1,
             b: [1, 2]
@@ -126,7 +126,7 @@ exports.imageUrlTest_unknownProperty = function () {
             a: 1,
             b: [1, 2]
         },
-        unknownProperty: "value"
+        unknownProperty: 'value'
     });
 
     assert.assertEquals('ImageUrlParams{type=server, params={a=[1], b=[1, 2]}, id=123, quality=90, filter=scale(1,1), background=ffffff}',
@@ -155,7 +155,7 @@ exports.pageUrlTest_unknownProperty = function () {
             a: 1,
             b: [1, 2]
         },
-        unknownProperty: "value"
+        unknownProperty: 'value'
     });
 
     assert.assertEquals('PageUrlParams{type=server, params={a=[1], b=[1, 2]}, path=a/b}', result);
@@ -204,7 +204,7 @@ exports.processHtmlTest = function () {
 exports.processHtmlTest_unknownProperty = function () {
     var result = portal.processHtml({
         value: '<p><a title="Link tooltip" href="content://3e266eea-9875-4cb7-b259-41ad152f8532" target="_blank">link</a></p>',
-        unknownProperty: "value"
+        unknownProperty: 'value'
     });
 
     assert.assertEquals('ProcessHtmlParams{type=server, params={}, value=<p><a title="Link tooltip" ' +

@@ -12,8 +12,8 @@ if (idProviderKey) {
 
 // BEGIN
 // Id provider key returned.
-var expected = "myidprovider" +
-               "";
+var expected = 'myidprovider' +
+               '';
 // END
 
 assert.assertJsonEquals(expected, idProviderKey);

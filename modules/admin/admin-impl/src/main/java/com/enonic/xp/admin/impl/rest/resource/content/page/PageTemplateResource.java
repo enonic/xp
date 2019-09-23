@@ -159,10 +159,7 @@ public final class PageTemplateResource
                     return true;
                 }
 
-                if ( new ControllerMappingsResolver( siteService ).canRender( content, nearestSite ) )
-                {
-                    return true;
-                }
+                return new ControllerMappingsResolver( siteService ).canRender( content, nearestSite );
             }
             return false;
         }

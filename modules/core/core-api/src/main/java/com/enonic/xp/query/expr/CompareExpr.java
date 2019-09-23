@@ -27,7 +27,7 @@ public final class CompareExpr
 
         private final boolean multiple;
 
-        private Operator( final String value, final boolean multiple )
+        Operator( final String value, final boolean multiple )
         {
             this.value = value;
             this.multiple = multiple;

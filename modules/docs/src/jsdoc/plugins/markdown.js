@@ -47,16 +47,14 @@ function process(doclet) {
 
         if (typeof doclet[tag] === 'string' && shouldProcessString(tag, doclet[tag])) {
             doclet[tag] = parse(doclet[tag]);
-        }
-        else if (Array.isArray(doclet[tag])) {
+        } else if (Array.isArray(doclet[tag])) {
             doclet[tag].forEach(function (value, index, original) {
                 var inner = {};
                 inner[tag] = value;
                 process(inner);
                 original[index] = inner[tag];
             });
-        }
-        else if (doclet[tag]) {
+        } else if (doclet[tag]) {
             process(doclet[tag]);
         }
     });

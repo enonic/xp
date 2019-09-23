@@ -11,14 +11,14 @@ exports.geoPoint = function () {
 
 exports.instant = function () {
     return {
-        myInstant: valueLib.instant("2016-08-01T11:22:00Z")
+        myInstant: valueLib.instant('2016-08-01T11:22:00Z')
     }
 };
 
 exports.instantFromDate = function () {
     return {
-        myInstantExpected: valueLib.instant("2016-08-01T11:22:00Z"),
-        myInstant: valueLib.instant(new Date("2016-08-01T11:22:00Z"))
+        myInstantExpected: valueLib.instant('2016-08-01T11:22:00Z'),
+        myInstant: valueLib.instant(new Date('2016-08-01T11:22:00Z'))
     }
 };
 
@@ -30,52 +30,52 @@ exports.boolean = function () {
 
 exports.reference = function () {
     return {
-        myReference: valueLib.reference("1234")
+        myReference: valueLib.reference('1234')
     }
 };
 
 exports.localDateTime = function () {
     return {
-        myLocalDateTime: valueLib.localDateTime("2010-10-10T10:00:00")
+        myLocalDateTime: valueLib.localDateTime('2010-10-10T10:00:00')
     }
 };
 
 exports.localDateTimeFromDate = function () {
     return {
-        myLocalDateTimeExpected: valueLib.localDateTime("2010-10-10T10:00:00"),
+        myLocalDateTimeExpected: valueLib.localDateTime('2010-10-10T10:00:00'),
         myLocalDateTime: valueLib.localDateTime(new Date(2010, 9, 10, 10, 0, 0))
     }
 };
 
 exports.localDate = function () {
     return {
-        myLocalDate: valueLib.localDate("2010-10-10")
+        myLocalDate: valueLib.localDate('2010-10-10')
     }
 };
 
 exports.localDateFromDate = function () {
     return {
-        myLocalDateExpected: valueLib.localDate("2010-10-10"),
-        myLocalDate: valueLib.localDate(new Date("Sun Oct 10 2010 10:00:00 GMT+0200 (CEST)"))
+        myLocalDateExpected: valueLib.localDate('2010-10-10'),
+        myLocalDate: valueLib.localDate(new Date('Sun Oct 10 2010 10:00:00 GMT+0200 (CEST)'))
     }
 };
 
 exports.localTime = function () {
     return {
-        myLocalTime: valueLib.localTime("10:00:30")
+        myLocalTime: valueLib.localTime('10:00:30')
     }
 };
 
 exports.localTimeFromDate = function () {
     return {
-        myLocalTimeExpected: valueLib.localTime("10:00:30"),
+        myLocalTimeExpected: valueLib.localTime('10:00:30'),
         myLocalTime: valueLib.localTime(new Date(2010, 9, 10, 10, 0, 30))
     }
 };
 
 exports.binary = function () {
     return {
-        myBinary: valueLib.binary("myFile", stream1)
+        myBinary: valueLib.binary('myFile', stream1)
     }
 };
 

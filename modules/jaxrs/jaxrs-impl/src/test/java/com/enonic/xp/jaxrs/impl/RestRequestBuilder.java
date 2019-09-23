@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import javax.ws.rs.core.MediaType;
 
@@ -55,7 +56,7 @@ public final class RestRequestBuilder
     public RestRequestBuilder queryParam( final String name, final String value )
         throws Exception
     {
-        final String str = name + "=" + URLEncoder.encode( value, "UTF-8" );
+        final String str = name + "=" + URLEncoder.encode( value, StandardCharsets.UTF_8 );
         if ( this.numParams == 0 )
         {
             this.uri.append( "?" );

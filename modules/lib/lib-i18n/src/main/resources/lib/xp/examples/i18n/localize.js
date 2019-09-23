@@ -12,8 +12,8 @@ var message1 = i18nLib.localize({
 // Localizes a message with placeholders.
 var message2 = i18nLib.localize({
     key: 'mymessage_with_placeholder',
-    locale: "no",
-    values: ["John", "London"]
+    locale: 'no',
+    values: ['John', 'London']
 });
 // END
 

@@ -88,8 +88,7 @@ public class Version
         }
         catch ( NoSuchElementException e )
         {
-            IllegalArgumentException iae = new IllegalArgumentException( "invalid version \"" + version + "\": invalid format" );
-            iae.initCause( e );
+            IllegalArgumentException iae = new IllegalArgumentException( "invalid version \"" + version + "\": invalid format", e );
             throw iae;
         }
 
@@ -109,8 +108,7 @@ public class Version
         catch ( NumberFormatException e )
         {
             IllegalArgumentException iae =
-                new IllegalArgumentException( "invalid version \"" + version + "\": non-numeric \"" + value + "\"" );
-            iae.initCause( e );
+                new IllegalArgumentException( "invalid version \"" + version + "\": non-numeric \"" + value + "\"", e );
             throw iae;
         }
     }

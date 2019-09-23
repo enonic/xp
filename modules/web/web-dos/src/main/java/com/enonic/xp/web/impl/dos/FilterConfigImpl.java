@@ -58,6 +58,6 @@ final class FilterConfigImpl
         this.config.put( "insertHeaders", String.valueOf( config.insertHeaders() ) );
         this.config.put( "trackSessions", String.valueOf( config.trackSessions() ) );
         this.config.put( "remotePort", String.valueOf( config.remotePort() ) );
-        this.config.put( "ipWhitelist", String.valueOf( config.ipWhitelist() ) );
+        this.config.put( "ipWhitelist", config.ipWhitelist() );
     }
 }

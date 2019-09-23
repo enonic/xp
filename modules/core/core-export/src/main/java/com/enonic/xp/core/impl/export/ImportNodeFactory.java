@@ -50,7 +50,7 @@ public class ImportNodeFactory
             return Node.create( serializedNode ).
                 parentPath( this.nodeImportPath.getParentPath() ).
                 name( getNodeName() ).
-                inheritPermissions( importPermissions ? serializedNode.inheritsPermissions() : true ).
+                inheritPermissions( !importPermissions || serializedNode.inheritsPermissions() ).
                 permissions( importPermissions ? serializedNode.getPermissions() : AccessControlList.empty() ).
                 id( importNodeIds && this.serializedNode.id() != null ? NodeId.from( this.serializedNode.id() ) : null ).
                 manualOrderValue( getManualOrderValue() ).

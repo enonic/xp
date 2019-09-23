@@ -1,8 +1,5 @@
 package com.enonic.xp.core.repo.vacuum.versiontable;
 
-import java.util.concurrent.ThreadLocalRandom;
-import java.time.Instant;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -19,16 +16,15 @@ import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
 import com.enonic.xp.repo.impl.vacuum.versiontable.VersionTableCleanupTask;
 import com.enonic.xp.vacuum.VacuumTaskResult;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class VersionTableCleanupTaskTest
+class VersionTableCleanupTaskTest
     extends AbstractNodeTest
 {
     private VersionTableCleanupTask task;
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         createDefaultRootNode();
 
@@ -39,8 +35,7 @@ public class VersionTableCleanupTaskTest
     }
 
     @Test
-    public void delete_node_deletes_versions()
-        throws Exception
+    void delete_node_deletes_versions()
     {
         // Do enough updates to go over the default batch-size
         final int updates = 1000;
@@ -63,8 +58,7 @@ public class VersionTableCleanupTaskTest
     }
 
     @Test
-    public void version_deleted_in_all_branches()
-        throws Exception
+    void version_deleted_in_all_branches()
     {
         final Node node1 = createNode( NodePath.ROOT, "node1" );
         pushNodes( NodeIds.from( node1.id() ), CTX_OTHER.getBranch() );
@@ -87,8 +81,7 @@ public class VersionTableCleanupTaskTest
     }
 
     @Test
-    public void version_not_deleted_in_all_branches()
-        throws Exception
+    void version_not_deleted_in_all_branches()
     {
         final Node node1 = createNode( NodePath.ROOT, "node1" );
         pushNodes( NodeIds.from( node1.id() ), CTX_OTHER.getBranch() );
@@ -111,8 +104,7 @@ public class VersionTableCleanupTaskTest
     }
 
     @Test
-    public void age_threshold()
-        throws Exception
+    void age_threshold()
     {
         final Node node1 = createNode( NodePath.ROOT, "node1" );
         updateNode( node1.id(), 2 );
@@ -146,12 +138,11 @@ public class VersionTableCleanupTaskTest
     {
         for ( int i = 0; i < updates; i++ )
         {
+            // Every update should introduce a change into the node
+            final long value = i;
             updateNode( UpdateNodeParams.create().
                 id( nodeId ).
-                editor( node -> {
-                    node.data.setInstant( "now", Instant.now() );
-                    node.data.setLong( "random", ThreadLocalRandom.current().nextLong() );
-                } ).
+                editor( node -> node.data.setLong( "someValue", value ) ).
                 build() );
         }
     }

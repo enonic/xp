@@ -2,9 +2,9 @@ var t = require('/lib/xp/testing.js');
 var content = require('/lib/xp/content.js');
 
 var expectedJson = [
-    "d7ad428b-eae2-4ff1-9427-e8e8a8a3ab23",
-    "9f5b0db0-38f9-4e81-b92e-116f25476b1c",
-    "e1f57280-d672-4cd8-b674-98e26e5b69ae"
+    'd7ad428b-eae2-4ff1-9427-e8e8a8a3ab23',
+    '9f5b0db0-38f9-4e81-b92e-116f25476b1c',
+    'e1f57280-d672-4cd8-b674-98e26e5b69ae'
 ];
 
 exports.unpublishById = function () {

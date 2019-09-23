@@ -44,12 +44,7 @@ public class Reference
 
         final Reference reference = (Reference) o;
 
-        if ( nodeId != null ? !nodeId.equals( reference.nodeId ) : reference.nodeId != null )
-        {
-            return false;
-        }
-
-        return true;
+        return nodeId != null ? nodeId.equals( reference.nodeId ) : reference.nodeId == null;
     }
 
     @Override

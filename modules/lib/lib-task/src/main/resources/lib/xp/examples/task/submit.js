@@ -11,4 +11,4 @@ var taskId = taskLib.submit({
 });
 // END
 
-assert.assertEquals("7ca603c1-3b88-4009-8f30-46ddbcc4bb19", taskId);
+assert.assertEquals('7ca603c1-3b88-4009-8f30-46ddbcc4bb19', taskId);

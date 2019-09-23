@@ -177,6 +177,6 @@ public final class ComponentInstruction
             return null;
         }
         final Component fragment = page.getFragment();
-        return fragment == null ? null : fragment;
+        return fragment;
     }
 }
