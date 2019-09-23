@@ -4,10 +4,12 @@ import com.enonic.xp.repository.RepositoryBinaryAttachments;
 import com.enonic.xp.repository.RepositoryData;
 import com.enonic.xp.repository.RepositoryId;
 
-public class UpdateRepositoryEntryParams
+public final class UpdateRepositoryEntryParams
 {
     private final RepositoryId repositoryId;
+
     private final RepositoryData repositoryData;
+
     private final RepositoryBinaryAttachments attachments;
 
     private UpdateRepositoryEntryParams( Builder builder )
@@ -40,7 +42,9 @@ public class UpdateRepositoryEntryParams
     public static class Builder
     {
         private RepositoryId repositoryId;
+
         private RepositoryData repositoryData;
+
         private RepositoryBinaryAttachments attachments;
 
         public Builder repositoryId( RepositoryId repositoryId )

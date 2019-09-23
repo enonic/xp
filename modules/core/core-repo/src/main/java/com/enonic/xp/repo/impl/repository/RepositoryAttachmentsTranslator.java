@@ -27,8 +27,7 @@ public final class RepositoryAttachmentsTranslator
     public static AttachedBinaries toAttachedBinaries( final RepositoryAttachments repositoryAttachments )
     {
         final ImmutableSet<AttachedBinary> attachedBinaries = repositoryAttachments.stream().
-            map( ra -> new AttachedBinary( ra.getBinaryReference(), ra.getBlobKey() ) )
-            .collect( ImmutableSet.toImmutableSet() );
+            map( ra -> new AttachedBinary( ra.getBinaryReference(), ra.getBlobKey() ) ).collect( ImmutableSet.toImmutableSet() );
         return AttachedBinaries.fromCollection( attachedBinaries );
     }
 
