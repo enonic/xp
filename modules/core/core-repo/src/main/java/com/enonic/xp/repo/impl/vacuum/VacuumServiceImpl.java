@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl.vacuum;
 
+import java.util.Set;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
@@ -29,8 +31,6 @@ public class VacuumServiceImpl
             throw new VacuumException( "Only admin role users can execute vacuum" );
         }
 
-        LOG.info( " Starting vacuum, running " + tasks.size() + " tasks" );
-
         final VacuumResult.Builder taskResults = doVacuum( params );
 
         return taskResults.build();
@@ -38,16 +38,19 @@ public class VacuumServiceImpl
 
     private VacuumResult.Builder doVacuum( final VacuumParameters params )
     {
-        final VacuumResult.Builder taskResults = VacuumResult.create();
-
-        final VacuumTaskParams taskParams = VacuumTaskParams.create().listener( params.getVacuumProgressListener() ).build();
-
+        VacuumTasks tasks = getTasks( params );
+        LOG.info( "Starting vacuum, running " + tasks.size() + " tasks" );
         if ( params.getVacuumTaskListener() != null )
         {
             params.getVacuumTaskListener().total( tasks.size() );
         }
 
-        for ( final VacuumTask task : this.tasks )
+        final VacuumTaskParams taskParams = VacuumTaskParams.create().
+            listener( params.getVacuumProgressListener() ).
+            build();
+
+        final VacuumResult.Builder taskResults = VacuumResult.create();
+        for ( final VacuumTask task : tasks )
         {
             LOG.info( "Running VacuumTask:" + task.name() );
             final VacuumTaskResult taskResult = task.execute( taskParams );
@@ -61,6 +64,25 @@ public class VacuumServiceImpl
             }
         }
         return taskResults;
+    }
+
+    private VacuumTasks getTasks( final VacuumParameters params )
+    {
+        final Set<String> taskNames = params.getTaskNames();
+        if ( taskNames == null )
+        {
+            return this.tasks;
+        }
+
+        final VacuumTasks filteredTasks = new VacuumTasks();
+        for ( VacuumTask task : this.tasks )
+        {
+            if ( taskNames.contains( task.name() ) )
+            {
+                filteredTasks.add( task );
+            }
+        }
+        return filteredTasks;
     }
 
     @SuppressWarnings("WeakerAccess")

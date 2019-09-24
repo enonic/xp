@@ -1,6 +1,7 @@
 package com.enonic.xp.impl.server.rest.task;
 
 import com.enonic.xp.impl.server.rest.VacuumProgressLogger;
+import com.enonic.xp.impl.server.rest.model.VacuumRequestJson;
 import com.enonic.xp.impl.server.rest.model.VacuumResultJson;
 import com.enonic.xp.impl.server.rest.task.listener.VacuumTaskListenerImpl;
 import com.enonic.xp.task.AbstractRunnableTask;
@@ -15,10 +16,13 @@ public class VacuumRunnableTask
 {
     private final VacuumService vacuumService;
 
+    private VacuumRequestJson params;
+
     private VacuumRunnableTask( Builder builder )
     {
         super( builder );
         this.vacuumService = builder.vacuumService;
+        this.params = builder.params == null ? new VacuumRequestJson( null, null ) : builder.params;
     }
 
     public static Builder create()
@@ -32,6 +36,8 @@ public class VacuumRunnableTask
         final VacuumParameters vacuumParams = VacuumParameters.create().
             vacuumProgressListener( new VacuumProgressLogger() ).
             vacuumTaskListener( new VacuumTaskListenerImpl( progressReporter ) ).
+            ageThreshold( params.getAgeThreshold() ).
+            taskConfigs( params.getTaskConfigs() ).
             build();
 
         final VacuumResult result = this.vacuumService.vacuum( vacuumParams );
@@ -44,9 +50,17 @@ public class VacuumRunnableTask
     {
         private VacuumService vacuumService;
 
+        private VacuumRequestJson params;
+
         public Builder vacuumService( final VacuumService vacuumService )
         {
             this.vacuumService = vacuumService;
+            return this;
+        }
+
+        public Builder params( final VacuumRequestJson params )
+        {
+            this.params = params;
             return this;
         }
 
