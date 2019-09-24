@@ -1,25 +1,39 @@
 package com.enonic.xp.lib.repo;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import com.google.common.io.ByteSource;
+
 import com.enonic.xp.branch.Branches;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.repository.EditableRepository;
 import com.enonic.xp.repository.Repository;
-import com.enonic.xp.repository.RepositoryAttachment;
-import com.enonic.xp.repository.RepositoryAttachments;
-import com.enonic.xp.repository.RepositoryBinaryAttachments;
 import com.enonic.xp.repository.RepositoryConstants;
+import com.enonic.xp.repository.RepositoryData;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.repository.UpdateRepositoryParams;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-class UpdateRepositoryHandlerTest
+import static org.junit.jupiter.api.Assertions.*;
+
+public class UpdateRepositoryHandlerTest
     extends ScriptTestSupport
 {
     private RepositoryService repositoryService;
+
+    private static final Repository MOCK_REPO;
+
+    static
+    {
+        MOCK_REPO = Repository.create().
+            id( RepositoryId.from( "my-repo" ) ).
+            data( RepositoryData.from( new PropertyTree() ) ).
+            branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) ).
+            build();
+    }
 
     @Override
     protected void initialize()
@@ -28,20 +42,7 @@ class UpdateRepositoryHandlerTest
         super.initialize();
         repositoryService = Mockito.mock( RepositoryService.class );
         Mockito.when( repositoryService.updateRepository( Mockito.any() ) ).
-            thenAnswer( invocation -> {
-                final UpdateRepositoryParams updateRepositoryParams = invocation.getArgument( 0 );
-                final RepositoryBinaryAttachments binaryAttachments = updateRepositoryParams.getAttachments();
-                final List<RepositoryAttachment> attachments = binaryAttachments.stream().
-                    map( rba -> new RepositoryAttachment( rba.getReference(), "mockKey" ) ).
-                    collect( Collectors.toList() );
-
-                return Repository.create().
-                    id( updateRepositoryParams.getRepositoryId() ).
-                    branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) ).
-                    data( updateRepositoryParams.getData() ).
-                    attachments( RepositoryAttachments.from( attachments ) ).
-                    build();
-            } );
+            thenReturn( MOCK_REPO );
         addService( RepositoryService.class, repositoryService );
     }
 
@@ -49,6 +50,21 @@ class UpdateRepositoryHandlerTest
     void testExample()
     {
         runScript( "/lib/xp/examples/repo/update.js" );
-        Mockito.verify( this.repositoryService, Mockito.times( 1 ) ).updateRepository( Mockito.any() );
+
+        ArgumentCaptor<UpdateRepositoryParams> captor = ArgumentCaptor.forClass( UpdateRepositoryParams.class );
+        Mockito.verify( this.repositoryService, Mockito.times( 1 ) ).updateRepository( captor.capture() );
+
+        final UpdateRepositoryParams capturedParams = captor.getValue();
+        assertEquals( RepositoryId.from( "my-repo" ), capturedParams.getRepositoryId() );
+        final EditableRepository edited = new EditableRepository( MOCK_REPO );
+        capturedParams.getEditor().accept( edited );
+        assertSame( MOCK_REPO, edited.source );
+        //todo assert edited fields
+    }
+
+    @SuppressWarnings("unused")
+    public ByteSource createByteSource( final String value )
+    {
+        return ByteSource.wrap( value.getBytes() );
     }
 }

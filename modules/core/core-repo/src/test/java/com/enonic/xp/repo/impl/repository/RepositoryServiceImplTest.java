@@ -21,7 +21,6 @@ import com.enonic.xp.repository.DeleteRepositoryParams;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryBinaryAttachment;
 import com.enonic.xp.repository.RepositoryBinaryAttachments;
-import com.enonic.xp.repository.RepositoryData;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.UpdateRepositoryParams;
 import com.enonic.xp.security.IdProviderKey;
@@ -81,7 +80,7 @@ class RepositoryServiceImplTest
 
         mockCurrentContext.callWith( () -> repositoryService.updateRepository( UpdateRepositoryParams.create().
             repositoryId( RepositoryId.from( repoId ) ).
-            data( RepositoryData.from( data ) ).
+            editor( edit -> edit.data = data ).
             build() ) );
 
         final Repository persistedRepo = getPersistedRepoWithoutCache( repoId );
@@ -111,10 +110,12 @@ class RepositoryServiceImplTest
 
         mockCurrentContext.runWith( () -> repositoryService.updateRepository( UpdateRepositoryParams.create().
             repositoryId( RepositoryId.from( repoId ) ).
-            data( RepositoryData.from( data ) ).
-            attachments( RepositoryBinaryAttachments.create().
-                add( new RepositoryBinaryAttachment( binaryRef, binarySource ) ).
-                build() ).
+            editor( edit -> {
+                edit.data = data;
+                edit.binaryAttachments = RepositoryBinaryAttachments.create().
+                    add( new RepositoryBinaryAttachment( binaryRef, binarySource ) ).
+                    build();
+            } ).
             build() ) );
 
         final Repository persistedRepo = getPersistedRepoWithoutCache( repoId );

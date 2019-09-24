@@ -1,5 +1,3 @@
-/* global __*/
-
 /**
  * Node repository related functions.
  *
@@ -8,6 +6,11 @@
  *
  * @module repo
  */
+
+/* global __, Java*/
+
+const RepositoryBinaryAttachmentType = Java.type("com.enonic.xp.repository.RepositoryBinaryAttachment");
+const BinaryReferenceType = Java.type("com.enonic.xp.util.BinaryReference");
 
 function checkRequiredValue(value, name) {
     if (value === undefined) {
@@ -168,17 +171,26 @@ exports.deleteBranch = function (params) {
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.id Repository ID.
- * @param {object} [params.data] Array of attachments.
- * @param {array} [params.attachments] Array of attachments.
+ * @param {function} params.editor Editor callback function.
  *
  * @returns {object} Repository updated as JSON.
  *
  */
 exports.updateRepository = function (params) {
-    checkRequiredParams(params, ['id']);
+    checkRequiredParams(params, ['id', 'editor']);
     const bean = __.newBean('com.enonic.xp.lib.repo.UpdateRepositoryHandler');
     bean.id = params.id;
-    bean.data = __.toScriptValue(params.data);
-    bean.attachments = __.nullOrValue(params.attachments);
+    bean.editor = __.toScriptValue(params.editor);
     return __.toNativeObject(bean.execute());
+};
+
+/**
+ * Creates a RepositoryBinaryAttachment java-type.
+ * @param {string} name The binary name
+ * @param stream The binary stream
+ *
+ * @returns {*} RepositoryBinaryAttachment java-type
+ */
+exports.repositoryBinary = function (name, stream) {
+    return new RepositoryBinaryAttachmentType(BinaryReferenceType.from(name), stream);
 };

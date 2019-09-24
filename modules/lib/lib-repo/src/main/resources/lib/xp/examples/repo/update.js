@@ -1,20 +1,26 @@
-/* global require */
-var repoLib = require('/lib/xp/repo.js');
-var assert = require('/lib/xp/testing');
+/* global require, Java, testInstance*/
+const repoLib = require('/lib/xp/repo.js');
+var assert = require('/lib/xp/testing.js');
+
+const stream = testInstance.createByteSource('Hello World');
+
+// Editor to call for repo.
+function editor(repoData) {
+
+    repoData.myString = 'modified';
+    repoData.myArray = ['modified1', 'modified2', 'modified3'];
+
+    repoData.myBinaryReference = repoLib.repositoryBinary('myFile', stream);
+
+    delete repoData.toBeRemoved;
+
+    return repoData;
+}
 
 // BEGIN
 // Update data
-var result = repoLib.updateRepository({
-    data: {'someData': 'someValue'},
+const result = repoLib.updateRepository({
+    editor: editor,
     id: 'my-repo'
 });
-var expected = {
-    id: 'my-repo',
-    branches: [
-        'master'
-    ],
-    settings: {},
-    data: {'someData': 'someValue'}
-};
 // END
-assert.assertJsonEquals(expected, result);

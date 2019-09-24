@@ -35,10 +35,12 @@ import com.enonic.xp.repository.CreateBranchParams;
 import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.DeleteBranchParams;
 import com.enonic.xp.repository.DeleteRepositoryParams;
+import com.enonic.xp.repository.EditableRepository;
 import com.enonic.xp.repository.NodeRepositoryService;
 import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
+import com.enonic.xp.repository.RepositoryData;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryNotFoundException;
 import com.enonic.xp.repository.RepositoryService;
@@ -149,10 +151,14 @@ public class RepositoryServiceImpl
             throw new RepositoryNotFoundException( repositoryId );
         }
 
+        final EditableRepository editableRepository = new EditableRepository( previousRepository );
+
+        updateRepositoryParams.getEditor().accept( editableRepository );
+
         UpdateRepositoryEntryParams params = UpdateRepositoryEntryParams.create().
             repositoryId( repositoryId ).
-            repositoryData( updateRepositoryParams.getData() ).
-            attachments( updateRepositoryParams.getAttachments() ).
+            repositoryData( RepositoryData.from( editableRepository.data ) ).
+            attachments( editableRepository.binaryAttachments ).
             build();
 
         return repositoryEntryService.updateRepositoryEntry( params );

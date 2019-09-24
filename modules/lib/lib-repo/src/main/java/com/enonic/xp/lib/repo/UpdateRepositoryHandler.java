@@ -1,14 +1,16 @@
 package com.enonic.xp.lib.repo;
 
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.lib.common.PropertyTreeMapper;
 import com.enonic.xp.lib.repo.mapper.RepositoryMapper;
 import com.enonic.xp.lib.value.ScriptValueTranslator;
-import com.enonic.xp.repository.Repository;
-import com.enonic.xp.repository.RepositoryBinaryAttachments;
-import com.enonic.xp.repository.RepositoryData;
+import com.enonic.xp.lib.value.ScriptValueTranslatorResult;
+import com.enonic.xp.repository.EditableRepository;
 import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.repository.RepositoryNotFoundException;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.repository.UpdateRepositoryParams;
 import com.enonic.xp.script.ScriptValue;
@@ -19,52 +21,88 @@ import com.enonic.xp.script.bean.ScriptBean;
 public class UpdateRepositoryHandler
     implements ScriptBean
 {
-    private RepositoryId id;
+    private String id;
 
-    private RepositoryData data;
+    private ScriptValue editor;
 
-    private RepositoryBinaryAttachments attachments;
+    private String scope;
 
     private Supplier<RepositoryService> repositoryServiceSupplier;
 
     public void setId( final String id )
     {
-        this.id = RepositoryId.from( id );
+        this.id = id;
     }
 
-    public void setData( final ScriptValue value )
+    public void setScope( final String scope )
     {
-        if ( value != null )
-        {
-            data = RepositoryData.from( new ScriptValueTranslator().create( value ).getPropertyTree() );
-        }
+        this.scope = scope;
     }
 
-    public void setAttachments( final ScriptValue value )
+    public void setEditor( final ScriptValue editor )
     {
-        if ( value != null )
-        {
-            attachments = new RepositoryBinaryAttachmentsParser().parse( value );
-        }
+        this.editor = editor;
     }
 
     public RepositoryMapper execute()
     {
+        final RepositoryId repositoryId = RepositoryId.from( id );
+
         final UpdateRepositoryParams updateRepositoryParams = UpdateRepositoryParams.create().
-            repositoryId( id ).
-            data( data ).
-            attachments( attachments ).
+            repositoryId( repositoryId ).
+            editor( newRepositoryEditor() ).
             build();
-        final Repository repository;
-        try
+        return new RepositoryMapper( repositoryServiceSupplier.get().updateRepository( updateRepositoryParams ) );
+    }
+
+    private Consumer<EditableRepository> newRepositoryEditor()
+    {
+        return edit -> {
+            final ScriptValue value = this.editor.call( new RepositoryMapper( edit.source ) );
+            updateRepositoryData( edit, value );
+            edit.binaryAttachments = new RepositoryBinaryAttachmentsParser().parse( value );
+        };
+    }
+
+    private void updateRepositoryData( final EditableRepository target, final ScriptValue value )
+    {
+        if ( value == null )
         {
-            repository = repositoryServiceSupplier.get().updateRepository( updateRepositoryParams );
+            if ( scope != null )
+            {
+                target.data.getValue( scope );
+            }
+            return;
         }
-        catch ( RepositoryNotFoundException e )
+        final ScriptValueTranslatorResult scriptValueTranslatorResult = new ScriptValueTranslator( false ).create( value );
+        final PropertyTree propertyTree = scriptValueTranslatorResult.getPropertyTree();
+
+        if ( this.scope == null )
+        {
+            target.data = propertyTree;
+        }
+        else
+        {
+            target.data.setSet( scope, propertyTree.getRoot() );
+        }
+    }
+
+    private PropertyTreeMapper createPropertyTreeMapper( PropertyTree profile, Boolean useRawValue )
+    {
+        if ( profile == null )
         {
             return null;
         }
-        return new RepositoryMapper( repository );
+
+        if ( this.scope == null )
+        {
+            return new PropertyTreeMapper( useRawValue, profile );
+        }
+        else
+        {
+            final PropertySet scopedProfile = profile.getSet( scope );
+            return scopedProfile == null ? null : new PropertyTreeMapper( useRawValue, scopedProfile.toTree() );
+        }
     }
 
     @Override
