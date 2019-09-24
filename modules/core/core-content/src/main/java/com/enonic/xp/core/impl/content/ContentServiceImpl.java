@@ -405,11 +405,10 @@ public class ContentServiceImpl
         return result;
     }
 
-    // TODO
     @Override
-    public int undoPendingDelete( UndoPendingDeleteContentParams params )
+    public int undoPendingDelete( final UndoPendingDeleteContentParams params )
     {
-        return UndoPendingDeleteContentCommand.create().
+        final int affectedContents = UndoPendingDeleteContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
@@ -417,6 +416,10 @@ public class ContentServiceImpl
             params( params ).
             build().
             execute();
+
+        contentAuditLogSupport.undoPendingDelete( params, affectedContents );
+
+        return affectedContents;
     }
 
     @Override
@@ -438,11 +441,10 @@ public class ContentServiceImpl
     }
 
 
-    // TODO
     @Override
     public PublishContentResult publish( final PushContentParams params )
     {
-        return PublishContentCommand.create().
+        final PublishContentResult result = PublishContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
@@ -458,6 +460,10 @@ public class ContentServiceImpl
             message( params.getMessage() ).
             build().
             execute();
+
+        contentAuditLogSupport.publish( params );
+
+        return result;
     }
 
     private ContentIds getExcludeChildrenIds( final PushContentParams params )
@@ -528,11 +534,10 @@ public class ContentServiceImpl
             execute();
     }
 
-    // TODO
     @Override
     public UnpublishContentsResult unpublishContent( final UnpublishContentParams params )
     {
-        return UnpublishContentCommand.create().
+        final UnpublishContentsResult result = UnpublishContentCommand.create().
             params( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
@@ -540,6 +545,10 @@ public class ContentServiceImpl
             eventPublisher( this.eventPublisher ).
             build().
             execute();
+
+        contentAuditLogSupport.unpublishContent( params );
+
+        return result;
     }
 
     @Override
@@ -741,11 +750,10 @@ public class ContentServiceImpl
             execute();
     }
 
-    // TODO
     @Override
     public DuplicateContentsResult duplicate( final DuplicateContentParams params )
     {
-        return DuplicateContentCommand.create( params ).
+        final DuplicateContentsResult result = DuplicateContentCommand.create( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
@@ -753,13 +761,16 @@ public class ContentServiceImpl
             duplicateListener( params.getDuplicateContentListener() ).
             build().
             execute();
+
+        contentAuditLogSupport.duplicate( params );
+
+        return result;
     }
 
-    // TODO
     @Override
     public MoveContentsResult move( final MoveContentParams params )
     {
-        return MoveContentCommand.create( params ).
+        final MoveContentsResult result = MoveContentCommand.create( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
@@ -768,13 +779,16 @@ public class ContentServiceImpl
             moveListener( params.getMoveContentListener() ).
             build().
             execute();
+
+        contentAuditLogSupport.move( params );
+
+        return result;
     }
 
-    // TODO
     @Override
     public Content rename( final RenameContentParams params )
     {
-        return RenameContentCommand.create( params ).
+        final Content content = RenameContentCommand.create( params ).
             nodeService( this.nodeService ).
             xDataService( this.xDataService ).
             siteService( this.siteService ).
@@ -788,6 +802,10 @@ public class ContentServiceImpl
             contentDataSerializer( this.contentDataSerializer ).
             build().
             execute();
+
+        contentAuditLogSupport.rename( params );
+
+        return content;
     }
 
     @Override
@@ -952,16 +970,16 @@ public class ContentServiceImpl
             execute();
     }
 
-    // TODO
     @Override
     public SetActiveContentVersionResult setActiveContentVersion( final ContentId contentId, final ContentVersionId versionId )
     {
         nodeService.setActiveVersion( NodeId.from( contentId.toString() ), NodeVersionId.from( versionId.toString() ) );
 
+        contentAuditLogSupport.setActiveContentVersion( contentId, versionId );
+
         return new SetActiveContentVersionResult( contentId, versionId );
     }
 
-    // TODO
     @Override
     public Content setChildOrder( final SetContentChildOrderParams params )
     {
@@ -972,16 +990,16 @@ public class ContentServiceImpl
                 childOrder( params.getChildOrder() ).
                 build() );
 
+            contentAuditLogSupport.setChildOrder( params );
+
             return translator.fromNode( node, true );
         }
         catch ( NodeAccessException e )
         {
             throw new ContentAccessException( e );
         }
-
     }
 
-    // TODO
     @Override
     public ReorderChildContentsResult reorderChildren( final ReorderChildContentsParams params )
     {
@@ -996,6 +1014,9 @@ public class ContentServiceImpl
         }
 
         final ReorderChildNodesResult reorderChildNodesResult = this.nodeService.reorderChildren( builder.build() );
+
+        contentAuditLogSupport.reorderChildren( params );
+
         this.nodeService.refresh( RefreshMode.SEARCH );
         return new ReorderChildContentsResult( reorderChildNodesResult.getSize() );
     }
@@ -1006,17 +1027,20 @@ public class ContentServiceImpl
         return nodeService.hasUnpublishedChildren( NodeId.from( params.getContentId() ), params.getTarget() );
     }
 
-    // TODO
     @Override
     public ApplyContentPermissionsResult applyPermissions( final ApplyContentPermissionsParams params )
     {
-        return ApplyContentPermissionsCommand.create( params ).
+        final ApplyContentPermissionsResult result = ApplyContentPermissionsCommand.create( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             build().
             execute();
+
+        contentAuditLogSupport.applyPermissions( params );
+
+        return result;
     }
 
     @Override
@@ -1108,11 +1132,10 @@ public class ContentServiceImpl
             execute();
     }
 
-    // TODO
     @Override
     public Content reprocess( final ContentId contentId )
     {
-        return ReprocessContentCommand.create( ReprocessContentParams.create().contentId( contentId ).build() ).
+        final Content content = ReprocessContentCommand.create( ReprocessContentParams.create().contentId( contentId ).build() ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
@@ -1127,6 +1150,10 @@ public class ContentServiceImpl
             contentProcessors( this.contentProcessors ).
             build().
             execute();
+
+        contentAuditLogSupport.reprocess( contentId );
+
+        return content;
     }
 
     @Override

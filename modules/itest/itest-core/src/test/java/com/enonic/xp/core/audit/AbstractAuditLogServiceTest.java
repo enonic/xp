@@ -86,8 +86,6 @@ public class AbstractAuditLogServiceTest
         this.nodeDao = new NodeVersionServiceImpl();
         this.nodeDao.setBlobStore( blobStore );
 
-        this.auditLogService = new AuditLogServiceImpl();
-
         this.indexedDataService = new IndexDataServiceImpl();
         this.indexedDataService.setStorageDao( storageDao );
 
@@ -133,6 +131,7 @@ public class AbstractAuditLogServiceTest
         this.nodeService.setRepositoryService( this.repositoryService );
         this.nodeService.initialize();
 
+        this.auditLogService = new AuditLogServiceImpl();
         this.auditLogService.setNodeService( this.nodeService );
         this.auditLogService.setIndexService( this.indexService );
         this.auditLogService.setRepositoryService( this.repositoryService );

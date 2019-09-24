@@ -10,11 +10,15 @@ import com.enonic.xp.audit.AuditLogIds;
 import com.enonic.xp.audit.FindAuditLogParams;
 import com.enonic.xp.audit.FindAuditLogResult;
 import com.enonic.xp.audit.LogAuditLogParams;
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.core.impl.audit.AuditLogConstants;
 import com.enonic.xp.core.impl.audit.AuditLogContext;
-import com.enonic.xp.repository.RepositoryNotFoundException;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.User;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AuditLogServiceImplTest_find
     extends AbstractAuditLogServiceTest
@@ -22,14 +26,24 @@ public class AuditLogServiceImplTest_find
     @Test
     public void find_anonymous()
     {
-        assertThrows(RepositoryNotFoundException.class, () -> {
+        final Context context = ContextBuilder.create().
+            repositoryId( AuditLogConstants.AUDIT_LOG_REPO_ID ).
+            branch( AuditLogConstants.AUDIT_LOG_BRANCH ).
+            authInfo( AuthenticationInfo.create().
+                principals( PrincipalKey.ofAnonymous() ).
+                user( User.ANONYMOUS ).
+                build() ).build();
+
+        AuditLogContext.createAdminContext().runWith( () -> {
             LogAuditLogParams params = LogAuditLogParams.create().type( "test" ).build();
             AuditLog log = auditLogService.log( params );
 
-            FindAuditLogResult result = auditLogService.find( FindAuditLogParams.create().ids( AuditLogIds.from( log.getId() ) ).build() );
-            assertEquals( 0L, result.getCount() );
-        });
-
+            context.runWith( () -> {
+                FindAuditLogResult result =
+                    auditLogService.find( FindAuditLogParams.create().ids( AuditLogIds.from( log.getId() ) ).build() );
+                assertEquals( 0L, result.getCount() );
+            } );
+        } );
     }
 
     private FindAuditLogResult findAsAdmin( FindAuditLogParams params )
