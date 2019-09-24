@@ -1,9 +1,5 @@
 apply from: "$rootDir/gradle/osgi.gradle"
 
-ext {
-    jettyVersion = '9.4.8.v20171121'
-}
-
 dependencies {
     compile project( ':web:web-api' )
     compile "org.eclipse.jetty:jetty-server:${jettyVersion}"
