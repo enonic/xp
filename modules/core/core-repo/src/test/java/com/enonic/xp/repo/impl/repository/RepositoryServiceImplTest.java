@@ -85,7 +85,7 @@ class RepositoryServiceImplTest
 
         final Repository persistedRepo = getPersistedRepoWithoutCache( repoId );
 
-        assertEquals( "b", persistedRepo.getData().getValue().getString( "myProp" ) );
+        assertEquals( "b", persistedRepo.getData().getString( "myProp" ) );
     }
 
     @Test

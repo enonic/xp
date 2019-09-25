@@ -7,6 +7,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.util.AttachedBinaries;
 
 @Beta
@@ -18,7 +19,7 @@ public final class Repository
 
     private final RepositorySettings settings;
 
-    private final RepositoryData data;
+    private final PropertyTree data;
 
     private final AttachedBinaries attachments;
 
@@ -27,7 +28,7 @@ public final class Repository
         this.id = builder.id;
         this.branches = builder.branches;
         this.settings = builder.settings == null ? RepositorySettings.create().build() : builder.settings;
-        this.data = Optional.ofNullable( builder.data ).orElse( RepositoryData.empty() );
+        this.data = Optional.ofNullable( builder.data ).orElse( new PropertyTree() );
         this.attachments = Optional.ofNullable( builder.attachments ).orElse( AttachedBinaries.empty() );
     }
 
@@ -46,7 +47,7 @@ public final class Repository
         return branches;
     }
 
-    public RepositoryData getData()
+    public PropertyTree getData()
     {
         return data;
     }
@@ -102,7 +103,7 @@ public final class Repository
 
         private Branches branches;
 
-        private RepositoryData data;
+        private PropertyTree data;
 
         private AttachedBinaries attachments;
 
@@ -143,7 +144,7 @@ public final class Repository
             return this;
         }
 
-        public Builder data( final RepositoryData data )
+        public Builder data( final PropertyTree data )
         {
             this.data = data;
             return this;

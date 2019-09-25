@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.util.BinaryAttachment;
 
-public class EditableRepository
+public final class EditableRepository
 {
     public final Repository source;
 
@@ -16,6 +16,6 @@ public class EditableRepository
     public EditableRepository( final Repository source )
     {
         this.source = source;
-        this.data = source.getData().getValue().copy();
+        this.data = source.getData().copy();
     }
 }

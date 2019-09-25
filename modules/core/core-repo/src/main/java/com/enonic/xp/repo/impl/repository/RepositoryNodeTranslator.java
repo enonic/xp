@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.repository;
 
 import java.util.Iterator;
+import java.util.Optional;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -22,7 +23,6 @@ import com.enonic.xp.repository.IndexMapping;
 import com.enonic.xp.repository.IndexSettings;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
-import com.enonic.xp.repository.RepositoryData;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositorySettings;
 import com.enonic.xp.security.SystemConstants;
@@ -66,7 +66,7 @@ public class RepositoryNodeTranslator
 
     public static NodeEditor toUpdateRepositoryNodeEditor( UpdateRepositoryEntryParams params )
     {
-        return toBeEdited -> toBeEdited.data.setSet( DATA_KEY, params.getRepositoryData().getValue().getRoot() );
+        return toBeEdited -> toBeEdited.data.setSet( DATA_KEY, params.getRepositoryData().getRoot() );
     }
 
     public static NodeEditor toDeleteBranchNodeEditor( final Branch branch )
@@ -91,9 +91,9 @@ public class RepositoryNodeTranslator
         branches.forEach( branch -> data.addString( BRANCHES_KEY, branch.getValue() ) );
     }
 
-    private static void toNodeData( final RepositoryData repositoryData, final PropertyTree data )
+    private static void toNodeData( final PropertyTree repositoryData, final PropertyTree data )
     {
-        data.addSet( DATA_KEY, repositoryData.getValue().getRoot().detach() );
+        data.addSet( DATA_KEY, repositoryData.getRoot().detach() );
     }
 
     private static void toNodeData( final IndexDefinitions indexDefinitions, final PropertyTree data )
@@ -135,7 +135,7 @@ public class RepositoryNodeTranslator
             indexDefinitions( toIndexConfigs( nodeData ) ).
             build();
 
-        final RepositoryData repositoryData = toRepositoryData( nodeData );
+        final PropertyTree repositoryData = toRepositoryData( nodeData );
 
         return Repository.create().
             id( RepositoryId.from( node.id().toString() ) ).
@@ -199,13 +199,8 @@ public class RepositoryNodeTranslator
         return null;
     }
 
-    private static RepositoryData toRepositoryData( final PropertyTree nodeData )
+    private static PropertyTree toRepositoryData( final PropertyTree nodeData )
     {
-        PropertySet dataSet = nodeData.getSet( DATA_KEY );
-        if ( dataSet != null )
-        {
-            return RepositoryData.from( dataSet.toTree() );
-        }
-        return null;
+        return Optional.ofNullable( nodeData.getSet( DATA_KEY ) ).map( PropertySet::toTree ).orElse( null );
     }
 }

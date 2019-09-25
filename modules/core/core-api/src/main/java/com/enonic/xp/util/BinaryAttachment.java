@@ -4,7 +4,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.io.ByteSource;
 
 /**
- * BinaryAttachment is will be final in future versions and must not be subclassed.
+ * BinaryAttachment will be final in future versions and must not be subclassed.
  * The only exception is {@link com.enonic.xp.node.BinaryAttachment}, until it gets deprecated removed
  */
 @Beta

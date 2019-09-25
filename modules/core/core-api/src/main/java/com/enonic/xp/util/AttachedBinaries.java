@@ -1,10 +1,12 @@
 package com.enonic.xp.util;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
-public class AttachedBinaries
+@Beta
+public final class AttachedBinaries
     extends AbstractImmutableEntitySet<AttachedBinary>
 {
     private static final AttachedBinaries EMPTY = new AttachedBinaries( ImmutableSet.of() );

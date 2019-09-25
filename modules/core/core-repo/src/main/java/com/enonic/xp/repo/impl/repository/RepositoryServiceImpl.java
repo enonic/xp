@@ -40,7 +40,6 @@ import com.enonic.xp.repository.NodeRepositoryService;
 import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
-import com.enonic.xp.repository.RepositoryData;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryNotFoundException;
 import com.enonic.xp.repository.RepositoryService;
@@ -130,21 +129,18 @@ public class RepositoryServiceImpl
         requireAdminRole();
 
         Repository repository = repositoryMap.compute( params.getRepositoryId(),
-            ( key, previousRepository ) -> doUpdateRepository( params, previousRepository ) );
+                                                       ( key, previousRepository ) -> doUpdateRepository( params, previousRepository ) );
 
         invalidatePathCache();
 
         return repository;
     }
 
-    private Repository doUpdateRepository( final UpdateRepositoryParams updateRepositoryParams,
-                                           Repository previousRepository )
+    private Repository doUpdateRepository( final UpdateRepositoryParams updateRepositoryParams, Repository previousRepository )
     {
         RepositoryId repositoryId = updateRepositoryParams.getRepositoryId();
 
-        previousRepository = previousRepository == null ?
-            repositoryEntryService.getRepositoryEntry( repositoryId ) :
-            previousRepository;
+        previousRepository = previousRepository == null ? repositoryEntryService.getRepositoryEntry( repositoryId ) : previousRepository;
 
         if ( previousRepository == null )
         {
@@ -157,7 +153,7 @@ public class RepositoryServiceImpl
 
         UpdateRepositoryEntryParams params = UpdateRepositoryEntryParams.create().
             repositoryId( repositoryId ).
-            repositoryData( RepositoryData.from( editableRepository.data ) ).
+            repositoryData( editableRepository.data ).
             attachments( editableRepository.binaryAttachments ).
             build();
 

@@ -11,7 +11,6 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.repository.EditableRepository;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
-import com.enonic.xp.repository.RepositoryData;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.repository.UpdateRepositoryParams;
@@ -37,7 +36,7 @@ public class ModifyRepositoryHandlerTest
 
         MOCK_REPO = Repository.create().
             id( RepositoryId.from( "my-repo" ) ).
-            data( RepositoryData.from( value ) ).
+            data( value ).
             branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) ).
             build();
     }
@@ -72,7 +71,7 @@ public class ModifyRepositoryHandlerTest
 
         assertEquals( "modified", edited.data.getString( "myString" ) );
 
-        assertTrue( edited.source.getData().getValue().hasProperty( "toBeRemoved" ) );
+        assertTrue( edited.source.getData().hasProperty( "toBeRemoved" ) );
         assertFalse( edited.data.hasProperty( "toBeRemoved" ) );
 
         final BinaryAttachment attachment = edited.binaryAttachments.get( 0 );
@@ -95,7 +94,7 @@ public class ModifyRepositoryHandlerTest
         final EditableRepository edited = new EditableRepository( MOCK_REPO );
         capturedParams.getEditor().accept( edited );
 
-        assertEquals( "toBeModified", edited.source.getData().getValue().getString( "myScopedObject.myScopedString" ), "Test is invalid" );
+        assertEquals( "toBeModified", edited.source.getData().getString( "myScopedObject.myScopedString" ), "Test is invalid" );
         assertEquals( "modified", edited.data.getString( "myScopedObject.myScopedString" ) );
 
         assertEquals( "toBeKeptValue", edited.data.getString( "toBeKept" ) );
@@ -118,7 +117,7 @@ public class ModifyRepositoryHandlerTest
         final EditableRepository edited = new EditableRepository( MOCK_REPO );
         capturedParams.getEditor().accept( edited );
 
-        assertTrue( edited.source.getData().getValue().hasProperty( "myScopedObject" ), "Test is invalid" );
+        assertTrue( edited.source.getData().hasProperty( "myScopedObject" ), "Test is invalid" );
         assertFalse( edited.data.hasProperty( "myScopedObject" ) );
     }
 

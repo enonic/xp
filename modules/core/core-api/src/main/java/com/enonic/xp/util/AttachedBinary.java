@@ -5,7 +5,7 @@ import java.util.Objects;
 import com.google.common.annotations.Beta;
 
 /**
- * AttachedBinary is will be final in future versions and must not be subclassed.
+ * AttachedBinary will be final in future versions and must not be subclassed.
  * The only exception is {@link com.enonic.xp.node.AttachedBinary}, until it gets deprecated removed
  */
 @Beta
@@ -15,10 +15,10 @@ public class AttachedBinary
 
     private final String blobKey;
 
-    public AttachedBinary( final BinaryReference binaryReference, final String key )
+    public AttachedBinary( final BinaryReference binaryReference, final String blobKey )
     {
         this.binaryReference = binaryReference;
-        this.blobKey = key;
+        this.blobKey = blobKey;
     }
 
     public BinaryReference getBinaryReference()
