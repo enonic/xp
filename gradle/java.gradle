@@ -19,6 +19,7 @@ configurations {
 }
 
 ext {
+    guavaVersion = '28.1-jre'
     felixVersion = '6.0.1'
 }
 
