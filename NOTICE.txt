@@ -17,10 +17,6 @@ Licenses used by Enonic XP
     Apache License 2.0
     https://tika.apache.org/license.html
 
-    Java Activation Framework
-    Common Development and Distribution License (CDDL) v.1.0
-    http://www.oracle.com/technetwork/java/jaf11-139815.html
-
     Animal Sniffer Annotations
     MIT License
     https://www.mojohaus.org/animal-sniffer/animal-sniffer-annotations/license.html
@@ -85,9 +81,13 @@ Licenses used by Enonic XP
     Apache License 2.0
     https://github.com/fusesource/jansi/blob/master/license.txt
 
+    Java Activation Framework
+    Sun Microsystems, Inc. ("Sun") ENTITLEMENT for SOFTWARE
+    Inside distro: http://download.oracle.com/otn-pub/java/jaf/1.1.1/jaf-1_1_1.zip
+
     JavaMail
-    Common Development and Distribution License (CDDL) v.1.0
-    https://javaee.github.io/javamail/LICENSE
+    Common Development and Distribution License (CDDL) v.1.1 : https://javaee.github.io/javamail/LICENSE
+    Source code : https://github.com/javaee/javamail/tree/JAVAMAIL-1_4_7
 
     Java Native Access
     Apache License 2.0
@@ -98,12 +98,12 @@ Licenses used by Enonic XP
     https://github.com/jparsec/jparsec/blob/master/LICENSE
 
     Logback Libraries
-    Eclipse Public License - Version 1.0
-    https://www.eclipse.org/legal/epl-v10.html
+    Eclipse Public License - Version 1.0 : https://logback.qos.ch/license.html
+    Source code : https://github.com/qos-ch/logback
 
     Metrics
     Apache License 2.0
-    https://github.com/dropwizard/metrics/blob/4.0-development/LICENSE
+    https://github.com/dropwizard/metrics/blob/4.1-development/LICENSE
 
     OK Http
     Apache License 2.0
