@@ -31,7 +31,7 @@ public class BinaryServiceImpl
     }
 
     @Override
-    public ByteSource get( final RepositoryId repositoryId, final AttachedBinary attachedBinary )
+    public ByteSource get( final RepositoryId repositoryId, final com.enonic.xp.util.AttachedBinary attachedBinary )
     {
         final Segment segment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.BINARY_SEGMENT_LEVEL );
         final BlobRecord record = blobStore.getRecord( segment, BlobKey.from( attachedBinary.getBlobKey() ) );

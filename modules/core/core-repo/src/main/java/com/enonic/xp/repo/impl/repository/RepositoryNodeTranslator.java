@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.repository;
 
 import java.util.Iterator;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.branch.Branch;
@@ -10,6 +11,8 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexType;
+import com.enonic.xp.node.AttachedBinaries;
+import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeEditor;
 import com.enonic.xp.node.NodeId;
@@ -23,6 +26,8 @@ import com.enonic.xp.repository.RepositoryData;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositorySettings;
 import com.enonic.xp.security.SystemConstants;
+import com.enonic.xp.util.AttachedBinary;
+import com.enonic.xp.util.BinaryAttachment;
 
 public class RepositoryNodeTranslator
 {
@@ -137,8 +142,26 @@ public class RepositoryNodeTranslator
             branches( toBranches( nodeData ) ).
             settings( repositorySettings ).
             data( repositoryData ).
-            attachments( RepositoryAttachmentsTranslator.toRepositoryAttachedBinaries( node.getAttachedBinaries() ) ).
+            attachments( toRepositoryAttachedBinaries( node.getAttachedBinaries() ) ).
             build();
+    }
+
+    private static com.enonic.xp.util.AttachedBinaries toRepositoryAttachedBinaries( final AttachedBinaries attachedBinaries )
+    {
+        final ImmutableSet<AttachedBinary> repositoryAttachments = attachedBinaries.stream().
+            map( ab -> new AttachedBinary( ab.getBinaryReference(), ab.getBlobKey() ) ).
+            collect( ImmutableSet.toImmutableSet() );
+        return com.enonic.xp.util.AttachedBinaries.from( repositoryAttachments );
+    }
+
+    public static BinaryAttachments toNodeBinaryAttachments( final ImmutableList<BinaryAttachment> repositoryBinaryAttachments )
+    {
+        final BinaryAttachments.Builder builder = BinaryAttachments.create();
+        repositoryBinaryAttachments.stream().
+            map( rba -> new com.enonic.xp.node.BinaryAttachment( rba.getReference(), rba.getByteSource() ) ).
+            forEach( builder::add );
+
+        return builder.build();
     }
 
     private static Branches toBranches( final PropertyTree nodeData )

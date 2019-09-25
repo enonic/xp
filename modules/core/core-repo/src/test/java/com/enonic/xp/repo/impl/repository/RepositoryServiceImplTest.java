@@ -3,7 +3,6 @@ package com.enonic.xp.repo.impl.repository;
 import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.branch.Branch;
@@ -11,8 +10,6 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.node.AttachedBinaries;
-import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
@@ -22,7 +19,6 @@ import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.DeleteBranchParams;
 import com.enonic.xp.repository.DeleteRepositoryParams;
 import com.enonic.xp.repository.Repository;
-import com.enonic.xp.repository.RepositoryAttachedBinaries;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.UpdateRepositoryParams;
 import com.enonic.xp.security.IdProviderKey;
@@ -33,6 +29,7 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.util.AttachedBinary;
 import com.enonic.xp.util.BinaryAttachment;
 import com.enonic.xp.util.BinaryReference;
 
@@ -121,8 +118,11 @@ class RepositoryServiceImplTest
 
         final Repository persistedRepo = getPersistedRepoWithoutCache( repoId );
 
-        AttachedBinary attachedBinary = toNodeAttachedBinaries( persistedRepo.getAttachments() )
-            .getByBinaryReference( BinaryReference.from( "image1.jpg" ) );
+        final AttachedBinary attachedBinary = persistedRepo.getAttachments().
+            getSet().
+            stream().
+            filter( ab -> ab.getBinaryReference().equals( BinaryReference.from( "image1.jpg" ) ) ).
+            findAny().orElseThrow();
 
         ByteSource persistedAttachment = binaryService.get( SystemConstants.SYSTEM_REPO_ID, attachedBinary );
 
@@ -234,13 +234,5 @@ class RepositoryServiceImplTest
             repositoryService.invalidateAll();
             return this.repositoryService.get( RepositoryId.from( id ) );
         } );
-    }
-
-    private static AttachedBinaries toNodeAttachedBinaries( final RepositoryAttachedBinaries repositoryAttachedBinaries )
-    {
-        final ImmutableSet<AttachedBinary> attachedBinaries = repositoryAttachedBinaries.stream().
-            map( ra -> new com.enonic.xp.node.AttachedBinary( ra.getBinaryReference(), ra.getBlobKey() ) ).
-            collect( ImmutableSet.toImmutableSet() );
-        return AttachedBinaries.fromCollection( attachedBinaries );
     }
 }

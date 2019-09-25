@@ -72,6 +72,9 @@ public class UpdateRepositoryHandler
         else
         {
             final ScriptValueTranslatorResult scriptValueTranslatorResult = new ScriptValueTranslator().create( value );
+
+            target.binaryAttachments = ImmutableList.copyOf( scriptValueTranslatorResult.getBinaryAttachments() );
+
             final PropertyTree propertyTree = scriptValueTranslatorResult.getPropertyTree();
 
             if ( scope == null )
@@ -82,7 +85,6 @@ public class UpdateRepositoryHandler
             {
                 target.data.setSet( scope, propertyTree.getRoot() );
             }
-            target.binaryAttachments = ImmutableList.copyOf( scriptValueTranslatorResult.getBinaryAttachments() );
         }
     }
 

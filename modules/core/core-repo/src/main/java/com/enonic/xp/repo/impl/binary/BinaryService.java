@@ -10,6 +10,6 @@ public interface BinaryService
 {
     AttachedBinary store( final RepositoryId repositoryId, final BinaryAttachment binaryAttachment );
 
-    ByteSource get( final RepositoryId repositoryId, final AttachedBinary key );
+    ByteSource get( final RepositoryId repositoryId, final com.enonic.xp.util.AttachedBinary key );
 
 }
