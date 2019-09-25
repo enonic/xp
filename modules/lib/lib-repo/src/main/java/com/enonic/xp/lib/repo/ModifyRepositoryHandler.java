@@ -17,7 +17,7 @@ import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 
 @SuppressWarnings("unused")
-public class UpdateRepositoryHandler
+public class ModifyRepositoryHandler
     implements ScriptBean
 {
     private String id;

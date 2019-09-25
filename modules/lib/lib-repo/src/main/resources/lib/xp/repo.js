@@ -168,15 +168,17 @@ exports.deleteBranch = function (params) {
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.id Repository ID.
+ * @param {string} [params.scope] Scope of the data to retrieve and update.
  * @param {function} params.editor Editor callback function.
  *
  * @returns {object} Repository updated as JSON.
  *
  */
-exports.updateRepository = function (params) {
+exports.modifyRepository = function (params) {
     checkRequiredParams(params, ['id', 'editor']);
-    const bean = __.newBean('com.enonic.xp.lib.repo.UpdateRepositoryHandler');
+    const bean = __.newBean('com.enonic.xp.lib.repo.ModifyRepositoryHandler');
     bean.id = params.id;
     bean.editor = __.toScriptValue(params.editor);
+    bean.scope = bean.scope = __.nullOrValue(params.scope);
     return __.toNativeObject(bean.execute());
 };

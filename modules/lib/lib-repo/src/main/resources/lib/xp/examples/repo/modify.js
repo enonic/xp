@@ -1,7 +1,6 @@
 /* global require, Java, testInstance*/
 const repoLib = require('/lib/xp/repo.js');
 const valueLib = require('/lib/xp/value');
-const assert = require('/lib/xp/testing.js');
 
 const stream = testInstance.createByteSource('Hello World');
 
@@ -20,7 +19,7 @@ function editor(repoData) {
 
 // BEGIN
 // Update data
-const result = repoLib.updateRepository({
+const result = repoLib.modifyRepository({
     editor: editor,
     id: 'my-repo'
 });
