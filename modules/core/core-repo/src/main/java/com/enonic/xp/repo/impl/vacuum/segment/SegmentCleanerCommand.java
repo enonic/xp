@@ -118,7 +118,7 @@ public class SegmentCleanerCommand
                 branch( SystemConstants.BRANCH_SYSTEM ).
                 build();
             final Instant since = Instant.now().minusMillis( params.getAgeThreshold() );
-            final NodeVersionQuery query = NodeVersionQuery.create().
+            final NodeVersionQuery findRecentVersionsQuery = NodeVersionQuery.create().
                 nodeId( NodeId.from( repositoryId.toString() ) ).
                 addQueryFilter( RangeFilter.create().
                     fieldName( VersionIndexPath.TIMESTAMP.getPath() ).
@@ -127,11 +127,11 @@ public class SegmentCleanerCommand
                 size( 0 ).
                 addOrderBy( FieldOrderExpr.create( VersionIndexPath.TIMESTAMP, OrderExpr.Direction.DESC ) ).
                 build();
-            final NodeVersionQueryResult versions = systemContext.callWith( () -> nodeService.findVersions( query ) );
+            final NodeVersionQueryResult result = systemContext.callWith( () -> nodeService.findVersions( findRecentVersionsQuery ) );
 
-            LOG.info( "Found " + versions.getTotalHits() + " recent versions" );
+            LOG.info( "Found " + result.getTotalHits() + " recent versions" );
 
-            return versions.getTotalHits() > 0;
+            return result.getTotalHits() > 0;
         } );
     }
 

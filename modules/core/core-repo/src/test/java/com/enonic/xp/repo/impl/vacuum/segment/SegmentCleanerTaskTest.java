@@ -10,6 +10,9 @@ import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
+import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.NodeVersionQuery;
+import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
 import com.enonic.xp.repository.Repositories;
@@ -35,6 +38,8 @@ public class SegmentCleanerTaskTest
 
     private RepositoryService repositoryService;
 
+    private NodeService nodeService;
+
     @BeforeEach
     public void setUp()
         throws Exception
@@ -46,11 +51,14 @@ public class SegmentCleanerTaskTest
         this.segment2 = RepositorySegmentUtils.toSegment( repositoryId2, NodeConstants.NODE_SEGMENT_LEVEL );
 
         this.repositoryService = Mockito.mock( RepositoryService.class );
-
         final Branch branch = Branch.from( "master" );
         final Repository repository = Repository.create().id( repositoryId ).branches( branch ).build();
         final Repository repository2 = Repository.create().id( repositoryId ).branches( branch ).build();
         Mockito.when( repositoryService.list() ).thenReturn( Repositories.from( repository, repository2 ) );
+
+
+        this.nodeService = Mockito.mock( NodeService.class );
+        Mockito.when( nodeService.findVersions( Mockito.any( NodeVersionQuery.class ) ) ).thenReturn( NodeVersionQueryResult.empty(0) );
     }
 
     @Test
@@ -66,6 +74,7 @@ public class SegmentCleanerTaskTest
         final SegmentCleanerTask task = new SegmentCleanerTask();
         task.setBlobStore( blobStore );
         task.setRepositoryService( repositoryService );
+        task.setNodeService( nodeService );
 
         final VacuumTaskParams vacuumParameters = VacuumTaskParams.create().
             build();
