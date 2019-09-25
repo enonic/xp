@@ -2,6 +2,8 @@ package com.enonic.xp.lib.repo;
 
 import java.util.function.Supplier;
 
+import com.google.common.collect.ImmutableList;
+
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.lib.repo.mapper.RepositoryMapper;
 import com.enonic.xp.lib.value.ScriptValueTranslator;
@@ -56,7 +58,6 @@ public class UpdateRepositoryHandler
     {
         final ScriptValue value = this.editor.call( new RepositoryMapper( target.source ) );
         updateRepositoryData( target, value );
-        target.binaryAttachments = new RepositoryBinaryAttachmentsParser().parse( value );
     }
 
     private void updateRepositoryData( final EditableRepository target, final ScriptValue value )
@@ -65,20 +66,23 @@ public class UpdateRepositoryHandler
         {
             if ( scope != null )
             {
-                target.data.getValue( scope );
+                target.data.removeProperty( scope );
             }
-            return;
-        }
-        final ScriptValueTranslatorResult scriptValueTranslatorResult = new ScriptValueTranslator( false ).create( value );
-        final PropertyTree propertyTree = scriptValueTranslatorResult.getPropertyTree();
-
-        if ( this.scope == null )
-        {
-            target.data = propertyTree;
         }
         else
         {
-            target.data.setSet( scope, propertyTree.getRoot() );
+            final ScriptValueTranslatorResult scriptValueTranslatorResult = new ScriptValueTranslator().create( value );
+            final PropertyTree propertyTree = scriptValueTranslatorResult.getPropertyTree();
+
+            if ( scope == null )
+            {
+                target.data = propertyTree;
+            }
+            else
+            {
+                target.data.setSet( scope, propertyTree.getRoot() );
+            }
+            target.binaryAttachments = ImmutableList.copyOf( scriptValueTranslatorResult.getBinaryAttachments() );
         }
     }
 
