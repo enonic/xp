@@ -8,14 +8,14 @@
  */
 
 
-var GeoPointType = Java.type("com.enonic.xp.util.GeoPoint");
-var InstantType = Java.type("java.time.Instant");
-var LocalDateType = Java.type("java.time.LocalDate");
-var LocalDateTimeType = Java.type("java.time.LocalDateTime");
-var LocalTimeType = Java.type("java.time.LocalTime");
-var ReferenceType = Java.type("com.enonic.xp.util.Reference");
-var BinaryReferenceType = Java.type("com.enonic.xp.util.BinaryReference");
-var BinaryAttachmentType = Java.type("com.enonic.xp.node.BinaryAttachment");
+var GeoPointType = Java.type('com.enonic.xp.util.GeoPoint');
+var InstantType = Java.type('java.time.Instant');
+var LocalDateType = Java.type('java.time.LocalDate');
+var LocalDateTimeType = Java.type('java.time.LocalDateTime');
+var LocalTimeType = Java.type('java.time.LocalTime');
+var ReferenceType = Java.type('com.enonic.xp.util.Reference');
+var BinaryReferenceType = Java.type('com.enonic.xp.util.BinaryReference');
+var BinaryAttachmentType = Java.type('com.enonic.xp.node.BinaryAttachment');
 
 var pad = function (number) {
     if (number < 10) {

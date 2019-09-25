@@ -1,11 +1,11 @@
 package com.enonic.xp.node;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.query.Query;
@@ -51,8 +51,7 @@ public class AbstractQuery
 
     private final boolean explain;
 
-    @SuppressWarnings("unchecked")
-    protected AbstractQuery( Builder builder )
+    protected AbstractQuery( Builder<?> builder )
     {
         this.query = builder.query;
         this.from = builder.from;
@@ -69,9 +68,9 @@ public class AbstractQuery
         this.explain = builder.explain;
     }
 
-    private ImmutableList<OrderExpr> setOrderExpressions( final Builder builder )
+    private ImmutableList<OrderExpr> setOrderExpressions( final Builder<?> builder )
     {
-        final List<OrderExpr> orderBys = Lists.newLinkedList();
+        final List<OrderExpr> orderBys = new ArrayList<>();
 
         if ( query != null )
         {
@@ -168,7 +167,7 @@ public class AbstractQuery
 
         private int batchSize = 5_000;
 
-        private final List<OrderExpr> orderBys = Lists.newLinkedList();
+        private final List<OrderExpr> orderBys = new ArrayList<>();
 
         private SearchMode searchMode = SearchMode.SEARCH;
 

@@ -2,6 +2,7 @@ var taskLib = require('/lib/xp/task.js');
 var assert = require('/lib/xp/testing');
 
 var count = 0;
+
 function processItem() {
     count++;
 }
@@ -29,5 +30,5 @@ var taskId = taskLib.submit({
 });
 // END
 
-assert.assertEquals("7ca603c1-3b88-4009-8f30-46ddbcc4bb19", taskId);
+assert.assertEquals('7ca603c1-3b88-4009-8f30-46ddbcc4bb19', taskId);
 assert.assertEquals(10, count);

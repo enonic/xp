@@ -4,9 +4,9 @@ import com.enonic.xp.node.CreateNodeParams;
 
 public interface ImportValidator
 {
-    public CreateNodeParams ensureValid( final CreateNodeParams original );
+    CreateNodeParams ensureValid( final CreateNodeParams original );
 
 
-    public boolean canHandle( final CreateNodeParams original );
+    boolean canHandle( final CreateNodeParams original );
 
 }

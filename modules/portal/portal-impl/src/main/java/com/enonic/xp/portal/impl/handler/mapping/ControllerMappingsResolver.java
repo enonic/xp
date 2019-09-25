@@ -271,7 +271,7 @@ final class ControllerMappingsResolver
         final boolean patternMatches = descriptor.getPattern().
             matcher( siteRelativePath ).
             matches();
-        return descriptor.invertPattern() ? !patternMatches : patternMatches;
+        return descriptor.invertPattern() != patternMatches;
     }
 
     private boolean matchesContent( final ControllerMappingDescriptor descriptor, final PortalRequest request )

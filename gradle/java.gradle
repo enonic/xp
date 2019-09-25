@@ -18,6 +18,10 @@ configurations {
     testOutput.extendsFrom testRuntime
 }
 
+ext {
+    felixVersion = '6.0.1'
+}
+
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.1'
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.5.1'
@@ -69,7 +73,7 @@ task integrationTest(type: Test) {
 check.dependsOn integrationTest
 
 jacocoTestReport {
-   executionData = files('build/jacoco/test.exec', 'build/jacoco/integrationTest.exec')
+    executionData.from = files( "$buildDir/jacoco/test.exec", "$buildDir/jacoco/integrationTest.exec" )
 }
 
 jar {

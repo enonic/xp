@@ -18,7 +18,7 @@ exports.submitTaskThrowingError = function () {
     var taskId = taskLib.submit({
         description: 'Background task',
         task: function () {
-            throw new Error("Something went wrong");
+            throw new Error('Something went wrong');
         }
     });
 

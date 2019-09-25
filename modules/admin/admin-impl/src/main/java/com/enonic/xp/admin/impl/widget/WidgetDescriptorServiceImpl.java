@@ -45,11 +45,7 @@ public final class WidgetDescriptorServiceImpl
                 {
                     return false;
                 }
-                if ( !widgetDescriptor.isAccessAllowed( userPrincipalKeys ) )
-                {
-                    return false;
-                }
-                return true;
+                return widgetDescriptor.isAccessAllowed( userPrincipalKeys );
             } );
     }
 

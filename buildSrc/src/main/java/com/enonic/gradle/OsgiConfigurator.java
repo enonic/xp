@@ -50,7 +50,7 @@ public final class OsgiConfigurator
 
     private String getIncludeResource( final Configuration config )
     {
-        final StringBuilder str = new StringBuilder( "" );
+        final StringBuilder str = new StringBuilder();
         for ( final ResolvedArtifact artifact : config.getResolvedConfiguration().getResolvedArtifacts() )
         {
             final String name = getFileName( artifact );

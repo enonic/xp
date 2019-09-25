@@ -15,9 +15,9 @@ if (result) {
 // BEGIN
 // Repository retrieved.
 var expected = {
-    "id": "test-repo",
-    "branches": [
-        "master"
+    'id': 'test-repo',
+    'branches': [
+        'master'
     ],
     settings: {}
 };

@@ -51,12 +51,7 @@ public final class FieldExpr
 
         final FieldExpr fieldExpr = (FieldExpr) o;
 
-        if ( indexPath != null ? !indexPath.equals( fieldExpr.indexPath ) : fieldExpr.indexPath != null )
-        {
-            return false;
-        }
-
-        return true;
+        return indexPath != null ? indexPath.equals( fieldExpr.indexPath ) : fieldExpr.indexPath == null;
     }
 
     @Override

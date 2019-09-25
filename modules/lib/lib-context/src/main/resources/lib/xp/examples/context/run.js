@@ -15,7 +15,7 @@ var result = contextLib.run({
         login: 'su',
         idProvider: 'system'
     },
-    principals: ["role:system.admin"],
+    principals: ['role:system.admin'],
     attributes: {
         'ignorePublishTimes': true
     }

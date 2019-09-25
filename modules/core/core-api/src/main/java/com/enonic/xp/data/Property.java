@@ -240,12 +240,7 @@ public final class Property
         {
             return false;
         }
-        if ( !Objects.equals( value, property.value ) )
-        {
-            return false;
-        }
-
-        return true;
+        return Objects.equals( value, property.value );
     }
 
     @Override

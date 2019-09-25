@@ -20,7 +20,7 @@ public class BlobKeys
 
     public static BlobKeys empty()
     {
-        return new BlobKeys( ImmutableSet.<BlobKey>of() );
+        return new BlobKeys( ImmutableSet.of() );
     }
 
     public static BlobKeys from( final BlobKey... blobKeys )

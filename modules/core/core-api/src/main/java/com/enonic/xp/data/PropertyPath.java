@@ -63,9 +63,7 @@ public final class PropertyPath
         Preconditions.checkNotNull( parentPath, "parentPath cannot be null" );
         Preconditions.checkNotNull( children, "children cannot be null" );
 
-        final List<Element> elements = Lists.newLinkedList();
-
-        elements.addAll( splitPathIntoElements( parentPath ) );
+        final List<Element> elements = new ArrayList<>( splitPathIntoElements( parentPath ) );
 
         for ( final String child : children )
         {

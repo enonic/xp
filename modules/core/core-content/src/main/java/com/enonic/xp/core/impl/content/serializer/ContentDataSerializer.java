@@ -245,7 +245,7 @@ public class ContentDataSerializer
         builder.creator( PrincipalKey.from( contentAsSet.getString( CREATOR ) ) );
         builder.createdTime( contentAsSet.getInstant( CREATED_TIME ) );
         builder.modifier( contentAsSet.getString( MODIFIER ) != null ? PrincipalKey.from( contentAsSet.getString( MODIFIER ) ) : null );
-        builder.modifiedTime( contentAsSet.getInstant( MODIFIED_TIME ) != null ? contentAsSet.getInstant( MODIFIED_TIME ) : null );
+        builder.modifiedTime( contentAsSet.getInstant( MODIFIED_TIME ) );
     }
 
     private void extractPublishInfo( final PropertySet contentAsSet, final Content.Builder builder )

@@ -17,22 +17,22 @@ var result = contentLib.createMedia({
 // BEGIN
 // Content created.
 var expected = {
-    "_id": "123456",
-    "_name": "mycontent",
-    "_path": "/a/b/mycontent",
-    "creator": "user:system:anonymous",
-    "createdTime": "1975-01-08T00:00:00Z",
-    "type": "base:unstructured",
-    "hasChildren": false,
-    "valid": false,
-    "data": {},
-    "x": {},
-    "page": {},
-    "attachments": {},
-    "publish": {},
-    "workflow": {
-        "state": "READY",
-        "checks": {}
+    '_id': '123456',
+    '_name': 'mycontent',
+    '_path': '/a/b/mycontent',
+    'creator': 'user:system:anonymous',
+    'createdTime': '1975-01-08T00:00:00Z',
+    'type': 'base:unstructured',
+    'hasChildren': false,
+    'valid': false,
+    'data': {},
+    'x': {},
+    'page': {},
+    'attachments': {},
+    'publish': {},
+    'workflow': {
+        'state': 'READY',
+        'checks': {}
     }
 };
 // END

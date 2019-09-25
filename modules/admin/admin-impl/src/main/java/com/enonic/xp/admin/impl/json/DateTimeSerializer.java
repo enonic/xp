@@ -24,7 +24,7 @@ public class DateTimeSerializer
 
     @Override
     public void serialize( Instant value, JsonGenerator jgen, SerializerProvider provider )
-        throws IOException, JsonGenerationException
+        throws IOException
     {
         if ( provider.isEnabled( SerializationFeature.WRITE_DATES_AS_TIMESTAMPS ) )
         {
@@ -38,7 +38,7 @@ public class DateTimeSerializer
 
     @Override
     public void serializeWithType( Instant value, JsonGenerator jgen, SerializerProvider provider, TypeSerializer typeSer )
-        throws IOException, JsonProcessingException
+        throws IOException
     {
         typeSer.writeTypePrefixForScalar( value, jgen );
         serialize( value, jgen, provider );

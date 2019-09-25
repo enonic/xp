@@ -2,43 +2,43 @@ var assert = require('/lib/xp/testing.js');
 var content = require('/lib/xp/content.js');
 
 var expectedJson = {
-    "_id": "123456",
-    "_name": "mycontent",
-    "_path": "/a/b/mycontent",
-    "creator": "user:system:anonymous",
-    "createdTime": "1975-01-08T00:00:00Z",
-    "type": "test:myContentType",
-    "displayName": "My Content",
-    "hasChildren": false,
-    "language": "es",
-    "valid": false,
-    "data": {
-        "a": 1,
-        "b": 2,
-        "c": [
-            "1",
-            "2"
+    '_id': '123456',
+    '_name': 'mycontent',
+    '_path': '/a/b/mycontent',
+    'creator': 'user:system:anonymous',
+    'createdTime': '1975-01-08T00:00:00Z',
+    'type': 'test:myContentType',
+    'displayName': 'My Content',
+    'hasChildren': false,
+    'language': 'es',
+    'valid': false,
+    'data': {
+        'a': 1,
+        'b': 2,
+        'c': [
+            '1',
+            '2'
         ],
-        "d": {
-            "e": {
-                "f": 3.6,
-                "g": true
+        'd': {
+            'e': {
+                'f': 3.6,
+                'g': true
             }
         }
     },
-    "x": {
-        "com-enonic-myapplication": {
-            "myschema": {
-                "a": 1
+    'x': {
+        'com-enonic-myapplication': {
+            'myschema': {
+                'a': 1
             }
         }
     },
-    "page": {},
-    "attachments": {},
-    "publish": {},
-    "workflow": {
-        "state": "READY",
-        "checks": {}
+    'page': {},
+    'attachments': {},
+    'publish': {},
+    'workflow': {
+        'state': 'READY',
+        'checks': {}
     }
 };
 
@@ -62,13 +62,13 @@ exports.createContent = function () {
             }
         },
         x: {
-            "com-enonic-myapplication": {
+            'com-enonic-myapplication': {
                 myschema: {
                     a: 1
                 }
             }
         },
-        "attachments": {},
+        'attachments': {},
     });
 
     assert.assertJsonEquals(expectedJson, result);
@@ -85,31 +85,31 @@ exports.createContentNameAlreadyExists = function () {
         });
 
     } catch (e) {
-        assert.assertEquals("contentAlreadyExists", e.code);
+        assert.assertEquals('contentAlreadyExists', e.code);
         return;
     }
 
-    throw {message: "Expected exception"};
+    throw {message: 'Expected exception'};
 };
 
 var expectedJsonAutoGenerateName = {
-    "_id": "123456",
-    "_name": "my-content",
-    "_path": "/a/b/my-content",
-    "creator": "user:system:anonymous",
-    "createdTime": "1975-01-08T00:00:00Z",
-    "type": "test:myContentType",
-    "displayName": "My Content",
-    "hasChildren": false,
-    "valid": false,
-    "data": {},
-    "x": {},
-    "page": {},
-    "attachments": {},
-    "publish": {},
-    "workflow": {
-        "state": "READY",
-        "checks": {}
+    '_id': '123456',
+    '_name': 'my-content',
+    '_path': '/a/b/my-content',
+    'creator': 'user:system:anonymous',
+    'createdTime': '1975-01-08T00:00:00Z',
+    'type': 'test:myContentType',
+    'displayName': 'My Content',
+    'hasChildren': false,
+    'valid': false,
+    'data': {},
+    'x': {},
+    'page': {},
+    'attachments': {},
+    'publish': {},
+    'workflow': {
+        'state': 'READY',
+        'checks': {}
     }
 };
 
@@ -125,23 +125,23 @@ exports.createContentAutoGenerateName = function () {
 };
 
 var expectedJsonAutoGenerateName2 = {
-    "_id": "123456",
-    "_name": "my-content-3",
-    "_path": "/a/b/my-content-3",
-    "creator": "user:system:anonymous",
-    "createdTime": "1975-01-08T00:00:00Z",
-    "type": "test:myContentType",
-    "displayName": "My Content",
-    "hasChildren": false,
-    "valid": false,
-    "data": {},
-    "x": {},
-    "page": {},
-    "attachments": {},
-    "publish": {},
-    "workflow": {
-        "state": "READY",
-        "checks": {}
+    '_id': '123456',
+    '_name': 'my-content-3',
+    '_path': '/a/b/my-content-3',
+    'creator': 'user:system:anonymous',
+    'createdTime': '1975-01-08T00:00:00Z',
+    'type': 'test:myContentType',
+    'displayName': 'My Content',
+    'hasChildren': false,
+    'valid': false,
+    'data': {},
+    'x': {},
+    'page': {},
+    'attachments': {},
+    'publish': {},
+    'workflow': {
+        'state': 'READY',
+        'checks': {}
     }
 };
 
@@ -158,24 +158,24 @@ exports.createContentWithChildOrder = function () {
 };
 
 var expectedJsonWithChildOrder = {
-    "_id": "123456",
-    "_name": "my-content",
-    "_path": "/a/b/my-content",
-    "creator": "user:system:anonymous",
-    "createdTime": "1975-01-08T00:00:00Z",
-    "type": "test:myContentType",
-    "displayName": "My Content",
-    "hasChildren": false,
-    "valid": false,
-    "childOrder": 'field DESC',
-    "data": {},
-    "x": {},
-    "page": {},
-    "attachments": {},
-    "publish": {},
-    "workflow": {
-        "state": "READY",
-        "checks": {}
+    '_id': '123456',
+    '_name': 'my-content',
+    '_path': '/a/b/my-content',
+    'creator': 'user:system:anonymous',
+    'createdTime': '1975-01-08T00:00:00Z',
+    'type': 'test:myContentType',
+    'displayName': 'My Content',
+    'hasChildren': false,
+    'valid': false,
+    'childOrder': 'field DESC',
+    'data': {},
+    'x': {},
+    'page': {},
+    'attachments': {},
+    'publish': {},
+    'workflow': {
+        'state': 'READY',
+        'checks': {}
     }
 };
 
@@ -195,24 +195,24 @@ exports.createContentAutoGenerateNameWithExistingName = function () {
 };
 
 var expectedJsonWithWorkflow = {
-    "_id": "123456",
-    "_name": "my-content",
-    "_path": "/a/b/my-content",
-    "creator": "user:system:anonymous",
-    "createdTime": "1975-01-08T00:00:00Z",
-    "type": "test:myContentType",
-    "displayName": "My Content",
-    "hasChildren": false,
-    "valid": false,
-    "data": {},
-    "x": {},
-    "page": {},
-    "attachments": {},
-    "publish": {},
-    "workflow": {
-        "state": "PENDING_APPROVAL",
-        "checks": {
-            "Review by lawyer": "PENDING"
+    '_id': '123456',
+    '_name': 'my-content',
+    '_path': '/a/b/my-content',
+    'creator': 'user:system:anonymous',
+    'createdTime': '1975-01-08T00:00:00Z',
+    'type': 'test:myContentType',
+    'displayName': 'My Content',
+    'hasChildren': false,
+    'valid': false,
+    'data': {},
+    'x': {},
+    'page': {},
+    'attachments': {},
+    'publish': {},
+    'workflow': {
+        'state': 'PENDING_APPROVAL',
+        'checks': {
+            'Review by lawyer': 'PENDING'
         }
     }
 };
@@ -223,10 +223,10 @@ exports.createContentWithWorkflow = function () {
         displayName: 'My Content',
         contentType: 'test:myContentType',
         data: {},
-        "workflow": {
-            "state": "PENDING_APPROVAL",
-            "checks": {
-                "Review by lawyer": "PENDING"
+        'workflow': {
+            'state': 'PENDING_APPROVAL',
+            'checks': {
+                'Review by lawyer': 'PENDING'
             }
         }
     });

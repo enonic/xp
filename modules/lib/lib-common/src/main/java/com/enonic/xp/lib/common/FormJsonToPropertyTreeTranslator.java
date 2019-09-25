@@ -173,7 +173,7 @@ public final class FormJsonToPropertyTreeTranslator
 
     private boolean hasInput( final Property parentProperty, final String key )
     {
-        return Input.class.isInstance( this.form.getFormItem( resolveInputPath( key, parentProperty ) ) );
+        return this.form.getFormItem( resolveInputPath( key, parentProperty ) ) instanceof Input;
     }
 
     private Input getInput( final Property parentProperty, final String key )
@@ -183,8 +183,7 @@ public final class FormJsonToPropertyTreeTranslator
 
     private boolean isOptionSetSelection( final String key, final Property parentProperty )
     {
-        return OPTION_SET_SELECTION_ARRAY_NAME.equals( key ) && FormOptionSet.class.isInstance(
-            this.form.getFormItem( resolveInputPath( parentProperty.getName(), parentProperty.getParent().getProperty() ) ) );
+        return OPTION_SET_SELECTION_ARRAY_NAME.equals( key ) && this.form.getFormItem( resolveInputPath( parentProperty.getName(), parentProperty.getParent().getProperty() ) ) instanceof FormOptionSet;
     }
 
 }

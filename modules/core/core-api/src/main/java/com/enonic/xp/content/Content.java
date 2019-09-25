@@ -491,7 +491,7 @@ public class Content
 
         public BUILDER path( final String path )
         {
-            return (BUILDER) path( ContentPath.from( path ) );
+            return path( ContentPath.from( path ) );
         }
 
         public BUILDER path( final ContentPath path )

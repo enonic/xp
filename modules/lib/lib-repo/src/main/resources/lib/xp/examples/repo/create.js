@@ -16,20 +16,20 @@ var result2 = repoLib.create({
     id: 'test-repo2',
     rootPermissions: [
         {
-            "principal": "role:admin",
-            "allow": [
-                "READ",
-                "CREATE",
-                "MODIFY",
-                "DELETE",
-                "PUBLISH",
-                "READ_PERMISSIONS",
-                "WRITE_PERMISSIONS"
+            'principal': 'role:admin',
+            'allow': [
+                'READ',
+                'CREATE',
+                'MODIFY',
+                'DELETE',
+                'PUBLISH',
+                'READ_PERMISSIONS',
+                'WRITE_PERMISSIONS'
             ],
-            "deny": []
+            'deny': []
         }
     ],
-    rootChildOrder: "_ts DESC"
+    rootChildOrder: '_ts DESC'
 });
 
 log.info('Repository created with id ' + result2.id);
@@ -38,9 +38,9 @@ log.info('Repository created with id ' + result2.id);
 // BEGIN
 // First repository created.
 var expected1 = {
-    "id": "test-repo",
-    "branches": [
-        "master"
+    'id': 'test-repo',
+    'branches': [
+        'master'
     ],
     settings: {}
 };
@@ -48,11 +48,11 @@ var expected1 = {
 assert.assertJsonEquals(expected1, result1);
 
 var expected2 =
-{
-    "id": "test-repo2",
-    "branches": [
-        "master"
-    ],
-    "settings": {}
-};
+    {
+        'id': 'test-repo2',
+        'branches': [
+            'master'
+        ],
+        'settings': {}
+    };
 assert.assertJsonEquals(expected2, result2);

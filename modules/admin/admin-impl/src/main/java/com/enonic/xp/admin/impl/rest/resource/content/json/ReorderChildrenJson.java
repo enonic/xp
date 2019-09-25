@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.Lists;
 
 public class ReorderChildrenJson
 {
@@ -16,7 +15,7 @@ public class ReorderChildrenJson
 
     private ChildOrderJson childOrder;
 
-    private List<ReorderChildJson> orderChildren = Lists.newLinkedList();
+    private List<ReorderChildJson> orderChildren;
 
     @JsonCreator
     public ReorderChildrenJson( @JsonProperty("silent") final Boolean silent, @JsonProperty("manualOrder") final Boolean manualOrder,

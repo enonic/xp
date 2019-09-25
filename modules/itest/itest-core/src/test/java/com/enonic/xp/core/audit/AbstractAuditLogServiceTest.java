@@ -66,12 +66,12 @@ public class AbstractAuditLogServiceTest
         this.binaryService.setBlobStore( blobStore );
 
         final StorageDaoImpl storageDao = new StorageDaoImpl();
-        storageDao.setClient( this.client );
+        storageDao.setClient( client );
 
         final EventPublisherImpl eventPublisher = new EventPublisherImpl();
 
         this.searchDao = new SearchDaoImpl();
-        this.searchDao.setClient( this.client );
+        this.searchDao.setClient( client );
 
         this.branchService = new BranchServiceImpl();
         this.branchService.setStorageDao( storageDao );

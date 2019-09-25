@@ -91,10 +91,10 @@ public class SecurityServiceImplTest
         binaryService.setBlobStore( blobStore );
 
         final StorageDaoImpl storageDao = new StorageDaoImpl();
-        storageDao.setClient( this.client );
+        storageDao.setClient( client );
 
         final SearchDaoImpl searchDao = new SearchDaoImpl();
-        searchDao.setClient( this.client );
+        searchDao.setClient( client );
 
         final BranchServiceImpl branchService = new BranchServiceImpl();
         branchService.setStorageDao( storageDao );
