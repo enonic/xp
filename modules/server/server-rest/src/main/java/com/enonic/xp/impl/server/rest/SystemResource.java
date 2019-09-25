@@ -15,6 +15,7 @@ import com.enonic.xp.export.ExportService;
 import com.enonic.xp.impl.server.rest.model.SystemDumpRequestJson;
 import com.enonic.xp.impl.server.rest.model.SystemDumpUpgradeRequestJson;
 import com.enonic.xp.impl.server.rest.model.SystemLoadRequestJson;
+import com.enonic.xp.impl.server.rest.model.VacuumRequestJson;
 import com.enonic.xp.impl.server.rest.task.DumpRunnableTask;
 import com.enonic.xp.impl.server.rest.task.LoadRunnableTask;
 import com.enonic.xp.impl.server.rest.task.UpgradeRunnableTask;
@@ -77,12 +78,13 @@ public final class SystemResource
 
     @POST
     @Path("vacuum")
-    public TaskResultJson vacuum()
+    public TaskResultJson vacuum( final VacuumRequestJson params )
     {
         return VacuumRunnableTask.create().
             description( "vacuum" ).
             taskService( taskService ).
             vacuumService( vacuumService ).
+            params(params).
             build().
             createTaskResult();
     }
