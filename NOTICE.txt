@@ -1,9 +1,21 @@
 
 Licenses used by Enonic XP
 
-    Java Activation Framework
-    Common Development and Distribution License (CDDL) v.1.0
-    http://www.oracle.com/technetwork/java/jaf11-139815.html
+    Apache Commons
+    Apache License 2.0
+    https://commons.apache.org/proper/commons-daemon/license.html
+
+    Apache Felix Framework
+    Apache License 2.0
+    https://felix.apache.org/license.html
+
+    Apache Ignite
+    Apache License 2.0
+    https://apacheignite.readme.io/v2.3/docs/license
+
+    Apache Tika
+    Apache License 2.0
+    https://tika.apache.org/license.html
 
     ATTO Parser
     MIT License
@@ -13,17 +25,9 @@ Licenses used by Enonic XP
     MIT License
     https://bouncycastle.org/licence.html
 
-    Apache Commons
-    Apache License 2.0
-    https://commons.apache.org/proper/commons-daemon/license.html
-
     ElasticSearch
     Apache License 2.0
     https://github.com/elastic/elasticsearch/blob/master/LICENSE.txt
-
-    Apache Felix Framework
-    Apache License 2.0
-    https://felix.apache.org/license.html
 
     Google Guava
     Apache License 2.0
@@ -32,10 +36,6 @@ Licenses used by Enonic XP
     GraphQL
     MIT License
     https://github.com/graphql-java/graphql-java/blob/master/LICENSE.md
-
-    Apache Ignite
-    Apache License 2.0
-    https://apacheignite.readme.io/v2.3/docs/license
 
     Jackson Annotations
     Apache License 2.0
@@ -57,9 +57,13 @@ Licenses used by Enonic XP
     Apache License 2.0
     https://github.com/FasterXML/jackson-jaxrs-providers
 
+    Java Activation Framework
+    Sun Microsystems, Inc. ("Sun") ENTITLEMENT for SOFTWARE
+    Inside distro: http://download.oracle.com/otn-pub/java/jaf/1.1.1/jaf-1_1_1.zip
+
     JavaMail
-    Common Development and Distribution License (CDDL) v.1.0
-    https://javaee.github.io/javamail/LICENSE
+    Common Development and Distribution License (CDDL) v.1.1 : https://javaee.github.io/javamail/LICENSE
+    Source code : https://github.com/javaee/javamail/tree/JAVAMAIL-1_4_7
 
     Java Native Access
     Apache License 2.0
@@ -70,12 +74,12 @@ Licenses used by Enonic XP
     https://github.com/jparsec/jparsec/blob/master/LICENSE
 
     Logback Libraries
-    Eclipse Public License - Version 1.0
-    https://www.eclipse.org/legal/epl-v10.html
+    Eclipse Public License - Version 1.0 : https://logback.qos.ch/license.html
+    Source code : https://github.com/qos-ch/logback
 
     Metrics
     Apache License 2.0
-    https://github.com/dropwizard/metrics/blob/4.0-development/LICENSE
+    https://github.com/dropwizard/metrics/blob/4.1-development/LICENSE
 
     OK Http
     Apache License 2.0
@@ -93,7 +97,3 @@ Licenses used by Enonic XP
     SLF4J Libraries
     MIT License
     http://slf4j.org/license.html
-
-    Apache Tika
-    Apache License 2.0
-    https://tika.apache.org/license.html
