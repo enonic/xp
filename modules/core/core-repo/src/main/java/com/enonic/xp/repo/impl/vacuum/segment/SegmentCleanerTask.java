@@ -4,6 +4,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.blob.BlobStore;
+import com.enonic.xp.node.NodeService;
 import com.enonic.xp.repo.impl.vacuum.VacuumTask;
 import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
 import com.enonic.xp.repository.RepositoryService;
@@ -20,6 +21,8 @@ public class SegmentCleanerTask
     private BlobStore blobStore;
 
     private RepositoryService repositoryService;
+
+    private NodeService nodeService;
 
     @Override
     public int order()
@@ -40,8 +43,10 @@ public class SegmentCleanerTask
             name( NAME ).
             blobStore( blobStore ).
             repositoryService( repositoryService ).
+            nodeService( nodeService ).
+            params(params).
             build().
-            execute( params );
+            execute();
     }
 
     @Reference
@@ -54,5 +59,11 @@ public class SegmentCleanerTask
     public void setRepositoryService( final RepositoryService repositoryService )
     {
         this.repositoryService = repositoryService;
+    }
+
+    @Reference
+    public void setNodeService( final NodeService nodeService )
+    {
+        this.nodeService = nodeService;
     }
 }

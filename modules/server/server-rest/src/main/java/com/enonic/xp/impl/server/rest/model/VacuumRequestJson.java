@@ -10,6 +10,9 @@ import com.enonic.xp.vacuum.VacuumTaskConfig;
 
 public class VacuumRequestJson
 {
+
+    public static final String AGE_THRESHOLD_KEY = "ageThreshold";
+
     private Map<String, Object> config;
 
     private Map<String, Map<String, Object>> taskConfigs;
@@ -29,7 +32,16 @@ public class VacuumRequestJson
 
     public Long getAgeThreshold()
     {
-        return config == null ? null : (Long) config.get( "ageThreshold" );
+        if ( config != null && config.containsKey( AGE_THRESHOLD_KEY ) )
+        {
+            final Object ageThreshold = config.get( AGE_THRESHOLD_KEY );
+            if (ageThreshold instanceof Number) {
+                return ((Number) ageThreshold).longValue();
+            } else if (ageThreshold instanceof String) {
+                return Long.parseLong( (String) ageThreshold );
+            }
+        }
+        return null;
     }
 
     public Map<String, VacuumTaskConfig> getTaskConfigMap()
