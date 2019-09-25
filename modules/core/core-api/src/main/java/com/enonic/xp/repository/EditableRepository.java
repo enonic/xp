@@ -1,6 +1,7 @@
 package com.enonic.xp.repository;
 
-import com.google.common.collect.ImmutableList;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.util.BinaryAttachment;
@@ -11,7 +12,7 @@ public final class EditableRepository
 
     public PropertyTree data;
 
-    public ImmutableList<BinaryAttachment> binaryAttachments = ImmutableList.of();
+    public List<BinaryAttachment> binaryAttachments = new ArrayList<>();
 
     public EditableRepository( final Repository source )
     {
