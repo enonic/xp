@@ -7,8 +7,7 @@ import com.google.common.collect.ImmutableMap;
 
 public final class VacuumParameters
 {
-
-    public static final int DEFAULT_AGE_THRESHOLD = 60 * 60 * 1000;
+    private static final int DEFAULT_AGE_THRESHOLD = 60 * 60 * 1000; //1 hour
 
     private final VacuumListener vacuumProgressListener;
 
@@ -16,14 +15,14 @@ public final class VacuumParameters
 
     private final long ageThreshold;
 
-    private final Map<String, Map<String, Object>> taskConfigs;
+    private final Map<String, VacuumTaskConfig> taskConfigMap;
 
     private VacuumParameters( final Builder builder )
     {
         this.vacuumProgressListener = builder.vacuumProgressListener;
         this.vacuumTaskListener = builder.vacuumTaskListener;
         this.ageThreshold = builder.ageThreshold == null ? DEFAULT_AGE_THRESHOLD : builder.ageThreshold.longValue();
-        this.taskConfigs = builder.taskConfigs == null ? null : ImmutableMap.copyOf( builder.taskConfigs );
+        this.taskConfigMap = builder.taskConfigMap == null ? null : ImmutableMap.copyOf( builder.taskConfigMap );
     }
 
     public static Builder create()
@@ -46,14 +45,18 @@ public final class VacuumParameters
         return ageThreshold;
     }
 
-    public Map<String, Map<String, Object>> getTaskConfigs()
+    public Map<String, VacuumTaskConfig> getTaskConfigMap()
     {
-        return taskConfigs;
+        return taskConfigMap;
+    }
+
+    public VacuumTaskConfig getTaskConfig(final String taskName) {
+        return taskConfigMap == null ? null : taskConfigMap.get( taskName );
     }
 
     public Set<String> getTaskNames()
     {
-        return taskConfigs == null ? null : taskConfigs.keySet();
+        return taskConfigMap == null ? null : taskConfigMap.keySet();
     }
 
     public static final class Builder
@@ -64,7 +67,7 @@ public final class VacuumParameters
 
         private Long ageThreshold;
 
-        private Map<String, Map<String, Object>> taskConfigs;
+        private Map<String, VacuumTaskConfig> taskConfigMap;
 
         private Builder()
         {
@@ -88,9 +91,9 @@ public final class VacuumParameters
             return this;
         }
 
-        public Builder taskConfigs( final Map<String, Map<String, Object>> taskConfigs )
+        public Builder taskConfigMap( final Map<String, VacuumTaskConfig> taskConfigs )
         {
-            this.taskConfigs = taskConfigs;
+            this.taskConfigMap = taskConfigs;
             return this;
         }
 

@@ -37,7 +37,7 @@ public class VacuumRunnableTask
             vacuumProgressListener( new VacuumProgressLogger() ).
             vacuumTaskListener( new VacuumTaskListenerImpl( progressReporter ) ).
             ageThreshold( params.getAgeThreshold() ).
-            taskConfigs( params.getTaskConfigs() ).
+            taskConfigMap( params.getTaskConfigMap() ).
             build();
 
         final VacuumResult result = this.vacuumService.vacuum( vacuumParams );

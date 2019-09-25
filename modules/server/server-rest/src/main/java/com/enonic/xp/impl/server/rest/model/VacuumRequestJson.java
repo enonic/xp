@@ -4,6 +4,9 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.ImmutableMap;
+
+import com.enonic.xp.vacuum.VacuumTaskConfig;
 
 public class VacuumRequestJson
 {
@@ -29,8 +32,17 @@ public class VacuumRequestJson
         return config == null ? null : (Long) config.get( "ageThreshold" );
     }
 
-    public Map<String, Map<String, Object>> getTaskConfigs()
+    public Map<String, VacuumTaskConfig> getTaskConfigMap()
     {
-        return taskConfigs;
+        if ( taskConfigs == null )
+        {
+            return null;
+        }
+
+        final ImmutableMap.Builder<String, VacuumTaskConfig> taskConfigMap = ImmutableMap.builder();
+        this.taskConfigs.entrySet().
+            forEach(
+                taskConfigEntry -> taskConfigMap.put( taskConfigEntry.getKey(), VacuumTaskConfig.from( taskConfigEntry.getValue() ) ) );
+        return taskConfigMap.build();
     }
 }
