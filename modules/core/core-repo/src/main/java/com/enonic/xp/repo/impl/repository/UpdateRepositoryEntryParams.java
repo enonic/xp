@@ -1,8 +1,10 @@
 package com.enonic.xp.repo.impl.repository;
 
-import com.enonic.xp.repository.RepositoryBinaryAttachments;
+import com.google.common.collect.ImmutableList;
+
 import com.enonic.xp.repository.RepositoryData;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.util.BinaryAttachment;
 
 public final class UpdateRepositoryEntryParams
 {
@@ -10,7 +12,7 @@ public final class UpdateRepositoryEntryParams
 
     private final RepositoryData repositoryData;
 
-    private final RepositoryBinaryAttachments attachments;
+    private final ImmutableList<BinaryAttachment> attachments;
 
     private UpdateRepositoryEntryParams( Builder builder )
     {
@@ -29,7 +31,7 @@ public final class UpdateRepositoryEntryParams
         return repositoryData;
     }
 
-    public RepositoryBinaryAttachments getAttachments()
+    public ImmutableList<BinaryAttachment> getAttachments()
     {
         return attachments;
     }
@@ -45,7 +47,7 @@ public final class UpdateRepositoryEntryParams
 
         private RepositoryData repositoryData;
 
-        private RepositoryBinaryAttachments attachments;
+        private ImmutableList<BinaryAttachment> attachments;
 
         public Builder repositoryId( RepositoryId repositoryId )
         {
@@ -59,7 +61,7 @@ public final class UpdateRepositoryEntryParams
             return this;
         }
 
-        public Builder attachments( RepositoryBinaryAttachments attachments )
+        public Builder attachments( ImmutableList<BinaryAttachment> attachments )
         {
             this.attachments = attachments;
             return this;

@@ -1,11 +1,8 @@
 package com.enonic.xp.lib.repo;
 
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.lib.common.PropertyTreeMapper;
 import com.enonic.xp.lib.repo.mapper.RepositoryMapper;
 import com.enonic.xp.lib.value.ScriptValueTranslator;
 import com.enonic.xp.lib.value.ScriptValueTranslatorResult;
@@ -50,18 +47,16 @@ public class UpdateRepositoryHandler
 
         final UpdateRepositoryParams updateRepositoryParams = UpdateRepositoryParams.create().
             repositoryId( repositoryId ).
-            editor( newRepositoryEditor() ).
+            editor( this::editRepository ).
             build();
         return new RepositoryMapper( repositoryServiceSupplier.get().updateRepository( updateRepositoryParams ) );
     }
 
-    private Consumer<EditableRepository> newRepositoryEditor()
+    private void editRepository( EditableRepository target )
     {
-        return edit -> {
-            final ScriptValue value = this.editor.call( new RepositoryMapper( edit.source ) );
-            updateRepositoryData( edit, value );
-            edit.binaryAttachments = new RepositoryBinaryAttachmentsParser().parse( value );
-        };
+        final ScriptValue value = this.editor.call( new RepositoryMapper( target.source ) );
+        updateRepositoryData( target, value );
+        target.binaryAttachments = new RepositoryBinaryAttachmentsParser().parse( value );
     }
 
     private void updateRepositoryData( final EditableRepository target, final ScriptValue value )
@@ -84,24 +79,6 @@ public class UpdateRepositoryHandler
         else
         {
             target.data.setSet( scope, propertyTree.getRoot() );
-        }
-    }
-
-    private PropertyTreeMapper createPropertyTreeMapper( PropertyTree profile, Boolean useRawValue )
-    {
-        if ( profile == null )
-        {
-            return null;
-        }
-
-        if ( this.scope == null )
-        {
-            return new PropertyTreeMapper( useRawValue, profile );
-        }
-        else
-        {
-            final PropertySet scopedProfile = profile.getSet( scope );
-            return scopedProfile == null ? null : new PropertyTreeMapper( useRawValue, scopedProfile.toTree() );
         }
     }
 

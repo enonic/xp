@@ -132,7 +132,7 @@ public class RepositoryEntryServiceImpl
         final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
             id( NodeId.from( params.getRepositoryId() ) ).
             editor( RepositoryNodeTranslator.toUpdateRepositoryNodeEditor( params ) ).
-            setBinaryAttachments( RepositoryAttachmentsTranslator.toBinaryAttachments( params.getAttachments() ) ).
+            setBinaryAttachments( RepositoryAttachmentsTranslator.toNodeBinaryAttachments( params.getAttachments() ) ).
             build();
         return updateRepositoryNode( updateNodeParams );
     }

@@ -1,14 +1,13 @@
 package com.enonic.xp.repo.impl.repository;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.node.AttachedBinaries;
-import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.node.BinaryAttachments;
-import com.enonic.xp.repository.RepositoryAttachment;
-import com.enonic.xp.repository.RepositoryAttachments;
-import com.enonic.xp.repository.RepositoryBinaryAttachments;
+import com.enonic.xp.repository.RepositoryAttachedBinaries;
+import com.enonic.xp.util.AttachedBinary;
 
 public final class RepositoryAttachmentsTranslator
 {
@@ -16,22 +15,16 @@ public final class RepositoryAttachmentsTranslator
     {
     }
 
-    public static RepositoryAttachments toRepositoryAttachments( final AttachedBinaries attachedBinaries )
+    public static RepositoryAttachedBinaries toRepositoryAttachedBinaries( final AttachedBinaries attachedBinaries )
     {
-        final ImmutableSet<RepositoryAttachment> repositoryAttachments = attachedBinaries.stream().
-            map( ab -> new RepositoryAttachment( ab.getBinaryReference(), ab.getBlobKey() ) ).
+        final ImmutableSet<AttachedBinary> repositoryAttachments = attachedBinaries.stream().
+            map( ab -> new AttachedBinary( ab.getBinaryReference(), ab.getBlobKey() ) ).
             collect( ImmutableSet.toImmutableSet() );
-        return RepositoryAttachments.from( repositoryAttachments );
+        return RepositoryAttachedBinaries.from( repositoryAttachments );
     }
 
-    public static AttachedBinaries toAttachedBinaries( final RepositoryAttachments repositoryAttachments )
-    {
-        final ImmutableSet<AttachedBinary> attachedBinaries = repositoryAttachments.stream().
-            map( ra -> new AttachedBinary( ra.getBinaryReference(), ra.getBlobKey() ) ).collect( ImmutableSet.toImmutableSet() );
-        return AttachedBinaries.fromCollection( attachedBinaries );
-    }
-
-    public static BinaryAttachments toBinaryAttachments( final RepositoryBinaryAttachments repositoryBinaryAttachments )
+    public static BinaryAttachments toNodeBinaryAttachments(
+        final ImmutableList<com.enonic.xp.util.BinaryAttachment> repositoryBinaryAttachments )
     {
         final BinaryAttachments.Builder builder = BinaryAttachments.create();
         repositoryBinaryAttachments.stream().

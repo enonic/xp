@@ -10,11 +10,11 @@ import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.node.AttachedBinary;
-import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repository.RepositoryExeption;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositorySegmentUtils;
+import com.enonic.xp.util.BinaryAttachment;
 
 @Component
 public class BinaryServiceImpl

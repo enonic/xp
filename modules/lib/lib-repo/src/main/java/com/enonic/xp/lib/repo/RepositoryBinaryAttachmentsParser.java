@@ -3,15 +3,16 @@ package com.enonic.xp.lib.repo;
 import java.util.Collection;
 import java.util.Map;
 
-import com.enonic.xp.repository.RepositoryBinaryAttachment;
-import com.enonic.xp.repository.RepositoryBinaryAttachments;
+import com.google.common.collect.ImmutableList;
+
 import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.util.BinaryAttachment;
 
 class RepositoryBinaryAttachmentsParser
 {
-    private final RepositoryBinaryAttachments.Builder binaryAttachmentsBuilder = RepositoryBinaryAttachments.create();
+    private final ImmutableList.Builder<BinaryAttachment> binaryAttachmentsBuilder = ImmutableList.builder();
 
-    public RepositoryBinaryAttachments parse( final ScriptValue value )
+    public ImmutableList<BinaryAttachment> parse( final ScriptValue value )
     {
         final Map<String, Object> map = value.getMap();
 
@@ -54,12 +55,12 @@ class RepositoryBinaryAttachmentsParser
 
     private void handleValue( final Object value )
     {
-        if ( value instanceof RepositoryBinaryAttachment )
+        if ( value instanceof BinaryAttachment )
         {
-            final RepositoryBinaryAttachment binaryAttachment = (RepositoryBinaryAttachment) value;
-            final RepositoryBinaryAttachment attachedBinary =
-                new RepositoryBinaryAttachment( binaryAttachment.getReference(), binaryAttachment.getByteSource() );
-            this.binaryAttachmentsBuilder.add( attachedBinary );
+            final BinaryAttachment binaryAttachment = (BinaryAttachment) value;
+            // for security reasons don't let subclasses to sneak into list. Obsolete when BinaryAttachment class declared final
+            final BinaryAttachment copy = new BinaryAttachment( binaryAttachment.getReference(), binaryAttachment.getByteSource() );
+            this.binaryAttachmentsBuilder.add( copy );
         }
     }
 }

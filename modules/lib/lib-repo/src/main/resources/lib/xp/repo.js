@@ -9,9 +9,6 @@
 
 /* global __, Java*/
 
-const RepositoryBinaryAttachmentType = Java.type("com.enonic.xp.repository.RepositoryBinaryAttachment");
-const BinaryReferenceType = Java.type("com.enonic.xp.util.BinaryReference");
-
 function checkRequiredValue(value, name) {
     if (value === undefined) {
         throw 'Parameter \'' + name + '\' is required';
@@ -182,15 +179,4 @@ exports.updateRepository = function (params) {
     bean.id = params.id;
     bean.editor = __.toScriptValue(params.editor);
     return __.toNativeObject(bean.execute());
-};
-
-/**
- * Creates a RepositoryBinaryAttachment java-type.
- * @param {string} name The binary name
- * @param stream The binary stream
- *
- * @returns {*} RepositoryBinaryAttachment java-type
- */
-exports.repositoryBinary = function (name, stream) {
-    return new RepositoryBinaryAttachmentType(BinaryReferenceType.from(name), stream);
 };

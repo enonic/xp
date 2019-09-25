@@ -137,7 +137,7 @@ public class RepositoryNodeTranslator
             branches( toBranches( nodeData ) ).
             settings( repositorySettings ).
             data( repositoryData ).
-            attachments( RepositoryAttachmentsTranslator.toRepositoryAttachments( node.getAttachedBinaries() ) ).
+            attachments( RepositoryAttachmentsTranslator.toRepositoryAttachedBinaries( node.getAttachedBinaries() ) ).
             build();
     }
 

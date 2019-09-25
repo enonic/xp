@@ -19,7 +19,7 @@ public final class Repository
 
     private final RepositoryData data;
 
-    private final RepositoryAttachments attachments;
+    private final RepositoryAttachedBinaries attachments;
 
     private Repository( Builder builder )
     {
@@ -27,7 +27,7 @@ public final class Repository
         this.branches = builder.branches;
         this.settings = builder.settings == null ? RepositorySettings.create().build() : builder.settings;
         this.data = Optional.ofNullable( builder.data ).orElse( RepositoryData.empty() );
-        this.attachments = Optional.ofNullable( builder.attachments ).orElse( RepositoryAttachments.empty() );
+        this.attachments = Optional.ofNullable( builder.attachments ).orElse( RepositoryAttachedBinaries.empty() );
     }
 
     public RepositoryId getId()
@@ -50,7 +50,7 @@ public final class Repository
         return data;
     }
 
-    public RepositoryAttachments getAttachments()
+    public RepositoryAttachedBinaries getAttachments()
     {
         return attachments;
     }
@@ -103,7 +103,7 @@ public final class Repository
 
         private RepositoryData data;
 
-        private RepositoryAttachments attachments;
+        private RepositoryAttachedBinaries attachments;
 
         private Builder()
         {
@@ -148,7 +148,7 @@ public final class Repository
             return this;
         }
 
-        public Builder attachments( final RepositoryAttachments attachments )
+        public Builder attachments( final RepositoryAttachedBinaries attachments )
         {
             this.attachments = attachments;
             return this;
