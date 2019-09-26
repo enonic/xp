@@ -5,6 +5,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Hashtable;
 
+import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
@@ -79,6 +80,7 @@ public abstract class ScriptTestSupport
         this.appVersion = value;
     }
 
+    @Before
     @BeforeEach
     public final void setup()
         throws Exception
