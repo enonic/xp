@@ -178,16 +178,29 @@ final class ControllerMappingsResolver
 
     private Content resolveContentByPath( final ContentPath contentPath )
     {
-        ContentPath path = contentPath;
-        Content content = null;
-        while ( content == null && path != null )
+        Content content = getContentByPath( contentPath );
+
+        //Resolves closest retrievable content, starting from the top.
+        if ( content == null )
         {
-            content = getContentByPath( path );
-            if ( content == null )
+            ContentPath currentContentPath = ContentPath.ROOT;
+            content = getContentByPath( currentContentPath );
+
+            for ( int contentPathIndex = 0; contentPathIndex < contentPath.elementCount(); contentPathIndex++ )
             {
-                path = path.getParentPath();
+                currentContentPath = ContentPath.from( currentContentPath, contentPath.getElement( contentPathIndex ) );
+                final Content childContent = getContentByPath( currentContentPath );
+                if ( childContent == null )
+                {
+                    break;
+                }
+                else
+                {
+                    content = childContent;
+                }
             }
         }
+
         return content;
     }
 
