@@ -13,22 +13,22 @@ import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 import com.enonic.xp.repo.impl.node.NodeHelper;
 import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
-import com.enonic.xp.repo.impl.vacuum.versiontable.VersionTableCleanupTask;
+import com.enonic.xp.repo.impl.vacuum.versiontable.VersionTableVacuumTask;
 import com.enonic.xp.vacuum.VacuumTaskResult;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class VersionTableCleanupTaskTest
+class VersionTableVacuumTaskTest
     extends AbstractNodeTest
 {
-    private VersionTableCleanupTask task;
+    private VersionTableVacuumTask task;
 
     @BeforeEach
     void setUp()
     {
         createDefaultRootNode();
 
-        this.task = new VersionTableCleanupTask();
+        this.task = new VersionTableVacuumTask();
         this.task.setNodeService( this.nodeService );
         this.task.setRepositoryService( this.repositoryService );
         this.task.setVersionService( this.versionService );
@@ -39,12 +39,13 @@ class VersionTableCleanupTaskTest
     {
         // Do enough updates to go over the default batch-size
         final int updates = 1000;
+        final int expectedVersionCount = updates + 1;
 
         final Node node1 = createNode( NodePath.ROOT, "node1" );
         updateNode( node1.id(), updates );
         doDeleteNode( node1.id() );
 
-        assertVersions( node1.id(), updates + 1 );
+        assertVersions( node1.id(), expectedVersionCount );
 
         final VacuumTaskResult result = NodeHelper.runAsAdmin( () -> this.task.execute( VacuumTaskParams.create().
             ageThreshold( 0 ).
@@ -52,7 +53,8 @@ class VersionTableCleanupTaskTest
         refresh();
 
         assertEquals( updates + 8, result.getProcessed() );
-        assertEquals( updates + 1, result.getDeleted() );
+        //Old version of CMS repository entry is also delete. Remove +1 when config to specify repository is implemented
+        assertEquals( expectedVersionCount + 1, result.getDeleted() );
 
         assertVersions( node1.id(), 0 );
     }
@@ -76,7 +78,8 @@ class VersionTableCleanupTaskTest
         refresh();
 
         assertEquals( 8, result.getProcessed() );
-        assertEquals( 1, result.getDeleted() );
+        //Old version of CMS repository entry is also delete. Set to 1 when config to specify repository is implemented
+        assertEquals( 2, result.getDeleted() );
         assertVersions( node1.id(), 0 );
     }
 
@@ -98,7 +101,8 @@ class VersionTableCleanupTaskTest
         refresh();
 
         assertEquals( 8, result.getProcessed() );
-        assertEquals( 0, result.getDeleted() );
+        //Old version of CMS repository entry is also delete. Set to 0 when config to specify repository is implemented
+        assertEquals( 1, result.getDeleted() );
 
         assertVersions( node1.id(), 1 );
     }
