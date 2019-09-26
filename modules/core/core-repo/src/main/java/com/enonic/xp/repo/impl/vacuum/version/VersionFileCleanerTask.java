@@ -22,7 +22,8 @@ import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
 import com.enonic.xp.vacuum.VacuumListener;
 import com.enonic.xp.vacuum.VacuumTaskResult;
 
-@Component(immediate = true)
+//TODO
+//@Component(immediate = true)
 public class VersionFileCleanerTask
     extends AbstractVacuumTask
     implements VacuumTask

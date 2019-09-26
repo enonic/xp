@@ -46,7 +46,7 @@ public class VacuumServiceImpl
         final VacuumResult.Builder taskResults = VacuumResult.create();
         for ( final VacuumTask task : tasks )
         {
-            LOG.info( "Running vacuum task [" + task.name() + "]" );
+            LOG.info( "Running vacuum task [" + task.name() + "]..." );
 
             final VacuumTaskParams taskParams = VacuumTaskParams.create().
                 listener( params.getVacuumProgressListener() ).
