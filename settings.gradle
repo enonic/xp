@@ -8,6 +8,7 @@ include 'core:core-image'
 include 'core:core-export'
 include 'core:core-mail'
 include 'core:core-elasticsearch'
+include 'core:core-elasticsearch7'
 include 'core:core-content'
 include 'core:core-site'
 include 'core:core-i18n'
@@ -111,6 +112,3 @@ def configureProject( p )
     p.projectDir = new File( (File) settingsDir, "modules/${dirName}" )
     assert p.projectDir.isDirectory()
 }
-
-
-
