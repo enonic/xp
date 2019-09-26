@@ -1,12 +1,13 @@
 package com.enonic.xp.admin.tool;
 
+import com.google.common.collect.ImmutableSet;
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
-import com.google.common.collect.ImmutableSet;
 
 public class AdminToolDescriptor
 {

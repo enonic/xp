@@ -1,10 +1,7 @@
 package com.enonic.xp.audit;
 
-import java.net.URI;
 import java.time.Instant;
 import java.util.Objects;
-
-import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;

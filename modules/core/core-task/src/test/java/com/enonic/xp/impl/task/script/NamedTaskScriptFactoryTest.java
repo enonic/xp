@@ -3,7 +3,6 @@ package com.enonic.xp.impl.task.script;
 import java.net.URL;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;

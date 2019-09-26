@@ -1,8 +1,8 @@
 package com.enonic.xp.server.internal.config;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Properties;
 
 import org.junit.jupiter.api.Test;

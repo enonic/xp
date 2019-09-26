@@ -7,8 +7,9 @@ import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import static com.enonic.xp.launcher.impl.SharedConstants.XP_HOME_DIR;
+import static com.enonic.xp.launcher.impl.SharedConstants.XP_INSTALL_DIR;
 import static org.junit.jupiter.api.Assertions.*;
-import static com.enonic.xp.launcher.impl.SharedConstants.*;
 
 public class EnvironmentResolverTest
 {

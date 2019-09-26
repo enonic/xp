@@ -14,10 +14,10 @@ import com.google.common.io.Resources;
 import com.google.common.net.HttpHeaders;
 
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.Media;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ExtraData;
+import com.enonic.xp.content.Media;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.extractor.ExtractedData;

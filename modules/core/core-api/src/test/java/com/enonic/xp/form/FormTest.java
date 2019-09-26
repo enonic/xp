@@ -1,7 +1,6 @@
 package com.enonic.xp.form;
 
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.inputtype.InputTypeName;

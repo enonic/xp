@@ -1,10 +1,8 @@
 package com.enonic.xp.audit;
 
-import java.net.URI;
 import java.time.Instant;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.PrincipalKey;

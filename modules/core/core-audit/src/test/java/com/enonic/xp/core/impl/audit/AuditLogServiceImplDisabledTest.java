@@ -9,7 +9,7 @@ import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.repository.RepositoryService;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AuditLogServiceImplDisabledTest
 {

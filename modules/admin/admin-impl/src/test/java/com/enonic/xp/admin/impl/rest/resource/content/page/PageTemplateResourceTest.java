@@ -6,9 +6,7 @@ import java.util.Locale;
 import javax.ws.rs.core.MediaType;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
-import org.mockito.ArgumentMatchers;
 
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.app.ApplicationKey;

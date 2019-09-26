@@ -13,8 +13,7 @@ import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.core.impl.audit.AuditLogContext;
 import com.enonic.xp.repository.RepositoryNotFoundException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AuditLogServiceImplTest_find
     extends AbstractAuditLogServiceTest

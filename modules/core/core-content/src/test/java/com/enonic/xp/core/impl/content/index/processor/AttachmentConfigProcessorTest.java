@@ -9,7 +9,6 @@ import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 import static com.enonic.xp.content.ContentPropertyNames.ATTACHMENT_TEXT_COMPONENT;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class AttachmentConfigProcessorTest

@@ -1,13 +1,11 @@
 package com.enonic.xp.core.impl.export;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 
 import com.google.common.io.ByteSource;
 

@@ -5,7 +5,7 @@ import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 
 import static com.enonic.xp.audit.AuditLogTestBuilder.getBuilder;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AuditLogsTest
 {

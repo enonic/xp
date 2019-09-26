@@ -1,7 +1,6 @@
 package com.enonic.xp.core.issue;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.ContentId;

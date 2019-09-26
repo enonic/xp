@@ -1,8 +1,5 @@
 package com.enonic.xp.admin.impl.rest.resource.application.json;
 
-import java.util.Collection;
-import java.util.stream.Collectors;
-
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.descriptor.Descriptors;

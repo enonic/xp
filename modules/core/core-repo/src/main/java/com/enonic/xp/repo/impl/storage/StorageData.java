@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.storage;
 
 import java.util.Arrays;
-import java.util.Collection;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;

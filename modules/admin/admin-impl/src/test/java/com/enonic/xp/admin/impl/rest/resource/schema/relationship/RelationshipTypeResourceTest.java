@@ -1,5 +1,18 @@
 package com.enonic.xp.admin.impl.rest.resource.schema.relationship;
 
+import java.awt.image.BufferedImage;
+import java.io.InputStream;
+import java.time.Instant;
+
+import javax.ws.rs.core.Response;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
+import com.google.common.io.ByteStreams;
+import com.google.common.io.Resources;
+
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.jaxrs.impl.MockRestResponse;
@@ -8,18 +21,6 @@ import com.enonic.xp.schema.relationship.RelationshipType;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
 import com.enonic.xp.schema.relationship.RelationshipTypes;
-import com.google.common.io.ByteStreams;
-import com.google.common.io.Resources;
-import static org.junit.jupiter.api.Assertions.*;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-
-import javax.ws.rs.core.Response;
-import java.awt.image.BufferedImage;
-import java.io.InputStream;
-import java.time.Instant;
 
 import static org.junit.jupiter.api.Assertions.*;
 

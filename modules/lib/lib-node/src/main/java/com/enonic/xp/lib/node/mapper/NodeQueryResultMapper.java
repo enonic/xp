@@ -1,8 +1,8 @@
 package com.enonic.xp.lib.node.mapper;
 
 import com.enonic.xp.aggregation.Aggregations;
-import com.enonic.xp.highlight.HighlightedProperty;
 import com.enonic.xp.highlight.HighlightedProperties;
+import com.enonic.xp.highlight.HighlightedProperty;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeHit;
 import com.enonic.xp.node.NodeHits;

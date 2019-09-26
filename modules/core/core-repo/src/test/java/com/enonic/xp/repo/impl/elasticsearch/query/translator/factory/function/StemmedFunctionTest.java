@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.function;
 
 import java.lang.reflect.Field;
-import java.util.Collections;
 
 import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.jupiter.api.BeforeEach;

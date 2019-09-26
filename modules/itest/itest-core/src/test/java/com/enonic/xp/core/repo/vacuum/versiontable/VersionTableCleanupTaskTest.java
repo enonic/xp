@@ -16,7 +16,7 @@ import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
 import com.enonic.xp.repo.impl.vacuum.versiontable.VersionTableCleanupTask;
 import com.enonic.xp.vacuum.VacuumTaskResult;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class VersionTableCleanupTaskTest
     extends AbstractNodeTest

@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.launcher.LauncherException;
 
 import static com.google.common.base.StandardSystemProperty.JAVA_VERSION;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RequirementCheckerTest
 {

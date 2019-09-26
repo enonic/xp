@@ -1,6 +1,5 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.BeforeEach;

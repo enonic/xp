@@ -1,7 +1,7 @@
 package com.enonic.xp.lib.auth;
 
-import org.mockito.Mockito;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import com.enonic.xp.resource.ResourceProblemException;
 import com.enonic.xp.security.SecurityService;
