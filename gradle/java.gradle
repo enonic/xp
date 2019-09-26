@@ -1,5 +1,4 @@
 apply plugin: 'java'
-apply plugin: 'groovy'
 apply plugin: 'jacoco'
 
 def defaultEncoding = 'UTF-8'
