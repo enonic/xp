@@ -101,6 +101,7 @@ public class ControllerMappingsResolverTest
         this.request.setContentPath( ContentPath.from( content.getPath(), "api" ) );
         this.request.getParams().put( "key", "123" );
         this.request.getParams().put( "category", "foo" );
+        Mockito.when( this.contentService.getByPath( content.getParentPath() ) ).thenReturn( site );
         Mockito.when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
         Mockito.when( this.contentService.getNearestSite( content.getId() ) ).thenReturn( site );
         final SiteDescriptor siteDescriptor = newSiteDescriptor3();
