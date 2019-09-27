@@ -105,6 +105,8 @@ public interface ContentService
 
     ByteSource getBinary( ContentId contentId, BinaryReference binaryReference );
 
+    ByteSource getBinary( ContentId contentId, ContentVersionId contentVersionId, BinaryReference binaryReference );
+
     @Deprecated
     InputStream getBinaryInputStream( ContentId contentId, BinaryReference binaryReference );
 

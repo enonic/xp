@@ -112,7 +112,9 @@ import com.enonic.xp.admin.impl.rest.resource.content.task.PublishRunnableTask;
 import com.enonic.xp.admin.impl.rest.resource.content.task.UnpublishRunnableTask;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
+import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.AttachmentNames;
+import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.branch.Branches;
@@ -1447,9 +1449,63 @@ public final class ContentResource
                 edit.workflowInfo = WorkflowInfo.inProgress();
             } );
 
+        updateContentParamsAttachments( content, contentVersionId, updateParams );
+
         final Content updatedContent = contentService.update( updateParams );
 
         return new ContentJson( updatedContent, contentIconUrlResolver, principalsResolver );
+    }
+
+
+    private void updateContentParamsAttachments( final Content content, final ContentVersionId contentVersionId,
+                                                 final UpdateContentParams updateParams )
+    {
+        if ( content.getAttachments() == null )
+        {
+            return;
+        }
+
+        updateParams.clearAttachments( true );
+        updateParams.createAttachments( createAttachments( content.getId(), contentVersionId, content.getAttachments() ) );
+    }
+
+    private CreateAttachments createAttachments( final ContentId contentId, final ContentVersionId contentVersionId,
+                                                 final Attachments attachments )
+    {
+        final CreateAttachments.Builder createBuilder = CreateAttachments.create();
+
+        attachments.forEach( attachment -> {
+            final ByteSource sourceBinary = contentService.getBinary( contentId, contentVersionId, attachment.getBinaryReference() );
+
+            if ( sourceBinary != null )
+            {
+                final CreateAttachment createAttachment = createAttachment( contentId, contentVersionId, attachment );
+                if ( createAttachment != null )
+                {
+                    createBuilder.add( createAttachment );
+                }
+            }
+        } );
+
+        return createBuilder.build();
+    }
+
+    private CreateAttachment createAttachment( final ContentId contentId, final ContentVersionId contentVersionId,
+                                               final Attachment sourceAttachment )
+    {
+        final ByteSource sourceBinary = contentService.getBinary( contentId, contentVersionId, sourceAttachment.getBinaryReference() );
+
+        if ( sourceBinary != null )
+        {
+            return CreateAttachment.create().
+                name( sourceAttachment.getName() ).
+                mimeType( sourceAttachment.getMimeType() ).
+                byteSource( sourceBinary ).
+                text( sourceAttachment.getTextContent() ).
+                build();
+        }
+
+        return null;
     }
 
     private Content doCreateAttachment( final String attachmentName, final MultipartForm form )
