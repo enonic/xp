@@ -23,7 +23,8 @@ public class VersionStorageDocFactory
             add( VersionIndexPath.BINARY_BLOB_KEYS.getPath(), nodeVersion.getBinaryBlobKeys() ).
             add( VersionIndexPath.NODE_ID.getPath(), nodeVersion.getNodeId().toString() ).
             add( VersionIndexPath.TIMESTAMP.getPath(), nodeVersion.getTimestamp() != null ? nodeVersion.getTimestamp() : Instant.now() ).
-            add( VersionIndexPath.NODE_PATH.getPath(), nodeVersion.getNodePath().toString() );
+            add( VersionIndexPath.NODE_PATH.getPath(), nodeVersion.getNodePath().toString() ).
+            add( VersionIndexPath.BRANCHES.getPath(), nodeVersion.getBranches() );
 
         if ( nodeVersion.getNodeCommitId() != null) {
             data.add( VersionIndexPath.COMMIT_ID.getPath(), nodeVersion.getNodeCommitId().toString() );

@@ -54,6 +54,11 @@
         "type": "string",
         "store": false,
         "index": "not_analyzed"
+      },
+      "branches": {
+        "type": "string",
+        "store": false,
+        "index": "not_analyzed"
       }
     }
   }

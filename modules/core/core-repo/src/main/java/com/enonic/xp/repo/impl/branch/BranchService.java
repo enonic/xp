@@ -14,8 +14,6 @@ public interface BranchService
 
     String store( final NodeBranchEntry nodeBranchEntry, final NodePath previousPath, final InternalContext context );
 
-    void delete( final NodeId nodeId, final InternalContext context );
-
     void delete( final NodeIds nodeIds, final InternalContext context );
 
     NodeBranchEntry get( final NodeId nodeId, final InternalContext context );
