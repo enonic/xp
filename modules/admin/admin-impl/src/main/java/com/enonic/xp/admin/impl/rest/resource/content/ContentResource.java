@@ -1427,46 +1427,45 @@ public final class ContentResource
     {
         final ContentVersionId contentVersionId = ContentVersionId.from( params.getVersionId() );
 
-        final Content content =
+        final Content versionedContent =
             params.getContentKey().startsWith( "/" )
                 ? contentService.getByPathAndVersionId( ContentPath.from( params.getContentKey() ), contentVersionId )
                 : contentService.getByIdAndVersionId( ContentId.from( params.getContentKey() ), contentVersionId );
 
-        if ( content == null )
+        if ( versionedContent == null )
         {
             throw JaxRsExceptions.notFound( "Content with contentKey [%s] and versionId [%s] not found", params.getContentKey(),
                                             params.getVersionId() );
         }
 
-        final UpdateContentParams updateParams = new UpdateContentParams().
-            contentId( content.getId() ).
-            editor( edit -> {
-                edit.data = content.getData();
-                edit.extraDatas = content.getAllExtraData();
-                edit.displayName = content.getDisplayName();
-                edit.owner = content.getOwner();
-                edit.language = content.getLanguage();
-                edit.workflowInfo = WorkflowInfo.inProgress();
-            } );
+        final UpdateContentParams updateParams = prepareUpdateContentParams( versionedContent, contentVersionId );
 
-        updateContentParamsAttachments( content, contentVersionId, updateParams );
+        final Content content = contentService.update( updateParams );
 
-        final Content updatedContent = contentService.update( updateParams );
-
-        return new ContentJson( updatedContent, contentIconUrlResolver, principalsResolver );
+        return new ContentJson( content, contentIconUrlResolver, principalsResolver );
     }
 
 
-    private void updateContentParamsAttachments( final Content content, final ContentVersionId contentVersionId,
-                                                 final UpdateContentParams updateParams )
+    private UpdateContentParams prepareUpdateContentParams( final Content versionedContent, final ContentVersionId contentVersionId )
     {
-        if ( content.getAttachments() == null )
+        final UpdateContentParams updateParams = new UpdateContentParams().
+            contentId( versionedContent.getId() ).
+            editor( edit -> {
+                edit.data = versionedContent.getData();
+                edit.extraDatas = versionedContent.getAllExtraData();
+                edit.displayName = versionedContent.getDisplayName();
+                edit.owner = versionedContent.getOwner();
+                edit.language = versionedContent.getLanguage();
+                edit.workflowInfo = WorkflowInfo.inProgress();
+            } );
+
+        if ( versionedContent.getAttachments() != null )
         {
-            return;
+            updateParams.clearAttachments( true );
+            updateParams.createAttachments( createAttachments( versionedContent.getId(), contentVersionId, versionedContent.getAttachments() ) );
         }
 
-        updateParams.clearAttachments( true );
-        updateParams.createAttachments( createAttachments( content.getId(), contentVersionId, content.getAttachments() ) );
+        return updateParams;
     }
 
     private CreateAttachments createAttachments( final ContentId contentId, final ContentVersionId contentVersionId,
@@ -1475,19 +1474,17 @@ public final class ContentResource
         final CreateAttachments.Builder createBuilder = CreateAttachments.create();
 
         attachments.forEach( attachment -> {
-            final ByteSource sourceBinary = contentService.getBinary( contentId, contentVersionId, attachment.getBinaryReference() );
+            final CreateAttachment createAttachment = createAttachment( contentId, contentVersionId, attachment );
 
-            if ( sourceBinary != null )
+            if ( createAttachment != null )
             {
-                final CreateAttachment createAttachment = createAttachment( contentId, contentVersionId, attachment );
-                if ( createAttachment != null )
-                {
-                    createBuilder.add( createAttachment );
-                }
+                createBuilder.add( createAttachment );
             }
         } );
 
-        return createBuilder.build();
+        final CreateAttachments createAttachments = createBuilder.build();
+
+        return createAttachments.isNotEmpty() ? createAttachments : null;
     }
 
     private CreateAttachment createAttachment( final ContentId contentId, final ContentVersionId contentVersionId,

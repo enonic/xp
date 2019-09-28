@@ -183,6 +183,7 @@ import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskResultJson;
 import com.enonic.xp.task.TaskService;
+import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.BinaryReferences;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.multipart.MultipartForm;
@@ -2233,8 +2234,18 @@ public class ContentResourceTest
 
         // mock
         final Content content = Mockito.mock( Content.class );
+        final ByteSource byteSource = Mockito.mock( ByteSource.class );
+
+        final Attachments attachments = Attachments.create().add( Attachment.create().
+            name( "attachment" ).mimeType( "mimeType" ).size( 1000L ).build() ).build();
+
+        Mockito.when( content.getId() ).thenReturn( ContentId.from( "nodeId" ) );
+        Mockito.when( content.getAttachments() ).thenReturn( attachments );
         Mockito.when( contentService.getByIdAndVersionId( any( ContentId.class ), any( ContentVersionId.class ) ) ).thenReturn( content );
         Mockito.when( contentService.update( any( UpdateContentParams.class ) ) ).thenReturn( updatedContent );
+        Mockito.when(
+            contentService.getBinary( any( ContentId.class ), any( ContentVersionId.class ), any( BinaryReference.class ) ) ).thenReturn(
+            byteSource );
 
         // test
         final ContentJson result = instance.revert( params );
@@ -2246,6 +2257,8 @@ public class ContentResourceTest
         // verify
         Mockito.verify( this.contentService, Mockito.times( 1 ) ).
             getByIdAndVersionId( any( ContentId.class ), any( ContentVersionId.class ) );
+        Mockito.verify( this.contentService, Mockito.times( 1 ) ).
+            getBinary( any( ContentId.class ), any( ContentVersionId.class ), any( BinaryReference.class ) );
         Mockito.verify( this.contentService, Mockito.times( 1 ) ).
             update( any( UpdateContentParams.class ) );
         Mockito.verifyNoMoreInteractions( contentService );
