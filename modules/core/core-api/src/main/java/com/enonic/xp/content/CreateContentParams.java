@@ -335,8 +335,8 @@ public final class CreateContentParams
 
         private void validate()
         {
-            Preconditions.checkNotNull( parentPath, "parentContentPath cannot be null" );
-            Preconditions.checkArgument( parentPath.isAbsolute(), "parentContentPath must be absolute: " + parentPath );
+            Preconditions.checkNotNull( parentPath, "parentPath cannot be null" );
+            Preconditions.checkArgument( parentPath.isAbsolute(), "parentPath must be absolute: " + parentPath );
             Preconditions.checkNotNull( data, "data cannot be null" );
             Preconditions.checkNotNull( createAttachments, "createAttachments cannot be null" );
             Preconditions.checkNotNull( type, "type cannot be null" );
