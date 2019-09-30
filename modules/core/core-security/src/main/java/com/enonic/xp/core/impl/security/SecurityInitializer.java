@@ -228,6 +228,12 @@ final class SecurityInitializer
             displayName( "Content Manager Administrator" ).
             build();
         addRole( createContentManager );
+
+        final CreateRoleParams createAuditLogRole = CreateRoleParams.create().
+            roleKey( RoleKeys.AUDIT_LOG ).
+            displayName( "Audit Log" ).
+            build();
+        addRole( createAuditLogRole );
     }
 
     private void createUsers()
