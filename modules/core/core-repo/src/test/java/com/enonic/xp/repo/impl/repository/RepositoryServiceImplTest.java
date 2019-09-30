@@ -118,13 +118,9 @@ class RepositoryServiceImplTest
 
         final Repository persistedRepo = getPersistedRepoWithoutCache( repoId );
 
-        final AttachedBinary attachedBinary = persistedRepo.getAttachments().
-            getSet().
-            stream().
-            filter( ab -> ab.getBinaryReference().equals( BinaryReference.from( "image1.jpg" ) ) ).
-            findAny().orElseThrow();
+        final AttachedBinary attachedBinary = persistedRepo.getAttachments().getByBinaryReference( BinaryReference.from( "image1.jpg" ) );
 
-        ByteSource persistedAttachment = binaryService.get( SystemConstants.SYSTEM_REPO_ID, attachedBinary );
+        ByteSource persistedAttachment = mockCurrentContext.callWith( () -> repositoryService.getAttachment( attachedBinary ) );
 
         assertTrue( binarySource.contentEquals( persistedAttachment ) );
     }

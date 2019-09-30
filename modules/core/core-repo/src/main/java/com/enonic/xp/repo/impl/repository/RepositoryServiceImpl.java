@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
+import com.google.common.io.ByteSource;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
@@ -46,6 +47,7 @@ import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.repository.UpdateRepositoryParams;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.util.AttachedBinary;
 
 @Component(immediate = true)
 public class RepositoryServiceImpl
@@ -303,6 +305,13 @@ public class RepositoryServiceImpl
     public void invalidate( final RepositoryId repositoryId )
     {
         repositoryMap.remove( repositoryId );
+    }
+
+    @Override
+    public ByteSource getAttachment( final AttachedBinary binaryReference )
+    {
+        requireAdminRole();
+        return repositoryEntryService.getAttachment( binaryReference );
     }
 
     private void requireAdminRole()

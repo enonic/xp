@@ -4,6 +4,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.io.ByteSource;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
@@ -34,6 +35,7 @@ import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
 import com.enonic.xp.security.SystemConstants;
+import com.enonic.xp.util.AttachedBinary;
 
 @Component
 public class RepositoryEntryServiceImpl
@@ -154,6 +156,12 @@ public class RepositoryEntryServiceImpl
             refresh();
             eventPublisher.publish( RepositoryEvents.deleted( repositoryId ) );
         }
+    }
+
+    @Override
+    public ByteSource getAttachment( AttachedBinary binaryReference )
+    {
+        return binaryService.get( SystemConstants.SYSTEM_REPO.getId(), binaryReference );
     }
 
     private void refresh()

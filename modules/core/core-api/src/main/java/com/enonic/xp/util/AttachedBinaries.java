@@ -1,5 +1,8 @@
 package com.enonic.xp.util;
 
+import java.util.NoSuchElementException;
+import java.util.Objects;
+
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 
@@ -14,6 +17,12 @@ public final class AttachedBinaries
     private AttachedBinaries( final ImmutableSet<AttachedBinary> set )
     {
         super( set );
+    }
+
+    public AttachedBinary getByBinaryReference( BinaryReference binaryReference )
+    {
+        return set.stream().filter( att -> Objects.equals( binaryReference, att.getBinaryReference() ) ).findAny().
+            orElseThrow( NoSuchElementException::new );
     }
 
     public static AttachedBinaries empty()
