@@ -112,7 +112,9 @@ import com.enonic.xp.admin.impl.rest.resource.content.task.PublishRunnableTask;
 import com.enonic.xp.admin.impl.rest.resource.content.task.UnpublishRunnableTask;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
+import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.AttachmentNames;
+import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.branch.Branches;
@@ -1425,31 +1427,82 @@ public final class ContentResource
     {
         final ContentVersionId contentVersionId = ContentVersionId.from( params.getVersionId() );
 
-        final Content content =
+        final Content versionedContent =
             params.getContentKey().startsWith( "/" )
                 ? contentService.getByPathAndVersionId( ContentPath.from( params.getContentKey() ), contentVersionId )
                 : contentService.getByIdAndVersionId( ContentId.from( params.getContentKey() ), contentVersionId );
 
-        if ( content == null )
+        if ( versionedContent == null )
         {
             throw JaxRsExceptions.notFound( "Content with contentKey [%s] and versionId [%s] not found", params.getContentKey(),
                                             params.getVersionId() );
         }
 
+        final UpdateContentParams updateParams = prepareUpdateContentParams( versionedContent, contentVersionId );
+
+        final Content content = contentService.update( updateParams );
+
+        return new ContentJson( content, contentIconUrlResolver, principalsResolver );
+    }
+
+
+    private UpdateContentParams prepareUpdateContentParams( final Content versionedContent, final ContentVersionId contentVersionId )
+    {
         final UpdateContentParams updateParams = new UpdateContentParams().
-            contentId( content.getId() ).
+            contentId( versionedContent.getId() ).
             editor( edit -> {
-                edit.data = content.getData();
-                edit.extraDatas = content.getAllExtraData();
-                edit.displayName = content.getDisplayName();
-                edit.owner = content.getOwner();
-                edit.language = content.getLanguage();
+                edit.data = versionedContent.getData();
+                edit.extraDatas = versionedContent.getAllExtraData();
+                edit.displayName = versionedContent.getDisplayName();
+                edit.owner = versionedContent.getOwner();
+                edit.language = versionedContent.getLanguage();
                 edit.workflowInfo = WorkflowInfo.inProgress();
             } );
 
-        final Content updatedContent = contentService.update( updateParams );
+        if ( versionedContent.getAttachments() != null )
+        {
+            updateParams.clearAttachments( true );
+            updateParams.createAttachments( createAttachments( versionedContent.getId(), contentVersionId, versionedContent.getAttachments() ) );
+        }
 
-        return new ContentJson( updatedContent, contentIconUrlResolver, principalsResolver );
+        return updateParams;
+    }
+
+    private CreateAttachments createAttachments( final ContentId contentId, final ContentVersionId contentVersionId,
+                                                 final Attachments attachments )
+    {
+        final CreateAttachments.Builder createBuilder = CreateAttachments.create();
+
+        attachments.forEach( attachment -> {
+            final CreateAttachment createAttachment = createAttachment( contentId, contentVersionId, attachment );
+
+            if ( createAttachment != null )
+            {
+                createBuilder.add( createAttachment );
+            }
+        } );
+
+        final CreateAttachments createAttachments = createBuilder.build();
+
+        return createAttachments.isNotEmpty() ? createAttachments : null;
+    }
+
+    private CreateAttachment createAttachment( final ContentId contentId, final ContentVersionId contentVersionId,
+                                               final Attachment sourceAttachment )
+    {
+        final ByteSource sourceBinary = contentService.getBinary( contentId, contentVersionId, sourceAttachment.getBinaryReference() );
+
+        if ( sourceBinary != null )
+        {
+            return CreateAttachment.create().
+                name( sourceAttachment.getName() ).
+                mimeType( sourceAttachment.getMimeType() ).
+                byteSource( sourceBinary ).
+                text( sourceAttachment.getTextContent() ).
+                build();
+        }
+
+        return null;
     }
 
     private Content doCreateAttachment( final String attachmentName, final MultipartForm form )
