@@ -1,19 +1,23 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
+
+import org.apache.commons.lang.StringUtils;
+
+import com.google.common.base.Strings;
 
 import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.audit.AuditLogUri;
 import com.enonic.xp.audit.AuditLogUris;
 import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
-import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.ContentVersionId;
-import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.content.DeleteContentParams;
@@ -29,10 +33,13 @@ import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.name.NamePrettyfier;
+import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.CreateSiteParams;
-import com.enonic.xp.site.Site;
 
 class ContentAuditLogSupport
 {
@@ -46,7 +53,7 @@ class ContentAuditLogSupport
         this.auditLogService = builder.auditLogService;
     }
 
-    void createSite( final CreateSiteParams params, final Site site )
+    void createSite( final CreateSiteParams params )
     {
         final PropertyTree data = new PropertyTree();
         data.setString( "description", params.getDescription() );
@@ -54,10 +61,12 @@ class ContentAuditLogSupport
         data.setString( "name", nullToNull( params.getName() ) );
         data.setString( "displayName", params.getDisplayName() );
 
-        log( "system.content.create", "Create a new site", data, site.getId() );
+        final ContentPath contentPath =
+            ContentPath.from( params.getParentContentPath(), generateNameFromParams( params.getName(), params.getDisplayName() ) );
+        log( "system.content.create", "Create a new site", data, contentPath );
     }
 
-    void createContent( final CreateContentParams params, final Content content )
+    void createContent( final CreateContentParams params )
     {
         final PropertyTree propertyTree = new PropertyTree();
         propertyTree.addString( "displayName", params.getDisplayName() );
@@ -76,10 +85,12 @@ class ContentAuditLogSupport
                 map( AccessControlEntry::toString ).collect( Collectors.toList() ) );
         }
 
-        log( "system.content.create", "Create a new content", propertyTree, content.getId() );
+        final ContentPath contentPath =
+            ContentPath.from( params.getParent(), generateNameFromParams( params.getName(), params.getDisplayName() ) );
+        log( "system.content.create", "Create a new content", propertyTree, contentPath );
     }
 
-    void createMedia( final CreateMediaParams params, final Content content )
+    void createMedia( final CreateMediaParams params )
     {
         final PropertyTree data = new PropertyTree();
         data.addString( "artist", params.getArtist() );
@@ -92,10 +103,11 @@ class ContentAuditLogSupport
         data.addDouble( "focalY", params.getFocalY() );
         data.addString( "parent", nullToNull( params.getParent() ) );
 
-        log( "system.content.create", "Create a new media", data, content.getId() );
+        final ContentPath contentPath = ContentPath.from( params.getParent(), params.getName() );
+        log( "system.content.create", "Create a new media", data, contentPath );
     }
 
-    void update( final UpdateContentParams params, final Content content )
+    void update( final UpdateContentParams params )
     {
         final PropertyTree data = new PropertyTree();
         data.addString( "contentId", nullToNull( params.getContentId() ) );
@@ -103,10 +115,12 @@ class ContentAuditLogSupport
         data.addBoolean( "clearAttachments", params.isClearAttachments() );
         data.addBoolean( "requireValid", params.isRequireValid() );
 
-        log( "system.content.update", String.format( "Update the content [%s]", nullToNull( content.getId() ) ), data, content.getId() );
+        final String message = String.format( "Update the content [%s]", params.getContentId() );
+
+        log( "system.content.update", message, data, params.getContentId() );
     }
 
-    void update( final UpdateMediaParams params, final Content content )
+    void update( final UpdateMediaParams params )
     {
         final PropertyTree data = new PropertyTree();
 
@@ -120,33 +134,13 @@ class ContentAuditLogSupport
         data.addDouble( "focalY", params.getFocalY() );
         data.addString( "content", nullToNull( params.getContent() ) );
 
-        final String message = String.format( "Update the media [%s]", nullToNull( content.getId() ) );
+        final String message = String.format( "Update the media [%s]", params.getContent() );
 
-        log( "system.content.update", message, data, content.getId() );
+        log( "system.content.update", message, data, params.getContent() );
     }
 
-    void delete( final DeleteContentParams params, final Contents contents )
+    void delete( final DeleteContentParams params )
     {
-        if ( contents == null || contents.getIds().getSet() == null )
-        {
-            return;
-        }
-
-        final PropertyTree data = new PropertyTree();
-        data.addString( "contentPath", nullToNull( params.getContentPath() ) );
-        data.addBoolean( "deleteOnline", params.isDeleteOnline() );
-
-        log( "system.content.delete", String.format( "Delete the content [%s]", contents.getIds().getSize() ), data,
-             params.getContentPath() );
-    }
-
-    void deleteWithoutFetch( final DeleteContentParams params )
-    {
-        if ( params.getContentPath() == null )
-        {
-            return;
-        }
-
         final PropertyTree data = new PropertyTree();
         data.addString( "contentPath", params.getContentPath().toString() );
         data.addBoolean( "deleteOnline", params.isDeleteOnline() );
@@ -156,7 +150,7 @@ class ContentAuditLogSupport
         log( "system.content.delete", message, data, params.getContentPath() );
     }
 
-    void undoPendingDelete( final UndoPendingDeleteContentParams params, final int affectedContents )
+    void undoPendingDelete( final UndoPendingDeleteContentParams params )
     {
         if ( params.getContentIds() == null )
         {
@@ -168,8 +162,8 @@ class ContentAuditLogSupport
         data.addStrings( "contentIds", params.getContentIds().stream().
             map( ContentId::toString ).collect( Collectors.toList() ) );
 
-        final String message = affectedContents > 1
-            ? String.format( "Undo the deletion of [%d] contents", affectedContents )
+        final String message = params.getContentIds().getSize() > 1
+            ? String.format( "Undo the deletion of [%d] contents", params.getContentIds().getSize() )
             : String.format( "Undo the deletion of the content [%s]", params.getContentIds().first() );
 
         log( "system.content.delete", message, data, params.getContentIds() );
@@ -269,7 +263,7 @@ class ContentAuditLogSupport
         }
 
         final String message =
-            String.format( "Move the content [%s] under parent with path [%s]", params.getContentId(), params.getParentContentPath() );
+            String.format( "Move the content [%s] under the parent [%s]", params.getContentId(), params.getParentContentPath() );
 
         log( "system.content.move", message, data, params.getContentId() );
     }
@@ -281,7 +275,7 @@ class ContentAuditLogSupport
         data.addString( "newName", nullToNull( params.getNewName() ) );
 
         final String message =
-            String.format( "Rename the content to [%s] with contentId [%s]", params.getNewName(), params.getContentId() );
+            String.format( "Rename the content [%s] to [%s]", params.getContentId(), params.getNewName() );
 
         log( "system.content.rename", message, data, params.getContentId() );
     }
@@ -349,34 +343,31 @@ class ContentAuditLogSupport
 
     private void log( final String type, final String message, final PropertyTree data, final ContentPaths contentPaths )
     {
-        final LogAuditLogParams logParams = LogAuditLogParams.create().
-            type( type ).
-            source( SOURCE_CORE_CONTENT ).
-            data( data ).
-            message( message ).
-            objectUris( AuditLogUris.from( contentPaths.
-                stream().
-                map( this::createAuditLogUri ).
-                collect( Collectors.toList() ) ) ).
-            build();
-
-        auditLogService.log( logParams );
+        log( type, message, data, AuditLogUris.from( contentPaths.
+            stream().
+            map( this::createAuditLogUri ).
+            collect( Collectors.toList() ) ) );
     }
 
     private void log( final String type, final String message, final PropertyTree data, final ContentIds contentIds )
+    {
+        log( type, message, data, AuditLogUris.from( contentIds.
+            stream().
+            map( this::createAuditLogUri ).
+            collect( Collectors.toList() ) ) );
+    }
+
+    private void log( final String type, final String message, final PropertyTree data, final AuditLogUris uris )
     {
         final LogAuditLogParams logParams = LogAuditLogParams.create().
             type( type ).
             source( SOURCE_CORE_CONTENT ).
             data( data ).
             message( message ).
-            objectUris( AuditLogUris.from( contentIds.
-                stream().
-                map( this::createAuditLogUri ).
-                collect( Collectors.toList() ) ) ).
+            objectUris( uris ).
             build();
 
-        auditLogService.log( logParams );
+        runAsAuditLog( () -> auditLogService.log( logParams ) );
     }
 
     private void log( final String type, final String message, final PropertyTree data, final ContentId contentId )
@@ -404,6 +395,32 @@ class ContentAuditLogSupport
     private String nullToNull( Object value )
     {
         return value != null ? value.toString() : null;
+    }
+
+    private <T> T runAsAuditLog( final Callable<T> callable )
+    {
+        final Context context = ContextAccessor.current();
+        return ContextBuilder.from( ContextAccessor.current() ).
+            authInfo( AuthenticationInfo.copyOf( context.getAuthInfo() ).
+                principals( RoleKeys.AUDIT_LOG ).build() ).
+            build().
+            callWith( callable );
+    }
+
+    private String generateNameFromParams( final ContentName contentName, final String displayName )
+    {
+        if ( contentName == null || StringUtils.isEmpty( contentName.toString() ) )
+        {
+            if ( Strings.isNullOrEmpty( displayName ) )
+            {
+                return ContentName.unnamed().toString();
+            }
+            else
+            {
+                return NamePrettyfier.create( displayName );
+            }
+        }
+        return contentName.toString();
     }
 
     static Builder create()

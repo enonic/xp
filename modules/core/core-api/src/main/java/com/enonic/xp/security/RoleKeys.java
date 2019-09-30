@@ -21,6 +21,10 @@ public final class RoleKeys
 
     public static final PrincipalKey ADMIN_LOGIN = PrincipalKey.ofRole( ADMIN_LOGIN_ID );
 
+    public static final String AUDIT_LOG_ID = "system.auditlog";
+
+    public static final PrincipalKey AUDIT_LOG = PrincipalKey.ofRole( AUDIT_LOG_ID );
+
     public static final PrincipalKey USER_MANAGER_APP = PrincipalKey.ofRole( "system.user.app" );
 
     public static final PrincipalKey USER_MANAGER_ADMIN = PrincipalKey.ofRole( "system.user.admin" );
