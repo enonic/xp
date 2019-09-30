@@ -216,6 +216,7 @@ task installDist( dependsOn: [copyResources, copyBundles] ) {
     description = 'Update distribution without creating zip.'
     group = 'Dist'
 }
+assemble.dependsOn installDist
 
 task distZip( type: Zip, dependsOn: installDist ) {
     description = 'Build full distribution zip.'
