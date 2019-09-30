@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.repository;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentMap;
 
 import org.osgi.service.component.annotations.Activate;
@@ -47,7 +48,7 @@ import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.repository.UpdateRepositoryParams;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.util.AttachedBinary;
+import com.enonic.xp.util.BinaryReference;
 
 @Component(immediate = true)
 public class RepositoryServiceImpl
@@ -308,10 +309,18 @@ public class RepositoryServiceImpl
     }
 
     @Override
-    public ByteSource getAttachment( final AttachedBinary binaryReference )
+    public Optional<ByteSource> getAttachment( final RepositoryId repositoryId, final BinaryReference binaryReference )
     {
         requireAdminRole();
-        return repositoryEntryService.getAttachment( binaryReference );
+
+        Repository repository = repositoryEntryService.getRepositoryEntry( repositoryId );
+        if ( repository == null )
+        {
+            throw new RepositoryNotFoundException( repositoryId );
+        }
+
+        return Optional.ofNullable( repository.getAttachments().getByBinaryReference( binaryReference ) ).
+            map( repositoryEntryService::getAttachment );
     }
 
     private void requireAdminRole()

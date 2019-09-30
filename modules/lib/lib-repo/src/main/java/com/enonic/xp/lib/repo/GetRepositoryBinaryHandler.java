@@ -4,14 +4,14 @@ import java.util.function.Supplier;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.util.BinaryReference;
 
-public class GetRepositoryAttachmentHandler
+@SuppressWarnings("unused")
+public class GetRepositoryBinaryHandler
     implements ScriptBean
 {
     private RepositoryId repositoryId;
@@ -22,7 +22,7 @@ public class GetRepositoryAttachmentHandler
 
     public void setRepositoryId( final String repositoryId )
     {
-        this.repositoryId = repositoryId == null ? null : RepositoryId.from( repositoryId );
+        this.repositoryId = RepositoryId.from( repositoryId );
     }
 
     public void setBinaryReference( final String binaryReference )
@@ -34,9 +34,7 @@ public class GetRepositoryAttachmentHandler
     {
         final RepositoryService repositoryService = repositoryServiceSupplier.get();
 
-        final Repository repository = repositoryService.get( repositoryId );
-
-        return repositoryService.getAttachment( repository.getAttachments().getByBinaryReference( binaryReference ) );
+        return repositoryService.getAttachment( repositoryId, binaryReference ).orElse( null );
     }
 
     @Override
