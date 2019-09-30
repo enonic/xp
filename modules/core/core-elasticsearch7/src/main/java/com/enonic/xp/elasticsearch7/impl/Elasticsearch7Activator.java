@@ -7,6 +7,8 @@ import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
@@ -24,7 +26,9 @@ public class Elasticsearch7Activator
 
     private Thread outStreamReader;
 
-    private final CountDownLatch latch = new CountDownLatch( 1 );
+    private final CountDownLatch startedLatch = new CountDownLatch( 1 );
+
+    private final AtomicBoolean statedSuccessfully = new AtomicBoolean();
 
     @Activate
     public void activate( final BundleContext context, final Map<String, String> map )
@@ -36,7 +40,7 @@ public class Elasticsearch7Activator
     private void startElasticProcess()
         throws IOException, InterruptedException
     {
-        final String basePath = "\\es\\elasticsearch-oss-7.3.2-windows-x86_64\\elasticsearch-7.3.2\\bin";
+        final String basePath = "\\es\\elasticsearch-2.4.6\\bin";
         process = new ProcessBuilder( Path.of( basePath, executableFilename() ).toString() ).
             redirectErrorStream( true ).
             start();
@@ -51,11 +55,11 @@ public class Elasticsearch7Activator
                     LOG.info( line );
                     if ( line.endsWith( "] started" ) )
                     {
-                        latch.countDown();
+                        statedSuccessfully.set( true );
+                        startedLatch.countDown();
                     }
                     if ( Thread.interrupted() )
                     {
-                        latch.countDown();
                         return;
                     }
                 }
@@ -64,6 +68,10 @@ public class Elasticsearch7Activator
             catch ( IOException e )
             {
                 throw new UncheckedIOException( e );
+            }
+            finally
+            {
+                startedLatch.countDown();
             }
         } );
         outStreamReader.start();
@@ -84,10 +92,10 @@ public class Elasticsearch7Activator
     public void deactivate()
         throws IOException, InterruptedException
     {
-        latch.await();
+        startedLatch.await();
         outStreamReader.interrupt();
         process.children().forEach( ProcessHandle::destroy );
         process.destroy();
-        process.waitFor();
+        process.waitFor( 1, TimeUnit.MINUTES );
     }
 }
