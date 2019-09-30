@@ -20,13 +20,15 @@ var expected = {
             'versionId': 'nodeVersionNew',
             'nodeId': 'nodeId1',
             'nodePath': '/',
-            'timestamp': '1970-01-01T00:16:40Z'
+            'timestamp': '1970-01-01T00:16:40Z',
+            'branches': ''
         },
         {
             'versionId': 'nodeVersionOld',
             'nodeId': 'nodeId1',
             'nodePath': '/',
-            'timestamp': '1970-01-01T00:08:20Z'
+            'timestamp': '1970-01-01T00:08:20Z',
+            'branches': ''
         }
     ]
 };
