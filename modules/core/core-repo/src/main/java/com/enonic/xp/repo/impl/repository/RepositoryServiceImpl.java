@@ -35,6 +35,7 @@ import com.enonic.xp.repository.CreateBranchParams;
 import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.DeleteBranchParams;
 import com.enonic.xp.repository.DeleteRepositoryParams;
+import com.enonic.xp.repository.EditableRepository;
 import com.enonic.xp.repository.NodeRepositoryService;
 import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.repository.Repository;
@@ -128,31 +129,32 @@ public class RepositoryServiceImpl
         requireAdminRole();
 
         Repository repository = repositoryMap.compute( params.getRepositoryId(),
-            ( key, previousRepository ) -> doUpdateRepository( params, previousRepository ) );
+                                                       ( key, previousRepository ) -> doUpdateRepository( params, previousRepository ) );
 
         invalidatePathCache();
 
         return repository;
     }
 
-    private Repository doUpdateRepository( final UpdateRepositoryParams updateRepositoryParams,
-                                           Repository previousRepository )
+    private Repository doUpdateRepository( final UpdateRepositoryParams updateRepositoryParams, Repository previousRepository )
     {
         RepositoryId repositoryId = updateRepositoryParams.getRepositoryId();
 
-        previousRepository = previousRepository == null ?
-            repositoryEntryService.getRepositoryEntry( repositoryId ) :
-            previousRepository;
+        previousRepository = previousRepository == null ? repositoryEntryService.getRepositoryEntry( repositoryId ) : previousRepository;
 
         if ( previousRepository == null )
         {
             throw new RepositoryNotFoundException( repositoryId );
         }
 
+        final EditableRepository editableRepository = new EditableRepository( previousRepository );
+
+        updateRepositoryParams.getEditor().accept( editableRepository );
+
         UpdateRepositoryEntryParams params = UpdateRepositoryEntryParams.create().
             repositoryId( repositoryId ).
-            repositoryData( updateRepositoryParams.getData() ).
-            attachments( updateRepositoryParams.getAttachments() ).
+            repositoryData( editableRepository.data ).
+            attachments( ImmutableList.copyOf( editableRepository.binaryAttachments ) ).
             build();
 
         return repositoryEntryService.updateRepositoryEntry( params );

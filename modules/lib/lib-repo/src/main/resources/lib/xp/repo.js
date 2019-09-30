@@ -1,11 +1,3 @@
-function valueOrDefault(value, defaultValue) {
-    if (value === undefined) {
-        return defaultValue;
-    }
-    return value;
-}
-
-
 /**
  * Node repository related functions.
  *
@@ -15,13 +7,20 @@ function valueOrDefault(value, defaultValue) {
  * @module repo
  */
 
-function required(params, name) {
-    var value = params[name];
-    if (value === undefined) {
-        throw "Parameter '" + name + "' is required";
-    }
+/* global __, Java*/
 
-    return value;
+function checkRequiredValue(value, name) {
+    if (value === undefined) {
+        throw 'Parameter \'' + name + '\' is required';
+    }
+}
+
+function checkRequiredParams(params, names) {
+    for (const name of names) {
+        if (Object.prototype.hasOwnProperty.call(params, name) === false) {
+            throw 'Parameter \'' + name + '\' is required';
+        }
+    }
 }
 
 /**
@@ -36,8 +35,7 @@ function required(params, name) {
  *
  */
 exports.refresh = function (params) {
-
-    var bean = __.newBean('com.enonic.xp.lib.repo.RefreshHandler');
+    const bean = __.newBean('com.enonic.xp.lib.repo.RefreshHandler');
     params = params || {};
     bean.mode = __.nullOrValue(params.mode);
     bean.repoId = __.nullOrValue(params.repo);
@@ -71,8 +69,9 @@ exports.refresh = function (params) {
  *
  */
 exports.create = function (params) {
-    var bean = __.newBean('com.enonic.xp.lib.repo.CreateRepositoryHandler');
-    bean.repositoryId = required(params, 'id');
+    checkRequiredParams(params, ['id']);
+    const bean = __.newBean('com.enonic.xp.lib.repo.CreateRepositoryHandler');
+    bean.repositoryId = params.id;
     bean.rootPermissions = params.rootPermissions ? __.toScriptValue(params.rootPermissions) : null;
     bean.rootChildOrder = __.nullOrValue(params.rootChildOrder);
     bean.indexDefinitions = params.settings && params.settings.definitions ? __.toScriptValue(params.settings.definitions) : null;
@@ -89,10 +88,8 @@ exports.create = function (params) {
  *
  */
 exports.delete = function (id) {
-    if (!id) {
-        throw "Parameter '" + id + "' is required";
-    }
-    var bean = __.newBean('com.enonic.xp.lib.repo.DeleteRepositoryHandler');
+    checkRequiredValue(id, 'id');
+    const bean = __.newBean('com.enonic.xp.lib.repo.DeleteRepositoryHandler');
     bean.repositoryId = id;
     return bean.execute();
 };
@@ -105,7 +102,7 @@ exports.delete = function (id) {
  *
  */
 exports.list = function () {
-    var bean = __.newBean('com.enonic.xp.lib.repo.ListRepositoriesHandler');
+    const bean = __.newBean('com.enonic.xp.lib.repo.ListRepositoriesHandler');
     return __.toNativeObject(bean.execute());
 };
 
@@ -120,10 +117,8 @@ exports.list = function () {
  *
  */
 exports.get = function (id) {
-    if (!id) {
-        throw "Parameter '" + id + "' is required";
-    }
-    var bean = __.newBean('com.enonic.xp.lib.repo.GetRepositoryHandler');
+    checkRequiredValue(id, 'id');
+    const bean = __.newBean('com.enonic.xp.lib.repo.GetRepositoryHandler');
     bean.repositoryId = id;
     return __.toNativeObject(bean.execute());
 };
@@ -140,9 +135,10 @@ exports.get = function (id) {
  *
  */
 exports.createBranch = function (params) {
-    var bean = __.newBean('com.enonic.xp.lib.repo.CreateBranchHandler');
-    bean.branchId = required(params, 'branchId');
-    bean.repoId = required(params, 'repoId');
+    checkRequiredParams(params, ['repoId', 'branchId']);
+    const bean = __.newBean('com.enonic.xp.lib.repo.CreateBranchHandler');
+    bean.branchId = params.branchId;
+    bean.repoId = params.repoId;
     return __.toNativeObject(bean.execute());
 };
 
@@ -158,8 +154,31 @@ exports.createBranch = function (params) {
  *
  */
 exports.deleteBranch = function (params) {
-    var bean = __.newBean('com.enonic.xp.lib.repo.DeleteBranchHandler');
-    bean.branchId = required(params, 'branchId');
-    bean.repoId = required(params, 'repoId');
+    checkRequiredParams(params, ['repoId', 'branchId']);
+    const bean = __.newBean('com.enonic.xp.lib.repo.DeleteBranchHandler');
+    bean.branchId = params.branchId;
+    bean.repoId = params.repoId;
+    return __.toNativeObject(bean.execute());
+};
+
+/**
+ * Updates a repository
+ *
+ * @example-ref examples/repo/update.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.id Repository ID.
+ * @param {string} [params.scope] Scope of the data to retrieve and update.
+ * @param {function} params.editor Editor callback function.
+ *
+ * @returns {object} Repository updated as JSON.
+ *
+ */
+exports.modifyRepository = function (params) {
+    checkRequiredParams(params, ['id', 'editor']);
+    const bean = __.newBean('com.enonic.xp.lib.repo.ModifyRepositoryHandler');
+    bean.id = params.id;
+    bean.editor = __.toScriptValue(params.editor);
+    bean.scope = bean.scope = __.nullOrValue(params.scope);
     return __.toNativeObject(bean.execute());
 };

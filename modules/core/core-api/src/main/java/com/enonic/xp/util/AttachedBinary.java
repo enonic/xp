@@ -1,19 +1,21 @@
-package com.enonic.xp.repository;
+package com.enonic.xp.util;
 
 import java.util.Objects;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.util.BinaryReference;
-
+/**
+ * AttachedBinary will be final in future versions and must not be subclassed.
+ * The only exception is {@link com.enonic.xp.node.AttachedBinary}, until it gets deprecated removed
+ */
 @Beta
-public final class RepositoryAttachment
+public class AttachedBinary
 {
     private final BinaryReference binaryReference;
 
     private final String blobKey;
 
-    public RepositoryAttachment( final BinaryReference binaryReference, final String blobKey )
+    public AttachedBinary( final BinaryReference binaryReference, final String blobKey )
     {
         this.binaryReference = binaryReference;
         this.blobKey = blobKey;
@@ -40,7 +42,7 @@ public final class RepositoryAttachment
         {
             return false;
         }
-        final RepositoryAttachment that = (RepositoryAttachment) o;
+        final AttachedBinary that = (AttachedBinary) o;
         return Objects.equals( binaryReference, that.binaryReference ) && Objects.equals( blobKey, that.blobKey );
     }
 

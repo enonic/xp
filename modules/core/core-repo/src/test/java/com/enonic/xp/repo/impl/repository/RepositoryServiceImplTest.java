@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.repository;
 
 import org.junit.jupiter.api.Test;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.branch.Branch;
@@ -9,7 +10,6 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
@@ -19,9 +19,6 @@ import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.DeleteBranchParams;
 import com.enonic.xp.repository.DeleteRepositoryParams;
 import com.enonic.xp.repository.Repository;
-import com.enonic.xp.repository.RepositoryBinaryAttachment;
-import com.enonic.xp.repository.RepositoryBinaryAttachments;
-import com.enonic.xp.repository.RepositoryData;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.UpdateRepositoryParams;
 import com.enonic.xp.security.IdProviderKey;
@@ -32,6 +29,8 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.util.AttachedBinary;
+import com.enonic.xp.util.BinaryAttachment;
 import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -81,12 +80,12 @@ class RepositoryServiceImplTest
 
         mockCurrentContext.callWith( () -> repositoryService.updateRepository( UpdateRepositoryParams.create().
             repositoryId( RepositoryId.from( repoId ) ).
-            data( RepositoryData.from( data ) ).
+            editor( edit -> edit.data = data ).
             build() ) );
 
         final Repository persistedRepo = getPersistedRepoWithoutCache( repoId );
 
-        assertEquals( "b", persistedRepo.getData().getValue().getString( "myProp" ) );
+        assertEquals( "b", persistedRepo.getData().getString( "myProp" ) );
     }
 
     @Test
@@ -111,17 +110,19 @@ class RepositoryServiceImplTest
 
         mockCurrentContext.runWith( () -> repositoryService.updateRepository( UpdateRepositoryParams.create().
             repositoryId( RepositoryId.from( repoId ) ).
-            data( RepositoryData.from( data ) ).
-            attachments( RepositoryBinaryAttachments.create().
-                add( new RepositoryBinaryAttachment( binaryRef, binarySource ) ).
-                build() ).
+            editor( edit -> {
+                edit.data = data;
+                edit.binaryAttachments = ImmutableList.of( new BinaryAttachment( binaryRef, binarySource ) );
+            } ).
             build() ) );
 
         final Repository persistedRepo = getPersistedRepoWithoutCache( repoId );
 
-        AttachedBinary attachedBinary =
-            RepositoryAttachmentsTranslator.toAttachedBinaries(persistedRepo.getAttachments())
-            .getByBinaryReference( BinaryReference.from( "image1.jpg" ) );
+        final AttachedBinary attachedBinary = persistedRepo.getAttachments().
+            getSet().
+            stream().
+            filter( ab -> ab.getBinaryReference().equals( BinaryReference.from( "image1.jpg" ) ) ).
+            findAny().orElseThrow();
 
         ByteSource persistedAttachment = binaryService.get( SystemConstants.SYSTEM_REPO_ID, attachedBinary );
 

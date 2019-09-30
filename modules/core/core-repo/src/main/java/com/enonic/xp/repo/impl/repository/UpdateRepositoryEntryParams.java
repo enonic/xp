@@ -1,16 +1,18 @@
 package com.enonic.xp.repo.impl.repository;
 
-import com.enonic.xp.repository.RepositoryBinaryAttachments;
-import com.enonic.xp.repository.RepositoryData;
+import com.google.common.collect.ImmutableList;
+
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.util.BinaryAttachment;
 
 public final class UpdateRepositoryEntryParams
 {
     private final RepositoryId repositoryId;
 
-    private final RepositoryData repositoryData;
+    private final PropertyTree repositoryData;
 
-    private final RepositoryBinaryAttachments attachments;
+    private final ImmutableList<BinaryAttachment> attachments;
 
     private UpdateRepositoryEntryParams( Builder builder )
     {
@@ -24,12 +26,12 @@ public final class UpdateRepositoryEntryParams
         return repositoryId;
     }
 
-    public RepositoryData getRepositoryData()
+    public PropertyTree getRepositoryData()
     {
         return repositoryData;
     }
 
-    public RepositoryBinaryAttachments getAttachments()
+    public ImmutableList<BinaryAttachment> getAttachments()
     {
         return attachments;
     }
@@ -43,9 +45,9 @@ public final class UpdateRepositoryEntryParams
     {
         private RepositoryId repositoryId;
 
-        private RepositoryData repositoryData;
+        private PropertyTree repositoryData;
 
-        private RepositoryBinaryAttachments attachments;
+        private ImmutableList<BinaryAttachment> attachments;
 
         public Builder repositoryId( RepositoryId repositoryId )
         {
@@ -53,13 +55,13 @@ public final class UpdateRepositoryEntryParams
             return this;
         }
 
-        public Builder repositoryData( RepositoryData repositoryData )
+        public Builder repositoryData( PropertyTree repositoryData )
         {
             this.repositoryData = repositoryData;
             return this;
         }
 
-        public Builder attachments( RepositoryBinaryAttachments attachments )
+        public Builder attachments( ImmutableList<BinaryAttachment> attachments )
         {
             this.attachments = attachments;
             return this;

@@ -1,6 +1,6 @@
 package com.enonic.xp.repository;
 
-import java.util.Optional;
+import java.util.function.Consumer;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
@@ -10,30 +10,22 @@ public final class UpdateRepositoryParams
 {
     private final RepositoryId repositoryId;
 
-    private final RepositoryData data;
-
-    private final RepositoryBinaryAttachments attachments;
+    private final Consumer<EditableRepository> editor;
 
     private UpdateRepositoryParams( final Builder builder )
     {
         this.repositoryId = builder.repositoryId;
-        this.data = Optional.ofNullable( builder.data ).orElse( RepositoryData.empty() );
-        this.attachments = Optional.ofNullable( builder.attachments ).orElse( RepositoryBinaryAttachments.empty() );
+        this.editor = builder.editor;
     }
 
-    public RepositoryData getData()
+    public Consumer<EditableRepository> getEditor()
     {
-        return data;
+        return editor;
     }
 
     public RepositoryId getRepositoryId()
     {
         return repositoryId;
-    }
-
-    public RepositoryBinaryAttachments getAttachments()
-    {
-        return attachments;
     }
 
     public static Builder create()
@@ -44,9 +36,8 @@ public final class UpdateRepositoryParams
     public static final class Builder
     {
         private RepositoryId repositoryId;
-        private RepositoryData data;
 
-        private RepositoryBinaryAttachments attachments;
+        private Consumer<EditableRepository> editor;
 
         private Builder()
         {
@@ -58,15 +49,9 @@ public final class UpdateRepositoryParams
             return this;
         }
 
-        public Builder data( final RepositoryData data )
+        public Builder editor( final Consumer<EditableRepository> editor )
         {
-            this.data = data;
-            return this;
-        }
-
-        public Builder attachments( final RepositoryBinaryAttachments attachments )
-        {
-            this.attachments = attachments;
+            this.editor = editor;
             return this;
         }
 
