@@ -1,5 +1,6 @@
 package com.enonic.xp.script.impl.executor;
 
+import com.enonic.xp.resource.ResourceError;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
@@ -53,7 +54,14 @@ final class ScriptExportsImpl
             return null;
         }
 
-        return method.call( args );
+        try
+        {
+            return method.call( args );
+        }
+        catch ( StackOverflowError e )
+        {
+            throw new ResourceError( script, "Method execute failed: [" + script + "][" + name + "]", e );
+        }
     }
 
     @Override
