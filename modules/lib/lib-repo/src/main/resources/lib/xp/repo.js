@@ -164,7 +164,7 @@ exports.deleteBranch = function (params) {
 /**
  * Updates a repository
  *
- * @example-ref examples/repo/update.js
+ * @example-ref examples/repo/modify.js
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.id Repository ID.
@@ -181,4 +181,23 @@ exports.modifyRepository = function (params) {
     bean.editor = __.toScriptValue(params.editor);
     bean.scope = bean.scope = __.nullOrValue(params.scope);
     return __.toNativeObject(bean.execute());
+};
+
+/**
+ * This function returns a data-stream for the specified repository attachment.
+ *
+ * @example-ref examples/repo/getBinary.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.repoId Repository ID.
+ * @param {string} params.binaryReference to the binary.
+ *
+ * @returns {*} Stream of the attachment data.
+ */
+exports.getBinary = function (params) {
+    checkRequiredParams(params, ['repoId', 'binaryReference']);
+    const bean = __.newBean('com.enonic.xp.lib.repo.GetRepositoryBinaryHandler');
+    bean.repositoryId = params.repoId;
+    bean.binaryReference = params.binaryReference;
+    return bean.execute();
 };

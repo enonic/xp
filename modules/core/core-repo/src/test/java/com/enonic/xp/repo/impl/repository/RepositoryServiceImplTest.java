@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl.repository;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -29,7 +31,6 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.util.AttachedBinary;
 import com.enonic.xp.util.BinaryAttachment;
 import com.enonic.xp.util.BinaryReference;
 
@@ -116,17 +117,14 @@ class RepositoryServiceImplTest
             } ).
             build() ) );
 
-        final Repository persistedRepo = getPersistedRepoWithoutCache( repoId );
+        ADMIN_CONTEXT.runWith( () -> {
+            repositoryService.invalidateAll();
+        } );
 
-        final AttachedBinary attachedBinary = persistedRepo.getAttachments().
-            getSet().
-            stream().
-            filter( ab -> ab.getBinaryReference().equals( BinaryReference.from( "image1.jpg" ) ) ).
-            findAny().orElseThrow();
+        Optional<ByteSource> persistedAttachment = mockCurrentContext.callWith(
+            () -> repositoryService.getAttachment( RepositoryId.from( repoId ), BinaryReference.from( "image1.jpg" ) ) );
 
-        ByteSource persistedAttachment = binaryService.get( SystemConstants.SYSTEM_REPO_ID, attachedBinary );
-
-        assertTrue( binarySource.contentEquals( persistedAttachment ) );
+        assertTrue( binarySource.contentEquals( persistedAttachment.orElseThrow() ) );
     }
 
     @Test

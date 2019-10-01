@@ -1,8 +1,12 @@
 package com.enonic.xp.repository;
 
+import java.util.Optional;
+
 import com.google.common.annotations.Beta;
+import com.google.common.io.ByteSource;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.util.BinaryReference;
 
 @Beta
 public interface RepositoryService
@@ -26,4 +30,6 @@ public interface RepositoryService
     void invalidateAll();
 
     void invalidate( final RepositoryId repositoryId );
+
+    Optional<ByteSource> getAttachment( final RepositoryId repositoryId, final BinaryReference binaryReference );
 }

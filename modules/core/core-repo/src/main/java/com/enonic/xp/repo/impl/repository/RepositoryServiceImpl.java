@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.repository;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentMap;
 
 import org.osgi.service.component.annotations.Activate;
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
+import com.google.common.io.ByteSource;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
@@ -46,6 +48,7 @@ import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.repository.UpdateRepositoryParams;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.util.BinaryReference;
 
 @Component(immediate = true)
 public class RepositoryServiceImpl
@@ -303,6 +306,21 @@ public class RepositoryServiceImpl
     public void invalidate( final RepositoryId repositoryId )
     {
         repositoryMap.remove( repositoryId );
+    }
+
+    @Override
+    public Optional<ByteSource> getAttachment( final RepositoryId repositoryId, final BinaryReference binaryReference )
+    {
+        requireAdminRole();
+
+        Repository repository = repositoryEntryService.getRepositoryEntry( repositoryId );
+        if ( repository == null )
+        {
+            throw new RepositoryNotFoundException( repositoryId );
+        }
+
+        return Optional.ofNullable( repository.getAttachments().getByBinaryReference( binaryReference ) ).
+            map( repositoryEntryService::getAttachment );
     }
 
     private void requireAdminRole()
