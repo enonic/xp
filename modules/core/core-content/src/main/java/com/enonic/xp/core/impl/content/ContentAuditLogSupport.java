@@ -17,6 +17,7 @@ import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
+import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentVersionId;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateMediaParams;
@@ -34,6 +35,7 @@ import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.name.NamePrettyfier;
 import com.enonic.xp.security.RoleKeys;
@@ -194,9 +196,11 @@ class ContentAuditLogSupport
         }
         if ( params.getContentPublishInfo() != null )
         {
-            data.addInstant( "contentPublishInfo.from", params.getContentPublishInfo().getFrom() );
-            data.addInstant( "contentPublishInfo.to", params.getContentPublishInfo().getTo() );
-            data.addInstant( "contentPublishInfo.first", params.getContentPublishInfo().getFirst() );
+            final ContentPublishInfo contentPublishInfo = params.getContentPublishInfo();
+            final PropertySet contentPublishInfoSet = data.addSet( "contentPublishInfo" );
+            contentPublishInfoSet.addInstant( "from", contentPublishInfo.getFrom() );
+            contentPublishInfoSet.addInstant( "to", contentPublishInfo.getTo() );
+            contentPublishInfoSet.addInstant( "first", contentPublishInfo.getFirst() );
         }
         data.addString( "target", params.getTarget().toString() );
         data.addString( "message", params.getMessage() );
