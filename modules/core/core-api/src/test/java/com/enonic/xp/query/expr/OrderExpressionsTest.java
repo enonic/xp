@@ -6,7 +6,9 @@ import com.google.common.collect.Lists;
 
 import com.enonic.xp.index.IndexPath;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class OrderExpressionsTest
 {

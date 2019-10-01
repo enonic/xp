@@ -24,7 +24,8 @@ import static com.enonic.xp.content.ContentPropertyNames.OWNER;
 import static com.enonic.xp.content.ContentPropertyNames.SITE;
 import static com.enonic.xp.content.ContentPropertyNames.SITECONFIG;
 import static com.enonic.xp.content.ContentPropertyNames.TYPE;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BaseConfigProcessorTest
 {

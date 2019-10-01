@@ -8,7 +8,7 @@ import com.google.common.collect.Lists;
 
 import com.enonic.xp.repo.impl.ReturnValue;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ReturnValueTest
 {

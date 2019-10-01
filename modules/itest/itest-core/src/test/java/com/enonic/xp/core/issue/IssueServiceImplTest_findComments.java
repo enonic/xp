@@ -12,7 +12,9 @@ import com.enonic.xp.issue.IssueCommentQuery;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.User;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class IssueServiceImplTest_findComments
     extends AbstractIssueServiceTest

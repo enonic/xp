@@ -7,7 +7,9 @@ import org.mockito.Mockito;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.resource.ResourceService;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DescriptorFacetFactoryImplTest
 {

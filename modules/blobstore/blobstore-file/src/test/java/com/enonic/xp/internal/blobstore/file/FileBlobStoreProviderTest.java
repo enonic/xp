@@ -9,7 +9,10 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.internal.blobstore.file.config.FileBlobStoreConfig;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class FileBlobStoreProviderTest
 {

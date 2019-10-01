@@ -11,10 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import com.enonic.xp.audit.AuditLogService;
-import com.enonic.xp.branch.Branches;
-import com.enonic.xp.repository.Repository;
-import com.enonic.xp.repository.RepositoryId;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.AdditionalAnswers;
 import org.mockito.Mockito;
@@ -27,7 +23,9 @@ import com.google.common.net.HttpHeaders;
 
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
+import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
@@ -81,6 +79,8 @@ import com.enonic.xp.repo.impl.search.NodeSearchServiceImpl;
 import com.enonic.xp.repo.impl.storage.IndexDataServiceImpl;
 import com.enonic.xp.repo.impl.storage.NodeStorageServiceImpl;
 import com.enonic.xp.repo.impl.version.VersionServiceImpl;
+import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -95,7 +95,9 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Reference;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AbstractContentServiceTest
     extends AbstractElasticsearchIntegrationTest

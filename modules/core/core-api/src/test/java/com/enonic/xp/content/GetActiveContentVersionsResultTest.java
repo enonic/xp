@@ -8,7 +8,7 @@ import com.google.common.collect.UnmodifiableIterator;
 
 import com.enonic.xp.branch.Branch;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GetActiveContentVersionsResultTest
 {

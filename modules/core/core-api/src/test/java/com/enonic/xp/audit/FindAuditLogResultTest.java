@@ -3,7 +3,8 @@ package com.enonic.xp.audit;
 import org.junit.jupiter.api.Test;
 
 import static com.enonic.xp.audit.AuditLogTestBuilder.getBuilder;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FindAuditLogResultTest
 {

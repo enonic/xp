@@ -12,7 +12,9 @@ import com.google.common.collect.Lists;
 
 import com.enonic.xp.web.dispatch.MappingBuilder;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ServletDefinitionImplTest
     extends ResourceDefinitionImplTest<Servlet, ServletDefinition>

@@ -10,7 +10,7 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.status.StatusReporter;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class StatusResourceTest
     extends ServerRestTestSupport

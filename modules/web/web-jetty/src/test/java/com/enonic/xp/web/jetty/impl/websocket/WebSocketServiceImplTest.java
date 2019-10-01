@@ -16,7 +16,7 @@ import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.jetty.impl.JettyController;
 import com.enonic.xp.web.jetty.impl.JettyTestSupport;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class WebSocketServiceImplTest
     extends JettyTestSupport

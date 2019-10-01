@@ -14,7 +14,7 @@ import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.BaseTestBu
 import com.enonic.xp.repo.impl.index.IndexStemmedController;
 import com.enonic.xp.repo.impl.index.StemmedIndexValueType;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StemmedFunctionTest
     extends BaseTestBuilderFactory

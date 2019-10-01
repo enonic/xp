@@ -13,7 +13,9 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.launcher.impl.env.Environment;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConfigLoaderTest
 {

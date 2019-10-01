@@ -12,7 +12,7 @@ import com.enonic.xp.portal.url.AttachmentUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PortalUrlServiceImpl_attachmentUrlTest
     extends AbstractPortalUrlServiceImplTest

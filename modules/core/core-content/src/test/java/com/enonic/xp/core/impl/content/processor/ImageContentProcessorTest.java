@@ -43,7 +43,11 @@ import com.enonic.xp.util.GeoPoint;
 
 import static com.enonic.xp.media.MediaInfo.GPS_INFO_GEO_POINT;
 import static com.enonic.xp.media.MediaInfo.GPS_INFO_METADATA_NAME;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ImageContentProcessorTest
 {

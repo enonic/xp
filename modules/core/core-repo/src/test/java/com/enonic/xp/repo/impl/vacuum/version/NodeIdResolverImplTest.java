@@ -10,7 +10,9 @@ import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.internal.blobstore.MemoryBlobRecord;
 import com.enonic.xp.node.NodeId;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class NodeIdResolverImplTest
 {

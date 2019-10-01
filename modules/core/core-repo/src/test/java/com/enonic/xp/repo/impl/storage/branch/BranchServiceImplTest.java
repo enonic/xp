@@ -27,7 +27,7 @@ import com.enonic.xp.repo.impl.storage.StoreRequest;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class BranchServiceImplTest
 {

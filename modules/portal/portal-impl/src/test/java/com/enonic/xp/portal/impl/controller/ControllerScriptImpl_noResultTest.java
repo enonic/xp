@@ -5,7 +5,8 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ControllerScriptImpl_noResultTest
     extends AbstractControllerTest

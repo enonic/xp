@@ -21,7 +21,7 @@ import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 
 import static com.enonic.xp.content.ContentPropertyNames.SITECONFIG;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SiteConfigProcessorTest
 {

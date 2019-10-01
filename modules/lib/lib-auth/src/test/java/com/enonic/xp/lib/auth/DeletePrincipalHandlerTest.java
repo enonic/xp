@@ -9,7 +9,7 @@ import com.enonic.xp.security.PrincipalNotFoundException;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DeletePrincipalHandlerTest
     extends ScriptTestSupport

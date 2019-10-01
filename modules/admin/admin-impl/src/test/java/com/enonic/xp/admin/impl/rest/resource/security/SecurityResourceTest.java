@@ -58,7 +58,9 @@ import com.enonic.xp.web.HttpStatus;
 import static com.enonic.xp.security.PrincipalRelationship.from;
 import static com.enonic.xp.security.acl.IdProviderAccess.ADMINISTRATOR;
 import static com.enonic.xp.security.acl.IdProviderAccess.READ;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SecurityResourceTest
     extends AdminResourceTestSupport

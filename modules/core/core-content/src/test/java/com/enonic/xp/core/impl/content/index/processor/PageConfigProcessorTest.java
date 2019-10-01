@@ -22,7 +22,8 @@ import static com.enonic.xp.core.impl.content.index.processor.PageConfigProcesso
 import static com.enonic.xp.core.impl.content.index.processor.PageConfigProcessor.COMPONENTS;
 import static com.enonic.xp.core.impl.content.index.processor.PageConfigProcessor.CONFIG;
 import static com.enonic.xp.core.impl.content.index.processor.PageConfigProcessor.DESCRIPTOR;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PageConfigProcessorTest
 {

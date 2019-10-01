@@ -8,7 +8,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionDeleteException;
 import com.enonic.xp.node.UpdateNodeParams;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DeleteVersionCommandTest
     extends AbstractNodeTest

@@ -13,7 +13,8 @@ import org.mockito.Mockito;
 import com.enonic.xp.mail.MailException;
 import com.enonic.xp.mail.MailMessage;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MailServiceImplTest
 {

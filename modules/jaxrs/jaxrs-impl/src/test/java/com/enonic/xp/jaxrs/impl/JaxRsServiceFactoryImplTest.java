@@ -8,7 +8,7 @@ import org.osgi.framework.BundleContext;
 import com.enonic.xp.jaxrs.JaxRsService;
 import com.enonic.xp.web.multipart.MultipartService;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JaxRsServiceFactoryImplTest
 {

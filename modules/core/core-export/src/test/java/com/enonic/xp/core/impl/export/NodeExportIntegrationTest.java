@@ -25,7 +25,8 @@ import static com.enonic.xp.core.impl.export.writer.NodeExportPathResolver.BINAR
 import static com.enonic.xp.core.impl.export.writer.NodeExportPathResolver.NODE_XML_EXPORT_NAME;
 import static com.enonic.xp.core.impl.export.writer.NodeExportPathResolver.SYSTEM_FOLDER_NAME;
 import static com.enonic.xp.core.impl.export.writer.NodeExportPathResolver.VERSION_FOLDER;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NodeExportIntegrationTest
     extends AbstractNodeTest

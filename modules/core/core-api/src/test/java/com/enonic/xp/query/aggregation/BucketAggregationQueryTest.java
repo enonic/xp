@@ -10,7 +10,7 @@ import com.enonic.xp.query.aggregation.metric.StatsAggregationQuery;
 import com.enonic.xp.query.aggregation.metric.ValueCountAggregationQuery;
 import com.enonic.xp.util.GeoPoint;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BucketAggregationQueryTest
 {

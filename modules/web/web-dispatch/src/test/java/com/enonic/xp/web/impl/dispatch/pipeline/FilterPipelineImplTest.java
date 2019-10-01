@@ -19,7 +19,7 @@ import com.google.common.collect.Maps;
 import com.enonic.xp.web.dispatch.FilterMapping;
 import com.enonic.xp.web.impl.dispatch.mapping.FilterDefinition;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FilterPipelineImplTest
     extends ResourcePipelineImplTest<FilterDefinition, FilterPipelineImpl>

@@ -15,7 +15,7 @@ import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.VersionMeta;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BranchDumpEntryJsonDumpSerializerTest
 {

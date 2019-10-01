@@ -11,7 +11,9 @@ import com.google.common.net.MediaType;
 
 import com.enonic.xp.media.MediaTypeProvider;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class MediaTypesTest
 {

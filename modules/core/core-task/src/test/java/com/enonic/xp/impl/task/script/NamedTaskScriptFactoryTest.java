@@ -25,7 +25,8 @@ import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskDescriptor;
 import com.enonic.xp.task.TaskId;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class NamedTaskScriptFactoryTest
 {

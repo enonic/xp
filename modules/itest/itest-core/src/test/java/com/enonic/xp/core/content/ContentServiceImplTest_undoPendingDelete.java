@@ -14,7 +14,7 @@ import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.SetNodeStateParams;
 import com.enonic.xp.schema.content.ContentTypeName;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ContentServiceImplTest_undoPendingDelete
     extends AbstractContentServiceTest

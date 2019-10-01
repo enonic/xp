@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 
 import com.enonic.xp.json.ObjectMapperHelper;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JsonTestHelper
 {
