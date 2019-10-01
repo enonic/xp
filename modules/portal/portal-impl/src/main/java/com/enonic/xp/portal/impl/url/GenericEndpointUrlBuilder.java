@@ -1,8 +1,8 @@
 package com.enonic.xp.portal.impl.url;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Arrays;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.content.ContentPath;
@@ -13,6 +13,8 @@ import com.enonic.xp.web.servlet.UriRewritingResult;
 abstract class GenericEndpointUrlBuilder<T extends AbstractUrlParams>
     extends PortalUrlBuilder<T>
 {
+    private static final String ELEMENT_DIVIDER = "/";
+
     protected final String endpointType;
 
     public GenericEndpointUrlBuilder( final String endpointType )
@@ -50,43 +52,38 @@ abstract class GenericEndpointUrlBuilder<T extends AbstractUrlParams>
             uriToProcess = uriToProcess.substring( uriRewritingResult.getNewUriPrefix().length() );
         }
 
-        //Builds the regexp that will catch the content path
-        final String regexp = buildContentPathRegExp();
+        //Gets the part of the URI before the endpoint
+        final int indexOfEndpoint = uriToProcess.indexOf( "/_/" + endpointType );
+        if ( indexOfEndpoint < 1 )
+        {
+            return uriRewritingResult.getRewrittenUri();
+        }
+        final String preEndpointPath = uriToProcess.substring( 0, indexOfEndpoint );
 
-        //Creates a matcher for this regexp and this uri
-        final Pattern pattern = Pattern.compile( regexp );
-        final Matcher matcher = pattern.matcher( uriToProcess );
+        //Appends the part of the URI before the endpoint minus the matching content path
+        result.append( removeContentPath( preEndpointPath ) );
 
-        //Removes the content path and return the uri
-        result.append( matcher.replaceFirst( "_/" + endpointType ) );
+        //Appends the endpoint part
+        result.append( result.length() == 1 ? uriToProcess.substring( indexOfEndpoint + 1 ) : uriToProcess.substring( indexOfEndpoint ) );
         return result.toString();
     }
 
-    private String buildContentPathRegExp()
+    private String removeContentPath( final String path )
     {
-        //Example of uri: /portal/draft/context/path/_/asset/myapplication/css/my.css
-        //Corresponding regexp: (?:(?:context/)?path/)?_/asset
-
-        final StringBuilder regexp = new StringBuilder();
-
-        //For each element of the content path, opens a non recorded group
+        final String[] splitPreEndpointPath = path.split( "/" );
+        int preEndpointPathIndex = splitPreEndpointPath.length - 1;
         final ContentPath contentPath = this.portalRequest.getContentPath();
-        for ( int i = 0; i < contentPath.elementCount(); i++ )
+        int contentPathIndex = contentPath.elementCount() - 1;
+        while ( preEndpointPathIndex >= 0 && contentPathIndex >= 0 &&
+            contentPath.getElement( contentPathIndex ).equals( splitPreEndpointPath[preEndpointPathIndex] ) )
         {
-            regexp.append( "(?:" );
+            preEndpointPathIndex--;
+            contentPathIndex--;
         }
 
-        //For each element of the content path, closes the corresponding optional group and encapsulates the previous groups
-        for ( int i = 0; i < contentPath.elementCount(); i++ )
-        {
-            final String elementPath = Pattern.quote( contentPath.getElement( i ) );
-            regexp.append( elementPath ).
-                append( "/)?" );
-        }
-
-        //The content path is located before "/_/asset" in the case of an asset
-        regexp.append( "_/" + endpointType );
-
-        return regexp.toString();
+        final String[] preEndpointPathWithoutContentPath = Arrays.copyOfRange( splitPreEndpointPath, 0, preEndpointPathIndex + 1 );
+        return Joiner.on( ELEMENT_DIVIDER ).join( preEndpointPathWithoutContentPath );
     }
+
+
 }
