@@ -81,7 +81,9 @@ abstract class GenericEndpointUrlBuilder<T extends AbstractUrlParams>
             contentPathIndex--;
         }
 
-        final String[] aaa = Arrays.copyOfRange( splitPreEndpointPath, 0, preEndpointPathIndex + 1 );
-        return Joiner.on( ELEMENT_DIVIDER ).join( aaa );
+        final String[] preEndpointPathWithoutContentPath = Arrays.copyOfRange( splitPreEndpointPath, 0, preEndpointPathIndex + 1 );
+        return Joiner.on( ELEMENT_DIVIDER ).join( preEndpointPathWithoutContentPath );
     }
+
+
 }
