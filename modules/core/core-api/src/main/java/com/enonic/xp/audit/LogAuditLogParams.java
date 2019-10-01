@@ -28,9 +28,9 @@ public class LogAuditLogParams
     private LogAuditLogParams( final Builder builder )
     {
         type = Objects.requireNonNull( builder.type, "AuditLogParams type cannot be null" );
-        time = Objects.requireNonNullElseGet( builder.time, () -> Instant.now() );
+        time = Objects.requireNonNullElseGet( builder.time, Instant::now );
         source = Objects.requireNonNullElse( builder.source, "" );
-        user = Objects.requireNonNullElseGet( builder.user, () -> getUserKey() );
+        user = Objects.requireNonNullElseGet( builder.user, this::getUserKey );
         message = Objects.requireNonNullElse( builder.message, "" );
         objectUris = Objects.requireNonNullElse( builder.objectUris, AuditLogUris.empty() );
         data = Objects.requireNonNullElse( builder.data, new PropertyTree() );

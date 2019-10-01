@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 
+import com.enonic.xp.core.impl.audit.config.AuditLogConfig;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.RepositoryId;
@@ -40,10 +41,11 @@ public class AuditLogRepoInitializerTest
     public void do_initialize()
     {
         AuditLogConfig config = Mockito.mock( AuditLogConfig.class );
-        Mockito.when( config.enabled() ).thenReturn( true );
-        Mockito.when( config.outputLogs() ).thenReturn( true );
+        Mockito.when( config.isEnabled() ).thenReturn( true );
+        Mockito.when( config.isOutputLogs() ).thenReturn( true );
 
-        auditLogService.initialize( config );
+        auditLogService.setConfig( config );
+        auditLogService.initialize();
         assertNotNull( auditLogService.getConfig() );
     }
 

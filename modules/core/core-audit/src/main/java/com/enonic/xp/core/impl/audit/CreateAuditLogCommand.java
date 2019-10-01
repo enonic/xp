@@ -25,8 +25,10 @@ public class CreateAuditLogCommand
     @Override
     public AuditLog execute()
     {
-        Node createdNode = createNode();
-        return AuditLogSerializer.fromNode( createdNode );
+        return AuditLogContext.createContext().callWith( () -> {
+            Node createdNode = createNode();
+            return AuditLogSerializer.fromNode( createdNode );
+        } );
     }
 
     private Node createNode()

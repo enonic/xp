@@ -6,6 +6,7 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.audit.AuditLog;
 import com.enonic.xp.audit.LogAuditLogParams;
+import com.enonic.xp.core.impl.audit.config.AuditLogConfig;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.repository.RepositoryService;
 
@@ -20,8 +21,8 @@ public class AuditLogServiceImplDisabledTest
         throws Exception
     {
         AuditLogConfig config = Mockito.mock( AuditLogConfig.class );
-        Mockito.when( config.enabled() ).thenReturn( false );
-        Mockito.when( config.outputLogs() ).thenReturn( true );
+        Mockito.when( config.isEnabled() ).thenReturn( false );
+        Mockito.when( config.isOutputLogs() ).thenReturn( true );
         IndexService indexService = Mockito.mock( IndexService.class );
         Mockito.when( indexService.isMaster() ).thenReturn( true );
         RepositoryService repositoryService = Mockito.mock( RepositoryService.class );
@@ -29,7 +30,8 @@ public class AuditLogServiceImplDisabledTest
         auditLogService = new AuditLogServiceImpl();
         auditLogService.setIndexService( indexService );
         auditLogService.setRepositoryService( repositoryService );
-        auditLogService.initialize( config );
+        auditLogService.setConfig( config );
+        auditLogService.initialize();
     }
 
     @Test

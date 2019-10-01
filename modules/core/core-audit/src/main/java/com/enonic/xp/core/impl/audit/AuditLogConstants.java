@@ -12,6 +12,7 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
 
 public class AuditLogConstants
 {
@@ -30,6 +31,10 @@ public class AuditLogConstants
         add( AccessControlEntry.create().
             allowAll().
             principal( RoleKeys.ADMIN ).
+            build() ).
+        add( AccessControlEntry.create().
+            allowAll().
+            principal( RoleKeys.AUDIT_LOG ).
             build() ).
         build();
 
