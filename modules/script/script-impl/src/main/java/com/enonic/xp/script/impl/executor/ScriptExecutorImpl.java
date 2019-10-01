@@ -17,6 +17,7 @@ import jdk.nashorn.api.scripting.ScriptObjectMirror;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.resource.Resource;
+import com.enonic.xp.resource.ResourceError;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.script.ScriptExports;
@@ -222,6 +223,10 @@ public final class ScriptExecutorImpl
         {
             throw ErrorHelper.handleError( e );
         }
+        catch ( final StackOverflowError e )
+        {
+            throw new ResourceError( key, "Script require failed: [" + key + "]", e );
+        }
     }
 
     @Override
@@ -241,6 +246,10 @@ public final class ScriptExecutorImpl
         catch ( final Exception e )
         {
             throw ErrorHelper.handleError( e );
+        }
+        catch ( final StackOverflowError e )
+        {
+            throw new ResourceError( script.getKey(), "Script execute failed: [" + script.getKey() + "]", e );
         }
     }
 
