@@ -2,7 +2,6 @@ package com.enonic.xp.portal.impl.view;
 
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 import com.enonic.xp.portal.url.PortalUrlService;
 

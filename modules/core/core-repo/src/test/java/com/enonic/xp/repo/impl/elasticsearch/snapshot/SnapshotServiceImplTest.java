@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl.elasticsearch.snapshot;
 
+import java.util.stream.Collectors;
+
 import org.elasticsearch.cluster.metadata.RepositoryMetaData;
 import org.elasticsearch.snapshots.SnapshotInfo;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,9 +25,10 @@ import com.enonic.xp.repository.DeleteRepositoryParams;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.SystemConstants;
 
-import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SnapshotServiceImplTest
     extends AbstractNodeTest

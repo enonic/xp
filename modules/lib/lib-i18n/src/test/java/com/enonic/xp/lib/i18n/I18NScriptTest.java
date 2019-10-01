@@ -9,7 +9,6 @@ import java.util.Set;
 import org.junit.Ignore;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 import com.google.common.collect.Maps;
 

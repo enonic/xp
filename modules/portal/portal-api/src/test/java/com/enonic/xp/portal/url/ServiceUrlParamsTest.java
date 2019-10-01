@@ -5,7 +5,8 @@ import org.junit.jupiter.api.Test;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ServiceUrlParamsTest
     extends AbstractUrlParamsTest

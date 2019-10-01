@@ -3,9 +3,9 @@ package com.enonic.xp.core.audit;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 
-import com.enonic.xp.core.impl.audit.config.AuditLogConfig;
 import com.enonic.xp.core.impl.audit.AuditLogRepoInitializer;
 import com.enonic.xp.core.impl.audit.AuditLogServiceImpl;
+import com.enonic.xp.core.impl.audit.config.AuditLogConfig;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.repo.impl.binary.BinaryServiceImpl;

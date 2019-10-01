@@ -8,7 +8,9 @@ import com.enonic.xp.core.impl.app.ApplicationTestSupport;
 import com.enonic.xp.style.StyleDescriptor;
 import com.enonic.xp.style.StyleDescriptors;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class StyleDescriptorServiceImplTest
     extends ApplicationTestSupport

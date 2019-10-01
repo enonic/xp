@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.core.impl.image.ImageFilter;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RectBorderFilterTest
     extends BaseImageFilterTest

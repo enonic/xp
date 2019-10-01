@@ -14,7 +14,10 @@ import com.enonic.xp.web.vhost.impl.config.VirtualHostConfig;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMappings;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class VirtualHostFilterTest
 {

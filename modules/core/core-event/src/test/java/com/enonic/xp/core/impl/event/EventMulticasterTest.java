@@ -7,7 +7,8 @@ import org.mockito.Mockito;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;

@@ -23,7 +23,9 @@ import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.util.Reference;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HtmlAreaNodeDataUpgraderTest
 {

@@ -3,15 +3,9 @@ package com.enonic.xp.core.impl.content;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.ContentPaths;
-import com.enonic.xp.content.Contents;
-import com.enonic.xp.content.FindContentByQueryParams;
-import com.enonic.xp.content.FindContentByQueryResult;
 import com.enonic.xp.content.FindContentPathsByQueryParams;
 import com.enonic.xp.node.FindNodePathsByQueryResult;
-import com.enonic.xp.node.FindNodesByQueryResult;
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeQuery;
-import com.enonic.xp.node.Nodes;
 
 final class FindContentPathsByQueryCommand
     extends AbstractContentCommand

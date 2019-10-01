@@ -21,7 +21,9 @@ import com.enonic.xp.node.NodeStorageException;
 import com.enonic.xp.repo.impl.branch.storage.BranchDocumentId;
 import com.enonic.xp.repo.impl.elasticsearch.ClientProxy;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DeleteNodeByIdCommandTest_error_handling
     extends AbstractNodeTest

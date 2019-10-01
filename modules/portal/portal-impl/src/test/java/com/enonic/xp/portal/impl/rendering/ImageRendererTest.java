@@ -14,7 +14,7 @@ import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.impl.url.AbstractPortalUrlServiceImplTest;
 import com.enonic.xp.region.ImageComponent;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ImageRendererTest
     extends AbstractPortalUrlServiceImplTest

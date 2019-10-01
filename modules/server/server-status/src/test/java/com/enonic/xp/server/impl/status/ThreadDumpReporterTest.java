@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import com.google.common.net.MediaType;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ThreadDumpReporterTest
     extends BaseReporterTest<ThreadDumpReporter>

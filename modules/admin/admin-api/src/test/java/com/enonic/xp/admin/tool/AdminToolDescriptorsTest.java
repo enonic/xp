@@ -7,7 +7,8 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.security.PrincipalKey;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AdminToolDescriptorsTest
 {

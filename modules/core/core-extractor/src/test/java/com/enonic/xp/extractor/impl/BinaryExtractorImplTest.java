@@ -14,7 +14,9 @@ import com.google.common.net.HttpHeaders;
 
 import com.enonic.xp.extractor.ExtractedData;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BinaryExtractorImplTest
 {

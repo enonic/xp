@@ -9,7 +9,8 @@ import org.osgi.framework.BundleContext;
 
 import com.google.common.collect.Maps;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ConfigInterpolatorTest
 {

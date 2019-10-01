@@ -7,7 +7,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class XmlMixinParserTest
     extends XmlModelParserTest

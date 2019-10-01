@@ -13,7 +13,7 @@ import com.enonic.xp.dump.RepoDumpResult;
 import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.repository.RepositoryId;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SystemRepoDumpResultJsonTest
 {

@@ -17,7 +17,10 @@ import com.enonic.xp.blob.Segment;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.util.ByteSizeParser;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ReadThroughBlobStoreTest
 {

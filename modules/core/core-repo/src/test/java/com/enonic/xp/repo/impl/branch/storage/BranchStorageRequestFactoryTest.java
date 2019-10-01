@@ -13,7 +13,7 @@ import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.storage.StoreRequest;
 import com.enonic.xp.repository.RepositoryId;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BranchStorageRequestFactoryTest
 {

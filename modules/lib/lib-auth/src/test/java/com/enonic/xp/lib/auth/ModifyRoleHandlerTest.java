@@ -14,7 +14,7 @@ import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.UpdateRoleParams;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ModifyRoleHandlerTest
     extends ScriptTestSupport

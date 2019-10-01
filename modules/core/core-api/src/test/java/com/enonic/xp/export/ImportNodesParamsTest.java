@@ -8,7 +8,8 @@ import org.mockito.Mockito;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.vfs.VirtualFile;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ImportNodesParamsTest
 {

@@ -6,7 +6,8 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.core.impl.image.ImageFilter;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class RoundedFilterTest
     extends BaseImageFilterTest

@@ -28,7 +28,8 @@ import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.handler.WebHandlerChain;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class FilterScriptImplTest
 {

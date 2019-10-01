@@ -13,7 +13,7 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.web.HttpMethod;
 
 import static java.util.stream.Collectors.joining;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PostProcessorImplTest
 {

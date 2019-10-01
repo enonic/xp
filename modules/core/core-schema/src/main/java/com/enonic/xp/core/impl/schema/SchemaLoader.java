@@ -1,5 +1,10 @@
 package com.enonic.xp.core.impl.schema;
 
+import java.util.Set;
+
+import com.google.common.collect.Sets;
+import com.google.common.io.Files;
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.resource.Resource;
@@ -8,10 +13,6 @@ import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.BaseSchemaName;
-import com.google.common.collect.Sets;
-import com.google.common.io.Files;
-
-import java.util.Set;
 
 public abstract class SchemaLoader<N extends BaseSchemaName, V extends BaseSchema>
 {

@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import com.google.common.io.CharSource;
 import com.google.common.io.CharStreams;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ByteOrderMarkHelperTest
 {

@@ -14,7 +14,8 @@ import com.enonic.xp.issue.IssueComment;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.security.User;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class IssueServiceImplTest_deleteComment
     extends AbstractIssueServiceTest

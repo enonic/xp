@@ -14,7 +14,7 @@ import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.NodeVersionsMetadata;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FindVersionsHandlerTest
     extends BaseNodeHandlerTest

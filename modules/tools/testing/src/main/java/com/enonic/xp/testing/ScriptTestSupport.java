@@ -42,7 +42,8 @@ import com.enonic.xp.testing.mock.MockServiceRegistry;
 import com.enonic.xp.testing.mock.MockViewFunctionService;
 import com.enonic.xp.testing.resource.ClassLoaderResourceService;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public abstract class ScriptTestSupport
 {

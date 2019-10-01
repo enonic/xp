@@ -9,7 +9,7 @@ import com.google.common.io.Resources;
 
 import com.enonic.xp.resource.ResourceService;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ErrorPageBuilderTest
 {

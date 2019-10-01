@@ -12,7 +12,9 @@ import com.google.common.collect.Lists;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.web.dispatch.ServletMapping;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class JaxRsServiceImplTest
 {

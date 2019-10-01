@@ -1,7 +1,6 @@
 package com.enonic.xp.core.issue;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.ContentId;
@@ -13,7 +12,9 @@ import com.enonic.xp.issue.IssueQuery;
 import com.enonic.xp.issue.PublishRequest;
 import com.enonic.xp.issue.PublishRequestItem;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class IssueServiceImplTest_findIssues
     extends AbstractIssueServiceTest

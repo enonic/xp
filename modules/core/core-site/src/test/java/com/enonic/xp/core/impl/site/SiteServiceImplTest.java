@@ -8,7 +8,7 @@ import com.enonic.xp.core.impl.app.ApplicationTestSupport;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.site.SiteDescriptor;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SiteServiceImplTest
     extends ApplicationTestSupport

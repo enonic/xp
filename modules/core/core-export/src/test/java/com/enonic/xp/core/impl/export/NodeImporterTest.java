@@ -27,7 +27,10 @@ import com.enonic.xp.node.NodeService;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.vfs.VirtualFiles;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class NodeImporterTest
 {

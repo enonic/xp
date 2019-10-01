@@ -30,7 +30,8 @@ import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.region.TextComponent;
 
 import static com.enonic.xp.core.impl.content.serializer.ComponentDataSerializer.COMPONENTS;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PageDataSerializerTest
     extends AbstractDataSerializerTest

@@ -5,7 +5,7 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.index.IndexService;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ExternalInitializerTest
 {

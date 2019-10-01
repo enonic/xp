@@ -2,8 +2,6 @@ package com.enonic.xp.node;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.security.Principals;
-
 @Beta
 public class NodeQuery
     extends AbstractQuery
