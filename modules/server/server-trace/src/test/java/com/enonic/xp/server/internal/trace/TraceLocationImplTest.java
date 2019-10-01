@@ -16,7 +16,7 @@ public class TraceLocationImplTest
         assertNotNull( location );
         assertEquals( getClass().getName(), location.getClassName() );
         assertEquals( "testLocation", location.getMethod() );
-        assertEquals( 14, location.getLineNumber() );
-        assertEquals( getClass().getName() + ".testLocation:14", location.toString() );
+        assertEquals( 15, location.getLineNumber() );
+        assertEquals( getClass().getName() + ".testLocation:15", location.toString() );
     }
 }
