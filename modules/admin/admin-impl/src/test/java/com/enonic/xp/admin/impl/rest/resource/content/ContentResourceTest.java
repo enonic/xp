@@ -192,7 +192,10 @@ import static com.enonic.xp.security.acl.Permission.DELETE;
 import static com.enonic.xp.security.acl.Permission.MODIFY;
 import static com.enonic.xp.security.acl.Permission.READ;
 import static java.util.Arrays.asList;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
@@ -827,7 +830,7 @@ public class ContentResourceTest
             post();
 
         Mockito.verify( taskService ).submitTask( captor.capture(), Mockito.anyString() );
-        PublishContentJson params = (PublishContentJson) captor.getValue().getParams();
+        PublishContentJson params = captor.getValue().getParams();
 
         assertEquals( 200, res.getStatus() );
         assertEquals( params.getMessage(), "my message" );

@@ -60,12 +60,7 @@ public abstract class Name
 
         final Name name = (Name) o;
 
-        if ( value != null ? !value.equals( name.value ) : name.value != null )
-        {
-            return false;
-        }
-
-        return true;
+        return value != null ? value.equals( name.value ) : name.value == null;
     }
 
     @Override

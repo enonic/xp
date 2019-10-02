@@ -6,7 +6,8 @@ import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.page.DescriptorKey;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class NopDescriptorFacetTest
 {

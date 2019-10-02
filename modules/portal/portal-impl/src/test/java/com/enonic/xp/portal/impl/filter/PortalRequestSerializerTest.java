@@ -24,7 +24,9 @@ import com.enonic.xp.script.impl.value.ScriptValueFactoryImpl;
 import com.enonic.xp.web.HttpMethod;
 
 import static com.google.common.collect.ImmutableMap.of;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PortalRequestSerializerTest
 {

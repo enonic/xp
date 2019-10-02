@@ -9,7 +9,7 @@ import com.google.common.collect.ImmutableMultimap;
 
 import com.enonic.xp.macro.Macro;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HtmlMacroEvaluatorTest
 {

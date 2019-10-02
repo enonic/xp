@@ -17,7 +17,7 @@ import com.enonic.xp.branch.Branches;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileDumpReaderTest
 {

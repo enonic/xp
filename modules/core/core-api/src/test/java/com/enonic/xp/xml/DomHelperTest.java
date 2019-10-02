@@ -12,7 +12,9 @@ import org.w3c.dom.Element;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class DomHelperTest
 {

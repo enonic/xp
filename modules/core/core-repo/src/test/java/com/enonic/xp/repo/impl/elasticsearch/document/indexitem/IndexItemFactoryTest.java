@@ -14,7 +14,8 @@ import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.repo.impl.index.IndexValueType;
 import com.enonic.xp.util.GeoPoint;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class IndexItemFactoryTest
 {

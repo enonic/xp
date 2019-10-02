@@ -9,11 +9,11 @@ log.info('Field value for the current ID provider config = %s', result.Field);
 // BEGIN
 // ID Provider config returned.
 var expected = {
-    "set": {
-        "subString": "subStringValue",
-        "subLong": 123
+    'set': {
+        'subString': 'subStringValue',
+        'subLong': 123
     },
-    "string": "stringValue"
+    'string': 'stringValue'
 };
 // END
 

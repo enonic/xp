@@ -10,7 +10,8 @@ import com.enonic.xp.repo.impl.index.IndexFieldNameNormalizer;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GetResultCanReadResolverTest
 {

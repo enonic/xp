@@ -47,11 +47,7 @@ public final class XDataServiceImpl
         }
 
         final XData xData = new XDataLoader( this.resourceService ).get( name );
-        if ( xData != null )
-        {
-            return xData;
-        }
-        return null;
+        return xData;
     }
 
     @Override

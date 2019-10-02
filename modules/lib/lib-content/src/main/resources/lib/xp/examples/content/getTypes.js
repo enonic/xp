@@ -15,172 +15,172 @@ contentTypes.forEach(function (ct) {
 
 var expected = [
     {
-        "name": "com.enonic.myapp:article",
-        "displayName": "Article",
-        "description": "Article content type",
-        "superType": "base:structured",
-        "abstract": false,
-        "final": true,
-        "allowChildContent": true,
-        "displayNameExpression": "${title} ${author}",
-        "icon": {
-            "mimeType": "image/png",
-            "modifiedTime": "2016-01-01T12:00:00Z"
+        'name': 'com.enonic.myapp:article',
+        'displayName': 'Article',
+        'description': 'Article content type',
+        'superType': 'base:structured',
+        'abstract': false,
+        'final': true,
+        'allowChildContent': true,
+        'displayNameExpression': '${title} ${author}',
+        'icon': {
+            'mimeType': 'image/png',
+            'modifiedTime': '2016-01-01T12:00:00Z'
         },
-        "form": [
+        'form': [
             {
-                "formItemType": "Input",
-                "name": "myTextLine",
-                "label": "My text line",
-                "customText": "Some custom text",
-                "helpText": "Some help text",
-                "maximize": true,
-                "inputType": "TextLine",
-                "occurrences": {
-                    "maximum": 1,
-                    "minimum": 1
+                'formItemType': 'Input',
+                'name': 'myTextLine',
+                'label': 'My text line',
+                'customText': 'Some custom text',
+                'helpText': 'Some help text',
+                'maximize': true,
+                'inputType': 'TextLine',
+                'occurrences': {
+                    'maximum': 1,
+                    'minimum': 1
                 },
-                "config": {
-                    "regexp": [
+                'config': {
+                    'regexp': [
                         {
-                            "value": "\\b\\d{3}-\\d{2}-\\d{4}\\b"
+                            'value': '\\b\\d{3}-\\d{2}-\\d{4}\\b'
                         }
                     ]
                 }
             },
             {
-                "formItemType": "Input",
-                "name": "myCheckbox",
-                "label": "My checkbox input",
-                "maximize": true,
-                "inputType": "CheckBox",
-                "occurrences": {
-                    "maximum": 1,
-                    "minimum": 0
+                'formItemType': 'Input',
+                'name': 'myCheckbox',
+                'label': 'My checkbox input',
+                'maximize': true,
+                'inputType': 'CheckBox',
+                'occurrences': {
+                    'maximum': 1,
+                    'minimum': 0
                 },
-                "default": {
-                    "value": true,
-                    "type": "Boolean"
+                'default': {
+                    'value': true,
+                    'type': 'Boolean'
                 },
-                "config": {}
+                'config': {}
             },
             {
-                "formItemType": "Input",
-                "name": "myRadioButton",
-                "label": "Radio button",
-                "maximize": true,
-                "inputType": "RadioButton",
-                "occurrences": {
-                    "maximum": 1,
-                    "minimum": 0
+                'formItemType': 'Input',
+                'name': 'myRadioButton',
+                'label': 'Radio button',
+                'maximize': true,
+                'inputType': 'RadioButton',
+                'occurrences': {
+                    'maximum': 1,
+                    'minimum': 0
                 },
-                "config": {
-                    "option": [
+                'config': {
+                    'option': [
                         {
-                            "value": "Option One",
-                            "@value": "one"
+                            'value': 'Option One',
+                            '@value': 'one'
                         },
                         {
-                            "value": "Option Two",
-                            "@value": "two"
+                            'value': 'Option Two',
+                            '@value': 'two'
                         }
                     ]
                 }
             },
             {
-                "formItemType": "Layout",
-                "name": "myFieldSet",
-                "label": "My field set",
-                "items": [
+                'formItemType': 'Layout',
+                'name': 'myFieldSet',
+                'label': 'My field set',
+                'items': [
                     {
-                        "formItemType": "Input",
-                        "name": "myTextLineInFieldSet",
-                        "label": "My text line",
-                        "maximize": true,
-                        "inputType": "TextLine",
-                        "occurrences": {
-                            "maximum": 1,
-                            "minimum": 0
+                        'formItemType': 'Input',
+                        'name': 'myTextLineInFieldSet',
+                        'label': 'My text line',
+                        'maximize': true,
+                        'inputType': 'TextLine',
+                        'occurrences': {
+                            'maximum': 1,
+                            'minimum': 0
                         },
-                        "config": {}
+                        'config': {}
                     }
                 ]
             },
             {
-                "formItemType": "ItemSet",
-                "name": "myFormItemSet",
-                "label": "My form item set",
-                "occurrences": {
-                    "maximum": 1,
-                    "minimum": 0
+                'formItemType': 'ItemSet',
+                'name': 'myFormItemSet',
+                'label': 'My form item set',
+                'occurrences': {
+                    'maximum': 1,
+                    'minimum': 0
                 },
-                "items": [
+                'items': [
                     {
-                        "formItemType": "Input",
-                        "name": "myTextLine",
-                        "label": "My text line",
-                        "maximize": true,
-                        "inputType": "TextLine",
-                        "occurrences": {
-                            "maximum": 1,
-                            "minimum": 0
+                        'formItemType': 'Input',
+                        'name': 'myTextLine',
+                        'label': 'My text line',
+                        'maximize': true,
+                        'inputType': 'TextLine',
+                        'occurrences': {
+                            'maximum': 1,
+                            'minimum': 0
                         },
-                        "config": {}
+                        'config': {}
                     }
                 ]
             },
             {
-                "formItemType": "OptionSet",
-                "name": "myOptionSet",
-                "label": "My option set",
-                "expanded": false,
-                "helpText": "Option set help text",
-                "occurrences": {
-                    "maximum": 1,
-                    "minimum": 0
+                'formItemType': 'OptionSet',
+                'name': 'myOptionSet',
+                'label': 'My option set',
+                'expanded': false,
+                'helpText': 'Option set help text',
+                'occurrences': {
+                    'maximum': 1,
+                    'minimum': 0
                 },
-                "selection": {
-                    "maximum": 1,
-                    "minimum": 0
+                'selection': {
+                    'maximum': 1,
+                    'minimum': 0
                 },
-                "options": [
+                'options': [
                     {
-                        "name": "myOptionSetOption1",
-                        "label": "option label1",
-                        "helpText": "Option help text",
-                        "default": false,
-                        "items": [
+                        'name': 'myOptionSetOption1',
+                        'label': 'option label1',
+                        'helpText': 'Option help text',
+                        'default': false,
+                        'items': [
                             {
-                                "formItemType": "Input",
-                                "name": "myTextLine1",
-                                "label": "myTextLine1",
-                                "maximize": true,
-                                "inputType": "TextLine",
-                                "occurrences": {
-                                    "maximum": 1,
-                                    "minimum": 0
+                                'formItemType': 'Input',
+                                'name': 'myTextLine1',
+                                'label': 'myTextLine1',
+                                'maximize': true,
+                                'inputType': 'TextLine',
+                                'occurrences': {
+                                    'maximum': 1,
+                                    'minimum': 0
                                 },
-                                "config": {}
+                                'config': {}
                             }
                         ]
                     },
                     {
-                        "name": "myOptionSetOption2",
-                        "label": "option label2",
-                        "helpText": "Option help text",
-                        "default": false,
-                        "items": [
+                        'name': 'myOptionSetOption2',
+                        'label': 'option label2',
+                        'helpText': 'Option help text',
+                        'default': false,
+                        'items': [
                             {
-                                "formItemType": "Input",
-                                "name": "myTextLine2",
-                                "label": "myTextLine2",
-                                "maximize": true,
-                                "inputType": "TextLine",
-                                "occurrences": {
-                                    "maximum": 1,
-                                    "minimum": 0
+                                'formItemType': 'Input',
+                                'name': 'myTextLine2',
+                                'label': 'myTextLine2',
+                                'maximize': true,
+                                'inputType': 'TextLine',
+                                'occurrences': {
+                                    'maximum': 1,
+                                    'minimum': 0
                                 },
-                                "config": {}
+                                'config': {}
                             }
                         ]
                     }
@@ -189,14 +189,14 @@ var expected = [
         ]
     },
     {
-        "name": "com.enonic.someapp:person",
-        "displayName": "Person",
-        "description": "Person content type",
-        "superType": "base:structured",
-        "abstract": false,
-        "final": true,
-        "allowChildContent": true,
-        "form": []
+        'name': 'com.enonic.someapp:person',
+        'displayName': 'Person',
+        'description': 'Person content type',
+        'superType': 'base:structured',
+        'abstract': false,
+        'final': true,
+        'allowChildContent': true,
+        'form': []
     }
 ];
 

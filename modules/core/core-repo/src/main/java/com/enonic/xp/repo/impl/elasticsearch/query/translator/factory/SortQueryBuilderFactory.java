@@ -13,8 +13,8 @@ import com.google.common.collect.Lists;
 import com.enonic.xp.query.expr.DynamicOrderExpr;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
-import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.function.DynamicSortBuilderFactory;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
 
 public class SortQueryBuilderFactory
     extends AbstractBuilderFactory

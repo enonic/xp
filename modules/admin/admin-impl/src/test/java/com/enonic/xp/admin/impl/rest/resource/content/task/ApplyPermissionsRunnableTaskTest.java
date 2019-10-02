@@ -23,7 +23,7 @@ import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
 
 import static com.enonic.xp.security.acl.Permission.READ;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ApplyPermissionsRunnableTaskTest
     extends AbstractRunnableTaskTest

@@ -17,7 +17,8 @@ import com.enonic.xp.script.serializer.JsonMapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 import com.enonic.xp.web.HttpMethod;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MacroContextMapperTest
 {

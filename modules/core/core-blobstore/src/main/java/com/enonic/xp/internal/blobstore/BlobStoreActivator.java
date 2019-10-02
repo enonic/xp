@@ -100,11 +100,7 @@ public class BlobStoreActivator
 
     private boolean activatorHasBeenInitialized()
     {
-        if ( this.context == null )
-        {
-            return false;
-        }
-        return true;
+        return this.context != null;
     }
 
     @Deactivate

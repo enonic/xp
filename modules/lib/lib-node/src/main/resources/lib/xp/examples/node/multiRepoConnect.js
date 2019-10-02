@@ -9,12 +9,12 @@ var searchConnection = nodeLib.multiRepoConnect({
         {
             repoId: 'my-repo',
             branch: 'myBranch',
-            principals: ["role:system.admin"]
+            principals: ['role:system.admin']
         },
         {
             repoId: 'my-other-repo',
             branch: 'master',
-            principals: ["role:system.admin"]
+            principals: ['role:system.admin']
         }
     ]
 });

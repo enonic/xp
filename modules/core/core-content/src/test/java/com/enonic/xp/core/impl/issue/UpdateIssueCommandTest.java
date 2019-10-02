@@ -25,7 +25,8 @@ import static com.enonic.xp.core.impl.issue.IssuePropertyNames.CREATOR;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.INDEX;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.STATUS;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.TITLE;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class UpdateIssueCommandTest
 {

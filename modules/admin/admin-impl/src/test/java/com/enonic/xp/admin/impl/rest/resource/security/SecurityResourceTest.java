@@ -1,6 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.security;
 
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -57,7 +58,9 @@ import com.enonic.xp.web.HttpStatus;
 import static com.enonic.xp.security.PrincipalRelationship.from;
 import static com.enonic.xp.security.acl.IdProviderAccess.ADMINISTRATOR;
 import static com.enonic.xp.security.acl.IdProviderAccess.READ;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SecurityResourceTest
     extends AdminResourceTestSupport
@@ -397,7 +400,7 @@ public class SecurityResourceTest
             userRes );
 
         String jsonString = request().
-            path( "security/principals/" + URLEncoder.encode( "user:local:alice", "UTF-8" ) ).
+            path( "security/principals/" + URLEncoder.encode( "user:local:alice", StandardCharsets.UTF_8 ) ).
             get().getAsString();
 
         assertJson( "getPrincipalUserById.json", jsonString );
@@ -436,7 +439,7 @@ public class SecurityResourceTest
         Mockito.when( securityService.getPrincipals( membershipKeys ) ).thenReturn( memberships );
 
         String jsonString = request().
-            path( "security/principals/" + URLEncoder.encode( "user:local:a", "UTF-8" ) ).
+            path( "security/principals/" + URLEncoder.encode( "user:local:a", StandardCharsets.UTF_8 ) ).
             queryParam( "memberships", "true" ).
             get().getAsString();
 
@@ -464,7 +467,7 @@ public class SecurityResourceTest
         Mockito.when( securityService.getRelationships( PrincipalKey.from( "group:system:group-a" ) ) ).thenReturn( members );
 
         String jsonString = request().
-            path( "security/principals/" + URLEncoder.encode( "group:system:group-a", "UTF-8" ) ).
+            path( "security/principals/" + URLEncoder.encode( "group:system:group-a", StandardCharsets.UTF_8 ) ).
             get().getAsString();
 
         assertJson( "getPrincipalGroupById.json", jsonString );
@@ -503,7 +506,7 @@ public class SecurityResourceTest
         Mockito.when( securityService.getPrincipals( membershipKeys ) ).thenReturn( memberships );
 
         String jsonString = request().
-            path( "security/principals/" + URLEncoder.encode( "group:system:group-a", "UTF-8" ) ).
+            path( "security/principals/" + URLEncoder.encode( "group:system:group-a", StandardCharsets.UTF_8 ) ).
             queryParam( "memberships", "true" ).
             get().getAsString();
 
@@ -531,7 +534,7 @@ public class SecurityResourceTest
         Mockito.when( securityService.getRelationships( PrincipalKey.from( "role:superuser" ) ) ).thenReturn( memberships );
 
         String jsonString = request().
-            path( "security/principals/" + URLEncoder.encode( "role:superuser", "UTF-8" ) ).
+            path( "security/principals/" + URLEncoder.encode( "role:superuser", StandardCharsets.UTF_8 ) ).
             get().getAsString();
 
         assertJson( "getPrincipalRoleById.json", jsonString );
@@ -803,7 +806,7 @@ public class SecurityResourceTest
     public void setPassword_null_throws_exception()
         throws Exception
     {
-        final SecurityResource resource = (SecurityResource) getResourceInstance();
+        final SecurityResource resource = getResourceInstance();
         final UpdatePasswordJson params = new UpdatePasswordJson( "user:system:user1", null );
 
         final WebApplicationException ex = assertThrows(WebApplicationException.class, () -> {
@@ -815,7 +818,7 @@ public class SecurityResourceTest
     public void setPassword_empty_throws_exception()
         throws Exception
     {
-        final SecurityResource resource = (SecurityResource) getResourceInstance();
+        final SecurityResource resource = getResourceInstance();
         final UpdatePasswordJson params = new UpdatePasswordJson( "user:system:user1", "" );
 
         final WebApplicationException ex = assertThrows(WebApplicationException.class, () -> {
@@ -849,7 +852,7 @@ public class SecurityResourceTest
     public void createUser_password_null_throws_exception()
         throws Exception
     {
-        final SecurityResource resource = (SecurityResource) getResourceInstance();
+        final SecurityResource resource = getResourceInstance();
         final CreateUserJson params = new CreateUserJson();
         params.userKey = "user:system:user1";
         params.displayName = "usert1";
@@ -866,7 +869,7 @@ public class SecurityResourceTest
     public void createUser_password_empty_throws_exception()
         throws Exception
     {
-        final SecurityResource resource = (SecurityResource) getResourceInstance();
+        final SecurityResource resource = getResourceInstance();
         final CreateUserJson params = new CreateUserJson();
         params.userKey = "user:system:user1";
         params.displayName = "usert1";

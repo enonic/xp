@@ -18,7 +18,8 @@ import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.xml.DomElement;
 import com.enonic.xp.xml.DomHelper;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class XmlPermissionsParserTest
     extends BaseXmlSerializerTest

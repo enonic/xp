@@ -8,7 +8,10 @@ import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ClassLoaderApplicationUrlResolverTest
 {
@@ -18,7 +21,7 @@ public class ClassLoaderApplicationUrlResolverTest
     public void setup()
         throws Exception
     {
-        URL resourcesPath[] = {new File( "src/test/resources" ).toURI().toURL()};
+        URL[] resourcesPath = {new File( "src/test/resources" ).toURI().toURL()};
         URLClassLoader loader = new URLClassLoader( resourcesPath, ClassLoader.getSystemClassLoader() );
         this.resolver = new ClassLoaderApplicationUrlResolver( loader );
     }

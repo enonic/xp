@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ResourceKeysTest
 {
@@ -49,7 +50,7 @@ public class ResourceKeysTest
     @Test
     public void fromIterable()
     {
-        ResourceKeys resourceKeys = ResourceKeys.from( (Iterable) ResourceKeysTest.list );
+        ResourceKeys resourceKeys = ResourceKeys.from( ResourceKeysTest.list );
 
         assertEquals( 3, resourceKeys.getSize() );
         assertTrue( resourceKeys.contains( ResourceKeysTest.list.get( 0 ) ) );

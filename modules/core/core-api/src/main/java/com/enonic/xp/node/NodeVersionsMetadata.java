@@ -1,12 +1,10 @@
 package com.enonic.xp.node;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 @Beta
 public class NodeVersionsMetadata
@@ -19,7 +17,7 @@ public class NodeVersionsMetadata
     private NodeVersionsMetadata( Builder builder )
     {
         this.nodeId = builder.nodeId;
-        this.nodeVersionMetadatas = ImmutableList.copyOf( builder.nodeVersionMetadata );
+        this.nodeVersionMetadatas = builder.nodeVersionMetadata.build();
     }
 
     private NodeVersionsMetadata( final NodeId nodeId, final ImmutableList<NodeVersionMetadata> nodeVersionMetadatas )
@@ -62,7 +60,7 @@ public class NodeVersionsMetadata
 
     public static final class Builder
     {
-        private final List<NodeVersionMetadata> nodeVersionMetadata = Lists.newLinkedList();
+        private final ImmutableList.Builder<NodeVersionMetadata> nodeVersionMetadata = ImmutableList.builder();
 
         private final NodeId nodeId;
 

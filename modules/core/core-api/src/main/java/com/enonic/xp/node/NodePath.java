@@ -402,7 +402,7 @@ public final class NodePath
             if ( this.elements != null )
             {
                 final ImmutableList.Builder<Element> newList = new ImmutableList.Builder<>();
-                this.elements.forEach( newList::add );
+                newList.addAll( this.elements );
                 newList.add( newElement( value ) );
                 this.elementListBuilder = newList;
                 this.elements = null;

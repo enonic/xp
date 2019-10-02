@@ -1,16 +1,14 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.Lists;
-
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NodeManualOrderValueResolverTest
 {
@@ -19,7 +17,7 @@ public class NodeManualOrderValueResolverTest
     public void resolve()
         throws Exception
     {
-        LinkedList<NodeId> nodeIds = Lists.newLinkedList();
+        List<NodeId> nodeIds = new ArrayList<>();
 
         for ( int i = 0; i <= 10; i++ )
         {

@@ -7,7 +7,10 @@ import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.Input;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TimeTypeTest
     extends BaseInputTypeTest

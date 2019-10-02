@@ -3,7 +3,7 @@ package com.enonic.xp.web.jetty.impl;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ThreadPoolInfoImplTest
 {

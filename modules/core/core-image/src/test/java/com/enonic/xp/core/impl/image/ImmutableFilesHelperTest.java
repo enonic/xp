@@ -8,7 +8,8 @@ import org.junit.jupiter.api.io.TempDir;
 
 import com.google.common.io.ByteSource;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ImmutableFilesHelperTest
 {

@@ -8,7 +8,8 @@ import com.enonic.xp.schema.relationship.RelationshipType;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.schema.relationship.RelationshipTypes;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RelationshipTypeServiceImplTest
     extends AbstractSchemaTest

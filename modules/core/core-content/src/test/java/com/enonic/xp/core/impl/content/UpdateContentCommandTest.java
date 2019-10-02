@@ -25,7 +25,7 @@ import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.SiteService;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class UpdateContentCommandTest
 {

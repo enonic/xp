@@ -8,7 +8,7 @@ import com.enonic.xp.core.impl.image.AwtImageFilter;
 import com.enonic.xp.core.impl.image.AwtImageFilterTest;
 import com.enonic.xp.core.impl.image.ImageFilter;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SepiaFilterTest
     extends AwtImageFilterTest

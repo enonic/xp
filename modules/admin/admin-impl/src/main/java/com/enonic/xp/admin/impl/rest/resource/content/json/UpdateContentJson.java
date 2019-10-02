@@ -20,7 +20,6 @@ import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.UpdateContentParams;
-import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.data.PropertyArrayJson;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.PropertyTreeJson;

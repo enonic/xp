@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypes;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BuiltinContentTypesTest
 {

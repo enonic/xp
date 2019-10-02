@@ -3,7 +3,7 @@ package com.enonic.xp.admin.impl.json;
 
 public interface ItemJson
 {
-    public boolean getEditable();
+    boolean getEditable();
 
-    public boolean getDeletable();
+    boolean getDeletable();
 }

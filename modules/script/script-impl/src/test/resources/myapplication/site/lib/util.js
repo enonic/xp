@@ -1,3 +1,3 @@
 exports.hello = function () {
-    return "Hello from Lib!";
+    return 'Hello from Lib!';
 };

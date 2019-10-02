@@ -19,7 +19,7 @@ import com.enonic.xp.web.impl.serializer.ResponseSerializationServiceImpl;
 import com.enonic.xp.web.jetty.impl.JettyTestSupport;
 import com.enonic.xp.web.websocket.WebSocketContextFactory;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class WebDispatcherServletTest
     extends JettyTestSupport

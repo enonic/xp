@@ -10,16 +10,16 @@ log.info(result.length + ' repositories found');
 // BEGIN
 // Repositories retrieved.
 var expected = [{
-    "id": "test-repo",
-    "branches": [
-        "master"
+    'id': 'test-repo',
+    'branches': [
+        'master'
     ],
     settings: {},
     data: {}
 }, {
-    "id": "another-repo",
-    "branches": [
-        "master"
+    'id': 'another-repo',
+    'branches': [
+        'master'
     ],
     settings: {},
     data: {}

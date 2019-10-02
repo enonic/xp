@@ -40,6 +40,7 @@ public class MultiRepoNodeHandler
             start( params.getStart() ).
             sort( params.getSort() ).
             filters( params.getFilters() ).
+            explain( params.isExplain() ).
             nodeService( this.nodeService ).
             build() );
     }

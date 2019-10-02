@@ -609,7 +609,7 @@ public final class ContentResource
                                                                              Permission.PUBLISH );
         //check if user has access to publish every content
         final Boolean isAllPublishable =
-            authInfo.hasRole( RoleKeys.ADMIN ) ? true : fullPublishList.stream().allMatch( publishAllowedCondition );
+            authInfo.hasRole( RoleKeys.ADMIN ) || fullPublishList.stream().allMatch( publishAllowedCondition );
 
         //check that not all contents are pending delete
         final Boolean isAllPendingDelete = getNotPendingDeletion( fullPublishList, compareResults ).getSize() == 0;
@@ -1163,7 +1163,7 @@ public final class ContentResource
         final Integer parentPathSize = parentPath != null ? parentPath.elementCount() : 0;
 
         final Set<ContentPath> layerPaths = targetContentPaths.stream().
-            filter( path -> parentPath != null ? path.isChildOf( parentPath ) : true ).
+            filter( path -> parentPath == null || path.isChildOf( parentPath ) ).
             map( path -> path.getAncestorPath( path.elementCount() - parentPathSize - 1 ) ).
 
             collect( Collectors.toSet() );

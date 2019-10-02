@@ -22,7 +22,8 @@ import com.enonic.xp.query.aggregation.GeoDistanceAggregationQuery;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 import com.enonic.xp.util.GeoPoint;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GeoDistanceAggregationTest
     extends AbstractNodeTest

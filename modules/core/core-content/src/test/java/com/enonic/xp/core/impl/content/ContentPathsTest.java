@@ -9,7 +9,8 @@ import com.google.common.collect.ImmutableSet;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ContentPathsTest
 {

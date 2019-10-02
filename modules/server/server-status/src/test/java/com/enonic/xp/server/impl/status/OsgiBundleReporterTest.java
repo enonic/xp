@@ -7,7 +7,7 @@ import org.osgi.framework.BundleContext;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class OsgiBundleReporterTest
     extends BaseOsgiReporterTest<OsgiBundleReporter>

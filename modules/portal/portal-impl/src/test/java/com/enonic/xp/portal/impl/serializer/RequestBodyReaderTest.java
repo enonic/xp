@@ -13,7 +13,11 @@ import com.google.common.net.MediaType;
 
 import com.enonic.xp.web.impl.serializer.RequestBodyReader;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RequestBodyReaderTest
 {

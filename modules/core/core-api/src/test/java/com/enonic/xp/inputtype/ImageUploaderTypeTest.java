@@ -7,7 +7,9 @@ import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class ImageUploaderTypeTest
     extends BaseInputTypeTest
@@ -20,7 +22,7 @@ public class ImageUploaderTypeTest
     @Test
     public void testName()
     {
-        assertEquals( "ImageUploader", this.type.getName().toString().toString() );
+        assertEquals( "ImageUploader", this.type.getName().toString() );
     }
 
     @Test

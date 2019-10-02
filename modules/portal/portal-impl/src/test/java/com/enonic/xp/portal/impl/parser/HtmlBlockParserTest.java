@@ -8,7 +8,8 @@ import com.google.common.io.Resources;
 import com.enonic.xp.portal.impl.rendering.RenderException;
 import com.enonic.xp.portal.postprocess.HtmlTag;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class HtmlBlockParserTest
 {

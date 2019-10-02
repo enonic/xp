@@ -12,7 +12,7 @@ import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PortalUrlServiceImpl_componentUrlTest
     extends AbstractPortalUrlServiceImplTest

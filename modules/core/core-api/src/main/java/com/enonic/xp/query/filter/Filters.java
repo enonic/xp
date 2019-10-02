@@ -1,11 +1,9 @@
 package com.enonic.xp.query.filter;
 
 import java.util.Collection;
-import java.util.List;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
@@ -47,7 +45,7 @@ public class Filters
 
     public static class Builder
     {
-        private List<Filter> filters = Lists.newLinkedList();
+        private ImmutableList.Builder<Filter> filters = ImmutableList.builder();
 
         private Builder()
         {
@@ -72,7 +70,7 @@ public class Filters
 
         public Filters build()
         {
-            return new Filters( ImmutableList.copyOf( this.filters ) );
+            return new Filters( this.filters.build() );
         }
     }
 }

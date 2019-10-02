@@ -27,7 +27,11 @@ import com.enonic.xp.site.SiteService;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptors;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ControllerMappingsResolverTest
 {
@@ -101,6 +105,7 @@ public class ControllerMappingsResolverTest
         this.request.setContentPath( ContentPath.from( content.getPath(), "api" ) );
         this.request.getParams().put( "key", "123" );
         this.request.getParams().put( "category", "foo" );
+        Mockito.when( this.contentService.getByPath( content.getParentPath() ) ).thenReturn( site );
         Mockito.when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
         Mockito.when( this.contentService.getNearestSite( content.getId() ) ).thenReturn( site );
         final SiteDescriptor siteDescriptor = newSiteDescriptor3();

@@ -3,7 +3,7 @@ package com.enonic.xp.support;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public abstract class AbstractEqualsTest
 {

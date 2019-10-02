@@ -10,7 +10,9 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.node.RenameNodeParams;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RenameNodeCommandTest
     extends AbstractNodeTest

@@ -8,7 +8,7 @@ import com.google.common.io.Resources;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.region.TextComponentType;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LiveEditAttributeInjectionTest
 {

@@ -61,7 +61,7 @@ public class IndexStemmedController
 
     public static String resolveAnalyzer( final String language )
     {
-        if ( SUPPORTED_ANALYZERS != null && SUPPORTED_ANALYZERS.keySet().contains( language ) )
+        if ( SUPPORTED_ANALYZERS != null && SUPPORTED_ANALYZERS.containsKey( language ) )
         {
             return SUPPORTED_ANALYZERS.get( language );
         }
@@ -71,7 +71,7 @@ public class IndexStemmedController
 
     public static IndexValueTypeInterface resolveIndexValueType( final String language )
     {
-        if ( SUPPORTED_INDEX_VALUE_TYPES != null && SUPPORTED_INDEX_VALUE_TYPES.keySet().contains( language ) )
+        if ( SUPPORTED_INDEX_VALUE_TYPES != null && SUPPORTED_INDEX_VALUE_TYPES.containsKey( language ) )
         {
             return SUPPORTED_INDEX_VALUE_TYPES.get( language );
         }

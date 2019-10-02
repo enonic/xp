@@ -34,7 +34,9 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.BinaryAttachment;
 import com.enonic.xp.util.BinaryReference;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class RepositoryServiceImplTest
     extends AbstractNodeTest

@@ -9,7 +9,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FindNodesByQueryCommandTest_func_pathMatch
     extends AbstractNodeTest

@@ -10,7 +10,9 @@ import org.osgi.framework.Constants;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ApplicationNameResolverTest
     extends BundleBasedTest

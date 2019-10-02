@@ -14,7 +14,8 @@ import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.mixin.MixinService;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ContentTypeServiceTest
     extends AbstractSchemaTest

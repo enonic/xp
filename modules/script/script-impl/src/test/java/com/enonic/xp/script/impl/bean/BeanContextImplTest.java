@@ -12,7 +12,10 @@ import com.enonic.xp.script.impl.service.ServiceRef;
 import com.enonic.xp.script.impl.service.ServiceRegistry;
 import com.enonic.xp.script.runtime.ScriptSettings;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class BeanContextImplTest
 {

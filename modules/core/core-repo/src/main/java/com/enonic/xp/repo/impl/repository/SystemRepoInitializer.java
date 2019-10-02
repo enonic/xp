@@ -68,10 +68,7 @@ public class SystemRepoInitializer
                     final Context currentContext = ContextAccessor.current();
                     final Node repositoryNode = this.nodeStorageService.get( RepositoryConstants.REPOSITORY_STORAGE_PARENT_PATH,
                                                                              InternalContext.from( currentContext ) );
-                    if ( repositoryNode != null )
-                    {
-                        return true;
-                    }
+                    return repositoryNode != null;
                 }
                 return false;
             } );

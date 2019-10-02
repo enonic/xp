@@ -1,5 +1,14 @@
 package com.enonic.xp.lib.content;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.collect.ImmutableMap;
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ExtraData;
@@ -21,15 +30,6 @@ import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.collect.ImmutableMap;
-
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public abstract class BaseContentHandler
     extends BaseContextHandler

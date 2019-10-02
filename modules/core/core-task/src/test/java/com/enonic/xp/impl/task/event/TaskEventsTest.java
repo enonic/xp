@@ -13,7 +13,8 @@ import com.enonic.xp.task.TaskInfo;
 import com.enonic.xp.task.TaskProgress;
 import com.enonic.xp.task.TaskState;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class TaskEventsTest
 {

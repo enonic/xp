@@ -15,7 +15,7 @@ var multiRepoConnectfactory = __.newBean('com.enonic.xp.lib.node.MultiRepoNodeHa
 function required(params, name) {
     var value = params[name];
     if (value === undefined) {
-        throw "Parameter '" + name + "' is required";
+        throw 'Parameter \'' + name + '\' is required';
     }
     return value;
 }
@@ -187,7 +187,7 @@ RepoConnection.prototype.push = function (params) {
     var handlerParams = __.newBean('com.enonic.xp.lib.node.PushNodeHandlerParams');
     params = params || {};
     if (params.key === undefined && params.keys === undefined) {
-        throw "Parameter 'key' or 'keys' is required";
+        throw 'Parameter \'key\' or \'keys\' is required';
     }
     handlerParams.key = params.key ? params.key : null;
     handlerParams.keys = params.keys ? params.keys : [];
@@ -293,7 +293,7 @@ RepoConnection.prototype.query = function (params) {
     handlerParams.start = params.start;
     handlerParams.count = params.count;
     handlerParams.query = nullOrValue(params.query);
-    handlerParams.sort = valueOrDefault(params.sort, "_score DESC");
+    handlerParams.sort = valueOrDefault(params.sort, '_score DESC');
     handlerParams.aggregations = __.toScriptValue(params.aggregations);
     handlerParams.suggestions = __.toScriptValue(params.suggestions);
     handlerParams.highlight = __.toScriptValue(params.highlight);
@@ -323,7 +323,7 @@ MultiRepoConnection.prototype.query = function (params) {
     handlerParams.start = params.start;
     handlerParams.count = params.count;
     handlerParams.query = nullOrValue(params.query);
-    handlerParams.sort = valueOrDefault(params.sort, "_score DESC");
+    handlerParams.sort = valueOrDefault(params.sort, '_score DESC');
     handlerParams.aggregations = __.toScriptValue(params.aggregations);
     handlerParams.suggestions = __.toScriptValue(params.suggestions);
     handlerParams.filters = __.toScriptValue(params.filters);
@@ -428,7 +428,7 @@ RepoConnection.prototype.findChildren = function (params) {
  * @param {string} [mode]=ALL Refresh all (ALL) data, or just the search-index (SEARCH) or the storage-index (STORAGE)
  */
 RepoConnection.prototype.refresh = function (mode) {
-    this.repoConnection.refresh(valueOrDefault(mode, "ALL"));
+    this.repoConnection.refresh(valueOrDefault(mode, 'ALL'));
 };
 
 
@@ -444,7 +444,7 @@ RepoConnection.prototype.refresh = function (mode) {
  * @returns {object} Updated root-node as JSON.
  */
 RepoConnection.prototype.setRootPermissions = function (params) {
-    required(params, "_permissions");
+    required(params, '_permissions');
     return __.toNativeObject(this.repoConnection.setRootPermissions(__.toScriptValue(params)));
 };
 
@@ -522,7 +522,7 @@ exports.multiRepoConnect = function (params) {
     var multiRepoNodeHandleContext = __.newBean('com.enonic.xp.lib.node.MultiRepoNodeHandleContext');
 
     params.sources.forEach(function (source) {
-        multiRepoNodeHandleContext.addSource(required(source, "repoId"), required(source, "branch"), required(source, "principals"));
+        multiRepoNodeHandleContext.addSource(required(source, 'repoId'), required(source, 'branch'), required(source, 'principals'));
     });
 
     return new MultiRepoConnection(multiRepoConnectfactory.create(multiRepoNodeHandleContext));

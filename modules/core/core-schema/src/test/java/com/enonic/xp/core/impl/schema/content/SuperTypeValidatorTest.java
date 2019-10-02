@@ -12,7 +12,9 @@ import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.content.validator.ContentTypeValidationError;
 import com.enonic.xp.schema.content.validator.ContentTypeValidationResult;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SuperTypeValidatorTest
 {

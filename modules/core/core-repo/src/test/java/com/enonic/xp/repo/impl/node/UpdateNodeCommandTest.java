@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +16,9 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.util.BinaryReference;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UpdateNodeCommandTest
     extends AbstractNodeTest
@@ -104,7 +106,7 @@ public class UpdateNodeCommandTest
 
         final byte[] bytes = ByteStreams.toByteArray( binary.openStream() );
 
-        assertEquals( "my-car-image-updated-source", new String( bytes, Charset.forName( "UTF-8" ) ) );
+        assertEquals( "my-car-image-updated-source", new String( bytes, StandardCharsets.UTF_8 ) );
     }
 
     private ByteSource originalBinaryData()

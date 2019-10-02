@@ -25,7 +25,7 @@ import com.enonic.xp.style.StyleDescriptor;
 import com.enonic.xp.style.StyleDescriptors;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PortalUrlServiceImpl_processHtmlTest
     extends AbstractPortalUrlServiceImplTest

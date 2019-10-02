@@ -10,6 +10,7 @@ import com.enonic.xp.audit.AuditLogUris;
 import com.enonic.xp.audit.FindAuditLogParams;
 import com.enonic.xp.audit.FindAuditLogResult;
 import com.enonic.xp.audit.LogAuditLogParams;
+import com.enonic.xp.core.impl.audit.config.AuditLogConfig;
 import com.enonic.xp.core.impl.audit.serializer.AuditLogSerializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexService;
@@ -76,15 +77,16 @@ public class AuditLogServiceImplTest
         Mockito.when( indexService.isMaster() ).thenReturn( true );
         RepositoryService repositoryService = Mockito.mock( RepositoryService.class );
 
+        AuditLogConfig config = Mockito.mock( AuditLogConfig.class );
+        Mockito.when( config.isEnabled() ).thenReturn( true );
+        Mockito.when( config.isOutputLogs() ).thenReturn( true );
+
         auditLogService = new AuditLogServiceImpl();
         auditLogService.setNodeService( nodeService );
         auditLogService.setIndexService( indexService );
         auditLogService.setRepositoryService( repositoryService );
-
-        AuditLogConfig config = Mockito.mock( AuditLogConfig.class );
-        Mockito.when( config.enabled() ).thenReturn( true );
-        Mockito.when( config.outputLogs() ).thenReturn( true );
-        auditLogService.initialize( config );
+        auditLogService.setConfig( config );
+        auditLogService.initialize();
     }
 
     @Test

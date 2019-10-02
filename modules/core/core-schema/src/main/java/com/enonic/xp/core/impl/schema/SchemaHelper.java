@@ -1,11 +1,11 @@
 package com.enonic.xp.core.impl.schema;
 
+import java.io.InputStream;
+import java.time.Instant;
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.resource.Resource;
-
-import java.io.InputStream;
-import java.time.Instant;
 
 public final class SchemaHelper
 {

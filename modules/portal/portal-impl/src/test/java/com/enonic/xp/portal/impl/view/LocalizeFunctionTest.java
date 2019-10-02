@@ -15,7 +15,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.site.Site;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LocalizeFunctionTest
     extends AbstractUrlViewFunctionTest

@@ -40,7 +40,8 @@ import static com.enonic.xp.core.impl.content.index.processor.PageRegionsConfigP
 import static com.enonic.xp.core.impl.content.index.processor.PageRegionsConfigProcessor.TEXT_COMPONENT_INDEX_CONFIG;
 import static com.enonic.xp.core.impl.content.index.processor.PageRegionsConfigProcessor.VALUE;
 import static java.util.Collections.singletonList;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PageRegionsConfigProcessorTest
 {

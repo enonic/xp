@@ -1,7 +1,7 @@
 package com.enonic.xp.node;
 
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.highlight.HighlightedFields;
+import com.enonic.xp.highlight.HighlightedProperties;
 import com.enonic.xp.query.QueryExplanation;
 import com.enonic.xp.repository.RepositoryId;
 
@@ -17,7 +17,7 @@ public class MultiRepoNodeHit
 
     private final QueryExplanation explanation;
 
-    private final HighlightedFields highlight;
+    private final HighlightedProperties highlight;
 
     private MultiRepoNodeHit( final Builder builder )
     {
@@ -54,7 +54,7 @@ public class MultiRepoNodeHit
         return score;
     }
 
-    public HighlightedFields getHighlight()
+    public HighlightedProperties getHighlight()
     {
         return highlight;
     }
@@ -76,7 +76,7 @@ public class MultiRepoNodeHit
 
         private QueryExplanation explanation;
 
-        private HighlightedFields.Builder highlight = HighlightedFields.create();
+        private HighlightedProperties.Builder highlight = HighlightedProperties.create();
 
         private Builder()
         {
@@ -112,9 +112,9 @@ public class MultiRepoNodeHit
             return this;
         }
 
-        public Builder highlight( final HighlightedFields val )
+        public Builder highlight( final HighlightedProperties val )
         {
-            highlight = HighlightedFields.create( val );
+            highlight = HighlightedProperties.create( val );
             return this;
         }
 

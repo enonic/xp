@@ -3,9 +3,7 @@ package com.enonic.xp.admin.impl.json;
 import java.io.IOException;
 import java.time.Instant;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -24,7 +22,7 @@ public class DateTimeSerializer
 
     @Override
     public void serialize( Instant value, JsonGenerator jgen, SerializerProvider provider )
-        throws IOException, JsonGenerationException
+        throws IOException
     {
         if ( provider.isEnabled( SerializationFeature.WRITE_DATES_AS_TIMESTAMPS ) )
         {
@@ -38,7 +36,7 @@ public class DateTimeSerializer
 
     @Override
     public void serializeWithType( Instant value, JsonGenerator jgen, SerializerProvider provider, TypeSerializer typeSer )
-        throws IOException, JsonProcessingException
+        throws IOException
     {
         typeSer.writeTypePrefixForScalar( value, jgen );
         serialize( value, jgen, provider );

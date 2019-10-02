@@ -19,7 +19,7 @@ import com.enonic.xp.portal.postprocess.PostProcessInjection;
 import com.enonic.xp.portal.postprocess.PostProcessInstruction;
 
 import static java.util.stream.Collectors.joining;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PostProcessEvaluatorTest
 {

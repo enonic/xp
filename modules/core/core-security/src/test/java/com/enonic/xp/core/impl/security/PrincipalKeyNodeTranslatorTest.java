@@ -14,7 +14,9 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalType;
 import com.enonic.xp.security.User;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PrincipalKeyNodeTranslatorTest
 {

@@ -7,7 +7,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class XmlXDataParserTest
     extends XmlModelParserTest

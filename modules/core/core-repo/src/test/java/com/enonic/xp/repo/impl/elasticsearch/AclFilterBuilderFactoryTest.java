@@ -11,7 +11,8 @@ import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.Principals;
 import com.enonic.xp.security.User;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AclFilterBuilderFactoryTest
 {

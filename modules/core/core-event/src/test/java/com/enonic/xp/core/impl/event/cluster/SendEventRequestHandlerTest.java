@@ -17,7 +17,7 @@ import org.mockito.Mockito;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventPublisher;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SendEventRequestHandlerTest
 {

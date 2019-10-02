@@ -22,7 +22,10 @@ import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
 import com.enonic.xp.task.TaskState;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TaskManagerImplTest
 {

@@ -14,7 +14,8 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.UpdateNodeParams;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CompareNodeCommandTest
     extends AbstractNodeTest

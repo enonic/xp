@@ -21,7 +21,9 @@ import com.enonic.xp.node.NodeStorageException;
 import com.enonic.xp.repo.impl.branch.storage.BranchDocumentId;
 import com.enonic.xp.repo.impl.elasticsearch.ClientProxy;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DeleteNodeByIdCommandTest_error_handling
     extends AbstractNodeTest
@@ -43,7 +45,7 @@ public class DeleteNodeByIdCommandTest_error_handling
             build() );
         refresh();
 
-        this.storageDao.setClient( new FailDeleteOnIdsProxy( this.client, NodeIds.from( createdNode.id() ) ) );
+        this.storageDao.setClient( new FailDeleteOnIdsProxy( client, NodeIds.from( createdNode.id() ) ) );
 
         assertThrows(NodeStorageException.class, () -> doDeleteNode( createdNode.id() ));
     }
@@ -60,7 +62,7 @@ public class DeleteNodeByIdCommandTest_error_handling
 
         refresh();
 
-        this.storageDao.setClient( new FailDeleteOnIdsProxy( this.client, NodeIds.from( n1_1.id() ) ) );
+        this.storageDao.setClient( new FailDeleteOnIdsProxy( client, NodeIds.from( n1_1.id() ) ) );
 
         try
         {

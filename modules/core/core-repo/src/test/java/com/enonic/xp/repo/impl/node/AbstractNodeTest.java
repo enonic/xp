@@ -5,7 +5,6 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import com.enonic.xp.branch.Branches;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
@@ -13,6 +12,7 @@ import org.mockito.Mockito;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.blob.SegmentLevel;
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -72,7 +72,7 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.Reference;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public abstract class AbstractNodeTest
     extends AbstractElasticsearchIntegrationTest
@@ -165,13 +165,13 @@ public abstract class AbstractNodeTest
         this.binaryService.setBlobStore( blobStore );
 
         storageDao = new StorageDaoImpl();
-        storageDao.setClient( this.client );
+        storageDao.setClient( client );
 
         this.searchDao = new SearchDaoImpl();
-        this.searchDao.setClient( this.client );
+        this.searchDao.setClient( client );
 
         this.indexServiceInternal = new IndexServiceInternalImpl();
-        this.indexServiceInternal.setClient( this.client );
+        this.indexServiceInternal.setClient( client );
 
         // Branch and version-services
 
@@ -205,7 +205,7 @@ public abstract class AbstractNodeTest
         this.searchService.setSearchDao( this.searchDao );
 
         this.snapshotService = new SnapshotServiceImpl();
-        this.snapshotService.setClient( this.client );
+        this.snapshotService.setClient( client );
         this.snapshotService.setConfiguration( repoConfig );
 
         setUpRepositoryServices();

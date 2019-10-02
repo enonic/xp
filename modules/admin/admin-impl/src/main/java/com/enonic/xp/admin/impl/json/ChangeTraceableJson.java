@@ -5,11 +5,11 @@ import java.time.Instant;
 
 public interface ChangeTraceableJson
 {
-    public String getCreator();
+    String getCreator();
 
-    public String getModifier();
+    String getModifier();
 
-    public Instant getModifiedTime();
+    Instant getModifiedTime();
 
-    public Instant getCreatedTime();
+    Instant getCreatedTime();
 }

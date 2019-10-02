@@ -18,7 +18,10 @@ import com.enonic.xp.core.impl.app.resolver.MultiApplicationUrlResolver;
 import com.enonic.xp.server.RunMode;
 
 import static com.enonic.xp.core.impl.app.ApplicationHelper.X_BUNDLE_TYPE;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 

@@ -28,7 +28,7 @@ import com.enonic.xp.node.SetNodeStateParams;
 import com.enonic.xp.node.SetNodeStateResult;
 import com.enonic.xp.schema.content.ContentTypeService;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DeleteAndFetchContentCommandTest
 {

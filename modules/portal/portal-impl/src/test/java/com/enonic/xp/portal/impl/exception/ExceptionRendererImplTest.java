@@ -19,6 +19,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.error.ErrorHandlerScript;
 import com.enonic.xp.portal.impl.error.ErrorHandlerScriptFactory;
 import com.enonic.xp.resource.Resource;
@@ -30,7 +31,10 @@ import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.AdditionalMatchers.not;
 import static org.mockito.Mockito.when;
 
@@ -223,6 +227,17 @@ public class ExceptionRendererImplTest
         assertEquals( HttpStatus.BAD_REQUEST, res.getStatus() );
         assertEquals( "<h1>Custom message page</h1><h3>My Part</h3>", res.getBody().toString() );
         assertTrue( postProcessor.isExecuted() );
+    }
+
+    @Test
+    public void testRender_RenderMode_Admin() {
+        this.request.setMode( RenderMode.ADMIN );
+        this.request.setApplicationKey( ApplicationKey.from( "myapplication-key" ) );
+
+        final PortalResponse result = renderer.render( this.request, new WebException( HttpStatus.NOT_FOUND, "Resource not found" ) );
+
+        assertNotNull( result );
+        assertEquals( "{\"status\":404,\"message\":\"Resource not found\"}", result.getBody().toString() );
     }
 
     private Site newSite()

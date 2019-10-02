@@ -14,7 +14,8 @@ import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
 import com.enonic.xp.support.ResourceTestHelper;
 import com.enonic.xp.support.XmlTestHelper;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class XmlSiteParserTest
 {

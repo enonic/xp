@@ -3,10 +3,8 @@ package com.enonic.xp.impl.server.rest;
 import java.net.URL;
 import java.time.Instant;
 
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 
-import com.enonic.xp.web.WebException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.Version;
@@ -18,11 +16,11 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.impl.server.rest.model.ApplicationInstallResultJson;
 import com.enonic.xp.impl.server.rest.model.ApplicationInstalledJson;
-
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
 
 public class ApplicationResourceTest

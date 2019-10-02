@@ -17,7 +17,7 @@ import com.enonic.xp.content.Media;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.url.ImageUrlParams;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class ImageUrlBuilderTest

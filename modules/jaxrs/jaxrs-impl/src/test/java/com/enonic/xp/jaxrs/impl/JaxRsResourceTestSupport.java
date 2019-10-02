@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.jboss.resteasy.core.Dispatcher;
 import org.jboss.resteasy.mock.MockDispatcherFactory;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;

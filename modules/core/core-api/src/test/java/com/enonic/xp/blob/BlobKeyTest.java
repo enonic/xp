@@ -5,7 +5,9 @@ import org.junit.jupiter.api.Test;
 import com.google.common.hash.HashCode;
 import com.google.common.io.ByteSource;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BlobKeyTest
 {

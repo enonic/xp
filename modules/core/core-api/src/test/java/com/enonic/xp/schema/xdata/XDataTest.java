@@ -6,7 +6,7 @@ import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class XDataTest
 {

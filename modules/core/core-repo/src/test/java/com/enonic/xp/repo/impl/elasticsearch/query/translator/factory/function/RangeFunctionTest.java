@@ -7,7 +7,7 @@ import com.enonic.xp.query.expr.FunctionExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.BaseTestBuilderFactory;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RangeFunctionTest
     extends BaseTestBuilderFactory

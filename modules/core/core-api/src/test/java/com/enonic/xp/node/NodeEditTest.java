@@ -9,7 +9,7 @@ import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NodeEditTest
 {

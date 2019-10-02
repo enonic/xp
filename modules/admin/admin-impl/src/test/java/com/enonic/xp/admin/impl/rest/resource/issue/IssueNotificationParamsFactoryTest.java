@@ -36,7 +36,7 @@ import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 

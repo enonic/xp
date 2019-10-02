@@ -1,7 +1,7 @@
 package com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre4;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -43,7 +43,7 @@ public class Pre4VersionsDumpEntryJson
     {
         private String nodeId;
 
-        private Collection<Pre4VersionDumpEntryJson> versions = new LinkedList<>();
+        private Collection<Pre4VersionDumpEntryJson> versions = new ArrayList<>();
 
         private Builder()
         {

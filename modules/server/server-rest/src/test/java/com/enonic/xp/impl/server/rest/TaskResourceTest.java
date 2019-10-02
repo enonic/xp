@@ -15,7 +15,8 @@ import com.enonic.xp.task.TaskProgress;
 import com.enonic.xp.task.TaskService;
 import com.enonic.xp.task.TaskState;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TaskResourceTest
     extends ServerRestTestSupport

@@ -9,10 +9,10 @@ log.info('Multipart item %s', result);
 // BEGIN
 // Multipart-form returned.
 var expected = {
-    "name": "item1",
-    "fileName": "item1.jpg",
-    "contentType": "image/png",
-    "size": 10
+    'name': 'item1',
+    'fileName': 'item1.jpg',
+    'contentType': 'image/png',
+    'size': 10
 };
 // END
 

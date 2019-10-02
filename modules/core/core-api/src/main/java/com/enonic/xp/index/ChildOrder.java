@@ -184,12 +184,7 @@ public class ChildOrder
 
         final ChildOrder that = (ChildOrder) o;
 
-        if ( orderExpressions != null ? !orderExpressions.equals( that.orderExpressions ) : that.orderExpressions != null )
-        {
-            return false;
-        }
-
-        return true;
+        return orderExpressions != null ? orderExpressions.equals( that.orderExpressions ) : that.orderExpressions == null;
     }
 
     @Override
