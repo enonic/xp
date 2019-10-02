@@ -71,7 +71,7 @@ public class SegmentCleanerTaskTest
         blobStore.removeRecord( segment, record2.getKey() );
         assertEquals( 2, blobStore.listSegments().count() );
 
-        final SegmentCleanerTask task = new SegmentCleanerTask();
+        final SegmentVacuumTask task = new SegmentVacuumTask();
         task.setBlobStore( blobStore );
         task.setRepositoryService( repositoryService );
         task.setNodeService( nodeService );

@@ -11,12 +11,12 @@ import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.vacuum.VacuumTaskResult;
 
 @Component(immediate = true)
-public class SegmentCleanerTask
+public class SegmentVacuumTask
     implements VacuumTask
 {
     private static final int ORDER = 0;
 
-    private static final String NAME = "UnusedSegmentsCleaner";
+    private static final String NAME = "SegmentVacuumTask";
 
     private BlobStore blobStore;
 
@@ -39,14 +39,15 @@ public class SegmentCleanerTask
     @Override
     public VacuumTaskResult execute( final VacuumTaskParams params )
     {
-        return SegmentCleanerCommand.create().
-            name( NAME ).
+        return SegmentVacuumCommand.create().
             blobStore( blobStore ).
             repositoryService( repositoryService ).
             nodeService( nodeService ).
-            params(params).
+            params( params ).
             build().
-            execute();
+            execute().
+            taskName( NAME ).
+            build();
     }
 
     @Reference

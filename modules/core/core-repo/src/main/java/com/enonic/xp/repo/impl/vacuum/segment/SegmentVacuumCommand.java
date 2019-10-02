@@ -3,7 +3,6 @@ package com.enonic.xp.repo.impl.vacuum.segment;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -20,13 +19,11 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.filter.RangeFilter;
-import com.enonic.xp.repo.impl.node.LoadNodeVersionCommand;
 import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
 import com.enonic.xp.repo.impl.version.VersionIndexPath;
 import com.enonic.xp.repository.RepositoryId;
@@ -36,9 +33,9 @@ import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.vacuum.VacuumTaskResult;
 
-public class SegmentCleanerCommand
+public class SegmentVacuumCommand
 {
-    private static final Logger LOG = LoggerFactory.getLogger( SegmentCleanerCommand.class );
+    private static final Logger LOG = LoggerFactory.getLogger( SegmentVacuumCommand.class );
 
     private RepositoryIds BUILTIN_REPOSITORIES = RepositoryIds.from( SystemConstants.SYSTEM_REPO_ID, ContentConstants.CONTENT_REPO_ID );
 
@@ -54,14 +51,13 @@ public class SegmentCleanerCommand
 
     private HashMap<RepositoryId, Boolean> repositoryPresenceMap;
 
-    private SegmentCleanerCommand( final Builder builder )
+    private SegmentVacuumCommand( final Builder builder )
     {
         blobStore = builder.blobStore;
         repositoryService = builder.repositoryService;
         nodeService = builder.nodeService;
         params = builder.params;
-        result = VacuumTaskResult.create().
-            taskName( builder.name );
+        result = VacuumTaskResult.create();
         repositoryPresenceMap = Maps.newHashMap();
         generateRepositoryPresenceMap();
     }
@@ -72,10 +68,8 @@ public class SegmentCleanerCommand
         repositoryService.list().forEach( repository -> repositoryPresenceMap.put( repository.getId(), true ) );
     }
 
-    public VacuumTaskResult execute()
+    public VacuumTaskResult.Builder execute()
     {
-        LOG.info( "Traversing segments....." );
-
         List<Segment> toBeRemoved = new ArrayList<>();
         blobStore.listSegments().
             forEach( segment -> {
@@ -94,6 +88,7 @@ public class SegmentCleanerCommand
         toBeRemoved.forEach( segment -> {
             try
             {
+                LOG.debug( "Deleting segment [" + segment + "]" );
                 blobStore.deleteSegment( segment );
                 result.deleted();
             }
@@ -104,13 +99,13 @@ public class SegmentCleanerCommand
             }
         } );
 
-        return result.build();
+        return result;
     }
 
     private boolean isRepositoryToKeep( final RepositoryId repositoryId )
     {
         return repositoryPresenceMap.computeIfAbsent( repositoryId, key -> {
-            LOG.info( "Old repository?" + key );
+            LOG.debug( "Repository [" + repositoryId + "] not found in the list of current repository" );
 
             //If repository is not present, find if there is an old version more recent than the threshold
             final Context systemContext = ContextBuilder.from( ContextAccessor.current() ).
@@ -129,7 +124,10 @@ public class SegmentCleanerCommand
                 build();
             final NodeVersionQueryResult result = systemContext.callWith( () -> nodeService.findVersions( findRecentVersionsQuery ) );
 
-            LOG.info( "Found " + result.getTotalHits() + " recent versions" );
+            if ( result.getTotalHits() > 0 )
+            {
+                LOG.debug( "Recent versions of the repository entry found" );
+            }
 
             return result.getTotalHits() > 0;
         } );
@@ -147,8 +145,6 @@ public class SegmentCleanerCommand
         private RepositoryService repositoryService;
 
         private NodeService nodeService;
-
-        private String name;
 
         private VacuumTaskParams params;
 
@@ -174,21 +170,15 @@ public class SegmentCleanerCommand
             return this;
         }
 
-        public Builder name( final String val )
-        {
-            name = val;
-            return this;
-        }
-
         public Builder params( final VacuumTaskParams val )
         {
             params = val;
             return this;
         }
 
-        public SegmentCleanerCommand build()
+        public SegmentVacuumCommand build()
         {
-            return new SegmentCleanerCommand( this );
+            return new SegmentVacuumCommand( this );
         }
     }
 }
