@@ -8,7 +8,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.util.AttachedBinaries;
+import com.enonic.xp.node.AttachedBinaries;
 
 @Beta
 public final class Repository

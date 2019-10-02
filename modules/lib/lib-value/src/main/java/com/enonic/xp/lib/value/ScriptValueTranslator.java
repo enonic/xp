@@ -145,9 +145,9 @@ public class ScriptValueTranslator
             parent.addLink( name, (Link) value );
         }
 
-        else if ( value instanceof com.enonic.xp.util.BinaryAttachment )
+        else if ( value instanceof BinaryAttachment )
         {
-            final com.enonic.xp.util.BinaryAttachment binaryAttachment = (com.enonic.xp.util.BinaryAttachment) value;
+            final BinaryAttachment binaryAttachment = (BinaryAttachment) value;
             parent.addBinaryReference( name, binaryAttachment.getReference() );
 
             if ( includeBinaryAttachments )

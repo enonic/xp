@@ -11,6 +11,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.event.EventPublisher;
+import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
@@ -35,7 +36,6 @@ import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
 import com.enonic.xp.security.SystemConstants;
-import com.enonic.xp.util.AttachedBinary;
 
 @Component
 public class RepositoryEntryServiceImpl
@@ -134,7 +134,7 @@ public class RepositoryEntryServiceImpl
         final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
             id( NodeId.from( params.getRepositoryId() ) ).
             editor( RepositoryNodeTranslator.toUpdateRepositoryNodeEditor( params ) ).
-            setBinaryAttachments( RepositoryNodeTranslator.toNodeBinaryAttachments( params.getAttachments() ) ).
+            setBinaryAttachments( params.getAttachments() ).
             build();
         return updateRepositoryNode( updateNodeParams );
     }

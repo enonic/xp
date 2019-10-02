@@ -3,8 +3,9 @@ package com.enonic.xp.repo.impl.repository;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.node.BinaryAttachment;
+import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.util.BinaryAttachment;
 
 public final class UpdateRepositoryEntryParams
 {
@@ -12,13 +13,13 @@ public final class UpdateRepositoryEntryParams
 
     private final PropertyTree repositoryData;
 
-    private final ImmutableList<BinaryAttachment> attachments;
+    private final BinaryAttachments attachments;
 
     private UpdateRepositoryEntryParams( Builder builder )
     {
         this.repositoryId = builder.repositoryId;
         this.repositoryData = builder.repositoryData;
-        this.attachments = builder.attachments;
+        this.attachments = builder.attachments.build();
     }
 
     public RepositoryId getRepositoryId()
@@ -31,7 +32,7 @@ public final class UpdateRepositoryEntryParams
         return repositoryData;
     }
 
-    public ImmutableList<BinaryAttachment> getAttachments()
+    public BinaryAttachments getAttachments()
     {
         return attachments;
     }
@@ -47,7 +48,7 @@ public final class UpdateRepositoryEntryParams
 
         private PropertyTree repositoryData;
 
-        private ImmutableList<BinaryAttachment> attachments;
+        private BinaryAttachments.Builder attachments = BinaryAttachments.create();
 
         public Builder repositoryId( RepositoryId repositoryId )
         {
@@ -63,7 +64,10 @@ public final class UpdateRepositoryEntryParams
 
         public Builder attachments( ImmutableList<BinaryAttachment> attachments )
         {
-            this.attachments = attachments;
+            if ( attachments != null )
+            {
+                attachments.forEach( this.attachments::add );
+            }
             return this;
         }
 

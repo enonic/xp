@@ -6,32 +6,53 @@ import com.enonic.xp.util.BinaryReference;
 
 @Beta
 public class AttachedBinary
-    extends com.enonic.xp.util.AttachedBinary
 {
+    private final BinaryReference binaryReference;
+
+    private final String blobKey;
+
     public AttachedBinary( final BinaryReference binaryReference, final String key )
     {
-        super( binaryReference, key );
+        this.binaryReference = binaryReference;
+        this.blobKey = key;
     }
 
     public BinaryReference getBinaryReference()
     {
-        return super.getBinaryReference();
+        return binaryReference;
     }
 
     public String getBlobKey()
     {
-        return super.getBlobKey();
+        return blobKey;
     }
 
     @Override
     public boolean equals( final Object o )
     {
-        return super.equals( o );
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+
+        final AttachedBinary that = (AttachedBinary) o;
+
+        if ( !binaryReference.equals( that.binaryReference ) )
+        {
+            return false;
+        }
+        return blobKey.equals( that.blobKey );
     }
 
     @Override
     public int hashCode()
     {
-        return super.hashCode();
+        int result = binaryReference.hashCode();
+        result = 31 * result + blobKey.hashCode();
+        return result;
     }
 }

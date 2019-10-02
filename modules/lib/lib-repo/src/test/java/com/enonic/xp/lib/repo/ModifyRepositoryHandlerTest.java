@@ -8,6 +8,7 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.repository.EditableRepository;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
@@ -15,10 +16,12 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.repository.UpdateRepositoryParams;
 import com.enonic.xp.testing.ScriptTestSupport;
-import com.enonic.xp.util.BinaryAttachment;
 import com.enonic.xp.util.BinaryReference;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ModifyRepositoryHandlerTest
     extends ScriptTestSupport
