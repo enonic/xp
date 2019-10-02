@@ -159,7 +159,7 @@ public class RepositoryEntryServiceImpl
     }
 
     @Override
-    public ByteSource getAttachment( AttachedBinary attachedBinary )
+    public ByteSource getBinary( AttachedBinary attachedBinary )
     {
         return binaryService.get( SystemConstants.SYSTEM_REPO.getId(), attachedBinary );
     }

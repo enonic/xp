@@ -19,7 +19,7 @@ function editor(repoData) {
 
 // BEGIN
 // Update data
-const result = repoLib.modifyRepository({
+const result = repoLib.modify({
     editor: editor,
     id: 'my-repo'
 });

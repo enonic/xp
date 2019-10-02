@@ -174,7 +174,7 @@ exports.deleteBranch = function (params) {
  * @returns {object} Repository updated as JSON.
  *
  */
-exports.modifyRepository = function (params) {
+exports.modify = function (params) {
     checkRequiredParams(params, ['id', 'editor']);
     const bean = __.newBean('com.enonic.xp.lib.repo.ModifyRepositoryHandler');
     bean.id = params.id;

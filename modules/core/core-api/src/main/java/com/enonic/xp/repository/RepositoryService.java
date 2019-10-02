@@ -31,5 +31,5 @@ public interface RepositoryService
 
     void invalidate( final RepositoryId repositoryId );
 
-    Optional<ByteSource> getAttachment( final RepositoryId repositoryId, final BinaryReference binaryReference );
+    ByteSource getBinary( final RepositoryId repositoryId, final BinaryReference binaryReference );
 }

@@ -34,7 +34,7 @@ public class GetRepositoryBinaryHandler
     {
         final RepositoryService repositoryService = repositoryServiceSupplier.get();
 
-        return repositoryService.getAttachment( repositoryId, binaryReference ).orElse( null );
+        return repositoryService.getBinary( repositoryId, binaryReference );
     }
 
     @Override

@@ -29,7 +29,7 @@ public class GetRepositoryBinaryHandlerTest
     {
         super.initialize();
         repositoryService = mock( RepositoryService.class );
-        when( repositoryService.getAttachment( any(), any() ) ).thenReturn( Optional.of( ByteSource.empty() ) );
+        when( repositoryService.getBinary( any(), any() ) ).thenReturn( ByteSource.empty() );
         addService( RepositoryService.class, repositoryService );
     }
 
@@ -40,6 +40,6 @@ public class GetRepositoryBinaryHandlerTest
         runScript( "/lib/xp/examples/repo/getBinary.js" );
 
         verify( repositoryService, Mockito.times( 1 ) ).
-            getAttachment( eq( RepositoryId.from( "my-repo" ) ), eq( BinaryReference.from( "myBinaryReference" ) ) );
+            getBinary( eq( RepositoryId.from( "my-repo" ) ), eq( BinaryReference.from( "myBinaryReference" ) ) );
     }
 }

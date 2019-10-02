@@ -9,7 +9,7 @@ function editor(repoData) {
 
 // BEGIN
 // Update data
-const result = repoLib.modifyRepository({
+const result = repoLib.modify({
     scope: 'myScopedObject',
     editor: editor,
     id: 'my-repo'

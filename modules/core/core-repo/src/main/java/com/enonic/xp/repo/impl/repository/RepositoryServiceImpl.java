@@ -22,6 +22,7 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 import com.enonic.xp.exception.ForbiddenAccessException;
+import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.RefreshMode;
@@ -309,7 +310,7 @@ public class RepositoryServiceImpl
     }
 
     @Override
-    public Optional<ByteSource> getAttachment( final RepositoryId repositoryId, final BinaryReference binaryReference )
+    public ByteSource getBinary( final RepositoryId repositoryId, final BinaryReference binaryReference )
     {
         requireAdminRole();
 
@@ -319,8 +320,8 @@ public class RepositoryServiceImpl
             throw new RepositoryNotFoundException( repositoryId );
         }
 
-        return Optional.ofNullable( repository.getAttachments().getByBinaryReference( binaryReference ) ).
-            map( repositoryEntryService::getAttachment );
+        final AttachedBinary attachedBinary = repository.getAttachments().getByBinaryReference( binaryReference );
+        return attachedBinary == null ? null : repositoryEntryService.getBinary( attachedBinary );
     }
 
     private void requireAdminRole()

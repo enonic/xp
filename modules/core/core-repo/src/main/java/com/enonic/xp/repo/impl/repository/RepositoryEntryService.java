@@ -24,5 +24,5 @@ public interface RepositoryEntryService
 
     void deleteRepositoryEntry( RepositoryId repositoryId );
 
-    ByteSource getAttachment( final AttachedBinary attachedBinary );
+    ByteSource getBinary( final AttachedBinary attachedBinary );
 }

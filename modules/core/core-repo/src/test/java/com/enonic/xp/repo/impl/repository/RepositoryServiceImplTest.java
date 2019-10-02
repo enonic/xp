@@ -125,10 +125,10 @@ class RepositoryServiceImplTest
             repositoryService.invalidateAll();
         } );
 
-        Optional<ByteSource> persistedAttachment = mockCurrentContext.callWith(
-            () -> repositoryService.getAttachment( RepositoryId.from( repoId ), BinaryReference.from( "image1.jpg" ) ) );
+        ByteSource persistedAttachment = mockCurrentContext.callWith(
+            () -> repositoryService.getBinary( RepositoryId.from( repoId ), BinaryReference.from( "image1.jpg" ) ) );
 
-        assertTrue( binarySource.contentEquals( persistedAttachment.orElseThrow() ) );
+        assertTrue( binarySource.contentEquals( persistedAttachment) );
     }
 
     @Test
