@@ -1,4 +1,4 @@
-package com.enonic.xp.repo.impl.vacuum.binary;
+package com.enonic.xp.repo.impl.vacuum.blob;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -7,18 +7,15 @@ import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.repo.impl.vacuum.VacuumTask;
 import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
-import com.enonic.xp.repo.impl.vacuum.versiontable.VersionTableVacuumCommand;
-import com.enonic.xp.repo.impl.version.VersionService;
-import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.vacuum.VacuumTaskResult;
 
 @Component(immediate = true)
-public class BinaryVacuumTask
+public class BinaryBlobVacuumTask
     implements VacuumTask
 {
     private static final int ORDER = 200;
 
-    private static final String NAME = "BinaryVacuumTask";
+    private static final String NAME = "BinaryBlobVacuumTask";
 
     private NodeService nodeService;
 
@@ -27,7 +24,7 @@ public class BinaryVacuumTask
     @Override
     public VacuumTaskResult execute( final VacuumTaskParams params )
     {
-        return BinaryVacuumCommand.create().
+        return BinaryBlobVacuumCommand.create().
             blobStore( blobStore ).
             nodeService( nodeService ).
             params( params ).
