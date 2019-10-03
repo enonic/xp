@@ -4,6 +4,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import com.google.common.base.Strings;
 import com.google.common.io.ByteSource;
@@ -12,25 +13,30 @@ import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.blob.SegmentLevel;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.internal.blobstore.MemoryBlobRecord;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
+import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.NodeVersionQuery;
+import com.enonic.xp.node.NodeVersionQueryResult;
+import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.vacuum.VacuumListener;
 import com.enonic.xp.vacuum.VacuumTaskResult;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class UnusedBinaryFileCleanerTaskTest
+public class BinaryVacuumTaskTest
 {
 
     private BlobStore blobStore;
 
-    private Segment binarySegment;
+    private NodeService nodeService;
 
-    private Segment nodeSegment;
+    private Segment binarySegment;
 
     @BeforeEach
     public void setUp()
@@ -38,7 +44,18 @@ public class UnusedBinaryFileCleanerTaskTest
     {
         this.blobStore = new MemoryBlobStore();
         this.binarySegment = Segment.from( SegmentLevel.from( "test" ), NodeConstants.BINARY_SEGMENT_LEVEL );
-        this.nodeSegment = Segment.from( SegmentLevel.from( "test" ), NodeConstants.NODE_SEGMENT_LEVEL );
+
+        this.nodeService = Mockito.mock( NodeService.class );
+        Mockito.when( nodeService.findVersions( Mockito.any( NodeVersionQuery.class ) ) ).
+            thenAnswer( ( invocation ) -> {
+                final NodeVersionQuery query = invocation.getArgument( 0 );
+                final ValueFilter valueFilter = (ValueFilter) query.getQueryFilters().first();
+                if ( valueFilter.getValues().contains( ValueFactory.newString( createBlobKey( 'a' ).toString() ) ) )
+                {
+                    return NodeVersionQueryResult.empty( 1 );
+                }
+                return NodeVersionQueryResult.empty( 0 );
+            } );
     }
 
     @Test
@@ -49,10 +66,9 @@ public class UnusedBinaryFileCleanerTaskTest
         this.blobStore.addRecord( binarySegment, createBinaryRecord( 'b' ) );
         this.blobStore.addRecord( binarySegment, createBinaryRecord( 'c' ) );
 
-        this.blobStore.addRecord( nodeSegment, createVersionRecordWithBinaryRef( "1", 'a' ) );
-
-        final UnusedBinaryFileCleanerTask task = new UnusedBinaryFileCleanerTask();
+        final BinaryVacuumTask task = new BinaryVacuumTask();
         task.setBlobStore( this.blobStore );
+        task.setNodeService( this.nodeService );
 
         final VacuumTaskResult result = task.execute( VacuumTaskParams.create().ageThreshold( 0 ).build() );
 
@@ -69,10 +85,9 @@ public class UnusedBinaryFileCleanerTaskTest
         this.blobStore.addRecord( binarySegment, createBinaryRecord( 'b' ) );
         this.blobStore.addRecord( binarySegment, createBinaryRecord( 'c' ) );
 
-        this.blobStore.addRecord( nodeSegment, createVersionRecordWithBinaryRef( "1", 'a' ) );
-
-        final UnusedBinaryFileCleanerTask task = new UnusedBinaryFileCleanerTask();
+        final BinaryVacuumTask task = new BinaryVacuumTask();
         task.setBlobStore( this.blobStore );
+        task.setNodeService( this.nodeService );
 
         AtomicInteger blobReportCount = new AtomicInteger( 0 );
         final VacuumListener progressListener = new VacuumListener()
@@ -116,8 +131,9 @@ public class UnusedBinaryFileCleanerTaskTest
     {
         this.blobStore.addRecord( binarySegment, createBinaryRecord( 'a' ) );
 
-        final UnusedBinaryFileCleanerTask task = new UnusedBinaryFileCleanerTask();
+        final BinaryVacuumTask task = new BinaryVacuumTask();
         task.setBlobStore( this.blobStore );
+        task.setNodeService( this.nodeService );
 
         final VacuumTaskResult result = task.execute( VacuumTaskParams.create().build() );
 

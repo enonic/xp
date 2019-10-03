@@ -1,5 +1,8 @@
 package com.enonic.xp.repo.impl.vacuum.binary;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,25 +81,35 @@ public class BinaryVacuumCommand
             params.getListener().vacuumingBlobSegment( segment );
         }
 
-        this.blobStore.list( segment ).
-            forEach( blobRecord -> processBlobRecord( segment, blobRecord ) );
+        final List<BlobKey> blobToDelete = new ArrayList<>();
+        blobStore.list( segment ).
+            filter( blobRecord -> shouldDelete( segment, blobRecord ) ).
+            forEach( blobRecord -> blobToDelete.add( blobRecord.getKey() ) );
+
+        blobToDelete.forEach( blobKey -> blobStore.removeRecord( segment, blobKey ) );
     }
 
-    private void processBlobRecord( final Segment segment, final BlobRecord blobRecord )
+    private boolean shouldDelete( final Segment segment, final BlobRecord blobRecord )
     {
-        final BlobKey blobKey = blobRecord.getKey();
-        if ( isOldBlobRecord( blobRecord ) && !isUsedByVersion( segment, blobKey ) )
+        if ( isOldBlobRecord( blobRecord ) )
         {
-            LOG.debug( "No version found in branch for binaryBlobKey [" + blobKey + "]" );
-            this.blobStore.removeRecord( segment, blobRecord.getKey() );
-            result.deleted();
-
+            result.processed();
             if ( params.getListener() != null )
             {
                 params.getListener().vacuumingBlob( 1L );
             }
+
+            final BlobKey blobKey = blobRecord.getKey();
+            if ( !isUsedByVersion( segment, blobKey ) )
+            {
+                LOG.debug( "No version found in branch for binaryBlobKey [" + blobKey + "]" );
+                result.deleted();
+                return true;
+            }
+            result.inUse();
         }
-        result.processed();
+
+        return false;
     }
 
     private boolean isOldBlobRecord( final BlobRecord blobRecord )
