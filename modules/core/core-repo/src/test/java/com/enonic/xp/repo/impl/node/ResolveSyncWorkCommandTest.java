@@ -1,9 +1,10 @@
 package com.enonic.xp.repo.impl.node;
 
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import org.jparsec.internal.util.Strings;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -1699,7 +1700,9 @@ public class ResolveSyncWorkCommandTest
         @Override
         public String toString()
         {
-            return Strings.join( ", ", this.nodes.toArray() );
+            return this.nodes.stream().
+                map( Objects::toString ).
+                collect( Collectors.joining( ", " ) );
         }
     }
 
