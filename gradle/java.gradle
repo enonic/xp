@@ -20,6 +20,8 @@ configurations {
 
 ext {
     felixVersion = '6.0.1'
+    cacheApiVersion = '1.1.1'
+    igniteVersion = '2.7.6'
 }
 
 dependencies {
