@@ -44,6 +44,7 @@ addBundle( 'net.java.dev.jna:jna:4.1.0', 6)
 
 // Library dependencies
 addBundle( 'com.google.guava:guava:28.1-jre', 8 )
+addBundle( 'com.google.guava:failureaccess:1.0.1', 8 )
 addBundle( 'commons-lang:commons-lang:2.4', 8 )
 addBundle( 'commons-io:commons-io:2.4', 8 )
 addBundle( 'commons-io:commons-io:2.4', 8 )

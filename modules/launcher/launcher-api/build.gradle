@@ -1,7 +1,9 @@
 import com.enonic.gradle.BuildInfoHelper
 
 dependencies {
-    compile "com.google.guava:guava:${guavaVersion}"
+    compile ("com.google.guava:guava:${guavaVersion}") {
+        exclude group: 'com.google.guava', module: 'listenablefuture'
+    }
 }
 
 ext {
