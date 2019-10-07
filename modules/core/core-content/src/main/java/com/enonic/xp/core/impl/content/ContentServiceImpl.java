@@ -20,6 +20,7 @@ import com.google.common.io.ByteSource;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.content.ActiveContentVersionEntry;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.ApplyContentPermissionsResult;
 import com.enonic.xp.content.CompareContentParams;
@@ -28,6 +29,7 @@ import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareContentsParams;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentDependencies;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
@@ -39,6 +41,7 @@ import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.ContentValidityParams;
 import com.enonic.xp.content.ContentValidityResult;
+import com.enonic.xp.content.ContentVersion;
 import com.enonic.xp.content.ContentVersionId;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.CreateContentParams;
@@ -911,6 +914,17 @@ public class ContentServiceImpl
             branches( params.getBranches() ).
             build().
             execute();
+    }
+
+    @Override
+    public ContentVersion getActiveVersion( final GetActiveContentVersionsParams params )
+    {
+        final GetActiveContentVersionsResult activeVersions = getActiveVersions( params );
+
+        final ActiveContentVersionEntry activeVersion = activeVersions.getActiveContentVersions().stream().filter(
+            contentVersion -> ContentConstants.BRANCH_DRAFT.equals( contentVersion.getBranch() ) ).findFirst().orElse( null );
+
+        return activeVersion != null ? activeVersion.getContentVersion() : null;
     }
 
     @Override
