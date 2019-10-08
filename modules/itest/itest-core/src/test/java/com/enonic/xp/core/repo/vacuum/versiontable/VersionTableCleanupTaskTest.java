@@ -47,7 +47,7 @@ class VersionTableCleanupTaskTest
         assertVersions( node1.id(), updates + 1 );
 
         final VacuumTaskResult result = NodeHelper.runAsAdmin( () -> this.task.execute( VacuumTaskParams.create().
-            ageThreshold( 0 ).
+            ageThreshold( -10_000 ). // 0 here makes more human sense, but clock is not monotonic. This moves threshold to the future.
             build() ) );
         refresh();
 
