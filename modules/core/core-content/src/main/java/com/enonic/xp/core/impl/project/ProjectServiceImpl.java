@@ -12,6 +12,7 @@ import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.content.ContentInitializer;
 import com.enonic.xp.data.PropertySet;
@@ -183,6 +184,7 @@ public class ProjectServiceImpl
         return ContextBuilder.create().
             repositoryId( SystemConstants.SYSTEM_REPO_ID ).
             branch( ContentConstants.BRANCH_MASTER ).
+            authInfo( ContextAccessor.current().getAuthInfo() ).
             build();
     }
 
