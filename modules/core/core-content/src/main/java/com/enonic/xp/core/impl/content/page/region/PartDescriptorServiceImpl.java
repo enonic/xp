@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.content.page.region;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -15,11 +16,13 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.descriptor.DescriptorKeyLocator;
 import com.enonic.xp.form.Form;
+import com.enonic.xp.icon.Icon;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.region.PartDescriptors;
 import com.enonic.xp.resource.Resource;
+import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.mixin.MixinService;
@@ -59,7 +62,7 @@ public final class PartDescriptorServiceImpl
         return new ResourceProcessor.Builder<DescriptorKey, PartDescriptor>().
             key( key ).
             segment( "partDescriptor" ).
-            keyTranslator( PartDescriptor::toResourceKey ).
+            keyTranslator( descKey -> PartDescriptor.toResourceKey( descKey, "xml" ) ).
             processor( resource -> loadDescriptor( key, resource ) ).
             build();
     }
@@ -115,9 +118,37 @@ public final class PartDescriptorServiceImpl
     {
         final PartDescriptor.Builder builder = PartDescriptor.create();
         parseXml( resource, builder );
-        builder.key( key );
-        return builder.build();
+        return builder.key( key ).icon( loadIcon( key ) ).build();
     }
+
+    protected final Icon loadIcon( final DescriptorKey name )
+    {
+        final Icon svgIcon = loadIcon( name, "image/svg+xml", "svg" );
+
+        if ( svgIcon != null )
+        {
+            return svgIcon;
+        }
+        else
+        {
+            return loadIcon( name, "image/png", "png" );
+        }
+    }
+
+    private final Icon loadIcon( final DescriptorKey key, final String mimeType, final String ext )
+    {
+        final ResourceKey resourceKey = PartDescriptor.toResourceKey( key, ext );
+        final Resource resource = this.resourceService.getResource( resourceKey );
+
+        if ( !resource.exists() )
+        {
+            return null;
+        }
+
+        final Instant modifiedTime = Instant.ofEpochMilli( resource.getTimestamp() );
+        return Icon.from( resource.readBytes(), mimeType, modifiedTime );
+    }
+
 
     private PartDescriptor createDefaultDescriptor( final DescriptorKey key )
     {
