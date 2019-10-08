@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.repository;
 
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentMap;
 
 import org.osgi.service.component.annotations.Activate;
@@ -22,11 +21,14 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 import com.enonic.xp.exception.ForbiddenAccessException;
+import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
+import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.node.DeleteNodeByIdCommand;
 import com.enonic.xp.repo.impl.node.RefreshCommand;
@@ -68,6 +70,8 @@ public class RepositoryServiceImpl
     private NodeStorageService nodeStorageService;
 
     private NodeSearchService nodeSearchService;
+
+    private BinaryService binaryService;
 
     private RepositoryEventListener repositoryEventListener;
 
@@ -336,10 +340,23 @@ public class RepositoryServiceImpl
 
     private Repository createRepositoryObject( final CreateRepositoryParams params )
     {
+        final AttachedBinaries.Builder attachments = AttachedBinaries.create();
+
+        if ( params.getBinaryAttachments() != null )
+        {
+            for ( final BinaryAttachment binaryAttachment : params.getBinaryAttachments() )
+            {
+                final AttachedBinary attachedBinary = binaryService.store( params.getRepositoryId(), binaryAttachment );
+                attachments.add( attachedBinary );
+            }
+        }
+
         return Repository.create().
             id( params.getRepositoryId() ).
             branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) ).
             settings( params.getRepositorySettings() ).
+            data( params.getData() ).
+            attachments( attachments.build() ).
             build();
     }
 
@@ -450,6 +467,12 @@ public class RepositoryServiceImpl
     public void setNodeSearchService( final NodeSearchService nodeSearchService )
     {
         this.nodeSearchService = nodeSearchService;
+    }
+
+    @Reference
+    public void setBinaryService( final BinaryService binaryService )
+    {
+        this.binaryService = binaryService;
     }
 
     @Override

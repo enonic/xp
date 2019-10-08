@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,8 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.init.ExternalInitializer;
+import com.enonic.xp.node.BinaryAttachment;
+import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeIds;
@@ -25,6 +28,7 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.Direction;
 import com.enonic.xp.repository.CreateBranchParams;
 import com.enonic.xp.repository.CreateRepositoryParams;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
@@ -42,17 +46,6 @@ public final class ContentInitializer
     public static final User SUPER_USER = User.create().
         key( PrincipalKey.ofSuperUser() ).
         login( PrincipalKey.ofSuperUser().getId() ).
-        build();
-
-    private static final AccessControlList CONTENT_REPO_DEFAULT_ACL = AccessControlList.create().
-        add( AccessControlEntry.create().
-            allowAll().
-            principal( RoleKeys.ADMIN ).
-            build() ).
-        add( AccessControlEntry.create().
-            allow( Permission.READ ).
-            principal( RoleKeys.CONTENT_MANAGER_ADMIN ).
-            build() ).
         build();
 
     private static final AccessControlList CONTENT_ROOT_DEFAULT_ACL = AccessControlList.create().
@@ -76,13 +69,22 @@ public final class ContentInitializer
 
     private final NodeService nodeService;
 
-    private final RepositoryService repositoryService;  
+    private final RepositoryService repositoryService;
+
+    private final RepositoryId repositoryId;
+
+    private final PropertyTree data;
+
+    private final BinaryAttachments binaryAttachments;
 
     private ContentInitializer( final Builder builder )
     {
         super( builder );
         this.nodeService = builder.nodeService;
         this.repositoryService = builder.repositoryService;
+        this.repositoryId = builder.repositoryId;
+        this.data = Optional.ofNullable( builder.data ).orElse( new PropertyTree() );
+        this.binaryAttachments = builder.binaryAttachments.build();
     }
 
     @Override
@@ -99,7 +101,7 @@ public final class ContentInitializer
     protected boolean isInitialized()
     {
         return createAdminContext().
-            callWith( () -> repositoryService.isInitialized( ContentConstants.CONTENT_REPO.getId() ) &&
+            callWith( () -> repositoryService.isInitialized( repositoryId ) &&
                 nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH ) != null );
     }
 
@@ -117,8 +119,10 @@ public final class ContentInitializer
     private void initializeRepository()
     {
         final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create().
-            repositoryId( ContentConstants.CONTENT_REPO_ID ).
-            rootPermissions( CONTENT_REPO_DEFAULT_ACL ).
+            repositoryId( repositoryId ).
+            data( data ).
+            addBinaryAttachments( binaryAttachments ).
+            rootPermissions( ContentConstants.CONTENT_REPO_DEFAULT_ACL ).
             rootChildOrder( ContentConstants.DEFAULT_CONTENT_REPO_ROOT_ORDER ).
             build();
 
@@ -163,6 +167,7 @@ public final class ContentInitializer
     {
         final AuthenticationInfo authInfo = createAdminAuthInfo();
         return ContextBuilder.from( ContentConstants.CONTEXT_MASTER ).
+            repositoryId( repositoryId ).
             authInfo( authInfo ).
             build();
     }
@@ -187,6 +192,12 @@ public final class ContentInitializer
 
         private RepositoryService repositoryService;
 
+        private RepositoryId repositoryId = ContentConstants.CONTENT_REPO_ID;
+
+        private PropertyTree data = new PropertyTree();
+
+        private BinaryAttachments.Builder binaryAttachments = BinaryAttachments.create();
+
         public Builder setNodeService( final NodeService nodeService )
         {
             this.nodeService = nodeService;
@@ -196,6 +207,24 @@ public final class ContentInitializer
         public Builder setRepositoryService( final RepositoryService repositoryService )
         {
             this.repositoryService = repositoryService;
+            return this;
+        }
+
+        public Builder repositoryId( final RepositoryId repositoryId )
+        {
+            this.repositoryId = repositoryId;
+            return this;
+        }
+
+        public Builder data( final PropertyTree data )
+        {
+            this.data = data;
+            return this;
+        }
+
+        public Builder addBinaryAttachment( final BinaryAttachment binaryAttachment )
+        {
+            this.binaryAttachments.add( binaryAttachment );
             return this;
         }
 

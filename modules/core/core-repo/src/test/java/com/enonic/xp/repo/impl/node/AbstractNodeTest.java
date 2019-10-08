@@ -146,7 +146,7 @@ public abstract class AbstractNodeTest
     protected StorageDaoImpl storageDao;
 
     @BeforeEach
-    void setUpNode()
+    protected void setUpNode()
         throws Exception
     {
         deleteAllIndices();
@@ -246,6 +246,7 @@ public abstract class AbstractNodeTest
         this.repositoryService.setNodeRepositoryService( nodeRepositoryService );
         this.repositoryService.setNodeStorageService( this.storageService );
         this.repositoryService.setNodeSearchService( this.searchService );
+        this.repositoryService.setBinaryService( this.binaryService );
 
         this.nodeService.setRepositoryService( this.repositoryService );
     }

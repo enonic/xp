@@ -5,14 +5,14 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.project.ProjectConstants;
 
 public final class RepositoryUtils
 {
     private static final String CONTENT_NAME_REGEX = "([a-z0-9\\-]+)";
 
     private static final Pattern CONTENT_REPOSITORY_ID_PATTERN =
-        Pattern.compile( "^" + ContentConstants.CONTENT_REPO_ID_PREFIX.replace( ".", "\\." ) + CONTENT_NAME_REGEX + "$" );
+        Pattern.compile( "^" + ProjectConstants.PROJECT_REPO_ID_PREFIX.replace( ".", "\\." ) + CONTENT_NAME_REGEX + "$" );
 
     public static RepositoryId fromContentRepoName( final String name )
     {
@@ -21,7 +21,7 @@ public final class RepositoryUtils
             return null;
         }
 
-        return RepositoryId.from( ContentConstants.CONTENT_REPO_ID_PREFIX + name );
+        return RepositoryId.from( ProjectConstants.PROJECT_REPO_ID_PREFIX + name );
     }
 
     public static String getContentRepoName( final RepositoryId repositoryId )

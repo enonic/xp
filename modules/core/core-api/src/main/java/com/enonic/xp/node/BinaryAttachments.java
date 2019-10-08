@@ -57,6 +57,16 @@ public class BinaryAttachments
             return this;
         }
 
+        public Builder add( final BinaryAttachments binaryAttachments )
+        {
+            if ( binaryAttachments != null )
+            {
+
+                this.binaryAttachments.addAll( binaryAttachments.getSet() );
+            }
+            return this;
+        }
+
         public BinaryAttachments build()
         {
             return new BinaryAttachments( ImmutableSet.copyOf( this.binaryAttachments ) );
