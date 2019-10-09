@@ -1,6 +1,7 @@
 package com.enonic.xp.admin.event.impl.json;
 
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,7 +12,6 @@ import org.osgi.framework.BundleEvent;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
 import com.enonic.xp.event.Event;
@@ -88,7 +88,7 @@ public class EventJsonSerializerTest
             throw new IllegalArgumentException( "Resource file [" + fileName + "] not found" );
         }
 
-        return Resources.toString( url, Charsets.UTF_8 );
+        return Resources.toString( url, StandardCharsets.UTF_8 );
     }
 
     private String toJson( final Object value )

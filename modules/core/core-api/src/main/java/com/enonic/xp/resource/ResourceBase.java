@@ -4,9 +4,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Throwables;
 import com.google.common.io.CharSource;
 
@@ -89,7 +89,7 @@ public abstract class ResourceBase
 
     private CharSource getCharSource()
     {
-        return getBytes().asCharSource( Charsets.UTF_8 );
+        return getBytes().asCharSource( StandardCharsets.UTF_8 );
     }
 
     @Override

@@ -1,8 +1,9 @@
 package com.enonic.xp.portal.impl.parser;
 
+import java.nio.charset.StandardCharsets;
+
 import org.junit.jupiter.api.Test;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
 import com.enonic.xp.portal.impl.rendering.RenderException;
@@ -136,6 +137,6 @@ public class HtmlBlockParserTest
     private String readResource( final String resourceName )
         throws Exception
     {
-        return Resources.toString( getClass().getResource( resourceName ), Charsets.UTF_8 );
+        return Resources.toString( getClass().getResource( resourceName ), StandardCharsets.UTF_8 );
     }
 }

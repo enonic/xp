@@ -1,11 +1,11 @@
 package com.enonic.xp.portal.impl.postprocess;
 
 
+import java.nio.charset.StandardCharsets;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
 import com.enonic.xp.portal.PortalRequest;
@@ -76,6 +76,6 @@ public class PostProcessorImplTest
     private String readResource( final String resourceName )
         throws Exception
     {
-        return Resources.toString( getClass().getResource( resourceName ), Charsets.UTF_8 );
+        return Resources.toString( getClass().getResource( resourceName ), StandardCharsets.UTF_8 );
     }
 }

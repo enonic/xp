@@ -2,10 +2,10 @@ package com.enonic.xp.web.impl.multipart;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 import javax.servlet.http.Part;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
 import com.google.common.net.MediaType;
 
@@ -53,7 +53,7 @@ final class MultipartItemImpl
     {
         try
         {
-            return asCharSource( Charsets.UTF_8 ).read();
+            return asCharSource( StandardCharsets.UTF_8 ).read();
         }
         catch ( final Exception e )
         {

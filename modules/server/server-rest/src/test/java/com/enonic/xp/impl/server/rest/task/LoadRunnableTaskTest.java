@@ -1,9 +1,9 @@
 package com.enonic.xp.impl.server.rest.task;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
-import org.apache.commons.io.Charsets;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -111,7 +111,7 @@ public class LoadRunnableTaskTest
             build() ) );
 
         final File file = new File( this.nameDir, "export.properties" );
-        Files.write( "a=b", file, Charsets.UTF_8 );
+        Files.write( "a=b", file, StandardCharsets.UTF_8 );
 
         SystemLoadParams params = SystemLoadParams.create().dumpName( "name" ).includeVersions( true ).build();
 

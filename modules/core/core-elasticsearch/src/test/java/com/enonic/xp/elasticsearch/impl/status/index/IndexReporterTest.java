@@ -1,6 +1,7 @@
 package com.enonic.xp.elasticsearch.impl.status.index;
 
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import org.elasticsearch.action.ActionListener;
@@ -25,7 +26,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -119,7 +119,7 @@ public class IndexReporterTest
             throw new IllegalArgumentException( "Resource file [" + fileName + "] not found" );
         }
 
-        return Resources.toString( url, Charsets.UTF_8 );
+        return Resources.toString( url, StandardCharsets.UTF_8 );
     }
 
     private JsonNode parseJson( final String json )

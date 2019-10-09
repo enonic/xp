@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.handler.identity;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -7,7 +8,6 @@ import java.util.regex.Pattern;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
 
 import com.enonic.xp.content.ContentService;
@@ -156,7 +156,7 @@ public class IdentityHandler
     {
         return Hashing.sha1().
             newHasher().
-            putString( jSessionId, Charsets.UTF_8 ).
+            putString( jSessionId, StandardCharsets.UTF_8 ).
             hash().
             toString();
     }
