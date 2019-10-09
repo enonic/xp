@@ -26,7 +26,8 @@ import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.handler.WebHandlerChain;
 import com.enonic.xp.web.impl.exception.ExceptionMapperImpl;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class WebAppHandlerTest
 {

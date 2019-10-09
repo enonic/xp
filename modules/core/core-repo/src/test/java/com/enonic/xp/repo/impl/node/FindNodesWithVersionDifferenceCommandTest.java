@@ -13,7 +13,7 @@ import com.enonic.xp.node.NodeVersionDiffResult;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.UpdateNodeParams;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FindNodesWithVersionDifferenceCommandTest
     extends AbstractNodeTest

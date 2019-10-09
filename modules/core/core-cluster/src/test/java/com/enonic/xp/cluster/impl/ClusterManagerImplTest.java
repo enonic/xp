@@ -14,7 +14,9 @@ import com.enonic.xp.cluster.ClusterNodes;
 import com.enonic.xp.cluster.ClusterState;
 import com.enonic.xp.cluster.Clusters;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ClusterManagerImplTest
 {

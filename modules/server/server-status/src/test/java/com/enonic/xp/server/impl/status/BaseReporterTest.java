@@ -16,7 +16,7 @@ import com.enonic.xp.status.StatusContext;
 import com.enonic.xp.status.StatusReporter;
 import com.enonic.xp.support.JsonTestHelper;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public abstract class BaseReporterTest<T extends StatusReporter>
 {

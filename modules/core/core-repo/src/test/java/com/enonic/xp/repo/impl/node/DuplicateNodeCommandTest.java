@@ -30,7 +30,11 @@ import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.Reference;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class DuplicateNodeCommandTest
     extends AbstractNodeTest

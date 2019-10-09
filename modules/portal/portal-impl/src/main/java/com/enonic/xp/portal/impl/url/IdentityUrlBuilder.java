@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.url;
 
-import com.google.common.base.Charsets;
+import java.nio.charset.StandardCharsets;
+
 import com.google.common.collect.Multimap;
 import com.google.common.hash.Hashing;
 
@@ -56,7 +57,7 @@ final class IdentityUrlBuilder
     {
         return Hashing.sha1().
             newHasher().
-            putString( jSessionId, Charsets.UTF_8 ).
+            putString( jSessionId, StandardCharsets.UTF_8 ).
             hash().
             toString();
     }

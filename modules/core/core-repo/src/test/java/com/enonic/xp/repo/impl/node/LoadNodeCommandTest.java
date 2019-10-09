@@ -15,7 +15,10 @@ import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeType;
 import com.enonic.xp.node.NodeVersionId;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class LoadNodeCommandTest
     extends AbstractNodeTest

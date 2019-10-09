@@ -16,7 +16,9 @@ import com.enonic.xp.query.highlight.constants.Order;
 import com.enonic.xp.query.highlight.constants.TagsSchema;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticHighlightQuery;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ElasticHighlightQueryBuilderFactoryTest
 {

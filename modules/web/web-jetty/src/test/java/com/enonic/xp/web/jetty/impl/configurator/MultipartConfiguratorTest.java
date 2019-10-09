@@ -7,7 +7,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MultipartConfiguratorTest
     extends JettyConfiguratorTest<ServletHolder>

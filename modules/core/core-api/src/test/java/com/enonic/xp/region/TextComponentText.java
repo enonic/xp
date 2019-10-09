@@ -5,7 +5,8 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.support.AbstractEqualsTest;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class TextComponentText
 {

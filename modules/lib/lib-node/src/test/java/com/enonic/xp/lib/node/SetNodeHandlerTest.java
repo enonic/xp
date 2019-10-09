@@ -6,7 +6,7 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.node.SetNodeChildOrderParams;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SetNodeHandlerTest
     extends BaseNodeHandlerTest

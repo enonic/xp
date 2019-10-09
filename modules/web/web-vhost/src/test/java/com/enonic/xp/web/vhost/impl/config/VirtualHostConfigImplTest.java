@@ -15,7 +15,10 @@ import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.IdProviderKeys;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class VirtualHostConfigImplTest
 {

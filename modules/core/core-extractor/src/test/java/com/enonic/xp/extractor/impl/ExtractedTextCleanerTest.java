@@ -1,11 +1,12 @@
 package com.enonic.xp.extractor.impl;
 
+import java.nio.charset.StandardCharsets;
+
 import org.junit.jupiter.api.Test;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ExtractedTextCleanerTest
 {
@@ -13,11 +14,11 @@ public class ExtractedTextCleanerTest
     public void strip_consecutive_linebreaks_and_whitespaces()
         throws Exception
     {
-        final String toBeCleaned = Resources.toString( this.getClass().getResource( "linebreaked.txt" ), Charsets.UTF_8 );
+        final String toBeCleaned = Resources.toString( this.getClass().getResource( "linebreaked.txt" ), StandardCharsets.UTF_8 );
 
         final String cleanedText = ExtractedTextCleaner.clean( toBeCleaned );
 
-        final String expected = Resources.toString( this.getClass().getResource( "linebreaked-clean.txt" ), Charsets.UTF_8 );
+        final String expected = Resources.toString( this.getClass().getResource( "linebreaked-clean.txt" ), StandardCharsets.UTF_8 );
 
         assertEquals( expected.trim(), cleanedText.trim() );
     }
@@ -26,11 +27,13 @@ public class ExtractedTextCleanerTest
     public void strip_consecutive_linebreaks_and_whitespaces_2()
         throws Exception
     {
-        final String toBeCleaned = Resources.toString( this.getClass().getResource( "consecutive-linebreaks.txt" ), Charsets.UTF_8 );
+        final String toBeCleaned =
+            Resources.toString( this.getClass().getResource( "consecutive-linebreaks.txt" ), StandardCharsets.UTF_8 );
 
         final String cleanedText = ExtractedTextCleaner.clean( toBeCleaned );
 
-        final String expected = Resources.toString( this.getClass().getResource( "consecutive-linebreaks-cleaned.txt" ), Charsets.UTF_8 );
+        final String expected =
+            Resources.toString( this.getClass().getResource( "consecutive-linebreaks-cleaned.txt" ), StandardCharsets.UTF_8 );
 
         assertEquals( expected, cleanedText );
     }

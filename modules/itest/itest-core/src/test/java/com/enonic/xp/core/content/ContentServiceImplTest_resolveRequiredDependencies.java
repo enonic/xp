@@ -7,7 +7,8 @@ import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ResolveRequiredDependenciesParams;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ContentServiceImplTest_resolveRequiredDependencies
     extends AbstractContentServiceTest

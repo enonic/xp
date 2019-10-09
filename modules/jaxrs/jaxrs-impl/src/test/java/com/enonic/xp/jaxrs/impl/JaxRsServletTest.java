@@ -13,7 +13,7 @@ import com.enonic.xp.web.filter.BaseWebFilter;
 import com.enonic.xp.web.jetty.impl.JettyTestSupport;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JaxRsServletTest
     extends JettyTestSupport

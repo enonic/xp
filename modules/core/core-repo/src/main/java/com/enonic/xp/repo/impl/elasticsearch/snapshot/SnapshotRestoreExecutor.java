@@ -17,7 +17,6 @@ import com.enonic.xp.cluster.ClusterManager;
 import com.enonic.xp.node.RestoreResult;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
-import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.util.Exceptions;
 
 public class SnapshotRestoreExecutor

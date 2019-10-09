@@ -22,7 +22,7 @@ import com.enonic.xp.repository.RepositorySegmentUtils;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.vacuum.VacuumTaskResult;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SegmentVacuumTaskTest
 {

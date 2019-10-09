@@ -16,7 +16,7 @@ import com.enonic.xp.site.SiteService;
 import com.enonic.xp.site.processor.ResponseProcessorDescriptor;
 import com.enonic.xp.site.processor.ResponseProcessorDescriptors;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ProcessorChainResolverTest
 {

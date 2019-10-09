@@ -15,7 +15,7 @@ import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.query.aggregation.DateHistogramAggregationQuery;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DateHistogramAggregationsTest
     extends AbstractNodeTest

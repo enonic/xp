@@ -17,7 +17,8 @@ import com.enonic.xp.repo.impl.elasticsearch.document.indexitem.IndexValueString
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.util.Reference;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NodeStoreDocumentFactoryTest
 {

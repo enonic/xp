@@ -10,7 +10,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 import com.google.common.collect.Maps;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RepoConfigurationTest
 {

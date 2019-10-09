@@ -8,7 +8,7 @@ import com.enonic.xp.portal.url.ServiceUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PortalUrlServiceImpl_serviceUrlTest
     extends AbstractPortalUrlServiceImplTest

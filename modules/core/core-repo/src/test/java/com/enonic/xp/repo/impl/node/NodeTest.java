@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.support.AbstractEqualsTest;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NodeTest
 {

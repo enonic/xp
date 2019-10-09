@@ -3,7 +3,6 @@ package com.enonic.xp.impl.task.script;
 import java.net.URL;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
@@ -26,7 +25,8 @@ import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskDescriptor;
 import com.enonic.xp.task.TaskId;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class NamedTaskScriptFactoryTest
 {

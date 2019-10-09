@@ -1,6 +1,5 @@
 package com.enonic.xp.dump;
 
-import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
 

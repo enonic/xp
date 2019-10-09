@@ -11,7 +11,7 @@ import com.google.common.collect.Lists;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.repo.impl.node.NodeManualOrderValueResolver;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class OrderbyValueResolverTestJava
 {

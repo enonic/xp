@@ -1,13 +1,12 @@
 package com.enonic.xp.audit;
 
-import java.net.URI;
 import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 
 public class AuditLogUri
 {
-    private URI value;
+    private String value;
 
     private AuditLogUri( final Builder builder )
     {
@@ -15,7 +14,7 @@ public class AuditLogUri
         value = builder.value;
     }
 
-    public URI getValue()
+    public String getValue()
     {
         return value;
     }
@@ -23,7 +22,7 @@ public class AuditLogUri
     @Override
     public String toString()
     {
-        return value.toString();
+        return value;
     }
 
     @Override
@@ -61,7 +60,7 @@ public class AuditLogUri
 
     public static final class Builder
     {
-        private URI value;
+        private String value;
 
         private Builder()
         {
@@ -69,7 +68,7 @@ public class AuditLogUri
 
         public Builder value( final String value )
         {
-            this.value = URI.create( value );
+            this.value = value;
             return this;
         }
 

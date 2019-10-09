@@ -20,7 +20,7 @@ import com.enonic.xp.region.Region;
 import com.enonic.xp.region.RegionDescriptor;
 import com.enonic.xp.region.RegionDescriptors;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RegionDataSerializerTest
     extends AbstractDataSerializerTest

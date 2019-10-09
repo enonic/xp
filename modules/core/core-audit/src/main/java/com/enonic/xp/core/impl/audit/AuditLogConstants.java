@@ -31,6 +31,10 @@ public class AuditLogConstants
             allowAll().
             principal( RoleKeys.ADMIN ).
             build() ).
+        add( AccessControlEntry.create().
+            allowAll().
+            principal( RoleKeys.AUDIT_LOG ).
+            build() ).
         build();
 
     public static final IndexPath TIME = IndexPath.from( AuditLogPropertyNames.TIME );

@@ -8,7 +8,7 @@ import com.enonic.xp.query.suggester.TermSuggestionQuery;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQueryFieldNameResolver;
 import com.enonic.xp.repo.impl.elasticsearch.suggistion.query.TermSuggestionQueryBuilderFactory;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class TermSuggestionQueryBuilderFactoryTest
 {

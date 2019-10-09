@@ -1,13 +1,5 @@
 package com.enonic.xp.lib.node;
 
-import java.util.List;
-import java.util.Map;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
-import com.enonic.xp.script.ScriptValue;
-
 @SuppressWarnings("unused")
 public class FindVersionsHandlerParams
 {

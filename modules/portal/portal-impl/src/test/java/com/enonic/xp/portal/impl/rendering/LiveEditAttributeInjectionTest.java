@@ -1,14 +1,15 @@
 package com.enonic.xp.portal.impl.rendering;
 
+import java.nio.charset.StandardCharsets;
+
 import org.junit.jupiter.api.Test;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.region.TextComponentType;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LiveEditAttributeInjectionTest
 {
@@ -212,6 +213,6 @@ public class LiveEditAttributeInjectionTest
     private String readResource( final String resourceName )
         throws Exception
     {
-        return Resources.toString( getClass().getResource( resourceName ), Charsets.UTF_8 );
+        return Resources.toString( getClass().getResource( resourceName ), StandardCharsets.UTF_8 );
     }
 }

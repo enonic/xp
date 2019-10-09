@@ -12,11 +12,12 @@ import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.audit.FindAuditLogParams;
 import com.enonic.xp.audit.FindAuditLogResult;
 import com.enonic.xp.audit.LogAuditLogParams;
+import com.enonic.xp.core.impl.audit.config.AuditLogConfig;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.repository.RepositoryService;
 
-@Component(immediate = true, configurationPid = "com.enonic.xp.audit")
+@Component(immediate = true)
 public class AuditLogServiceImpl
     implements AuditLogService
 {
@@ -31,10 +32,8 @@ public class AuditLogServiceImpl
     private NodeService nodeService;
 
     @Activate
-    public void initialize( final AuditLogConfig config )
+    public void initialize()
     {
-        this.config = config;
-
         AuditLogRepoInitializer.create().
             setIndexService( indexService ).
             setRepositoryService( repositoryService ).
@@ -50,7 +49,7 @@ public class AuditLogServiceImpl
     @Override
     public AuditLog log( final LogAuditLogParams params )
     {
-        if ( !config.enabled() )
+        if ( !config.isEnabled() )
         {
             return null;
         }
@@ -61,7 +60,7 @@ public class AuditLogServiceImpl
             build().
             execute();
 
-        if ( this.config.outputLogs() )
+        if ( this.config.isOutputLogs() )
         {
             logAuditLog( result );
         }
@@ -112,4 +111,11 @@ public class AuditLogServiceImpl
     {
         this.nodeService = nodeService;
     }
+
+    @Reference
+    public void setConfig( final AuditLogConfig config )
+    {
+        this.config = config;
+    }
+
 }

@@ -10,7 +10,8 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.script.event.ScriptEventListener;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class ScriptEventManagerImplTest
 {

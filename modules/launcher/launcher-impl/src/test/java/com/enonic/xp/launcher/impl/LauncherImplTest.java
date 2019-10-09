@@ -1,9 +1,9 @@
 package com.enonic.xp.launcher.impl;
 
+import java.nio.file.Path;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-
-import java.nio.file.Path;
 
 public class LauncherImplTest
 {

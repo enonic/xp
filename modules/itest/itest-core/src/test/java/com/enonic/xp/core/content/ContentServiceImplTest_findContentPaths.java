@@ -8,7 +8,7 @@ import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.query.parser.QueryParser;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Deprecated
 public class ContentServiceImplTest_findContentPaths

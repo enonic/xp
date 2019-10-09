@@ -5,6 +5,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Hashtable;
 
+import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
@@ -41,7 +42,8 @@ import com.enonic.xp.testing.mock.MockServiceRegistry;
 import com.enonic.xp.testing.mock.MockViewFunctionService;
 import com.enonic.xp.testing.resource.ClassLoaderResourceService;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public abstract class ScriptTestSupport
 {
@@ -79,6 +81,7 @@ public abstract class ScriptTestSupport
         this.appVersion = value;
     }
 
+    @Before
     @BeforeEach
     public final void setup()
         throws Exception

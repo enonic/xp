@@ -17,7 +17,8 @@ import static com.enonic.xp.core.impl.issue.IssueCommentPropertyNames.CREATED_TI
 import static com.enonic.xp.core.impl.issue.IssueCommentPropertyNames.CREATOR;
 import static com.enonic.xp.core.impl.issue.IssueCommentPropertyNames.CREATOR_DISPLAY_NAME;
 import static com.enonic.xp.core.impl.issue.IssueCommentPropertyNames.TEXT;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class IssueCommentDataSerializerTest
 {

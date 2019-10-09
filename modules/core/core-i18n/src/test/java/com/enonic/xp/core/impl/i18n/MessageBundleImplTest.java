@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.i18n.MessageBundle;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MessageBundleImplTest
 {

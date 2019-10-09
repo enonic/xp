@@ -2,10 +2,10 @@ package com.enonic.xp.xml.parser;
 
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.Test;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -14,7 +14,8 @@ import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
 import com.enonic.xp.support.ResourceTestHelper;
 import com.enonic.xp.support.XmlTestHelper;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class XmlSiteParserTest
 {
@@ -147,7 +148,7 @@ public class XmlSiteParserTest
     @Test
     public void testSiteXmlWithUtf8BomEncoding()
     {
-        final String xml = loadTestFile( "utf8bom.xml", Charsets.UTF_8 );
+        final String xml = loadTestFile( "utf8bom.xml", StandardCharsets.UTF_8 );
 
         final SiteDescriptor.Builder siteDescriptorBuilder = SiteDescriptor.create();
         ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
@@ -168,7 +169,7 @@ public class XmlSiteParserTest
     @Test
     public void testSiteXmlWithUtf16LeBomEncoding()
     {
-        final String xml = loadTestFile( "utf16lebom.xml", Charsets.UTF_16LE );
+        final String xml = loadTestFile( "utf16lebom.xml", StandardCharsets.UTF_16LE );
 
         final SiteDescriptor.Builder siteDescriptorBuilder = SiteDescriptor.create();
         ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
@@ -189,7 +190,7 @@ public class XmlSiteParserTest
     @Test
     public void testSiteXmlWithUtf16BeBomEncoding()
     {
-        final String xml = loadTestFile( "utf16bebom.xml", Charsets.UTF_16BE );
+        final String xml = loadTestFile( "utf16bebom.xml", StandardCharsets.UTF_16BE );
 
         final SiteDescriptor.Builder siteDescriptorBuilder = SiteDescriptor.create();
         ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );

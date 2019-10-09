@@ -6,7 +6,8 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.impl.AbstractScriptTest;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class NewBeanScriptTest
     extends AbstractScriptTest

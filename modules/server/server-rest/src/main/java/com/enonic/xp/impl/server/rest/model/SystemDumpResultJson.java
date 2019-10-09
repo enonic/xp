@@ -2,10 +2,9 @@ package com.enonic.xp.impl.server.rest.model;
 
 import java.util.List;
 
-import com.google.common.collect.Lists;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 
 import com.enonic.xp.dump.RepoDumpResult;
 import com.enonic.xp.dump.SystemDumpResult;

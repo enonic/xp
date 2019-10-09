@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.ContentPath;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MoveTaskMessageGeneratorTest
 {

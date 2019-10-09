@@ -3,12 +3,12 @@ package com.enonic.xp.vfs;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Stream;
 
-import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
@@ -99,7 +99,7 @@ final class LocalFile
             return null;
         }
 
-        return com.google.common.io.Files.asCharSource( this.path.toFile(), Charsets.UTF_8 );
+        return com.google.common.io.Files.asCharSource( this.path.toFile(), StandardCharsets.UTF_8 );
     }
 
     @Override

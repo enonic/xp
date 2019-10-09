@@ -5,13 +5,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishRequestJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishRequestScheduleJson;
-import com.enonic.xp.issue.CreateIssueParams;
-import com.enonic.xp.issue.CreatePublishRequestIssueParams;
 import com.enonic.xp.issue.IssueType;
 import com.enonic.xp.issue.PublishRequest;
 import com.enonic.xp.issue.PublishRequestIssueSchedule;

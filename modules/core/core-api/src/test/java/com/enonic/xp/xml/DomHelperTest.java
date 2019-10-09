@@ -3,16 +3,18 @@ package com.enonic.xp.xml;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class DomHelperTest
 {
@@ -33,7 +35,7 @@ public class DomHelperTest
         throws Exception
     {
         final URL url = getClass().getResource( "document.xml" );
-        final String xml = Resources.toString( url, Charsets.UTF_8 );
+        final String xml = Resources.toString( url, StandardCharsets.UTF_8 );
         final Document doc = DomHelper.parse( xml );
         assertNotNull( doc );
     }
@@ -50,7 +52,7 @@ public class DomHelperTest
         throws Exception
     {
         final URL url = getClass().getResource( "document.xml" );
-        final String xml = Resources.toString( url, Charsets.UTF_8 );
+        final String xml = Resources.toString( url, StandardCharsets.UTF_8 );
         final Document doc = DomHelper.parse( new StringReader( xml ) );
         assertNotNull( doc );
     }

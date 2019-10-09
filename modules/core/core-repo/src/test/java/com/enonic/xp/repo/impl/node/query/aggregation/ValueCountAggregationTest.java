@@ -19,7 +19,8 @@ import com.enonic.xp.query.aggregation.TermsAggregationQuery;
 import com.enonic.xp.query.aggregation.metric.ValueCountAggregationQuery;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ValueCountAggregationTest
     extends AbstractNodeTest

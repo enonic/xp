@@ -11,7 +11,7 @@ import org.osgi.framework.ServiceReference;
 
 import com.enonic.xp.annotation.Order;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ServletStatusReporterTest
     extends ResourceReporterTest

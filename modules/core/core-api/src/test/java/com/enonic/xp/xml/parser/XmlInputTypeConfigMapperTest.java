@@ -15,7 +15,8 @@ import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.xml.DomElement;
 import com.enonic.xp.xml.DomHelper;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class XmlInputTypeConfigMapperTest
 {

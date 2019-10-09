@@ -6,7 +6,7 @@ import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.service.log.LogService;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class LogServiceFactoryTest
 {

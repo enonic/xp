@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import com.google.common.io.Resources;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HtmlSanitizerImplTest
 {

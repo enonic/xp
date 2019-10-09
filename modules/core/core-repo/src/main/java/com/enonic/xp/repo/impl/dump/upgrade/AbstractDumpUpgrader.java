@@ -1,11 +1,11 @@
 package com.enonic.xp.repo.impl.dump.upgrade;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.BlobKey;
@@ -77,7 +77,7 @@ public abstract class AbstractDumpUpgrader
 
     protected BlobKey addRecord( final Segment segment, final String serializedData )
     {
-        final ByteSource byteSource = ByteSource.wrap( serializedData.getBytes( Charsets.UTF_8 ) );
+        final ByteSource byteSource = ByteSource.wrap( serializedData.getBytes( StandardCharsets.UTF_8 ) );
         final BlobRecord blobRecord = dumpReader.getDumpBlobStore().
             addRecord( segment, byteSource );
         return blobRecord.getKey();

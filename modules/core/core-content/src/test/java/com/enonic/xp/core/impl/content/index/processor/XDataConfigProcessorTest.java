@@ -24,7 +24,7 @@ import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.schema.xdata.XDatas;
 
 import static com.enonic.xp.content.ContentPropertyNames.EXTRA_DATA;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class XDataConfigProcessorTest
 {

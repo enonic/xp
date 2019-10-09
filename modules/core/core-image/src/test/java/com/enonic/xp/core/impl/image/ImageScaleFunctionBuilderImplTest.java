@@ -15,7 +15,8 @@ import com.enonic.xp.core.impl.image.command.ScaleWidthFunctionCommand;
 import com.enonic.xp.image.FocalPoint;
 import com.enonic.xp.image.ScaleParams;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public final class ImageScaleFunctionBuilderImplTest
 {

@@ -194,25 +194,43 @@ public final class ExceptionRendererImpl
 
     private Site resolveSiteFromPath( final PortalRequest req )
     {
-        ContentPath path = req.getContentPath();
-        while ( path != null && !path.isRoot() )
+        ContentPath contentPath = req.getContentPath();
+        final Content content = getByPathAsContentAdmin( contentPath );
+        if ( content != null && content.isSite() )
         {
-            try
-            {
-                final ContentPath cp = path;
-                final Content content = runAsContentAdmin( () -> this.contentService.getByPath( cp ) );
-                if ( content.isSite() )
-                {
-                    return (Site) content;
-                }
-            }
-            catch ( ContentNotFoundException e )
-            {
-                // not actual content found in the path, but there might still be a site in the parent
-            }
-            path = path.getParentPath();
+            return (Site) content;
         }
-        return null;
+
+        //Resolves closest site, starting from the top.
+        Site site = null;
+        ContentPath currentContentPath = ContentPath.ROOT;
+        for ( int contentPathIndex = 0; contentPathIndex < contentPath.elementCount(); contentPathIndex++ )
+        {
+            currentContentPath = ContentPath.from( currentContentPath, contentPath.getElement( contentPathIndex ) );
+            final Content childContent = getByPathAsContentAdmin( currentContentPath );
+            if ( childContent == null )
+            {
+                break;
+            }
+            else if ( childContent.isSite() )
+            {
+                site = (Site) childContent;
+            }
+        }
+
+        return site;
+    }
+
+    private Content getByPathAsContentAdmin( final ContentPath contentPath )
+    {
+        try
+        {
+            return runAsContentAdmin( () -> this.contentService.getByPath( contentPath ) );
+        }
+        catch ( ContentNotFoundException e )
+        {
+            return null;
+        }
     }
 
     private <T> T runAsContentAdmin( final Callable<T> callable )
