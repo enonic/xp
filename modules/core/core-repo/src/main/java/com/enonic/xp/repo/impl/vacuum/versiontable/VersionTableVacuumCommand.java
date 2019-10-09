@@ -129,10 +129,16 @@ public class VersionTableVacuumCommand
         switch ( findVersionsInBranches( repository, version ) )
         {
             case NO_VERSION_FOUND:
-                LOG.debug( "No version found in branch for for [" + version.getNodeId() + "/ " + version.getNodeVersionId() + "]" );
+                if ( LOG.isDebugEnabled() )
+                {
+                    LOG.debug( "No version found in branch for for [" + version.getNodeId() + "/ " + version.getNodeVersionId() + "]" );
+                }
                 return true;
             case OTHER_VERSION_FOUND:
-                LOG.debug( "Other version found in branch for for [" + version.getNodeId() + "/ " + version.getNodeVersionId() + "]" );
+                if ( LOG.isDebugEnabled() )
+                {
+                    LOG.debug( "Other version found in branch for for [" + version.getNodeId() + "/ " + version.getNodeVersionId() + "]" );
+                }
                 return version.getNodeCommitId() == null;
         }
         return false;

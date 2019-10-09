@@ -89,7 +89,10 @@ public class SegmentVacuumCommand
         toBeRemoved.forEach( segment -> {
             try
             {
-                LOG.debug( "Deleting segment [" + segment + "]" );
+                if ( LOG.isDebugEnabled() )
+                {
+                    LOG.debug( "Deleting segment [" + segment + "]" );
+                }
                 blobStore.deleteSegment( segment );
                 result.deleted();
             }
@@ -106,7 +109,10 @@ public class SegmentVacuumCommand
     private boolean isRepositoryToKeep( final RepositoryId repositoryId )
     {
         return repositoryPresenceMap.computeIfAbsent( repositoryId, key -> {
-            LOG.debug( "Repository [" + repositoryId + "] not found in the list of current repository" );
+            if ( LOG.isDebugEnabled() )
+            {
+                LOG.debug( "Repository [" + repositoryId + "] not found in the list of current repository" );
+            }
 
             //If repository is not present, find if there is an old version more recent than the threshold
             final Context systemContext = ContextBuilder.from( ContextAccessor.current() ).
@@ -125,7 +131,7 @@ public class SegmentVacuumCommand
                 build();
             final NodeVersionQueryResult result = systemContext.callWith( () -> nodeService.findVersions( findRecentVersionsQuery ) );
 
-            if ( result.getTotalHits() > 0 )
+            if ( result.getTotalHits() > 0 && LOG.isDebugEnabled() )
             {
                 LOG.debug( "Recent versions of the repository entry found" );
             }

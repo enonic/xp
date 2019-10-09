@@ -100,7 +100,10 @@ public abstract class AbstractBlobVacuumCommand
             final BlobKey blobKey = blobRecord.getKey();
             if ( !isUsedByVersion( segment, blobKey ) )
             {
-                LOG.debug( "No version found in branch for " + getFieldIndexPath().toString() + " [" + blobKey + "]" );
+                if ( LOG.isDebugEnabled() )
+                {
+                    LOG.debug( "No version found in branch for " + getFieldIndexPath().toString() + " [" + blobKey + "]" );
+                }
                 result.deleted();
                 return true;
             }
