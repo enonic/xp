@@ -1,7 +1,8 @@
-package com.enonic.xp.repo.impl.vacuum.binary;
+package com.enonic.xp.repo.impl.vacuum.blob;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,25 +11,26 @@ import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.Segment;
+import com.enonic.xp.blob.SegmentLevel;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.query.filter.ValueFilter;
+import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repo.impl.node.NodeSegmentUtils;
 import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
-import com.enonic.xp.repo.impl.vacuum.versiontable.VersionTableVacuumCommand;
-import com.enonic.xp.repo.impl.version.VersionIndexPath;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositorySegmentUtils;
 import com.enonic.xp.vacuum.VacuumTaskResult;
 
-public class BinaryVacuumCommand
+public abstract class AbstractBlobVacuumCommand
 {
-    private static final Logger LOG = LoggerFactory.getLogger( VersionTableVacuumCommand.class );
+    private static final Logger LOG = LoggerFactory.getLogger( AbstractBlobVacuumCommand.class );
 
     private final BlobStore blobStore;
 
@@ -38,33 +40,27 @@ public class BinaryVacuumCommand
 
     private VacuumTaskResult.Builder result;
 
-    private BinaryVacuumCommand( final Builder builder )
+    protected AbstractBlobVacuumCommand( final Builder builder )
     {
         blobStore = builder.blobStore;
         nodeService = builder.nodeService;
         params = builder.params;
     }
 
-    public static Builder create()
-    {
-        return new Builder();
-    }
-
-
     public VacuumTaskResult.Builder execute()
     {
         this.result = VacuumTaskResult.create();
 
         this.blobStore.listSegments().
-            filter( NodeSegmentUtils::isBinarySegment ).
+            filter( segment -> RepositorySegmentUtils.hasBlobTypeLevel( segment, getBlobTypeSegmentLevel() ) ).
             forEach( this::processBinarySegment );
         return result;
     }
 
-    private NodeVersionQuery createQuery( final BlobKey blobKey )
+    protected NodeVersionQuery createQuery( final BlobKey blobKey )
     {
         final ValueFilter mustHaveBinaryBlobKey = ValueFilter.create().
-            fieldName( VersionIndexPath.BINARY_BLOB_KEYS.getPath() ).
+            fieldName( getFieldIndexPath().getPath() ).
             addValue( ValueFactory.newString( blobKey.toString() ) ).
             build();
 
@@ -73,6 +69,11 @@ public class BinaryVacuumCommand
             addQueryFilter( mustHaveBinaryBlobKey ).
             build();
     }
+
+    protected abstract SegmentLevel getBlobTypeSegmentLevel();
+
+    protected abstract IndexPath getFieldIndexPath();
+
 
     private void processBinarySegment( final Segment segment )
     {
@@ -102,7 +103,7 @@ public class BinaryVacuumCommand
             final BlobKey blobKey = blobRecord.getKey();
             if ( !isUsedByVersion( segment, blobKey ) )
             {
-                LOG.debug( "No version found in branch for binaryBlobKey [" + blobKey + "]" );
+                LOG.debug( "No version found in branch for " + getFieldIndexPath().toString() + " [" + blobKey + "]" );
                 result.deleted();
                 return true;
             }
@@ -134,7 +135,7 @@ public class BinaryVacuumCommand
         return versions.getTotalHits() > 0;
     }
 
-    public static final class Builder
+    public static class Builder<B extends Builder>
     {
         private BlobStore blobStore;
 
@@ -142,31 +143,26 @@ public class BinaryVacuumCommand
 
         private VacuumTaskParams params;
 
-        private Builder()
+        protected Builder()
         {
         }
 
-        public Builder blobStore( final BlobStore blobStore )
+        public B blobStore( final BlobStore blobStore )
         {
             this.blobStore = blobStore;
-            return this;
+            return (B) this;
         }
 
-        public Builder nodeService( final NodeService nodeService )
+        public B nodeService( final NodeService nodeService )
         {
             this.nodeService = nodeService;
-            return this;
+            return (B) this;
         }
 
-        public Builder params( final VacuumTaskParams params )
+        public B params( final VacuumTaskParams params )
         {
             this.params = params;
-            return this;
-        }
-
-        public BinaryVacuumCommand build()
-        {
-            return new BinaryVacuumCommand( this );
+            return (B) this;
         }
     }
 }

@@ -1,8 +1,7 @@
-package com.enonic.xp.repo.impl.vacuum.binary;
+package com.enonic.xp.repo.impl.vacuum.blob;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -12,7 +11,6 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.Segment;
-import com.enonic.xp.blob.SegmentLevel;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.internal.blobstore.MemoryBlobRecord;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
@@ -20,7 +18,7 @@ import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.query.filter.ValueFilter;
-import com.enonic.xp.repo.impl.node.NodeConstants;
+import com.enonic.xp.repo.impl.vacuum.VacuumTask;
 import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.vacuum.VacuumListener;
@@ -29,22 +27,18 @@ import com.enonic.xp.vacuum.VacuumTaskResult;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class BinaryVacuumTaskTest
+public abstract class AbstractBlobVacuumTaskTest
 {
+    protected BlobStore blobStore;
 
-    private BlobStore blobStore;
+    protected NodeService nodeService;
 
-    private NodeService nodeService;
+    protected Segment segment;
 
-    private Segment binarySegment;
-
-    @BeforeEach
     public void setUp()
         throws Exception
     {
         this.blobStore = new MemoryBlobStore();
-        this.binarySegment = Segment.from( SegmentLevel.from( "test" ), NodeConstants.BINARY_SEGMENT_LEVEL );
-
         this.nodeService = Mockito.mock( NodeService.class );
         Mockito.when( nodeService.findVersions( Mockito.any( NodeVersionQuery.class ) ) ).
             thenAnswer( ( invocation ) -> {
@@ -58,17 +52,14 @@ public class BinaryVacuumTaskTest
             } );
     }
 
-    @Test
     public void test_delete_unused()
         throws Exception
     {
-        this.blobStore.addRecord( binarySegment, createBinaryRecord( 'a' ) );
-        this.blobStore.addRecord( binarySegment, createBinaryRecord( 'b' ) );
-        this.blobStore.addRecord( binarySegment, createBinaryRecord( 'c' ) );
+        this.blobStore.addRecord( segment, createBlobRecord( 'a' ) );
+        this.blobStore.addRecord( segment, createBlobRecord( 'b' ) );
+        this.blobStore.addRecord( segment, createBlobRecord( 'c' ) );
 
-        final BinaryVacuumTask task = new BinaryVacuumTask();
-        task.setBlobStore( this.blobStore );
-        task.setNodeService( this.nodeService );
+        final VacuumTask task = createTask();
 
         final VacuumTaskResult result = task.execute( VacuumTaskParams.create().ageThreshold( 0 ).build() );
 
@@ -77,25 +68,22 @@ public class BinaryVacuumTaskTest
         assertEquals( 1, result.getInUse() );
     }
 
-    @Test
     public void test_progress_report()
         throws Exception
     {
-        this.blobStore.addRecord( binarySegment, createBinaryRecord( 'a' ) );
-        this.blobStore.addRecord( binarySegment, createBinaryRecord( 'b' ) );
-        this.blobStore.addRecord( binarySegment, createBinaryRecord( 'c' ) );
+        this.blobStore.addRecord( segment, createBlobRecord( 'a' ) );
+        this.blobStore.addRecord( segment, createBlobRecord( 'b' ) );
+        this.blobStore.addRecord( segment, createBlobRecord( 'c' ) );
 
-        final BinaryVacuumTask task = new BinaryVacuumTask();
-        task.setBlobStore( this.blobStore );
-        task.setNodeService( this.nodeService );
+        final VacuumTask task = createTask();
 
         AtomicInteger blobReportCount = new AtomicInteger( 0 );
         final VacuumListener progressListener = new VacuumListener()
         {
             @Override
-            public void vacuumingBlobSegment( final Segment segment )
+            public void vacuumingBlobSegment( final Segment vacuumedSegment )
             {
-                assertEquals( Segment.from( "test", "binary" ), segment );
+                assertEquals( segment, vacuumedSegment );
             }
 
             @Override
@@ -125,28 +113,20 @@ public class BinaryVacuumTaskTest
         assertEquals( 3, blobReportCount.get() );
     }
 
-    @Test
     public void age_threshold()
         throws Exception
     {
-        this.blobStore.addRecord( binarySegment, createBinaryRecord( 'a' ) );
+        this.blobStore.addRecord( segment, createBlobRecord( 'a' ) );
 
-        final BinaryVacuumTask task = new BinaryVacuumTask();
-        task.setBlobStore( this.blobStore );
-        task.setNodeService( this.nodeService );
-
+        final VacuumTask task = createTask();
         final VacuumTaskResult result = task.execute( VacuumTaskParams.create().build() );
 
         assertEquals( 0, result.getProcessed() );
     }
 
-    private MemoryBlobRecord createVersionRecordWithBinaryRef( final String key, final char binaryRef )
-    {
-        return new MemoryBlobRecord( BlobKey.from( key ),
-                                     ByteSource.wrap( createVersionContent( createBlobKey( binaryRef ) ).getBytes() ) );
-    }
+    protected abstract VacuumTask createTask();
 
-    private MemoryBlobRecord createBinaryRecord( final char id )
+    private MemoryBlobRecord createBlobRecord( final char id )
     {
         return new MemoryBlobRecord( createBlobKey( id ), ByteSource.wrap( "stuff".getBytes() ) );
     }
@@ -154,11 +134,5 @@ public class BinaryVacuumTaskTest
     private BlobKey createBlobKey( final char value )
     {
         return BlobKey.from( Strings.padStart( "", 40, value ) );
-    }
-
-    private String createVersionContent( final BlobKey blobKey )
-    {
-        return "{\"attachedBinaries\":[{\"binaryReference\":\"trump3.jpg\",\"blobKey\":\"" + blobKey +
-            "\"}],\"childOrder\":\"modifiedtime DESC\",\"data\"";
     }
 }
