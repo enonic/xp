@@ -70,7 +70,6 @@ public class SegmentVacuumCommand
 
     public VacuumTaskResult.Builder execute()
     {
-
         List<Segment> toBeRemoved = new ArrayList<>();
         blobStore.listSegments().
             forEach( segment -> {

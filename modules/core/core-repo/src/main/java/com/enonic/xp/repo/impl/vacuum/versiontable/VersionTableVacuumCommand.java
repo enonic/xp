@@ -111,6 +111,10 @@ public class VersionTableVacuumCommand
                     result.deleted();
                     versionToDeleteList.add( version.getNodeVersionId() );
                 }
+                else
+                {
+                    result.inUse();
+                }
             } );
             versionService.delete( versionToDeleteList, InternalContext.from( ContextAccessor.current() ) );
 

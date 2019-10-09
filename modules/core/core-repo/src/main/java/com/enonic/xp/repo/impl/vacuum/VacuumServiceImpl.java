@@ -59,6 +59,7 @@ public class VacuumServiceImpl
             taskResults.add( taskResult );
             LOG.info( "Vacuum task [" + task.name() + "] done" );
         }
+        LOG.info( "Vacuum done" );
 
         return taskResults.build();
     }

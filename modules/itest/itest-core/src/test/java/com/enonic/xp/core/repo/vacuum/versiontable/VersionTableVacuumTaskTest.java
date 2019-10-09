@@ -73,7 +73,7 @@ class VersionTableVacuumTaskTest
         assertVersions( node1.id(), 1 );
 
         final VacuumTaskResult result = NodeHelper.runAsAdmin( () -> this.task.execute( VacuumTaskParams.create().
-            ageThreshold( 0 ).
+            ageThreshold( -1 ).
             build() ) );
         refresh();
 
@@ -96,7 +96,7 @@ class VersionTableVacuumTaskTest
         assertVersions( node1.id(), 1 );
 
         final VacuumTaskResult result = NodeHelper.runAsAdmin( () -> this.task.execute( VacuumTaskParams.create().
-            ageThreshold( 0 ).
+            ageThreshold( -1 ).
             build() ) );
         refresh();
 

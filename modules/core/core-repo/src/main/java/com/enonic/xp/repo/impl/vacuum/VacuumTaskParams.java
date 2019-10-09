@@ -1,11 +1,14 @@
 package com.enonic.xp.repo.impl.vacuum;
 
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+
 import com.enonic.xp.vacuum.VacuumListener;
 import com.enonic.xp.vacuum.VacuumTaskConfig;
 
 public final class VacuumTaskParams
 {
-    private static final int DEFAULT_AGE_THRESHOLD = 60 * 60 * 1000; //1 hour
+    private static final long DEFAULT_AGE_THRESHOLD = Duration.of( 1, ChronoUnit.HOURS ).toMillis();
 
     private final long ageThreshold;
 
