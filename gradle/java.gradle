@@ -87,3 +87,7 @@ publishing.publications {
         artifact sourcesJar
     }
 }
+
+task allDependencies(type: DependencyReportTask) {}
+
+task allDependencyInsight(type: DependencyInsightReportTask) {}
