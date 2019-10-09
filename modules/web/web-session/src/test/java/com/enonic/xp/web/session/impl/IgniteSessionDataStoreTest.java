@@ -55,6 +55,7 @@ public class IgniteSessionDataStoreTest
         when( ignite.getOrCreateCache( any( CacheConfiguration.class ) ) ).thenReturn( cache );
         store.addIgnite( ignite );
         store.activate( getWebSessionConfig() );
+        store.start();
     }
 
     @Test

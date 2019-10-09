@@ -20,6 +20,7 @@ configurations {
 
 ext {
     felixVersion = '6.0.1'
+    jettyVersion = '9.4.21.v20190926'
 }
 
 dependencies {
