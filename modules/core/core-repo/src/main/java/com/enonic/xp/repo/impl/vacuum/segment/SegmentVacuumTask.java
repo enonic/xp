@@ -39,6 +39,9 @@ public class SegmentVacuumTask
     @Override
     public VacuumTaskResult execute( final VacuumTaskParams params )
     {
+        if (params.hasListener()) {
+            params.getListener().taskBegin( NAME, null );
+        }
         return SegmentVacuumCommand.create().
             blobStore( blobStore ).
             repositoryService( repositoryService ).

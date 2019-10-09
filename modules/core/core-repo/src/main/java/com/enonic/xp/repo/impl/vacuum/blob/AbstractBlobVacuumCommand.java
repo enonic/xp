@@ -2,7 +2,6 @@ package com.enonic.xp.repo.impl.vacuum.blob;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,8 +19,6 @@ import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.query.filter.ValueFilter;
-import com.enonic.xp.repo.impl.node.NodeConstants;
-import com.enonic.xp.repo.impl.node.NodeSegmentUtils;
 import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
@@ -77,9 +74,9 @@ public abstract class AbstractBlobVacuumCommand
 
     private void processBinarySegment( final Segment segment )
     {
-        if ( params.getListener() != null )
+        if ( params.hasListener() )
         {
-            params.getListener().vacuumingBlobSegment( segment );
+            params.getListener().stepBegin( segment.toString(), null );
         }
 
         final List<BlobKey> blobToDelete = new ArrayList<>();
@@ -95,9 +92,9 @@ public abstract class AbstractBlobVacuumCommand
         if ( isOldBlobRecord( blobRecord ) )
         {
             result.processed();
-            if ( params.getListener() != null )
+            if ( params.hasListener() )
             {
-                params.getListener().vacuumingBlob( 1L );
+                params.getListener().processed( 1L );
             }
 
             final BlobKey blobKey = blobRecord.getKey();

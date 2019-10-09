@@ -2,7 +2,6 @@ package com.enonic.xp.repo.impl.vacuum.blob;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.base.Strings;
@@ -20,7 +19,6 @@ import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.vacuum.VacuumTask;
 import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
-import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.vacuum.VacuumListener;
 import com.enonic.xp.vacuum.VacuumTaskResult;
 
@@ -81,27 +79,26 @@ public abstract class AbstractBlobVacuumTaskTest
         final VacuumListener progressListener = new VacuumListener()
         {
             @Override
-            public void vacuumingBlobSegment( final Segment vacuumedSegment )
+            public void vacuumBegin( final long taskCount )
             {
-                assertEquals( segment, vacuumedSegment );
+
             }
 
             @Override
-            public void vacuumingBlob( final long count )
+            public void taskBegin( final String task, final Long stepCount )
+            {
+
+            }
+
+            @Override
+            public void stepBegin( final String stepName, final Long toProcessCount )
+            {
+            }
+
+            @Override
+            public void processed( final long count )
             {
                 blobReportCount.incrementAndGet();
-            }
-
-            @Override
-            public void vacuumingVersionRepository( final RepositoryId repository, final long total )
-            {
-
-            }
-
-            @Override
-            public void vacuumingVersion( final long count )
-            {
-
             }
         };
         final VacuumTaskResult result = task.execute( VacuumTaskParams.create().ageThreshold( 0 ).listener( progressListener ).build() );

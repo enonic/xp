@@ -1,9 +1,8 @@
 package com.enonic.xp.impl.server.rest.task;
 
-import com.enonic.xp.impl.server.rest.VacuumProgressLogger;
 import com.enonic.xp.impl.server.rest.model.VacuumRequestJson;
 import com.enonic.xp.impl.server.rest.model.VacuumResultJson;
-import com.enonic.xp.impl.server.rest.task.listener.VacuumTaskListenerImpl;
+import com.enonic.xp.impl.server.rest.task.listener.VacuumListenerImpl;
 import com.enonic.xp.task.AbstractRunnableTask;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskId;
@@ -34,8 +33,7 @@ public class VacuumRunnableTask
     public void run( final TaskId id, final ProgressReporter progressReporter )
     {
         final VacuumParameters vacuumParams = VacuumParameters.create().
-            vacuumProgressListener( new VacuumProgressLogger() ).
-            vacuumTaskListener( new VacuumTaskListenerImpl( progressReporter ) ).
+            vacuumListener( new VacuumListenerImpl( progressReporter ) ).
             ageThreshold( params.getAgeThreshold() ).
             taskConfigMap( params.getTaskConfigMap() ).
             build();

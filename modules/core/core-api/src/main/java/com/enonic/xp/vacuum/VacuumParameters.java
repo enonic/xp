@@ -9,9 +9,7 @@ public final class VacuumParameters
 {
     private static final int DEFAULT_AGE_THRESHOLD = 60 * 60 * 1000; //1 hour
 
-    private final VacuumListener vacuumProgressListener;
-
-    private final VacuumTaskListener vacuumTaskListener;
+    private final VacuumListener vacuumListener;
 
     private final long ageThreshold;
 
@@ -19,8 +17,7 @@ public final class VacuumParameters
 
     private VacuumParameters( final Builder builder )
     {
-        this.vacuumProgressListener = builder.vacuumProgressListener;
-        this.vacuumTaskListener = builder.vacuumTaskListener;
+        this.vacuumListener = builder.vacuumListener;
         this.ageThreshold = builder.ageThreshold == null ? DEFAULT_AGE_THRESHOLD : builder.ageThreshold.longValue();
         this.taskConfigMap = builder.taskConfigMap == null ? null : ImmutableMap.copyOf( builder.taskConfigMap );
     }
@@ -30,14 +27,9 @@ public final class VacuumParameters
         return new Builder();
     }
 
-    public VacuumListener getVacuumProgressListener()
+    public VacuumListener getVacuumListener()
     {
-        return vacuumProgressListener;
-    }
-
-    public VacuumTaskListener getVacuumTaskListener()
-    {
-        return vacuumTaskListener;
+        return vacuumListener;
     }
 
     public long getAgeThreshold()
@@ -61,9 +53,7 @@ public final class VacuumParameters
 
     public static final class Builder
     {
-        private VacuumListener vacuumProgressListener;
-
-        private VacuumTaskListener vacuumTaskListener;
+        private VacuumListener vacuumListener;
 
         private Long ageThreshold;
 
@@ -73,15 +63,9 @@ public final class VacuumParameters
         {
         }
 
-        public Builder vacuumProgressListener( final VacuumListener vacuumProgressListener )
+        public Builder vacuumListener( final VacuumListener vacuumListener )
         {
-            this.vacuumProgressListener = vacuumProgressListener;
-            return this;
-        }
-
-        public Builder vacuumTaskListener( final VacuumTaskListener vacuumTaskListener )
-        {
-            this.vacuumTaskListener = vacuumTaskListener;
+            this.vacuumListener = vacuumListener;
             return this;
         }
 

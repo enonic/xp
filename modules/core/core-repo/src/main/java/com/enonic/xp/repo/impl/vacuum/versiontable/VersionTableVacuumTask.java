@@ -27,6 +27,9 @@ public class VersionTableVacuumTask
     @Override
     public VacuumTaskResult execute( final VacuumTaskParams params )
     {
+        if (params.hasListener()) {
+            params.getListener().taskBegin( NAME, null );
+        }
         return VersionTableVacuumCommand.create().
             repositoryService( repositoryService ).
             nodeService( nodeService ).

@@ -28,7 +28,6 @@ import com.enonic.xp.repo.impl.version.VersionIndexPath;
 import com.enonic.xp.repo.impl.version.VersionService;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
-import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.vacuum.VacuumListener;
 import com.enonic.xp.vacuum.VacuumTaskResult;
@@ -94,11 +93,10 @@ public class VersionTableVacuumCommand
             build();
 
         final VacuumListener listener = params.getListener();
-        final RepositoryId repositoryId = repository.getId();
         if ( listener != null )
         {
             final Long versionTotal = executor.getTotalHits();
-            listener.vacuumingVersionRepository( repositoryId, versionTotal );
+            listener.stepBegin( repository.getId().toString(), versionTotal );
         }
 
         while ( executor.hasMore() )
@@ -113,13 +111,13 @@ public class VersionTableVacuumCommand
                     result.deleted();
                     versionToDeleteList.add( version.getNodeVersionId() );
                 }
-                if ( listener != null )
-                {
-                    listener.vacuumingVersion( 1L );
-                }
             } );
-
             versionService.delete( versionToDeleteList, InternalContext.from( ContextAccessor.current() ) );
+
+            if ( listener != null )
+            {
+                listener.processed( versions.size() );
+            }
         }
 
     }

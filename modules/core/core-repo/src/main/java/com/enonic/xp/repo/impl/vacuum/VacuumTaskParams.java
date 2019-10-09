@@ -30,6 +30,10 @@ public final class VacuumTaskParams
         return listener;
     }
 
+    public boolean hasListener() {
+        return listener != null;
+    }
+
     public VacuumTaskConfig getConfig()
     {
         return config;

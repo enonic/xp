@@ -24,7 +24,7 @@ import com.enonic.xp.vacuum.VacuumTaskResult;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class SegmentCleanerTaskTest
+public class SegmentVacuumTaskTest
 {
     private MemoryBlobStore blobStore;
 

@@ -38,9 +38,9 @@ public class VacuumServiceImpl
         //Retrieves the tasks to execute
         VacuumTasks tasks = getTasks( params );
         LOG.info( "Starting vacuum. Running " + tasks.size() + " tasks..." );
-        if ( params.getVacuumTaskListener() != null )
+        if ( params.getVacuumListener() != null )
         {
-            params.getVacuumTaskListener().total( tasks.size() );
+            params.getVacuumListener().vacuumBegin( tasks.size() );
         }
 
         final VacuumResult.Builder taskResults = VacuumResult.create();
@@ -49,7 +49,7 @@ public class VacuumServiceImpl
             LOG.info( "Running vacuum task [" + task.name() + "]..." );
 
             final VacuumTaskParams taskParams = VacuumTaskParams.create().
-                listener( params.getVacuumProgressListener() ).
+                listener( params.getVacuumListener() ).
                 ageThreshold( params.getAgeThreshold() ).
                 config( params.getTaskConfig( task.name() ) ).
                 build();
@@ -57,13 +57,9 @@ public class VacuumServiceImpl
 
             LOG.info( task.name() + " : " + taskResult.toString() );
             taskResults.add( taskResult );
-            LOG.info( "Vacuum task [" + task.name() + "] done");
-
-            if ( params.getVacuumTaskListener() != null )
-            {
-                params.getVacuumTaskListener().taskExecuted();
-            }
+            LOG.info( "Vacuum task [" + task.name() + "] done" );
         }
+
         return taskResults.build();
     }
 
