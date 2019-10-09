@@ -53,6 +53,7 @@ import com.enonic.xp.admin.impl.json.content.ContentPermissionsJson;
 import com.enonic.xp.admin.impl.json.content.ContentSummaryJson;
 import com.enonic.xp.admin.impl.json.content.ContentSummaryListJson;
 import com.enonic.xp.admin.impl.json.content.ContentTreeSelectorListJson;
+import com.enonic.xp.admin.impl.json.content.ContentVersionJson;
 import com.enonic.xp.admin.impl.json.content.ContentsExistByPathJson;
 import com.enonic.xp.admin.impl.json.content.ContentsExistJson;
 import com.enonic.xp.admin.impl.json.content.DependenciesAggregationJson;
@@ -137,6 +138,7 @@ import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.ContentValidityParams;
 import com.enonic.xp.content.ContentValidityResult;
+import com.enonic.xp.content.ContentVersion;
 import com.enonic.xp.content.ContentVersionId;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.CreateMediaParams;
@@ -187,12 +189,14 @@ import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.task.TaskResultJson;
 import com.enonic.xp.task.TaskService;
+import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.Exceptions;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
 
 import static java.lang.Math.toIntExact;
+import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
 import static org.apache.commons.lang.StringUtils.isBlank;
 
@@ -1423,7 +1427,7 @@ public final class ContentResource
 
     @POST
     @Path("revert")
-    public ContentJson revert( final RevertContentJson params )
+    public ContentVersionJson revert( final RevertContentJson params )
     {
         final ContentVersionId contentVersionId = ContentVersionId.from( params.getVersionId() );
 
@@ -1438,11 +1442,19 @@ public final class ContentResource
                                             params.getVersionId() );
         }
 
-        final UpdateContentParams updateParams = prepareUpdateContentParams( versionedContent, contentVersionId );
+        final Content revertedContent = contentService.update( prepareUpdateContentParams( versionedContent, contentVersionId ) );
 
-        final Content content = contentService.update( updateParams );
+        final ContentVersion contentVersion = contentService.getActiveVersion( GetActiveContentVersionsParams.create().
+            branches( Branches.from( ContentConstants.BRANCH_DRAFT ) ).
+            contentId( revertedContent.getId() ).
+            build() );
 
-        return new ContentJson( content, contentIconUrlResolver, principalsResolver );
+        if ( contentVersion != null )
+        {
+            return new ContentVersionJson( contentVersion, principalsResolver );
+        }
+
+        return null;
     }
 
 
@@ -1459,13 +1471,40 @@ public final class ContentResource
                 edit.workflowInfo = WorkflowInfo.inProgress();
             } );
 
-        if ( versionedContent.getAttachments() != null )
-        {
-            updateParams.clearAttachments( true );
-            updateParams.createAttachments( createAttachments( versionedContent.getId(), contentVersionId, versionedContent.getAttachments() ) );
-        }
+        updateAttachments( versionedContent, contentVersionId, updateParams );
 
         return updateParams;
+    }
+
+    private void updateAttachments( final Content versionedContent, final ContentVersionId contentVersionId,
+                                    final UpdateContentParams updateParams )
+    {
+        final Content content = contentService.getById( versionedContent.getId() );
+
+        final List<BinaryReference> sourceAttachments =
+            ofNullable( content.getAttachments() ).orElse( Attachments.empty() ).stream().map( Attachment::getBinaryReference ).collect(
+                Collectors.toList() );
+
+        final List<BinaryReference> targetAttachments =
+            ofNullable( versionedContent.getAttachments() ).orElse( Attachments.empty() ).stream().map(
+                Attachment::getBinaryReference ).collect( Collectors.toList() );
+
+        List<BinaryReference> difference;
+        if ( sourceAttachments.size() > targetAttachments.size() )
+        {
+            difference = sourceAttachments.stream().filter( ref -> !targetAttachments.contains( ref ) ).collect( Collectors.toList() );
+        }
+        else
+        {
+            difference = targetAttachments.stream().filter( ref -> !sourceAttachments.contains( ref ) ).collect( Collectors.toList() );
+        }
+
+        if ( !difference.isEmpty() )
+        {
+            updateParams.clearAttachments( true );
+            updateParams.createAttachments(
+                createAttachments( versionedContent.getId(), contentVersionId, versionedContent.getAttachments() ) );
+        }
     }
 
     private CreateAttachments createAttachments( final ContentId contentId, final ContentVersionId contentVersionId,
