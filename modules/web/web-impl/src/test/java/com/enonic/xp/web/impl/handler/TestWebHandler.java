@@ -5,7 +5,7 @@ import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.handler.WebHandlerChain;
 
-public class TestWebHandler
+public final class TestWebHandler
     implements WebHandler
 {
     protected WebResponse response;
@@ -13,22 +13,10 @@ public class TestWebHandler
     protected RequestVerifier verifier = req -> {
     };
 
-    private final int order;
-
-    public TestWebHandler()
-    {
-        this( 0 );
-    }
-
-    public TestWebHandler( final int order )
-    {
-        this.order = order;
-    }
-
     @Override
     public int getOrder()
     {
-        return order;
+        return 0;
     }
 
     @Override

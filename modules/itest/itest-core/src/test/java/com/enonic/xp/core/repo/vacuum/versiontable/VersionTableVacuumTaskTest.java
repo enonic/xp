@@ -1,5 +1,8 @@
 package com.enonic.xp.core.repo.vacuum.versiontable;
 
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -16,12 +19,20 @@ import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
 import com.enonic.xp.repo.impl.vacuum.versiontable.VersionTableVacuumTask;
 import com.enonic.xp.vacuum.VacuumTaskResult;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class VersionTableVacuumTaskTest
     extends AbstractNodeTest
 {
     private VersionTableVacuumTask task;
+
+    // "0" makes more human sense, but clock is not monotonic.
+    // Negative threshold queries versions timestamps in future, so nearly created nodes guaranteed to be found.
+    private static final long NEGATIVE_AGE_THRESHOLD_MILLIS = -Duration.of( 1, ChronoUnit.HOURS ).toMillis();
+
+    // Number of versions created on fresh setup.
+    private int SYSTEM_NODES_COUNT = 7;
 
     @BeforeEach
     void setUp()
@@ -48,7 +59,7 @@ class VersionTableVacuumTaskTest
         assertVersions( node1.id(), expectedVersionCount );
 
         final VacuumTaskResult result = NodeHelper.runAsAdmin( () -> this.task.execute( VacuumTaskParams.create().
-            ageThreshold( -10_000 ). // 0 here makes more human sense, but clock is not monotonic. This moves threshold to the future.
+            ageThreshold( NEGATIVE_AGE_THRESHOLD_MILLIS ).
             build() ) );
         refresh();
 
@@ -73,7 +84,7 @@ class VersionTableVacuumTaskTest
         assertVersions( node1.id(), 1 );
 
         final VacuumTaskResult result = NodeHelper.runAsAdmin( () -> this.task.execute( VacuumTaskParams.create().
-            ageThreshold( -1 ).
+            ageThreshold( NEGATIVE_AGE_THRESHOLD_MILLIS ).
             build() ) );
         refresh();
 
@@ -96,7 +107,7 @@ class VersionTableVacuumTaskTest
         assertVersions( node1.id(), 1 );
 
         final VacuumTaskResult result = NodeHelper.runAsAdmin( () -> this.task.execute( VacuumTaskParams.create().
-            ageThreshold( -1 ).
+            ageThreshold( NEGATIVE_AGE_THRESHOLD_MILLIS ).
             build() ) );
         refresh();
 
@@ -118,7 +129,7 @@ class VersionTableVacuumTaskTest
         assertVersions( node1.id(), 3 );
 
         final VacuumTaskResult result = NodeHelper.runAsAdmin( () -> this.task.execute( VacuumTaskParams.create().
-            ageThreshold( 100_000 ).
+            ageThreshold( Duration.of( 1, ChronoUnit.HOURS ).toMillis() ).
             build() ) );
         refresh();
 
