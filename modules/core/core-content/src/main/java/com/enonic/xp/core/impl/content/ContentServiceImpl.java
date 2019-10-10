@@ -29,6 +29,7 @@ import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareContentsParams;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentDependencies;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
@@ -190,6 +191,7 @@ public class ContentServiceImpl
             setIndexService( indexService ).
             setNodeService( nodeService ).
             setRepositoryService( repositoryService ).
+            repositoryId( ContentConstants.CONTENT_REPO_ID ).
             build().
             initialize();
 

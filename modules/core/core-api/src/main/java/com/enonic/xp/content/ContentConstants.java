@@ -9,6 +9,7 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeType;
+import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.repository.Repository;
@@ -17,6 +18,9 @@ import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 @Beta
@@ -41,7 +45,7 @@ public class ContentConstants
         value( "master" ).
         build();
 
-    public static final String CONTENT_REPO_ID_PREFIX = "com.enonic.cms.";
+    public static final String CONTENT_REPO_ID_PREFIX = ProjectConstants.PROJECT_REPO_ID_PREFIX;
 
     public static final RepositoryId CONTENT_REPO_ID = RepositoryId.from( CONTENT_REPO_ID_PREFIX + "default" );
 
@@ -58,6 +62,17 @@ public class ContentConstants
     public static final Context CONTEXT_MASTER = ContextBuilder.create().
         branch( BRANCH_MASTER ).
         repositoryId( CONTENT_REPO.getId() ).
+        build();
+
+    public static final AccessControlList CONTENT_REPO_DEFAULT_ACL = AccessControlList.create().
+        add( AccessControlEntry.create().
+            allowAll().
+            principal( RoleKeys.ADMIN ).
+            build() ).
+        add( AccessControlEntry.create().
+            allow( Permission.READ ).
+            principal( RoleKeys.CONTENT_MANAGER_ADMIN ).
+            build() ).
         build();
 
     public static final String CONTENT_ROOT_NAME = "content";

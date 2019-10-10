@@ -11,9 +11,14 @@ public class AttachmentSerializer
 {
     public static void create( final PropertyTree propertyTree, final CreateAttachments createAttachments )
     {
+        create( propertyTree.getRoot(), createAttachments, ContentPropertyNames.ATTACHMENT );
+    }
+
+    public static void create( final PropertySet propertySet, final CreateAttachments createAttachments, final String name )
+    {
         for ( final CreateAttachment createAttachment : createAttachments )
         {
-            final PropertySet attachmentSet = propertyTree.addSet( ContentPropertyNames.ATTACHMENT );
+            final PropertySet attachmentSet = propertySet.addSet( name );
             attachmentSet.addString( ContentPropertyNames.ATTACHMENT_NAME, createAttachment.getName() );
             attachmentSet.addString( ContentPropertyNames.ATTACHMENT_LABEL, createAttachment.getLabel() );
             attachmentSet.addBinaryReference( ContentPropertyNames.ATTACHMENT_BINARY_REF, createAttachment.getBinaryReference() );
