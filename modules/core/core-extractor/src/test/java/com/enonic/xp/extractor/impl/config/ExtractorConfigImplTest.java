@@ -12,8 +12,6 @@ import com.google.common.collect.Maps;
 
 import static com.enonic.xp.extractor.impl.config.ExtractorConfigMap.BODY_SIZE_LIMIT_DEFAULT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ExtractorConfigImplTest
 {
@@ -31,7 +29,6 @@ public class ExtractorConfigImplTest
     {
         instance.configure( new HashMap<>(  ) );
 
-        assertTrue( instance.isEnabled() );
         assertEquals( BODY_SIZE_LIMIT_DEFAULT, instance.getBodySizeLimit() );
     }
 
@@ -41,7 +38,6 @@ public class ExtractorConfigImplTest
     {
         loadConfig( "empty" );
 
-        assertTrue( instance.isEnabled() );
         assertEquals( BODY_SIZE_LIMIT_DEFAULT, instance.getBodySizeLimit() );
     }
 
@@ -51,18 +47,7 @@ public class ExtractorConfigImplTest
     {
         loadConfig( "complete" );
 
-        assertTrue( instance.isEnabled() );
         assertEquals( 200_000, instance.getBodySizeLimit() );
-    }
-
-    @Test
-    public void testLoadConfig_Disabled()
-        throws Exception
-    {
-        loadConfig( "disabled" );
-
-        assertFalse( instance.isEnabled() );
-        assertEquals( BODY_SIZE_LIMIT_DEFAULT, instance.getBodySizeLimit() );
     }
 
     @Test
@@ -71,7 +56,6 @@ public class ExtractorConfigImplTest
     {
         loadConfig( "invalid" );
 
-        assertTrue( instance.isEnabled() );
         assertEquals( BODY_SIZE_LIMIT_DEFAULT, instance.getBodySizeLimit() );
     }
 

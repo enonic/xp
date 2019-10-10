@@ -14,15 +14,7 @@ public class ExtractorConfigImpl
 
     private final static Logger LOG = LoggerFactory.getLogger( ExtractorConfigImpl.class );
 
-    private boolean enabled;
-
     private int bodySizeLimit;
-
-    @Override
-    public boolean isEnabled()
-    {
-        return enabled;
-    }
 
     @Override
     public int getBodySizeLimit()
@@ -35,13 +27,9 @@ public class ExtractorConfigImpl
     {
         final ExtractorConfigMap configMap = new ExtractorConfigMap( config );
 
-        this.enabled = configMap.isEnabled();
         this.bodySizeLimit = configMap.getBodySizeLimit();
 
-        if ( this.enabled )
-        {
-            LOG.info( "Binary extractor is enabled and mappings updated." );
-        }
+        LOG.info( "Binary extractor - mappings updated." );
     }
 
 }
