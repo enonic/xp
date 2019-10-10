@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.tika.detect.DefaultDetector;
 import org.apache.tika.parser.DefaultParser;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.google.common.base.Strings;
@@ -44,6 +45,7 @@ public class BinaryExtractorImplTest
     }
 
     @Test
+    @Disabled("Requires PDFBox Tika Parser in classpath. But tika-parsers 1.x heavily pollutes classpath with other jars")
     public void extract_pdf()
         throws Exception
     {
