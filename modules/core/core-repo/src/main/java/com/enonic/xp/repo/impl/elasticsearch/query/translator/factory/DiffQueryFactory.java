@@ -1,12 +1,12 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory;
 
+import org.apache.lucene.search.join.ScoreMode;
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.FilteredQueryBuilder;
-import org.elasticsearch.index.query.HasChildQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.TermQueryBuilder;
 import org.elasticsearch.index.query.WildcardQueryBuilder;
+import org.elasticsearch.join.query.HasChildQueryBuilder;
 
 import com.google.common.base.Preconditions;
 
@@ -80,7 +80,7 @@ public class DiffQueryFactory
             mustNot( isInBranch( target ) );
     }
 
-    private FilteredQueryBuilder wrapInPathQueryIfNecessary( final BoolQueryBuilder sourceTargetCompares )
+    private BoolQueryBuilder wrapInPathQueryIfNecessary( final BoolQueryBuilder sourceTargetCompares )
     {
 
         final BoolQueryBuilder pathFilter = new BoolQueryBuilder();
@@ -105,8 +105,8 @@ public class DiffQueryFactory
         }
 
         return addedPathFilter
-            ? new FilteredQueryBuilder( pathFilter, sourceTargetCompares )
-            : new FilteredQueryBuilder( QueryBuilders.matchAllQuery(), sourceTargetCompares );
+            ? pathFilter.filter( sourceTargetCompares )
+            : QueryBuilders.boolQuery().filter( QueryBuilders.matchAllQuery() ).filter( sourceTargetCompares );
     }
 
     private BoolQueryBuilder joinOnlyInQueries( final BoolQueryBuilder inSourceOnly, final BoolQueryBuilder inTargetOnly,
@@ -132,14 +132,14 @@ public class DiffQueryFactory
                                                         queryPath.endsWith( "/" ) ? queryPath + "*" : queryPath + "/*" ) );
         }
 
-        return new HasChildQueryBuilder( childStorageType.getName(), pathQuery );
+        return new HasChildQueryBuilder( childStorageType.getName(), pathQuery, ScoreMode.None );
     }
 
     private HasChildQueryBuilder deletedInBranch( final Branch sourceBranch )
     {
         return new HasChildQueryBuilder( childStorageType.getName(), new BoolQueryBuilder().
             must( isDeleted() ).
-            must( new TermQueryBuilder( BranchIndexPath.BRANCH_NAME.toString(), sourceBranch.getValue() ) ) );
+            must( new TermQueryBuilder( BranchIndexPath.BRANCH_NAME.toString(), sourceBranch.getValue() ) ), ScoreMode.None );
     }
 
     private TermQueryBuilder isDeleted()

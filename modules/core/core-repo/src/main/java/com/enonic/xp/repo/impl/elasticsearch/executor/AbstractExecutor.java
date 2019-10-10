@@ -1,13 +1,16 @@
 package com.enonic.xp.repo.impl.elasticsearch.executor;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.search.ClearScrollRequest;
+import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
-import org.elasticsearch.client.Client;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.search.sort.SortBuilder;
 
@@ -26,7 +29,7 @@ abstract class AbstractExecutor
 
     final String deleteTimeout = "5s";
 
-    final Client client;
+    final RestHighLevelClient client;
 
     private final ExecutorProgressListener progressReporter;
 
@@ -81,7 +84,10 @@ abstract class AbstractExecutor
 
     SearchRequestBuilder createScrollRequest( final ElasticsearchQuery query )
     {
-        final SearchRequestBuilder searchRequestBuilder = client.prepareSearch( query.getIndexNames() ).
+        final SearchRequest searchRequest = new SearchRequest( query.getIndexNames() );
+
+        final SearchRequestBuilder searchRequestBuilder = client.search( searchRequest, RequestOptions.DEFAULT ).
+
             setTypes( query.getIndexTypes() ).
             setScroll( defaultScrollTime ).
             setQuery( query.getQuery() ).
@@ -98,7 +104,8 @@ abstract class AbstractExecutor
 
         if ( sortBuilders.isEmpty() )
         {
-            searchType = SearchType.SCAN;
+            // TODO ES: https://www.elastic.co/guide/en/elasticsearch/reference/5.5/breaking_50_search_changes.html#_literal_search_type_scan_literal_removed
+            searchType = SearchType.DFS_QUERY_THEN_FETCH;
         }
         else
         {
@@ -107,8 +114,8 @@ abstract class AbstractExecutor
             sortBuilders.forEach( searchRequestBuilder::addSort );
         }
 
-        searchRequestBuilder.
-            setSearchType( searchType );
+        searchRequestBuilder.setSearchType( searchType );
+
         return searchRequestBuilder;
     }
 
@@ -117,7 +124,14 @@ abstract class AbstractExecutor
         final ClearScrollRequest clearScrollRequest = new ClearScrollRequest();
         clearScrollRequest.addScrollId( scrollResp.getScrollId() );
 
-        client.clearScroll( clearScrollRequest ).actionGet();
+        try
+        {
+            client.clearScroll( clearScrollRequest, RequestOptions.DEFAULT );
+        }
+        catch ( IOException e )
+        {
+            throw new RuntimeException( e ); // TODO ES: specify exception instead of RuntimeException
+        }
     }
 
     void reportProgress( final int count )
@@ -130,7 +144,7 @@ abstract class AbstractExecutor
 
     public static class Builder<B extends Builder>
     {
-        private final Client client;
+        private final RestHighLevelClient client;
 
         private ExecutorProgressListener progressReporter;
 
@@ -146,7 +160,7 @@ abstract class AbstractExecutor
             return (B) this;
         }
 
-        Builder( final Client client )
+        Builder( final RestHighLevelClient client )
         {
             this.client = client;
         }

@@ -26,7 +26,7 @@ class SnapshotResultFactory
         return SnapshotResult.create().
             state( SnapshotResult.State.valueOf( snapshotInfo.state().toString() ) ).
             indices( snapshotInfo.indices() ).
-            name( snapshotInfo.name() ).
+            name( snapshotInfo.snapshotId().getName() ).
             reason( snapshotInfo.reason() ).
             timestamp( Instant.ofEpochMilli( snapshotInfo.endTime() ) ).
             build();

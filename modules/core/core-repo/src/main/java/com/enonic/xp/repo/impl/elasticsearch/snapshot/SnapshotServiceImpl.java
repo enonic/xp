@@ -206,9 +206,9 @@ public class SnapshotServiceImpl
             new PutRepositoryRequestBuilder( this.client.admin().cluster(), PutRepositoryAction.INSTANCE ).
                 setName( SNAPSHOT_REPOSITORY_NAME ).
                 setType( "fs" ).
-                setSettings( Settings.settingsBuilder().
+                setSettings( Settings.builder().
                     put( "compress", true ).
-                    put( "location", getSnapshotsDir() ).
+                    put( "location", getSnapshotsDir().toPath() ).
                     build() );
 
         this.client.admin().cluster().putRepository( requestBuilder.request() ).actionGet();

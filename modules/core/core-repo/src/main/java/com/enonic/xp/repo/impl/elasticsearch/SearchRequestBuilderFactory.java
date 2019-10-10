@@ -4,6 +4,8 @@ import org.elasticsearch.action.search.SearchAction;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
+import org.elasticsearch.search.suggest.SuggestBuilder;
 
 import com.google.common.collect.ImmutableList;
 
@@ -55,7 +57,10 @@ public class SearchRequestBuilderFactory
         query.getSortBuilders().forEach( searchRequestBuilder::addSort );
 
         query.getAggregations().forEach( searchRequestBuilder::addAggregation );
-        query.getSuggestions().forEach( searchRequestBuilder::addSuggestion );
+
+        final SuggestBuilder suggestBuilder = new SuggestBuilder();
+        query.getSuggestions().forEach( suggestionBuilder -> suggestBuilder.addSuggestion( suggestionBuilder.field(), suggestionBuilder ) );
+        searchRequestBuilder.suggest( suggestBuilder );
 
         if ( query.getHighlight() != null )
         {
@@ -64,7 +69,7 @@ public class SearchRequestBuilderFactory
 
         if ( query.getReturnFields() != null && query.getReturnFields().isNotEmpty() )
         {
-            searchRequestBuilder.addFields( query.getReturnFields().getReturnFieldNames() );
+            searchRequestBuilder.storedFields( query.getReturnFields().getReturnFieldNames() );
         }
 
         return searchRequestBuilder;
@@ -72,8 +77,7 @@ public class SearchRequestBuilderFactory
 
     private SearchRequestBuilder setHighlightSettings( final SearchRequestBuilder builder, final ElasticHighlightQuery highlight )
     {
-        highlight.getFields().forEach( builder::addHighlightedField );
-
+        highlight.getFields().forEach( field -> builder.addStoredField( field.name() ) );
 
         final Encoder encoder = highlight.getEncoder();
         final TagsSchema tagsSchema = highlight.getTagsSchema();
@@ -86,37 +90,51 @@ public class SearchRequestBuilderFactory
         final ImmutableList<String> postTags = highlight.getPostTags();
         final Boolean requireFieldMatch = highlight.getRequireFieldMatch();
 
-        builder.setHighlighterType( HIGHLIGHTER_TYPE );
-        if (encoder != null) {
-            builder.setHighlighterEncoder( encoder.value() );
+        final HighlightBuilder highlightBuilder = new HighlightBuilder();
+
+        highlightBuilder.highlighterType( HIGHLIGHTER_TYPE );
+        if ( encoder != null )
+        {
+            highlightBuilder.encoder( encoder.value() );
         }
-        if (fragmenter != null) {
-            builder.setHighlighterFragmenter( fragmenter.value() );
+        if ( fragmenter != null )
+        {
+            highlightBuilder.fragmenter( fragmenter.value() );
         }
-        if (fragmentSize != null) {
-            builder.setHighlighterFragmentSize( fragmentSize );
+        if ( fragmentSize != null )
+        {
+            highlightBuilder.fragmentSize( fragmentSize );
         }
-        if (noMatchSize != null) {
-            builder.setHighlighterNoMatchSize( noMatchSize );
+        if ( noMatchSize != null )
+        {
+            highlightBuilder.noMatchSize( noMatchSize );
         }
-        if (numOfFragments != null) {
-            builder.setHighlighterNumOfFragments( numOfFragments );
+        if ( numOfFragments != null )
+        {
+            highlightBuilder.numOfFragments( numOfFragments );
         }
-        if (order != null) {
-            builder.setHighlighterOrder( order.value() );
+        if ( order != null )
+        {
+            highlightBuilder.order( order.value() );
         }
-        if (preTags != null && !preTags.isEmpty()) {
-            builder.setHighlighterPreTags( preTags.toArray( new String[preTags.size()] ));
+        if ( preTags != null && !preTags.isEmpty() )
+        {
+            highlightBuilder.preTags( preTags.toArray( new String[preTags.size()] ) );
         }
-        if (postTags != null && !postTags.isEmpty()) {
-            builder.setHighlighterPostTags( postTags.toArray( new String[postTags.size()]) );
+        if ( postTags != null && !postTags.isEmpty() )
+        {
+            highlightBuilder.postTags( postTags.toArray( new String[postTags.size()] ) );
         }
-        if (requireFieldMatch != null) {
-            builder.setHighlighterRequireFieldMatch( requireFieldMatch );
+        if ( requireFieldMatch != null )
+        {
+            highlightBuilder.requireFieldMatch( requireFieldMatch );
         }
-        if (tagsSchema != null) {
-            builder.setHighlighterTagsSchema( tagsSchema.value() );
+        if ( tagsSchema != null )
+        {
+            highlightBuilder.tagsSchema( tagsSchema.value() );
         }
+
+        builder.highlighter( highlightBuilder );
 
         return builder;
     }

@@ -3,7 +3,7 @@ package com.enonic.xp.repo.impl.elasticsearch.result;
 import java.util.Map;
 
 import org.elasticsearch.action.get.GetResponse;
-import org.elasticsearch.index.get.GetField;
+import org.elasticsearch.common.document.DocumentField;
 
 import com.enonic.xp.repo.impl.ReturnValues;
 import com.enonic.xp.repo.impl.storage.GetResult;
@@ -17,13 +17,13 @@ public class GetResultFactory
             return GetResult.empty();
         }
 
-        final Map<String, GetField> hitFieldMap = getResponse.getFields();
+        final Map<String, DocumentField> hitFieldMap = getResponse.getFields();
 
         final ReturnValues.Builder builder = ReturnValues.create();
 
         for ( final String fieldName : hitFieldMap.keySet() )
         {
-            final GetField getField = hitFieldMap.get( fieldName );
+            final DocumentField getField = hitFieldMap.get( fieldName );
 
             builder.add( fieldName, getField.getValues() );
         }

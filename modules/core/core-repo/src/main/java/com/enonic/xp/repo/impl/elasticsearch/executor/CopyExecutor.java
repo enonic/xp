@@ -1,13 +1,19 @@
 package com.enonic.xp.repo.impl.elasticsearch.executor;
 
-import org.elasticsearch.action.bulk.BulkRequestBuilder;
+import java.io.IOException;
+
+import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.Client;
+import org.elasticsearch.action.search.SearchScrollRequest;
+import org.elasticsearch.action.support.WriteRequest;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.Requests;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.Scroll;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +58,7 @@ public class CopyExecutor
         QueryBuilder query = QueryBuilders.matchAllQuery();
 
         return ElasticsearchQuery.create().
-            query( QueryBuilders.filteredQuery( query, idFilterBuilder ) ).
+            query( QueryBuilders.boolQuery().filter( query ).filter( idFilterBuilder ) ).
             addIndexName( copyRequest.getStorageSource().getStorageName().getName() ).
             addIndexType( copyRequest.getStorageSource().getStorageType().getName() ).
             size( copyRequest.getNodeIds().getSize() ).
@@ -62,7 +68,7 @@ public class CopyExecutor
             build();
     }
 
-    public static Builder create( final Client client )
+    public static Builder create( final RestHighLevelClient client )
     {
         return new Builder( client );
     }
@@ -77,22 +83,28 @@ public class CopyExecutor
 
         while ( true )
         {
-            LOG.debug( "Copy: Fetched [" + scrollResp.getHits().hits().length + "] hits, processing" );
+            LOG.debug( "Copy: Fetched [" + scrollResp.getHits().getHits().length + "] hits, processing" );
 
             if ( scrollResp.getHits().getHits().length > 0 )
             {
                 doCopy( scrollResp );
             }
 
-            scrollResp = client.prepareSearchScroll( scrollResp.getScrollId() ).
-                setScroll( defaultScrollTime ).
-                execute().
-                actionGet();
+            final SearchScrollRequest searchScrollRequest = new SearchScrollRequest( scrollResp.getScrollId() ).
+                scroll( new Scroll( defaultScrollTime ) );
 
-            if ( scrollResp.getHits().getHits().length == 0 )
+            try
             {
-                clearScroll( scrollResp );
-                break;
+                scrollResp = client.scroll( searchScrollRequest, RequestOptions.DEFAULT );
+                if ( scrollResp.getHits().getHits().length == 0 )
+                {
+                    clearScroll( scrollResp );
+                    break;
+                }
+            }
+            catch ( IOException e )
+            {
+                throw new RuntimeException( e );
             }
         }
 
@@ -100,24 +112,32 @@ public class CopyExecutor
 
     private void doCopy( final SearchResponse scrollResp )
     {
-        BulkRequestBuilder bulkRequest = client.prepareBulk();
+        final BulkRequest bulkRequest = new BulkRequest();
 
         final org.elasticsearch.search.SearchHits hits = scrollResp.getHits();
 
         for ( final org.elasticsearch.search.SearchHit hit : hits )
         {
             bulkRequest.add( Requests.indexRequest().
-                id( hit.id() ).
+                id( hit.getId() ).
                 index( IndexNameResolver.resolveSearchIndexName( copyRequest.getTargetRepo() ) ).
                 type( SearchStorageType.from( copyRequest.getTargetBranch() ).getName() ).
-                source( hit.source() ).
-                refresh( false ) );
+                source( hit.getSourceAsMap() ).
+                setRefreshPolicy( WriteRequest.RefreshPolicy.NONE ) );
         }
 
         final Stopwatch timer = Stopwatch.createStarted();
-        final BulkResponse response = bulkRequest.execute().actionGet();
-        LOG.debug( "Copied [" + response.getItems().length + "] in " + timer.stop() );
-        reportProgress( response.getItems().length );
+        final BulkResponse response;
+        try
+        {
+            response = client.bulk( bulkRequest, RequestOptions.DEFAULT );
+            LOG.debug( "Copied [" + response.getItems().length + "] in " + timer.stop() );
+            reportProgress( response.getItems().length );
+        }
+        catch ( IOException e )
+        {
+            throw new RuntimeException( e );
+        }
     }
 
 
@@ -126,7 +146,7 @@ public class CopyExecutor
     {
         private CopyRequest request;
 
-        private Builder( final Client client )
+        private Builder( final RestHighLevelClient client )
         {
             super( client );
         }

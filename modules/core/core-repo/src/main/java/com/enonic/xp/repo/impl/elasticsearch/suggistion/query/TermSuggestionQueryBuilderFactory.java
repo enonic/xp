@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch.suggistion.query;
 
+import org.elasticsearch.search.suggest.SortBy;
 import org.elasticsearch.search.suggest.term.TermSuggestionBuilder;
 
 import com.enonic.xp.query.suggester.TermSuggestionQuery;
@@ -19,8 +20,7 @@ public class TermSuggestionQueryBuilderFactory
     {
         final String field = fieldNameResolver.resolve( suggestionQuery.getField(), IndexValueType.ANALYZED );
 
-        final TermSuggestionBuilder builder = new TermSuggestionBuilder( suggestionQuery.getName() ).
-            field( field ).
+        final TermSuggestionBuilder builder = new TermSuggestionBuilder( field ).
             text( suggestionQuery.getText() );
 
         final Integer size = suggestionQuery.getSize();
@@ -42,10 +42,10 @@ public class TermSuggestionQueryBuilderFactory
             builder.analyzer( analyzer );
         }
         if (sort != null) {
-            builder.sort( sort.value() );
+            builder.sort( SortBy.resolve( sort.value() ) );
         }
         if (suggestMode != null) {
-            builder.suggestMode( suggestMode.value() );
+            builder.suggestMode( TermSuggestionBuilder.SuggestMode.resolve(suggestMode.value()) );
         }
         if (maxEdits != null) {
             builder.maxEdits( maxEdits );
@@ -66,7 +66,7 @@ public class TermSuggestionQueryBuilderFactory
             builder.maxTermFreq( maxTermFreq );
         }
         if (stringDistance != null) {
-            builder.stringDistance( stringDistance.value() );
+            builder.stringDistance( TermSuggestionBuilder.StringDistanceImpl.resolve( stringDistance.value() ) );
         }
         return builder;
     }

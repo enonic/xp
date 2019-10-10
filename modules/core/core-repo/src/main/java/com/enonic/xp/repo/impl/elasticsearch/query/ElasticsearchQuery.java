@@ -8,7 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
-import org.elasticsearch.search.suggest.SuggestBuilder;
+import org.elasticsearch.search.suggest.SuggestionBuilder;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -42,7 +42,7 @@ public class ElasticsearchQuery
 
     private final ImmutableSet<AbstractAggregationBuilder> aggregations;
 
-    private final ImmutableSet<SuggestBuilder.SuggestionBuilder> suggestions;
+    private final ImmutableSet<SuggestionBuilder> suggestions;
 
     private final ElasticHighlightQuery highlight;
 
@@ -81,7 +81,7 @@ public class ElasticsearchQuery
         return aggregations;
     }
 
-    public ImmutableSet<SuggestBuilder.SuggestionBuilder> getSuggestions()
+    public ImmutableSet<SuggestionBuilder> getSuggestions()
     {
         return suggestions;
     }
@@ -186,7 +186,7 @@ public class ElasticsearchQuery
 
         private Set<AbstractAggregationBuilder> aggregations = Sets.newHashSet();
 
-        private Set<SuggestBuilder.SuggestionBuilder> suggestions = Sets.newHashSet();
+        private Set<SuggestionBuilder> suggestions = Sets.newHashSet();
 
         private ElasticHighlightQuery highlight = ElasticHighlightQuery.empty();
 
@@ -272,7 +272,7 @@ public class ElasticsearchQuery
             return this;
         }
 
-        public Builder setSuggestions( final Set<SuggestBuilder.SuggestionBuilder> suggestions )
+        public Builder setSuggestions( final Set<SuggestionBuilder> suggestions )
         {
             this.suggestions = suggestions;
             return this;

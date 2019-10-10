@@ -2,7 +2,7 @@ package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.function;
 
 import java.util.List;
 
-import org.elasticsearch.index.query.SimpleQueryStringBuilder;
+import org.elasticsearch.index.query.Operator;
 
 import com.enonic.xp.query.expr.ValueExpr;
 
@@ -23,7 +23,7 @@ public abstract class AbstractSimpleQueryStringFunctionArguments
 
     private final WeightedQueryFieldNames fieldNames;
 
-    private SimpleQueryStringBuilder.Operator operator = SimpleQueryStringBuilder.Operator.OR;
+    private Operator operator = Operator.OR;
 
     private final String searchString;
 
@@ -69,7 +69,7 @@ public abstract class AbstractSimpleQueryStringFunctionArguments
 
         try
         {
-            this.operator = SimpleQueryStringBuilder.Operator.valueOf( operatorAsString );
+            this.operator = Operator.valueOf( operatorAsString );
         }
         catch ( IllegalArgumentException e )
         {
@@ -97,7 +97,7 @@ public abstract class AbstractSimpleQueryStringFunctionArguments
         return fieldNames;
     }
 
-    public SimpleQueryStringBuilder.Operator getOperator()
+    public Operator getOperator()
     {
         return operator;
     }

@@ -59,7 +59,7 @@ public class SnapshotExecutor
                 setWaitForCompletion( true ).
                 setRepository( this.snapshotRepositoryName ).
                 setSnapshot( snapshotName ).
-                setSettings( Settings.settingsBuilder().
+                setSettings( Settings.builder().
                     put( "ignore_unavailable", true ) );
 
         final CreateSnapshotResponse createSnapshotResponse =

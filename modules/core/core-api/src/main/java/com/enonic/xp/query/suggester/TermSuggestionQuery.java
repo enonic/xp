@@ -213,6 +213,7 @@ public final class TermSuggestionQuery
 
     public enum StringDistance
     {
+        // TODO ES: to fix JAROWINKLER -> JARO_WINKLER
         INTERNAL( "internal" ), DAMERAU_LEVENSHTEIN( "damerau_levenshtein" ), LEVENSHTEIN( "levenshtein" ), JAROWINKLER(
         "jarowinkler" ), NGRAM( "ngram" );
 
