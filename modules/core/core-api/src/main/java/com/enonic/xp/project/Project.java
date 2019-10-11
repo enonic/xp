@@ -35,11 +35,6 @@ public final class Project
         return new Builder();
     }
 
-    public static Builder create( final Project source )
-    {
-        return new Builder( source );
-    }
-
     public static Project from( final Repository repository )
     {
         final PropertyTree repositoryData = repository.getData();
@@ -132,14 +127,6 @@ public final class Project
 
         private Builder()
         {
-        }
-
-        public Builder( final Project source )
-        {
-            name = source.name;
-            displayName = source.displayName;
-            description = source.description;
-            icon = source.icon;
         }
 
         public Builder name( final ProjectName value )

@@ -1,5 +1,6 @@
 package com.enonic.xp.core.project;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -7,6 +8,7 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
 import com.enonic.xp.node.Node;
@@ -18,7 +20,6 @@ import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.index.IndexServiceImpl;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
-import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.IdProviderKey;
@@ -26,8 +27,6 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.User;
-import com.enonic.xp.security.acl.AccessControlEntry;
-import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -75,7 +74,7 @@ class ProjectServiceImplTest
     {
         final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
 
-        final Project project = doCreateProject( ProjectName.from( projectRepoId ) );
+        final Project project = doCreateProjectAsAdmin( ProjectName.from( projectRepoId ) );
         assertNotNull( project );
         assertEquals( "test-project", project.getName().toString() );
 
@@ -90,10 +89,36 @@ class ProjectServiceImplTest
     }
 
     @Test
+    void create_without_permissions()
+    {
+        final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
+
+        final RuntimeException ex =
+            Assertions.assertThrows( RuntimeException.class, () -> doCreateProject( ProjectName.from( projectRepoId ) ) );
+
+        assertEquals( "java.lang.IllegalAccessException: User has no project permissions.", ex.getMessage() );
+    }
+
+    @Test
+    void create_with_content_admin_permissions()
+    {
+        final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
+
+        final Project project = ContextBuilder.from( ContextAccessor.current() ).
+            authInfo( AuthenticationInfo.copyOf( ContextAccessor.current().getAuthInfo() ).
+                principals( RoleKeys.CONTENT_MANAGER_ADMIN ).
+                build() ).
+            build().
+            callWith( () -> doCreateProject( ProjectName.from( projectRepoId ) ) );
+
+        assertNotNull( project );
+    }
+
+    @Test
     void delete()
     {
         final ProjectName projectName = ProjectName.from( "test-project" );
-        doCreateProject( projectName );
+        doCreateProjectAsAdmin( projectName );
 
         ADMIN_CONTEXT.runWith( () -> {
 
@@ -109,9 +134,9 @@ class ProjectServiceImplTest
     @Test
     void list()
     {
-        doCreateProject( ProjectName.from( "test-project1" ) );
-        doCreateProject( ProjectName.from( "test-project2" ) );
-        doCreateProject( ProjectName.from( "test-project3" ) );
+        doCreateProjectAsAdmin( ProjectName.from( "test-project1" ) );
+        doCreateProjectAsAdmin( ProjectName.from( "test-project2" ) );
+        doCreateProjectAsAdmin( ProjectName.from( "test-project3" ) );
 
         ADMIN_CONTEXT.runWith( () -> {
             assertEquals( 3, projectService.list().getSize() );
@@ -125,7 +150,7 @@ class ProjectServiceImplTest
     @Test
     void get()
     {
-        final Project createdProject = doCreateProject( ProjectName.from( "test-project" ) );
+        final Project createdProject = doCreateProjectAsAdmin( ProjectName.from( "test-project" ) );
 
         ADMIN_CONTEXT.runWith( () -> {
             assertEquals( createdProject, projectService.get( ProjectName.from( "test-project" ) ) );
@@ -136,7 +161,7 @@ class ProjectServiceImplTest
     @Test
     void modify()
     {
-        doCreateProject( ProjectName.from( "test-project" ) );
+        doCreateProjectAsAdmin( ProjectName.from( "test-project" ) );
 
         ADMIN_CONTEXT.runWith( () -> {
             projectService.modify( ModifyProjectParams.create().
@@ -164,7 +189,7 @@ class ProjectServiceImplTest
 
     private Project doCreateProject( final ProjectName name )
     {
-        return ADMIN_CONTEXT.callWith( () -> this.projectService.create( CreateProjectParams.create().
+        return this.projectService.create( CreateProjectParams.create().
             name( name ).
             description( "description" ).
             displayName( "Project display name" ).
@@ -174,28 +199,14 @@ class ProjectServiceImplTest
                 name( "MyImage.jpg" ).
                 byteSource( ByteSource.wrap( "bytes".getBytes() ) ).
                 build() ).
-            build() ) );
+            build() );
 
     }
 
-    private Repository doCreateRepo( final String id )
+    private Project doCreateProjectAsAdmin( final ProjectName name )
     {
-        return ADMIN_CONTEXT.callWith( () -> this.repositoryService.createRepository( CreateRepositoryParams.create().
-            repositoryId( RepositoryId.from( id ) ).
-            rootPermissions( AccessControlList.create().
-                add( AccessControlEntry.create().
-                    principal( TEST_DEFAULT_USER.getKey() ).
-                    allowAll().
-                    build() ).
-                build() ).
-            build() ) );
+        return ADMIN_CONTEXT.callWith( () -> doCreateProject( name ) );
+
     }
 
-    private Repository getPersistedRepoWithoutCache( String id )
-    {
-        return ADMIN_CONTEXT.callWith( () -> {
-            repositoryService.invalidateAll();
-            return this.repositoryService.get( RepositoryId.from( id ) );
-        } );
-    }
 }

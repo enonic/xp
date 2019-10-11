@@ -59,18 +59,6 @@ public final class Projects
     {
         private ImmutableSet.Builder<Project> projects = ImmutableSet.builder();
 
-        public Builder add( Project project )
-        {
-            this.projects.add( project );
-            return this;
-        }
-
-        public Builder addAll( Projects projects )
-        {
-            this.projects.addAll( projects.getSet() );
-            return this;
-        }
-
         public Builder addAll( Collection<Project> projects )
         {
             this.projects.addAll( projects );

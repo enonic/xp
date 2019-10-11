@@ -189,7 +189,9 @@ public class ProjectServiceImpl
             return authenticationInfo.hasRole( RoleKeys.ADMIN ) ? ContextAccessor.current() : ContextBuilder.create().
                 repositoryId( SystemConstants.SYSTEM_REPO_ID ).
                 branch( ContentConstants.BRANCH_MASTER ).
-                authInfo( authenticationInfo ).
+                authInfo( AuthenticationInfo.copyOf( authenticationInfo ).
+                    principals( RoleKeys.ADMIN ).
+                    build() ).
                 build();
         }
 
@@ -198,22 +200,7 @@ public class ProjectServiceImpl
 
     private boolean hasProjectPermissions( final AuthenticationInfo authenticationInfo )
     {
-        if ( authenticationInfo.hasRole( RoleKeys.ADMIN ) )
-        {
-            return true;
-        }
-
-        if ( authenticationInfo.hasRole( RoleKeys.CONTENT_MANAGER_ADMIN ) )
-        {
-            return true;
-        }
-
-        if ( authenticationInfo.hasRole( RoleKeys.CONTENT_MANAGER_EXPERT ) )
-        {
-            return true;
-        }
-
-        return authenticationInfo.hasRole( RoleKeys.CONTENT_MANAGER_APP );
+        return authenticationInfo.hasRole( RoleKeys.ADMIN ) || authenticationInfo.hasRole( RoleKeys.CONTENT_MANAGER_ADMIN );
     }
 
     @Reference
