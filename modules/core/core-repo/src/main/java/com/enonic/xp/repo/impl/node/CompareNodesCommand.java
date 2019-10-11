@@ -1,9 +1,9 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.Context;
@@ -33,7 +33,7 @@ public class CompareNodesCommand
 
     public NodeComparisons execute()
     {
-        Set<NodeId> allNodeIds = Sets.newHashSet();
+        Set<NodeId> allNodeIds = new HashSet<>();
 
         final Context context = ContextAccessor.current();
 

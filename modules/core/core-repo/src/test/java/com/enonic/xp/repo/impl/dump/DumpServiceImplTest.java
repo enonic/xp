@@ -15,7 +15,6 @@ import org.mockito.Mockito;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationService;
@@ -89,12 +88,7 @@ import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.Reference;
 import com.enonic.xp.util.Version;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DumpServiceImplTest
     extends AbstractNodeTest
@@ -506,7 +500,7 @@ public class DumpServiceImplTest
 
     private TreeSet<Instant> getOrderedTimestamps( final NodeVersionQueryResult result )
     {
-        TreeSet<Instant> timestamps = Sets.newTreeSet();
+        TreeSet<Instant> timestamps = new TreeSet<Instant>();
         result.getNodeVersionsMetadata().forEach( version -> timestamps.add( version.getTimestamp() ) );
         return timestamps;
     }

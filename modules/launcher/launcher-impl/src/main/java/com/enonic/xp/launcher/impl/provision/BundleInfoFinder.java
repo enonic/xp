@@ -3,12 +3,12 @@ package com.enonic.xp.launcher.impl.provision;
 import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 final class BundleInfoFinder
 {
@@ -22,7 +22,7 @@ final class BundleInfoFinder
     List<BundleInfo> find()
         throws Exception
     {
-        final Set<BundleInfo> set = Sets.newHashSet();
+        final Set<BundleInfo> set = new HashSet<>();
         for ( final Map.Entry<Integer, File> entry : findBundleDirs().entrySet() )
         {
             findBundles( set, entry.getValue(), entry.getKey() );

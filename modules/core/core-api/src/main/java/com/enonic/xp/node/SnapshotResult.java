@@ -2,10 +2,10 @@ package com.enonic.xp.node;
 
 import java.time.Instant;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.Sets;
 
 @Beta
 public class SnapshotResult
@@ -69,7 +69,7 @@ public class SnapshotResult
 
     public static final class Builder
     {
-        private final Set<String> indices = Sets.newHashSet();
+        private final Set<String> indices = new HashSet<>();
 
         private State state;
 

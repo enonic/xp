@@ -1,10 +1,9 @@
 package com.enonic.xp.repo.impl.vacuum.binary;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.google.common.collect.Sets;
 
 class BinaryReferenceMatcher
 {
@@ -12,7 +11,7 @@ class BinaryReferenceMatcher
 
     public static Set<String> matches( final String value )
     {
-        Set<String> matches = Sets.newHashSet();
+        Set<String> matches = new HashSet<>();
 
         final Matcher matcher = pattern.matcher( value );
 

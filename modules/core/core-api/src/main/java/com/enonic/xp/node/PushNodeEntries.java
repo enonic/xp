@@ -1,12 +1,12 @@
 package com.enonic.xp.node;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.RepositoryId;
@@ -50,7 +50,7 @@ public class PushNodeEntries
 
     public static final class Builder
     {
-        private Set<PushNodeEntry> entries = Sets.newLinkedHashSet();
+        private Set<PushNodeEntry> entries = new LinkedHashSet<>();
 
         private Branch targetBranch;
 

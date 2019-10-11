@@ -1,6 +1,7 @@
 package com.enonic.xp.attachment;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -11,7 +12,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
@@ -102,7 +102,7 @@ public final class CreateAttachments
 
     public static class Builder
     {
-        private Set<CreateAttachment> contents = Sets.newLinkedHashSet();
+        private Set<CreateAttachment> contents = new LinkedHashSet<>();
 
         public Builder add( CreateAttachment value )
         {

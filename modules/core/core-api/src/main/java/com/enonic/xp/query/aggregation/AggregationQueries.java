@@ -1,11 +1,11 @@
 package com.enonic.xp.query.aggregation;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
@@ -30,7 +30,7 @@ public class AggregationQueries
 
     public static AggregationQueries empty()
     {
-        final Set<AggregationQuery> returnFields = Sets.newHashSet();
+        final Set<AggregationQuery> returnFields = new HashSet<>();
         return new AggregationQueries( returnFields );
     }
 
@@ -41,7 +41,7 @@ public class AggregationQueries
 
     public static final class Builder
     {
-        private final Set<AggregationQuery> aggregationQueries = Sets.newHashSet();
+        private final Set<AggregationQuery> aggregationQueries = new HashSet<>();
 
         public Builder add( final AggregationQuery aggregationQuery )
         {

@@ -1,11 +1,11 @@
 package com.enonic.xp.node;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 import com.enonic.xp.util.BinaryReference;
@@ -31,7 +31,7 @@ public class AttachedBinaries
 
     public static AttachedBinaries empty()
     {
-        final Set<AttachedBinary> returnFields = Sets.newHashSet();
+        final Set<AttachedBinary> returnFields = new HashSet<>();
         return new AttachedBinaries( returnFields );
     }
 
@@ -60,7 +60,7 @@ public class AttachedBinaries
 
     public static class Builder
     {
-        private final Set<AttachedBinary> nodeAttachedBinaries = Sets.newHashSet();
+        private final Set<AttachedBinary> nodeAttachedBinaries = new HashSet<>();
 
         public Builder add( final AttachedBinary attachedBinary )
         {

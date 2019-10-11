@@ -1,9 +1,8 @@
 package com.enonic.xp.repo.impl.version.search;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-
-import com.google.common.collect.Sets;
 
 public class ExcludeEntries
     implements Iterable<ExcludeEntry>
@@ -18,7 +17,7 @@ public class ExcludeEntries
 
     public static ExcludeEntries empty()
     {
-        return new ExcludeEntries( Sets.newHashSet() );
+        return new ExcludeEntries( new HashSet<>() );
     }
 
     public boolean isEmpty()
@@ -44,7 +43,7 @@ public class ExcludeEntries
 
     public static final class Builder
     {
-        private final Set<ExcludeEntry> excludeEntries = Sets.newHashSet();
+        private final Set<ExcludeEntry> excludeEntries = new HashSet<>();
 
         private Builder()
         {

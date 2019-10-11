@@ -1,11 +1,11 @@
 package com.enonic.xp.node;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
@@ -41,7 +41,7 @@ public class NodeCommitEntries
 
     public static class Builder
     {
-        final Set<NodeCommitEntry> nodeCommitEntries = Sets.newLinkedHashSet();
+        final Set<NodeCommitEntry> nodeCommitEntries = new LinkedHashSet<>();
 
         public Builder add( final NodeCommitEntry nodeCommitEntry )
         {

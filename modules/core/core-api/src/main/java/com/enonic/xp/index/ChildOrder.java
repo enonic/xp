@@ -1,12 +1,12 @@
 package com.enonic.xp.index;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Strings;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.content.ContentIndexPath;
 import com.enonic.xp.node.NodeIndexPath;
@@ -144,7 +144,7 @@ public class ChildOrder
 
     public static final class Builder
     {
-        private final Set<OrderExpr> orderExpressions = Sets.newLinkedHashSet();
+        private final Set<OrderExpr> orderExpressions = new LinkedHashSet<>();
 
         private Builder()
         {

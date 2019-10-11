@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.elasticsearch.query;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -12,7 +13,6 @@ import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.suggest.SuggestBuilder;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.node.SearchOptimizer;
@@ -172,9 +172,9 @@ public class ElasticsearchQuery
 
         private QueryBuilder filter;
 
-        private final Set<String> indexTypes = Sets.newHashSet();
+        private final Set<String> indexTypes = new HashSet<>();
 
-        private final Set<String> indexNames = Sets.newHashSet();
+        private final Set<String> indexNames = new HashSet<>();
 
         private List<SortBuilder> sortBuilders = new ArrayList<>();
 
@@ -184,9 +184,9 @@ public class ElasticsearchQuery
 
         private int batchSize = 15_000;
 
-        private Set<AbstractAggregationBuilder> aggregations = Sets.newHashSet();
+        private Set<AbstractAggregationBuilder> aggregations = new HashSet<>();
 
-        private Set<SuggestBuilder.SuggestionBuilder> suggestions = Sets.newHashSet();
+        private Set<SuggestBuilder.SuggestionBuilder> suggestions = new HashSet<>();
 
         private ElasticHighlightQuery highlight = ElasticHighlightQuery.empty();
 

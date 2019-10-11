@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.servlet.Filter;
 import javax.servlet.Servlet;
@@ -14,7 +15,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 public final class MappingBuilder
 {
@@ -48,7 +48,7 @@ public final class MappingBuilder
     {
         this.order = 0;
         this.initParams = new HashMap<>();
-        this.urlPatterns = Sets.newTreeSet();
+        this.urlPatterns = new TreeSet<String>();
         this.connectors = new ArrayList<>();
     }
 

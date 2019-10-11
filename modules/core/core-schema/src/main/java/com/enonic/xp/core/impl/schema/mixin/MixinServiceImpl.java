@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.schema.mixin;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -11,8 +12,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
@@ -65,7 +64,7 @@ public final class MixinServiceImpl
     @Override
     public Mixins getAll()
     {
-        final Set<Mixin> list = Sets.newLinkedHashSet();
+        final Set<Mixin> list = new LinkedHashSet<>();
 
         for ( final Application application : this.applicationService.getInstalledApplications() )
         {

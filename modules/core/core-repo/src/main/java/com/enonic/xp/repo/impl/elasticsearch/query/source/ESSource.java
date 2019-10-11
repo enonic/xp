@@ -1,8 +1,7 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.source;
 
+import java.util.HashSet;
 import java.util.Set;
-
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.query.filter.Filter;
 import com.enonic.xp.query.filter.Filters;
@@ -46,11 +45,11 @@ public class ESSource
 
     public static final class Builder
     {
-        private Set<String> indexNames = Sets.newHashSet();
+        private Set<String> indexNames = new HashSet<>();
 
-        private Set<String> indexTypes = Sets.newHashSet();
+        private Set<String> indexTypes = new HashSet<>();
 
-        private Set<Filter> filters = Sets.newHashSet();
+        private Set<Filter> filters = new HashSet<>();
 
         private Builder()
         {

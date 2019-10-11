@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.schema.xdata;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -8,8 +9,6 @@ import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
@@ -64,7 +63,7 @@ public final class XDataServiceImpl
     @Override
     public XDatas getAll()
     {
-        final Set<XData> list = Sets.newLinkedHashSet();
+        final Set<XData> list = new LinkedHashSet<>();
         list.addAll( this.builtInTypes.getAll().getList() );
 
         for ( final Application application : this.applicationService.getInstalledApplications() )

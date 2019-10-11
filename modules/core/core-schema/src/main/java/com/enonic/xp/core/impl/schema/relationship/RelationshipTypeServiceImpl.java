@@ -1,13 +1,12 @@
 package com.enonic.xp.core.impl.schema.relationship;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
@@ -53,7 +52,7 @@ public final class RelationshipTypeServiceImpl
     @Override
     public RelationshipTypes getAll()
     {
-        final Set<RelationshipType> list = Sets.newLinkedHashSet();
+        final Set<RelationshipType> list = new LinkedHashSet<>();
         list.addAll( this.builtInTypes.getAll().getList() );
 
         for ( final Application application : this.applicationService.getInstalledApplications() )

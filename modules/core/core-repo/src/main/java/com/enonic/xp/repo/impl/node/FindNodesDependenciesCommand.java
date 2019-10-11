@@ -1,10 +1,9 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.NodeId;
@@ -26,7 +25,7 @@ public class FindNodesDependenciesCommand
 
     private final NodeIds excludedIds;
 
-    private final Set<NodeId> processed = Sets.newHashSet();
+    private final Set<NodeId> processed = new HashSet<>();
 
     private final boolean recursive;
 

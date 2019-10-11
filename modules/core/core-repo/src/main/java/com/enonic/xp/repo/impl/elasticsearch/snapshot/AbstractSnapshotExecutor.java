@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch.snapshot;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -12,8 +13,6 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.index.IndexNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repository.Repositories;
@@ -115,7 +114,7 @@ class AbstractSnapshotExecutor
 
     Set<String> getIndexNames( final RepositoryId repositoryId )
     {
-        final Set<String> indices = Sets.newHashSet();
+        final Set<String> indices = new HashSet<>();
 
         indices.add( IndexNameResolver.resolveStorageIndexName( repositoryId ) );
         indices.add( IndexNameResolver.resolveSearchIndexName( repositoryId ) );

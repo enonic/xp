@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -17,7 +18,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalAnswers;
 import org.mockito.Mockito;
 
-import com.google.common.collect.Sets;
 import com.google.common.io.Resources;
 
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
@@ -553,7 +553,7 @@ public class ContentTypeResourceTest
     @Test
     public void getMimeTypes()
     {
-        final Set<String> mimeTypes = Sets.newHashSet();
+        final Set<String> mimeTypes = new HashSet<>();
         mimeTypes.add( "mimeType1" );
         mimeTypes.add( "mimeType2" );
 

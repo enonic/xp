@@ -1,12 +1,12 @@
 package com.enonic.xp.node;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.Sets;
 
 @Beta
 public class NodePublishRequests
@@ -16,13 +16,13 @@ public class NodePublishRequests
 
     private final Map<NodeId, NodePublishRequest> nodePublishRequestMap;
 
-    private final Set<NodePublishRequest> publishAsParentFor = Sets.newHashSet();
+    private final Set<NodePublishRequest> publishAsParentFor = new HashSet<>();
 
-    private final Set<NodePublishRequest> publishAsReferredTo = Sets.newHashSet();
+    private final Set<NodePublishRequest> publishAsReferredTo = new HashSet<>();
 
-    private final Set<NodePublishRequest> publishAsRequested = Sets.newHashSet();
+    private final Set<NodePublishRequest> publishAsRequested = new HashSet<>();
 
-    private final Set<NodePublishRequest> publishAsChildOf = Sets.newHashSet();
+    private final Set<NodePublishRequest> publishAsChildOf = new HashSet<>();
 
     public int size()
     {
@@ -74,7 +74,7 @@ public class NodePublishRequests
     public NodePublishRequests()
     {
         this.nodePublishRequestMap = new HashMap<>();
-        this.nodePublishRequests = Sets.newHashSet();
+        this.nodePublishRequests = new HashSet<>();
     }
 
     public void add( final NodePublishRequest nodePublishRequest )

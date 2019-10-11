@@ -2,10 +2,10 @@ package com.enonic.xp.index;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.node.NodeId;
@@ -74,7 +74,7 @@ public class ReindexResult
 
     public static final class Builder
     {
-        private final Set<NodeId> nodeIds = Sets.newHashSet();
+        private final Set<NodeId> nodeIds = new HashSet<>();
 
         private Duration duration;
 

@@ -1,9 +1,9 @@
 package com.enonic.xp.impl.macro;
 
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
-import com.google.common.collect.Sets;
 import com.google.common.io.Files;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -33,7 +33,7 @@ final class MacroDescriptorKeyLocator
             return Collections.emptySet();
         }
 
-        final Set<MacroKey> keys = Sets.newLinkedHashSet();
+        final Set<MacroKey> keys = new LinkedHashSet<>();
         for ( final ResourceKey resource : this.service.findFiles( key, this.pattern ) )
         {
             final MacroKey descriptorKey = newDescriptorKey( key, resource );

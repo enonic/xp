@@ -1,5 +1,6 @@
 package com.enonic.xp.node;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -201,7 +202,7 @@ public class CreateNodeParams
 
         private NodeType nodeType;
 
-        private Set<BinaryAttachment> binaryAttachments = Sets.newHashSet();
+        private Set<BinaryAttachment> binaryAttachments = new HashSet<>();
 
         private Builder()
         {

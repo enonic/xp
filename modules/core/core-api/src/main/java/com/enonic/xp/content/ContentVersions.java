@@ -2,10 +2,10 @@ package com.enonic.xp.content;
 
 import java.util.Iterator;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSortedSet;
-import com.google.common.collect.Sets;
 
 @Beta
 public class ContentVersions
@@ -40,7 +40,7 @@ public class ContentVersions
 
     public static final class Builder
     {
-        private SortedSet<ContentVersion> contentVersions = Sets.newTreeSet();
+        private SortedSet<ContentVersion> contentVersions = new TreeSet<ContentVersion>();
 
         private ContentId contentId;
 

@@ -1,6 +1,7 @@
 package com.enonic.xp.content;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -8,7 +9,6 @@ import java.util.Set;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 @Beta
 public class GetPublishStatusesResult
@@ -52,7 +52,7 @@ public class GetPublishStatusesResult
 
     public static final class Builder
     {
-        private Set<GetPublishStatusResult> compareResults = Sets.newHashSet();
+        private Set<GetPublishStatusResult> compareResults = new HashSet<>();
 
         private Map<ContentId, GetPublishStatusResult> compareResultsMap = new HashMap<>();
 

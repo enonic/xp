@@ -3,6 +3,7 @@ package com.enonic.xp.repo.impl.vacuum.binary;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -11,7 +12,6 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Sets;
 import com.google.common.io.CharSource;
 
 import com.enonic.xp.blob.BlobKey;
@@ -105,7 +105,7 @@ public class UnusedBinaryFileCleanerTask
     {
         LOG.info( "Calculating all existing binary references....." );
 
-        final Set<String> binaryReferences = Sets.newHashSet();
+        final Set<String> binaryReferences = new HashSet<>();
 
         this.blobStore.listSegments().
             filter( NodeSegmentUtils::isNodeSegment ).

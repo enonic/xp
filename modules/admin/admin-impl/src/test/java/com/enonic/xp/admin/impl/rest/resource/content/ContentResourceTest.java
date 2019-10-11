@@ -1026,7 +1026,7 @@ public class ContentResourceTest
     public void countContentsWithDescendants_empty_json()
     {
         GetDescendantsOfContents json = new GetDescendantsOfContents();
-        json.setContentPaths( new HashSet<String>() );
+        json.setContentPaths( new HashSet<>() );
 
         ContentResource contentResource = getResourceInstance();
 
@@ -1036,7 +1036,7 @@ public class ContentResourceTest
     @Test
     public void countContentsWithDescendants_no_children()
     {
-        Set<String> contentPaths = new HashSet<String>( asList( "/root/a", "/root/b", "/root/c" ) );
+        Set<String> contentPaths = new HashSet<>( asList( "/root/a", "/root/b", "/root/c" ) );
 
         GetDescendantsOfContents json = new GetDescendantsOfContents();
         json.setContentPaths( contentPaths );
@@ -1470,7 +1470,7 @@ public class ContentResourceTest
             Collections.singleton( new ContentDependenciesAggregation( ContentTypeName.media(), 1L ) ) ).build() );
 
         Mockito.when( contentService.getDependencies( content2.getId() ) ).thenReturn(
-            ContentDependencies.create().inboundDependencies( Sets.newHashSet() ).outboundDependencies( Sets.newHashSet() ).build() );
+            ContentDependencies.create().inboundDependencies( new HashSet<>() ).outboundDependencies( new HashSet<>() ).build() );
 
         GetDependenciesResultJson result = contentResource.getDependencies(
             new ContentIdsJson( Lists.asList( content1.getId().toString(), content2.getId().toString(), new String[]{} ) ) );

@@ -1,9 +1,9 @@
 package com.enonic.xp.node;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.Sets;
 
 @Beta
 public class NodeVersionDiffResult
@@ -40,7 +40,7 @@ public class NodeVersionDiffResult
 
     public static class Builder
     {
-        private final Set<NodeId> nodeIds = Sets.newLinkedHashSet();
+        private final Set<NodeId> nodeIds = new LinkedHashSet<>();
 
         private long totalHits;
 
