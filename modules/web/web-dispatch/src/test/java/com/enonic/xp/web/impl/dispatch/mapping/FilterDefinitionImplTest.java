@@ -13,7 +13,9 @@ import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.enonic.xp.web.dispatch.MappingBuilder;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FilterDefinitionImplTest
     extends ResourceDefinitionImplTest<Filter, FilterDefinition>

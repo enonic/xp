@@ -14,7 +14,7 @@ import com.google.common.collect.Lists;
 import com.enonic.xp.web.dispatch.ServletMapping;
 import com.enonic.xp.web.impl.dispatch.mapping.ServletDefinition;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ServletPipelineImplTest
     extends ResourcePipelineImplTest<ServletDefinition, ServletPipelineImpl>

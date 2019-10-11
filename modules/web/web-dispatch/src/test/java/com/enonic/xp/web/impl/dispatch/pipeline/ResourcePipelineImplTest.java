@@ -16,7 +16,7 @@ import com.google.common.collect.Lists;
 
 import com.enonic.xp.web.impl.dispatch.mapping.ResourceDefinition;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public abstract class ResourcePipelineImplTest<D extends ResourceDefinition<?>, P extends ResourcePipelineImpl<D>>
 {
