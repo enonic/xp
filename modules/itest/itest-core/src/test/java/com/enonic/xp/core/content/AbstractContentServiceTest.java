@@ -47,6 +47,7 @@ import com.enonic.xp.core.impl.content.ContentInitializer;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
 import com.enonic.xp.core.impl.media.MediaInfoServiceImpl;
+import com.enonic.xp.core.impl.project.ProjectServiceImpl;
 import com.enonic.xp.core.impl.schema.content.ContentTypeServiceImpl;
 import com.enonic.xp.core.impl.site.SiteServiceImpl;
 import com.enonic.xp.data.PropertySet;
@@ -280,6 +281,11 @@ public class AbstractContentServiceTest
         LayoutDescriptorService layoutDescriptorService = Mockito.mock(LayoutDescriptorService.class);
         AuditLogService auditLogService = Mockito.mock( AuditLogService.class );
 
+        final ProjectServiceImpl projectService = new ProjectServiceImpl();
+        projectService.setIndexService( indexService );
+        projectService.setRepositoryService( repositoryService );
+        projectService.setNodeService( nodeService );
+
         contentService.setNodeService( nodeService );
         contentService.setEventPublisher( eventPublisher );
         contentService.setMediaInfoService( mediaInfoService );
@@ -292,9 +298,8 @@ public class AbstractContentServiceTest
         contentService.setAuditLogService( auditLogService );
         contentService.setFormDefaultValuesProcessor( ( form, data ) -> {
         } );
-        contentService.setIndexService(indexService);
         contentService.setNodeService( nodeService );
-        contentService.setRepositoryService(repositoryService);
+        contentService.setProjectService( projectService );
         contentService.initialize();
 
         waitForClusterHealth();

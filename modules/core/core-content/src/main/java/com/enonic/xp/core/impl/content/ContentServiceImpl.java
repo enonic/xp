@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.Instant;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
 import org.osgi.service.component.annotations.Activate;
@@ -94,7 +92,6 @@ import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.form.FormDefaultValuesProcessor;
-import com.enonic.xp.index.IndexService;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
@@ -108,10 +105,12 @@ import com.enonic.xp.node.ReorderChildNodesParams;
 import com.enonic.xp.node.ReorderChildNodesResult;
 import com.enonic.xp.node.SetNodeChildOrderParams;
 import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.project.CreateProjectParams;
+import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
-import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.xdata.XDataService;
@@ -138,13 +137,9 @@ public class ContentServiceImpl
 
     private static final SiteConfigsDataSerializer SITE_CONFIGS_DATA_SERIALIZER = new SiteConfigsDataSerializer();
 
-    private final ExecutorService applyPermissionsExecutor;
-
     private ContentTypeService contentTypeService;
 
     private NodeService nodeService;
-
-    private RepositoryService repositoryService;
 
     private EventPublisher eventPublisher;
 
@@ -156,7 +151,7 @@ public class ContentServiceImpl
 
     private ContentNodeTranslator translator;
 
-    private IndexService indexService;
+    private ProjectService projectService;
 
     private ContentProcessors contentProcessors;
 
@@ -180,20 +175,16 @@ public class ContentServiceImpl
             setNameFormat( "apply-permissions-thread-%d" ).
             setUncaughtExceptionHandler( ( t, e ) -> LOG.error( "Apply Permissions failed", e ) ).
             build();
-        this.applyPermissionsExecutor = Executors.newFixedThreadPool( 5, namedThreadFactory );
         this.contentProcessors = new ContentProcessors();
     }
 
     @Activate
     public void initialize()
     {
-        ContentInitializer.create().
-            setIndexService( indexService ).
-            setNodeService( nodeService ).
-            setRepositoryService( repositoryService ).
-            repositoryId( ContentConstants.CONTENT_REPO_ID ).
-            build().
-            initialize();
+        callAsContentAdmin( () -> this.projectService.create( CreateProjectParams.create().
+            name( ProjectName.from( ContentConstants.CONTENT_REPO_ID ) ).
+            displayName( "Default" ).
+            build() ) );
 
         this.contentDataSerializer = ContentDataSerializer.create().
             contentService( this ).
@@ -1050,7 +1041,7 @@ public class ContentServiceImpl
     {
         final ContentPath rootContentPath = ContentPath.ROOT;
         final NodePath rootNodePath = ContentNodeHelper.translateContentPathToNodePath( rootContentPath );
-        final Node rootNode = runAsContentAdmin( () -> nodeService.getByPath( rootNodePath ) );
+        final Node rootNode = callAuthenticatedAsContentAdmin( () -> nodeService.getByPath( rootNodePath ) );
         return rootNode != null ? rootNode.getPermissions() : AccessControlList.empty();
     }
 
@@ -1095,7 +1086,18 @@ public class ContentServiceImpl
             execute();
     }
 
-    private <T> T runAsContentAdmin( final Callable<T> callable )
+    private <T> T callAsContentAdmin( final Callable<T> callable )
+    {
+        return ContextBuilder.from( ContextAccessor.current() ).
+            authInfo( AuthenticationInfo.
+                copyOf( ContextAccessor.current().getAuthInfo() ).
+                principals( RoleKeys.ADMIN, RoleKeys.CONTENT_MANAGER_ADMIN ).
+                build() ).
+            build().
+            callWith( callable );
+    }
+
+    private <T> T callAuthenticatedAsContentAdmin( final Callable<T> callable )
     {
         final Context context = ContextAccessor.current();
         final AuthenticationInfo authInfo = context.getAuthInfo();
@@ -1104,11 +1106,9 @@ public class ContentServiceImpl
             return context.callWith( callable );
         }
 
-        return ContextBuilder.from( ContextAccessor.current() ).
-            authInfo( AuthenticationInfo.copyOf( authInfo ).principals( RoleKeys.ADMIN, RoleKeys.CONTENT_MANAGER_ADMIN ).build() ).
-            build().
-            callWith( callable );
+        return callAsContentAdmin( callable );
     }
+
 
     @Override
     public ByteSource getBinary( final ContentId contentId, final BinaryReference binaryReference )
@@ -1254,12 +1254,6 @@ public class ContentServiceImpl
     }
 
     @Reference
-    public void setRepositoryService( final RepositoryService repositoryService )
-    {
-        this.repositoryService = repositoryService;
-    }
-
-    @Reference
     public void setEventPublisher( final EventPublisher eventPublisher )
     {
         this.eventPublisher = eventPublisher;
@@ -1283,11 +1277,10 @@ public class ContentServiceImpl
         this.siteService = siteService;
     }
 
-    @SuppressWarnings("unused")
     @Reference
-    public void setIndexService( final IndexService indexService )
+    public void setProjectService( final ProjectService projectService )
     {
-        this.indexService = indexService;
+        this.projectService = projectService;
     }
 
     @SuppressWarnings("unused")
