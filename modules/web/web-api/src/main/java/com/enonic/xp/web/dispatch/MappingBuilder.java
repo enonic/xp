@@ -1,6 +1,7 @@
 package com.enonic.xp.web.dispatch;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -13,7 +14,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 public final class MappingBuilder
@@ -47,7 +47,7 @@ public final class MappingBuilder
     private MappingBuilder()
     {
         this.order = 0;
-        this.initParams = Maps.newHashMap();
+        this.initParams = new HashMap<>();
         this.urlPatterns = Sets.newTreeSet();
         this.connectors = new ArrayList<>();
     }

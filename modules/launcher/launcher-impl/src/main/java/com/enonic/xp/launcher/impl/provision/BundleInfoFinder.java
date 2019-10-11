@@ -2,12 +2,12 @@ package com.enonic.xp.launcher.impl.provision;
 
 import java.io.File;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 final class BundleInfoFinder
@@ -35,7 +35,7 @@ final class BundleInfoFinder
 
     private Map<Integer, File> findBundleDirs()
     {
-        final Map<Integer, File> result = Maps.newHashMap();
+        final Map<Integer, File> result = new HashMap<>();
         final File[] dirs = this.systemDir.listFiles( this::isDirectory );
         if ( dirs == null )
         {

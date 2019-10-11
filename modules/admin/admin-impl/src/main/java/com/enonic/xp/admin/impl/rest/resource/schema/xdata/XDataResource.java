@@ -2,6 +2,7 @@ package com.enonic.xp.admin.impl.rest.resource.schema.xdata;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -16,8 +17,6 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.admin.impl.json.schema.xdata.XDataJson;
 import com.enonic.xp.admin.impl.json.schema.xdata.XDataListJson;
@@ -82,7 +81,7 @@ public final class XDataResource
 
         final XDataListJson result = new XDataListJson();
 
-        final Map<XData, Boolean> resultXData = Maps.newLinkedHashMap();
+        final Map<XData, Boolean> resultXData = new LinkedHashMap<>();
 
         getContentTypeXData( content ).
             forEach( xData -> resultXData.putIfAbsent( xData, false ) );
@@ -132,7 +131,7 @@ public final class XDataResource
 
     private Map<XData, Boolean> getSiteXData( final Content content )
     {
-        final Map<XData, Boolean> result = Maps.newLinkedHashMap();
+        final Map<XData, Boolean> result = new LinkedHashMap<>();
 
         final Site nearestSite = this.contentService.getNearestSite( content.getId() );
 
@@ -159,7 +158,7 @@ public final class XDataResource
 
     private Map<XData, Boolean> getXDatasByContentType( final XDataMappings xDataMappings, final ContentTypeName contentTypeName )
     {
-        final Map<XData, Boolean> result = Maps.newLinkedHashMap();
+        final Map<XData, Boolean> result = new LinkedHashMap<>();
 
         filterXDataMappingsByContentType( xDataMappings, contentTypeName ).
             forEach( xDataMapping -> {

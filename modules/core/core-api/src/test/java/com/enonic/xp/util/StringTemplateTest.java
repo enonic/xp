@@ -1,5 +1,6 @@
 package com.enonic.xp.util;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -7,17 +8,15 @@ import org.junit.jupiter.api.Test;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import com.google.common.collect.Maps;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class StringTemplateTest
 {
     @Test
     public void applyNone()
     {
-        final Map<String, String> model = Maps.newHashMap();
+        final Map<String, String> model = new HashMap<>();
         final StringTemplate template = new StringTemplate( "{{this}} is a {{test}}" );
         final String value = template.apply( model );
 
@@ -27,7 +26,7 @@ public class StringTemplateTest
     @Test
     public void applyModel()
     {
-        final Map<String, String> model = Maps.newHashMap();
+        final Map<String, String> model = new HashMap<>();
         model.put( "this", "This" );
         model.put( "test", "TEST" );
 
@@ -40,7 +39,7 @@ public class StringTemplateTest
     @Test
     public void applyModelEscape()
     {
-        final Map<String, String> model = Maps.newHashMap();
+        final Map<String, String> model = new HashMap<>();
         model.put( "this", "This" );
         model.put( "test", "TEST" );
 
@@ -53,7 +52,7 @@ public class StringTemplateTest
     @Test
     public void loadFromResource()
     {
-        final Map<String, String> model = Maps.newHashMap();
+        final Map<String, String> model = new HashMap<>();
         model.put( "mode", "file" );
         model.put( "one", "1" );
         model.put( "two", "2" );

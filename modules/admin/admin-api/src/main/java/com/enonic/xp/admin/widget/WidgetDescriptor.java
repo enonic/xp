@@ -1,13 +1,13 @@
 package com.enonic.xp.admin.widget;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.descriptor.Descriptor;
@@ -116,7 +116,7 @@ public class WidgetDescriptor
 
         private Collection<PrincipalKey> allowedPrincipals;
 
-        public final Map<String, String> config = Maps.newHashMap();
+        public final Map<String, String> config = new HashMap<>();
 
         private Builder()
         {

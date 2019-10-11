@@ -1,11 +1,10 @@
 package com.enonic.xp.admin.impl.rest.resource.issue;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.admin.impl.rest.resource.schema.SchemaImageHelper;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconResolver;
@@ -126,7 +125,7 @@ public class IssueNotificationParamsFactory
 
     private Map<ContentId, String> getIcons( final Contents contents )
     {
-        final Map<ContentId, String> icons = Maps.newHashMap();
+        final Map<ContentId, String> icons = new HashMap<>();
 
         contents.stream().forEach( content -> {
             final Icon icon = contentTypeIconResolver.resolveIcon( content.getType() );

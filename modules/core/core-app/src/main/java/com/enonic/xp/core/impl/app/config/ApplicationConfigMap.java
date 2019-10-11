@@ -1,8 +1,7 @@
 package com.enonic.xp.core.impl.app.config;
 
 import java.util.Map;
-
-import com.google.common.collect.Maps;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.config.Configuration;
@@ -15,7 +14,7 @@ public final class ApplicationConfigMap
 
     private ApplicationConfigMap()
     {
-        this.map = Maps.newConcurrentMap();
+        this.map = new ConcurrentHashMap<>();
     }
 
     public Configuration get( final ApplicationKey key )

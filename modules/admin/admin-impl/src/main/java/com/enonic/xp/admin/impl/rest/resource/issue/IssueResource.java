@@ -1,6 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.issue;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -21,7 +22,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
 import com.google.common.net.HttpHeaders;
 
 import com.enonic.xp.admin.impl.json.issue.DeleteIssueCommentResultJson;
@@ -397,7 +397,7 @@ public final class IssueResource
 
     private Map<Issue, List<User>> fetchAssigneesForIssues( final List<Issue> issues )
     {
-        final Map<Issue, List<User>> issuesWithAssignees = Maps.newHashMap();
+        final Map<Issue, List<User>> issuesWithAssignees = new HashMap<>();
 
         issues.stream().forEach( issue -> issuesWithAssignees.put( issue, doFetchAssignees( issue ) ) );
 

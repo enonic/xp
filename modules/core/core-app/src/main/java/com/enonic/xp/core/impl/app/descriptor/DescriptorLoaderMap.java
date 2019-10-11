@@ -1,8 +1,7 @@
 package com.enonic.xp.core.impl.app.descriptor;
 
+import java.util.HashMap;
 import java.util.Map;
-
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.descriptor.Descriptor;
 import com.enonic.xp.descriptor.DescriptorLoader;
@@ -15,7 +14,7 @@ final class DescriptorLoaderMap
 
     DescriptorLoaderMap()
     {
-        this.map = Maps.newHashMap();
+        this.map = new HashMap<>();
     }
 
     @SuppressWarnings("unchecked")

@@ -1,13 +1,13 @@
 package com.enonic.xp.node;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.content.CompareStatus;
@@ -85,7 +85,7 @@ public class NodeComparisons
 
     public static final class Builder
     {
-        private final Map<NodeId, NodeComparison> nodeIdNodeComparisonMap = Maps.newHashMap();
+        private final Map<NodeId, NodeComparison> nodeIdNodeComparisonMap = new HashMap<>();
 
         private Builder()
         {

@@ -1,6 +1,7 @@
 package com.enonic.xp.launcher.impl.framework;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.launcher.LauncherListener;
 import com.enonic.xp.launcher.impl.SharedConstants;
@@ -64,7 +64,7 @@ public final class FrameworkService
         updateBootDelegation();
         updateSystemPackagesExtra();
 
-        final Map<String, Object> map = Maps.newHashMap();
+        final Map<String, Object> map = new HashMap<>();
         map.put( LOG_LOGGER_PROP, new FrameworkLogger() );
         map.putAll( this.config );
 

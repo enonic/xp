@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -7,7 +8,6 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.context.ContextAccessor;
@@ -65,7 +65,7 @@ class UpdatedAttachedBinariesResolver
             return persistedNode.getAttachedBinaries();
         }
 
-        final Map<BinaryReference, AttachedBinary> resolvedAttachedBinaries = Maps.newLinkedHashMap();
+        final Map<BinaryReference, AttachedBinary> resolvedAttachedBinaries = new LinkedHashMap<>();
 
         processExistingBinaries( resolvedAttachedBinaries, referencesInEditedNode, referencesInPersistedNode );
 

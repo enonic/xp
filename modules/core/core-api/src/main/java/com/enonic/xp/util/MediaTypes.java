@@ -1,12 +1,12 @@
 package com.enonic.xp.util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.Maps;
 import com.google.common.io.Files;
 import com.google.common.net.MediaType;
 
@@ -28,7 +28,7 @@ public final class MediaTypes
     private MediaTypes()
     {
         this.providers = new ArrayList<>();
-        this.mediaTypes = Maps.newHashMap();
+        this.mediaTypes = new HashMap<>();
 
         this.mediaTypes.put( "gif", MediaType.GIF );
         this.mediaTypes.put( "png", MediaType.PNG );
@@ -73,7 +73,7 @@ public final class MediaTypes
     @Override
     public Map<String, MediaType> asMap()
     {
-        final Map<String, MediaType> map = Maps.newHashMap( this.mediaTypes );
+        final Map<String, MediaType> map = new HashMap<>( this.mediaTypes );
         for ( final MediaTypeProvider provider : this.providers )
         {
             map.putAll( provider.asMap() );

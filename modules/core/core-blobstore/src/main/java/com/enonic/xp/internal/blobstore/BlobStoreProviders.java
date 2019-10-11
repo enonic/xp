@@ -1,9 +1,8 @@
 package com.enonic.xp.internal.blobstore;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.blob.BlobStoreProvider;
 
@@ -14,7 +13,7 @@ final class BlobStoreProviders
 
     BlobStoreProviders()
     {
-        this.providers = Maps.newHashMap();
+        this.providers = new HashMap<>();
     }
 
     void add( final BlobStoreProvider provider )

@@ -1,6 +1,7 @@
 package com.enonic.xp.lib.i18n;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Map;
@@ -9,8 +10,6 @@ import java.util.Set;
 import org.junit.Ignore;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
-
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentName;
@@ -65,7 +64,7 @@ public class I18NScriptTest
         final Object[] arguments = invocation.getArguments();
         if ( invocation.getMethod().getName().equals( "asMap" ) )
         {
-            final Map<String, String> map = Maps.newHashMap();
+            final Map<String, String> map = new HashMap<>();
             map.put( "a", "1" );
             map.put( "b", "2" );
             return map;

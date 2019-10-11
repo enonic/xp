@@ -2,15 +2,14 @@ package com.enonic.xp.repo.impl.config;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import com.google.common.collect.Maps;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RepoConfigurationTest
 {
@@ -22,7 +21,7 @@ public class RepoConfigurationTest
     @BeforeEach
     public void setup()
     {
-        this.map = Maps.newHashMap();
+        this.map = new HashMap<>();
         System.setProperty( "xp.home", this.temporaryFolder.toFile().getAbsolutePath() );
     }
 

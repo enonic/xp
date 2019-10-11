@@ -3,11 +3,10 @@ package com.enonic.xp.server.shell.impl;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.osgi.framework.BundleContext;
-
-import com.google.common.collect.Maps;
 
 final class ShellContextProxy
     implements InvocationHandler
@@ -21,7 +20,7 @@ final class ShellContextProxy
     public ShellContextProxy( final BundleContext delegate )
     {
         this.delegate = delegate;
-        this.properties = Maps.newHashMap();
+        this.properties = new HashMap<>();
     }
 
     @Override

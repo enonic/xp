@@ -1,5 +1,7 @@
 package com.enonic.xp.web.impl.dispatch.pipeline;
 
+import java.util.HashMap;
+
 import javax.servlet.Servlet;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -8,12 +10,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.web.dispatch.ServletMapping;
 import com.enonic.xp.web.impl.dispatch.mapping.ServletDefinition;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ServletPipelineImplTest
     extends ResourcePipelineImplTest<ServletDefinition, ServletPipelineImpl>
@@ -46,7 +47,7 @@ public class ServletPipelineImplTest
         assertEquals( 0, Lists.newArrayList( this.pipeline ).size() );
         this.pipeline.addServlet( servlet, new MyServiceReference<Servlet>() );
 
-        this.pipeline.activate( Maps.newHashMap() );
+        this.pipeline.activate( new HashMap<>() );
 
         assertEquals( 1, Lists.newArrayList( this.pipeline ).size() );
         this.pipeline.removeServlet( servlet );
@@ -60,7 +61,7 @@ public class ServletPipelineImplTest
         assertEquals( 0, Lists.newArrayList( this.pipeline ).size() );
         this.pipeline.addMapping( mapping );
 
-        this.pipeline.activate( Maps.newHashMap() );
+        this.pipeline.activate( new HashMap<>() );
 
         assertEquals( 1, Lists.newArrayList( this.pipeline ).size() );
         this.pipeline.removeMapping( mapping );
@@ -76,7 +77,7 @@ public class ServletPipelineImplTest
         this.pipeline.add( def1 );
         this.pipeline.add( def2 );
 
-        this.pipeline.activate( Maps.newHashMap() );
+        this.pipeline.activate( new HashMap<>() );
 
         this.pipeline.service( this.request, this.response );
 

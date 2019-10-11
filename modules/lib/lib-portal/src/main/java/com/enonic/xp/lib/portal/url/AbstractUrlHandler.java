@@ -1,9 +1,9 @@
 package com.enonic.xp.lib.portal.url;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.portal.PortalRequest;
@@ -26,7 +26,7 @@ public abstract class AbstractUrlHandler
     {
         if ( params == null )
         {
-            return createUrl( Maps.newHashMap() );
+            return createUrl( new HashMap<>() );
         }
 
         return createUrl( params.getMap() );

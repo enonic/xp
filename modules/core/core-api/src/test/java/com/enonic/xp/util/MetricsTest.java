@@ -1,5 +1,6 @@
 package com.enonic.xp.util;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -12,11 +13,8 @@ import com.codahale.metrics.Meter;
 import com.codahale.metrics.Metric;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
-import com.google.common.collect.Maps;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MetricsTest
 {
@@ -87,7 +85,7 @@ public class MetricsTest
     @Test
     public void registerAll()
     {
-        final Map<String, Metric> map = Maps.newHashMap();
+        final Map<String, Metric> map = new HashMap<>();
         map.put( MetricsTest.class.getName() + ".timer", new Timer() );
 
         Metrics.registerAll( () -> map );

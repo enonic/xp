@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.app;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.osgi.framework.Bundle;
@@ -11,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationInvalidator;
@@ -33,7 +33,7 @@ final class ApplicationRegistry
 
     public ApplicationRegistry()
     {
-        this.applications = Maps.newConcurrentMap();
+        this.applications = new ConcurrentHashMap<>();
         this.factory = new ApplicationFactory( RunMode.get() );
         this.invalidators = Lists.newCopyOnWriteArrayList();
     }

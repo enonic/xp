@@ -1,13 +1,12 @@
 package com.enonic.xp.portal.impl.rendering;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
-
-import com.google.common.collect.Maps;
 
 @Component
 public final class RendererFactoryImpl
@@ -17,7 +16,7 @@ public final class RendererFactoryImpl
 
     public RendererFactoryImpl()
     {
-        this.renderers = Maps.newHashMap();
+        this.renderers = new HashMap<>();
     }
 
     @Override

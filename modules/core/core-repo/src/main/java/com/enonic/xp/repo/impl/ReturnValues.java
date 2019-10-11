@@ -1,9 +1,8 @@
 package com.enonic.xp.repo.impl;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
-
-import com.google.common.collect.Maps;
 
 public class ReturnValues
 {
@@ -48,7 +47,7 @@ public class ReturnValues
 
     public static final class Builder
     {
-        final Map<String, ReturnValue> returnValues = Maps.newHashMap();
+        final Map<String, ReturnValue> returnValues = new HashMap<>();
 
         private Builder()
         {

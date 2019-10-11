@@ -1,9 +1,9 @@
 package com.enonic.xp.node;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 
 public class NodesHasChildrenResult
 {
@@ -36,7 +36,7 @@ public class NodesHasChildrenResult
 
     public static class Builder
     {
-        private final Map<NodeId, Boolean> valueMap = Maps.newHashMap();
+        private final Map<NodeId, Boolean> valueMap = new HashMap<>();
 
         public Builder add( final NodeId nodeId, final boolean hasChild )
         {

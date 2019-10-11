@@ -2,11 +2,10 @@ package com.enonic.xp.node;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
-
-import com.google.common.collect.Maps;
 
 public class NodeBranchEntries
     implements Iterable<NodeBranchEntry>
@@ -20,7 +19,7 @@ public class NodeBranchEntries
 
     private NodeBranchEntries( final Collection<NodeBranchEntry> entries )
     {
-        branchNodeVersionMap = Maps.newLinkedHashMap();
+        branchNodeVersionMap = new LinkedHashMap<>();
         entries.stream().forEach( entry -> branchNodeVersionMap.put( entry.getNodeId(), entry ) );
     }
 
@@ -77,7 +76,7 @@ public class NodeBranchEntries
 
     public static class Builder
     {
-        private final Map<NodeId, NodeBranchEntry> map = Maps.newLinkedHashMap();
+        private final Map<NodeId, NodeBranchEntry> map = new LinkedHashMap<>();
 
         public Builder add( final NodeBranchEntry nodeBranchEntry )
         {

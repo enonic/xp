@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.media;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -8,7 +9,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Resources;
 import com.google.common.net.HttpHeaders;
@@ -25,7 +25,7 @@ import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.schema.content.ContentTypeName;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MediaInfoServiceTest
 {
@@ -37,7 +37,7 @@ public class MediaInfoServiceTest
         this.service = new MediaInfoServiceImpl();
         service.setBinaryExtractor( source ->
                                     {
-                                        Map<String, List<String>> data = Maps.newHashMap();
+                                        Map<String, List<String>> data = new HashMap<>();
                                         data.put( HttpHeaders.CONTENT_TYPE, Lists.newArrayList( "image/jpeg" ) );
                                         data.put( "myExtractedValue", Lists.newArrayList( "fisk" ) );
 

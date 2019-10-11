@@ -1,9 +1,9 @@
 package com.enonic.xp.repo.impl.dump.upgrade.flattenedpage;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -18,7 +18,7 @@ public class TemplateControllerMappings
 
     private static final String TEMPLATE_CONTENT_TYPE_VALUE = "portal:page-template";
 
-    private Map<String, String> templateControllerMap = Maps.newHashMap();
+    private Map<String, String> templateControllerMap = new HashMap<>();
 
 
     public void handle( final NodeId nodeId, final PropertyTree nodeData )

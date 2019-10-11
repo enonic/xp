@@ -6,14 +6,11 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.media.MediaTypeProvider;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MediaTypesTest
 {
@@ -79,7 +76,7 @@ public class MediaTypesTest
             @Override
             public Map<String, MediaType> asMap()
             {
-                final HashMap<String, MediaType> map = Maps.newHashMap();
+                final HashMap<String, MediaType> map = new HashMap<>();
                 map.put( "test", unknown );
                 return map;
             }

@@ -4,12 +4,7 @@ import java.util.HashMap;
 
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.Maps;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BlobStoreConfigImplTest
 {
@@ -19,7 +14,7 @@ public class BlobStoreConfigImplTest
         throws Exception
     {
         final BlobStoreConfigImpl blobStoreConfig = new BlobStoreConfigImpl();
-        blobStoreConfig.activate( Maps.newHashMap() );
+        blobStoreConfig.activate( new HashMap<>() );
 
         assertEquals( "file", blobStoreConfig.providerName() );
         assertTrue( blobStoreConfig.cache() );
@@ -32,7 +27,7 @@ public class BlobStoreConfigImplTest
     public void trim_whitespaces()
         throws Exception
     {
-        final HashMap<String, String> valueMap = Maps.newHashMap();
+        final HashMap<String, String> valueMap = new HashMap<>();
         valueMap.put( "cache.enabled", "    false     " );
 
         final BlobStoreConfigImpl blobStoreConfig = new BlobStoreConfigImpl();

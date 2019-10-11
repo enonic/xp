@@ -1,13 +1,11 @@
 package com.enonic.xp.launcher.impl.config;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.Maps;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ConfigPropertiesTest
 {
@@ -25,7 +23,7 @@ public class ConfigPropertiesTest
     @Test
     public void testPutAll()
     {
-        final Map<String, String> map = Maps.newHashMap();
+        final Map<String, String> map = new HashMap<>();
         map.put( "key1", "value1" );
         map.put( " key2 ", " value2 " );
 

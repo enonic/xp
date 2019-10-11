@@ -1,11 +1,11 @@
 package com.enonic.xp.highlight;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 
 public class HighlightedProperties
     implements Iterable<HighlightedProperty>
@@ -76,7 +76,7 @@ public class HighlightedProperties
 
     public static final class Builder
     {
-        final Map<String, HighlightedProperty> highlightedFields = Maps.newHashMap();
+        final Map<String, HighlightedProperty> highlightedFields = new HashMap<>();
 
         private Builder()
         {
