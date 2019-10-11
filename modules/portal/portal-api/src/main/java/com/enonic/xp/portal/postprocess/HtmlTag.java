@@ -1,7 +1,9 @@
 package com.enonic.xp.portal.postprocess;
 
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public enum HtmlTag
 {
@@ -10,15 +12,8 @@ public enum HtmlTag
     BODY_BEGIN( "bodyBegin" ),
     BODY_END( "bodyEnd" );
 
-    private static final Map<String, HtmlTag> LOOKUP_TABLE = new HashMap<>();
-
-    static
-    {
-        for ( final HtmlTag htmlTag : HtmlTag.values() )
-        {
-            LOOKUP_TABLE.put( htmlTag.id, htmlTag );
-        }
-    }
+    private static final Map<String, HtmlTag> LOOKUP_TABLE =
+        Arrays.stream( values() ).collect( Collectors.toMap( e -> e.id, Function.identity() ) );
 
     private final String id;
 
