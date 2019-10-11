@@ -1,5 +1,6 @@
 package com.enonic.xp.admin.impl.rest.resource.macro;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -26,7 +27,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import com.google.common.html.HtmlEscapers;
 
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
@@ -105,7 +105,7 @@ public final class MacroResource
         final Set<ApplicationKey> keys = appKeys.getKeys();
         keys.add( ApplicationKey.SYSTEM );
 
-        final List<MacroDescriptorJson> macroDescriptorJsons = Lists.newArrayList();
+        final List<MacroDescriptorJson> macroDescriptorJsons = new ArrayList<>();
 
         ApplicationKeys.from( keys ).forEach( applicationKey -> {
             macroDescriptorJsons.addAll( this.macroDescriptorService.getByApplication( applicationKey ).

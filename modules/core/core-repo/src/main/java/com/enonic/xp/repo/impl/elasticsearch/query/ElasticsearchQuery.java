@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch.query;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -11,7 +12,6 @@ import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.suggest.SuggestBuilder;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.node.SearchMode;
@@ -176,7 +176,7 @@ public class ElasticsearchQuery
 
         private final Set<String> indexNames = Sets.newHashSet();
 
-        private List<SortBuilder> sortBuilders = Lists.newArrayList();
+        private List<SortBuilder> sortBuilders = new ArrayList<>();
 
         private int from = 0;
 

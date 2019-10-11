@@ -1,11 +1,10 @@
 package com.enonic.xp.core.impl.issue;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
@@ -27,9 +26,7 @@ import static com.enonic.xp.core.impl.issue.IssuePropertyNames.INDEX;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.PUBLISH_REQUEST;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.STATUS;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.TITLE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class IssueNodeTranslatorTest
 {
@@ -72,7 +69,7 @@ public class IssueNodeTranslatorTest
 
         final PropertySet publishRequestSet = new PropertySet();
 
-        List<PropertySet> propertySetList = Lists.newArrayList();
+        List<PropertySet> propertySetList = new ArrayList<>();
         propertySetList.add( createItemSet( "content-id1", false ) );
         propertySetList.add( createItemSet( "content-id2", true ) );
         publishRequestSet.addSets( PublishRequestPropertyNames.ITEMS, propertySetList.toArray( new PropertySet[propertySetList.size()] ) );

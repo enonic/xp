@@ -1,6 +1,7 @@
 package com.enonic.xp.web.impl.dispatch.mapping;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -18,18 +19,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.google.common.collect.Lists;
-
 import com.enonic.xp.annotation.Order;
 import com.enonic.xp.web.dispatch.FilterMapping;
 import com.enonic.xp.web.dispatch.MappingBuilder;
 import com.enonic.xp.web.dispatch.ResourceMapping;
 import com.enonic.xp.web.dispatch.ServletMapping;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ResourceMappingHelperTest
 {
@@ -80,7 +76,7 @@ public class ResourceMappingHelperTest
     @Test
     public void testFilter_none()
     {
-        final FilterMapping mapping = ResourceMappingHelper.filter( this.mockFilter, Lists.newArrayList() );
+        final FilterMapping mapping = ResourceMappingHelper.filter( this.mockFilter, new ArrayList<>() );
         assertNull( mapping );
     }
 
@@ -93,7 +89,7 @@ public class ResourceMappingHelperTest
     @Test
     public void testServlet_none()
     {
-        final ServletMapping mapping = ResourceMappingHelper.servlet( this.mockServlet, Lists.newArrayList() );
+        final ServletMapping mapping = ResourceMappingHelper.servlet( this.mockServlet, new ArrayList<>() );
         assertNull( mapping );
     }
 
@@ -116,7 +112,7 @@ public class ResourceMappingHelperTest
     public void testConfigure_servlet()
     {
         final MyServlet servlet = new MyServlet();
-        final ServletMapping mapping = ResourceMappingHelper.servlet( servlet, Lists.newArrayList() );
+        final ServletMapping mapping = ResourceMappingHelper.servlet( servlet, new ArrayList<>() );
 
         assertNotNull( mapping );
         assertSame( servlet, mapping.getResource() );
@@ -128,7 +124,7 @@ public class ResourceMappingHelperTest
     public void testConfigure_filter()
     {
         final MyFilter filter = new MyFilter();
-        final FilterMapping mapping = ResourceMappingHelper.filter( filter, Lists.newArrayList() );
+        final FilterMapping mapping = ResourceMappingHelper.filter( filter, new ArrayList<>() );
 
         assertNotNull( mapping );
         assertSame( filter, mapping.getResource() );

@@ -1,8 +1,7 @@
 package com.enonic.xp.repo.impl.elasticsearch.document.indexitem;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.data.Value;
 import com.enonic.xp.index.AllTextIndexConfig;
@@ -13,7 +12,7 @@ class AllTextTypeFactory
 {
     static List<IndexItem> create( final Value propertyValue, final IndexConfig indexConfig, final AllTextIndexConfig allTextIndexConfig )
     {
-        List<IndexItem> allTextItems = Lists.newArrayList();
+        List<IndexItem> allTextItems = new ArrayList<>();
 
         if ( ( indexConfig.isDecideByType() && propertyValue.isText() ) || indexConfig.isIncludeInAllText() )
         {

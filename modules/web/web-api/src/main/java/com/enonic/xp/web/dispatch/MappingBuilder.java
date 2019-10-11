@@ -1,5 +1,6 @@
 package com.enonic.xp.web.dispatch;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -48,7 +49,7 @@ public final class MappingBuilder
         this.order = 0;
         this.initParams = Maps.newHashMap();
         this.urlPatterns = Sets.newTreeSet();
-        this.connectors = Lists.newArrayList();
+        this.connectors = new ArrayList<>();
     }
 
     private final Map<String, String> initParams;

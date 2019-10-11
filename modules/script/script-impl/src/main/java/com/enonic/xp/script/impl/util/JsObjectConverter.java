@@ -1,10 +1,10 @@
 package com.enonic.xp.script.impl.util;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
@@ -101,7 +101,7 @@ public final class JsObjectConverter
 
     private List<Object> toList( final ScriptObjectMirror source )
     {
-        final List<Object> result = Lists.newArrayList();
+        final List<Object> result = new ArrayList<>();
         for ( final Object item : source.values() )
         {
             final Object converted = toObject( item );

@@ -1,8 +1,7 @@
 package com.enonic.xp.web.vhost.impl.mapping;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.IdProviderKeys;
@@ -42,7 +41,7 @@ public class VirtualHostIdProvidersMapping
 
         private Builder()
         {
-            this.idProviderKeys = Lists.newArrayList();
+            this.idProviderKeys = new ArrayList<>();
         }
 
         public Builder setDefaultIdProvider( final IdProviderKey defaultIdProvider )

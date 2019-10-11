@@ -1,9 +1,9 @@
 package com.enonic.xp.web.websocket;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public final class WebSocketConfig
@@ -14,7 +14,7 @@ public final class WebSocketConfig
 
     public List<String> getSubProtocols()
     {
-        return this.subProtocols != null ? this.subProtocols : Lists.newArrayList();
+        return this.subProtocols != null ? this.subProtocols : new ArrayList<>();
     }
 
     public void setSubProtocols( final List<String> subProtocols )

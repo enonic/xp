@@ -1,12 +1,12 @@
 package com.enonic.xp.core.impl.schema.relationship;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.app.Application;
@@ -73,7 +73,7 @@ public final class RelationshipTypeServiceImpl
             return this.builtInTypes.getByApplication( key );
         }
 
-        final List<RelationshipType> list = Lists.newArrayList();
+        final List<RelationshipType> list = new ArrayList<>();
         for ( final RelationshipTypeName name : findNames( key ) )
         {
             final RelationshipType type = getByName( name );

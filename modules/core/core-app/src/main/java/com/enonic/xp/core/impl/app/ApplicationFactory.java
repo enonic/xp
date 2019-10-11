@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.app;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.List;
 
@@ -11,8 +12,6 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
@@ -79,7 +78,7 @@ final class ApplicationFactory
 
     private List<URL> getSearchPathUrls( final List<String> paths )
     {
-        final List<URL> result = Lists.newArrayList();
+        final List<URL> result = new ArrayList<>();
         for ( final String path : paths )
         {
             final URL url = getSearchPathUrl( path );

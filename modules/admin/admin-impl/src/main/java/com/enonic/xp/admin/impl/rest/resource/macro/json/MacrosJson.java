@@ -1,9 +1,8 @@
 package com.enonic.xp.admin.impl.rest.resource.macro.json;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.admin.impl.rest.resource.macro.MacroIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
@@ -18,7 +17,7 @@ public class MacrosJson
 
     public MacrosJson( final Builder builder )
     {
-        List<MacroDescriptorJson> notSortedMacros = Lists.newArrayList();
+        List<MacroDescriptorJson> notSortedMacros = new ArrayList<>();
         if ( builder.macroDescriptors != null )
         {
             for ( final MacroDescriptor macroDescriptor : builder.macroDescriptors )

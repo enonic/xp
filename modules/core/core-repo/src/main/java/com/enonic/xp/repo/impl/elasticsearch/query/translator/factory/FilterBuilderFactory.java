@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -13,7 +14,6 @@ import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.index.query.TermsQueryBuilder;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.data.Value;
@@ -49,7 +49,7 @@ public class FilterBuilderFactory
 
     private QueryBuilder doCreate( final ImmutableSet<Filter> queryFilters )
     {
-        List<QueryBuilder> filtersToApply = Lists.newArrayList();
+        List<QueryBuilder> filtersToApply = new ArrayList<>();
 
         appendFilters( queryFilters, filtersToApply );
 
@@ -156,7 +156,7 @@ public class FilterBuilderFactory
 
     private QueryBuilder[] createBooleanFilterChildren( final ImmutableSet<Filter> queryFilters )
     {
-        List<QueryBuilder> filtersToApply = Lists.newArrayList();
+        List<QueryBuilder> filtersToApply = new ArrayList<>();
 
         appendFilters( queryFilters, filtersToApply );
 

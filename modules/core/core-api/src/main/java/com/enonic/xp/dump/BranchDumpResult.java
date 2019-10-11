@@ -1,9 +1,8 @@
 package com.enonic.xp.dump;
 
 
+import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.branch.Branch;
 
@@ -49,7 +48,7 @@ public class BranchDumpResult
 
         private Long successful = 0L;
 
-        private final List<DumpError> errors = Lists.newArrayList();
+        private final List<DumpError> errors = new ArrayList<>();
 
         private Builder( final Branch branch )
         {

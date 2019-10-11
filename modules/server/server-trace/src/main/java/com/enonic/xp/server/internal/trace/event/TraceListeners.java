@@ -1,8 +1,7 @@
 package com.enonic.xp.server.internal.trace.event;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.trace.TraceEvent;
 import com.enonic.xp.trace.TraceListener;
@@ -14,7 +13,7 @@ final class TraceListeners
 
     TraceListeners()
     {
-        this.list = Lists.newArrayList();
+        this.list = new ArrayList<>();
     }
 
     void add( final TraceListener listener )

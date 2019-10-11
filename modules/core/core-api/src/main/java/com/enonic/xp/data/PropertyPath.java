@@ -10,7 +10,6 @@ import org.apache.commons.lang.StringUtils;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 /**
  * Immutable
@@ -95,7 +94,7 @@ public final class PropertyPath
         this.relative = this.elements.size() <= 0 || !this.elements.get( 0 ).getName().startsWith( ELEMENT_DIVIDER );
         this.refString = toString( this.elements );
 
-        final List<Element> parentPathElements = Lists.newArrayList();
+        final List<Element> parentPathElements = new ArrayList<>();
         for ( int i = 0; i < this.elements.size(); i++ )
         {
             if ( i < this.elements.size() - 1 )

@@ -1,6 +1,7 @@
 package com.enonic.xp.internal.blobstore.file;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -9,17 +10,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.Segment;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FileBlobStoreTest
 {
@@ -85,7 +82,7 @@ public class FileBlobStoreTest
     public void list()
         throws Exception
     {
-        List<BlobRecord> stored = Lists.newArrayList();
+        List<BlobRecord> stored = new ArrayList<>();
         stored.add( createRecord( "f1" ) );
         stored.add( createRecord( "f2" ) );
         stored.add( createRecord( "f3" ) );

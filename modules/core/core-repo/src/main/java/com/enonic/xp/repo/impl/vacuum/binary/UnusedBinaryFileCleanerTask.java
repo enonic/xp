@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.vacuum.binary;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -10,7 +11,6 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.io.CharSource;
 
@@ -65,7 +65,7 @@ public class UnusedBinaryFileCleanerTask
         this.blobStore.listSegments().
             filter( NodeSegmentUtils::isBinarySegment ).
             forEach( segment -> {
-                final List<BlobKey> toBeDeleted = Lists.newArrayList();
+                final List<BlobKey> toBeDeleted = new ArrayList<>();
 
                 if ( listener != null )
                 {

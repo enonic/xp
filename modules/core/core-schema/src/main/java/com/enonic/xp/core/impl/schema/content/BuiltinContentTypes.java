@@ -1,10 +1,9 @@
 package com.enonic.xp.core.impl.schema.content;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.WordUtils;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentPropertyNames;
@@ -343,7 +342,7 @@ final class BuiltinContentTypes
 
     private ContentTypes processTypes( final ContentTypes types )
     {
-        final List<ContentType> result = Lists.newArrayList();
+        final List<ContentType> result = new ArrayList<>();
         for ( final ContentType type : types )
         {
             result.add( processType( type ) );

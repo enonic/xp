@@ -1,10 +1,9 @@
 package com.enonic.xp.repo.impl.node.event;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.event.Event;
 
@@ -39,7 +38,7 @@ class NodesEventData
     @SuppressWarnings("unchecked")
     private static List<NodeEventData> handleList( final List<Object> nodesList )
     {
-        final List<NodeEventData> nodeEventData = Lists.newArrayList();
+        final List<NodeEventData> nodeEventData = new ArrayList<>();
 
         for ( final Object listItem : nodesList )
         {

@@ -1,11 +1,11 @@
 package com.enonic.xp.util;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.Files;
 import com.google.common.net.MediaType;
@@ -27,7 +27,7 @@ public final class MediaTypes
 
     private MediaTypes()
     {
-        this.providers = Lists.newArrayList();
+        this.providers = new ArrayList<>();
         this.mediaTypes = Maps.newHashMap();
 
         this.mediaTypes.put( "gif", MediaType.GIF );

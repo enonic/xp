@@ -1,12 +1,10 @@
 package com.enonic.xp.inputtype;
 
+import java.util.stream.StreamSupport;
+
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.Lists;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class InputTypesTest
 {
@@ -20,7 +18,7 @@ public class InputTypesTest
     @Test
     public void countBuiltinTypes()
     {
-        assertEquals( 22, Lists.newArrayList( this.types.iterator() ).size() );
+        assertEquals( 22, StreamSupport.stream( this.types.spliterator(), false ).count() );
     }
 
     @Test
@@ -42,6 +40,6 @@ public class InputTypesTest
     @Test
     public void resolveType_unknown()
     {
-        assertThrows(InputTypeNotFoundException.class, () -> this.types.resolve( InputTypeName.from( "unknown" ) ));
+        assertThrows( InputTypeNotFoundException.class, () -> this.types.resolve( InputTypeName.from( "unknown" ) ) );
     }
 }

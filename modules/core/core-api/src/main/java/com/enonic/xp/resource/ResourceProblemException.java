@@ -1,11 +1,11 @@
 package com.enonic.xp.resource;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.exception.BaseException;
 
@@ -82,7 +82,7 @@ public final class ResourceProblemException
 
         private Builder()
         {
-            this.callStack = Lists.newArrayList();
+            this.callStack = new ArrayList<>();
             this.lineNumber = -1;
         }
 

@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.elasticsearch.ElasticsearchException;
@@ -10,8 +11,6 @@ import org.elasticsearch.client.Client;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.Lists;
-
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
@@ -21,9 +20,7 @@ import com.enonic.xp.node.NodeStorageException;
 import com.enonic.xp.repo.impl.branch.storage.BranchDocumentId;
 import com.enonic.xp.repo.impl.elasticsearch.ClientProxy;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DeleteNodeByIdCommandTest_error_handling
     extends AbstractNodeTest
@@ -83,7 +80,7 @@ public class DeleteNodeByIdCommandTest_error_handling
     private class FailDeleteOnIdsProxy
         extends ClientProxy
     {
-        private final List<String> failOn = Lists.newArrayList();
+        private final List<String> failOn = new ArrayList<>();
 
         private FailDeleteOnIdsProxy( final Client client, final NodeIds failOnIds )
         {

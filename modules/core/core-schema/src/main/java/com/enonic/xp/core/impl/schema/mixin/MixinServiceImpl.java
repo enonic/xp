@@ -12,7 +12,6 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.app.Application;
@@ -80,7 +79,7 @@ public final class MixinServiceImpl
     @Override
     public Mixins getByApplication( final ApplicationKey key )
     {
-        final List<Mixin> list = Lists.newArrayList();
+        final List<Mixin> list = new ArrayList<>();
         for ( final MixinName name : findNames( key ) )
         {
             final Mixin type = getByName( name );

@@ -37,7 +37,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.io.ByteSource;
@@ -1388,7 +1387,7 @@ public final class ContentResource
             accessPrincipals.put( access, principals );
         }
 
-        final List<EffectivePermissionJson> permissionsJson = Lists.newArrayList();
+        final List<EffectivePermissionJson> permissionsJson = new ArrayList<>();
         for ( Access access : Access.values() )
         {
             final EffectivePermissionAccessJson accessJson = new EffectivePermissionAccessJson();

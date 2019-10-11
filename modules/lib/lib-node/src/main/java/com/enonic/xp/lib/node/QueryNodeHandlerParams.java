@@ -1,9 +1,9 @@
 package com.enonic.xp.lib.node;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.script.ScriptValue;
@@ -42,7 +42,7 @@ public class QueryNodeHandlerParams
 
     private List<Map<String, Object>> doSetFilters( final ScriptValue filters )
     {
-        List<Map<String, Object>> filterList = Lists.newArrayList();
+        List<Map<String, Object>> filterList = new ArrayList<>();
 
         if ( filters == null )
         {

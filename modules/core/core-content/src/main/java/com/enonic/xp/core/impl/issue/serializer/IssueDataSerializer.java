@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.issue.serializer;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -132,7 +133,7 @@ public class IssueDataSerializer
 
         publishRequestSet.addStrings( PublishRequestPropertyNames.EXCLUDE_IDS, publishRequest.getExcludeIds().asStrings() );
 
-        final Collection<PropertySet> itemSets = Lists.newArrayList();
+        final Collection<PropertySet> itemSets = new ArrayList<>();
         for ( final PublishRequestItem item : publishRequest.getItems() )
         {
             final PropertySet itemSet = new PropertySet();

@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.schema.xdata;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -8,7 +9,6 @@ import java.util.stream.Collectors;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.app.Application;
@@ -84,7 +84,7 @@ public final class XDataServiceImpl
             return this.builtInTypes.getByApplication( key );
         }
 
-        final List<XData> list = Lists.newArrayList();
+        final List<XData> list = new ArrayList<>();
         for ( final XDataName name : findNames( key ) )
         {
             final XData type = getByName( name );

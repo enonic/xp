@@ -1,5 +1,6 @@
 package com.enonic.xp.launcher.impl.framework;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -13,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.launcher.LauncherListener;
@@ -38,7 +38,7 @@ public final class FrameworkService
 
     public FrameworkService()
     {
-        this.activators = Lists.newArrayList();
+        this.activators = new ArrayList<>();
     }
 
     public FrameworkService config( final ConfigProperties config )

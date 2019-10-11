@@ -1,10 +1,10 @@
 package com.enonic.xp.repo.impl.node.json;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.data.PropertyArrayJson;
 import com.enonic.xp.data.PropertyTreeJson;
@@ -82,7 +82,7 @@ public final class NodeVersionDataJson
             return null;
         }
 
-        final List<AttachedBinaryJson> attachedBinaryJsons = Lists.newArrayList();
+        final List<AttachedBinaryJson> attachedBinaryJsons = new ArrayList<>();
 
         for ( final AttachedBinary attachedBinary : attachedBinaries )
         {

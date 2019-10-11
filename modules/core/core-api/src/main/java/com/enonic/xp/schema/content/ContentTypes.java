@@ -1,5 +1,6 @@
 package com.enonic.xp.schema.content;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -11,7 +12,6 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.support.AbstractImmutableEntityList;
@@ -40,7 +40,7 @@ public final class ContentTypes
 
     private ContentTypes add( final ImmutableList<ContentType> contentTypes )
     {
-        final List<ContentType> tmp = Lists.newArrayList();
+        final List<ContentType> tmp = new ArrayList<>();
         tmp.addAll( this.list );
         tmp.addAll( contentTypes );
 

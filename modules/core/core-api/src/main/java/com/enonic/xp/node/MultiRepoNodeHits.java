@@ -1,10 +1,10 @@
 package com.enonic.xp.node;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
@@ -18,7 +18,7 @@ public class MultiRepoNodeHits
 
     public static MultiRepoNodeHits empty()
     {
-        final List<MultiRepoNodeHit> returnFields = Lists.newArrayList();
+        final List<MultiRepoNodeHit> returnFields = new ArrayList<>();
         return new MultiRepoNodeHits( returnFields );
     }
 
@@ -34,7 +34,7 @@ public class MultiRepoNodeHits
 
     public static class Builder
     {
-        private final List<MultiRepoNodeHit> nodeHits = Lists.newArrayList();
+        private final List<MultiRepoNodeHit> nodeHits = new ArrayList<>();
 
         public Builder add( final MultiRepoNodeHit nodeHit )
         {

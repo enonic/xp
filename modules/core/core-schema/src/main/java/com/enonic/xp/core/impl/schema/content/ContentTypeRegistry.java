@@ -1,12 +1,12 @@
 package com.enonic.xp.core.impl.schema.content;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.app.Application;
@@ -63,7 +63,7 @@ final class ContentTypeRegistry
             return this.builtInTypes.getByApplication( key );
         }
 
-        final List<ContentType> list = Lists.newArrayList();
+        final List<ContentType> list = new ArrayList<>();
         for ( final ContentTypeName name : findNames( key ) )
         {
             final ContentType type = get( name );

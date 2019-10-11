@@ -1,9 +1,9 @@
 package com.enonic.xp.xml.parser;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.app.ApplicationRelativeResolver;
 import com.enonic.xp.schema.content.ContentType;
@@ -58,7 +58,7 @@ public final class XmlContentTypeParser
 
     private XDataNames buildMetaData( final DomElement root )
     {
-        final List<XDataName> names = Lists.newArrayList();
+        final List<XDataName> names = new ArrayList<>();
         for ( final DomElement child : root.getChildren( "x-data" ) )
         {
             String name = child.getAttribute( "name" );

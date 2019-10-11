@@ -1,5 +1,6 @@
 package com.enonic.xp.admin.impl.rest.resource.schema.xdata;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +17,6 @@ import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.admin.impl.json.schema.xdata.XDataJson;
@@ -190,7 +190,7 @@ public final class XDataResource
             new ContentTypeNameWildcardResolver( this.contentTypeService );
 
         final List<String> allowContentTypes =
-            StringUtils.isNotBlank( allowContentType ) ? Collections.singletonList( allowContentType ) : Lists.newArrayList();
+            StringUtils.isNotBlank( allowContentType ) ? Collections.singletonList( allowContentType ) : new ArrayList<>();
 
         if ( contentTypeNameWildcardResolver.anyTypeHasWildcard( allowContentTypes ) )
         {

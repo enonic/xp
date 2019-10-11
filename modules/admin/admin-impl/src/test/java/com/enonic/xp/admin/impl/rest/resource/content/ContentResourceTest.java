@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -192,10 +193,7 @@ import static com.enonic.xp.security.acl.Permission.DELETE;
 import static com.enonic.xp.security.acl.Permission.MODIFY;
 import static com.enonic.xp.security.acl.Permission.READ;
 import static java.util.Arrays.asList;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
@@ -947,7 +945,7 @@ public class ContentResourceTest
 
         final WebApplicationException ex = assertThrows(WebApplicationException.class, () -> {
             contentResource.reorderChildContents(
-                    new ReorderChildrenJson( false, false, content.getId().toString(), null, Lists.newArrayList() ) );
+                new ReorderChildrenJson( false, false, content.getId().toString(), null, new ArrayList<>() ) );
         });
         assertEquals( "Not allowed to reorder children manually, current parentOrder = [_ts DESC].", ex.getMessage() );
 
@@ -1495,7 +1493,7 @@ public class ContentResourceTest
         Mockito.when( taskService.submitTask( Mockito.isA( DuplicateRunnableTask.class ), eq( "Duplicate content" ) ) ).thenReturn(
             TaskId.from( "task-id" ) );
 
-        TaskResultJson result = contentResource.duplicate( new DuplicateContentsJson( Lists.newArrayList() ) );
+        TaskResultJson result = contentResource.duplicate( new DuplicateContentsJson( new ArrayList<>() ) );
 
         assertEquals( "task-id", result.getTaskId() );
     }
@@ -1774,7 +1772,7 @@ public class ContentResourceTest
             Contents.from( content ) );
 
         AbstractContentQueryResultJson result =
-            contentResource.query( new ContentQueryJson( "", 0, 10, Lists.newArrayList(), null, null, null, null ) );
+            contentResource.query( new ContentQueryJson( "", 0, 10, new ArrayList<>(), null, null, null, null ) );
 
         assertEquals( 1, result.getContents().size() );
         assertTrue( result.getContents().contains( new ContentIdJson( content.getId() ) ) );
@@ -1806,7 +1804,7 @@ public class ContentResourceTest
             Contents.from( content ) );
 
         AbstractContentQueryResultJson result = contentResource.selectorQuery(
-            new ContentTreeSelectorQueryJson( "", 0, 10, null, null, null, Lists.newArrayList(), Lists.newArrayList(), null, null, null ) );
+            new ContentTreeSelectorQueryJson( "", 0, 10, null, null, null, new ArrayList<>(), new ArrayList<>(), null, null, null ) );
 
         assertEquals( 1, result.getContents().size() );
         assertTrue( result.getContents().contains( new ContentIdJson( content.getId() ) ) );

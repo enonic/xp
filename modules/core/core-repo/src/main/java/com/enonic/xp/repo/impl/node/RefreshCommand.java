@@ -1,8 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.RefreshMode;
@@ -32,7 +31,7 @@ public class RefreshCommand
             throw new IndexException( "Cannot refresh index, index for repository [" + repositoryId + "] does not exist" );
         }
 
-        final List<String> indices = Lists.newArrayList();
+        final List<String> indices = new ArrayList<>();
 
         if ( refreshMode.equals( RefreshMode.ALL ) )
         {

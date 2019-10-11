@@ -1,14 +1,13 @@
 package com.enonic.xp.repo.impl.storage.result;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.Lists;
-
 import com.enonic.xp.repo.impl.ReturnValue;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ReturnValueTest
 {
@@ -16,7 +15,7 @@ public class ReturnValueTest
     public void addList()
         throws Exception
     {
-        List<String> values = Lists.newArrayList();
+        List<String> values = new ArrayList<>();
         values.add( "a" );
         values.add( "b" );
         values.add( "c" );

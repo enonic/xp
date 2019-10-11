@@ -7,7 +7,6 @@ import java.util.Set;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.app.Application;
@@ -63,7 +62,7 @@ public final class MacroDescriptorServiceImpl
     @Override
     public MacroDescriptors getByApplication( final ApplicationKey applicationKey )
     {
-        final List<MacroDescriptor> list = Lists.newArrayList();
+        final List<MacroDescriptor> list = new ArrayList<>();
         if ( isSystem( applicationKey ) )
         {
             list.addAll( builtinMacrosDescriptors.getAll().getSet() );

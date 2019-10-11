@@ -1,11 +1,11 @@
 package com.enonic.xp.export;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.node.NodePath;
@@ -76,9 +76,9 @@ public class NodeExportResult
     {
         private boolean dryRun;
 
-        private final List<ExportError> exportErrors = Lists.newArrayList();
+        private final List<ExportError> exportErrors = new ArrayList<>();
 
-        private final List<String> exportedBinaries = Lists.newArrayList();
+        private final List<String> exportedBinaries = new ArrayList<>();
 
         private final Set<NodePath> nodePaths = Sets.newHashSet();
 

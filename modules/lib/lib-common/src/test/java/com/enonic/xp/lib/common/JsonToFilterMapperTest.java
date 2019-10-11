@@ -1,5 +1,6 @@
 package com.enonic.xp.lib.common;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,9 +18,7 @@ import com.enonic.xp.query.filter.Filters;
 import com.enonic.xp.query.filter.IdFilter;
 import com.enonic.xp.query.filter.ValueFilter;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class JsonToFilterMapperTest
 {
@@ -143,7 +142,7 @@ public class JsonToFilterMapperTest
     public void array_on_root_single()
         throws Exception
     {
-        final List<Map<String, Object>> existsFilters = Lists.newArrayList();
+        final List<Map<String, Object>> existsFilters = new ArrayList<>();
         existsFilters.add( createExistsFilter() );
 
         final Filters filters = com.enonic.xp.lib.common.JsonToFilterMapper.create( existsFilters );
@@ -155,7 +154,7 @@ public class JsonToFilterMapperTest
     public void array_on_root()
         throws Exception
     {
-        final List<Map<String, Object>> existsFilters = Lists.newArrayList();
+        final List<Map<String, Object>> existsFilters = new ArrayList<>();
         existsFilters.add( createExistsFilter() );
         existsFilters.add( createExistsFilter() );
         existsFilters.add( createExistsFilter() );

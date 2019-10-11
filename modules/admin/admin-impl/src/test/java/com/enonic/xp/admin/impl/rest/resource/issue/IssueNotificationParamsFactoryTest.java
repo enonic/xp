@@ -1,6 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.issue;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -36,7 +37,7 @@ import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -128,7 +129,7 @@ public class IssueNotificationParamsFactoryTest
             build().
             updatedParams();
 
-        assertEquals( Lists.newArrayList(), params.getApprovers() );
+        assertEquals( new ArrayList<>(), params.getApprovers() );
         assertEquals( User.ANONYMOUS, params.getModifier() );
         assertEquals( 0, params.getIcons().size() );
 

@@ -1,11 +1,10 @@
 package com.enonic.xp.core.impl.app.descriptor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
@@ -55,7 +54,7 @@ final class DescriptorFacetImpl<T extends Descriptor>
     @Override
     public Descriptors<T> get( final DescriptorKeys keys )
     {
-        final List<T> list = Lists.newArrayList();
+        final List<T> list = new ArrayList<>();
         for ( final DescriptorKey key : keys )
         {
             final T descriptor = get( key );

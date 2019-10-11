@@ -1,5 +1,7 @@
 package com.enonic.xp.jaxrs.impl;
 
+import java.util.stream.StreamSupport;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -7,14 +9,10 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 
-import com.google.common.collect.Lists;
-
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.web.dispatch.ServletMapping;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class JaxRsServiceImplTest
 {
@@ -64,10 +62,10 @@ public class JaxRsServiceImplTest
         Mockito.when( this.context.getService( ref ) ).thenReturn( component );
 
         assertSame( component, this.service.addingService( ref ) );
-        assertEquals( 1, Lists.newArrayList( this.service.iterator() ).size() );
+        assertEquals( 1, StreamSupport.stream( this.service.spliterator(), false ).count() );
 
         this.service.removedService( ref, component );
-        assertEquals( 0, Lists.newArrayList( this.service.iterator() ).size() );
+        assertEquals( 0, StreamSupport.stream( this.service.spliterator(), false ).count() );
     }
 
     @Test

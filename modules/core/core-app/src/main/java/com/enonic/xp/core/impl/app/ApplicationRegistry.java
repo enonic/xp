@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.app;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
@@ -49,7 +50,7 @@ final class ApplicationRegistry
 
     private ApplicationKeys findApplicationKeys()
     {
-        final List<ApplicationKey> list = Lists.newArrayList();
+        final List<ApplicationKey> list = new ArrayList<>();
         for ( final Bundle bundle : this.context.getBundles() )
         {
             if ( isApplication( bundle ) )
@@ -85,7 +86,7 @@ final class ApplicationRegistry
 
     public Collection<Application> getAll()
     {
-        final List<Application> list = Lists.newArrayList();
+        final List<Application> list = new ArrayList<>();
 
         for ( final ApplicationKey key : findApplicationKeys() )
         {

@@ -1,10 +1,10 @@
 package com.enonic.xp.impl.server.rest.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.dump.RepoLoadResult;
 import com.enonic.xp.dump.SystemLoadResult;
@@ -57,7 +57,7 @@ public class SystemLoadResultJson
 
     public static final class Builder
     {
-        private final List<RepoLoadResultJson> repositories = Lists.newArrayList();
+        private final List<RepoLoadResultJson> repositories = new ArrayList<>();
 
         private Builder()
         {

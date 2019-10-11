@@ -1,6 +1,7 @@
 package com.enonic.xp.xml.schema;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.transform.dom.DOMResult;
@@ -9,7 +10,6 @@ import javax.xml.transform.dom.DOMSource;
 import org.xml.sax.SAXException;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.Lists;
 
 @Beta
 public final class SchemaValidator
@@ -19,7 +19,7 @@ public final class SchemaValidator
 
     public SchemaValidator()
     {
-        this.list = Lists.newArrayList();
+        this.list = new ArrayList<>();
         register( EXPORT_NS, "/META-INF/xsd/export.xsd" );
         register( MODEL_NS, "/META-INF/xsd/model.xsd" );
     }
