@@ -48,7 +48,7 @@ public final class MappingBuilder
     {
         this.order = 0;
         this.initParams = new HashMap<>();
-        this.urlPatterns = new TreeSet<String>();
+        this.urlPatterns = new TreeSet<>();
         this.connectors = new ArrayList<>();
     }
 

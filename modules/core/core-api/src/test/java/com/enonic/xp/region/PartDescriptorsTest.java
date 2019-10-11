@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class PartDescriptorsTest
 {
 
-    private static final List<PartDescriptor> partDescriptorsList = new ArrayList<PartDescriptor>();
+    private static final List<PartDescriptor> partDescriptorsList = new ArrayList<>();
 
     @BeforeAll
     public static void initRegionDescriptors()

@@ -505,7 +505,7 @@ public class DumpServiceImplTest
 
     private TreeSet<Instant> getOrderedTimestamps( final NodeVersionQueryResult result )
     {
-        TreeSet<Instant> timestamps = new TreeSet<Instant>();
+        TreeSet<Instant> timestamps = new TreeSet<>();
         result.getNodeVersionsMetadata().forEach( version -> timestamps.add( version.getTimestamp() ) );
         return timestamps;
     }

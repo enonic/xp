@@ -13,7 +13,7 @@ public final class VirtualHostMappings
 
     public VirtualHostMappings()
     {
-        this.set = new TreeSet<VirtualHostMapping>();
+        this.set = new TreeSet<>();
     }
 
     public void add( final VirtualHostMapping mapping )

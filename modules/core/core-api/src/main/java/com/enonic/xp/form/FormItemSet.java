@@ -263,7 +263,7 @@ public class FormItemSet
 
         private String helpTextI18nKey;
 
-        private List<FormItem> formItems = new ArrayList<FormItem>();
+        private List<FormItem> formItems = new ArrayList<>();
 
         public Builder()
         {

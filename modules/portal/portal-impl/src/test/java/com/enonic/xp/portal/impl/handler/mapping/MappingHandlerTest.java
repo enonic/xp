@@ -154,7 +154,7 @@ public class MappingHandlerTest
         this.request.setEndpointPath( "" );
         this.request.setContent( this.contentService.getById( ContentId.from( "id" ) ) );
 
-        Renderer<ControllerMappingDescriptor> renderer = new Renderer<ControllerMappingDescriptor>()
+        Renderer<ControllerMappingDescriptor> renderer = new Renderer<>()
         {
             @Override
             public Class<ControllerMappingDescriptor> getType()

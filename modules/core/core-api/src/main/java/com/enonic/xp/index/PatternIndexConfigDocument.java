@@ -125,7 +125,7 @@ public class PatternIndexConfigDocument
     public static final class Builder
         extends AbstractIndexConfigDocument.Builder<Builder>
     {
-        private SortedSet<PathIndexConfig> pathIndexConfigs = new TreeSet<PathIndexConfig>();
+        private SortedSet<PathIndexConfig> pathIndexConfigs = new TreeSet<>();
 
         private Map<String, PathIndexConfig> stringPathIndexConfigMap = new HashMap<>();
 

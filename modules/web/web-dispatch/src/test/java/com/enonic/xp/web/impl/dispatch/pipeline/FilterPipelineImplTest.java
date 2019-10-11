@@ -69,7 +69,7 @@ public class FilterPipelineImplTest
         final MyFilter filter = new MyFilter();
 
         assertEquals( 0, Lists.newArrayList( this.pipeline ).size() );
-        this.pipeline.addFilter( filter, new MyServiceReference<Filter>() );
+        this.pipeline.addFilter( filter, new MyServiceReference<>() );
 
         this.pipeline.activate( new HashMap<>() );
 

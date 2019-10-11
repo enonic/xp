@@ -100,7 +100,7 @@ public final class FilterExprParserContext
             return null;
         }
 
-        ArrayList<Object> list = new ArrayList<Object>();
+        ArrayList<Object> list = new ArrayList<>();
         for ( String part : str.split( "," ) )
         {
             list.add( parseValue( part ) );

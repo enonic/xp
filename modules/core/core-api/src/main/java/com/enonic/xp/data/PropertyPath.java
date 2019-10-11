@@ -271,7 +271,7 @@ public final class PropertyPath
 
     private static ImmutableList<Element> splitPathIntoElements( final String path )
     {
-        List<Element> elements = new ArrayList<Element>();
+        List<Element> elements = new ArrayList<>();
 
         StringTokenizer st = new StringTokenizer( path, ELEMENT_DIVIDER );
         int count = 0;

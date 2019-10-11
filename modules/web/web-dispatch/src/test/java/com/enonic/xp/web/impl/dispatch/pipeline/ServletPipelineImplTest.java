@@ -45,7 +45,7 @@ public class ServletPipelineImplTest
         final MyServlet servlet = new MyServlet();
 
         assertEquals( 0, Lists.newArrayList( this.pipeline ).size() );
-        this.pipeline.addServlet( servlet, new MyServiceReference<Servlet>() );
+        this.pipeline.addServlet( servlet, new MyServiceReference<>() );
 
         this.pipeline.activate( new HashMap<>() );
 

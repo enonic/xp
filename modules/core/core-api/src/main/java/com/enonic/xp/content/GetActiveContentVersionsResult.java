@@ -28,7 +28,7 @@ public class GetActiveContentVersionsResult
 
     public static final class Builder
     {
-        private final SortedSet<ActiveContentVersionEntry> activeContentVersions = new TreeSet<ActiveContentVersionEntry>();
+        private final SortedSet<ActiveContentVersionEntry> activeContentVersions = new TreeSet<>();
 
         private Builder()
         {

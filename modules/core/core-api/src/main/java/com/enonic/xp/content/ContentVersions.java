@@ -40,7 +40,7 @@ public class ContentVersions
 
     public static final class Builder
     {
-        private SortedSet<ContentVersion> contentVersions = new TreeSet<ContentVersion>();
+        private SortedSet<ContentVersion> contentVersions = new TreeSet<>();
 
         private ContentId contentId;
 

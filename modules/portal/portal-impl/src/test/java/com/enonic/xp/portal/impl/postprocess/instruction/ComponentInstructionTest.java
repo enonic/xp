@@ -202,7 +202,7 @@ public class ComponentInstructionTest
     private RendererFactory newRendererFactory( final String renderResult )
     {
         RendererFactory rendererFactory = mock( RendererFactory.class );
-        Renderer<Component> renderer = new Renderer<Component>()
+        Renderer<Component> renderer = new Renderer<>()
         {
             @Override
             public Class<Component> getType()
