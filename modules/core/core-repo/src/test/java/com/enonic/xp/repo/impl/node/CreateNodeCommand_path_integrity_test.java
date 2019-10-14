@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -8,8 +9,6 @@ import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -40,7 +39,7 @@ public class CreateNodeCommand_path_integrity_test
     public void create()
         throws Exception
     {
-        List<Future> threads = Lists.newArrayList();
+        List<Future> threads = new ArrayList<>();
 
         final ExecutorService executor = Executors.newFixedThreadPool( 5 );
 

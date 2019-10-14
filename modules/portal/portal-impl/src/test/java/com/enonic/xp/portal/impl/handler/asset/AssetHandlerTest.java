@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.handler.asset;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -7,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 
-import com.google.common.collect.Maps;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.portal.PortalRequest;
@@ -45,7 +45,7 @@ public class AssetHandlerTest
         throws Exception
     {
         this.request = new PortalRequest();
-        this.resources = Maps.newHashMap();
+        this.resources = new HashMap<>();
 
         final ResourceService resourceService = Mockito.mock( ResourceService.class );
         Mockito.when( resourceService.getResource( Mockito.any() ) ).then( this::getResource );

@@ -1,10 +1,9 @@
 package com.enonic.xp.node;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-
-import com.google.common.collect.Sets;
 
 public class SearchTargets
     implements Iterable<SearchTarget>
@@ -39,7 +38,7 @@ public class SearchTargets
 
     public static final class Builder
     {
-        private Set<SearchTarget> targets = Sets.newHashSet();
+        private Set<SearchTarget> targets = new HashSet<>();
 
         private Builder()
         {

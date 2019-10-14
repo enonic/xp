@@ -1,10 +1,9 @@
 package com.enonic.xp.lib.node;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.script.ScriptValue;
 
@@ -42,7 +41,7 @@ public class QueryNodeHandlerParams
 
     private List<Map<String, Object>> doSetFilters( final ScriptValue filters )
     {
-        List<Map<String, Object>> filterList = Lists.newArrayList();
+        List<Map<String, Object>> filterList = new ArrayList<>();
 
         if ( filters == null )
         {
@@ -125,7 +124,7 @@ public class QueryNodeHandlerParams
     @SuppressWarnings("unused")
     public void setAggregations( final ScriptValue aggregations )
     {
-        this.aggregations = aggregations != null ? aggregations.getMap() : Maps.newHashMap();
+        this.aggregations = aggregations != null ? aggregations.getMap() : new HashMap<>();
     }
 
     Map<String, Object> getSuggestions()
@@ -136,7 +135,7 @@ public class QueryNodeHandlerParams
     @SuppressWarnings("unused")
     public void setSuggestions( final ScriptValue suggestions )
     {
-        this.suggestions = suggestions != null ? suggestions.getMap() : Maps.newHashMap();
+        this.suggestions = suggestions != null ? suggestions.getMap() : new HashMap<>();
     }
 
     Map<String, Object> getHighlight()
@@ -147,7 +146,7 @@ public class QueryNodeHandlerParams
     @SuppressWarnings("unused")
     public void setHighlight( final ScriptValue highlight )
     {
-        this.highlight = highlight != null ? highlight.getMap() : Maps.newHashMap();
+        this.highlight = highlight != null ? highlight.getMap() : new HashMap<>();
     }
 
     public void setExplain( final boolean explain )

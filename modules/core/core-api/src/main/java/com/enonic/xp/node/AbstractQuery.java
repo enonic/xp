@@ -1,12 +1,12 @@
 package com.enonic.xp.node;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.query.Query;
 import com.enonic.xp.query.aggregation.AggregationQueries;
@@ -153,9 +153,9 @@ public class AbstractQuery
 
         private final Filters.Builder queryFilters = Filters.create();
 
-        private Set<AggregationQuery> aggregationQueries = Sets.newHashSet();
+        private Set<AggregationQuery> aggregationQueries = new HashSet<>();
 
-        private Set<SuggestionQuery> suggestionQueries = Sets.newHashSet();
+        private Set<SuggestionQuery> suggestionQueries = new HashSet<>();
 
         private HighlightQuery highlight;
 

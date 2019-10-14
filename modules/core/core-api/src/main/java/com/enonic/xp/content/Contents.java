@@ -1,6 +1,7 @@
 package com.enonic.xp.content;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
@@ -10,7 +11,6 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
@@ -91,7 +91,7 @@ public final class Contents
 
     public static class Builder
     {
-        private Set<Content> contents = Sets.newLinkedHashSet();
+        private Set<Content> contents = new LinkedHashSet<>();
 
         public Builder add( Content content )
         {

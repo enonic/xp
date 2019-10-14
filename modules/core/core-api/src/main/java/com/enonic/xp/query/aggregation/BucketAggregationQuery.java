@@ -1,10 +1,10 @@
 package com.enonic.xp.query.aggregation;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 
 @Beta
 public abstract class BucketAggregationQuery
@@ -31,7 +31,7 @@ public abstract class BucketAggregationQuery
             super( name );
         }
 
-        private Set<AggregationQuery> aggregationQueries = Sets.newHashSet();
+        private Set<AggregationQuery> aggregationQueries = new HashSet<>();
 
         @SuppressWarnings("unchecked")
         public T addSubQuery( final AggregationQuery aggregationQuery )

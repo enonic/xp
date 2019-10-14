@@ -1,10 +1,9 @@
 package com.enonic.xp.repo.impl.elasticsearch.suggistion.query;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.elasticsearch.search.suggest.SuggestBuilder;
-
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.query.suggester.SuggestionQueries;
 import com.enonic.xp.query.suggester.SuggestionQuery;
@@ -27,7 +26,7 @@ public class SuggestionQueryBuilderFactory
 
     private Set<SuggestBuilder.SuggestionBuilder> doCreate( final SuggestionQueries suggestionQueries )
     {
-        Set<SuggestBuilder.SuggestionBuilder> suggestionBuilders = Sets.newHashSet();
+        Set<SuggestBuilder.SuggestionBuilder> suggestionBuilders = new HashSet<>();
 
         for ( final SuggestionQuery suggestionQuery : suggestionQueries )
         {

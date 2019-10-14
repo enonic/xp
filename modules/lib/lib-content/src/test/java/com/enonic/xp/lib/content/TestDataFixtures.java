@@ -3,10 +3,9 @@ package com.enonic.xp.lib.content;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
@@ -124,7 +123,7 @@ public final class TestDataFixtures
 
     public static Contents newContents( final int num )
     {
-        final List<Content> list = Lists.newArrayList();
+        final List<Content> list = new ArrayList<>();
         for ( int i = 0; i < num; i++ )
         {
             final Content content = Content.create().

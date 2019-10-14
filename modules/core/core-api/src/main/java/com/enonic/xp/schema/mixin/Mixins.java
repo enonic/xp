@@ -1,5 +1,6 @@
 package com.enonic.xp.schema.mixin;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -14,7 +15,6 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.support.AbstractImmutableEntityList;
@@ -43,7 +43,7 @@ public final class Mixins
 
     private Mixins add( final ImmutableList<Mixin> mixins )
     {
-        final List<Mixin> tmp = Lists.newArrayList();
+        final List<Mixin> tmp = new ArrayList<>();
         tmp.addAll( this.list );
         tmp.addAll( mixins );
 

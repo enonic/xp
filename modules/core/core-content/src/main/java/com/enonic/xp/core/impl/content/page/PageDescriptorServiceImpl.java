@@ -8,8 +8,6 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Lists;
-
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.descriptor.DescriptorKeyLocator;
@@ -67,7 +65,7 @@ public final class PageDescriptorServiceImpl
     @Override
     public PageDescriptors getByApplication( final ApplicationKey key )
     {
-        final List<PageDescriptor> list = Lists.newArrayList();
+        final List<PageDescriptor> list = new ArrayList<>();
         for ( final DescriptorKey descriptorKey : findDescriptorKeys( key ) )
         {
             try

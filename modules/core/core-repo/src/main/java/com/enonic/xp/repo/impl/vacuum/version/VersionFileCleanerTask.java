@@ -1,14 +1,13 @@
 package com.enonic.xp.repo.impl.vacuum.version;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
@@ -64,7 +63,7 @@ public class VersionFileCleanerTask
         this.blobStore.listSegments().
             filter( NodeSegmentUtils::isNodeSegment ).
             forEach( segment -> {
-                List<BlobKey> toBeRemoved = Lists.newArrayList();
+                List<BlobKey> toBeRemoved = new ArrayList<>();
 
                 if ( listener != null )
                 {

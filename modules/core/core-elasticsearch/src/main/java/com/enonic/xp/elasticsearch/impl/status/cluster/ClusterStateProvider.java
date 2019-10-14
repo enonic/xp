@@ -1,5 +1,6 @@
 package com.enonic.xp.elasticsearch.impl.status.cluster;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.elasticsearch.ElasticsearchException;
@@ -12,8 +13,6 @@ import org.elasticsearch.cluster.node.DiscoveryNode;
 import org.elasticsearch.cluster.node.DiscoveryNodes;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-
-import com.google.common.collect.Lists;
 
 @Component(service = ClusterStateProvider.class)
 public final class ClusterStateProvider
@@ -75,7 +74,7 @@ public final class ClusterStateProvider
 
     private List<MemberNodeState> getMembersState( DiscoveryNodes members )
     {
-        final List<MemberNodeState> results = Lists.newArrayList();
+        final List<MemberNodeState> results = new ArrayList<>();
 
         for ( DiscoveryNode node : members )
         {

@@ -1,9 +1,9 @@
 package com.enonic.xp.issue;
 
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
-
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
@@ -158,7 +158,7 @@ public class Issue
 
         public Builder()
         {
-            this.approverIds = Sets.newLinkedHashSet();
+            this.approverIds = new LinkedHashSet<>();
             this.issueStatus = IssueStatus.OPEN;
             this.issueType = IssueType.STANDARD;
         }
@@ -176,7 +176,7 @@ public class Issue
             this.issueStatus = source.issueStatus;
             this.creator = source.creator;
             this.modifier = source.modifier;
-            this.approverIds = source.approverIds != null ? source.approverIds.getSet() : Sets.newHashSet();
+            this.approverIds = source.approverIds != null ? source.approverIds.getSet() : new HashSet<>();
             this.publishRequest = source.publishRequest;
             this.issueType = source.issueType;
         }

@@ -1,8 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.content;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.admin.impl.rest.resource.content.json.AggregationQueryJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentQueryJson;
@@ -86,7 +85,7 @@ public class ContentQueryJsonToContentQueryConverter
     private ContentIds getExistingContentIds( final ContentIds contentIds )
     {
         final Contents contents = this.contentService.getByIds( new GetContentByIdsParams( contentIds ) );
-        final List<ContentId> existingContentIds = Lists.newArrayList();
+        final List<ContentId> existingContentIds = new ArrayList<>();
         contents.forEach( content -> existingContentIds.add( content.getId() ) );
         return ContentIds.from( existingContentIds );
     }

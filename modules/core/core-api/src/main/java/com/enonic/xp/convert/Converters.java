@@ -1,9 +1,9 @@
 package com.enonic.xp.convert;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.Maps;
 
 @Beta
 public final class Converters
@@ -14,7 +14,7 @@ public final class Converters
 
     private Converters()
     {
-        this.map = Maps.newConcurrentMap();
+        this.map = new ConcurrentHashMap<>();
         addConverter( new StringConverter() );
         addConverter( new BooleanConverter() );
         addConverter( new ByteConverter() );

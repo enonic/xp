@@ -1,6 +1,7 @@
 package com.enonic.xp.content;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -11,7 +12,6 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.schema.xdata.XDataNames;
@@ -86,7 +86,7 @@ public final class ExtraDatas
 
     public static class Builder
     {
-        private Set<ExtraData> set = Sets.newLinkedHashSet();
+        private Set<ExtraData> set = new LinkedHashSet<>();
 
         public Builder add( final ExtraData value )
         {

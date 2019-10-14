@@ -32,10 +32,10 @@ public class MixinsTest
         {
             assertTrue( e instanceof UnsupportedOperationException );
         }
-        mixins = Mixins.from( new ArrayList<Mixin>()
+        mixins = Mixins.from( new ArrayList<>()
         {{
-                add( mixin );
-            }} );
+            add( mixin );
+        }} );
         try
         {
             mixins.getList().add( null );

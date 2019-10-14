@@ -1,10 +1,10 @@
 package com.enonic.xp.query.suggester;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
@@ -28,7 +28,7 @@ public class SuggestionQueries
 
     public static SuggestionQueries empty()
     {
-        final Set<SuggestionQuery> returnFields = Sets.newHashSet();
+        final Set<SuggestionQuery> returnFields = new HashSet<>();
         return new SuggestionQueries( returnFields );
     }
 
@@ -39,7 +39,7 @@ public class SuggestionQueries
 
     public static final class Builder
     {
-        private final Set<SuggestionQuery> suggestionQueries = Sets.newHashSet();
+        private final Set<SuggestionQuery> suggestionQueries = new HashSet<>();
 
         public Builder add( final SuggestionQuery suggestionQuery )
         {

@@ -13,7 +13,7 @@ public final class FilterSetExpr
 
     public FilterSetExpr()
     {
-        this.list = new ArrayList<FilterExpr>();
+        this.list = new ArrayList<>();
     }
 
     public List<FilterExpr> getList()

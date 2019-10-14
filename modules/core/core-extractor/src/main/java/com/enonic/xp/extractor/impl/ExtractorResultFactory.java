@@ -1,5 +1,6 @@
 package com.enonic.xp.extractor.impl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -9,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.extractor.ExtractedData;
 
@@ -38,7 +38,7 @@ class ExtractorResultFactory
 
     private static Map<String, List<String>> toMap( final Metadata metadata )
     {
-        Map<String, List<String>> values = Maps.newHashMap();
+        Map<String, List<String>> values = new HashMap<>();
 
         for ( String name : metadata.names() )
         {

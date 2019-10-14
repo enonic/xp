@@ -1,5 +1,6 @@
 package com.enonic.xp.jaxrs.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletConfig;
@@ -12,8 +13,6 @@ import org.jboss.resteasy.plugins.server.servlet.ResteasyContextParameters;
 import org.jboss.resteasy.plugins.server.servlet.ServletBootstrap;
 import org.jboss.resteasy.plugins.server.servlet.ServletContainerDispatcher;
 import org.jboss.resteasy.util.GetRestful;
-
-import com.google.common.collect.Lists;
 
 final class JaxRsDispatcher
     extends ServletContainerDispatcher
@@ -68,8 +67,8 @@ final class JaxRsDispatcher
 
     private void applyApplication()
     {
-        final List<Object> resourceList = Lists.newArrayList();
-        final List<Object> providerList = Lists.newArrayList();
+        final List<Object> resourceList = new ArrayList<>();
+        final List<Object> providerList = new ArrayList<>();
 
         for ( final Object object : this.app.getSingletons() )
         {

@@ -56,7 +56,10 @@ public class SuperTypeValidatorTest
     public void validationResult()
     {
         ContentTypeValidationResult validationResult1 = ContentTypeValidationResult.from(new ContentTypeValidationError("superType not found: superTypeName", ContentTypeName.media()));
-        ContentTypeValidationResult validationResult2 = ContentTypeValidationResult.from(new ArrayList<ContentTypeValidationError>() {{ add(new ContentTypeValidationError("superType not found: superTypeName", ContentTypeName.media())); }});
+        ContentTypeValidationResult validationResult2 = ContentTypeValidationResult.from( new ArrayList<>()
+        {{
+            add( new ContentTypeValidationError( "superType not found: superTypeName", ContentTypeName.media() ) );
+        }});
         ContentTypeValidationResult validationResult3 = ContentTypeValidationResult.empty();
         assertNotEquals( validationResult1, validationResult2 );
         assertNotEquals( validationResult1.hashCode(), validationResult2.hashCode() );

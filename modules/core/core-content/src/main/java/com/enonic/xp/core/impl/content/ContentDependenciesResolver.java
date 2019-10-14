@@ -1,10 +1,9 @@
 package com.enonic.xp.core.impl.content;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.aggregation.BucketAggregation;
 import com.enonic.xp.content.ContentDependencies;
@@ -72,7 +71,7 @@ public class ContentDependenciesResolver
 
     private Collection<ContentDependenciesAggregation> resolveOutboundDependenciesAggregation( final ContentId contentId )
     {
-        final Map<ContentTypeName, Long> aggregationJsonMap = Maps.newHashMap();
+        final Map<ContentTypeName, Long> aggregationJsonMap = new HashMap<>();
 
         final Contents contents =
             this.contentService.getByIds( new GetContentByIdsParams( this.contentService.getOutboundDependencies( contentId ) ) );

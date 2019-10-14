@@ -1,9 +1,8 @@
 package com.enonic.xp.core.impl.content.processor;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.content.processor.ContentProcessor;
 
@@ -14,7 +13,7 @@ public class ContentProcessors
 
     public ContentProcessors()
     {
-        this.processors = Sets.newHashSet();
+        this.processors = new HashSet<>();
     }
 
     @Override

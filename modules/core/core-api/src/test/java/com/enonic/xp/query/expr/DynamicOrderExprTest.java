@@ -1,8 +1,8 @@
 package com.enonic.xp.query.expr;
 
-import org.junit.jupiter.api.Test;
+import java.util.ArrayList;
 
-import com.google.common.collect.Lists;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -12,7 +12,7 @@ public class DynamicOrderExprTest
     @Test
     public void testExpression()
     {
-        final FunctionExpr func = FunctionExpr.from( "name", Lists.newArrayList() );
+        final FunctionExpr func = FunctionExpr.from( "name", new ArrayList<>() );
         final DynamicOrderExpr expr = new DynamicOrderExpr( func, OrderExpr.Direction.DESC );
 
         assertSame( func, expr.getFunction() );

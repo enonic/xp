@@ -1,5 +1,6 @@
 package com.enonic.xp.admin.impl.market;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -7,7 +8,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.collect.Maps;
 import com.squareup.okhttp.HttpUrl;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.Request;
@@ -18,7 +18,7 @@ class MarketRequestFactory
 
     public static Request create( final String baseUrl, final List<String> ids, final String version, final int start, final int count )
     {
-        Map<String, Object> getParams = Maps.newHashMap();
+        Map<String, Object> getParams = new HashMap<>();
 
         getParams.put( "xpVersion", version );
         getParams.put( "start", start );

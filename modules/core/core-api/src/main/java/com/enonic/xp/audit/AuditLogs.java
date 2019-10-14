@@ -1,12 +1,12 @@
 package com.enonic.xp.audit;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
@@ -54,7 +54,7 @@ public final class AuditLogs
 
     public static class Builder
     {
-        private final Set<AuditLog> auditLogs = Sets.newLinkedHashSet();
+        private final Set<AuditLog> auditLogs = new LinkedHashSet<>();
 
         public Builder add( AuditLog auditLog )
         {

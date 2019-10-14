@@ -1,9 +1,8 @@
 package com.enonic.xp.impl.server.rest.model;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.index.ReindexResult;
@@ -31,7 +30,7 @@ public final class ReindexResultJson
         json.repositoryId = result.getRepositoryId().toString();
         json.numberReindexed = result.getReindexNodes().getSize();
 
-        json.branches = Lists.newArrayList();
+        json.branches = new ArrayList<>();
         for ( final Branch branch : result.getBranches() )
         {
             json.branches.add( branch.getValue() );

@@ -1,9 +1,8 @@
 package com.enonic.xp.core.impl.app.resource;
 
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
-
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.resource.Resource;
@@ -23,7 +22,7 @@ public final class ProcessingCache
     {
         this.loader = loader;
         this.runMode = runMode;
-        this.map = Maps.newConcurrentMap();
+        this.map = new ConcurrentHashMap<>();
     }
 
     public <K, V> V process( final ResourceProcessor<K, V> processor )

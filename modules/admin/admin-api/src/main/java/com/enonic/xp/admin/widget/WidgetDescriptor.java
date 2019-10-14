@@ -1,14 +1,14 @@
 package com.enonic.xp.admin.widget;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.descriptor.Descriptor;
 import com.enonic.xp.icon.Icon;
@@ -112,11 +112,11 @@ public class WidgetDescriptor
 
         private Icon icon;
 
-        public final Set<String> interfaces = Sets.newTreeSet();
+        public final Set<String> interfaces = new TreeSet<>();
 
         private Collection<PrincipalKey> allowedPrincipals;
 
-        public final Map<String, String> config = Maps.newHashMap();
+        public final Map<String, String> config = new HashMap<>();
 
         private Builder()
         {

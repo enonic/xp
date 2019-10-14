@@ -1,9 +1,9 @@
 package com.enonic.xp.attachment;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.content.ContentId;
 
@@ -39,7 +39,7 @@ public class UpdateAttachmentsParams
     {
         private ContentId contentId;
 
-        private Set<Attachment> attachments = Sets.newHashSet();
+        private Set<Attachment> attachments = new HashSet<>();
 
         public Builder( final ContentId contentId )
         {

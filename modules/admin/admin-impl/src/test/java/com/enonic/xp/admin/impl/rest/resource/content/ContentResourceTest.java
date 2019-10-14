@@ -5,8 +5,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -25,7 +27,6 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.io.ByteSource;
 import com.google.common.net.HttpHeaders;
@@ -950,7 +951,7 @@ public class ContentResourceTest
 
         final WebApplicationException ex = assertThrows(WebApplicationException.class, () -> {
             contentResource.reorderChildContents(
-                    new ReorderChildrenJson( false, false, content.getId().toString(), null, Lists.newArrayList() ) );
+                new ReorderChildrenJson( false, false, content.getId().toString(), null, new ArrayList<>() ) );
         });
         assertEquals( "Not allowed to reorder children manually, current parentOrder = [_ts DESC].", ex.getMessage() );
 
@@ -1031,7 +1032,7 @@ public class ContentResourceTest
     public void countContentsWithDescendants_empty_json()
     {
         GetDescendantsOfContents json = new GetDescendantsOfContents();
-        json.setContentPaths( new HashSet<String>() );
+        json.setContentPaths( new HashSet<>() );
 
         ContentResource contentResource = getResourceInstance();
 
@@ -1041,7 +1042,7 @@ public class ContentResourceTest
     @Test
     public void countContentsWithDescendants_no_children()
     {
-        Set<String> contentPaths = new HashSet<String>( asList( "/root/a", "/root/b", "/root/c" ) );
+        Set<String> contentPaths = new HashSet<>( asList( "/root/a", "/root/b", "/root/c" ) );
 
         GetDescendantsOfContents json = new GetDescendantsOfContents();
         json.setContentPaths( contentPaths );
@@ -1475,7 +1476,7 @@ public class ContentResourceTest
             Collections.singleton( new ContentDependenciesAggregation( ContentTypeName.media(), 1L ) ) ).build() );
 
         Mockito.when( contentService.getDependencies( content2.getId() ) ).thenReturn(
-            ContentDependencies.create().inboundDependencies( Sets.newHashSet() ).outboundDependencies( Sets.newHashSet() ).build() );
+            ContentDependencies.create().inboundDependencies( new HashSet<>() ).outboundDependencies( new HashSet<>() ).build() );
 
         GetDependenciesResultJson result = contentResource.getDependencies(
             new ContentIdsJson( Lists.asList( content1.getId().toString(), content2.getId().toString(), new String[]{} ) ) );
@@ -1498,7 +1499,7 @@ public class ContentResourceTest
         Mockito.when( taskService.submitTask( Mockito.isA( DuplicateRunnableTask.class ), eq( "Duplicate content" ) ) ).thenReturn(
             TaskId.from( "task-id" ) );
 
-        TaskResultJson result = contentResource.duplicate( new DuplicateContentsJson( Lists.newArrayList() ) );
+        TaskResultJson result = contentResource.duplicate( new DuplicateContentsJson( new ArrayList<>() ) );
 
         assertEquals( "task-id", result.getTaskId() );
     }
@@ -1777,7 +1778,7 @@ public class ContentResourceTest
             Contents.from( content ) );
 
         AbstractContentQueryResultJson result =
-            contentResource.query( new ContentQueryJson( "", 0, 10, Lists.newArrayList(), null, null, null, null ) );
+            contentResource.query( new ContentQueryJson( "", 0, 10, new ArrayList<>(), null, null, null, null ) );
 
         assertEquals( 1, result.getContents().size() );
         assertTrue( result.getContents().contains( new ContentIdJson( content.getId() ) ) );
@@ -1809,7 +1810,7 @@ public class ContentResourceTest
             Contents.from( content ) );
 
         AbstractContentQueryResultJson result = contentResource.selectorQuery(
-            new ContentTreeSelectorQueryJson( "", 0, 10, null, null, null, Lists.newArrayList(), Lists.newArrayList(), null, null, null ) );
+            new ContentTreeSelectorQueryJson( "", 0, 10, null, null, null, new ArrayList<>(), new ArrayList<>(), null, null, null ) );
 
         assertEquals( 1, result.getContents().size() );
         assertTrue( result.getContents().contains( new ContentIdJson( content.getId() ) ) );
@@ -1866,7 +1867,7 @@ public class ContentResourceTest
         Mockito.when( multipartForm.getAsString( "id" ) ).thenReturn( "id" );
         Mockito.when( multipartForm.get( "file" ) ).thenReturn( multipartItem );
 
-        Map<String, List<String>> data = Maps.newHashMap();
+        Map<String, List<String>> data = new HashMap<>();
         data.put( HttpHeaders.CONTENT_TYPE, Lists.newArrayList( com.google.common.net.MediaType.JPEG.toString() ) );
 
         ExtractedData extractedData = ExtractedData.create().
@@ -1910,7 +1911,7 @@ public class ContentResourceTest
         Mockito.when( multipartForm.getAsString( "id" ) ).thenReturn( "id" );
         Mockito.when( multipartForm.get( "file" ) ).thenReturn( multipartItem );
 
-        Map<String, List<String>> data = Maps.newHashMap();
+        Map<String, List<String>> data = new HashMap<>();
         data.put( HttpHeaders.CONTENT_TYPE, Lists.newArrayList( com.google.common.net.MediaType.JPEG.toString() ) );
 
         ExtractedData extractedData = ExtractedData.create().

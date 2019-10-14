@@ -1,14 +1,13 @@
 package com.enonic.xp.core.impl.i18n;
 
 import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
-
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.i18n.MessageBundle;
 
@@ -54,7 +53,7 @@ final class MessageBundleImpl
     @Override
     public Map<String, String> asMap()
     {
-        final Map<String, String> map = Maps.newHashMap();
+        final Map<String, String> map = new HashMap<>();
         for ( final Object key : this.properties.keySet() )
         {
             map.put( key.toString(), doGetMessage( key.toString() ) );

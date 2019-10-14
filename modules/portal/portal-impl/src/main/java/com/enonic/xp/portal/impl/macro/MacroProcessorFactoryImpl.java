@@ -1,14 +1,13 @@
 package com.enonic.xp.portal.impl.macro;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
-
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.macro.MacroProcessor;
@@ -27,7 +26,7 @@ public final class MacroProcessorFactoryImpl
 
     public MacroProcessorFactoryImpl()
     {
-        this.macroProcessors = Maps.newConcurrentMap();
+        this.macroProcessors = new ConcurrentHashMap<>();
     }
 
     @Override

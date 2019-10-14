@@ -1,8 +1,7 @@
 package com.enonic.xp.core.impl.schema.relationship;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.schema.SchemaHelper;
@@ -56,7 +55,7 @@ final class BuiltinRelationshipTypes
 
     private List<RelationshipType> generateSystemRelationshipTypes()
     {
-        final List<RelationshipType> relationshipTypes = Lists.newArrayList();
+        final List<RelationshipType> relationshipTypes = new ArrayList<>();
         for ( RelationshipType relationshipType : RELATIONSHIP_TYPES )
         {
             relationshipType = RelationshipType.create( relationshipType ).

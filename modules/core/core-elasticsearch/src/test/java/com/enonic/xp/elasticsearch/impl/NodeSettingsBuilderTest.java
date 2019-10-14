@@ -5,6 +5,7 @@ import java.net.InetAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.elasticsearch.common.settings.Settings;
@@ -14,8 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 import org.osgi.framework.BundleContext;
-
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.cluster.ClusterConfig;
 import com.enonic.xp.cluster.ClusterNodeId;
@@ -87,7 +86,7 @@ public class NodeSettingsBuilderTest
     @Test
     public void settings_default()
     {
-        final Map<String, String> map = Maps.newHashMap();
+        final Map<String, String> map = new HashMap<>();
         final Settings settings = this.builder.buildSettings( map );
 
         assertNotNull( settings );
@@ -97,7 +96,7 @@ public class NodeSettingsBuilderTest
     @Test
     public void settings_override()
     {
-        final Map<String, String> map = Maps.newHashMap();
+        final Map<String, String> map = new HashMap<>();
         map.put( "path", "/to/some/other/path" );
 
         final Settings settings = this.builder.buildSettings( map );

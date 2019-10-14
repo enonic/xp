@@ -1,6 +1,7 @@
 package com.enonic.xp.web.session.impl;
 
 import java.lang.annotation.Annotation;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.ignite.Ignite;
@@ -168,7 +169,7 @@ public class IgniteSessionDataStoreTest
         final Set<String> expiredSessionIds = store.doGetExpired( Sets.newHashSet( "123", "456", "789" ) );
         assertEquals( Sets.newHashSet( "123", "456", "789" ), expiredSessionIds );
 
-        store.getExpired( Sets.newHashSet() );
+        store.getExpired( new HashSet<>() );
         final Set<String> expiredSessionIds2 = store.doGetExpired( Sets.newHashSet( "123", "456", "789" ) );
         assertEquals( Sets.newHashSet( "123", "456", "789" ), expiredSessionIds2 );
     }
@@ -178,8 +179,8 @@ public class IgniteSessionDataStoreTest
     public void doGetExpiredEmpty()
         throws Exception
     {
-        final Set<String> expiredSessionIds = store.doGetExpired( Sets.newHashSet() );
-        assertEquals( Sets.newHashSet(), expiredSessionIds );
+        final Set<String> expiredSessionIds = store.doGetExpired( new HashSet<>() );
+        assertEquals( new HashSet<>(), expiredSessionIds );
     }
 
     @Test

@@ -1,14 +1,13 @@
 package com.enonic.xp.repo.impl.vacuum.versiontable;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.ContextAccessor;
@@ -90,7 +89,7 @@ public class VersionTableCleanupTask
             nodeService( this.nodeService ).
             build();
 
-        final List<NodeVersionId> toBeDeleted = Lists.newArrayList();
+        final List<NodeVersionId> toBeDeleted = new ArrayList<>();
 
         if ( listener != null )
         {

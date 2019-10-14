@@ -1,8 +1,7 @@
 package com.enonic.xp.repo.impl.dump.reader;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 public class EntryLoadResult
 {
@@ -35,7 +34,7 @@ public class EntryLoadResult
     {
         private long successful = 0L;
 
-        private final List<EntryLoadError> errors = Lists.newArrayList();
+        private final List<EntryLoadError> errors = new ArrayList<>();
 
         private Builder()
         {

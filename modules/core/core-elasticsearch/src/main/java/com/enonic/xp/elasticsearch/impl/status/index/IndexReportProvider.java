@@ -1,5 +1,6 @@
 package com.enonic.xp.elasticsearch.impl.status.index;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.elasticsearch.action.admin.cluster.state.ClusterStateAction;
@@ -13,8 +14,6 @@ import org.elasticsearch.cluster.routing.ShardRouting;
 import org.elasticsearch.cluster.routing.ShardRoutingState;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-
-import com.google.common.collect.Lists;
 
 @Component(service = IndexReportProvider.class)
 public class IndexReportProvider
@@ -74,7 +73,7 @@ public class IndexReportProvider
 
     private List<ShardDetails> create( final List<ShardRouting> shardRoutingList, final DiscoveryNodes discoveryNodes )
     {
-        List<ShardDetails> list = Lists.newArrayList();
+        List<ShardDetails> list = new ArrayList<>();
 
         shardRoutingList.forEach( ( routing ) -> list.add( ShardDetails.create().
             id( routing.index() + "(" + routing.getId() + ")" ).

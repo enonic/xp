@@ -1,16 +1,16 @@
 package com.enonic.xp.index;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.Maps;
 
 @Beta
 public final class IndexValueProcessors
 {
     public final static IndexValueProcessor HTML_STRIPPER = new HtmlStripper();
 
-    private static final Map<String, IndexValueProcessor> PROCESSORS = Maps.newHashMap();
+    private static final Map<String, IndexValueProcessor> PROCESSORS = new HashMap<>();
 
     static
     {

@@ -2,12 +2,12 @@ package com.enonic.xp.vfs;
 
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
 import org.osgi.framework.Bundle;
 
-import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
 import com.google.common.io.Resources;
@@ -77,7 +77,7 @@ class BundleResource
     {
         final Enumeration<URL> entries = bundle.findEntries( path, PATTERN, false );
 
-        List<VirtualFile> files = Lists.newArrayList();
+        List<VirtualFile> files = new ArrayList<>();
 
         while ( entries.hasMoreElements() )
         {

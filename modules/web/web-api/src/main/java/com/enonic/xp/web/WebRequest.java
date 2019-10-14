@@ -1,5 +1,6 @@
 package com.enonic.xp.web;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -7,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Strings;
 import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.security.IdProvider;
@@ -53,8 +53,8 @@ public class WebRequest
     public WebRequest()
     {
         this.params = LinkedHashMultimap.create();
-        this.headers = Maps.newHashMap();
-        this.cookies = Maps.newHashMap();
+        this.headers = new HashMap<>();
+        this.cookies = new HashMap<>();
     }
 
     public WebRequest( final WebRequest webRequest )

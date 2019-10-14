@@ -1,6 +1,8 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -13,8 +15,6 @@ import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.index.query.TermsQueryBuilder;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.data.Value;
 import com.enonic.xp.query.filter.BooleanFilter;
@@ -49,7 +49,7 @@ public class FilterBuilderFactory
 
     private QueryBuilder doCreate( final ImmutableSet<Filter> queryFilters )
     {
-        List<QueryBuilder> filtersToApply = Lists.newArrayList();
+        List<QueryBuilder> filtersToApply = new ArrayList<>();
 
         appendFilters( queryFilters, filtersToApply );
 
@@ -131,7 +131,7 @@ public class FilterBuilderFactory
     {
         final String queryFieldName = IndexFieldNameNormalizer.normalize( idFilter.getFieldName() );
 
-        final Set<Object> values = Sets.newHashSet();
+        final Set<Object> values = new HashSet<>();
 
         values.addAll( idFilter.getValues() );
 
@@ -156,7 +156,7 @@ public class FilterBuilderFactory
 
     private QueryBuilder[] createBooleanFilterChildren( final ImmutableSet<Filter> queryFilters )
     {
-        List<QueryBuilder> filtersToApply = Lists.newArrayList();
+        List<QueryBuilder> filtersToApply = new ArrayList<>();
 
         appendFilters( queryFilters, filtersToApply );
 
@@ -200,7 +200,7 @@ public class FilterBuilderFactory
 
         final String queryFieldName = this.fieldNameResolver.resolve( filter );
 
-        final Set<Object> values = Sets.newHashSet();
+        final Set<Object> values = new HashSet<>();
 
         values.addAll( filter.getValues().stream().map( ValueHelper::getValueAsType ).collect( Collectors.toList() ) );
 

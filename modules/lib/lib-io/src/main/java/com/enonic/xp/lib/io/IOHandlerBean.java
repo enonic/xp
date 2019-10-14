@@ -40,7 +40,7 @@ public final class IOHandlerBean
         throws Exception
     {
         final CharSource source = toCharSource( value );
-        source.readLines( new LineProcessor<Object>()
+        source.readLines( new LineProcessor<>()
         {
             @Override
             public boolean processLine( final String line )

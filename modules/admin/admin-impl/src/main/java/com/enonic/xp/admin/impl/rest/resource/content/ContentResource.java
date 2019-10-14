@@ -37,8 +37,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Resources;
@@ -497,7 +495,7 @@ public final class ContentResource
     @Path("getDependencies")
     public GetDependenciesResultJson getDependencies( final ContentIdsJson params )
     {
-        final Map<String, DependenciesJson> result = Maps.newHashMap();
+        final Map<String, DependenciesJson> result = new HashMap<>();
 
         params.getContentIds().forEach( ( id -> {
             final ContentDependencies dependencies = contentService.getDependencies( id );
@@ -1396,7 +1394,7 @@ public final class ContentResource
             accessPrincipals.put( access, principals );
         }
 
-        final List<EffectivePermissionJson> permissionsJson = Lists.newArrayList();
+        final List<EffectivePermissionJson> permissionsJson = new ArrayList<>();
         for ( Access access : Access.values() )
         {
             final EffectivePermissionAccessJson accessJson = new EffectivePermissionAccessJson();

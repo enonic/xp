@@ -1,9 +1,9 @@
 package com.enonic.xp.vfs;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
 
@@ -66,7 +66,7 @@ class NullResource
     @Override
     public List<VirtualFile> getChildren()
     {
-        return Lists.newArrayList();
+        return new ArrayList<>();
     }
 
     @Override

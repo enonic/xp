@@ -2,6 +2,7 @@ package com.enonic.xp.web.jetty.impl.websocket;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -12,7 +13,6 @@ import javax.websocket.MessageHandler;
 import javax.websocket.Session;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 public class TestEndpoint
     extends Endpoint
@@ -26,7 +26,7 @@ public class TestEndpoint
     public TestEndpoint()
     {
         this.sessions = Lists.newCopyOnWriteArrayList();
-        this.messages = Maps.newConcurrentMap();
+        this.messages = new ConcurrentHashMap<>();
         expectMessages( 0 );
     }
 

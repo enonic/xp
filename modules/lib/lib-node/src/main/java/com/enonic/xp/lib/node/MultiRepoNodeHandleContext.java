@@ -1,8 +1,7 @@
 package com.enonic.xp.lib.node;
 
+import java.util.HashSet;
 import java.util.Set;
-
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.SearchTarget;
@@ -11,7 +10,7 @@ import com.enonic.xp.security.PrincipalKeys;
 
 public class MultiRepoNodeHandleContext
 {
-    private final Set<SearchTarget> searchTargets = Sets.newHashSet();
+    private final Set<SearchTarget> searchTargets = new HashSet<>();
 
     public MultiRepoNodeHandleContext()
     {

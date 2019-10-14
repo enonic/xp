@@ -1,9 +1,9 @@
 package com.enonic.xp.admin.impl.rest.resource.content.json;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.admin.impl.json.content.ContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentIconUrlResolver;
@@ -32,7 +32,7 @@ public class ContentQueryResultJson
 
         private final ContentPrincipalsResolver contentPrincipalsResolver;
 
-        private Set<ContentJson> contents = Sets.newLinkedHashSet();
+        private Set<ContentJson> contents = new LinkedHashSet<>();
 
         public Builder( final ContentIconUrlResolver iconUrlResolver, final ContentPrincipalsResolver contentPrincipalsResolver )
         {

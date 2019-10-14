@@ -1,11 +1,10 @@
 package com.enonic.xp.cluster.impl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
-
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.cluster.NodeDiscovery;
 
@@ -20,7 +19,7 @@ public class ClusterConfigImplTest
     {
         final ClusterConfigImpl config = new ClusterConfigImpl();
 
-        final Map<String, String> settings = Maps.newHashMap();
+        final Map<String, String> settings = new HashMap<>();
         settings.put( "discovery.unicast.hosts", "localhost, 192.168.0.1, beast.enonic.net" );
         config.activate( settings );
 
@@ -35,7 +34,7 @@ public class ClusterConfigImplTest
     public void default_name()
         throws Exception
     {
-        final Map<String, String> settings = Maps.newHashMap();
+        final Map<String, String> settings = new HashMap<>();
         final ClusterConfigImpl config = new ClusterConfigImpl();
         config.activate( settings );
 

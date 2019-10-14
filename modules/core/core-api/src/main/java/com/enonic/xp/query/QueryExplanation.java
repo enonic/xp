@@ -2,8 +2,6 @@ package com.enonic.xp.query;
 
 import java.util.ArrayList;
 
-import com.google.common.collect.Lists;
-
 public class QueryExplanation
 {
     private final float value;
@@ -45,7 +43,7 @@ public class QueryExplanation
 
         private String description;
 
-        private final ArrayList<QueryExplanation> details = Lists.newArrayList();
+        private final ArrayList<QueryExplanation> details = new ArrayList<>();
 
         private Builder()
         {

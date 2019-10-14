@@ -1,10 +1,9 @@
 package com.enonic.xp.repo.impl.search.result;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
-
-import com.google.common.collect.Lists;
 
 public class SearchHits
     implements Iterable<SearchHit>
@@ -44,7 +43,7 @@ public class SearchHits
 
     public static class Builder
     {
-        private final List<SearchHit> hits = Lists.newArrayList();
+        private final List<SearchHit> hits = new ArrayList<>();
 
 
         public Builder add( final SearchHit entry )

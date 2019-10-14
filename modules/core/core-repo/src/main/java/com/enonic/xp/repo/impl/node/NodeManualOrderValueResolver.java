@@ -1,8 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
@@ -15,7 +14,7 @@ public class NodeManualOrderValueResolver
 
     public static List<NodeIdOrderValue> resolve( final NodeIds orderedNodeIds )
     {
-        final List<NodeIdOrderValue> result = Lists.newArrayList();
+        final List<NodeIdOrderValue> result = new ArrayList<>();
 
         Long currentValue = START_ORDER_VALUE;
 

@@ -5,8 +5,6 @@ import java.util.HashMap;
 
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.Maps;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -19,7 +17,7 @@ public class FileBlobStoreConfigImplTest
         throws Exception
     {
         final FileBlobStoreConfigImpl config = new FileBlobStoreConfigImpl();
-        config.activate( Maps.newHashMap() );
+        config.activate( new HashMap<>() );
 
         assertFalse( config.readThroughEnabled() );
         assertEquals( new File( "${xp.home}/repo/blob" ), config.baseDir() );
@@ -31,7 +29,7 @@ public class FileBlobStoreConfigImplTest
     public void trim_space()
         throws Exception
     {
-        final HashMap<String, String> values = Maps.newHashMap();
+        final HashMap<String, String> values = new HashMap<>();
         values.put( "readThrough.enabled", "true " );
 
         final FileBlobStoreConfigImpl config = new FileBlobStoreConfigImpl();

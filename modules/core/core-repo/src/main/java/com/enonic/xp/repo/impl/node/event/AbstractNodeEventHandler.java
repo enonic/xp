@@ -1,9 +1,8 @@
 package com.enonic.xp.repo.impl.node.event;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.event.Event;
@@ -44,7 +43,7 @@ abstract class AbstractNodeEventHandler
     @SuppressWarnings("unchecked")
     private List<Map<Object, Object>> doGetValueMap( final List<Object> nodesList )
     {
-        final List<Map<Object, Object>> mapList = Lists.newArrayList();
+        final List<Map<Object, Object>> mapList = new ArrayList<>();
 
         for ( final Object listItem : nodesList )
         {

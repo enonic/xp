@@ -1,5 +1,6 @@
 package com.enonic.xp.form;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -7,7 +8,6 @@ import java.util.StringTokenizer;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 
 @Beta
@@ -65,7 +65,7 @@ public class FormItemPath
 
         this.elements = elementNames;
 
-        final List<String> parentPathElements = Lists.newArrayList();
+        final List<String> parentPathElements = new ArrayList<>();
         for ( int i = 0; i < this.elements.size(); i++ )
         {
             if ( i < this.elements.size() - 1 )
@@ -116,7 +116,7 @@ public class FormItemPath
 
     public FormItemPath asNewWithoutFirstPathElement()
     {
-        final List<String> pathElements = Lists.newArrayList();
+        final List<String> pathElements = new ArrayList<>();
         for ( int i = 0; i < elements.size(); i++ )
         {
             if ( i > 0 )

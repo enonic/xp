@@ -1,8 +1,7 @@
 package com.enonic.xp.repo.impl.dump.model;
 
 import java.util.Collection;
-
-import com.google.common.collect.Sets;
+import java.util.HashSet;
 
 import com.enonic.xp.node.NodeId;
 
@@ -45,7 +44,7 @@ public class BranchDumpEntry
     {
         private NodeId nodeId;
 
-        private Collection<String> binaryReferences = Sets.newHashSet();
+        private Collection<String> binaryReferences = new HashSet<>();
 
         private VersionMeta meta;
 

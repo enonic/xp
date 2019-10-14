@@ -4,6 +4,7 @@ import java.nio.charset.Charset;
 import java.security.SecureRandom;
 import java.time.Clock;
 import java.time.Instant;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -23,7 +24,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.google.common.primitives.Ints;
@@ -296,15 +296,15 @@ public final class SecurityServiceImpl
 
     private PrincipalKeys resolveMemberships( final PrincipalKey userKey )
     {
-        final Set<PrincipalKey> resolvedMemberships = Sets.newLinkedHashSet();
+        final Set<PrincipalKey> resolvedMemberships = new LinkedHashSet<>();
         final PrincipalKeys directMemberships = queryDirectMemberships( userKey );
         resolvedMemberships.addAll( directMemberships.getSet() );
 
-        final Set<PrincipalKey> queriedMemberships = Sets.newLinkedHashSet();
+        final Set<PrincipalKey> queriedMemberships = new LinkedHashSet<>();
 
         do
         {
-            final Set<PrincipalKey> newMemberships = Sets.newLinkedHashSet();
+            final Set<PrincipalKey> newMemberships = new LinkedHashSet<>();
             resolvedMemberships.stream().filter( principal -> !queriedMemberships.contains( principal ) ).forEach( principal -> {
                 final PrincipalKeys indirectMemberships = queryDirectMemberships( principal );
                 newMemberships.addAll( indirectMemberships.getSet() );

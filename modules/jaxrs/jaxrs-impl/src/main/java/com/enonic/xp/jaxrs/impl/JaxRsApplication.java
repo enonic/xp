@@ -1,11 +1,10 @@
 package com.enonic.xp.jaxrs.impl;
 
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.core.Application;
-
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.jaxrs.JaxRsComponent;
 
@@ -16,7 +15,7 @@ final class JaxRsApplication
 
     public JaxRsApplication()
     {
-        this.singletons = Sets.newConcurrentHashSet();
+        this.singletons = ConcurrentHashMap.newKeySet();
     }
 
     @Override

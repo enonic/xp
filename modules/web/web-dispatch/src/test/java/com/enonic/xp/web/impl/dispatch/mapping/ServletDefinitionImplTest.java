@@ -1,5 +1,7 @@
 package com.enonic.xp.web.impl.dispatch.mapping;
 
+import java.util.ArrayList;
+
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
@@ -7,8 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.web.dispatch.MappingBuilder;
 
@@ -37,7 +37,7 @@ public class ServletDefinitionImplTest
     @Test
     public void create_noAnnotations()
     {
-        assertNull( ResourceDefinitionFactory.create( this.resource, Lists.newArrayList() ) );
+        assertNull( ResourceDefinitionFactory.create( this.resource, new ArrayList<>() ) );
     }
 
     @Override

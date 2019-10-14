@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.app;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -103,7 +104,7 @@ public final class ApplicationHelper
         final String value = getHeader( bundle, X_SOURCE_PATHS, "" );
         if ( Strings.isNullOrEmpty( value ) )
         {
-            return Lists.newArrayList();
+            return new ArrayList<>();
         }
         return Lists.newArrayList( Splitter.on( ',' ).trimResults().split( value ) );
     }

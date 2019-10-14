@@ -1,12 +1,12 @@
 package com.enonic.xp.portal.impl.controller;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.Cookie;
 import javax.ws.rs.core.Response;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.portal.PortalResponse;
@@ -328,7 +328,7 @@ public final class PortalResponseSerializer
         }
 
         final Map<String, Object> map = value.getMap();
-        final Map<String, String> result = Maps.newHashMap();
+        final Map<String, String> result = new HashMap<>();
 
         for ( final Map.Entry<String, Object> entry : map.entrySet() )
         {

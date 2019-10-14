@@ -1,11 +1,11 @@
 package com.enonic.xp.node;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
@@ -25,7 +25,7 @@ public class DeleteSnapshotsResult
 
     public static class Builder
     {
-        private final Set<String> snapshotNames = Sets.newHashSet();
+        private final Set<String> snapshotNames = new HashSet<>();
 
 
         public Builder add( final String snapshotName )

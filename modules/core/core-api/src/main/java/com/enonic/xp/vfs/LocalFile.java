@@ -6,10 +6,10 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
 
@@ -70,10 +70,10 @@ final class LocalFile
     {
         if ( !isFolder() )
         {
-            return Lists.newArrayList();
+            return new ArrayList<>();
         }
 
-        final List<VirtualFile> virtualFiles = Lists.newArrayList();
+        final List<VirtualFile> virtualFiles = new ArrayList<>();
 
         try
         {
