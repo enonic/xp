@@ -1,0 +1,11 @@
+{
+  "description": "project description 1",
+  "displayName": "project name 1",
+  "icon": {
+    "label": "small",
+    "mimeType": "image/png",
+    "name": "logo.png",
+    "size": 0
+  },
+  "name": "project1"
+}

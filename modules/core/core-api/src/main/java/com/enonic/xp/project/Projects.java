@@ -65,6 +65,11 @@ public final class Projects
             return this;
         }
 
+        public Builder addAll( Project... projects )
+        {
+            this.projects.add( projects );
+            return this;
+        }
 
         public Projects build()
         {
