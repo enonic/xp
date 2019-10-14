@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch.aggregation;
 
-import org.elasticsearch.search.aggregations.metrics.max.Max;
+import org.elasticsearch.search.aggregations.metrics.Max;
 
 import com.enonic.xp.aggregation.SingleValueMetricAggregation;
 

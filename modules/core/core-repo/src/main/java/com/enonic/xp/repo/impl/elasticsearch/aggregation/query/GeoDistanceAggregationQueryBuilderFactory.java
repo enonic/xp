@@ -1,8 +1,10 @@
 package com.enonic.xp.repo.impl.elasticsearch.aggregation.query;
 
+import org.elasticsearch.common.geo.GeoPoint;
 import org.elasticsearch.common.unit.DistanceUnit;
-import org.elasticsearch.search.aggregations.AggregationBuilder;
-import org.elasticsearch.search.aggregations.bucket.range.geodistance.GeoDistanceBuilder;
+import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.bucket.range.GeoDistanceAggregationBuilder;
 
 import com.google.common.base.Strings;
 
@@ -20,14 +22,13 @@ class GeoDistanceAggregationQueryBuilderFactory
         super( fieldNameResolver );
     }
 
-    AggregationBuilder create( final GeoDistanceAggregationQuery query )
+    AbstractAggregationBuilder create( final GeoDistanceAggregationQuery query )
     {
         final String fieldName = fieldNameResolver.resolve( query.getFieldName(), IndexValueType.GEO_POINT );
 
-        final GeoDistanceBuilder geoDistanceBuilder = new GeoDistanceBuilder( query.getName() ).
-            field( fieldName ).
-            lat( query.getOrigin().getLatitude() ).
-            lon( query.getOrigin().getLongitude() );
+        final GeoDistanceAggregationBuilder geoDistanceBuilder = AggregationBuilders.geoDistance( query.getName(), new GeoPoint(
+            query.getOrigin().getLatitude(), query.getOrigin().getLongitude() ) ).
+            field( fieldName );
 
         if ( !Strings.isNullOrEmpty( query.getUnit() ) )
         {
@@ -54,7 +55,7 @@ class GeoDistanceAggregationQueryBuilderFactory
         return geoDistanceBuilder;
     }
 
-    private void addBoundedToAndFrom( final GeoDistanceBuilder geoDistanceBuilder, final DistanceRange range, final String key )
+    private void addBoundedToAndFrom( final GeoDistanceAggregationBuilder geoDistanceBuilder, final DistanceRange range, final String key )
     {
         if ( Strings.isNullOrEmpty( key ) )
         {
@@ -66,7 +67,7 @@ class GeoDistanceAggregationQueryBuilderFactory
         }
     }
 
-    private void addUnboundedFrom( final GeoDistanceBuilder geoDistanceBuilder, final DistanceRange range, final String key )
+    private void addUnboundedFrom( final GeoDistanceAggregationBuilder geoDistanceBuilder, final DistanceRange range, final String key )
     {
         if ( Strings.isNullOrEmpty( key ) )
         {
@@ -78,7 +79,7 @@ class GeoDistanceAggregationQueryBuilderFactory
         }
     }
 
-    private void addUnboundedTo( final GeoDistanceBuilder geoDistanceBuilder, final DistanceRange range, final String key )
+    private void addUnboundedTo( final GeoDistanceAggregationBuilder geoDistanceBuilder, final DistanceRange range, final String key )
     {
         if ( Strings.isNullOrEmpty( key ) )
         {

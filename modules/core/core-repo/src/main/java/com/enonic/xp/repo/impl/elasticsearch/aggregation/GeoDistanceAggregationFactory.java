@@ -2,8 +2,8 @@ package com.enonic.xp.repo.impl.elasticsearch.aggregation;
 
 import java.util.Collection;
 
+import org.elasticsearch.search.aggregations.bucket.range.InternalGeoDistance;
 import org.elasticsearch.search.aggregations.bucket.range.InternalRange;
-import org.elasticsearch.search.aggregations.bucket.range.geodistance.InternalGeoDistance;
 
 import com.enonic.xp.aggregation.BucketAggregation;
 import com.enonic.xp.aggregation.Buckets;

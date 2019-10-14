@@ -1,23 +1,20 @@
 package com.enonic.xp.repo.impl.elasticsearch.storage;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Collection;
 
 import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.action.delete.DeleteRequestBuilder;
-import org.elasticsearch.action.delete.DeleteResponse;
-import org.elasticsearch.action.get.GetRequestBuilder;
+import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.get.MultiGetRequest;
-import org.elasticsearch.action.get.MultiGetRequestBuilder;
 import org.elasticsearch.action.get.MultiGetResponse;
 import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.support.WriteRequest;
-import org.elasticsearch.client.Client;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.cluster.block.ClusterBlockException;
-import org.elasticsearch.rest.RestStatus;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -49,28 +46,27 @@ public class StorageDaoImpl
     {
         final StorageSource settings = request.getSettings();
 
-        final IndexRequestBuilder indexRequestBuilder = this.client.prepareIndex().
-            setIndex( settings.getStorageName().getName() ).
-            setType( settings.getStorageType().getName() ).
-            setSource( XContentBuilderFactory.create( request ) ).
-            setId( request.getId() );
+        final IndexRequest indexRequest = new IndexRequest().
+            index( settings.getStorageName().getName() ).
+            type( settings.getStorageType().getName() ).
+            source( XContentBuilderFactory.create( request ) ).
+            id( request.getId() ).
+            timeout( request.getTimeout() );
 
         if ( request.isForceRefresh() )
         {
-            indexRequestBuilder.setRefreshPolicy( WriteRequest.RefreshPolicy.IMMEDIATE );
+            indexRequest.setRefreshPolicy( WriteRequest.RefreshPolicy.IMMEDIATE );
         }
-
         if ( request.getRouting() != null )
         {
-            indexRequestBuilder.setRouting( request.getRouting() );
+            indexRequest.routing( request.getRouting() );
         }
-
         if ( request.getParent() != null )
         {
-//            indexRequest.parent( request.getParent() ); TODO ES: needs discussed
+            indexRequest.routing( request.getParent() );
         }
 
-        return doStore( indexRequestBuilder.request(), request.getTimeout() );
+        return doStore( indexRequest );
     }
 
     @Override
@@ -82,35 +78,38 @@ public class StorageDaoImpl
     }
 
     @Override
-    public boolean delete( final DeleteRequest request )
+    public void delete( final DeleteRequest request )
     {
         final StorageSource settings = request.getSettings();
         final String id = request.getId();
 
-        final DeleteRequestBuilder builder = client.prepareDelete().
-            setId( id ).
-            setIndex( settings.getStorageName().getName() ).
-            setType( settings.getStorageType().getName() );
+        final org.elasticsearch.action.delete.DeleteRequest deleteRequest = new org.elasticsearch.action.delete.DeleteRequest().
+            id( id ).
+            index( settings.getStorageName().getName() ).
+            type( settings.getStorageType().getName() ).
+            timeout( request.getTimeoutAsString() );
+
         if ( request.isForceRefresh() )
         {
-            builder.setRefreshPolicy( WriteRequest.RefreshPolicy.IMMEDIATE );
+            deleteRequest.setRefreshPolicy( WriteRequest.RefreshPolicy.IMMEDIATE );
         }
 
-        final DeleteResponse deleteResponse;
         try
         {
-            deleteResponse = builder.get( request.getTimeoutAsString() );
+            client.delete( deleteRequest, RequestOptions.DEFAULT );
         }
         catch ( ClusterBlockException e )
         {
             throw new NodeStorageException( "Cannot delete node " + id + ", Repository in 'READ-ONLY mode'" );
         }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
         catch ( Exception e )
         {
             throw new NodeStorageException( "Cannot delete node " + id, e );
         }
-
-        return deleteResponse.status() != RestStatus.NOT_FOUND; // TODO ES: needs double check what is replacement of deleteResponse.isFound()
     }
 
     @Override
@@ -122,20 +121,27 @@ public class StorageDaoImpl
         {
             try
             {
-                final DeleteRequestBuilder deleteRequestBuilder = this.client.prepareDelete().
-                    setIndex( settings.getStorageName().getName() ).
-                    setType( settings.getStorageType().getName() ).
-                    setId( id ).
-                    setRouting( id );
+                final org.elasticsearch.action.delete.DeleteRequest deleteRequest = new org.elasticsearch.action.delete.DeleteRequest().
+                    id( id ).
+                    index( settings.getStorageName().getName() ).
+                    type( settings.getStorageType().getName() ).
+                    routing( id ).
+                    timeout( requests.getTimeoutAsString() );
+
                 if ( requests.isForceRefresh() )
                 {
-                    deleteRequestBuilder.setRefreshPolicy( WriteRequest.RefreshPolicy.IMMEDIATE );
+                    deleteRequest.setRefreshPolicy( WriteRequest.RefreshPolicy.IMMEDIATE );
                 }
-                deleteRequestBuilder.get( requests.getTimeoutAsString() );
+
+                client.delete( deleteRequest, RequestOptions.DEFAULT );
             }
             catch ( ClusterBlockException e )
             {
                 throw new NodeStorageException( "Cannot delete node " + id + ", Repository in 'READ-ONLY mode'" );
+            }
+            catch ( IOException e )
+            {
+                throw new UncheckedIOException( e );
             }
             catch ( Exception e )
             {
@@ -144,13 +150,12 @@ public class StorageDaoImpl
         }
     }
 
-    private String doStore( final IndexRequest request, final String timeout )
+    private String doStore( final IndexRequest request )
     {
-        final IndexResponse indexResponse;
         try
         {
-            indexResponse = this.client.index( request ).
-                actionGet( timeout );
+            final IndexResponse indexResponse = this.client.index( request, RequestOptions.DEFAULT );
+            return indexResponse.getId();
         }
         catch ( ClusterBlockException e )
         {
@@ -160,8 +165,10 @@ public class StorageDaoImpl
         {
             throw new NodeStorageException( "Cannot store node " + request.toString(), e );
         }
-
-        return indexResponse.getId();
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
     }
 
     @Override
@@ -169,24 +176,30 @@ public class StorageDaoImpl
     {
         final StorageSource storageSource = request.getStorageSource();
 
-        final GetRequestBuilder builder = this.client.prepareGet().
-            setType( storageSource.getStorageType().getName() ).
-            setPreference( request.getSearchPreference().getName() ).
-            setId( request.getId() );
+        final GetRequest getRequest = new GetRequest().
+            id( request.getId() ).
+            type( storageSource.getStorageType().getName() ).
+            preference( request.getSearchPreference().getName() );
 
         if ( request.getReturnFields().isNotEmpty() )
         {
-            builder.setStoredFields( request.getReturnFields().getReturnFieldNames() );
+            getRequest.storedFields( request.getReturnFields().getReturnFieldNames() );
         }
 
         if ( request.getRouting() != null )
         {
-            builder.setRouting( request.getRouting() );
+            getRequest.routing( request.getRouting() );
         }
 
-        final GetResponse getResponse = builder.get( request.getTimeout() );
-
-        return GetResultFactory.create( getResponse );
+        try
+        {
+            final GetResponse response = client.get( getRequest, RequestOptions.DEFAULT );
+            return GetResultFactory.create( response );
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
     }
 
     @Override
@@ -197,7 +210,7 @@ public class StorageDaoImpl
             return new GetResults();
         }
 
-        final MultiGetRequestBuilder multiGetRequestBuilder = this.client.prepareMultiGet();
+        final MultiGetRequest multiGetRequest = new MultiGetRequest();
 
         for ( final GetByIdRequest request : requests.getRequests() )
         {
@@ -217,13 +230,18 @@ public class StorageDaoImpl
                 item.routing( request.getRouting() );
             }
 
-            multiGetRequestBuilder.add( item );
-
+            multiGetRequest.add( item );
         }
 
-        final MultiGetResponse multiGetItemResponses = multiGetRequestBuilder.get();
-
-        return GetResultsFactory.create( multiGetItemResponses );
+        try
+        {
+            final MultiGetResponse response = client.mget( multiGetRequest, RequestOptions.DEFAULT );
+            return GetResultsFactory.create( response );
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
     }
 
     @Override

@@ -1,7 +1,7 @@
 package com.enonic.xp.repo.impl.elasticsearch.aggregation.query;
 
-import org.elasticsearch.search.aggregations.AggregationBuilder;
-import org.elasticsearch.search.aggregations.bucket.range.date.DateRangeBuilder;
+import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
+import org.elasticsearch.search.aggregations.bucket.range.DateRangeAggregationBuilder;
 
 import com.google.common.base.Strings;
 
@@ -19,11 +19,11 @@ class DateRangeAggregationQueryBuilderFactory
         super( fieldNameResolver );
     }
 
-    AggregationBuilder create( final DateRangeAggregationQuery query )
+    AbstractAggregationBuilder create( final DateRangeAggregationQuery query )
     {
         final String fieldName = fieldNameResolver.resolve( query.getFieldName(), IndexValueType.DATETIME );
 
-        final DateRangeBuilder dateRangeBuilder = new DateRangeBuilder( query.getName() ).
+        final DateRangeAggregationBuilder dateRangeBuilder = new DateRangeAggregationBuilder( query.getName() ).
             field( fieldName );
 
         if ( !Strings.isNullOrEmpty( query.getFormat() ) )
@@ -33,7 +33,7 @@ class DateRangeAggregationQueryBuilderFactory
 
         for ( final DateRange dateRange : query.getRanges() )
         {
-            dateRangeBuilder.addRange( dateRange.getKey(), dateRange.getFrom(), dateRange.getTo() );
+            dateRangeBuilder.addRange( dateRange.getKey(), (Double) dateRange.getFrom(), (Double) dateRange.getTo() );
         }
 
         return dateRangeBuilder;

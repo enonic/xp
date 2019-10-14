@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch.aggregation.query;
 
-import org.elasticsearch.search.aggregations.AggregationBuilder;
+import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
 
 import com.enonic.xp.query.aggregation.AbstractHistogramAggregationQuery;
 import com.enonic.xp.query.aggregation.DateHistogramAggregationQuery;
@@ -16,7 +16,7 @@ class HistogramAggregationQueryBuilderFactory
         super( fieldNameResolver );
     }
 
-    AggregationBuilder create( final AbstractHistogramAggregationQuery histogramAggregationQuery )
+    AbstractAggregationBuilder create( final AbstractHistogramAggregationQuery histogramAggregationQuery )
     {
         if ( histogramAggregationQuery instanceof DateHistogramAggregationQuery )
         {

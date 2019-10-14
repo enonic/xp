@@ -149,7 +149,7 @@ public class DiffQueryFactory
 
     private HasChildQueryBuilder isInBranch( final Branch source )
     {
-        return new HasChildQueryBuilder( childStorageType.getName(), createWsConstraint( source ) );
+        return new HasChildQueryBuilder( childStorageType.getName(), createWsConstraint( source ), ScoreMode.None );
     }
 
     private TermQueryBuilder createWsConstraint( final Branch branch )

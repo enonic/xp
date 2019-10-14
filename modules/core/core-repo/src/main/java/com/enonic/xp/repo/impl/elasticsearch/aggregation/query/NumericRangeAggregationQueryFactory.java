@@ -1,7 +1,8 @@
 package com.enonic.xp.repo.impl.elasticsearch.aggregation.query;
 
-import org.elasticsearch.search.aggregations.AggregationBuilder;
-import org.elasticsearch.search.aggregations.bucket.range.RangeBuilder;
+import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.bucket.range.RangeAggregationBuilder;
 
 import com.google.common.base.Strings;
 
@@ -19,11 +20,11 @@ class NumericRangeAggregationQueryFactory
         super( fieldNameResolver );
     }
 
-    AggregationBuilder create( final NumericRangeAggregationQuery query )
+    AbstractAggregationBuilder create( final NumericRangeAggregationQuery query )
     {
         final String fieldName = fieldNameResolver.resolve( query.getFieldName(), IndexValueType.NUMBER );
 
-        final RangeBuilder rangeBuilder = new RangeBuilder( query.getName() ).
+        final RangeAggregationBuilder rangeBuilder = AggregationBuilders.range( query.getName() ).
             field( fieldName );
 
         for ( final NumericRange range : query.getRanges() )

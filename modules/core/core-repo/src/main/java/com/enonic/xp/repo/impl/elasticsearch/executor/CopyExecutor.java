@@ -1,10 +1,11 @@
 package com.enonic.xp.repo.impl.elasticsearch.executor;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
-import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchScrollRequest;
 import org.elasticsearch.action.support.WriteRequest;
@@ -13,7 +14,6 @@ import org.elasticsearch.client.Requests;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.Scroll;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,26 +75,24 @@ public class CopyExecutor
 
     public void execute()
     {
-        final SearchRequestBuilder searchRequestBuilder = createScrollRequest( createQuery() );
+        final SearchRequest searchRequest = createScrollRequest( createQuery() );
 
-        SearchResponse scrollResp = searchRequestBuilder.
-            execute().
-            actionGet();
-
-        while ( true )
+        try
         {
-            LOG.debug( "Copy: Fetched [" + scrollResp.getHits().getHits().length + "] hits, processing" );
+            SearchResponse scrollResp = client.search( searchRequest, RequestOptions.DEFAULT );
 
-            if ( scrollResp.getHits().getHits().length > 0 )
+            while ( true )
             {
-                doCopy( scrollResp );
-            }
+                LOG.debug( "Copy: Fetched [" + scrollResp.getHits().getHits().length + "] hits, processing" );
 
-            final SearchScrollRequest searchScrollRequest = new SearchScrollRequest( scrollResp.getScrollId() ).
-                scroll( new Scroll( defaultScrollTime ) );
+                if ( scrollResp.getHits().getHits().length > 0 )
+                {
+                    doCopy( scrollResp );
+                }
 
-            try
-            {
+                final SearchScrollRequest searchScrollRequest = new SearchScrollRequest( scrollResp.getScrollId() ).
+                    scroll( defaultScrollTime );
+
                 scrollResp = client.scroll( searchScrollRequest, RequestOptions.DEFAULT );
                 if ( scrollResp.getHits().getHits().length == 0 )
                 {
@@ -102,12 +100,11 @@ public class CopyExecutor
                     break;
                 }
             }
-            catch ( IOException e )
-            {
-                throw new RuntimeException( e );
-            }
         }
-
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
     }
 
     private void doCopy( final SearchResponse scrollResp )
@@ -127,16 +124,15 @@ public class CopyExecutor
         }
 
         final Stopwatch timer = Stopwatch.createStarted();
-        final BulkResponse response;
         try
         {
-            response = client.bulk( bulkRequest, RequestOptions.DEFAULT );
+            final BulkResponse response = client.bulk( bulkRequest, RequestOptions.DEFAULT );
             LOG.debug( "Copied [" + response.getItems().length + "] in " + timer.stop() );
             reportProgress( response.getItems().length );
         }
         catch ( IOException e )
         {
-            throw new RuntimeException( e );
+            throw new UncheckedIOException( e );
         }
     }
 
