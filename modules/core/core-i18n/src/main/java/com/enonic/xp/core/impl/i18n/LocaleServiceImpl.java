@@ -1,7 +1,7 @@
 package com.enonic.xp.core.impl.i18n;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.Reader;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -256,7 +256,7 @@ public final class LocaleServiceImpl
 
         if ( resource.exists() )
         {
-            try (InputStream in = resource.openStream())
+            try (Reader in = resource.openReader())
             {
                 properties.load( in );
             }

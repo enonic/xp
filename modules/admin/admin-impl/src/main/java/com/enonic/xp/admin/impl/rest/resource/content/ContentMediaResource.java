@@ -1,7 +1,6 @@
 package com.enonic.xp.admin.impl.rest.resource.content;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Set;
@@ -142,18 +141,10 @@ public final class ContentMediaResource
             throw JaxRsExceptions.notFound( String.format( "Content [%s] was not found", contentId ) );
         }
 
-        try
-        {
-            final String decodedIdentifier =
-                StringUtils.isNotBlank( identifier ) ? URLDecoder.decode( identifier, StandardCharsets.UTF_8.toString() ) : identifier;
+        final String decodedIdentifier =
+            StringUtils.isNotBlank( identifier ) ? URLDecoder.decode( identifier, StandardCharsets.UTF_8 ) : identifier;
 
-            return resolveAttachment( decodedIdentifier, content );
-        }
-        catch ( UnsupportedEncodingException e )
-        {
-            return resolveAttachment( identifier, content );
-        }
-
+        return resolveAttachment( decodedIdentifier, content );
     }
 
     private Attachment resolveAttachment( final String identifier, final Content content )
