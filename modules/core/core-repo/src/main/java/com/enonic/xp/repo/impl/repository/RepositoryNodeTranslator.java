@@ -51,6 +51,7 @@ public class RepositoryNodeTranslator
             name( repository.getId().toString() ).
             parentPath( RepositoryConstants.REPOSITORY_STORAGE_PARENT_PATH ).
             permissions( SystemConstants.SYSTEM_REPO_DEFAULT_ACL ).
+            attachedBinaries( repository.getAttachments() ).
             build();
     }
 
