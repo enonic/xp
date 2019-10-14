@@ -1,24 +1,23 @@
 package com.enonic.xp.vacuum;
 
+import java.time.Duration;
 import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableMap;
 
-public final class VacuumParameters
+public class VacuumParameters
 {
-    private static final int DEFAULT_AGE_THRESHOLD = 60 * 60 * 1000; //1 hour
-
     private final VacuumListener vacuumListener;
 
-    private final long ageThreshold;
+    private final Duration ageThreshold;
 
     private final Map<String, VacuumTaskConfig> taskConfigMap;
 
     private VacuumParameters( final Builder builder )
     {
         this.vacuumListener = builder.vacuumListener;
-        this.ageThreshold = builder.ageThreshold == null ? DEFAULT_AGE_THRESHOLD : builder.ageThreshold.longValue();
+        this.ageThreshold = builder.ageThreshold == null ? null : builder.ageThreshold;
         this.taskConfigMap = builder.taskConfigMap == null ? null : ImmutableMap.copyOf( builder.taskConfigMap );
     }
 
@@ -32,7 +31,7 @@ public final class VacuumParameters
         return vacuumListener;
     }
 
-    public long getAgeThreshold()
+    public Duration getAgeThreshold()
     {
         return ageThreshold;
     }
@@ -42,7 +41,8 @@ public final class VacuumParameters
         return taskConfigMap;
     }
 
-    public VacuumTaskConfig getTaskConfig(final String taskName) {
+    public VacuumTaskConfig getTaskConfig( final String taskName )
+    {
         return taskConfigMap == null ? null : taskConfigMap.get( taskName );
     }
 
@@ -55,7 +55,7 @@ public final class VacuumParameters
     {
         private VacuumListener vacuumListener;
 
-        private Long ageThreshold;
+        private Duration ageThreshold;
 
         private Map<String, VacuumTaskConfig> taskConfigMap;
 
@@ -69,7 +69,7 @@ public final class VacuumParameters
             return this;
         }
 
-        public Builder ageThreshold( final Long ageThreshold )
+        public Builder ageThreshold( final Duration ageThreshold )
         {
             this.ageThreshold = ageThreshold;
             return this;

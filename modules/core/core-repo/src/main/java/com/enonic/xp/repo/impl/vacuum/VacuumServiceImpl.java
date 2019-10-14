@@ -1,7 +1,9 @@
 package com.enonic.xp.repo.impl.vacuum;
 
+import java.time.Duration;
 import java.util.Set;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
@@ -15,13 +17,21 @@ import com.enonic.xp.vacuum.VacuumResult;
 import com.enonic.xp.vacuum.VacuumService;
 import com.enonic.xp.vacuum.VacuumTaskResult;
 
-@Component(immediate = true)
+@Component(immediate = true, configurationPid = "com.enonic.xp.vacuum")
 public class VacuumServiceImpl
     implements VacuumService
 {
     private final VacuumTasks tasks = new VacuumTasks();
 
     private final static Logger LOG = LoggerFactory.getLogger( VacuumServiceImpl.class );
+
+    private VacuumConfig config;
+
+    @Activate
+    public void activate( final VacuumConfig config )
+    {
+        this.config = config;
+    }
 
     @Override
     public VacuumResult vacuum( final VacuumParameters params )
@@ -30,6 +40,7 @@ public class VacuumServiceImpl
         {
             throw new VacuumException( "Only admin role users can execute vacuum" );
         }
+
         return doVacuum( params );
     }
 
@@ -50,7 +61,7 @@ public class VacuumServiceImpl
 
             final VacuumTaskParams taskParams = VacuumTaskParams.create().
                 listener( params.getVacuumListener() ).
-                ageThreshold( params.getAgeThreshold() ).
+                ageThreshold( getAgeThresholdMs( params ) ).
                 config( params.getTaskConfig( task.name() ) ).
                 build();
             final VacuumTaskResult taskResult = task.execute( taskParams );
@@ -81,6 +92,16 @@ public class VacuumServiceImpl
             }
         }
         return filteredTasks;
+    }
+
+    private long getAgeThresholdMs( final VacuumParameters params )
+    {
+        final Duration ageThreshold = params.getAgeThreshold();
+        if ( ageThreshold != null )
+        {
+            return ageThreshold.toMillis();
+        }
+        return Duration.ofMinutes( config.threshold_ageMinutes() ).toMillis();
     }
 
     @SuppressWarnings("WeakerAccess")
