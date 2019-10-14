@@ -21,7 +21,10 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.site.CreateSiteParams;
 import com.enonic.xp.site.SiteConfigs;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ContentServiceImplTest_create
     extends AbstractContentServiceTest

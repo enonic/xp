@@ -3,7 +3,7 @@ var taskLib = require('/lib/xp/task.js');
 
 exports.isRunning = function () {
 
-    var result = taskLib.isRunning("my-task");
+    var result = taskLib.isRunning('my-task');
 
     t.assertFalse(result);
 

@@ -23,7 +23,7 @@ public class MacroPostProcessInstructionSerializer
 
     private String makeParamsAttributes( final Macro macro )
     {
-        final StringBuilder result = new StringBuilder( "" );
+        final StringBuilder result = new StringBuilder();
         final ImmutableMultimap<String, String> params = macro.getParameters();
         for ( String key : params.keySet() )
         {

@@ -17,14 +17,14 @@ if (result) {
 // BEGIN
 // Permissions returned.
 var expected = {
-    "inheritsPermissions": false,
-    "permissions": [
+    'inheritsPermissions': false,
+    'permissions': [
         {
-            "principal": "user:system:anonymous",
-            "allow": [
-                "READ"
+            'principal': 'user:system:anonymous',
+            'allow': [
+                'READ'
             ],
-            "deny": []
+            'deny': []
         }
     ]
 };

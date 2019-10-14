@@ -6,7 +6,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EditablePageTest
 {

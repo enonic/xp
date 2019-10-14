@@ -28,7 +28,13 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.Nodes;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ApplicationServiceImplTest
     extends BundleBasedTest
@@ -114,12 +120,13 @@ public class ApplicationServiceImplTest
     }
 
     @Test
-    public void start_app_exact_version()
+    public void start_app_atleast_version()
         throws Exception
     {
         activateWithNoStoredApplications();
 
-        final Bundle bundle = deployBundle( "app1", true, VersionRange.valueOf( "5.2" ) );
+        // At a time of writing Felix version is 6.0.1. All greater versions should work as well.
+        final Bundle bundle = deployBundle( "app1", true, VersionRange.valueOf( "6.0" ) );
 
         assertEquals( Bundle.INSTALLED, bundle.getState() );
         this.service.startApplication( ApplicationKey.from( "app1" ), false );
@@ -132,7 +139,8 @@ public class ApplicationServiceImplTest
     {
         activateWithNoStoredApplications();
 
-        final Bundle bundle = deployBundle( "app1", true, VersionRange.valueOf( "(5.1,5.2]" ) );
+        // At a time of writing Felix version is 6.0.1. Range covers all future versions as well.
+        final Bundle bundle = deployBundle( "app1", true, VersionRange.valueOf( "(6.0,9999.0]" ) );
 
         assertEquals( Bundle.INSTALLED, bundle.getState() );
         this.service.startApplication( ApplicationKey.from( "app1" ), false );
@@ -145,6 +153,7 @@ public class ApplicationServiceImplTest
     {
         activateWithNoStoredApplications();
 
+        // Version upper bound is too low for current and future Felix version (at a time of writing 6.0.1)
         final Bundle bundle = deployBundle( "app1", true, VersionRange.valueOf( "[5.1,5.2)" ) );
 
         assertEquals( Bundle.INSTALLED, bundle.getState() );
@@ -157,7 +166,8 @@ public class ApplicationServiceImplTest
     {
         activateWithNoStoredApplications();
 
-        final Bundle bundle = deployBundle( "app1", true, VersionRange.valueOf( "[5.1,5.1]" ) );
+        // There is no version 0.0 of Felix.
+        final Bundle bundle = deployBundle( "app1", true, VersionRange.valueOf( "[0.0,0.0]" ) );
 
         assertEquals( Bundle.INSTALLED, bundle.getState() );
         assertThrows(ApplicationInvalidVersionException.class, () -> this.service.startApplication( ApplicationKey.from( "app1" ), false ));

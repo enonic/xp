@@ -52,12 +52,7 @@ public class IndexPath
 
         final IndexPath indexPath = (IndexPath) o;
 
-        if ( path != null ? !path.equalsIgnoreCase( indexPath.path ) : indexPath.path != null )
-        {
-            return false;
-        }
-
-        return true;
+        return path != null ? path.equalsIgnoreCase( indexPath.path ) : indexPath.path == null;
     }
 
     @Override

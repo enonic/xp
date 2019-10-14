@@ -1,17 +1,16 @@
 package com.enonic.xp.lib.node.mapper;
 
 import com.enonic.xp.aggregation.Aggregations;
-import com.enonic.xp.highlight.HighlightedField;
-import com.enonic.xp.highlight.HighlightedFields;
+import com.enonic.xp.highlight.HighlightedProperties;
+import com.enonic.xp.highlight.HighlightedProperty;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeHit;
 import com.enonic.xp.node.NodeHits;
 import com.enonic.xp.script.serializer.MapGenerator;
-import com.enonic.xp.script.serializer.MapSerializable;
 import com.enonic.xp.suggester.Suggestions;
 
 public final class NodeQueryResultMapper
-    implements MapSerializable
+    extends AbstractQueryResultMapper
 {
     private final NodeHits nodeHits;
 
@@ -47,6 +46,7 @@ public final class NodeQueryResultMapper
             gen.map();
             gen.value( "id", nodeHit.getNodeId() );
             gen.value( "score", Float.isNaN( nodeHit.getScore() ) ? 0.0 : nodeHit.getScore() );
+            serialize( gen, nodeHit.getExplanation() );
             serialize( gen, nodeHit.getHighlight() );
             gen.end();
         }
@@ -73,15 +73,15 @@ public final class NodeQueryResultMapper
         }
     }
 
-    private void serialize( final MapGenerator gen, final HighlightedFields highlightedFields )
+    private void serialize( final MapGenerator gen, final HighlightedProperties highlightedProperties )
     {
-        if ( highlightedFields != null && !highlightedFields.isEmpty() )
+        if ( highlightedProperties != null && !highlightedProperties.isEmpty() )
         {
             gen.map( "highlight" );
-            for ( HighlightedField highlightedField : highlightedFields )
+            for ( HighlightedProperty highlightedProperty : highlightedProperties )
             {
-                gen.array( highlightedField.getName() );
-                for ( String fragment : highlightedField.getFragments() )
+                gen.array( highlightedProperty.getName() );
+                for ( String fragment : highlightedProperty.getFragments() )
                 {
                     gen.value( fragment );
                 }

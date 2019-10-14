@@ -3,10 +3,6 @@ package com.enonic.xp.core.issue;
 import java.util.List;
 import java.util.Map;
 
-import com.enonic.xp.branch.Branches;
-import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.repository.Repository;
-import com.enonic.xp.repository.RepositoryId;
 import org.junit.jupiter.api.BeforeEach;
 
 import com.google.common.collect.Lists;
@@ -14,6 +10,8 @@ import com.google.common.collect.Maps;
 import com.google.common.net.HttpHeaders;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.Branches;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -40,6 +38,8 @@ import com.enonic.xp.repo.impl.search.NodeSearchServiceImpl;
 import com.enonic.xp.repo.impl.storage.IndexDataServiceImpl;
 import com.enonic.xp.repo.impl.storage.NodeStorageServiceImpl;
 import com.enonic.xp.repo.impl.version.VersionServiceImpl;
+import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;

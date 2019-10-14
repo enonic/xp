@@ -97,11 +97,7 @@ public class HasUnpublishedChildrenResultJson
                 return false;
             }
 
-            if( !hasChildren.equals( that.hasChildren )) {
-                return false;
-            }
-
-            return true;
+            return hasChildren.equals( that.hasChildren );
         }
 
         @Override

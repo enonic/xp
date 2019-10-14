@@ -1,9 +1,9 @@
 package com.enonic.xp.repo.impl.dump.upgrade.htmlarea;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
 
@@ -106,7 +106,7 @@ public class HtmlAreaDumpUpgrader
 
     private NodeVersion getNodeVersion( final DumpBlobRecord dumpBlobRecord )
     {
-        final CharSource charSource = dumpBlobRecord.getBytes().asCharSource( Charsets.UTF_8 );
+        final CharSource charSource = dumpBlobRecord.getBytes().asCharSource( StandardCharsets.UTF_8 );
         try
         {
             final NodeVersionDataJson nodeVersionDataJson = deserializeValue( charSource.read(), NodeVersionDataJson.class );
@@ -120,7 +120,7 @@ public class HtmlAreaDumpUpgrader
 
     private PatternIndexConfigDocument getIndexConfigDocument( final DumpBlobRecord dumpBlobRecord )
     {
-        final CharSource charSource = dumpBlobRecord.getBytes().asCharSource( Charsets.UTF_8 );
+        final CharSource charSource = dumpBlobRecord.getBytes().asCharSource( StandardCharsets.UTF_8 );
         try
         {
             final IndexConfigDocumentJson indexConfigDocumentJson = deserializeValue( charSource.read(), IndexConfigDocumentJson.class );
@@ -135,7 +135,7 @@ public class HtmlAreaDumpUpgrader
     private void writeNodeVersion( final NodeVersion nodeVersion, final DumpBlobRecord dumpBlobRecord )
     {
         final String serializedUpgradedNodeVersion = serialize( NodeVersionDataJson.toJson( nodeVersion ) );
-        final ByteSource byteSource = ByteSource.wrap( serializedUpgradedNodeVersion.getBytes( Charsets.UTF_8 ) );
+        final ByteSource byteSource = ByteSource.wrap( serializedUpgradedNodeVersion.getBytes( StandardCharsets.UTF_8 ) );
         try
         {
 

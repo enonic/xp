@@ -9,7 +9,7 @@ import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NodeChildOrderResolverTest
     extends AbstractNodeTest

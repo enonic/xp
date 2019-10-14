@@ -12,7 +12,9 @@ import org.mockito.internal.util.collections.Iterables;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class ResourceConfigTest
 {

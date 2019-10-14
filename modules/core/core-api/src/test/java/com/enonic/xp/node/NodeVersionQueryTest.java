@@ -6,7 +6,7 @@ import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.query.expr.OrderExpr;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class NodeVersionQueryTest
 {

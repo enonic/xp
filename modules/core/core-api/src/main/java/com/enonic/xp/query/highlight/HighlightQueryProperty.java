@@ -6,13 +6,13 @@ import com.google.common.collect.ImmutableList;
 import com.enonic.xp.query.highlight.constants.Fragmenter;
 import com.enonic.xp.query.highlight.constants.Order;
 
-public class HighlightQueryField
+public class HighlightQueryProperty
 {
     private final String name;
 
-    private final HighlightFieldSettings settings;
+    private final HighlightPropertySettings settings;
 
-    private HighlightQueryField( final Builder builder )
+    private HighlightQueryProperty( final Builder builder )
     {
         this.name = builder.name;
         this.settings = builder.settings;
@@ -23,7 +23,7 @@ public class HighlightQueryField
         return new Builder( name );
     }
 
-    private HighlightFieldSettings doGetSettings() {
+    private HighlightPropertySettings doGetSettings() {
         return settings;
     }
 
@@ -76,14 +76,14 @@ public class HighlightQueryField
     {
         private String name;
 
-        private HighlightFieldSettings settings = HighlightFieldSettings.empty();
+        private HighlightPropertySettings settings = HighlightPropertySettings.empty();
 
         public Builder( final String name )
         {
             this.name = name;
         }
 
-        public Builder settings( final HighlightFieldSettings settings )
+        public Builder settings( final HighlightPropertySettings settings )
         {
             this.settings = settings;
             return this;
@@ -94,10 +94,10 @@ public class HighlightQueryField
             Preconditions.checkNotNull( name, "name is required" );
         }
 
-        public HighlightQueryField build()
+        public HighlightQueryProperty build()
         {
             validate();
-            return new HighlightQueryField( this );
+            return new HighlightQueryProperty( this );
         }
     }
 }

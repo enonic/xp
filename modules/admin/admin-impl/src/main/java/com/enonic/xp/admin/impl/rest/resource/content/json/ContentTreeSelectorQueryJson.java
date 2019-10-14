@@ -8,10 +8,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.index.ChildOrder;
-import com.enonic.xp.schema.content.ContentTypeNames;
 
 public class ContentTreeSelectorQueryJson
     extends ContentSelectorQueryJson

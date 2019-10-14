@@ -9,7 +9,9 @@ import org.junit.jupiter.api.io.TempDir;
 
 import com.enonic.xp.blob.BlobKey;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class FileBlobRecordTest
 {

@@ -6,7 +6,6 @@ import java.nio.charset.StandardCharsets;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.BlobRecord;
@@ -115,9 +114,9 @@ public class NodeVersionServiceImpl
 
         try
         {
-            final String nodeString = nodeBlobRecord.getBytes().asCharSource( Charsets.UTF_8 ).read();
-            final String indexConfigString = indexConfigBlobRecord.getBytes().asCharSource( Charsets.UTF_8 ).read();
-            final String accessControlString = accessControlBlobRecord.getBytes().asCharSource( Charsets.UTF_8 ).read();
+            final String nodeString = nodeBlobRecord.getBytes().asCharSource( StandardCharsets.UTF_8 ).read();
+            final String indexConfigString = indexConfigBlobRecord.getBytes().asCharSource( StandardCharsets.UTF_8 ).read();
+            final String accessControlString = accessControlBlobRecord.getBytes().asCharSource( StandardCharsets.UTF_8 ).read();
             return this.nodeVersionJsonSerializer.toNodeVersion( nodeString, indexConfigString, accessControlString );
         }
         catch ( IOException e )

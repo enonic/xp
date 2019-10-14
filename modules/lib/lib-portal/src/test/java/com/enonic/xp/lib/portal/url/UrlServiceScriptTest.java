@@ -3,14 +3,13 @@ package com.enonic.xp.lib.portal.url;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UrlServiceScriptTest
     extends ScriptTestSupport
@@ -20,7 +19,7 @@ public class UrlServiceScriptTest
         throws Exception
     {
         super.initialize();
-        addService( PortalUrlService.class, Mockito.mock( PortalUrlService.class, (Answer) this::urlAnswer ) );
+        addService( PortalUrlService.class, Mockito.mock( PortalUrlService.class, this::urlAnswer ) );
     }
 
     private Object urlAnswer( final InvocationOnMock invocation )

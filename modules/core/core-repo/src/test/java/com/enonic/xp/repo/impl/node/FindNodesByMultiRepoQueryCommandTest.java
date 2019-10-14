@@ -32,7 +32,9 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 import static com.enonic.xp.repository.RepositoryConstants.MASTER_BRANCH;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class FindNodesByMultiRepoQueryCommandTest
     extends AbstractNodeTest

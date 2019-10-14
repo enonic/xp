@@ -12,7 +12,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.enonic.xp.support.JsonTestHelper;
 import com.enonic.xp.web.session.impl.IgniteSessionDataStore;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class WebSessionReporterTest
 {

@@ -6,7 +6,7 @@ package com.enonic.xp.core.impl.image.parser;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FilterExprParserTest
 {

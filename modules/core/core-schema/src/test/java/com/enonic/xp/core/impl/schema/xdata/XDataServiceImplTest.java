@@ -13,7 +13,8 @@ import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.schema.xdata.XDataNames;
 import com.enonic.xp.schema.xdata.XDatas;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class XDataServiceImplTest
     extends AbstractSchemaTest

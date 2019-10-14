@@ -9,5 +9,5 @@ exports.testLocalize = function () {
         application: 'com.enonic.myapplication'
     });
 
-    t.assertEquals("value-1", result);
+    t.assertEquals('value-1', result);
 };

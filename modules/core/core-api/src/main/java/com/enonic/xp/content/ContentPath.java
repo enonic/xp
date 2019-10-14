@@ -1,7 +1,5 @@
 package com.enonic.xp.content;
 
-
-import java.util.LinkedList;
 import java.util.List;
 
 import com.google.common.annotations.Beta;
@@ -9,7 +7,6 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 @Beta
 public final class ContentPath
@@ -28,20 +25,8 @@ public final class ContentPath
     {
         Preconditions.checkNotNull( builder.elements );
         this.absolute = builder.absolute;
-
-        if ( builder.elements.isEmpty() )
-        {
-            refString = this.absolute ? ELEMENT_DIVIDER : "";
-            this.elements = ImmutableList.of();
-        }
-        else
-        {
-            final ImmutableList.Builder<String> elementsBuilder = ImmutableList.builder();
-            elementsBuilder.addAll( builder.elements );
-            this.elements = elementsBuilder.build();
-            this.refString = ( this.absolute ? ELEMENT_DIVIDER : "" ) + Joiner.on( ELEMENT_DIVIDER ).join( elements );
-        }
-
+        this.elements = builder.elements.build();
+        this.refString = ( this.absolute ? ELEMENT_DIVIDER : "" ) + Joiner.on( ELEMENT_DIVIDER ).join( elements );
     }
 
     public String getElement( final int index )
@@ -64,16 +49,19 @@ public final class ContentPath
         return getAncestorPath(1);
     }
 
-    public ContentPath getAncestorPath( final Integer deep )
+    public ContentPath getAncestorPath( final int deep )
     {
-        if ( this.elements.size() < 1 )
+        final int size = this.elements.size();
+
+        if ( size < deep )
         {
             return null;
         }
 
-        final LinkedList<String> parentElements = newListOfParentElements( deep );
+        final int subIndex = size - deep;
+        final List<String> parentElements = this.elements.subList( 0, subIndex );
 
-        return parentElements != null ? create().absolute( absolute ).elements( parentElements ).build() : null;
+        return create().absolute( absolute ).elements( parentElements ).build();
     }
 
     public boolean isAbsolute()
@@ -168,21 +156,6 @@ public final class ContentPath
         return refString;
     }
 
-    private LinkedList<String> newListOfParentElements( final Integer deep )
-    {
-        final LinkedList<String> newElements = Lists.newLinkedList( this.elements );
-        for ( int count = 0; count < deep; count++ )
-        {
-            if ( !newElements.isEmpty() )
-            {
-                newElements.removeLast();
-            } else {
-                return null;
-            }
-        }
-        return newElements;
-    }
-
     public static ContentPath from( final String path )
     {
         final Iterable<String> pathElements = Splitter.on( ELEMENT_DIVIDER ).omitEmptyStrings().split( path );
@@ -211,18 +184,19 @@ public final class ContentPath
 
     public final static class Builder
     {
-        private LinkedList<String> elements;
+        private ImmutableList.Builder<String> elements;
 
         private boolean absolute = true;
 
         private Builder()
         {
-            this.elements = Lists.newLinkedList();
+            this.elements = ImmutableList.builder();
         }
 
         private Builder( ContentPath source )
         {
-            this.elements = Lists.newLinkedList( source.elements );
+            this.elements = ImmutableList.builder();
+            this.elements.addAll(source.elements);
             this.absolute = source.absolute;
         }
 
@@ -234,7 +208,7 @@ public final class ContentPath
 
         public Builder elements( final String... pathElements )
         {
-            this.elements.clear();
+            this.elements = ImmutableList.builder();
             for ( String pathElement : pathElements )
             {
                 validatePathElement( pathElement );
@@ -245,7 +219,7 @@ public final class ContentPath
 
         public Builder elements( final Iterable<String> pathElements )
         {
-            this.elements.clear();
+            this.elements = ImmutableList.builder();
             for ( String pathElement : pathElements )
             {
                 validatePathElement( pathElement );

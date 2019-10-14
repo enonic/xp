@@ -70,7 +70,7 @@ public class ResolveContentsToBePublishedCommand
             map( id -> NodeId.from( id.toString() ) ).
             collect( Collectors.toList() ) ) : NodeIds.empty();
 
-        final boolean includeChildren = excludeChildrenIds != null ? !this.excludeChildrenIds.contains( contentId ) : true;
+        final boolean includeChildren = excludeChildrenIds == null || !this.excludeChildrenIds.contains( contentId );
 
         return nodeService.resolveSyncWork( SyncWorkResolverParams.create().
             includeChildren( includeChildren ).

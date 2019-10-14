@@ -26,7 +26,10 @@ import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 
 import static com.enonic.xp.repo.impl.node.NodeConstants.INDEX_CONFIG_SEGMENT_LEVEL;
 import static com.enonic.xp.repo.impl.node.NodeConstants.NODE_SEGMENT_LEVEL;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class NodeVersionServiceImplTest
     extends AbstractNodeTest

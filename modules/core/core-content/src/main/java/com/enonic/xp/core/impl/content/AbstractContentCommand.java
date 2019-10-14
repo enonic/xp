@@ -109,11 +109,8 @@ abstract class AbstractContentCommand
         if ( publishInfo != null )
         {
             //If publishTo is before the current time or publishFrom after the current time
-            if ( ( publishInfo.getTo() != null && publishInfo.getTo().compareTo( now ) < 0 ) ||
-                ( publishInfo.getFrom() != null && publishInfo.getFrom().compareTo( now ) > 0 ) )
-            {
-                return true;
-            }
+            return (publishInfo.getTo() != null && publishInfo.getTo().compareTo( now ) < 0) ||
+                (publishInfo.getFrom() != null && publishInfo.getFrom().compareTo( now ) > 0);
         }
         return false;
     }
@@ -128,10 +125,7 @@ abstract class AbstractContentCommand
                 data.getInstant( PropertyPath.from( ContentPropertyNames.PUBLISH_INFO, ContentPropertyNames.PUBLISH_FROM ) );
             final Instant publishTo =
                 data.getInstant( PropertyPath.from( ContentPropertyNames.PUBLISH_INFO, ContentPropertyNames.PUBLISH_TO ) );
-            if ( ( publishTo != null && publishTo.compareTo( now ) < 0 ) || ( publishFrom != null && publishFrom.compareTo( now ) > 0 ) )
-            {
-                return true;
-            }
+            return (publishTo != null && publishTo.compareTo( now ) < 0) || (publishFrom != null && publishFrom.compareTo( now ) > 0);
         }
         return false;
     }

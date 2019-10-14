@@ -9,7 +9,6 @@ import org.junit.After;
 import org.junit.Ignore;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 import com.google.common.collect.Maps;
 
@@ -48,7 +47,7 @@ public class LocalizeNoHttpTest
             localeService.getLocales( eq( ApplicationKey.from( "com.enonic.myapplication" ) ), any( String[].class ) ) ).thenReturn(
             locales );
 
-        final MessageBundle bundle = Mockito.mock( MessageBundle.class, (Answer) this::answer );
+        final MessageBundle bundle = Mockito.mock( MessageBundle.class, this::answer );
         Mockito.when( localeService.getBundle( eq( ApplicationKey.from( "com.enonic.myapplication" ) ), Mockito.any( Locale.class ),
                                                any() ) ).
             thenReturn( bundle );

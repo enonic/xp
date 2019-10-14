@@ -28,7 +28,12 @@ import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.BaseHandlerTest;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class AttachmentHandlerTest
     extends BaseHandlerTest
@@ -323,7 +328,7 @@ public class AttachmentHandlerTest
         final byte[] responseBody = ( (ByteSource) res.getBody() ).read();
 
         final String responseMultipartString = new String( responseBody, StandardCharsets.UTF_8 );
-        String responseMultipartLines[] = responseMultipartString.split( "\\r?\\n" );
+        String[] responseMultipartLines = responseMultipartString.split( "\\r?\\n" );
 
         assertEquals( "Content-Type: image/png", responseMultipartLines[2] );
         assertEquals( "Content-Range: bytes 0-1/7", responseMultipartLines[3] );

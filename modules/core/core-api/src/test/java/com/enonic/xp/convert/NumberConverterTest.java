@@ -2,7 +2,8 @@ package com.enonic.xp.convert;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public abstract class NumberConverterTest<T extends Number>
 {

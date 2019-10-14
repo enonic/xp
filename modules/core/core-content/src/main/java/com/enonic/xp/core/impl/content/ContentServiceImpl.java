@@ -21,6 +21,7 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ActiveContentVersionEntry;
+import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.ApplyContentPermissionsResult;
 import com.enonic.xp.content.CompareContentParams;
@@ -171,6 +172,10 @@ public class ContentServiceImpl
 
     private ContentDataSerializer contentDataSerializer;
 
+    private AuditLogService auditLogService;
+
+    private ContentAuditLogSupport contentAuditLogSupport;
+
     public ContentServiceImpl()
     {
         final ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().
@@ -199,11 +204,17 @@ public class ContentServiceImpl
             build();
 
         this.translator = new ContentNodeTranslator( nodeService, contentDataSerializer );
+
+        this.contentAuditLogSupport = ContentAuditLogSupport.create().
+            auditLogService( auditLogService ).
+            build();
     }
 
     @Override
     public Site create( final CreateSiteParams params )
     {
+        contentAuditLogSupport.createSite( params );
+
         final PropertyTree data = new PropertyTree();
         data.setString( "description", params.getDescription() );
 
@@ -252,6 +263,8 @@ public class ContentServiceImpl
     @Override
     public Content create( final CreateContentParams params )
     {
+        contentAuditLogSupport.createContent( params );
+
         final Content content = CreateContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
@@ -291,7 +304,9 @@ public class ContentServiceImpl
     @Override
     public Content create( final CreateMediaParams params )
     {
-        return CreateMediaCommand.create().
+        contentAuditLogSupport.createMedia( params );
+
+        final Content content = CreateMediaCommand.create().
             params( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
@@ -308,12 +323,16 @@ public class ContentServiceImpl
             contentDataSerializer( this.contentDataSerializer ).
             build().
             execute();
+
+        return content;
     }
 
     @Override
     public Content update( final UpdateContentParams params )
     {
-        return UpdateContentCommand.create( params ).
+        contentAuditLogSupport.update( params );
+
+        final Content content = UpdateContentCommand.create( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
@@ -327,12 +346,16 @@ public class ContentServiceImpl
             contentDataSerializer( this.contentDataSerializer ).
             build().
             execute();
+
+        return content;
     }
 
     @Override
     public Content update( final UpdateMediaParams params )
     {
-        return UpdateMediaCommand.create( params ).
+        contentAuditLogSupport.update( params );
+
+        final Content content = UpdateMediaCommand.create( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
@@ -347,12 +370,16 @@ public class ContentServiceImpl
             contentDataSerializer( this.contentDataSerializer ).
             build().
             execute();
+
+        return content;
     }
 
     @Override
     public Contents delete( final DeleteContentParams params )
     {
-        return DeleteAndFetchContentCommand.create().
+        contentAuditLogSupport.delete( params );
+
+        final Contents contents = DeleteAndFetchContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
@@ -360,12 +387,16 @@ public class ContentServiceImpl
             params( params ).
             build().
             execute();
+
+        return contents;
     }
 
     @Override
     public DeleteContentsResult deleteWithoutFetch( final DeleteContentParams params )
     {
-        return DeleteContentCommand.create().
+        contentAuditLogSupport.delete( params );
+
+        final DeleteContentsResult result = DeleteContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
@@ -373,12 +404,16 @@ public class ContentServiceImpl
             params( params ).
             build().
             execute();
+
+        return result;
     }
 
     @Override
-    public int undoPendingDelete( UndoPendingDeleteContentParams params )
+    public int undoPendingDelete( final UndoPendingDeleteContentParams params )
     {
-        return UndoPendingDeleteContentCommand.create().
+        contentAuditLogSupport.undoPendingDelete( params );
+
+        final int affectedContents = UndoPendingDeleteContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
@@ -386,6 +421,8 @@ public class ContentServiceImpl
             params( params ).
             build().
             execute();
+
+        return affectedContents;
     }
 
     @Override
@@ -410,7 +447,9 @@ public class ContentServiceImpl
     @Override
     public PublishContentResult publish( final PushContentParams params )
     {
-        return PublishContentCommand.create().
+        contentAuditLogSupport.publish( params );
+
+        final PublishContentResult result = PublishContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
@@ -426,6 +465,8 @@ public class ContentServiceImpl
             message( params.getMessage() ).
             build().
             execute();
+
+        return result;
     }
 
     private ContentIds getExcludeChildrenIds( final PushContentParams params )
@@ -499,7 +540,9 @@ public class ContentServiceImpl
     @Override
     public UnpublishContentsResult unpublishContent( final UnpublishContentParams params )
     {
-        return UnpublishContentCommand.create().
+        contentAuditLogSupport.unpublishContent( params );
+
+        final UnpublishContentsResult result = UnpublishContentCommand.create().
             params( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
@@ -507,6 +550,8 @@ public class ContentServiceImpl
             eventPublisher( this.eventPublisher ).
             build().
             execute();
+
+        return result;
     }
 
     @Override
@@ -711,7 +756,9 @@ public class ContentServiceImpl
     @Override
     public DuplicateContentsResult duplicate( final DuplicateContentParams params )
     {
-        return DuplicateContentCommand.create( params ).
+        contentAuditLogSupport.duplicate( params );
+
+        final DuplicateContentsResult result = DuplicateContentCommand.create( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
@@ -719,12 +766,16 @@ public class ContentServiceImpl
             duplicateListener( params.getDuplicateContentListener() ).
             build().
             execute();
+
+        return result;
     }
 
     @Override
     public MoveContentsResult move( final MoveContentParams params )
     {
-        return MoveContentCommand.create( params ).
+        contentAuditLogSupport.move( params );
+
+        final MoveContentsResult result = MoveContentCommand.create( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
@@ -733,12 +784,16 @@ public class ContentServiceImpl
             moveListener( params.getMoveContentListener() ).
             build().
             execute();
+
+        return result;
     }
 
     @Override
     public Content rename( final RenameContentParams params )
     {
-        return RenameContentCommand.create( params ).
+        contentAuditLogSupport.rename( params );
+
+        final Content content = RenameContentCommand.create( params ).
             nodeService( this.nodeService ).
             xDataService( this.xDataService ).
             siteService( this.siteService ).
@@ -752,6 +807,8 @@ public class ContentServiceImpl
             contentDataSerializer( this.contentDataSerializer ).
             build().
             execute();
+
+        return content;
     }
 
     @Override
@@ -930,6 +987,8 @@ public class ContentServiceImpl
     @Override
     public SetActiveContentVersionResult setActiveContentVersion( final ContentId contentId, final ContentVersionId versionId )
     {
+        contentAuditLogSupport.setActiveContentVersion( contentId, versionId );
+
         nodeService.setActiveVersion( NodeId.from( contentId.toString() ), NodeVersionId.from( versionId.toString() ) );
 
         return new SetActiveContentVersionResult( contentId, versionId );
@@ -938,6 +997,8 @@ public class ContentServiceImpl
     @Override
     public Content setChildOrder( final SetContentChildOrderParams params )
     {
+        contentAuditLogSupport.setChildOrder( params );
+
         try
         {
             final Node node = nodeService.setChildOrder( SetNodeChildOrderParams.create().
@@ -951,12 +1012,13 @@ public class ContentServiceImpl
         {
             throw new ContentAccessException( e );
         }
-
     }
 
     @Override
     public ReorderChildContentsResult reorderChildren( final ReorderChildContentsParams params )
     {
+        contentAuditLogSupport.reorderChildren( params );
+
         final ReorderChildNodesParams.Builder builder = ReorderChildNodesParams.create();
 
         for ( final ReorderChildParams param : params )
@@ -968,6 +1030,7 @@ public class ContentServiceImpl
         }
 
         final ReorderChildNodesResult reorderChildNodesResult = this.nodeService.reorderChildren( builder.build() );
+
         this.nodeService.refresh( RefreshMode.SEARCH );
         return new ReorderChildContentsResult( reorderChildNodesResult.getSize() );
     }
@@ -981,13 +1044,17 @@ public class ContentServiceImpl
     @Override
     public ApplyContentPermissionsResult applyPermissions( final ApplyContentPermissionsParams params )
     {
-        return ApplyContentPermissionsCommand.create( params ).
+        contentAuditLogSupport.applyPermissions( params );
+
+        final ApplyContentPermissionsResult result = ApplyContentPermissionsCommand.create( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             build().
             execute();
+
+        return result;
     }
 
     @Override
@@ -1094,7 +1161,9 @@ public class ContentServiceImpl
     @Override
     public Content reprocess( final ContentId contentId )
     {
-        return ReprocessContentCommand.create( ReprocessContentParams.create().contentId( contentId ).build() ).
+        contentAuditLogSupport.reprocess( contentId );
+
+        final Content content = ReprocessContentCommand.create( ReprocessContentParams.create().contentId( contentId ).build() ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
@@ -1109,6 +1178,8 @@ public class ContentServiceImpl
             contentProcessors( this.contentProcessors ).
             build().
             execute();
+
+        return content;
     }
 
     @Override
@@ -1278,4 +1349,11 @@ public class ContentServiceImpl
     {
         this.layoutDescriptorService = layoutDescriptorService;
     }
+
+    @Reference
+    public void setAuditLogService( final AuditLogService auditLogService )
+    {
+        this.auditLogService = auditLogService;
+    }
+
 }

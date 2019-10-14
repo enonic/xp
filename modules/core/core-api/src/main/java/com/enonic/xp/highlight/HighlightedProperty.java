@@ -8,13 +8,13 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 
-public class HighlightedField
+public class HighlightedProperty
 {
     private final String name;
 
     private final ImmutableSet<String> fragments;
 
-    private HighlightedField( final Builder builder )
+    private HighlightedProperty( final Builder builder )
     {
         this.name = builder.name;
         this.fragments = ImmutableSet.copyOf( builder.fragments );
@@ -46,7 +46,7 @@ public class HighlightedField
         {
             return false;
         }
-        final HighlightedField that = (HighlightedField) o;
+        final HighlightedProperty that = (HighlightedProperty) o;
         return Objects.equals( name, that.name ) && Objects.equals( fragments, that.fragments );
     }
 
@@ -83,10 +83,10 @@ public class HighlightedField
             Preconditions.checkNotNull( name, "name must be set" );
         }
 
-        public HighlightedField build()
+        public HighlightedProperty build()
         {
             this.validate();
-            return new HighlightedField( this );
+            return new HighlightedProperty( this );
         }
     }
 }

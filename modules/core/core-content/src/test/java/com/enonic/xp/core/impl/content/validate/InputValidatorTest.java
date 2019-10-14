@@ -24,7 +24,7 @@ import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Reference;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class InputValidatorTest
 {

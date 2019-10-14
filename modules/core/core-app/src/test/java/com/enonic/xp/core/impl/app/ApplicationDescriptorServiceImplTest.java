@@ -13,7 +13,8 @@ import org.osgi.service.component.ComponentContext;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.support.ResourceTestHelper;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ApplicationDescriptorServiceImplTest
 {

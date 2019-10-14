@@ -2,7 +2,6 @@ package com.enonic.xp.portal.impl.view;
 
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 import com.enonic.xp.portal.url.PortalUrlService;
 
@@ -11,7 +10,7 @@ public abstract class AbstractUrlViewFunctionTest
 {
     protected final PortalUrlService createUrlService()
     {
-        return Mockito.mock( PortalUrlService.class, (Answer) this::urlAnswer );
+        return Mockito.mock( PortalUrlService.class, this::urlAnswer );
     }
 
     private Object urlAnswer( final InvocationOnMock invocation )

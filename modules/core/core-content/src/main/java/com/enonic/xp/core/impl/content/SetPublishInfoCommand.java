@@ -6,7 +6,6 @@ import com.enonic.xp.content.ContentIndexPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.PushContentListener;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeId;
@@ -17,7 +16,6 @@ import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.query.filter.BooleanFilter;
 import com.enonic.xp.query.filter.ExistsFilter;
 import com.enonic.xp.query.filter.IdFilter;
-import com.enonic.xp.security.User;
 
 public class SetPublishInfoCommand
     extends AbstractContentCommand

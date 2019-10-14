@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.tika.detect.DefaultDetector;
 import org.apache.tika.parser.DefaultParser;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.google.common.base.Strings;
@@ -14,7 +15,9 @@ import com.google.common.net.HttpHeaders;
 
 import com.enonic.xp.extractor.ExtractedData;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BinaryExtractorImplTest
 {
@@ -42,6 +45,7 @@ public class BinaryExtractorImplTest
     }
 
     @Test
+    @Disabled("Requires PDFBox Tika Parser in classpath. But tika-parsers 1.x heavily pollutes classpath with other jars")
     public void extract_pdf()
         throws Exception
     {

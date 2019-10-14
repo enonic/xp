@@ -11,7 +11,7 @@ import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.SetNodeStateParams;
 import com.enonic.xp.node.SetNodeStateResult;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SetNodeStateCommandTest
     extends AbstractNodeTest

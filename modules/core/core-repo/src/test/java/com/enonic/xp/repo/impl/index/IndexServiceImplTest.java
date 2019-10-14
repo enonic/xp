@@ -28,7 +28,9 @@ import com.enonic.xp.repo.impl.node.PushNodesCommand;
 import com.enonic.xp.repository.IndexSettings;
 import com.enonic.xp.security.SystemConstants;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class IndexServiceImplTest
     extends AbstractNodeTest

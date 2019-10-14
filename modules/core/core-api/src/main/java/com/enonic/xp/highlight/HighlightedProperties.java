@@ -7,12 +7,12 @@ import java.util.Objects;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
-public class HighlightedFields
-    implements Iterable<HighlightedField>
+public class HighlightedProperties
+    implements Iterable<HighlightedProperty>
 {
-    private final ImmutableMap<String, HighlightedField> highlightedFields;
+    private final ImmutableMap<String, HighlightedProperty> highlightedFields;
 
-    private HighlightedFields( final Builder builder )
+    private HighlightedProperties( final Builder builder )
     {
         this.highlightedFields = ImmutableMap.copyOf( builder.highlightedFields );
     }
@@ -27,7 +27,7 @@ public class HighlightedFields
         return highlightedFields.isEmpty();
     }
 
-    public HighlightedField get( final String name )
+    public HighlightedProperty get( final String name )
     {
         return highlightedFields.get( name );
     }
@@ -43,7 +43,7 @@ public class HighlightedFields
         {
             return false;
         }
-        final HighlightedFields that = (HighlightedFields) o;
+        final HighlightedProperties that = (HighlightedProperties) o;
         return Objects.equals( highlightedFields, that.highlightedFields );
     }
 
@@ -53,9 +53,9 @@ public class HighlightedFields
         return Objects.hash( highlightedFields );
     }
 
-    public static HighlightedFields empty()
+    public static HighlightedProperties empty()
     {
-        return HighlightedFields.create().build();
+        return HighlightedProperties.create().build();
     }
 
     public static Builder create()
@@ -63,26 +63,26 @@ public class HighlightedFields
         return new Builder();
     }
 
-    public static Builder create( HighlightedFields source )
+    public static Builder create( HighlightedProperties source )
     {
         return new Builder( source );
     }
 
     @Override
-    public Iterator<HighlightedField> iterator()
+    public Iterator<HighlightedProperty> iterator()
     {
         return highlightedFields.values().iterator();
     }
 
     public static final class Builder
     {
-        final Map<String, HighlightedField> highlightedFields = Maps.newHashMap();
+        final Map<String, HighlightedProperty> highlightedFields = Maps.newHashMap();
 
         private Builder()
         {
         }
 
-        private Builder( final HighlightedFields source )
+        private Builder( final HighlightedProperties source )
         {
             if ( source == null )
             {
@@ -91,15 +91,15 @@ public class HighlightedFields
             highlightedFields.putAll( source.highlightedFields );
         }
 
-        public Builder add( final HighlightedField highlightedField )
+        public Builder add( final HighlightedProperty highlightedProperty )
         {
-            highlightedFields.put( highlightedField.getName(), highlightedField );
+            highlightedFields.put( highlightedProperty.getName(), highlightedProperty );
             return this;
         }
 
-        public HighlightedFields build()
+        public HighlightedProperties build()
         {
-            return new HighlightedFields( this );
+            return new HighlightedProperties( this );
         }
     }
 

@@ -1,13 +1,13 @@
 package com.enonic.xp.lib.auth;
 
-import org.mockito.Mockito;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import com.enonic.xp.resource.ResourceProblemException;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CreateUserHandlerTest
     extends ScriptTestSupport

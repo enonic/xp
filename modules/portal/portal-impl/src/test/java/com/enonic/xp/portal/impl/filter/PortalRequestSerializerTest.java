@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.filter;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -9,7 +10,6 @@ import javax.script.ScriptEngine;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
 
@@ -24,7 +24,9 @@ import com.enonic.xp.script.impl.value.ScriptValueFactoryImpl;
 import com.enonic.xp.web.HttpMethod;
 
 import static com.google.common.collect.ImmutableMap.of;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PortalRequestSerializerTest
 {
@@ -163,6 +165,6 @@ public class PortalRequestSerializerTest
     private String readResource( final String resourceName )
         throws Exception
     {
-        return Resources.toString( getClass().getResource( resourceName ), Charsets.UTF_8 );
+        return Resources.toString( getClass().getResource( resourceName ), StandardCharsets.UTF_8 );
     }
 }

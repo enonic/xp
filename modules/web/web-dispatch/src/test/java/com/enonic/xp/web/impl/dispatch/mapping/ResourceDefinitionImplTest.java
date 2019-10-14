@@ -8,7 +8,9 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.web.dispatch.MappingBuilder;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public abstract class ResourceDefinitionImplTest<T, D extends ResourceDefinition<T>>
 {

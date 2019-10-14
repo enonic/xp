@@ -10,7 +10,9 @@ import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.TraceEvent;
 import com.enonic.xp.trace.Tracer;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TraceServiceTest
 {

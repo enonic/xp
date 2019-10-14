@@ -10,7 +10,8 @@ import com.enonic.xp.blob.ProviderConfig;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.internal.blobstore.config.BlobStoreConfig;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class BlobStoreFactoryTest
 {

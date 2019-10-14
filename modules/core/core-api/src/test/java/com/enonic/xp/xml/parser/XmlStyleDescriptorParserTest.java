@@ -8,7 +8,7 @@ import com.enonic.xp.style.GenericStyle;
 import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.style.StyleDescriptor;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class XmlStyleDescriptorParserTest
     extends XmlModelParserTest

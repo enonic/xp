@@ -10,7 +10,8 @@ import com.google.common.collect.Lists;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FulltextFunctionArgumentsTest
 {

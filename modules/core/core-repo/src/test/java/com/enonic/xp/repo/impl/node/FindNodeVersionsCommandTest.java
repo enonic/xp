@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
 import java.time.Instant;
-import java.util.Random;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQuery;
@@ -19,23 +19,21 @@ import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.repo.impl.version.VersionIndexPath;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class FindNodeVersionsCommandTest
+class FindNodeVersionsCommandTest
     extends AbstractNodeTest
 {
-    private final Random random = new Random();
-
     @BeforeEach
-    public void setUp()
+    void setUp()
         throws Exception
     {
-        this.createDefaultRootNode();
+        createDefaultRootNode();
     }
 
     @Test
-    public void get_single_version()
-        throws Exception
+    void get_single_version()
     {
         final Node node = createNode( CreateNodeParams.create().
             name( "my-node" ).
@@ -58,25 +56,19 @@ public class FindNodeVersionsCommandTest
     }
 
     @Test
-    public void get_multiple_version()
-        throws Exception
+    void get_multiple_version()
     {
         PropertyTree data = new PropertyTree();
-        data.addLong( "test", this.random.nextLong() );
 
         final Node node = createNode( CreateNodeParams.create().
             data( data ).
             name( "my-node" ).
             parent( NodePath.ROOT ).
             build() );
-        sleep( 2 );
-        doUpdateNode( node );
-        sleep( 2 );
-        doUpdateNode( node );
-        sleep( 2 );
-        doUpdateNode( node );
-        sleep( 2 );
-        doUpdateNode( node );
+
+        final int updateCount = 4;
+
+        updateNode( node.id(), updateCount );
 
         refresh();
 
@@ -93,52 +85,38 @@ public class FindNodeVersionsCommandTest
             build().
             execute();
 
-        assertEquals( 5, result.getHits() );
+        assertEquals( updateCount + 1, result.getHits() );
 
         final NodeVersionsMetadata nodeVersionsMetadata = result.getNodeVersionsMetadata();
         Instant previousTimestamp = null;
 
         for ( final NodeVersionMetadata nodeVersionMetadata : nodeVersionsMetadata )
         {
+            final Instant currentNodeTimestamp = nodeVersionMetadata.getTimestamp();
             if ( previousTimestamp != null )
             {
-                if ( !nodeVersionMetadata.getTimestamp().isBefore( previousTimestamp ) )
+                if ( currentNodeTimestamp.isAfter( previousTimestamp ) )
                 {
-                    fail( "expected timestamp of current item to be before previous. Previous: [" + previousTimestamp + "], current: [" +
-                              nodeVersionMetadata.getTimestamp() + "]" );
+                    fail( String.format(
+                        "expected timestamp of current item to be before or equal to previous. Previous: [%s], current: [%s]",
+                        previousTimestamp, currentNodeTimestamp ) );
                 }
             }
 
-            previousTimestamp = nodeVersionMetadata.getTimestamp();
+            previousTimestamp = currentNodeTimestamp;
         }
     }
 
-    private void sleep( int ms )
+    private void updateNode( final NodeId nodeId, final int updates )
     {
-        try
+        for ( int i = 0; i < updates; i++ )
         {
-            Thread.sleep( ms );
+            // Every update should introduce a change into the node
+            final long value = i;
+            updateNode( UpdateNodeParams.create().
+                id( nodeId ).
+                editor( node -> node.data.setLong( "someValue", value ) ).
+                build() );
         }
-        catch ( InterruptedException e )
-        {
-            e.printStackTrace();
-        }
-    }
-
-    private Node doUpdateNode( final Node node )
-    {
-        UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
-            id( node.id() ).
-            editor( toBeEdited -> toBeEdited.data.setLong( "test", this.random.nextLong() ) ).
-            build();
-
-        return UpdateNodeCommand.create().
-            params( updateNodeParams ).
-            indexServiceInternal( this.indexServiceInternal ).
-            binaryService( this.binaryService ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            build().
-            execute();
     }
 }

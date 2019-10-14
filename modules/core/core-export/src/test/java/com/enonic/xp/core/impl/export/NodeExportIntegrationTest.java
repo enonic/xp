@@ -1,13 +1,11 @@
 package com.enonic.xp.core.impl.export;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 
 import com.google.common.io.ByteSource;
 
@@ -27,7 +25,8 @@ import static com.enonic.xp.core.impl.export.writer.NodeExportPathResolver.BINAR
 import static com.enonic.xp.core.impl.export.writer.NodeExportPathResolver.NODE_XML_EXPORT_NAME;
 import static com.enonic.xp.core.impl.export.writer.NodeExportPathResolver.SYSTEM_FOLDER_NAME;
 import static com.enonic.xp.core.impl.export.writer.NodeExportPathResolver.VERSION_FOLDER;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NodeExportIntegrationTest
     extends AbstractNodeTest

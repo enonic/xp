@@ -14,7 +14,7 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserEditor;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ModifyUserHandlerTest
     extends ScriptTestSupport

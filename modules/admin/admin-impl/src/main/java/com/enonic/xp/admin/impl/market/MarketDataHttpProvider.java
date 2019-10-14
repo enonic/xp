@@ -3,6 +3,7 @@ package com.enonic.xp.admin.impl.market;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -11,7 +12,6 @@ import org.osgi.service.component.annotations.Component;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -85,7 +85,7 @@ public class MarketDataHttpProvider
     {
         try (final InputStream bodyStream = response.body().byteStream())
         {
-            final String body = CharStreams.toString( new InputStreamReader( bodyStream, Charsets.UTF_8 ) );
+            final String body = CharStreams.toString( new InputStreamReader( bodyStream, StandardCharsets.UTF_8 ) );
 
             throw new MarketException( "Cannot get applications from marked, server response : [body = " + body + "]", code );
         }

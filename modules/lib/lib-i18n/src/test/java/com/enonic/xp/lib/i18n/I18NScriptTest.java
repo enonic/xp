@@ -9,7 +9,6 @@ import java.util.Set;
 import org.junit.Ignore;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 import com.google.common.collect.Maps;
 
@@ -47,7 +46,7 @@ public class I18NScriptTest
         locales.add( new Locale( "ca" ) );
         Mockito.when( localeService.getLocales( any( ApplicationKey.class ), any( String[].class ) ) ).thenReturn( locales );
 
-        final MessageBundle bundle = Mockito.mock( MessageBundle.class, (Answer) this::answer );
+        final MessageBundle bundle = Mockito.mock( MessageBundle.class, this::answer );
         Mockito.when(
             localeService.getBundle( Mockito.any( ApplicationKey.class ), Mockito.any( Locale.class ), any() ) ).
             thenReturn( bundle );

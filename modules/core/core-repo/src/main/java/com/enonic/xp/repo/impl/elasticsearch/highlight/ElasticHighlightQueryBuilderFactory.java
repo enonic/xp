@@ -5,7 +5,7 @@ import org.elasticsearch.search.highlight.HighlightBuilder;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.query.highlight.HighlightQuery;
-import com.enonic.xp.query.highlight.HighlightQueryField;
+import com.enonic.xp.query.highlight.HighlightQueryProperty;
 import com.enonic.xp.query.highlight.constants.Fragmenter;
 import com.enonic.xp.query.highlight.constants.Order;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticHighlightQuery;
@@ -25,12 +25,12 @@ public class ElasticHighlightQueryBuilderFactory
         ElasticHighlightQuery.Builder result = ElasticHighlightQuery.create().
             settings( highlightQuery.getSettings() );
 
-        for ( HighlightQueryField highlightQueryField : highlightQuery.getFields() )
+        for ( HighlightQueryProperty highlightQueryProperty : highlightQuery.getProperties() )
         {
-            final String normalizedFieldName = IndexFieldNameNormalizer.normalize( highlightQueryField.getName() );
+            final String normalizedFieldName = IndexFieldNameNormalizer.normalize( highlightQueryProperty.getName() );
             final String normalizedFieldNameWithPostFix = normalizedFieldName + IndexValueType.INDEX_VALUE_TYPE_SEPARATOR + "_*";
-            final HighlightBuilder.Field rawHighlightField = createField( normalizedFieldName, highlightQueryField );
-            final HighlightBuilder.Field analyzedHighlightField = createField( normalizedFieldNameWithPostFix, highlightQueryField );
+            final HighlightBuilder.Field rawHighlightField = createField( normalizedFieldName, highlightQueryProperty );
+            final HighlightBuilder.Field analyzedHighlightField = createField( normalizedFieldNameWithPostFix, highlightQueryProperty );
 
             result.addField( rawHighlightField );
             result.addField( analyzedHighlightField );
@@ -39,18 +39,18 @@ public class ElasticHighlightQueryBuilderFactory
         return result.build();
     }
 
-    private HighlightBuilder.Field createField( final String name, final HighlightQueryField field )
+    private HighlightBuilder.Field createField( final String name, final HighlightQueryProperty property )
     {
         final HighlightBuilder.Field builder = new HighlightBuilder.Field( name );
 
-        final Fragmenter fragmenter = field.getFragmenter();
-        final Integer fragmentSize = field.getFragmentSize();
-        final Integer noMatchSize = field.getNoMatchSize();
-        final Integer numOfFragments = field.getNumOfFragments();
-        final Order order = field.getOrder();
-        final ImmutableList<String> preTags = field.getPreTags();
-        final ImmutableList<String> postTags = field.getPostTags();
-        final Boolean requireFieldMatch = field.getRequireFieldMatch();
+        final Fragmenter fragmenter = property.getFragmenter();
+        final Integer fragmentSize = property.getFragmentSize();
+        final Integer noMatchSize = property.getNoMatchSize();
+        final Integer numOfFragments = property.getNumOfFragments();
+        final Order order = property.getOrder();
+        final ImmutableList<String> preTags = property.getPreTags();
+        final ImmutableList<String> postTags = property.getPostTags();
+        final Boolean requireFieldMatch = property.getRequireFieldMatch();
 
         if (fragmenter != null) {
             builder.fragmenter( fragmenter.value() );

@@ -7,12 +7,12 @@ exports.testNoChange = function () {
     });
 
     assert.assertJsonEquals({
-        "branch": "draft",
-        "repository": "com.enonic.cms.default",
-        "authInfo": {
-            "principals": [
-                "user:system:anonymous",
-                "role:system.everyone"
+        'branch': 'draft',
+        'repository': 'com.enonic.cms.default',
+        'authInfo': {
+            'principals': [
+                'user:system:anonymous',
+                'role:system.everyone'
             ]
         }
     }, result);
@@ -20,34 +20,34 @@ exports.testNoChange = function () {
 
 exports.testChange = function () {
     var result = context.run({
-        repository: "myrepository",
+        repository: 'myrepository',
         branch: 'mybranch',
         user: {
             login: 'su',
             idProvider: 'system'
         },
-        principals: ["role:system.myrole"]
+        principals: ['role:system.myrole']
     }, function () {
         return context.get();
     });
 
     assert.assertJsonEquals({
-        "branch": "mybranch",
-        "repository": "myrepository",
-        "authInfo": {
-            "user": {
-                "type": "user",
-                "key": "user:system:su",
-                "displayName": "Super User",
-                "disabled": false,
-                "login": "su",
-                "idProvider": "system"
+        'branch': 'mybranch',
+        'repository': 'myrepository',
+        'authInfo': {
+            'user': {
+                'type': 'user',
+                'key': 'user:system:su',
+                'displayName': 'Super User',
+                'disabled': false,
+                'login': 'su',
+                'idProvider': 'system'
             },
-            "principals": [
-                "role:system.admin",
-                "role:system.everyone",
-                "user:system:su",
-                "role:system.myrole"
+            'principals': [
+                'role:system.admin',
+                'role:system.everyone',
+                'user:system:su',
+                'role:system.myrole'
             ]
         }
     }, result);

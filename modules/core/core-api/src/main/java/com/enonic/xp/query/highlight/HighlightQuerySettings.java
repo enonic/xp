@@ -6,7 +6,7 @@ import com.enonic.xp.query.highlight.constants.Encoder;
 import com.enonic.xp.query.highlight.constants.TagsSchema;
 
 public class HighlightQuerySettings
-    extends HighlightFieldSettings
+    extends HighlightPropertySettings
 {
     private final Encoder encoder;
 
@@ -66,7 +66,7 @@ public class HighlightQuerySettings
     }
 
     public static class Builder
-        extends HighlightFieldSettings.Builder<Builder>
+        extends HighlightPropertySettings.Builder<Builder>
     {
         private Encoder encoder;
 

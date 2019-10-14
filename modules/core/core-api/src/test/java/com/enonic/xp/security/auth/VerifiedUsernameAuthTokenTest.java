@@ -4,7 +4,8 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.security.IdProviderKey;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class VerifiedUsernameAuthTokenTest
 {

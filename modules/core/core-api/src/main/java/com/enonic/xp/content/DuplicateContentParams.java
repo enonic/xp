@@ -79,12 +79,7 @@ public final class DuplicateContentParams
             return false;
         }
 
-        if ( !includeChildren.equals( that.includeChildren ) )
-        {
-            return false;
-        }
-
-        return true;
+        return includeChildren.equals( that.includeChildren );
     }
 
     @Override

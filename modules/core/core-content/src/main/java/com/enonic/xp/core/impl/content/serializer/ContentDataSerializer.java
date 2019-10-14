@@ -8,7 +8,6 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.AttachmentNames;
@@ -25,7 +24,6 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.CreateContentTranslatorParams;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.UpdateContentTranslatorParams;
-import com.enonic.xp.content.WorkflowCheckState;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -245,7 +243,7 @@ public class ContentDataSerializer
         builder.creator( PrincipalKey.from( contentAsSet.getString( CREATOR ) ) );
         builder.createdTime( contentAsSet.getInstant( CREATED_TIME ) );
         builder.modifier( contentAsSet.getString( MODIFIER ) != null ? PrincipalKey.from( contentAsSet.getString( MODIFIER ) ) : null );
-        builder.modifiedTime( contentAsSet.getInstant( MODIFIED_TIME ) != null ? contentAsSet.getInstant( MODIFIED_TIME ) : null );
+        builder.modifiedTime( contentAsSet.getInstant( MODIFIED_TIME ) );
     }
 
     private void extractPublishInfo( final PropertySet contentAsSet, final Content.Builder builder )

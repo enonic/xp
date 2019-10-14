@@ -11,7 +11,7 @@ import com.squareup.okhttp.ResponseBody;
 
 import com.enonic.xp.market.MarketException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MarketDataHttpProviderTest
 {

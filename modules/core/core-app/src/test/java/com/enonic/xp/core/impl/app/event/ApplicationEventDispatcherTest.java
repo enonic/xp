@@ -13,7 +13,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.BundleBasedTest;
 import com.enonic.xp.event.Event;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ApplicationEventDispatcherTest
     extends BundleBasedTest

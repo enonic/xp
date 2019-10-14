@@ -14,7 +14,6 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.ValueFactory;
-import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
@@ -95,7 +94,7 @@ public class VersionTableCleanupTask
 
         if ( listener != null )
         {
-            final Long versionTotal = executor.getTotalHits();
+            final long versionTotal = executor.getTotalHits();
             listener.vacuumingVersionRepository( repositoryId, versionTotal );
         }
 
@@ -147,17 +146,13 @@ public class VersionTableCleanupTask
     {
         for ( final Branch branch : repository.getBranches() )
         {
-            try
+            boolean nodeExists = ContextBuilder.from( ContextAccessor.current() ).
+                branch( branch ).
+                repositoryId( repository.getId() ).
+                build().callWith( () -> this.nodeService.nodeExists( version.getNodeId() ) );
+            if ( nodeExists )
             {
-                ContextBuilder.from( ContextAccessor.current() ).
-                    branch( branch ).
-                    repositoryId( repository.getId() ).
-                    build().callWith( () -> this.nodeService.getById( version.getNodeId() ) );
                 return true;
-            }
-            catch ( NodeNotFoundException e )
-            {
-                // Ignore
             }
         }
 

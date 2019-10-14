@@ -1,8 +1,8 @@
 package com.enonic.xp.server.internal.config;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Properties;
 
 import org.junit.jupiter.api.Test;
@@ -10,7 +10,9 @@ import org.junit.jupiter.api.io.TempDir;
 
 import com.google.common.collect.Lists;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ConfigPathsTest
 {

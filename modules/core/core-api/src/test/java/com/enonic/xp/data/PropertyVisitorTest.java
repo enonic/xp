@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.util.Link;
 import com.enonic.xp.util.Reference;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PropertyVisitorTest
 {

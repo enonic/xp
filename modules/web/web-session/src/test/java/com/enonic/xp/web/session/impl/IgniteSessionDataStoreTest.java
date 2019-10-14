@@ -17,7 +17,11 @@ import org.mockito.Mockito;
 
 import com.google.common.collect.Sets;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -51,6 +55,7 @@ public class IgniteSessionDataStoreTest
         when( ignite.getOrCreateCache( any( CacheConfiguration.class ) ) ).thenReturn( cache );
         store.addIgnite( ignite );
         store.activate( getWebSessionConfig() );
+        store.start();
     }
 
     @Test

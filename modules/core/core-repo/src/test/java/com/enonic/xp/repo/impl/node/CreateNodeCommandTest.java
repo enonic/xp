@@ -24,7 +24,10 @@ import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.Reference;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CreateNodeCommandTest
     extends AbstractNodeTest

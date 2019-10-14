@@ -7,7 +7,7 @@ import org.mockito.Mockito;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeVersionId;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SetActiveVersionHandlerTest
     extends BaseNodeHandlerTest

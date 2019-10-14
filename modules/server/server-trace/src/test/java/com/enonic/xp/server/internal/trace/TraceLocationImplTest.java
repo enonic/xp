@@ -4,7 +4,8 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.trace.TraceLocation;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class TraceLocationImplTest
 {
@@ -15,7 +16,7 @@ public class TraceLocationImplTest
         assertNotNull( location );
         assertEquals( getClass().getName(), location.getClassName() );
         assertEquals( "testLocation", location.getMethod() );
-        assertEquals( 14, location.getLineNumber() );
-        assertEquals( getClass().getName() + ".testLocation:14", location.toString() );
+        assertEquals( 15, location.getLineNumber() );
+        assertEquals( getClass().getName() + ".testLocation:15", location.toString() );
     }
 }

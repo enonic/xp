@@ -45,6 +45,7 @@ import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationSucces
 import com.enonic.xp.admin.impl.rest.resource.application.json.GetMarketApplicationsJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ListApplicationJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.MarketApplicationsJson;
+import com.enonic.xp.admin.impl.rest.resource.content.page.part.PartDescriptorIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.macro.MacroIconResolver;
 import com.enonic.xp.admin.impl.rest.resource.macro.MacroIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconResolver;
@@ -139,9 +140,12 @@ public final class ApplicationResource
 
     private static final ApplicationImageHelper HELPER = new ApplicationImageHelper();
 
+    private PartDescriptorIconUrlResolver partDescriptorIconUrlResolver;
+
     public ApplicationResource()
     {
         iconUrlResolver = new ApplicationIconUrlResolver();
+        partDescriptorIconUrlResolver = new PartDescriptorIconUrlResolver();
     }
 
     @GET
@@ -203,6 +207,7 @@ public final class ApplicationResource
                 Collectors.toList() ) ) ).
 
             setContentTypeIconUrlResolver( this.contentTypeIconUrlResolver ).
+            setPartDescriptorIconUrlResolver( this.partDescriptorIconUrlResolver ).
             setMacroIconUrlResolver( this.macroIconUrlResolver ).
             setRelationshipTypeIconUrlResolver( this.relationshipTypeIconUrlResolver ).
             setLocaleMessageResolver( new LocaleMessageResolver( this.localeService, applicationKey ) ).

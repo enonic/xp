@@ -1,10 +1,7 @@
 package com.enonic.xp.node;
 
-import java.util.List;
-
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
@@ -14,7 +11,7 @@ public class ReorderChildNodesParams
 {
     private ReorderChildNodesParams( final Builder builder )
     {
-        super( ImmutableList.copyOf( builder.orderChildNodeParamsList ) );
+        super( builder.orderChildNodeParamsList.build() );
     }
 
     public static Builder create()
@@ -24,8 +21,7 @@ public class ReorderChildNodesParams
 
     public static class Builder
     {
-        private final List<ReorderChildNodeParams> orderChildNodeParamsList = Lists.newLinkedList();
-
+        private final ImmutableList.Builder<ReorderChildNodeParams> orderChildNodeParamsList = ImmutableList.builder();
 
         public Builder add( final ReorderChildNodeParams reorderChildNodeParams )
         {

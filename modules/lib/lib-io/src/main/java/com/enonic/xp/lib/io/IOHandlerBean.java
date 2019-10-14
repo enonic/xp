@@ -1,10 +1,10 @@
 package com.enonic.xp.lib.io;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.function.Function;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
 import com.google.common.io.LineProcessor;
@@ -66,7 +66,7 @@ public final class IOHandlerBean
 
     public ByteSource newStream( final String value )
     {
-        return ByteSource.wrap( value.getBytes( Charsets.UTF_8 ) );
+        return ByteSource.wrap( value.getBytes( StandardCharsets.UTF_8 ) );
     }
 
     public String getMimeType( final Object key )
@@ -89,7 +89,7 @@ public final class IOHandlerBean
 
     private CharSource toCharSource( final Object value )
     {
-        return toByteSource( value ).asCharSource( Charsets.UTF_8 );
+        return toByteSource( value ).asCharSource( StandardCharsets.UTF_8 );
     }
 
     private ByteSource toByteSource( final Object value )

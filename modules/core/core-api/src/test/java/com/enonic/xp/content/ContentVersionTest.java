@@ -6,7 +6,8 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.security.PrincipalKey;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class ContentVersionTest
 {

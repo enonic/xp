@@ -5,7 +5,8 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.web.HttpStatus;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class PortalErrorTest
 {

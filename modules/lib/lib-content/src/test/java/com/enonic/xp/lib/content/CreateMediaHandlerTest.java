@@ -15,7 +15,7 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.security.PrincipalKey;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CreateMediaHandlerTest
     extends BaseContentHandlerTest
