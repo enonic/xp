@@ -101,9 +101,13 @@ public interface ContentService
 
     GetActiveContentVersionsResult getActiveVersions( GetActiveContentVersionsParams params );
 
+    ContentVersion getActiveVersion(GetActiveContentVersionsParams params);
+
     SetActiveContentVersionResult setActiveContentVersion( ContentId contentId, ContentVersionId versionId );
 
     ByteSource getBinary( ContentId contentId, BinaryReference binaryReference );
+
+    ByteSource getBinary( ContentId contentId, ContentVersionId contentVersionId, BinaryReference binaryReference );
 
     @Deprecated
     InputStream getBinaryInputStream( ContentId contentId, BinaryReference binaryReference );
