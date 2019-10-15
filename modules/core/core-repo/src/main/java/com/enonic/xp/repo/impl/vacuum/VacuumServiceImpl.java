@@ -1,5 +1,9 @@
 package com.enonic.xp.repo.impl.vacuum;
 
+import java.time.Duration;
+import java.util.Set;
+
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
@@ -13,13 +17,21 @@ import com.enonic.xp.vacuum.VacuumResult;
 import com.enonic.xp.vacuum.VacuumService;
 import com.enonic.xp.vacuum.VacuumTaskResult;
 
-@Component(immediate = true)
+@Component(immediate = true, configurationPid = "com.enonic.xp.vacuum")
 public class VacuumServiceImpl
     implements VacuumService
 {
     private final VacuumTasks tasks = new VacuumTasks();
 
     private final static Logger LOG = LoggerFactory.getLogger( VacuumServiceImpl.class );
+
+    private VacuumConfig config;
+
+    @Activate
+    public void activate( final VacuumConfig config )
+    {
+        this.config = config;
+    }
 
     @Override
     public VacuumResult vacuum( final VacuumParameters params )
@@ -29,38 +41,66 @@ public class VacuumServiceImpl
             throw new VacuumException( "Only admin role users can execute vacuum" );
         }
 
-        LOG.info( " Starting vacuum, running " + tasks.size() + " tasks" );
+        return doVacuum( params );
+    }
 
-        final VacuumResult.Builder taskResults = doVacuum( params );
+    private VacuumResult doVacuum( final VacuumParameters params )
+    {
+        //Retrieves the tasks to execute
+        VacuumTasks tasks = getTasks( params );
+        LOG.info( "Starting vacuum. Running " + tasks.size() + " tasks..." );
+        if ( params.getVacuumListener() != null )
+        {
+            params.getVacuumListener().vacuumBegin( tasks.size() );
+        }
+
+        final VacuumResult.Builder taskResults = VacuumResult.create();
+        for ( final VacuumTask task : tasks )
+        {
+            LOG.info( "Running vacuum task [" + task.name() + "]..." );
+
+            final VacuumTaskParams taskParams = VacuumTaskParams.create().
+                listener( params.getVacuumListener() ).
+                ageThreshold( getAgeThresholdMs( params ) ).
+                build();
+            final VacuumTaskResult taskResult = task.execute( taskParams );
+
+            LOG.info( task.name() + " : " + taskResult.toString() );
+            taskResults.add( taskResult );
+            LOG.info( "Vacuum task [" + task.name() + "] done" );
+        }
+        LOG.info( "Vacuum done" );
 
         return taskResults.build();
     }
 
-    private VacuumResult.Builder doVacuum( final VacuumParameters params )
+    private VacuumTasks getTasks( final VacuumParameters params )
     {
-        final VacuumResult.Builder taskResults = VacuumResult.create();
-
-        final VacuumTaskParams taskParams = VacuumTaskParams.create().listener( params.getVacuumProgressListener() ).build();
-
-        if ( params.getVacuumTaskListener() != null )
+        final Set<String> taskNames = params.getTaskNames();
+        if ( taskNames == null )
         {
-            params.getVacuumTaskListener().total( tasks.size() );
+            return this.tasks;
         }
 
-        for ( final VacuumTask task : this.tasks )
+        final VacuumTasks filteredTasks = new VacuumTasks();
+        for ( VacuumTask task : this.tasks )
         {
-            LOG.info( "Running VacuumTask:" + task.name() );
-            final VacuumTaskResult taskResult = task.execute( taskParams );
-            LOG.info( task.name() + " : " + taskResult.toString() );
-            taskResults.add( taskResult );
-            LOG.info( "VacuumTask done: " + task.name() );
-
-            if ( params.getVacuumTaskListener() != null )
+            if ( taskNames.contains( task.name() ) )
             {
-                params.getVacuumTaskListener().taskExecuted();
+                filteredTasks.add( task );
             }
         }
-        return taskResults;
+        return filteredTasks;
+    }
+
+    private long getAgeThresholdMs( final VacuumParameters params )
+    {
+        final Duration ageThreshold = params.getAgeThreshold();
+        if ( ageThreshold != null )
+        {
+            return ageThreshold.toMillis();
+        }
+        return Duration.ofMinutes( config.ageThresholdMinutes() ).toMillis();
     }
 
     @SuppressWarnings("WeakerAccess")

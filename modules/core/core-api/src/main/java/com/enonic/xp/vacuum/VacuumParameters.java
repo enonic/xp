@@ -1,15 +1,25 @@
 package com.enonic.xp.vacuum;
 
-public final class VacuumParameters
-{
-    private final VacuumListener vacuumProgressListener;
+import java.time.Duration;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 
-    private final VacuumTaskListener vacuumTaskListener;
+import com.google.common.collect.ImmutableSet;
+
+public class VacuumParameters
+{
+    private final VacuumListener vacuumListener;
+
+    private final Duration ageThreshold;
+
+    private final ImmutableSet<String> taskNames;
 
     private VacuumParameters( final Builder builder )
     {
-        this.vacuumProgressListener = builder.vacuumProgressListener;
-        this.vacuumTaskListener = builder.vacuumTaskListener;
+        this.vacuumListener = builder.vacuumListener;
+        this.ageThreshold = builder.ageThreshold == null ? null : builder.ageThreshold;
+        this.taskNames = builder.taskNames == null ? null : ImmutableSet.copyOf( builder.taskNames );
     }
 
     public static Builder create()
@@ -17,35 +27,48 @@ public final class VacuumParameters
         return new Builder();
     }
 
-    public VacuumListener getVacuumProgressListener()
+    public VacuumListener getVacuumListener()
     {
-        return vacuumProgressListener;
+        return vacuumListener;
     }
 
-    public VacuumTaskListener getVacuumTaskListener()
+    public Duration getAgeThreshold()
     {
-        return vacuumTaskListener;
+        return ageThreshold;
+    }
+
+    public ImmutableSet<String> getTaskNames()
+    {
+        return taskNames;
     }
 
     public static final class Builder
     {
-        private VacuumListener vacuumProgressListener;
+        private VacuumListener vacuumListener;
 
-        private VacuumTaskListener vacuumTaskListener;
+        private Duration ageThreshold;
+
+        private Collection<String> taskNames;
 
         private Builder()
         {
         }
 
-        public Builder vacuumProgressListener( final VacuumListener vacuumProgressListener )
+        public Builder vacuumListener( final VacuumListener vacuumListener )
         {
-            this.vacuumProgressListener = vacuumProgressListener;
+            this.vacuumListener = vacuumListener;
             return this;
         }
 
-        public Builder vacuumTaskListener( final VacuumTaskListener vacuumTaskListener )
+        public Builder ageThreshold( final Duration ageThreshold )
         {
-            this.vacuumTaskListener = vacuumTaskListener;
+            this.ageThreshold = ageThreshold;
+            return this;
+        }
+
+        public Builder taskNames( final Collection<String> taskNames )
+        {
+            this.taskNames = taskNames;
             return this;
         }
 

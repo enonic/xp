@@ -16,16 +16,16 @@ import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 import com.enonic.xp.repo.impl.node.NodeHelper;
 import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
-import com.enonic.xp.repo.impl.vacuum.versiontable.VersionTableCleanupTask;
+import com.enonic.xp.repo.impl.vacuum.versiontable.VersionTableVacuumTask;
 import com.enonic.xp.vacuum.VacuumTaskResult;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class VersionTableCleanupTaskTest
+class VersionTableVacuumTaskTest
     extends AbstractNodeTest
 {
-    private VersionTableCleanupTask task;
+    private VersionTableVacuumTask task;
 
     // "0" makes more human sense, but clock is not monotonic.
     // Negative threshold queries versions timestamps in future, so nearly created nodes guaranteed to be found.
@@ -39,35 +39,34 @@ class VersionTableCleanupTaskTest
     {
         createDefaultRootNode();
 
-        this.task = new VersionTableCleanupTask();
+        this.task = new VersionTableVacuumTask();
         this.task.setNodeService( this.nodeService );
         this.task.setRepositoryService( this.repositoryService );
         this.task.setVersionService( this.versionService );
+        this.task.setBlobStore( this.blobStore );
     }
 
     @Test
     void delete_node_deletes_versions()
     {
         // Do enough updates to go over the default batch-size
-        final int updates = 1000;
+        final int updates = 1500;
+        final int expectedVersionCount = updates + 1;
 
         final Node node1 = createNode( NodePath.ROOT, "node1" );
         updateNode( node1.id(), updates );
         doDeleteNode( node1.id() );
 
-        int versionsCount = 1 + updates;
-
-        assertVersions( node1.id(), versionsCount );
+        assertVersions( node1.id(), expectedVersionCount );
 
         final VacuumTaskResult result = NodeHelper.runAsAdmin( () -> this.task.execute( VacuumTaskParams.create().
             ageThreshold( NEGATIVE_AGE_THRESHOLD_MILLIS ).
             build() ) );
         refresh();
 
-        assertAll( () -> assertEquals( versionsCount + SYSTEM_NODES_COUNT, result.getProcessed(), "All versions should be processed" ),
-                   () -> assertEquals( versionsCount, result.getDeleted(), "All version updates should be processed" ),
-                   () -> assertEquals( SYSTEM_NODES_COUNT, result.getInUse(), "Some versions are in use" ),
-                   () -> assertEquals( 0, result.getFailed(), "Some version cleanup failed" ) );
+        assertEquals( updates + 8, result.getProcessed() );
+        //Old version of CMS repository entry is also delete. Remove +1 when config to specify repository is implemented
+        assertEquals( expectedVersionCount + 1, result.getDeleted() );
 
         assertVersions( node1.id(), 0 );
     }
@@ -90,8 +89,9 @@ class VersionTableCleanupTaskTest
             build() ) );
         refresh();
 
-        assertEquals( SYSTEM_NODES_COUNT + 1, result.getProcessed() );
-        assertEquals( 1, result.getDeleted() );
+        assertEquals( 8, result.getProcessed() );
+        //Old version of CMS repository entry is also delete. Set to 1 when config to specify repository is implemented
+        assertEquals( 2, result.getDeleted() );
         assertVersions( node1.id(), 0 );
     }
 
@@ -112,8 +112,9 @@ class VersionTableCleanupTaskTest
             build() ) );
         refresh();
 
-        assertEquals( SYSTEM_NODES_COUNT + 1, result.getProcessed() );
-        assertEquals( 0, result.getDeleted() );
+        assertEquals( 8, result.getProcessed() );
+        //Old version of CMS repository entry is also delete. Set to 0 when config to specify repository is implemented
+        assertEquals( 1, result.getDeleted() );
 
         assertVersions( node1.id(), 1 );
     }

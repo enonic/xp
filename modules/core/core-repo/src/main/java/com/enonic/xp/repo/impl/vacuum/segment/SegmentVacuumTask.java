@@ -4,22 +4,25 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.blob.BlobStore;
+import com.enonic.xp.node.NodeService;
 import com.enonic.xp.repo.impl.vacuum.VacuumTask;
 import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.vacuum.VacuumTaskResult;
 
 @Component(immediate = true)
-public class SegmentCleanerTask
+public class SegmentVacuumTask
     implements VacuumTask
 {
     private static final int ORDER = 0;
 
-    private static final String NAME = "UnusedSegmentsCleaner";
+    private static final String NAME = "SegmentVacuumTask";
 
     private BlobStore blobStore;
 
     private RepositoryService repositoryService;
+
+    private NodeService nodeService;
 
     @Override
     public int order()
@@ -36,12 +39,18 @@ public class SegmentCleanerTask
     @Override
     public VacuumTaskResult execute( final VacuumTaskParams params )
     {
-        return SegmentCleanerCommand.create().
-            name( NAME ).
+        if (params.hasListener()) {
+            params.getListener().taskBegin( NAME, null );
+        }
+        return SegmentVacuumCommand.create().
             blobStore( blobStore ).
             repositoryService( repositoryService ).
+            nodeService( nodeService ).
+            params( params ).
             build().
-            execute( params );
+            execute().
+            taskName( NAME ).
+            build();
     }
 
     @Reference
@@ -54,5 +63,11 @@ public class SegmentCleanerTask
     public void setRepositoryService( final RepositoryService repositoryService )
     {
         this.repositoryService = repositoryService;
+    }
+
+    @Reference
+    public void setNodeService( final NodeService nodeService )
+    {
+        this.nodeService = nodeService;
     }
 }
