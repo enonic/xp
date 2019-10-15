@@ -1,10 +1,11 @@
 package com.enonic.xp.vacuum;
 
 import java.time.Duration;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 public class VacuumParameters
 {
@@ -12,13 +13,13 @@ public class VacuumParameters
 
     private final Duration ageThreshold;
 
-    private final Map<String, VacuumTaskConfig> taskConfigMap;
+    private final ImmutableSet<String> taskNames;
 
     private VacuumParameters( final Builder builder )
     {
         this.vacuumListener = builder.vacuumListener;
         this.ageThreshold = builder.ageThreshold == null ? null : builder.ageThreshold;
-        this.taskConfigMap = builder.taskConfigMap == null ? null : ImmutableMap.copyOf( builder.taskConfigMap );
+        this.taskNames = builder.taskNames == null ? null : ImmutableSet.copyOf( builder.taskNames );
     }
 
     public static Builder create()
@@ -36,19 +37,9 @@ public class VacuumParameters
         return ageThreshold;
     }
 
-    public Map<String, VacuumTaskConfig> getTaskConfigMap()
+    public ImmutableSet<String> getTaskNames()
     {
-        return taskConfigMap;
-    }
-
-    public VacuumTaskConfig getTaskConfig( final String taskName )
-    {
-        return taskConfigMap == null ? null : taskConfigMap.get( taskName );
-    }
-
-    public Set<String> getTaskNames()
-    {
-        return taskConfigMap == null ? null : taskConfigMap.keySet();
+        return taskNames;
     }
 
     public static final class Builder
@@ -57,7 +48,7 @@ public class VacuumParameters
 
         private Duration ageThreshold;
 
-        private Map<String, VacuumTaskConfig> taskConfigMap;
+        private Collection<String> taskNames;
 
         private Builder()
         {
@@ -75,9 +66,9 @@ public class VacuumParameters
             return this;
         }
 
-        public Builder taskConfigMap( final Map<String, VacuumTaskConfig> taskConfigs )
+        public Builder taskNames( final Collection<String> taskNames )
         {
-            this.taskConfigMap = taskConfigs;
+            this.taskNames = taskNames;
             return this;
         }
 

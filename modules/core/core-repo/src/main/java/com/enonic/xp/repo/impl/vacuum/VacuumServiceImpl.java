@@ -62,7 +62,6 @@ public class VacuumServiceImpl
             final VacuumTaskParams taskParams = VacuumTaskParams.create().
                 listener( params.getVacuumListener() ).
                 ageThreshold( getAgeThresholdMs( params ) ).
-                config( params.getTaskConfig( task.name() ) ).
                 build();
             final VacuumTaskResult taskResult = task.execute( taskParams );
 
@@ -101,7 +100,7 @@ public class VacuumServiceImpl
         {
             return ageThreshold.toMillis();
         }
-        return Duration.ofMinutes( config.threshold_ageMinutes() ).toMillis();
+        return Duration.ofMinutes( config.ageThresholdMinutes() ).toMillis();
     }
 
     @SuppressWarnings("WeakerAccess")

@@ -3,6 +3,7 @@ package com.enonic.xp.repo.impl.vacuum.versiontable;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.repo.impl.vacuum.VacuumTask;
 import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
@@ -24,6 +25,8 @@ public class VersionTableVacuumTask
 
     private VersionService versionService;
 
+    private BlobStore blobStore;
+
     @Override
     public VacuumTaskResult execute( final VacuumTaskParams params )
     {
@@ -34,6 +37,7 @@ public class VersionTableVacuumTask
             repositoryService( repositoryService ).
             nodeService( nodeService ).
             versionService( versionService ).
+            blobStore( blobStore ).
             params( params ).
             build().
             execute().
@@ -69,5 +73,11 @@ public class VersionTableVacuumTask
     public void setVersionService( final VersionService versionService )
     {
         this.versionService = versionService;
+    }
+
+    @Reference
+    public void setBlobStore( final BlobStore blobStore )
+    {
+        this.blobStore = blobStore;
     }
 }

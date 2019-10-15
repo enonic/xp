@@ -43,13 +43,14 @@ class VersionTableVacuumTaskTest
         this.task.setNodeService( this.nodeService );
         this.task.setRepositoryService( this.repositoryService );
         this.task.setVersionService( this.versionService );
+        this.task.setBlobStore( this.blobStore );
     }
 
     @Test
     void delete_node_deletes_versions()
     {
         // Do enough updates to go over the default batch-size
-        final int updates = 1000;
+        final int updates = 1500;
         final int expectedVersionCount = updates + 1;
 
         final Node node1 = createNode( NodePath.ROOT, "node1" );

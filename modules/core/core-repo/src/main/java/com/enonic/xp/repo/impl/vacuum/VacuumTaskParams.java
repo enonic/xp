@@ -47,7 +47,7 @@ public final class VacuumTaskParams
 
     public static final class Builder
     {
-        private long ageThreshold;
+        private long ageThreshold = Duration.ofDays( 21 ).toMillis();
 
         private VacuumListener listener;
 
