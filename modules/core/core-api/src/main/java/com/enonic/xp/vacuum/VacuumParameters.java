@@ -1,25 +1,25 @@
 package com.enonic.xp.vacuum;
 
+import java.time.Duration;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
-public final class VacuumParameters
+public class VacuumParameters
 {
-    private static final int DEFAULT_AGE_THRESHOLD = 60 * 60 * 1000; //1 hour
-
     private final VacuumListener vacuumListener;
 
-    private final long ageThreshold;
+    private final Duration ageThreshold;
 
-    private final Map<String, VacuumTaskConfig> taskConfigMap;
+    private final ImmutableSet<String> taskNames;
 
     private VacuumParameters( final Builder builder )
     {
         this.vacuumListener = builder.vacuumListener;
-        this.ageThreshold = builder.ageThreshold == null ? DEFAULT_AGE_THRESHOLD : builder.ageThreshold.longValue();
-        this.taskConfigMap = builder.taskConfigMap == null ? null : ImmutableMap.copyOf( builder.taskConfigMap );
+        this.ageThreshold = builder.ageThreshold == null ? null : builder.ageThreshold;
+        this.taskNames = builder.taskNames == null ? null : ImmutableSet.copyOf( builder.taskNames );
     }
 
     public static Builder create()
@@ -32,32 +32,23 @@ public final class VacuumParameters
         return vacuumListener;
     }
 
-    public long getAgeThreshold()
+    public Duration getAgeThreshold()
     {
         return ageThreshold;
     }
 
-    public Map<String, VacuumTaskConfig> getTaskConfigMap()
+    public ImmutableSet<String> getTaskNames()
     {
-        return taskConfigMap;
-    }
-
-    public VacuumTaskConfig getTaskConfig(final String taskName) {
-        return taskConfigMap == null ? null : taskConfigMap.get( taskName );
-    }
-
-    public Set<String> getTaskNames()
-    {
-        return taskConfigMap == null ? null : taskConfigMap.keySet();
+        return taskNames;
     }
 
     public static final class Builder
     {
         private VacuumListener vacuumListener;
 
-        private Long ageThreshold;
+        private Duration ageThreshold;
 
-        private Map<String, VacuumTaskConfig> taskConfigMap;
+        private Collection<String> taskNames;
 
         private Builder()
         {
@@ -69,15 +60,15 @@ public final class VacuumParameters
             return this;
         }
 
-        public Builder ageThreshold( final Long ageThreshold )
+        public Builder ageThreshold( final Duration ageThreshold )
         {
             this.ageThreshold = ageThreshold;
             return this;
         }
 
-        public Builder taskConfigMap( final Map<String, VacuumTaskConfig> taskConfigs )
+        public Builder taskNames( final Collection<String> taskNames )
         {
-            this.taskConfigMap = taskConfigs;
+            this.taskNames = taskNames;
             return this;
         }
 

@@ -8,8 +8,6 @@ import com.enonic.xp.vacuum.VacuumTaskConfig;
 
 public final class VacuumTaskParams
 {
-    private static final long DEFAULT_AGE_THRESHOLD = Duration.of( 1, ChronoUnit.HOURS ).toMillis();
-
     private final long ageThreshold;
 
     private final VacuumListener listener;
@@ -49,7 +47,7 @@ public final class VacuumTaskParams
 
     public static final class Builder
     {
-        private long ageThreshold = DEFAULT_AGE_THRESHOLD;
+        private long ageThreshold = Duration.ofDays( 21 ).toMillis();
 
         private VacuumListener listener;
 

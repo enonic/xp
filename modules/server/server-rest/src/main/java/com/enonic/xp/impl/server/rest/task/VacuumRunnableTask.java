@@ -1,5 +1,7 @@
 package com.enonic.xp.impl.server.rest.task;
 
+import java.time.Duration;
+
 import com.enonic.xp.impl.server.rest.model.VacuumRequestJson;
 import com.enonic.xp.impl.server.rest.model.VacuumResultJson;
 import com.enonic.xp.impl.server.rest.task.listener.VacuumListenerImpl;
@@ -34,8 +36,8 @@ public class VacuumRunnableTask
     {
         final VacuumParameters vacuumParams = VacuumParameters.create().
             vacuumListener( new VacuumListenerImpl( progressReporter ) ).
-            ageThreshold( params.getAgeThreshold() ).
-            taskConfigMap( params.getTaskConfigMap() ).
+            ageThreshold( params.getAgeThreshold() == null ? null : Duration.ofMinutes( params.getAgeThreshold() ) ).
+            taskNames( params.getTasks() ).
             build();
 
         final VacuumResult result = this.vacuumService.vacuum( vacuumParams );

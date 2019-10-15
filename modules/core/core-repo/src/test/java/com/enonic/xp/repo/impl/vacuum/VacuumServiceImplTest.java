@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl.vacuum;
 
+import java.lang.annotation.Annotation;
+
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.repo.impl.node.NodeHelper;
@@ -18,6 +20,7 @@ public class VacuumServiceImplTest
     {
 
         final VacuumServiceImpl service = new VacuumServiceImpl();
+        service.activate( new TestVacuumConfig() );
 
         service.addTask( new VacuumTask()
         {

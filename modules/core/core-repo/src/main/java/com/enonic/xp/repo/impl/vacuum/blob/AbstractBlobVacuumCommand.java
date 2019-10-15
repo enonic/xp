@@ -13,12 +13,8 @@ import com.enonic.xp.blob.Segment;
 import com.enonic.xp.blob.SegmentLevel;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.NodeVersionQuery;
-import com.enonic.xp.node.NodeVersionQueryResult;
-import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
@@ -52,19 +48,6 @@ public abstract class AbstractBlobVacuumCommand
             filter( segment -> RepositorySegmentUtils.hasBlobTypeLevel( segment, getBlobTypeSegmentLevel() ) ).
             forEach( this::processBinarySegment );
         return result;
-    }
-
-    protected NodeVersionQuery createQuery( final BlobKey blobKey )
-    {
-        final ValueFilter mustHaveBinaryBlobKey = ValueFilter.create().
-            fieldName( getFieldIndexPath().getPath() ).
-            addValue( ValueFactory.newString( blobKey.toString() ) ).
-            build();
-
-        return NodeVersionQuery.create().
-            size( 0 ).
-            addQueryFilter( mustHaveBinaryBlobKey ).
-            build();
     }
 
     protected abstract SegmentLevel getBlobTypeSegmentLevel();
@@ -102,7 +85,7 @@ public abstract class AbstractBlobVacuumCommand
             {
                 if ( LOG.isDebugEnabled() )
                 {
-                    LOG.debug( "No version found in branch for " + getFieldIndexPath().toString() + " [" + blobKey + "]" );
+                    LOG.debug( "No version found for " + getFieldIndexPath().toString() + " [" + blobKey + "]" );
                 }
                 result.deleted();
                 return true;
@@ -130,9 +113,11 @@ public abstract class AbstractBlobVacuumCommand
 
     private boolean isUsedByVersion( final BlobKey blobKey )
     {
-        final NodeVersionQuery query = createQuery( blobKey );
-        final NodeVersionQueryResult versions = nodeService.findVersions( query );
-        return versions.getTotalHits() > 0;
+        return IsBlobUsedByVersionCommand.create().nodeService( nodeService ).
+            fieldPath( getFieldIndexPath() ).
+            blobKey( blobKey ).
+            build().
+            execute();
     }
 
     public static class Builder<B extends Builder>
