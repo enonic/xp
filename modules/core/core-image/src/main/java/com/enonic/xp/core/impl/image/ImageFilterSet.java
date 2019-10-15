@@ -15,7 +15,7 @@ public final class ImageFilterSet
 
     public ImageFilterSet()
     {
-        this.list = new ArrayList<ImageFilter>();
+        this.list = new ArrayList<>();
     }
 
     public void addFilter( ImageFilter filter )

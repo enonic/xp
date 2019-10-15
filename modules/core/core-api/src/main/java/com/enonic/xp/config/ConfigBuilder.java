@@ -2,6 +2,7 @@ package com.enonic.xp.config;
 
 import java.util.Collections;
 import java.util.Dictionary;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -13,7 +14,7 @@ public final class ConfigBuilder
 
     private ConfigBuilder()
     {
-        this.map = Maps.newHashMap();
+        this.map = new HashMap<>();
     }
 
     public ConfigBuilder add( final String key, final Object value )

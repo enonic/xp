@@ -1,9 +1,9 @@
 package com.enonic.xp.admin.impl.rest.resource.content.json;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.admin.impl.json.content.ContentIdJson;
 import com.enonic.xp.content.Content;
@@ -25,7 +25,7 @@ public class ContentIdQueryResultJson
     public static class Builder
         extends AbstractContentQueryResultJson.Builder<Builder>
     {
-        private Set<ContentIdJson> contents = Sets.newLinkedHashSet();
+        private Set<ContentIdJson> contents = new LinkedHashSet<>();
 
         @Override
         public Builder addContent( final Content content )

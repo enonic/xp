@@ -1,5 +1,6 @@
 package com.enonic.xp.node;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -83,7 +84,7 @@ public class NodeIds
 
     public static class Builder
     {
-        private final List<NodeId> nodeIds = Lists.newArrayList();
+        private final List<NodeId> nodeIds = new ArrayList<>();
 
         public Builder add( final NodeId nodeId )
         {

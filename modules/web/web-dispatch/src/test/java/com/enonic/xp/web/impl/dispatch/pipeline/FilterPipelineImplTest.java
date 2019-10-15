@@ -1,6 +1,7 @@
 package com.enonic.xp.web.impl.dispatch.pipeline;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -14,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.web.dispatch.FilterMapping;
 import com.enonic.xp.web.impl.dispatch.mapping.FilterDefinition;
@@ -69,9 +69,9 @@ public class FilterPipelineImplTest
         final MyFilter filter = new MyFilter();
 
         assertEquals( 0, Lists.newArrayList( this.pipeline ).size() );
-        this.pipeline.addFilter( filter, new MyServiceReference<Filter>() );
+        this.pipeline.addFilter( filter, new MyServiceReference<>() );
 
-        this.pipeline.activate( Maps.newHashMap() );
+        this.pipeline.activate( new HashMap<>() );
 
         assertEquals( 1, Lists.newArrayList( this.pipeline ).size() );
         this.pipeline.removeFilter( filter );
@@ -85,7 +85,7 @@ public class FilterPipelineImplTest
         assertEquals( 0, Lists.newArrayList( this.pipeline ).size() );
         this.pipeline.addMapping( mapping );
 
-        this.pipeline.activate( Maps.newHashMap() );
+        this.pipeline.activate( new HashMap<>() );
 
         assertEquals( 1, Lists.newArrayList( this.pipeline ).size() );
         this.pipeline.removeMapping( mapping );

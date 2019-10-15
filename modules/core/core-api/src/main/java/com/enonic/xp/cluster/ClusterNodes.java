@@ -1,9 +1,9 @@
 package com.enonic.xp.cluster;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
@@ -22,7 +22,7 @@ public class ClusterNodes
 
     public static class Builder
     {
-        private final List<ClusterNode> nodes = Lists.newArrayList();
+        private final List<ClusterNode> nodes = new ArrayList<>();
 
         public Builder add( final ClusterNode node )
         {

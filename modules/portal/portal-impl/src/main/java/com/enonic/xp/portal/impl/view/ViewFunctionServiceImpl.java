@@ -1,13 +1,12 @@
 package com.enonic.xp.portal.impl.view;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
-
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.portal.view.ViewFunction;
 import com.enonic.xp.portal.view.ViewFunctionParams;
@@ -21,7 +20,7 @@ public final class ViewFunctionServiceImpl
 
     public ViewFunctionServiceImpl()
     {
-        this.functions = Maps.newHashMap();
+        this.functions = new HashMap<>();
     }
 
     private ViewFunction getFunction( final String name )

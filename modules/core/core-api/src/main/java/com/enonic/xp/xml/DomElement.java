@@ -1,5 +1,6 @@
 package com.enonic.xp.xml;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -14,7 +15,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.convert.Converters;
 
@@ -57,7 +57,7 @@ public final class DomElement
     private List<DomElement> getChildren( final Predicate<Element> filter )
     {
         final NodeList list = this.elem.getChildNodes();
-        final List<DomElement> result = Lists.newArrayList();
+        final List<DomElement> result = new ArrayList<>();
 
         for ( int i = 0; i < list.getLength(); i++ )
         {
@@ -90,7 +90,7 @@ public final class DomElement
 
     public List<Attr> getAttributes()
     {
-        final List<Attr> result = Lists.newArrayList();
+        final List<Attr> result = new ArrayList<>();
         final NamedNodeMap map = this.elem.getAttributes();
 
         for ( int i = 0; i < map.getLength(); i++ )

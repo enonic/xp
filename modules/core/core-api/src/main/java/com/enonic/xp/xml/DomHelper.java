@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -26,7 +27,6 @@ import org.w3c.dom.ls.LSSerializer;
 import org.xml.sax.InputSource;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.Lists;
 
 @Beta
 public final class DomHelper
@@ -143,7 +143,7 @@ public final class DomHelper
     public static List<Node> getChildNodes( final Node node )
     {
         final NodeList list = node.getChildNodes();
-        final List<Node> result = Lists.newArrayList();
+        final List<Node> result = new ArrayList<>();
 
         for ( int i = 0; i < list.getLength(); i++ )
         {
@@ -157,7 +157,7 @@ public final class DomHelper
     public static List<Element> getChildElements( final Element elem )
     {
         final NodeList list = elem.getChildNodes();
-        final List<Element> result = Lists.newArrayList();
+        final List<Element> result = new ArrayList<>();
 
         for ( int i = 0; i < list.getLength(); i++ )
         {

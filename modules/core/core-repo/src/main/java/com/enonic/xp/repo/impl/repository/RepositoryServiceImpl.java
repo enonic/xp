@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.repository;
 
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.osgi.service.component.annotations.Activate;
@@ -10,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
@@ -51,7 +51,7 @@ public class RepositoryServiceImpl
 {
     private static final Logger LOG = LoggerFactory.getLogger( RepositoryServiceImpl.class );
 
-    private final ConcurrentMap<RepositoryId, Repository> repositoryMap = Maps.newConcurrentMap();
+    private final ConcurrentMap<RepositoryId, Repository> repositoryMap = new ConcurrentHashMap<>();
 
     private RepositoryEntryService repositoryEntryService;
 

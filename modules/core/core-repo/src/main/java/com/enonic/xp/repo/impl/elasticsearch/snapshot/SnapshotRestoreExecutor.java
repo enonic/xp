@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch.snapshot;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -10,8 +11,6 @@ import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotR
 import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.cluster.ClusterManager;
 import com.enonic.xp.node.RestoreResult;
@@ -59,7 +58,7 @@ public class SnapshotRestoreExecutor
             builder.failed( true );
         }
 
-        final List<String> indices = Lists.newArrayList();
+        final List<String> indices = new ArrayList<>();
         indices.addAll( tempResults.getIndices() );
         indices.addAll( result.getIndices() );
 

@@ -2,10 +2,9 @@ package com.enonic.xp.web.vhost.impl.mapping;
 
 import java.util.Iterator;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
-
-import com.google.common.collect.Sets;
 
 public final class VirtualHostMappings
     implements Iterable<VirtualHostMapping>
@@ -14,7 +13,7 @@ public final class VirtualHostMappings
 
     public VirtualHostMappings()
     {
-        this.set = Sets.newTreeSet();
+        this.set = new TreeSet<>();
     }
 
     public void add( final VirtualHostMapping mapping )

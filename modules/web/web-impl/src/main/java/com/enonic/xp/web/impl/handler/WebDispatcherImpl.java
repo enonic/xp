@@ -1,11 +1,13 @@
 package com.enonic.xp.web.impl.handler;
 
+import java.util.Comparator;
 import java.util.Iterator;
-import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Component;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
@@ -16,30 +18,22 @@ import com.enonic.xp.web.servlet.ServletRequestHolder;
 public final class WebDispatcherImpl
     implements WebDispatcher
 {
-    private final List<WebHandler> webHandlerList = Lists.newCopyOnWriteArrayList();
+    private final AtomicReference<ImmutableList<WebHandler>> webHandlerListRef = new AtomicReference<>( ImmutableList.of() );
 
     @Override
-    public synchronized void add( final WebHandler webHandler )
+    public void add( final WebHandler webHandler )
     {
-        this.webHandlerList.add( webHandler );
-        sortWebHandlerList();
+        webHandlerListRef.updateAndGet( oldWebHandlers -> Stream.concat( oldWebHandlers.stream(), Stream.of( webHandler ) ).
+            sorted( Comparator.comparingInt( WebHandler::getOrder ) ).
+            collect( ImmutableList.toImmutableList() ) );
     }
 
     @Override
-    public synchronized void remove( final WebHandler webHandler )
+    public void remove( final WebHandler webHandler )
     {
-        this.webHandlerList.remove( webHandler );
-        sortWebHandlerList();
-    }
-
-    private void sortWebHandlerList()
-    {
-        this.webHandlerList.sort( this::compare );
-    }
-
-    private int compare( final WebHandler webHandler1, final WebHandler webHandler2 )
-    {
-        return webHandler1.getOrder() - webHandler2.getOrder();
+        webHandlerListRef.updateAndGet( oldWebHandlers -> oldWebHandlers.stream().filter( w -> w != webHandler ).
+            sorted( Comparator.comparingInt( WebHandler::getOrder ) ).
+            collect( ImmutableList.toImmutableList() ) );
     }
 
     @Override
@@ -47,12 +41,12 @@ public final class WebDispatcherImpl
         throws Exception
     {
         ServletRequestHolder.setRequest( req.getRawRequest() );
-        return new WebHandlerChainImpl( this.webHandlerList ).handle( req, res );
+        return new WebHandlerChainImpl( this.webHandlerListRef.get() ).handle( req, res );
     }
 
     @Override
     public Iterator<WebHandler> iterator()
     {
-        return this.webHandlerList.iterator();
+        return this.webHandlerListRef.get().iterator();
     }
 }

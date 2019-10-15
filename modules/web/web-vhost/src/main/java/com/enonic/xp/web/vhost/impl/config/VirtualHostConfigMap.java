@@ -1,5 +1,6 @@
 package com.enonic.xp.web.vhost.impl.config;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -7,7 +8,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostIdProvidersMapping;
@@ -110,7 +110,7 @@ final class VirtualHostConfigMap
 
     private Iterable<String> findMappingNames()
     {
-        final Set<String> result = Sets.newHashSet();
+        final Set<String> result = new HashSet<>();
 
         for ( final String key : this.map.keySet() )
         {

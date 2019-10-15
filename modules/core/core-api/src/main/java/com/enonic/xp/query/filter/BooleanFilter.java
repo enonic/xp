@@ -1,11 +1,11 @@
 package com.enonic.xp.query.filter;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 @Beta
 public class BooleanFilter
@@ -59,11 +59,11 @@ public class BooleanFilter
     public static class Builder
         extends Filter.Builder<Builder>
     {
-        Set<Filter> must = Sets.newHashSet();
+        Set<Filter> must = new HashSet<>();
 
-        Set<Filter> mustNot = Sets.newHashSet();
+        Set<Filter> mustNot = new HashSet<>();
 
-        Set<Filter> should = Sets.newHashSet();
+        Set<Filter> should = new HashSet<>();
 
         public Builder must( final Filter filter )
         {

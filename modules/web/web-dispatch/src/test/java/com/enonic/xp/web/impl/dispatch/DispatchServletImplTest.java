@@ -29,8 +29,8 @@ public class DispatchServletImplTest
         this.servletPipeline = Mockito.mock( ServletPipeline.class );
 
         this.servlet = new DispatchServletImpl();
-        this.servlet.addFilterPipeline( this.filterPipeline, new MyServiceReference<FilterPipeline>() );
-        this.servlet.addServletPipeline( this.servletPipeline, new MyServiceReference<ServletPipeline>() );
+        this.servlet.addFilterPipeline( this.filterPipeline, new MyServiceReference<>() );
+        this.servlet.addServletPipeline( this.servletPipeline, new MyServiceReference<>() );
     }
 
     @Test

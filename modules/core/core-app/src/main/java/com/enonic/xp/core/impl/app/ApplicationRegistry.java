@@ -1,7 +1,9 @@
 package com.enonic.xp.core.impl.app;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.osgi.framework.Bundle;
@@ -10,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationInvalidator;
@@ -32,7 +33,7 @@ final class ApplicationRegistry
 
     public ApplicationRegistry()
     {
-        this.applications = Maps.newConcurrentMap();
+        this.applications = new ConcurrentHashMap<>();
         this.factory = new ApplicationFactory( RunMode.get() );
         this.invalidators = Lists.newCopyOnWriteArrayList();
     }
@@ -49,7 +50,7 @@ final class ApplicationRegistry
 
     private ApplicationKeys findApplicationKeys()
     {
-        final List<ApplicationKey> list = Lists.newArrayList();
+        final List<ApplicationKey> list = new ArrayList<>();
         for ( final Bundle bundle : this.context.getBundles() )
         {
             if ( isApplication( bundle ) )
@@ -85,7 +86,7 @@ final class ApplicationRegistry
 
     public Collection<Application> getAll()
     {
-        final List<Application> list = Lists.newArrayList();
+        final List<Application> list = new ArrayList<>();
 
         for ( final ApplicationKey key : findApplicationKeys() )
         {

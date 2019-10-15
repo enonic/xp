@@ -1,6 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.issue;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -128,7 +129,7 @@ public class IssueNotificationParamsFactoryTest
             build().
             updatedParams();
 
-        assertEquals( Lists.newArrayList(), params.getApprovers() );
+        assertEquals( new ArrayList<>(), params.getApprovers() );
         assertEquals( User.ANONYMOUS, params.getModifier() );
         assertEquals( 0, params.getIcons().size() );
 

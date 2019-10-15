@@ -202,10 +202,10 @@ public class ContentTypeTest
     @Test
     public void getContentTypesParams()
     {
-        List<ContentTypeName> list = new ArrayList<ContentTypeName>()
+        List<ContentTypeName> list = new ArrayList<>()
         {{
-                add( ContentTypeName.audioMedia() );
-            }};
+            add( ContentTypeName.audioMedia() );
+        }};
         GetContentTypesParams params1 = new GetContentTypesParams();
         params1.contentTypeNames( ContentTypeNames.create().add( ContentTypeName.archiveMedia() ).addAll( list ).build() );
         GetContentTypesParams params2 = new GetContentTypesParams();

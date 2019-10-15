@@ -37,8 +37,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Resources;
@@ -53,6 +51,7 @@ import com.enonic.xp.admin.impl.json.content.ContentPermissionsJson;
 import com.enonic.xp.admin.impl.json.content.ContentSummaryJson;
 import com.enonic.xp.admin.impl.json.content.ContentSummaryListJson;
 import com.enonic.xp.admin.impl.json.content.ContentTreeSelectorListJson;
+import com.enonic.xp.admin.impl.json.content.ContentVersionJson;
 import com.enonic.xp.admin.impl.json.content.ContentsExistByPathJson;
 import com.enonic.xp.admin.impl.json.content.ContentsExistJson;
 import com.enonic.xp.admin.impl.json.content.DependenciesAggregationJson;
@@ -96,6 +95,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.ReorderChildJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ReorderChildrenJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ResolvePublishContentResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ResolvePublishDependenciesJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.RevertContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.SetActiveVersionJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.SetChildOrderJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.UndoPendingDeleteContentJson;
@@ -111,7 +111,9 @@ import com.enonic.xp.admin.impl.rest.resource.content.task.PublishRunnableTask;
 import com.enonic.xp.admin.impl.rest.resource.content.task.UnpublishRunnableTask;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
+import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.AttachmentNames;
+import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.branch.Branches;
@@ -134,6 +136,8 @@ import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.ContentValidityParams;
 import com.enonic.xp.content.ContentValidityResult;
+import com.enonic.xp.content.ContentVersion;
+import com.enonic.xp.content.ContentVersionId;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.content.FindContentByParentParams;
@@ -183,12 +187,14 @@ import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.task.TaskResultJson;
 import com.enonic.xp.task.TaskService;
+import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.Exceptions;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
 
 import static java.lang.Math.toIntExact;
+import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
 import static org.apache.commons.lang.StringUtils.isBlank;
 
@@ -489,7 +495,7 @@ public final class ContentResource
     @Path("getDependencies")
     public GetDependenciesResultJson getDependencies( final ContentIdsJson params )
     {
-        final Map<String, DependenciesJson> result = Maps.newHashMap();
+        final Map<String, DependenciesJson> result = new HashMap<>();
 
         params.getContentIds().forEach( ( id -> {
             final ContentDependencies dependencies = contentService.getDependencies( id );
@@ -1388,7 +1394,7 @@ public final class ContentResource
             accessPrincipals.put( access, principals );
         }
 
-        final List<EffectivePermissionJson> permissionsJson = Lists.newArrayList();
+        final List<EffectivePermissionJson> permissionsJson = new ArrayList<>();
         for ( Access access : Access.values() )
         {
             final EffectivePermissionAccessJson accessJson = new EffectivePermissionAccessJson();
@@ -1415,6 +1421,125 @@ public final class ContentResource
 
         final FindContentIdsByParentResult result = this.contentService.findIdsByParent( params );
         return result.getContentIds().stream().map( contentId -> new ContentIdJson( contentId ) ).collect( Collectors.toList() );
+    }
+
+    @POST
+    @Path("revert")
+    public ContentVersionJson revert( final RevertContentJson params )
+    {
+        final ContentVersionId contentVersionId = ContentVersionId.from( params.getVersionId() );
+
+        final Content versionedContent =
+            params.getContentKey().startsWith( "/" )
+                ? contentService.getByPathAndVersionId( ContentPath.from( params.getContentKey() ), contentVersionId )
+                : contentService.getByIdAndVersionId( ContentId.from( params.getContentKey() ), contentVersionId );
+
+        if ( versionedContent == null )
+        {
+            throw JaxRsExceptions.notFound( "Content with contentKey [%s] and versionId [%s] not found", params.getContentKey(),
+                                            params.getVersionId() );
+        }
+
+        final Content revertedContent = contentService.update( prepareUpdateContentParams( versionedContent, contentVersionId ) );
+
+        final ContentVersion contentVersion = contentService.getActiveVersion( GetActiveContentVersionsParams.create().
+            branches( Branches.from( ContentConstants.BRANCH_DRAFT ) ).
+            contentId( revertedContent.getId() ).
+            build() );
+
+        if ( contentVersion != null )
+        {
+            return new ContentVersionJson( contentVersion, principalsResolver );
+        }
+
+        return null;
+    }
+
+
+    private UpdateContentParams prepareUpdateContentParams( final Content versionedContent, final ContentVersionId contentVersionId )
+    {
+        final UpdateContentParams updateParams = new UpdateContentParams().
+            contentId( versionedContent.getId() ).
+            editor( edit -> {
+                edit.data = versionedContent.getData();
+                edit.extraDatas = versionedContent.getAllExtraData();
+                edit.displayName = versionedContent.getDisplayName();
+                edit.owner = versionedContent.getOwner();
+                edit.language = versionedContent.getLanguage();
+                edit.workflowInfo = WorkflowInfo.inProgress();
+            } );
+
+        updateAttachments( versionedContent, contentVersionId, updateParams );
+
+        return updateParams;
+    }
+
+    private void updateAttachments( final Content versionedContent, final ContentVersionId contentVersionId,
+                                    final UpdateContentParams updateParams )
+    {
+        final Content content = contentService.getById( versionedContent.getId() );
+
+        final List<BinaryReference> sourceAttachments =
+            ofNullable( content.getAttachments() ).orElse( Attachments.empty() ).stream().map( Attachment::getBinaryReference ).collect(
+                Collectors.toList() );
+
+        final List<BinaryReference> targetAttachments =
+            ofNullable( versionedContent.getAttachments() ).orElse( Attachments.empty() ).stream().map(
+                Attachment::getBinaryReference ).collect( Collectors.toList() );
+
+        List<BinaryReference> difference;
+        if ( sourceAttachments.size() > targetAttachments.size() )
+        {
+            difference = sourceAttachments.stream().filter( ref -> !targetAttachments.contains( ref ) ).collect( Collectors.toList() );
+        }
+        else
+        {
+            difference = targetAttachments.stream().filter( ref -> !sourceAttachments.contains( ref ) ).collect( Collectors.toList() );
+        }
+
+        if ( !difference.isEmpty() )
+        {
+            updateParams.clearAttachments( true );
+            updateParams.createAttachments(
+                createAttachments( versionedContent.getId(), contentVersionId, versionedContent.getAttachments() ) );
+        }
+    }
+
+    private CreateAttachments createAttachments( final ContentId contentId, final ContentVersionId contentVersionId,
+                                                 final Attachments attachments )
+    {
+        final CreateAttachments.Builder createBuilder = CreateAttachments.create();
+
+        attachments.forEach( attachment -> {
+            final CreateAttachment createAttachment = createAttachment( contentId, contentVersionId, attachment );
+
+            if ( createAttachment != null )
+            {
+                createBuilder.add( createAttachment );
+            }
+        } );
+
+        final CreateAttachments createAttachments = createBuilder.build();
+
+        return createAttachments.isNotEmpty() ? createAttachments : null;
+    }
+
+    private CreateAttachment createAttachment( final ContentId contentId, final ContentVersionId contentVersionId,
+                                               final Attachment sourceAttachment )
+    {
+        final ByteSource sourceBinary = contentService.getBinary( contentId, contentVersionId, sourceAttachment.getBinaryReference() );
+
+        if ( sourceBinary != null )
+        {
+            return CreateAttachment.create().
+                name( sourceAttachment.getName() ).
+                mimeType( sourceAttachment.getMimeType() ).
+                byteSource( sourceBinary ).
+                text( sourceAttachment.getTextContent() ).
+                build();
+        }
+
+        return null;
     }
 
     private Content doCreateAttachment( final String attachmentName, final MultipartForm form )

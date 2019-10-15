@@ -1,8 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.content.task;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.content.ContentPath;
 
@@ -79,13 +78,13 @@ public class MoveRunnableTaskResult
     public static class Builder
         extends RunnableTaskResult.Builder<Builder>
     {
-        private List<ContentPath> alreadyMoved = Lists.newArrayList();
+        private List<ContentPath> alreadyMoved = new ArrayList<>();
 
-        private List<ContentPath> existsFailed = Lists.newArrayList();
+        private List<ContentPath> existsFailed = new ArrayList<>();
 
-        private List<ContentPath> notExistsFailed = Lists.newArrayList();
+        private List<ContentPath> notExistsFailed = new ArrayList<>();
 
-        private List<ContentPath> accessFailed = Lists.newArrayList();
+        private List<ContentPath> accessFailed = new ArrayList<>();
 
         private ContentPath destination;
 

@@ -1,5 +1,6 @@
 package com.enonic.xp.lib.node;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -26,7 +27,7 @@ public class NodeKeys
 
     public static NodeKeys empty()
     {
-        return new NodeKeys( Lists.newArrayList() );
+        return new NodeKeys( new ArrayList<>() );
     }
 
     public int size()

@@ -1,10 +1,10 @@
 package com.enonic.xp.node;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
@@ -25,7 +25,7 @@ public class SnapshotResults
 
     public static class Builder
     {
-        private final Set<SnapshotResult> snapshotResults = Sets.newLinkedHashSet();
+        private final Set<SnapshotResult> snapshotResults = new LinkedHashSet<>();
 
 
         public Builder add( final SnapshotResult snapshotResult )

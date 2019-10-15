@@ -1,9 +1,9 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.Contents;
@@ -41,7 +41,7 @@ final class GetContentByIdsCommand
 
     private NodeIds getAsNodeIds( final ContentIds contentIds )
     {
-        final List<NodeId> nodeIds = Lists.newArrayList();
+        final List<NodeId> nodeIds = new ArrayList<>();
 
         contentIds.forEach( contentId -> nodeIds.add( NodeId.from( contentId.toString() ) ) );
 

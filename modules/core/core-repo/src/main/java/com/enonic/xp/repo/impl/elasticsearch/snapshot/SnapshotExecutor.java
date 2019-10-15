@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch.snapshot;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -7,8 +8,6 @@ import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotAct
 import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotRequestBuilder;
 import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotResponse;
 import org.elasticsearch.common.settings.Settings;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.node.SnapshotResult;
 import com.enonic.xp.repository.RepositoryId;
@@ -43,7 +42,7 @@ public class SnapshotExecutor
 
     private SnapshotResult doSnapshotRepositories( final RepositoryIds repoIds )
     {
-        final List<String> indexNames = Lists.newArrayList();
+        final List<String> indexNames = new ArrayList<>();
 
         repoIds.forEach( ( repoId ) -> indexNames.addAll( getIndexNames( repoId ) ) );
 

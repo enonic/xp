@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
@@ -7,8 +8,6 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
@@ -1591,7 +1590,7 @@ public class ResolveSyncWorkCommandTest
     private static class ExpectedNodes
         implements Iterable<ExpectedNode>
     {
-        final Set<ExpectedNode> nodes = Sets.newHashSet();
+        final Set<ExpectedNode> nodes = new HashSet<>();
 
         public static ExpectedNodes create()
         {

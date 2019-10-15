@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Maps;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.NodeVersionKey;
@@ -86,7 +85,7 @@ class NodeServiceMock
 
     private final MockNodeTree<NodePath> nodeTree = new MockNodeTree<>( NodePath.ROOT );
 
-    private final Map<BinaryReference, ByteSource> blobStore = Maps.newHashMap();
+    private final Map<BinaryReference, ByteSource> blobStore = new HashMap<>();
 
     public NodeServiceMock()
     {

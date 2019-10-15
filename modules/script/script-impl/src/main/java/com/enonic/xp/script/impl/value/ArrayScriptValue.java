@@ -1,8 +1,7 @@
 package com.enonic.xp.script.impl.value;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 import jdk.nashorn.api.scripting.JSObject;
 
@@ -30,7 +29,7 @@ final class ArrayScriptValue
     @Override
     public List<ScriptValue> getArray()
     {
-        final List<ScriptValue> result = Lists.newArrayList();
+        final List<ScriptValue> result = new ArrayList<>();
         for ( final Object item : this.value.values() )
         {
             final ScriptValue wrapped = this.factory.newValue( item );
@@ -46,7 +45,7 @@ final class ArrayScriptValue
     @Override
     public <T> List<T> getArray( final Class<T> type )
     {
-        final List<T> result = Lists.newArrayList();
+        final List<T> result = new ArrayList<>();
         for ( final ScriptValue item : getArray() )
         {
             final T converted = item.getValue( type );
@@ -62,7 +61,7 @@ final class ArrayScriptValue
     @Override
     public List<Object> getList()
     {
-        final List<Object> result = Lists.newArrayList();
+        final List<Object> result = new ArrayList<>();
         for ( final Object val : this.value.values() )
         {
             final ScriptValue item = this.factory.newValue( val );

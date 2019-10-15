@@ -1,5 +1,6 @@
 package com.enonic.xp.repository;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -83,7 +84,7 @@ public final class RepositoryIds
 
     public static class Builder
     {
-        private List<RepositoryId> repositories = Lists.newArrayList();
+        private List<RepositoryId> repositories = new ArrayList<>();
 
         public Builder add( final RepositoryId repositoryId )
         {

@@ -1,9 +1,9 @@
 package com.enonic.xp.suggester;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 public abstract class Suggestion<ENTRY extends SuggestionEntry>
 {
@@ -31,7 +31,7 @@ public abstract class Suggestion<ENTRY extends SuggestionEntry>
     {
         private final String name;
 
-        private final List<ENTRY> suggestionEntries = Lists.newArrayList();
+        private final List<ENTRY> suggestionEntries = new ArrayList<>();
 
         public Builder( final String name )
         {

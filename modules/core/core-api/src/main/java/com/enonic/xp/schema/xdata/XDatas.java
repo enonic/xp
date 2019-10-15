@@ -1,5 +1,6 @@
 package com.enonic.xp.schema.xdata;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -10,7 +11,6 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.schema.BaseSchema;
@@ -40,7 +40,7 @@ public final class XDatas
 
     private XDatas add( final ImmutableList<XData> xDatas )
     {
-        final List<XData> tmp = Lists.newArrayList();
+        final List<XData> tmp = new ArrayList<>();
         tmp.addAll( this.list );
         tmp.addAll( xDatas );
 

@@ -5,11 +5,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.Maps;
-
 public final class ContentTypeFromMimeTypeResolver
 {
-    private final static Map<String, ContentTypeName> MAP = Maps.newHashMap();
+    private final static Map<String, ContentTypeName> MAP = new HashMap<>();
 
     static
     {

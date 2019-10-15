@@ -1,11 +1,11 @@
 package com.enonic.xp.config;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -19,7 +19,7 @@ public class ConfigurationTest
     @Test
     public void testEmpty()
     {
-        final Map<String, String> source = Maps.newHashMap();
+        final Map<String, String> source = new HashMap<>();
         final Configuration config = ConfigurationImpl.create( source );
 
         assertNotNull( config );

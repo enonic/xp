@@ -1,10 +1,9 @@
 package com.enonic.xp.lib.content;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentQuery;
@@ -148,7 +147,7 @@ public final class QueryContentHandler
 
     private List<Map<String, Object>> doSetFilters( final ScriptValue filters )
     {
-        List<Map<String, Object>> filterList = Lists.newArrayList();
+        List<Map<String, Object>> filterList = new ArrayList<>();
 
         if ( filters == null )
         {

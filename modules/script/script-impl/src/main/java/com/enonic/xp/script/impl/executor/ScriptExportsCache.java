@@ -1,8 +1,7 @@
 package com.enonic.xp.script.impl.executor;
 
 import java.util.Map;
-
-import com.google.common.collect.Maps;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
@@ -13,7 +12,7 @@ final class ScriptExportsCache
 
     ScriptExportsCache()
     {
-        this.cache = Maps.newConcurrentMap();
+        this.cache = new ConcurrentHashMap<>();
     }
 
     public Object get( final ResourceKey key )

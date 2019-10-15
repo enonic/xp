@@ -5,6 +5,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -14,7 +15,6 @@ import javax.mail.internet.InternetAddress;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.text.StrSubstitutor;
 
-import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
 
 import com.enonic.xp.content.CompareStatus;
@@ -81,7 +81,7 @@ public abstract class IssueMailMessageGenerator<P extends IssueNotificationParam
 
     private String generateMessageBody()
     {
-        final Map messageParams = Maps.newHashMap();
+        final Map messageParams = new HashMap<>();
         final int itemCount = params.getIssue().getPublishRequest().getItems().getSize();
         final int commentsCount = params.getComments().size();
         final String description = params.getIssue().getDescription();
@@ -139,7 +139,7 @@ public abstract class IssueMailMessageGenerator<P extends IssueNotificationParam
 
     private String generateCommentHtml( final IssueComment item, final String template, final DateTimeFormatter fmt )
     {
-        final Map itemParams = Maps.newHashMap();
+        final Map itemParams = new HashMap<>();
         itemParams.put( "displayName", item.getCreatorDisplayName() );
         itemParams.put( "shortName", makeShortName( item.getCreatorDisplayName() ) );
         itemParams.put( "icon", item.getCreator() );
@@ -171,7 +171,7 @@ public abstract class IssueMailMessageGenerator<P extends IssueNotificationParam
         final CompareStatus status = params.getCompareResults().getCompareContentResultsMap().get( item.getId() ).getCompareStatus();
         final boolean isOnline = status.equals( CompareStatus.EQUAL );
 
-        final Map itemParams = Maps.newHashMap();
+        final Map itemParams = new HashMap<>();
         itemParams.put( "displayName", item.getDisplayName() );
         itemParams.put( "path", item.getPath() );
         itemParams.put( "icon", getIcon( item.getId() ) );
@@ -211,7 +211,7 @@ public abstract class IssueMailMessageGenerator<P extends IssueNotificationParam
 
     private String generateAppoverHtml( final User approver, final String template )
     {
-        final Map params = Maps.newHashMap();
+        final Map params = new HashMap<>();
         params.put( "approver", makeShortName( approver.getDisplayName() ) );
         params.put( "displayName", approver.getDisplayName() );
 

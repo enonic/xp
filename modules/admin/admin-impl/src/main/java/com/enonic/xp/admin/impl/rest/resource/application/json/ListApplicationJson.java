@@ -1,8 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.application.json;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 public final class ListApplicationJson
 {
@@ -10,7 +9,7 @@ public final class ListApplicationJson
 
     public ListApplicationJson()
     {
-        this.list = Lists.newArrayList();
+        this.list = new ArrayList<>();
     }
 
     public void add( final ApplicationJson applicationJson )

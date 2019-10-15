@@ -20,6 +20,7 @@ import com.google.common.io.ByteSource;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.content.ActiveContentVersionEntry;
 import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.ApplyContentPermissionsResult;
@@ -29,6 +30,7 @@ import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareContentsParams;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentDependencies;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
@@ -40,6 +42,7 @@ import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.ContentValidityParams;
 import com.enonic.xp.content.ContentValidityResult;
+import com.enonic.xp.content.ContentVersion;
 import com.enonic.xp.content.ContentVersionId;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.CreateContentParams;
@@ -971,6 +974,17 @@ public class ContentServiceImpl
     }
 
     @Override
+    public ContentVersion getActiveVersion( final GetActiveContentVersionsParams params )
+    {
+        final GetActiveContentVersionsResult activeVersions = getActiveVersions( params );
+
+        final ActiveContentVersionEntry activeVersion = activeVersions.getActiveContentVersions().stream().filter(
+            contentVersion -> ContentConstants.BRANCH_DRAFT.equals( contentVersion.getBranch() ) ).findFirst().orElse( null );
+
+        return activeVersion != null ? activeVersion.getContentVersion() : null;
+    }
+
+    @Override
     public SetActiveContentVersionResult setActiveContentVersion( final ContentId contentId, final ContentVersionId versionId )
     {
         contentAuditLogSupport.setActiveContentVersion( contentId, versionId );
@@ -1112,6 +1126,18 @@ public class ContentServiceImpl
     public ByteSource getBinary( final ContentId contentId, final BinaryReference binaryReference )
     {
         return GetBinaryCommand.create( contentId, binaryReference ).
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            translator( this.translator ).
+            eventPublisher( this.eventPublisher ).
+            build().
+            execute();
+    }
+
+    @Override
+    public ByteSource getBinary( final ContentId contentId, final ContentVersionId contentVersionId, final BinaryReference binaryReference )
+    {
+        return GetBinaryByVersionCommand.create( contentId, contentVersionId, binaryReference ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).

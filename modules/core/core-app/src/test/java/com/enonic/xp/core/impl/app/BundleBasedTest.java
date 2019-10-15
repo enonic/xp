@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.felix.framework.Felix;
@@ -15,8 +16,6 @@ import org.ops4j.pax.tinybundles.core.TinyBundles;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
-
-import com.google.common.collect.Maps;
 
 public abstract class BundleBasedTest
 {
@@ -33,7 +32,7 @@ public abstract class BundleBasedTest
     {
         final File cacheDir = Files.createDirectory(this.temporaryFolder.resolve( "cache" ) ).toFile();
 
-        final Map<String, Object> config = Maps.newHashMap();
+        final Map<String, Object> config = new HashMap<>();
         config.put( Constants.FRAMEWORK_STORAGE, cacheDir.getAbsolutePath() );
         config.put( Constants.FRAMEWORK_STORAGE_CLEAN, Constants.FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT );
 

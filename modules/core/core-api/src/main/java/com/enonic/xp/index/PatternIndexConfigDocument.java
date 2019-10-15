@@ -10,8 +10,6 @@ import org.apache.commons.lang.StringUtils;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSortedSet;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.util.GlobPatternMatcher;
@@ -127,9 +125,9 @@ public class PatternIndexConfigDocument
     public static final class Builder
         extends AbstractIndexConfigDocument.Builder<Builder>
     {
-        private SortedSet<PathIndexConfig> pathIndexConfigs = Sets.newTreeSet();
+        private SortedSet<PathIndexConfig> pathIndexConfigs = new TreeSet<>();
 
-        private Map<String, PathIndexConfig> stringPathIndexConfigMap = Maps.newHashMap();
+        private Map<String, PathIndexConfig> stringPathIndexConfigMap = new HashMap<>();
 
         private IndexConfig defaultConfig = IndexConfig.BY_TYPE;
 

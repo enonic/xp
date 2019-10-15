@@ -1,11 +1,10 @@
 package com.enonic.xp.cluster.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.cluster.ClusterHealth;
 import com.enonic.xp.cluster.ClusterId;
@@ -176,7 +175,7 @@ public class ClusterManagerImplTest
     private void createManager( final String... required )
         throws Exception
     {
-        List<ClusterId> requiredIds = Lists.newArrayList();
+        List<ClusterId> requiredIds = new ArrayList<>();
 
         for ( final String req : required )
         {

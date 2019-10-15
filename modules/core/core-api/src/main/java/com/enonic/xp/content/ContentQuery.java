@@ -1,11 +1,11 @@
 package com.enonic.xp.content;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.query.aggregation.AggregationQueries;
 import com.enonic.xp.query.aggregation.AggregationQuery;
@@ -106,7 +106,7 @@ public class ContentQuery
 
         private int size = DEFAULT_FETCH_SIZE;
 
-        private Set<AggregationQuery> aggregationQueries = Sets.newHashSet();
+        private Set<AggregationQuery> aggregationQueries = new HashSet<>();
 
         private Filters.Builder queryFilters = Filters.create();
 

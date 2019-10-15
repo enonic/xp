@@ -1,12 +1,12 @@
 package com.enonic.xp.repo.impl.dump;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
@@ -24,9 +24,9 @@ class TestDumpWriter
 
     private RepoBranchEntry current;
 
-    private final Set<String> binaries = Sets.newHashSet();
+    private final Set<String> binaries = new HashSet<>();
 
-    private final Set<NodeVersionKey> nodeVersionKeys = Sets.newHashSet();
+    private final Set<NodeVersionKey> nodeVersionKeys = new HashSet<>();
 
     private DumpMeta dumpMeta;
 

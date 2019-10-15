@@ -1,5 +1,6 @@
 package com.enonic.xp.content;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -83,7 +84,7 @@ public final class ContentIds
 
     public static class Builder
     {
-        private List<ContentId> contents = Lists.newArrayList();
+        private List<ContentId> contents = new ArrayList<>();
 
         public Builder add( final ContentId contentId )
         {

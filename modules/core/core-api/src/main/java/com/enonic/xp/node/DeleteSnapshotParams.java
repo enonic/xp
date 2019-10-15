@@ -2,10 +2,10 @@ package com.enonic.xp.node;
 
 import java.time.Instant;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.Sets;
 
 @Beta
 public class DeleteSnapshotParams
@@ -37,7 +37,7 @@ public class DeleteSnapshotParams
 
     public static final class Builder
     {
-        private final Set<String> snapshotNames = Sets.newHashSet();
+        private final Set<String> snapshotNames = new HashSet<>();
 
         private Instant before;
 

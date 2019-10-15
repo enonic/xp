@@ -1,9 +1,9 @@
 package com.enonic.xp.context;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.session.Session;
 
@@ -16,7 +16,7 @@ final class LocalScopeImpl
 
     LocalScopeImpl()
     {
-        this.attributes = Maps.newHashMap();
+        this.attributes = new HashMap<>();
     }
 
     @Override

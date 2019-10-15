@@ -1,10 +1,9 @@
 package com.enonic.xp.node;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-
-import com.google.common.collect.Sets;
 
 public class ResolveSyncWorkResult
     implements Iterable<NodeComparison>
@@ -25,7 +24,7 @@ public class ResolveSyncWorkResult
 
     public static ResolveSyncWorkResult empty()
     {
-        return new ResolveSyncWorkResult( Sets.newHashSet() );
+        return new ResolveSyncWorkResult( new HashSet<>() );
     }
 
     public static Builder create()

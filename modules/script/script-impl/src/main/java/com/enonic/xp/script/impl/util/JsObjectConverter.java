@@ -1,11 +1,11 @@
 package com.enonic.xp.script.impl.util;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 
@@ -101,7 +101,7 @@ public final class JsObjectConverter
 
     private List<Object> toList( final ScriptObjectMirror source )
     {
-        final List<Object> result = Lists.newArrayList();
+        final List<Object> result = new ArrayList<>();
         for ( final Object item : source.values() )
         {
             final Object converted = toObject( item );
@@ -121,12 +121,12 @@ public final class JsObjectConverter
             return toMap( (ScriptObjectMirror) source );
         }
 
-        return Maps.newHashMap();
+        return new HashMap<>();
     }
 
     private Map<String, Object> toMap( final ScriptObjectMirror source )
     {
-        final Map<String, Object> result = Maps.newLinkedHashMap();
+        final Map<String, Object> result = new LinkedHashMap<>();
         for ( final Map.Entry<String, Object> entry : source.entrySet() )
         {
             final Object converted = toObject( entry.getValue() );

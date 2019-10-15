@@ -1,9 +1,8 @@
 package com.enonic.xp.admin.impl.rest.resource.content.task;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
@@ -46,7 +45,7 @@ public class DeleteRunnableTaskResult
     public static class Builder
         extends RunnableTaskResult.Builder<Builder>
     {
-        private List<ContentPath> pending = Lists.newArrayList();
+        private List<ContentPath> pending = new ArrayList<>();
 
         private Builder()
         {

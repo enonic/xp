@@ -1,9 +1,9 @@
 package com.enonic.xp.xml.parser;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.inputtype.InputTypeName;
 
@@ -18,7 +18,7 @@ final class InputTypeAliasConverters
 
     private InputTypeAliasConverters()
     {
-        this.map = Maps.newConcurrentMap();
+        this.map = new ConcurrentHashMap<>();
         this.map.put( InputTypeName.CONTENT_SELECTOR, ContentSelectorAliasConverter.INSTANCE );
         this.map.put( InputTypeName.IMAGE_SELECTOR, ContentSelectorAliasConverter.INSTANCE );
         this.map.put( InputTypeName.MEDIA_SELECTOR, ContentSelectorAliasConverter.INSTANCE );

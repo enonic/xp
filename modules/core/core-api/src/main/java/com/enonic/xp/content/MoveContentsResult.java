@@ -1,9 +1,9 @@
 package com.enonic.xp.content;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.Lists;
 
 @Beta
 public class MoveContentsResult
@@ -35,7 +35,7 @@ public class MoveContentsResult
 
     public static final class Builder
     {
-        private List<ContentId> movedContents = Lists.newArrayList();
+        private List<ContentId> movedContents = new ArrayList<>();
 
         private String contentName;
 

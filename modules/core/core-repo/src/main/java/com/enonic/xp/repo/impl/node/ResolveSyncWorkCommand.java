@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -9,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
@@ -61,7 +61,7 @@ public class ResolveSyncWorkCommand
         this.target = builder.target;
         this.includeChildren = builder.includeChildren;
         this.result = ResolveSyncWorkResult.create();
-        this.processedIds = Sets.newHashSet();
+        this.processedIds = new HashSet<>();
         this.excludedIds = builder.excludedIds;
         this.includeDependencies = builder.includeDependencies;
         this.initialDiffFilter = builder.initialDiffFilter;

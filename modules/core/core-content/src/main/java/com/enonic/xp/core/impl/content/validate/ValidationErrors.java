@@ -1,11 +1,11 @@
 package com.enonic.xp.core.impl.content.validate;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Sets;
 
 @Beta
 public final class ValidationErrors
@@ -90,7 +90,7 @@ public final class ValidationErrors
 
     public static class Builder
     {
-        private final Set<ValidationError> dataValidationErrors = Sets.newHashSet();
+        private final Set<ValidationError> dataValidationErrors = new HashSet<>();
 
         public Builder add( final ValidationError dataValidationError )
         {

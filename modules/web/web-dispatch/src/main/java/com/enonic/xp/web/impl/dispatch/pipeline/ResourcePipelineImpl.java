@@ -1,5 +1,6 @@
 package com.enonic.xp.web.impl.dispatch.pipeline;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +12,6 @@ import javax.servlet.ServletException;
 import org.osgi.framework.ServiceReference;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.impl.dispatch.mapping.ResourceDefinition;
@@ -31,7 +31,7 @@ public abstract class ResourcePipelineImpl<T extends ResourceDefinition<?>>
 
     ResourcePipelineImpl()
     {
-        this.map = Maps.newHashMap();
+        this.map = new HashMap<>();
         this.list = Lists.newCopyOnWriteArrayList();
         this.resourceQueue = Lists.newCopyOnWriteArrayList();
     }

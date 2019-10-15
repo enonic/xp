@@ -1,10 +1,10 @@
 package com.enonic.xp.aggregation;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 @Beta
 public abstract class Aggregation
@@ -44,7 +44,7 @@ public abstract class Aggregation
 
         private final String name;
 
-        private final Set<Aggregation> subAggregations = Sets.newHashSet();
+        private final Set<Aggregation> subAggregations = new HashSet<>();
 
         @SuppressWarnings("unchecked")
         public T addSubAggregation( final Aggregation aggregation )

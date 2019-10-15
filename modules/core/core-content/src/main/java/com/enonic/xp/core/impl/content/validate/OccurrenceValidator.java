@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.stream.StreamSupport;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
@@ -26,7 +25,7 @@ public final class OccurrenceValidator
 
     private final Form form;
 
-    private final List<ValidationError> validationErrors = Lists.newArrayList();
+    private final List<ValidationError> validationErrors = new ArrayList<>();
 
     public OccurrenceValidator( final Form form )
     {
@@ -44,7 +43,7 @@ public final class OccurrenceValidator
 
     private void validate( final Form form, final PropertySet dataSet )
     {
-        final List<PropertySet> parentDataSets = Lists.newArrayList();
+        final List<PropertySet> parentDataSets = new ArrayList<>();
         parentDataSets.add( dataSet );
         validate( form, parentDataSets );
     }
@@ -111,7 +110,7 @@ public final class OccurrenceValidator
                 if ( ( hasSelectionArray && optionIsSelected( option, selectedItems ) ) ||
                     ( !hasSelectionArray && option.isDefaultOption() ) )
                 {
-                    final List<PropertySet> optionDataSets = Lists.newArrayList();
+                    final List<PropertySet> optionDataSets = new ArrayList<>();
                     optionDataSets.add( optionSetOccurrencePropertySet.getSet( option.getName() ) );
                     validate( option.getFormItems(), optionDataSets );
                 }

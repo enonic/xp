@@ -3,14 +3,13 @@ package com.enonic.xp.portal.impl.websocket;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.websocket.CloseReason;
 import javax.websocket.Endpoint;
 import javax.websocket.EndpointConfig;
 import javax.websocket.MessageHandler;
 import javax.websocket.Session;
-
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
@@ -38,7 +37,7 @@ final class WebSocketEntryImpl
 
     WebSocketEntryImpl( final WebSocketEndpoint endpoint, final WebSocketRegistry registry )
     {
-        this.groups = Sets.newConcurrentHashSet();
+        this.groups = ConcurrentHashMap.newKeySet();
         this.endpoint = endpoint;
         this.registry = registry;
 

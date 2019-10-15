@@ -15,7 +15,6 @@ import org.mockito.Mockito;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationService;
@@ -506,7 +505,7 @@ public class DumpServiceImplTest
 
     private TreeSet<Instant> getOrderedTimestamps( final NodeVersionQueryResult result )
     {
-        TreeSet<Instant> timestamps = Sets.newTreeSet();
+        TreeSet<Instant> timestamps = new TreeSet<>();
         result.getNodeVersionsMetadata().forEach( version -> timestamps.add( version.getTimestamp() ) );
         return timestamps;
     }
