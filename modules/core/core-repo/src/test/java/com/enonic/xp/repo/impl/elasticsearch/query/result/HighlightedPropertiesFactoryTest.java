@@ -3,7 +3,7 @@ package com.enonic.xp.repo.impl.elasticsearch.query.result;
 import java.util.Map;
 
 import org.elasticsearch.common.text.Text;
-import org.elasticsearch.search.highlight.HighlightField;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.highlight.HighlightedProperties;

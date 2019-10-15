@@ -1,11 +1,13 @@
 package com.enonic.xp.repo.impl.elasticsearch.snapshot;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Collection;
 import java.util.List;
 
-import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotAction;
-import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotRequestBuilder;
+import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotRequest;
 import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotResponse;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.common.settings.Settings;
 
 import com.google.common.collect.Lists;
@@ -52,20 +54,25 @@ public class SnapshotExecutor
 
     private SnapshotResult executeSnapshotCommand( final Collection<String> indices )
     {
-        final CreateSnapshotRequestBuilder createRequest =
-            new CreateSnapshotRequestBuilder( this.client.admin().cluster(), CreateSnapshotAction.INSTANCE ).
-                setIndices( indices.toArray( new String[indices.size()] ) ).
-                setIncludeGlobalState( false ).
-                setWaitForCompletion( true ).
-                setRepository( this.snapshotRepositoryName ).
-                setSnapshot( snapshotName ).
-                setSettings( Settings.builder().
-                    put( "ignore_unavailable", true ) );
+        final CreateSnapshotRequest request = new CreateSnapshotRequest().
+            indices( indices.toArray( new String[indices.size()] ) ).
+            includeGlobalState( false ).
+            waitForCompletion( true ).
+            repository( this.snapshotRepositoryName ).
+            snapshot( snapshotName ).
+            settings( Settings.builder().
+                put( "ignore_unavailable", true ) );
 
-        final CreateSnapshotResponse createSnapshotResponse =
-            this.client.admin().cluster().createSnapshot( createRequest.request() ).actionGet();
+        try
+        {
+            final CreateSnapshotResponse response = client.snapshot().create( request, RequestOptions.DEFAULT );
 
-        return SnapshotResultFactory.create( createSnapshotResponse );
+            return SnapshotResultFactory.create( response );
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
     }
 
     public static Builder create()

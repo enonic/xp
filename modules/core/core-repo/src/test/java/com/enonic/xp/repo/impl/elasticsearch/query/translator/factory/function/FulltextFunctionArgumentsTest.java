@@ -2,7 +2,7 @@ package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.function;
 
 import java.util.List;
 
-import org.elasticsearch.index.query.SimpleQueryStringBuilder;
+import org.elasticsearch.index.query.Operator;
 import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
@@ -25,7 +25,7 @@ public class FulltextFunctionArgumentsTest
 
         assertEquals( "myField", functionArguments.getWeightedQueryFieldName().iterator().next().getBaseFieldName() );
         assertEquals( "SearchString", functionArguments.getSearchString() );
-        assertEquals( SimpleQueryStringBuilder.Operator.AND, functionArguments.getOperator() );
+        assertEquals( Operator.AND, functionArguments.getOperator() );
     }
 
     @Test
@@ -37,7 +37,7 @@ public class FulltextFunctionArgumentsTest
 
         assertEquals( "myField", functionArguments.getWeightedQueryFieldName().iterator().next().getBaseFieldName() );
         assertEquals( "SearchString", functionArguments.getSearchString() );
-        assertEquals( SimpleQueryStringBuilder.Operator.OR, functionArguments.getOperator() );
+        assertEquals( Operator.OR, functionArguments.getOperator() );
         assertEquals( NodeConstants.DEFAULT_FULLTEXT_SEARCH_ANALYZER, functionArguments.getAnalyzer() );
     }
 
@@ -63,7 +63,7 @@ public class FulltextFunctionArgumentsTest
 
         assertEquals( "myField", functionArguments.getWeightedQueryFieldName().iterator().next().getBaseFieldName() );
         assertEquals( "SearchString", functionArguments.getSearchString() );
-        assertEquals( SimpleQueryStringBuilder.Operator.OR, functionArguments.getOperator() );
+        assertEquals( Operator.OR, functionArguments.getOperator() );
         assertEquals( "myAnalyzer", functionArguments.getAnalyzer() );
     }
 

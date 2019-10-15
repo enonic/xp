@@ -1,13 +1,15 @@
 package com.enonic.xp.repo.impl.elasticsearch.snapshot;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotAction;
-import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotRequestBuilder;
+import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotRequest;
 import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotResponse;
+import org.elasticsearch.client.RequestOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -147,17 +149,22 @@ public class SnapshotRestoreExecutor
 
     private RestoreSnapshotResponse executeRestoreRequest( final Set<String> indices )
     {
-        final RestoreSnapshotResponse response;
-        final RestoreSnapshotRequestBuilder restoreSnapshotRequestBuilder =
-            new RestoreSnapshotRequestBuilder( this.client.admin().cluster(), RestoreSnapshotAction.INSTANCE ).
-                setRestoreGlobalState( false ).
-                setIndices( indices.toArray( new String[indices.size()] ) ).
-                setRepository( this.snapshotRepositoryName ).
-                setSnapshot( this.snapshotName ).
-                setWaitForCompletion( true );
+        final RestoreSnapshotRequest request = new RestoreSnapshotRequest().
+            includeGlobalState( false ).
+            indices( indices.toArray( new String[indices.size()] ) ).
+            repository( snapshotRepositoryName ).
+            snapshot( snapshotName ).
+            waitForCompletion( true );
 
-        response = this.client.admin().cluster().restoreSnapshot( restoreSnapshotRequestBuilder.request() ).actionGet();
-        return response;
+        try
+        {
+            final RestoreSnapshotResponse response = client.snapshot().restore( request, RequestOptions.DEFAULT );
+            return response;
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
     }
 
     public static Builder create()
