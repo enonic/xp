@@ -128,17 +128,17 @@ public class ProjectServiceImpl
     }
 
     @Override
-    public Boolean delete( ProjectName projectName )
+    public boolean delete( ProjectName projectName )
     {
         return callWithContext( () -> {
-            final Boolean result = doDelete( projectName );
+            final boolean result = doDelete( projectName );
             LOG.info( "Project deleted: " + projectName );
 
             return result;
         } );
     }
 
-    private Boolean doDelete( final ProjectName projectName )
+    private boolean doDelete( final ProjectName projectName )
     {
         final DeleteRepositoryParams params = DeleteRepositoryParams.from( projectName.getRepoId() );
         final RepositoryId deletedRepositoryId = this.repositoryService.deleteRepository( params );

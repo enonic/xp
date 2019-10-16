@@ -50,7 +50,7 @@ public final class ProjectResource
 
     @POST
     @Path("delete")
-    public Boolean delete( final DeleteProjectParamsJson params )
+    public boolean delete( final DeleteProjectParamsJson params )
     {
         return this.projectService.delete( params.getName() );
     }
