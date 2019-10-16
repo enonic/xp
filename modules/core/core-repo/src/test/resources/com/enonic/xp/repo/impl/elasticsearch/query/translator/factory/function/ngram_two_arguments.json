@@ -1,10 +1,17 @@
 {
   "simple_query_string": {
-    "query": "Her er teksten min",
+    "query": "Herertekstenmin",
     "fields": [
-      "fiskebolle._ngram"
+      "fiskebolle._ngram^1.0"
     ],
     "analyzer": "ngram_search_default",
-    "default_operator": "or"
+    "flags": -1,
+    "default_operator": "or",
+    "analyze_wildcard": false,
+    "auto_generate_synonyms_phrase_query": true,
+    "fuzzy_prefix_length": 0,
+    "fuzzy_max_expansions": 50,
+    "fuzzy_transpositions": true,
+    "boost": 1.0
   }
 }

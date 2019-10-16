@@ -3,6 +3,7 @@
     "myfield._number": [
       1.0,
       2.0
-    ]
+    ],
+    "boost":1.0
   }
 }

@@ -45,7 +45,7 @@ public class DeleteNodeByIdCommandTest_error_handling
             build() );
         refresh();
 
-        this.storageDao.setClient( new FailDeleteOnIdsProxy( client, NodeIds.from( createdNode.id() ) ) );
+//        this.storageDao.setClient( new FailDeleteOnIdsProxy( client, NodeIds.from( createdNode.id() ) ) );
 
         assertThrows(NodeStorageException.class, () -> doDeleteNode( createdNode.id() ));
     }
@@ -62,7 +62,7 @@ public class DeleteNodeByIdCommandTest_error_handling
 
         refresh();
 
-        this.storageDao.setClient( new FailDeleteOnIdsProxy( client, NodeIds.from( n1_1.id() ) ) );
+//        this.storageDao.setClient( new FailDeleteOnIdsProxy( client, NodeIds.from( n1_1.id() ) ) );
 
         try
         {

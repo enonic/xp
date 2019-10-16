@@ -2,6 +2,7 @@
   "term": {
     "myfield._number": {
       "value": 1.0,
+      "boost": 1.0,
       "_name": "myfield._number"
     }
   }

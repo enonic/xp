@@ -1,9 +1,16 @@
 {
   "bool": {
-    "must_not": {
-      "wildcard": {
-        "myfield": "myvalue"
+    "must_not": [
+      {
+        "wildcard": {
+          "myfield": {
+            "wildcard": "myvalue",
+            "boost": 1.0
+          }
+        }
       }
-    }
+    ],
+    "adjust_pure_negative": true,
+    "boost": 1.0
   }
 }
