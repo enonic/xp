@@ -2,13 +2,11 @@ package com.enonic.xp.admin.impl.rest.resource.project.json;
 
 import java.util.Objects;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.admin.impl.json.content.attachment.AttachmentJson;
 import com.enonic.xp.project.Project;
 
-@Beta
 public final class ProjectJson
 {
     private final String name;

@@ -1,6 +1,6 @@
 package com.enonic.xp.admin.impl.rest.resource.content;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.container.ResourceInfo;
@@ -19,15 +19,15 @@ import com.enonic.xp.jaxrs.JaxRsComponent;
 public final class CmsResourceDynamicFeature
     implements DynamicFeature, JaxRsComponent
 {
-    private final List<Class<? extends JaxRsComponent>> SUPPORTED_RESOURCES =
-        List.of( ContentResource.class, XDataResource.class, PageTemplateResource.class, ContentImageResource.class,
-                 ContentIconResource.class, ContentMediaResource.class, PageResource.class, FragmentResource.class,
-                 ContentTypeResource.class );
+    private final Set<Class<? extends JaxRsComponent>> supportedResources =
+        Set.of( ContentResource.class, XDataResource.class, PageTemplateResource.class, ContentImageResource.class,
+                ContentIconResource.class, ContentMediaResource.class, PageResource.class, FragmentResource.class,
+                ContentTypeResource.class );
 
     @Override
     public void configure( final ResourceInfo resourceInfo, final FeatureContext context )
     {
-        if ( SUPPORTED_RESOURCES.contains( resourceInfo.getResourceClass() ) )
+        if ( supportedResources.contains( resourceInfo.getResourceClass() ) )
         {
             context.register( new CmsResourceFilter() );
         }

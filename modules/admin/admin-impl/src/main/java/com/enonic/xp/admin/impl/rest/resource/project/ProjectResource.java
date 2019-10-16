@@ -13,7 +13,6 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.project.json.DeleteProjectParamsJson;
-import com.enonic.xp.admin.impl.rest.resource.project.json.DeleteProjectResultJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.ProjectJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.ProjectParamsJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.ProjectsJson;
@@ -51,10 +50,9 @@ public final class ProjectResource
 
     @POST
     @Path("delete")
-    public DeleteProjectResultJson delete( final DeleteProjectParamsJson params )
+    public Boolean delete( final DeleteProjectParamsJson params )
     {
-        final ProjectName result = this.projectService.delete( params.getName() );
-        return new DeleteProjectResultJson( result );
+        return this.projectService.delete( params.getName() );
     }
 
     @GET

@@ -1,5 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.project;
 
+import java.util.List;
+
 import javax.ws.rs.core.MediaType;
 
 import org.junit.jupiter.api.Test;
@@ -67,7 +69,7 @@ public class ProjectResourceTest
         final Project project2 = createProject( "project2", "project2", null, null );
         final Project project3 = createProject( "project3", null, null, null );
 
-        Mockito.when( projectService.list() ).thenReturn( Projects.create().addAll( project1, project2, project3 ).build() );
+        Mockito.when( projectService.list() ).thenReturn( Projects.create().addAll( List.of( project1, project2, project3 ) ).build() );
 
         String jsonString = request().path( "project/list" ).get().getAsString();
 
@@ -131,7 +133,7 @@ public class ProjectResourceTest
     public void delete_project()
         throws Exception
     {
-        Mockito.when( projectService.delete( ProjectName.from( "project1" ) ) ).thenReturn( ProjectName.from( "project1" ) );
+        Mockito.when( projectService.delete( ProjectName.from( "project1" ) ) ).thenReturn( true );
 
         final String jsonString = request().
             path( "project/delete" ).
@@ -139,7 +141,7 @@ public class ProjectResourceTest
             post().
             getAsString();
 
-        assertEquals( "{\"name\":\"project1\"}", jsonString );
+        assertEquals( "true", jsonString );
     }
 
     private Project createProject( final String name, final String displayName, final String description, final Attachment icon )

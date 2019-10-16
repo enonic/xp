@@ -2,7 +2,6 @@ package com.enonic.xp.admin.impl.rest.resource.project.json;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.annotations.Beta;
 
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.project.CreateProjectParams;
@@ -12,7 +11,6 @@ import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
 
-@Beta
 public final class ProjectParamsJson
 {
     private final ProjectName name;

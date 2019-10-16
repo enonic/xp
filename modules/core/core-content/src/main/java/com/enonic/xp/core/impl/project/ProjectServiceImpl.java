@@ -128,22 +128,22 @@ public class ProjectServiceImpl
     }
 
     @Override
-    public ProjectName delete( ProjectName projectName )
+    public Boolean delete( ProjectName projectName )
     {
         return callWithContext( () -> {
-            final ProjectName result = doDelete( projectName );
+            final Boolean result = doDelete( projectName );
             LOG.info( "Project deleted: " + projectName );
 
             return result;
         } );
     }
 
-    private ProjectName doDelete( final ProjectName projectName )
+    private Boolean doDelete( final ProjectName projectName )
     {
         final DeleteRepositoryParams params = DeleteRepositoryParams.from( projectName.getRepoId() );
         final RepositoryId deletedRepositoryId = this.repositoryService.deleteRepository( params );
 
-        return deletedRepositoryId != null ? ProjectName.from( deletedRepositoryId ) : null;
+        return deletedRepositoryId != null;
     }
 
     private PropertyTree createProjectData( final String displayName, final String description, final CreateAttachment icon )
@@ -178,11 +178,6 @@ public class ProjectServiceImpl
     private <T> T callWithContext( Callable<T> runnable )
     {
         return context().callWith( runnable );
-    }
-
-    private <T> void runWithContext( Runnable runnable )
-    {
-        context().runWith( runnable );
     }
 
     private Context context()
