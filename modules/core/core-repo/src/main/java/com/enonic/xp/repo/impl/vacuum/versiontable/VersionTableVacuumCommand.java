@@ -153,7 +153,7 @@ public class VersionTableVacuumCommand
 
     private boolean isBlobKeyUsed( final BlobKey blobKey, final IndexPath fieldPath )
     {
-        return !IsBlobUsedByVersionCommand.create().
+        return IsBlobUsedByVersionCommand.create().
             nodeService( nodeService ).
             fieldPath( fieldPath ).
             blobKey( blobKey ).

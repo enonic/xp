@@ -113,7 +113,8 @@ public abstract class AbstractBlobVacuumCommand
 
     private boolean isUsedByVersion( final BlobKey blobKey )
     {
-        return IsBlobUsedByVersionCommand.create().nodeService( nodeService ).
+        return IsBlobUsedByVersionCommand.create().
+            nodeService( nodeService ).
             fieldPath( getFieldIndexPath() ).
             blobKey( blobKey ).
             build().
