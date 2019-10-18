@@ -3,9 +3,7 @@ dependencies {
     compile 'org.osgi:osgi.core:7.0.0'
     compile 'org.osgi:osgi.cmpn:7.0.0'
     compile "org.apache.felix:org.apache.felix.framework:${felixVersion}"
-    compile( 'org.apache.felix:org.apache.felix.utils:1.11.0' ) {
-        transitive = false
-    }
+    compile 'org.apache.felix:org.apache.felix.utils:1.11.2'
     compile 'commons-io:commons-io:2.4'
     compile 'ch.qos.logback:logback-classic:1.2.3'
     compile 'org.slf4j:jul-to-slf4j:1.7.25'
