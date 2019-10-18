@@ -9,7 +9,6 @@ import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
-import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.action.admin.indices.open.OpenIndexRequest;
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
 import org.elasticsearch.action.admin.indices.settings.get.GetSettingsRequest;
@@ -29,6 +28,7 @@ import org.elasticsearch.client.indices.CreateIndexResponse;
 import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.client.indices.GetMappingsRequest;
 import org.elasticsearch.client.indices.GetMappingsResponse;
+import org.elasticsearch.client.indices.PutMappingRequest;
 import org.elasticsearch.cluster.metadata.MappingMetaData;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
 import org.elasticsearch.common.settings.Settings;
@@ -285,11 +285,9 @@ public class IndexServiceInternalImpl
         final String indexName = request.getIndexName();
         LOG.info( "Apply mapping for index {}", indexName );
 
-        // TODO ES: Should be used org.elasticsearch.client.indices.PutMappingRequest
         final PutMappingRequest mappingRequest = new PutMappingRequest( indexName ).
-            type( request.getIndexType().isDynamicTypes() ? ES_DEFAULT_INDEX_TYPE_NAME : request.getIndexType().getName() ).
-            source( request.getMapping().getAsString() ).
-            timeout( APPLY_MAPPING_TIMEOUT );
+            source( request.getMapping().getAsString(), XContentType.JSON );
+        mappingRequest.setTimeout( TimeValue.timeValueSeconds( 5 ) );
 
         try
         {

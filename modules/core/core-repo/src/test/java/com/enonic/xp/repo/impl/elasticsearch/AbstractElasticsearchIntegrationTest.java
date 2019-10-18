@@ -6,6 +6,7 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import org.apache.http.HttpHost;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
 import org.elasticsearch.action.admin.indices.refresh.RefreshResponse;
@@ -14,6 +15,7 @@ import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
@@ -47,7 +49,7 @@ public abstract class AbstractElasticsearchIntegrationTest
 
     protected File getSnapshotsDir()
     {
-        return ElasticsearchFixture.server.getSnapshotsDir();
+        return ElasticsearchFixture.snapshotsDir;
     }
 
     protected void printAllIndexContent( final String indexName, final String indexType )
@@ -76,7 +78,7 @@ public abstract class AbstractElasticsearchIntegrationTest
 
     public static void waitForClusterHealth()
     {
-        ElasticsearchFixture.elasticsearchIndexService.getClusterHealth( "10s" );
+        ElasticsearchFixture.indexService.getClusterHealth( "10s" );
     }
 
     protected static RefreshResponse refresh()
@@ -117,23 +119,47 @@ public abstract class AbstractElasticsearchIntegrationTest
         implements ExtensionContext.Store.CloseableResource
     {
 
-        static IndexServiceInternalImpl elasticsearchIndexService;
+        static final String ROOT_DATA_DIRECTORY = "elasticsearch-data";
 
-        static EmbeddedElasticsearchServer server;
+        static IndexServiceInternalImpl indexService;
+
+        static File snapshotsDir;
+
+        String dataDirectory;
 
         public ElasticsearchFixture()
             throws IOException
         {
-            LOG.info( "Starting up Elasticsearch" );
+            LOG.info( "Connect to external Elasticsearch Cluster" );
 
-            Path elasticsearchTemporaryFolder = Files.createTempDirectory( "elasticsearchFixture" );
+            Path rootDirectory = Files.createTempDirectory( "elasticsearchFixture" );
 
-            server = new EmbeddedElasticsearchServer( elasticsearchTemporaryFolder.toFile() );
-//            Embedded Elasticsearch not supported https://www.elastic.co/blog/elasticsearch-the-server
-//            client = server.getClient();
+            System.setProperty( "mapper.allow_dots_in_name", "true" );
+            dataDirectory = new File( rootDirectory.toFile(), ROOT_DATA_DIRECTORY ).toString();
 
-            elasticsearchIndexService = new IndexServiceInternalImpl();
-            elasticsearchIndexService.setClient( client );
+            final File pathHome = new File( this.dataDirectory, "index" );
+            if ( !pathHome.exists() )
+            {
+                pathHome.mkdir();
+            }
+
+            final File pathData = new File( this.dataDirectory, "data" );
+            if ( !pathData.exists() )
+            {
+                pathData.mkdir();
+            }
+
+            snapshotsDir = new File( this.dataDirectory, "repo" );
+
+            if ( !snapshotsDir.exists() )
+            {
+                snapshotsDir.mkdir();
+            }
+
+            client = new RestHighLevelClient( RestClient.builder( new HttpHost( "localhost", 9200, "http" ) ) );
+
+            indexService = new IndexServiceInternalImpl();
+            indexService.setClient( client );
         }
 
         @Override
@@ -141,14 +167,10 @@ public abstract class AbstractElasticsearchIntegrationTest
         {
             try
             {
-                LOG.info( "Shutting down Elasticsearch" );
+                LOG.info( "Disconnect from external Elasticsearch Cluster" );
                 if ( client != null )
                 {
                     client.close();
-                }
-                if ( server != null )
-                {
-                    server.shutdown();
                 }
             }
             catch ( IOException e )
