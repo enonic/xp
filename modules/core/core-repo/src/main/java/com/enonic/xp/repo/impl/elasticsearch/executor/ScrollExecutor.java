@@ -1,10 +1,14 @@
 package com.enonic.xp.repo.impl.elasticsearch.executor;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.concurrent.TimeUnit;
 
-import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.Client;
+import org.elasticsearch.action.search.SearchScrollRequest;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.unit.TimeValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,50 +30,55 @@ class ScrollExecutor
         super( builder );
     }
 
-    public static Builder create( final Client client )
+    public static Builder create( final RestHighLevelClient client )
     {
         return new Builder( client );
     }
 
     public SearchResult execute( final ElasticsearchQuery query )
     {
-        final SearchRequestBuilder searchRequestBuilder = createScrollRequest( query );
+        final SearchRequest searchRequest = createScrollRequest( query );
 
-        SearchResponse scrollResp = searchRequestBuilder.
-            execute().
-            actionGet();
-
-        final SearchHits.Builder searchHitsBuilder = SearchHits.create();
-
-        while ( true )
+        try
         {
-            LOG.debug( "Scrolling, got " + scrollResp.getHits().hits().length + " hits" );
+            SearchResponse scrollResp = client.search( searchRequest, RequestOptions.DEFAULT );
 
-            searchHitsBuilder.addAll( SearchHitsFactory.create( scrollResp.getHits() ) );
+            final SearchHits.Builder searchHitsBuilder = SearchHits.create();
 
-            scrollResp = client.prepareSearchScroll( scrollResp.getScrollId() ).
-                setScroll( defaultScrollTime ).
-                execute().
-                actionGet();
-
-            if ( scrollResp.getHits().getHits().length == 0 )
+            while ( true )
             {
-                clearScroll( scrollResp );
-                break;
-            }
-        }
+                LOG.debug( "Scrolling, got " + scrollResp.getHits().getHits().length + " hits" );
 
-        return SearchResult.create().
-            hits( searchHitsBuilder.build() ).
-            totalHits( scrollResp.getHits().getTotalHits() ).
-            maxScore( scrollResp.getHits().maxScore() ).
-            build();
+                searchHitsBuilder.addAll( SearchHitsFactory.create( scrollResp.getHits() ) );
+
+                final SearchScrollRequest searchScrollRequest = new SearchScrollRequest( scrollResp.getScrollId() ).
+                    scroll( defaultScrollTime );
+
+                scrollResp = client.scroll( searchScrollRequest, RequestOptions.DEFAULT );
+
+                if ( scrollResp.getHits().getHits().length == 0 )
+                {
+                    clearScroll( scrollResp );
+                    break;
+                }
+            }
+
+            return SearchResult.create().
+                hits( searchHitsBuilder.build() ).
+                totalHits( scrollResp.getHits().getTotalHits().value ).
+                maxScore( scrollResp.getHits().getMaxScore() ).
+                build();
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
     }
 
     public static class Builder
         extends AbstractExecutor.Builder<Builder>
     {
-        private Builder( final Client client )
+        private Builder( final RestHighLevelClient client )
         {
             super( client );
         }

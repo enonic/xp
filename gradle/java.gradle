@@ -61,7 +61,7 @@ task integrationTest(type: Test) {
     group = 'verification'
 
     useJUnitPlatform {
-        includeTags 'elasticsearch'
+        excludeTags 'elasticsearch' // includeTags 'elasticsearch'
     }
 
     systemProperty 'java.awt.headless', 'true'

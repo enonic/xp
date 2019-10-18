@@ -3,36 +3,46 @@
     "must": [
       {
         "exists": {
-          "field": "mymust"
+          "field": "mymust",
+          "boost": 1.0
         }
       },
       {
         "exists": {
-          "field": "mymust"
+          "field": "mymust",
+          "boost": 1.0
         }
       }
     ],
-    "must_not": {
-      "exists": {
-        "field": "mymustnot"
+    "must_not": [
+      {
+        "exists": {
+          "field": "mymustnot",
+          "boost": 1.0
+        }
       }
-    },
+    ],
     "should": [
       {
         "exists": {
-          "field": "myoptional"
+          "field": "myoptional",
+          "boost": 1.0
         }
       },
       {
         "exists": {
-          "field": "myoptional"
+          "field": "myoptional",
+          "boost": 1.0
         }
       },
       {
         "exists": {
-          "field": "myoptional"
+          "field": "myoptional",
+          "boost": 1.0
         }
       }
-    ]
+    ],
+    "adjust_pure_negative": true,
+    "boost": 1.0
   }
 }

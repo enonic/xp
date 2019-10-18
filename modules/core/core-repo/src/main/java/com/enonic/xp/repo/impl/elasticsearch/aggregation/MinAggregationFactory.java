@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch.aggregation;
 
-import org.elasticsearch.search.aggregations.metrics.min.Min;
+import org.elasticsearch.search.aggregations.metrics.Min;
 
 import com.enonic.xp.aggregation.SingleValueMetricAggregation;
 

@@ -3,6 +3,7 @@ package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory;
 import java.nio.charset.StandardCharsets;
 import java.util.TimeZone;
 
+import org.elasticsearch.common.Strings;
 import org.elasticsearch.common.xcontent.ToXContent;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
@@ -44,7 +45,7 @@ public abstract class BaseTestBuilderFactory
         facetBuilder.toXContent( builder, ToXContent.EMPTY_PARAMS );
         builder.endObject();
 
-        return builder.string();
+        return Strings.toString( builder );
     }
 
     protected final String load( final String name )

@@ -1,10 +1,11 @@
 {
-    "range": {
-        "myfield._number": {
-            "from": 3.0,
-            "to": null,
-            "include_lower": false,
-            "include_upper": true
-        }
+  "range": {
+    "myfield._number": {
+      "from": 3.0,
+      "to": null,
+      "include_lower": false,
+      "include_upper": true,
+      "boost": 1.0
     }
+  }
 }

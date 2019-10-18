@@ -4,7 +4,8 @@
       "from": null,
       "to": 3.0,
       "include_lower": true,
-      "include_upper": false
+      "include_upper": false,
+      "boost": 1.0
     }
   }
 }

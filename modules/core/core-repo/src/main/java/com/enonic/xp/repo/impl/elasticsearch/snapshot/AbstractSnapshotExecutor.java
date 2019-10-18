@@ -1,18 +1,21 @@
 package com.enonic.xp.repo.impl.elasticsearch.snapshot;
 
 import java.util.HashSet;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.action.admin.indices.close.CloseIndexAction;
-import org.elasticsearch.action.admin.indices.close.CloseIndexRequestBuilder;
-import org.elasticsearch.action.admin.indices.open.OpenIndexAction;
-import org.elasticsearch.action.admin.indices.open.OpenIndexRequestBuilder;
-import org.elasticsearch.client.Client;
+import org.elasticsearch.action.admin.indices.open.OpenIndexRequest;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.indices.CloseIndexRequest;
 import org.elasticsearch.index.IndexNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Sets;
 
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repository.Repositories;
@@ -26,7 +29,7 @@ class AbstractSnapshotExecutor
 {
     final String snapshotRepositoryName;
 
-    final Client client;
+    final RestHighLevelClient client;
 
     private final RepositoryService repositoryService;
 
@@ -54,18 +57,18 @@ class AbstractSnapshotExecutor
     {
         for ( final String indexName : indexNames )
         {
-            CloseIndexRequestBuilder closeIndexRequestBuilder =
-                new CloseIndexRequestBuilder( this.client.admin().indices(), CloseIndexAction.INSTANCE ).
-                    setIndices( indexName );
-
             try
             {
-                this.client.admin().indices().close( closeIndexRequestBuilder.request() ).actionGet();
+                this.client.indices().close( new CloseIndexRequest( indexName ), RequestOptions.DEFAULT );
                 LOG.info( "Closed index " + indexName );
             }
             catch ( IndexNotFoundException e )
             {
                 LOG.warn( "Could not close index [" + indexName + "], not found" );
+            }
+            catch ( IOException e )
+            {
+                throw new UncheckedIOException( e );
             }
         }
     }
@@ -85,18 +88,18 @@ class AbstractSnapshotExecutor
     {
         for ( final String indexName : indexNames )
         {
-            OpenIndexRequestBuilder openIndexRequestBuilder =
-                new OpenIndexRequestBuilder( this.client.admin().indices(), OpenIndexAction.INSTANCE ).
-                    setIndices( indexName );
-
             try
             {
-                this.client.admin().indices().open( openIndexRequestBuilder.request() ).actionGet();
+                client.indices().open( new OpenIndexRequest( indexName ), RequestOptions.DEFAULT );
                 LOG.info( "Opened index " + indexName );
             }
             catch ( ElasticsearchException e )
             {
                 LOG.warn( "Could not open index [" + indexName + "]" );
+            }
+            catch ( IOException e )
+            {
+                throw new UncheckedIOException( e );
             }
         }
     }
@@ -127,7 +130,7 @@ class AbstractSnapshotExecutor
     {
         private String snapshotRepositoryName;
 
-        private Client client;
+        private RestHighLevelClient client;
 
         private RepositoryService repositoryService;
 
@@ -139,7 +142,7 @@ class AbstractSnapshotExecutor
         }
 
         @SuppressWarnings("unchecked")
-        public B client( final Client val )
+        public B client( final RestHighLevelClient val )
         {
             client = val;
             return (B) this;

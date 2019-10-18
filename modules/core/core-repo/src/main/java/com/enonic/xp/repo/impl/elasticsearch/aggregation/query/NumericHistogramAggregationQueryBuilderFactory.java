@@ -1,8 +1,9 @@
 package com.enonic.xp.repo.impl.elasticsearch.aggregation.query;
 
-import org.elasticsearch.search.aggregations.AggregationBuilder;
-import org.elasticsearch.search.aggregations.bucket.histogram.Histogram;
-import org.elasticsearch.search.aggregations.bucket.histogram.HistogramBuilder;
+import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.BucketOrder;
+import org.elasticsearch.search.aggregations.bucket.histogram.HistogramAggregationBuilder;
 
 import com.enonic.xp.query.aggregation.HistogramAggregationQuery;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.AbstractBuilderFactory;
@@ -18,9 +19,9 @@ class NumericHistogramAggregationQueryBuilderFactory
         super( fieldNameResolver );
     }
 
-    AggregationBuilder create( final HistogramAggregationQuery aggregationQuery )
+    AbstractAggregationBuilder create( final HistogramAggregationQuery aggregationQuery )
     {
-        final HistogramBuilder builder = new HistogramBuilder( aggregationQuery.getName() ).
+        final HistogramAggregationBuilder builder = AggregationBuilders.histogram( aggregationQuery.getName() ).
             interval( aggregationQuery.getInterval() ).
             field( fieldNameResolver.resolve( aggregationQuery.getFieldName(), IndexValueType.NUMBER ) );
 
@@ -42,18 +43,18 @@ class NumericHistogramAggregationQueryBuilderFactory
         return builder;
     }
 
-    private Histogram.Order translate( HistogramAggregationQuery.Order order )
+    private BucketOrder translate( HistogramAggregationQuery.Order order )
     {
         switch ( order )
         {
             case KEY_ASC:
-                return Histogram.Order.KEY_ASC;
+                return BucketOrder.key( true );
             case KEY_DESC:
-                return Histogram.Order.KEY_DESC;
+                return BucketOrder.key( false );
             case COUNT_DESC:
-                return Histogram.Order.COUNT_DESC;
+                return BucketOrder.count( false );
             case COUNT_ASC:
-                return Histogram.Order.COUNT_ASC;
+                return BucketOrder.count( true );
         }
 
         throw new IllegalArgumentException( "Unknown order value for histogram: " + order.name() );

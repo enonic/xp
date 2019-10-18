@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.ExistsQueryBuilder;
-import org.elasticsearch.index.query.IndicesQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.index.query.TermsQueryBuilder;
@@ -116,15 +115,27 @@ public class FilterBuilderFactory
 
     private QueryBuilder createIndicesFilter( final IndicesFilter indicesFilter )
     {
-        final IndicesQueryBuilder builder =
-            new IndicesQueryBuilder( doCreateFilterBuilder( indicesFilter.getFilter() ), indicesFilter.getIndices() );
+        final BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder();
+
+        boolQueryBuilder.filter( doCreateFilterBuilder( indicesFilter.getFilter() ) );
 
         if ( indicesFilter.getNoMatchFilter() != null )
         {
-            builder.noMatchQuery( doCreateFilterBuilder( indicesFilter.getNoMatchFilter() ) );
+            boolQueryBuilder.mustNot( doCreateFilterBuilder( indicesFilter.getNoMatchFilter() ) );
         }
 
-        return builder;
+        return boolQueryBuilder; // TODO ES:
+
+//        boolQueryBuilder.filter( doCreateFilterBuilder( indicesFilter.getFilter() ), indicesFilter.getIndices() );
+//        final IndicesQueryBuilder builder =
+//            new IndicesQueryBuilder( doCreateFilterBuilder( indicesFilter.getFilter() ), indicesFilter.getIndices() );
+//
+//        if ( indicesFilter.getNoMatchFilter() != null )
+//        {
+//            builder.noMatchQuery( doCreateFilterBuilder( indicesFilter.getNoMatchFilter() ) );
+//        }
+//
+//        return builder;
     }
 
     private QueryBuilder createIdFilter( final IdFilter idFilter )

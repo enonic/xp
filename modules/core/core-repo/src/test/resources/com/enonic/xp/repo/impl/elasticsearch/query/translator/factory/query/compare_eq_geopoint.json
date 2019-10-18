@@ -5,6 +5,7 @@
         "lat": 59.91273,
         "lon": 10.74609
       },
+      "boost": 1.0,
       "_name": "myfield._geopoint"
     }
   }

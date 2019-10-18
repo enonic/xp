@@ -2,7 +2,7 @@ package com.enonic.xp.repo.impl.elasticsearch.suggestion.query;
 
 import java.util.Set;
 
-import org.elasticsearch.search.suggest.SuggestBuilder;
+import org.elasticsearch.search.suggest.SuggestionBuilder;
 import org.elasticsearch.search.suggest.term.TermSuggestionBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,7 +44,7 @@ public class SuggestionQueryBuilderFactoryTest
             stringDistance( TermSuggestionQuery.StringDistance.INTERNAL ).
             build();
 
-        final Set<SuggestBuilder.SuggestionBuilder> suggestionBuilder =
+        final Set<SuggestionBuilder> suggestionBuilder =
             suggestionQueryBuilderFactory.create( SuggestionQueries.create().add( query ).build() );
 
         assertNotNull( suggestionBuilder );

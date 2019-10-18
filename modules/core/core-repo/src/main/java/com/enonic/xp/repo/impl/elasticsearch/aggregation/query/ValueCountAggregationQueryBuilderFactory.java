@@ -1,7 +1,7 @@
 package com.enonic.xp.repo.impl.elasticsearch.aggregation.query;
 
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
-import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCountBuilder;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
 
 import com.enonic.xp.query.aggregation.metric.ValueCountAggregationQuery;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.AbstractBuilderFactory;
@@ -18,7 +18,7 @@ class ValueCountAggregationQueryBuilderFactory
 
     AbstractAggregationBuilder create( final ValueCountAggregationQuery valueCountAggregationQuery )
     {
-        return new ValueCountBuilder( valueCountAggregationQuery.getName() ).
+        return AggregationBuilders.count( valueCountAggregationQuery.getName() ).
             field( fieldNameResolver.resolve( valueCountAggregationQuery.getFieldName(), IndexValueType.STRING ) );
     }
 

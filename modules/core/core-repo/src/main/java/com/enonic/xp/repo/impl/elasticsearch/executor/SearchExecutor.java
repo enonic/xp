@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch.executor;
 
-import org.elasticsearch.action.search.SearchRequestBuilder;
-import org.elasticsearch.client.Client;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +24,7 @@ public class SearchExecutor
         super( builder );
     }
 
-    public static Builder create( final Client client )
+    public static Builder create( final RestHighLevelClient client )
     {
         return new Builder( client );
     }
@@ -65,16 +64,15 @@ public class SearchExecutor
 
     private SearchResult doSearch( final ElasticsearchQuery query )
     {
-        final SearchRequestBuilder searchRequestBuilder = SearchRequestBuilderFactory.newFactory().
+        final org.elasticsearch.action.search.SearchRequest searchRequest = SearchRequestBuilderFactory.newFactory().
             query( query ).
-            client( this.client ).
+            preference( searchPreference ).
+            scrollTimeout( defaultScrollTime.getStringRep() ).
             resolvedSize( resolveSize( query ) ).
             build().
             create();
 
-        //System.out.println( "######################\n\r" + searchRequestBuilder.toString() );
-
-        return doSearchRequest( searchRequestBuilder );
+        return doSearchRequest( searchRequest );
     }
 
     private int resolveSize( final ElasticsearchQuery query )
@@ -96,7 +94,7 @@ public class SearchExecutor
     public static class Builder
         extends AbstractExecutor.Builder<Builder>
     {
-        private Builder( final Client client )
+        private Builder( final RestHighLevelClient client )
         {
             super( client );
         }

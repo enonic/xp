@@ -2,8 +2,12 @@ package com.enonic.xp.repo.impl.elasticsearch.snapshot;
 
 import java.util.stream.Collectors;
 
+import org.elasticsearch.action.admin.cluster.repositories.delete.DeleteRepositoryRequest;
+import org.elasticsearch.action.admin.cluster.repositories.get.GetRepositoriesRequest;
+import org.elasticsearch.action.admin.cluster.snapshots.delete.DeleteSnapshotRequest;
+import org.elasticsearch.action.admin.cluster.snapshots.get.GetSnapshotsRequest;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.cluster.metadata.RepositoryMetaData;
-import org.elasticsearch.snapshots.SnapshotInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -46,11 +50,19 @@ public class SnapshotServiceImplTest
     public void setUp()
         throws Exception
     {
-        for (String repository : client.admin().cluster().prepareGetRepositories().execute().actionGet().repositories().stream().map(RepositoryMetaData::name).collect(Collectors.toList())) {
-            for (String snapshot : client.admin().cluster().prepareGetSnapshots(repository).execute().actionGet().getSnapshots().stream().map(SnapshotInfo::name).collect(Collectors.toList())) {
-                client.admin().cluster().prepareDeleteSnapshot(repository, snapshot).execute().actionGet();
+        for ( String repository : client.snapshot().getRepository( new GetRepositoriesRequest(),
+                                                                   RequestOptions.DEFAULT ).repositories().stream().map(
+            RepositoryMetaData::name ).collect( Collectors.toList() ) )
+        {
+            for ( String snapshot : client.snapshot().get( new GetSnapshotsRequest().
+                repository( repository ), RequestOptions.DEFAULT ).
+                getSnapshots().stream().map( snapshotInfo -> snapshotInfo.snapshotId().getName() ).collect( Collectors.toList() ) )
+            {
+                client.snapshot().delete( new DeleteSnapshotRequest().
+                    snapshot( snapshot ).
+                    repository( repository ), RequestOptions.DEFAULT );
             }
-            client.admin().cluster().prepareDeleteRepository(repository).execute().actionGet();
+            client.snapshot().deleteRepository( new DeleteRepositoryRequest( repository ), RequestOptions.DEFAULT );
         }
 
         this.snapshotService = new SnapshotServiceImpl();
@@ -155,7 +167,7 @@ public class SnapshotServiceImplTest
     public void restore_invalid_snapshot()
         throws Exception
     {
-        assertThrows(SnapshotException.class, () -> NodeHelper.runAsAdmin( this::doRestoreInvalidSnapshot ) );
+        assertThrows( SnapshotException.class, () -> NodeHelper.runAsAdmin( this::doRestoreInvalidSnapshot ) );
     }
 
     private void doRestoreInvalidSnapshot()

@@ -3,6 +3,7 @@
     "myfield": [
       "myvalue2",
       "myvalue1"
-    ]
+    ],
+    "boost":1.0
   }
 }

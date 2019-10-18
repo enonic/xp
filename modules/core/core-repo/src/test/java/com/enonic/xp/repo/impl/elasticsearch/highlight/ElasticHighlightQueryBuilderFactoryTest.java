@@ -3,7 +3,7 @@ package com.enonic.xp.repo.impl.elasticsearch.highlight;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.elasticsearch.search.highlight.HighlightBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

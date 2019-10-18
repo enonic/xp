@@ -7,11 +7,10 @@ import java.io.IOException;
 import org.apache.commons.io.FileUtils;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.env.Environment;
 import org.elasticsearch.node.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
 public class EmbeddedElasticsearchServer
 {
@@ -42,7 +41,7 @@ public class EmbeddedElasticsearchServer
         snaphotsDir = new File( this.dataDirectory, "repo" );
         snaphotsDir.mkdir();
 
-        Settings.Builder testServerSetup = Settings.settingsBuilder().
+        final Settings.Builder testServerSetup = Settings.builder().
             put( "name", "repo-node-" + this.now ).
             put( "client", "false" ).
             put( "data", "true" ).
@@ -56,10 +55,8 @@ public class EmbeddedElasticsearchServer
             put( "index.translog.sync_interval", "15m" ).
             put( "discovery.zen.ping.multicast.enabled", "false" );
 
-        node = nodeBuilder().
-            local( true ).
-            settings( testServerSetup.build() ).
-            node();
+        final Environment environment = new Environment( testServerSetup.build(), rootDirectory.toPath() );
+        node = new Node( environment );
     }
 
     public Client getClient()
@@ -68,6 +65,7 @@ public class EmbeddedElasticsearchServer
     }
 
     public void shutdown()
+        throws IOException
     {
         LOG.info( " --- Shutting down ES integration test server instance" );
         node.close();

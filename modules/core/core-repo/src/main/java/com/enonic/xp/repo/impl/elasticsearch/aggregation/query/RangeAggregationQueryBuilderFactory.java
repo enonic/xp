@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch.aggregation.query;
 
-import org.elasticsearch.search.aggregations.AggregationBuilder;
+import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
 
 import com.enonic.xp.query.aggregation.AbstractRangeAggregationQuery;
 import com.enonic.xp.query.aggregation.DateRangeAggregationQuery;
@@ -17,7 +17,7 @@ class RangeAggregationQueryBuilderFactory
         super( fieldNameResolver );
     }
 
-    AggregationBuilder create( final AbstractRangeAggregationQuery aggregationQuery )
+    AbstractAggregationBuilder create( final AbstractRangeAggregationQuery aggregationQuery )
     {
         if ( aggregationQuery instanceof DateRangeAggregationQuery )
         {

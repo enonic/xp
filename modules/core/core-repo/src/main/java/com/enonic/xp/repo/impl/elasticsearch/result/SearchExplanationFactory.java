@@ -24,7 +24,7 @@ class SearchExplanationFactory
         final QueryExplanation.Builder builder = QueryExplanation.create();
 
         builder.description( explanation.getDescription() );
-        builder.value( explanation.getValue() );
+        builder.value( explanation.getValue().floatValue() );
 
         if ( explanation.getDetails() != null )
         {

@@ -1,9 +1,12 @@
 package com.enonic.xp.repo.impl.elasticsearch;
 
-import org.elasticsearch.action.search.SearchAction;
-import org.elasticsearch.action.search.SearchRequestBuilder;
+import java.util.Arrays;
+
+import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchType;
-import org.elasticsearch.client.Client;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
+import org.elasticsearch.search.suggest.SuggestBuilder;
 
 import com.google.common.collect.ImmutableList;
 
@@ -21,15 +24,18 @@ public class SearchRequestBuilderFactory
 
     private final int resolvedSize;
 
-    private final ElasticsearchQuery query;
+    private final String preference;
 
-    private final Client client;
+    private final String scrollTimeout;
+
+    private final ElasticsearchQuery query;
 
     private SearchRequestBuilderFactory( final Builder builder )
     {
-        resolvedSize = builder.resolvedSize;
-        query = builder.query;
-        client = builder.client;
+        this.resolvedSize = builder.resolvedSize;
+        this.query = builder.query;
+        this.preference = builder.preference;
+        this.scrollTimeout = builder.scrollTimeout;
     }
 
     public static Builder newFactory()
@@ -37,43 +43,56 @@ public class SearchRequestBuilderFactory
         return new Builder();
     }
 
-    public SearchRequestBuilder create()
+    public SearchRequest create()
     {
         final SearchType searchType =
             query.getSearchOptimizer().equals( SearchOptimizer.ACCURACY ) ? SearchType.DFS_QUERY_THEN_FETCH : SearchType.DEFAULT;
 
-        final SearchRequestBuilder searchRequestBuilder = new SearchRequestBuilder( this.client, SearchAction.INSTANCE ).
-            setExplain( query.isExplain() ).
-            setIndices( query.getIndexNames() ).
-            setTypes( query.getIndexTypes() ).
-            setSearchType( searchType ).
-            setQuery( query.getQuery() ).
-            setPostFilter( query.getFilter() ).
-            setFrom( query.getFrom() ).
-            setSize( resolvedSize );
+        final SearchSourceBuilder sourceBuilder = new SearchSourceBuilder().
+            explain( query.isExplain() ).
+            query( query.getQuery() ).
+            postFilter( query.getFilter() ).
+            from( query.getFrom() ).
+            size( resolvedSize );
 
-        query.getSortBuilders().forEach( searchRequestBuilder::addSort );
+        query.getSortBuilders().forEach( sourceBuilder::sort );
+        query.getAggregations().forEach( sourceBuilder::aggregation );
 
-        query.getAggregations().forEach( searchRequestBuilder::addAggregation );
-        query.getSuggestions().forEach( searchRequestBuilder::addSuggestion );
+        final SuggestBuilder suggestBuilder = new SuggestBuilder();
+        query.getSuggestions().forEach( suggestionBuilder -> suggestBuilder.addSuggestion( suggestionBuilder.field(), suggestionBuilder ) );
+        sourceBuilder.suggest( suggestBuilder );
 
         if ( query.getHighlight() != null )
         {
-            setHighlightSettings( searchRequestBuilder, query.getHighlight() );
+            setHighlightSettings( sourceBuilder, query.getHighlight() );
         }
 
         if ( query.getReturnFields() != null && query.getReturnFields().isNotEmpty() )
         {
-            searchRequestBuilder.addFields( query.getReturnFields().getReturnFieldNames() );
+            sourceBuilder.storedFields( Arrays.asList( query.getReturnFields().getReturnFieldNames() ) );
         }
 
-        return searchRequestBuilder;
+        final SearchRequest searchRequest = new SearchRequest().
+            searchType( searchType ).
+            types( query.getIndexTypes() ).
+            indices( query.getIndexNames() ).
+            source( sourceBuilder );
+
+        if ( preference != null )
+        {
+            searchRequest.preference( preference );
+        }
+        if ( scrollTimeout != null )
+        {
+            searchRequest.scroll( scrollTimeout );
+        }
+
+        return searchRequest;
     }
 
-    private SearchRequestBuilder setHighlightSettings( final SearchRequestBuilder builder, final ElasticHighlightQuery highlight )
+    private SearchSourceBuilder setHighlightSettings( final SearchSourceBuilder builder, final ElasticHighlightQuery highlight )
     {
-        highlight.getFields().forEach( builder::addHighlightedField );
-
+        highlight.getFields().forEach( field -> builder.storedField( field.name() ) );
 
         final Encoder encoder = highlight.getEncoder();
         final TagsSchema tagsSchema = highlight.getTagsSchema();
@@ -86,37 +105,51 @@ public class SearchRequestBuilderFactory
         final ImmutableList<String> postTags = highlight.getPostTags();
         final Boolean requireFieldMatch = highlight.getRequireFieldMatch();
 
-        builder.setHighlighterType( HIGHLIGHTER_TYPE );
-        if (encoder != null) {
-            builder.setHighlighterEncoder( encoder.value() );
+        final HighlightBuilder highlightBuilder = new HighlightBuilder();
+
+        highlightBuilder.highlighterType( HIGHLIGHTER_TYPE );
+        if ( encoder != null )
+        {
+            highlightBuilder.encoder( encoder.value() );
         }
-        if (fragmenter != null) {
-            builder.setHighlighterFragmenter( fragmenter.value() );
+        if ( fragmenter != null )
+        {
+            highlightBuilder.fragmenter( fragmenter.value() );
         }
-        if (fragmentSize != null) {
-            builder.setHighlighterFragmentSize( fragmentSize );
+        if ( fragmentSize != null )
+        {
+            highlightBuilder.fragmentSize( fragmentSize );
         }
-        if (noMatchSize != null) {
-            builder.setHighlighterNoMatchSize( noMatchSize );
+        if ( noMatchSize != null )
+        {
+            highlightBuilder.noMatchSize( noMatchSize );
         }
-        if (numOfFragments != null) {
-            builder.setHighlighterNumOfFragments( numOfFragments );
+        if ( numOfFragments != null )
+        {
+            highlightBuilder.numOfFragments( numOfFragments );
         }
-        if (order != null) {
-            builder.setHighlighterOrder( order.value() );
+        if ( order != null )
+        {
+            highlightBuilder.order( order.value() );
         }
-        if (preTags != null && !preTags.isEmpty()) {
-            builder.setHighlighterPreTags( preTags.toArray( new String[preTags.size()] ));
+        if ( preTags != null && !preTags.isEmpty() )
+        {
+            highlightBuilder.preTags( preTags.toArray( new String[preTags.size()] ) );
         }
-        if (postTags != null && !postTags.isEmpty()) {
-            builder.setHighlighterPostTags( postTags.toArray( new String[postTags.size()]) );
+        if ( postTags != null && !postTags.isEmpty() )
+        {
+            highlightBuilder.postTags( postTags.toArray( new String[postTags.size()] ) );
         }
-        if (requireFieldMatch != null) {
-            builder.setHighlighterRequireFieldMatch( requireFieldMatch );
+        if ( requireFieldMatch != null )
+        {
+            highlightBuilder.requireFieldMatch( requireFieldMatch );
         }
-        if (tagsSchema != null) {
-            builder.setHighlighterTagsSchema( tagsSchema.value() );
+        if ( tagsSchema != null )
+        {
+            highlightBuilder.tagsSchema( tagsSchema.value() );
         }
+
+        builder.highlighter( highlightBuilder );
 
         return builder;
     }
@@ -128,7 +161,9 @@ public class SearchRequestBuilderFactory
 
         private ElasticsearchQuery query;
 
-        private Client client;
+        private String preference;
+
+        private String scrollTimeout;
 
         private Builder()
         {
@@ -146,9 +181,15 @@ public class SearchRequestBuilderFactory
             return this;
         }
 
-        public Builder client( final Client client )
+        public Builder preference( final String preference )
         {
-            this.client = client;
+            this.preference = preference;
+            return this;
+        }
+
+        public Builder scrollTimeout( final String scrollTimeout )
+        {
+            this.scrollTimeout = scrollTimeout;
             return this;
         }
 

@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch.aggregation;
 
-import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCount;
+import org.elasticsearch.search.aggregations.metrics.ValueCount;
 
 import com.enonic.xp.aggregation.SingleValueMetricAggregation;
 

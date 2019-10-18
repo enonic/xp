@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch.highlight;
 
-import org.elasticsearch.search.highlight.HighlightBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 
 import com.google.common.collect.ImmutableList;
 
