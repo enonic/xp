@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ContextImplTest
 {
-    private final class SampleValue
+    private static final class SampleValue
     {
     }
 

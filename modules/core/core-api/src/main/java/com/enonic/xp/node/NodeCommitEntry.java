@@ -52,7 +52,7 @@ public class NodeCommitEntry
     @Override
     public int compareTo( final NodeCommitEntry o )
     {
-        if ( this.timestamp == o.timestamp )
+        if ( this.timestamp.equals( o.timestamp ) )
         {
             return 0;
         }

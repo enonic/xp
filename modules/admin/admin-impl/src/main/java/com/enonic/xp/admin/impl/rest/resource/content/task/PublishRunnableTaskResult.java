@@ -32,6 +32,7 @@ public class PublishRunnableTaskResult
         return new PublishTaskMessageGenerator().generate( this );
     }
 
+    @Override
     public int getSuccessCount()
     {
         return deleted.size() + super.getSuccessCount();
@@ -64,6 +65,7 @@ public class PublishRunnableTaskResult
             return this;
         }
 
+        @Override
         public PublishRunnableTaskResult build()
         {
             return new PublishRunnableTaskResult( this );

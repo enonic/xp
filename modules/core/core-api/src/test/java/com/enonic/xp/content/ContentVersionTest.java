@@ -65,7 +65,15 @@ public class ContentVersionTest
             comment( "comment" ).
             build();
 
-        assertEquals( 0, version1.compareTo( version1 ) );
+        final ContentVersion version1Same = ContentVersion.create().
+            id( ContentVersionId.from( "a" ) ).
+            modified( now1 ).
+            modifier( PrincipalKey.ofAnonymous() ).
+            displayName( "contentVersion" ).
+            comment( "comment" ).
+            build();
+
+        assertEquals( 0, version1.compareTo( version1Same ) );
 
         final Instant now2 = now1.plusMillis( 1000 );
 

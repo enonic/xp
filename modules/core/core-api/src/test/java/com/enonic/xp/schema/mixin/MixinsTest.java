@@ -1,7 +1,7 @@
 package com.enonic.xp.schema.mixin;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -32,10 +32,7 @@ public class MixinsTest
         {
             assertTrue( e instanceof UnsupportedOperationException );
         }
-        mixins = Mixins.from( new ArrayList<>()
-        {{
-            add( mixin );
-        }} );
+        mixins = Mixins.from( Collections.singleton( mixin ) );
         try
         {
             mixins.getList().add( null );

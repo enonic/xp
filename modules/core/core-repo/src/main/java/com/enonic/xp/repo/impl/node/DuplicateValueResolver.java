@@ -123,7 +123,7 @@ abstract class DuplicateValueResolver
                 }
                 else if ( hasCopyCountNumber( counterToken, separator ) )
                 {
-                    duplicateName.copyCounter = new Integer( counterToken.substring( 1 ) );
+                    duplicateName.copyCounter = Integer.valueOf( counterToken.substring( 1 ) );
                 }
                 else
                 {

@@ -66,6 +66,7 @@ public class IndexConfigUpgrader
         return NAME;
     }
 
+    @Override
     protected void upgradeRepository( final RepositoryId repositoryId )
     {
         if ( ContentConstants.CONTENT_REPO_ID.equals( repositoryId ) )

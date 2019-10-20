@@ -41,7 +41,7 @@ final class NameCharacterHelper
 
     private static boolean isExplicitlyAllowed( final char c )
     {
-        final byte unicodeCategory = new Integer( Character.getType( c ) ).byteValue();
+        final byte unicodeCategory = Integer.valueOf( Character.getType( c ) ).byteValue();
         return ALLOWED_UNICODE_CATEGORIES.contains( unicodeCategory ) || ADDITIONAL_ALLOWED_CHARACTERS.contains( c );
     }
 

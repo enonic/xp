@@ -1,5 +1,7 @@
 package com.enonic.xp.resource;
 
+import java.util.Objects;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.io.Files;
@@ -77,19 +79,28 @@ public final class ResourceKey
     @Override
     public String toString()
     {
-        return getUri();
+        return uri;
     }
 
     @Override
     public boolean equals( final Object o )
     {
-        return ( o instanceof ResourceKey ) && ( this.uri.equals( ( (ResourceKey) o ).uri ) );
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( !( o instanceof ResourceKey ) )
+        {
+            return false;
+        }
+        final ResourceKey that = (ResourceKey) o;
+        return uri.equals( that.uri );
     }
 
     @Override
     public int hashCode()
     {
-        return this.uri.hashCode();
+        return Objects.hash( uri );
     }
 
     private static String normalizePath( final String path )

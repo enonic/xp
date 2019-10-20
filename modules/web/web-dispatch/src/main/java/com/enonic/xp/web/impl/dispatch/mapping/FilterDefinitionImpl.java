@@ -32,6 +32,7 @@ final class FilterDefinitionImpl
         this.resource.destroy();
     }
 
+    @Override
     public boolean doFilter( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain )
         throws IOException, ServletException
     {

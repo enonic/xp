@@ -158,7 +158,7 @@ public class TextRendererTest
         assertEquals( "<div data-portal-component-type=\"text\"><section>" + text + "</section></div>", portalResponse.getAsString() );
     }
 
-    private class MockMacroService
+    private static class MockMacroService
         implements MacroService
     {
         @Override
@@ -180,7 +180,7 @@ public class TextRendererTest
         }
     }
 
-    private class MockStyleDescriptorService
+    private static class MockStyleDescriptorService
         implements StyleDescriptorService
     {
         @Override

@@ -31,7 +31,7 @@ public class ConvertersTest
     public void testConvertOrNull()
     {
         final Integer value1 = Converters.convertOrNull( "123", Integer.class );
-        assertEquals( new Integer( 123 ), value1 );
+        assertEquals( 123, value1 );
 
         final Integer value2 = Converters.convertOrNull( "abc", Integer.class );
         assertNull( value2 );

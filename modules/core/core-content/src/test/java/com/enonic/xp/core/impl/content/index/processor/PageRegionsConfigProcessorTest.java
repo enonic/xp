@@ -222,7 +222,7 @@ public class PageRegionsConfigProcessorTest
                     {
                         final PartComponent partComponent = (PartComponent) component;
 
-                        Mockito.when( partDescriptorService.getByKey( ( partComponent.getDescriptor() ) ) ).thenReturn(
+                        Mockito.when( partDescriptorService.getByKey( partComponent.getDescriptor() ) ).thenReturn(
                             PartDescriptor.create().key( partComponent.getDescriptor() ).config( partForms.next() ).build() );
                     }
                 }
@@ -232,7 +232,7 @@ public class PageRegionsConfigProcessorTest
                     {
                         final LayoutComponent layoutComponent = (LayoutComponent) component;
 
-                        Mockito.when( layoutDescriptorService.getByKey( ( layoutComponent.getDescriptor() ) ) ).thenReturn(
+                        Mockito.when( layoutDescriptorService.getByKey( layoutComponent.getDescriptor() ) ).thenReturn(
                             LayoutDescriptor.create().key( layoutComponent.getDescriptor() ).config( layoutForms.next() ).regions(
                                 RegionDescriptors.create().build() ).build() );
 
@@ -264,7 +264,7 @@ public class PageRegionsConfigProcessorTest
                     {
                         final PartComponent partComponent = (PartComponent) component;
 
-                        Mockito.when( partDescriptorService.getByKey( ( partComponent.getDescriptor() ) ) ).thenReturn(
+                        Mockito.when( partDescriptorService.getByKey( partComponent.getDescriptor() ) ).thenReturn(
                             PartDescriptor.create().key( partComponent.getDescriptor() ).config( partForms.next() ).build() );
                     }
                 }

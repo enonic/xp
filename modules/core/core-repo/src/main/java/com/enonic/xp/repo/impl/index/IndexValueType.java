@@ -26,6 +26,7 @@ public enum IndexValueType
         this.postfix = postfix;
     }
 
+    @Override
     public String getPostfix()
     {
         return postfix;

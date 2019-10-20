@@ -34,14 +34,14 @@ public class ResourceMappingHelperTest
 {
     @Order(10)
     @WebServlet(name = "test", value = "/", urlPatterns = "/*", initParams = @WebInitParam(name = "a", value = "1"))
-    final class MyServlet
+    static final class MyServlet
         extends HttpServlet
     {
     }
 
     @Order(10)
     @WebFilter(filterName = "test", value = "/", urlPatterns = "/*", initParams = @WebInitParam(name = "a", value = "1"))
-    final class MyFilter
+    static final class MyFilter
         implements Filter
     {
         @Override

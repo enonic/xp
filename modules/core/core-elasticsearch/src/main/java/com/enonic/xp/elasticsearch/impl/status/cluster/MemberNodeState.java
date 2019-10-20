@@ -22,6 +22,7 @@ final class MemberNodeState
         this.name = builder.name;
     }
 
+    @Override
     ObjectNode toJson()
     {
         final ObjectNode json = super.toJson();

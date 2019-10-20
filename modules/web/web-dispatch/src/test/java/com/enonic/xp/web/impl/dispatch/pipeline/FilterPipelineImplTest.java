@@ -25,7 +25,7 @@ public class FilterPipelineImplTest
     extends ResourcePipelineImplTest<FilterDefinition, FilterPipelineImpl>
 {
     @WebFilter
-    private final class MyFilter
+    private static final class MyFilter
         implements Filter
     {
         @Override

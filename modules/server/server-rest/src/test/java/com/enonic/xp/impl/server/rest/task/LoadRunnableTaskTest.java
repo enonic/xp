@@ -69,6 +69,7 @@ public class LoadRunnableTaskTest
         this.dumpDir = createDir( dataDir, "dump" );
     }
 
+    @Override
     protected LoadRunnableTask createAndRunTask()
     {
         return null;

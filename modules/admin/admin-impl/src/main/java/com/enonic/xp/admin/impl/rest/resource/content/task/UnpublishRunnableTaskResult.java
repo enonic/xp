@@ -28,6 +28,7 @@ public class UnpublishRunnableTaskResult
             super();
         }
 
+        @Override
         public UnpublishRunnableTaskResult build()
         {
             return new UnpublishRunnableTaskResult( this );

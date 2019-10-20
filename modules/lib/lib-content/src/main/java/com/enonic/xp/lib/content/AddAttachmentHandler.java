@@ -64,7 +64,7 @@ public final class AddAttachmentHandler
         }
         else
         {
-            return ByteSource.wrap( ( data.toString() ).getBytes( StandardCharsets.UTF_8 ) );
+            return ByteSource.wrap( data.toString().getBytes( StandardCharsets.UTF_8 ) );
         }
     }
 

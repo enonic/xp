@@ -72,6 +72,6 @@ final class NodePermissionsResolver
         final PrincipalKeys authInfoPrincipals = authInfo.getPrincipals();
         final PrincipalKeys principalsAllowed = nodePermissions.getPrincipalsWithPermission( permission );
 
-        return principalsAllowed.stream().anyMatch( ( authInfoPrincipals::contains ) );
+        return principalsAllowed.stream().anyMatch( authInfoPrincipals::contains );
     }
 }

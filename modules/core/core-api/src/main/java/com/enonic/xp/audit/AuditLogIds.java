@@ -86,15 +86,15 @@ public final class AuditLogIds
     {
         private List<AuditLogId> contents = new ArrayList<>();
 
-        public Builder add( final AuditLogId AuditLogId )
+        public Builder add( final AuditLogId auditLogId )
         {
-            this.contents.add( AuditLogId );
+            this.contents.add( auditLogId );
             return this;
         }
 
-        public Builder addAll( final AuditLogIds AuditLogIds )
+        public Builder addAll( final AuditLogIds auditLogIds )
         {
-            this.contents.addAll( AuditLogIds.getSet() );
+            this.contents.addAll( auditLogIds.getSet() );
             return this;
         }
 

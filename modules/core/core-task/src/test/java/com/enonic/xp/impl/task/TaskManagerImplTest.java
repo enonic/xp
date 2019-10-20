@@ -38,7 +38,7 @@ public class TaskManagerImplTest
     {
         taskMan = new TaskManagerImpl();
         final AtomicInteger count = new AtomicInteger( 0 );
-        taskMan.setIdGen( () -> ( TaskId.from( Integer.toString( count.incrementAndGet() ) ) ) );
+        taskMan.setIdGen( () -> TaskId.from( Integer.toString( count.incrementAndGet() ) ) );
 
         this.eventsPublished = new ArrayList<>();
         taskMan.setEventPublisher( event -> this.eventsPublished.add( event ) );

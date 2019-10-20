@@ -25,6 +25,7 @@ public final class ServletPipelineImpl
     implements ServletPipeline
 {
 
+    @Override
     @Activate
     protected void activate( Map<String, Object> properties )
     {

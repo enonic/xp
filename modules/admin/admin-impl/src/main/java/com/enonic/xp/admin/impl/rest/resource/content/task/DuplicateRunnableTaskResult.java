@@ -48,6 +48,7 @@ public class DuplicateRunnableTaskResult
             super();
         }
 
+        @Override
         public Builder succeeded( ContentPath item )
         {
             super.succeeded( item );
@@ -60,6 +61,7 @@ public class DuplicateRunnableTaskResult
             return this;
         }
 
+        @Override
         public DuplicateRunnableTaskResult build()
         {
             return new DuplicateRunnableTaskResult( this );

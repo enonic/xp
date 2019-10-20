@@ -43,7 +43,7 @@ public class IdProviderApplicationJson
         return idProviders;
     }
 
-    public class IdProviderJson
+    public static class IdProviderJson
     {
         private String displayName;
 
