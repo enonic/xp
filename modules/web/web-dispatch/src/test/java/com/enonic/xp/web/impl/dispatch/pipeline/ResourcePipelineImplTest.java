@@ -78,7 +78,7 @@ public abstract class ResourcePipelineImplTest<D extends ResourceDefinition<?>, 
         Mockito.verify( def, Mockito.times( 1 ) ).destroy();
     }
 
-    protected final class MyServiceReference<T>
+    protected static final class MyServiceReference<T>
         implements ServiceReference<T>
     {
         @Override

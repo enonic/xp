@@ -640,7 +640,7 @@ public final class SecurityResource
         this.idProviderControllerService = idProviderControllerService;
     }
 
-    private class FetchPrincipalsWithRolesResult
+    private static class FetchPrincipalsWithRolesResult
     {
         private List<Principal> principals;
 

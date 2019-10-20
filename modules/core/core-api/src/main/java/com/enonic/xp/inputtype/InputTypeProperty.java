@@ -44,14 +44,25 @@ public final class InputTypeProperty
     @Override
     public boolean equals( final Object o )
     {
-        return o instanceof InputTypeProperty && equals( (InputTypeProperty) o );
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( !( o instanceof InputTypeProperty ) )
+        {
+            return false;
+        }
+        final InputTypeProperty that = (InputTypeProperty) o;
+        return Objects.equals( name, that.name ) && Objects.equals( value, that.value ) && Objects.equals( attributes, that.attributes );
     }
 
-    private boolean equals( final InputTypeProperty o )
+    @Override
+    public int hashCode()
     {
-        return Objects.equals( this.name, o.name ) && Objects.equals( this.value, o.value ) && this.attributes.equals( o.attributes );
+        return Objects.hash( name, value, attributes );
     }
 
+    @Override
     public String toString()
     {
         return this.name + "=" + this.value + "[" + Joiner.on( "," ).withKeyValueSeparator( "=" ).join( this.attributes ) + "]";

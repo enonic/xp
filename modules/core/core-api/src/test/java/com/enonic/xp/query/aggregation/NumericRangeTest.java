@@ -12,8 +12,8 @@ public class NumericRangeTest
         final NumericRange numericRange = NumericRange.create().key( "key" ).from( 0.0 ).to( 1.0 ).build();
 
         assertEquals( "key", numericRange.getKey() );
-        assertEquals( new Double( 0.0 ), numericRange.getFrom() );
-        assertEquals( new Double( 1.0 ), numericRange.getTo() );
+        assertEquals( 0.0, numericRange.getFrom() );
+        assertEquals( 1.0, numericRange.getTo() );
 
     }
 }

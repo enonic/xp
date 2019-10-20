@@ -127,7 +127,7 @@ public class FormDefaultValuesProcessorImplTest
         defaultValuesProcessor.setDefaultValues( form, data );
 
         assertEquals( "default", data.getString( "myOptionSet.option1.myInput" ) );
-        assertEquals( new Double( 0 ), data.getDouble( "myOptionSet.option1.myDouble" ) );
+        assertEquals( 0, data.getDouble( "myOptionSet.option1.myDouble" ) );
     }
 
     @Test

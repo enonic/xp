@@ -54,7 +54,7 @@ public class AbstractImmutableEntityListTest
         assertFalse( list1.equals( list2 ) );
     }
 
-    private class MyList
+    private static class MyList
         extends AbstractImmutableEntityList<String>
     {
 

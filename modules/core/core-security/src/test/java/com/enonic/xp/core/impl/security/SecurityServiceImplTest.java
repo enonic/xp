@@ -1171,7 +1171,7 @@ public class SecurityServiceImplTest
             build();
     }
 
-    private class CustomAuthenticationToken
+    private static class CustomAuthenticationToken
         extends AuthenticationToken
     {
     }

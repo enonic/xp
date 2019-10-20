@@ -112,7 +112,7 @@ public class PageHandlerTest
     public void getContentNotFound()
         throws Exception
     {
-        Mockito.when( this.contentService.getByPath( Mockito.anyObject() ) ).thenReturn( null );
+        Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( null );
         this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
 
         try
@@ -176,7 +176,7 @@ public class PageHandlerTest
     public void getContentNotEnoughPermissions()
         throws Exception
     {
-        Mockito.when( this.contentService.getByPath( Mockito.anyObject() ) ).thenReturn( null );
+        Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( null );
         Mockito.when( this.contentService.contentExists( Mockito.any( ContentPath.class ) ) ).thenReturn( true );
 
         this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );

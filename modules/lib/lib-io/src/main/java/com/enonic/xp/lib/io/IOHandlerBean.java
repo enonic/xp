@@ -46,7 +46,9 @@ public final class IOHandlerBean
             public boolean processLine( final String line )
                 throws IOException
             {
-                callback.apply( line );
+                // callback is JS function for which according to contract return value is ignored.
+                // Suppress Error Prone warning about unused Function return value.
+                @SuppressWarnings("unused") final Object ignore = callback.apply( line );
                 return true;
             }
 

@@ -237,7 +237,7 @@ public class HtmlAreaContentProcessor
     {
         properties.stream().
             map( Property::getString ).
-            forEach( ( value -> processString( value, processedIds ) ) );
+            forEach( value -> processString( value, processedIds ) );
     }
 
     private void processComponent( final DescriptorBasedComponent component, final ContentIds.Builder processedIds )

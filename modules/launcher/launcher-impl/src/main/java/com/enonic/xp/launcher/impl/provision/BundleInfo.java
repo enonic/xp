@@ -2,6 +2,7 @@ package com.enonic.xp.launcher.impl.provision;
 
 import java.io.File;
 import java.net.URI;
+import java.util.Objects;
 
 final class BundleInfo
     implements Comparable<BundleInfo>
@@ -47,20 +48,24 @@ final class BundleInfo
     }
 
     @Override
-    public int hashCode()
+    public boolean equals( final Object o )
     {
-        return this.location.hashCode();
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( !( o instanceof BundleInfo ) )
+        {
+            return false;
+        }
+        final BundleInfo that = (BundleInfo) o;
+        return level == that.level && location.equals( that.location );
     }
 
     @Override
-    public boolean equals( final Object obj )
+    public int hashCode()
     {
-        return ( obj instanceof BundleInfo ) && equals( (BundleInfo) obj );
-    }
-
-    private boolean equals( final BundleInfo obj )
-    {
-        return obj.location.equals( this.location ) && ( obj.level == this.level );
+        return Objects.hash( location, level );
     }
 
     @Override

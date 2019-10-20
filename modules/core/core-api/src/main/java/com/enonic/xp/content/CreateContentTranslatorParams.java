@@ -394,7 +394,6 @@ public class CreateContentTranslatorParams
             Preconditions.checkNotNull( type, "type cannot be null" );
             Preconditions.checkNotNull( creator, "creator cannot be null" );
             Preconditions.checkNotNull( name, "name cannot be null" );
-            Preconditions.checkNotNull( valid, "valid cannot be null" );
             Preconditions.checkNotNull( childOrder, "childOrder cannot be null" );
         }
 

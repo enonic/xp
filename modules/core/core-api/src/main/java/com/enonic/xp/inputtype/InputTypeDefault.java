@@ -95,7 +95,22 @@ public final class InputTypeDefault
     @Override
     public boolean equals( final Object o )
     {
-        return ( o instanceof InputTypeDefault ) && ( (InputTypeDefault) o ).map.equals( this.map );
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( !( o instanceof InputTypeDefault ) )
+        {
+            return false;
+        }
+        final InputTypeDefault that = (InputTypeDefault) o;
+        return map.equals( that.map );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( map );
     }
 
     public static InputTypeDefault empty()

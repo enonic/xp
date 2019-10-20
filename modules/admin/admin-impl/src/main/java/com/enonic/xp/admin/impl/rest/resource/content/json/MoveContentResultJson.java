@@ -29,7 +29,7 @@ public class MoveContentResultJson
         failures.add( new Failure( name, reason ) );
     }
 
-    public class Success
+    public static class Success
     {
 
         private String name;
@@ -45,7 +45,7 @@ public class MoveContentResultJson
         }
     }
 
-    public class Failure
+    public static class Failure
         extends Success
     {
 

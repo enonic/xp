@@ -2,7 +2,6 @@ package com.enonic.xp.web.impl.dispatch.pipeline;
 
 import java.util.HashMap;
 
-import javax.servlet.Servlet;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 
@@ -20,7 +19,7 @@ public class ServletPipelineImplTest
     extends ResourcePipelineImplTest<ServletDefinition, ServletPipelineImpl>
 {
     @WebServlet
-    private final class MyServlet
+    private static final class MyServlet
         extends HttpServlet
     {
     }

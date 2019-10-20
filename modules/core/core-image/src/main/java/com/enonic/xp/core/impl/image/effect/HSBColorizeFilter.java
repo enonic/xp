@@ -35,7 +35,7 @@ public final class HSBColorizeFilter
         int alpha = ( rgb >> 24 ) & 0xff;
         int red = ( rgb >> 16 ) & 0xff;
         int green = ( rgb >> 8 ) & 0xff;
-        int blue = ( rgb ) & 0xff;
+        int blue = rgb & 0xff;
         float[] hsbvals = new float[3];
 
         Color.RGBtoHSB( red, green, blue, hsbvals );

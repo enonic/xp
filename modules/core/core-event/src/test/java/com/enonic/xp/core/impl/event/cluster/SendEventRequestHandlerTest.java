@@ -18,6 +18,7 @@ import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventPublisher;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class SendEventRequestHandlerTest
 {
@@ -56,10 +57,10 @@ public class SendEventRequestHandlerTest
 
         //Creates an event
         Event event = Event.create( "eventType" ).
-            timestamp( 123l ).
+            timestamp( 123L ).
             distributed( true ).
             value( "key1", "value1" ).
-            value( "key2", new Long( 1234l ) ).build();
+            value( "key2", 1234L ).build();
 
         //Writes the event
         final BytesStreamOutput bytesStreamOutput = new BytesStreamOutput();
@@ -80,7 +81,7 @@ public class SendEventRequestHandlerTest
         final Event eventForwarded = argumentCaptor.getValue();
         assertEquals( eventForwarded.getType(), event.getType() );
         assertEquals( eventForwarded.getTimestamp(), event.getTimestamp() );
-        assertEquals( eventForwarded.isDistributed(), false );
+        assertFalse( eventForwarded.isDistributed() );
         assertEquals( eventForwarded.getData(), event.getData() );
     }
 }
