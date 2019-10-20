@@ -29,6 +29,7 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:2.28.2'
     testImplementation 'org.mockito:mockito-junit-jupiter:2.28.2'
     testImplementation 'org.springframework:spring-test:4.1.6.RELEASE'
+    testImplementation 'nl.jqno.equalsverifier:equalsverifier:3.1.10'
     testRuntimeOnly 'org.slf4j:slf4j-simple:1.7.25'
     testOutput sourceSets.test.output
 }
