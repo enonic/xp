@@ -1,9 +1,8 @@
 package com.enonic.xp.lib.content;
 
-import java.security.SecureRandom;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Supplier;
 
 import com.enonic.xp.content.Content;
@@ -21,8 +20,6 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 public final class CreateContentHandler
     extends BaseContentHandler
 {
-    private final static Random RANDOM = new SecureRandom();
-
     private String name;
 
     private String parentPath;
@@ -43,7 +40,7 @@ public final class CreateContentHandler
 
     private String childOrder;
 
-    private Supplier<String> idGenerator = () -> Long.toString( Math.abs( RANDOM.nextLong() ) );
+    private Supplier<String> idGenerator = () -> Long.toString( ThreadLocalRandom.current().nextLong( Long.MAX_VALUE ) );
 
     private Map<String, Object> workflow;
 
