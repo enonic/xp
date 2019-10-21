@@ -449,6 +449,7 @@ public class ResolveSyncWorkCommand
             return this;
         }
 
+        @Override
         void validate()
         {
             super.validate();

@@ -38,6 +38,7 @@ public class CommitDumpUpgrader
         super( basePath );
     }
 
+    @Override
     protected void upgradeRepository( final RepositoryId repositoryId )
     {
         commitedNodeIds.clear();

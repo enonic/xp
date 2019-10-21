@@ -34,6 +34,7 @@ public class IssueCommentedNotificationParams
             this.modifier = modifier;
         }
 
+        @Override
         public IssueCommentedNotificationParams build()
         {
             return new IssueCommentedNotificationParams( this );

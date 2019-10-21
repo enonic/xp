@@ -31,6 +31,7 @@ final class ServletDefinitionImpl
         this.resource.destroy();
     }
 
+    @Override
     public boolean service( final HttpServletRequest req, final HttpServletResponse res )
         throws IOException, ServletException
     {

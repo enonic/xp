@@ -17,6 +17,7 @@ final class LaunchBrowserAction
         setEnabled( true );
     }
 
+    @Override
     public void actionPerformed( ActionEvent event )
     {
         final String url = MainWindow.get().getHttpUrl();

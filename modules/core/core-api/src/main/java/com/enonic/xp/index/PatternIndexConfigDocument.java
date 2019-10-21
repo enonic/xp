@@ -92,6 +92,7 @@ public class PatternIndexConfigDocument
         return defaultConfig;
     }
 
+    @Override
     public AllTextIndexConfig getAllTextConfig()
     {
         return allTextConfig;

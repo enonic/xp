@@ -38,6 +38,7 @@ public class MarketDataHttpProvider
         this.marketUrl = config.marketUrl();
     }
 
+    @Override
     public MarketApplicationsJson search( List<String> ids, String version, int start, int count )
     {
         final Request request = MarketRequestFactory.create( marketUrl, ids, version, start, count );

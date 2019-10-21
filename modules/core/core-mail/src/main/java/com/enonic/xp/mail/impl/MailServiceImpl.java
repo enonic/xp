@@ -86,6 +86,7 @@ public final class MailServiceImpl
     {
         return new javax.mail.Authenticator()
         {
+            @Override
             protected PasswordAuthentication getPasswordAuthentication()
             {
                 return new PasswordAuthentication( config.smtpUser(), config.smtpPassword() );

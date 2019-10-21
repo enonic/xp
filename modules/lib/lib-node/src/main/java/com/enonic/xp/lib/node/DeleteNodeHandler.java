@@ -26,6 +26,7 @@ public final class DeleteNodeHandler
         return new Builder();
     }
 
+    @Override
     public Collection<String> execute()
     {
         final ImmutableList.Builder<String> deletedNodeIds = ImmutableList.builder();

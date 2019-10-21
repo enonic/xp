@@ -24,6 +24,7 @@ public final class PageRegions
         return new Builder( source );
     }
 
+    @Override
     public PageRegions copy()
     {
         return PageRegions.create( this ).build();

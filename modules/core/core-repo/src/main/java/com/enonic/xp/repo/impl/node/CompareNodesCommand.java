@@ -75,6 +75,7 @@ public class CompareNodesCommand
             return this;
         }
 
+        @Override
         protected void validate()
         {
             super.validate();

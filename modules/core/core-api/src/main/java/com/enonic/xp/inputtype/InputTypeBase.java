@@ -31,11 +31,13 @@ public abstract class InputTypeBase
         return this.name.toString();
     }
 
+    @Override
     public Value createValue( final String value, final InputTypeConfig config )
     {
         return createValue( ValueFactory.newString( value ), config );
     }
 
+    @Override
     public abstract Value createValue( final Value value, final InputTypeConfig config );
 
     @Override
@@ -83,5 +85,6 @@ public abstract class InputTypeBase
         return false;
     }
 
+    @Override
     public abstract void validate( Property property, InputTypeConfig config );
 }

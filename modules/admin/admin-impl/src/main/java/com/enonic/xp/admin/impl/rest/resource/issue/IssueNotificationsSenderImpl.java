@@ -35,6 +35,7 @@ public class IssueNotificationsSenderImpl
         this.sendMailExecutor = Executors.newCachedThreadPool( threadFactory );
     }
 
+    @Override
     public void notifyIssueCreated( final IssueNotificationParams params )
     {
         if ( isRecipientsPresent( params ) )
@@ -44,6 +45,7 @@ public class IssueNotificationsSenderImpl
         }
     }
 
+    @Override
     public void notifyIssuePublished( final IssuePublishedNotificationParams params )
     {
         if ( isRecipientsPresent( params ) )
@@ -53,6 +55,7 @@ public class IssueNotificationsSenderImpl
         }
     }
 
+    @Override
     public void notifyIssueUpdated( final IssueUpdatedNotificationParams params )
     {
         if ( isRecipientsPresent( params ) )
@@ -62,6 +65,7 @@ public class IssueNotificationsSenderImpl
         }
     }
 
+    @Override
     public void notifyIssueCommented( final IssueCommentedNotificationParams params )
     {
         if ( isRecipientsPresent( params ) )

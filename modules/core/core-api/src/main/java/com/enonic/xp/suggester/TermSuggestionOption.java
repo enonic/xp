@@ -33,6 +33,7 @@ public final class TermSuggestionOption
             return this;
         }
 
+        @Override
         public TermSuggestionOption build()
         {
             return new TermSuggestionOption( this );

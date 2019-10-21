@@ -68,6 +68,7 @@ public class IssueInitializer
         createAdminContext().runWith( this::initIssueNode );
     }
 
+    @Override
     public boolean isInitialized()
     {
         return createAdminContext().

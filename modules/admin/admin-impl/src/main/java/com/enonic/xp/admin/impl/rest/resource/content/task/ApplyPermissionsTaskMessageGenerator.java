@@ -9,16 +9,19 @@ class ApplyPermissionsTaskMessageGenerator
         return "Nothing to edit.";
     }
 
+    @Override
     void appendMessageForSingleFailure( final StringBuilder builder, final RunnableTaskResult result )
     {
         builder.append( String.format( "Permissions for \"%s\" could not be applied.", result.getFailed().get( 0 ).getName() ) );
     }
 
+    @Override
     void appendMessageForMultipleFailure( final StringBuilder builder, final RunnableTaskResult result )
     {
         builder.append( String.format( "Failed to apply permissions for %s items. ", result.getFailureCount() ) );
     }
 
+    @Override
     void appendMessageForSingleSuccess( final StringBuilder builder, final RunnableTaskResult result )
     {
         if ( result.getSucceeded() != null && result.getSucceeded().size() == 1 )
@@ -27,6 +30,7 @@ class ApplyPermissionsTaskMessageGenerator
         }
     }
 
+    @Override
     void appendMessageForMultipleSuccess( final StringBuilder builder, final RunnableTaskResult result )
     {
         builder.append( String.format( "Permissions for %s items are applied.", result.getSuccessCount() ) );

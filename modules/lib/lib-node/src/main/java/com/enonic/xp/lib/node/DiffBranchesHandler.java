@@ -30,6 +30,7 @@ public final class DiffBranchesHandler
         return new Builder();
     }
 
+    @Override
     public Object execute()
     {
         final NodeId nodeId = getNodeId( this.nodeKey );

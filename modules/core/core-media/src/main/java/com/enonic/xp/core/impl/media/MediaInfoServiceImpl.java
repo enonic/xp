@@ -70,6 +70,7 @@ public final class MediaInfoServiceImpl
         return null;
     }
 
+    @Override
     public ImageOrientation getImageOrientation( ByteSource byteSource, Media media )
     {
         final ImageOrientation imageOrientation = media.getOrientation();

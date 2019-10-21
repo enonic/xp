@@ -10,6 +10,7 @@ public final class StaticHtml
         this.html = html;
     }
 
+    @Override
     public String getHtml()
     {
         return html;
