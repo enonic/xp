@@ -1,5 +1,8 @@
 package com.enonic.xp.repo.impl.storage;
 
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -8,6 +11,7 @@ import com.enonic.xp.blob.BlobKeys;
 import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.blob.NodeVersionKeys;
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
@@ -21,6 +25,7 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
+import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
@@ -165,18 +170,31 @@ public class NodeStorageServiceImpl
         }
         else
         {
+            this.removeBranchFromCurrentVersion( nodeBranchEntry.getNodeId(), context );
+
             nodeVersionId = new NodeVersionId();
             nodeVersionKey = nodeVersionService.store( NodeVersion.from( params.getNode() ), context );
         }
 
         storeVersionMetadata( params.getNode(), nodeVersionId, nodeVersionKey, context );
 
-        return moveInBranchAndReIndex( params.getNode(), nodeVersionId, nodeVersionKey, nodeBranchEntry.getNodePath(), context );
+        final Node movedNode =
+            moveInBranchAndReIndex( params.getNode(), nodeVersionId, nodeVersionKey, nodeBranchEntry.getNodePath(), context );
+
+        if ( !params.isUpdateMetadataOnly() )
+        {
+            this.addBranchToNewVersion( movedNode, nodeVersionId, context );
+        }
+
+        return movedNode;
     }
 
     @Override
     public void delete( final NodeIds nodeIds, final InternalContext context )
     {
+        final NodeBranchEntries nodeBranchEntries = branchService.get( nodeIds, true, context );
+        nodeBranchEntries.forEach( nodeBranchEntry -> this.removeBranchFromCurrentVersion( nodeBranchEntry.getNodeId(), context ) );
+
         branchService.delete( nodeIds, context );
         indexDataService.delete( nodeIds, context );
     }
@@ -220,6 +238,8 @@ public class NodeStorageServiceImpl
             throw new NodeNotFoundException( "Cannot find node version with id: " + nodeVersionId );
         }
 
+        this.addBranchToNewVersion( node, nodeVersionId, context );
+
         this.branchService.store( NodeBranchEntry.create().
             nodeVersionId( nodeVersionId ).
             nodeVersionKey( nodeVersionMetadata.getNodeVersionKey() ).
@@ -245,6 +265,9 @@ public class NodeStorageServiceImpl
             {
                 pushListener.nodesPushed( 1 );
             }
+
+            final InternalContext internalContext = InternalContext.create( context ).branch( entries.getTargetBranch() ).build();
+            this.addBranchToNewVersion( nodeBranchEntry, internalContext );
         }
 
         this.indexDataService.push( IndexPushNodeParams.create().
@@ -263,6 +286,9 @@ public class NodeStorageServiceImpl
         this.branchService.store( entry, InternalContext.create( context ).
             branch( target ).
             build() );
+
+        final InternalContext internalContext = InternalContext.create( context ).branch( target ).build();
+        this.addBranchToNewVersion( node, entry.getVersionId(), internalContext );
 
         this.indexDataService.push( IndexPushNodeParams.create().
             nodeIds( NodeIds.from( node.id() ) ).
@@ -554,6 +580,9 @@ public class NodeStorageServiceImpl
     private void storeBranchMetadata( final StoreBranchMetadataParams storeBranchMetadataParams )
     {
         final Node node = storeBranchMetadataParams.getNode();
+
+        this.updateBranchesInVersion( node, storeBranchMetadataParams.getNodeVersionId(), storeBranchMetadataParams.getContext() );
+
         this.branchService.store( NodeBranchEntry.create().
             nodeVersionId( storeBranchMetadataParams.getNodeVersionId() ).
             nodeVersionKey( storeBranchMetadataParams.getNodeVersionKey() ).
@@ -562,6 +591,58 @@ public class NodeStorageServiceImpl
             timestamp( node.getTimestamp() ).
             nodePath( node.path() ).
             build(), storeBranchMetadataParams.getContext() );
+    }
+
+    private void updateBranchesInVersion( final Node node, final NodeVersionId newVersionId, final InternalContext internalContext )
+    {
+        this.removeBranchFromCurrentVersion( node.id(), internalContext );
+        this.addBranchToNewVersion( node, newVersionId, internalContext );
+    }
+
+    private void removeBranchFromCurrentVersion( final NodeId nodeId, InternalContext internalContext )
+    {
+        final NodeBranchEntry oldNodeBranchEntry = branchService.get( nodeId, internalContext );
+        if ( oldNodeBranchEntry != null )
+        {
+            final NodeVersionMetadata oldNodeVersionMetadata =
+                this.versionService.getVersion( oldNodeBranchEntry.getNodeId(), oldNodeBranchEntry.getVersionId(), internalContext );
+
+            if ( oldNodeVersionMetadata != null )
+            {
+                final Branches newBranches = Branches.from( oldNodeVersionMetadata.getBranches().
+                    stream().
+                    filter( branch -> !branch.equals( internalContext.getBranch() ) ).
+                    collect( Collectors.toSet() ) );
+
+                this.versionService.store( NodeVersionMetadata.create( oldNodeVersionMetadata ).
+                    setBranches( newBranches ).build(), internalContext );
+            }
+        }
+    }
+
+    private void addBranchToNewVersion( final NodeBranchEntry node, final InternalContext internalContext )
+    {
+        this.doAddBranchToNewVersion( node.getNodeId(), node.getNodeState(), node.getVersionId(), internalContext );
+    }
+
+    private void addBranchToNewVersion( final Node node, final NodeVersionId newVersionId, final InternalContext internalContext )
+    {
+        this.doAddBranchToNewVersion( node.id(), node.getNodeState(), newVersionId, internalContext );
+    }
+
+    private void doAddBranchToNewVersion( final NodeId nodeId, final NodeState nodeState, final NodeVersionId newVersionId,
+                                          final InternalContext internalContext )
+    {
+        final NodeVersionMetadata nodeVersionMetadata = this.versionService.getVersion( nodeId, newVersionId, internalContext );
+
+        final Branches newBranches = Branches.from(
+            Stream.<Branch>concat( nodeVersionMetadata.getBranches().stream(), Stream.<Branch>of( internalContext.getBranch() ) ).
+                filter( branch -> !NodeState.PENDING_DELETE.equals( nodeState ) || !branch.equals( internalContext.getBranch() ) ).collect(
+                Collectors.toSet() ) );
+
+        this.versionService.store( NodeVersionMetadata.create( nodeVersionMetadata ).
+            setBranches( newBranches ).
+            build(), internalContext );
     }
 
     private Node moveInBranchAndReIndex( final Node node, final NodeVersionId nodeVersionId, final NodeVersionKey nodeVersionKey,

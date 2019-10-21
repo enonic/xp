@@ -14,6 +14,7 @@ import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.UpdateNodeParams;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FindNodesWithVersionDifferenceCommandTest
     extends AbstractNodeTest
@@ -257,29 +258,10 @@ public class FindNodesWithVersionDifferenceCommandTest
         NodeVersionDiffResult result = getDiff( WS_DEFAULT, WS_OTHER, node1.path() );
 
         assertEquals( 4, result.getNodesWithDifferences().getSize() );
-
-        int counter = 0;
-        for ( final NodeId nodeId : result.getNodesWithDifferences() )
-        {
-            if ( counter == 0 )
-            {
-                assertEquals( "dddd", nodeId.toString() );
-            }
-            else if ( counter == 1 )
-            {
-                assertEquals( "ccc", nodeId.toString() );
-            }
-            else if ( counter == 2 )
-            {
-                assertEquals( "11", nodeId.toString() );
-            }
-            else if ( counter == 3 )
-            {
-                assertEquals( "_a", nodeId.toString() );
-            }
-
-            counter++;
-        }
+        assertTrue( result.getNodesWithDifferences().contains( NodeId.from( "dddd" ) ) );
+        assertTrue( result.getNodesWithDifferences().contains( NodeId.from( "ccc" ) ) );
+        assertTrue( result.getNodesWithDifferences().contains( NodeId.from( "11" ) ) );
+        assertTrue( result.getNodesWithDifferences().contains( NodeId.from( "_a" ) ) );
     }
 
     @Test

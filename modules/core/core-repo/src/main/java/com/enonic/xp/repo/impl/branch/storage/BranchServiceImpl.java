@@ -131,21 +131,6 @@ public class BranchServiceImpl
     }
 
     @Override
-    public void delete( final NodeId nodeId, final InternalContext context )
-    {
-        final NodeBranchEntry nodeBranchEntry = doGetById( nodeId, context );
-
-        if ( nodeBranchEntry == null )
-        {
-            return;
-        }
-
-        storageDao.delete( BranchDeleteRequestFactory.create( nodeId, context ) );
-
-        pathCache.evict( createPath( nodeBranchEntry.getNodePath(), context ) );
-    }
-
-    @Override
     public void delete( final NodeIds nodeIds, final InternalContext context )
     {
         final NodeBranchEntries nodeBranchEntries = getIgnoreOrder( nodeIds, context );
