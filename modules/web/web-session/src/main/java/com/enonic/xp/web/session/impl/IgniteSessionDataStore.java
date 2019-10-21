@@ -91,6 +91,7 @@ public final class IgniteSessionDataStore
         return reference.get();
     }
 
+    @Override
     public SessionData doLoad( final String cacheKey )
     {
         final IgniteCache<String, SessionDataWrapper> igniteCache = this.igniteCache;

@@ -91,6 +91,7 @@ public class ClusterManagerImpl
         return this.instances;
     }
 
+    @Override
     public boolean isHealthy()
     {
         return isHealthy;

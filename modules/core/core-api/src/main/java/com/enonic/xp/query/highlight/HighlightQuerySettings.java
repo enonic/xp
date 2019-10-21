@@ -84,6 +84,7 @@ public class HighlightQuerySettings
             return this;
         }
 
+        @Override
         public HighlightQuerySettings build()
         {
             return new HighlightQuerySettings( this );

@@ -280,6 +280,7 @@ public class Version
         return ( major == other.major ) && ( minor == other.minor ) && ( micro == other.micro ) && qualifier.equals( other.qualifier );
     }
 
+    @Override
     public int compareTo( Version other )
     {
         if ( other == this )

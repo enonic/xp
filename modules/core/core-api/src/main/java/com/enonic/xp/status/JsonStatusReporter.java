@@ -10,6 +10,7 @@ import com.google.common.net.MediaType;
 public abstract class JsonStatusReporter
     implements StatusReporter
 {
+    @Override
     public final MediaType getMediaType()
     {
         return MediaType.JSON_UTF_8;

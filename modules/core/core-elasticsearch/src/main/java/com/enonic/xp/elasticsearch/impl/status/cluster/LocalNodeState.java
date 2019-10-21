@@ -13,6 +13,7 @@ final class LocalNodeState
         this.numberOfNodesSeen = builder.numberOfNodesSeen;
     }
 
+    @Override
     ObjectNode toJson()
     {
         final ObjectNode json = super.toJson();

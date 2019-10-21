@@ -32,6 +32,7 @@ public class DeleteRunnableTaskResult
         return new DeleteTaskMessageGenerator().generate( this );
     }
 
+    @Override
     public int getSuccessCount()
     {
         return pending.size() + super.getSuccessCount();
@@ -58,6 +59,7 @@ public class DeleteRunnableTaskResult
             return this;
         }
 
+        @Override
         public DeleteRunnableTaskResult build()
         {
             return new DeleteRunnableTaskResult( this );

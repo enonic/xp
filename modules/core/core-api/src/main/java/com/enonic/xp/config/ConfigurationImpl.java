@@ -65,6 +65,7 @@ final class ConfigurationImpl
         return new ConfigurationImpl( builder.build() );
     }
 
+    @Override
     public Map<String, String> asMap()
     {
         return this.map;

@@ -145,6 +145,7 @@ public class DuplicateRunnableTask
             return this;
         }
 
+        @Override
         public DuplicateRunnableTask build()
         {
             return new DuplicateRunnableTask( this );

@@ -31,6 +31,7 @@ public class ModifyNodeHandler
         return new Builder();
     }
 
+    @Override
     public Object execute()
     {
         final Node node = getExistingNode();
@@ -39,7 +40,7 @@ public class ModifyNodeHandler
 
         final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
             id( node.id() ).
-            editor( createEditor(updatedNodeScriptValue) ).
+            editor( createEditor( updatedNodeScriptValue) ).
             setBinaryAttachments( binaryAttachments ).
             build();
 

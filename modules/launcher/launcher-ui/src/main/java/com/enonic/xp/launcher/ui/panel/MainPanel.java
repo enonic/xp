@@ -35,11 +35,13 @@ public final class MainPanel
         add( loggingPanel, BorderLayout.CENTER );
     }
 
+    @Override
     protected void paintComponent( final Graphics graphics )
     {
         graphics.drawImage( this.image, 0, 0, null );
     }
 
+    @Override
     public Dimension getPreferredSize()
     {
         return new Dimension( this.image.getWidth(), this.image.getHeight() );

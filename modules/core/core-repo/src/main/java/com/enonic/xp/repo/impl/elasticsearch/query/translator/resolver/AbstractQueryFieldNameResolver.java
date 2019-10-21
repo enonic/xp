@@ -16,6 +16,7 @@ import com.enonic.xp.repo.impl.index.IndexValueTypeInterface;
 abstract class AbstractQueryFieldNameResolver
     implements QueryFieldNameResolver
 {
+    @Override
     public String resolve( final CompareExpr compareExpr )
     {
         final FieldExpr field = compareExpr.getField();
@@ -32,6 +33,7 @@ abstract class AbstractQueryFieldNameResolver
         return createValueTypeAwareFieldName( baseFieldName, firstValue.getValue() );
     }
 
+    @Override
     public String resolve( final ValueFilter valueQueryFilter )
     {
         final String valueQueryFilterFieldName = valueQueryFilter.getFieldName();
@@ -41,22 +43,26 @@ abstract class AbstractQueryFieldNameResolver
         return createValueTypeAwareFieldName( baseFieldName, firstValue );
     }
 
+    @Override
     public String resolve( final String queryFieldName )
     {
         return appendIndexValueType( queryFieldName, IndexValueType.STRING );
     }
 
 
+    @Override
     public String resolve( final String queryFieldName, final IndexValueTypeInterface indexValueType )
     {
         return appendIndexValueType( queryFieldName, indexValueType );
     }
 
+    @Override
     public String resolve( final String queryFieldName, final Value value )
     {
         return createValueTypeAwareFieldName( queryFieldName, value );
     }
 
+    @Override
     public String resolveOrderByFieldName( final String queryFieldName )
     {
         final String normalizedFieldName = IndexFieldNameNormalizer.normalize( queryFieldName );

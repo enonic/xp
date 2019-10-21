@@ -20,8 +20,8 @@ import com.google.common.io.ByteSource;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.content.ActiveContentVersionEntry;
 import com.enonic.xp.audit.AuditLogService;
+import com.enonic.xp.content.ActiveContentVersionEntry;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.ApplyContentPermissionsResult;
 import com.enonic.xp.content.CompareContentParams;
@@ -498,6 +498,7 @@ public class ContentServiceImpl
             execute();
     }
 
+    @Override
     public ContentIds resolveRequiredDependencies( ResolveRequiredDependenciesParams params )
     {
         return ResolveRequiredDependenciesCommand.create().
@@ -856,6 +857,7 @@ public class ContentServiceImpl
             execute();
     }
 
+    @Override
     public Contents findByApplicationKey( final ApplicationKey key )
     {
         final ContentQuery query = ContentQuery.create().

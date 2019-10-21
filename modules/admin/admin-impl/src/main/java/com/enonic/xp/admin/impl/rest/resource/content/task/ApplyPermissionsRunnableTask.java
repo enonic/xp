@@ -89,6 +89,7 @@ public class ApplyPermissionsRunnableTask
             return this;
         }
 
+        @Override
         public ApplyPermissionsRunnableTask build()
         {
             return new ApplyPermissionsRunnableTask( this );

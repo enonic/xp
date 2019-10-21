@@ -33,6 +33,7 @@ public final class EventWebSocket
         this.session = null;
     }
 
+    @Override
     public void onError( final Session session, final Throwable error )
     {
         this.webSocketManager.unregisterSocket( this );

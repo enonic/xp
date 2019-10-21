@@ -10,6 +10,7 @@ public class RepositoryNotFoundException
         super( "Repository with id [" + repositoryId + "] not found" );
     }
 
+    @Override
     public String getCode()
     {
         return "repositoryNotFound";

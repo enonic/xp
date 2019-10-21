@@ -95,6 +95,7 @@ abstract class AbstractGetBinaryCommand
             return (B) this;
         }
 
+        @Override
         void validate() {
             Preconditions.checkNotNull( binaryService, "binaryBlobStore not set" );
             Preconditions.checkArgument( propertyPath != null || binaryReference != null,

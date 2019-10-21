@@ -21,6 +21,7 @@ public class SearchQueryFieldNameResolver
         return BUILT_IN_FIELDS;
     }
 
+    @Override
     protected String appendIndexValueType( final String baseFieldName, final IndexValueTypeInterface indexValueType )
     {
         return IndexFieldNameNormalizer.normalize( baseFieldName + ( Strings.isNullOrEmpty( indexValueType.getPostfix() )

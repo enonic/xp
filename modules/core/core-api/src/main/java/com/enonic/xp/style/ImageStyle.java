@@ -29,21 +29,25 @@ public final class ImageStyle
         this.filter = builder.filter;
     }
 
+    @Override
     public String getElement()
     {
         return STYLE_ELEMENT_NAME;
     }
 
+    @Override
     public String getName()
     {
         return name;
     }
 
+    @Override
     public String getDisplayName()
     {
         return displayName;
     }
 
+    @Override
     public String getDisplayNameI18nKey()
     {
         return displayNameI18nKey;
