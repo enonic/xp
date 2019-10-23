@@ -5,6 +5,7 @@
       "myfield._analyzed"
     ],
     "analyzer": "fulltext_search_default",
-    "default_operator": "or"
+    "default_operator": "or",
+    "analyze_wildcard": true
   }
 }
