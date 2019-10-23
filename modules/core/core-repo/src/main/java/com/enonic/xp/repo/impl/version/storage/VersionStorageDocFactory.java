@@ -7,7 +7,7 @@ import com.enonic.xp.repo.impl.StorageSource;
 import com.enonic.xp.repo.impl.storage.StaticStorageType;
 import com.enonic.xp.repo.impl.storage.StorageData;
 import com.enonic.xp.repo.impl.storage.StoreRequest;
-import com.enonic.xp.repo.impl.storage.StoreStorageName;
+import com.enonic.xp.repo.impl.storage.VersionStorageName;
 import com.enonic.xp.repo.impl.version.VersionIndexPath;
 import com.enonic.xp.repository.RepositoryId;
 
@@ -35,7 +35,7 @@ public class VersionStorageDocFactory
             id( nodeVersion.getNodeVersionId().toString() ).
             forceRefresh( false ).
             settings( StorageSource.create().
-                storageName( StoreStorageName.from( repositoryId ) ).
+                storageName( VersionStorageName.from( repositoryId ) ).
                 storageType( StaticStorageType.VERSION ).
                 build() ).
             data( data.build() ).

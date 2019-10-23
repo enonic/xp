@@ -1013,8 +1013,7 @@ public class DumpServiceImplTest
             this.blobStore.clear();
         }
 
-        this.indexServiceInternal.deleteIndices( IndexNameResolver.resolveSearchIndexName( SystemConstants.SYSTEM_REPO.getId() ) );
-        this.indexServiceInternal.deleteIndices( IndexNameResolver.resolveStorageIndexName( SystemConstants.SYSTEM_REPO.getId() ) );
+        this.deleteSystemIndices();
 
         SystemRepoInitializer.create().
             setIndexServiceInternal( indexServiceInternal ).
@@ -1051,4 +1050,12 @@ public class DumpServiceImplTest
             build() );
     }
 
+    private void deleteSystemIndices()
+    {
+        this.indexServiceInternal.deleteIndices( IndexNameResolver.resolveSearchIndexName( SystemConstants.SYSTEM_REPO.getId() ) );
+        this.indexServiceInternal.deleteIndices( IndexNameResolver.resolveBranchIndexName( SystemConstants.SYSTEM_REPO.getId() ) );
+        this.indexServiceInternal.deleteIndices( IndexNameResolver.resolveVersionIndexName( SystemConstants.SYSTEM_REPO.getId() ) );
+        this.indexServiceInternal.deleteIndices( IndexNameResolver.resolveCommitIndexName( SystemConstants.SYSTEM_REPO.getId() ) );
+
+    }
 }

@@ -1,55 +1,26 @@
 package com.enonic.xp.repo.impl.search;
 
-import com.enonic.xp.repo.impl.StorageName;
+import com.enonic.xp.repo.impl.storage.BaseStorageName;
 import com.enonic.xp.repository.RepositoryId;
 
 public class SearchStorageName
-    implements StorageName
+    extends BaseStorageName
 {
-    public final static String STORAGE_INDEX_PREFIX = "search";
+    public static final String STORAGE_INDEX_PREFIX = "search";
 
-    public final static String DIVIDER = "-";
-
-    private final String name;
-
-    private SearchStorageName( final String name )
+    SearchStorageName( final String name )
     {
-        this.name = name;
+        super( name );
     }
 
     public static SearchStorageName from( final RepositoryId repositoryId )
     {
-        return new SearchStorageName( STORAGE_INDEX_PREFIX + DIVIDER + repositoryId.toString() );
-    }
-
-
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-
-        final SearchStorageName that = (SearchStorageName) o;
-
-        return !( name != null ? !name.equals( that.name ) : that.name != null );
-
+        return new SearchStorageName( getStorageName( STORAGE_INDEX_PREFIX, repositoryId ) );
     }
 
     @Override
-    public int hashCode()
+    public String toString()
     {
-        return name != null ? name.hashCode() : 0;
-    }
-
-    @Override
-    public String getName()
-    {
-        return name;
+        return "SearchStorageName{" + "name='" + this.getName() + '\'' + '}';
     }
 }

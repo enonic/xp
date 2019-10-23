@@ -50,6 +50,8 @@ public class NodeRepositoryServiceImpl
     {
         delete( repositoryId, IndexType.SEARCH );
         delete( repositoryId, IndexType.VERSION );
+        delete( repositoryId, IndexType.BRANCH );
+        delete( repositoryId, IndexType.COMMIT );
     }
 
     private void delete( final RepositoryId repositoryId, final IndexType indexType )
@@ -66,16 +68,20 @@ public class NodeRepositoryServiceImpl
             throw new RepositoryException( "Unable to initialize repositories" );
         }
 
-        final String storageIndexName = IndexNameResolver.resolveStorageIndexName( repositoryId );
+        final String versionIndexName = IndexNameResolver.resolveVersionIndexName( repositoryId );
+        final String branchIndexName = IndexNameResolver.resolveBranchIndexName( repositoryId );
+        final String commitIndexName = IndexNameResolver.resolveCommitIndexName( repositoryId );
         final String searchIndexName = IndexNameResolver.resolveSearchIndexName( repositoryId );
 
-        return indexServiceInternal.indicesExists( storageIndexName, searchIndexName );
+        return indexServiceInternal.indicesExists( versionIndexName, branchIndexName, commitIndexName, searchIndexName );
     }
 
     private void createIndexes( final CreateRepositoryParams params )
     {
         doCreateIndex( params, IndexType.SEARCH );
         doCreateIndex( params, IndexType.VERSION );
+        doCreateIndex( params, IndexType.BRANCH );
+        doCreateIndex( params, IndexType.COMMIT );
     }
 
 
@@ -166,27 +172,16 @@ public class NodeRepositoryServiceImpl
 
     private String resolveIndexName( final RepositoryId repositoryId, final IndexType indexType )
     {
-        switch ( indexType )
+        final String indexName = IndexNameResolver.resolveIndexName( repositoryId, indexType );
+
+        if ( indexName != null )
         {
-            case SEARCH:
-            {
-                return IndexNameResolver.resolveSearchIndexName( repositoryId );
-            }
-            case VERSION:
-            {
-                return IndexNameResolver.resolveStorageIndexName( repositoryId );
-            }
-            case BRANCH:
-            {
-                return IndexNameResolver.resolveStorageIndexName( repositoryId );
-            }
-            case COMMIT:
-            {
-                return IndexNameResolver.resolveStorageIndexName( repositoryId );
-            }
+            return indexName;
         }
 
-        throw new IllegalArgumentException( "Cannot resolve index name for indexType [" + indexType.getName() + "]" );
+        throw new IllegalArgumentException( indexType != null
+                                                ? ( "Cannot resolve index name for indexType [" + indexType.getName() + "]" )
+                                                : "Cannot resolve index name for empty index type." );
     }
 
     private boolean checkClusterHealth()

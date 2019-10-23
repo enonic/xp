@@ -3,10 +3,10 @@ package com.enonic.xp.repo.impl.commit.storage;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.StorageSource;
+import com.enonic.xp.repo.impl.storage.CommitStorageName;
 import com.enonic.xp.repo.impl.storage.StaticStorageType;
 import com.enonic.xp.repo.impl.storage.StorageData;
 import com.enonic.xp.repo.impl.storage.StoreRequest;
-import com.enonic.xp.repo.impl.storage.StoreStorageName;
 
 public class CommitStorageRequestFactory
 {
@@ -25,7 +25,7 @@ public class CommitStorageRequestFactory
             id( id ).
             forceRefresh( false ).
             settings( StorageSource.create().
-                storageName( StoreStorageName.from( context.getRepositoryId() ) ).
+                storageName( CommitStorageName.from( context.getRepositoryId() ) ).
                 storageType( StaticStorageType.COMMIT ).
                 build() ).
             data( data ).

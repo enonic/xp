@@ -34,7 +34,7 @@ public class GetActiveContentVersionsCommand
 
     public GetActiveContentVersionsResult execute()
     {
-        this.nodeService.refresh( RefreshMode.STORAGE );
+        this.nodeService.refresh( RefreshMode.VERSION );
 
         final NodeId nodeId = NodeId.from( contentId.toString() );
 

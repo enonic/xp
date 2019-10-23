@@ -6,10 +6,10 @@ import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.StorageSource;
+import com.enonic.xp.repo.impl.storage.BranchStorageName;
 import com.enonic.xp.repo.impl.storage.StaticStorageType;
 import com.enonic.xp.repo.impl.storage.StorageData;
 import com.enonic.xp.repo.impl.storage.StoreRequest;
-import com.enonic.xp.repo.impl.storage.StoreStorageName;
 
 class BranchStorageRequestFactory
 {
@@ -37,7 +37,7 @@ class BranchStorageRequestFactory
             nodePath( nodeBranchEntry.getNodePath() ).
             forceRefresh( false ).
             settings( StorageSource.create().
-                storageName( StoreStorageName.from( context.getRepositoryId() ) ).
+                storageName( BranchStorageName.from( context.getRepositoryId() ) ).
                 storageType( StaticStorageType.BRANCH ).
                 build() ).
             data( data ).
