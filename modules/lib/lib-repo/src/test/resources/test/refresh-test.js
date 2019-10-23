@@ -19,9 +19,21 @@ exports.refreshSearch = function () {
 
 };
 
-exports.refreshStorage = function () {
+exports.refreshVersion = function () {
 
-    repoLib.refresh({mode: 'storage'});
+    repoLib.refresh({mode: 'version'});
+
+};
+
+exports.refreshBranch = function () {
+
+    repoLib.refresh({mode: 'branch'});
+
+};
+
+exports.refreshCommit = function () {
+
+    repoLib.refresh({mode: 'commit'});
 
 };
 

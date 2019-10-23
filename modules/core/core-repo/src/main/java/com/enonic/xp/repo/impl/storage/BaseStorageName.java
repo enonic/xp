@@ -1,25 +1,25 @@
 package com.enonic.xp.repo.impl.storage;
 
+import org.apache.commons.lang.NotImplementedException;
+
 import com.enonic.xp.repo.impl.StorageName;
 import com.enonic.xp.repository.RepositoryId;
 
-public class StoreStorageName
+public abstract class BaseStorageName
     implements StorageName
 {
-    private final static String SEARCH_INDEX_PREFIX = "storage";
-
-    private final static String DIVIDER = "-";
+    public final static String DIVIDER = "-";
 
     private final String name;
 
-    private StoreStorageName( final String name )
+    protected BaseStorageName( final String name )
     {
         this.name = name;
     }
 
-    public static StoreStorageName from( final RepositoryId repositoryId )
+    protected static String getStorageName( final String prefix, final RepositoryId repositoryId )
     {
-        return new StoreStorageName( SEARCH_INDEX_PREFIX + DIVIDER + repositoryId.toString() );
+        return prefix + DIVIDER + repositoryId.toString();
     }
 
     @Override
@@ -40,7 +40,7 @@ public class StoreStorageName
             return false;
         }
 
-        final StoreStorageName that = (StoreStorageName) o;
+        final BaseStorageName that = (BaseStorageName) o;
 
         return !( name != null ? !name.equals( that.name ) : that.name != null );
 
@@ -55,9 +55,7 @@ public class StoreStorageName
     @Override
     public String toString()
     {
-        return "StoreStorageName{" +
-            "name='" + name + '\'' +
-            '}';
+        throw new NotImplementedException( "Must be implemented in inheritors" );
     }
 }
 

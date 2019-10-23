@@ -34,7 +34,7 @@ public class RefreshScriptTest
     {
         runScript( "/lib/xp/examples/repo/refresh.js" );
         verify( this.nodeService, times( 1 ) ).refresh( RefreshMode.SEARCH );
-        verify( this.nodeService, times( 1 ) ).refresh( RefreshMode.STORAGE );
+        verify( this.nodeService, times( 1 ) ).refresh( RefreshMode.BRANCH );
         verify( this.nodeService, times( 1 ) ).refresh( RefreshMode.ALL );
     }
 
@@ -63,11 +63,27 @@ public class RefreshScriptTest
     }
 
     @Test
-    public void testRefreshStorage()
+    public void testRefreshVersion()
         throws Exception
     {
-        runFunction( "/test/refresh-test.js", "refreshStorage" );
-        verify( this.nodeService, times( 1 ) ).refresh( RefreshMode.STORAGE );
+        runFunction( "/test/refresh-test.js", "refreshVersion" );
+        verify( this.nodeService, times( 1 ) ).refresh( RefreshMode.VERSION );
+    }
+
+    @Test
+    public void testRefreshBranch()
+        throws Exception
+    {
+        runFunction( "/test/refresh-test.js", "refreshBranch" );
+        verify( this.nodeService, times( 1 ) ).refresh( RefreshMode.BRANCH );
+    }
+
+    @Test
+    public void testRefreshCommit()
+        throws Exception
+    {
+        runFunction( "/test/refresh-test.js", "refreshCommit" );
+        verify( this.nodeService, times( 1 ) ).refresh( RefreshMode.COMMIT );
     }
 
     @Test

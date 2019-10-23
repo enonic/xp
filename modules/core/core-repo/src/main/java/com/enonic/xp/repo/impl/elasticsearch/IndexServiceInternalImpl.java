@@ -216,14 +216,12 @@ public class IndexServiceInternalImpl
     @Override
     public IndexSettings getIndexSettings( final RepositoryId repositoryId, final IndexType indexType )
     {
-        if ( repositoryId == null || indexType == null )
+        final String indexName = IndexNameResolver.resolveIndexName( repositoryId, indexType );
+
+        if ( indexName == null )
         {
             return null;
         }
-
-        final String indexName = IndexType.SEARCH == indexType
-            ? IndexNameResolver.resolveSearchIndexName( repositoryId )
-            : IndexNameResolver.resolveStorageIndexName( repositoryId );
 
         try
         {
@@ -252,14 +250,12 @@ public class IndexServiceInternalImpl
     @Override
     public Map<String, Object> getIndexMapping( final RepositoryId repositoryId, final Branch branch, final IndexType indexType )
     {
-        if ( repositoryId == null || indexType == null )
+        final String indexName = IndexNameResolver.resolveIndexName( repositoryId, indexType );
+
+        if ( indexName == null )
         {
             return null;
         }
-
-        final String indexName = IndexType.SEARCH == indexType
-            ? IndexNameResolver.resolveSearchIndexName( repositoryId )
-            : IndexNameResolver.resolveStorageIndexName( repositoryId );
 
         try
         {

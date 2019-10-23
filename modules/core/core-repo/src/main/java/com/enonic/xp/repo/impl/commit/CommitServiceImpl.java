@@ -11,12 +11,12 @@ import com.enonic.xp.repo.impl.StorageSource;
 import com.enonic.xp.repo.impl.commit.storage.CommitIndexPath;
 import com.enonic.xp.repo.impl.commit.storage.CommitStorageRequestFactory;
 import com.enonic.xp.repo.impl.commit.storage.NodeCommitEntryFactory;
+import com.enonic.xp.repo.impl.storage.CommitStorageName;
 import com.enonic.xp.repo.impl.storage.GetByIdRequest;
 import com.enonic.xp.repo.impl.storage.GetResult;
 import com.enonic.xp.repo.impl.storage.StaticStorageType;
 import com.enonic.xp.repo.impl.storage.StorageDao;
 import com.enonic.xp.repo.impl.storage.StoreRequest;
-import com.enonic.xp.repo.impl.storage.StoreStorageName;
 
 @Component
 public class CommitServiceImpl
@@ -52,16 +52,16 @@ public class CommitServiceImpl
     {
         return GetByIdRequest.create().
             id( nodeCommitId.toString() ).
-            storageSettings( createStorageSettings( context ) ).
+            storageSettings( createCommitStorageSettings( context ) ).
             returnFields( COMMIT_RETURN_FIELDS ).
             routing( nodeCommitId.toString() ).
             build();
     }
 
-    private StorageSource createStorageSettings( final InternalContext context )
+    private StorageSource createCommitStorageSettings( final InternalContext context )
     {
         return StorageSource.create().
-            storageName( StoreStorageName.from( context.getRepositoryId() ) ).
+            storageName( CommitStorageName.from( context.getRepositoryId() ) ).
             storageType( StaticStorageType.COMMIT ).
             build();
     }

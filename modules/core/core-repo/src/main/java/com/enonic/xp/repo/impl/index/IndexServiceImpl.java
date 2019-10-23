@@ -109,9 +109,14 @@ public class IndexServiceImpl
                                       final boolean closeIndex, final UpdateIndexSettingsResult.Builder result )
     {
         final String searchIndexName = IndexNameResolver.resolveSearchIndexName( repositoryId );
-        final String storageIndexName = IndexNameResolver.resolveStorageIndexName( repositoryId );
+        final String versionIndexName = IndexNameResolver.resolveVersionIndexName( repositoryId );
+        final String branchIndexName = IndexNameResolver.resolveBranchIndexName( repositoryId );
+        final String commitIndexName = IndexNameResolver.resolveCommitIndexName( repositoryId );
+
         updateIndexSettings( searchIndexName, updateIndexSettings, result, closeIndex );
-        updateIndexSettings( storageIndexName, updateIndexSettings, result, closeIndex );
+        updateIndexSettings( versionIndexName, updateIndexSettings, result, closeIndex );
+        updateIndexSettings( branchIndexName, updateIndexSettings, result, closeIndex );
+        updateIndexSettings( commitIndexName, updateIndexSettings, result, closeIndex );
     }
 
     private void updateIndexSettings( final String indexName, final UpdateIndexSettings settings,
