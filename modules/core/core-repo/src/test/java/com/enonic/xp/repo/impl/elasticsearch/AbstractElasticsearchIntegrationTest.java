@@ -3,8 +3,6 @@ package com.enonic.xp.repo.impl.elasticsearch;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 import org.apache.http.HttpHost;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
@@ -20,19 +18,24 @@ import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.repo.impl.elasticsearch.distro.ElasticsearchInstance;
+
 @Tag("elasticsearch")
-@ExtendWith(AbstractElasticsearchIntegrationTest.EmbeddedElasticsearchExtension.class)
+@ExtendWith(AbstractElasticsearchIntegrationTest.ElasticsearchExtension.class)
 public abstract class AbstractElasticsearchIntegrationTest
 {
     private final static Logger LOG = LoggerFactory.getLogger( AbstractElasticsearchIntegrationTest.class );
 
     protected static RestHighLevelClient client;
+
+    private static IndexServiceInternalImpl indexService;
 
     protected boolean indexExists( String index )
     {
@@ -49,7 +52,7 @@ public abstract class AbstractElasticsearchIntegrationTest
 
     protected File getSnapshotsDir()
     {
-        return ElasticsearchFixture.snapshotsDir;
+        return ElasticsearchInstance.INSTANCE.getSnapshotsDir();
     }
 
     protected void printAllIndexContent( final String indexName, final String indexType )
@@ -78,7 +81,7 @@ public abstract class AbstractElasticsearchIntegrationTest
 
     public static void waitForClusterHealth()
     {
-        ElasticsearchFixture.indexService.getClusterHealth( "10s" );
+        indexService.getClusterHealth( "10s" );
     }
 
     protected static RefreshResponse refresh()
@@ -105,56 +108,14 @@ public abstract class AbstractElasticsearchIntegrationTest
         }
     }
 
-    static class EmbeddedElasticsearchExtension
-        implements BeforeAllCallback
+    static class ElasticsearchExtension
+        implements BeforeAllCallback, AfterAllCallback
     {
         @Override
         public void beforeAll( ExtensionContext context )
+            throws IOException, InterruptedException
         {
-            context.getRoot().getStore( ExtensionContext.Namespace.GLOBAL ).getOrComputeIfAbsent( ElasticsearchFixture.class );
-        }
-    }
-
-    static class ElasticsearchFixture
-        implements ExtensionContext.Store.CloseableResource
-    {
-
-        static final String ROOT_DATA_DIRECTORY = "elasticsearch-data";
-
-        static IndexServiceInternalImpl indexService;
-
-        static File snapshotsDir;
-
-        String dataDirectory;
-
-        public ElasticsearchFixture()
-            throws IOException
-        {
-            LOG.info( "Connect to external Elasticsearch Cluster" );
-
-            Path rootDirectory = Files.createTempDirectory( "elasticsearchFixture" );
-
-            System.setProperty( "mapper.allow_dots_in_name", "true" );
-            dataDirectory = new File( rootDirectory.toFile(), ROOT_DATA_DIRECTORY ).toString();
-
-            final File pathHome = new File( this.dataDirectory, "index" );
-            if ( !pathHome.exists() )
-            {
-                pathHome.mkdir();
-            }
-
-            final File pathData = new File( this.dataDirectory, "data" );
-            if ( !pathData.exists() )
-            {
-                pathData.mkdir();
-            }
-
-            snapshotsDir = new File( this.dataDirectory, "repo" );
-
-            if ( !snapshotsDir.exists() )
-            {
-                snapshotsDir.mkdir();
-            }
+            ElasticsearchInstance.INSTANCE.start();
 
             client = new RestHighLevelClient( RestClient.builder( new HttpHost( "localhost", 9200, "http" ) ) );
 
@@ -163,19 +124,15 @@ public abstract class AbstractElasticsearchIntegrationTest
         }
 
         @Override
-        public void close()
+        public void afterAll( final ExtensionContext context )
+            throws Exception
         {
-            try
+            ElasticsearchInstance.INSTANCE.stop();
+
+            if ( client != null )
             {
-                LOG.info( "Disconnect from external Elasticsearch Cluster" );
-                if ( client != null )
-                {
-                    client.close();
-                }
-            }
-            catch ( IOException e )
-            {
-                throw new UncheckedIOException( e );
+                LOG.info( "Disconnect from Elasticsearch Client" );
+                client.close();
             }
         }
     }

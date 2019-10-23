@@ -5,6 +5,7 @@ dependencies {
     compile 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.4.0'
 //    compile 'org.elasticsearch:elasticsearch:2.4.6'
     compile 'org.apache.commons:commons-compress:1.14'
+    compile 'org.rauschig:jarchivelib:1.0.0'
     testCompile project( path: ':core:core-blobstore', configuration: 'testOutput' )
     testCompile project( path: ':core:core-api', configuration: 'testOutput' )
 }
