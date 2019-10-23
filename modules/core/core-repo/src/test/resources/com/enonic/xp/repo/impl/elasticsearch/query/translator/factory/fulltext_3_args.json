@@ -2,16 +2,10 @@
   "simple_query_string": {
     "query": "mysearchphrase",
     "fields": [
-      "myfield._analyzed^1.0"
+      "myfield._analyzed"
     ],
     "analyzer": "fulltext_search_default",
-    "flags": -1,
     "default_operator": "or",
-    "analyze_wildcard": false,
-    "auto_generate_synonyms_phrase_query": true,
-    "fuzzy_prefix_length": 0,
-    "fuzzy_max_expansions": 50,
-    "fuzzy_transpositions": true,
-    "boost": 1.0
+    "analyze_wildcard": true
   }
 }
