@@ -117,7 +117,9 @@ class AbstractSnapshotExecutor
     {
         final Set<String> indices = Sets.newHashSet();
 
-        indices.add( IndexNameResolver.resolveStorageIndexName( repositoryId ) );
+        indices.add( IndexNameResolver.resolveVersionIndexName( repositoryId ) );
+        indices.add( IndexNameResolver.resolveBranchIndexName( repositoryId ) );
+        indices.add( IndexNameResolver.resolveCommitIndexName( repositoryId ) );
         indices.add( IndexNameResolver.resolveSearchIndexName( repositoryId ) );
 
         return indices;

@@ -2,7 +2,6 @@ package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory;
 
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.FilteredQueryBuilder;
-import org.elasticsearch.index.query.HasChildQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.TermQueryBuilder;
@@ -13,7 +12,6 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repo.impl.StorageType;
-import com.enonic.xp.repo.impl.branch.storage.BranchIndexPath;
 import com.enonic.xp.repo.impl.version.VersionIndexPath;
 import com.enonic.xp.repo.impl.version.search.ExcludeEntries;
 import com.enonic.xp.repo.impl.version.search.ExcludeEntry;
@@ -29,14 +27,11 @@ public class NewDiffQueryFactory
 
     private final ExcludeEntries excludes;
 
-    private final StorageType childStorageType;
-
     private NewDiffQueryFactory( Builder builder )
     {
         source = builder.query.getSource();
         target = builder.query.getTarget();
         nodePath = builder.query.getNodePath();
-        childStorageType = builder.childStorageType;
         this.excludes = builder.query.getExcludes();
     }
 
@@ -111,15 +106,15 @@ public class NewDiffQueryFactory
         final String queryPath = nodePath.toString().toLowerCase();
 
         final BoolQueryBuilder pathQuery = new BoolQueryBuilder().
-            should( new TermQueryBuilder( BranchIndexPath.PATH.getPath(), queryPath ) );
+            should( new TermQueryBuilder( VersionIndexPath.NODE_PATH.getPath(), queryPath ) );
 
         if ( recursive )
         {
-            pathQuery.should( new WildcardQueryBuilder( BranchIndexPath.PATH.getPath(),
+            pathQuery.should( new WildcardQueryBuilder( VersionIndexPath.NODE_PATH.getPath(),
                                                         queryPath.endsWith( "/" ) ? queryPath + "*" : queryPath + "/*" ) );
         }
 
-        return new HasChildQueryBuilder( childStorageType.getName(), pathQuery );
+        return pathQuery;
     }
 
     private TermQueryBuilder isInBranch( final Branch source )

@@ -189,14 +189,12 @@ public class IndexServiceInternalImpl
     @Override
     public IndexSettings getIndexSettings( final RepositoryId repositoryId, final IndexType indexType )
     {
-        if ( repositoryId == null || indexType == null )
+        final String indexName = IndexNameResolver.resolveIndexName( repositoryId, indexType );
+
+        if ( indexName == null )
         {
             return null;
         }
-
-        final String indexName = IndexType.SEARCH == indexType
-            ? IndexNameResolver.resolveSearchIndexName( repositoryId )
-            : IndexNameResolver.resolveStorageIndexName( repositoryId );
 
         final ImmutableOpenMap<String, Settings> settingsMap =
             this.client.admin().indices().getSettings( new GetSettingsRequest().indices( indexName ) ).actionGet(
@@ -208,14 +206,12 @@ public class IndexServiceInternalImpl
     @Override
     public Map<String, Object> getIndexMapping( final RepositoryId repositoryId, final Branch branch, final IndexType indexType )
     {
-        if ( repositoryId == null || indexType == null )
+        final String indexName = IndexNameResolver.resolveIndexName( repositoryId, indexType );
+
+        if ( indexName == null )
         {
             return null;
         }
-
-        final String indexName = IndexType.SEARCH == indexType
-            ? IndexNameResolver.resolveSearchIndexName( repositoryId )
-            : IndexNameResolver.resolveStorageIndexName( repositoryId );
 
         final ImmutableOpenMap<String, ImmutableOpenMap<String, MappingMetaData>> repoMappings =
             this.client.admin().indices().getMappings( new GetMappingsRequest().indices( indexName ) ).actionGet(

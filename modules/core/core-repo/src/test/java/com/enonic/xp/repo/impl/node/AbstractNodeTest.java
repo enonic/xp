@@ -444,18 +444,18 @@ public abstract class AbstractNodeTest
 
     protected void printBranchIndex()
     {
-        printAllIndexContent( IndexNameResolver.resolveStorageIndexName( ContextAccessor.current().getRepositoryId() ),
+        printAllIndexContent( IndexNameResolver.resolveBranchIndexName( ContextAccessor.current().getRepositoryId() ),
                               IndexType.BRANCH.getName() );
     }
 
     protected void printVersionIndex()
     {
-        printAllIndexContent( IndexNameResolver.resolveStorageIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.VERSION.getName() );
+        printAllIndexContent( IndexNameResolver.resolveVersionIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.VERSION.getName() );
     }
 
     protected void printCommitIndex()
     {
-        printAllIndexContent( IndexNameResolver.resolveStorageIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.COMMIT.getName() );
+        printAllIndexContent( IndexNameResolver.resolveCommitIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.COMMIT.getName() );
     }
 
     protected PushNodesResult pushNodes( final Branch target, final NodeId... nodeIds )

@@ -3,7 +3,6 @@ package com.enonic.xp.repo.impl.dump;
 import java.io.File;
 import java.net.URI;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.Instant;
 import java.util.Iterator;
 import java.util.List;
@@ -12,7 +11,6 @@ import java.util.TreeSet;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 
 import com.google.common.collect.ImmutableMap;
@@ -32,13 +30,13 @@ import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.dump.BranchDumpResult;
+import com.enonic.xp.dump.DumpUpgradeResult;
 import com.enonic.xp.dump.RepoDumpResult;
 import com.enonic.xp.dump.RepoLoadResult;
 import com.enonic.xp.dump.SystemDumpListener;
 import com.enonic.xp.dump.SystemDumpParams;
 import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.dump.SystemDumpUpgradeParams;
-import com.enonic.xp.dump.DumpUpgradeResult;
 import com.enonic.xp.dump.SystemLoadListener;
 import com.enonic.xp.dump.SystemLoadParams;
 import com.enonic.xp.dump.SystemLoadResult;
@@ -91,7 +89,12 @@ import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.Reference;
 import com.enonic.xp.util.Version;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DumpServiceImplTest
     extends AbstractNodeTest
@@ -1011,8 +1014,7 @@ public class DumpServiceImplTest
             this.blobStore.clear();
         }
 
-        this.indexServiceInternal.deleteIndices( IndexNameResolver.resolveSearchIndexName( SystemConstants.SYSTEM_REPO.getId() ) );
-        this.indexServiceInternal.deleteIndices( IndexNameResolver.resolveStorageIndexName( SystemConstants.SYSTEM_REPO.getId() ) );
+        this.deleteSystemIndices();
 
         SystemRepoInitializer.create().
             setIndexServiceInternal( indexServiceInternal ).
@@ -1049,4 +1051,12 @@ public class DumpServiceImplTest
             build() );
     }
 
+    private void deleteSystemIndices()
+    {
+        this.indexServiceInternal.deleteIndices( IndexNameResolver.resolveSearchIndexName( SystemConstants.SYSTEM_REPO.getId() ) );
+        this.indexServiceInternal.deleteIndices( IndexNameResolver.resolveBranchIndexName( SystemConstants.SYSTEM_REPO.getId() ) );
+        this.indexServiceInternal.deleteIndices( IndexNameResolver.resolveVersionIndexName( SystemConstants.SYSTEM_REPO.getId() ) );
+        this.indexServiceInternal.deleteIndices( IndexNameResolver.resolveCommitIndexName( SystemConstants.SYSTEM_REPO.getId() ) );
+
+    }
 }

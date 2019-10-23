@@ -51,7 +51,13 @@ import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.BinaryReference;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NodeServiceImplTest
     extends AbstractNodeTest
@@ -92,29 +98,27 @@ public class NodeServiceImplTest
     public void get_by_id_non_existing()
         throws Exception
     {
-        assertThrows(NodeNotFoundException.class, () -> this.nodeService.getById( NodeId.from( "a" ) ));
+        assertThrows( NodeNotFoundException.class, () -> this.nodeService.getById( NodeId.from( "a" ) ) );
     }
 
     @Test
     public void get_by_id_repo_non_existing()
         throws Exception
     {
-        assertThrows(RepositoryNotFoundException.class, () ->
-            ContextBuilder.from(ContextAccessor.current()).
-                    repositoryId("missing-repo").
-                    build().
-                    callWith(() -> this.nodeService.getById(NodeId.from("a")))
-        );
+        assertThrows( RepositoryNotFoundException.class, () -> ContextBuilder.from( ContextAccessor.current() ).
+            repositoryId( "missing-repo" ).
+            build().
+            callWith( () -> this.nodeService.getById( NodeId.from( "a" ) ) ) );
     }
 
     @Test
     public void get_by_id_branch_non_existing()
         throws Exception
     {
-        assertThrows(BranchNotFoundException.class, () -> ContextBuilder.from( ContextAccessor.current() ).
+        assertThrows( BranchNotFoundException.class, () -> ContextBuilder.from( ContextAccessor.current() ).
             branch( "missing-branch" ).
             build().
-            callWith( () -> this.nodeService.getById( NodeId.from( "a" ) ) ));
+            callWith( () -> this.nodeService.getById( NodeId.from( "a" ) ) ) );
     }
 
     @Test
@@ -356,7 +360,8 @@ public class NodeServiceImplTest
             } ).
             build();
         final Node updatedNode = updateNode( updateNodeParams );
-        nodeService.refresh( RefreshMode.STORAGE );
+        nodeService.refresh( RefreshMode.BRANCH );
+        nodeService.refresh( RefreshMode.VERSION );
 
         //Check that the two versions have no commit ID by default
         final NodeVersionsMetadata versionsMetadata = getVersionsMetadata( nodeId );
@@ -372,7 +377,8 @@ public class NodeServiceImplTest
             message( "Commit message" ).
             build();
         final NodeCommitEntry returnedCommitEntry = nodeService.commit( commitEntry, NodeIds.from( nodeId ) );
-        nodeService.refresh( RefreshMode.STORAGE );
+
+        nodeService.refresh( RefreshMode.VERSION );
 
         //Check created commit entry
         final NodeCommitId nodeCommitId = returnedCommitEntry.getNodeCommitId();
@@ -397,7 +403,8 @@ public class NodeServiceImplTest
         final RoutableNodeVersionId routableNodeVersionId = RoutableNodeVersionId.from( nodeId, firstVersionMetadata2.getNodeVersionId() );
         final NodeCommitEntry returnedCommitEntry2 =
             nodeService.commit( commitEntry, RoutableNodeVersionIds.from( routableNodeVersionId ) );
-        nodeService.refresh( RefreshMode.STORAGE );
+
+        nodeService.refresh( RefreshMode.VERSION );
 
         //Check that only the first version has been impacted
         final NodeVersionsMetadata versionsMetadata3 = getVersionsMetadata( nodeId );
@@ -417,7 +424,7 @@ public class NodeServiceImplTest
             parent( NodePath.ROOT ).
             build() );
 
-        final Node fetchedNode = this.nodeService.getByIdAndVersionId( createdNode.id(), createdNode.getNodeVersionId());
+        final Node fetchedNode = this.nodeService.getByIdAndVersionId( createdNode.id(), createdNode.getNodeVersionId() );
 
         assertEquals( createdNode, fetchedNode );
     }
@@ -430,7 +437,7 @@ public class NodeServiceImplTest
             parent( NodePath.ROOT ).
             build() );
 
-        final Node fetchedNode = this.nodeService.getByPathAndVersionId( createdNode.path(), createdNode.getNodeVersionId());
+        final Node fetchedNode = this.nodeService.getByPathAndVersionId( createdNode.path(), createdNode.getNodeVersionId() );
 
         assertEquals( createdNode, fetchedNode );
     }
