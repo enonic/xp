@@ -12,9 +12,10 @@ class NGramFunction
     {
         final NGramFunctionArguments arguments = new NGramFunctionArguments( functionExpr.getArguments() );
 
-        SimpleQueryStringBuilder builder = new SimpleQueryStringBuilder( arguments.getSearchString() ).
+        final SimpleQueryStringBuilder builder = new SimpleQueryStringBuilder( arguments.getSearchString() ).
             defaultOperator( arguments.getOperator() ).
-            analyzer( arguments.getAnalyzer() );
+            analyzer( arguments.getAnalyzer() ).
+            analyzeWildcard( true );
 
         appendQueryFieldNames( arguments, builder );
 
