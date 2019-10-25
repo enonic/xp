@@ -3,11 +3,10 @@ dependencies {
     compile 'org.osgi:osgi.core:7.0.0'
     compile 'org.osgi:osgi.cmpn:7.0.0'
     compile "org.apache.felix:org.apache.felix.framework:${felixVersion}"
-    runtime 'org.apache.felix:org.apache.felix.log:1.2.2'
-    runtime 'org.apache.felix:org.apache.felix.logback:1.0.2'
+    runtimeOnly 'org.apache.felix:org.apache.felix.logback:1.0.2'
     compile 'org.apache.felix:org.apache.felix.utils:1.11.2'
     compile 'commons-io:commons-io:2.4'
-    compile 'ch.qos.logback:logback-classic:1.2.3'
+    runtimeOnly 'ch.qos.logback:logback-classic:1.2.3'
     compile 'org.slf4j:slf4j-api:1.7.25'
     compile 'org.fusesource.jansi:jansi:1.11'
     compile 'javax.mail:mail:1.4.7'
