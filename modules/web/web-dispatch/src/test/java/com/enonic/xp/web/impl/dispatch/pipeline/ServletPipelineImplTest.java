@@ -57,6 +57,7 @@ public class ServletPipelineImplTest
     public void addRemove_mapping()
     {
         final ServletMapping mapping = Mockito.mock( ServletMapping.class );
+        Mockito.when( mapping.getResource() ).thenReturn( Mockito.mock( Servlet.class ) );
 
         assertEquals( 0, Lists.newArrayList( this.pipeline ).size() );
         this.pipeline.addMapping( mapping );

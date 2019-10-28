@@ -1,10 +1,10 @@
 package com.enonic.xp.util;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.google.common.annotations.Beta;
 import com.google.common.io.Files;
@@ -21,13 +21,12 @@ public final class MediaTypes
 
     private final static MediaType DEFAULT = MediaType.OCTET_STREAM;
 
-    private final List<MediaTypeProvider> providers;
+    private final List<MediaTypeProvider> providers = new CopyOnWriteArrayList<>();
 
     private final Map<String, MediaType> mediaTypes;
 
     private MediaTypes()
     {
-        this.providers = new ArrayList<>();
         this.mediaTypes = new HashMap<>();
 
         this.mediaTypes.put( "gif", MediaType.GIF );

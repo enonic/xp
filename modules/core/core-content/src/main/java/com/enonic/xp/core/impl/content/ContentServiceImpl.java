@@ -160,7 +160,7 @@ public class ContentServiceImpl
 
     private IndexService indexService;
 
-    private ContentProcessors contentProcessors;
+    private final ContentProcessors contentProcessors = new ContentProcessors();
 
     private FormDefaultValuesProcessor formDefaultValuesProcessor;
 
@@ -183,7 +183,6 @@ public class ContentServiceImpl
             setUncaughtExceptionHandler( ( t, e ) -> LOG.error( "Apply Permissions failed", e ) ).
             build();
         this.applyPermissionsExecutor = Executors.newFixedThreadPool( 5, namedThreadFactory );
-        this.contentProcessors = new ContentProcessors();
     }
 
     @Activate

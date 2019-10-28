@@ -81,6 +81,7 @@ public class FilterPipelineImplTest
     public void addRemove_mapping()
     {
         final FilterMapping mapping = Mockito.mock( FilterMapping.class );
+        Mockito.when( mapping.getResource() ).thenReturn( Mockito.mock( Filter.class ) );
 
         assertEquals( 0, Lists.newArrayList( this.pipeline ).size() );
         this.pipeline.addMapping( mapping );

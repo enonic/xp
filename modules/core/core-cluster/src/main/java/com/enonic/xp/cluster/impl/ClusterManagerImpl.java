@@ -13,8 +13,6 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Lists;
-
 import com.enonic.xp.cluster.Cluster;
 import com.enonic.xp.cluster.ClusterId;
 import com.enonic.xp.cluster.ClusterManager;
@@ -30,8 +28,7 @@ public class ClusterManagerImpl
 {
     private final Long checkIntervalMs;
 
-    private final static List<ClusterId> DEFAULT_REQUIRED_INSTANCES =
-        Lists.newArrayList( ClusterId.from( "elasticsearch" ));
+    private final static List<ClusterId> DEFAULT_REQUIRED_INSTANCES = List.of( ClusterId.from( "elasticsearch" ) );
 
     private final Clusters instances;
 
@@ -39,7 +36,7 @@ public class ClusterManagerImpl
 
     private final Timer timer = new Timer();
 
-    private final List<ClusterValidator> validators = Lists.newArrayList( new HealthValidator(), new ClusterMembersValidator() );
+    private final List<ClusterValidator> validators = List.of( new HealthValidator(), new ClusterMembersValidator() );
 
     private volatile boolean isHealthy;
 

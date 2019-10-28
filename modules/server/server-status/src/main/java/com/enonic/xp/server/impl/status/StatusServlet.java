@@ -37,12 +37,7 @@ public final class StatusServlet
 {
     private final static String PATH_PREFIX = "/";
 
-    private final Map<String, StatusReporter> reporters;
-
-    public StatusServlet()
-    {
-        this.reporters = new ConcurrentHashMap<>();
-    }
+    private final Map<String, StatusReporter> reporters = new ConcurrentHashMap<>();
 
     private JsonNode getRootInfo()
     {

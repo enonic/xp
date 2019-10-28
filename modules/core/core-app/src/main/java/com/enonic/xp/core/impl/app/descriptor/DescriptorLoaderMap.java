@@ -1,21 +1,16 @@
 package com.enonic.xp.core.impl.app.descriptor;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.enonic.xp.descriptor.Descriptor;
 import com.enonic.xp.descriptor.DescriptorLoader;
 
 final class DescriptorLoaderMap
 {
-    private final Map<Class, DescriptorLoader> map;
+    private final Map<Class, DescriptorLoader> map = new ConcurrentHashMap<>();
 
     DescriptorFacetFactory facetFactory;
-
-    DescriptorLoaderMap()
-    {
-        this.map = new HashMap<>();
-    }
 
     @SuppressWarnings("unchecked")
     private <T extends Descriptor> DescriptorLoader<T> get( final Class<T> type )

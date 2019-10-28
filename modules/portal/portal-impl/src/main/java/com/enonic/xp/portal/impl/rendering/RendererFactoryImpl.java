@@ -1,7 +1,7 @@
 package com.enonic.xp.portal.impl.rendering;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -12,12 +12,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 public final class RendererFactoryImpl
     implements RendererFactory
 {
-    private final Map<Class, Renderer> renderers;
-
-    public RendererFactoryImpl()
-    {
-        this.renderers = new HashMap<>();
-    }
+    private final Map<Class, Renderer> renderers = new ConcurrentHashMap<>();
 
     @Override
     @SuppressWarnings("unchecked")
