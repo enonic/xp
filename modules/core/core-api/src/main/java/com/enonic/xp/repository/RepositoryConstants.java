@@ -14,17 +14,17 @@ public class RepositoryConstants
 
     public static final ChildOrder DEFAULT_CHILD_ORDER = ChildOrder.defaultOrder();
 
-    private static final AccessControlEntry authenticatedRead = AccessControlEntry.create().
+    private static final AccessControlEntry AUTHENTICATED_READ = AccessControlEntry.create().
         allow( Permission.READ ).
         principal( RoleKeys.AUTHENTICATED ).
         build();
 
-    private static final AccessControlEntry adminFullAccess = AccessControlEntry.create().
+    private static final AccessControlEntry ADMIN_FULL_ACCESS = AccessControlEntry.create().
         allowAll().
         principal( RoleKeys.ADMIN ).
         build();
 
-    public static final AccessControlList DEFAULT_REPO_PERMISSIONS = AccessControlList.of( adminFullAccess, authenticatedRead );
+    public static final AccessControlList DEFAULT_REPO_PERMISSIONS = AccessControlList.of( ADMIN_FULL_ACCESS, AUTHENTICATED_READ );
 
     public static final Branch MASTER_BRANCH = Branch.from( "master" );
 

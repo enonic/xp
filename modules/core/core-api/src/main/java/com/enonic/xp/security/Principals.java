@@ -26,9 +26,9 @@ public final class Principals
         return PrincipalKeys.from( map.keySet() );
     }
 
-    public Principal getPrincipal( final PrincipalKey PrincipalKey )
+    public Principal getPrincipal( final PrincipalKey principalKey )
     {
-        return map.get( PrincipalKey );
+        return map.get( principalKey );
     }
 
     public Iterable<User> getUsers()

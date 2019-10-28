@@ -24,17 +24,17 @@ public final class SystemConstants
         branches( Branches.from( BRANCH_SYSTEM ) ).
         build();
 
-    private static final AccessControlEntry authenticatedRead = AccessControlEntry.create().
+    private static final AccessControlEntry AUTHENTICATED_READ = AccessControlEntry.create().
         allow( Permission.READ ).
         principal( RoleKeys.AUTHENTICATED ).
         build();
 
-    private static final AccessControlEntry adminFullAccess = AccessControlEntry.create().
+    private static final AccessControlEntry ADMIN_FULL_ACCESS = AccessControlEntry.create().
         allowAll().
         principal( RoleKeys.ADMIN ).
         build();
 
-    public static final AccessControlList SYSTEM_REPO_DEFAULT_ACL = AccessControlList.of( adminFullAccess, authenticatedRead );
+    public static final AccessControlList SYSTEM_REPO_DEFAULT_ACL = AccessControlList.of( ADMIN_FULL_ACCESS, AUTHENTICATED_READ );
 
 
 }

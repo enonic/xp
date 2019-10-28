@@ -30,7 +30,7 @@ class AbstractSnapshotExecutor
 
     private final RepositoryService repositoryService;
 
-    private final Logger LOG = LoggerFactory.getLogger( AbstractSnapshotExecutor.class );
+    private static final Logger LOG = LoggerFactory.getLogger( AbstractSnapshotExecutor.class );
 
     AbstractSnapshotExecutor( final Builder builder )
     {

@@ -20,7 +20,7 @@ import com.enonic.xp.repository.IndexException;
 
 abstract class AbstractExecutor
 {
-    static final TimeValue defaultScrollTime = new TimeValue( 60, TimeUnit.SECONDS );
+    static final TimeValue DEFAULT_SCROLL_TIME = new TimeValue( 60, TimeUnit.SECONDS );
 
     final String storeTimeout = "10s";
 
@@ -83,7 +83,7 @@ abstract class AbstractExecutor
     {
         final SearchRequestBuilder searchRequestBuilder = client.prepareSearch( query.getIndexNames() ).
             setTypes( query.getIndexTypes() ).
-            setScroll( defaultScrollTime ).
+            setScroll( DEFAULT_SCROLL_TIME ).
             setQuery( query.getQuery() ).
             setPostFilter( query.getFilter() ).
             setFrom( query.getFrom() ).

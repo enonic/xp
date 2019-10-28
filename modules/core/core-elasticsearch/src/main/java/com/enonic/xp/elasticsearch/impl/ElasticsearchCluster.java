@@ -34,7 +34,7 @@ public final class ElasticsearchCluster
 {
     private final ClusterId id = ClusterId.from( "elasticsearch" );
 
-    private final String CLUSTER_HEALTH_TIMEOUT = "5s";
+    private static final String CLUSTER_HEALTH_TIMEOUT = "5s";
 
     private Node node;
 

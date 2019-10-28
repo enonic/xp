@@ -27,9 +27,9 @@ public final class Applications
         return ApplicationKeys.from( map.keySet() );
     }
 
-    public Application getApplication( final ApplicationKey ApplicationKey )
+    public Application getApplication( final ApplicationKey applicationKey )
     {
-        return map.get( ApplicationKey );
+        return map.get( applicationKey );
     }
 
     @Override
