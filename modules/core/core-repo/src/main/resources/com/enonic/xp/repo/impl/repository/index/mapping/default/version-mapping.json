@@ -1,65 +1,57 @@
 {
-  "version": {
-    "_all": {
-      "enabled": false
+  "date_detection": false,
+  "numeric_detection": false,
+  "properties": {
+    "nodeid": {
+      "type": "text",
+      "store": false,
+      "index": false
     },
-    "_source": {
-      "enabled": true
+    "versionid": {
+      "type": "text",
+      "store": false,
+      "index": false
     },
-    "date_detection": false,
-    "numeric_detection": false,
-    "properties": {
-      "nodeid": {
-        "type": "string",
-        "store": false,
-        "index": "not_analyzed"
-      },
-      "versionid": {
-        "type": "string",
-        "store": false,
-        "index": "not_analyzed"
-      },
-      "nodeblobkey": {
-        "type": "string",
-        "store": false,
-        "index": "not_analyzed"
-      },
-      "indexconfigblobkey": {
-        "type": "string",
-        "store": false,
-        "index": "not_analyzed"
-      },
-      "accesscontrolblobkey": {
-        "type": "string",
-        "store": false,
-        "index": "not_analyzed"
-      },
-      "binaryblobkeys": {
-        "type": "string",
-        "store": false,
-        "index": "not_analyzed"
-      },
-      "timestamp": {
-        "type": "date",
-        "store": false,
-        "index": "not_analyzed"
-      },
-      "nodepath": {
-        "type": "string",
-        "store": false,
-        "index": "analyzed",
-        "analyzer": "keywordlowercase"
-      },
-      "commitid": {
-        "type": "string",
-        "store": false,
-        "index": "not_analyzed"
-      },
-      "branches": {
-        "type": "string",
-        "store": false,
-        "index": "not_analyzed"
-      }
+    "nodeblobkey": {
+      "type": "text",
+      "store": false,
+      "index": false
+    },
+    "indexconfigblobkey": {
+      "type": "text",
+      "store": false,
+      "index": false
+    },
+    "accesscontrolblobkey": {
+      "type": "text",
+      "store": false,
+      "index": false
+    },
+    "binaryblobkeys": {
+      "type": "text",
+      "store": false,
+      "index": false
+    },
+    "timestamp": {
+      "type": "date",
+      "store": false,
+      "index": false
+    },
+    "nodepath": {
+      "type": "text",
+      "store": false,
+      "index": true,
+      "analyzer": "keywordlowercase"
+    },
+    "commitid": {
+      "type": "text",
+      "store": false,
+      "index": false
+    },
+    "branches": {
+      "type": "text",
+      "store": false,
+      "index": false
     }
   }
 }

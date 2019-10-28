@@ -1,34 +1,26 @@
 {
-  "commit": {
-    "_all": {
-      "enabled": false
+  "date_detection": false,
+  "numeric_detection": false,
+  "properties": {
+    "commitid": {
+      "type": "text",
+      "store": false,
+      "index": false
     },
-    "_source": {
-      "enabled": true
+    "message": {
+      "type": "text",
+      "store": false,
+      "index": false
     },
-    "date_detection": false,
-    "numeric_detection": false,
-    "properties": {
-      "commitid": {
-        "type": "string",
-        "store": false,
-        "index": "not_analyzed"
-      },
-      "message": {
-        "type": "string",
-        "store": false,
-        "index": "not_analyzed"
-      },
-      "timestamp": {
-        "type": "date",
-        "store": false,
-        "index": "not_analyzed"
-      },
-      "committer": {
-        "type": "string",
-        "store": false,
-        "index": "not_analyzed"
-      }
+    "timestamp": {
+      "type": "date",
+      "store": false,
+      "index": false
+    },
+    "committer": {
+      "type": "text",
+      "store": false,
+      "index": false
     }
   }
 }
