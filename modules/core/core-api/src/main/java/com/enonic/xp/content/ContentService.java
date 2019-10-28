@@ -101,7 +101,7 @@ public interface ContentService
 
     GetActiveContentVersionsResult getActiveVersions( GetActiveContentVersionsParams params );
 
-    ContentVersion getActiveVersion(GetActiveContentVersionsParams params);
+    ContentVersion getActiveVersion(GetActiveContentVersionParams params);
 
     SetActiveContentVersionResult setActiveContentVersion( ContentId contentId, ContentVersionId versionId );
 

@@ -146,6 +146,7 @@ import com.enonic.xp.content.FindContentIdsByParentResult;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.FindContentVersionsParams;
 import com.enonic.xp.content.FindContentVersionsResult;
+import com.enonic.xp.content.GetActiveContentVersionParams;
 import com.enonic.xp.content.GetActiveContentVersionsParams;
 import com.enonic.xp.content.GetActiveContentVersionsResult;
 import com.enonic.xp.content.GetContentByIdsParams;
@@ -1442,8 +1443,8 @@ public final class ContentResource
 
         final Content revertedContent = contentService.update( prepareUpdateContentParams( versionedContent, contentVersionId ) );
 
-        final ContentVersion contentVersion = contentService.getActiveVersion( GetActiveContentVersionsParams.create().
-            branches( Branches.from( ContentConstants.BRANCH_DRAFT ) ).
+        final ContentVersion contentVersion = contentService.getActiveVersion( GetActiveContentVersionParams.create().
+            branch( ContentConstants.BRANCH_DRAFT ).
             contentId( revertedContent.getId() ).
             build() );
 

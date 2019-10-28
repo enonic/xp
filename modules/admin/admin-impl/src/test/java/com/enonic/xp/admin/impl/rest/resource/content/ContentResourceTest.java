@@ -123,6 +123,7 @@ import com.enonic.xp.content.FindContentIdsByParentResult;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.FindContentVersionsParams;
 import com.enonic.xp.content.FindContentVersionsResult;
+import com.enonic.xp.content.GetActiveContentVersionParams;
 import com.enonic.xp.content.GetActiveContentVersionsParams;
 import com.enonic.xp.content.GetActiveContentVersionsResult;
 import com.enonic.xp.content.GetContentByIdsParams;
@@ -2253,7 +2254,7 @@ public class ContentResourceTest
         Mockito.when(
             contentService.getBinary( any( ContentId.class ), any( ContentVersionId.class ), any( BinaryReference.class ) ) ).thenReturn(
             byteSource );
-        Mockito.when( contentService.getActiveVersion( any( GetActiveContentVersionsParams.class ) ) ).thenReturn( contentVersion );
+        Mockito.when( contentService.getActiveVersion( any( GetActiveContentVersionParams.class ) ) ).thenReturn( contentVersion );
 
         // test
         final ContentVersionJson result = instance.revert( params );
@@ -2272,7 +2273,7 @@ public class ContentResourceTest
         Mockito.verify( this.contentService, Mockito.times( 1 ) ).
             getById( any( ContentId.class ) );
         Mockito.verify( this.contentService, Mockito.times( 1 ) ).
-            getActiveVersion( any( GetActiveContentVersionsParams.class ) );
+            getActiveVersion( any( GetActiveContentVersionParams.class ) );
         Mockito.verifyNoMoreInteractions( contentService );
     }
 
@@ -2296,7 +2297,7 @@ public class ContentResourceTest
         Mockito.when( contentService.getByPathAndVersionId( any( ContentPath.class ), any( ContentVersionId.class ) ) ).thenReturn( versionedContent );
         Mockito.when( contentService.update( any( UpdateContentParams.class ) ) ).thenReturn( updatedContent );
         Mockito.when( contentService.getById( any( ContentId.class ) ) ).thenReturn( content );
-        Mockito.when( contentService.getActiveVersion( any( GetActiveContentVersionsParams.class ) ) ).thenReturn( contentVersion );
+        Mockito.when( contentService.getActiveVersion( any( GetActiveContentVersionParams.class ) ) ).thenReturn( contentVersion );
 
         // test
         final ContentVersionJson result = instance.revert( params );
@@ -2313,7 +2314,7 @@ public class ContentResourceTest
         Mockito.verify( this.contentService, Mockito.times( 1 ) ).
             getById( any( ContentId.class ) );
         Mockito.verify( this.contentService, Mockito.times( 1 ) ).
-            getActiveVersion( any( GetActiveContentVersionsParams.class ) );
+            getActiveVersion( any( GetActiveContentVersionParams.class ) );
         Mockito.verifyNoMoreInteractions( contentService );
     }
 
