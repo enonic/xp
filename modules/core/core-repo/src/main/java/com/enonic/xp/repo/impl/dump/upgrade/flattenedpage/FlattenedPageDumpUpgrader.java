@@ -35,7 +35,7 @@ import com.enonic.xp.util.Version;
 public class FlattenedPageDumpUpgrader
     extends AbstractDumpUpgrader
 {
-    private final Logger LOG = LoggerFactory.getLogger( FlattenedPageDumpUpgrader.class );
+    private static final Logger LOG = LoggerFactory.getLogger( FlattenedPageDumpUpgrader.class );
 
     private static final Version MODEL_VERSION = new Version( 3 );
 

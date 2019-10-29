@@ -46,9 +46,9 @@ public final class IdProviders
         return IdProviderKeys.from( map.keySet() );
     }
 
-    public IdProvider getIdProvider( final IdProviderKey IdProviderKey )
+    public IdProvider getIdProvider( final IdProviderKey idProviderKey )
     {
-        return map.get( IdProviderKey );
+        return map.get( idProviderKey );
     }
 
 }

@@ -104,7 +104,7 @@ public final class ApplicationResource
 
     private final static Logger LOG = LoggerFactory.getLogger( ApplicationResource.class );
 
-    private final static Striped<Lock> lockStriped = Striped.lazyWeakLock( 100 );
+    private final static Striped<Lock> LOCK_STRIPED = Striped.lazyWeakLock( 100 );
 
     private ApplicationService applicationService;
 
@@ -592,7 +592,7 @@ public final class ApplicationResource
 
     private <V> V lock( Object key, Callable<V> callable )
     {
-        final Lock lock = lockStriped.get( key );
+        final Lock lock = LOCK_STRIPED.get( key );
         try
         {
             if ( lock.tryLock( 30, TimeUnit.MINUTES ) )

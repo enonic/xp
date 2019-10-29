@@ -35,7 +35,7 @@ public class ClusterManagerImpl
 
     private final Clusters instances;
 
-    private final Logger LOG = LoggerFactory.getLogger( ClusterManagerImpl.class );
+    private static final Logger LOG = LoggerFactory.getLogger( ClusterManagerImpl.class );
 
     private final Timer timer = new Timer();
 

@@ -37,7 +37,8 @@ public class SegmentVacuumCommand
 {
     private static final Logger LOG = LoggerFactory.getLogger( SegmentVacuumCommand.class );
 
-    private RepositoryIds BUILTIN_REPOSITORIES = RepositoryIds.from( SystemConstants.SYSTEM_REPO_ID, ContentConstants.CONTENT_REPO_ID );
+    private static final RepositoryIds BUILTIN_REPOSITORIES =
+        RepositoryIds.from( SystemConstants.SYSTEM_REPO_ID, ContentConstants.CONTENT_REPO_ID );
 
     private RepositoryService repositoryService;
 

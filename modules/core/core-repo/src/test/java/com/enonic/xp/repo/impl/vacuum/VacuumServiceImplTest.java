@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.vacuum;
 
-import java.lang.annotation.Annotation;
-
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.repo.impl.node.NodeHelper;

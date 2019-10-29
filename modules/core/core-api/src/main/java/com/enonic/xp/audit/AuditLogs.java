@@ -47,9 +47,9 @@ public final class AuditLogs
         return new Builder();
     }
 
-    public AuditLog getAuditLogById( final AuditLogId AuditLogId )
+    public AuditLog getAuditLogById( final AuditLogId auditLogId )
     {
-        return this.map.get( AuditLogId );
+        return this.map.get( auditLogId );
     }
 
     public static class Builder

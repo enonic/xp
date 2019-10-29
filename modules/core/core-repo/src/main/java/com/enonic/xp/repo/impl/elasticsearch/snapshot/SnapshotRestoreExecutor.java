@@ -21,7 +21,7 @@ import com.enonic.xp.util.Exceptions;
 public class SnapshotRestoreExecutor
     extends AbstractSnapshotExecutor
 {
-    private final Logger LOG = LoggerFactory.getLogger( SnapshotRestoreExecutor.class );
+    private static final Logger LOG = LoggerFactory.getLogger( SnapshotRestoreExecutor.class );
 
     private final ClusterManager clusterManager;
 
