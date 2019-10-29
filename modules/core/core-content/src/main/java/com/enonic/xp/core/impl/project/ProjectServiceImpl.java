@@ -29,6 +29,7 @@ import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.project.Projects;
 import com.enonic.xp.repository.DeleteRepositoryParams;
 import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.repository.UpdateRepositoryParams;
 import com.enonic.xp.security.RoleKeys;
@@ -127,18 +128,22 @@ public class ProjectServiceImpl
     }
 
     @Override
-    public void delete( ProjectName projectName )
+    public boolean delete( ProjectName projectName )
     {
-        runWithContext( () -> {
-            doDelete( projectName );
+        return callWithContext( () -> {
+            final boolean result = doDelete( projectName );
             LOG.info( "Project deleted: " + projectName );
+
+            return result;
         } );
     }
 
-    private void doDelete( final ProjectName projectName )
+    private boolean doDelete( final ProjectName projectName )
     {
         final DeleteRepositoryParams params = DeleteRepositoryParams.from( projectName.getRepoId() );
-        this.repositoryService.deleteRepository( params );
+        final RepositoryId deletedRepositoryId = this.repositoryService.deleteRepository( params );
+
+        return deletedRepositoryId != null;
     }
 
     private PropertyTree createProjectData( final String displayName, final String description, final CreateAttachment icon )
@@ -173,11 +178,6 @@ public class ProjectServiceImpl
     private <T> T callWithContext( Callable<T> runnable )
     {
         return context().callWith( runnable );
-    }
-
-    private <T> void runWithContext( Runnable runnable )
-    {
-        context().runWith( runnable );
     }
 
     private Context context()

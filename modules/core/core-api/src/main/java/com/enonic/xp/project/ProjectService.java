@@ -13,5 +13,5 @@ public interface ProjectService
 
     Project get( final ProjectName projectName );
 
-    void delete( final ProjectName projectName );
+    boolean delete( final ProjectName projectName );
 }

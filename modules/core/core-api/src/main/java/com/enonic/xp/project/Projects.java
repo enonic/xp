@@ -65,7 +65,6 @@ public final class Projects
             return this;
         }
 
-
         public Projects build()
         {
             return new Projects( this );
