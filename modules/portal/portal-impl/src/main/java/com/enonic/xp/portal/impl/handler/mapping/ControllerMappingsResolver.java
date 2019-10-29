@@ -115,7 +115,7 @@ final class ControllerMappingsResolver
             map( SiteConfig::getApplicationKey ).
             map( siteService::getDescriptor ).
             filter( Objects::nonNull ).
-            forEach( ( siteDescriptor -> descriptors.addAll( siteDescriptor.getMappingDescriptors().getList() ) ) );
+            forEach( siteDescriptor -> descriptors.addAll( siteDescriptor.getMappingDescriptors().getList() ) );
         return descriptors;
     }
 

@@ -55,7 +55,6 @@ import com.enonic.xp.security.acl.IdProviderAccessControlEntry;
 import com.enonic.xp.security.acl.IdProviderAccessControlList;
 import com.enonic.xp.web.HttpStatus;
 
-import static com.enonic.xp.security.PrincipalRelationship.from;
 import static com.enonic.xp.security.acl.IdProviderAccess.ADMINISTRATOR;
 import static com.enonic.xp.security.acl.IdProviderAccess.READ;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -461,8 +460,8 @@ public class SecurityResourceTest
         Mockito.<Optional<? extends Principal>>when(
             securityService.getPrincipal( PrincipalKey.from( "group:system:group-a" ) ) ).thenReturn( userRes );
 
-        PrincipalRelationship member1 = from( group.getKey() ).to( PrincipalKey.from( "user:system:user1" ) );
-        PrincipalRelationship member2 = from( group.getKey() ).to( PrincipalKey.from( "user:system:user2" ) );
+        PrincipalRelationship member1 = PrincipalRelationship.from( group.getKey() ).to( PrincipalKey.from( "user:system:user1" ) );
+        PrincipalRelationship member2 = PrincipalRelationship.from( group.getKey() ).to( PrincipalKey.from( "user:system:user2" ) );
         PrincipalRelationships members = PrincipalRelationships.from( member1, member2 );
         Mockito.when( securityService.getRelationships( PrincipalKey.from( "group:system:group-a" ) ) ).thenReturn( members );
 
@@ -495,8 +494,8 @@ public class SecurityResourceTest
         Mockito.<Optional<? extends Principal>>when(
             securityService.getPrincipal( PrincipalKey.from( "group:system:group-a" ) ) ).thenReturn( userRes );
 
-        PrincipalRelationship member1 = from( group.getKey() ).to( PrincipalKey.from( "user:system:user1" ) );
-        PrincipalRelationship member2 = from( group.getKey() ).to( PrincipalKey.from( "user:system:user2" ) );
+        PrincipalRelationship member1 = PrincipalRelationship.from( group.getKey() ).to( PrincipalKey.from( "user:system:user1" ) );
+        PrincipalRelationship member2 = PrincipalRelationship.from( group.getKey() ).to( PrincipalKey.from( "user:system:user2" ) );
         PrincipalRelationships members = PrincipalRelationships.from( member1, member2 );
         Mockito.when( securityService.getRelationships( PrincipalKey.from( "group:system:group-a" ) ) ).thenReturn( members );
 
@@ -528,8 +527,8 @@ public class SecurityResourceTest
         Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( PrincipalKey.from( "role:superuser" ) ) ).thenReturn(
             userRes );
 
-        PrincipalRelationship membership1 = from( role.getKey() ).to( PrincipalKey.from( "user:system:user1" ) );
-        PrincipalRelationship membership2 = from( role.getKey() ).to( PrincipalKey.from( "user:system:user2" ) );
+        PrincipalRelationship membership1 = PrincipalRelationship.from( role.getKey() ).to( PrincipalKey.from( "user:system:user1" ) );
+        PrincipalRelationship membership2 = PrincipalRelationship.from( role.getKey() ).to( PrincipalKey.from( "user:system:user2" ) );
         PrincipalRelationships memberships = PrincipalRelationships.from( membership1, membership2 );
         Mockito.when( securityService.getRelationships( PrincipalKey.from( "role:superuser" ) ) ).thenReturn( memberships );
 
@@ -746,8 +745,8 @@ public class SecurityResourceTest
             build();
 
         Mockito.when( securityService.updateGroup( Mockito.any( UpdateGroupParams.class ) ) ).thenReturn( group );
-        PrincipalRelationship members1 = from( group.getKey() ).to( PrincipalKey.from( "user:system:user1" ) );
-        PrincipalRelationship members2 = from( group.getKey() ).to( PrincipalKey.from( "user:system:user2" ) );
+        PrincipalRelationship members1 = PrincipalRelationship.from( group.getKey() ).to( PrincipalKey.from( "user:system:user1" ) );
+        PrincipalRelationship members2 = PrincipalRelationship.from( group.getKey() ).to( PrincipalKey.from( "user:system:user2" ) );
         PrincipalRelationships members = PrincipalRelationships.from( members1, members2 );
         Mockito.when( securityService.getRelationships( group.getKey() ) ).thenReturn( members );
 
@@ -774,8 +773,8 @@ public class SecurityResourceTest
             build();
 
         Mockito.when( securityService.updateRole( Mockito.any( UpdateRoleParams.class ) ) ).thenReturn( role );
-        PrincipalRelationship membership1 = from( role.getKey() ).to( PrincipalKey.from( "user:system:user1" ) );
-        PrincipalRelationship membership2 = from( role.getKey() ).to( PrincipalKey.from( "user:system:user2" ) );
+        PrincipalRelationship membership1 = PrincipalRelationship.from( role.getKey() ).to( PrincipalKey.from( "user:system:user1" ) );
+        PrincipalRelationship membership2 = PrincipalRelationship.from( role.getKey() ).to( PrincipalKey.from( "user:system:user2" ) );
         PrincipalRelationships memberships = PrincipalRelationships.from( membership1, membership2 );
         Mockito.when( securityService.getRelationships( role.getKey() ) ).thenReturn( memberships );
 

@@ -70,7 +70,7 @@ public class DispatchServletImplTest
         Mockito.verify( this.filterPipeline, Mockito.times( 1 ) ).filter( req, res, this.servletPipeline );
     }
 
-    private final class MyServiceReference<T>
+    private static final class MyServiceReference<T>
         implements ServiceReference<T>
     {
         @Override

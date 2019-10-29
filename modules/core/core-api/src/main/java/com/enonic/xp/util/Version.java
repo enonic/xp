@@ -210,7 +210,7 @@ public class Version
             return s;
         }
         int q = qualifier.length();
-        StringBuffer result = new StringBuffer( 20 + q );
+        StringBuilder result = new StringBuilder( 20 + q );
         result.append( major );
         result.append( SEPARATOR );
         result.append( minor );
@@ -227,7 +227,7 @@ public class Version
     public String toShortestString()
     {
         int q = qualifier.length();
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         result.append( major );
         if ( minor > 0 || micro > 0 || q > 0 )
         {

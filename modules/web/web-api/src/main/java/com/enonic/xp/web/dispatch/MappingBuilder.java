@@ -20,7 +20,7 @@ public final class MappingBuilder
 {
     private List<String> connectors;
 
-    private final class FilterMappingImpl
+    private static final class FilterMappingImpl
         extends AbstractMapping<Filter>
         implements FilterMapping
     {
@@ -30,7 +30,7 @@ public final class MappingBuilder
         }
     }
 
-    private final class ServletMappingImpl
+    private static final class ServletMappingImpl
         extends AbstractMapping<Servlet>
         implements ServletMapping
     {
@@ -80,7 +80,7 @@ public final class MappingBuilder
         return this;
     }
 
-    private abstract class AbstractMapping<T>
+    private abstract static class AbstractMapping<T>
         implements ResourceMapping<T>
     {
         private int order;

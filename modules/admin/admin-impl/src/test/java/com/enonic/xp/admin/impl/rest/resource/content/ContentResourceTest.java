@@ -1177,15 +1177,10 @@ public class ContentResourceTest
             build();
 
         final BinaryReferences attachmentNames = BinaryReferences.from( "file1.jpg", "file2.txt" );
-        class UpdateContentParamsMatcher
-            implements ArgumentMatcher<UpdateContentParams>
-        {
-            public boolean matches( UpdateContentParams param )
-            {
-                return param.getContentId().equals( content.getId() ) && param.getRemoveAttachments().equals( attachmentNames );
-            }
-        }
-        Mockito.when( contentService.update( argThat( new UpdateContentParamsMatcher() ) ) ).thenReturn( content );
+        Mockito.when( contentService.update( argThat(
+            (ArgumentMatcher<UpdateContentParams>) param -> param.getContentId().equals( content.getId() ) &&
+                param.getRemoveAttachments().equals( attachmentNames ) ) ) ).
+            thenReturn( content );
 
         String jsonString = request().path( "content/deleteAttachment" ).
             entity( readFromFile( "delete_attachments_params.json" ), MediaType.APPLICATION_JSON_TYPE ).

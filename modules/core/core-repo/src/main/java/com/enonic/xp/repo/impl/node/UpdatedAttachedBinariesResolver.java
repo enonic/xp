@@ -180,7 +180,7 @@ class UpdatedAttachedBinariesResolver
         }
     }
 
-    private class ReferenceResolver
+    private static class ReferenceResolver
         extends PropertyVisitor
     {
         private final Set<BinaryReference> binaryReferences = new LinkedHashSet<>();

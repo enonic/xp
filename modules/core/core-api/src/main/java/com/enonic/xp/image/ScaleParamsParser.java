@@ -79,7 +79,7 @@ public final class ScaleParamsParser
 
         try
         {
-            return new Integer( str );
+            return Integer.valueOf( str );
         }
         catch ( Exception e )
         {

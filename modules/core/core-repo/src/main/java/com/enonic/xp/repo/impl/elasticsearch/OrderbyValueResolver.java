@@ -35,12 +35,12 @@ public class OrderbyValueResolver
     private static String getNumericOrderBy( Value value )
     {
 
-        if ( value.getType() == ValueTypes.DOUBLE )
+        if ( value.getType().equals( ValueTypes.DOUBLE ) )
         {
             return LexiSortable.toLexiSortable( value.asDouble() );
         }
 
-        if ( value.getType() == ValueTypes.LONG )
+        if ( value.getType().equals( ValueTypes.LONG ) )
         {
             return LexiSortable.toLexiSortable( value.asLong() );
         }

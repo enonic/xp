@@ -227,7 +227,7 @@ public abstract class BaseContentHandler
 
     boolean strictContentValidation( final ContentTypeName contentTypeName )
     {
-        return ( !contentTypeName.isUnstructured() ) && strictDataValidation();
+        return !contentTypeName.isUnstructured() && strictDataValidation();
     }
 
     boolean strictDataValidation()

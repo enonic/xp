@@ -19,7 +19,7 @@ public class ServletPipelineImplTest
     extends ResourcePipelineImplTest<ServletDefinition, ServletPipelineImpl>
 {
     @WebServlet
-    private final class MyServlet
+    private static final class MyServlet
         extends HttpServlet
     {
     }

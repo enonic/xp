@@ -112,7 +112,7 @@ public class ResolveSyncWorkCommand
 
         addNewAndMovedParents( comparisons );
 
-        comparisons.forEach( ( this::addToResult ) );
+        comparisons.forEach( this::addToResult );
 
         markPendingDeleteChildrenForDeletion( comparisons );
     }
@@ -237,8 +237,8 @@ public class ResolveSyncWorkCommand
     private Set<NodeComparison> getNewAndMoved( final NodeComparisons parentComparisons )
     {
         return parentComparisons.getComparisons().stream().
-            filter( ( comparison -> comparison.getCompareStatus().equals( CompareStatus.NEW ) ||
-                comparison.getCompareStatus().equals( CompareStatus.MOVED ) ) ).
+            filter( comparison -> comparison.getCompareStatus().equals( CompareStatus.NEW ) ||
+                comparison.getCompareStatus().equals( CompareStatus.MOVED ) ).
             filter( comparison -> !this.processedIds.contains( comparison.getNodeId() ) ).
             collect( Collectors.toSet() );
     }

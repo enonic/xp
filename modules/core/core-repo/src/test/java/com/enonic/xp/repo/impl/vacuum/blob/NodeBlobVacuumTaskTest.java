@@ -12,6 +12,7 @@ import com.enonic.xp.repo.impl.vacuum.VacuumTask;
 public class NodeBlobVacuumTaskTest
     extends AbstractBlobVacuumTaskTest
 {
+    @Override
     @BeforeEach
     public void setUp()
         throws Exception
@@ -20,6 +21,7 @@ public class NodeBlobVacuumTaskTest
         this.segment = Segment.from( SegmentLevel.from( "test" ), NodeConstants.NODE_SEGMENT_LEVEL );
     }
 
+    @Override
     @Test
     public void test_delete_unused()
         throws Exception
@@ -27,6 +29,7 @@ public class NodeBlobVacuumTaskTest
         super.test_delete_unused();
     }
 
+    @Override
     @Test
     public void test_progress_report()
         throws Exception
@@ -34,6 +37,7 @@ public class NodeBlobVacuumTaskTest
         super.test_progress_report();
     }
 
+    @Override
     @Test
     public void age_threshold()
         throws Exception

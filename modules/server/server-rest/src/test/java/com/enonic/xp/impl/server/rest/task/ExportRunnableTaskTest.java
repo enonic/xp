@@ -39,6 +39,7 @@ public class ExportRunnableTaskTest
         this.exportService = Mockito.mock( ExportService.class );
     }
 
+    @Override
     protected ExportRunnableTask createAndRunTask()
     {
         return null;

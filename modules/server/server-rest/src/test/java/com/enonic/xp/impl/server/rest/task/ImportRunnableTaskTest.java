@@ -53,6 +53,7 @@ public class ImportRunnableTaskTest
         this.nodeRepositoryService = Mockito.mock( NodeRepositoryService.class );
     }
 
+    @Override
     protected ImportRunnableTask createAndRunTask()
     {
         return null;

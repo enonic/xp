@@ -29,7 +29,7 @@ public final class FilterSetExpr
     @Override
     public String toString()
     {
-        StringBuffer str = new StringBuffer();
+        StringBuilder str = new StringBuilder();
         for ( FilterExpr expr : this.list )
         {
             if ( str.length() > 0 )

@@ -30,6 +30,7 @@ public class DumpRunnableTaskTest
         this.dumpService = Mockito.mock( DumpService.class );
     }
 
+    @Override
     protected DumpRunnableTask createAndRunTask()
     {
         return null;

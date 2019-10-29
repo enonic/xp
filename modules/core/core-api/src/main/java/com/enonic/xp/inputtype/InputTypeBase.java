@@ -49,7 +49,7 @@ public abstract class InputTypeBase
     protected final void validateType( final Property property, final ValueType expectedType )
     {
         final ValueType actualType = property.getType();
-        if ( actualType != expectedType )
+        if ( !actualType.equals( expectedType ) )
         {
             throw InputTypeValidationException.invalidType( property, actualType, expectedType );
         }
@@ -76,7 +76,7 @@ public abstract class InputTypeBase
     {
         for ( final ValueType type : types )
         {
-            if ( type == check )
+            if ( type.equals( check ) )
             {
                 return true;
             }

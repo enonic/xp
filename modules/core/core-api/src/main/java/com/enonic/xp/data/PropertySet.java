@@ -523,7 +523,7 @@ public final class PropertySet
             {
                 if ( property.getValue() instanceof PropertySetValue )
                 {
-                    propertySize += ( ( (PropertySet) property.getValue().getObject() ).getPropertySize() );
+                    propertySize += ( (PropertySet) property.getValue().getObject() ).getPropertySize();
                 }
             }
         }

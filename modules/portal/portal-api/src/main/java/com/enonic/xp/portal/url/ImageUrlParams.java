@@ -78,7 +78,7 @@ public final class ImageUrlParams
 
     public ImageUrlParams quality( final String value )
     {
-        return Strings.isNullOrEmpty( value ) ? this : quality( new Integer( value ) );
+        return Strings.isNullOrEmpty( value ) ? this : quality( Integer.valueOf( value ) );
     }
 
     public ImageUrlParams format( final String value )

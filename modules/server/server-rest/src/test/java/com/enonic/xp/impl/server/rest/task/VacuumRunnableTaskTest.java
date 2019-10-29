@@ -24,6 +24,7 @@ public class VacuumRunnableTaskTest
         this.vacuumService = Mockito.mock( VacuumService.class );
     }
 
+    @Override
     protected VacuumRunnableTask createAndRunTask()
     {
         final VacuumRunnableTask task = VacuumRunnableTask.create().
