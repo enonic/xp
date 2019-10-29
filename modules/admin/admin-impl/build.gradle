@@ -3,7 +3,6 @@ apply from: "$rootDir/gradle/osgi.gradle"
 dependencies {
     compile project( ':admin:admin-api' )
     compile 'org.jboss.resteasy:resteasy-jaxrs:3.0.8.Final'
-    compile 'com.squareup.okhttp:okhttp:2.5.0'
     testCompile project( ':jaxrs:jaxrs-impl' )
     testCompile project( path: ':core:core-app', configuration: 'testOutput' )
     testCompile project( path: ':portal:portal-api', configuration: 'testOutput' )

@@ -3,19 +3,18 @@ package com.enonic.xp.admin.impl.market;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.zip.GZIPInputStream;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.google.common.io.CharStreams;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
 
 import com.enonic.xp.admin.impl.rest.resource.application.json.MarketApplicationsJson;
 import com.enonic.xp.json.ObjectMapperHelper;
@@ -26,9 +25,7 @@ import com.enonic.xp.web.HttpStatus;
 public class MarketDataHttpProvider
     implements MarketDataProvider
 {
-    private static final int connectionTimeout = 10_000;
-
-    private static final int readTimeout = 10_000;
+    private static final Duration CONNECTION_TIMEOUT = Duration.ofSeconds( 10 );
 
     private String marketUrl;
 
@@ -41,36 +38,43 @@ public class MarketDataHttpProvider
     @Override
     public MarketApplicationsJson search( List<String> ids, String version, int start, int count )
     {
-        final Request request = MarketRequestFactory.create( marketUrl, ids, version, start, count );
+        final HttpRequest request = MarketRequestFactory.create( marketUrl, ids, version, start, count );
 
         return doRequest( request );
     }
 
-    private MarketApplicationsJson doRequest( Request request )
+    private MarketApplicationsJson doRequest( HttpRequest request )
     {
+        final HttpClient client = HttpClient.newBuilder().
+            connectTimeout( CONNECTION_TIMEOUT ).
+            build();
 
-        final OkHttpClient client = new OkHttpClient();
-        client.setReadTimeout( readTimeout, TimeUnit.MILLISECONDS );
-        client.setConnectTimeout( connectionTimeout, TimeUnit.MILLISECONDS );
-
+        final HttpResponse<InputStream> response;
         try
         {
-            final Response response = client.newCall( request ).execute();
-            return parseResponse( response );
+            response = client.send( request, HttpResponse.BodyHandlers.ofInputStream() );
         }
-        catch ( IOException e )
+        catch ( IOException | InterruptedException e )
         {
             throw new MarketException( "Cannot connect to market", e );
         }
+        return parseResponse( response );
     }
 
-    protected MarketApplicationsJson parseResponse( final Response response )
+    private MarketApplicationsJson parseResponse( final HttpResponse<InputStream> response )
     {
-        final int code = response.code();
+        final int code = response.statusCode();
 
         if ( code == HttpStatus.OK.value() )
         {
-            return parseJson( response );
+            try
+            {
+                return parseResponseBody( response );
+            }
+            catch ( IOException e )
+            {
+                throw new MarketException( "Failed to get response from market", e );
+            }
         }
         else if ( code == HttpStatus.INTERNAL_SERVER_ERROR.value() )
         {
@@ -82,9 +86,9 @@ public class MarketDataHttpProvider
         }
     }
 
-    private MarketApplicationsJson throwExceptionAttachBody( final Response response, final int code )
+    private MarketApplicationsJson throwExceptionAttachBody( final HttpResponse<InputStream> response, final int code )
     {
-        try (final InputStream bodyStream = response.body().byteStream())
+        try (final InputStream bodyStream = response.body())
         {
             final String body = CharStreams.toString( new InputStreamReader( bodyStream, StandardCharsets.UTF_8 ) );
 
@@ -96,21 +100,34 @@ public class MarketDataHttpProvider
         }
     }
 
-    private MarketApplicationsJson parseJson( final Response response )
+    private MarketApplicationsJson parseResponseBody( final HttpResponse<InputStream> response )
+        throws IOException
     {
-        try (final InputStream src = response.body().byteStream())
+        final List<String> contentEncoding = response.headers().allValues( "Content-Encoding" );
+
+        if ( contentEncoding.isEmpty() )
         {
-            return ObjectMapperHelper.create().
-                readValue( src, MarketApplicationsJson.class );
+            try (final InputStream src = response.body())
+            {
+                return parseJson( src );
+            }
         }
-        catch ( JsonParseException | JsonMappingException e )
+        else if ( contentEncoding.equals( List.of( "gzip" ) ) )
         {
-            throw new MarketException( "Failed to parse response from market", e );
+            try (final InputStream body = response.body(); final InputStream is = new GZIPInputStream( body ))
+            {
+                return parseJson( is );
+            }
         }
-        catch ( IOException e )
+        else
         {
-            throw new MarketException( "Failed to get response from market", e );
+            throw new IOException( "Unsupported Content-Encoding " + contentEncoding );
         }
     }
 
+    private MarketApplicationsJson parseJson( final InputStream src )
+        throws IOException
+    {
+        return ObjectMapperHelper.create().readValue( src, MarketApplicationsJson.class );
+    }
 }

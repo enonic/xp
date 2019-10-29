@@ -1,28 +1,26 @@
 package com.enonic.xp.admin.impl.market;
 
-import java.util.HashMap;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.net.http.HttpRequest;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.squareup.okhttp.HttpUrl;
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
 
 class MarketRequestFactory
 {
+    private static final Duration READ_TIMEOUT = Duration.ofSeconds( 10 );
 
-    public static Request create( final String baseUrl, final List<String> ids, final String version, final int start, final int count )
+    public static HttpRequest create( final String baseUrl, final List<String> ids, final String version, final int start, final int count )
     {
-        Map<String, Object> getParams = new HashMap<>();
-
-        getParams.put( "xpVersion", version );
-        getParams.put( "start", start );
-        getParams.put( "count", count );
+        Map<String, String> getParams = Map.of( "xpVersion", version, "start", String.valueOf( start ), "count", String.valueOf( count ) );
 
         ObjectMapper mapper = new ObjectMapper();
         String body = null;
@@ -44,34 +42,20 @@ class MarketRequestFactory
         return create( baseUrl, getParams, body );
     }
 
-    private static Request create( final String baseUrl, Map<String, Object> getParams, String body )
+    private static HttpRequest create( final String baseUrl, Map<String, String> getParams, String body )
     {
-        final Request.Builder request = new Request.Builder();
-        request.url( baseUrl );
+        final String queryString = getParams.entrySet().stream().
+            map( e -> URLEncoder.encode( e.getKey(), StandardCharsets.UTF_8 ) + "=" +
+                URLEncoder.encode( e.getValue(), StandardCharsets.UTF_8 ) ).
+            collect( Collectors.joining( "&" ) );
+        final URI uri = URI.create( baseUrl + "?" + queryString );
 
-        HttpUrl url = HttpUrl.parse( baseUrl );
-
-        url = addParams( url, getParams );
-
-        request.url( url );
-
-        request.header( "Accept", "application/json" );
-
-        request.post( RequestBody.create( MediaType.parse( "application/json" ), body ) );
-
-        return request.build();
-    }
-
-    private static HttpUrl addParams( final HttpUrl url, final Map<String, Object> params )
-    {
-        HttpUrl.Builder urlBuilder = url.newBuilder();
-        for ( Map.Entry<String, Object> header : params.entrySet() )
-        {
-            if ( header.getValue() != null )
-            {
-                urlBuilder.addEncodedQueryParameter( header.getKey(), header.getValue().toString() );
-            }
-        }
-        return urlBuilder.build();
+        return HttpRequest.newBuilder( uri ).
+            timeout( READ_TIMEOUT ).
+            header( "Content-Type", "application/json" ).
+            header( "Accept", "application/json" ).
+            header( "Accept-Encoding", "gzip" ).
+            POST( HttpRequest.BodyPublishers.ofString( body ) ).
+            build();
     }
 }

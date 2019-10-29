@@ -1,20 +1,21 @@
 package com.enonic.xp.web.jetty.impl;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+
 import javax.servlet.Filter;
 import javax.servlet.http.HttpServlet;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
-
 public abstract class JettyTestSupport
 {
     protected JettyTestServer server;
 
-    protected OkHttpClient client;
+    protected HttpClient client;
 
     protected String baseUrl;
 
@@ -26,7 +27,7 @@ public abstract class JettyTestSupport
         this.server.start();
         configure();
 
-        this.client = new OkHttpClient();
+        this.client = HttpClient.newHttpClient();
         this.baseUrl = "http://localhost:" + this.server.getPort();
     }
 
@@ -57,14 +58,14 @@ public abstract class JettyTestSupport
         this.server.addServlet( servlet, mapping );
     }
 
-    protected final Request.Builder newRequest( final String path )
+    protected final HttpRequest.Builder newRequest( final String path )
     {
-        return new Request.Builder().url( this.baseUrl + path );
+        return HttpRequest.newBuilder( URI.create( this.baseUrl + path ) );
     }
 
-    protected final Response callRequest( final Request request )
+    protected final HttpResponse callRequest( final HttpRequest request )
         throws Exception
     {
-        return this.client.newCall( request ).execute();
+        return this.client.send( request, HttpResponse.BodyHandlers.ofString() );
     }
 }

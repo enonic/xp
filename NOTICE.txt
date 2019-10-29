@@ -108,10 +108,6 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     Apache License 2.0
     https://github.com/dropwizard/metrics/blob/4.1-development/LICENSE
 
-    OK Http
-    Apache License 2.0
-    https://github.com/square/okhttp/blob/master/LICENSE.txt
-
     OSGi Utilities
     Apache License 2.0
     https://www.mvnrepository.com/artifact/org.osgi/org.osgi.core

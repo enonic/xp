@@ -6,11 +6,14 @@ import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 import javax.servlet.http.HttpServlet;
 
+import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+
+import com.enonic.xp.web.dispatch.DispatchConstants;
 
 public final class JettyTestServer
 {
@@ -20,7 +23,15 @@ public final class JettyTestServer
 
     public JettyTestServer()
     {
-        this.server = new Server( 0 );
+        this.server = new Server();
+
+        final ServerConnector connector = new ServerConnector( this.server, new HttpConnectionFactory() );
+        connector.setHost( "localhost" );
+        connector.setPort( 0 );
+        connector.setName( DispatchConstants.XP_CONNECTOR );
+
+        this.server.addConnector( connector );
+
         this.handler = new ServletContextHandler( null, "/", ServletContextHandler.SESSIONS );
         this.server.setHandler( this.handler );
     }
