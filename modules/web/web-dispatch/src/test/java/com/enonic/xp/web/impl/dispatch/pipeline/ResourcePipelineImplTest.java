@@ -1,6 +1,8 @@
 package com.enonic.xp.web.impl.dispatch.pipeline;
 
+import java.util.Dictionary;
 import java.util.HashMap;
+import java.util.Hashtable;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -115,6 +117,12 @@ public abstract class ResourcePipelineImplTest<D extends ResourceDefinition<?>, 
         public int compareTo( final Object reference )
         {
             return 0;
+        }
+
+        @Override
+        public Dictionary<String, Object> getProperties()
+        {
+            return new Hashtable<>();
         }
     }
 }
