@@ -8,7 +8,6 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Sets;
 import com.google.common.io.CharSource;
 
 import com.enonic.xp.core.impl.export.reader.ExportReader;
@@ -60,7 +59,7 @@ public final class NodeImporter
 
     private final boolean importPermissions;
 
-    private final Set<ImportValidator> importValidators = Sets.newHashSet( new ContentImportValidator() );
+    private final Set<ImportValidator> importValidators = Set.of( new ContentImportValidator() );
 
     private final XsltTransformer transformer;
 

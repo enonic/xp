@@ -58,7 +58,7 @@ class UpdatedAttachedBinariesResolver
 
         final Set<BinaryReference> referencesInPersistedNode = new ReferenceResolver().resolve( this.persistedNode.data() );
 
-        final Sets.SetView<BinaryReference> changedBinaryReferences = Sets.difference( referencesInEditedNode, referencesInPersistedNode );
+        final Set<BinaryReference> changedBinaryReferences = Sets.difference( referencesInEditedNode, referencesInPersistedNode );
 
         if ( changedBinaryReferences.isEmpty() && this.binaryAttachments.isEmpty() )
         {
@@ -76,7 +76,7 @@ class UpdatedAttachedBinariesResolver
         return AttachedBinaries.fromCollection( resolvedAttachedBinaries.values() );
     }
 
-    private void verifyAllNewGivenAsBinaryAttachment( final Sets.SetView<BinaryReference> changedBinaryReferences )
+    private void verifyAllNewGivenAsBinaryAttachment( final Set<BinaryReference> changedBinaryReferences )
     {
         for ( final BinaryReference binaryReference : changedBinaryReferences )
         {
@@ -109,7 +109,7 @@ class UpdatedAttachedBinariesResolver
                                           final Set<BinaryReference> referencesInEditedNode,
                                           final Set<BinaryReference> referencesInPersistedNode )
     {
-        final Sets.SetView<BinaryReference> unchangedReferences = Sets.intersection( referencesInPersistedNode, referencesInEditedNode );
+        final Set<BinaryReference> unchangedReferences = Sets.intersection( referencesInPersistedNode, referencesInEditedNode );
 
         final AttachedBinaries attachedBinaries = persistedNode.getAttachedBinaries();
 

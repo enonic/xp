@@ -4,8 +4,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.TreeSet;
 
-import com.google.common.collect.Sets;
-
 class VacuumTasks
     implements Iterable<VacuumTask>
 {
@@ -13,7 +11,7 @@ class VacuumTasks
 
     public VacuumTasks()
     {
-        this.tasks = Sets.newTreeSet( Comparator.comparingInt( VacuumTask::order ) );
+        this.tasks = new TreeSet<>( Comparator.comparingInt( VacuumTask::order ) );
     }
 
     @Override

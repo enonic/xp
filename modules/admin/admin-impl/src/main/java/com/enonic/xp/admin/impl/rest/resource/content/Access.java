@@ -3,10 +3,10 @@ package com.enonic.xp.admin.impl.rest.resource.content;
 
 import java.util.Arrays;
 import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.security.acl.Permission;
@@ -29,7 +29,7 @@ public enum Access
 
     public static Access fromPermissions( final Iterable<Permission> permissions )
     {
-        final HashSet<Permission> perms = Sets.newHashSet( permissions );
+        final ImmutableSet<Permission> perms = Sets.immutableEnumSet( permissions );
         return Stream.of( READ, WRITE, PUBLISH, FULL ).
             filter( a -> a.hasPermissions( perms ) ).
             findFirst().

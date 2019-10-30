@@ -5,6 +5,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.Servlet;
@@ -23,7 +24,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.collect.Sets;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.annotation.Order;
@@ -47,7 +47,7 @@ public final class StatusServlet
     private JsonNode getRootInfo()
     {
         final ArrayNode json = JsonNodeFactory.instance.arrayNode();
-        final Set<String> names = Sets.newTreeSet( this.reporters.keySet() );
+        final Set<String> names = new TreeSet<>( this.reporters.keySet() );
         names.forEach( json::add );
         return json;
     }
