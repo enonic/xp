@@ -5,17 +5,14 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
@@ -28,7 +25,7 @@ public final class Mixins
     private Mixins( final ImmutableList<Mixin> list )
     {
         super( list );
-        this.map = Maps.uniqueIndex( list, new ToNameFunction() );
+        this.map = list.stream().collect( ImmutableMap.toImmutableMap( Mixin::getName, Function.identity() ) );
     }
 
     public Mixins add( final Mixin... mixins )
@@ -52,8 +49,7 @@ public final class Mixins
 
     public Set<MixinName> getNames()
     {
-        final Collection<MixinName> names = Collections2.transform( this.list, new ToNameFunction() );
-        return ImmutableSet.copyOf( names );
+        return map.keySet();
     }
 
     public Mixin getMixin( final MixinName mixinName )
@@ -90,16 +86,6 @@ public final class Mixins
     public static Mixins from( final Stream<? extends Mixin> mixins )
     {
         return new Mixins( ImmutableList.copyOf( mixins.collect( Collectors.toList() ) ) );
-    }
-
-    private final static class ToNameFunction
-        implements Function<Mixin, MixinName>
-    {
-        @Override
-        public MixinName apply( final Mixin value )
-        {
-            return value.getName();
-        }
     }
 
     public static Builder create()

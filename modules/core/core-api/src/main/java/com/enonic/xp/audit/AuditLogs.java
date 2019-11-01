@@ -3,10 +3,10 @@ package com.enonic.xp.audit;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.function.Function;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
@@ -18,7 +18,7 @@ public final class AuditLogs
     private AuditLogs( final Set<AuditLog> set )
     {
         super( ImmutableSet.copyOf( set ) );
-        this.map = Maps.uniqueIndex( set, input -> input.getId() );
+        this.map = set.stream().collect( ImmutableMap.toImmutableMap( AuditLog::getId, Function.identity() ) );
     }
 
     public static AuditLogs empty()
