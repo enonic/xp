@@ -4,14 +4,12 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
@@ -24,13 +22,12 @@ public final class CreateAttachments
     private CreateAttachments( final Set<CreateAttachment> set )
     {
         super( ImmutableSet.copyOf( set ) );
-        this.map = Maps.uniqueIndex( set, new ToNameFunction() );
+        this.map = set.stream().collect( ImmutableMap.toImmutableMap( CreateAttachment::getName, Function.identity() ) );
     }
 
     public ImmutableList<String> getNames()
     {
-        final Collection<String> names = Collections2.transform( this.set, new ToNameFunction() );
-        return ImmutableList.copyOf( names );
+        return map.keySet().asList();
     }
 
     public CreateAttachment getByName( final String name )
@@ -57,16 +54,6 @@ public final class CreateAttachments
     public static CreateAttachments from( final Collection<? extends CreateAttachment> contents )
     {
         return new CreateAttachments( ImmutableSet.copyOf( contents ) );
-    }
-
-    private final static class ToNameFunction
-        implements Function<CreateAttachment, String>
-    {
-        @Override
-        public String apply( final CreateAttachment value )
-        {
-            return value.getName();
-        }
     }
 
     public static Builder create()
