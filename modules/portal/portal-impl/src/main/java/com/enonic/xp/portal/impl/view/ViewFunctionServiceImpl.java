@@ -1,7 +1,7 @@
 package com.enonic.xp.portal.impl.view;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -16,12 +16,7 @@ import com.enonic.xp.portal.view.ViewFunctionService;
 public final class ViewFunctionServiceImpl
     implements ViewFunctionService
 {
-    private final Map<String, ViewFunction> functions;
-
-    public ViewFunctionServiceImpl()
-    {
-        this.functions = new HashMap<>();
-    }
+    private final Map<String, ViewFunction> functions = new ConcurrentHashMap<>();
 
     private ViewFunction getFunction( final String name )
     {

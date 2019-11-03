@@ -13,12 +13,7 @@ final class EventMulticaster
 {
     private final static Logger LOG = LoggerFactory.getLogger( EventMulticaster.class );
 
-    protected final CopyOnWriteArrayList<EventListener> listeners;
-
-    public EventMulticaster()
-    {
-        this.listeners = new CopyOnWriteArrayList<>();
-    }
+    protected final CopyOnWriteArrayList<EventListener> listeners = new CopyOnWriteArrayList<>();
 
     public void add( final EventListener listener )
     {

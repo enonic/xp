@@ -1,17 +1,16 @@
 package com.enonic.xp.web.impl.dispatch.pipeline;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
 import org.osgi.framework.ServiceReference;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.impl.dispatch.mapping.ResourceDefinition;
@@ -21,20 +20,13 @@ public abstract class ResourcePipelineImpl<T extends ResourceDefinition<?>>
 {
     private ServletContext context;
 
-    private final Map<Object, T> map;
+    private final Map<Object, T> map = new ConcurrentHashMap<>();
 
-    final List<T> list;
+    final List<T> list = new CopyOnWriteArrayList<>();
 
     private Optional<String> connector;
 
-    private List<T> resourceQueue;
-
-    ResourcePipelineImpl()
-    {
-        this.map = new HashMap<>();
-        this.list = Lists.newCopyOnWriteArrayList();
-        this.resourceQueue = Lists.newCopyOnWriteArrayList();
-    }
+    private final List<T> resourceQueue = new CopyOnWriteArrayList<>();
 
     @Override
     public final void init( final ServletContext context )
