@@ -668,7 +668,7 @@ public class ApplicationServiceImplTest
         Mockito.verify( invalidator2, Mockito.times( 1 ) ).invalidate( key );
     }
 
-    private class ApplicationEventMatcher
+    private static class ApplicationEventMatcher
         implements ArgumentMatcher<Event>
     {
         Event thisObject;

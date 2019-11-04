@@ -85,7 +85,7 @@ public class CopyExecutor
             }
 
             scrollResp = client.prepareSearchScroll( scrollResp.getScrollId() ).
-                setScroll( defaultScrollTime ).
+                setScroll( DEFAULT_SCROLL_TIME ).
                 execute().
                 actionGet();
 

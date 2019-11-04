@@ -87,7 +87,7 @@ public class ContentPublishInfo
         }
 
         final ContentPublishInfo that = (ContentPublishInfo) o;
-        return Objects.equals( from, that.from ) & Objects.equals( to, that.to ) & Objects.equals( first, that.first );
+        return Objects.equals( from, that.from ) && Objects.equals( to, that.to ) && Objects.equals( first, that.first );
 
     }
 

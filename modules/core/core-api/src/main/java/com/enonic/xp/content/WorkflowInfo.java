@@ -121,7 +121,7 @@ public class WorkflowInfo
         }
 
         final WorkflowInfo that = (WorkflowInfo) o;
-        return Objects.equals( state, that.state ) & Objects.equals( checks, that.checks );
+        return Objects.equals( state, that.state ) && Objects.equals( checks, that.checks );
 
     }
 

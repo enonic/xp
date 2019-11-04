@@ -18,7 +18,7 @@ configurations {
 }
 
 ext {
-    felixVersion = '6.0.1'
+    felixVersion = '6.0.3'
     jettyVersion = '9.4.22.v20191022'
 }
 

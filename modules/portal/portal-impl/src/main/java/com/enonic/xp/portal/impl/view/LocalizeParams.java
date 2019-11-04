@@ -23,7 +23,7 @@ class LocalizeParams
 
     private Object[] params;
 
-    private final Pattern VALUES_PATTERN = Pattern.compile( "^\\{.*\\}$" );
+    private static final Pattern VALUES_PATTERN = Pattern.compile( "^\\{.*\\}$" );
 
     private final PortalRequest request;
 

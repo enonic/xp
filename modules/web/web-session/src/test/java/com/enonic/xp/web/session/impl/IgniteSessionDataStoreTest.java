@@ -274,7 +274,8 @@ public class IgniteSessionDataStoreTest
             {
                 return 10;
             }
-            
+
+            @Override
             public int write_timeout()
             {
                 return 1000;

@@ -16,13 +16,13 @@ import static org.mockito.ArgumentMatchers.eq;
 public class RemoveMembersHandlerTest
     extends ScriptTestSupport
 {
-    private final PrincipalKey USER = PrincipalKey.from( "user:myIdProvider:userId" );
+    private static final PrincipalKey USER = PrincipalKey.from( "user:myIdProvider:userId" );
 
-    private final PrincipalKey GROUP = PrincipalKey.from( "group:myGroupStore:groupId" );
+    private static final PrincipalKey GROUP = PrincipalKey.from( "group:myGroupStore:groupId" );
 
-    private final PrincipalKey GROUP2 = PrincipalKey.from( "group:myGroupStore:groupId2" );
+    private static final PrincipalKey GROUP2 = PrincipalKey.from( "group:myGroupStore:groupId2" );
 
-    private final PrincipalKey ROLE = PrincipalKey.from( "role:roleId" );
+    private static final PrincipalKey ROLE = PrincipalKey.from( "role:roleId" );
 
     private SecurityService securityService;
 

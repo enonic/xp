@@ -1,12 +1,12 @@
 package com.enonic.xp.page;
 
 import java.util.Collection;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.Contents;
@@ -21,7 +21,7 @@ public final class PageTemplates
     private PageTemplates( final ImmutableList<PageTemplate> list )
     {
         super( list );
-        this.templatesByName = Maps.uniqueIndex( list, PageTemplate::getName );
+        this.templatesByName = list.stream().collect( ImmutableMap.toImmutableMap( PageTemplate::getName, Function.identity() ) );
     }
 
     public PageTemplate getTemplate( final ContentName name )

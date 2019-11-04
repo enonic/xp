@@ -17,7 +17,7 @@ import com.enonic.xp.json.ObjectMapperHelper;
 
 public class JsonHelper
 {
-    private final static ObjectMapper mapper = ObjectMapperHelper.create().
+    private final static ObjectMapper MAPPER = ObjectMapperHelper.create().
         configure( SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, true );
 
     public static JsonNode merge( JsonNode mainNode, JsonNode updateNode )
@@ -54,7 +54,7 @@ public class JsonHelper
 
         try
         {
-            return mapper.readTree( Resources.toString( url, StandardCharsets.UTF_8 ) );
+            return MAPPER.readTree( Resources.toString( url, StandardCharsets.UTF_8 ) );
         }
         catch ( IOException e )
         {
@@ -71,14 +71,14 @@ public class JsonHelper
 
     public static JsonNode from( final Map<String, Object> settings )
     {
-        return mapper.valueToTree( settings );
+        return MAPPER.valueToTree( settings );
     }
 
     public static JsonNode from( final String json )
     {
         try
         {
-            return mapper.readTree( json );
+            return MAPPER.readTree( json );
         }
         catch ( IOException e )
         {

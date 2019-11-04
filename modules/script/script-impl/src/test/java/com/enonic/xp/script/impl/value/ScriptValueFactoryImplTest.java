@@ -57,7 +57,7 @@ public class ScriptValueFactoryImplTest
         assertEquals( true, value.isValue() );
 
         assertEquals( "2", value.getValue() );
-        assertEquals( new Integer( 2 ), value.getValue( Integer.class ) );
+        assertEquals( 2, value.getValue( Integer.class ) );
         assertTrue( value.getList().isEmpty() );
 
         assertNonArray( value );
@@ -107,8 +107,8 @@ public class ScriptValueFactoryImplTest
         assertEquals( 2, value.getArray( Integer.class ).size() );
         assertEquals( "1", value.getArray().get( 0 ).getValue() );
         assertEquals( "2", value.getArray().get( 1 ).getValue() );
-        assertEquals( new Integer( 1 ), value.getArray( Integer.class ).get( 0 ) );
-        assertEquals( new Integer( 2 ), value.getArray( Integer.class ).get( 1 ) );
+        assertEquals( 1, value.getArray( Integer.class ).get( 0 ) );
+        assertEquals( 2, value.getArray( Integer.class ).get( 1 ) );
         assertEquals( 2, value.getList().size() );
         assertEquals( "1", value.getList().get( 0 ) );
         assertEquals( "2", value.getList().get( 1 ) );

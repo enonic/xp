@@ -65,7 +65,7 @@ public final class ScriptExecutorImpl
 
     private JavascriptHelper javascriptHelper;
 
-    private final static Striped<Lock> requireLocks = Striped.lazyWeakLock( 1000 );
+    private final static Striped<Lock> REQUIRE_LOCKS = Striped.lazyWeakLock( 1000 );
 
     public void setScriptSettings( final ScriptSettings scriptSettings )
     {
@@ -161,7 +161,7 @@ public final class ScriptExecutorImpl
             return cached;
         }
 
-        final Lock lock = requireLocks.get( key );
+        final Lock lock = REQUIRE_LOCKS.get( key );
         try
         {
             if ( lock.tryLock( 5, TimeUnit.MINUTES ) )

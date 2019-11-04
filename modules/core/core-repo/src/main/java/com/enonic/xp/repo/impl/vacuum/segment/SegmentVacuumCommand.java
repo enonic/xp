@@ -8,8 +8,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Maps;
-
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.content.ContentConstants;
@@ -37,7 +35,8 @@ public class SegmentVacuumCommand
 {
     private static final Logger LOG = LoggerFactory.getLogger( SegmentVacuumCommand.class );
 
-    private RepositoryIds BUILTIN_REPOSITORIES = RepositoryIds.from( SystemConstants.SYSTEM_REPO_ID, ContentConstants.CONTENT_REPO_ID );
+    private static final RepositoryIds BUILTIN_REPOSITORIES =
+        RepositoryIds.from( SystemConstants.SYSTEM_REPO_ID, ContentConstants.CONTENT_REPO_ID );
 
     private RepositoryService repositoryService;
 
@@ -58,7 +57,7 @@ public class SegmentVacuumCommand
         nodeService = builder.nodeService;
         params = builder.params;
         result = VacuumTaskResult.create();
-        repositoryPresenceMap = Maps.newHashMap();
+        repositoryPresenceMap = new HashMap<>();
         generateRepositoryPresenceMap();
     }
 

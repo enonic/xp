@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.event.Event;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SendEventRequestTest
 {
@@ -20,10 +20,10 @@ public class SendEventRequestTest
         throws IOException
     {
         Event event = Event.create( "eventType" ).
-            timestamp( 123l ).
+            timestamp( 123L ).
             distributed( true ).
             value( "key1", "value1" ).
-            value( "key2", new Long( 1234l ) ).build();
+            value( "key2", 1234L ).build();
 
         //Writes the event
         final BytesStreamOutput bytesStreamOutput = new BytesStreamOutput();
@@ -35,6 +35,6 @@ public class SendEventRequestTest
         final SendEventRequest sendEventRequestIn = new SendEventRequest();
         sendEventRequestIn.readFrom( bytesStreamInput );
 
-        assertTrue( event.equals( sendEventRequestIn.getEvent() ) );
+        assertEquals( event, sendEventRequestIn.getEvent() );
     }
 }

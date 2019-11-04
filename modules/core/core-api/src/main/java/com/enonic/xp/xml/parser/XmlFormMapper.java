@@ -25,7 +25,7 @@ import com.enonic.xp.xml.XmlException;
 @Beta
 public final class XmlFormMapper
 {
-    private static final AtomicInteger fieldSetCounter = new AtomicInteger( 1);
+    private static final AtomicInteger FIELD_SET_COUNTER = new AtomicInteger( 1 );
 
     private final ApplicationKey currentApplication;
 
@@ -134,7 +134,7 @@ public final class XmlFormMapper
     private FieldSet buildFieldSetItem( final DomElement root )
     {
         final FieldSet.Builder builder = FieldSet.create();
-        builder.name( "fieldSet" + fieldSetCounter.getAndIncrement() );
+        builder.name( "fieldSet" + FIELD_SET_COUNTER.getAndIncrement() );
         final String labelI18n = getLabelI18n( root );
         builder.label( getLabel( root, labelI18n ) );
         builder.labelI18nKey( labelI18n );

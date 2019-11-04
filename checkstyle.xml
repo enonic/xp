@@ -9,6 +9,11 @@
 
   <module name="TreeWalker">
     <module name="UnusedImports"/>
-    <module name="IllegalImport"/>
+    <module name="IllegalImport">
+      <property name="illegalPkgs" value="sun, org.mockito.internal"/>
+    </module>
+    <module name="ConstantName"/>
+    <module name="ParameterName"/>
+    <module name="MemberName"/>
   </module>
 </module>

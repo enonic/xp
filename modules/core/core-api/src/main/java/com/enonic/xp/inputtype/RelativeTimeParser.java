@@ -75,21 +75,21 @@ final class RelativeTimeParser
 
     private interface DateTimeUnits
     {
-        Set<String> YEAR_UNITS = ImmutableSet.of( "year", "years", "y" );
+        Set<String> YEAR_UNITS = Set.of( "year", "years", "y" );
 
-        Set<String> MONTH_UNITS = ImmutableSet.of( "month", "months", "M" );
+        Set<String> MONTH_UNITS = Set.of( "month", "months", "M" );
 
-        Set<String> WEEK_UNITS = ImmutableSet.of( "week", "weeks", "w" );
+        Set<String> WEEK_UNITS = Set.of( "week", "weeks", "w" );
 
-        Set<String> DAY_UNITS = ImmutableSet.of( "day", "days", "d" );
+        Set<String> DAY_UNITS = Set.of( "day", "days", "d" );
 
-        Set<String> HOUR_UNITS = ImmutableSet.of( "hour", "hours", "h" );
+        Set<String> HOUR_UNITS = Set.of( "hour", "hours", "h" );
 
-        Set<String> MINUTE_UNITS = ImmutableSet.of( "minute", "minutes", "m" );
+        Set<String> MINUTE_UNITS = Set.of( "minute", "minutes", "m" );
 
-        Set<String> SECOND_UNITS = ImmutableSet.of( "second", "seconds", "s" );
+        Set<String> SECOND_UNITS = Set.of( "second", "seconds", "s" );
 
-        Set<String> CURRENT_UNITS = ImmutableSet.of( "now", "0" );
+        Set<String> CURRENT_UNITS = Set.of( "now", "0" );
 
         Set<String> PERIOD_UNITS = ImmutableSet.<String>builder().
             addAll( YEAR_UNITS ).

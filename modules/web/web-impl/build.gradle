@@ -6,7 +6,6 @@ dependencies {
     testCompile project( path: ':web:web-api', configuration: 'testOutput' )
     testCompile project( path: ':web:web-jetty', configuration: 'testOutput' )
     testCompile "org.eclipse.jetty:jetty-servlet:${jettyVersion}"
-    testCompile 'com.squareup.okhttp:okhttp:2.5.0'
 }
 
 jar {

@@ -2,12 +2,11 @@ package com.enonic.xp.attachment;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.function.Function;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
@@ -20,8 +19,7 @@ public final class Attachments
     private Attachments( final ImmutableList<Attachment> list )
     {
         super( list );
-
-        this.attachmentByName = Maps.uniqueIndex( list, new ToNameFunction() );
+        this.attachmentByName = list.stream().collect( ImmutableMap.toImmutableMap( Attachment::getName, Function.identity() ) );
     }
 
     public Attachment byName( final String name )
@@ -86,26 +84,6 @@ public final class Attachments
     public static Attachments from( final Collection<? extends Attachment> contents )
     {
         return new Attachments( ImmutableList.copyOf( contents ) );
-    }
-
-    private final static class ToNameFunction
-        implements Function<Attachment, String>
-    {
-        @Override
-        public String apply( final Attachment value )
-        {
-            return value.getName();
-        }
-    }
-
-    private final static class ToLabelFunction
-        implements Function<Attachment, String>
-    {
-        @Override
-        public String apply( final Attachment value )
-        {
-            return value.getLabel();
-        }
     }
 
     public static Builder create()

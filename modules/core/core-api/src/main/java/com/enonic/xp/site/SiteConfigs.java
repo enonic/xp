@@ -1,13 +1,12 @@
 package com.enonic.xp.site;
 
 import java.util.Collection;
+import java.util.function.Function;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.support.AbstractImmutableEntityList;
@@ -21,7 +20,8 @@ public class SiteConfigs
     private SiteConfigs( final ImmutableList<SiteConfig> list )
     {
         super( list );
-        this.applicationsByName = Maps.uniqueIndex( list, new ToNameFunction() );
+        this.applicationsByName =
+            list.stream().collect( ImmutableMap.toImmutableMap( SiteConfig::getApplicationKey, Function.identity() ) );
     }
 
     public SiteConfig get( final ApplicationKey applicationKey )
@@ -34,7 +34,8 @@ public class SiteConfigs
         return get( ApplicationKey.from( applicationKey ) );
     }
 
-    public ImmutableSet<ApplicationKey> getApplicationKeys() {
+    public ImmutableSet<ApplicationKey> getApplicationKeys()
+    {
         return applicationsByName.keySet();
     }
 
@@ -77,16 +78,6 @@ public class SiteConfigs
         public SiteConfigs build()
         {
             return new SiteConfigs( builder.build() );
-        }
-    }
-
-    private final static class ToNameFunction
-        implements Function<SiteConfig, ApplicationKey>
-    {
-        @Override
-        public ApplicationKey apply( final SiteConfig value )
-        {
-            return value.getApplicationKey();
         }
     }
 }

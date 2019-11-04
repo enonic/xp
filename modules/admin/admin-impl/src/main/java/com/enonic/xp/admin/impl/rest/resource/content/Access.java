@@ -31,7 +31,7 @@ public enum Access
     {
         final HashSet<Permission> perms = Sets.newHashSet( permissions );
         return Stream.of( READ, WRITE, PUBLISH, FULL ).
-            filter( ( a ) -> a.hasPermissions( perms ) ).
+            filter( a -> a.hasPermissions( perms ) ).
             findFirst().
             orElse( CUSTOM );
     }
