@@ -47,7 +47,7 @@ public final class ApplicationServiceImpl
 
     private final ConcurrentMap<ApplicationKey, Boolean> localApplicationSet = new ConcurrentHashMap<>();
 
-    private ApplicationRegistry registry = new ApplicationRegistry();
+    private final ApplicationRegistry registry = new ApplicationRegistry();
 
     private BundleContext context;
 

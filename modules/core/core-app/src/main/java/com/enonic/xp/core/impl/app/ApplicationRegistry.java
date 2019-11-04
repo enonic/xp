@@ -5,13 +5,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationInvalidator;
@@ -23,20 +22,13 @@ final class ApplicationRegistry
 {
     private final static Logger LOG = LoggerFactory.getLogger( ApplicationRegistry.class );
 
-    private final ConcurrentMap<ApplicationKey, Application> applications;
+    private final ConcurrentMap<ApplicationKey, Application> applications = new ConcurrentHashMap<>();
 
     private BundleContext context;
 
-    private final ApplicationFactory factory;
+    private final ApplicationFactory factory = new ApplicationFactory( RunMode.get() );
 
-    private final List<ApplicationInvalidator> invalidators;
-
-    public ApplicationRegistry()
-    {
-        this.applications = new ConcurrentHashMap<>();
-        this.factory = new ApplicationFactory( RunMode.get() );
-        this.invalidators = Lists.newCopyOnWriteArrayList();
-    }
+    private final List<ApplicationInvalidator> invalidators = new CopyOnWriteArrayList<>();
 
     public void activate( final BundleContext context )
     {

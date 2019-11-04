@@ -2,17 +2,13 @@ package com.enonic.xp.repo.impl.vacuum;
 
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.TreeSet;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 class VacuumTasks
     implements Iterable<VacuumTask>
 {
-    private final TreeSet<VacuumTask> tasks;
-
-    public VacuumTasks()
-    {
-        this.tasks = new TreeSet<>( Comparator.comparingInt( VacuumTask::order ) );
-    }
+    private final Set<VacuumTask> tasks = new ConcurrentSkipListSet<>( Comparator.comparingInt( VacuumTask::order ) );
 
     @Override
     public Iterator<VacuumTask> iterator()

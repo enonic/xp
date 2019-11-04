@@ -1,13 +1,12 @@
 package com.enonic.xp.web.impl.dispatch.mapping;
 
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Map;
 
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
-
-import com.google.common.collect.Iterators;
 
 final class ResourceConfig
     implements FilterConfig, ServletConfig
@@ -46,7 +45,7 @@ final class ResourceConfig
     @Override
     public Enumeration<String> getInitParameterNames()
     {
-        return Iterators.asEnumeration( this.initParams.keySet().iterator() );
+        return Collections.enumeration( this.initParams.keySet() );
     }
 
     @Override
