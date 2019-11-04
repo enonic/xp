@@ -2,8 +2,6 @@ package com.enonic.xp.server.internal.trace;
 
 import java.util.Set;
 
-import com.google.common.collect.Sets;
-
 import com.enonic.xp.trace.TraceLocation;
 import com.enonic.xp.trace.Tracer;
 
@@ -11,7 +9,7 @@ final class TraceLocationImpl
     implements TraceLocation
 {
     private final static Set<String> IGNORED_CLASSES =
-        Sets.newHashSet( TraceLocationImpl.class.getName(), Tracer.class.getName(), TraceService.class.getName() );
+        Set.of( TraceLocationImpl.class.getName(), Tracer.class.getName(), TraceService.class.getName() );
 
     private final String method;
 

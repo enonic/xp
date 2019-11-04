@@ -26,8 +26,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.google.common.io.ByteSource;
 import com.google.common.net.HttpHeaders;
 
@@ -1695,7 +1695,8 @@ public class ContentResourceTest
         Content content2 = createContent( "content-id2", "content-name2", "myapplication:content-type" );
 
         GetDescendantsOfContents params = new GetDescendantsOfContents();
-        params.setContentPaths( Sets.newHashSet( content1.getPath().toString(), content2.getPath().toString() ) );
+        // TODO Unfortunately test relies on order paths in Set. Replace with Set.of then assertion is fixed.
+        params.setContentPaths( ImmutableSet.of( content1.getPath().toString(), content2.getPath().toString() ) );
 
         final ArgumentCaptor<ContentQuery> argumentCaptor = ArgumentCaptor.forClass( ContentQuery.class );
 
@@ -1710,7 +1711,7 @@ public class ContentResourceTest
         Mockito.verify( this.contentService, Mockito.times( 1 ) ).find( argumentCaptor.capture() );
 
         assertEquals(
-            "((_path LIKE '/content/content-name2/*' OR _path LIKE '/content/content-name1/*') AND _path NOT IN ('/content/content-name2', '/content/content-name1')) ORDER BY _path ASC",
+            "((_path LIKE '/content/content-name1/*' OR _path LIKE '/content/content-name2/*') AND _path NOT IN ('/content/content-name1', '/content/content-name2')) ORDER BY _path ASC",
             argumentCaptor.getValue().getQueryExpr().toString() );
 
         assertTrue( result.contains( new ContentIdJson( content1.getId() ) ) );
@@ -1726,7 +1727,8 @@ public class ContentResourceTest
         Content content2 = createContent( "content-id2", "content-name2", "myapplication:content-type" );
 
         GetDescendantsOfContents params = new GetDescendantsOfContents();
-        params.setContentPaths( Sets.newHashSet( content1.getPath().toString(), content2.getPath().toString() ) );
+        // TODO Unfortunately test relies on order paths in Set.  Replace with Set.of then assertion is fixed.
+        params.setContentPaths( ImmutableSet.of( content1.getPath().toString(), content2.getPath().toString() ) );
         params.setFilterStatuses( Collections.singleton( CompareStatus.NEW ) );
 
         final ArgumentCaptor<ContentQuery> argumentCaptor = ArgumentCaptor.forClass( ContentQuery.class );
@@ -1746,7 +1748,7 @@ public class ContentResourceTest
         Mockito.verify( this.contentService, Mockito.times( 1 ) ).find( argumentCaptor.capture() );
 
         assertEquals(
-            "((_path LIKE '/content/content-name2/*' OR _path LIKE '/content/content-name1/*') AND _path NOT IN ('/content/content-name2', '/content/content-name1')) ORDER BY _path ASC",
+            "((_path LIKE '/content/content-name1/*' OR _path LIKE '/content/content-name2/*') AND _path NOT IN ('/content/content-name1', '/content/content-name2')) ORDER BY _path ASC",
             argumentCaptor.getValue().getQueryExpr().toString() );
 
         assertTrue( result.contains( new ContentIdJson( content1.getId() ) ) );
