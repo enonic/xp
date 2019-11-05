@@ -21,9 +21,8 @@ import org.osgi.framework.ServiceRegistration;
 import com.enonic.xp.cluster.ClusterHealth;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ElasticsearchClusterTest
 {
@@ -40,12 +39,10 @@ public class ElasticsearchClusterTest
         throws Exception
     {
         this.context = Mockito.mock( BundleContext.class );
-        this.activator = new ElasticsearchCluster();
+        final Node node = Mockito.mock( Node.class );
+        this.activator = new ElasticsearchCluster( context, node );
 
         this.clientReg = mockRegisterService( Client.class );
-
-        final Node node = Mockito.mock( Node.class );
-        this.activator.setNode( node );
 
         final Client client = Mockito.mock( Client.class );
         Mockito.when( node.client() ).thenReturn( client );
@@ -85,12 +82,10 @@ public class ElasticsearchClusterTest
     {
         setClusterHealth( ClusterHealthStatus.GREEN );
 
-        this.activator.activate( this.context );
-        assertNull( this.activator.reg );
+        assertFalse( this.activator.isEnabled() );
 
         this.activator.enable();
-        assertNotNull( this.activator.reg );
-        assertSame( this.clientReg, this.activator.reg );
+        assertTrue( this.activator.isEnabled() );
 
         this.activator.disable();
         Mockito.verify( this.clientReg, Mockito.times( 1 ) ).unregister();
