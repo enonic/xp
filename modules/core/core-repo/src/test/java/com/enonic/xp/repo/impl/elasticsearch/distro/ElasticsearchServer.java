@@ -32,7 +32,7 @@ public class ElasticsearchServer
 
     private Thread ownerThread;
 
-    private final long startTimeoutInMs = 15000;
+    private final long startTimeoutInMs = 60000;
 
     private volatile int pid = -1;
 

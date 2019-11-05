@@ -15,6 +15,8 @@ import org.elasticsearch.action.support.WriteRequest;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.cluster.block.ClusterBlockException;
+import org.elasticsearch.common.Strings;
+import org.elasticsearch.search.fetch.subphase.FetchSourceContext;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -48,7 +50,6 @@ public class StorageDaoImpl
 
         final IndexRequest indexRequest = new IndexRequest().
             index( settings.getStorageName().getName() ).
-            type( settings.getStorageType().getName() ).
             source( XContentBuilderFactory.create( request ) ).
             id( request.getId() ).
             timeout( request.getTimeout() );
@@ -86,7 +87,6 @@ public class StorageDaoImpl
         final org.elasticsearch.action.delete.DeleteRequest deleteRequest = new org.elasticsearch.action.delete.DeleteRequest().
             id( id ).
             index( settings.getStorageName().getName() ).
-            type( settings.getStorageType().getName() ).
             timeout( request.getTimeoutAsString() );
 
         if ( request.isForceRefresh() )
@@ -124,7 +124,6 @@ public class StorageDaoImpl
                 final org.elasticsearch.action.delete.DeleteRequest deleteRequest = new org.elasticsearch.action.delete.DeleteRequest().
                     id( id ).
                     index( settings.getStorageName().getName() ).
-                    type( settings.getStorageType().getName() ).
                     routing( id ).
                     timeout( requests.getTimeoutAsString() );
 
@@ -177,13 +176,14 @@ public class StorageDaoImpl
         final StorageSource storageSource = request.getStorageSource();
 
         final GetRequest getRequest = new GetRequest().
+            index( storageSource.getStorageName().getName() ).
             id( request.getId() ).
-            type( storageSource.getStorageType().getName() ).
             preference( request.getSearchPreference().getName() );
 
         if ( request.getReturnFields().isNotEmpty() )
         {
-            getRequest.storedFields( request.getReturnFields().getReturnFieldNames() );
+            getRequest.fetchSourceContext(
+                new FetchSourceContext( true, request.getReturnFields().getReturnFieldNames(), Strings.EMPTY_ARRAY ) );
         }
 
         if ( request.getRouting() != null )
@@ -216,9 +216,7 @@ public class StorageDaoImpl
         {
             final StorageSource storageSource = request.getStorageSource();
 
-            final MultiGetRequest.Item item =
-                new MultiGetRequest.Item( storageSource.getStorageName().getName(), storageSource.getStorageType().getName(),
-                                          request.getId() );
+            final MultiGetRequest.Item item = new MultiGetRequest.Item( storageSource.getStorageName().getName(), request.getId() );
 
             if ( request.getReturnFields().isNotEmpty() )
             {

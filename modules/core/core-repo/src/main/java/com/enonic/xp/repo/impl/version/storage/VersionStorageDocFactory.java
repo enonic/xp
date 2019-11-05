@@ -2,6 +2,8 @@ package com.enonic.xp.repo.impl.version.storage;
 
 import java.time.Instant;
 
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.Branches;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.repo.impl.StorageSource;
 import com.enonic.xp.repo.impl.storage.StaticStorageType;
@@ -10,6 +12,9 @@ import com.enonic.xp.repo.impl.storage.StoreRequest;
 import com.enonic.xp.repo.impl.storage.VersionStorageName;
 import com.enonic.xp.repo.impl.version.VersionIndexPath;
 import com.enonic.xp.repository.RepositoryId;
+
+import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
 
 public class VersionStorageDocFactory
 {
@@ -24,7 +29,8 @@ public class VersionStorageDocFactory
             add( VersionIndexPath.NODE_ID.getPath(), nodeVersion.getNodeId().toString() ).
             add( VersionIndexPath.TIMESTAMP.getPath(), nodeVersion.getTimestamp() != null ? nodeVersion.getTimestamp() : Instant.now() ).
             add( VersionIndexPath.NODE_PATH.getPath(), nodeVersion.getNodePath().toString() ).
-            add( VersionIndexPath.BRANCHES.getPath(), nodeVersion.getBranches() );
+            add( VersionIndexPath.BRANCHES.getPath(),
+                 ofNullable( nodeVersion.getBranches() ).orElse( Branches.empty() ).stream().map( Branch::getValue ).collect( toList() ) );
 
         if ( nodeVersion.getNodeCommitId() != null) {
             data.add( VersionIndexPath.COMMIT_ID.getPath(), nodeVersion.getNodeCommitId().toString() );

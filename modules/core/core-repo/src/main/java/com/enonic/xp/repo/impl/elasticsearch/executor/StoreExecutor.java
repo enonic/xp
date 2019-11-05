@@ -41,7 +41,6 @@ public class StoreExecutor
             final IndexRequest req = Requests.indexRequest().
                 id( id ).
                 index( indexDocument.getIndexName() ).
-                type( indexDocument.getIndexTypeName() ).
                 source( xContentBuilder ).
                 setRefreshPolicy(
                     indexDocument.isRefreshAfterOperation() ? WriteRequest.RefreshPolicy.IMMEDIATE : WriteRequest.RefreshPolicy.NONE ).

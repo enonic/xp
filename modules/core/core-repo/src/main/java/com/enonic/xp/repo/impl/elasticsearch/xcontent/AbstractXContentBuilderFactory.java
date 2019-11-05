@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl.elasticsearch.xcontent;
 
+import java.util.Collection;
+
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 
@@ -28,9 +30,28 @@ abstract class AbstractXContentBuilderFactory
         if ( value instanceof String )
         {
             value = IndexValueNormalizer.normalize( (String) value );
+            result.field( name, value );
         }
 
-        result.field( name, value );
+        if ( value instanceof Collection )
+        {
+            if ( ( (Collection) value ).size() == 1 )
+            {
+                Object next = ( (Collection) value ).iterator().next();
+                if ( next instanceof String )
+                {
+                    result.field( name, IndexValueNormalizer.normalize( (String) next ) );
+                }
+                else
+                {
+                    result.field( name, next );
+                }
+            }
+            else
+            {
+                result.field( name, (Iterable<?>) value );
+            }
+        }
     }
 
 

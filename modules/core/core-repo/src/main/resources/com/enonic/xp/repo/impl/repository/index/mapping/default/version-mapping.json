@@ -3,34 +3,34 @@
   "numeric_detection": false,
   "properties": {
     "nodeid": {
-      "type": "text",
+      "type": "keyword",
       "store": false,
-      "index": false
+      "index": true
     },
     "versionid": {
-      "type": "text",
+      "type": "keyword",
       "store": false,
-      "index": false
+      "index": true
     },
     "nodeblobkey": {
-      "type": "text",
+      "type": "keyword",
       "store": false,
-      "index": false
+      "index": true
     },
     "indexconfigblobkey": {
-      "type": "text",
+      "type": "keyword",
       "store": false,
-      "index": false
+      "index": true
     },
     "accesscontrolblobkey": {
-      "type": "text",
+      "type": "keyword",
       "store": false,
-      "index": false
+      "index": true
     },
     "binaryblobkeys": {
-      "type": "text",
+      "type": "keyword",
       "store": false,
-      "index": false
+      "index": true
     },
     "timestamp": {
       "type": "date",
@@ -44,14 +44,14 @@
       "analyzer": "keywordlowercase"
     },
     "commitid": {
-      "type": "text",
+      "type": "keyword",
       "store": false,
-      "index": false
+      "index": true
     },
     "branches": {
-      "type": "text",
+      "type": "keyword",
       "store": false,
-      "index": false
+      "index": true
     }
   }
 }
