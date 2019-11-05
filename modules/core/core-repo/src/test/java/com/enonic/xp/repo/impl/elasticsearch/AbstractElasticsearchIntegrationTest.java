@@ -59,7 +59,6 @@ public abstract class AbstractElasticsearchIntegrationTest
     {
         final org.elasticsearch.action.search.SearchRequest searchRequest = new org.elasticsearch.action.search.SearchRequest().
             indices( indexName ).
-            types( indexType ).
             source( new SearchSourceBuilder().
                 size( 100 ).
                 storedField( "_source" ).

@@ -131,8 +131,7 @@ public class IndexServiceInternalImpl
         {
             final GetRequest request = new GetRequest().
                 id( nodeId.toString() ).
-                index( IndexNameResolver.resolveSearchIndexName( repositoryId ) ).
-                type( source.getValue() );
+                index( IndexNameResolver.resolveSearchIndexName( repositoryId ) );
 
             final GetResponse response = this.client.get( request, RequestOptions.DEFAULT );
 
@@ -146,7 +145,6 @@ public class IndexServiceInternalImpl
             final IndexRequest req = Requests.indexRequest().
                 id( nodeId.toString() ).
                 index( IndexNameResolver.resolveSearchIndexName( repositoryId ) ).
-                type( target.getValue() ).
                 source( sourceValues ).
                 setRefreshPolicy( WriteRequest.RefreshPolicy.NONE );
 
