@@ -2,9 +2,9 @@ apply from: "$rootDir/gradle/osgi.gradle"
 
 dependencies {
     compile project( ':core:core-api' )
-    compile 'org.apache.ignite:ignite-core:2.3.0'
-    compile 'org.apache.ignite:ignite-osgi:2.3.0'
-    compile 'javax.cache:cache-api:1.0.0'
+    compile "org.apache.ignite:ignite-core:${igniteVersion}"
+    compile "org.apache.ignite:ignite-osgi:${igniteVersion}"
+    compile "org.apache.ignite:ignite-slf4j:${igniteVersion}"
     testCompile project( path: ':core:core-api', configuration: 'testOutput' )
 }
 

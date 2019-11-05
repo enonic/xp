@@ -90,7 +90,10 @@ final class JaxRsServiceImpl
         }
 
         final JaxRsComponent component = this.context.getService( reference );
-        add( component );
+        if ( component != null )
+        {
+            add( component );
+        }
         return component;
     }
 

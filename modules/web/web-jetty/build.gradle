@@ -16,5 +16,6 @@ jar {
     bnd( 'Bundle-Name': 'Enonic XP Web - Jetty',
          'Export-Package': 'org.eclipse.jetty.*, javax.servlet.*;-split-package:=merge-first, javax.websocket.*;-split-package:=merge-first',
          'Import-Package': '*;resolution:=optional',
+         'DynamicImport-Package': 'com.enonic.xp.security.auth, com.enonic.xp.data',
          'X-Jetty-Version': jettyVersion )
 }

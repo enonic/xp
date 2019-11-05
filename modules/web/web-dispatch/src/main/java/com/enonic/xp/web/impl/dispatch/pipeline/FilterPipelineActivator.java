@@ -13,18 +13,18 @@ import com.enonic.xp.web.dispatch.DispatchConstants;
 @Component(immediate = true)
 public class FilterPipelineActivator
 {
-    private ComponentFactory factory;
+    private final ComponentFactory<FilterPipeline> factory;
+
+    @Activate
+    public FilterPipelineActivator( @Reference(target = "(component.factory=pipeline)") final ComponentFactory<FilterPipeline> factory )
+    {
+        this.factory = factory;
+    }
 
     @Activate
     public void activate()
     {
         DispatchConstants.CONNECTORS.forEach( connector -> factory.newInstance(
-            new Hashtable<String, String>( Collections.singletonMap( DispatchConstants.CONNECTOR_PROPERTY, connector ) ) ) );
-    }
-
-    @Reference(target = "(component.factory=pipeline)")
-    public void setFactory( final ComponentFactory factory )
-    {
-        this.factory = factory;
+            new Hashtable<>( Collections.singletonMap( DispatchConstants.CONNECTOR_PROPERTY, connector ) ) ) );
     }
 }

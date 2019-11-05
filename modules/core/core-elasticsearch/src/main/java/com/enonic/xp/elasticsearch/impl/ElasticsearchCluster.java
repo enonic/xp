@@ -32,24 +32,23 @@ import com.enonic.xp.cluster.ClusterNodes;
 public final class ElasticsearchCluster
     implements Cluster
 {
-    private final ClusterId id = ClusterId.from( "elasticsearch" );
+    private static final Logger LOG = LoggerFactory.getLogger( ElasticsearchCluster.class );
 
     private static final String CLUSTER_HEALTH_TIMEOUT = "5s";
 
-    private Node node;
+    private final ClusterId id = ClusterId.from( "elasticsearch" );
 
-    private BundleContext context;
+    private final Node node;
 
-    protected ServiceRegistration<Client> reg;
+    private final BundleContext bundleContext;
 
-    private final static Logger LOG = LoggerFactory.getLogger( ElasticsearchCluster.class );
+    private volatile ServiceRegistration<Client> clientServiceRegistration;
 
     @Activate
-    @SuppressWarnings("WeakerAccess")
-    public void activate( final BundleContext context )
+    public ElasticsearchCluster( final BundleContext bundleContext, @Reference final Node node )
     {
-        this.context = context;
-        this.reg = null;
+        this.bundleContext = bundleContext;
+        this.node = node;
     }
 
     @Deactivate
@@ -68,7 +67,7 @@ public final class ElasticsearchCluster
     @Override
     public boolean isEnabled()
     {
-        return this.reg != null;
+        return this.clientServiceRegistration != null;
     }
 
     @Override
@@ -150,20 +149,20 @@ public final class ElasticsearchCluster
         unregisterClient();
     }
 
-    private void registerClient()
+    private synchronized void registerClient()
     {
-        if ( this.reg != null )
+        if ( this.clientServiceRegistration != null )
         {
             return;
         }
 
         LOG.info( "Cluster operational, register elasticsearch-client" );
-        this.reg = this.context.registerService( Client.class, this.node.client(), new Hashtable<>() );
+        this.clientServiceRegistration = this.bundleContext.registerService( Client.class, this.node.client(), new Hashtable<>() );
     }
 
-    private void unregisterClient()
+    private synchronized void unregisterClient()
     {
-        if ( this.reg == null )
+        if ( this.clientServiceRegistration == null )
         {
             return;
         }
@@ -171,11 +170,11 @@ public final class ElasticsearchCluster
         try
         {
             LOG.info( "Cluster not operational, unregister elasticsearch-client" );
-            this.reg.unregister();
+            this.clientServiceRegistration.unregister();
         }
         finally
         {
-            this.reg = null;
+            this.clientServiceRegistration = null;
         }
     }
 
@@ -213,12 +212,5 @@ public final class ElasticsearchCluster
         }
 
         return ClusterHealth.green();
-    }
-
-
-    @Reference
-    public void setNode( final Node node )
-    {
-        this.node = node;
     }
 }

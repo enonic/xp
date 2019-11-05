@@ -16,42 +16,29 @@ final class SessionWrapper
 {
     private final HttpServletRequest request;
 
-    private HttpSession session;
-
     SessionWrapper( final HttpServletRequest request )
     {
         this.request = request;
-        this.session = this.request.getSession( false );
-    }
-
-    private void createSessionIfNeeded()
-    {
-        if ( this.session != null )
-        {
-            return;
-        }
-
-        this.session = this.request.getSession( true );
     }
 
     @Override
     public SessionKey getKey()
     {
-        createSessionIfNeeded();
-        return SessionKey.from( this.session.getId() );
+        return SessionKey.from( request.getSession().getId() );
     }
 
     @Override
     public Object getAttribute( final String key )
     {
-        if ( this.session == null )
+        HttpSession session = request.getSession( false );
+        if ( session == null )
         {
             return null;
         }
 
         try
         {
-            return this.session.getAttribute( key );
+            return session.getAttribute( key );
         }
         catch ( IllegalStateException e )
         {
@@ -69,8 +56,8 @@ final class SessionWrapper
     @Override
     public void setAttribute( final String key, final Object value )
     {
-        createSessionIfNeeded();
-        this.session.setAttribute( key, value );
+        HttpSession session = request.getSession( true );
+        session.setAttribute( key, value );
     }
 
     @Override
@@ -82,12 +69,13 @@ final class SessionWrapper
     @Override
     public void removeAttribute( final String key )
     {
-        if ( this.session == null )
+        HttpSession session = request.getSession( false );
+        if ( session == null )
         {
             return;
         }
 
-        this.session.removeAttribute( key );
+        session.removeAttribute( key );
     }
 
     @Override
@@ -99,18 +87,19 @@ final class SessionWrapper
     @Override
     public Map<String, Object> getAttributes()
     {
-        final ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
-        if ( this.session == null )
-        {
-            return builder.build();
-        }
+        HttpSession session = request.getSession( false );
 
-        final Enumeration<String> names = this.session.getAttributeNames();
+        if ( session == null )
+        {
+            return ImmutableMap.of();
+        }
+        final ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
+        final Enumeration<String> names = session.getAttributeNames();
 
         while ( names.hasMoreElements() )
         {
             final String key = names.nextElement();
-            builder.put( key, this.session.getAttribute( key ) );
+            builder.put( key, session.getAttribute( key ) );
         }
 
         return builder.build();
@@ -119,11 +108,12 @@ final class SessionWrapper
     @Override
     public void invalidate()
     {
-        if ( this.session == null )
+        HttpSession session = request.getSession( false );
+        if ( session == null )
         {
             return;
         }
 
-        this.session.invalidate();
+        session.invalidate();
     }
 }

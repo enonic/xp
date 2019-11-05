@@ -33,4 +33,6 @@ public @interface IgniteSettings
     int communication_message_queue_limit() default 1024;
 
     String discovery_unicast_sockets();
+
+    boolean clientMode() default false;
 }

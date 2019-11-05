@@ -2,16 +2,13 @@ package com.enonic.xp.web.jetty.impl.websocket;
 
 import java.net.URI;
 import java.net.http.WebSocket;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.enonic.xp.web.dispatch.DispatchConstants;
-import com.enonic.xp.web.jetty.impl.JettyController;
 import com.enonic.xp.web.jetty.impl.JettyTestSupport;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -36,13 +33,9 @@ public class WebSocketServiceImplTest
     {
         this.endpoint = new TestEndpoint();
 
-        final JettyController controller = Mockito.mock( JettyController.class );
-
         this.server.setVirtualHosts( new String[]{DispatchConstants.VIRTUAL_HOST_PREFIX + DispatchConstants.XP_CONNECTOR} );
-        Mockito.when( controller.getServletContexts() ).thenReturn( List.of( this.server.getHandler().getServletContext() ) );
 
-        this.service = new WebSocketServiceImpl();
-        this.service.setController( controller );
+        this.service = new WebSocketServiceImpl( this.server.getHandler().getServletContext() );
         this.service.activate();
 
         this.servlet = new TestWebSocketServlet();

@@ -1,4 +1,4 @@
-package com.enonic.xp.web.session.impl.reporter;
+package com.enonic.xp.web.session.impl.ignite.reporter;
 
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.cache.CacheMetrics;

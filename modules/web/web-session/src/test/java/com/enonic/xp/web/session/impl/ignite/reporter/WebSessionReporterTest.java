@@ -1,4 +1,4 @@
-package com.enonic.xp.web.session.impl.reporter;
+package com.enonic.xp.web.session.impl.ignite.reporter;
 
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
@@ -10,7 +10,7 @@ import org.mockito.Mockito;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import com.enonic.xp.support.JsonTestHelper;
-import com.enonic.xp.web.session.impl.IgniteSessionDataStore;
+import com.enonic.xp.web.session.impl.AbstractSessionDataStoreFactoryActivator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -32,10 +32,10 @@ public class WebSessionReporterTest
         this.cache = (IgniteCache<Object, Object>) Mockito.mock( IgniteCache.class );
         this.cacheMetrics = Mockito.mock( CacheMetrics.class );
 
-        Mockito.when( this.ignite.cache( IgniteSessionDataStore.WEB_SESSION_CACHE ) ).thenReturn( this.cache );
+        Mockito.when( ignite.cache( AbstractSessionDataStoreFactoryActivator.WEB_SESSION_CACHE ) ).thenReturn( cache );
         Mockito.when( this.cache.metrics() ).thenReturn( this.cacheMetrics );
         Mockito.when( this.cache.size() ).thenReturn( 123 );
-        Mockito.when( this.cache.getName() ).thenReturn( IgniteSessionDataStore.WEB_SESSION_CACHE );
+        Mockito.when( this.cache.getName() ).thenReturn( AbstractSessionDataStoreFactoryActivator.WEB_SESSION_CACHE );
     }
 
     @Test
@@ -45,10 +45,9 @@ public class WebSessionReporterTest
         Mockito.when( this.cacheMetrics.isStatisticsEnabled() ).thenReturn( true );
         Mockito.when( this.cacheMetrics.getValueType() ).thenReturn( Object.class.getName() );
 
-        final WebSessionReporter reporter = new WebSessionReporter();
-        reporter.setIgnite( this.ignite );
+        final WebSessionReporter reporter = new WebSessionReporter( this.ignite );
 
-        assertEquals( reporter.getName(), "cache." + IgniteSessionDataStore.WEB_SESSION_CACHE );
+        assertEquals( reporter.getName(), "cache." + AbstractSessionDataStoreFactoryActivator.WEB_SESSION_CACHE );
 
         final JsonNode result = reporter.getReport();
         assertJson( "metrics.json", result );

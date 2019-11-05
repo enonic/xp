@@ -86,7 +86,6 @@ include 'app:app-system'
 include 'repack:repack-attoparser'
 include 'repack:repack-elasticsearch'
 include 'repack:repack-resteasy'
-include 'repack:repack-javax-cache-api'
 
 include 'runtime'
 include 'docs'

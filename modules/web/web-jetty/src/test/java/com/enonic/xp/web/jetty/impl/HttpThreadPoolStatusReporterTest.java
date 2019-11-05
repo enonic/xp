@@ -3,6 +3,7 @@ package com.enonic.xp.web.jetty.impl;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
+import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.junit.jupiter.api.Test;
 
@@ -14,6 +15,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.common.io.Resources;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class HttpThreadPoolStatusReporterTest
 {
@@ -21,7 +24,9 @@ public class HttpThreadPoolStatusReporterTest
     public void getName()
         throws Exception
     {
-        final HttpThreadPoolStatusReporter reporter = new HttpThreadPoolStatusReporter( new ThreadPoolImpl( 8, 2, false ) );
+        final Server server = mock( Server.class );
+        when( server.getThreadPool() ).thenReturn( new ThreadPoolImpl( 8, 2, false ) );
+        final HttpThreadPoolStatusReporter reporter = new HttpThreadPoolStatusReporter( server );
         assertEquals( "http.threadpool", reporter.getName() );
     }
 
@@ -29,7 +34,10 @@ public class HttpThreadPoolStatusReporterTest
     public void getReport()
         throws Exception
     {
-        final HttpThreadPoolStatusReporter reporter = new HttpThreadPoolStatusReporter( new ThreadPoolImpl( 8, 2, false ) );
+        final Server server = mock( Server.class );
+
+        when( server.getThreadPool() ).thenReturn( new ThreadPoolImpl( 8, 2, false ) );
+        final HttpThreadPoolStatusReporter reporter = new HttpThreadPoolStatusReporter( server );
         assertEquals( parseJson( readFromFile( "http_thread_pool_report.json" ) ), reporter.getReport() );
     }
 
