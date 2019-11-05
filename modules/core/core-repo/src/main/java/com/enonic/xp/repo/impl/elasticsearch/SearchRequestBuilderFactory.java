@@ -1,9 +1,8 @@
 package com.enonic.xp.repo.impl.elasticsearch;
 
-import java.util.Arrays;
-
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchType;
+import org.elasticsearch.common.Strings;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.suggest.SuggestBuilder;
@@ -69,12 +68,11 @@ public class SearchRequestBuilderFactory
 
         if ( query.getReturnFields() != null && query.getReturnFields().isNotEmpty() )
         {
-            sourceBuilder.storedFields( Arrays.asList( query.getReturnFields().getReturnFieldNames() ) );
+            sourceBuilder.fetchSource( query.getReturnFields().getReturnFieldNames(), Strings.EMPTY_ARRAY );
         }
 
         final SearchRequest searchRequest = new SearchRequest().
             searchType( searchType ).
-            types( query.getIndexTypes() ).
             indices( query.getIndexNames() ).
             source( sourceBuilder );
 

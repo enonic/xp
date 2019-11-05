@@ -220,7 +220,8 @@ public class StorageDaoImpl
 
             if ( request.getReturnFields().isNotEmpty() )
             {
-                item.storedFields( request.getReturnFields().getReturnFieldNames() );
+                item.fetchSourceContext(
+                    new FetchSourceContext( true, request.getReturnFields().getReturnFieldNames(), Strings.EMPTY_ARRAY ) );
             }
 
             if ( request.getRouting() != null )
