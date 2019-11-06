@@ -84,7 +84,7 @@ abstract class AbstractExecutor
     {
         return SearchRequestBuilderFactory.newFactory().
             query( query ).
-            scrollTimeout( defaultScrollTime.getStringRep() ).
+            scrollTimeout( DEFAULT_SCROLL_TIME.getStringRep() ).
             resolvedSize( query.getBatchSize() ).
             build().
             create();
