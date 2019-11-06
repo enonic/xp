@@ -18,47 +18,31 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class PostProcessorImplTest
 {
     @Test
-    public void testPostProcessingInstructions()
+    public void testPostProcessingInstructions_GET()
         throws Exception
     {
-        final String html = readResource( "postProcessSource1.html" );
-
-        final PostProcessorImpl postProcessor = new PostProcessorImpl();
-        postProcessor.addInstruction( new TestPostProcessInstruction() );
-
-        final PortalResponse.Builder portalResponseBuilder = PortalResponse.create().postProcess( true ).body( html );
-
-        final PortalRequest portalRequest = new PortalRequest();
-        portalRequest.setMethod( HttpMethod.GET );
-
-        final PortalResponse portalResponse = postProcessor.processResponse( portalRequest, portalResponseBuilder.build() );
-
-        final String outputHtml = portalResponse.getBody().toString();
-        final String expectedResult = readResource( "postProcessResult1.html" );
-
-        assertEqualsTrimmed( expectedResult, outputHtml );
+        testPostProcessingInstructions( HttpMethod.GET);
     }
 
     @Test
-    public void testPostProcessingInjections()
+    public void testPostProcessingInstructions_POST()
         throws Exception
     {
-        final String html = readResource( "postProcessSource2.html" );
+        testPostProcessingInstructions( HttpMethod.POST );
+    }
 
-        final PostProcessorImpl postProcessor = new PostProcessorImpl();
-        postProcessor.addInjection( new TestPostProcessInjection() );
+    @Test
+    public void testPostProcessingInjections_GET()
+        throws Exception
+    {
+        testPostProcessingInjections(HttpMethod.GET);
+    }
 
-        final PortalResponse.Builder portalResponseBuilder = PortalResponse.create().postProcess( true ).body( html );
-
-        final PortalRequest portalRequest = new PortalRequest();
-        portalRequest.setMethod( HttpMethod.GET );
-
-        final PortalResponse portalResponse = postProcessor.processResponse( portalRequest, portalResponseBuilder.build() );
-
-        final String outputHtml = portalResponse.getBody().toString();
-        final String expectedResult = readResource( "postProcessResult2.html" );
-
-        assertEqualsTrimmed( expectedResult, outputHtml );
+    @Test
+    public void testPostProcessingInjections_POST()
+        throws Exception
+    {
+        testPostProcessingInjections(HttpMethod.POST);
     }
 
     private void assertEqualsTrimmed( final String expected, final String actual )
@@ -78,4 +62,47 @@ public class PostProcessorImplTest
     {
         return Resources.toString( getClass().getResource( resourceName ), StandardCharsets.UTF_8 );
     }
+
+    private void testPostProcessingInstructions( final HttpMethod httpMethod )
+        throws Exception
+    {
+        final String html = readResource( "postProcessSource1.html" );
+
+        final PostProcessorImpl postProcessor = new PostProcessorImpl();
+        postProcessor.addInstruction( new TestPostProcessInstruction() );
+
+        final PortalResponse.Builder portalResponseBuilder = PortalResponse.create().postProcess( true ).body( html );
+
+        final PortalRequest portalRequest = new PortalRequest();
+        portalRequest.setMethod( httpMethod );
+
+        final PortalResponse portalResponse = postProcessor.processResponse( portalRequest, portalResponseBuilder.build() );
+
+        final String outputHtml = portalResponse.getBody().toString();
+        final String expectedResult = readResource( "postProcessResult1.html" );
+
+        assertEqualsTrimmed( expectedResult, outputHtml );
+    }
+
+    private void testPostProcessingInjections(final HttpMethod httpMethod)
+        throws Exception
+    {
+        final String html = readResource( "postProcessSource2.html" );
+
+        final PostProcessorImpl postProcessor = new PostProcessorImpl();
+        postProcessor.addInjection( new TestPostProcessInjection() );
+
+        final PortalResponse.Builder portalResponseBuilder = PortalResponse.create().postProcess( true ).body( html );
+
+        final PortalRequest portalRequest = new PortalRequest();
+        portalRequest.setMethod( httpMethod );
+
+        final PortalResponse portalResponse = postProcessor.processResponse( portalRequest, portalResponseBuilder.build() );
+
+        final String outputHtml = portalResponse.getBody().toString();
+        final String expectedResult = readResource( "postProcessResult2.html" );
+
+        assertEqualsTrimmed( expectedResult, outputHtml );
+    }
+
 }
