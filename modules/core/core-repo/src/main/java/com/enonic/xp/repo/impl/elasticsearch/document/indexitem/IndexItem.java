@@ -8,7 +8,7 @@ import com.enonic.xp.repo.impl.index.IndexValueTypeInterface;
 
 public abstract class IndexItem<T extends IndexValue>
 {
-    public final static String INDEX_VALUE_TYPE_SEPARATOR = ".";
+    public final static String INDEX_VALUE_TYPE_SEPARATOR = "@";
 
     private final IndexPath indexPath;
 

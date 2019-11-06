@@ -35,22 +35,7 @@ abstract class AbstractXContentBuilderFactory
 
         if ( value instanceof Collection )
         {
-            if ( ( (Collection) value ).size() == 1 )
-            {
-                Object next = ( (Collection) value ).iterator().next();
-                if ( next instanceof String )
-                {
-                    result.field( name, IndexValueNormalizer.normalize( (String) next ) );
-                }
-                else
-                {
-                    result.field( name, next );
-                }
-            }
-            else
-            {
-                result.field( name, (Iterable<?>) value );
-            }
+            result.field( name, (Iterable<?>) value );
         }
     }
 

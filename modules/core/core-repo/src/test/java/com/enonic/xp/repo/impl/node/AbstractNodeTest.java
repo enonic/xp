@@ -157,7 +157,6 @@ public abstract class AbstractNodeTest
         Mockito.when( repoConfig.getSnapshotsDir() ).thenReturn( new File( this.temporaryFolder.toFile(), "repo/snapshots" ) );
 
         System.setProperty( "xp.home", temporaryFolder.toFile().getPath() );
-        System.setProperty( "mapper.allow_dots_in_name", "true" );
 
         ContextAccessor.INSTANCE.set( CTX_DEFAULT );
 

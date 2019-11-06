@@ -38,8 +38,6 @@ public enum ElasticsearchInstance
         {
             Path rootDirectory = Files.createTempDirectory( TMP_ELASTICSEARCH_DIR );
 
-            System.setProperty( "mapper.allow_dots_in_name", "true" );
-
             final File dataDir = new File( rootDirectory.toFile(), ROOT_DATA_DIR );
 
             final File pathHome = new File( dataDir, "index" );

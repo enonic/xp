@@ -7,7 +7,7 @@ import com.enonic.xp.index.IndexPath;
 @Beta
 public class NodeIndexPath
 {
-    private static final String DIVIDER = ".";
+    private static final String DIVIDER = "@";
 
     private static final String PERMISSIONS_ROOT = "_permissions";
 

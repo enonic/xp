@@ -19,7 +19,7 @@ public class CheckContentValidityCommand
     extends AbstractContentCommand
 {
     private static final String WORKFLOW_STATE_FIELD =
-        String.join( ".", ContentPropertyNames.WORKFLOW_INFO, ContentPropertyNames.WORKFLOW_INFO_STATE );
+        String.join( "@", ContentPropertyNames.WORKFLOW_INFO, ContentPropertyNames.WORKFLOW_INFO_STATE );
 
     private final ContentIds contentIds;
 
