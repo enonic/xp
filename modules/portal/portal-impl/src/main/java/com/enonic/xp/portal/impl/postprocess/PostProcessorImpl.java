@@ -25,6 +25,8 @@ public final class PostProcessorImpl
     private final static ImmutableList<MediaType> HTML_CONTENT_TYPES =
         ImmutableList.of( MediaType.create( "text", "html" ), MediaType.create( "application", "xhtml+xml" ) );
 
+    private final static ImmutableList<HttpMethod> METHODS_ALLOWED_TO_PROCESS = ImmutableList.of( HttpMethod.GET, HttpMethod.POST );
+
     private final List<PostProcessInstruction> instructions = new CopyOnWriteArrayList<>();
 
     private final List<PostProcessInjection> injections = new CopyOnWriteArrayList<>();
@@ -32,7 +34,7 @@ public final class PostProcessorImpl
     @Override
     public PortalResponse processResponse( final PortalRequest portalRequest, final PortalResponse portalResponse )
     {
-        if ( !portalResponse.isPostProcess() || portalRequest.getMethod() != HttpMethod.GET )
+        if ( !portalResponse.isPostProcess() || !METHODS_ALLOWED_TO_PROCESS.contains( portalRequest.getMethod() ) )
         {
             return portalResponse;
         }
@@ -49,7 +51,7 @@ public final class PostProcessorImpl
     @Override
     public PortalResponse processResponseInstructions( final PortalRequest portalRequest, final PortalResponse portalResponse )
     {
-        if ( !portalResponse.isPostProcess() || portalRequest.getMethod() != HttpMethod.GET )
+        if ( !portalResponse.isPostProcess() || !METHODS_ALLOWED_TO_PROCESS.contains( portalRequest.getMethod() ) )
         {
             return portalResponse;
         }
@@ -66,7 +68,7 @@ public final class PostProcessorImpl
     @Override
     public PortalResponse processResponseContributions( final PortalRequest portalRequest, final PortalResponse portalResponse )
     {
-        if ( !portalResponse.isPostProcess() || portalRequest.getMethod() != HttpMethod.GET )
+        if ( !portalResponse.isPostProcess() || !METHODS_ALLOWED_TO_PROCESS.contains( portalRequest.getMethod() ) )
         {
             return portalResponse;
         }
