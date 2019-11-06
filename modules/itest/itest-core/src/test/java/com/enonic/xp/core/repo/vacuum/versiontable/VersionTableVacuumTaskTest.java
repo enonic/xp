@@ -19,7 +19,6 @@ import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
 import com.enonic.xp.repo.impl.vacuum.versiontable.VersionTableVacuumTask;
 import com.enonic.xp.vacuum.VacuumTaskResult;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class VersionTableVacuumTaskTest
@@ -32,7 +31,7 @@ class VersionTableVacuumTaskTest
     private static final long NEGATIVE_AGE_THRESHOLD_MILLIS = -Duration.of( 1, ChronoUnit.HOURS ).toMillis();
 
     // Number of versions created on fresh setup.
-    private int SYSTEM_NODES_COUNT = 7;
+    private static int SYSTEM_NODES_COUNT = 7;
 
     @BeforeEach
     void setUp()

@@ -1,11 +1,11 @@
 package com.enonic.xp.xml;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Predicate;
 
 import org.w3c.dom.Node;
-
-import com.google.common.collect.Sets;
 
 final class NodeNamePredicate
     implements Predicate<Node>
@@ -14,7 +14,7 @@ final class NodeNamePredicate
 
     public NodeNamePredicate( final String... names )
     {
-        this.set = Sets.newHashSet( names );
+        this.set = new HashSet<>( Arrays.asList( names ) );
     }
 
     @Override

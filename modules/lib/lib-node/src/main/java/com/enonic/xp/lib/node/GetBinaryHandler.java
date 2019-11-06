@@ -25,6 +25,7 @@ public class GetBinaryHandler
     }
 
 
+    @Override
     public ByteSource execute()
     {
         final NodeId nodeId = getNodeId( nodeKey );

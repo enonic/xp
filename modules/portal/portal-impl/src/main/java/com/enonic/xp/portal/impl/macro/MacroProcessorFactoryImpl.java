@@ -22,12 +22,7 @@ public final class MacroProcessorFactoryImpl
 {
     private PortalScriptService scriptService;
 
-    private final Map<String, MacroProcessor> macroProcessors;
-
-    public MacroProcessorFactoryImpl()
-    {
-        this.macroProcessors = new ConcurrentHashMap<>();
-    }
+    private final Map<String, MacroProcessor> macroProcessors = new ConcurrentHashMap<>();
 
     @Override
     public MacroProcessor fromDir( final ResourceKey dir )

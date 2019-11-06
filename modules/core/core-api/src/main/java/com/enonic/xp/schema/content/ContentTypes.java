@@ -4,15 +4,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
@@ -25,7 +23,7 @@ public final class ContentTypes
     private ContentTypes( final ImmutableList<ContentType> list )
     {
         super( list );
-        this.map = Maps.uniqueIndex( list, new ToNameFunction() );
+        this.map = list.stream().collect( ImmutableMap.toImmutableMap( ContentType::getName, Function.identity() ) );
     }
 
     public ContentTypes add( final ContentType... contentTypes )
@@ -49,8 +47,7 @@ public final class ContentTypes
 
     public ImmutableSet<ContentTypeName> getNames()
     {
-        final Collection<ContentTypeName> names = Collections2.transform( this.list, new ToNameFunction() );
-        return ImmutableSet.copyOf( names );
+        return map.keySet();
     }
 
     public ContentType getContentType( final ContentTypeName contentTypeName )
@@ -87,16 +84,6 @@ public final class ContentTypes
     public static ContentTypes from( final Collection<? extends ContentType> contentTypes )
     {
         return new ContentTypes( ImmutableList.copyOf( contentTypes ) );
-    }
-
-    private final static class ToNameFunction
-        implements Function<ContentType, ContentTypeName>
-    {
-        @Override
-        public ContentTypeName apply( final ContentType value )
-        {
-            return value.getName();
-        }
     }
 
     public static Builder create()

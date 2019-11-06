@@ -16,8 +16,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.google.common.collect.Sets;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -166,12 +164,12 @@ public class IgniteSessionDataStoreTest
         sessionData2.setLastNode( "OTHER" );
         when( cache.get( eq( getCacheKey( "456" ) ) ) ).thenReturn( new SessionDataWrapper( sessionData2 ) );
 
-        final Set<String> expiredSessionIds = store.doGetExpired( Sets.newHashSet( "123", "456", "789" ) );
-        assertEquals( Sets.newHashSet( "123", "456", "789" ), expiredSessionIds );
+        final Set<String> expiredSessionIds = store.doGetExpired( Set.of( "123", "456", "789" ) );
+        assertEquals( Set.of( "123", "456", "789" ), expiredSessionIds );
 
         store.getExpired( new HashSet<>() );
-        final Set<String> expiredSessionIds2 = store.doGetExpired( Sets.newHashSet( "123", "456", "789" ) );
-        assertEquals( Sets.newHashSet( "123", "456", "789" ), expiredSessionIds2 );
+        final Set<String> expiredSessionIds2 = store.doGetExpired( Set.of( "123", "456", "789" ) );
+        assertEquals( Set.of( "123", "456", "789" ), expiredSessionIds2 );
     }
 
 
@@ -274,7 +272,8 @@ public class IgniteSessionDataStoreTest
             {
                 return 10;
             }
-            
+
+            @Override
             public int write_timeout()
             {
                 return 1000;

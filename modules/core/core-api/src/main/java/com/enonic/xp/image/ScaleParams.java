@@ -26,6 +26,7 @@ public final class ScaleParams
         return this.args;
     }
 
+    @Override
     public String toString()
     {
         return this.name + "(" + Stream.of( this.args ).map( this::encode ).collect( joining( "," ) ) + ")";

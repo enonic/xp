@@ -50,7 +50,7 @@ class RepoDumper
 {
     private static final int DEFAULT_BATCH_SIZE = 5000;
 
-    private final Logger LOG = LoggerFactory.getLogger( RepoDumper.class );
+    private static final Logger LOG = LoggerFactory.getLogger( RepoDumper.class );
 
     private final RepositoryId repositoryId;
 

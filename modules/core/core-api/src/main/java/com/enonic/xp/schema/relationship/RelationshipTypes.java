@@ -1,19 +1,15 @@
 package com.enonic.xp.schema.relationship;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
@@ -26,7 +22,7 @@ public final class RelationshipTypes
     private RelationshipTypes( final ImmutableList<RelationshipType> list )
     {
         super( list );
-        this.map = Maps.uniqueIndex( list, new ToNameFunction() );
+        this.map = list.stream().collect( ImmutableMap.toImmutableMap( RelationshipType::getName, Function.identity() ) );
     }
 
     public RelationshipTypes add( final RelationshipType... relationshipTypes )
@@ -50,8 +46,7 @@ public final class RelationshipTypes
 
     public Set<RelationshipTypeName> getNames()
     {
-        final Collection<RelationshipTypeName> names = Collections2.transform( this.list, new ToNameFunction() );
-        return ImmutableSet.copyOf( names );
+        return map.keySet();
     }
 
     public RelationshipType get( final RelationshipTypeName relationshipTypeName )
@@ -83,15 +78,5 @@ public final class RelationshipTypes
     public static RelationshipTypes from( final Iterator<RelationshipType> relationshipTypes )
     {
         return new RelationshipTypes( ImmutableList.copyOf( relationshipTypes ) );
-    }
-
-    private final static class ToNameFunction
-        implements Function<RelationshipType, RelationshipTypeName>
-    {
-        @Override
-        public RelationshipTypeName apply( final RelationshipType value )
-        {
-            return value.getName();
-        }
     }
 }

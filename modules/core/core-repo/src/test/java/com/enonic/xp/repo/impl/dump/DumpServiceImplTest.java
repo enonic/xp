@@ -216,7 +216,7 @@ public class DumpServiceImplTest
 
         final BranchDumpResult result = systemDumpResult.get( CTX_DEFAULT.getRepositoryId() ).get( CTX_DEFAULT.getBranch() );
         assertNotNull( result );
-        assertEquals( new Long( 2 ), result.getSuccessful() );
+        assertEquals( 2, result.getSuccessful() );
 
         NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true ) );
 
@@ -246,7 +246,7 @@ public class DumpServiceImplTest
 
         final BranchDumpResult result = systemDumpResult.get( CTX_DEFAULT.getRepositoryId() ).get( CTX_DEFAULT.getBranch() );
         assertNotNull( result );
-        assertEquals( new Long( 2 ), result.getSuccessful() );
+        assertEquals( 2, result.getSuccessful() );
 
         NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true ) );
 
@@ -269,10 +269,10 @@ public class DumpServiceImplTest
             build() ) );
 
         // 4 of node, 1 of root
-        assertEquals( new Long( 5 ), systemDumpResult.get( CTX_DEFAULT.getRepositoryId() ).getVersions() );
+        assertEquals( 5, systemDumpResult.get( CTX_DEFAULT.getRepositoryId() ).getVersions() );
         final BranchDumpResult branchDumpResult = systemDumpResult.get( CTX_DEFAULT.getRepositoryId() ).get( CTX_DEFAULT.getBranch() );
 
-        assertEquals( new Long( 2 ), branchDumpResult.getSuccessful() );
+        assertEquals( 2, branchDumpResult.getSuccessful() );
     }
 
     @Test
@@ -587,7 +587,7 @@ public class DumpServiceImplTest
         final VersionsLoadResult versionsLoadResult = repoLoadResult.getVersionsLoadResult();
         assertNotNull( versionsLoadResult );
         // One for root, 4 for myNode
-        assertEquals( new Long( 5 ), versionsLoadResult.getSuccessful() );
+        assertEquals( 5, versionsLoadResult.getSuccessful() );
     }
 
     private RepoLoadResult getRepoLoadResult( final SystemLoadResult result, final RepositoryId repositoryId )

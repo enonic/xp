@@ -29,7 +29,7 @@ import com.enonic.xp.security.User;
 
 public class IssueNotificationParamsFactory
 {
-    private final SchemaImageHelper HELPER = new SchemaImageHelper();
+    private static final SchemaImageHelper HELPER = new SchemaImageHelper();
 
     private SecurityService securityService;
 

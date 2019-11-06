@@ -96,7 +96,7 @@ public class NodeVersionMetadata
     @Override
     public int compareTo( final NodeVersionMetadata o )
     {
-        if ( this.timestamp == o.timestamp )
+        if ( this.timestamp.equals( o.timestamp ) )
         {
             return 0;
         }

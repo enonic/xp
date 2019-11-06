@@ -121,7 +121,7 @@ class TestDumpWriter
         return nodeVersionKeys;
     }
 
-    class RepoBranchEntry
+    static final class RepoBranchEntry
     {
         private final RepositoryId repositoryId;
 

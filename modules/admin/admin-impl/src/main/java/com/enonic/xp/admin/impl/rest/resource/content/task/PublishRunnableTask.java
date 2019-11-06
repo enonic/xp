@@ -132,6 +132,7 @@ public class PublishRunnableTask
             return this;
         }
 
+        @Override
         public PublishRunnableTask build()
         {
             return new PublishRunnableTask( this );

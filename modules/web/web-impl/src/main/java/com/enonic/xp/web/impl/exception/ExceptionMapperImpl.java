@@ -12,6 +12,7 @@ import com.enonic.xp.web.exception.ExceptionMapper;
 public final class ExceptionMapperImpl
     implements ExceptionMapper
 {
+    @Override
     public WebException map( final Throwable cause )
     {
         if ( cause instanceof WebException )
@@ -32,6 +33,7 @@ public final class ExceptionMapperImpl
         return new WebException( HttpStatus.INTERNAL_SERVER_ERROR, cause );
     }
 
+    @Override
     public void throwIfNeeded( final WebResponse res )
         throws WebException
     {

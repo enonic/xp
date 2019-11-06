@@ -3,6 +3,7 @@ package com.enonic.xp.server.internal.trace.event;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -11,8 +12,6 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
-import com.google.common.collect.Queues;
-
 import com.enonic.xp.trace.TraceEvent;
 import com.enonic.xp.trace.TraceListener;
 
@@ -20,17 +19,11 @@ import com.enonic.xp.trace.TraceListener;
 public final class TraceEventDispatcherImpl
     implements TraceEventDispatcher, Runnable
 {
-    private final TraceListeners listeners;
+    private final TraceListeners listeners = new TraceListeners();
 
-    private final BlockingQueue<TraceEvent> queue;
+    private final BlockingQueue<TraceEvent> queue = new LinkedBlockingQueue<>();
 
     private ExecutorService executor;
-
-    public TraceEventDispatcherImpl()
-    {
-        this.queue = Queues.newLinkedBlockingQueue();
-        this.listeners = new TraceListeners();
-    }
 
     @Activate
     public void activate()

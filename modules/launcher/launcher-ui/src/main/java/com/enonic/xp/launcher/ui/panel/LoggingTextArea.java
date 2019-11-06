@@ -25,6 +25,7 @@ final class LoggingTextArea
         setTabSize( 2 );
     }
 
+    @Override
     protected void paintComponent( final Graphics graphics )
     {
         final Graphics2D g2 = (Graphics2D) graphics;

@@ -91,7 +91,7 @@ public class CopyExecutor
                 }
 
                 final SearchScrollRequest searchScrollRequest = new SearchScrollRequest( scrollResp.getScrollId() ).
-                    scroll( defaultScrollTime );
+                    scroll( DEFAULT_SCROLL_TIME );
 
                 scrollResp = client.scroll( searchScrollRequest, RequestOptions.DEFAULT );
                 if ( scrollResp.getHits().getHits().length == 0 )

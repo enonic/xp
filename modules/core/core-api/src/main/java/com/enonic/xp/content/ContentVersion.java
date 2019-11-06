@@ -79,7 +79,7 @@ public class ContentVersion
     @Override
     public int compareTo( final ContentVersion o )
     {
-        if ( this.modified == o.modified )
+        if ( Objects.equals( this.modified, o.modified ) )
         {
             return 0;
         }

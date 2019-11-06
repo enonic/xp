@@ -21,7 +21,7 @@ import com.enonic.xp.repo.impl.search.result.SearchResult;
 class ScrollExecutor
     extends AbstractExecutor
 {
-    private static final TimeValue defaultScrollTime = new TimeValue( 30, TimeUnit.SECONDS );
+    private static final TimeValue DEFAULT_SCROLL_TIME = new TimeValue( 30, TimeUnit.SECONDS );
 
     private final static Logger LOG = LoggerFactory.getLogger( ScrollExecutor.class );
 
@@ -52,7 +52,7 @@ class ScrollExecutor
                 searchHitsBuilder.addAll( SearchHitsFactory.create( scrollResp.getHits() ) );
 
                 final SearchScrollRequest searchScrollRequest = new SearchScrollRequest( scrollResp.getScrollId() ).
-                    scroll( defaultScrollTime );
+                    scroll( DEFAULT_SCROLL_TIME );
 
                 scrollResp = client.scroll( searchScrollRequest, RequestOptions.DEFAULT );
 

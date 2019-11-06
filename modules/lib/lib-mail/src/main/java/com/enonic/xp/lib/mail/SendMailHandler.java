@@ -198,7 +198,7 @@ public final class SendMailHandler
     private InternetAddress[] toAddresses( final String[] addressList )
         throws Exception
     {
-        return Stream.of( addressList ).filter( StringUtils::isNotBlank ).map( ( this::toAddress ) ).toArray( InternetAddress[]::new );
+        return Stream.of( addressList ).filter( StringUtils::isNotBlank ).map( this::toAddress ).toArray( InternetAddress[]::new );
     }
 
     private List<Attachment> getAttachments()

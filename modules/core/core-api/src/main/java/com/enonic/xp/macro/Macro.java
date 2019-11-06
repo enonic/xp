@@ -85,6 +85,7 @@ public final class Macro
         return Objects.hash( name, body, params );
     }
 
+    @Override
     public String toString()
     {
         final StringBuilder result = new StringBuilder( "[" ).append( name );

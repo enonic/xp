@@ -82,51 +82,61 @@ public class AbstractQuery
         return ImmutableList.copyOf( orderBys );
     }
 
+    @Override
     public ImmutableList<OrderExpr> getOrderBys()
     {
         return orderBys;
     }
 
+    @Override
     public QueryExpr getQuery()
     {
         return query;
     }
 
+    @Override
     public Filters getPostFilters()
     {
         return postFilters;
     }
 
+    @Override
     public Filters getQueryFilters()
     {
         return queryFilters;
     }
 
+    @Override
     public AggregationQueries getAggregationQueries()
     {
         return aggregationQueries;
     }
 
+    @Override
     public SuggestionQueries getSuggestionQueries()
     {
         return suggestionQueries;
     }
 
+    @Override
     public HighlightQuery getHighlight()
     {
         return highlight;
     }
 
+    @Override
     public int getFrom()
     {
         return from;
     }
 
+    @Override
     public int getSize()
     {
         return size;
     }
 
+    @Override
     public boolean isExplain()
     {
         return explain;
@@ -137,6 +147,7 @@ public class AbstractQuery
         return batchSize;
     }
 
+    @Override
     public SearchMode getSearchMode()
     {
         return searchMode;

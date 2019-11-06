@@ -1,9 +1,10 @@
 package com.enonic.xp.security;
 
+import java.util.function.Function;
+
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
@@ -16,13 +17,12 @@ public final class IdProviders
     private IdProviders( final ImmutableList<IdProvider> list )
     {
         super( list );
-        this.map = Maps.uniqueIndex( list, IdProvider::getKey );
+        this.map = list.stream().collect( ImmutableMap.toImmutableMap( IdProvider::getKey, Function.identity() ) );
     }
 
     public static IdProviders empty()
     {
-        final ImmutableList<IdProvider> list = ImmutableList.of();
-        return new IdProviders( list );
+        return new IdProviders( ImmutableList.of() );
     }
 
     public static IdProviders from( final IdProvider... idProviders )
@@ -46,9 +46,9 @@ public final class IdProviders
         return IdProviderKeys.from( map.keySet() );
     }
 
-    public IdProvider getIdProvider( final IdProviderKey IdProviderKey )
+    public IdProvider getIdProvider( final IdProviderKey idProviderKey )
     {
-        return map.get( IdProviderKey );
+        return map.get( idProviderKey );
     }
 
 }

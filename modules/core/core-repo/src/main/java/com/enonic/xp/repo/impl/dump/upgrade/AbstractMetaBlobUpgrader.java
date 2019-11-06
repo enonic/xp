@@ -12,7 +12,7 @@ import com.enonic.xp.repository.RepositoryId;
 public abstract class AbstractMetaBlobUpgrader
     extends AbstractDumpUpgrader
 {
-    private final Logger LOG = LoggerFactory.getLogger( AbstractMetaBlobUpgrader.class );
+    private static final Logger LOG = LoggerFactory.getLogger( AbstractMetaBlobUpgrader.class );
 
     public AbstractMetaBlobUpgrader( final Path basePath )
     {

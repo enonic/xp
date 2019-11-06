@@ -11,6 +11,7 @@ public class BranchNotFoundException
         super( "Branch with id [" + branch + "] not found" );
     }
 
+    @Override
     public String getCode()
     {
         return "branchNotFound";

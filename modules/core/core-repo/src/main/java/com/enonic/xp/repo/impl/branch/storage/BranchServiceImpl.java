@@ -108,9 +108,9 @@ public class BranchServiceImpl
     private <T> T synchronizeByPath( final NodePath path, final Supplier<T> callback )
     {
         final Lock lock = PARENT_PATH_LOCKS.get( path );
+        lock.lock();
         try
         {
-            lock.lock();
             return callback.get();
         }
         finally

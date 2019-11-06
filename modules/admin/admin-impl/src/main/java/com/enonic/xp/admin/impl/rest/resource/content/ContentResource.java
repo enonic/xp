@@ -614,8 +614,7 @@ public final class ContentResource
             id -> this.contentService.getPermissionsById( id ).isAllowedFor( ContextAccessor.current().getAuthInfo().getPrincipals(),
                                                                              Permission.PUBLISH );
         //check if user has access to publish every content
-        final Boolean isAllPublishable =
-            authInfo.hasRole( RoleKeys.ADMIN ) || fullPublishList.stream().allMatch( publishAllowedCondition );
+        final Boolean isAllPublishable = authInfo.hasRole( RoleKeys.ADMIN ) || fullPublishList.stream().allMatch( publishAllowedCondition );
 
         //check that not all contents are pending delete
         final Boolean isAllPendingDelete = getNotPendingDeletion( fullPublishList, compareResults ).getSize() == 0;
@@ -774,12 +773,21 @@ public final class ContentResource
     }
 
     @GET
-    public ContentIdJson getById( @QueryParam("id") final String idParam,
+    public ContentIdJson getById( @QueryParam("id") final String idParam, @QueryParam("versionId") final String versionIdParam,
                                   @QueryParam("expand") @DefaultValue(EXPAND_FULL) final String expandParam )
     {
 
         final ContentId id = ContentId.from( idParam );
-        final Content content = contentService.getById( id );
+        Content content;
+        if ( versionIdParam == null )
+        {
+            content = contentService.getById( id );
+        }
+        else
+        {
+            final ContentVersionId versionId = ContentVersionId.from( versionIdParam );
+            content = contentService.getByIdAndVersionId( id, versionId );
+        }
 
         if ( content == null )
         {

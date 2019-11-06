@@ -3,7 +3,6 @@ package com.enonic.xp.core.impl.app;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.time.Instant;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.osgi.framework.Bundle;
@@ -178,6 +177,6 @@ public class MockApplication
     @Override
     public Set<String> getCapabilities()
     {
-        return new HashSet<>();
+        return Set.of();
     }
 }

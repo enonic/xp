@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.vacuum;
 
 import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 
 import com.enonic.xp.vacuum.VacuumListener;
 import com.enonic.xp.vacuum.VacuumTaskConfig;

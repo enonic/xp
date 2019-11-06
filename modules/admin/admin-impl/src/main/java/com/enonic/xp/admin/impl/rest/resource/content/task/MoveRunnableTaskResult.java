@@ -54,11 +54,13 @@ public class MoveRunnableTaskResult
         return destination;
     }
 
+    @Override
     public int getSuccessCount()
     {
         return super.getSuccessCount() + alreadyMoved.size();
     }
 
+    @Override
     public int getFailureCount()
     {
         return super.getFailureCount() + existsFailed.size() + notExistsFailed.size() + accessFailed.size();
@@ -129,6 +131,7 @@ public class MoveRunnableTaskResult
             return this;
         }
 
+        @Override
         public MoveRunnableTaskResult build()
         {
             return new MoveRunnableTaskResult( this );

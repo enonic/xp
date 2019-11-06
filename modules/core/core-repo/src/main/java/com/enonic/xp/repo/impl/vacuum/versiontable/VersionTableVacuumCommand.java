@@ -2,11 +2,10 @@ package com.enonic.xp.repo.impl.vacuum.versiontable;
 
 import java.time.Instant;
 import java.util.HashSet;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobStore;
@@ -111,10 +110,9 @@ public class VersionTableVacuumCommand
             listener.stepBegin( repository.getId().toString(), versionTotal );
         }
 
-
-        final HashSet<NodeVersionId> versionToDeleteSet = Sets.newHashSet();
-        final HashSet<BlobKey> nodeBlobToCheckSet = Sets.newHashSet();
-        final HashSet<BlobKey> binaryBlobToCheckSet = Sets.newHashSet();
+        final Set<NodeVersionId> versionToDeleteSet = new HashSet<>();
+        final Set<BlobKey> nodeBlobToCheckSet = new HashSet<>();
+        final Set<BlobKey> binaryBlobToCheckSet = new HashSet<>();
         while ( executor.hasMore() )
         {
             final NodeVersionsMetadata versions = executor.execute();

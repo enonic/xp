@@ -21,6 +21,7 @@ public final class LayoutRegions
         return new Builder( source );
     }
 
+    @Override
     public LayoutRegions copy()
     {
         return LayoutRegions.create( this ).build();

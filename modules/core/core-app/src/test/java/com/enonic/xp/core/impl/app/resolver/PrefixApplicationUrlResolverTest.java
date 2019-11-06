@@ -8,8 +8,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.google.common.collect.Sets;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -31,7 +29,7 @@ public class PrefixApplicationUrlResolverTest
     @Test
     public void testFindFiles()
     {
-        Mockito.when( this.delegate.findFiles() ).thenReturn( Sets.newHashSet( "a/b/c.txt", "a/b/c/d.txt", "a/other.txt" ) );
+        Mockito.when( this.delegate.findFiles() ).thenReturn( Set.of( "a/b/c.txt", "a/b/c/d.txt", "a/other.txt" ) );
 
         final Set<String> files = this.resolver.findFiles();
         assertEquals( 2, files.size() );

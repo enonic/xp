@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
-import com.google.common.collect.Sets;
 import com.google.common.reflect.ClassPath;
 
 public final class OsgiExportsBuilder
@@ -76,7 +75,7 @@ public final class OsgiExportsBuilder
     {
         if ( !recursive )
         {
-            return Sets.newHashSet( name );
+            return Set.of( name );
         }
 
         return this.packageNames.stream().filter( item -> matchesPackage( name, item ) ).collect( Collectors.toSet() );

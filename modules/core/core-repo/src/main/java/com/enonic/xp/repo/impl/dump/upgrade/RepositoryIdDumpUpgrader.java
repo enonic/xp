@@ -196,6 +196,7 @@ public class RepositoryIdDumpUpgrader
     }
 
 
+    @Override
     protected void upgradeRepository( final RepositoryId repositoryId )
     {
         if ( SystemConstants.SYSTEM_REPO_ID.equals( repositoryId ) )
@@ -204,6 +205,7 @@ public class RepositoryIdDumpUpgrader
         }
     }
 
+    @Override
     protected void upgradeBranch( final RepositoryId repositoryId, final Branch branch )
     {
         if ( ContentConstants.BRANCH_MASTER.equals( branch ) )
@@ -212,16 +214,19 @@ public class RepositoryIdDumpUpgrader
         }
     }
 
+    @Override
     protected void upgradeBranchEntries( final RepositoryId repositoryId, final Branch branch, final File entriesFile )
     {
         super.upgradeBranchEntries( repositoryId, branch, entriesFile );
     }
 
+    @Override
     protected boolean hasToUpgradeEntry( final RepositoryId repositoryId, final String entryContent, final String entryName )
     {
         return OLD_REPOSITORY_FILE_NAME.equals( entryName );
     }
 
+    @Override
     protected String upgradeEntryName( final RepositoryId repositoryId, final String entryName )
     {
         return upgradeString( entryName );

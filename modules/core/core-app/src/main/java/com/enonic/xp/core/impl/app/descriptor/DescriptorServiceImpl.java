@@ -17,12 +17,7 @@ import com.enonic.xp.page.DescriptorKey;
 public final class DescriptorServiceImpl
     implements DescriptorService
 {
-    private final DescriptorLoaderMap map;
-
-    public DescriptorServiceImpl()
-    {
-        this.map = new DescriptorLoaderMap();
-    }
+    private final DescriptorLoaderMap map = new DescriptorLoaderMap();
 
     @Override
     public <T extends Descriptor> T get( final Class<T> type, final DescriptorKey key )

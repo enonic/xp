@@ -20,8 +20,8 @@ import com.google.common.io.ByteSource;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.content.ActiveContentVersionEntry;
 import com.enonic.xp.audit.AuditLogService;
+import com.enonic.xp.content.ActiveContentVersionEntry;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.ApplyContentPermissionsResult;
 import com.enonic.xp.content.CompareContentParams;
@@ -160,7 +160,7 @@ public class ContentServiceImpl
 
     private IndexService indexService;
 
-    private ContentProcessors contentProcessors;
+    private final ContentProcessors contentProcessors = new ContentProcessors();
 
     private FormDefaultValuesProcessor formDefaultValuesProcessor;
 
@@ -183,7 +183,6 @@ public class ContentServiceImpl
             setUncaughtExceptionHandler( ( t, e ) -> LOG.error( "Apply Permissions failed", e ) ).
             build();
         this.applyPermissionsExecutor = Executors.newFixedThreadPool( 5, namedThreadFactory );
-        this.contentProcessors = new ContentProcessors();
     }
 
     @Activate
@@ -498,6 +497,7 @@ public class ContentServiceImpl
             execute();
     }
 
+    @Override
     public ContentIds resolveRequiredDependencies( ResolveRequiredDependenciesParams params )
     {
         return ResolveRequiredDependenciesCommand.create().
@@ -856,6 +856,7 @@ public class ContentServiceImpl
             execute();
     }
 
+    @Override
     public Contents findByApplicationKey( final ApplicationKey key )
     {
         final ContentQuery query = ContentQuery.create().

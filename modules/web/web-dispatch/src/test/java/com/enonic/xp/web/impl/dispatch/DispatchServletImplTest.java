@@ -1,5 +1,8 @@
 package com.enonic.xp.web.impl.dispatch;
 
+import java.util.Dictionary;
+import java.util.Hashtable;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -67,7 +70,7 @@ public class DispatchServletImplTest
         Mockito.verify( this.filterPipeline, Mockito.times( 1 ) ).filter( req, res, this.servletPipeline );
     }
 
-    private final class MyServiceReference<T>
+    private static final class MyServiceReference<T>
         implements ServiceReference<T>
     {
         @Override
@@ -104,6 +107,12 @@ public class DispatchServletImplTest
         public int compareTo( final Object reference )
         {
             return 0;
+        }
+
+        @Override
+        public Dictionary<String, Object> getProperties()
+        {
+            return new Hashtable<>();
         }
     }
 }
