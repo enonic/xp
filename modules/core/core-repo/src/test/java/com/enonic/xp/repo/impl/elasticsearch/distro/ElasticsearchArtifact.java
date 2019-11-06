@@ -4,12 +4,11 @@ import org.apache.commons.lang.SystemUtils;
 
 public enum ElasticsearchArtifact
 {
+    LINUX( "elasticsearch-oss-7.4.2-linux-x86_64.tar.gz" ),
 
-    LINUX( "elasticsearch-7.4.0-linux-x86_64.tar.gz" ),
+    WINDOWS( "elasticsearch-oss-7.4.2-windows-x86_64.zip" ),
 
-    WINDOWS( "elasticsearch-7.4.0-windows-x86_64.zip" ),
-
-    MAC_OS( "elasticsearch-7.4.0-darwin-x86_64.tar.gz" );
+    MAC_OS( "elasticsearch-oss-7.4.2-darwin-x86_64.tar.gz" );
 
     private final String archiveName;
 
