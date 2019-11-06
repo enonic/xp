@@ -33,11 +33,11 @@ class ElasticsearchDownloader
     public void download()
         throws IOException
     {
-        FileUtils.forceMkdir( ES_DIR );
+        FileUtils.forceMkdir( ES_DIR.toFile() );
 
         URL url = getDownloadUrl();
         String localFileName = constructLocalFileName( url );
-        File target = new File( ES_DIR, localFileName );
+        File target = new File( ES_DIR.toFile(), localFileName );
         File statusFile = new File( target.getParentFile(), target.getName() + ELS_PACKAGE_STATUS_FILE_SUFFIX );
         removeBrokenDownload( target, statusFile );
         if ( !target.exists() )

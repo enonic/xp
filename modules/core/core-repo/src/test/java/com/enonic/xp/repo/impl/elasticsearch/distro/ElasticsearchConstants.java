@@ -1,12 +1,16 @@
 package com.enonic.xp.repo.impl.elasticsearch.distro;
 
-import java.io.File;
+import java.nio.file.Path;
 
 public interface ElasticsearchConstants
 {
-    String EXTRACTED_ARCHIVE_NAME = "elasticsearch-7.4.0";
+    String VERSION = "7.4.2";
 
-    File ES_DIR = new File( System.getProperty( "java.io.tmpdir" ), "elasticsearch-dir" );
+    String EXTRACTED_ARCHIVE_NAME = "elasticsearch-" + VERSION;
+
+    String DOWNLOAD_URL_BASE = "https://artifacts.elastic.co/downloads/elasticsearch/";
+
+    Path ES_DIR = Path.of( System.getProperty( "java.io.tmpdir" ), "elasticsearch-dir" );
 
     String ROOT_DATA_DIR = "elasticsearch-data";
 

@@ -20,9 +20,9 @@ import static com.enonic.xp.repo.impl.elasticsearch.distro.ElasticsearchConstant
 class ElasticsearchInstaller
 {
 
-    private static final Logger logger = LoggerFactory.getLogger( ElasticsearchInstaller.class );
+    private static final Logger LOGGER = LoggerFactory.getLogger( ElasticsearchInstaller.class );
 
-    private ElasticsearchDownloader downloader;
+    private final ElasticsearchDownloader downloader;
 
     ElasticsearchInstaller( final ElasticsearchDownloaderConfig downloaderConfig )
     {
@@ -36,17 +36,17 @@ class ElasticsearchInstaller
 
         FileUtils.forceMkdir( getInstallationDirectory() );
 
-        logger.info( "Installing Elasticsearch into the " + getInstallationDirectory() + "..." );
+        LOGGER.info( "Installing Elasticsearch into the " + getInstallationDirectory() + "..." );
 
         try
         {
-            final File source = new File( ES_DIR, ElasticsearchArtifact.getArchiveNameByOS() );
-            unzip( source.toPath() );
-            logger.info( "Done" );
+            final Path source = ES_DIR.resolve( ElasticsearchArtifact.getArchiveNameByOS() );
+            unzip( source );
+            LOGGER.info( "Done" );
         }
         catch ( IOException e )
         {
-            logger.info( "Failure : " + e );
+            LOGGER.info( "Failure : " + e );
             throw new RuntimeException( e );
         }
     }
@@ -57,12 +57,12 @@ class ElasticsearchInstaller
         Archiver archiver = SystemUtils.IS_OS_WINDOWS
             ? ArchiverFactory.createArchiver( ArchiveFormat.ZIP )
             : ArchiverFactory.createArchiver( ArchiveFormat.TAR, CompressionType.GZIP );
-        archiver.extract( downloadedTo.toFile(), ES_DIR );
+        archiver.extract( downloadedTo.toFile(), ES_DIR.toFile() );
     }
 
-    private File getInstallationDirectory()
+    public File getInstallationDirectory()
     {
-        return FileUtils.getFile( ES_DIR );
+        return ES_DIR.toFile();
     }
 
 }

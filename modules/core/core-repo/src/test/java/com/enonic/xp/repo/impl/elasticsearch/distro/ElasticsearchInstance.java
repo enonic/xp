@@ -26,7 +26,6 @@ public enum ElasticsearchInstance
     {
         elasticsearchServer = ElasticsearchServer.ElasticsearchServerBuilder.builder().
             esJavaOpts( "-Xms512m -Xmx512m" ).
-            destroyInstallationDirectoryOnStop( false ).
             downloaderConfig( ElasticsearchDownloaderConfig.builder().build() ).
             build();
 

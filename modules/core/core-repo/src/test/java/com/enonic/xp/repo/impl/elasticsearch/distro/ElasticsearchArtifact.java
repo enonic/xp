@@ -4,11 +4,11 @@ import org.apache.commons.lang.SystemUtils;
 
 public enum ElasticsearchArtifact
 {
-    LINUX( "elasticsearch-oss-7.4.2-linux-x86_64.tar.gz" ),
+    LINUX( "elasticsearch-oss-" + ElasticsearchConstants.VERSION + "-linux-x86_64.tar.gz" ),
 
-    WINDOWS( "elasticsearch-oss-7.4.2-windows-x86_64.zip" ),
+    WINDOWS( "elasticsearch-oss-" + ElasticsearchConstants.VERSION + "-windows-x86_64.zip" ),
 
-    MAC_OS( "elasticsearch-oss-7.4.2-darwin-x86_64.tar.gz" );
+    MAC_OS( "elasticsearch-oss-" + ElasticsearchConstants.VERSION + "-darwin-x86_64.tar.gz" );
 
     private final String archiveName;
 
@@ -44,7 +44,7 @@ public enum ElasticsearchArtifact
 
     public static String getArtifactUrl()
     {
-        return "https://artifacts.elastic.co/downloads/elasticsearch/" + getArchiveNameByOS();
+        return ElasticsearchConstants.DOWNLOAD_URL_BASE + getArchiveNameByOS();
     }
 
 }
