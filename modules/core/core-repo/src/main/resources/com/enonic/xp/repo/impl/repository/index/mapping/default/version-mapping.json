@@ -3,55 +3,35 @@
   "numeric_detection": false,
   "properties": {
     "nodeid": {
-      "type": "keyword",
-      "store": false,
-      "index": true
+      "type": "keyword"
     },
     "versionid": {
-      "type": "keyword",
-      "store": false,
-      "index": true
+      "type": "keyword"
     },
     "nodeblobkey": {
-      "type": "keyword",
-      "store": false,
-      "index": true
+      "type": "keyword"
     },
     "indexconfigblobkey": {
-      "type": "keyword",
-      "store": false,
-      "index": true
+      "type": "keyword"
     },
     "accesscontrolblobkey": {
-      "type": "keyword",
-      "store": false,
-      "index": true
+      "type": "keyword"
     },
     "binaryblobkeys": {
-      "type": "keyword",
-      "store": false,
-      "index": true
+      "type": "keyword"
     },
     "timestamp": {
-      "type": "date",
-      "store": false,
-      "index": false
+      "type": "date"
     },
     "nodepath": {
-      "type": "text",
-      "store": false,
-      "index": true,
-      "analyzer": "keywordlowercase"
+      "type": "keyword",
+      "normalizer": "lowercase"
     },
     "commitid": {
-      "type": "keyword",
-      "store": false,
-      "index": true
+      "type": "keyword"
     },
     "branches": {
-      "type": "keyword",
-      "store": false,
-      "index": true
+      "type": "keyword"
     }
   }
 }

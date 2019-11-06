@@ -3,24 +3,16 @@
   "numeric_detection": false,
   "properties": {
     "commitid": {
-      "type": "text",
-      "store": false,
-      "index": false
+      "type": "keyword"
     },
     "message": {
-      "type": "text",
-      "store": false,
-      "index": false
+      "type": "keyword"
     },
     "timestamp": {
-      "type": "date",
-      "store": false,
-      "index": false
+      "type": "keyword"
     },
     "committer": {
-      "type": "text",
-      "store": false,
-      "index": false
+      "type": "keyword"
     }
   }
 }
