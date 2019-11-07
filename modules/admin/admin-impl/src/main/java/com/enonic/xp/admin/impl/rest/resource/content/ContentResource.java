@@ -1470,10 +1470,12 @@ public final class ContentResource
             contentId( versionedContent.getId() ).
             editor( edit -> {
                 edit.data = versionedContent.getData();
-                edit.extraDatas = versionedContent.getAllExtraData();
                 edit.displayName = versionedContent.getDisplayName();
-                edit.owner = versionedContent.getOwner();
+                edit.extraDatas = versionedContent.getAllExtraData();
+                edit.page = versionedContent.getPage();
                 edit.language = versionedContent.getLanguage();
+                edit.owner = versionedContent.getOwner();
+                edit.thumbnail = versionedContent.getThumbnail();
                 edit.workflowInfo = WorkflowInfo.inProgress();
             } );
 
