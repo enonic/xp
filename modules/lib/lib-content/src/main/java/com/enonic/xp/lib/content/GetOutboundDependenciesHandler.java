@@ -1,10 +1,11 @@
 package com.enonic.xp.lib.content;
 
+import java.util.stream.Collectors;
+
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.lib.content.mapper.ContentIdsMapper;
 
 public class GetOutboundDependenciesHandler
     extends BaseContextHandler
@@ -35,7 +36,7 @@ public class GetOutboundDependenciesHandler
             contentIds = contentService.getOutboundDependencies( ContentId.from( key ) );
         }
 
-        return contentIds == null ? null : new ContentIdsMapper( contentIds );
+        return contentIds.stream().map( ContentId::toString ).collect( Collectors.toList());
     }
 
     private void validate()
