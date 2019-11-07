@@ -7,7 +7,7 @@ dependencies {
     compile 'org.apache.felix:org.apache.felix.utils:1.11.2'
     compile 'commons-io:commons-io:2.4'
     runtimeOnly 'ch.qos.logback:logback-classic:1.2.3'
-    compile "org.slf4j:slf4j-api:${slf4jVersion}"
+    compile 'org.slf4j:slf4j-api:1.7.25'
     compile 'org.fusesource.jansi:jansi:1.11'
     compile 'javax.mail:mail:1.4.7'
 }
