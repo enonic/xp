@@ -7,7 +7,7 @@ repoLib.refresh();
 
 // BEGIN
 // Refresh branch for default repository
-repoLib.refresh({mode: 'branch'});
+repoLib.refresh({mode: 'storage'});
 // END
 
 // BEGIN

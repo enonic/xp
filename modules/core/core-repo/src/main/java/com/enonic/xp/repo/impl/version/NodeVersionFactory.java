@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.version;
 
 import java.time.Instant;
+import java.util.stream.Collectors;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobKeys;
@@ -45,7 +46,7 @@ class NodeVersionFactory
             nodeVersionKey( nodeVersionKey ).
             binaryBlobKeys( binaryBlobKeys ).
             nodeCommitId( commitId == null ? null : NodeCommitId.from( commitId.toString() ) ).
-            setBranches( branches ).
+            addBranches( branches ).
             build();
     }
 
@@ -64,15 +65,14 @@ class NodeVersionFactory
 
     private static Branches toBranches( final ReturnValue returnValue )
     {
-        final Branches.Builder branches = Branches.create();
         if ( returnValue != null )
         {
-            returnValue.getValues().
+            return Branches.from( returnValue.getValues().
                 stream().
                 map( value -> Branch.from( value.toString() ) ).
-                forEach( branches::add );
+                collect( Collectors.toSet() ) );
         }
-        return branches.build();
+        return Branches.empty();
     }
 
 }

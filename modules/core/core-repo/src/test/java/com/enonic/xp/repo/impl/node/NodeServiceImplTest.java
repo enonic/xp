@@ -360,8 +360,8 @@ public class NodeServiceImplTest
             } ).
             build();
         final Node updatedNode = updateNode( updateNodeParams );
-        nodeService.refresh( RefreshMode.BRANCH );
-        nodeService.refresh( RefreshMode.VERSION );
+
+        nodeService.refresh( RefreshMode.STORAGE );
 
         //Check that the two versions have no commit ID by default
         final NodeVersionsMetadata versionsMetadata = getVersionsMetadata( nodeId );
@@ -378,7 +378,7 @@ public class NodeServiceImplTest
             build();
         final NodeCommitEntry returnedCommitEntry = nodeService.commit( commitEntry, NodeIds.from( nodeId ) );
 
-        nodeService.refresh( RefreshMode.VERSION );
+        nodeService.refresh( RefreshMode.STORAGE );
 
         //Check created commit entry
         final NodeCommitId nodeCommitId = returnedCommitEntry.getNodeCommitId();
@@ -404,7 +404,7 @@ public class NodeServiceImplTest
         final NodeCommitEntry returnedCommitEntry2 =
             nodeService.commit( commitEntry, RoutableNodeVersionIds.from( routableNodeVersionId ) );
 
-        nodeService.refresh( RefreshMode.VERSION );
+        nodeService.refresh( RefreshMode.STORAGE );
 
         //Check that only the first version has been impacted
         final NodeVersionsMetadata versionsMetadata3 = getVersionsMetadata( nodeId );

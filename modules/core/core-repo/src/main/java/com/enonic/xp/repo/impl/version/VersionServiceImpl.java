@@ -47,7 +47,10 @@ public class VersionServiceImpl
                     nodeVersionMetadata.getBranches().stream().filter( branch -> !branch.equals( context.getBranch() ) ).collect(
                         Collectors.toSet() ) );
 
-            this.store( NodeVersionMetadata.create( nodeVersionMetadata ).setBranches( branches ).build(), context );
+            this.store( NodeVersionMetadata.
+                create( nodeVersionMetadata ).
+                addBranches( branches ).
+                build(), context );
         } );
     }
 

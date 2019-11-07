@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.Objects;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.blob.BlobKeys;
 import com.enonic.xp.blob.NodeVersionKey;
@@ -39,7 +40,7 @@ public class NodeVersionMetadata
         nodePath = builder.nodePath;
         nodeCommitId = builder.nodeCommitId;
         timestamp = builder.timestamp;
-        branches = builder.branches.build();
+        branches = Branches.from( builder.branches.build() );
     }
 
     public static Builder create()
@@ -186,7 +187,7 @@ public class NodeVersionMetadata
 
         private Instant timestamp;
 
-        private Branches.Builder branches = Branches.create();
+        private ImmutableSet.Builder<Branch> branches = ImmutableSet.builder();
 
         private Builder()
         {
@@ -246,15 +247,12 @@ public class NodeVersionMetadata
             return this;
         }
 
-        public Builder setBranches( Branches branches )
+        public Builder addBranches( Branches branches )
         {
-            this.branches = Branches.create().addAll( branches );
-            return this;
-        }
-
-        public Builder setBranches( Branch... branches )
-        {
-            this.branches = Branches.create().addAll( branches );
+            if ( branches != null )
+            {
+                this.branches = this.branches.addAll( branches );
+            }
             return this;
         }
 

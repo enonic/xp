@@ -39,7 +39,7 @@ public class FindContentVersionsCommand
 
     private FindContentVersionsResult doGetContentVersions()
     {
-        this.nodeService.refresh( RefreshMode.VERSION );
+        this.nodeService.refresh( RefreshMode.STORAGE );
 
         final NodeId nodeId = NodeId.from( this.contentId );
 

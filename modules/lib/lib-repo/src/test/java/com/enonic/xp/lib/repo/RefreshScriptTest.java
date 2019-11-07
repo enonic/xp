@@ -34,7 +34,7 @@ public class RefreshScriptTest
     {
         runScript( "/lib/xp/examples/repo/refresh.js" );
         verify( this.nodeService, times( 1 ) ).refresh( RefreshMode.SEARCH );
-        verify( this.nodeService, times( 1 ) ).refresh( RefreshMode.BRANCH );
+        verify( this.nodeService, times( 1 ) ).refresh( RefreshMode.STORAGE );
         verify( this.nodeService, times( 1 ) ).refresh( RefreshMode.ALL );
     }
 
@@ -60,6 +60,14 @@ public class RefreshScriptTest
     {
         runFunction( "/test/refresh-test.js", "refreshSearch" );
         verify( this.nodeService, times( 1 ) ).refresh( RefreshMode.SEARCH );
+    }
+
+    @Test
+    public void testRefreshStorage()
+        throws Exception
+    {
+        runFunction( "/test/refresh-test.js", "refreshStorage" );
+        verify( this.nodeService, times( 1 ) ).refresh( RefreshMode.STORAGE );
     }
 
     @Test

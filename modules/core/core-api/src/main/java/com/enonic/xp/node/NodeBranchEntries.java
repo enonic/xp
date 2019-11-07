@@ -3,7 +3,6 @@ package com.enonic.xp.node;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -27,11 +26,6 @@ public class NodeBranchEntries
     public static NodeBranchEntries from( final Collection<NodeBranchEntry> nodeBranchEntries )
     {
         return new NodeBranchEntries( nodeBranchEntries );
-    }
-
-    public static NodeBranchEntries from( final NodeBranchEntry... nodeBranchEntries )
-    {
-        return new NodeBranchEntries( List.of( nodeBranchEntries ) );
     }
 
     public static NodeBranchEntries empty()

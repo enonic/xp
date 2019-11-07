@@ -615,7 +615,7 @@ public class NodeStorageServiceImpl
                     collect( Collectors.toSet() ) );
 
                 this.versionService.store( NodeVersionMetadata.create( oldNodeVersionMetadata ).
-                    setBranches( newBranches ).build(), internalContext );
+                    addBranches( newBranches ).build(), internalContext );
             }
         }
     }
@@ -641,7 +641,7 @@ public class NodeStorageServiceImpl
                 Collectors.toSet() ) );
 
         this.versionService.store( NodeVersionMetadata.create( nodeVersionMetadata ).
-            setBranches( newBranches ).
+            addBranches( newBranches ).
             build(), internalContext );
     }
 

@@ -37,6 +37,12 @@ exports.refreshCommit = function () {
 
 };
 
+exports.refreshStorage = function () {
+
+    repoLib.refresh({mode: 'storage'});
+
+};
+
 exports.refreshInvalid = function () {
 
     repoLib.refresh({mode: 'stuff'});

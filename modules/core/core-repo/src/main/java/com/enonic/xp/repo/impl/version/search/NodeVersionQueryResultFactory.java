@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.version.search;
 
 import java.time.Instant;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
 
@@ -87,7 +88,7 @@ public class NodeVersionQueryResultFactory
             nodePath( NodePath.create( nodePath ).build() ).
             nodeId( NodeId.from( nodeId ) ).
             nodeCommitId( Strings.isNullOrEmpty( commitId ) ? null : NodeCommitId.from( commitId ) ).
-            setBranches( branches ).
+            addBranches( branches ).
             build();
     }
 
@@ -118,14 +119,13 @@ public class NodeVersionQueryResultFactory
 
     private static Branches toBranches( final ReturnValue returnValue )
     {
-        final Branches.Builder branches = Branches.create();
         if ( returnValue != null )
         {
-            returnValue.getValues().
+            return Branches.from( returnValue.getValues().
                 stream().
                 map( value -> Branch.from( value.toString() ) ).
-                forEach( branches::add );
+                collect( Collectors.toSet() ) );
         }
-        return branches.build();
+        return Branches.empty();
     }
 }

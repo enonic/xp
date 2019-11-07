@@ -2,7 +2,7 @@ package com.enonic.xp.node;
 
 public enum RefreshMode
 {
-    SEARCH( "search" ), VERSION( "version" ), BRANCH( "branch" ), COMMIT( "commit" ), ALL( "all" );
+    SEARCH( "search" ), STORAGE( "storage" ), VERSION( "version" ), BRANCH( "branch" ), COMMIT( "commit" ), ALL( "all" );
 
     private final String name;
 

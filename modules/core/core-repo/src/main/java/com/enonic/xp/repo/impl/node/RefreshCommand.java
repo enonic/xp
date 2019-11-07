@@ -36,9 +36,13 @@ public class RefreshCommand
 
         final List<String> indices = new ArrayList<>();
 
-        if ( refreshMode.equals( RefreshMode.ALL ) )
+        if ( RefreshMode.ALL == refreshMode || RefreshMode.STORAGE == refreshMode )
         {
-            indices.add( IndexNameResolver.resolveSearchIndexName( repositoryId ) );
+            if ( RefreshMode.ALL == refreshMode )
+            {
+                indices.add( IndexNameResolver.resolveSearchIndexName( repositoryId ) );
+            }
+
             indices.add( IndexNameResolver.resolveVersionIndexName( repositoryId ) );
             indices.add( IndexNameResolver.resolveBranchIndexName( repositoryId ) );
             indices.add( IndexNameResolver.resolveCommitIndexName( repositoryId ) );
