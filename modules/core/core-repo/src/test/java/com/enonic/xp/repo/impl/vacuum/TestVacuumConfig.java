@@ -6,7 +6,7 @@ public class TestVacuumConfig
     implements VacuumConfig
 {
     @Override
-    public long ageThresholdMinutes()
+    public long ageThreshold()
     {
         return 0;
     }
