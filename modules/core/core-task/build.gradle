@@ -4,7 +4,16 @@ dependencies {
     compile project( ':core:core-api' )
     compile project( ':script:script-api' )
     compile project( ':portal:portal-api' )
-    compile 'org.elasticsearch:elasticsearch:2.4.6'
+    compile ('org.elasticsearch:elasticsearch:2.4.6') {
+        exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-cbor'
+        exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-yaml'
+        exclude group: 'org.yaml', module: 'snakeyaml'
+        exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-smile'
+    }
+    runtimeOnly "com.fasterxml.jackson.dataformat:jackson-dataformat-smile:${jacksonVersion}"
+    runtimeOnly "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:${jacksonVersion}"
+    runtimeOnly "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${jacksonVersion}"
+
     testCompile project( path: ':core:core-api', configuration: 'testOutput' )
     testCompile project( path: ':core:core-app', configuration: 'testOutput' )
     testCompile project( path: ':portal:portal-impl', configuration: 'testOutput' )
