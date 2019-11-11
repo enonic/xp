@@ -16,5 +16,6 @@ dependencies {
 }
 
 jar {
-    bnd( 'Bundle-Name': 'Enonic XP Portal - Impl' )
+    bnd( 'Bundle-Name': 'Enonic XP Portal - Impl',
+         'Private-Package': 'org.attoparser.*')
 }

@@ -21,9 +21,9 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     MIT License
     https://www.mojohaus.org/animal-sniffer/animal-sniffer-annotations/license.html
 
-    ATTO Parser
-    MIT License
-    https://github.com/tpolecat/atto
+    AttoParser
+    Apache License 2.0
+    https://www.attoparser.org/license.html
 
     Bouncy Castle
     MIT License
