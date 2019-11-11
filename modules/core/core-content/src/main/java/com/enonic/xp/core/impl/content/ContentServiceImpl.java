@@ -16,6 +16,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.UnmodifiableIterator;
 import com.google.common.io.ByteSource;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
@@ -984,10 +985,8 @@ public class ContentServiceImpl
             contentId( params.getContentId() ).
             build() );
 
-        final ActiveContentVersionEntry activeVersion = activeVersions.getActiveContentVersions().stream().filter(
-            contentVersion -> params.getBranch().equals( contentVersion.getBranch() ) ).findFirst().orElse( null );
-
-        return activeVersion != null ? activeVersion.getContentVersion() : null;
+        final UnmodifiableIterator<ActiveContentVersionEntry> activeVersionIterator = activeVersions.getActiveContentVersions().iterator();
+        return activeVersionIterator.hasNext() ? activeVersionIterator.next().getContentVersion() : null;
     }
 
     @Override
