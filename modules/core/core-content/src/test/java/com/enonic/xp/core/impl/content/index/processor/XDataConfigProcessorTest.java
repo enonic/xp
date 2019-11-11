@@ -72,7 +72,7 @@ public class XDataConfigProcessorTest
 
         assertEquals( 2, result.getPathIndexConfigs().size() );
         assertEquals( "htmlStripper",
-                      result.getConfigForPath( PropertyPath.from( EXTRA_DATA + ".appname.localname0.htmlarea" ) ).getIndexValueProcessors().get(
+                      result.getConfigForPath( PropertyPath.from( EXTRA_DATA + "@appname@localname0@htmlarea" ) ).getIndexValueProcessors().get(
                           0 ).getName() );
 
     }

@@ -95,20 +95,20 @@ public class PropertyTreeTest
     {
         PropertyTree original = new PropertyTree();
         original.setString( "myString", "a" );
-        original.setString( "mySet.myString", "1" );
+        original.setString( "mySet@myString", "1" );
 
         assertEquals( "a", original.getString( "myString" ) );
-        assertEquals( "1", original.getString( "mySet.myString" ) );
+        assertEquals( "1", original.getString( "mySet@myString" ) );
 
         PropertyTree copy = original.copy();
         copy.setString( "myString", "b" );
-        copy.setString( PropertyPath.from( "mySet.myString" ), "2" );
+        copy.setString( PropertyPath.from( "mySet@myString" ), "2" );
 
         assertEquals( "b", copy.getString( "myString" ) );
-        assertEquals( "2", copy.getString( "mySet.myString" ) );
+        assertEquals( "2", copy.getString( "mySet@myString" ) );
 
         assertEquals( "a", original.getString( "myString" ) );
-        assertEquals( "1", original.getString( "mySet.myString" ) );
+        assertEquals( "1", original.getString( "mySet@myString" ) );
     }
 
     @Test
@@ -208,7 +208,7 @@ public class PropertyTreeTest
         PropertySet set = newTree.newSet( sourceTree );
         newTree.addSet( "mySet", set );
 
-        assertEquals( "myString", newTree.getString( "mySet.myProp" ) );
+        assertEquals( "myString", newTree.getString( "mySet@myProp" ) );
     }
 
     @Test
@@ -430,10 +430,10 @@ public class PropertyTreeTest
         List<Value> longValueList = new ArrayList<>();
         longValueList.add( ValueFactory.newLong( 1L ) );
 
-        tree.setValues( "mySet.strings", stringValueList );
+        tree.setValues( "mySet@strings", stringValueList );
         tree.setValues( PropertyPath.from( "longs" ), longValueList );
 
-        assertEquals( "d", tree.getString( PropertyPath.from( "mySet.strings" ) ) );
+        assertEquals( "d", tree.getString( PropertyPath.from( "mySet@strings" ) ) );
         Property p = tree.getProperty( PropertyPath.from( "longs" ) );
         assertEquals( 1, p.getLong() );
     }
@@ -458,9 +458,9 @@ public class PropertyTreeTest
         set1.addStrings( "strings", "a", "b", "c" );
 
         assertNotNull( tree.getProperty( "mySet" ) );
-        assertEquals( "a", tree.getString( PropertyPath.from( "mySet.strings" ) ) );
-        tree.removeProperty( PropertyPath.from( "mySet.strings" ) );
-        assertEquals( "b", tree.getString( PropertyPath.from( "mySet.strings" ) ) );
+        assertEquals( "a", tree.getString( PropertyPath.from( "mySet@strings" ) ) );
+        tree.removeProperty( PropertyPath.from( "mySet@strings" ) );
+        assertEquals( "b", tree.getString( PropertyPath.from( "mySet@strings" ) ) );
         tree.removeProperty( "mySet" );
         assertNull( tree.getProperty( "mySet" ) );
     }
@@ -473,7 +473,7 @@ public class PropertyTreeTest
         set1.addStrings( "strings", "a", "b", "c" );
 
         assertTrue( tree.hasProperty( "mySet" ) );
-        assertTrue( tree.hasProperty( PropertyPath.from( "mySet.strings" ) ) );
+        assertTrue( tree.hasProperty( PropertyPath.from( "mySet@strings" ) ) );
         assertTrue( tree.hasProperty( "mySet", 0 ) );
         assertFalse( tree.hasProperty( "nonExistingSet" ) );
     }

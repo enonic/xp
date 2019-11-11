@@ -75,8 +75,8 @@ public class PageDataSerializerTest
         pageDataSerializer.toData( page, pageAsData.getRoot() );
 
         final PropertySet pageOnlyData = pageAsData.getRoot().getProperties( COMPONENTS ).get( 0 ).getSet();
-        assertTrue( pageOnlyData.hasProperty( "page.config.app-key.d-name" ) );
-        assertEquals( "42.0", pageOnlyData.getString( "page.config.app-key.d-name.aim" ) );
+        assertTrue( pageOnlyData.hasProperty( "page@config@app-key@d-name" ) );
+        assertEquals( "42.0", pageOnlyData.getString( "page@config@app-key@d-name@aim" ) );
     }
 
     @Test
@@ -88,8 +88,8 @@ public class PageDataSerializerTest
         pageDataSerializer.toData( page, pageAsData.getRoot() );
 
         final PropertySet componentOnlyData = pageAsData.getRoot().getProperties( COMPONENTS ).get( 1 ).getSet();
-        assertTrue( componentOnlyData.hasProperty( "part.config.app-descriptor-x.name-x" ) );
-        assertEquals( "somevalue", componentOnlyData.getString( "part.config.app-descriptor-x.name-x.some" ) );
+        assertTrue( componentOnlyData.hasProperty( "part@config@app-descriptor-x@name-x" ) );
+        assertEquals( "somevalue", componentOnlyData.getString( "part@config@app-descriptor-x@name-x@some" ) );
     }
 
     @Test

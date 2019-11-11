@@ -72,18 +72,18 @@ public class PropertyTest
     public void property_copy()
     {
         PropertyTree sourceTree = new PropertyTree();
-        sourceTree.setString( "outerSet.innerSet.myString", "myValue" );
+        sourceTree.setString( "outerSet@innerSet@myString", "myValue" );
         System.out.println( sourceTree );
 
         PropertyTree destinationTree = new PropertyTree();
         PropertySet destiSet = destinationTree.addSet( "destiSet" );
-        sourceTree.getProperty( "outerSet.innerSet" ).copyTo( destiSet );
+        sourceTree.getProperty( "outerSet@innerSet" ).copyTo( destiSet );
 
         System.out.println( destinationTree.toString() );
 
         // Verify the property from the source and destination tree are equals
-        assertEquals( sourceTree.getProperty( "outerSet.innerSet" ), destinationTree.getProperty( "destiSet.innerSet" ) );
-        assertEquals( sourceTree.getProperty( "outerSet.innerSet.myString" ), destinationTree.getProperty( "destiSet.innerSet.myString" ) );
+        assertEquals( sourceTree.getProperty( "outerSet@innerSet" ), destinationTree.getProperty( "destiSet@innerSet" ) );
+        assertEquals( sourceTree.getProperty( "outerSet@innerSet@myString" ), destinationTree.getProperty( "destiSet@innerSet@myString" ) );
     }
 
 
