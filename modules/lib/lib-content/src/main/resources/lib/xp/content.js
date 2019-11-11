@@ -495,3 +495,18 @@ exports.getTypes = function () {
     var bean = __.newBean('com.enonic.xp.lib.content.ContentTypeHandler');
     return __.toNativeObject(bean.getAllContentTypes());
 };
+
+/**
+ * Returns outbound dependencies on a content.
+ *
+ * @param {object} params JSON parameters.
+ * @param {string} params.key Path or id of the content.
+ * @returns {object} Content Ids.
+ */
+exports.getOutboundDependencies = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.content.GetOutboundDependenciesHandler');
+
+    bean.key = required(params, 'key');
+
+    return __.toNativeObject(bean.execute());
+};
