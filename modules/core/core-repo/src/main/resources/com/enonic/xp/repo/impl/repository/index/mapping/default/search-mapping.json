@@ -50,7 +50,7 @@
       "template_userdata_orderby": {
         "match": "*@_orderby",
         "mapping": {
-          "type": "text",
+          "type": "keyword",
           "analyzer": "keywordlowercase",
           "ignore_above": 3072
         }
