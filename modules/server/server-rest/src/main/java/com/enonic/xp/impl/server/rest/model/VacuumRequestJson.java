@@ -8,19 +8,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class VacuumRequestJson
 {
 
-    private final Long ageThreshold;
+    private final String ageThreshold;
 
     private final List<String> tasks;
 
     @JsonCreator
-    public VacuumRequestJson( @JsonProperty("ageThreshold") final Long ageThreshold,
-                              @JsonProperty("tasks") final List<String> tasks )
+    public VacuumRequestJson( @JsonProperty("ageThreshold") final String ageThreshold, @JsonProperty("tasks") final List<String> tasks )
     {
         this.ageThreshold = ageThreshold;
         this.tasks = tasks;
     }
 
-    public Long getAgeThreshold()
+    public String getAgeThreshold()
     {
         return ageThreshold;
     }

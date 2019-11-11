@@ -39,7 +39,7 @@ public class VacuumRunnableTask
     {
         final VacuumParameters vacuumParams = VacuumParameters.create().
             vacuumListener( new VacuumListenerImpl( progressReporter ) ).
-            ageThreshold( params.getAgeThreshold() == null ? null : Duration.ofMinutes( params.getAgeThreshold() ) ).
+            ageThreshold( params.getAgeThreshold() == null ? null : Duration.parse( params.getAgeThreshold() ) ).
             taskNames( params.getTasks() == null ? Arrays.asList( DEFAULT_VACUUM_TASKS ) : params.getTasks() ).
             build();
 
