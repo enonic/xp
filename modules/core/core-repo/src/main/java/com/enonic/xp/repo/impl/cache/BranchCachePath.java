@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl.cache;
 
+import java.util.concurrent.TimeUnit;
+
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
@@ -14,6 +16,7 @@ public class BranchCachePath
     {
         pathCache = CacheBuilder.newBuilder().
             maximumSize( 100000 ).
+            expireAfterWrite( 10, TimeUnit.MINUTES).
             build();
     }
 
