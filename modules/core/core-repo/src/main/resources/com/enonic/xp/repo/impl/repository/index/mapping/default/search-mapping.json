@@ -4,7 +4,7 @@
   "dynamic_templates": [
     {
       "template_fulltext": {
-        "match": "*._analyzed",
+        "match": "*@_analyzed",
         "mapping": {
           "type": "text",
           "analyzer": "document_index_default"
@@ -13,7 +13,7 @@
     },
     {
       "template_path": {
-        "match": "*._path",
+        "match": "*@_path",
         "mapping": {
           "type": "text",
           "analyzer": "path_analyzer"
@@ -22,7 +22,7 @@
     },
     {
       "template_ngram": {
-        "match": "*._ngram",
+        "match": "*@_ngram",
         "mapping": {
           "type": "text",
           "analyzer": "ngram_index_front",
@@ -32,7 +32,7 @@
     },
     {
       "template_userdata_date": {
-        "match": "*._datetime",
+        "match": "*@_datetime",
         "mapping": {
           "type": "date"
         }
@@ -40,7 +40,7 @@
     },
     {
       "template_userdata_number": {
-        "match": "*._number",
+        "match": "*@_number",
         "mapping": {
           "type": "double"
         }
@@ -48,7 +48,7 @@
     },
     {
       "template_userdata_orderby": {
-        "match": "*._orderby",
+        "match": "*@_orderby",
         "mapping": {
           "type": "text",
           "analyzer": "keywordlowercase",
@@ -58,7 +58,7 @@
     },
     {
       "template_userdata_geopoint": {
-        "match": "*._geopoint",
+        "match": "*@_geopoint",
         "mapping": {
           "type": "geo_point"
         }
@@ -66,7 +66,7 @@
     },
     {
       "template_stemmed_ar": {
-        "match": "*._stemmed_ar",
+        "match": "*@_stemmed_ar",
         "mapping": {
           "type": "text",
           "analyzer": "arabic"
@@ -75,7 +75,7 @@
     },
     {
       "template_stemmed_hy": {
-        "match": "*._stemmed_hy",
+        "match": "*@_stemmed_hy",
         "mapping": {
           "type": "text",
           "analyzer": "armenian"
@@ -84,7 +84,7 @@
     },
     {
       "template_stemmed_eu": {
-        "match": "*._stemmed_eu",
+        "match": "*@_stemmed_eu",
         "mapping": {
           "type": "text",
           "analyzer": "basque"
@@ -93,7 +93,7 @@
     },
     {
       "template_stemmed_bn": {
-        "match": "*._stemmed_bn",
+        "match": "*@_stemmed_bn",
         "mapping": {
           "type": "text",
           "analyzer": "bengali"
@@ -102,7 +102,7 @@
     },
     {
       "template_stemmed_pt-br": {
-        "match": "*._stemmed_pt-br",
+        "match": "*@_stemmed_pt-br",
         "mapping": {
           "type": "text",
           "analyzer": "brazilian"
@@ -111,7 +111,7 @@
     },
     {
       "template_stemmed_bg": {
-        "match": "*._stemmed_bg",
+        "match": "*@_stemmed_bg",
         "mapping": {
           "type": "text",
           "analyzer": "bulgarian"
@@ -120,7 +120,7 @@
     },
     {
       "template_stemmed_ca": {
-        "match": "*._stemmed_ca",
+        "match": "*@_stemmed_ca",
         "mapping": {
           "type": "text",
           "analyzer": "catalan"
@@ -129,7 +129,7 @@
     },
     {
       "template_stemmed_zh": {
-        "match": "*._stemmed_zh",
+        "match": "*@_stemmed_zh",
         "mapping": {
           "type": "text",
           "analyzer": "cjk"
@@ -138,7 +138,7 @@
     },
     {
       "template_stemmed_ja": {
-        "match": "*._stemmed_ja",
+        "match": "*@_stemmed_ja",
         "mapping": {
           "type": "text",
           "analyzer": "cjk"
@@ -147,7 +147,7 @@
     },
     {
       "template_stemmed_ko": {
-        "match": "*._stemmed_ko",
+        "match": "*@_stemmed_ko",
         "mapping": {
           "type": "text",
           "analyzer": "cjk"
@@ -156,7 +156,7 @@
     },
     {
       "template_stemmed_cs": {
-        "match": "*._stemmed_cs",
+        "match": "*@_stemmed_cs",
         "mapping": {
           "type": "text",
           "analyzer": "czech"
@@ -165,7 +165,7 @@
     },
     {
       "template_stemmed_da": {
-        "match": "*._stemmed_da",
+        "match": "*@_stemmed_da",
         "mapping": {
           "type": "text",
           "analyzer": "danish"
@@ -174,7 +174,7 @@
     },
     {
       "template_stemmed_nl": {
-        "match": "*._stemmed_nl",
+        "match": "*@_stemmed_nl",
         "mapping": {
           "type": "text",
           "analyzer": "dutch"
@@ -183,7 +183,7 @@
     },
     {
       "template_stemmed_en": {
-        "match": "*._stemmed_en",
+        "match": "*@_stemmed_en",
         "mapping": {
           "type": "text",
           "analyzer": "english"
@@ -192,7 +192,7 @@
     },
     {
       "template_stemmed_fi": {
-        "match": "*._stemmed_fi",
+        "match": "*@_stemmed_fi",
         "mapping": {
           "type": "text",
           "analyzer": "finnish"
@@ -201,7 +201,7 @@
     },
     {
       "template_stemmed_fr": {
-        "match": "*._stemmed_fr",
+        "match": "*@_stemmed_fr",
         "mapping": {
           "type": "text",
           "analyzer": "french"
@@ -210,7 +210,7 @@
     },
     {
       "template_stemmed_gl": {
-        "match": "*._stemmed_gl",
+        "match": "*@_stemmed_gl",
         "mapping": {
           "type": "text",
           "analyzer": "galician"
@@ -219,7 +219,7 @@
     },
     {
       "template_stemmed_de": {
-        "match": "*._stemmed_de",
+        "match": "*@_stemmed_de",
         "mapping": {
           "type": "text",
           "analyzer": "german"
@@ -228,7 +228,7 @@
     },
     {
       "template_stemmed_el": {
-        "match": "*._stemmed_el",
+        "match": "*@_stemmed_el",
         "mapping": {
           "type": "text",
           "analyzer": "greek"
@@ -237,7 +237,7 @@
     },
     {
       "template_stemmed_hi": {
-        "match": "*._stemmed_hi",
+        "match": "*@_stemmed_hi",
         "mapping": {
           "type": "text",
           "analyzer": "hindi"
@@ -246,7 +246,7 @@
     },
     {
       "template_stemmed_hu": {
-        "match": "*._stemmed_hu",
+        "match": "*@_stemmed_hu",
         "mapping": {
           "type": "text",
           "analyzer": "hungarian"
@@ -255,7 +255,7 @@
     },
     {
       "template_stemmed_id": {
-        "match": "*._stemmed_id",
+        "match": "*@_stemmed_id",
         "mapping": {
           "type": "text",
           "analyzer": "indonesian"
@@ -264,7 +264,7 @@
     },
     {
       "template_stemmed_ga": {
-        "match": "*._stemmed_ga",
+        "match": "*@_stemmed_ga",
         "mapping": {
           "type": "text",
           "analyzer": "irish"
@@ -273,7 +273,7 @@
     },
     {
       "template_stemmed_it": {
-        "match": "*._stemmed_it",
+        "match": "*@_stemmed_it",
         "mapping": {
           "type": "text",
           "analyzer": "italian"
@@ -282,7 +282,7 @@
     },
     {
       "template_stemmed_lv": {
-        "match": "*._stemmed_lv",
+        "match": "*@_stemmed_lv",
         "mapping": {
           "type": "text",
           "analyzer": "latvian"
@@ -291,7 +291,7 @@
     },
     {
       "template_stemmed_lt": {
-        "match": "*._stemmed_lt",
+        "match": "*@_stemmed_lt",
         "mapping": {
           "type": "text",
           "analyzer": "lithuanian"
@@ -300,7 +300,7 @@
     },
     {
       "template_stemmed_no": {
-        "match": "*._stemmed_no",
+        "match": "*@_stemmed_no",
         "mapping": {
           "type": "text",
           "analyzer": "norwegian"
@@ -309,7 +309,7 @@
     },
     {
       "template_stemmed_nb": {
-        "match": "*._stemmed_nb",
+        "match": "*@_stemmed_nb",
         "mapping": {
           "type": "text",
           "analyzer": "norwegian"
@@ -318,7 +318,7 @@
     },
     {
       "template_stemmed_nn": {
-        "match": "*._stemmed_nn",
+        "match": "*@_stemmed_nn",
         "mapping": {
           "type": "text",
           "analyzer": "language_analyzer_nn"
@@ -327,7 +327,7 @@
     },
     {
       "template_stemmed_fa": {
-        "match": "*._stemmed_fa",
+        "match": "*@_stemmed_fa",
         "mapping": {
           "type": "text",
           "analyzer": "persian"
@@ -336,7 +336,7 @@
     },
     {
       "template_stemmed_pt": {
-        "match": "*._stemmed_pt",
+        "match": "*@_stemmed_pt",
         "mapping": {
           "type": "text",
           "analyzer": "portuguese"
@@ -345,7 +345,7 @@
     },
     {
       "template_stemmed_ro": {
-        "match": "*._stemmed_ro",
+        "match": "*@_stemmed_ro",
         "mapping": {
           "type": "text",
           "analyzer": "romanian"
@@ -354,7 +354,7 @@
     },
     {
       "template_stemmed_ru": {
-        "match": "*._stemmed_ru",
+        "match": "*@_stemmed_ru",
         "mapping": {
           "type": "text",
           "analyzer": "russian"
@@ -363,7 +363,7 @@
     },
     {
       "template_stemmed_ku": {
-        "match": "*._stemmed_ku",
+        "match": "*@_stemmed_ku",
         "mapping": {
           "type": "text",
           "analyzer": "sorani"
@@ -372,7 +372,7 @@
     },
     {
       "template_stemmed_es": {
-        "match": "*._stemmed_es",
+        "match": "*@_stemmed_es",
         "mapping": {
           "type": "text",
           "analyzer": "spanish"
@@ -381,7 +381,7 @@
     },
     {
       "template_stemmed_sv": {
-        "match": "*._stemmed_sv",
+        "match": "*@_stemmed_sv",
         "mapping": {
           "type": "text",
           "analyzer": "swedish"
@@ -390,7 +390,7 @@
     },
     {
       "template_stemmed_tr": {
-        "match": "*._stemmed_tr",
+        "match": "*@_stemmed_tr",
         "mapping": {
           "type": "text",
           "analyzer": "turkish"
@@ -399,7 +399,7 @@
     },
     {
       "template_stemmed_th": {
-        "match": "*._stemmed_th",
+        "match": "*@_stemmed_th",
         "mapping": {
           "type": "text",
           "analyzer": "thai"
