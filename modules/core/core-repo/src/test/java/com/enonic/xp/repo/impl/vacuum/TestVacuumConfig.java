@@ -1,14 +1,15 @@
 package com.enonic.xp.repo.impl.vacuum;
 
 import java.lang.annotation.Annotation;
+import java.time.Duration;
 
 public class TestVacuumConfig
     implements VacuumConfig
 {
     @Override
-    public long ageThreshold()
+    public String ageThreshold()
     {
-        return 0;
+        return Duration.ZERO.toString();
     }
 
     @Override
