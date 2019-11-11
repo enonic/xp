@@ -153,6 +153,35 @@ public class FindNodesByQueryCommandTest_func_fulltext
     }
 
     @Test
+    public void ascii_folding_with_wildcard()
+        throws Exception
+    {
+        final PropertyTree data = new PropertyTree();
+        data.addString( "myProperty", "grønnsaker" );
+
+        final Node node = createNode( CreateNodeParams.create().
+            name( "my-node-1" ).
+            parent( NodePath.ROOT ).
+            data( data ).
+            indexConfigDocument( PatternIndexConfigDocument.create().
+                analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
+                defaultConfig( IndexConfig.BY_TYPE ).
+                build() ).
+            build(), true );
+
+        final NodeQuery query = NodeQuery.create().
+            query( QueryExpr.from( new DynamicConstraintExpr(
+                FunctionExpr.from( "fulltext", ValueExpr.string( NodeIndexPath.ALL_TEXT.getPath() ), ValueExpr.string( "grønns*" ),
+                                   ValueExpr.string( "AND" ) ) ) ) ).
+            build();
+
+        final FindNodesByQueryResult result = doFindByQuery( query );
+
+        assertEquals( 1, result.getNodeIds().getSize() );
+        assertTrue( result.getNodeIds().contains( node.id() ) );
+    }
+
+    @Test
     public void fulltext_with_path()
         throws Exception
     {

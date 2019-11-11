@@ -5,6 +5,7 @@
       "field._stemmed_en"
     ],
     "analyzer": "language_analyzer_en",
-    "default_operator": "or"
+    "default_operator": "or",
+    "analyze_wildcard": true
   }
 }
