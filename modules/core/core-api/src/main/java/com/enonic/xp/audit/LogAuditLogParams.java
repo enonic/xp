@@ -19,8 +19,6 @@ public class LogAuditLogParams
 
     private final PrincipalKey user;
 
-    private final String message;
-
     private final AuditLogUris objectUris;
 
     private final PropertyTree data;
@@ -31,7 +29,6 @@ public class LogAuditLogParams
         time = Objects.requireNonNullElseGet( builder.time, Instant::now );
         source = Objects.requireNonNullElse( builder.source, "" );
         user = Objects.requireNonNullElseGet( builder.user, this::getUserKey );
-        message = Objects.requireNonNullElse( builder.message, "" );
         objectUris = Objects.requireNonNullElse( builder.objectUris, AuditLogUris.empty() );
         data = Objects.requireNonNullElse( builder.data, new PropertyTree() );
     }
@@ -63,11 +60,6 @@ public class LogAuditLogParams
         return user;
     }
 
-    public String getMessage()
-    {
-        return message;
-    }
-
     public AuditLogUris getObjectUris()
     {
         return objectUris;
@@ -92,8 +84,6 @@ public class LogAuditLogParams
         private String source;
 
         private PrincipalKey user;
-
-        private String message;
 
         private AuditLogUris objectUris;
 
@@ -124,12 +114,6 @@ public class LogAuditLogParams
         public Builder user( final PrincipalKey val )
         {
             user = val;
-            return this;
-        }
-
-        public Builder message( final String val )
-        {
-            message = val;
             return this;
         }
 

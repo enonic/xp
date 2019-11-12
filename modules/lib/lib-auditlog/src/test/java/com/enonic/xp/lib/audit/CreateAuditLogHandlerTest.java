@@ -29,7 +29,6 @@ public class CreateAuditLogHandlerTest
             type( "testlog" ).
             source( "testbundle" ).
             user( PrincipalKey.ofAnonymous() ).
-            message( "Audit log message" ).
             objectUris( AuditLogUris.from( "some:resource:uri" ) ).
             data( data ).build() ).
             build();

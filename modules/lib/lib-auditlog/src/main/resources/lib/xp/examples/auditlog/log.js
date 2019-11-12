@@ -15,7 +15,6 @@ var log2 = auditLib.log({
     time: '2019-08-12T08:44:02.767Z',
     source: 'unittests',
     user: 'user:system:anonymous',
-    message: 'Audit log message',
     objects: [
         'some:resource:uri'
     ],
@@ -32,7 +31,6 @@ var expected1 = {
     'time': '2019-08-12T08:44:02.767Z',
     'source': 'testbundle',
     'user': 'user:system:anonymous',
-    'message': '',
     'objects': [],
     'data': {}
 };
@@ -45,7 +43,6 @@ var expected2 = {
     'time': '2019-08-12T08:44:02.767Z',
     'source': 'testbundle',
     'user': 'user:system:anonymous',
-    'message': 'Audit log message',
     'objects': [
         'some:resource:uri'
     ],
