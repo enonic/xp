@@ -174,9 +174,16 @@ class ContentAuditLogSupport
         paramsSet.addString( "contentPath", params.getContentPath().toString() );
         paramsSet.addBoolean( "deleteOnline", params.isDeleteOnline() );
 
-        addContents( data.getRoot(), contents, "result" );
+        if ( contents != null )
+        {
+            addContents( data.getRoot(), contents, "result" );
+            log( "system.content.delete", data, contents.getIds() );
+        }
+        else
+        {
+            //TODO: get `pending delete` result for log
+        }
 
-        log( "system.content.delete", data, contents.getIds() );
     }
 
     void delete( final DeleteContentParams params, final DeleteContentsResult contents )
@@ -188,8 +195,8 @@ class ContentAuditLogSupport
         paramsSet.addString( "contentPath", params.getContentPath().toString() );
         paramsSet.addBoolean( "deleteOnline", params.isDeleteOnline() );
 
-        addContentsAsStrings( resultSet, contents.getDeletedContents(), "deletedContents" );
-        addContentsAsStrings( resultSet, contents.getPendingContents(), "pendingContents" );
+        addContents( resultSet, contents.getDeletedContents(), "deletedContents" );
+        addContents( resultSet, contents.getPendingContents(), "pendingContents" );
 
         log( "system.content.delete", data, ContentIds.create().
             addAll( contents.getDeletedContents() ).
@@ -283,7 +290,7 @@ class ContentAuditLogSupport
             paramsSet.addString( "unpublishBranch", params.getUnpublishBranch().getValue() );
         }
 
-        addContentsAsStrings( resultSet, result.getUnpublishedContents(), "unpublishedContents" );
+        addContents( resultSet, result.getUnpublishedContents(), "unpublishedContents" );
 
         log( "system.content.unpublishContent", data, result.getUnpublishedContents() );
     }
@@ -325,7 +332,7 @@ class ContentAuditLogSupport
             paramsSet.addString( "creator", params.getCreator().getId() );
         }
 
-        addContentsAsStrings( resultSet, result.getMovedContents(), "movedContents" );
+        addContents( resultSet, result.getMovedContents(), "movedContents" );
 
         log( "system.content.move", data, params.getContentId() );
     }
@@ -424,6 +431,12 @@ class ContentAuditLogSupport
         log( "system.content.reprocess", data, contentId );
     }
 
+    private void addContent( final PropertySet targetSet, final Content content )
+    {
+        targetSet.setString( "id", content.getId().toString() );
+        targetSet.setString( "path", content.getPath().toString() );
+    }
+
     private void addContents( final PropertySet targetSet, final Contents contents, final String name )
     {
         contents.stream().map( content -> {
@@ -432,43 +445,20 @@ class ContentAuditLogSupport
 
             return contentSet;
         } ).
-            forEach( contentSet -> targetSet.addSet( name ) );
-    }
-
-    private void addContent( final PropertySet targetSet, final Content content )
-    {
-        targetSet.setString( "id", content.getId().toString() );
-        targetSet.setString( "path", content.getPath().toString() );
+            forEach( contentSet -> targetSet.addSet( name, contentSet ) );
     }
 
     private void addContents( final PropertySet targetSet, final ContentIds contents, final String name )
     {
-        contents.stream().map( contentId -> {
-            final PropertySet contentSet = new PropertySet();
-
-            contentSet.setString( "id", contentId.toString() );
-
-            return contentSet;
-        } ).
-            forEach( contentSet -> targetSet.addSet( name ) );
+        targetSet.addStrings( name, contents.stream().
+            map( ContentId::toString ).
+            collect( Collectors.toSet() ) );
     }
 
     private void addContents( final PropertySet targetSet, final ContentPaths contents, final String name )
     {
-        contents.stream().map( contentPath -> {
-            final PropertySet contentSet = new PropertySet();
-
-            contentSet.setString( "path", contentPath.toString() );
-
-            return contentSet;
-        } ).
-            forEach( contentSet -> targetSet.addSet( name ) );
-    }
-
-    private void addContentsAsStrings( final PropertySet targetSet, final ContentIds contents, final String name )
-    {
         targetSet.addStrings( name, contents.stream().
-            map( ContentId::toString ).
+            map( ContentPath::toString ).
             collect( Collectors.toSet() ) );
     }
 

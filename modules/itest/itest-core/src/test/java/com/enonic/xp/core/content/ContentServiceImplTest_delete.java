@@ -1,7 +1,12 @@
 package com.enonic.xp.core.content;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
 
+import com.google.common.collect.Sets;
+
+import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
@@ -15,6 +20,7 @@ import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.PublishContentParams;
 import com.enonic.xp.content.PublishContentResult;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeState;
@@ -352,5 +358,39 @@ public class ContentServiceImplTest_delete
         assertEquals( 1, result.getDeletedContents().getSize() );
 
 
+    }
+
+    @Test
+    public void audit_data()
+    {
+        final ArgumentCaptor<LogAuditLogParams> captor = ArgumentCaptor.forClass( LogAuditLogParams.class );
+
+        //Creates a content with children
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "Root Content" ).
+            parent( ContentPath.ROOT ).
+            type( ContentTypeName.folder() ).
+            build();
+
+        final Content content = this.contentService.create( createContentParams );
+
+        final CreateContentParams createChild1ContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "Child1 Content" ).
+            parent( content.getPath() ).
+            type( ContentTypeName.folder() ).
+            build();
+
+        final Content child1Content = this.contentService.create( createChild1ContentParams );
+
+        final DeleteContentParams deleteContentParams = DeleteContentParams.create().contentPath( content.getPath() ).build();
+        this.contentService.deleteWithoutFetch( deleteContentParams );
+
+        Mockito.verify( auditLogService, Mockito.times( 3 ) ).log( captor.capture() );
+
+        final PropertySet logResultSet = captor.getValue().getData().getSet( "result" );
+
+        assertEquals( 2, Sets.newHashSet( logResultSet.getStrings( "deletedContents" ) ).size() );
     }
 }

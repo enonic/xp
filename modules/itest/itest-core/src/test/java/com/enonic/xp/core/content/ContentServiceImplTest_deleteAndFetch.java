@@ -3,7 +3,10 @@ package com.enonic.xp.core.content;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
 
+import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
@@ -11,6 +14,7 @@ import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.GetContentByIdsParams;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
 
@@ -138,5 +142,37 @@ public class ContentServiceImplTest_deleteAndFetch
         assertEquals( 1, deletedOther.getSize() );
     }
 
+    @Test
+    public void audit_data()
+    {
+        final ArgumentCaptor<LogAuditLogParams> captor = ArgumentCaptor.forClass( LogAuditLogParams.class );
+
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "Root Content" ).
+            parent( ContentPath.ROOT ).
+            type( ContentTypeName.folder() ).
+            build();
+
+        final Content content = this.contentService.create( createContentParams );
+
+        final CreateContentParams createChild1ContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "Child1 Content" ).
+            parent( content.getPath() ).
+            type( ContentTypeName.folder() ).
+            build();
+
+        final Content child1Content = this.contentService.create( createChild1ContentParams );
+
+        this.contentService.delete( DeleteContentParams.create().contentPath( content.getPath() ).build() );
+
+        Mockito.verify( auditLogService, Mockito.times( 3 ) ).log( captor.capture() );
+
+        final PropertySet logResultSet = captor.getValue().getData().getSet( "result" );
+
+        assertEquals( content.getId().toString(), logResultSet.getString( "id" ) );
+        assertEquals( content.getPath().toString(), logResultSet.getString( "path" ) );
+    }
 
 }
