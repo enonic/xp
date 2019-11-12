@@ -7,7 +7,7 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.PushContentParams;
+import com.enonic.xp.content.PublishContentParams;
 import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -35,7 +35,7 @@ public class ContentServiceImplTest_unpublish
             type( ContentTypeName.folder() ).
             build() );
 
-        this.contentService.publish( PushContentParams.create().
+        this.contentService.publish( PublishContentParams.create().
             target( ContentConstants.BRANCH_MASTER ).
             contentIds( ContentIds.from( content.getId() ) ).
             build() );
@@ -78,7 +78,7 @@ public class ContentServiceImplTest_unpublish
             type( ContentTypeName.folder() ).
             build() );
 
-        this.contentService.push( PushContentParams.create().
+        this.contentService.publish( PublishContentParams.create().
             target( ContentConstants.BRANCH_MASTER ).
             contentIds( ContentIds.from( content.getId() ) ).
             build() );

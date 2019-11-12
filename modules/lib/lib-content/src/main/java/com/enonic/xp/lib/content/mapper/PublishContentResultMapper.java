@@ -9,14 +9,14 @@ import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 
-public class PushContentResultMapper
+public class PublishContentResultMapper
     implements MapSerializable
 {
     private final PublishContentResult value;
 
     private final List<ContentPath> contentNotFound;
 
-    public PushContentResultMapper( final PublishContentResult value, final List<ContentPath> contentNotFound )
+    public PublishContentResultMapper( final PublishContentResult value, final List<ContentPath> contentNotFound )
     {
         this.value = value;
         this.contentNotFound = contentNotFound;

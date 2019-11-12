@@ -34,10 +34,7 @@ public interface ContentService
 
     int undoPendingDelete( UndoPendingDeleteContentParams params );
 
-    @Deprecated
-    PushContentsResult push( PushContentParams params );
-
-    PublishContentResult publish( PushContentParams params );
+    PublishContentResult publish( PublishContentParams params );
 
     UnpublishContentsResult unpublishContent( UnpublishContentParams params );
 

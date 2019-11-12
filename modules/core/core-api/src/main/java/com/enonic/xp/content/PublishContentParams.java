@@ -7,7 +7,7 @@ import com.google.common.annotations.Beta;
 import com.enonic.xp.branch.Branch;
 
 @Beta
-public class PushContentParams
+public class PublishContentParams
 {
     private final ContentIds contentIds;
 
@@ -23,13 +23,13 @@ public class PushContentParams
 
     private final boolean includeDependencies;
 
-    private final PushContentListener pushContentListener;
+    private final PublishContentListener publishContentListener;
 
     private final DeleteContentListener deleteContentListener;
 
     private final String message;
 
-    private PushContentParams( Builder builder )
+    private PublishContentParams( Builder builder )
     {
         contentIds = builder.contentIds;
         excludedContentIds = builder.excludedContentIds;
@@ -38,7 +38,7 @@ public class PushContentParams
         includeDependencies = builder.includeDependencies;
         excludeChildrenIds = builder.excludeChildrenIds;
         includeChildren = builder.includeChildren;
-        pushContentListener = builder.pushContentListener;
+        publishContentListener = builder.publishContentListener;
         deleteContentListener = builder.deleteContentListener;
         message = builder.message;
     }
@@ -84,9 +84,9 @@ public class PushContentParams
         return includeDependencies;
     }
 
-    public PushContentListener getPushContentListener()
+    public PublishContentListener getPublishContentListener()
     {
-        return pushContentListener;
+        return publishContentListener;
     }
 
     public DeleteContentListener getDeleteContentListener()
@@ -110,11 +110,11 @@ public class PushContentParams
         {
             return false;
         }
-        final PushContentParams that = (PushContentParams) o;
+        final PublishContentParams that = (PublishContentParams) o;
         return includeChildren == that.includeChildren && includeDependencies == that.includeDependencies &&
             Objects.equals( excludeChildrenIds, that.excludeChildrenIds ) && Objects.equals( contentIds, that.contentIds ) &&
             Objects.equals( excludedContentIds, that.excludedContentIds ) && Objects.equals( target, that.target ) &&
-            Objects.equals( pushContentListener, that.pushContentListener ) &&
+            Objects.equals( publishContentListener, that.publishContentListener ) &&
             Objects.equals( deleteContentListener, that.deleteContentListener ) && Objects.equals( message, that.message );
     }
 
@@ -122,7 +122,7 @@ public class PushContentParams
     public int hashCode()
     {
         return Objects.hash( contentIds, excludedContentIds, includeChildren, excludeChildrenIds, target, includeDependencies,
-                             pushContentListener, deleteContentListener, message );
+                             publishContentListener, deleteContentListener, message );
     }
 
     public static final class Builder
@@ -141,7 +141,7 @@ public class PushContentParams
 
         private boolean includeDependencies = true;
 
-        private PushContentListener pushContentListener;
+        private PublishContentListener publishContentListener;
 
         private DeleteContentListener deleteContentListener;
 
@@ -195,9 +195,9 @@ public class PushContentParams
             return this;
         }
 
-        public Builder pushListener( final PushContentListener pushContentListener )
+        public Builder pushListener( final PublishContentListener publishContentListener )
         {
-            this.pushContentListener = pushContentListener;
+            this.publishContentListener = publishContentListener;
             return this;
         }
 
@@ -213,9 +213,9 @@ public class PushContentParams
             return this;
         }
 
-        public PushContentParams build()
+        public PublishContentParams build()
         {
-            return new PushContentParams( this );
+            return new PublishContentParams( this );
         }
     }
 }

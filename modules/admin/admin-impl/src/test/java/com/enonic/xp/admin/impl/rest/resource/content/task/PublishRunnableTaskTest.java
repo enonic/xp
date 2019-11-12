@@ -10,8 +10,8 @@ import org.mockito.Mockito;
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishContentJson;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.PublishContentParams;
 import com.enonic.xp.content.PublishContentResult;
-import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.task.AbstractRunnableTaskTest;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
@@ -61,7 +61,7 @@ public class PublishRunnableTaskTest
         Mockito.when( params.getExcludedIds() ).thenReturn( Collections.emptySet() );
         Mockito.when( params.getExcludeChildrenIds() ).thenReturn( Collections.emptySet() );
 
-        Mockito.when( contentService.publish( Mockito.isA( PushContentParams.class ) ) ).thenReturn( result );
+        Mockito.when( contentService.publish( Mockito.isA( PublishContentParams.class ) ) ).thenReturn( result );
 
         Mockito.when( contentService.getById( Mockito.eq( contents.get( 0 ).getId() ) ) ).thenReturn( contents.get( 0 ) );
         Mockito.when( contentService.getById( Mockito.eq( contents.get( 1 ).getId() ) ) ).thenReturn( contents.get( 1 ) );
@@ -84,7 +84,7 @@ public class PublishRunnableTaskTest
     {
         Mockito.when( params.getIds() ).thenReturn( Collections.singleton( contents.get( 0 ).getId().toString() ) );
 
-        Mockito.when( contentService.publish( Mockito.isA( PushContentParams.class ) ) ).thenReturn( result );
+        Mockito.when( contentService.publish( Mockito.isA( PublishContentParams.class ) ) ).thenReturn( result );
         Mockito.when( contentService.getById( Mockito.isA( ContentId.class ) ) ).thenReturn( contents.get( 0 ) );
 
         createAndRunTask();

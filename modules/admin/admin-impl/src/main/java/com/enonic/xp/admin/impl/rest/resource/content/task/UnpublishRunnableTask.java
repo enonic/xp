@@ -14,7 +14,7 @@ import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.content.PushContentListener;
+import com.enonic.xp.content.PublishContentListener;
 import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.task.AbstractRunnableTask;
@@ -52,7 +52,7 @@ public class UnpublishRunnableTask
         final ContentIds contentIds = ContentIds.from( params.getIds() );
         progressReporter.info( "Unpublishing content" );
 
-        final PushContentListener listener = new UnpublishContentProgressListener( progressReporter );
+        final PublishContentListener listener = new UnpublishContentProgressListener( progressReporter );
 
         final ContentIds childrenIds = ContentQueryWithChildren.create().
             contentService( this.contentService ).

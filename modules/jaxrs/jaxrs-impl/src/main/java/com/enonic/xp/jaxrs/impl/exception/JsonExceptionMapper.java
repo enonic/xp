@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import com.enonic.xp.content.PushContentException;
+import com.enonic.xp.content.PublishContentException;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.exception.NotFoundException;
@@ -45,7 +45,7 @@ public final class JsonExceptionMapper
             return toErrorInfo( cause, Response.Status.BAD_REQUEST.getStatusCode() );
         }
 
-        if ( cause instanceof PushContentException )
+        if ( cause instanceof PublishContentException )
         {
             return toErrorInfo( cause, Response.Status.BAD_REQUEST.getStatusCode() );
         }

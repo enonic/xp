@@ -13,8 +13,8 @@ import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.MoveContentParams;
-import com.enonic.xp.content.PushContentParams;
-import com.enonic.xp.content.PushContentsResult;
+import com.enonic.xp.content.PublishContentParams;
+import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeState;
@@ -131,7 +131,7 @@ public class ContentServiceImplTest_delete
 
         refresh();
 
-        final PushContentsResult result = this.contentService.push( PushContentParams.create().
+        final PublishContentResult result = this.contentService.publish( PublishContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
             target( CTX_OTHER.getBranch() ).
             build() );
@@ -197,14 +197,14 @@ public class ContentServiceImplTest_delete
         final Content subChildContent = this.contentService.create( createSubChildContentParams );
 
         //Publishes the content
-        final PushContentParams pushParams = PushContentParams.create().
+        final PublishContentParams pushParams = PublishContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
             target( CTX_OTHER.getBranch() ).
             build();
 
         refresh();
 
-        this.contentService.push( pushParams );
+        this.contentService.publish( pushParams );
 
         //Deletes the content
         final DeleteContentParams deleteContentParams = DeleteContentParams.create().contentPath( content.getPath() ).build();
@@ -246,7 +246,7 @@ public class ContentServiceImplTest_delete
 
         refresh();
 
-        final PushContentsResult result = this.contentService.push( PushContentParams.create().
+        final PublishContentResult result = this.contentService.publish( PublishContentParams.create().
             contentIds( ContentIds.from( parent.getId() ) ).
             target( CTX_OTHER.getBranch() ).
             build() );

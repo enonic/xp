@@ -22,8 +22,8 @@ import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.FindContentVersionsParams;
 import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.content.MoveContentParams;
+import com.enonic.xp.content.PublishContentParams;
 import com.enonic.xp.content.PublishContentResult;
-import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
@@ -63,7 +63,7 @@ public class ContentServiceImplTest_publish
 
         final Content content = this.contentService.create( createContentParams );
 
-        final PublishContentResult push = this.contentService.publish( PushContentParams.create().
+        final PublishContentResult push = this.contentService.publish( PublishContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
             target( CTX_OTHER.getBranch() ).
             includeDependencies( false ).
@@ -91,7 +91,7 @@ public class ContentServiceImplTest_publish
 
         final Content content = this.contentService.create( createContentParams );
 
-        final PublishContentResult push = this.contentService.publish( PushContentParams.create().
+        final PublishContentResult push = this.contentService.publish( PublishContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
             target( CTX_OTHER.getBranch() ).
             includeDependencies( false ).
@@ -126,7 +126,7 @@ public class ContentServiceImplTest_publish
 
         final Content content = this.contentService.create( createContentParams );
 
-        final PublishContentResult push = this.contentService.publish( PushContentParams.create().
+        final PublishContentResult push = this.contentService.publish( PublishContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
             target( WS_OTHER ).
             includeDependencies( false ).
@@ -146,7 +146,7 @@ public class ContentServiceImplTest_publish
             type( ContentTypeName.folder() ).
             build() );
 
-        final PushContentParams pushParams = PushContentParams.create().
+        final PublishContentParams pushParams = PublishContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
             target( WS_OTHER ).
             build();
@@ -168,7 +168,7 @@ public class ContentServiceImplTest_publish
     {
         createContentTree();
 
-        final PushContentParams pushParams = PushContentParams.create().
+        final PublishContentParams pushParams = PublishContentParams.create().
             contentIds( ContentIds.from( content2.getId() ) ).
             target( WS_OTHER ).
             build();
@@ -184,7 +184,7 @@ public class ContentServiceImplTest_publish
     {
         createContentTree();
 
-        final PushContentParams pushParams = PushContentParams.create().
+        final PublishContentParams pushParams = PublishContentParams.create().
             contentIds( ContentIds.from( content1.getId() ) ).
             target( WS_OTHER ).
             build();
@@ -207,7 +207,7 @@ public class ContentServiceImplTest_publish
     {
         createContentTree2();
 
-        final PushContentParams pushParams = PushContentParams.create().
+        final PublishContentParams pushParams = PublishContentParams.create().
             contentIds( ContentIds.from( content1_1.getId() ) ).
             excludeChildrenIds( ContentIds.from( content1_1.getId() ) ).
             target( WS_OTHER ).
@@ -227,7 +227,7 @@ public class ContentServiceImplTest_publish
     {
         createContentTree();
 
-        final PushContentParams pushParams = PushContentParams.create().
+        final PublishContentParams pushParams = PublishContentParams.create().
             contentIds( ContentIds.from( content1.getId() ) ).
             excludedContentIds( ContentIds.from( content1.getId() ) ).
             target( WS_OTHER ).
@@ -246,7 +246,7 @@ public class ContentServiceImplTest_publish
     {
         createContentTree();
 
-        final PushContentParams pushParams = PushContentParams.create().
+        final PublishContentParams pushParams = PublishContentParams.create().
             contentIds( ContentIds.from( content1.getId() ) ).
             excludedContentIds( ContentIds.from( content1_1.getId() ) ).
             excludeChildrenIds( ContentIds.from( content1.getId() ) ).
@@ -276,7 +276,7 @@ public class ContentServiceImplTest_publish
 
         refresh();
 
-        final PushContentParams pushParams = PushContentParams.create().
+        final PublishContentParams pushParams = PublishContentParams.create().
             contentIds( ContentIds.from( content1.getId(), content2.getId() ) ).
             excludedContentIds( ContentIds.from( content1_1.getId() ) ).
             target( WS_OTHER ).
@@ -302,7 +302,7 @@ public class ContentServiceImplTest_publish
     {
         createContentTree2();
 
-        final PushContentParams pushParams = PushContentParams.create().
+        final PublishContentParams pushParams = PublishContentParams.create().
             contentIds( ContentIds.from( content1.getId() ) ).
             includeDependencies( false ).
             target( WS_OTHER ).
@@ -327,7 +327,7 @@ public class ContentServiceImplTest_publish
     {
         createContentTree();
 
-        this.contentService.publish( PushContentParams.create().
+        this.contentService.publish( PublishContentParams.create().
             contentIds( ContentIds.from( content1.getId() ) ).
             target( WS_OTHER ).
             excludeChildrenIds( ContentIds.from( content1.getId() ) ).
@@ -421,7 +421,7 @@ public class ContentServiceImplTest_publish
     {
         final Content content = createContent( ContentPath.ROOT, "a" );
 
-        this.contentService.publish( PushContentParams.create().
+        this.contentService.publish( PublishContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
             target( WS_OTHER ).
             message( "My message" ).
@@ -445,7 +445,7 @@ public class ContentServiceImplTest_publish
     {
         final Content content = createContent( ContentPath.ROOT, "a" );
 
-        this.contentService.publish( PushContentParams.create().
+        this.contentService.publish( PublishContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
             target( WS_OTHER ).
             message( null ).
@@ -523,7 +523,7 @@ public class ContentServiceImplTest_publish
 
     private PublishContentResult doPublish( final ContentIds excludeChildrenIds, final ContentId... contentIds )
     {
-        return this.contentService.publish( PushContentParams.create().
+        return this.contentService.publish( PublishContentParams.create().
             excludeChildrenIds( excludeChildrenIds ).
             contentIds( ContentIds.from( contentIds ) ).
             target( WS_OTHER ).

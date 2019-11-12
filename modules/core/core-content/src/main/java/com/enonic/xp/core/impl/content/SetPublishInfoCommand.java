@@ -5,7 +5,7 @@ import java.time.Instant;
 import com.enonic.xp.content.ContentIndexPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentPublishInfo;
-import com.enonic.xp.content.PushContentListener;
+import com.enonic.xp.content.PublishContentListener;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeId;
@@ -24,14 +24,14 @@ public class SetPublishInfoCommand
 
     private final ContentPublishInfo contentPublishInfo;
 
-    private final PushContentListener pushContentListener;
+    private final PublishContentListener publishContentListener;
 
     private SetPublishInfoCommand( final Builder builder )
     {
         super( builder );
         this.nodeIds = builder.nodeIds;
         this.contentPublishInfo = builder.contentPublishInfo == null ? ContentPublishInfo.create().build() : builder.contentPublishInfo;
-        this.pushContentListener = builder.pushContentListener;
+        this.publishContentListener = builder.publishContentListener;
     }
 
     public void execute()
@@ -91,9 +91,9 @@ public class SetPublishInfoCommand
                 } ).
                 id( id ).
                 build() );
-            if ( pushContentListener != null )
+            if ( publishContentListener != null )
             {
-                pushContentListener.contentPushed( 1 );
+                publishContentListener.contentPushed( 1 );
             }
         }
 
@@ -145,7 +145,7 @@ public class SetPublishInfoCommand
 
         private ContentPublishInfo contentPublishInfo;
 
-        private PushContentListener pushContentListener;
+        private PublishContentListener publishContentListener;
 
         public Builder()
         {
@@ -168,9 +168,9 @@ public class SetPublishInfoCommand
             return this;
         }
 
-        public SetPublishInfoCommand.Builder pushListener( final PushContentListener pushContentListener )
+        public SetPublishInfoCommand.Builder pushListener( final PublishContentListener publishContentListener )
         {
-            this.pushContentListener = pushContentListener;
+            this.publishContentListener = publishContentListener;
             return this;
         }
 

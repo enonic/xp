@@ -17,7 +17,7 @@ import com.enonic.xp.content.FindContentVersionsParams;
 import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.content.GetActiveContentVersionsParams;
 import com.enonic.xp.content.GetActiveContentVersionsResult;
-import com.enonic.xp.content.PushContentParams;
+import com.enonic.xp.content.PublishContentParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.WorkflowCheckState;
 import com.enonic.xp.content.WorkflowInfo;
@@ -72,7 +72,7 @@ public class ContentServiceImplTest_versions
             type( ContentTypeName.folder() ).
             build() );
 
-        this.contentService.push( PushContentParams.create().
+        this.contentService.publish( PublishContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
             target( CTX_OTHER.getBranch() ).
             build() );

@@ -9,7 +9,7 @@ import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.DuplicateContentsResult;
-import com.enonic.xp.content.PushContentParams;
+import com.enonic.xp.content.PublishContentParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -104,7 +104,7 @@ public class ContentServiceImplTest_publish_update_publishedTime
     {
 
         final Content rootContent = createContent( ContentPath.ROOT );
-        this.contentService.publish( PushContentParams.create().
+        this.contentService.publish( PublishContentParams.create().
             contentIds( ContentIds.from( rootContent.getId() ) ).
             target( WS_OTHER ).
             build() );
@@ -124,7 +124,7 @@ public class ContentServiceImplTest_publish_update_publishedTime
 
     private void doPublishContent( final Content content )
     {
-        this.contentService.publish( PushContentParams.create().
+        this.contentService.publish( PublishContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
             target( CTX_OTHER.getBranch() ).
             includeDependencies( false ).
