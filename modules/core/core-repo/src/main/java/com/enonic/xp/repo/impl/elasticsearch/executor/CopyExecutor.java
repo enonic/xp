@@ -22,12 +22,10 @@ import com.google.common.base.Stopwatch;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.query.filter.Filters;
 import com.enonic.xp.query.filter.IdFilter;
-import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.FilterBuilderFactory;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQueryFieldNameResolver;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
-import com.enonic.xp.repo.impl.search.SearchStorageType;
 import com.enonic.xp.repo.impl.storage.CopyRequest;
 
 public class CopyExecutor
@@ -64,7 +62,6 @@ public class CopyExecutor
             size( copyRequest.getNodeIds().getSize() ).
             batchSize( BATCH_SIZE ).
             from( 0 ).
-            setReturnFields( ReturnFields.from( NodeIndexPath.SOURCE ) ).
             build();
     }
 
