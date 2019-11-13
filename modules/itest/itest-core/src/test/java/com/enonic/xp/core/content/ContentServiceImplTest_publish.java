@@ -158,7 +158,7 @@ public class ContentServiceImplTest_publish
         final PublishContentResult push = this.contentService.publish( pushParams );
         assertEquals( 1, push.getPushedContents().getSize() );
 
-        contentService.delete( DeleteContentParams.create().
+        contentService.deleteWithoutFetch( DeleteContentParams.create().
             contentPath( content.getPath() ).
             build() );
 
@@ -344,7 +344,7 @@ public class ContentServiceImplTest_publish
 
         this.contentService.move( params );
 
-        this.contentService.delete( DeleteContentParams.create().
+        this.contentService.deleteWithoutFetch( DeleteContentParams.create().
             contentPath( content2.getPath() ).
             build() );
 

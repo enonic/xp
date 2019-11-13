@@ -375,23 +375,6 @@ public class ContentServiceImpl
     }
 
     @Override
-    public Contents delete( final DeleteContentParams params )
-    {
-        final Contents contents = DeleteAndFetchContentCommand.create().
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            params( params ).
-            build().
-            execute();
-
-        contentAuditLogSupport.delete( params, contents );
-
-        return contents;
-    }
-
-    @Override
     public DeleteContentsResult deleteWithoutFetch( final DeleteContentParams params )
     {
         final DeleteContentsResult result = DeleteContentCommand.create().

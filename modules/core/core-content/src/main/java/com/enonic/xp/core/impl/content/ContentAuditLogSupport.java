@@ -166,26 +166,6 @@ class ContentAuditLogSupport
         log( "system.content.update", data, content.getId() );
     }
 
-    void delete( final DeleteContentParams params, final Contents contents )
-    {
-        final PropertyTree data = new PropertyTree();
-        final PropertySet paramsSet = data.addSet( "params" );
-
-        paramsSet.addString( "contentPath", params.getContentPath().toString() );
-        paramsSet.addBoolean( "deleteOnline", params.isDeleteOnline() );
-
-        if ( contents != null )
-        {
-            addContents( data.getRoot(), contents, "result" );
-            log( "system.content.delete", data, contents.getIds() );
-        }
-        else
-        {
-            //TODO: get `pending delete` result for log
-        }
-
-    }
-
     void delete( final DeleteContentParams params, final DeleteContentsResult contents )
     {
         final PropertyTree data = new PropertyTree();

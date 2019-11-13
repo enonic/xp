@@ -27,9 +27,6 @@ public interface ContentService
 
     Content rename( RenameContentParams params );
 
-    @Deprecated
-    Contents delete( DeleteContentParams params );
-
     DeleteContentsResult deleteWithoutFetch( DeleteContentParams params );
 
     int undoPendingDelete( UndoPendingDeleteContentParams params );
