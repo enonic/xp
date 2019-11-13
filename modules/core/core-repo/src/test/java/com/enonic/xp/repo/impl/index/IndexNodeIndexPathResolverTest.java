@@ -22,10 +22,10 @@ public class IndexNodeIndexPathResolverTest
         Arguments.of( "A", ValueExpr.string( "test" ), "a" ) ,
         Arguments.of( "A.b", ValueExpr.string( "test" ), "a.b" ) ,
         Arguments.of( "A.B.c", ValueExpr.string( "test" ), "a.b.c" ) ,
-        Arguments.of( "A.b.c", ValueExpr.number( 1.0 ), "a.b.c._number" ) ,
-        Arguments.of( "A.B.C", ValueExpr.number( 1L ), "a.b.c._number" ) ,
-        Arguments.of( "A.B.C", ValueExpr.geoPoint( "80,80" ), "a.b.c._geopoint" ) ,
-        Arguments.of( "A.B.C", ValueExpr.instant( "2013-08-01T10:00:00.000Z" ), "a.b.c._datetime" )
+        Arguments.of( "A.b.c", ValueExpr.number( 1.0 ), "a.b.c@_number" ) ,
+        Arguments.of( "A.B.C", ValueExpr.number( 1L ), "a.b.c@_number" ) ,
+        Arguments.of( "A.B.C", ValueExpr.geoPoint( "80,80" ), "a.b.c@_geopoint" ) ,
+        Arguments.of( "A.B.C", ValueExpr.instant( "2013-08-01T10:00:00.000Z" ), "a.b.c@_datetime" )
         );
     }
 

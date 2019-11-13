@@ -10,7 +10,7 @@
             },
             "filter": {
                 "range": {
-                    "lastModified.date": {
+                    "lastModified@date": {
                         "from": null,
                         "to": "2013-01-01T01:01:00.000Z",
                         "include_lower": true,

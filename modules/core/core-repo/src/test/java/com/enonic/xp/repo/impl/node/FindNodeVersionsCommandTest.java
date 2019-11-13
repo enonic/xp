@@ -26,7 +26,7 @@ class FindNodeVersionsCommandTest
     extends AbstractNodeTest
 {
     @BeforeEach
-    void setUp()
+    void beforeEach()
         throws Exception
     {
         createDefaultRootNode();

@@ -63,7 +63,8 @@ public class FlattenedPageIndexUpgraderTest
         final PatternIndexConfigDocument newDocument = new FlattenedPageIndexUpgrader( descriptorKey, components ).
             upgrade( oldDocument );
 
-        assertEquals( getIndexConfigDocument( newIndexDocumentFile ), newDocument );
+        PatternIndexConfigDocument expected = getIndexConfigDocument( newIndexDocumentFile );
+        assertEquals( expected, newDocument );
     }
 
     private PatternIndexConfigDocument getIndexConfigDocument( final String name )

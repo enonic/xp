@@ -1,6 +1,6 @@
 {
   "range": {
-    "myfield._number": {
+    "myfield@_number": {
       "from": null,
       "to": 3.0,
       "include_lower": true,

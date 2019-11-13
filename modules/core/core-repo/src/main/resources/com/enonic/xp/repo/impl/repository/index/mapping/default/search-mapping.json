@@ -410,8 +410,8 @@
       "template_node_properties": {
         "match": "_*",
         "mapping": {
-          "type": "text",
-          "analyzer": "keywordlowercase",
+          "type": "keyword",
+          "normalizer": "lowercase",
           "ignore_above": 3072
         }
       }
@@ -420,8 +420,8 @@
       "template_metadata_strings": {
         "match": "*",
         "mapping": {
-          "type": "text",
-          "analyzer": "keywordlowercase",
+          "type": "keyword",
+          "normalizer": "lowercase",
           "ignore_above": 3072
         }
       }

@@ -2,7 +2,7 @@
   "bool": {
     "must_not": {
       "term": {
-        "myfield._number": 3.0
+        "myfield@_number": 3.0
       }
     }
   }

@@ -106,7 +106,7 @@ public class SetNodeChildOrderCommandTest
         {
             final Node currentNode = getNode( n );
 
-            assertTrue( previousOrderValue == null || currentNode.getManualOrderValue() > previousOrderValue ,
+            org.junit.jupiter.api.Assertions.assertTrue( previousOrderValue == null || currentNode.getManualOrderValue() > previousOrderValue ,
                     "Wrong orderValue, previousOrderValue = " + previousOrderValue + ", current = " + currentNode.getManualOrderValue());
 
             previousOrderValue = currentNode.getManualOrderValue();
@@ -140,10 +140,10 @@ public class SetNodeChildOrderCommandTest
             final Node currentNode = getNode( n );
 
             final boolean largerThanPreviousName = previousName.compareTo( currentNode.name().toString() ) < 0;
-            assertTrue( Objects.equals( previousName, "" ) || largerThanPreviousName ,
+            org.junit.jupiter.api.Assertions.assertTrue( Objects.equals( previousName, "" ) || largerThanPreviousName ,
                     "Wrong value, previousValue = " + previousName + ", current = " + currentNode.name());
 
-            assertTrue( previousOrderValue == null || currentNode.getManualOrderValue() < previousOrderValue,
+            org.junit.jupiter.api.Assertions.assertTrue( previousOrderValue == null || currentNode.getManualOrderValue() < previousOrderValue,
                     "Wrong orderValue, previousOrderValue = " + previousOrderValue + ", current = " + currentNode.getManualOrderValue());
 
             previousOrderValue = currentNode.getManualOrderValue();

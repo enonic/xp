@@ -162,9 +162,9 @@ public class PropertyTreeJsonTest
 
         assertEquals( "a", tree.getString( "arrayString" ) );
         assertEquals( "b", tree.getString( "arrayString[1]" ) );
-        assertEquals( "a", tree.getString( "arraySet[0]@string" ) );
-        assertEquals( "b", tree.getString( "arraySet[1]@string" ) );
-        assertEquals( "c", tree.getString( "arraySet[1]@string[1]" ) );
+        assertEquals( "a", tree.getString( "arraySet[0].string" ) );
+        assertEquals( "b", tree.getString( "arraySet[1].string" ) );
+        assertEquals( "c", tree.getString( "arraySet[1].string[1]" ) );
 
         assertEquals( sourceTree.toString(), tree.toString() );
     }

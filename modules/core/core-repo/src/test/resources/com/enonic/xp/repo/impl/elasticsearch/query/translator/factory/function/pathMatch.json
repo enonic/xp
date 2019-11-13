@@ -1,6 +1,6 @@
 {
   "match": {
-    "mypath._path": {
+    "mypath@_path": {
       "query": "/fisk",
       "operator": "OR",
       "prefix_length": 0,

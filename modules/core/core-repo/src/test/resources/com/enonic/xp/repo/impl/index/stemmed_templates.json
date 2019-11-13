@@ -9,7 +9,7 @@
           "analyzer": "language_analyzer_en",
           "include_in_all": false
         },
-        "match": "*._stemmed_en"
+        "match": "*@_stemmed_en"
       },
       "template_stemmed_no": {
         "mapping": {
@@ -19,7 +19,7 @@
           "analyzer": "language_analyzer_no",
           "include_in_all": false
         },
-        "match": "*._stemmed_no"
+        "match": "*@_stemmed_no"
       }
     }
   ]

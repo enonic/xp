@@ -1,6 +1,6 @@
 {
   "range": {
-    "myfield._datetime": {
+    "myfield@_datetime": {
       "from": "1975-08-01T10:00:00.000Z",
       "to": "1975-08-01T10:00:00.000Z",
       "include_lower": true,

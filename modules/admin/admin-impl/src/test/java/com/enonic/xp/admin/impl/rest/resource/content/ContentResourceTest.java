@@ -267,8 +267,8 @@ public class ContentResourceTest
         data.setLong( "myArray[0]", 1L );
         data.setLong( "myArray[1]", 2L );
 
-        data.setDouble( "mySetWithArray@myArray[0]", 3.14159 );
-        data.setDouble( "mySetWithArray@myArray[1]", 1.333 );
+        data.setDouble( "mySetWithArray.myArray[0]", 3.14159 );
+        data.setDouble( "mySetWithArray.myArray[1]", 1.333 );
 
         Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).
             thenReturn( content );
@@ -407,8 +407,8 @@ public class ContentResourceTest
         aContentData.setLong( "myArray[0]", 1L );
         aContentData.setLong( "myArray[1]", 2L );
 
-        aContentData.setDouble( "mySetWithArray@myArray[0]", 3.14159 );
-        aContentData.setDouble( "mySetWithArray@myArray[1]", 1.333 );
+        aContentData.setDouble( "mySetWithArray.myArray[0]", 3.14159 );
+        aContentData.setDouble( "mySetWithArray.myArray[1]", 1.333 );
 
         Mockito.when( contentService.getById( contentId ) ).thenReturn( aContent );
 

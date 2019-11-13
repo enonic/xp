@@ -45,7 +45,7 @@ public class FindNodesDependenciesCommandTest
             build().
             execute();
 
-        assertEquals( 2, dependants.getSize(), "Should contain [node1_1(r),node1_1_1(r), contains " + dependants.getAsStrings() );
+        org.junit.jupiter.api.Assertions.assertEquals( 2, dependants.getSize(), "Should contain [node1_1(r),node1_1_1(r), contains " + dependants.getAsStrings() );
     }
 
     @Test
@@ -78,7 +78,7 @@ public class FindNodesDependenciesCommandTest
             build().
             execute();
 
-        assertEquals( 1, dependants.getSize(), "Should contain 'node1_1', contains " + dependants.getAsStrings() );
+        org.junit.jupiter.api.Assertions.assertEquals( 1, dependants.getSize(), "Should contain 'node1_1', contains " + dependants.getAsStrings() );
     }
 
     @Test
@@ -99,7 +99,7 @@ public class FindNodesDependenciesCommandTest
             build().
             execute();
 
-        assertEquals( 1, dependants.getSize() , "Should contain [node1_1(r)], contains " + dependants.getAsStrings());
+        org.junit.jupiter.api.Assertions.assertEquals( 1, dependants.getSize() , "Should contain [node1_1(r)], contains " + dependants.getAsStrings());
     }
 
     @Test
@@ -120,7 +120,7 @@ public class FindNodesDependenciesCommandTest
             build().
             execute();
 
-        assertEquals( 2, dependants.getSize() , "Should contain [node1_1(r),node1_1_1(r), contains " + dependants.getAsStrings());
+        org.junit.jupiter.api.Assertions.assertEquals( 2, dependants.getSize() , "Should contain [node1_1(r),node1_1_1(r), contains " + dependants.getAsStrings());
     }
 
     @Test
@@ -145,8 +145,8 @@ public class FindNodesDependenciesCommandTest
             execute();
 
         assertEquals( 2, dependants.getSize() );
-        assertTrue( dependants.contains( node1_2.id() ) , "Should contain node1_2");
-        assertTrue( dependants.contains( NodeId.from( "n1_2_1" ) ) , "Should contain node1_2_1");
+        org.junit.jupiter.api.Assertions.assertTrue( dependants.contains( node1_2.id() ) , "Should contain node1_2");
+        org.junit.jupiter.api.Assertions.assertTrue( dependants.contains( NodeId.from( "n1_2_1" ) ) , "Should contain node1_2_1");
     }
 
 

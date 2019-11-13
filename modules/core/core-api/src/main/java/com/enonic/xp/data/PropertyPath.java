@@ -20,7 +20,7 @@ public final class PropertyPath
 {
     public final static PropertyPath ROOT = new PropertyPath();
 
-    public final static String ELEMENT_DIVIDER = "@";
+    public final static String ELEMENT_DIVIDER = ".";
 
     private final ImmutableList<Element> elements;
 

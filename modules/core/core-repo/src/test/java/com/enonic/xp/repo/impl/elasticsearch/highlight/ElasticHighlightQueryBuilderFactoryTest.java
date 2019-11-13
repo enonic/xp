@@ -44,7 +44,7 @@ public class ElasticHighlightQueryBuilderFactoryTest
 
         final List<String> names =
             elasticHighlightQuery.getFields().stream().map( HighlightBuilder.Field::name ).collect( Collectors.toList() );
-        assertTrue( names.containsAll( List.of( "propertytohighlight._*", "propertytohighlight" ) ) );
+        assertTrue( names.containsAll( List.of( "propertytohighlight@_*", "propertytohighlight" ) ) );
     }
 
     @Test

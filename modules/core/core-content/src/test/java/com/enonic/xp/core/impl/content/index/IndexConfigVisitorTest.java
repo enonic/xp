@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.content.index;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.PropertyPath;
@@ -13,6 +14,7 @@ import com.enonic.xp.inputtype.InputTypeName;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Disabled("Upgrade ES")
 public class IndexConfigVisitorTest
 {
     @Test

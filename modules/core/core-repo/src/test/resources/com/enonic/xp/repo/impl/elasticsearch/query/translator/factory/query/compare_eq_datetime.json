@@ -1,9 +1,9 @@
 {
   "term": {
-    "myfield._datetime": {
+    "myfield@_datetime": {
       "value": "2013-11-29T09:42:00.000Z",
       "boost": 1.0,
-      "_name": "myfield._datetime"
+      "_name": "myfield@_datetime"
     }
   }
 }

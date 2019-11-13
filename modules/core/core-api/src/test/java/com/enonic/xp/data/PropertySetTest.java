@@ -123,8 +123,8 @@ public class PropertySetTest
         PropertySet copy = setSource.copy( destinationTree );
         destinationTree.addSet( "setCopy", copy );
 
-        assertEquals( sourceTree.getProperty( "setSource@a[0]" ).getValue(), destinationTree.getProperty( "setCopy@a[0]" ).getValue() );
-        assertEquals( sourceTree.getProperty( "setSource@a[1]" ).getValue(), destinationTree.getProperty( "setCopy@a[1]" ).getValue() );
+        assertEquals( sourceTree.getProperty( "setSource.a[0]" ).getValue(), destinationTree.getProperty( "setCopy.a[0]" ).getValue() );
+        assertEquals( sourceTree.getProperty( "setSource.a[1]" ).getValue(), destinationTree.getProperty( "setCopy.a[1]" ).getValue() );
     }
 
     @Test
