@@ -31,7 +31,7 @@ public class BatchedGetCommitsExecutor
     {
         final NodeCommitQueryResult result = this.nodeService.findCommits( NodeCommitQuery.create( this.query ).
             from( 0 ).
-            size( 0 ).
+            size( 1000 ). // TODO Upgrade ES needs define correct size
             build() );
 
         return result.getTotalHits();

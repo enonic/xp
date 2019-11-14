@@ -90,7 +90,10 @@ public class SearchRequestBuilderFactory
 
     private SearchSourceBuilder setHighlightSettings( final SearchSourceBuilder builder, final ElasticHighlightQuery highlight )
     {
-        highlight.getFields().forEach( field -> builder.storedField( field.name() ) );
+//        TODO Upgrade ES
+//        builder.fetchSource( new FetchSourceContext( true,
+//                                                     (String[]) highlight.getFields().stream().map( HighlightBuilder.Field::name ).collect(
+//                                                         Collectors.toList() ).toArray(), Strings.EMPTY_ARRAY ) );
 
         final Encoder encoder = highlight.getEncoder();
         final TagsSchema tagsSchema = highlight.getTagsSchema();

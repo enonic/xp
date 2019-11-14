@@ -7,7 +7,6 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.PropertySet;
@@ -27,7 +26,6 @@ import com.enonic.xp.util.Reference;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Disabled("Upgrade ES")
 public class InputValidatorTest
 {
     private InputValidator inputValidator;

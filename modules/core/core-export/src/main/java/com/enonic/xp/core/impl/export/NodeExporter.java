@@ -142,7 +142,7 @@ public class NodeExporter
         // TODO: Batch this?
         final NodeVersionQueryResult versions = this.nodeService.findVersions( GetNodeVersionsParams.create().
             from( 0 ).
-            size( -1 ).
+            size( 10 ). // TODO Upgrade ES: needs to define correct size
             nodeId( node.id() ).
             build() );
 

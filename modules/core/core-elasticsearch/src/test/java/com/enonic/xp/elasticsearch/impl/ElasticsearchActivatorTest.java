@@ -14,6 +14,7 @@ import org.elasticsearch.cluster.ClusterService;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.transport.TransportService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -28,6 +29,7 @@ import com.enonic.xp.cluster.ClusterNodeId;
 import com.enonic.xp.cluster.NodeDiscovery;
 
 @Tag("elasticsearch")
+@Disabled("Embedded ES is deprecated for 7.4.x version of ES")
 public class ElasticsearchActivatorTest
 {
     private BundleContext context;

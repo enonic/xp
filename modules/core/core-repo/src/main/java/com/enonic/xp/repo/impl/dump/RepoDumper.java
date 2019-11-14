@@ -366,7 +366,7 @@ class RepoDumper
     {
         final NodeVersionQuery.Builder queryBuilder = NodeVersionQuery.create().
             nodeId( nodeId ).
-            size( this.maxVersions != null ? this.maxVersions : -1 );
+            size( this.maxVersions != null ? this.maxVersions : 10 ); // TODO Upgrade ES needs to define default size
 
         if ( this.maxAge != null )
         {

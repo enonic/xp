@@ -51,7 +51,7 @@
         "match": "*@_orderby",
         "mapping": {
           "type": "keyword",
-          "analyzer": "keywordlowercase",
+          "normalizer": "lowercase",
           "ignore_above": 3072
         }
       }

@@ -41,7 +41,7 @@ public class BatchedGetChildrenExecutor
 
     private long initTotalHits()
     {
-        final FindNodesByParentParams queryParams = createQuery( 0, 0 );
+        final FindNodesByParentParams queryParams = createQuery( 0, 1000 ); // TODO Upgrade ES needs define a correct
 
         final FindNodesByParentResult byParent = this.nodeService.findByParent( queryParams );
 
