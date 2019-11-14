@@ -148,7 +148,7 @@ public class ContentServiceImplTest_undoPendingDelete
 
         int result = resurrect( ContentIds.from( ContentIds.from( content.getId() ) ) );
 
-        Mockito.verify( auditLogService, Mockito.times( 3 ) ).log( captor.capture() );
+        Mockito.verify( auditLogService, Mockito.timeout( 5000 ).times( 3 ) ).log( captor.capture() );
 
         final PropertySet logResultSet = captor.getValue().getData().getSet( "result" );
 

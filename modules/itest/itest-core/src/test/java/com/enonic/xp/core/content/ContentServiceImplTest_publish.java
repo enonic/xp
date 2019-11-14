@@ -490,7 +490,7 @@ public class ContentServiceImplTest_publish
             includeDependencies( false ).
             build() );
 
-        Mockito.verify( auditLogService, Mockito.times( 2 ) ).log( captor.capture() );
+        Mockito.verify( auditLogService, Mockito.timeout( 5000 ).times( 2 ) ).log( captor.capture() );
 
         final PropertySet logResultSet = captor.getValue().getData().getSet( "result" );
 

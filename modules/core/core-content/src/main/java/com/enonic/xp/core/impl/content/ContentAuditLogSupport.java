@@ -1,6 +1,10 @@
 package com.enonic.xp.core.impl.content;
 
 import java.util.concurrent.Callable;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
@@ -57,14 +61,30 @@ class ContentAuditLogSupport
 {
     private static final String SOURCE_CORE_CONTENT = "com.enonic.xp.core-content";
 
+    private static final AtomicBoolean initialized = new AtomicBoolean( false );
+
+    private static ThreadPoolExecutor executor;
+
     private final AuditLogService auditLogService;
 
     private ContentAuditLogSupport( final Builder builder )
     {
         this.auditLogService = builder.auditLogService;
+
+        if ( !initialized.get() )
+        {
+            executor = new ThreadPoolExecutor( 0, Runtime.getRuntime().availableProcessors(), 0L, TimeUnit.MILLISECONDS,
+                                               new LinkedBlockingQueue<Runnable>(), new ThreadPoolExecutor.CallerRunsPolicy() );
+            initialized.set( true );
+        }
     }
 
     void createSite( final CreateSiteParams params, final Site site )
+    {
+        executor.execute( () -> doCreateSite( params, site ) );
+    }
+
+    private void doCreateSite( final CreateSiteParams params, final Site site )
     {
         final PropertyTree data = new PropertyTree();
         final PropertySet paramsSet = data.addSet( "params" );
@@ -81,6 +101,11 @@ class ContentAuditLogSupport
     }
 
     void createContent( final CreateContentParams params, final Content content )
+    {
+        executor.execute( () -> doCreateContent( params, content ) );
+    }
+
+    private void doCreateContent( final CreateContentParams params, final Content content )
     {
         final PropertyTree data = new PropertyTree();
         final PropertySet paramsSet = data.addSet( "params" );
@@ -110,6 +135,11 @@ class ContentAuditLogSupport
 
     void createMedia( final CreateMediaParams params, final Content content )
     {
+        executor.execute( () -> doCreateMedia( params, content ) );
+    }
+
+    private void doCreateMedia( final CreateMediaParams params, final Content content )
+    {
         final PropertyTree data = new PropertyTree();
         final PropertySet paramsSet = data.addSet( "params" );
         final PropertySet resultSet = data.addSet( "result" );
@@ -131,6 +161,11 @@ class ContentAuditLogSupport
 
     void update( final UpdateContentParams params, final Content content )
     {
+        executor.execute( () -> doUpdate( params, content ) );
+    }
+
+    private void doUpdate( final UpdateContentParams params, final Content content )
+    {
         final PropertyTree data = new PropertyTree();
         final PropertySet paramsSet = data.addSet( "params" );
         final PropertySet resultSet = data.addSet( "result" );
@@ -146,6 +181,11 @@ class ContentAuditLogSupport
     }
 
     void update( final UpdateMediaParams params, final Content content )
+    {
+        executor.execute( () -> doUpdate( params, content ) );
+    }
+
+    private void doUpdate( final UpdateMediaParams params, final Content content )
     {
         final PropertyTree data = new PropertyTree();
         final PropertySet paramsSet = data.addSet( "params" );
@@ -168,6 +208,11 @@ class ContentAuditLogSupport
 
     void delete( final DeleteContentParams params, final DeleteContentsResult contents )
     {
+        executor.execute( () -> doDelete( params, contents ) );
+    }
+
+    private void doDelete( final DeleteContentParams params, final DeleteContentsResult contents )
+    {
         final PropertyTree data = new PropertyTree();
         final PropertySet paramsSet = data.addSet( "params" );
         final PropertySet resultSet = data.addSet( "result" );
@@ -185,6 +230,11 @@ class ContentAuditLogSupport
     }
 
     void undoPendingDelete( final UndoPendingDeleteContentParams params, final Contents contents )
+    {
+        executor.execute( () -> doUndoPendingDelete( params, contents ) );
+    }
+
+    private void doUndoPendingDelete( final UndoPendingDeleteContentParams params, final Contents contents )
     {
         if ( params.getContentIds() == null )
         {
@@ -204,6 +254,11 @@ class ContentAuditLogSupport
     }
 
     void publish( final PublishContentParams params, final PublishContentResult result )
+    {
+        executor.execute( () -> doPublish( params, result ) );
+    }
+
+    private void doPublish( final PublishContentParams params, final PublishContentResult result )
     {
         if ( params.getContentIds() == null )
         {
@@ -253,6 +308,11 @@ class ContentAuditLogSupport
 
     void unpublishContent( final UnpublishContentParams params, final UnpublishContentsResult result )
     {
+        executor.execute( () -> doUnpublishContent( params, result ) );
+    }
+
+    private void doUnpublishContent( final UnpublishContentParams params, final UnpublishContentsResult result )
+    {
         if ( params.getContentIds() == null )
         {
             return;
@@ -277,6 +337,11 @@ class ContentAuditLogSupport
 
     void duplicate( final DuplicateContentParams params, final DuplicateContentsResult result )
     {
+        executor.execute( () -> doDuplicate( params, result ) );
+    }
+
+    private void doDuplicate( final DuplicateContentParams params, final DuplicateContentsResult result )
+    {
         if ( params.getContentId() == null )
         {
             return;
@@ -293,13 +358,17 @@ class ContentAuditLogSupport
             paramsSet.addString( "creator", params.getCreator().getId() );
         }
 
-        resultSet.addStrings( "duplicatedContents",
-                              result.getDuplicatedContents().stream().map( ContentId::toString ).collect( Collectors.toSet() ) );
+        resultSet.addStrings( "duplicatedContents", result.getDuplicatedContents().stream().map( ContentId::toString ).collect( Collectors.toSet() ) );
 
         log( "system.content.duplicate", data, result.getDuplicatedContents() );
     }
 
     void move( final MoveContentParams params, MoveContentsResult result )
+    {
+        executor.execute( () -> doMove( params, result ) );
+    }
+
+    private void doMove( final MoveContentParams params, MoveContentsResult result )
     {
         final PropertyTree data = new PropertyTree();
         final PropertySet paramsSet = data.addSet( "params" );
@@ -319,6 +388,12 @@ class ContentAuditLogSupport
 
     void rename( final RenameContentParams params, final Content content )
     {
+        executor.execute( () -> doRename( params, content ) );
+
+    }
+
+    private void doRename( final RenameContentParams params, final Content content )
+    {
         final PropertyTree data = new PropertyTree();
         final PropertySet paramsSet = data.addSet( "params" );
         final PropertySet resultSet = data.addSet( "result" );
@@ -332,6 +407,11 @@ class ContentAuditLogSupport
     }
 
     void setActiveContentVersion( final ContentId contentId, final ContentVersionId versionId )
+    {
+        executor.execute( () -> doSetActiveContentVersion( contentId, versionId ) );
+    }
+
+    private void doSetActiveContentVersion( final ContentId contentId, final ContentVersionId versionId )
     {
         final PropertyTree data = new PropertyTree();
         final PropertySet paramsSet = data.addSet( "params" );
@@ -348,6 +428,12 @@ class ContentAuditLogSupport
 
     void setChildOrder( final SetContentChildOrderParams params, final Content content )
     {
+        executor.execute( () -> doSetChildOrder( params, content ) );
+
+    }
+
+    private void doSetChildOrder( final SetContentChildOrderParams params, final Content content )
+    {
         final PropertyTree data = new PropertyTree();
         final PropertySet paramsSet = data.addSet( "params" );
         final PropertySet resultSet = data.addSet( "result" );
@@ -362,6 +448,12 @@ class ContentAuditLogSupport
 
     void reorderChildren( final ReorderChildContentsParams params, final ReorderChildContentsResult result )
     {
+        executor.execute( () -> doReorderChildren( params, result ) );
+
+    }
+
+    private void doReorderChildren( final ReorderChildContentsParams params, final ReorderChildContentsResult result )
+    {
         final PropertyTree data = new PropertyTree();
         final PropertySet paramsSet = data.addSet( "params" );
         final PropertySet resultSet = data.addSet( "result" );
@@ -375,6 +467,11 @@ class ContentAuditLogSupport
     }
 
     void applyPermissions( final ApplyContentPermissionsParams params, final ApplyContentPermissionsResult result )
+    {
+        executor.execute( () -> doApplyPermissions( params, result ) );
+    }
+
+    private void doApplyPermissions( final ApplyContentPermissionsParams params, final ApplyContentPermissionsResult result )
     {
         final PropertyTree data = new PropertyTree();
         final PropertySet paramsSet = data.addSet( "params" );
@@ -397,6 +494,11 @@ class ContentAuditLogSupport
     }
 
     void reprocess( final Content content )
+    {
+        executor.execute( () -> doReprocess( content ) );
+    }
+
+    private void doReprocess( final Content content )
     {
         final ContentId contentId = content.getId();
 

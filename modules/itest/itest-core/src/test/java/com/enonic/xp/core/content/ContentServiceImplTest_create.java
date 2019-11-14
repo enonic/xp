@@ -217,7 +217,8 @@ public class ContentServiceImplTest_create
             build();
 
         final Content content = this.contentService.create( createContentParams );
-        Mockito.verify( auditLogService ).log( captor.capture() );
+
+        Mockito.verify( auditLogService, Mockito.timeout( 5000 ).times( 1 ) ).log( captor.capture() );
 
         final PropertySet logResultSet = captor.getValue().getData().getSet( "result" );
 
