@@ -61,7 +61,7 @@ class ContentAuditLogSupport
 {
     private static final String SOURCE_CORE_CONTENT = "com.enonic.xp.core-content";
 
-    private static final AtomicBoolean initialized = new AtomicBoolean( false );
+    private static final AtomicBoolean INITIALIZED = new AtomicBoolean( false );
 
     private static ThreadPoolExecutor executor;
 
@@ -71,11 +71,11 @@ class ContentAuditLogSupport
     {
         this.auditLogService = builder.auditLogService;
 
-        if ( !initialized.get() )
+        if ( !INITIALIZED.get() )
         {
             executor = new ThreadPoolExecutor( 0, Runtime.getRuntime().availableProcessors(), 0L, TimeUnit.MILLISECONDS,
                                                new LinkedBlockingQueue<Runnable>(), new ThreadPoolExecutor.CallerRunsPolicy() );
-            initialized.set( true );
+            INITIALIZED.set( true );
         }
     }
 
