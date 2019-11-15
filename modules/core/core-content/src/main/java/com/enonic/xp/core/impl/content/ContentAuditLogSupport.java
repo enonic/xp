@@ -4,7 +4,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
@@ -34,8 +33,8 @@ import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.DuplicateContentsResult;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
-import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.PublishContentResult;
+import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
@@ -61,22 +60,19 @@ class ContentAuditLogSupport
 {
     private static final String SOURCE_CORE_CONTENT = "com.enonic.xp.core-content";
 
-    private static final AtomicBoolean INITIALIZED = new AtomicBoolean( false );
+    private static final int THREAD_POOL_SIZE = Runtime.getRuntime().availableProcessors();
 
-    private static ThreadPoolExecutor executor;
+    private static final int QUEUE_SIZE = 100;
+
+    private static final ThreadPoolExecutor executor =
+        new ThreadPoolExecutor( 0, THREAD_POOL_SIZE, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>( QUEUE_SIZE ),
+                                new ThreadPoolExecutor.CallerRunsPolicy() );
 
     private final AuditLogService auditLogService;
 
     private ContentAuditLogSupport( final Builder builder )
     {
         this.auditLogService = builder.auditLogService;
-
-        if ( !INITIALIZED.get() )
-        {
-            executor = new ThreadPoolExecutor( 0, Runtime.getRuntime().availableProcessors(), 0L, TimeUnit.MILLISECONDS,
-                                               new LinkedBlockingQueue<Runnable>(), new ThreadPoolExecutor.CallerRunsPolicy() );
-            INITIALIZED.set( true );
-        }
     }
 
     void createSite( final CreateSiteParams params, final Site site )
@@ -358,7 +354,8 @@ class ContentAuditLogSupport
             paramsSet.addString( "creator", params.getCreator().getId() );
         }
 
-        resultSet.addStrings( "duplicatedContents", result.getDuplicatedContents().stream().map( ContentId::toString ).collect( Collectors.toSet() ) );
+        resultSet.addStrings( "duplicatedContents",
+                              result.getDuplicatedContents().stream().map( ContentId::toString ).collect( Collectors.toSet() ) );
 
         log( "system.content.duplicate", data, result.getDuplicatedContents() );
     }
