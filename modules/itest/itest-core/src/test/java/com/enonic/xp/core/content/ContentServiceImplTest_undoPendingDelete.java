@@ -1,13 +1,17 @@
 package com.enonic.xp.core.content;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
 
+import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.UndoPendingDeleteContentParams;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeState;
@@ -133,5 +137,22 @@ public class ContentServiceImplTest_undoPendingDelete
             build() );
 
         return content;
+    }
+
+    @Test
+    public void audit_data()
+    {
+        final ArgumentCaptor<LogAuditLogParams> captor = ArgumentCaptor.forClass( LogAuditLogParams.class );
+
+        final Content content = this.createTestContent( "myContent" );
+
+        int result = resurrect( ContentIds.from( ContentIds.from( content.getId() ) ) );
+
+        Mockito.verify( auditLogService, Mockito.times( 3 ) ).log( captor.capture() );
+
+        final PropertySet logResultSet = captor.getValue().getData().getSet( "result" );
+
+        assertEquals( content.getId().toString(), logResultSet.getString( "id" ) );
+        assertEquals( content.getPath().toString(), logResultSet.getString( "path" ) );
     }
 }

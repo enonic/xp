@@ -13,8 +13,6 @@ public class AuditLogPropertyNames
 
     public static final String USER = "user";
 
-    public static final String MESSAGE = "message";
-
     public static final String OBJECTURIS = "objects";
 
     public static final String DATA = "data";
