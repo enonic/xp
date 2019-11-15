@@ -254,7 +254,7 @@ class ContentAuditLogSupport
         executor.execute( () -> doPublish( params, result ) );
     }
 
-    private void doPublish( final PublishContentParams params, final PublishContentResult result )
+    private void doPublish( final PushContentParams params, final PublishContentResult result )
     {
         if ( params.getContentIds() == null )
         {
