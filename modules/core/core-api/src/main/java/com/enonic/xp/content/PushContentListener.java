@@ -1,6 +1,6 @@
 package com.enonic.xp.content;
 
-public interface PublishContentListener
+public interface PushContentListener
 {
     void contentPushed( int count );
 

@@ -69,7 +69,7 @@ import com.enonic.xp.content.GetPublishStatusesResult;
 import com.enonic.xp.content.HasUnpublishedChildrenParams;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
-import com.enonic.xp.content.PublishContentParams;
+import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PublishStatus;
 import com.enonic.xp.content.RenameContentParams;
@@ -409,7 +409,7 @@ public class ContentServiceImpl
     }
 
     @Override
-    public PublishContentResult publish( final PublishContentParams params )
+    public PublishContentResult publish( final PushContentParams params )
     {
         final PublishContentResult result = PublishContentCommand.create().
             nodeService( this.nodeService ).
@@ -433,7 +433,7 @@ public class ContentServiceImpl
         return result;
     }
 
-    private ContentIds getExcludeChildrenIds( final PublishContentParams params )
+    private ContentIds getExcludeChildrenIds( final PushContentParams params )
     {
         if ( params.getExcludeChildrenIds().isNotEmpty() )
         {

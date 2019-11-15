@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import com.enonic.xp.content.PublishContentException;
+import com.enonic.xp.content.PushContentException;
 import com.enonic.xp.market.MarketException;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceNotFoundException;
@@ -80,7 +80,7 @@ public class JsonExceptionMapperTest
     @Test
     public void testToResponse_PushContentException()
     {
-        final Response res = this.mapper.toResponse( new PublishContentException( "test" ) );
+        final Response res = this.mapper.toResponse( new PushContentException( "test" ) );
         assertEquals( 400, res.getStatus() );
     }
 

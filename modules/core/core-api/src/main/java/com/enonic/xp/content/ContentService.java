@@ -31,7 +31,7 @@ public interface ContentService
 
     int undoPendingDelete( UndoPendingDeleteContentParams params );
 
-    PublishContentResult publish( PublishContentParams params );
+    PublishContentResult publish( PushContentParams params );
 
     UnpublishContentsResult unpublishContent( UnpublishContentParams params );
 

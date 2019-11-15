@@ -14,7 +14,7 @@ public final class UnpublishContentParams
 
     private final Branch unpublishBranch;
 
-    private final PublishContentListener publishContentListener;
+    private final PushContentListener publishContentListener;
 
     private UnpublishContentParams( final Builder builder )
     {
@@ -66,7 +66,7 @@ public final class UnpublishContentParams
         return new Builder();
     }
 
-    public PublishContentListener getPublishContentListener()
+    public PushContentListener getPublishContentListener()
     {
         return publishContentListener;
     }
@@ -79,7 +79,7 @@ public final class UnpublishContentParams
 
         private boolean includeChildren;
 
-        private PublishContentListener publishContentListener;
+        private PushContentListener publishContentListener;
 
         private Builder()
         {
@@ -109,7 +109,7 @@ public final class UnpublishContentParams
             Preconditions.checkNotNull( unpublishBranch, "unpublishBranch must be set" );
         }
 
-        public Builder pushListener( final PublishContentListener publishContentListener )
+        public Builder pushListener( final PushContentListener publishContentListener )
         {
             this.publishContentListener = publishContentListener;
             return this;

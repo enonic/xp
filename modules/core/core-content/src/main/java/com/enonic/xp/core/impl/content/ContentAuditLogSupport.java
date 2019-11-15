@@ -30,7 +30,7 @@ import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.DuplicateContentsResult;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
-import com.enonic.xp.content.PublishContentParams;
+import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.ReorderChildContentsParams;
@@ -203,7 +203,7 @@ class ContentAuditLogSupport
         log( "system.content.delete", data, contents.getIds() );
     }
 
-    void publish( final PublishContentParams params, final PublishContentResult result )
+    void publish( final PushContentParams params, final PublishContentResult result )
     {
         if ( params.getContentIds() == null )
         {

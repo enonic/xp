@@ -3,11 +3,11 @@ package com.enonic.xp.content;
 import com.google.common.annotations.Beta;
 
 @Beta
-public class PublishContentException
+public class PushContentException
     extends RuntimeException
 {
 
-    public PublishContentException( final String message )
+    public PushContentException( final String message )
     {
         super( message );
     }

@@ -12,7 +12,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.Contents;
-import com.enonic.xp.content.PublishContentParams;
+import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.PrincipalKey;
@@ -73,7 +73,7 @@ public class PublishContentHandlerTest
         Mockito.when( this.contentService.getByPath( ContentPath.from( "/mysite/somepage" ) ) ).thenReturn( content );
 
         ContentIds ids = ContentIds.from( PUB_ID_1, FAIL_ID );
-        PublishContentParams pushParams = PublishContentParams.create().
+        PushContentParams pushParams = PushContentParams.create().
             contentIds( ids ).
             target( Branch.from( "master" ) ).
             includeDependencies( false ).
@@ -90,7 +90,7 @@ public class PublishContentHandlerTest
     {
         ContentIds ids = ContentIds.from( PUB_ID_2, DEL_ID, FAIL_ID );
 
-        PublishContentParams pushParams = PublishContentParams.create().
+        PushContentParams pushParams = PushContentParams.create().
             contentIds( ids ).
             target( Branch.from( "draft" ) ).
             build();
@@ -110,7 +110,7 @@ public class PublishContentHandlerTest
         Mockito.when( this.contentService.getByPath( ContentPath.from( "/yourfolder/yourcontent" ) ) ).thenReturn( yourContent );
 
         ContentIds ids = ContentIds.from( PUB_ID_2, PUB_ID_3 );
-        PublishContentParams pushParams = PublishContentParams.create().
+        PushContentParams pushParams = PushContentParams.create().
             contentIds( ids ).
             target( Branch.from( "master" ) ).
             build();
@@ -131,7 +131,7 @@ public class PublishContentHandlerTest
 
         ContentIds ids = ContentIds.from( PUB_ID_3 );
 
-        PublishContentParams pushParams = PublishContentParams.create().
+        PushContentParams pushParams = PushContentParams.create().
             contentIds( ids ).
             target( Branch.from( "master" ) ).
             excludeChildrenIds( ids ).
@@ -148,7 +148,7 @@ public class PublishContentHandlerTest
     {
         ContentIds ids = ContentIds.from( PUB_ID_2, DEL_ID, FAIL_ID );
 
-        PublishContentParams pushParams = PublishContentParams.create().
+        PushContentParams pushParams = PushContentParams.create().
             contentIds( ids ).
             target( Branch.from( "draft" ) ).
             message( "My first publish" ).

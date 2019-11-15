@@ -9,7 +9,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.PublishContentParams;
+import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.UndoPendingDeleteContentParams;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -124,7 +124,7 @@ public class ContentServiceImplTest_undoPendingDelete
 
         final Content content = this.contentService.create( createContentParams );
 
-        this.contentService.publish( PublishContentParams.create().
+        this.contentService.publish( PushContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
             target( WS_OTHER ).
             includeDependencies( false ).

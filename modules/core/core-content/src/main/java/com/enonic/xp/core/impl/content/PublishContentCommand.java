@@ -16,7 +16,7 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentValidityResult;
 import com.enonic.xp.content.DeleteContentListener;
-import com.enonic.xp.content.PublishContentListener;
+import com.enonic.xp.content.PushContentListener;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -53,7 +53,7 @@ public class PublishContentCommand
 
     private final PublishContentResult.Builder resultBuilder;
 
-    private final PublishContentListener publishContentListener;
+    private final PushContentListener publishContentListener;
 
     private final DeleteContentListener deleteNodeListener;
 
@@ -287,7 +287,7 @@ public class PublishContentCommand
 
         private boolean includeDependencies = true;
 
-        private PublishContentListener publishContentListener;
+        private PushContentListener publishContentListener;
 
         private DeleteContentListener deleteNodeListener;
 
@@ -339,7 +339,7 @@ public class PublishContentCommand
             return this;
         }
 
-        public Builder pushListener( final PublishContentListener publishContentListener )
+        public Builder pushListener( final PushContentListener publishContentListener )
         {
             this.publishContentListener = publishContentListener;
             return this;
