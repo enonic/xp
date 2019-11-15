@@ -45,6 +45,7 @@ public final class ContentResource
 
     @POST
     @Path("reprocess")
+    @Deprecated
     public ReprocessContentResultJson reprocess( final ReprocessContentRequestJson request )
     {
         final List<ContentPath> updated = new ArrayList<>();
@@ -65,6 +66,7 @@ public final class ContentResource
         return new ReprocessContentResultJson( ContentPaths.from( updated ), errors );
     }
 
+    @Deprecated
     private void reprocessContent( final Content content, final boolean skipChildren, final List<ContentPath> updated,
                                    final List<String> errors )
     {

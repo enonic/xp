@@ -58,7 +58,6 @@ public class ReprocessRunnableTask
             {
                 ConstraintExpr pathExpr = CompareExpr.like( FieldExpr.from( "_path" ), ValueExpr.string(
                     "/content/" + content.getPath().asRelative().toString() + "/*" ) );
-                //ConstraintExpr typeExpr = CompareExpr.like( FieldExpr.from( "_type" ), ValueExpr.string( "media:*" ) );
                 ContentQuery countChildren = ContentQuery.create().queryExpr( QueryExpr.from( pathExpr ) ).size( 0 ).build();
 
                 total = (int) contentService.find( countChildren ).getTotalHits();
