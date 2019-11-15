@@ -5,6 +5,7 @@
       "fiskebolle._ngram"
     ],
     "analyzer": "ngram_search_default",
-    "default_operator": "or"
+    "default_operator": "or",
+    "analyze_wildcard": true
   }
 }

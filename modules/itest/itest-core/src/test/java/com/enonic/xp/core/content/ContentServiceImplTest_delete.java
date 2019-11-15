@@ -18,7 +18,7 @@ import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.MoveContentParams;
-import com.enonic.xp.content.PublishContentParams;
+import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -137,7 +137,7 @@ public class ContentServiceImplTest_delete
 
         refresh();
 
-        final PublishContentResult result = this.contentService.publish( PublishContentParams.create().
+        final PublishContentResult result = this.contentService.publish( PushContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
             target( CTX_OTHER.getBranch() ).
             build() );
@@ -203,7 +203,7 @@ public class ContentServiceImplTest_delete
         final Content subChildContent = this.contentService.create( createSubChildContentParams );
 
         //Publishes the content
-        final PublishContentParams pushParams = PublishContentParams.create().
+        final PushContentParams pushParams = PushContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
             target( CTX_OTHER.getBranch() ).
             build();
@@ -252,7 +252,7 @@ public class ContentServiceImplTest_delete
 
         refresh();
 
-        final PublishContentResult result = this.contentService.publish( PublishContentParams.create().
+        final PublishContentResult result = this.contentService.publish( PushContentParams.create().
             contentIds( ContentIds.from( parent.getId() ) ).
             target( CTX_OTHER.getBranch() ).
             build() );

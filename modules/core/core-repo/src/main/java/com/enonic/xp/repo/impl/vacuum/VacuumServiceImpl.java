@@ -100,7 +100,7 @@ public class VacuumServiceImpl
         {
             return ageThreshold.toMillis();
         }
-        return Duration.ofMinutes( config.ageThresholdMinutes() ).toMillis();
+        return Duration.parse( config.ageThreshold() ).toMillis();
     }
 
     @SuppressWarnings("WeakerAccess")

@@ -5,7 +5,7 @@ import java.time.Instant;
 import com.enonic.xp.content.ContentIndexPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentPublishInfo;
-import com.enonic.xp.content.PublishContentListener;
+import com.enonic.xp.content.PushContentListener;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeId;
@@ -24,7 +24,7 @@ public class SetPublishInfoCommand
 
     private final ContentPublishInfo contentPublishInfo;
 
-    private final PublishContentListener publishContentListener;
+    private final PushContentListener publishContentListener;
 
     private SetPublishInfoCommand( final Builder builder )
     {
@@ -145,7 +145,7 @@ public class SetPublishInfoCommand
 
         private ContentPublishInfo contentPublishInfo;
 
-        private PublishContentListener publishContentListener;
+        private PushContentListener publishContentListener;
 
         public Builder()
         {
@@ -168,7 +168,7 @@ public class SetPublishInfoCommand
             return this;
         }
 
-        public SetPublishInfoCommand.Builder pushListener( final PublishContentListener publishContentListener )
+        public SetPublishInfoCommand.Builder pushListener( final PushContentListener publishContentListener )
         {
             this.publishContentListener = publishContentListener;
             return this;

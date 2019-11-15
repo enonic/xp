@@ -7,7 +7,7 @@ import com.google.common.annotations.Beta;
 import com.enonic.xp.branch.Branch;
 
 @Beta
-public class PublishContentParams
+public class PushContentParams
 {
     private final ContentIds contentIds;
 
@@ -23,13 +23,13 @@ public class PublishContentParams
 
     private final boolean includeDependencies;
 
-    private final PublishContentListener publishContentListener;
+    private final PushContentListener publishContentListener;
 
     private final DeleteContentListener deleteContentListener;
 
     private final String message;
 
-    private PublishContentParams( Builder builder )
+    private PushContentParams( Builder builder )
     {
         contentIds = builder.contentIds;
         excludedContentIds = builder.excludedContentIds;
@@ -84,7 +84,7 @@ public class PublishContentParams
         return includeDependencies;
     }
 
-    public PublishContentListener getPublishContentListener()
+    public PushContentListener getPublishContentListener()
     {
         return publishContentListener;
     }
@@ -110,7 +110,7 @@ public class PublishContentParams
         {
             return false;
         }
-        final PublishContentParams that = (PublishContentParams) o;
+        final PushContentParams that = (PushContentParams) o;
         return includeChildren == that.includeChildren && includeDependencies == that.includeDependencies &&
             Objects.equals( excludeChildrenIds, that.excludeChildrenIds ) && Objects.equals( contentIds, that.contentIds ) &&
             Objects.equals( excludedContentIds, that.excludedContentIds ) && Objects.equals( target, that.target ) &&
@@ -141,7 +141,7 @@ public class PublishContentParams
 
         private boolean includeDependencies = true;
 
-        private PublishContentListener publishContentListener;
+        private PushContentListener publishContentListener;
 
         private DeleteContentListener deleteContentListener;
 
@@ -195,7 +195,7 @@ public class PublishContentParams
             return this;
         }
 
-        public Builder pushListener( final PublishContentListener publishContentListener )
+        public Builder pushListener( final PushContentListener publishContentListener )
         {
             this.publishContentListener = publishContentListener;
             return this;
@@ -213,9 +213,9 @@ public class PublishContentParams
             return this;
         }
 
-        public PublishContentParams build()
+        public PushContentParams build()
         {
-            return new PublishContentParams( this );
+            return new PushContentParams( this );
         }
     }
 }

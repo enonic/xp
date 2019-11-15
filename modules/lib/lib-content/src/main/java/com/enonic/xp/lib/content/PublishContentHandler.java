@@ -13,7 +13,7 @@ import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.content.PublishContentParams;
+import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -80,7 +80,7 @@ public final class PublishContentHandler
             }
         }
 
-        final PublishContentParams.Builder builder = PublishContentParams.create();
+        final PushContentParams.Builder builder = PushContentParams.create();
         builder.contentIds( ContentIds.from( contentIds ) );
         builder.target( Branch.from( targetBranch ) );
         if ( this.contentPublishInfo != null )
