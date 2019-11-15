@@ -1,5 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.issue;
 
+import com.enonic.xp.issue.IssueStatus;
+
 public class IssueUpdatedMailMessageGenerator
     extends IssueMailMessageGenerator<IssueUpdatedNotificationParams>
 {
@@ -11,8 +13,14 @@ public class IssueUpdatedMailMessageGenerator
     @Override
     protected String generateMessageSubject()
     {
-        return String.format( "Issue \"%s\" (#%d) was updated by %s", params.getIssue().getTitle(), params.getIssue().getIndex(),
-                              params.getModifier().getDisplayName() );
+        return String.format( "Re: %s (#%d)", params.getIssue().getTitle(), params.getIssue().getIndex() );
+    }
+
+    @Override
+    protected String generateMessageTitle()
+    {
+        return String.format( "%s %s the issue", params.getCreator().getDisplayName(),
+                              params.getIssue().getStatus() == IssueStatus.CLOSED ? "closed" : "reopened" );
     }
 
     @Override

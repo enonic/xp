@@ -3,12 +3,18 @@
         <div style="float: right; margin-left: 15px;">${approvers}</div>
 
         <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 32 32"
-             style="float: left; color: black; margin-right: 15px;">
+             style="float: left; color: black; margin-right: 15px; display: ${display-issue-icon}">
             <path d="M14 24.828l-6.414-7.414 1.828-1.828 4.586 3.586 8.586-7.586 1.829 1.828zM25.993 4c0.002 0.002 0.005 0.005 0.007 0.007v23.986c-0.002 0.002-0.005 0.005-0.007 0.007h-19.986c-0.003-0.002-0.005-0.005-0.007-0.007v-23.986c0.002-0.003 0.005-0.005 0.007-0.007h-4.007v24c0 2.2 1.8 4 4 4h20c2.2 0 4-1.8 4-4v-24h-4.007zM20 4v-2c0-1.105-0.895-2-2-2h-4c-1.105 0-2 0.895-2 2v2h-4v4h16v-4h-4zM18 4h-4v-2h4v2z"></path>
         </svg>
 
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="26.25" height="30" viewBox="0 0 28 32"
+             style="float: left; color: black; margin-right: 15px;; display: ${display-request-icon}">
+            <title>hash</title>
+            <path d="M28 12v-4h-5.004l1-8h-4l-1 8h-7.998l1-8h-4l-1 8h-6.998v4h6.498l-0.998 8h-5.5v4h5l-1 8h4l1-8h7.998l-1 8h4.002l1-8h7v-4h-6.5l0.996-8h5.504zM17.498 20h-7.998l0.998-8h7.998l-0.998 8z"></path>
+        </svg>
+
         <div style="line-height: 30px;font-size: 20px;">
-            <b>${title}</b> (#${index})
+            <b>${title}</b>
         </div>
     </div>
     <div style="margin-bottom: 25px;">
@@ -27,12 +33,7 @@
         </a>
     </div>
     <div style="margin-bottom: 40px; font-size: 16px; display: ${comments-block-visibility}">
-        <div style="margin-bottom: 15px;">Comments<span
-                style="display: ${comments-trimmed-text-visibility}; margin-left: 10px;">(Showing the 5 latest)</span>
-        </div>
+        <div style="margin-bottom: 15px;">Latest comment</div>
         ${comments}
     </div>
-    <div style="margin-bottom: 15px; font-size: 16px; display: ${issue-block-visibility};">Issue Items (${issuesNum})</div>
-    <div style="font-size: 16px; color: #aaa; display: ${no-issues-block-visibility};">This issue has no items</div>
-    ${items}
 </div>

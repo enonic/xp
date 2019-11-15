@@ -22,6 +22,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.issue.IssueComment;
 import com.enonic.xp.issue.IssueStatus;
+import com.enonic.xp.issue.IssueType;
 import com.enonic.xp.mail.MailMessage;
 import com.enonic.xp.security.User;
 
@@ -55,11 +56,18 @@ public abstract class IssueMailMessageGenerator<P extends IssueNotificationParam
 
     protected abstract String generateMessageSubject();
 
+    protected abstract String generateMessageTitle();
+
     protected abstract String generateRecipients();
 
     protected abstract String getSender();
 
     protected abstract String getCopyRecepients();
+
+    protected boolean shouldShowComments()
+    {
+        return false;
+    }
 
     protected String getApproverEmails()
     {
@@ -82,27 +90,24 @@ public abstract class IssueMailMessageGenerator<P extends IssueNotificationParam
     private String generateMessageBody()
     {
         final Map messageParams = new HashMap<>();
-        final int itemCount = params.getIssue().getPublishRequest().getItems().getSize();
-        final int commentsCount = params.getComments().size();
+        final boolean showComments = this.shouldShowComments();
         final String description = params.getIssue().getDescription();
+        final boolean isRequest = params.getIssue().getIssueType() == IssueType.PUBLISH_REQUEST;
 
         messageParams.put( "id", params.getIssue().getId().toString() );
         messageParams.put( "index", params.getIssue().getIndex() );
+        messageParams.put( "display-issue-icon", isRequest ? "none" : "block" );
+        messageParams.put( "display-request-icon", isRequest ? "block" : "none" );
         messageParams.put( "idShort", params.getIssue().getId().toString().substring( 0, 9 ) );
-        messageParams.put( "title", params.getIssue().getTitle() );
+        messageParams.put( "title", generateMessageTitle() );
         messageParams.put( "status", params.getIssue().getStatus() );
-        messageParams.put( "statusBgColor", params.getIssue().getStatus() == IssueStatus.OPEN ? "#609e24" : "#777" );
+        messageParams.put( "statusBgColor", params.getIssue().getStatus() == IssueStatus.OPEN ? "#2c76e9" : "#777" );
         messageParams.put( "creator", params.getIssue().getCreator().getId() );
-        messageParams.put( "issuesNum", itemCount );
         messageParams.put( "description", description );
         messageParams.put( "url", params.getUrl() + "#/issue/" + params.getIssue().getId().toString() );
-        messageParams.put( "items", generateItemsHtml() );
         messageParams.put( "approvers", generateApproversHtml() );
         messageParams.put( "description-block-visibility", description.length() == 0 ? "none" : "block" );
-        messageParams.put( "issue-block-visibility", itemCount == 0 ? "none" : "block" );
-        messageParams.put( "no-issues-block-visibility", itemCount == 0 ? "block" : "none" );
-        messageParams.put( "comments-trimmed-text-visibility", commentsCount > IssueMailMessageGenerator.MAX_COMMENTS ? "inline" : "none" );
-        messageParams.put( "comments-block-visibility", commentsCount == 0 ? "none" : "block" );
+        messageParams.put( "comments-block-visibility", showComments ? "block" : "none" );
         messageParams.put( "comments", generateCommentsHtml() );
 
         return new StrSubstitutor( messageParams ).replace( load( "email.html" ) );
@@ -123,18 +128,15 @@ public abstract class IssueMailMessageGenerator<P extends IssueNotificationParam
 
     private String generateCommentsHtml()
     {
+        if ( params.getComments().size() == 0 )
+        {
+            return "";
+        }
         final String commentTemplate = load( "comment.html" );
         final DateTimeFormatter fmt = DateTimeFormatter.ofLocalizedDateTime( FormatStyle.SHORT );
-        final StringBuilder stringBuilder = new StringBuilder();
-        final Integer commentCount = params.getComments().size();
+        final IssueComment comment = params.getComments().get( params.getComments().size() - 1 );
 
-        for ( final IssueComment comment : params.getComments().subList(
-            Math.max( 0, commentCount - IssueMailMessageGenerator.MAX_COMMENTS ), commentCount ) )
-        {
-            stringBuilder.append( generateCommentHtml( comment, commentTemplate, fmt ) );
-        }
-
-        return stringBuilder.toString();
+        return generateCommentHtml( comment, commentTemplate, fmt );
     }
 
     private String generateCommentHtml( final IssueComment item, final String template, final DateTimeFormatter fmt )

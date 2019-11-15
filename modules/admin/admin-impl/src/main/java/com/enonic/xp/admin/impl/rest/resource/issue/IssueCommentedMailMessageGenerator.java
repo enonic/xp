@@ -11,8 +11,13 @@ public class IssueCommentedMailMessageGenerator
     @Override
     protected String generateMessageSubject()
     {
-        return String.format( "%s posted a new comment to \"%s\" (#%d)", params.getModifier().getDisplayName(),
-                              params.getIssue().getTitle(), params.getIssue().getIndex() );
+        return String.format( "Re: %s (#%d)", params.getIssue().getTitle(), params.getIssue().getIndex() );
+    }
+
+    @Override
+    protected String generateMessageTitle()
+    {
+        return "A new comment is posted";
     }
 
     @Override
@@ -31,6 +36,12 @@ public class IssueCommentedMailMessageGenerator
     protected String getCopyRecepients()
     {
         return super.getApproverEmails();
+    }
+
+    @Override
+    protected boolean shouldShowComments()
+    {
+        return params.getComments().size() > 0;
     }
 
 }
