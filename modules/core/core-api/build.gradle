@@ -6,7 +6,6 @@ dependencies {
     compile 'com.fasterxml.jackson.core:jackson-databind:2.9.6'
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.6'
     compile 'org.jparsec:jparsec:3.1'
-    compile 'commons-io:commons-io:2.4'
     compile 'org.osgi:osgi.core:7.0.0'
     compile 'org.osgi:osgi.cmpn:7.0.0'
     compile "org.slf4j:slf4j-api:${slf4jVersion}"

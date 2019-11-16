@@ -19,6 +19,9 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.io.MoreFiles;
+import com.google.common.io.RecursiveDeleteOption;
+
 @Tag("elasticsearch")
 @ExtendWith(AbstractElasticsearchIntegrationTest.EmbeddedElasticsearchExtension.class)
 public abstract class AbstractElasticsearchIntegrationTest
@@ -90,12 +93,14 @@ public abstract class AbstractElasticsearchIntegrationTest
 
         static EmbeddedElasticsearchServer server;
 
+        static Path elasticsearchTemporaryFolder;
+
         public ElasticsearchFixture()
             throws IOException
         {
             LOG.info( "Starting up Elasticsearch" );
 
-            Path elasticsearchTemporaryFolder = Files.createTempDirectory("elasticsearchFixture");
+            elasticsearchTemporaryFolder = Files.createTempDirectory( "elasticsearchFixture" );
 
             server = new EmbeddedElasticsearchServer( elasticsearchTemporaryFolder.toFile() );
 
@@ -107,6 +112,7 @@ public abstract class AbstractElasticsearchIntegrationTest
 
         @Override
         public void close()
+            throws IOException
         {
             LOG.info( "Shutting down Elasticsearch" );
             if (client != null) {
@@ -115,6 +121,7 @@ public abstract class AbstractElasticsearchIntegrationTest
             if (server != null) {
                 server.shutdown();
             }
+            MoreFiles.deleteRecursively( elasticsearchTemporaryFolder, RecursiveDeleteOption.ALLOW_INSECURE );
         }
     }
 

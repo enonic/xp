@@ -3,15 +3,13 @@ package com.enonic.xp.repo.impl.dump.upgrade;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-import org.apache.commons.io.FileUtils;
-
 import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
-import com.google.common.io.Files;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.Segment;
@@ -22,6 +20,7 @@ import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.repo.impl.dump.DumpBlobRecord;
+import com.enonic.xp.repo.impl.dump.FileUtils;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.serializer.json.DumpMetaJsonSerializer;
 import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre5.Pre5ContentConstants;
@@ -143,10 +142,11 @@ public class RepositoryIdDumpUpgrader
 
         if ( oldRepoDirectory != null )
         {
-            final File newRepoDirectory = new File( oldRepoDirectory.getParent(), NEW_REPOSITORY_ID.toString() );
+            final Path newRepoDirectory = Path.of( oldRepoDirectory.getParent(), NEW_REPOSITORY_ID.toString() );
+
             try
             {
-                FileUtils.moveDirectory( oldRepoDirectory, newRepoDirectory );
+                FileUtils.moveDirectory( oldRepoDirectory.toPath(), newRepoDirectory );
             }
             catch ( IOException e )
             {
@@ -168,7 +168,7 @@ public class RepositoryIdDumpUpgrader
 
         try
         {
-            Files.write( new DumpMetaJsonSerializer().serialize( upgradedDumpMeta ).getBytes(), dumpMetaFile );
+            Files.write( dumpMetaFile.toPath(), new DumpMetaJsonSerializer().serialize( upgradedDumpMeta ).getBytes() );
         }
         catch ( IOException e )
         {

@@ -17,12 +17,6 @@ configurations {
     testOutput.extendsFrom testRuntime
 }
 
-ext {
-    slf4jVersion = '1.7.29'
-    felixVersion = '6.0.3'
-    jettyVersion = '9.4.22.v20191022'
-}
-
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.1'
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.5.1'
