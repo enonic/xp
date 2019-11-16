@@ -2,7 +2,7 @@ package com.enonic.xp.core.impl.audit.config;
 
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
+import com.google.common.base.Strings;
 
 public class AuditLogConfigMap
 {
@@ -24,12 +24,12 @@ public class AuditLogConfigMap
 
     public boolean isEnabled()
     {
-        return StringUtils.isNotBlank( map.get( ENABLED_PROPERTY ) ) ? "true".equals( map.get( ENABLED_PROPERTY ) ) : ENABLED_DEFAULT_VALUE;
+        return !Strings.nullToEmpty( map.get( ENABLED_PROPERTY ) ).isBlank() ? "true".equals( map.get( ENABLED_PROPERTY ) ) : ENABLED_DEFAULT_VALUE;
     }
 
     public boolean isOutputLogs()
     {
-        return StringUtils.isNotBlank( map.get( OUTPUT_LOGS_PROPERTY ) )
+        return !Strings.nullToEmpty( map.get( OUTPUT_LOGS_PROPERTY ) ).isBlank()
             ? "true".equals( map.get( OUTPUT_LOGS_PROPERTY ) )
             : OUTPUT_LOGS_DEFAULT_VALUE;
     }

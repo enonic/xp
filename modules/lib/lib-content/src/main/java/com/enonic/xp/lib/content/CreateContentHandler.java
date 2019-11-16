@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Supplier;
 
+import com.google.common.base.Strings;
+
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
@@ -13,9 +15,6 @@ import com.enonic.xp.lib.content.mapper.ContentMapper;
 import com.enonic.xp.name.NamePrettyfier;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.script.ScriptValue;
-
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public final class CreateContentHandler
     extends BaseContentHandler
@@ -47,11 +46,12 @@ public final class CreateContentHandler
     @Override
     protected Object doExecute()
     {
-        if ( isBlank( this.name ) && isNotBlank( this.displayName ) && isNotBlank( this.parentPath ) )
+        if ( Strings.nullToEmpty( this.name ).isBlank() && !Strings.nullToEmpty( this.displayName ).isBlank() &&
+            !Strings.nullToEmpty( this.parentPath ).isBlank() )
         {
             this.name = generateUniqueContentName( ContentPath.from( this.parentPath ), this.displayName );
         }
-        if ( isBlank( this.displayName ) && isNotBlank( this.name ) )
+        if ( Strings.nullToEmpty( this.displayName ).isBlank() && !Strings.nullToEmpty( this.name ).isBlank() )
         {
             this.displayName = this.name;
         }

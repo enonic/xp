@@ -20,12 +20,12 @@ import java.util.stream.Stream;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
@@ -2119,8 +2119,8 @@ public class ContentResourceTest
     {
         ContentResource contentResource = getResourceInstance();
 
-        Locale[] availableLocales = Stream.of( Locale.getAvailableLocales() ).filter(
-            locale -> StringUtils.isNotEmpty( locale.toLanguageTag() ) && StringUtils.isNotEmpty( locale.getDisplayName() ) ).toArray(
+        Locale[] availableLocales = Stream.of( Locale.getAvailableLocales() ).filter( locale -> !Strings.nullToEmpty(
+            locale.toLanguageTag() ).isEmpty() && !Strings.nullToEmpty( locale.getDisplayName() ).isEmpty() ).toArray(
             Locale[]::new );
 
         if ( availableLocales.length > 0 )
@@ -2128,34 +2128,34 @@ public class ContentResourceTest
             Locale locale = availableLocales[0];
 
             assertTrue( contentResource.getLocales( locale.toLanguageTag() ).getLocales().contains( new LocaleJson( locale ) ) );
-            if ( StringUtils.isNotEmpty( ( locale.getDisplayName( locale ) ) ) )
+            if ( !Strings.nullToEmpty( ( locale.getDisplayName( locale ) ) ).isEmpty() )
             {
                 assertTrue(
                     contentResource.getLocales( locale.getDisplayName( locale ) ).getLocales().contains( new LocaleJson( locale ) ) );
             }
-            if ( StringUtils.isNotEmpty( ( locale.getLanguage() ) ) )
+            if ( !Strings.nullToEmpty( ( locale.getLanguage() ) ).isEmpty() )
             {
                 assertTrue( contentResource.getLocales( locale.getLanguage() ).getLocales().contains( new LocaleJson( locale ) ) );
             }
-            if ( StringUtils.isNotEmpty( ( locale.getDisplayLanguage( locale ) ) ) )
+            if ( !Strings.nullToEmpty( ( locale.getDisplayLanguage( locale ) ) ).isEmpty() )
             {
                 assertTrue(
                     contentResource.getLocales( locale.getDisplayLanguage( locale ) ).getLocales().contains( new LocaleJson( locale ) ) );
             }
-            if ( StringUtils.isNotEmpty( ( locale.getVariant() ) ) )
+            if ( !Strings.nullToEmpty( ( locale.getVariant() ) ).isEmpty() )
             {
                 assertTrue( contentResource.getLocales( locale.getVariant() ).getLocales().contains( new LocaleJson( locale ) ) );
             }
-            if ( StringUtils.isNotEmpty( ( locale.getDisplayVariant( locale ) ) ) )
+            if ( !Strings.nullToEmpty( ( locale.getDisplayVariant( locale ) ) ).isEmpty() )
             {
                 assertTrue(
                     contentResource.getLocales( locale.getDisplayVariant( locale ) ).getLocales().contains( new LocaleJson( locale ) ) );
             }
-            if ( StringUtils.isNotEmpty( ( locale.getCountry() ) ) )
+            if ( !Strings.nullToEmpty( ( locale.getCountry() ) ).isEmpty() )
             {
                 assertTrue( contentResource.getLocales( locale.getCountry() ).getLocales().contains( new LocaleJson( locale ) ) );
             }
-            if ( StringUtils.isNotEmpty( ( locale.getDisplayCountry( locale ) ) ) )
+            if ( !Strings.nullToEmpty( ( locale.getDisplayCountry( locale ) ) ).isEmpty() )
             {
                 assertTrue(
                     contentResource.getLocales( locale.getDisplayCountry( locale ) ).getLocales().contains( new LocaleJson( locale ) ) );
@@ -2170,7 +2170,9 @@ public class ContentResourceTest
         ContentResource contentResource = getResourceInstance();
 
         Locale[] expectedLocales = Arrays.stream( Locale.getAvailableLocales() ).
-            filter( ( locale ) -> StringUtils.isNotEmpty( locale.toLanguageTag() ) && StringUtils.isNotEmpty( locale.getDisplayName() ) ).
+            filter( ( locale ) ->
+                        !Strings.nullToEmpty( locale.toLanguageTag() ).isEmpty() &&
+                            !Strings.nullToEmpty( locale.getDisplayName() ).isEmpty() ).
             toArray( Locale[]::new );
 
         LocaleListJson result = contentResource.getLocales( "" );

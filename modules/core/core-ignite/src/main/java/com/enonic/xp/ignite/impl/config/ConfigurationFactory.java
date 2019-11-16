@@ -18,7 +18,7 @@ import com.google.common.base.Strings;
 import com.enonic.xp.cluster.ClusterConfig;
 import com.enonic.xp.home.HomeDir;
 
-import static org.apache.commons.lang.StringUtils.isEmpty;
+import static com.enonic.xp.migration.StringUtils.isEmpty;
 
 public class ConfigurationFactory
 {

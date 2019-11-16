@@ -3,7 +3,7 @@ package com.enonic.xp.lib.content;
 import java.time.Instant;
 import java.util.Locale;
 
-import org.apache.commons.lang.StringUtils;
+import com.enonic.xp.migration.StringUtils;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

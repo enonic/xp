@@ -18,10 +18,10 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.base.Strings;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
@@ -38,7 +38,6 @@ import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.security.RoleKeys;
 
 import static com.enonic.xp.web.servlet.ServletRequestUrlHelper.contentDispositionAttachment;
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 @SuppressWarnings("UnusedDeclaration")
 @Path(ResourceConstants.REST_ROOT + "content/media")
@@ -113,7 +112,7 @@ public final class ContentMediaResource
         if ( download )
         {
             final String fileName = attachment.getName();
-            if ( isNotEmpty( fileName ) )
+            if ( !Strings.nullToEmpty( fileName ).isEmpty() )
             {
                 response = response.header( "Content-Disposition", contentDispositionAttachment( fileName ) );
             }
@@ -142,7 +141,7 @@ public final class ContentMediaResource
         }
 
         final String decodedIdentifier =
-            StringUtils.isNotBlank( identifier ) ? URLDecoder.decode( identifier, StandardCharsets.UTF_8 ) : identifier;
+            !Strings.nullToEmpty( identifier ).isBlank() ? URLDecoder.decode( identifier, StandardCharsets.UTF_8 ) : identifier;
 
         return resolveAttachment( decodedIdentifier, content );
     }
@@ -150,7 +149,7 @@ public final class ContentMediaResource
     private Attachment resolveAttachment( final String identifier, final Content content )
     {
         Attachment attachment = null;
-        if ( isNotEmpty( identifier ) )
+        if ( !Strings.nullToEmpty( identifier ).isEmpty() )
         {
             attachment = content.getAttachments().byName( identifier );
             if ( attachment == null )

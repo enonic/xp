@@ -6,9 +6,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Objects;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.annotations.Beta;
+import com.google.common.base.Strings;
 
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.GeoPoint;
@@ -204,7 +203,7 @@ public final class Property
         {
             throw new NullPointerException( "Property name cannot be null" );
         }
-        if ( StringUtils.isBlank( name ) )
+        if ( Strings.nullToEmpty( name ).isBlank() )
         {
             throw new IllegalArgumentException( "Property name cannot be blank" );
         }

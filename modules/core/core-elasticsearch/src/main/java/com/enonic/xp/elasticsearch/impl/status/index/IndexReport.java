@@ -1,9 +1,8 @@
 package com.enonic.xp.elasticsearch.impl.status.index;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.base.Strings;
 
 public class IndexReport
 {
@@ -39,7 +38,7 @@ public class IndexReport
             json.set( "shards", shardInfo.toJson() );
         }
 
-        if ( StringUtils.isNotEmpty( errorMessage ) )
+        if ( !Strings.nullToEmpty( errorMessage ).isEmpty() )
         {
             json.put( "errorMessage", errorMessage );
         }

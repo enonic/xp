@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CharacterData;
 import org.w3c.dom.Comment;
@@ -15,6 +14,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.Strings;
 
 import com.enonic.xp.convert.Converters;
 
@@ -109,7 +109,7 @@ public final class DomElement
     public String getAttribute( final String name, final String defValue )
     {
         final String value = getAttribute( name );
-        return StringUtils.isNotBlank( value ) ? value : defValue;
+        return !Strings.nullToEmpty( value ).isBlank() ? value : defValue;
     }
 
     public <T> T getAttributeAs( final String name, final Class<T> type, final T defValue )

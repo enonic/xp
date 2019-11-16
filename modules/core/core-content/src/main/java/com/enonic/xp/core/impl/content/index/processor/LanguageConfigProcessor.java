@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.content.index.processor;
 
-import org.apache.commons.lang.StringUtils;
+import com.google.common.base.Strings;
 
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.index.IndexConfig;
@@ -19,7 +19,7 @@ public class LanguageConfigProcessor
     @Override
     public PatternIndexConfigDocument.Builder processDocument( final PatternIndexConfigDocument.Builder builder )
     {
-        if ( StringUtils.isNotBlank( this.language ) )
+        if ( !Strings.nullToEmpty( this.language ).isBlank() )
         {
             builder.addAllTextConfigLanguage( this.language ).build();
             builder.add( ContentPropertyNames.LANGUAGE, IndexConfig.NGRAM );

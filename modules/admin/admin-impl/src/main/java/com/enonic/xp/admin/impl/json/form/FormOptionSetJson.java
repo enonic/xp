@@ -4,10 +4,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.form.FormOptionSet;
@@ -48,7 +47,7 @@ public class FormOptionSetJson
 
     public String getLabel()
     {
-        if ( localeMessageResolver != null && StringUtils.isNotBlank( formOptionSet.getLabelI18nKey() ) )
+        if ( localeMessageResolver != null && !Strings.nullToEmpty( formOptionSet.getLabelI18nKey() ).isBlank() )
         {
             return localeMessageResolver.localizeMessage( formOptionSet.getLabelI18nKey(), formOptionSet.getLabel() );
         }
@@ -80,7 +79,7 @@ public class FormOptionSetJson
 
     public String getHelpText()
     {
-        if ( localeMessageResolver != null && StringUtils.isNotBlank( formOptionSet.getHelpTextI18nKey() ) )
+        if ( localeMessageResolver != null && !Strings.nullToEmpty( formOptionSet.getHelpTextI18nKey() ).isBlank() )
         {
             return localeMessageResolver.localizeMessage( formOptionSet.getHelpTextI18nKey(), formOptionSet.getHelpText() );
         }

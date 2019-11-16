@@ -3,7 +3,6 @@ package com.enonic.xp.core.impl.content;
 import java.time.Instant;
 import java.util.Locale;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -388,7 +387,7 @@ final class CreateContentCommand
 
     private void populateName( final CreateContentTranslatorParams.Builder builder )
     {
-        if ( params.getName() == null || StringUtils.isEmpty( params.getName().toString() ) )
+        if ( params.getName() == null || Strings.nullToEmpty( params.getName().toString() ).isEmpty() )
         {
             if ( !Strings.isNullOrEmpty( params.getDisplayName() ) )
             {

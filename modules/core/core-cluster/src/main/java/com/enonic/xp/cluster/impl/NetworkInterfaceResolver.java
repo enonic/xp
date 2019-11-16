@@ -13,9 +13,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.apache.commons.lang.StringUtils.substringAfter;
-import static org.apache.commons.lang.StringUtils.substringBefore;
-import static org.apache.commons.lang.StringUtils.substringBetween;
+import static com.enonic.xp.migration.StringUtils.substringAfter;
+import static com.enonic.xp.migration.StringUtils.substringBefore;
+import static com.enonic.xp.migration.StringUtils.substringBetween;
 
 final class NetworkInterfaceResolver
 {

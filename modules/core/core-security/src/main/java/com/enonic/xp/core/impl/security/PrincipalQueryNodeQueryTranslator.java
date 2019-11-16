@@ -3,7 +3,7 @@ package com.enonic.xp.core.impl.security;
 import java.util.Collections;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
+import com.google.common.base.Strings;
 
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeQuery;
@@ -53,13 +53,13 @@ final class PrincipalQueryNodeQueryTranslator
         }
 
         final String searchText = principalQuery.getSearchText();
-        if ( StringUtils.isNotBlank( searchText ) )
+        if ( !Strings.nullToEmpty( searchText ).isBlank() )
         {
             nodeQueryBuilder.query( getQueryExpression( searchText ) );
         }
 
         final String email = principalQuery.getEmail();
-        if ( StringUtils.isNotBlank( email ) )
+        if ( !Strings.nullToEmpty( email ).isBlank() )
         {
             nodeQueryBuilder.addQueryFilter( ValueFilter.create().
                 fieldName( EMAIL_KEY ).
@@ -68,7 +68,7 @@ final class PrincipalQueryNodeQueryTranslator
         }
 
         final String name = principalQuery.getName();
-        if ( StringUtils.isNotBlank( name ) )
+        if ( !Strings.nullToEmpty( name ).isBlank() )
         {
             nodeQueryBuilder.addQueryFilter( ValueFilter.create().
                 fieldName( NAME_KEY ).
@@ -77,7 +77,7 @@ final class PrincipalQueryNodeQueryTranslator
         }
 
         final String displayName = principalQuery.getDisplayName();
-        if ( StringUtils.isNotBlank( displayName ) )
+        if ( !Strings.nullToEmpty( displayName ).isBlank() )
         {
             nodeQueryBuilder.addQueryFilter( ValueFilter.create().
                 fieldName( DISPLAY_NAME_KEY ).

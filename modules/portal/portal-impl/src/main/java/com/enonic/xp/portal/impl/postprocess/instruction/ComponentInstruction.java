@@ -26,7 +26,7 @@ import com.enonic.xp.region.LayoutRegions;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 
-import static org.apache.commons.lang.StringUtils.substringAfter;
+import static com.enonic.xp.migration.StringUtils.substringAfter;
 
 @org.osgi.service.component.annotations.Component(immediate = true)
 public final class ComponentInstruction

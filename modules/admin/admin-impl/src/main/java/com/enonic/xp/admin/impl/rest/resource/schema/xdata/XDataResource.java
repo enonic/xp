@@ -14,9 +14,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
+import com.google.common.base.Strings;
 
 import com.enonic.xp.admin.impl.json.schema.xdata.XDataJson;
 import com.enonic.xp.admin.impl.json.schema.xdata.XDataListJson;
@@ -175,7 +176,7 @@ public final class XDataResource
     private Boolean isXDataAllowed( final XDataName xDataName, final String allowContentType, final ContentTypeName contentTypeName )
     {
 
-        if ( StringUtils.isBlank( allowContentType ) )
+        if ( Strings.nullToEmpty( allowContentType ).isBlank() )
         {
             return true;
         }
@@ -189,7 +190,7 @@ public final class XDataResource
             new ContentTypeNameWildcardResolver( this.contentTypeService );
 
         final List<String> allowContentTypes =
-            StringUtils.isNotBlank( allowContentType ) ? Collections.singletonList( allowContentType ) : new ArrayList<>();
+            !Strings.nullToEmpty( allowContentType ).isBlank() ? Collections.singletonList( allowContentType ) : new ArrayList<>();
 
         if ( contentTypeNameWildcardResolver.anyTypeHasWildcard( allowContentTypes ) )
         {

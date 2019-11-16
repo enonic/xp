@@ -3,8 +3,6 @@ package com.enonic.xp.core.impl.content;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.base.Strings;
 
 import com.enonic.xp.audit.AuditLogService;
@@ -509,7 +507,7 @@ class ContentAuditLogSupport
 
     private String generateNameFromParams( final ContentName contentName, final String displayName )
     {
-        if ( contentName == null || StringUtils.isEmpty( contentName.toString() ) )
+        if ( contentName == null || Strings.nullToEmpty( contentName.toString() ).isEmpty() )
         {
             if ( Strings.isNullOrEmpty( displayName ) )
             {

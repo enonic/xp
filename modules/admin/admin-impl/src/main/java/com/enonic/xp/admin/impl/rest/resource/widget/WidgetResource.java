@@ -13,9 +13,10 @@ import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
+import com.google.common.base.Strings;
 
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.widget.json.WidgetDescriptorJson;
@@ -85,7 +86,7 @@ public class WidgetResource
             else
             {
                 responseBuilder = Response.ok( appIcon.toByteArray(), appIcon.getMimeType() );
-                if ( StringUtils.isNotEmpty( hash ) )
+                if ( !Strings.nullToEmpty( hash ).isEmpty() )
                 {
                     applyMaxAge( responseBuilder );
                 }
@@ -94,7 +95,7 @@ public class WidgetResource
         else
         {
             responseBuilder = Response.ok( icon.toByteArray(), icon.getMimeType() );
-            if ( StringUtils.isNotEmpty( hash ) )
+            if ( !Strings.nullToEmpty( hash ).isEmpty() )
             {
                 applyMaxAge( responseBuilder );
             }

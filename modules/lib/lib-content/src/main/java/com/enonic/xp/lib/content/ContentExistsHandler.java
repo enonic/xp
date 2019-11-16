@@ -1,6 +1,6 @@
 package com.enonic.xp.lib.content;
 
-import org.apache.commons.lang.StringUtils;
+import com.google.common.base.Strings;
 
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
@@ -27,7 +27,7 @@ public final class ContentExistsHandler
 
     private boolean doExecute()
     {
-        if ( StringUtils.isBlank( this.key ) )
+        if ( Strings.nullToEmpty( this.key ).isBlank() )
         {
             throw new IllegalArgumentException( "'key' param is empty" );
         }

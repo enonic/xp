@@ -1,7 +1,5 @@
 package com.enonic.xp.security.auth;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.security.IdProviderKey;
@@ -19,26 +17,19 @@ public final class UsernamePasswordAuthToken
 
     public void setUsername( final String username )
     {
-        if ( StringUtils.countMatches( username, "\\" ) == 1 )
+        final String[] userParts = username.split( "\\\\" );
+        if ( userParts.length != 2 )
         {
-            final String[] userParts = username.split( "\\\\" );
-            if ( userParts.length != 2 )
-            {
-                this.username = username;
-                return;
-            }
-
-            try
-            {
-                setIdProvider( IdProviderKey.from( userParts[0] ) );
-                this.username = userParts[1];
-            }
-            catch ( java.lang.IllegalArgumentException e )
-            {
-                this.username = username;
-            }
+            this.username = username;
+            return;
         }
-        else
+
+        try
+        {
+            setIdProvider( IdProviderKey.from( userParts[0] ) );
+            this.username = userParts[1];
+        }
+        catch ( java.lang.IllegalArgumentException e )
         {
             this.username = username;
         }

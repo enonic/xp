@@ -2,8 +2,7 @@ package com.enonic.xp.portal.impl.url;
 
 import java.nio.charset.StandardCharsets;
 
-import org.apache.commons.lang.StringUtils;
-
+import com.google.common.base.Strings;
 import com.google.common.collect.Multimap;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
@@ -73,7 +72,7 @@ final class ImageUrlBuilder
         if ( this.params.getFormat() != null )
         {
             final String extension = Files.getFileExtension( name );
-            if ( StringUtils.isEmpty( extension ) || !this.params.getFormat().equals( extension ) )
+            if ( Strings.nullToEmpty( extension ).isEmpty() || !this.params.getFormat().equals( extension ) )
             {
                 return name + "." + this.params.getFormat();
             }

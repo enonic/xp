@@ -1,9 +1,10 @@
 package com.enonic.xp.portal.impl.handler.image;
 
-import org.apache.commons.lang.StringUtils;
+import com.enonic.xp.migration.StringUtils;
 
 import com.google.common.base.Strings;
 import com.google.common.io.ByteSource;
+import com.google.common.io.Files;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.attachment.Attachment;
@@ -30,7 +31,7 @@ import com.enonic.xp.util.MediaTypes;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 
-import static org.apache.commons.lang.StringUtils.substringBeforeLast;
+import static com.enonic.xp.migration.StringUtils.substringBeforeLast;
 
 final class ImageHandlerWorker
     extends PortalHandlerWorker<PortalRequest>
@@ -147,7 +148,7 @@ final class ImageHandlerWorker
     private String getFormat( final String fileName, final String mimeType )
         throws Exception
     {
-        String format = StringUtils.substringAfterLast( fileName, "." ).toLowerCase();
+        String format = Files.getFileExtension( fileName ).toLowerCase();
         if ( Strings.isNullOrEmpty( format ) )
         {
             format = this.imageService.getFormatByMimeType( mimeType );

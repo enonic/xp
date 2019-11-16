@@ -15,10 +15,10 @@ import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.admin.impl.json.content.page.region.PartDescriptorJson;
@@ -124,7 +124,7 @@ public final class PartDescriptorResource
             responseBuilder = Response.ok( image, icon.getMimeType() );
         }
 
-        if ( StringUtils.isNotEmpty( hash ) )
+        if ( !Strings.nullToEmpty( hash ).isEmpty() )
         {
             applyMaxAge( Integer.MAX_VALUE, responseBuilder );
         }

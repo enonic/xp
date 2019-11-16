@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch;
 
-import org.apache.commons.lang.StringUtils;
+import com.enonic.xp.migration.StringUtils;
 
 import com.google.common.base.Strings;
 
@@ -60,7 +60,7 @@ public class OrderbyValueResolver
             return "";
         }
 
-        return StringUtils.lowerCase( StringUtils.substring( value, 0, Math.min( value.length(), ORDER_BY_STRING_MAX_LENGHT ) ) );
+        return value.substring( 0, Math.min( value.length(), ORDER_BY_STRING_MAX_LENGHT ) ).toLowerCase();
     }
 
 

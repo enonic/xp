@@ -1,10 +1,9 @@
 package com.enonic.xp.form;
 
 
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 
 @Beta
 public abstract class Layout
@@ -15,7 +14,7 @@ public abstract class Layout
     Layout( final String name )
     {
         Preconditions.checkNotNull( name, "a name is required for a Layout" );
-        Preconditions.checkArgument( StringUtils.isNotBlank( name ), "a name is required for a Layout" );
+        Preconditions.checkArgument( !Strings.nullToEmpty( name ).isBlank(), "a name is required for a Layout" );
         Preconditions.checkArgument( !name.contains( "." ), "name cannot contain punctuations: " + name );
         this.name = name;
     }

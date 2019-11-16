@@ -1,8 +1,7 @@
 package com.enonic.xp.admin.impl.json.content.page;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 
 import com.enonic.xp.admin.impl.json.ItemJson;
 import com.enonic.xp.admin.impl.json.form.FormJson;
@@ -51,7 +50,7 @@ public abstract class DescriptorJson
 
     public String getDisplayName()
     {
-        if ( StringUtils.isNotBlank( descriptor.getDisplayNameI18nKey() ) )
+        if ( !Strings.nullToEmpty( descriptor.getDisplayNameI18nKey() ).isBlank() )
         {
             return localeMessageResolver.localizeMessage( descriptor.getDisplayNameI18nKey(), descriptor.getDisplayName() );
         }
@@ -63,7 +62,7 @@ public abstract class DescriptorJson
 
     public String getDescription()
     {
-        if ( StringUtils.isNotBlank( descriptor.getDescriptionI18nKey() ) )
+        if ( !Strings.nullToEmpty( descriptor.getDescriptionI18nKey() ).isBlank() )
         {
             return localeMessageResolver.localizeMessage( descriptor.getDescriptionI18nKey(), descriptor.getDescription() );
         }

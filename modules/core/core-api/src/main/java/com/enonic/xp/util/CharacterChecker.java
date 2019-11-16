@@ -1,6 +1,6 @@
 package com.enonic.xp.util;
 
-import org.apache.commons.lang.StringUtils;
+import com.enonic.xp.migration.StringUtils;
 
 public final class CharacterChecker
 {

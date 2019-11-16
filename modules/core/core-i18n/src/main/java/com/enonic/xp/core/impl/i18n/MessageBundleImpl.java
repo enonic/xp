@@ -7,7 +7,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
+import com.google.common.base.Strings;
 
 import com.enonic.xp.i18n.MessageBundle;
 
@@ -31,7 +31,7 @@ final class MessageBundleImpl
     public String localize( final String key, final Object... args )
     {
         final String message = doGetMessage( key );
-        return StringUtils.isNotEmpty( message ) ? format( message, args ) : null;
+        return !Strings.nullToEmpty( message ).isEmpty() ? format( message, args ) : null;
     }
 
     @Override

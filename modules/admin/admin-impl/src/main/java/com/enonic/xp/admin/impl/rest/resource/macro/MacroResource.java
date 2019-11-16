@@ -22,7 +22,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -143,7 +142,7 @@ public final class MacroResource
         {
             final Object image = HELPER.isSvg( icon ) ? icon.toByteArray() : HELPER.resizeImage( icon.asInputStream(), size );
             responseBuilder = Response.ok( image, icon.getMimeType() );
-            if ( StringUtils.isNotEmpty( hash ) )
+            if ( !Strings.nullToEmpty( hash ).isEmpty() )
             {
                 applyMaxAge( Integer.MAX_VALUE, responseBuilder );
             }

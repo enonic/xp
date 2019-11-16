@@ -2,6 +2,7 @@ package com.enonic.xp.impl.server.rest;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Set;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
@@ -10,7 +11,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
@@ -35,7 +35,7 @@ import com.enonic.xp.web.multipart.MultipartItem;
 public final class ApplicationResource
     implements JaxRsComponent
 {
-    private final static String[] ALLOWED_PROTOCOLS = {"http", "https"};
+    private final static Set<String> ALLOWED_PROTOCOLS = Set.of( "http", "https");
 
     private final static Logger LOG = LoggerFactory.getLogger( ApplicationResource.class );
 
@@ -72,7 +72,7 @@ public final class ApplicationResource
         {
             final URL url = new URL( urlString );
 
-            if ( ArrayUtils.contains( ALLOWED_PROTOCOLS, url.getProtocol() ) )
+            if ( ALLOWED_PROTOCOLS.contains( url.getProtocol() ) )
             {
                 ApplicationInstallResultJson json = installApplication( url );
 

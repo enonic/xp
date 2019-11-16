@@ -30,8 +30,8 @@ import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.style.StyleDescriptors;
 
-import static org.apache.commons.lang.StringUtils.substringAfter;
-import static org.apache.commons.lang.StringUtils.substringBefore;
+import static com.enonic.xp.migration.StringUtils.substringAfter;
+import static com.enonic.xp.migration.StringUtils.substringBefore;
 
 public class HtmlLinkProcessor
 {

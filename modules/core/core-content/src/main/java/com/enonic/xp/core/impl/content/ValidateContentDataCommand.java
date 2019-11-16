@@ -1,10 +1,10 @@
 package com.enonic.xp.core.impl.content;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentName;
@@ -101,7 +101,7 @@ final class ValidateContentDataCommand
         {
             this.resultBuilder.add( new ValidationError( "name is required" ) );
         }
-        if ( StringUtils.isBlank( displayName ) )
+        if ( Strings.nullToEmpty( displayName ).isBlank() )
         {
             this.resultBuilder.add( new ValidationError( "displayName is required" ) );
         }

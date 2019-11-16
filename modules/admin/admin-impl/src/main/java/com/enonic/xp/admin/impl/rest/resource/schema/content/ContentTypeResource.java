@@ -15,10 +15,10 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.admin.impl.json.schema.content.ContentTypeJson;
@@ -182,7 +182,7 @@ public final class ContentTypeResource
         final Object image = HELPER.isSvg( icon ) ? icon.toByteArray() : HELPER.resizeImage( icon.asInputStream(), size );
         final Response.ResponseBuilder responseBuilder = Response.ok( image, icon.getMimeType() );
 
-        if ( StringUtils.isNotEmpty( hash ) )
+        if ( !Strings.nullToEmpty( hash ).isEmpty() )
         {
             applyMaxAge( Integer.MAX_VALUE, responseBuilder );
         }

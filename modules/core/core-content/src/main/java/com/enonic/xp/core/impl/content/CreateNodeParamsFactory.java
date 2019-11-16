@@ -1,8 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.content.ContentConstants;
@@ -95,7 +94,7 @@ public class CreateNodeParamsFactory
             indexConfigFactoryBuilder.extraDatas( extraData );
         }
 
-        if ( StringUtils.isNotBlank( language ) )
+        if ( !Strings.nullToEmpty( language ).isBlank() )
         {
             indexConfigFactoryBuilder.language( language );
         }

@@ -9,7 +9,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+
+import com.google.common.base.Strings;
 
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
@@ -56,7 +57,7 @@ public final class XmlNodeParser
 
         final String timestampString = root.getChildValue( "timestamp" );
         this.builder.timestamp(
-            timestampString != null && StringUtils.isNotBlank( timestampString ) ? Instant.parse( timestampString ) : null );
+            timestampString != null && !Strings.nullToEmpty( timestampString ).isBlank() ? Instant.parse( timestampString ) : null );
 
         this.builder.childOrder( ChildOrder.from( root.getChildValue( "childOrder" ) ) );
         this.builder.nodeType( NodeType.from( root.getChildValue( "nodeType" ) ) );

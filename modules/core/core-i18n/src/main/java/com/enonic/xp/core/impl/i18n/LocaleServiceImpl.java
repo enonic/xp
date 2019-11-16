@@ -13,9 +13,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
+import com.google.common.base.Strings;
 
 import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
@@ -27,8 +28,8 @@ import com.enonic.xp.resource.ResourceKeys;
 import com.enonic.xp.resource.ResourceService;
 
 import static java.util.stream.Collectors.toSet;
-import static org.apache.commons.lang.StringUtils.substringBefore;
-import static org.apache.commons.lang.StringUtils.substringBetween;
+import static com.enonic.xp.migration.StringUtils.substringBefore;
+import static com.enonic.xp.migration.StringUtils.substringBetween;
 
 @Component(immediate = true)
 public final class LocaleServiceImpl
@@ -221,18 +222,18 @@ public final class LocaleServiceImpl
 
         props.putAll( loadBundle( applicationKey, bundleName, "" ) );
 
-        if ( StringUtils.isNotEmpty( lang ) )
+        if ( !Strings.nullToEmpty( lang ).isEmpty() )
         {
             lang = lang.toLowerCase();
             props.putAll( loadBundle( applicationKey, bundleName, DELIMITER + lang ) );
         }
 
-        if ( StringUtils.isNotEmpty( country ) )
+        if ( !Strings.nullToEmpty( country ).isEmpty() )
         {
             props.putAll( loadBundle( applicationKey, bundleName, DELIMITER + lang + DELIMITER + country ) );
         }
 
-        if ( StringUtils.isNotEmpty( variant ) )
+        if ( !Strings.nullToEmpty( variant ).isEmpty() )
         {
             variant = variant.toLowerCase();
             props.putAll( loadBundle( applicationKey, bundleName, DELIMITER + lang + DELIMITER + country + DELIMITER + variant ) );

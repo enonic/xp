@@ -6,10 +6,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 
 @Beta
 public class FormItemSet
@@ -39,7 +38,7 @@ public class FormItemSet
         super();
 
         Preconditions.checkNotNull( builder.name, "a name is required for a FormItemSet" );
-        Preconditions.checkArgument( StringUtils.isNotBlank( builder.name ), "a name is required for a FormItemSet" );
+        Preconditions.checkArgument( !Strings.nullToEmpty( builder.name ).isBlank(), "a name is required for a FormItemSet" );
         Preconditions.checkArgument( !builder.name.contains( "." ), "name cannot contain punctations: " + builder.name );
 
         this.name = builder.name;

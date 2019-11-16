@@ -12,9 +12,9 @@ import java.util.stream.Collectors;
 import javax.mail.Message;
 import javax.mail.internet.InternetAddress;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.text.StrSubstitutor;
 
+import com.google.common.base.Strings;
 import com.google.common.io.Resources;
 
 import com.enonic.xp.content.CompareStatus;
@@ -64,7 +64,7 @@ public abstract class IssueMailMessageGenerator<P extends IssueNotificationParam
     protected String getApproverEmails()
     {
         return params.getApprovers().stream().
-            filter( approver -> StringUtils.isNotBlank( approver.getEmail() ) ).
+            filter( approver -> !Strings.nullToEmpty( approver.getEmail() ).isBlank() ).
             map( approver -> approver.getEmail() ).
             collect( Collectors.joining( "," ) );
     }

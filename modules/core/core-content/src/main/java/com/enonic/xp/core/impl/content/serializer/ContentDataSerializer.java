@@ -5,9 +5,8 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.AttachmentNames;
@@ -297,7 +296,7 @@ public class ContentDataSerializer
     private void extractLanguage( final PropertySet contentAsSet, final Content.Builder builder )
     {
         String language = contentAsSet.getString( LANGUAGE );
-        if ( StringUtils.isNotEmpty( language ) )
+        if ( !Strings.nullToEmpty( language ).isEmpty() )
         {
             builder.language( Locale.forLanguageTag( language ) );
         }
@@ -307,7 +306,7 @@ public class ContentDataSerializer
     {
         String owner = contentAsSet.getString( OWNER );
 
-        if ( StringUtils.isNotBlank( owner ) )
+        if ( !Strings.nullToEmpty( owner ).isBlank() )
         {
             builder.owner( PrincipalKey.from( owner ) );
         }

@@ -2,7 +2,7 @@ package com.enonic.xp.core.impl.content;
 
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
+import com.enonic.xp.migration.StringUtils;
 
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;

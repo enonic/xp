@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
+import com.google.common.base.Strings;
 
 import com.enonic.xp.app.ApplicationRelativeResolver;
 import com.enonic.xp.resource.ResourceKey;
@@ -16,8 +16,6 @@ import com.enonic.xp.site.mapping.ControllerMappingDescriptors;
 import com.enonic.xp.site.processor.ResponseProcessorDescriptor;
 import com.enonic.xp.site.processor.ResponseProcessorDescriptors;
 import com.enonic.xp.xml.DomElement;
-
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 public final class XmlSiteParser
     extends XmlModelParser<XmlSiteParser>
@@ -133,7 +131,7 @@ public final class XmlSiteParser
     {
         final ResponseProcessorDescriptor.Builder builder = ResponseProcessorDescriptor.create();
         final String orderValue = processorElement.getAttribute( PROCESSOR_DESCRIPTOR_ORDER_ATTRIBUTE );
-        if ( isNotEmpty( orderValue ) )
+        if ( !Strings.nullToEmpty( orderValue ).isEmpty() )
         {
             builder.order( Integer.parseInt( orderValue ) );
         }
@@ -146,19 +144,19 @@ public final class XmlSiteParser
     {
         final ControllerMappingDescriptor.Builder builder = ControllerMappingDescriptor.create();
         final String controllerPath = mappingElement.getAttribute( MAPPING_DESCRIPTOR_CONTROLLER_ATTRIBUTE );
-        if ( StringUtils.isNotBlank( controllerPath ) )
+        if ( !Strings.nullToEmpty( controllerPath ).isBlank() )
         {
             builder.controller( ResourceKey.from( this.currentApplication, controllerPath ) );
         }
 
         final String filterPath = mappingElement.getAttribute( MAPPING_DESCRIPTOR_FILTER_ATTRIBUTE );
-        if ( StringUtils.isNotBlank( filterPath ) )
+        if ( !Strings.nullToEmpty( filterPath ).isBlank() )
         {
             builder.filter( ResourceKey.from( this.currentApplication, filterPath ) );
         }
 
         final String orderValue = mappingElement.getAttribute( MAPPING_DESCRIPTOR_ORDER_ATTRIBUTE );
-        if ( isNotEmpty( orderValue ) )
+        if ( !Strings.nullToEmpty( orderValue ).isEmpty() )
         {
             builder.order( Integer.parseInt( orderValue ) );
         }
@@ -167,7 +165,7 @@ public final class XmlSiteParser
         if ( matchElement != null )
         {
             final String match = matchElement.getValue();
-            if ( isNotEmpty( match ) )
+            if ( !Strings.nullToEmpty( match ).isEmpty() )
             {
                 builder.contentConstraint( match );
             }
@@ -177,7 +175,7 @@ public final class XmlSiteParser
         if ( patternElement != null )
         {
             final String pattern = patternElement.getValue();
-            if ( isNotEmpty( pattern ) )
+            if ( !Strings.nullToEmpty( pattern ).isEmpty() )
             {
                 final boolean invert = "true".equals( patternElement.getAttribute( MAPPING_DESCRIPTOR_INVERT_ATTRIBUTE, "false" ) );
                 builder.pattern( pattern );

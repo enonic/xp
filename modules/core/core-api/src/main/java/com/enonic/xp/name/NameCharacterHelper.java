@@ -1,6 +1,6 @@
 package com.enonic.xp.name;
 
-import org.apache.commons.lang.StringUtils;
+import com.enonic.xp.migration.StringUtils;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.CharMatcher;

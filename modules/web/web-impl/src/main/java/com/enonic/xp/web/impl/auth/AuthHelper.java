@@ -1,6 +1,6 @@
 package com.enonic.xp.web.impl.auth;
 
-import org.apache.commons.lang.StringUtils;
+import com.enonic.xp.migration.StringUtils;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.security.SecurityService;
@@ -58,7 +58,7 @@ final class AuthHelper
 
     private boolean isValidEmail( final String value )
     {
-        return StringUtils.countMatches( value, "@" ) == 1;
+        return value != null && value.chars().filter( ch -> ch == '@' ).count() == 1;
     }
 
 }

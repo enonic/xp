@@ -7,7 +7,7 @@ import java.util.stream.Stream;
 
 import javax.servlet.http.Cookie;
 
-import org.apache.commons.lang.StringUtils;
+import com.enonic.xp.migration.StringUtils;
 import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;

@@ -7,9 +7,10 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
+import com.google.common.base.Strings;
 
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.ContentEditor;
@@ -275,7 +276,7 @@ public class HtmlAreaContentProcessor
 
     private void processString( final String value, final ContentIds.Builder processedIds )
     {
-        if ( StringUtils.isBlank( value ) )
+        if ( Strings.nullToEmpty( value ).isBlank() )
         {
             return;
         }

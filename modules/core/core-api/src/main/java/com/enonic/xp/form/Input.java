@@ -3,10 +3,9 @@ package com.enonic.xp.form;
 
 import java.util.Objects;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 
 import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeDefault;
@@ -50,12 +49,12 @@ public final class Input
         super();
 
         Preconditions.checkNotNull( builder.name, "a name is required for a Input" );
-        Preconditions.checkArgument( StringUtils.isNotBlank( builder.name ), "a name is required for a Input" );
+        Preconditions.checkArgument( !Strings.nullToEmpty( builder.name ).isBlank(), "a name is required for a Input" );
         Preconditions.checkArgument( !builder.name.contains( "." ), "name cannot contain punctuations: " + builder.name );
         Preconditions.checkNotNull( builder.inputType, "inputType cannot be null" );
 
         Preconditions.checkNotNull( builder.label, "a label is required for a Input" );
-        Preconditions.checkArgument( StringUtils.isNotBlank( builder.label ), "a label is required for a Input" );
+        Preconditions.checkArgument( !Strings.nullToEmpty( builder.label ).isBlank(), "a label is required for a Input" );
 
         this.name = builder.name;
         this.type = builder.inputType;

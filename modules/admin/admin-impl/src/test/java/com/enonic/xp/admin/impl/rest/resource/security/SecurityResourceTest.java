@@ -10,12 +10,12 @@ import java.util.Optional;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
@@ -159,7 +159,7 @@ public class SecurityResourceTest
     {
         MockRestResponse result = request().path( "security/idprovider" ).get();
 
-        assertTrue( StringUtils.isBlank( result.getAsString() ) );
+        assertTrue( Strings.nullToEmpty( result.getAsString() ).isBlank() );
         assertEquals( HttpStatus.NO_CONTENT.value(), result.getStatus() );
     }
 

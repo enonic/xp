@@ -2,9 +2,8 @@ package com.enonic.xp.admin.impl.json.schema.xdata;
 
 import java.time.Instant;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 
 import com.enonic.xp.admin.impl.json.ItemJson;
 import com.enonic.xp.admin.impl.json.form.FormJson;
@@ -47,7 +46,7 @@ public class XDataJson
 
     public String getDisplayName()
     {
-        if ( StringUtils.isNotBlank( xData.getDisplayNameI18nKey() ) )
+        if ( !Strings.nullToEmpty( xData.getDisplayNameI18nKey() ).isBlank() )
         {
             return localeMessageResolver.localizeMessage( xData.getDisplayNameI18nKey(), xData.getDisplayName() );
         }
@@ -59,7 +58,7 @@ public class XDataJson
 
     public String getDescription()
     {
-        if ( StringUtils.isNotBlank( xData.getDescriptionI18nKey() ) )
+        if ( !Strings.nullToEmpty( xData.getDescriptionI18nKey() ).isBlank() )
         {
             return localeMessageResolver.localizeMessage( xData.getDescriptionI18nKey(), xData.getDescription() );
         }

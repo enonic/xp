@@ -2,9 +2,8 @@ package com.enonic.xp.region;
 
 import java.util.Objects;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.annotations.Beta;
+import com.google.common.base.Strings;
 
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.data.PropertyTree;
@@ -70,7 +69,7 @@ public class ImageComponent
 
     public boolean hasCaption()
     {
-        return config.hasProperty( CAPTION ) && StringUtils.isNotBlank( config.getString( CAPTION ) );
+        return config.hasProperty( CAPTION ) && !Strings.nullToEmpty( config.getString( CAPTION ) ).isBlank();
     }
 
     public String getCaption()

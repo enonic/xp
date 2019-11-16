@@ -2,11 +2,10 @@ package com.enonic.xp.admin.impl.rest.resource.content.json;
 
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.Strings;
 
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.index.ChildOrder;
@@ -37,7 +36,7 @@ public class ContentTreeSelectorQueryJson
             this.parentPath = ContentPath.from( parentPath );
         }
 
-        if( StringUtils.isNotBlank( childOrder ) ) {
+        if( !Strings.nullToEmpty( childOrder ).isBlank() ) {
             this.childOrder = ChildOrder.from( childOrder );
         }
     }

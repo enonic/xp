@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.text.StrLookup;
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.osgi.framework.BundleContext;
@@ -113,7 +112,7 @@ public final class ConfigInterpolator
         {
             final String key = entry.getKey();
             final String value = substitutor.replace( entry.getValue() );
-            map.put( key, StringUtils.trim( value ) );
+            map.put( key, value.trim() );
         }
     }
 }

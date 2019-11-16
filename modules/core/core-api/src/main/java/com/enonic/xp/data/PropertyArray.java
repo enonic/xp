@@ -4,10 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 
 @Beta
@@ -96,7 +95,7 @@ public final class PropertyArray
             parent.getProperty() != null && parent.getProperty().getType().equals( ValueTypes.PROPERTY_SET );
 
         final StringBuilder s = new StringBuilder();
-        final String indent = StringUtils.leftPad( "", ( countAncestors() + 1 ) * 2 );
+        final String indent = Strings.padStart( "", ( countAncestors() + 1 ) * 2, ' ' );
         s.append( indent );
         if ( parentIsPropertySet )
         {

@@ -2,7 +2,7 @@ package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.function;
 
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import com.google.common.base.Strings;
 
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQueryFieldNameResolver;
@@ -17,7 +17,7 @@ public class FulltextFunctionArguments
     @Override
     protected String resolveAnalyzer( final String value )
     {
-        return StringUtils.isBlank( value ) ? NodeConstants.DEFAULT_FULLTEXT_SEARCH_ANALYZER : value;
+        return Strings.nullToEmpty( value ).isBlank() ? NodeConstants.DEFAULT_FULLTEXT_SEARCH_ANALYZER : value;
     }
 
     public FulltextFunctionArguments( final List<ValueExpr> arguments )

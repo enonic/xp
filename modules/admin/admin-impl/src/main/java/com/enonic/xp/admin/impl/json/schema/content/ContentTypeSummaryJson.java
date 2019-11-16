@@ -3,8 +3,7 @@ package com.enonic.xp.admin.impl.json.schema.content;
 import java.time.Instant;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.admin.impl.json.ChangeTraceableJson;
@@ -51,7 +50,7 @@ public class ContentTypeSummaryJson
 
     public String getDisplayName()
     {
-        if ( StringUtils.isNotBlank( contentType.getDisplayNameI18nKey() ) )
+        if ( !Strings.nullToEmpty( contentType.getDisplayNameI18nKey() ).isBlank() )
         {
             return localeMessageResolver.localizeMessage( contentType.getDisplayNameI18nKey(), contentType.getDisplayName() );
         }
@@ -63,7 +62,7 @@ public class ContentTypeSummaryJson
 
     public String getDescription()
     {
-        if ( StringUtils.isNotBlank( contentType.getDescriptionI18nKey() ) )
+        if ( !Strings.nullToEmpty( contentType.getDescriptionI18nKey() ).isBlank() )
         {
             return localeMessageResolver.localizeMessage( contentType.getDescriptionI18nKey(), contentType.getDescription() );
         }
@@ -75,7 +74,7 @@ public class ContentTypeSummaryJson
 
     public String getDisplayNameLabel()
     {
-        if ( StringUtils.isNotBlank( contentType.getDisplayNameLabelI18nKey() ) )
+        if ( !Strings.nullToEmpty( contentType.getDisplayNameLabelI18nKey() ).isBlank() )
         {
             return localeMessageResolver.localizeMessage( contentType.getDisplayNameLabelI18nKey(), contentType.getDisplayNameLabel() );
         }
