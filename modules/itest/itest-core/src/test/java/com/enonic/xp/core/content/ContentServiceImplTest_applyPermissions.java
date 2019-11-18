@@ -68,6 +68,7 @@ public class ContentServiceImplTest_applyPermissions
 
     @Test
     public void audit_data()
+        throws Exception
     {
         final ArgumentCaptor<LogAuditLogParams> captor = ArgumentCaptor.forClass( LogAuditLogParams.class );
 
@@ -87,7 +88,7 @@ public class ContentServiceImplTest_applyPermissions
 
         final ApplyContentPermissionsResult result = this.contentService.applyPermissions( applyParams );
 
-        Mockito.verify( auditLogService, Mockito.times( 2 ) ).log( captor.capture() );
+        Mockito.verify( auditLogService, Mockito.timeout( 5000 ).times( 2 ) ).log( captor.capture() );
 
         final PropertySet logResultSet = captor.getValue().getData().getSet( "result" );
 
