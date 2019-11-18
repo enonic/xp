@@ -46,7 +46,7 @@ class NodeVersionFactory
             nodeVersionKey( nodeVersionKey ).
             binaryBlobKeys( binaryBlobKeys ).
             nodeCommitId( commitId == null ? null : NodeCommitId.from( commitId.toString() ) ).
-            addBranches( branches ).
+            setBranches( branches ).
             build();
     }
 

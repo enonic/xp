@@ -247,11 +247,11 @@ public class NodeVersionMetadata
             return this;
         }
 
-        public Builder addBranches( Branches branches )
+        public Builder setBranches( Branches branches )
         {
             if ( branches != null )
             {
-                this.branches = this.branches.addAll( branches );
+                this.branches = ImmutableSet.<Branch>builder().addAll( branches );
             }
             return this;
         }

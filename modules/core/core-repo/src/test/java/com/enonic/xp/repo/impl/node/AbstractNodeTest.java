@@ -310,7 +310,7 @@ public abstract class AbstractNodeTest
 
                 this.versionService.store( NodeVersionMetadata.
                     create( nodeVersionMetadata ).
-                    addBranches( Branches.empty() ).
+                    setBranches( Branches.empty() ).
                     build(), internalContext );
             }
         }

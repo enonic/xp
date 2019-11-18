@@ -88,7 +88,7 @@ public class NodeVersionQueryResultFactory
             nodePath( NodePath.create( nodePath ).build() ).
             nodeId( NodeId.from( nodeId ) ).
             nodeCommitId( Strings.isNullOrEmpty( commitId ) ? null : NodeCommitId.from( commitId ) ).
-            addBranches( branches ).
+            setBranches( branches ).
             build();
     }
 

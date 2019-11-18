@@ -49,7 +49,7 @@ public class VersionServiceImpl
 
             this.store( NodeVersionMetadata.
                 create( nodeVersionMetadata ).
-                addBranches( branches ).
+                setBranches( branches ).
                 build(), context );
         } );
     }
