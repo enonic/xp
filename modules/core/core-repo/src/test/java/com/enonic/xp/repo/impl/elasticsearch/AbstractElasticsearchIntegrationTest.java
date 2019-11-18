@@ -101,7 +101,8 @@ public abstract class AbstractElasticsearchIntegrationTest
     {
         try
         {
-            return client.indices().delete( new DeleteIndexRequest( "_all" ), RequestOptions.DEFAULT );
+            return client.indices().delete( new DeleteIndexRequest( "search-*", "branch-*", "version-*", "commit-*" ),
+                                            RequestOptions.DEFAULT );
         }
         catch ( IOException e )
         {
