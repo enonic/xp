@@ -9,6 +9,7 @@ import org.elasticsearch.search.aggregations.bucket.histogram.Histogram;
 import org.elasticsearch.search.aggregations.bucket.histogram.InternalHistogram;
 import org.elasticsearch.search.aggregations.bucket.range.InternalDateRange;
 import org.elasticsearch.search.aggregations.bucket.range.InternalGeoDistance;
+import org.elasticsearch.search.aggregations.bucket.range.ParsedGeoDistance;
 import org.elasticsearch.search.aggregations.bucket.range.Range;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.metrics.Max;
@@ -54,7 +55,14 @@ public class AggregationsFactory
             }
             else if ( aggregation instanceof Range )
             {
-                aggregationsBuilder.add( NumericRangeAggregationFactory.create( (Range) aggregation ) );
+                if ( aggregation instanceof ParsedGeoDistance )
+                {
+                    aggregationsBuilder.add( ParsedGeoDistanceAggregationFactory.create( (ParsedGeoDistance) aggregation ) );
+                }
+                else
+                {
+                    aggregationsBuilder.add( NumericRangeAggregationFactory.create( (Range) aggregation ) );
+                }
             }
             else if ( aggregation instanceof InternalHistogram )
             {

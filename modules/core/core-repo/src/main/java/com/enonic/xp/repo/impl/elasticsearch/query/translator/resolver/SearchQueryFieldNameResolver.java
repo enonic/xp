@@ -12,7 +12,7 @@ import com.enonic.xp.repo.impl.index.IndexValueTypeInterface;
 public class SearchQueryFieldNameResolver
     extends AbstractQueryFieldNameResolver
 {
-    private final static List<String> BUILT_IN_FIELDS = Lists.newArrayList( "_score", "_id" );
+    private final static List<String> BUILT_IN_FIELDS = Lists.newArrayList( "_score", "_id", "_ts", "_manualordervalue" );
 
 
     @Override

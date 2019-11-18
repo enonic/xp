@@ -37,7 +37,7 @@ public class HasUnpublishedChildrenCommand
             source( ContextAccessor.current().getBranch() ).
             target( target ).
             nodePath( parentNode.path() ).
-            size( 0 ).
+            size( 1000 ). // TODO Upgrade ES
             excludes( ExcludeEntries.create().
                 add( new ExcludeEntry( parentNode.path(), false ) ).
                 build() ).

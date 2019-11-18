@@ -40,7 +40,7 @@ class GetBranchDataCommand
         branch = builder.branch;
         nodeSearchService = builder.nodeSearchService;
         repositoryId = builder.repositoryId;
-        final SearchResult result = doQuery( 0, 0 );
+        final SearchResult result = doQuery( 0, 1000 ); // TODO Upgrade ES
         this.totalHits = result.getTotalHits();
     }
 

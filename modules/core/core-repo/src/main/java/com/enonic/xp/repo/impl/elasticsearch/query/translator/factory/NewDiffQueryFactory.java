@@ -118,7 +118,7 @@ public class NewDiffQueryFactory
 
     private TermQueryBuilder isInBranch( final Branch source )
     {
-        return new TermQueryBuilder( VersionIndexPath.BRANCHES.toString(), source );
+        return new TermQueryBuilder( VersionIndexPath.BRANCHES.toString(), source.toString() );
     }
 
     public static final class Builder

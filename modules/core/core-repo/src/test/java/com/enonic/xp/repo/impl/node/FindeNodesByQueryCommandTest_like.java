@@ -51,8 +51,8 @@ public class FindeNodesByQueryCommandTest_like
     {
         setupData();
 
-        queryAndExpect( "_parentPath=\"/content/superhero/posts\" AND data.post LIKE \"*text*\"", 1 );
-        queryAndExpect( " _parentPath=\"/content/superhero/posts\" AND data.title LIKE \"*post*\"", 1 );
+        queryAndExpect( "_parentPath=\"/content/superhero/posts\" AND data@post LIKE \"*text*\"", 1 );
+        queryAndExpect( " _parentPath=\"/content/superhero/posts\" AND data@title LIKE \"*post*\"", 1 );
     }
 
     private void setupData()

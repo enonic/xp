@@ -50,17 +50,21 @@ public class NumericRangeAggregationTest
                 fieldName( "numeric" ).
                 addRange( NumericRange.create().
                     to( 150d ).
+                    key( "small" ).
                     build() ).
                 addRange( NumericRange.create().
                     from( 150d ).
                     to( 250d ).
+                    key( "small" ).
                     build() ).
                 addRange( NumericRange.create().
                     from( 250d ).
                     to( 350d ).
+                    key( "small" ).
                     build() ).
                 addRange( NumericRange.create().
                     from( 350d ).
+                    key( "small" ).
                     build() ).
                 build() ).
             build();
@@ -74,10 +78,10 @@ public class NumericRangeAggregationTest
         final Buckets buckets = aggregation.getBuckets();
 
         final Iterator<Bucket> iterator = buckets.iterator();
-        verifyBucket( iterator.next(), 1, null );
-        verifyBucket( iterator.next(), 1, null );
-        verifyBucket( iterator.next(), 1, null );
-        verifyBucket( iterator.next(), 3, null );
+        verifyBucket( iterator.next(), 1, "small" );
+        verifyBucket( iterator.next(), 1, "small" );
+        verifyBucket( iterator.next(), 1, "small" );
+        verifyBucket( iterator.next(), 3, "small" );
     }
 
     @Test

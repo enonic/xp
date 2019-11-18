@@ -32,7 +32,7 @@ public class FindNodesWithVersionDifferenceCommand
 
     private final NodeStorageService nodeStorageService;
 
-    private final int batchSize = 20_000;
+    private final int batchSize = 10_000;
 
     private FindNodesWithVersionDifferenceCommand( final Builder builder )
     {

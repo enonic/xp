@@ -5,7 +5,6 @@ import java.util.Collection;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.support.WriteRequest;
 import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.Requests;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.slf4j.Logger;
@@ -38,7 +37,7 @@ public class StoreExecutor
 
             final XContentBuilder xContentBuilder = StoreDocumentXContentBuilderFactory.create( indexDocument );
 
-            final IndexRequest req = Requests.indexRequest().
+            final IndexRequest req = new IndexRequest().
                 id( id ).
                 index( indexDocument.getIndexName() ).
                 source( xContentBuilder ).

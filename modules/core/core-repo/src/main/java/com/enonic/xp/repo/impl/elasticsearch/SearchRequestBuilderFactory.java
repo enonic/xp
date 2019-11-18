@@ -42,7 +42,11 @@ public class SearchRequestBuilderFactory
         return new Builder();
     }
 
-    public SearchRequest create()
+    public SearchRequest create() {
+        return create( true );
+    }
+
+    public SearchRequest create(final boolean considerFromParam)
     {
         final SearchType searchType =
             query.getSearchOptimizer().equals( SearchOptimizer.ACCURACY ) ? SearchType.DFS_QUERY_THEN_FETCH : SearchType.DEFAULT;
@@ -51,8 +55,12 @@ public class SearchRequestBuilderFactory
             explain( query.isExplain() ).
             query( query.getQuery() ).
             postFilter( query.getFilter() ).
-            from( query.getFrom() ).
             size( resolvedSize );
+
+        if ( considerFromParam )
+        {
+            sourceBuilder.from( query.getFrom() );
+        }
 
         query.getSortBuilders().forEach( sourceBuilder::sort );
         query.getAggregations().forEach( sourceBuilder::aggregation );
