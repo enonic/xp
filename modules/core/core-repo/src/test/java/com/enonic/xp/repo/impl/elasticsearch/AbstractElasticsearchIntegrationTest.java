@@ -1,8 +1,8 @@
 package com.enonic.xp.repo.impl.elasticsearch;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.file.Path;
 
 import org.apache.http.HttpHost;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
@@ -37,6 +37,8 @@ public abstract class AbstractElasticsearchIntegrationTest
 
     private static IndexServiceInternalImpl indexService;
 
+    private static Path snapshotsDir;
+
     protected boolean indexExists( String index )
     {
         try
@@ -50,9 +52,9 @@ public abstract class AbstractElasticsearchIntegrationTest
         }
     }
 
-    protected File getSnapshotsDir()
+    protected Path getSnapshotsDir()
     {
-        return ElasticsearchInstance.INSTANCE.getSnapshotsDir();
+        return snapshotsDir;
     }
 
     protected void printAllIndexContent( final String indexName, final String indexType )
@@ -110,12 +112,16 @@ public abstract class AbstractElasticsearchIntegrationTest
     static class ElasticsearchExtension
         implements BeforeAllCallback, AfterAllCallback
     {
+        ElasticsearchInstance elasticsearchInstance;
+
         @Override
         public void beforeAll( ExtensionContext context )
             throws IOException, InterruptedException
         {
-            ElasticsearchInstance.INSTANCE.start();
+            elasticsearchInstance = new ElasticsearchInstance();
+            elasticsearchInstance.start();
 
+            snapshotsDir = elasticsearchInstance.getSnapshotsDir();
 
             client = new RestHighLevelClient( RestClient.builder( new HttpHost( "localhost", 9200, "http" ) ) );
 
@@ -127,7 +133,7 @@ public abstract class AbstractElasticsearchIntegrationTest
         public void afterAll( final ExtensionContext context )
             throws Exception
         {
-            ElasticsearchInstance.INSTANCE.stop();
+            elasticsearchInstance.stop();
 
             if ( client != null )
             {

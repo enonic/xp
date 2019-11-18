@@ -1,28 +1,23 @@
 package com.enonic.xp.repo.impl.elasticsearch.distro;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
-import org.apache.commons.io.FileUtils;
 
 import com.enonic.xp.repo.impl.elasticsearch.distro.config.ElasticsearchDownloaderConfig;
 
 import static com.enonic.xp.repo.impl.elasticsearch.distro.ElasticsearchConstants.ROOT_DATA_DIR;
 import static com.enonic.xp.repo.impl.elasticsearch.distro.ElasticsearchConstants.TMP_ELASTICSEARCH_DIR;
 
-public enum ElasticsearchInstance
+public class ElasticsearchInstance
 {
-
-    INSTANCE;
 
     private ElasticsearchServer elasticsearchServer;
 
-    private File snapshotsDir;
+    private Path snapshotsDir;
 
-    ElasticsearchInstance()
+    public ElasticsearchInstance()
     {
         elasticsearchServer = ElasticsearchServer.ElasticsearchServerBuilder.builder().
             esJavaOpts( "-Xms512m -Xmx512m" ).
@@ -38,16 +33,16 @@ public enum ElasticsearchInstance
         {
             Path rootDirectory = Files.createTempDirectory( TMP_ELASTICSEARCH_DIR );
 
-            final File dataDir = new File( rootDirectory.toFile(), ROOT_DATA_DIR );
+            final Path dataDir = rootDirectory.resolve( ROOT_DATA_DIR );
 
-            final File pathHome = new File( dataDir, "index" );
-            FileUtils.forceMkdir( pathHome );
+            final Path pathHome = dataDir.resolve( "index" );
+            Files.createDirectories( pathHome );
 
-            final File pathData = new File( dataDir, "data" );
-            FileUtils.forceMkdir( pathData );
+            final Path pathData = dataDir.resolve( "data" );
+            Files.createDirectories( pathData );
 
-            snapshotsDir = new File( dataDir, "repo" );
-            FileUtils.forceMkdir( snapshotsDir );
+            snapshotsDir = dataDir.resolve( "repo" );
+            Files.createDirectories( snapshotsDir );
         }
         catch ( IOException e )
         {
@@ -72,7 +67,7 @@ public enum ElasticsearchInstance
         }
     }
 
-    public File getSnapshotsDir()
+    public Path getSnapshotsDir()
     {
         return snapshotsDir;
     }

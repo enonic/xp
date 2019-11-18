@@ -1,8 +1,8 @@
 package com.enonic.xp.repo.impl.config;
 
-import java.io.File;
+import java.nio.file.Path;
 
 public interface RepoConfiguration
 {
-    File getSnapshotsDir();
+    Path getSnapshotsDir();
 }
