@@ -189,21 +189,14 @@ public class MoveNodeCommand
         final Node movedNode;
 
         final boolean isTheOriginalMovedNode = persistedNode.id().equals( this.nodeId );
-        if ( isTheOriginalMovedNode )
-        {
-            final boolean isRenaming = newParentPath.equals( persistedNode.parentPath() );
+        final boolean isOriginalNodeRenaming = isTheOriginalMovedNode && newParentPath.equals( persistedNode.parentPath() );
 
-            if ( !isRenaming )
-            {
-                updateStoredNodeProperties( newParentPath, nodeToMoveBuilder );
-            }
-
-            movedNode = doStore( nodeToMoveBuilder.build(), false );
-        }
-        else
+        if ( !isOriginalNodeRenaming )
         {
-            movedNode = doStore( nodeToMoveBuilder.build(), true );
+            updateStoredNodeProperties( newParentPath, nodeToMoveBuilder );
         }
+
+        movedNode = doStore( nodeToMoveBuilder.build() );
 
         nodeMoved( 1 );
 
@@ -251,11 +244,11 @@ public class MoveNodeCommand
         return updateManualOrderValue;
     }
 
-    private Node doStore( final Node movedNode, final boolean metadataOnly )
+    private Node doStore( final Node movedNode )
     {
         return this.nodeStorageService.move( MoveNodeParams.create().
             node( movedNode ).
-            updateMetadataOnly( metadataOnly ).
+            updateMetadataOnly( false ).
             build(), InternalContext.from( ContextAccessor.current() ) );
     }
 

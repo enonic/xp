@@ -263,20 +263,39 @@ public class ResolveSyncWorkCommandTest
     }
 
     /**
-     * node1                                   (Moved)
+     * Before move:
+     * <p>
+     * node1                                   (Equal)
      * .....|
-     * .....node1_1                            (New)
+     * .....node1_1                            (Equal)
      * ............|
-     * .............node1_1_1                  (New)
+     * .............node1_1_1                  (Equal)
      * ......................|
-     * .......................node1_1_1_1      (New)
+     * .......................node1_1_1_1      (Equal)
+     * <p>
+     * node2                                   (Equal)
+     * <p>
+     * After move:
+     * <p>
+     * node1                                   (Eaual)
+     * .....|
+     * .....node1_1                            (Equal)
+     * <p>
+     * node2                                   (Equal)
+     * .....|
+     * .....node1_1_1                          (Moved)
+     * ..........|
+     * ..........node1_1_1_1                   (Moved)
+     *
+     *
      * <p>
      * Contents created below look like pic above.
-     * ResolveSyncWorkCommand will return node1_1_1 and two of its parents when called both with includeChildren=true and with includeChildren=false
-     * 1) FindNodesWithVersionDifferenceCommand will returns only actual nodes that have Moved status (such like node1)...
-     * 2) ... though CompareContentCommand will return status Moved for all children of Moved content.
-     * 3) When includeChildren=false ResolveSyncWorkCommand will resolve all parents against the passed node.
+     * ResolveSyncWorkCommand will return node1_1 and its parent when called with includeChildren=false and will also add node1_1_1 and node1_1_1_1 with includeChildren=true
+     * 1) initial diff will contain requested node (node1_1) for includeChildren=false or FindNodesWithVersionDifferenceCommand will return all moved children (node1_1_1 and node1_1_1_1) for includeChildren=true
+     * 2) ... though CompareContentCommand will return statuses for all contents in initial diff.
+     * 3) ResolveSyncWorkCommand will resolve all "NEW" and "Moved" parents against the passed node (none in current test).
      * So ResolveSyncWorkCommand will return only "Moved" parents of passed node and passed node itself when includeChildren=false
+     * And will also contain moved children of passed node when includeChildren=true
      */
     @Test
     public void resolveDependenciesOfMovedNodes2()
@@ -315,29 +334,47 @@ public class ResolveSyncWorkCommandTest
 
         moveNode( node1, node2.path() );
 
-        final ResolveSyncWorkResult resultChildrenIncluded = resolveSyncWorkResult( node1_1_1.id(), true );
-        final ResolveSyncWorkResult resultChildrenNotIncluded = resolveSyncWorkResult( node1_1_1.id(), false );
+        final ResolveSyncWorkResult resultChildrenIncluded = resolveSyncWorkResult( node1_1.id(), true );
+        final ResolveSyncWorkResult resultChildrenNotIncluded = resolveSyncWorkResult( node1_1.id(), false );
 
-        assertEquals( resultChildrenIncluded.getSize(), 3 );
-        assertEquals( resultChildrenNotIncluded.getSize(), 3 );
+        assertEquals( 4, resultChildrenIncluded.getSize() );
+        assertEquals( 2, resultChildrenNotIncluded.getSize() );
 
     }
 
     /**
-     * node1                                   (New)
+     * Before move:
+     * <p>
+     * node1                                   (Eaual)
      * .....|
-     * .....node1_1                            (New)
+     * .....node1_1                            (Equal)
      * ............|
-     * .............node1_1_1                  (Moved)
+     * .............node1_1_1                  (Equal)
      * ......................|
-     * .......................node1_1_1_1      (New)
+     * .......................node1_1_1_1      (Equal)
+     * <p>
+     * node2                                   (New)
+     * <p>
+     * After move:
+     * <p>
+     * * node1                                (Eaual)
+     * * .....|
+     * * .....node1_1                     (Equal)
+     * <p>
+     * * node2                            (New)
+     * * .....|
+     * * .....node1_1_1                   (Moved)
+     * *      * .....|
+     * *      * .....node1_1_1_1          (Moved)
+     *
      * <p>
      * Contents created below look like pic above.
-     * ResolveSyncWorkCommand will return node1_1_1 for node1_1_1.id() when called both with includeChildren=true and with includeChildren=false
-     * 1) FindNodesWithVersionDifferenceCommand will returns only actual nodes that have Moved status (such like node1)...
-     * 2) ... though CompareContentCommand will return status Moved for all children of Moved content.
-     * 3) When includeChildren=false ResolveSyncWorkCommand will resolve all parents against the passed node.
-     * So ResolveSyncWorkCommand will return only "Moved" parents of passed node and passed node itself when includeChildren=false
+     * ResolveSyncWorkCommand will return node1_1_1 and its new parent for node1_1_1.id() when called with includeChildren=false and will also add node1_1_1_1 with includeChildren=true
+     * 1) initial diff will contain requested node (node1_1_1) for includeChildren=false or FindNodesWithVersionDifferenceCommand will return all moved child ( node1_1_1_1) for includeChildren=true
+     * 2) ... though CompareContentCommand will return statuses for all contents in initial diff.
+     * 3) ResolveSyncWorkCommand will resolve all "New" and "Moved" parents against the passed node (node2).
+     * So ResolveSyncWorkCommand will return only "New" parent of passed node and passed node itself when includeChildren=false
+     * And will also contain moved children of passed node when includeChildren=true
      */
     @Test
     public void resolveDependenciesOfMovedNodes3()
@@ -372,7 +409,7 @@ public class ResolveSyncWorkCommandTest
             name( "node2" ).
             build() );
 
-        pushNodes( WS_OTHER, node1.id(), node2.id(), node1_1.id(), node1_1_1.id(), node1_1_1_1.id() );
+        pushNodes( WS_OTHER, node1.id(), node1_1.id(), node1_1_1.id(), node1_1_1_1.id() );
 
         moveNode( node1_1_1, node2.path() );
 
@@ -381,8 +418,8 @@ public class ResolveSyncWorkCommandTest
         final ResolveSyncWorkResult resultChildrenIncluded = resolveSyncWorkResult( node1_1_1.id(), true );
         final ResolveSyncWorkResult resultChildrenNotIncluded = resolveSyncWorkResult( node1_1_1.id(), false );
 
-        assertEquals( resultChildrenIncluded.getSize(), 1 );
-        assertEquals( resultChildrenNotIncluded.getSize(), 1 );
+        assertEquals( resultChildrenIncluded.getSize(), 3 );
+        assertEquals( resultChildrenNotIncluded.getSize(), 2 );
     }
 
     private void moveNode( Node moveMe, NodePath to )
@@ -1270,16 +1307,16 @@ public class ResolveSyncWorkCommandTest
 
 
     /*
-      * s1
-      ** a1
-      ** a2
-      *** a2_1 -> b2_1
-      **** a2_1_1
-      * s2
-      ** b1
-      ** b2
-      *** b2_1
-   */
+     * s1
+     ** a1
+     ** a2
+     *** a2_1 -> b2_1
+     **** a2_1_1
+     * s2
+     ** b1
+     ** b2
+     *** b2_1
+     */
     @Test
     public void not_include_dependencies()
     {
@@ -1335,15 +1372,15 @@ public class ResolveSyncWorkCommandTest
     }
 
     /*
-        * s1
-        ** a1
-        ** a2
-        *** a2_1 -> b2_1
-        **** a2_1_1
-        * s2
-        ** b1
-        ** b2
-        *** b2_1
+     * s1
+     ** a1
+     ** a2
+     *** a2_1 -> b2_1
+     **** a2_1_1
+     * s2
+     ** b1
+     ** b2
+     *** b2_1
      */
     private void createS1S2Tree()
     {
@@ -1575,16 +1612,12 @@ public class ResolveSyncWorkCommandTest
 
         assertEquals( expectedNodes
 
-            .nodes.size(), result.getSize() ,
-                createAssertFailMessage( result, expectedNodes ));
+                          .nodes.size(), result.getSize(), createAssertFailMessage( result, expectedNodes ) );
     }
 
     private enum Reason
     {
-        PARENT,
-        CHILD,
-        REFERRED,
-        IMPLICIT
+        PARENT, CHILD, REFERRED, IMPLICIT
     }
 
     private static class ExpectedNodes
