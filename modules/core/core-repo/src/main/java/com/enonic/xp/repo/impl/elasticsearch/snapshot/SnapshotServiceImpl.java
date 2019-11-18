@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.elasticsearch.ElasticsearchStatusException;
 import org.elasticsearch.action.admin.cluster.repositories.get.GetRepositoriesRequest;
 import org.elasticsearch.action.admin.cluster.repositories.get.GetRepositoriesResponse;
 import org.elasticsearch.action.admin.cluster.repositories.put.PutRepositoryRequest;
@@ -18,12 +19,15 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.cluster.metadata.RepositoryMetaData;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.repositories.RepositoryException;
 import org.elasticsearch.repositories.RepositoryMissingException;
+import org.elasticsearch.repositories.fs.FsRepository;
+import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.snapshots.SnapshotInfo;
 import org.elasticsearch.snapshots.SnapshotState;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.cluster.ClusterManager;
 import com.enonic.xp.event.EventPublisher;
@@ -44,6 +48,8 @@ import com.enonic.xp.snapshot.SnapshotService;
 public class SnapshotServiceImpl
     implements SnapshotService
 {
+    private static final Logger LOG = LoggerFactory.getLogger( SnapshotServiceImpl.class );
+
     private final static String SNAPSHOT_REPOSITORY_NAME = "enonic-xp-snapshot-repo";
 
     private RestHighLevelClient client;
@@ -197,13 +203,20 @@ public class SnapshotServiceImpl
                 }
             }
         }
-        catch ( RepositoryException e )
-        {
-            return null;
-        }
         catch ( IOException e )
         {
             throw new UncheckedIOException( e );
+        }
+        catch ( Exception e )
+        {
+            if ( e instanceof ElasticsearchStatusException )
+            {
+                if ( ( (ElasticsearchStatusException) e ).status() == RestStatus.NOT_FOUND )
+                {
+                    LOG.debug( "Snapshot repository \"{}\" not found", SNAPSHOT_REPOSITORY_NAME );
+                }
+            }
+            return null;
         }
 
         return null;
@@ -214,10 +227,10 @@ public class SnapshotServiceImpl
         try
         {
             final PutRepositoryRequest request = new PutRepositoryRequest( SNAPSHOT_REPOSITORY_NAME ).
-                type( "fs" ).
+                type( FsRepository.TYPE ).
                 settings( Settings.builder().
-                    put( "compress", true ).
-                    put( "location", getSnapshotsDir().toPath() ).
+                    put( FsRepository.COMPRESS_SETTING.getKey(), true ).
+                    put( FsRepository.LOCATION_SETTING.getKey(), getSnapshotsDir().toPath() ).
                     build() );
 
             this.client.snapshot().createRepository( request, RequestOptions.DEFAULT );
