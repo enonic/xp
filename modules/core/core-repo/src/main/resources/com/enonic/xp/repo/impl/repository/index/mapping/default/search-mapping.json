@@ -433,6 +433,9 @@
     },
     "_manualordervalue": {
       "type": "keyword"
+    },
+    "branch": {
+      "type": "keyword"
     }
   }
 }

@@ -82,7 +82,6 @@ public class ESQueryTranslator
 
         return ElasticsearchQuery.create().
             addIndexNames( esSource.getIndexNames() ).
-            addIndexTypes( esSource.getIndexTypes() ).
             query( queryBuilder ).
             from( query.getFrom() ).
             size( query.getSize() ).

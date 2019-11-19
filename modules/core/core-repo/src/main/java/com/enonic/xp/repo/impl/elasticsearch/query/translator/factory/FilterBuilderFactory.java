@@ -21,6 +21,7 @@ import com.enonic.xp.query.filter.ExistsFilter;
 import com.enonic.xp.query.filter.Filter;
 import com.enonic.xp.query.filter.Filters;
 import com.enonic.xp.query.filter.IdFilter;
+import com.enonic.xp.query.filter.IndexFilter;
 import com.enonic.xp.query.filter.IndicesFilter;
 import com.enonic.xp.query.filter.RangeFilter;
 import com.enonic.xp.query.filter.ValueFilter;
@@ -107,6 +108,10 @@ public class FilterBuilderFactory
         {
             return createIndicesFilter( (IndicesFilter) filter );
         }
+        else if ( filter instanceof IndexFilter )
+        {
+            return createIndexFilter( (IndexFilter) filter );
+        }
         else
         {
             throw new IllegalArgumentException( String.format( "Filter of type %s not supported", filter.getClass() ) );
@@ -147,6 +152,13 @@ public class FilterBuilderFactory
         values.addAll( idFilter.getValues() );
 
         return new TermsQueryBuilder( queryFieldName, values );
+    }
+
+    private QueryBuilder createIndexFilter( final IndexFilter indexFilter )
+    {
+        final String filedName = IndexFieldNameNormalizer.normalize( indexFilter.getFieldName() );
+
+        return new TermsQueryBuilder( filedName, new HashSet<>( indexFilter.getValues() ) );
     }
 
     private QueryBuilder createBooleanFilter( final BooleanFilter booleanFilter )

@@ -7,11 +7,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.elasticsearch.ElasticsearchException;
+import org.elasticsearch.ElasticsearchStatusException;
 import org.elasticsearch.action.admin.indices.open.OpenIndexRequest;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.CloseIndexRequest;
-import org.elasticsearch.index.IndexNotFoundException;
+import org.elasticsearch.rest.RestStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,9 +61,12 @@ class AbstractSnapshotExecutor
                 this.client.indices().close( new CloseIndexRequest( indexName ), RequestOptions.DEFAULT );
                 LOG.info( "Closed index " + indexName );
             }
-            catch ( IndexNotFoundException e )
+            catch ( ElasticsearchStatusException e )
             {
-                LOG.warn( "Could not close index [" + indexName + "], not found" );
+                if ( e.status() == RestStatus.NOT_FOUND )
+                {
+                    LOG.warn( "Could not close index [" + indexName + "], not found" );
+                }
             }
             catch ( IOException e )
             {

@@ -8,8 +8,7 @@ class SingleRepoStorageSourceAdaptor
 {
     public static ESSource adapt( final SingleRepoStorageSource source )
     {
-        final ESSource.Builder esSource = ESSource.create().
-            addIndexType( source.getType().name().toLowerCase() );
+        final ESSource.Builder esSource = ESSource.create();
 
         final BaseStorageName storageIndexName = createStorageIndexName( source.getRepositoryId(), source.getType() );
 

@@ -12,7 +12,6 @@ class SingleRepoSearchSourceAdaptor
     {
         return ESSource.create().
             addIndexName( createSearchIndexName( source.getRepositoryId() ).getName() ).
-            addIndexType( createSearchTypeName( source.getBranch() ) ).
             addFilter( createAclFilterBuilder( source.getAcl() ) ).
             build();
     }
