@@ -33,7 +33,6 @@ public abstract class BaseAuditLogHandlerTest
             time( Instant.ofEpochMilli( 1565599442767L ) ).
             source( p.getSource() ).
             user( p.getUser() ).
-            message( p.getMessage() ).
             objectUris( p.getObjectUris() ).
             data( p.getData() );
     }

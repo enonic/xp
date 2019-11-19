@@ -29,8 +29,6 @@ public class CreateAuditLogHandler
 
     private PrincipalKey user;
 
-    private String message;
-
     private AuditLogUris objectUris;
 
     private PropertyTree data;
@@ -43,7 +41,6 @@ public class CreateAuditLogHandler
             time( this.time ).
             source( this.source ).
             user( this.user ).
-            message( this.message ).
             objectUris( this.objectUris ).
             data( this.data ).
             build() );
@@ -68,11 +65,6 @@ public class CreateAuditLogHandler
     public void setUser( final String user )
     {
         this.user = user != null ? PrincipalKey.from( user ) : null;
-    }
-
-    public void setMessage( final String message )
-    {
-        this.message = message;
     }
 
     public void setObjectUris( final ScriptValue objectUris )
