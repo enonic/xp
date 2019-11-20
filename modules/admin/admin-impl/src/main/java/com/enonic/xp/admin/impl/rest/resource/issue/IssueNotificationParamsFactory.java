@@ -216,7 +216,7 @@ public class IssueNotificationParamsFactory
             return this;
         }
 
-        public Builder localseService( final LocaleService localeService )
+        public Builder localeService( final LocaleService localeService )
         {
             this.localeService = localeService;
             return this;

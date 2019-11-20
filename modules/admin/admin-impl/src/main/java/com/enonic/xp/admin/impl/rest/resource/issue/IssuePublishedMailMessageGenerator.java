@@ -24,7 +24,7 @@ public class IssuePublishedMailMessageGenerator
     protected String generateMessageTitle()
     {
         final String message =
-            params.getLocaleMessageResolver().localizeMessage( "issue.email.published", "%s published and closed the %" );
+            params.getLocaleMessageResolver().localizeMessage( "issue.email.published", "%s published and closed the %s" );
         return String.format( message, params.getPublisher().getDisplayName(), getIssueTypeText() );
     }
 

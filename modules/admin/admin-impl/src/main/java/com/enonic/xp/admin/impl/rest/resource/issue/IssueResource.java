@@ -123,7 +123,7 @@ public final class IssueResource
             securityService( securityService ).
             contentService( contentService ).
             contentTypeService( contentTypeService ).
-            localseService( localeService ).
+            localeService( localeService ).
             issue( issue ).
             comments( comments ).
             url( request.getHeader( HttpHeaders.REFERER ) ).
@@ -192,7 +192,7 @@ public final class IssueResource
                 securityService( securityService ).
                 contentService( contentService ).
                 contentTypeService( contentTypeService ).
-                localseService( localeService ).
+                localeService( localeService ).
                 issue( issue ).
                 comments( comments ).
                 url( request.getHeader( HttpHeaders.REFERER ) ).
@@ -209,7 +209,7 @@ public final class IssueResource
                 securityService( securityService ).
                 contentService( contentService ).
                 contentTypeService( contentTypeService ).
-                localseService( localeService ).
+                localeService( localeService ).
                 issue( issue ).
                 comments( comments ).
                 url( request.getHeader( HttpHeaders.REFERER ) );
@@ -272,7 +272,7 @@ public final class IssueResource
                 securityService( securityService ).
                 contentService( contentService ).
                 contentTypeService( contentTypeService ).
-                localseService( localeService ).
+                localeService( localeService ).
                 issue( issue ).
                 comments( results.getIssueComments() ).
                 url( request.getHeader( HttpHeaders.REFERER ) ).

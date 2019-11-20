@@ -529,7 +529,7 @@ public class IssueResourceTest
         final User creator = User.ANONYMOUS;
 
         final CreateIssueCommentJson params =
-            new CreateIssueCommentJson( issue.getId().toString(), comment.getText(), comment.getCreator().toString() );
+            new CreateIssueCommentJson( issue.getId().toString(), comment.getText(), comment.getCreator().toString(), false );
 
         IssueResource resource = getResourceInstance();
         Mockito.when( securityService.getUser( params.creator ) ).thenReturn( Optional.ofNullable( creator ) );
@@ -552,7 +552,7 @@ public class IssueResourceTest
         final IssueComment comment = createIssueComment( Instant.now() );
 
         final CreateIssueCommentJson params =
-            new CreateIssueCommentJson( issue.getId().toString(), comment.getText(), comment.getCreator().toString() );
+            new CreateIssueCommentJson( issue.getId().toString(), comment.getText(), comment.getCreator().toString(), false );
 
         IssueResource resource = getResourceInstance();
         Mockito.when( issueService.getIssue( params.issueId ) ).thenReturn( issue );
@@ -568,7 +568,7 @@ public class IssueResourceTest
         final IssueComment comment = createIssueComment( Instant.now() );
 
         final CreateIssueCommentJson params =
-            new CreateIssueCommentJson( issue.getId().toString(), comment.getText(), comment.getCreator().toString() );
+            new CreateIssueCommentJson( issue.getId().toString(), comment.getText(), comment.getCreator().toString(), false );
 
         IssueResource resource = getResourceInstance();
         Mockito.when( issueService.getIssue( params.issueId ) ).thenThrow( new IssueNotFoundException( issue.getId() ) );
