@@ -96,7 +96,7 @@ public class FindNodesByQueryCommandTest_func_fulltext
 
         final NodeQuery query2 = NodeQuery.create().
             query( QueryExpr.from( new DynamicConstraintExpr(
-                FunctionExpr.from( "fulltext", ValueExpr.string( "data.displayName" ), ValueExpr.string( "ø å" ),
+                FunctionExpr.from( "fulltext", ValueExpr.string( "data@displayName" ), ValueExpr.string( "ø å" ),
                                    ValueExpr.string( "OR" ) ) ) ) ).
             build();
 
