@@ -126,11 +126,11 @@ public class FindNodesByMultiRepoQueryCommandTest
         final Branch otherBranch = callInContext( REPO_USER_1, repo1.getId(), MASTER_BRANCH, () -> createBranch( "otherBranch" ) );
 
         final Node repo1MasterNode1 =
-            callInContext( REPO_USER_1, repo1.getId(), MASTER_BRANCH, () -> createNode( NodePath.ROOT, "repo1Node" ) );
+            callInContext( REPO_USER_1, repo1.getId(), MASTER_BRANCH, () -> createNode( NodePath.ROOT, "repo1Node", MASTER_BRANCH ) );
         final Node repo1OtherNode1 =
-            callInContext( REPO_USER_1, repo1.getId(), otherBranch, () -> createNode( NodePath.ROOT, "repo1Node" ) );
+            callInContext( REPO_USER_1, repo1.getId(), otherBranch, () -> createNode( NodePath.ROOT, "repo1Node", otherBranch ) );
         final Node repo2MasterNode1 =
-            callInContext( REPO_USER_2, repo2.getId(), MASTER_BRANCH, () -> createNode( NodePath.ROOT, "repo2Node" ) );
+            callInContext( REPO_USER_2, repo2.getId(), MASTER_BRANCH, () -> createNode( NodePath.ROOT, "repo2Node", MASTER_BRANCH ) );
 
         final SearchTargets targets = SearchTargets.create().
             add( createTarget( otherBranch, REPO_USER_1, repo1.getId() ) ).

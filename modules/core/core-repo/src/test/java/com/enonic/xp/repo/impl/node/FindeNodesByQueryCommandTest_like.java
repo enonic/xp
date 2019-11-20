@@ -32,8 +32,8 @@ public class FindeNodesByQueryCommandTest_like
 
         printContentRepoIndex();
 
-        queryAndExpect( "_parentPath=\"/content/superhero/posts\" AND data.tags LIKE \"tag\"", 1 );
-        queryAndExpect( "_parentPath=\"/content/superhero/posts\" AND data.tags LIKE \"sample\"", 1 );
+        queryAndExpect( "_parentPath=\"/content/superhero/posts\" AND data@tags LIKE \"tag\"", 1 );
+        queryAndExpect( "_parentPath=\"/content/superhero/posts\" AND data@tags LIKE \"sample\"", 1 );
     }
 
     @Test
@@ -42,7 +42,7 @@ public class FindeNodesByQueryCommandTest_like
     {
         setupData();
 
-        queryAndExpect( " _parentPath=\"/content/superhero/posts\" AND data.author LIKE \"ec87335c-3ee2-45ef-8ece-90401e04af29\"", 1 );
+        queryAndExpect( " _parentPath=\"/content/superhero/posts\" AND data@author LIKE \"ec87335c-3ee2-45ef-8ece-90401e04af29\"", 1 );
     }
 
     @Test

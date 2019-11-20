@@ -1,8 +1,10 @@
 package com.enonic.xp.repo.impl.node;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.io.TempDir;
@@ -350,6 +352,15 @@ public abstract class AbstractNodeTest
             parent( parent ).
             name( name ).
             setNodeId( NodeId.from( name ) ).
+            build() );
+    }
+
+    protected Node createNode( final NodePath parent, final String name, final Branch branch )
+    {
+        return createNode( CreateNodeParams.create().
+            parent( parent ).
+            name( name ).
+            setNodeId( NodeId.from( name + "_" + branch.getValue() ) ).
             build() );
     }
 
