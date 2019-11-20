@@ -22,6 +22,7 @@ import com.enonic.xp.web.dispatch.DispatchServlet;
 import com.enonic.xp.web.jetty.impl.configurator.GZipConfigurator;
 import com.enonic.xp.web.jetty.impl.configurator.HttpConfigurator;
 import com.enonic.xp.web.jetty.impl.configurator.MultipartConfigurator;
+import com.enonic.xp.web.jetty.impl.configurator.RequestLogConfigurator;
 import com.enonic.xp.web.jetty.impl.configurator.SessionConfigurator;
 
 final class JettyService
@@ -82,6 +83,7 @@ final class JettyService
             forEach( contexts::addHandler );
 
         new HttpConfigurator().configure( this.config, this.server );
+        new RequestLogConfigurator().configure( this.config, this.server );
 
         Metrics.removeAll( Handler.class );
         final InstrumentedHandler instrumentedHandler = new InstrumentedHandler( Metrics.registry(), Handler.class.getName() );
