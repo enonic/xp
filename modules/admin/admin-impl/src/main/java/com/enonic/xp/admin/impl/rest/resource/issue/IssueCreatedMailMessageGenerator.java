@@ -17,7 +17,8 @@ public class IssueCreatedMailMessageGenerator
     @Override
     protected String generateMessageTitle()
     {
-        return String.format( "%s assigned you a new issue", params.getCreator().getDisplayName() );
+        final String message = params.getLocaleMessageResolver().localizeMessage( "issue.email.created", "%s assigned you a new %s" );
+        return String.format( message, params.getCreator().getDisplayName(), getIssueTypeText() );
     }
 
     @Override
@@ -38,9 +39,4 @@ public class IssueCreatedMailMessageGenerator
         return "";
     }
 
-    @Override
-    protected boolean shouldShowComments()
-    {
-        return params.getComments().size() > 0;
-    }
 }

@@ -17,7 +17,7 @@ public class IssueCommentedMailMessageGenerator
     @Override
     protected String generateMessageTitle()
     {
-        return "A new comment is posted";
+        return params.getLocaleMessageResolver().localizeMessage( "issue.email.commented", "A new comment is posted" );
     }
 
     @Override
@@ -36,12 +36,6 @@ public class IssueCommentedMailMessageGenerator
     protected String getCopyRecepients()
     {
         return super.getApproverEmails();
-    }
-
-    @Override
-    protected boolean shouldShowComments()
-    {
-        return params.getComments().size() > 0;
     }
 
 }

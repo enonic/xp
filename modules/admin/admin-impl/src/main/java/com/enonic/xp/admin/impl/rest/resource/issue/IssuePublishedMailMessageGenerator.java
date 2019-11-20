@@ -15,13 +15,22 @@ public class IssuePublishedMailMessageGenerator
     }
 
     @Override
-    protected String generateMessageTitle()
+    protected boolean shouldShowComments()
     {
-        return String.format( "%s published and closed the request", params.getCreator().getDisplayName() );
+        return false;
     }
 
     @Override
-    protected String getSender() {
+    protected String generateMessageTitle()
+    {
+        final String message =
+            params.getLocaleMessageResolver().localizeMessage( "issue.email.published", "%s published and closed the %" );
+        return String.format( message, params.getPublisher().getDisplayName(), getIssueTypeText() );
+    }
+
+    @Override
+    protected String getSender()
+    {
         return params.getPublisher().getEmail();
     }
 

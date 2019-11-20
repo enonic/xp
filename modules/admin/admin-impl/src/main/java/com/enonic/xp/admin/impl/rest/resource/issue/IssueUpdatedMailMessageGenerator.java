@@ -1,7 +1,5 @@
 package com.enonic.xp.admin.impl.rest.resource.issue;
 
-import com.enonic.xp.issue.IssueStatus;
-
 public class IssueUpdatedMailMessageGenerator
     extends IssueMailMessageGenerator<IssueUpdatedNotificationParams>
 {
@@ -19,8 +17,19 @@ public class IssueUpdatedMailMessageGenerator
     @Override
     protected String generateMessageTitle()
     {
-        return String.format( "%s %s the issue", params.getCreator().getDisplayName(),
-                              params.getIssue().getStatus() == IssueStatus.CLOSED ? "closed" : "reopened" );
+        String key, defaultValue;
+        if ( isIssueOpen() )
+        {
+            key = "issue.email.reopened";
+            defaultValue = "%s reopened the %s";
+        }
+        else
+        {
+            key = "issue.email.closed";
+            defaultValue = "%s closed the %s";
+        }
+        final String message = params.getLocaleMessageResolver().localizeMessage( key, defaultValue );
+        return String.format( message, params.getModifier().getDisplayName(), this.getIssueTypeText() );
     }
 
     @Override

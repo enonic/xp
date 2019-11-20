@@ -44,6 +44,7 @@ import com.enonic.xp.admin.impl.rest.resource.issue.json.UpdateIssueCommentJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.UpdateIssueJson;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.issue.CreateIssueCommentParams;
 import com.enonic.xp.issue.CreateIssueParams;
 import com.enonic.xp.issue.CreatePublishRequestIssueParams;
@@ -93,6 +94,8 @@ public final class IssueResource
 
     private ContentTypeService contentTypeService;
 
+    private LocaleService localeService;
+
     @POST
     @Path("create")
     public IssueJson create( final CreateIssueJson json, @Context HttpServletRequest request )
@@ -120,6 +123,7 @@ public final class IssueResource
             securityService( securityService ).
             contentService( contentService ).
             contentTypeService( contentTypeService ).
+            localseService( localeService ).
             issue( issue ).
             comments( comments ).
             url( request.getHeader( HttpHeaders.REFERER ) ).
@@ -188,6 +192,7 @@ public final class IssueResource
                 securityService( securityService ).
                 contentService( contentService ).
                 contentTypeService( contentTypeService ).
+                localseService( localeService ).
                 issue( issue ).
                 comments( comments ).
                 url( request.getHeader( HttpHeaders.REFERER ) ).
@@ -204,6 +209,7 @@ public final class IssueResource
                 securityService( securityService ).
                 contentService( contentService ).
                 contentTypeService( contentTypeService ).
+                localseService( localeService ).
                 issue( issue ).
                 comments( comments ).
                 url( request.getHeader( HttpHeaders.REFERER ) );
@@ -257,20 +263,24 @@ public final class IssueResource
 
         final IssueComment comment = issueService.createComment( params );
 
-        final IssueCommentQuery commentsQuery = IssueCommentQuery.create().issue( issue.getId() ).build();
-        final FindIssueCommentsResult results = issueService.findComments( commentsQuery );
+        if ( !json.silent )
+        {
+            final IssueCommentQuery commentsQuery = IssueCommentQuery.create().issue( issue.getId() ).build();
+            final FindIssueCommentsResult results = issueService.findComments( commentsQuery );
 
-        IssueCommentedNotificationParams notificationParams = IssueNotificationParamsFactory.create().
-            securityService( securityService ).
-            contentService( contentService ).
-            contentTypeService( contentTypeService ).
-            issue( issue ).
-            comments( results.getIssueComments() ).
-            url( request.getHeader( HttpHeaders.REFERER ) ).
-            build().
-            commentedParams();
+            IssueCommentedNotificationParams notificationParams = IssueNotificationParamsFactory.create().
+                securityService( securityService ).
+                contentService( contentService ).
+                contentTypeService( contentTypeService ).
+                localseService( localeService ).
+                issue( issue ).
+                comments( results.getIssueComments() ).
+                url( request.getHeader( HttpHeaders.REFERER ) ).
+                build().
+                commentedParams();
 
-        issueNotificationsSender.notifyIssueCommented( notificationParams );
+            issueNotificationsSender.notifyIssueCommented( notificationParams );
+        }
 
         return new IssueCommentJson( comment );
     }
@@ -546,4 +556,11 @@ public final class IssueResource
     {
         this.contentTypeService = contentTypeService;
     }
+
+    @Reference
+    public void setLocaleService( final LocaleService localeService )
+    {
+        this.localeService = localeService;
+    }
+
 }
