@@ -26,6 +26,7 @@ import com.enonic.xp.issue.Issue;
 import com.enonic.xp.issue.IssueComment;
 import com.enonic.xp.issue.PublishRequestItem;
 import com.enonic.xp.schema.content.ContentTypeService;
+import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
@@ -104,7 +105,8 @@ public class IssueNotificationParamsFactory
 
     private IssueNotificationParams createMessageParams()
     {
-        final User creator = securityService.getUser( issue.getCreator() ).orElse( null );
+        PrincipalKey creatorOrModifierKey = issue.getModifier() != null ? issue.getModifier() : issue.getCreator();
+        final User creatorOrModifier = securityService.getUser( creatorOrModifierKey ).orElse( null );
         final ContentIds contentIds = ContentIds.from(
             issue.getPublishRequest().getItems().stream().map( PublishRequestItem::getId ).collect( Collectors.toList() ) );
         final Contents contents = contentService.getByIds( new GetContentByIdsParams( contentIds ) );
@@ -119,7 +121,7 @@ public class IssueNotificationParamsFactory
 
         return IssueNotificationParams.create().
             issue( issue ).
-            creator( creator ).
+            creator( creatorOrModifier ).
             approvers( approvers ).
             items( contents ).
             localeMessageResolver( localeMessageResolver ).

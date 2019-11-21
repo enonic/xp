@@ -26,16 +26,4 @@ public class IssueCommentedMailMessageGenerator
         return params.getModifier().getEmail();
     }
 
-    @Override
-    protected String generateRecipients()
-    {
-        return super.getCreatorEmail();
-    }
-
-    @Override
-    protected String getCopyRecepients()
-    {
-        return super.getApproverEmails();
-    }
-
 }

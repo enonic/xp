@@ -34,16 +34,4 @@ public class IssuePublishedMailMessageGenerator
         return params.getPublisher().getEmail();
     }
 
-    @Override
-    protected String generateRecipients()
-    {
-        return super.getCreatorEmail();
-    }
-
-    @Override
-    protected String getCopyRecepients()
-    {
-        return super.getApproverEmails();
-    }
-
 }

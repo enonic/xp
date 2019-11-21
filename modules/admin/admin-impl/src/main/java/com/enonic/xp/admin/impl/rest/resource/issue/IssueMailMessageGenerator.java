@@ -52,11 +52,17 @@ public abstract class IssueMailMessageGenerator<P extends IssueNotificationParam
 
     protected abstract String generateMessageTitle();
 
-    protected abstract String generateRecipients();
-
     protected abstract String getSender();
 
-    protected abstract String getCopyRecepients();
+    protected String generateRecipients()
+    {
+        return this.getApproverEmails();
+    }
+
+    protected String getCopyRecepients()
+    {
+        return "";
+    }
 
     protected boolean shouldShowComments()
     {
