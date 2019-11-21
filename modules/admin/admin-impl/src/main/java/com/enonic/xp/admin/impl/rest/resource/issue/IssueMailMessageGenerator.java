@@ -107,11 +107,13 @@ public abstract class IssueMailMessageGenerator<P extends IssueNotificationParam
         final boolean isRequest = this.isPublishRequest();
         final boolean isOpen = isIssueOpen();
         final String idString = params.getIssue().getId().toString();
+        final String showDetailsCaption = params.getLocaleMessageResolver().localizeMessage( "issue.email.showDetailsCaption", "Show Details..." );
+        final String latestCommentTitle = params.getLocaleMessageResolver().localizeMessage( "issue.email.latestCommentTitle", "Latest comment" );
 
         messageParams.put( "id", idString );
         messageParams.put( "index", params.getIssue().getIndex() );
         messageParams.put( "display-issue-icon", isRequest ? "none" : "block" );
-        messageParams.put( "display-request-icon", isRequest ? "block" : "none" );
+        messageParams.put( "display-request-icon", isRequest ? "inline-block" : "none" );
         messageParams.put( "icon-color", isOpen ? "#609E24" : "#777" );
         messageParams.put( "idShort", idString.substring( 0, 9 ) );
         messageParams.put( "title", generateMessageTitle() );
@@ -123,6 +125,8 @@ public abstract class IssueMailMessageGenerator<P extends IssueNotificationParam
         messageParams.put( "description-block-visibility", description.length() == 0 ? "none" : "block" );
         messageParams.put( "comments-block-visibility", showComments ? "block" : "none" );
         messageParams.put( "comments", generateCommentsHtml() );
+        messageParams.put( "showDetailsCaption", showDetailsCaption );
+        messageParams.put( "latestCommentTitle", latestCommentTitle );
 
         return new StrSubstitutor( messageParams ).replace( load( "email.html" ) );
     }

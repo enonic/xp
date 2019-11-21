@@ -1,14 +1,15 @@
 <div style="font-family: 'Open Sans', sans-serif;">
-    <div style="margin-bottom: 25px; font-size: 20px;">
+    <div style="margin-bottom: 25px; font-size: 20px; display: flex; align-items: center;">
 
-        <svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg">
+        <svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg"
+             style="margin-right: 15px; display: ${display-request-icon}">
             <path fill="${icon-color}"
-                  style="float: left; color: black; margin-right: 15px; display: ${display-request-icon}"
+
                   d="M16,0 C7.163,0 0,7.163 0,16 C0,24.837 7.163,32 16,32 C24.837,32 32,24.837 32,16 C32,7.163 24.837,0 16,0 L16,0 L16,0 Z M16,29 C8.82,29 3,23.18 3,16 C3,8.82 8.82,3 16,3 C23.18,3 29,8.82 29,16 C29,23.18 23.18,29 16,29 L16,29 L16,29 Z M12,9 L24,16 L12,23 L12,9 L12,9 Z"></path>
         </svg>
 
-        <svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg"
-             style="float: left; color: black; margin-right: 15px; display: ${display-issue-icon}">
+        <svg width="22px" height="22px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg"
+             style="margin-right: 10px; display: ${display-issue-icon}">
             <g id="issue-closed" fill="${icon-color}">
                 <path
                         d="M16,0 C7.163,0 0,7.163 0,16 C0,24.837 7.163,32 16,32 C24.837,32 32,24.837 32,16 C32,7.163 24.837,0 16,0 L16,0 Z M16,29 C8.82,29 3,23.18 3,16 C3,8.82 8.82,3 16,3 C23.18,3 29,8.82 29,16 C29,23.18 23.18,29 16,29 L16,29 Z"></path>
@@ -18,8 +19,8 @@
             </g>
         </svg>
 
-        <div style="line-height: 30px;font-size: 20px;">
-            <b>${title}</b>
+        <div style="line-height: 30px;font-size: 20px;display: inline-block">
+            ${title}
         </div>
     </div>
     <div style="margin-bottom: 25px;">
@@ -33,12 +34,12 @@
                     overflow: hidden;
                     text-overflow: ellipsis;
                     max-width: 150px;
-                    display: inline-block;">Show details...</span>
+                    display: inline-block;">${showDetailsCaption}</span>
             </button>
         </a>
     </div>
     <div style="margin-bottom: 40px; font-size: 16px; display: ${comments-block-visibility}">
-        <div style="margin-bottom: 15px;">Latest comment</div>
+        <div style="margin-bottom: 15px;">${latestCommentTitle}</div>
         ${comments}
     </div>
 </div>
