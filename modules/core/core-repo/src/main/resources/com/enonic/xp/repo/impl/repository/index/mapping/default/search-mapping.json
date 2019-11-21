@@ -432,7 +432,7 @@
       "type": "date"
     },
     "_manualordervalue": {
-      "type": "keyword"
+      "type": "long"
     },
     "branch": {
       "type": "keyword"
