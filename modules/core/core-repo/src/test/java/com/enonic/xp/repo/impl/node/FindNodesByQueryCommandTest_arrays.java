@@ -57,10 +57,10 @@ public class FindNodesByQueryCommandTest_arrays
 
         printContentRepoIndex();
 
-        compareQueryAndAssert( "cars.car.brand", "skoda", node1.id() );
-        compareQueryAndAssert( "cars.car.brand", "volvo", node1.id() );
-        compareQueryAndAssert( "cars.car.color", "red", node1.id() );
-        compareQueryAndAssert( "cars.car.color", "artic grey", node1.id() );
+        compareQueryAndAssert( "cars@car@brand", "skoda", node1.id() );
+        compareQueryAndAssert( "cars@car@brand", "volvo", node1.id() );
+        compareQueryAndAssert( "cars@car@color", "red", node1.id() );
+        compareQueryAndAssert( "cars@car@color", "artic grey", node1.id() );
     }
 
     private void compareQueryAndAssert( final String path1, final String value1, final NodeId nodeId )

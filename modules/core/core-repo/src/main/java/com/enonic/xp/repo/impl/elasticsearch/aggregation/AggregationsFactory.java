@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.elasticsearch.aggregation;
 
 
 import java.time.Instant;
+import java.time.ZonedDateTime;
 
 import org.elasticsearch.search.aggregations.HasAggregations;
 import org.elasticsearch.search.aggregations.bucket.MultiBucketsAggregation;
@@ -9,6 +10,7 @@ import org.elasticsearch.search.aggregations.bucket.histogram.Histogram;
 import org.elasticsearch.search.aggregations.bucket.histogram.InternalHistogram;
 import org.elasticsearch.search.aggregations.bucket.range.InternalDateRange;
 import org.elasticsearch.search.aggregations.bucket.range.InternalGeoDistance;
+import org.elasticsearch.search.aggregations.bucket.range.ParsedDateRange;
 import org.elasticsearch.search.aggregations.bucket.range.ParsedGeoDistance;
 import org.elasticsearch.search.aggregations.bucket.range.Range;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
@@ -58,6 +60,10 @@ public class AggregationsFactory
                 if ( aggregation instanceof ParsedGeoDistance )
                 {
                     aggregationsBuilder.add( ParsedGeoDistanceAggregationFactory.create( (ParsedGeoDistance) aggregation ) );
+                }
+                else if ( aggregation instanceof ParsedDateRange )
+                {
+                    aggregationsBuilder.add( ParsedDateRangeAggregationFactory.create( (ParsedDateRange) aggregation ) );
                 }
                 else
                 {
@@ -119,6 +125,12 @@ public class AggregationsFactory
     {
         return dateTime == null ? null : java.time.Instant.ofEpochMilli( dateTime.getMillis() );
     }
+
+    static Instant toInstant( final ZonedDateTime dateTime )
+    {
+        return dateTime == null ? null : dateTime.toInstant();
+    }
+
 }
 
 

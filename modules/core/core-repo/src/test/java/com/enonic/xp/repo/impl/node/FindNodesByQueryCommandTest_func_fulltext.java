@@ -142,7 +142,7 @@ public class FindNodesByQueryCommandTest_func_fulltext
 
         final NodeQuery query2 = NodeQuery.create().
             query( QueryExpr.from( new DynamicConstraintExpr(
-                FunctionExpr.from( "fulltext", ValueExpr.string( "data.displayName" ), ValueExpr.string( "o a" ),
+                FunctionExpr.from( "fulltext", ValueExpr.string( "data@displayName" ), ValueExpr.string( "o a" ),
                                    ValueExpr.string( "OR" ) ) ) ) ).
             build();
 
@@ -188,11 +188,11 @@ public class FindNodesByQueryCommandTest_func_fulltext
 
         final PropertyTree data = new PropertyTree();
 
-        final String path1 = "Test.Of.String.With.Path";
+        final String path1 = "Test@Of@String@With@Path";
         final String value1 = "fisk ost pølse løk";
         data.setString( path1, value1 );
 
-        final String path2 = "MyString.With.Path2";
+        final String path2 = "MyString@With@Path2";
         final String value2 = "vif rbk lsk sif";
         data.setString( path2, value2 );
 
@@ -369,7 +369,7 @@ public class FindNodesByQueryCommandTest_func_fulltext
         throws Exception
     {
         final PropertyTree data = new PropertyTree();
-        final String path1 = "test.of.string-1.with.path-1";
+        final String path1 = "test@of@string-1@with@path-1";
         final String value1 = "fisk ost pølse løk";
         data.setString( path1, value1 );
 
@@ -384,7 +384,7 @@ public class FindNodesByQueryCommandTest_func_fulltext
             build() );
 
         final PropertyTree data2 = new PropertyTree();
-        final String path2 = "test.of.string-2.with.path-2";
+        final String path2 = "test@of@string-2@with@path-2";
         final String value2 = "fisk ost pølse løk";
         data2.setString( path2, value2 );
 
@@ -399,11 +399,11 @@ public class FindNodesByQueryCommandTest_func_fulltext
             build() );
 
         queryAndAssert( "fulltext('test*', 'leter etter fisk', 'OR')", 2 );
-        queryAndAssert( "fulltext('test.*', 'leter etter fisk', 'OR')", 2 );
-        queryAndAssert( "fulltext('test.of*', 'leter etter fisk', 'OR')", 2 );
-        queryAndAssert( "fulltext('test.of.string*', 'leter etter fisk', 'OR')", 2 );
-        queryAndAssert( "fulltext('test.of.string-1.*', 'leter etter fisk', 'OR')", 1 );
-        queryAndAssert( "fulltext('test.of.string-2.*', 'leter etter fisk', 'OR')", 1 );
+        queryAndAssert( "fulltext('test@*', 'leter etter fisk', 'OR')", 2 );
+        queryAndAssert( "fulltext('test@of*', 'leter etter fisk', 'OR')", 2 );
+        queryAndAssert( "fulltext('test@of@string*', 'leter etter fisk', 'OR')", 2 );
+        queryAndAssert( "fulltext('test@of@string-1@*', 'leter etter fisk', 'OR')", 1 );
+        queryAndAssert( "fulltext('test@of@string-2@*', 'leter etter fisk', 'OR')", 1 );
         queryAndAssert( "fulltext('*path*', 'leter etter fisk', 'OR')", 2 );
         queryAndAssert( "fulltext('*path', 'leter etter fisk', 'OR')", 0 );
         queryAndAssert( "fulltext('*path-1', 'leter etter fisk', 'OR')", 1 );

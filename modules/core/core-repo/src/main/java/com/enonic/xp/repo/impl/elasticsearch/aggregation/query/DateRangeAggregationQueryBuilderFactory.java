@@ -33,7 +33,9 @@ class DateRangeAggregationQueryBuilderFactory
 
         for ( final DateRange dateRange : query.getRanges() )
         {
-            dateRangeBuilder.addRange( dateRange.getKey(), (Double) dateRange.getFrom(), (Double) dateRange.getTo() );
+            String from = dateRange.getFrom() != null ? dateRange.getFrom().toString() : null;
+            String to = dateRange.getTo() != null ? dateRange.getTo().toString() : null;
+            dateRangeBuilder.addRange( dateRange.getKey(), from, to );
         }
 
         return dateRangeBuilder;
