@@ -200,8 +200,8 @@ public class FilterBuilderFactory
         final String queryFieldName = this.fieldNameResolver.resolve( filter.getFieldName(), from != null ? from : to );
 
         RangeQueryBuilder builder = new RangeQueryBuilder( queryFieldName ).
-            from( from ).
-            to( to ).
+            from( from != null ? from.getObject() : null ).
+            to( to != null ? to.getObject() : null).
             includeLower( true ).
             includeUpper( true );
 
