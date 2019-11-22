@@ -13,6 +13,7 @@ import org.elasticsearch.search.sort.SortBuilder;
 
 import com.google.common.collect.ImmutableSet;
 
+import com.enonic.xp.repo.impl.SearchPreference;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.xp.repo.impl.elasticsearch.result.SearchResultFactory;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
@@ -88,6 +89,7 @@ abstract class AbstractExecutor
             setPostFilter( query.getFilter() ).
             setFrom( query.getFrom() ).
             setSize( query.getBatchSize() ).
+            setPreference( SearchPreference.LOCAL.getName() ).
             addFields( query.getReturnFields().getReturnFieldNames() );
 
         query.getSortBuilders().forEach( searchRequestBuilder::addSort );
