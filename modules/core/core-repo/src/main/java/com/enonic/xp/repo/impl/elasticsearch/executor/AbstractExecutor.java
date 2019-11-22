@@ -82,17 +82,12 @@ abstract class AbstractExecutor
 
     SearchRequest createScrollRequest( final ElasticsearchQuery query )
     {
-        return createScrollRequest( query, true );
-    }
-
-    SearchRequest createScrollRequest( final ElasticsearchQuery query, final boolean discoverFromParam )
-    {
         return SearchRequestBuilderFactory.newFactory().
             query( query ).
             scrollTimeout( DEFAULT_SCROLL_TIME.getStringRep() ).
             resolvedSize( query.getBatchSize() ).
             build().
-            create( discoverFromParam );
+            createScrollRequest();
     }
 
     void clearScroll( final SearchResponse scrollResp )

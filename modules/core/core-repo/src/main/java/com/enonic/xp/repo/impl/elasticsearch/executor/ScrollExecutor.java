@@ -37,7 +37,7 @@ class ScrollExecutor
 
     public SearchResult execute( final ElasticsearchQuery query )
     {
-        final SearchRequest searchRequest = createScrollRequest( query, false );
+        final SearchRequest searchRequest = createScrollRequest( query );
 
         try
         {

@@ -42,58 +42,71 @@ public class SearchRequestBuilderFactory
         return new Builder();
     }
 
-    public SearchRequest create() {
-        return create( true );
+    public SearchRequest create()
+    {
+        final SearchRequest searchRequest = createDefaultRequest();
+
+        searchRequest.source().from( query.getFrom() );
+
+        return searchRequest;
     }
 
-    public SearchRequest create(final boolean considerFromParam)
+    public SearchRequest createScrollRequest()
     {
-        final SearchType searchType =
-            query.getSearchOptimizer().equals( SearchOptimizer.ACCURACY ) ? SearchType.DFS_QUERY_THEN_FETCH : SearchType.DEFAULT;
+        final SearchRequest searchRequest = createDefaultRequest();
 
-        final SearchSourceBuilder sourceBuilder = new SearchSourceBuilder().
-            explain( query.isExplain() ).
-            query( query.getQuery() ).
-            postFilter( query.getFilter() ).
-            size( resolvedSize );
-
-        if ( considerFromParam )
-        {
-            sourceBuilder.from( query.getFrom() );
-        }
-
-        query.getSortBuilders().forEach( sourceBuilder::sort );
-        query.getAggregations().forEach( sourceBuilder::aggregation );
-
-        final SuggestBuilder suggestBuilder = new SuggestBuilder();
-        query.getSuggestions().forEach( suggestionBuilder -> suggestBuilder.addSuggestion( suggestionBuilder.field(), suggestionBuilder ) );
-        sourceBuilder.suggest( suggestBuilder );
-
-        if ( query.getHighlight() != null )
-        {
-            setHighlightSettings( sourceBuilder, query.getHighlight() );
-        }
-
-        if ( query.getReturnFields() != null && query.getReturnFields().isNotEmpty() )
-        {
-            sourceBuilder.fetchSource( query.getReturnFields().getReturnFieldNames(), Strings.EMPTY_ARRAY );
-        }
-
-        final SearchRequest searchRequest = new SearchRequest().
-            searchType( searchType ).
-            indices( query.getIndexNames() ).
-            source( sourceBuilder );
-
-        if ( preference != null )
-        {
-            searchRequest.preference( preference );
-        }
         if ( scrollTimeout != null )
         {
             searchRequest.scroll( scrollTimeout );
         }
 
         return searchRequest;
+    }
+
+    private SearchRequest createDefaultRequest()
+    {
+        final SearchType searchType =
+            query.getSearchOptimizer().equals( SearchOptimizer.ACCURACY ) ? SearchType.DFS_QUERY_THEN_FETCH : SearchType.DEFAULT;
+
+        final SearchRequest searchRequest = new SearchRequest().
+            searchType( searchType ).
+            indices( query.getIndexNames() ).
+            source( prepareSearchSource() );
+
+        if ( preference != null )
+        {
+            searchRequest.preference( preference );
+        }
+
+        return searchRequest;
+    }
+
+    private SearchSourceBuilder prepareSearchSource()
+    {
+        final SearchSourceBuilder result = new SearchSourceBuilder().
+            explain( query.isExplain() ).
+            query( query.getQuery() ).
+            postFilter( query.getFilter() ).
+            size( resolvedSize );
+
+        query.getSortBuilders().forEach( result::sort );
+        query.getAggregations().forEach( result::aggregation );
+
+        final SuggestBuilder suggestBuilder = new SuggestBuilder();
+        query.getSuggestions().forEach( suggestionBuilder -> suggestBuilder.addSuggestion( suggestionBuilder.field(), suggestionBuilder ) );
+        result.suggest( suggestBuilder );
+
+        if ( query.getHighlight() != null )
+        {
+            setHighlightSettings( result, query.getHighlight() );
+        }
+
+        if ( query.getReturnFields() != null && query.getReturnFields().isNotEmpty() )
+        {
+            result.fetchSource( query.getReturnFields().getReturnFieldNames(), Strings.EMPTY_ARRAY );
+        }
+
+        return result;
     }
 
     private SearchSourceBuilder setHighlightSettings( final SearchSourceBuilder builder, final ElasticHighlightQuery highlight )

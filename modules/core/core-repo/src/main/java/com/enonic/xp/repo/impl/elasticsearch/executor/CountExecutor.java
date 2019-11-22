@@ -1,10 +1,16 @@
 package com.enonic.xp.repo.impl.elasticsearch.executor;
 
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.client.RestHighLevelClient;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 
-import com.enonic.xp.repo.impl.elasticsearch.SearchRequestBuilderFactory;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.core.CountRequest;
+import org.elasticsearch.client.core.CountResponse;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
+
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
+import com.enonic.xp.repo.impl.search.result.SearchHits;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 
 class CountExecutor
@@ -23,13 +29,29 @@ class CountExecutor
 
     public SearchResult execute( final ElasticsearchQuery query )
     {
-        final SearchRequest searchRequest = SearchRequestBuilderFactory.newFactory().
-            query( query ).
-            preference( searchPreference ).
-            build().
-            create();
+        final SearchSourceBuilder sourceBuilder = new SearchSourceBuilder().
+            query( query.getQuery() ).
+            postFilter( query.getFilter() );
 
-        return doSearchRequest( searchRequest );
+        query.getAggregations().forEach( sourceBuilder::aggregation );
+
+        final CountRequest countRequest = new CountRequest().
+            indices( query.getIndexNames() ).
+            preference( searchPreference ).
+            source( sourceBuilder );
+
+        try
+        {
+            final CountResponse countResponse = client.count( countRequest, RequestOptions.DEFAULT );
+
+            return SearchResult.create().
+                hits( SearchHits.create().build() ).
+                totalHits( countResponse.getCount() ).build();
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
     }
 
     public static class Builder

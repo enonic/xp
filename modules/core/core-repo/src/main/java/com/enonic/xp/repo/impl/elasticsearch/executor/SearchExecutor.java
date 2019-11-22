@@ -67,7 +67,6 @@ public class SearchExecutor
         final org.elasticsearch.action.search.SearchRequest searchRequest = SearchRequestBuilderFactory.newFactory().
             query( query ).
             preference( searchPreference ).
-            scrollTimeout( DEFAULT_SCROLL_TIME.getStringRep() ).
             resolvedSize( resolveSize( query ) ).
             build().
             create();
