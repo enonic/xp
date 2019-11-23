@@ -80,8 +80,8 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.IdProviderAccessControlList;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.base.Strings.nullToEmpty;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang.StringUtils.isBlank;
 
 
 @SuppressWarnings("UnusedDeclaration")
@@ -421,12 +421,12 @@ public final class SecurityResource
     public EmailAvailabilityJson isEmailAvailable( @QueryParam("idProviderKey") final String idProviderKeyParam,
                                                    @QueryParam("email") final String email )
     {
-        if ( isBlank( email ) )
+        if ( nullToEmpty( email ).isBlank() )
         {
             throw new WebApplicationException( "Expected email parameter" );
         }
         final IdProviderKey idProviderKey =
-            isBlank( idProviderKeyParam ) ? IdProviderKey.system() : IdProviderKey.from( idProviderKeyParam );
+            nullToEmpty( idProviderKeyParam ).isBlank() ? IdProviderKey.system() : IdProviderKey.from( idProviderKeyParam );
         final PrincipalQuery query = PrincipalQuery.create().email( email ).idProvider( idProviderKey ).build();
         final PrincipalQueryResult queryResult = securityService.query( query );
         return new EmailAvailabilityJson( queryResult.isEmpty() );

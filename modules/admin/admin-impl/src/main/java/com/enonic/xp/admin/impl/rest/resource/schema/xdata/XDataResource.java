@@ -49,6 +49,7 @@ import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.site.XDataMappings;
 
+import static com.google.common.base.Strings.nullToEmpty;
 import static java.util.stream.Collectors.toList;
 
 @Path(ResourceConstants.REST_ROOT + "schema/xdata")
@@ -175,7 +176,7 @@ public final class XDataResource
     private Boolean isXDataAllowed( final XDataName xDataName, final String allowContentType, final ContentTypeName contentTypeName )
     {
 
-        if ( StringUtils.isBlank( allowContentType ) )
+        if ( nullToEmpty( allowContentType ).isBlank() )
         {
             return true;
         }

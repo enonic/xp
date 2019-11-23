@@ -195,10 +195,10 @@ import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.base.Strings.nullToEmpty;
 import static java.lang.Math.toIntExact;
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
-import static org.apache.commons.lang.StringUtils.isBlank;
 
 @SuppressWarnings("UnusedDeclaration")
 @Path(ResourceConstants.REST_ROOT + "content")
@@ -657,7 +657,7 @@ public final class ContentResource
 
     private ContentIds sortContentIds( final ContentIds contentIds, final String field )
     {
-        if ( StringUtils.isBlank( field ) )
+        if ( nullToEmpty( field ).isBlank() )
         {
             return contentIds;
         }
@@ -765,7 +765,7 @@ public final class ContentResource
             final String moveBefore = reorderChildJson.getMoveBefore();
             builder.add( ReorderChildParams.create().
                 contentToMove( ContentId.from( reorderChildJson.getContentId() ) ).
-                contentToMoveBefore( isBlank( moveBefore ) ? null : ContentId.from( moveBefore ) ).
+                contentToMoveBefore( nullToEmpty( moveBefore ).isBlank() ? null : ContentId.from( moveBefore ) ).
                 build() );
         }
 
