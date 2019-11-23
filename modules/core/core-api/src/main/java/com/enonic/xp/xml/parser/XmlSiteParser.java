@@ -4,8 +4,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.enonic.xp.app.ApplicationRelativeResolver;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.site.SiteDescriptor;
@@ -18,6 +16,7 @@ import com.enonic.xp.site.processor.ResponseProcessorDescriptors;
 import com.enonic.xp.xml.DomElement;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.base.Strings.nullToEmpty;
 
 public final class XmlSiteParser
     extends XmlModelParser<XmlSiteParser>
@@ -146,13 +145,13 @@ public final class XmlSiteParser
     {
         final ControllerMappingDescriptor.Builder builder = ControllerMappingDescriptor.create();
         final String controllerPath = mappingElement.getAttribute( MAPPING_DESCRIPTOR_CONTROLLER_ATTRIBUTE );
-        if ( StringUtils.isNotBlank( controllerPath ) )
+        if ( !nullToEmpty( controllerPath ).isBlank() )
         {
             builder.controller( ResourceKey.from( this.currentApplication, controllerPath ) );
         }
 
         final String filterPath = mappingElement.getAttribute( MAPPING_DESCRIPTOR_FILTER_ATTRIBUTE );
-        if ( StringUtils.isNotBlank( filterPath ) )
+        if ( !nullToEmpty( filterPath ).isBlank() )
         {
             builder.filter( ResourceKey.from( this.currentApplication, filterPath ) );
         }

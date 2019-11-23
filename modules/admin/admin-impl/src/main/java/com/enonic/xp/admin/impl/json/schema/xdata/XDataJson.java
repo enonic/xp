@@ -2,8 +2,6 @@ package com.enonic.xp.admin.impl.json.schema.xdata;
 
 import java.time.Instant;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.admin.impl.json.ItemJson;
@@ -12,6 +10,8 @@ import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolv
 import com.enonic.xp.admin.impl.rest.resource.schema.mixin.InlineMixinResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.mixin.MixinIconUrlResolver;
 import com.enonic.xp.schema.xdata.XData;
+
+import static com.google.common.base.Strings.nullToEmpty;
 
 public class XDataJson
     implements ItemJson
@@ -47,7 +47,7 @@ public class XDataJson
 
     public String getDisplayName()
     {
-        if ( StringUtils.isNotBlank( xData.getDisplayNameI18nKey() ) )
+        if ( !nullToEmpty( xData.getDisplayNameI18nKey() ).isBlank() )
         {
             return localeMessageResolver.localizeMessage( xData.getDisplayNameI18nKey(), xData.getDisplayName() );
         }
@@ -59,7 +59,7 @@ public class XDataJson
 
     public String getDescription()
     {
-        if ( StringUtils.isNotBlank( xData.getDescriptionI18nKey() ) )
+        if ( !nullToEmpty( xData.getDescriptionI18nKey() ).isBlank() )
         {
             return localeMessageResolver.localizeMessage( xData.getDescriptionI18nKey(), xData.getDescription() );
         }

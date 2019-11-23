@@ -279,11 +279,11 @@ public final class ContentResource
         final String focalX = form.getAsString( "focalX" );
         final String focalY = form.getAsString( "focalY" );
 
-        if ( StringUtils.isNotBlank( focalX ) )
+        if ( !nullToEmpty( focalX ).isBlank() )
         {
             createMediaParams.focalX( Double.valueOf( focalX ) );
         }
-        if ( StringUtils.isNotBlank( focalY ) )
+        if ( !nullToEmpty( focalY ).isBlank() )
         {
             createMediaParams.focalY( Double.valueOf( focalY ) );
         }
@@ -335,11 +335,11 @@ public final class ContentResource
         final String focalX = form.getAsString( "focalX" );
         final String focalY = form.getAsString( "focalY" );
 
-        if ( StringUtils.isNotBlank( focalX ) )
+        if ( !nullToEmpty( focalX ).isBlank() )
         {
             params.focalX( Double.valueOf( focalX ) );
         }
-        if ( StringUtils.isNotBlank( focalY ) )
+        if ( !nullToEmpty( focalY ).isBlank() )
         {
             params.focalY( Double.valueOf( focalY ) );
         }
@@ -1325,7 +1325,7 @@ public final class ContentResource
     public LocaleListJson getLocales( @QueryParam("query") final String query )
     {
         Locale[] locales = Locale.getAvailableLocales();
-        if ( StringUtils.isNotBlank( query ) )
+        if ( !nullToEmpty( query ).isBlank() )
         {
             String trimmedQuery = query.trim();
             locales = Arrays.stream( locales ).

@@ -14,7 +14,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -190,7 +189,7 @@ public final class XDataResource
             new ContentTypeNameWildcardResolver( this.contentTypeService );
 
         final List<String> allowContentTypes =
-            StringUtils.isNotBlank( allowContentType ) ? Collections.singletonList( allowContentType ) : new ArrayList<>();
+            nullToEmpty( allowContentType ).isBlank() ? new ArrayList<>() : Collections.singletonList( allowContentType );
 
         if ( contentTypeNameWildcardResolver.anyTypeHasWildcard( allowContentTypes ) )
         {

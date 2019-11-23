@@ -18,7 +18,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -212,7 +211,7 @@ public final class SecurityResource
     private List<PrincipalType> parsePrincipalTypes( final String types )
     {
         final List<PrincipalType> principalTypes = new ArrayList<>();
-        if ( StringUtils.isNotBlank( types ) )
+        if ( !nullToEmpty( types ).isBlank() )
         {
             final String[] typeItems = types.split( "," );
             for ( String typeItem : typeItems )
