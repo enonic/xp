@@ -25,7 +25,6 @@ import javax.ws.rs.core.Response;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.base.Strings;
 import com.google.common.html.HtmlEscapers;
 
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
@@ -70,6 +69,7 @@ import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.base.Strings.nullToEmpty;
 
 @Path(ResourceConstants.REST_ROOT + "macro")
 @Produces(MediaType.APPLICATION_JSON)
@@ -235,7 +235,7 @@ public final class MacroResource
                                              final PortalRequest portalRequest )
     {
         final MacroContext.Builder context = MacroContext.create().name( macroDescriptor.getName() );
-        String body = Strings.nullToEmpty( formData.getString( "body" ) );
+        String body = nullToEmpty( formData.getString( "body" ) );
         body = HtmlEscapers.htmlEscaper().escape( body );
         context.body( body );
         for ( Property prop : formData.getProperties() )
@@ -253,7 +253,7 @@ public final class MacroResource
     private Macro createMacro( final MacroDescriptor macroDescriptor, final PropertyTree formData )
     {
         final Macro.Builder context = Macro.create().name( macroDescriptor.getName() );
-        final String body = Strings.nullToEmpty( formData.getString( "body" ) );
+        final String body = nullToEmpty( formData.getString( "body" ) );
         context.body( body );
         for ( Property prop : formData.getProperties() )
         {

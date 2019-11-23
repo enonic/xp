@@ -10,7 +10,6 @@ import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.SimpleBindings;
 
-import com.google.common.base.Strings;
 import com.google.common.util.concurrent.Striped;
 
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
@@ -33,6 +32,8 @@ import com.enonic.xp.script.impl.value.ScriptValueFactory;
 import com.enonic.xp.script.impl.value.ScriptValueFactoryImpl;
 import com.enonic.xp.script.runtime.ScriptSettings;
 import com.enonic.xp.server.RunMode;
+
+import static com.google.common.base.Strings.nullToEmpty;
 
 public final class ScriptExecutorImpl
     implements ScriptExecutor
@@ -282,7 +283,7 @@ public final class ScriptExecutorImpl
 
     private Object requireJsOrJson( final Resource resource )
     {
-        final String ext = Strings.nullToEmpty( resource.getKey().getExtension() );
+        final String ext = nullToEmpty( resource.getKey().getExtension() );
         if ( ext.equals( "json" ) )
         {
             return requireJson( resource );
