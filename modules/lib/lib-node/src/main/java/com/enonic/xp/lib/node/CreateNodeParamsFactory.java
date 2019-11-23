@@ -1,7 +1,5 @@
 package com.enonic.xp.lib.node;
 
-import com.google.common.base.Strings;
-
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
@@ -20,6 +18,7 @@ import static com.enonic.xp.lib.node.NodePropertyConstants.NODE_NAME;
 import static com.enonic.xp.lib.node.NodePropertyConstants.NODE_TYPE;
 import static com.enonic.xp.lib.node.NodePropertyConstants.PARENT_PATH;
 import static com.enonic.xp.lib.node.NodePropertyConstants.PERMISSIONS;
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 class CreateNodeParamsFactory
 {
@@ -49,10 +48,10 @@ class CreateNodeParamsFactory
         setUserData( properties, builder );
 
         builder.
-            parent( Strings.isNullOrEmpty( parentPath ) ? NodePath.ROOT : NodePath.create( parentPath ).build() ).
+            parent( isNullOrEmpty( parentPath ) ? NodePath.ROOT : NodePath.create( parentPath ).build() ).
             manualOrderValue( manualOrderValue ).
             childOrder( ChildOrder.from( childOrder ) ).
-            nodeType( Strings.isNullOrEmpty( nodeType ) ? NodeType.DEFAULT_NODE_COLLECTION : NodeType.from( nodeType ) ).
+            nodeType( isNullOrEmpty( nodeType ) ? NodeType.DEFAULT_NODE_COLLECTION : NodeType.from( nodeType ) ).
             indexConfigDocument( new IndexConfigFactory( indexConfig ).create() ).
             setBinaryAttachments( createAttachments );
 
@@ -84,7 +83,7 @@ class CreateNodeParamsFactory
 
     private void setName( final String name, final CreateNodeParams.Builder builder )
     {
-        if ( Strings.isNullOrEmpty( name ) )
+        if ( isNullOrEmpty( name ) )
         {
             final NodeId nodeId = new NodeId();
             builder.setNodeId( nodeId );

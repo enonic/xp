@@ -7,8 +7,6 @@ import java.util.Map;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 
-import com.google.common.base.Strings;
-
 import com.enonic.xp.cluster.ClusterConfig;
 import com.enonic.xp.cluster.ClusterNodeId;
 import com.enonic.xp.cluster.NodeDiscovery;
@@ -17,6 +15,8 @@ import com.enonic.xp.cluster.impl.discovery.StaticIpNodeDiscovery;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.config.ConfigInterpolator;
 import com.enonic.xp.config.Configuration;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 @Component(configurationPid = "com.enonic.xp.cluster")
 public class ClusterConfigImpl
@@ -62,7 +62,7 @@ public class ClusterConfigImpl
 
     private String normalizeHostEntry( final String entry )
     {
-        return Strings.isNullOrEmpty( entry ) ? "" : entry.trim();
+        return isNullOrEmpty( entry ) ? "" : entry.trim();
     }
 
     @Override
@@ -70,7 +70,7 @@ public class ClusterConfigImpl
     {
         final String nodeName = this.config.get( "node.name" );
 
-        if ( Strings.isNullOrEmpty( nodeName ) )
+        if ( isNullOrEmpty( nodeName ) )
         {
             return ClusterNodeNameProvider.getID();
         }

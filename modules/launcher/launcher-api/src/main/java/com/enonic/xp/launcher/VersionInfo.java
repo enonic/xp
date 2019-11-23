@@ -3,8 +3,9 @@ package com.enonic.xp.launcher;
 import java.util.Map;
 import java.util.Properties;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public final class VersionInfo
 {
@@ -20,7 +21,7 @@ public final class VersionInfo
     public String getVersion()
     {
         final String value = getClass().getPackage().getImplementationVersion();
-        return Strings.isNullOrEmpty( value ) ? "0.0.0-SNAPSHOT" : value;
+        return isNullOrEmpty( value ) ? "0.0.0-SNAPSHOT" : value;
     }
 
     public String getBuildHash()
@@ -46,7 +47,7 @@ public final class VersionInfo
     private String getProperty( final String name, final String defValue )
     {
         final String value = this.props.getProperty( name );
-        return Strings.isNullOrEmpty( value ) ? defValue : value.trim();
+        return isNullOrEmpty( value ) ? defValue : value.trim();
     }
 
     private static VersionInfo load()

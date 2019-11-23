@@ -2,10 +2,11 @@ package com.enonic.xp.admin.impl.rest.resource.content.json;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Strings;
 
 import com.enonic.xp.query.aggregation.AggregationQuery;
 import com.enonic.xp.query.aggregation.DateHistogramAggregationQuery;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class DateHistogramAggregationQueryJson
     extends AggregationQueryJson
@@ -24,7 +25,7 @@ public class DateHistogramAggregationQueryJson
             fieldName( fieldName ).
             interval( interval );
 
-        if ( !Strings.isNullOrEmpty( format ) )
+        if ( !isNullOrEmpty( format ) )
         {
             builder.format( format );
         }
