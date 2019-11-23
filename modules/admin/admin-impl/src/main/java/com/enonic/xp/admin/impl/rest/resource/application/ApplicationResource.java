@@ -91,6 +91,7 @@ import com.enonic.xp.util.Exceptions;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
 
 @Path(ResourceConstants.REST_ROOT + "application")
@@ -395,7 +396,7 @@ public final class ApplicationResource
         else
         {
             responseBuilder = Response.ok( icon.toByteArray(), icon.getMimeType() );
-            if ( StringUtils.isNotEmpty( hash ) )
+            if ( !isNullOrEmpty( hash ) )
             {
                 applyMaxAge( Integer.MAX_VALUE, responseBuilder );
             }

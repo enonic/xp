@@ -1337,15 +1337,14 @@ public final class ContentResource
                     containsIgnoreCase( locale.getDisplayVariant( locale ), trimmedQuery ) ||
                     containsIgnoreCase( locale.getCountry(), trimmedQuery ) ||
                     containsIgnoreCase( locale.getDisplayCountry( locale ), trimmedQuery ) ||
-                    containsIgnoreCase( getFormattedDisplayName( locale ), trimmedQuery ) &&
-                        StringUtils.isNotEmpty( locale.toLanguageTag() ) && StringUtils.isNotEmpty( locale.getDisplayName() ) ).
+                    containsIgnoreCase( getFormattedDisplayName( locale ), trimmedQuery ) && !isNullOrEmpty( locale.toLanguageTag() ) &&
+                        !isNullOrEmpty( locale.getDisplayName() ) ).
                 toArray( Locale[]::new );
         }
         else
         {
             locales = Arrays.stream( locales ).
-                filter(
-                    ( locale ) -> StringUtils.isNotEmpty( locale.toLanguageTag() ) && StringUtils.isNotEmpty( locale.getDisplayName() ) ).
+                filter( ( locale ) -> !isNullOrEmpty( locale.toLanguageTag() ) && !isNullOrEmpty( locale.getDisplayName() ) ).
                 toArray( Locale[]::new );
         }
         return new LocaleListJson( locales );
@@ -1425,8 +1424,8 @@ public final class ContentResource
     {
 
         final FindContentByParentParams params = FindContentByParentParams.create().
-            parentId( StringUtils.isNotEmpty( parentId ) ? ContentId.from( parentId ) : null ).
-            childOrder( StringUtils.isNotEmpty( childOrder ) ? ChildOrder.from( childOrder ) : null ).
+            parentId( isNullOrEmpty( parentId ) ? null : ContentId.from( parentId ) ).
+            childOrder( isNullOrEmpty( childOrder ) ? null : ChildOrder.from( childOrder ) ).
             build();
 
         final FindContentIdsByParentResult result = this.contentService.findIdsByParent( params );

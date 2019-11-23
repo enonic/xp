@@ -61,6 +61,7 @@ import static com.enonic.xp.content.ContentPropertyNames.WORKFLOW_INFO;
 import static com.enonic.xp.content.ContentPropertyNames.WORKFLOW_INFO_CHECKS;
 import static com.enonic.xp.content.ContentPropertyNames.WORKFLOW_INFO_STATE;
 import static com.enonic.xp.core.impl.content.serializer.ComponentDataSerializer.COMPONENTS;
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class ContentDataSerializer
 {
@@ -297,7 +298,7 @@ public class ContentDataSerializer
     private void extractLanguage( final PropertySet contentAsSet, final Content.Builder builder )
     {
         String language = contentAsSet.getString( LANGUAGE );
-        if ( StringUtils.isNotEmpty( language ) )
+        if ( !isNullOrEmpty( language ) )
         {
             builder.language( Locale.forLanguageTag( language ) );
         }

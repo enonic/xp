@@ -22,7 +22,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -69,6 +68,8 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 @Path(ResourceConstants.REST_ROOT + "macro")
 @Produces(MediaType.APPLICATION_JSON)
@@ -143,7 +144,7 @@ public final class MacroResource
         {
             final Object image = HELPER.isSvg( icon ) ? icon.toByteArray() : HELPER.resizeImage( icon.asInputStream(), size );
             responseBuilder = Response.ok( image, icon.getMimeType() );
-            if ( StringUtils.isNotEmpty( hash ) )
+            if ( !isNullOrEmpty( hash ) )
             {
                 applyMaxAge( Integer.MAX_VALUE, responseBuilder );
             }

@@ -244,7 +244,7 @@ public final class SecurityResource
             includeTypes( principalTypes ).
             searchText( query );
 
-        if ( StringUtils.isNotEmpty( idProviderKey ) )
+        if ( !isNullOrEmpty( idProviderKey ) )
         {
             principalQuery.idProvider( IdProviderKey.from( idProviderKey ) );
         }
@@ -279,7 +279,7 @@ public final class SecurityResource
             includeTypes( principalTypes ).
             searchText( query );
 
-        if ( StringUtils.isNotEmpty( idProviderKey ) )
+        if ( !isNullOrEmpty( idProviderKey ) )
         {
             principalQuery.idProvider( IdProviderKey.from( idProviderKey ) );
         }
