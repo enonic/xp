@@ -21,6 +21,7 @@ import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 
+import static com.enonic.xp.data.PropertyPath.ELEMENT_DIVIDER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -146,8 +147,8 @@ public class FormJsonToPropertyTreeTranslatorTest
         final JsonNode node = loadJson( "fieldset" );
         final PropertyTree data = new FormJsonToPropertyTreeTranslator( createFormForFieldSet(), true ).translate( node );
 
-        final Property key = data.getProperty( "attributes.key" );
-        final Property numberProp = data.getProperty( "attributes.number" );
+        final Property key = data.getProperty( "attributes" + ELEMENT_DIVIDER + "key" );
+        final Property numberProp = data.getProperty( "attributes" + ELEMENT_DIVIDER + "number" );
 
         assertEquals( ValueTypes.STRING.getName(), key.getType().getName() );
         assertEquals( "value", key.getValue().asString() );

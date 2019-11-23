@@ -29,6 +29,7 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.util.BinaryReference;
 
+import static com.enonic.xp.data.PropertyPath.ELEMENT_DIVIDER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NodeVersionJsonDumpSerializerTest
@@ -45,7 +46,7 @@ public class NodeVersionJsonDumpSerializerTest
         throws Exception
     {
         PropertyTree nodeData = new PropertyTree();
-        nodeData.setDouble( "a.b.c", 2.0 );
+        nodeData.setDouble( "a" + ELEMENT_DIVIDER + "b" + ELEMENT_DIVIDER + "c", 2.0 );
         nodeData.setLocalDate( "b", LocalDate.of( 2013, 1, 2 ) );
         nodeData.setString( "c", "runar" );
         nodeData.setLocalDateTime( "d", LocalDateTime.of( 2013, 1, 2, 3, 4, 5, 0 ) );

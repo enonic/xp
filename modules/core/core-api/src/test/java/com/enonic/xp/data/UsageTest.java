@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
 
+import static com.enonic.xp.data.PropertyPath.ELEMENT_DIVIDER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
@@ -59,7 +60,7 @@ public class UsageTest
         assertSame( set, tree.getValue( "mySet", 0 ).asData() );
         assertSame( set, tree.getSet( "mySet", 0 ) );
         assertSame( set, tree.getSet( "mySet" ) );
-        assertSame( "myValue", tree.getString( "mySet.myProp[0]" ) );
+        assertSame( "myValue", tree.getString( "mySet" + ELEMENT_DIVIDER + "myProp[0]" ) );
     }
 
     @Test

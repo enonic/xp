@@ -35,6 +35,8 @@ import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Link;
 
+import static com.enonic.xp.data.PropertyPath.ELEMENT_DIVIDER;
+
 public final class TestDataFixtures
 {
     public static Content newContent()
@@ -156,7 +158,7 @@ public final class TestDataFixtures
         tree.addStrings( "strings", "a", "b", "c" );
         tree.setString( "stringEmpty", "" );
         tree.setString( "stringNull", null );
-        tree.setString( "set.property", "value" );
+        tree.setString( "set" + ELEMENT_DIVIDER + "property", "value" );
         tree.addXml( "xml", "<xml><my-xml hello='world'/></xml>" );
         tree.addBinaryReference( "binaryReference", BinaryReference.from( "abc" ) );
         tree.addLink( "link", Link.from( ContentPath.from( "/my/content" ).toString() ) );
@@ -179,7 +181,7 @@ public final class TestDataFixtures
         final PropertyTree tree = new PropertyTree();
         tree.setLong( "a", 1L );
         tree.setString( "b", "2" );
-        tree.setBoolean( "c.d", true );
+        tree.setBoolean( "c" + ELEMENT_DIVIDER + "d", true );
 
         final PropertySet set1 = tree.addSet( "c" );
         set1.setBoolean( "d", true );

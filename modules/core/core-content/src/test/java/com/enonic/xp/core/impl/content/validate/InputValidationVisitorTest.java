@@ -12,6 +12,7 @@ import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeValidationException;
 import com.enonic.xp.inputtype.InputTypes;
 
+import static com.enonic.xp.data.PropertyPath.ELEMENT_DIVIDER;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class InputValidationVisitorTest
@@ -34,7 +35,7 @@ public class InputValidationVisitorTest
         propertyTree.setLong( "myTextLine", 33L );
 
         final InputValidationVisitor validationVisitor = new InputValidationVisitor( propertyTree, InputTypes.BUILTIN );
-        assertThrows(InputTypeValidationException.class, () -> validationVisitor.traverse( form ));
+        assertThrows( InputTypeValidationException.class, () -> validationVisitor.traverse( form ) );
     }
 
     @Test
@@ -78,10 +79,10 @@ public class InputValidationVisitorTest
             build();
 
         PropertyTree propertyTree = new PropertyTree();
-        propertyTree.setLong( "myFormItemSet.myTextLine", 33L );
+        propertyTree.setLong( "myFormItemSet" + ELEMENT_DIVIDER + "myTextLine", 33L );
 
         final InputValidationVisitor validationVisitor = new InputValidationVisitor( propertyTree, InputTypes.BUILTIN );
-        assertThrows(InputTypeValidationException.class, () -> validationVisitor.traverse( form ));
+        assertThrows( InputTypeValidationException.class, () -> validationVisitor.traverse( form ) );
     }
 
     @Test
@@ -104,7 +105,7 @@ public class InputValidationVisitorTest
             build();
 
         PropertyTree propertyTree = new PropertyTree();
-        propertyTree.setString( "myFormItemSet.myTextLine", "33" );
+        propertyTree.setString( "myFormItemSet" + ELEMENT_DIVIDER + "myTextLine", "33" );
 
         final InputValidationVisitor validationVisitor = new InputValidationVisitor( propertyTree, InputTypes.BUILTIN );
         validationVisitor.traverse( form );
@@ -133,10 +134,10 @@ public class InputValidationVisitorTest
             build();
 
         PropertyTree propertyTree = new PropertyTree();
-        propertyTree.setLong( "myOptionSet.myOptionSetOption1.myTextLine1", 33L );
+        propertyTree.setLong( "myOptionSet" + ELEMENT_DIVIDER + "myOptionSetOption1" + ELEMENT_DIVIDER + "myTextLine1", 33L );
 
         final InputValidationVisitor validationVisitor = new InputValidationVisitor( propertyTree, InputTypes.BUILTIN );
-        assertThrows(InputTypeValidationException.class, () -> validationVisitor.traverse( form ));
+        assertThrows( InputTypeValidationException.class, () -> validationVisitor.traverse( form ) );
     }
 
     @Test
@@ -162,7 +163,7 @@ public class InputValidationVisitorTest
             build();
 
         PropertyTree propertyTree = new PropertyTree();
-        propertyTree.setString( "myOptionSet.myOptionSetOption1.myTextLine1", "33" );
+        propertyTree.setString( "myOptionSet" + ELEMENT_DIVIDER + "myOptionSetOption1" + ELEMENT_DIVIDER + "myTextLine1", "33" );
 
         final InputValidationVisitor validationVisitor = new InputValidationVisitor( propertyTree, InputTypes.BUILTIN );
         validationVisitor.traverse( form );

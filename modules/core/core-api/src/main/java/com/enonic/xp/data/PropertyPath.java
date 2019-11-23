@@ -33,7 +33,7 @@ public final class PropertyPath
     public static PropertyPath from( final PropertyPath parentPath, final String element )
     {
         Preconditions.checkNotNull( parentPath, "parentPath cannot be null" );
-        Preconditions.checkNotNull( parentPath, "element cannot be null" );
+        Preconditions.checkNotNull( element, "element cannot be null" );
         return new PropertyPath( parentPath, new Element( element ) );
     }
 
@@ -279,9 +279,9 @@ public final class PropertyPath
         {
             count++;
             final String element = st.nextToken();
-            if ( count == 1 && path.startsWith( "." ) )
+            if ( count == 1 && path.startsWith( ELEMENT_DIVIDER ) )
             {
-                elements.add( new Element( "." + element ) );
+                elements.add( new Element( ELEMENT_DIVIDER + element ) );
             }
             else
             {

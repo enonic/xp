@@ -44,9 +44,9 @@ public final class ContentMappingConstraint
 
     private static final String VALID_PROPERTY = "valid";
 
-    private static final String DATA_PROPERTY_PREFIX = "data.";
+    private static final String DATA_PROPERTY_PREFIX = "data@";
 
-    private static final String XDATA_PROPERTY_PREFIX = "x.";
+    private static final String XDATA_PROPERTY_PREFIX = "x@";
 
     private final String id;
 
@@ -108,10 +108,10 @@ public final class ContentMappingConstraint
         else if ( this.id.startsWith( XDATA_PROPERTY_PREFIX ) )
         {
             String dataPath = substringAfter( id, XDATA_PROPERTY_PREFIX );
-            final String appPrefix = substringBefore( dataPath, "." );
-            dataPath = substringAfter( dataPath, "." );
-            final String mixinName = substringBefore( dataPath, "." );
-            dataPath = substringAfter( dataPath, "." );
+            final String appPrefix = substringBefore( dataPath, "@" );
+            dataPath = substringAfter( dataPath, "@" );
+            final String mixinName = substringBefore( dataPath, "@" );
+            dataPath = substringAfter( dataPath, "@" );
             final PropertyTree xData = getXData( content.getAllExtraData(), appPrefix, mixinName );
             if ( xData == null )
             {

@@ -191,6 +191,7 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
 
+import static com.enonic.xp.data.PropertyPath.ELEMENT_DIVIDER;
 import static com.enonic.xp.security.acl.Permission.CREATE;
 import static com.enonic.xp.security.acl.Permission.DELETE;
 import static com.enonic.xp.security.acl.Permission.MODIFY;
@@ -267,8 +268,8 @@ public class ContentResourceTest
         data.setLong( "myArray[0]", 1L );
         data.setLong( "myArray[1]", 2L );
 
-        data.setDouble( "mySetWithArray.myArray[0]", 3.14159 );
-        data.setDouble( "mySetWithArray.myArray[1]", 1.333 );
+        data.setDouble( "mySetWithArray@myArray[0]", 3.14159 );
+        data.setDouble( "mySetWithArray@myArray[1]", 1.333 );
 
         Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).
             thenReturn( content );
@@ -407,8 +408,8 @@ public class ContentResourceTest
         aContentData.setLong( "myArray[0]", 1L );
         aContentData.setLong( "myArray[1]", 2L );
 
-        aContentData.setDouble( "mySetWithArray.myArray[0]", 3.14159 );
-        aContentData.setDouble( "mySetWithArray.myArray[1]", 1.333 );
+        aContentData.setDouble( "mySetWithArray" + ELEMENT_DIVIDER + "myArray[0]", 3.14159 );
+        aContentData.setDouble( "mySetWithArray" + ELEMENT_DIVIDER + "myArray[1]", 1.333 );
 
         Mockito.when( contentService.getById( contentId ) ).thenReturn( aContent );
 
@@ -494,8 +495,8 @@ public class ContentResourceTest
         final PropertyTree aContentData = aContent.getData();
         aContentData.setLocalDate( "myProperty", this.currentDate );
 
-        aContentData.setLong( "mySet@setProperty1", 1L );
-        aContentData.setLong( "mySet@setProperty2", 2L );
+        aContentData.setLong( "mySet" + ELEMENT_DIVIDER + "setProperty1", 1L );
+        aContentData.setLong( "mySet" + ELEMENT_DIVIDER + "setProperty2", 2L );
 
         Mockito.when( contentService.getById( ContentId.from( "aaa" ) ) ).thenReturn( aContent );
 

@@ -16,6 +16,7 @@ import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.testing.ScriptTestSupport;
 
+import static com.enonic.xp.data.PropertyPath.ELEMENT_DIVIDER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -242,11 +243,11 @@ public class ScriptValueTranslatorTest
     {
         final PropertyTree properties = getPropertyTree( "map" );
         assertNotNull( properties.getSet( "myMap" ) );
-        assertNotNull( properties.getSet( "myMap.a" ) );
-        assertNotNull( properties.getLong( "myMap.a.b" ) );
+        assertNotNull( properties.getSet( "myMap" + ELEMENT_DIVIDER + "a" ) );
+        assertNotNull( properties.getLong( "myMap" + ELEMENT_DIVIDER + "a" + ELEMENT_DIVIDER + "b" ) );
         validateType( properties, "myMap", ValueTypes.PROPERTY_SET );
-        validateType( properties, "myMap.a", ValueTypes.PROPERTY_SET );
-        validateType( properties, "myMap.a.b", ValueTypes.LONG );
+        validateType( properties, "myMap" + ELEMENT_DIVIDER + "a", ValueTypes.PROPERTY_SET );
+        validateType( properties, "myMap" + ELEMENT_DIVIDER + "a" + ELEMENT_DIVIDER + "b", ValueTypes.LONG );
     }
 
     private void validateType( final PropertyTree properties, final String propertyName, final ValueType valueType )

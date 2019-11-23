@@ -7,6 +7,8 @@ import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.script.serializer.JsonMapGenerator;
 
+import static com.enonic.xp.data.PropertyPath.ELEMENT_DIVIDER;
+
 public class IndexConfigDocMapperTest
     extends BaseMapperTest
 {
@@ -22,10 +24,10 @@ public class IndexConfigDocMapperTest
             add( "full", IndexConfig.FULLTEXT ).
             add( "byType", IndexConfig.BY_TYPE ).
             add( "property1", IndexConfig.BY_TYPE ).
-            add( "property1.*", IndexConfig.BY_TYPE ).
-            add( "property1.x", IndexConfig.BY_TYPE ).
-            add( "property1.property2", IndexConfig.BY_TYPE ).
-            add( "property1.*.property3", IndexConfig.create( IndexConfig.BY_TYPE ).addLanguage( "en" ).build() ).
+            add( "property1" + ELEMENT_DIVIDER + "*", IndexConfig.BY_TYPE ).
+            add( "property1" + ELEMENT_DIVIDER + "x", IndexConfig.BY_TYPE ).
+            add( "property1" + ELEMENT_DIVIDER + "property2", IndexConfig.BY_TYPE ).
+            add( "property1" + ELEMENT_DIVIDER + "*" + ELEMENT_DIVIDER + "property3", IndexConfig.create( IndexConfig.BY_TYPE ).addLanguage( "en" ).build() ).
             build();
 
         final JsonMapGenerator jsonGenerator = new JsonMapGenerator();

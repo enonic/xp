@@ -63,6 +63,7 @@ public class NodeStoreDocumentFactory
         final IndexDocument.Builder builder = IndexDocument.create().
             id( this.node.id().toString() ).
             indexName( IndexNameResolver.resolveSearchIndexName( this.repositoryId ) ).
+            indexTypeName( this.branch.getValue() ).
             analyzer( indexConfigDocument.getAnalyzer() ).
             indexItems( createIndexItems() ).
             refreshAfterOperation( this.refresh );

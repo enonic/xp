@@ -38,7 +38,7 @@ public class RepoConfigurationTest
         this.map.put( "snapshots.dir", "/a/b" );
 
         final RepoConfiguration config = createConfig();
-        assertEquals( new File( "/a/b" ), config.getSnapshotsDir() );
+        assertEquals( new File( "/a/b" ), config.getSnapshotsDir().toFile() );
     }
 
 }

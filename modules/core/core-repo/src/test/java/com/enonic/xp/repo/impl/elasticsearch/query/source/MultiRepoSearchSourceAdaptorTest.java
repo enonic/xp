@@ -35,7 +35,6 @@ public class MultiRepoSearchSourceAdaptorTest
             build() );
 
         assertEquals( "search-repo1", source.getIndexNames().iterator().next() );
-        assertEquals( "branch1", source.getIndexTypes().iterator().next() );
     }
 
 
@@ -53,7 +52,6 @@ public class MultiRepoSearchSourceAdaptorTest
 
         assertEquals( 1, source.getFilters().getSize() );
         assertEquals( "search-repo1", source.getIndexNames().iterator().next() );
-        assertEquals( "branch1", source.getIndexTypes().iterator().next() );
     }
 
     @Test
@@ -74,14 +72,13 @@ public class MultiRepoSearchSourceAdaptorTest
             build() );
 
         assertTrue( source.getIndexNames().containsAll( Arrays.asList( "search-repo1", "search-repo2" ) ) );
-        assertTrue( source.getIndexTypes().containsAll( Arrays.asList( "branch1", "branch2" ) ) );
 
         final Filters filters = source.getFilters();
 
         assertEquals( 1, filters.getSize() );
         final Filter allFilters = filters.get( 0 );
         assert ( allFilters instanceof BooleanFilter );
-        final ImmutableSet<Filter> shouldFilters = ( (BooleanFilter) allFilters ).getMust();
+        final ImmutableSet<Filter> shouldFilters = ( (BooleanFilter) allFilters ).getShould();
         assertEquals( 2, shouldFilters.size() );
     }
 }

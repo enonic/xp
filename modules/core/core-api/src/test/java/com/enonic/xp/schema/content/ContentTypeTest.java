@@ -15,6 +15,7 @@ import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.security.PrincipalKey;
 
+import static com.enonic.xp.form.FormItemPath.ELEMENT_DIVIDER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -57,7 +58,8 @@ public class ContentTypeTest
         FormItemSet myFormItemSet = FormItemSet.create().name( "mySet" ).addFormItem( layout ).build();
         contentType.getForm().addFormItem( myFormItemSet );
 
-        assertEquals( "mySet.eyeColour", contentType.getForm().getInput( "mySet.eyeColour" ).getPath().toString() );
+        assertEquals( "mySet" + ELEMENT_DIVIDER + "eyeColour",
+                      contentType.getForm().getInput( "mySet" + ELEMENT_DIVIDER + "eyeColour" ).getPath().toString() );
     }
 
     @Test
@@ -77,10 +79,14 @@ public class ContentTypeTest
             build();
 
         assertEquals( "title", contentType.getForm().getInput( "title" ).getPath().toString() );
-        assertEquals( "address.label", contentType.getForm().getInput( "address.label" ).getPath().toString() );
-        assertEquals( "address.street", contentType.getForm().getInput( "address.street" ).getPath().toString() );
-        assertEquals( "address.postalNo", contentType.getForm().getInput( "address.postalNo" ).getPath().toString() );
-        assertEquals( "address.country", contentType.getForm().getInput( "address.country" ).getPath().toString() );
+        assertEquals( "address" + ELEMENT_DIVIDER + "label",
+                      contentType.getForm().getInput( "address" + ELEMENT_DIVIDER + "label" ).getPath().toString() );
+        assertEquals( "address" + ELEMENT_DIVIDER + "street",
+                      contentType.getForm().getInput( "address" + ELEMENT_DIVIDER + "street" ).getPath().toString() );
+        assertEquals( "address" + ELEMENT_DIVIDER + "postalNo",
+                      contentType.getForm().getInput( "address" + ELEMENT_DIVIDER + "postalNo" ).getPath().toString() );
+        assertEquals( "address" + ELEMENT_DIVIDER + "country",
+                      contentType.getForm().getInput( "address" + ELEMENT_DIVIDER + "country" ).getPath().toString() );
     }
 
     @Test
@@ -110,33 +116,34 @@ public class ContentTypeTest
             build();
 
         assertEquals( "top-set", contentType.getForm().getFormItemSet( "top-set" ).getPath().toString() );
-        assertEquals( "top-set.myInput", contentType.getForm().getInput( "top-set.myInput" ).getPath().toString() );
-        assertEquals( "top-set.inner-set", contentType.getForm().getFormItemSet( "top-set.inner-set" ).getPath().toString() );
-        assertEquals( "top-set.inner-set.myInnerInput",
-                      contentType.getForm().getInput( "top-set.inner-set.myInnerInput" ).getPath().toString() );
+        assertEquals( "top-set" + ELEMENT_DIVIDER + "myInput",
+                      contentType.getForm().getInput( "top-set" + ELEMENT_DIVIDER + "myInput" ).getPath().toString() );
+        assertEquals( "top-set" + ELEMENT_DIVIDER + "inner-set",
+                      contentType.getForm().getFormItemSet( "top-set" + ELEMENT_DIVIDER + "inner-set" ).getPath().toString() );
+        assertEquals( "top-set" + ELEMENT_DIVIDER + "inner-set" + ELEMENT_DIVIDER + "myInnerInput", contentType.getForm().getInput(
+            "top-set" + ELEMENT_DIVIDER + "inner-set" + ELEMENT_DIVIDER + "myInnerInput" ).getPath().toString() );
     }
 
     @Test
     public void contentTypeBuilder()
     {
-        ContentType.Builder builder =
-            ContentType.
-                create().
-                name( ContentTypeName.media() ).
-                form( MEDIA_DEFAULT ).
-                setAbstract().
-                setFinal().
-                allowChildContent( true ).
-                setBuiltIn().
-                displayNameExpression( "displayNameExpression" ).
-                displayName( "displayName" ).
-                displayNameLabel( "displayNameLabel" ).
-                displayNameLabelI18nKey( "displayNameLabelI18nKey" ).
-                description( "description" ).
-                modifiedTime( Instant.now() ).
-                createdTime( Instant.now() ).
-                creator( PrincipalKey.ofAnonymous() ).
-                modifier( PrincipalKey.ofAnonymous() );
+        ContentType.Builder builder = ContentType.
+            create().
+            name( ContentTypeName.media() ).
+            form( MEDIA_DEFAULT ).
+            setAbstract().
+            setFinal().
+            allowChildContent( true ).
+            setBuiltIn().
+            displayNameExpression( "displayNameExpression" ).
+            displayName( "displayName" ).
+            displayNameLabel( "displayNameLabel" ).
+            displayNameLabelI18nKey( "displayNameLabelI18nKey" ).
+            description( "description" ).
+            modifiedTime( Instant.now() ).
+            createdTime( Instant.now() ).
+            creator( PrincipalKey.ofAnonymous() ).
+            modifier( PrincipalKey.ofAnonymous() );
         ContentType contentType1 = builder.build();
         ContentType contentType2 = ContentType.create( contentType1 ).build();
         assertEquals( contentType1.getName(), contentType2.getName() );

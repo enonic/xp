@@ -3,7 +3,6 @@ package com.enonic.xp.site.mapping;
 import java.time.Instant;
 import java.util.Locale;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -25,6 +24,7 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.PrincipalKey;
 
+import static com.enonic.xp.data.PropertyPath.ELEMENT_DIVIDER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -38,7 +38,7 @@ public class ContentMappingConstraintTest
     public void testInvalidExpression()
         throws Exception
     {
-        assertThrows(IllegalArgumentException.class, () -> ContentMappingConstraint.parse( "_path='/'" ));
+        assertThrows( IllegalArgumentException.class, () -> ContentMappingConstraint.parse( "_path='/'" ) );
     }
 
     @Test
@@ -155,8 +155,8 @@ public class ContentMappingConstraintTest
         throws Exception
     {
         final Content content = newContent();
-        assertTrue( ContentMappingConstraint.parse( "data.c.h:true" ).matches( content ) );
-        assertFalse( ContentMappingConstraint.parse( "data.c.h:false" ).matches( content ) );
+        assertTrue( ContentMappingConstraint.parse( "data" + ELEMENT_DIVIDER + "c" + ELEMENT_DIVIDER + "h:true" ).matches( content ) );
+        assertFalse( ContentMappingConstraint.parse( "data" + ELEMENT_DIVIDER + "c" + ELEMENT_DIVIDER + "h:false" ).matches( content ) );
     }
 
     @Test
@@ -164,9 +164,9 @@ public class ContentMappingConstraintTest
         throws Exception
     {
         final Content content = newContent();
-        assertTrue( ContentMappingConstraint.parse( "data.c.g:'test'" ).matches( content ) );
-        assertTrue( ContentMappingConstraint.parse( "data.c.g:test" ).matches( content ) );
-        assertFalse( ContentMappingConstraint.parse( "data.c.g:'foo'" ).matches( content ) );
+        assertTrue( ContentMappingConstraint.parse( "data" + ELEMENT_DIVIDER + "c" + ELEMENT_DIVIDER + "g:'test'" ).matches( content ) );
+        assertTrue( ContentMappingConstraint.parse( "data" + ELEMENT_DIVIDER + "c" + ELEMENT_DIVIDER + "g:test" ).matches( content ) );
+        assertFalse( ContentMappingConstraint.parse( "data" + ELEMENT_DIVIDER + "c" + ELEMENT_DIVIDER + "g:'foo'" ).matches( content ) );
     }
 
     @Test
@@ -174,8 +174,8 @@ public class ContentMappingConstraintTest
         throws Exception
     {
         final Content content = newContent();
-        assertTrue( ContentMappingConstraint.parse( "data.c.i:42" ).matches( content ) );
-        assertFalse( ContentMappingConstraint.parse( "data.c.i:1" ).matches( content ) );
+        assertTrue( ContentMappingConstraint.parse( "data" + ELEMENT_DIVIDER + "c" + ELEMENT_DIVIDER + "i:42" ).matches( content ) );
+        assertFalse( ContentMappingConstraint.parse( "data" + ELEMENT_DIVIDER + "c" + ELEMENT_DIVIDER + "i:1" ).matches( content ) );
     }
 
     @Test
@@ -183,8 +183,8 @@ public class ContentMappingConstraintTest
         throws Exception
     {
         final Content content = newContent();
-        assertTrue( ContentMappingConstraint.parse( "data.c.j:99" ).matches( content ) );
-        assertFalse( ContentMappingConstraint.parse( "data.c.j:1" ).matches( content ) );
+        assertTrue( ContentMappingConstraint.parse( "data" + ELEMENT_DIVIDER + "c" + ELEMENT_DIVIDER + "j:99" ).matches( content ) );
+        assertFalse( ContentMappingConstraint.parse( "data" + ELEMENT_DIVIDER + "c" + ELEMENT_DIVIDER + "j:1" ).matches( content ) );
     }
 
     @Test
@@ -192,10 +192,14 @@ public class ContentMappingConstraintTest
         throws Exception
     {
         final Content content = newContent();
-        assertTrue( ContentMappingConstraint.parse( "x.myapplication.myschema.a:1" ).matches( content ) );
-        assertFalse( ContentMappingConstraint.parse( "x.myapplication.missing.a:1" ).matches( content ) );
-        assertFalse( ContentMappingConstraint.parse( "x.myapplication.myschema.a:2" ).matches( content ) );
-        assertFalse( ContentMappingConstraint.parse( "x.myapplication.myschema.b:1" ).matches( content ) );
+        assertTrue( ContentMappingConstraint.parse(
+            "x" + ELEMENT_DIVIDER + "myapplication" + ELEMENT_DIVIDER + "myschema" + ELEMENT_DIVIDER + "a:1" ).matches( content ) );
+        assertFalse( ContentMappingConstraint.parse(
+            "x" + ELEMENT_DIVIDER + "myapplication" + ELEMENT_DIVIDER + "missing" + ELEMENT_DIVIDER + "a:1" ).matches( content ) );
+        assertFalse( ContentMappingConstraint.parse(
+            "x" + ELEMENT_DIVIDER + "myapplication" + ELEMENT_DIVIDER + "myschema" + ELEMENT_DIVIDER + "a:2" ).matches( content ) );
+        assertFalse( ContentMappingConstraint.parse(
+            "x" + ELEMENT_DIVIDER + "myapplication" + ELEMENT_DIVIDER + "myschema" + ELEMENT_DIVIDER + "b:1" ).matches( content ) );
     }
 
     private Content newContent()

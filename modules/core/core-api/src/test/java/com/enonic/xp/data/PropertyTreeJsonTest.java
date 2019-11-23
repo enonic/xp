@@ -16,6 +16,7 @@ import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Link;
 import com.enonic.xp.util.Reference;
 
+import static com.enonic.xp.data.PropertyPath.ELEMENT_DIVIDER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PropertyTreeJsonTest
@@ -162,9 +163,9 @@ public class PropertyTreeJsonTest
 
         assertEquals( "a", tree.getString( "arrayString" ) );
         assertEquals( "b", tree.getString( "arrayString[1]" ) );
-        assertEquals( "a", tree.getString( "arraySet[0].string" ) );
-        assertEquals( "b", tree.getString( "arraySet[1].string" ) );
-        assertEquals( "c", tree.getString( "arraySet[1].string[1]" ) );
+        assertEquals( "a", tree.getString( "arraySet[0]" + ELEMENT_DIVIDER + "string" ) );
+        assertEquals( "b", tree.getString( "arraySet[1]" + ELEMENT_DIVIDER + "string" ) );
+        assertEquals( "c", tree.getString( "arraySet[1]" + ELEMENT_DIVIDER + "string[1]" ) );
 
         assertEquals( sourceTree.toString(), tree.toString() );
     }

@@ -18,6 +18,7 @@ import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 
+import static com.enonic.xp.data.PropertyPath.ELEMENT_DIVIDER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -167,7 +168,7 @@ public class OccurrenceValidatorTest
         contentType.getForm().addFormItem( FormItemSet.create().name( "mySet" ).required( true ).addFormItem(
             Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).build() ).build() );
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
-        content.getData().setString( "mySet.myInput", "value" );
+        content.getData().setString( "mySet" + ELEMENT_DIVIDER + "myInput", "value" );
 
         // exercise
         ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
@@ -213,9 +214,9 @@ public class OccurrenceValidatorTest
             Input.create().name( "myOtherRequiredInput" ).label( "Other input" ).inputType( InputTypeName.TEXT_LINE ).required(
                 true ).build() );
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
-        content.getData().setString( "mySet.myUnrequiredData", "1" );
+        content.getData().setString( "mySet" + ELEMENT_DIVIDER + "myUnrequiredData", "1" );
 
-        assertEquals( "mySet.myRequiredInput", mySet.getInput( "myRequiredInput" ).getPath().toString() );
+        assertEquals( "mySet" + ELEMENT_DIVIDER + "myRequiredInput", mySet.getInput( "myRequiredInput" ).getPath().toString() );
 
         // exercise
         ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
@@ -227,7 +228,8 @@ public class OccurrenceValidatorTest
 
         DataValidationError nextDataValidationError = (DataValidationError) dataValidationErrorIterator.next();
         assertTrue( nextDataValidationError instanceof MinimumOccurrencesValidationError );
-        assertEquals( "Input [mySet.myRequiredInput] requires minimum 1 occurrence: 0", nextDataValidationError.getErrorMessage() );
+        assertEquals( "Input [mySet" + ELEMENT_DIVIDER + "myRequiredInput] requires minimum 1 occurrence: 0",
+                      nextDataValidationError.getErrorMessage() );
         assertNotNull( nextDataValidationError.getPath() );
         nextDataValidationError = (DataValidationError) dataValidationErrorIterator.next();
         assertTrue( nextDataValidationError instanceof MinimumOccurrencesValidationError );
@@ -269,10 +271,10 @@ public class OccurrenceValidatorTest
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
 
         content.getData().setString( "name", "Thomas" );
-        content.getData().setString( "crimes[0].description", "Stole tomatoes from neighbour" );
-        content.getData().setString( "crimes[0].year", "1989" );
-        content.getData().setString( "crimes[1].description", "Stole a chocolate from the Matbua shop" );
-        content.getData().setString( "crimes[1].year", "1990" );
+        content.getData().setString( "crimes[0]" + ELEMENT_DIVIDER + "description", "Stole tomatoes from neighbour" );
+        content.getData().setString( "crimes[0]" + ELEMENT_DIVIDER + "year", "1989" );
+        content.getData().setString( "crimes[1]" + ELEMENT_DIVIDER + "description", "Stole a chocolate from the Matbua shop" );
+        content.getData().setString( "crimes[1]" + ELEMENT_DIVIDER + "year", "1990" );
 
         // exercise
         ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
@@ -282,7 +284,8 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_input_with_maxOccur1_with_two_nonnull_data_when_validate_then_MaximumOccurrencesValidationError() {
+    public void given_input_with_maxOccur1_with_two_nonnull_data_when_validate_then_MaximumOccurrencesValidationError()
+    {
         contentType.getForm().addFormItem(
             Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).maximumOccurrences( 1 ).build() );
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
@@ -296,7 +299,8 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_input_with_maxOccur1_with_three_null_data_when_validate_then_hasErrors_returns_false() {
+    public void given_input_with_maxOccur1_with_three_null_data_when_validate_then_hasErrors_returns_false()
+    {
         contentType.getForm().addFormItem(
             Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).maximumOccurrences( 1 ).build() );
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
@@ -310,7 +314,8 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_input_with_maxOccur1_with_one_null_and_one_nonnull_value_when_validate_then_hasErrors_returns_false() {
+    public void given_input_with_maxOccur1_with_one_null_and_one_nonnull_value_when_validate_then_hasErrors_returns_false()
+    {
         contentType.getForm().addFormItem(
             Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).maximumOccurrences( 1 ).build() );
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
@@ -323,7 +328,8 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_input_with_minOccur1_with_two_null_values_when_validate_then_hasErrors_returns_MinimumOccurrencesValidationError() {
+    public void given_input_with_minOccur1_with_two_null_values_when_validate_then_hasErrors_returns_MinimumOccurrencesValidationError()
+    {
         contentType.getForm().addFormItem(
             Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).minimumOccurrences( 1 ).build() );
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
@@ -337,7 +343,8 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_input_with_minOccur1_with_one_null_value_when_validate_then_hasErrors_returns_MinimumOccurrencesValidationError() {
+    public void given_input_with_minOccur1_with_one_null_value_when_validate_then_hasErrors_returns_MinimumOccurrencesValidationError()
+    {
         contentType.getForm().addFormItem(
             Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).minimumOccurrences( 1 ).build() );
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
@@ -350,7 +357,8 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_input_with_minOccur1_with_two_nonnull_values_when_validate_then_hasErrors_returns_false() {
+    public void given_input_with_minOccur1_with_two_nonnull_values_when_validate_then_hasErrors_returns_false()
+    {
         contentType.getForm().addFormItem(
             Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).minimumOccurrences( 1 ).build() );
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
@@ -363,7 +371,8 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_input_with_minOccur1_and_maxOccur2_with_one_null_value_when_validate_then_hasErrors_returns_MinimumOccurrencesValidationError() {
+    public void given_input_with_minOccur1_and_maxOccur2_with_one_null_value_when_validate_then_hasErrors_returns_MinimumOccurrencesValidationError()
+    {
         contentType.getForm().addFormItem(
             Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).minimumOccurrences( 1 ).build() );
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
@@ -376,16 +385,17 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_formitemset_with_input_with_minOccur1_with_one_null_value_when_validate_then_hasErrors_returns_MinimumOccurrencesValidationError() {
+    public void given_formitemset_with_input_with_minOccur1_with_one_null_value_when_validate_then_hasErrors_returns_MinimumOccurrencesValidationError()
+    {
         FormItemSet crimes = FormItemSet.create().name( "crimes" ).multiple( true ).build();
         contentType.getForm().addFormItem( crimes );
-        crimes.add( Input.create().name( "description" ).label( "Description" ).minimumOccurrences( 1 ).inputType( InputTypeName.TEXT_LINE ).build() );
+        crimes.add( Input.create().name( "description" ).label( "Description" ).minimumOccurrences( 1 ).inputType(
+            InputTypeName.TEXT_LINE ).build() );
         crimes.add( Input.create().name( "year" ).label( "Year" ).inputType( InputTypeName.TEXT_LINE ).build() );
 
-
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
-        content.getData().setString( "crimes[0].description", null );
-        content.getData().setString( "crimes[0].year", "1989" );
+        content.getData().setString( "crimes[0]" + ELEMENT_DIVIDER + "description", null );
+        content.getData().setString( "crimes[0]" + ELEMENT_DIVIDER + "year", "1989" );
 
         // exercise
         ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
@@ -394,17 +404,19 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_formitemset_with_two_inputs_with_minOccur_with_data_when_validate_then_hasErrors_returns_false() {
+    public void given_formitemset_with_two_inputs_with_minOccur_with_data_when_validate_then_hasErrors_returns_false()
+    {
         FormItemSet crimes = FormItemSet.create().name( "crimes" ).multiple( true ).build();
         contentType.getForm().addFormItem( crimes );
-        crimes.add( Input.create().name( "description" ).label( "Description" ).minimumOccurrences( 1 ).inputType( InputTypeName.TEXT_LINE ).build() );
-        crimes.add( Input.create().name( "year" ).label( "Year" ).minimumOccurrences( 2 ).maximumOccurrences( 0 ).inputType( InputTypeName.TEXT_LINE ).build() );
-
+        crimes.add( Input.create().name( "description" ).label( "Description" ).minimumOccurrences( 1 ).inputType(
+            InputTypeName.TEXT_LINE ).build() );
+        crimes.add( Input.create().name( "year" ).label( "Year" ).minimumOccurrences( 2 ).maximumOccurrences( 0 ).inputType(
+            InputTypeName.TEXT_LINE ).build() );
 
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
-        content.getData().setString( "crimes[0].description", "descr" );
-        content.getData().setString( "crimes[0].year[0]", "1989" );
-        content.getData().setString( "crimes[0].year[1]", "1990" );
+        content.getData().setString( "crimes[0]" + ELEMENT_DIVIDER + "description", "descr" );
+        content.getData().setString( "crimes[0]" + ELEMENT_DIVIDER + "year[0]", "1989" );
+        content.getData().setString( "crimes[0]" + ELEMENT_DIVIDER + "year[1]", "1990" );
 
         // exercise
         ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
@@ -430,8 +442,8 @@ public class OccurrenceValidatorTest
         contentType.getForm().addFormItem( crimes.build() );
 
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
-        content.getData().setString( "crimes[0].option1.description", null );
-        content.getData().setString( "crimes[0].option1.year", "1989" );
+        content.getData().setString( "crimes[0]" + ELEMENT_DIVIDER + "option1" + ELEMENT_DIVIDER + "description", null );
+        content.getData().setString( "crimes[0]" + ELEMENT_DIVIDER + "option1" + ELEMENT_DIVIDER + "year", "1989" );
 
         // exercise
         ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
@@ -460,9 +472,9 @@ public class OccurrenceValidatorTest
         contentType.getForm().addFormItem( crimes.build() );
 
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
-        content.getData().setString( "crimes[0].option1.description", "descr" );
-        content.getData().setString( "crimes[0].option1.year[0]", "1989" );
-        content.getData().setString( "crimes[0].option1.year[1]", "1990" );
+        content.getData().setString( "crimes[0]" + ELEMENT_DIVIDER + "option1" + ELEMENT_DIVIDER + "description", "descr" );
+        content.getData().setString( "crimes[0]" + ELEMENT_DIVIDER + "option1" + ELEMENT_DIVIDER + "year[0]", "1989" );
+        content.getData().setString( "crimes[0]" + ELEMENT_DIVIDER + "option1" + ELEMENT_DIVIDER + "year[1]", "1990" );
 
         // exercise
         ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
@@ -486,7 +498,7 @@ public class OccurrenceValidatorTest
         contentType.getForm().addFormItem( myOptionSet.build() );
 
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
-        content.getData().setString( "myOptionSet.option1.myInput", "value" );
+        content.getData().setString( "myOptionSet" + ELEMENT_DIVIDER + "option1" + ELEMENT_DIVIDER + "myInput", "value" );
 
         // exercise
         ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
@@ -565,7 +577,7 @@ public class OccurrenceValidatorTest
                 true ).build() );
 
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
-        content.getData().setString( "myOptionSet.option1.myUnrequiredData", "1" );
+        content.getData().setString( "myOptionSet" + ELEMENT_DIVIDER + "option1" + ELEMENT_DIVIDER + "myUnrequiredData", "1" );
 
         //assertEquals( "myOptionSet.option1.myRequiredInput", myOptionSet.getInput( "myRequiredInput" ).getPath().toString() );
 
@@ -579,8 +591,9 @@ public class OccurrenceValidatorTest
 
         DataValidationError nextDataValidationError = (DataValidationError) dataValidationErrorIterator.next();
         assertTrue( nextDataValidationError instanceof MinimumOccurrencesValidationError );
-        assertEquals( "Input [myOptionSet.option1.myRequiredInput] requires minimum 1 occurrence: 0",
-                      nextDataValidationError.getErrorMessage() );
+        assertEquals(
+            "Input [myOptionSet" + ELEMENT_DIVIDER + "option1" + ELEMENT_DIVIDER + "myRequiredInput] requires minimum 1 occurrence: 0",
+            nextDataValidationError.getErrorMessage() );
         assertNotNull( nextDataValidationError.getPath() );
         nextDataValidationError = (DataValidationError) dataValidationErrorIterator.next();
         assertTrue( nextDataValidationError instanceof MinimumOccurrencesValidationError );
@@ -649,10 +662,12 @@ public class OccurrenceValidatorTest
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
 
         content.getData().setString( "name", "Thomas" );
-        content.getData().setString( "crimes[0].option1.description", "Stole tomatoes from neighbour" );
-        content.getData().setString( "crimes[0].option1..year", "1989" );
-        content.getData().setString( "crimes[1].option1..description", "Stole a chocolate from the Matbua shop" );
-        content.getData().setString( "crimes[1].option1..year", "1990" );
+        content.getData().setString( "crimes[0]" + ELEMENT_DIVIDER + "option1" + ELEMENT_DIVIDER + "description",
+                                     "Stole tomatoes from neighbour" );
+        content.getData().setString( "crimes[0]" + ELEMENT_DIVIDER + "option1" + ELEMENT_DIVIDER + "" + ELEMENT_DIVIDER + "year", "1989" );
+        content.getData().setString( "crimes[1]" + ELEMENT_DIVIDER + "option1" + ELEMENT_DIVIDER + "" + ELEMENT_DIVIDER + "description",
+                                     "Stole a chocolate from the Matbua shop" );
+        content.getData().setString( "crimes[1]" + ELEMENT_DIVIDER + "option1" + ELEMENT_DIVIDER + "" + ELEMENT_DIVIDER + "year", "1990" );
 
         // exercise
         ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
@@ -667,7 +682,7 @@ public class OccurrenceValidatorTest
         contentType.getForm().addFormItem( makeOptionSet( "myOptionSet", 1, 1, 1, 1 ) );
 
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
-        content.getData().setString( "myOptionSet.option1.myUnrequiredData", "1" );
+        content.getData().setString( "myOptionSet" + ELEMENT_DIVIDER + "option1" + ELEMENT_DIVIDER + "myUnrequiredData", "1" );
         ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertFalse( validationResults.hasErrors() );
     }
@@ -678,9 +693,9 @@ public class OccurrenceValidatorTest
         contentType.getForm().addFormItem( makeOptionSet( "myOptionSet", 0, 0, 1, 1 ) );
 
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
-        content.getData().setString( "myOptionSet.option1.myUnrequiredData", "1" );
-        content.getData().setString( "myOptionSet._selected", "1" );
-        content.getData().removeProperty( "myOptionSet._selected" );
+        content.getData().setString( "myOptionSet" + ELEMENT_DIVIDER + "option1" + ELEMENT_DIVIDER + "myUnrequiredData", "1" );
+        content.getData().setString( "myOptionSet" + ELEMENT_DIVIDER + "_selected", "1" );
+        content.getData().removeProperty( "myOptionSet" + ELEMENT_DIVIDER + "_selected" );
         ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertTrue( validationResults.hasErrors() );
         assertTrue( validationResults.getFirst() instanceof OptionSetSelectionValidationError );
@@ -693,7 +708,7 @@ public class OccurrenceValidatorTest
         contentType.getForm().addFormItem( makeOptionSet( "myOptionSet", 3, 0, 1, 2 ) );
 
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
-        content.getData().setString( "myOptionSet.option1.myUnrequiredData", "1" );
+        content.getData().setString( "myOptionSet" + ELEMENT_DIVIDER + "option1" + ELEMENT_DIVIDER + "myUnrequiredData", "1" );
         content.getData().getSet( "myOptionSet" ).addString( "_selected", "option1" );
         content.getData().getSet( "myOptionSet" ).addString( "_selected", "option2" );
         content.getData().getSet( "myOptionSet" ).addString( "_selected", "option3" );
@@ -710,7 +725,7 @@ public class OccurrenceValidatorTest
         contentType.getForm().addFormItem( makeOptionSet( "myOptionSet", 3, 0, 3, 3 ) );
 
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
-        content.getData().setString( "myOptionSet.option1.myUnrequiredData", "1" );
+        content.getData().setString( "myOptionSet" + ELEMENT_DIVIDER + "option1" + ELEMENT_DIVIDER + "myUnrequiredData", "1" );
         content.getData().getSet( "myOptionSet" ).addString( "_selected", "option1" );
         content.getData().getSet( "myOptionSet" ).addString( "_selected", "option2" );
 
@@ -726,7 +741,7 @@ public class OccurrenceValidatorTest
         contentType.getForm().addFormItem( makeOptionSet( "myOptionSet", 0, 2, 1, 1 ) );
 
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
-        content.getData().setString( "myOptionSet.option1.myUnrequiredData", "1" );
+        content.getData().setString( "myOptionSet" + ELEMENT_DIVIDER + "option1" + ELEMENT_DIVIDER + "myUnrequiredData", "1" );
         ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertTrue( validationResults.hasErrors() );
         assertTrue( validationResults.getFirst() instanceof OptionSetSelectionValidationError );
@@ -739,7 +754,7 @@ public class OccurrenceValidatorTest
         contentType.getForm().addFormItem( makeOptionSet( "myOptionSet", 2, 0, 1, 1 ) );
 
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
-        content.getData().setString( "myOptionSet.option1.myUnrequiredData", "1" );
+        content.getData().setString( "myOptionSet" + ELEMENT_DIVIDER + "option1" + ELEMENT_DIVIDER + "myUnrequiredData", "1" );
 
         ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertTrue( validationResults.hasErrors() );

@@ -12,6 +12,7 @@ import com.enonic.xp.inputtype.InputTypeDefault;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 
+import static com.enonic.xp.data.PropertyPath.ELEMENT_DIVIDER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -126,8 +127,8 @@ public class FormDefaultValuesProcessorImplTest
         final PropertyTree data = new PropertyTree();
         defaultValuesProcessor.setDefaultValues( form, data );
 
-        assertEquals( "default", data.getString( "myOptionSet.option1.myInput" ) );
-        assertEquals( 0, data.getDouble( "myOptionSet.option1.myDouble" ) );
+        assertEquals( "default", data.getString( "myOptionSet" + ELEMENT_DIVIDER + "option1" + ELEMENT_DIVIDER + "myInput" ) );
+        assertEquals( 0, data.getDouble( "myOptionSet" + ELEMENT_DIVIDER + "option1" + ELEMENT_DIVIDER + "myDouble" ) );
     }
 
     @Test
@@ -164,7 +165,7 @@ public class FormDefaultValuesProcessorImplTest
         final PropertyTree data = new PropertyTree();
         defaultValuesProcessor.setDefaultValues( form, data );
 
-        assertEquals( "default", data.getString( "myOptionSet.option1.myInput" ) );
-        assertNull( data.getDouble( "myOptionSet.option1.myDouble" ) );
+        assertEquals( "default", data.getString( "myOptionSet" + ELEMENT_DIVIDER + "option1" + ELEMENT_DIVIDER + "myInput" ) );
+        assertNull( data.getDouble( "myOptionSet" + ELEMENT_DIVIDER + "option1" + ELEMENT_DIVIDER + "myDouble" ) );
     }
 }

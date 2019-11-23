@@ -14,6 +14,7 @@ import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositorySettings;
 
+import static com.enonic.xp.data.PropertyPath.ELEMENT_DIVIDER;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -54,14 +55,22 @@ public class RepositoryNodeTranslatorTest
 
         final PropertyTree data = node.data();
 
-        assertNotNull( data.getProperty( "indexConfigs.version.mapping.myMapping" ) );
-        assertNull( data.getProperty( "indexConfigs.version.mapping.myMapping[1]" ) );
-        assertNotNull( data.getProperty( "indexConfigs.version.settings.mySetting" ) );
-        assertNull( data.getProperty( "indexConfigs.version.settings.mySetting[1]" ) );
+        assertNotNull( data.getProperty(
+            "indexConfigs" + ELEMENT_DIVIDER + "version" + ELEMENT_DIVIDER + "mapping" + ELEMENT_DIVIDER + "myMapping" ) );
+        assertNull( data.getProperty(
+            "indexConfigs" + ELEMENT_DIVIDER + "version" + ELEMENT_DIVIDER + "mapping" + ELEMENT_DIVIDER + "myMapping[1]" ) );
+        assertNotNull( data.getProperty(
+            "indexConfigs" + ELEMENT_DIVIDER + "version" + ELEMENT_DIVIDER + "settings" + ELEMENT_DIVIDER + "mySetting" ) );
+        assertNull( data.getProperty(
+            "indexConfigs" + ELEMENT_DIVIDER + "version" + ELEMENT_DIVIDER + "settings" + ELEMENT_DIVIDER + "mySetting[1]" ) );
 
-        assertNotNull( data.getProperty( "indexConfigs.branch.mapping.myMapping" ) );
-        assertNull( data.getProperty( "indexConfigs.branch.mapping.myMapping[1]" ) );
-        assertNotNull( data.getProperty( "indexConfigs.branch.settings.mySetting" ) );
-        assertNull( data.getProperty( "indexConfigs.branch.settings.mySetting[1]" ) );
+        assertNotNull(
+            data.getProperty( "indexConfigs" + ELEMENT_DIVIDER + "branch" + ELEMENT_DIVIDER + "mapping" + ELEMENT_DIVIDER + "myMapping" ) );
+        assertNull( data.getProperty(
+            "indexConfigs" + ELEMENT_DIVIDER + "branch" + ELEMENT_DIVIDER + "mapping" + ELEMENT_DIVIDER + "myMapping[1]" ) );
+        assertNotNull( data.getProperty(
+            "indexConfigs" + ELEMENT_DIVIDER + "branch" + ELEMENT_DIVIDER + "settings" + ELEMENT_DIVIDER + "mySetting" ) );
+        assertNull( data.getProperty(
+            "indexConfigs" + ELEMENT_DIVIDER + "branch" + ELEMENT_DIVIDER + "settings" + ELEMENT_DIVIDER + "mySetting[1]" ) );
     }
 }

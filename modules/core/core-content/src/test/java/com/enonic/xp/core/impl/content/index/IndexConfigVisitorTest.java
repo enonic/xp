@@ -11,6 +11,7 @@ import com.enonic.xp.form.Input;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.inputtype.InputTypeName;
 
+import static com.enonic.xp.data.PropertyPath.ELEMENT_DIVIDER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class IndexConfigVisitorTest
@@ -36,8 +37,8 @@ public class IndexConfigVisitorTest
 
         final PatternIndexConfigDocument document = builder.build();
         assertEquals( 1, document.getPathIndexConfigs().size() );
-        assertEquals( "htmlStripper",
-                      document.getConfigForPath( PropertyPath.from( "parent.htmlArea" ) ).getIndexValueProcessors().get( 0 ).getName() );
+        assertEquals( "htmlStripper", document.getConfigForPath(
+            PropertyPath.from( "parent" + ELEMENT_DIVIDER + "htmlArea" ) ).getIndexValueProcessors().get( 0 ).getName() );
     }
 
     @Test
@@ -66,9 +67,8 @@ public class IndexConfigVisitorTest
 
         final PatternIndexConfigDocument document = builder.build();
         assertEquals( 1, document.getPathIndexConfigs().size() );
-        assertEquals( "htmlStripper",
-                      document.getConfigForPath( PropertyPath.from( "parent.myFormItemSet.htmlArea" ) ).getIndexValueProcessors().get(
-                          0 ).getName() );
+        assertEquals( "htmlStripper", document.getConfigForPath( PropertyPath.from(
+            "parent" + ELEMENT_DIVIDER + "myFormItemSet" + ELEMENT_DIVIDER + "htmlArea" ) ).getIndexValueProcessors().get( 0 ).getName() );
     }
 
     @Test
@@ -100,7 +100,8 @@ public class IndexConfigVisitorTest
 
         final PatternIndexConfigDocument document = builder.build();
         assertEquals( 1, document.getPathIndexConfigs().size() );
-        assertEquals( "htmlStripper", document.getConfigForPath(
-            PropertyPath.from( "parent.myoptionset.myoptionsetoption2.htmlArea" ) ).getIndexValueProcessors().get( 0 ).getName() );
+        assertEquals( "htmlStripper", document.getConfigForPath( PropertyPath.from(
+            "parent" + ELEMENT_DIVIDER + "myoptionset" + ELEMENT_DIVIDER + "myoptionsetoption2" + ELEMENT_DIVIDER +
+                "htmlArea" ) ).getIndexValueProcessors().get( 0 ).getName() );
     }
 }

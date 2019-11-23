@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.util.Link;
 import com.enonic.xp.util.Reference;
 
+import static com.enonic.xp.data.PropertyPath.ELEMENT_DIVIDER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PropertyVisitorTest
@@ -39,8 +40,8 @@ public class PropertyVisitorTest
         // verify
         assertEquals( 3, hits.size() );
         assertEquals( "a", hits.get( 0 ).getPath().toString() );
-        assertEquals( "a.b", hits.get( 1 ).getPath().toString() );
-        assertEquals( "a.b.c", hits.get( 2 ).getPath().toString() );
+        assertEquals( "a" + ELEMENT_DIVIDER + "b", hits.get( 1 ).getPath().toString() );
+        assertEquals( "a" + ELEMENT_DIVIDER + "b" + ELEMENT_DIVIDER + "c", hits.get( 2 ).getPath().toString() );
     }
 
     @Test
@@ -72,8 +73,8 @@ public class PropertyVisitorTest
         assertEquals( 4, hits.size() );
         assertEquals( "myText", hits.get( 0 ).getPath().toString() );
         assertEquals( "myDate", hits.get( 1 ).getPath().toString() );
-        assertEquals( "mySet.myText", hits.get( 2 ).getPath().toString() );
-        assertEquals( "mySet.myDate", hits.get( 3 ).getPath().toString() );
+        assertEquals( "mySet" + ELEMENT_DIVIDER + "myText", hits.get( 2 ).getPath().toString() );
+        assertEquals( "mySet" + ELEMENT_DIVIDER + "myDate", hits.get( 3 ).getPath().toString() );
     }
 
     @Test
@@ -105,7 +106,7 @@ public class PropertyVisitorTest
         // verify
         assertEquals( 2, hits.size() );
         assertEquals( "myDate", hits.get( 0 ).getPath().toString() );
-        assertEquals( "mySet.myDate", hits.get( 1 ).getPath().toString() );
+        assertEquals( "mySet" + ELEMENT_DIVIDER + "myDate", hits.get( 1 ).getPath().toString() );
     }
 
     @Test
@@ -139,7 +140,7 @@ public class PropertyVisitorTest
         // verify
         assertEquals( 2, hits.size() );
         assertEquals( "myRef", hits.get( 0 ).getPath().toString() );
-        assertEquals( "mySet.myRef", hits.get( 1 ).getPath().toString() );
+        assertEquals( "mySet" + ELEMENT_DIVIDER + "myRef", hits.get( 1 ).getPath().toString() );
     }
 
 
@@ -174,7 +175,7 @@ public class PropertyVisitorTest
         // verify
         assertEquals( 2, hits.size() );
         assertEquals( "myLink", hits.get( 0 ).getPath().toString() );
-        assertEquals( "mySet.myLink", hits.get( 1 ).getPath().toString() );
+        assertEquals( "mySet" + ELEMENT_DIVIDER + "myLink", hits.get( 1 ).getPath().toString() );
     }
 
 }

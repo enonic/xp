@@ -24,6 +24,7 @@ import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.schema.xdata.XDatas;
 
 import static com.enonic.xp.content.ContentPropertyNames.EXTRA_DATA;
+import static com.enonic.xp.data.PropertyPath.ELEMENT_DIVIDER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class XDataConfigProcessorTest
@@ -72,7 +73,8 @@ public class XDataConfigProcessorTest
 
         assertEquals( 2, result.getPathIndexConfigs().size() );
         assertEquals( "htmlStripper", result.getConfigForPath(
-            PropertyPath.from( EXTRA_DATA + ".appname.localname0.htmlarea" ) ).getIndexValueProcessors().get( 0 ).getName() );
+            PropertyPath.from( EXTRA_DATA + ".appname.localname0" + ELEMENT_DIVIDER + "htmlarea" ) ).getIndexValueProcessors().get(
+            0 ).getName() );
 
     }
 
