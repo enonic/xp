@@ -194,6 +194,7 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.lang.Math.toIntExact;
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
@@ -992,7 +993,7 @@ public final class ContentResource
     {
         final ContentPath parentContentPath;
 
-        if ( StringUtils.isEmpty( parentIdParam ) )
+        if ( isNullOrEmpty( parentIdParam ) )
         {
             parentContentPath = null;
         }

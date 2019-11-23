@@ -10,6 +10,8 @@ import org.apache.commons.lang.StringUtils;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+
 @Beta
 public final class NamePrettyfier
 {
@@ -113,7 +115,7 @@ public final class NamePrettyfier
 
     private static String replaceWithHyphens( String prettifiedName )
     {
-        if ( StringUtils.isEmpty( prettifiedName ) )
+        if ( isNullOrEmpty( prettifiedName ) )
         {
             return "";
         }
@@ -128,7 +130,7 @@ public final class NamePrettyfier
 
     private static String makeLowerCase( String prettifiedName )
     {
-        if ( StringUtils.isEmpty( prettifiedName ) )
+        if ( isNullOrEmpty( prettifiedName ) )
         {
             return "";
         }
@@ -139,7 +141,7 @@ public final class NamePrettyfier
 
     private static String replaceBlankSpaces( String prettifiedName )
     {
-        if ( StringUtils.isEmpty( prettifiedName ) )
+        if ( isNullOrEmpty( prettifiedName ) )
         {
             return "";
         }
@@ -153,7 +155,7 @@ public final class NamePrettyfier
 
     private static String removeUnsafeCharacters( String prettifiedName )
     {
-        if ( StringUtils.isEmpty( prettifiedName ) )
+        if ( isNullOrEmpty( prettifiedName ) )
         {
             return "";
         }

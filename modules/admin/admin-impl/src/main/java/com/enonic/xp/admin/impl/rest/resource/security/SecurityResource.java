@@ -79,6 +79,7 @@ import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.IdProviderAccessControlList;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang.StringUtils.isBlank;
 
@@ -435,7 +436,7 @@ public final class SecurityResource
     @Path("principals/createUser")
     public UserJson createUser( final CreateUserJson params )
     {
-        if ( StringUtils.isEmpty( params.password ) )
+        if ( isNullOrEmpty( params.password ) )
         {
             throw new WebApplicationException( "Password has not been set." );
         }
@@ -517,7 +518,7 @@ public final class SecurityResource
     {
         final PrincipalKey userKey = params.getUserKey();
 
-        if ( StringUtils.isEmpty( params.getPassword() ) )
+        if ( isNullOrEmpty( params.getPassword() ) )
         {
             throw new WebApplicationException( "Password has not been set." );
         }
