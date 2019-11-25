@@ -23,12 +23,13 @@ ext {
     jettyVersion = '9.4.22.v20191022'
     jacksonVersion = '2.9.10'
     jacksonDatabindVersion = '2.9.10.1'
+    junitJupiterVersion = '5.5.2'
 }
 
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.1'
-    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.5.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.1'
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:${junitJupiterVersion}"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
     testImplementation 'org.mockito:mockito-core:2.28.2'
     testImplementation 'org.mockito:mockito-junit-jupiter:2.28.2'
     testImplementation 'org.springframework:spring-test:4.1.6.RELEASE'

@@ -16,11 +16,13 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.UnmodifiableIterator;
 import com.google.common.io.ByteSource;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.audit.AuditLogService;
+import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ActiveContentVersionEntry;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.ApplyContentPermissionsResult;
@@ -30,7 +32,6 @@ import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareContentsParams;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentDependencies;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
@@ -60,6 +61,7 @@ import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.FindContentPathsByQueryParams;
 import com.enonic.xp.content.FindContentVersionsParams;
 import com.enonic.xp.content.FindContentVersionsResult;
+import com.enonic.xp.content.GetActiveContentVersionParams;
 import com.enonic.xp.content.GetActiveContentVersionsParams;
 import com.enonic.xp.content.GetActiveContentVersionsResult;
 import com.enonic.xp.content.GetContentByIdsParams;
@@ -975,14 +977,15 @@ public class ContentServiceImpl
     }
 
     @Override
-    public ContentVersion getActiveVersion( final GetActiveContentVersionsParams params )
+    public ContentVersion getActiveVersion( final GetActiveContentVersionParams params )
     {
-        final GetActiveContentVersionsResult activeVersions = getActiveVersions( params );
+        final GetActiveContentVersionsResult activeVersions = getActiveVersions( GetActiveContentVersionsParams.create().
+            branches( Branches.from( params.getBranch() ) ).
+            contentId( params.getContentId() ).
+            build() );
 
-        final ActiveContentVersionEntry activeVersion = activeVersions.getActiveContentVersions().stream().filter(
-            contentVersion -> ContentConstants.BRANCH_DRAFT.equals( contentVersion.getBranch() ) ).findFirst().orElse( null );
-
-        return activeVersion != null ? activeVersion.getContentVersion() : null;
+        final UnmodifiableIterator<ActiveContentVersionEntry> activeVersionIterator = activeVersions.getActiveContentVersions().iterator();
+        return activeVersionIterator.hasNext() ? activeVersionIterator.next().getContentVersion() : null;
     }
 
     @Override
