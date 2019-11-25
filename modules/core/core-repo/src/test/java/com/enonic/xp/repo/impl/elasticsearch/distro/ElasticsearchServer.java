@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.elasticsearch.distro;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
@@ -9,10 +10,16 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.repo.impl.elasticsearch.distro.config.ElasticsearchConfig;
 import com.enonic.xp.repo.impl.elasticsearch.distro.config.ElasticsearchDownloaderConfig;
+
+import static com.enonic.xp.repo.impl.elasticsearch.distro.ElasticsearchConstants.ES_DIR;
+import static com.enonic.xp.repo.impl.elasticsearch.distro.ElasticsearchConstants.EXTRACTED_ARCHIVE_NAME;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 
 public class ElasticsearchServer
@@ -29,6 +36,8 @@ public class ElasticsearchServer
 
     private final String esJavaOpts;
 
+    private final ElasticsearchConfig config;
+
 
     private final ElasticsearchInstaller installer;
 
@@ -36,13 +45,14 @@ public class ElasticsearchServer
     {
         this.esJavaOpts = builder.esJavaOpts;
         this.installer = new ElasticsearchInstaller( builder.downloaderConfig );
+        this.config = builder.elasticsearchConfig;
     }
 
     public synchronized void start()
         throws InterruptedException, IOException
     {
         installer.install();
-
+        configure();
         startElasticProcess();
         installExitHook();
         startedLatch.await();
@@ -75,8 +85,7 @@ public class ElasticsearchServer
         throws IOException, InterruptedException
     {
         process = new ProcessBuilder(
-            Path.of( installer.getInstallationDirectory().getPath(), ElasticsearchConstants.EXTRACTED_ARCHIVE_NAME, "bin",
-                     executableFilename() ).toString() ).
+            Path.of( installer.getInstallationDirectory().getPath(), EXTRACTED_ARCHIVE_NAME, "bin", executableFilename() ).toString() ).
             redirectErrorStream( true ).
             start();
 
@@ -119,11 +128,23 @@ public class ElasticsearchServer
         deactivate();
     }
 
+    private void configure()
+        throws IOException
+    {
+        if ( config != null )
+        {
+            File elasticsearchYml = FileUtils.getFile( ES_DIR.toFile(), EXTRACTED_ARCHIVE_NAME, "config", "elasticsearch.yml" );
+            FileUtils.writeStringToFile( elasticsearchYml, config.toYaml(), UTF_8 );
+        }
+    }
+
     public static class ElasticsearchServerBuilder
     {
         private String esJavaOpts;
 
         private ElasticsearchDownloaderConfig downloaderConfig;
+
+        private ElasticsearchConfig elasticsearchConfig;
 
         public static ElasticsearchServerBuilder builder()
         {
@@ -139,6 +160,12 @@ public class ElasticsearchServer
         public ElasticsearchServerBuilder downloaderConfig( final ElasticsearchDownloaderConfig downloaderConfig )
         {
             this.downloaderConfig = downloaderConfig;
+            return this;
+        }
+
+        public ElasticsearchServerBuilder elasticsearchConfig( final ElasticsearchConfig elasticsearchConfig )
+        {
+            this.elasticsearchConfig = elasticsearchConfig;
             return this;
         }
 

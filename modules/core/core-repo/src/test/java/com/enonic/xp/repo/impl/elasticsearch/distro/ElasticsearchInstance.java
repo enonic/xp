@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
 
+import com.enonic.xp.repo.impl.elasticsearch.distro.config.ElasticsearchConfig;
 import com.enonic.xp.repo.impl.elasticsearch.distro.config.ElasticsearchDownloaderConfig;
 
 import static com.enonic.xp.repo.impl.elasticsearch.distro.ElasticsearchConstants.ROOT_DATA_DIR;
@@ -19,12 +21,16 @@ public class ElasticsearchInstance
 
     public ElasticsearchInstance()
     {
+        initialize();
+
         elasticsearchServer = ElasticsearchServer.ElasticsearchServerBuilder.builder().
             esJavaOpts( "-Xms512m -Xmx512m" ).
-            downloaderConfig( ElasticsearchDownloaderConfig.builder().build() ).
+            downloaderConfig( ElasticsearchDownloaderConfig.builder().
+                build() ).
+            elasticsearchConfig( ElasticsearchConfig.builder().
+                setting( "path.repo", Collections.singletonList( snapshotsDir.toAbsolutePath().toString() ) ).
+                build() ).
             build();
-
-        initialize();
     }
 
     public void initialize()
