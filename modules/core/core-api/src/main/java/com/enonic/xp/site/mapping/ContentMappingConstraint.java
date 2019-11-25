@@ -20,6 +20,7 @@ import com.enonic.xp.data.ValueType;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.schema.xdata.XDataName;
 
+import static com.enonic.xp.data.PropertyPath.ELEMENT_DIVIDER;
 import static org.apache.commons.lang.StringUtils.substringAfter;
 import static org.apache.commons.lang.StringUtils.substringBefore;
 
@@ -44,9 +45,9 @@ public final class ContentMappingConstraint
 
     private static final String VALID_PROPERTY = "valid";
 
-    private static final String DATA_PROPERTY_PREFIX = "data@";
+    private static final String DATA_PROPERTY_PREFIX = "data" + ELEMENT_DIVIDER;
 
-    private static final String XDATA_PROPERTY_PREFIX = "x@";
+    private static final String XDATA_PROPERTY_PREFIX = "x" + ELEMENT_DIVIDER;
 
     private final String id;
 
@@ -108,10 +109,10 @@ public final class ContentMappingConstraint
         else if ( this.id.startsWith( XDATA_PROPERTY_PREFIX ) )
         {
             String dataPath = substringAfter( id, XDATA_PROPERTY_PREFIX );
-            final String appPrefix = substringBefore( dataPath, "@" );
-            dataPath = substringAfter( dataPath, "@" );
-            final String mixinName = substringBefore( dataPath, "@" );
-            dataPath = substringAfter( dataPath, "@" );
+            final String appPrefix = substringBefore( dataPath, ELEMENT_DIVIDER );
+            dataPath = substringAfter( dataPath, ELEMENT_DIVIDER );
+            final String mixinName = substringBefore( dataPath, ELEMENT_DIVIDER );
+            dataPath = substringAfter( dataPath, ELEMENT_DIVIDER );
             final PropertyTree xData = getXData( content.getAllExtraData(), appPrefix, mixinName );
             if ( xData == null )
             {
