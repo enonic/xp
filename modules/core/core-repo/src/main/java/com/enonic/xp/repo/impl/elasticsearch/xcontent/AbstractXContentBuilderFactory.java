@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.elasticsearch.xcontent;
 
-import java.util.Collection;
-
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 
@@ -33,7 +31,7 @@ abstract class AbstractXContentBuilderFactory
             result.field( name, value );
         }
 
-        if ( value instanceof Collection )
+        if ( value instanceof Iterable )
         {
             result.field( name, (Iterable<?>) value );
         }

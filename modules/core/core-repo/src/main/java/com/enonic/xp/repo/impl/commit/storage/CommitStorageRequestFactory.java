@@ -29,7 +29,6 @@ public class CommitStorageRequestFactory
                 storageType( StaticStorageType.COMMIT ).
                 build() ).
             data( data ).
-            routing( id ).
             build();
     }
 }

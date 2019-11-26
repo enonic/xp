@@ -9,7 +9,7 @@
       "type": "keyword"
     },
     "timestamp": {
-      "type": "keyword"
+      "type": "date"
     },
     "committer": {
       "type": "keyword"

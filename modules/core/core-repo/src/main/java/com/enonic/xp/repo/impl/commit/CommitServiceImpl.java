@@ -54,7 +54,6 @@ public class CommitServiceImpl
             id( nodeCommitId.toString() ).
             storageSettings( createCommitStorageSettings( context ) ).
             returnFields( COMMIT_RETURN_FIELDS ).
-            routing( nodeCommitId.toString() ).
             build();
     }
 

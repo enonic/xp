@@ -125,7 +125,6 @@ public class StorageDaoImpl
                 final org.elasticsearch.action.delete.DeleteRequest deleteRequest = new org.elasticsearch.action.delete.DeleteRequest().
                     id( id ).
                     index( settings.getStorageName().getName() ).
-                    routing( id ).
                     timeout( requests.getTimeoutAsString() );
 
                 if ( requests.isForceRefresh() )
