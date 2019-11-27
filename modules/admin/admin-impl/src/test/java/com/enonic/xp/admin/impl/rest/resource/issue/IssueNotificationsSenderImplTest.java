@@ -23,6 +23,7 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.GetContentByIdsParams;
+import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.issue.Issue;
 import com.enonic.xp.issue.IssueComment;
@@ -58,6 +59,8 @@ public class IssueNotificationsSenderImplTest
 
     IssueNotificationParamsFactory.Builder notificationFactoryBuilder;
 
+    private LocaleService localeService;
+
     @BeforeEach
     public void setUp()
     {
@@ -66,12 +69,13 @@ public class IssueNotificationsSenderImplTest
         contentService = Mockito.mock( ContentService.class );
         issueNotificationsSender = new IssueNotificationsSenderImpl();
         contentTypeService = Mockito.mock( ContentTypeService.class );
+        localeService = Mockito.mock( LocaleService.class );
 
         issueNotificationsSender.setMailService( mailService );
 
         notificationFactoryBuilder =
-            IssueNotificationParamsFactory.create().contentService( contentService ).securityService( securityService ).contentTypeService(
-                contentTypeService );
+            IssueNotificationParamsFactory.create().contentService( contentService ).securityService( securityService ).localeService(
+                localeService ).contentTypeService( contentTypeService );
     }
 
     @Test

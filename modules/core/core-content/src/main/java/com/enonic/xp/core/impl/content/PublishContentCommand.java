@@ -16,8 +16,8 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentValidityResult;
 import com.enonic.xp.content.DeleteContentListener;
-import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentListener;
+import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -53,7 +53,7 @@ public class PublishContentCommand
 
     private final PublishContentResult.Builder resultBuilder;
 
-    private final PushContentListener pushContentListener;
+    private final PushContentListener publishContentListener;
 
     private final DeleteContentListener deleteNodeListener;
 
@@ -69,7 +69,7 @@ public class PublishContentCommand
         this.includeDependencies = builder.includeDependencies;
         this.excludeChildrenIds = builder.excludeChildrenIds;
         this.resultBuilder = PublishContentResult.create();
-        this.pushContentListener = builder.pushContentListener;
+        this.publishContentListener = builder.publishContentListener;
         this.deleteNodeListener = builder.deleteNodeListener;
         this.message = builder.message;
     }
@@ -85,9 +85,9 @@ public class PublishContentCommand
 
         final CompareContentResults results = getSyncWork();
 
-        if ( pushContentListener != null )
+        if ( publishContentListener != null )
         {
-            pushContentListener.contentResolved( results.size() );
+            publishContentListener.contentResolved( results.size() );
         }
         pushAndDelete( results );
 
@@ -171,7 +171,7 @@ public class PublishContentCommand
         SetPublishInfoCommand.create( this ).
             nodeIds( nodesToPush ).
             contentPublishInfo( contentPublishInfo ).
-            pushListener( pushContentListener ).
+            pushListener( publishContentListener ).
             build().
             execute();
 
@@ -231,9 +231,9 @@ public class PublishContentCommand
             // node to delete doesn't exist
         }
 
-        if ( pushContentListener != null )
+        if ( publishContentListener != null )
         {
-            pushContentListener.contentPushed( contentIdsToDelete.getSize() );
+            publishContentListener.contentPushed( contentIdsToDelete.getSize() );
         }
     }
 
@@ -248,9 +248,9 @@ public class PublishContentCommand
     @Override
     public void nodesPushed( final int count )
     {
-        if ( pushContentListener != null )
+        if ( publishContentListener != null )
         {
-            pushContentListener.contentPushed( count );
+            publishContentListener.contentPushed( count );
         }
     }
 
@@ -287,7 +287,7 @@ public class PublishContentCommand
 
         private boolean includeDependencies = true;
 
-        private PushContentListener pushContentListener;
+        private PushContentListener publishContentListener;
 
         private DeleteContentListener deleteNodeListener;
 
@@ -339,9 +339,9 @@ public class PublishContentCommand
             return this;
         }
 
-        public Builder pushListener( final PushContentListener pushContentListener )
+        public Builder pushListener( final PushContentListener publishContentListener )
         {
-            this.pushContentListener = pushContentListener;
+            this.publishContentListener = publishContentListener;
             return this;
         }
 

@@ -17,8 +17,6 @@ public class AuditLogTestBuilder
 
     static PrincipalKey user = PrincipalKey.ofSuperUser();
 
-    static String message = "testMessage";
-
     static AuditLogUris objectUris = AuditLogUris.from( "a:b:c", "d:e:f" );
 
     static PropertyTree data = new PropertyTree();
@@ -37,7 +35,6 @@ public class AuditLogTestBuilder
             time( time ).
             source( source ).
             user( user ).
-            message( message ).
             objectUris( objectUris ).
             data( data );
     }

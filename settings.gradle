@@ -40,6 +40,7 @@ include 'web:web-jetty'
 include 'web:web-dos'
 include 'web:web-dispatch'
 include 'web:web-session'
+include 'web:web-header'
 
 include 'jaxrs:jaxrs-api'
 include 'jaxrs:jaxrs-impl'
@@ -108,6 +109,3 @@ def configureProject( p )
     p.projectDir = new File( (File) settingsDir, "modules/${dirName}" )
     assert p.projectDir.isDirectory()
 }
-
-
-

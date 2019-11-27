@@ -47,7 +47,6 @@ public class AuditLogServiceImplTest
         auditLogParams = LogAuditLogParams.create().
             type( "testType" ).
             source( "testSource" ).
-            message( "testMessage" ).
             objectUris( AuditLogUris.from( "a:b:c", "d:e:f" ) ).
             data( data ).
             build();
@@ -142,8 +141,6 @@ public class AuditLogServiceImplTest
         assertEquals( auditLogParams.getSource(), log.getSource() );
         assertNotNull( log.getUser() );
         assertEquals( auditLogParams.getUser(), log.getUser() );
-        assertNotNull( log.getMessage() );
-        assertEquals( auditLogParams.getMessage(), log.getMessage() );
         assertNotNull( log.getObjectUris() );
         assertEquals( 2, log.getObjectUris().getSize() );
         assertEquals( auditLogParams.getObjectUris(), log.getObjectUris() );

@@ -29,7 +29,6 @@ public class AuditLogTest
         assertEquals( log.getTime(), AuditLogTestBuilder.time );
         assertEquals( log.getSource(), AuditLogTestBuilder.source );
         assertEquals( log.getUser(), AuditLogTestBuilder.user );
-        assertEquals( log.getMessage(), AuditLogTestBuilder.message );
         assertEquals( log.getObjectUris(), AuditLogTestBuilder.objectUris );
         assertEquals( log.getData(), AuditLogTestBuilder.data );
     }

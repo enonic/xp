@@ -99,9 +99,9 @@ public class UnpublishContentCommand
         final NodeIds nodes = this.nodeService.deleteById( nodeId );
         if ( nodes != null && nodes.isNotEmpty() )
         {
-            if ( params.getPushContentListener() != null )
+            if ( params.getPublishContentListener() != null )
             {
-                params.getPushContentListener().contentPushed( 1 );
+                params.getPublishContentListener().contentPushed( 1 );
             }
             contentsBuilder.add( ContentId.from( nodes.first().toString() ) );
         }
@@ -150,7 +150,7 @@ public class UnpublishContentCommand
                         {
                             publishInfo.removeProperty( ContentPropertyNames.PUBLISH_TO );
                         }
-                        
+
                         if (publishInfo.getInstant( ContentPropertyNames.PUBLISH_FIRST ).compareTo( Instant.now()) > 0 ) {
                             publishInfo.removeProperty( ContentPropertyNames.PUBLISH_FIRST );
                         }

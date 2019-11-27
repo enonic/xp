@@ -3,11 +3,14 @@ package com.enonic.xp.core.content;
 import java.time.Instant;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.attachment.Attachments;
+import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPath;
@@ -16,6 +19,7 @@ import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.WorkflowCheckState;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.site.CreateSiteParams;
@@ -145,9 +149,9 @@ public class ContentServiceImplTest_create
             type( ContentTypeName.shortcut() ).
             build();
 
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows( IllegalArgumentException.class, () -> {
             this.contentService.create( createContentParams );
-        });
+        } );
     }
 
     @Test
@@ -198,5 +202,27 @@ public class ContentServiceImplTest_create
         assertNotNull( storedContent.getWorkflowInfo() );
         assertEquals( WorkflowState.PENDING_APPROVAL, storedContent.getWorkflowInfo().getState() );
         assertEquals( ImmutableMap.of( "My check", WorkflowCheckState.REJECTED ), storedContent.getWorkflowInfo().getChecks() );
+    }
+
+    @Test
+    public void audit_data()
+    {
+        final ArgumentCaptor<LogAuditLogParams> captor = ArgumentCaptor.forClass( LogAuditLogParams.class );
+
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "This is my content" ).
+            parent( ContentPath.ROOT ).
+            type( ContentTypeName.folder() ).
+            build();
+
+        final Content content = this.contentService.create( createContentParams );
+
+        Mockito.verify( auditLogService, Mockito.timeout( 5000 ).times( 1 ) ).log( captor.capture() );
+
+        final PropertySet logResultSet = captor.getValue().getData().getSet( "result" );
+
+        assertEquals( content.getId().toString(), logResultSet.getString( "id" ) );
+        assertEquals( content.getPath().toString(), logResultSet.getString( "path" ) );
     }
 }

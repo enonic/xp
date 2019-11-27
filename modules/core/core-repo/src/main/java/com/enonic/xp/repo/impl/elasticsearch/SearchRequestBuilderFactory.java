@@ -14,6 +14,7 @@ import com.enonic.xp.query.highlight.constants.Encoder;
 import com.enonic.xp.query.highlight.constants.Fragmenter;
 import com.enonic.xp.query.highlight.constants.Order;
 import com.enonic.xp.query.highlight.constants.TagsSchema;
+import com.enonic.xp.repo.impl.SearchPreference;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticHighlightQuery;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
 
@@ -71,12 +72,8 @@ public class SearchRequestBuilderFactory
         final SearchRequest searchRequest = new SearchRequest().
             searchType( searchType ).
             indices( query.getIndexNames() ).
-            source( prepareSearchSource() );
-
-        if ( preference != null )
-        {
-            searchRequest.preference( preference );
-        }
+            source( prepareSearchSource() ).
+            preference( SearchPreference.LOCAL.getName() );
 
         return searchRequest;
     }
