@@ -24,8 +24,6 @@ public class SearchRequestBuilderFactory
 
     private final int resolvedSize;
 
-    private final String preference;
-
     private final String scrollTimeout;
 
     private final ElasticsearchQuery query;
@@ -34,7 +32,6 @@ public class SearchRequestBuilderFactory
     {
         this.resolvedSize = builder.resolvedSize;
         this.query = builder.query;
-        this.preference = builder.preference;
         this.scrollTimeout = builder.scrollTimeout;
     }
 
@@ -180,8 +177,6 @@ public class SearchRequestBuilderFactory
 
         private ElasticsearchQuery query;
 
-        private String preference;
-
         private String scrollTimeout;
 
         private Builder()
@@ -197,12 +192,6 @@ public class SearchRequestBuilderFactory
         public Builder query( final ElasticsearchQuery query )
         {
             this.query = query;
-            return this;
-        }
-
-        public Builder preference( final String preference )
-        {
-            this.preference = preference;
             return this;
         }
 

@@ -66,7 +66,6 @@ public class SearchExecutor
     {
         final org.elasticsearch.action.search.SearchRequest searchRequest = SearchRequestBuilderFactory.newFactory().
             query( query ).
-            preference( searchPreference ).
             resolvedSize( resolveSize( query ) ).
             build().
             create();
