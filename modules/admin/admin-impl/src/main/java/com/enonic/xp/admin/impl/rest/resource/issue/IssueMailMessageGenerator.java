@@ -89,8 +89,13 @@ public abstract class IssueMailMessageGenerator<P extends IssueNotificationParam
 
     protected String getApproverEmails()
     {
+        return getApproverEmails( null );
+    }
+
+    protected String getApproverEmails( final String exceptEmail )
+    {
         return params.getApprovers().stream().
-            filter( approver -> StringUtils.isNotBlank( approver.getEmail() ) ).
+            filter( approver -> StringUtils.isNotBlank( approver.getEmail() ) && !approver.getEmail().equals( exceptEmail ) ).
             map( approver -> approver.getEmail() ).
             collect( Collectors.joining( "," ) );
     }
@@ -113,8 +118,10 @@ public abstract class IssueMailMessageGenerator<P extends IssueNotificationParam
         final boolean isRequest = this.isPublishRequest();
         final boolean isOpen = isIssueOpen();
         final String idString = params.getIssue().getId().toString();
-        final String showDetailsCaption = params.getLocaleMessageResolver().localizeMessage( "issue.email.showDetailsCaption", "Show Details..." );
-        final String latestCommentTitle = params.getLocaleMessageResolver().localizeMessage( "issue.email.latestCommentTitle", "Latest comment" );
+        final String showDetailsCaption =
+            params.getLocaleMessageResolver().localizeMessage( "issue.email.showDetailsCaption", "Show Details..." );
+        final String latestCommentTitle =
+            params.getLocaleMessageResolver().localizeMessage( "issue.email.latestCommentTitle", "Latest comment" );
 
         messageParams.put( "id", idString );
         messageParams.put( "index", params.getIssue().getIndex() );

@@ -27,4 +27,10 @@ public class IssueCreatedMailMessageGenerator
         return super.getCreatorEmail();
     }
 
+
+    @Override
+    protected String generateRecipients()
+    {
+        return getApproverEmails( params.getCreator().getEmail() );
+    }
 }

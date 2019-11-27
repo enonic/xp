@@ -38,4 +38,16 @@ public class IssueUpdatedMailMessageGenerator
         return params.getModifier().getEmail();
     }
 
+    @Override
+    protected String generateRecipients()
+    {
+        return getApproverEmails( params.getModifier().getEmail() );
+    }
+
+    @Override
+    protected String getCopyRecepients()
+    {
+        final String creatorEmail = super.getCreatorEmail();
+        return !creatorEmail.equals( params.getModifier().getEmail() ) ? creatorEmail : "";
+    }
 }

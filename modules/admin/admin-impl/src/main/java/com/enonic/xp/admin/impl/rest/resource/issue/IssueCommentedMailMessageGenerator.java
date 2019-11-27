@@ -26,4 +26,10 @@ public class IssueCommentedMailMessageGenerator
         return params.getModifier().getEmail();
     }
 
+    @Override
+    protected String generateRecipients()
+    {
+        // do not send email to the one who made a comment
+        return getApproverEmails( params.getModifier().getEmail() );
+    }
 }
