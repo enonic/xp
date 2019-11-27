@@ -1,12 +1,11 @@
 package com.enonic.xp.repo.impl.elasticsearch.distro;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
+import java.nio.file.Paths;
 
-import com.enonic.xp.repo.impl.elasticsearch.distro.config.ElasticsearchConfig;
 import com.enonic.xp.repo.impl.elasticsearch.distro.config.ElasticsearchDownloaderConfig;
 
 import static com.enonic.xp.repo.impl.elasticsearch.distro.ElasticsearchConstants.ROOT_DATA_DIR;
@@ -19,17 +18,15 @@ public class ElasticsearchInstance
 
     private Path snapshotsDir;
 
+    private Path esConfigDir;
+
     public ElasticsearchInstance()
     {
         initialize();
 
         elasticsearchServer = ElasticsearchServer.ElasticsearchServerBuilder.builder().
-            esJavaOpts( "-Xms512m -Xmx512m" ).
-            downloaderConfig( ElasticsearchDownloaderConfig.builder().
-                build() ).
-            elasticsearchConfig( ElasticsearchConfig.builder().
-                setting( "path.repo", Collections.singletonList( snapshotsDir.toAbsolutePath().toString() ) ).
-                build() ).
+            esPathConf( esConfigDir.toAbsolutePath().toString() ).
+            downloaderConfig( ElasticsearchDownloaderConfig.builder().build() ).
             build();
     }
 
@@ -49,10 +46,22 @@ public class ElasticsearchInstance
 
             snapshotsDir = dataDir.resolve( "repo" );
             Files.createDirectories( snapshotsDir );
+
+            esConfigDir = dataDir.resolve( "elasticConfig" );
+            Files.createDirectories( esConfigDir );
+
+            copyResource( "jvm.options" );
+            copyResource( "log4j2.properties" );
+
+            final Path elasticsearchYml = esConfigDir.resolve( "elasticsearch.yml" );
+            Files.createFile( elasticsearchYml );
+
+            final String builder = "path.repo: [" + snapshotsDir.toString() + "]";
+            Files.writeString( elasticsearchYml, builder );
         }
-        catch ( IOException e )
+        catch ( Exception e )
         {
-            throw new UncheckedIOException( e );
+            throw new RuntimeException( e );
         }
     }
 
@@ -76,6 +85,17 @@ public class ElasticsearchInstance
     public Path getSnapshotsDir()
     {
         return snapshotsDir;
+    }
+
+    private void copyResource( final String resourceName )
+        throws Exception
+    {
+        URL resource = getClass().getClassLoader().getResource( "elastic/config/" + resourceName );
+
+        if ( resource != null )
+        {
+            Files.copy( Paths.get( resource.toURI() ), esConfigDir.resolve( resourceName ) );
+        }
     }
 
 }

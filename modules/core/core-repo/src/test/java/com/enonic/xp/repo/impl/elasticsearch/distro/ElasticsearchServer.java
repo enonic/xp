@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch.distro;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
@@ -10,16 +9,12 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.repo.impl.elasticsearch.distro.config.ElasticsearchConfig;
 import com.enonic.xp.repo.impl.elasticsearch.distro.config.ElasticsearchDownloaderConfig;
 
-import static com.enonic.xp.repo.impl.elasticsearch.distro.ElasticsearchConstants.ES_DIR;
 import static com.enonic.xp.repo.impl.elasticsearch.distro.ElasticsearchConstants.EXTRACTED_ARCHIVE_NAME;
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 
 public class ElasticsearchServer
@@ -34,25 +29,21 @@ public class ElasticsearchServer
 
     private final AtomicBoolean statedSuccessfully = new AtomicBoolean();
 
-    private final String esJavaOpts;
-
-    private final ElasticsearchConfig config;
+    private final String esPathConf;
 
 
     private final ElasticsearchInstaller installer;
 
     private ElasticsearchServer( final ElasticsearchServerBuilder builder )
     {
-        this.esJavaOpts = builder.esJavaOpts;
+        this.esPathConf = builder.esPathConf;
         this.installer = new ElasticsearchInstaller( builder.downloaderConfig );
-        this.config = builder.elasticsearchConfig;
     }
 
     public synchronized void start()
         throws InterruptedException, IOException
     {
         installer.install();
-        configure();
         startElasticProcess();
         installExitHook();
         startedLatch.await();
@@ -82,12 +73,14 @@ public class ElasticsearchServer
 
 
     public void startElasticProcess()
-        throws IOException, InterruptedException
+        throws IOException
     {
-        process = new ProcessBuilder(
+        final ProcessBuilder processBuilder = new ProcessBuilder(
             Path.of( installer.getInstallationDirectory().getPath(), EXTRACTED_ARCHIVE_NAME, "bin", executableFilename() ).toString() ).
-            redirectErrorStream( true ).
-            start();
+            redirectErrorStream( true );
+        processBuilder.environment().put( "ES_PATH_CONF", esPathConf );
+
+        process = processBuilder.start();
 
         outStreamReader = new Thread( () -> {
 
@@ -128,44 +121,26 @@ public class ElasticsearchServer
         deactivate();
     }
 
-    private void configure()
-        throws IOException
-    {
-        if ( config != null )
-        {
-            File elasticsearchYml = FileUtils.getFile( ES_DIR.toFile(), EXTRACTED_ARCHIVE_NAME, "config", "elasticsearch.yml" );
-            FileUtils.writeStringToFile( elasticsearchYml, config.toYaml(), UTF_8 );
-        }
-    }
-
     public static class ElasticsearchServerBuilder
     {
-        private String esJavaOpts;
+        private String esPathConf;
 
         private ElasticsearchDownloaderConfig downloaderConfig;
-
-        private ElasticsearchConfig elasticsearchConfig;
 
         public static ElasticsearchServerBuilder builder()
         {
             return new ElasticsearchServerBuilder();
         }
 
-        public ElasticsearchServerBuilder esJavaOpts( final String esJavaOpts )
+        public ElasticsearchServerBuilder esPathConf( final String esPathConf )
         {
-            this.esJavaOpts = esJavaOpts;
+            this.esPathConf = esPathConf;
             return this;
         }
 
         public ElasticsearchServerBuilder downloaderConfig( final ElasticsearchDownloaderConfig downloaderConfig )
         {
             this.downloaderConfig = downloaderConfig;
-            return this;
-        }
-
-        public ElasticsearchServerBuilder elasticsearchConfig( final ElasticsearchConfig elasticsearchConfig )
-        {
-            this.elasticsearchConfig = elasticsearchConfig;
             return this;
         }
 

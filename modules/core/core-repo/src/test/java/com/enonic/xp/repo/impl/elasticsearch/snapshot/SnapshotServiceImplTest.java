@@ -3,7 +3,6 @@ package com.enonic.xp.repo.impl.elasticsearch.snapshot;
 import java.io.IOException;
 import java.util.stream.Collectors;
 
-import org.elasticsearch.ElasticsearchStatusException;
 import org.elasticsearch.action.admin.cluster.repositories.delete.DeleteRepositoryRequest;
 import org.elasticsearch.action.admin.cluster.repositories.get.GetRepositoriesRequest;
 import org.elasticsearch.action.admin.cluster.snapshots.delete.DeleteSnapshotRequest;
@@ -222,26 +221,19 @@ public class SnapshotServiceImplTest
     private static void cleanRepositories()
         throws IOException
     {
-        try
+        for ( String repository : client.snapshot().getRepository( new GetRepositoriesRequest(),
+                                                                   RequestOptions.DEFAULT ).repositories().stream().map(
+            RepositoryMetaData::name ).collect( Collectors.toList() ) )
         {
-            for ( String repository : client.snapshot().getRepository( new GetRepositoriesRequest(),
-                                                                       RequestOptions.DEFAULT ).repositories().stream().map(
-                RepositoryMetaData::name ).collect( Collectors.toList() ) )
+            for ( String snapshot : client.snapshot().get( new GetSnapshotsRequest().
+                repository( repository ), RequestOptions.DEFAULT ).
+                getSnapshots().stream().map( snapshotInfo -> snapshotInfo.snapshotId().getName() ).collect( Collectors.toList() ) )
             {
-                for ( String snapshot : client.snapshot().get( new GetSnapshotsRequest().
-                    repository( repository ), RequestOptions.DEFAULT ).
-                    getSnapshots().stream().map( snapshotInfo -> snapshotInfo.snapshotId().getName() ).collect( Collectors.toList() ) )
-                {
-                    client.snapshot().delete( new DeleteSnapshotRequest().
-                        snapshot( snapshot ).
-                        repository( repository ), RequestOptions.DEFAULT );
-                }
-                client.snapshot().deleteRepository( new DeleteRepositoryRequest( repository ), RequestOptions.DEFAULT );
+                client.snapshot().delete( new DeleteSnapshotRequest().
+                    snapshot( snapshot ).
+                    repository( repository ), RequestOptions.DEFAULT );
             }
-        }
-        catch ( ElasticsearchStatusException e )
-        {
-            // do nothing
+            client.snapshot().deleteRepository( new DeleteRepositoryRequest( repository ), RequestOptions.DEFAULT );
         }
     }
 

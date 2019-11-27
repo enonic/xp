@@ -4,7 +4,6 @@ dependencies {
     compile project( ':core:core-api' )
     compile 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.4.0'
     compile 'org.apache.commons:commons-compress:1.14'
-    testCompile 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.10.1'
     testCompile 'org.rauschig:jarchivelib:1.0.0'
     testCompile project( path: ':core:core-blobstore', configuration: 'testOutput' )
     testCompile project( path: ':core:core-api', configuration: 'testOutput' )
