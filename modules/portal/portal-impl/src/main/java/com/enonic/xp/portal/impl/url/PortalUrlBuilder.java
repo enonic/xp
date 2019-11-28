@@ -108,7 +108,7 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
         return UrlEscapers.urlPathSegmentEscaper().escape( value ).replaceAll( "\\+", "%2B" );
     }
 
-    private String normalizePath( final String value )
+    String normalizePath( final String value )
     {
         if ( value == null )
         {
