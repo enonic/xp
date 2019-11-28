@@ -72,10 +72,10 @@ abstract class GenericEndpointUrlBuilder<T extends AbstractUrlParams>
     {
         final String[] splitPreEndpointPath = path.split( "/" );
         int preEndpointPathIndex = splitPreEndpointPath.length - 1;
-        final ContentPath contentPath = this.portalRequest.getContentPath();
-        int contentPathIndex = contentPath.elementCount() - 1;
+        final ContentPath normalizedContentPath = ContentPath.from( normalizePath( this.portalRequest.getContentPath().toString() ) );
+        int contentPathIndex = normalizedContentPath.elementCount() - 1;
         while ( preEndpointPathIndex >= 0 && contentPathIndex >= 0 &&
-            normalizePath( contentPath.getElement( contentPathIndex ) ).equals( splitPreEndpointPath[preEndpointPathIndex] ) )
+            normalizedContentPath.getElement( contentPathIndex ).equals( splitPreEndpointPath[preEndpointPathIndex] ) )
         {
             preEndpointPathIndex--;
             contentPathIndex--;
